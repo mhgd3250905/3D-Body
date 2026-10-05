@@ -1,0 +1,15 @@
+node_modules/
+.reference/
+output/playwright/.cache/
+*.log
+
+# Generated builds, checks and local asset archives stay on disk.
+/dist/
+/output/
+/assets/*
+!/assets/blender-studio-source/
+/assets/blender-studio-source/*
+!/assets/blender-studio-source/SOURCE.md
+/托马斯/备份/
+__pycache__/
+*.pyc
