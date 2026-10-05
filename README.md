@@ -26,13 +26,15 @@
 
 膝盖和肘部支持直接旋转，带动小腿或前臂；独立“腰部”控制点可弯腰、扭腰和侧弯。旋转固定手一侧的肘部前，先取消对应手固定。旧姿势继续原样显示，新的腰部和关节角度可随步骤保存、撤销及镜像。
 
+“动画编辑”可自己 K 两步之间的中间帧：拖画布下方时间轴，调整身体后按 K 保存；← / → 逐帧查看，空格预览，可循环当前段或整圈。右侧顶部可选择“线性 · 匀速”或“平滑 · 缓入缓出”，只需摆好关键帧，中间画面自动生成。每次 K 保存或更新都会重新生成这帧到前后相邻关键姿态的过渡，提示显示影响范围。白色菱形是原节点，蓝色菱形是新增帧。中间帧和补帧方式自动用于播放，刷新后保留，支持删除、撤销和独立 JSON 备份；个人步骤与原草稿保留。“四肢过渡路线”默认“沿关键姿态 · 推荐”，按保存帧实际膝肘弯向连接，脚和非支撑手在运动髋肩周围过渡；路线与补帧速度分别设置，仍可切回原直线对照。详细用法见 [docs/animation-editor.md](docs/animation-editor.md)。
+
 热点颜色代表功能关联，没有标注肌电激活百分比。源解剖参考未包含腹直肌、腹内斜肌、腹横肌、背阔肌与腰方肌的独立网格；它们仍可能参与动作。模型范围不等同于肌肉重要性排序。
 
 “补齐另一侧”保留为此前前撑起始五步方案的兼容工具：手动使用时按列表第 4、3、2、1 步的镜像追加为第 6–9 步，交换左右手脚、完整朝向和支撑状态，保留原来的五步及当前草稿。这与当前采用原第 9–16 步的正式循环是两种入口；旧五步模板不会一律自动补齐。镜像可以继续编辑，也可以撤销这次补齐，载入镜像仍保持统一推荐镜头。
 
 ## 编辑与构建
 
-`src/main.js` 管理界面与交互，`src/data.js` 保存中文肌群和训练内容，`src/viewer.js` 管理 Three.js 场景，`src/coach-motion.js` 驱动卡通人物的保存姿势及手动编辑，`src/flare-sequence.js` 在关键姿势之间插值，`src/official-poses.js` 管理正式展示与备份，`src/pose-editor.js` 管理三维控制点，`src/pose-panel.js` 管理数值调整和步骤保存。`public/coach/` 保存运动人物 GLB、真实关节点、正式九步 `flare-sequence.json` 与署名，`public/anatomy/` 保存独立肌骨数据与署名。修改后运行：
+`src/main.js` 管理界面与交互，`src/data.js` 保存中文肌群和训练内容，`src/viewer.js` 管理 Three.js 场景，`src/coach-motion.js` 驱动卡通人物的保存姿势及手动编辑，`src/flare-sequence.js` 在关键姿势之间插值，`src/official-poses.js` 管理正式展示与备份，`src/pose-editor.js` 管理三维控制点，`src/pose-panel.js` 管理数值调整和步骤保存。动画编辑界面与独立存储分别在 `src/transition-panel.js`、`src/transition-edits.js`，四肢路径计算在 `src/limb-arc.js`。`public/coach/` 保存运动人物 GLB、真实关节点、正式九步 `flare-sequence.json` 与署名，`public/anatomy/` 保存独立肌骨数据与署名。修改后运行：
 
 ```powershell
 npm ci
@@ -58,6 +60,7 @@ node tools/verify-saved-loop-ui.mjs --module-only
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
 | 解剖来源、覆盖范围与二进制校验 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
 | 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |
+| 动画 K 帧、时间轴、过渡备份与路径 | [docs/animation-editor.md](docs/animation-editor.md) |
 | 原第 9–16 步正式循环、来源与迁移 | [docs/flare-pose-presets.md](docs/flare-pose-presets.md)、[public/coach/flare-sequence.json](public/coach/flare-sequence.json)；用户导出源为 `托马斯/16.json` |
 | 肌群功能、训练依据与证据范围 | [docs/flare-research.md](docs/flare-research.md)；[public/research.md](public/research.md) 是内容一致的离线公开副本 |
 

@@ -26,9 +26,11 @@
 
 浏览器只升级正式展示数据一次，并独立保存旧展示；个人库、草稿和标题保持原始值。“撤销展示替换”可恢复此前正式版本，刷新后保留撤销结果。以后更新个人第 9–16 步，再点“用于正式展示”即可同步微调，闭环仍使用同一个原第 9 步。个人库至少有 16 步时，优先按来源 ID 选择；导入改变 ID 后按列表第 9–16 项选择。额外步骤保留，完整独立九步的显式采用也继续支持。
 
+中间过渡可通过“动画编辑”直接 K 帧，独立存储并用于正式播放，原九个节点与 `public/coach/flare-sequence.json` 的保存值保持原样。当前默认按保存帧实际膝肘弯向连接四肢轨迹，过渡帧与验证范围见 [animation-editor.md](animation-editor.md)；下方历史骨架数值仍代表当次交付，不代表新增过渡功能的验证结果。
+
 ## 9–16–9 交付时的检查记录与当前入口
 
-9–16–9 功能交付时按用户要求没有执行全量测试。来源核对记录在 `output/official-loop-9-16/source-report.json`，九帧骨架检查在 `output/official-loop-9-16/rig-check.json`：正式 JSON、预设与整数采样均精确保留来源；首尾第 09 步完全相同；九帧无解算警告，解算后的姿势最大差为 `2.382e-7`，骨长最大误差为 `1.665e-16 m`，支撑手漂移最大为 `5.552e-17 m`。这些是该次交付记录，本次文档对齐没有重新测量这些数值。
+9–16–9 功能交付时按用户要求没有执行全量测试。来源核对记录在 `output/official-loop-9-16/source-report.json`，九帧骨架检查在 `output/official-loop-9-16/rig-check.json`：正式 JSON、预设与整数采样均精确保留来源；首尾第 09 步完全相同；九帧无解算警告，解算后的姿势最大差为 `2.382e-7`，骨长最大误差为 `1.665e-16 m`，支撑手漂移最大为 `5.552e-17 m`。这些是该次交付记录，此后文档对齐没有重测这组历史数值；新增过渡功能的检查另记在 [animation-editor.md](animation-editor.md#验证入口)。
 
 9–16–9 功能交付时的构建和针对性浏览器检查覆盖新版缓存升级、旧版恢复、个人数据保留、来源编号、阶段跳转、固定镜头和手机侧栏，记录在 `output/saved-loop-9-16/verification.json`。此前基于原第 1–5 步及镜像的记录保留在 `output/official-sequence/`、`output/flare-sequence/` 与 `output/pose-presets/`，属于旧正式版本，不能作为本版全量通过证据。
 
@@ -40,4 +42,4 @@ node tools/verify-saved-loop-ui.mjs --module-only
 
 可选 UI 模式运行同一命令并省略 `--module-only`，要求本机 Chrome、Codex 提供的 Playwright 运行库，以及 8810 端口的最新已构建页面；先构建，再用本地服务打开。它使用独立浏览器上下文，不访问用户正在使用的浏览器库。其范围限于该循环的缓存升级／撤销、关键帧、个人库保留、阶段跳转和一个手机场景，不是动作物理或编辑器全量测试。详细前置条件和历史入口列表见 [pose-editor.md](pose-editor.md#实现和验证)。
 
-`verify:presets`、`verify:sequence`、`verify:official`、`verify:demonstration` 等旧入口仍含旧来源、旧阶段或同名九步自动采用断言，当前不可据其历史记录宣称通过。本次文档收束仅复核当前纯模块入口与构建，不重跑这些历史检查或全量测试；一般资产、编辑器和运动约束入口也没有新增通过结论。动作与训练依据见 [flare-research.md](flare-research.md)。
+`verify:presets`、`verify:sequence`、`verify:official`、`verify:demonstration` 等旧入口仍含旧来源、旧阶段或同名九步自动采用断言，当前不可据其历史记录宣称通过。此前正式循环的文档收束只复核纯模块入口与构建，未重跑这些历史检查或全量测试；本轮动画编辑的独立检查见上述文档，一般资产与编辑器全量入口没有新增通过结论。动作与训练依据见 [flare-research.md](flare-research.md)。
