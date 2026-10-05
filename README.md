@@ -28,7 +28,7 @@
 
 热点颜色代表功能关联，没有标注肌电激活百分比。源解剖参考未包含腹直肌、腹内斜肌、腹横肌、背阔肌与腰方肌的独立网格；它们仍可能参与动作。模型范围不等同于肌肉重要性排序。
 
-如果已保存并调整好从前撑到后撑的前五步，可在“我的托马斯步骤”点“补齐另一侧”。它直接按第 4、3、2、1 步的镜像追加为第 6–9 步，交换左右手脚、完整朝向和支撑状态，保留原来的五步及当前草稿。镜像可以继续编辑，也可以撤销这次补齐。
+“补齐另一侧”保留为此前前撑起始五步方案的兼容工具：手动使用时按列表第 4、3、2、1 步的镜像追加为第 6–9 步，交换左右手脚、完整朝向和支撑状态，保留原来的五步及当前草稿。这与当前采用原第 9–16 步的正式循环是两种入口；旧五步模板不会一律自动补齐。镜像可以继续编辑，也可以撤销这次补齐，载入镜像仍保持统一推荐镜头。
 
 ## 编辑与构建
 
@@ -41,6 +41,28 @@ npm run build
 
 开发预览可运行 `npm run dev`。开发服务器同样使用 8810，请先关闭正式服务或指定另一个端口。
 
-可编辑 Blender 场景在 `assets/coach/flare-coach.blend`，实际渲染在 `output/blender/coach-preview.png`。人物制作、复现命令与免费许可见 `docs/friendly-coach.md`；解剖来源、覆盖范围和二进制校验见 `docs/anatomy-assets.md`；动作与训练依据见 `docs/flare-research.md`。收费资产选型文档仅保留为此前研究记录，本项目没有采购。
+当前正式循环的轻量检查命令如下，检查保存值、循环闭合、采用与迁移逻辑，不启动浏览器：
+
+```powershell
+node tools/verify-saved-loop-ui.mjs --module-only
+```
+
+可选的针对性浏览器检查、前置条件与历史测试的适用范围见 `docs/pose-editor.md`。旧检查脚本包含早期五步、旧 ID、旧时间轴或旧存储键的固定断言，不能作为当前版本通过证据。
+
+## 当前文档与历史记录
+
+下面是当前版本的事实来源。人物与解剖分开查阅，研究说明的公开副本与源文档同步维护。
+
+| 主题 | 当前来源 |
+| --- | --- |
+| 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
+| 解剖来源、覆盖范围与二进制校验 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
+| 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |
+| 原第 9–16 步正式循环、来源与迁移 | [docs/flare-pose-presets.md](docs/flare-pose-presets.md)、[public/coach/flare-sequence.json](public/coach/flare-sequence.json)；用户导出源为 `托马斯/16.json` |
+| 肌群功能、训练依据与证据范围 | [docs/flare-research.md](docs/flare-research.md)；[public/research.md](public/research.md) 是内容一致的离线公开副本 |
+
+[docs/anatomy-landmarks.md](docs/anatomy-landmarks.md) 保留此前 BodyParts3D 自动绑定试验；[docs/ready-made-models.md](docs/ready-made-models.md)、[docs/rigged-model-options.md](docs/rigged-model-options.md)、[docs/skin-first-anatomy-options.md](docs/skin-first-anatomy-options.md) 保留此前资产选型。它们不是当前展示方案，价格与外部平台信息仅代表当时核查记录，本项目没有采购。
+
+可编辑 Blender 场景在 `assets/coach/flare-coach.blend`，原始 Snow 场景在 `assets/blender-studio-source/`，此前渲染在 `output/blender/coach-preview.png`。Git 保存当前代码、运行资产、文档与 `托马斯/` 的 17 个顶层 JSON 导出；生成的 `dist/`、`output/`、下载素材、Blender 场景、缓存和 `托马斯/备份/` 留在本地且被忽略，不包含在 Git 提交中。原始素材和备份没有删除或重建。
 
 卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。本项目未发布或部署远程站点。

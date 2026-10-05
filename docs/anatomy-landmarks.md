@@ -1,8 +1,10 @@
 # BodyParts3D 绑定枢轴与动作重定向
 
-动作页使用与静态解剖页相同的 637 个 BodyParts3D 4.0 肌骨结构，以及可选的原始 Skin 体表。`src/atlas-motion.js` 复制原始几何并添加 GPU skin 属性，肌骨结构按八个功能肌群、其他肌肉、骨骼合并为 10 批 `SkinnedMesh`；Skin 独立合并为第 11 批。静态几何和原始 position/normal/index 数值保持不变。
+> 历史试验记录：以下描述此前 BodyParts3D 自动绑定与体表展示的实现、测量和检查，不是当前默认动作人物。当前 `src/viewer.js` 使用 Snow 的 `createCoachMotion`；详细解剖在独立视图展示。当前人物与复现见 [friendly-coach.md](friendly-coach.md)，正式循环见 [flare-pose-presets.md](flare-pose-presets.md)。以下旧时间轴、网格数量和验证结果按原记录保留，未在本次文档对齐中重跑。
 
-加载 Skin 时默认仅显示完整、不透明体表。只有选择局部肌群并进入 `reveal` 后，才显示相应内部肌肉与淡骨骼；局部皮肤窗口由调用方的体表材质控制。完整皮肤是当前展示基线，覆盖旧资产索引中把 Skin 当透明轮廓参考的建议。
+此前试验的动作页使用与静态解剖页相同的 637 个 BodyParts3D 4.0 肌骨结构，以及可选的原始 Skin 体表。`src/atlas-motion.js` 复制原始几何并添加 GPU skin 属性，肌骨结构按八个功能肌群、其他肌肉、骨骼合并为 10 批 `SkinnedMesh`；Skin 独立合并为第 11 批。静态几何和原始 position/normal/index 数值保持不变。
+
+当时加载 Skin 默认仅显示完整、不透明体表。只有选择局部肌群并进入 `reveal` 后，才显示相应内部肌肉与淡骨骼；局部皮肤窗口由调用方的体表材质控制。完整皮肤是该轮试验的展示基线，覆盖更早资产索引中把 Skin 当透明轮廓参考的建议。
 
 `flare-rig.js` 仅提供周期、躯干方向、支持手与腿的摆动方向。它生成的几何人体不进入动作场景。动作使用下面测得的源模型比例重新求解。
 

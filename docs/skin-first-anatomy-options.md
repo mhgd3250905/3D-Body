@@ -1,12 +1,14 @@
 # 现成完整皮肤 + 解剖资产核查
 
+> 历史选型记录：以下商品与平台信息仅代表 2026-10-04 的核查，未在本次文档对齐中重新查询，不是当前采购或实现建议。本项目之后确定零预算，采用免费 Snow 与独立解剖视图；当前方案见 [friendly-coach.md](friendly-coach.md)。
+
 核查日期：2026-10-04。范围：现成人体资产和交互平台；未购买、未联系商家、未改应用代码。
 
 目前最接近“完整皮肤默认展示、选中后解剖、整套可摆动作”的可购买本地资产是 Plasticboy Blender Rigged V9。较高医学精度的专业方案是 Zygote 整套及另购 rig。BioDigital 则是在线 Viewer / SDK 平台，不是可下载 GLB 的替代品。三者均未提供可直接套用的 Flare 动画。
 
 ## 1. Plasticboy — 完整皮肤与全部解剖系统已绑定的本地套装
 
-- [BLENDER RIGGED Complete Male Anatomy PACK V9 2025](https://plasticboyanatomy.com/collections/rigged-human-anatomy-3d-models/products/blender-rigged-complete-male-anatomy-pack-v9-2024)：当前官网 US$899；男女整套 US$1,799。官网声明适配 Blender 3.1+，800 多个独立医学命名对象，皮肤、肌肉、骨骼等所有系统整合并绑定。另有 Maya / 3ds Max 版。
+- [BLENDER RIGGED Complete Male Anatomy PACK V9 2025](https://plasticboyanatomy.com/collections/rigged-human-anatomy-3d-models/products/blender-rigged-complete-male-anatomy-pack-v9-2024)：核查当日官网 US$899；男女整套 US$1,799。官网声明适配 Blender 3.1+，800 多个独立医学命名对象，皮肤、肌肉、骨骼等所有系统整合并绑定。另有 Maya / 3ds Max 版。
 - 肉眼查看了[官方完整皮肤原图（No Genitals）](https://plasticboyanatomy.com/cdn/shop/files/Plasticboy-Male-Skin-System-Front-No-Genitals_1024x1024@2x.jpg?v=1741699149)：有头发、自然肤色、正常健壮比例和连续完整外观；该预览未穿运动短裤。
 - [FAQ](https://plasticboyanatomy.com/pages/faq) 说明 rig 是支持简单姿态的 basic rig；V9 不含呼吸、心跳功能。其解剖定位为入门讲解，制作未受医学专家指导，不应包装成临床级精度。官网允许申请测试 sample。
 - [授权](https://plasticboyanatomy.com/pages/license)：永久 royalty-free，明确包含软件、web、移动应用使用；不允许用户提取、分发独立模型，raw 文件许可限单一地理地点。不要把资产放进公开源码仓库。
