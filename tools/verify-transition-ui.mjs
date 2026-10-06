@@ -101,7 +101,90 @@ async function download(page, selector, name) {
 
 try {
   browser = await chromium.launch({ channel: 'chrome', headless: true, args: ['--enable-unsafe-swiftshader'] });
-  if (process.argv.includes('--keyframe-spans')) {
+  if (process.argv.includes('--fixed-frames')) {
+    const baseline = createFlareSequence(source.steps, { period: source.period });
+    const edits = createTransitionEdits(source);edits.interpolation = 'linear';
+    edits.points = [1.45, 2.6].map((time, index) => ({ id: `fixed-neighbor-${index}`, segment: Math.floor(time), at: time % 1, name: '保留已有中间帧', pose: baseline.sample(time) }));
+    const page = await pageFor(JSON.stringify({ format: 'flare-transition-library', version: 1, entries: [edits] }));
+    await mode(page, 'transition');await drawer(page, 'details', true);
+    const at = async time => { await seek(page, time);return inspect(page); };
+    await seek(page, 0);
+    for (let index = 0; index < 60; index++) await page.keyboard.press('ArrowRight');
+    check('Sixty frame steps land on the existing original node rather than a near-zero blue K', (await inspect(page)).transitions.state.fixedIndex === 1 && (await inspect(page)).transitions.state.at === 0);
+    const before = [];
+    for (const time of [1.2, 1.8, 2.2, 2.8]) before.push(await at(time));
+    await page.locator('[data-transition-fixed="2"]').click();
+    check('A white marker opens the existing original pose for editing', (await inspect(page)).transitions.state.fixedIndex === 2 && await page.locator('#transition-pos-0').isEnabled() && await page.locator('#transition-keyframe-button').textContent() === '更新原关键帧 · K');
+    await blur(page);await page.keyboard.press('k');
+    check('K without an adjustment does not rewrite an original frame', await stored(page, OFFICIAL_KEY) === officialRaw);
+    await adjustPelvis(page, 2);const changed = await inspect(page);await page.keyboard.press('k');
+    let frame = await inspect(page);const savedFormal = structuredClone(frame.formal);
+    check('Saving updates the existing node and preserves the displayed edited pose', difference(frame.formal.steps[2].pose, changed.pose) < 1e-7 && difference(frame.pose, changed.pose) < 1e-6);
+    check('A fixed-frame update keeps the same nine IDs, times and other original poses', frame.formal.steps.length === 9 && frame.formal.period === source.period && equal(frame.formal.steps.map(step => step.id), source.steps.map(step => step.id)) && frame.formal.steps.every((step, index) => index === 2 || equal(step, source.steps[index])));
+    check('Existing intermediate keyframes and interpolation settings survive an original update', equal(frame.transitions.document.points, edits.points) && frame.transitions.document.interpolation === 'linear');
+    const after = [];
+    for (const time of [1.2, 1.8, 2.2, 2.8]) after.push(await at(time));
+    check('Both neighboring spans regenerate while preceding and following K frames bound the change', difference(after[1].status.motion.joints, before[1].status.motion.joints) > 1e-4 && difference(after[2].status.motion.joints, before[2].status.motion.joints) > 1e-4 && difference(after[0].pose, before[0].pose) < 1e-7 && difference(after[3].pose, before[3].pose) < 1e-7);
+    check('Saving original frames does not create or overwrite personal steps or drafts', await stored(page, PERSONAL_KEY) === personalRaw && (await inspect(page)).formal.source.origin === 'browser-keyframe-edit');
+    await page.reload();await ready(page);await mode(page, 'transition');await seek(page, 2);await drawer(page, 'details', true);
+    check('Reload restores the updated original frame with its intermediate K frames', equal((await inspect(page)).formal, savedFormal) && equal((await inspect(page)).transitions.document.points, edits.points));
+    await page.locator('#transition-undo-document').click();
+    check('An original update can be undone after reload without losing K frames', equal((await inspect(page)).formal.steps, source.steps) && equal((await inspect(page)).transitions.document.points, edits.points));
+    await page.locator('[data-transition-fixed="0"]').click();await adjustPelvis(page, 1);await page.keyboard.press('k');frame = await inspect(page);
+    check('Editing the first 09 updates both closure poses and keeps their separate metadata', equal(frame.formal.steps[0].pose, frame.formal.steps[8].pose) && difference(frame.formal.steps[0].pose, source.steps[0].pose) > 1e-4 && frame.formal.steps[8].id === source.steps[8].id && frame.formal.steps[8].name === source.steps[8].name);
+    await page.locator('[data-transition-fixed="8"]').click();await adjustPelvis(page, 1);await page.keyboard.press('k');
+    const exportedFrame = await inspect(page);
+    check('Editing the final 09 also updates the first 09 without adding a frame', equal(exportedFrame.formal.steps[0].pose, exportedFrame.formal.steps[8].pose) && exportedFrame.formal.steps.length === 9);
+    const backupPath = await download(page, '#transition-export', 'fixed-frame-animation-backup.json');
+    const backup = JSON.parse(await fs.readFile(backupPath, 'utf8'));
+    check('One animation backup contains updated original poses, K frames and settings', equal(backup.sequence, exportedFrame.formal) && equal(backup.points, edits.points) && backup.interpolation === 'linear');
+    await page.locator('#transition-undo-document').click();await page.locator('#transition-undo-document').click();
+    check('Undo restores both original closure poses with all K frames', equal((await inspect(page)).formal.steps, source.steps) && equal((await inspect(page)).transitions.document.points, edits.points));
+    await page.locator('#transition-import-file').setInputFiles(backupPath);
+    await page.waitForFunction(expected => JSON.stringify(window.flareInspector.demonstration()) === expected, JSON.stringify(backup.sequence));
+    check('Import restores updated originals together with their generated spans', equal((await inspect(page)).formal, backup.sequence) && equal((await inspect(page)).transitions.document.points, edits.points));
+    await page.locator('#transition-undo-document').click();
+    check('Undoing a complete animation import restores the prior originals and K frames', equal((await inspect(page)).formal.steps, source.steps) && equal((await inspect(page)).transitions.document.points, edits.points));
+    const rawBeforeInvalid = { official: await stored(page, OFFICIAL_KEY), transitions: await stored(page, TRANSITION_STORAGE_KEY) };
+    const invalidBackup = structuredClone(backup);invalidBackup.sequence.steps[1].id = 'another-animation';
+    await page.locator('#transition-import-file').setInputFiles({ name: 'wrong-layout.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(invalidBackup)) });
+    await page.waitForFunction(() => document.querySelector('#toast').textContent.includes('另一组') || document.querySelector('#toast').textContent.includes('顺序'));
+    check('An unrelated animation backup leaves both original and transition storage untouched', await stored(page, OFFICIAL_KEY) === rawBeforeInvalid.official && await stored(page, TRANSITION_STORAGE_KEY) === rawBeforeInvalid.transitions);
+    await seek(page, 2);await adjustPelvis(page, 3);const beforeFailure = await inspect(page), transitionBeforeFailure = await stored(page, TRANSITION_STORAGE_KEY);
+    await page.evaluate(() => { window.originalStorageSetItem = Storage.prototype.setItem;Storage.prototype.setItem = function(key, value) { if (key === 'flare-demonstration-v1') throw new DOMException('Test quota failure', 'QuotaExceededError');return window.originalStorageSetItem.call(this, key, value); }; });
+    await page.keyboard.press('k');
+    const afterFailure = await inspect(page);
+    check('A failed original save keeps the prior sequence and edited pose available', equal(afterFailure.formal, beforeFailure.formal) && difference(afterFailure.pose, beforeFailure.pose) < 1e-7 && afterFailure.transitions.state.dirty && await stored(page, TRANSITION_STORAGE_KEY) === transitionBeforeFailure);
+    await page.evaluate(() => { Storage.prototype.setItem = window.originalStorageSetItem;delete window.originalStorageSetItem; });
+    await page.keyboard.press('k');
+    await mode(page, 'motion');await page.evaluate(() => window.flareInspector.setTime(2));
+    check('Normal playback samples the updated original pose from the same animation', difference((await inspect(page)).pose, (await inspect(page)).formal.steps[2].pose) < 1e-6);
+    await mode(page, 'pose');
+    check('The ordinary pose editor reads the updated formal pose without changing personal data', equal((await page.evaluate(() => window.flareInspector.presetLibrary()))[2].pose, (await inspect(page)).formal.steps[2].pose) && await stored(page, PERSONAL_KEY) === personalRaw);
+    await mode(page, 'transition');await seek(page, 4);await adjustPelvis(page, 1);const unsavedOriginal = await inspect(page);
+    await seek(page, 4.5);await page.keyboard.press('k');
+    check('Saving a blue K at another time preserves the unsaved white-frame adjustment', equal((await inspect(page)).transitions.document.draft, unsavedOriginal.transitions.document.draft));
+    await drawer(page, 'library', true);await page.locator('#transition-return-draft').click();
+    check('The preserved original draft can still be resumed and saved to its original position', (await inspect(page)).transitions.state.fixedIndex === 4 && (await inspect(page)).transitions.state.dirty && difference((await inspect(page)).pose, unsavedOriginal.pose) < 1e-6);
+    await page.keyboard.press('k');await drawer(page, 'details', true);await page.locator('#transition-interpolation').selectOption('smooth');
+    const rawBeforeUndoFailure = await stored(page, TRANSITION_STORAGE_KEY);
+    await page.evaluate(() => { window.originalStorageSetItem = Storage.prototype.setItem;Storage.prototype.setItem = function(key, value) { if (key === 'flare-transition-library-v1') throw new DOMException('Test quota failure', 'QuotaExceededError');return window.originalStorageSetItem.call(this, key, value); }; });
+    await page.locator('#transition-undo-document').click();
+    check('A failed undo preserves its retry history and reports that browser storage was not saved', await stored(page, TRANSITION_STORAGE_KEY) === rawBeforeUndoFailure && await page.locator('#transition-undo-document').isEnabled() && (await page.locator('#toast').textContent()).includes('浏览器保存失败'));
+    await page.evaluate(() => { Storage.prototype.setItem = window.originalStorageSetItem;delete window.originalStorageSetItem; });
+    await page.locator('#transition-undo-document').click();
+    const retriedUndo = await inspect(page), savedEntries = JSON.parse(await stored(page, TRANSITION_STORAGE_KEY)).entries;
+    check('Retrying the undo commits the prior settings when storage becomes available', retriedUndo.transitions.document.interpolation === 'linear' && savedEntries.some(entry => entry.interpolation === 'linear' && equal(entry.base, retriedUndo.transitions.document.base)));
+    // Pose mode may remember its own draft; use an independent context for the mobile check.
+    const mobile = await pageFor(JSON.stringify({ format: 'flare-transition-library', version: 1, entries: [edits] }), { width: 390, height: 844 });
+    await mode(mobile, 'transition');await seek(mobile, 1);await adjustPelvis(mobile, 1);await drawer(mobile, 'details', false);
+    check('The update-original button stays accessible with mobile drawers closed', await mobile.locator('#transition-keyframe-button').isVisible() && await mobile.locator('#transition-keyframe-button').isEnabled());
+    await mobile.locator('#transition-keyframe-button').click();
+    check('A mobile original update preserves IDs and intermediate frames', equal((await inspect(mobile)).formal.steps.map(step => step.id), source.steps.map(step => step.id)) && equal((await inspect(mobile)).transitions.document.points, edits.points));
+    await mode(page, 'transition');await seek(page, 2);await drawer(page, 'details', true);
+    await screenshot(page, 'fixed-frame-editor.png');
+    check('Original-frame editing leaves source files unchanged and has no browser errors', await fs.readFile(sourcePath, 'utf8') === sourceBytes && errors.length === 0, errors);
+  } else if (process.argv.includes('--keyframe-spans')) {
     const page = await pageFor();await mode(page, 'transition');await drawer(page, 'details', true);
     const at = async time => { await seek(page, time);return inspect(page); };
     const before = [];
@@ -367,7 +450,9 @@ try {
 } catch (error) {
   failure = error.stack;await activePage?.screenshot({ path: path.join(output, 'transition-failure.png') }).catch(() => {});
 } finally {
-  const scope = process.argv.includes('--keyframe-spans')
+  const scope = process.argv.includes('--fixed-frames')
+    ? 'Direct original-keyframe editing, bounded adjacent spans, existing K and personal-data preservation, closure, reload undo, complete animation backup, failed storage and mobile controls in isolated Chrome contexts.'
+    : process.argv.includes('--keyframe-spans')
     ? 'Only actual knee K save/update and neighboring generated spans, keyframe approach continuity, next-key influence bounds, reload and exact original preservation in an isolated Chrome context.'
     : process.argv.includes('--interpolation-only')
     ? 'Only interpolation selection and actual rig timing, legacy compatibility, drafts, K save, undo, full playback, reload, JSON import/export, disabling and mobile access in an isolated Chrome context.'
@@ -375,7 +460,7 @@ try {
     ? 'Only focused timeline ArrowRight/K, the text-input K guard, exact original-key preservation and a clean editor screenshot in an isolated Chrome context.'
     : 'Isolated Chrome contexts: K save/update, anchors, temporary pose, Ctrl+Z, hidden sidebars, frame stepping, previews, reload, delete/undo, enable/disable, export/import and a mobile layout. Original user browser data is never opened.';
   const report = { pass: !failure && errors.length === 0, passed: checks.filter(item => item.pass).length, total: checks.length, checks, errors, failure, screenshots, personalRawSha256: createHash('sha256').update(personalRaw).digest('hex'), resumedAtPlayback: process.argv.includes('--resume-at-playback'), scope };
-  const reportPath = path.join(output, process.argv.includes('--keyframe-spans') ? 'transition-keyframe-span-verification.json' : process.argv.includes('--interpolation-only') ? 'transition-interpolation-verification.json' : process.argv.includes('--focus-shortcuts') ? 'transition-shortcut-verification.json' : 'transition-ui-verification.json');
+  const reportPath = path.join(output, process.argv.includes('--fixed-frames') ? 'fixed-frame-ui-verification.json' : process.argv.includes('--keyframe-spans') ? 'transition-keyframe-span-verification.json' : process.argv.includes('--interpolation-only') ? 'transition-interpolation-verification.json' : process.argv.includes('--focus-shortcuts') ? 'transition-shortcut-verification.json' : 'transition-ui-verification.json');
   await fs.writeFile(reportPath, JSON.stringify(report, null, 2));await browser?.close();
   console.log(JSON.stringify({ pass: report.pass, passed: report.passed, total: report.total, errors, failure, report: reportPath, screenshots }, null, 2));
   if (!report.pass) process.exitCode = 1;
