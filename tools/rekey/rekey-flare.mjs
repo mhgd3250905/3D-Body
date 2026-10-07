@@ -82,7 +82,7 @@ const FLEX_RANGE=[-15,110]; // hip extension 15° .. flexion 110°
 const HIP=Number(process.env.HIP_TWIST??-20);
 // Hip-led orbit. Rear (9) -> transfer (10) -> single support (11) -> pass (12) -> front (13):
 // flexion eases from pike to near-flat, abduction stays wide, hips rise over the support arm.
-const A=Number(process.env.ABD??56);
+const A=Number(process.env.ABD??36);
 // Turn a WHOLE key (body, hips, legs, free hand) about the vertical line through the
 // support hand, so the body orbits with the legs instead of the legs twisting alone.
 function yawWhole(p,deg,side='right'){const piv=V(p.limbs[side].wrist).setY(0),q=new THREE.Quaternion().setFromAxisAngle(Y,rad(deg));
@@ -147,16 +147,33 @@ function liftHips(p,y,side='right'){
     for(const sd of ['left','right'])if(p.limbs[sd].footQuaternion)p.limbs[sd].footQuaternion=rq(p.limbs[sd].footQuaternion);
     if(p.limbs[free].handQuaternion)p.limbs[free].handQuaternion=rq(p.limbs[free].handQuaternion);}}
 const LIFT=[[1,+(process.env.Y10??.80),135],[2,+(process.env.Y11??.74),96],[3,+(process.env.Y12??.60),15]];
-if(process.env.LIFT!=='0')for(const [i,y,az] of LIFT){liftHips(S(i),y);strad(S(i),{az,F:'auto',A,minY:.30});liftHips(S(i),y);}
+// v7, bboy first principles: the support shoulder pushes the whole trunk block up
+// (lower back + back + hips together) and rotates it; the pelvis does NOT twist away
+// from the chest. Legs: straight, a moderate straddle (bboy, not gymnastics), hanging
+// off the pelvis along the trunk line with a light pike.
+const BF=+(process.env.BF??18),BA=+(process.env.BA??30);
+function stradBody(p,F=BF,Ab=BA){
+  p.pelvisQuaternion=p.bodyQuaternion.slice();
+  const q=new THREE.Quaternion(...p.bodyQuaternion),hips=settle(p),reach=hips.length*.9995;
+  const u=new THREE.Vector3(0,-Math.cos(rad(F)),Math.sin(rad(F))).applyQuaternion(q),w=new THREE.Vector3(1,0,0).applyQuaternion(q),fwd=new THREE.Vector3(0,0,1).applyQuaternion(q);
+  for(const [sd,sign] of [['left',1],['right',-1]]){const l=p.limbs[sd],dir=u.clone().multiplyScalar(Math.cos(rad(Ab))).addScaledVector(w,sign*Math.sin(rad(Ab))).normalize();
+    const ankle=hips[sd].clone().addScaledVector(dir,reach),knee=hips[sd].clone().addScaledVector(dir,reach*.5).addScaledVector(fwd,.3);
+    const old=new THREE.Quaternion(...(l.footQuaternion??[0,0,0,1]));l.ankle=ankle.toArray();l.kneePole=knee.toArray();}
+}
+const lowAnkle=p=>Math.min(p.limbs.left.ankle[1],p.limbs.right.ankle[1]);
+if(process.env.BBOY!=='0')for(const [i,y0] of LIFT){let y=y0;const p=S(i);stradBody(p);liftHips(p,y);
+  // still too low? push the trunk block higher rather than spreading or twisting
+  for(let k=0;k<12&&lowAnkle(p)<.24;k++){y+=.02;liftHips(p,y);} p.__lift=y;}
+else for(const [i,y,az] of LIFT){liftHips(S(i),y);strad(S(i),{az,F:'auto',A,minY:.30});liftHips(S(i),y);}
 for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.36]])clearFreeArm(S(i),'left',g);
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
 strad(S(4),{F:'auto',A,minY:.3});onOrbit(S(0),180);strad(S(0),{F:'auto',A,minY:.3});steps[8].pose=structuredClone(S(0));
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
-report(steps,'flare keys v4');console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
+report(steps,'flare keys v7');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
 for(const x of steps)delete x.pose.__flex;
 {const Q=steps.map(x=>new THREE.Quaternion(...(x.pose.pelvisQuaternion??x.pose.bodyQuaternion))),B=steps.map(x=>new THREE.Quaternion(...x.pose.bodyQuaternion)),D=180/Math.PI;
  console.log('SUMMARY twist',Q.slice(0,8).map((q,i)=>(q.angleTo(B[i])*D).toFixed(0)).join(' '),'| pelvis steps',Q.slice(0,8).map((q,i)=>(q.angleTo(Q[i+1])*D).toFixed(0)).join(' '));}
 if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});
-  d.revision={name:'v6 侧撑提前顶髋',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
+  d.revision={name:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
     changes:['髋部带动双腿：腿在髋部坐标里保持分腿（屈髋由后撑约60°渐变到前撑约12°，外展约55°），髋部随腿转动并在单撑时抬高','双腿整圈伸直（按真实髋—踝全长）','第10/16步腿方位改到±135°，消除10→11、16→15倒转；11/12保持原方位，让腿先过、手再落','下方脚踝离地≥0.30 m','手的摆放保留原稿；第12/14步空手向远离腿的方向移15 cm，避开扫过的大腿','前双撑躯干后仰84°','单撑髋部相对胸口转20°'],mirrors:'14–16 由 10–12 镜像生成'};
   fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
