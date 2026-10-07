@@ -146,7 +146,7 @@ function liftHips(p,y,side='right'){
     for(const k of ['wrist','elbowPole'])p.limbs[free][k]=rp(p.limbs[free][k]);
     for(const sd of ['left','right'])if(p.limbs[sd].footQuaternion)p.limbs[sd].footQuaternion=rq(p.limbs[sd].footQuaternion);
     if(p.limbs[free].handQuaternion)p.limbs[free].handQuaternion=rq(p.limbs[free].handQuaternion);}}
-const LIFT=[[1,+(process.env.Y10??.80),135],[2,+(process.env.Y11??.74),96],[3,+(process.env.Y12??.60),15]];
+const LIFT=[[1,+(process.env.Y10??.80),135],[2,+(process.env.Y11??.82),96],[3,+(process.env.Y12??.68),15]];
 // v8 (user): at the rear diagonals a bboy folds the legs in a Y toward the trunk
 // (hip flexion), not body and legs in one plane. Per-key pike, referenced to the
 // user's own hand keys (≈75° / 37° / 46°) but not copied.
@@ -155,11 +155,13 @@ const PIKE={1:+(process.env.P10??62),2:+(process.env.P11??34),3:+(process.env.P1
 // right hand planted, the LEFT leg (free-hand side) is driven up toward the left
 // ear — that drive lifts the hips — while the RIGHT leg swoops low under it and
 // around to the front (scissor). Per-key hip flexion [kick leg, swoop leg] and
-// abduction; the mean keeps the v8 Y pike. 14–16 mirror it (right leg kicks).
+// abduction; the mean keeps the v8 Y pike. v10 (user): at the side the TOP leg is
+// lifted toward the same-side ear / back of the head (big abduction, little
+// flexion) and that upward drive raises hips + lower back. 14–16 mirror it (right leg kicks).
 const SCISSOR=process.env.SCISSOR==='0'?null:{
   1:{F:{left:+(process.env.K10??84),right:+(process.env.S10??40)},A:{left:34,right:26}},
-  2:{F:{left:+(process.env.K11??74),right:+(process.env.S11??-4)},A:{left:34,right:20}},
-  3:{F:{left:+(process.env.K12??58),right:+(process.env.S12??22)},A:{left:32,right:28}}};
+  2:{F:{left:+(process.env.K11??15),right:+(process.env.S11??-4)},A:{left:+(process.env.KA11??85),right:+(process.env.SA11??20)}},
+  3:{F:{left:+(process.env.K12??40),right:+(process.env.S12??22)},A:{left:+(process.env.KA12??62),right:28}}};
 // v7, bboy first principles: the support shoulder pushes the whole trunk block up
 // (lower back + back + hips together) and rotates it; the pelvis does NOT twist away
 // from the chest. Legs: straight, a moderate straddle (bboy, not gymnastics), hanging
@@ -212,11 +214,11 @@ for(let i=0;i<5;i++){S(i).limbs.right.handQuaternion=PLANT.slice();fixEnds(S(i))
 for(const i of [0,4]){const m=mirrorPose(S(i));S(i).limbs.left.handQuaternion=m.limbs.left.handQuaternion;}
 steps[8].pose=structuredClone(S(0));
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
-report(steps,'flare keys v9');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
+report(steps,'flare keys v10');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
 for(const x of steps)delete x.pose.__flex;
 {const Q=steps.map(x=>new THREE.Quaternion(...(x.pose.pelvisQuaternion??x.pose.bodyQuaternion))),B=steps.map(x=>new THREE.Quaternion(...x.pose.bodyQuaternion)),D=180/Math.PI;
  console.log('SUMMARY twist',Q.slice(0,8).map((q,i)=>(q.angleTo(B[i])*D).toFixed(0)).join(' '),'| pelvis steps',Q.slice(0,8).map((q,i)=>(q.angleTo(Q[i+1])*D).toFixed(0)).join(' '));}
 if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});
-  d.revision={name:'v9 腿部主动剪刀摆动',v9:['单撑阶段空手一侧的腿主动踢向同侧耳朵（屈髋约74–84°），另一条腿从下方低扫绕到前面（屈髋约-4–40°），形成剪刀；平均屈髋保留v8的Y字','14–16镜像：换手后右腿上踢、左腿低扫'],prevV8:'v8 斜后方Y字屈髋+脚尖手掌朝向',v8:['第10/16步双腿Y字向躯干屈髋约62°，侧撑约34°，换腿约40°（参考原稿手K姿态）','脚掌按小腿方向重算：全程绷脚约55°，不内翻不外翻','支撑手整段不在地面转动（9→13 右手、13→9 左手方向固定），空手腕部自然伸直'],prev:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
+  d.revision={name:'v10 侧面上方腿提向同侧耳后',v10:['第11步上方腿（空手侧）以外展约85°、屈髋约15°提向同侧耳后/后脑勺方向，脚踝高约1.65 m；第12步外展62°屈髋40°','向上发力带髋：第11/12步髋高 0.74→0.82、0.60→0.68 m','15/14步镜像'],prevV9:'v9 腿部主动剪刀摆动',v9:['单撑阶段空手一侧的腿主动踢向同侧耳朵（屈髋约74–84°），另一条腿从下方低扫绕到前面（屈髋约-4–40°），形成剪刀；平均屈髋保留v8的Y字','14–16镜像：换手后右腿上踢、左腿低扫'],prevV8:'v8 斜后方Y字屈髋+脚尖手掌朝向',v8:['第10/16步双腿Y字向躯干屈髋约62°，侧撑约34°，换腿约40°（参考原稿手K姿态）','脚掌按小腿方向重算：全程绷脚约55°，不内翻不外翻','支撑手整段不在地面转动（9→13 右手、13→9 左手方向固定），空手腕部自然伸直'],prev:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
     changes:['髋部带动双腿：腿在髋部坐标里保持分腿（屈髋由后撑约60°渐变到前撑约12°，外展约55°），髋部随腿转动并在单撑时抬高','双腿整圈伸直（按真实髋—踝全长）','第10/16步腿方位改到±135°，消除10→11、16→15倒转；11/12保持原方位，让腿先过、手再落','下方脚踝离地≥0.30 m','手的摆放保留原稿；第12/14步空手向远离腿的方向移15 cm，避开扫过的大腿','前双撑躯干后仰84°','单撑髋部相对胸口转20°'],mirrors:'14–16 由 10–12 镜像生成'};
   fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
