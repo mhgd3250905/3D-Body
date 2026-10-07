@@ -146,6 +146,22 @@ steps[8].pose=JSON.parse(JSON.stringify(S(0)));
 {const p=S(1);motion.applyPose(p);const hc=bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5),sc=bone('leftUpperArm').add(bone('rightUpperArm')).multiplyScalar(.5),down=hc.clone().sub(sc).normalize();
  const a=bone('leftFoot').sub(bone('leftThigh')).normalize(),b=bone('rightFoot').sub(bone('rightThigh')).normalize(),n=a.clone().cross(b).normalize();
  console.log('K10FOLD outOfLegPlane',Math.abs(90-deg(down.angleTo(n))).toFixed(0),'L',deg(down.angleTo(a)).toFixed(0),'R',deg(down.angleTo(b)).toFixed(0),'ankY',bone('leftFoot').y.toFixed(2),bone('rightFoot').y.toFixed(2),'head',bone('head').y.toFixed(2),'pel',p.pelvis[1].toFixed(2));}
+// v20 (user: one fixed foot angle looks stiff; let the foot respond to each pose).
+// Still bboy-flexed, but the ankle varies with the leg's job: a leg driving up
+// (ankle above the hip) hooks harder (~78 deg shin-foot), a leg skimming low
+// relaxes a little (~98 deg), level legs sit near 90. A small roll turns the
+// sole outward as the leg opens sideways.
+if(process.env.FOOTVAR!=='0'){
+  const HOOK=env('PFHI',-8),RELAX=env('PFLO',12),MID=env('PFMID',2),ROLL=env('ROLL',8);
+  for(let i=0;i<8;i++){const p=S(i);motion.applyPose(p);const hc=bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5);
+    const pq=new THREE.Quaternion(...(p.pelvisQuaternion??p.bodyQuaternion)).invert();
+    for(const sd of ['left','right']){const h=bone(sd+'Thigh'),a=V(p.limbs[sd].ankle),t=THREE.MathUtils.clamp((a.y-h.y)/.6,-1,1);
+      const pf=t>=0?MID+(HOOK-MID)*t:MID+(RELAX-MID)*(-t);
+      const loc=a.clone().sub(h).normalize().applyQuaternion(pq),abd=Math.abs(loc.x),sg=sd==='left'?1:-1;
+      const q=rel(sd+'Shin').multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),rad(sg*ROLL*abd))).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(pf)));
+      p.limbs[sd].footQuaternion=q.normalize().toArray();}}
+  steps[8].pose=JSON.parse(JSON.stringify(S(0)));
+}
 report(steps,'flare keys v12');
 if(process.argv.includes('--write')){doc.revision={...doc.revision,name:'v12 斜后方换手：肩顶起+踢腿上提',v12:['依据用户本人托马斯视频：第10/16步支撑臂竖直、肩顶在手正上方，头不再贴地','胸口向空手一侧打开，空手离地','空手侧腿已经向上踢（提向同侧耳），另一条腿向后低扫，剪刀发力带髋'],prevV11:doc.revision.name};
   fs.writeFileSync(new URL('../../public/coach/flare-sequence.json',import.meta.url),JSON.stringify(doc,null,2)+'\n');}
