@@ -421,12 +421,33 @@ export function createCoachMotion({ model, rigData }) {
     return resolvedNode(pose).solved[side].leg.end.toArray();
   }
 
+  // Round hip orbit: a looping sequence (last key repeats the first) moves the hips
+  // along a Catmull-Rom curve through the neighbouring keys instead of straight
+  // chords, so the pelvis traces one full rounded loop. ?hip=linear restores chords.
+  const linearHips = typeof location !== 'undefined' && new URLSearchParams(location.search).get('hip') === 'linear';
+  const samePelvisKey = (a, b) => a.pelvis.every((v, i) => Math.abs(v - b.pelvis[i]) < 1e-9)
+    && a.bodyQuaternion.every((v, i) => Math.abs(v - b.bodyQuaternion[i]) < 1e-9);
+  function roundHipPath(start, end, first, last, blend) {
+    const steps = sequence?.steps;
+    if (linearHips || !steps || steps.length < 4 || !samePelvisKey(steps[0].pose, steps[steps.length - 1].pose)) return null;
+    const n = steps.length - 1; // unique keys in the loop
+    const i = steps.findIndex(step => samePelvisKey(step.pose, start));
+    if (i < 0 || !samePelvisKey(steps[(i + 1) % steps.length].pose, end)) return null;
+    const prev = resolvedNode(steps[(i - 1 + n) % n].pose).constrainedPelvis, next = resolvedNode(steps[(i + 2) % n].pose).constrainedPelvis;
+    const p1 = first.constrainedPelvis, p2 = last.constrainedPelvis, t = blend, t2 = t * t, t3 = t2 * t;
+    return new THREE.Vector3(0, 0, 0)
+      .addScaledVector(prev, -0.5 * t3 + t2 - 0.5 * t)
+      .addScaledVector(p1, 1.5 * t3 - 2.5 * t2 + 1)
+      .addScaledVector(p2, -1.5 * t3 + 2 * t2 + 0.5 * t)
+      .addScaledVector(next, 0.5 * t3 - 0.5 * t2);
+  }
+
   function mapPoseTransition(pose, { start, end, blend }) {
     // A saved node's actual IK solution, including its fallback bend plane,
     // is the endpoint of the animation. The raw pole can be on the limb axis
     // and its raw pelvis/target can be outside the constrained region.
     const first = resolvedNode(start), last = resolvedNode(end);
-    pose.pelvis = first.constrainedPelvis.clone().lerp(last.constrainedPelvis, blend).toArray();
+    pose.pelvis = (roundHipPath(start, end, first, last, blend) ?? first.constrainedPelvis.clone().lerp(last.constrainedPelvis, blend)).toArray();
     for (const side of SIDES) {
       pose.limbs[side].wrist = first.solved[side].arm.end.clone().lerp(last.solved[side].arm.end, blend).toArray();
     }

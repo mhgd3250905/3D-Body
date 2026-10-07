@@ -112,15 +112,31 @@ function clearFreeArm(p,side='left',gap=.36){
     if(worst.d>=gap)return;
     const l=p.limbs[side],push=worst.away.multiplyScalar(gap-worst.d+.02);l.wrist=V(l.wrist).add(push).toArray();l.elbowPole=V(l.elbowPole).add(push).toArray();}
 }
-for(const i of [1,2,3])clearFreeArm(S(i));
+// Round, full hip orbit (top view): rear keys sit on the ellipse the side/front keys
+// already trace, so behind the hands the hips swing out in one full arc instead of
+// ducking in at 9. Ellipse centre (0, CZ), semi-axes AX (sideways) and AZ (front/back).
+const CZ=-.05,AX=+(process.env.AX??.44),AZ=+(process.env.AZ??.32);
+const onOrbit=(p,deg,support=null)=>{const th=rad(deg),pel=V(motion.applyPose(p).pelvis);
+  const target=new THREE.Vector3(AX*Math.sin(th),pel.y,CZ+AZ*Math.cos(th));p.pelvis=target.toArray();
+  if(!support)return;
+  // single support: re-aim the torso so the support shoulder sits over the hand from the new hip spot
+  for(let it=0;it<4;it++){motion.applyPose(p);const sh=bone(support+'UpperArm').sub(V(p.pelvis)),wr=V(p.limbs[support].wrist);
+    const want=wr.clone().add(new THREE.Vector3(0,.455,0)).sub(target);
+    const r=new THREE.Quaternion().setFromUnitVectors(sh.clone().normalize(),want.clone().normalize());
+    p.bodyQuaternion=r.clone().multiply(new THREE.Quaternion(...p.bodyQuaternion)).toArray();
+    if(p.pelvisQuaternion)p.pelvisQuaternion=r.clone().multiply(new THREE.Quaternion(...p.pelvisQuaternion)).toArray();
+    // keep the shoulder-hand distance reachable by sliding the hips along the torso line
+    const slide=want.length()-sh.length();p.pelvis=target.clone().addScaledVector(want.normalize(),slide).toArray();}};
+onOrbit(S(1),+(process.env.TH10??135),'right');strad(S(1),{az:135,elev:+(process.env.E10??14),F:'auto',A,minY:.30});
+for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.36]])clearFreeArm(S(i),'left',g);
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
-strad(S(4),{F:'auto',A,minY:.3});strad(S(0),{F:'auto',A,minY:.3});steps[8].pose=structuredClone(S(0));
+strad(S(4),{F:'auto',A,minY:.3});onOrbit(S(0),180);strad(S(0),{F:'auto',A,minY:.3});steps[8].pose=structuredClone(S(0));
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
 report(steps,'flare keys v4');console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
 for(const x of steps)delete x.pose.__flex;
 {const Q=steps.map(x=>new THREE.Quaternion(...(x.pose.pelvisQuaternion??x.pose.bodyQuaternion))),B=steps.map(x=>new THREE.Quaternion(...x.pose.bodyQuaternion)),D=180/Math.PI;
  console.log('SUMMARY twist',Q.slice(0,8).map((q,i)=>(q.angleTo(B[i])*D).toFixed(0)).join(' '),'| pelvis steps',Q.slice(0,8).map((q,i)=>(q.angleTo(Q[i+1])*D).toFixed(0)).join(' '));}
 if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});
-  d.revision={name:'v4 髋带腿环绕',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
+  d.revision={name:'v5 髋部圆弧轨迹',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
     changes:['髋部带动双腿：腿在髋部坐标里保持分腿（屈髋由后撑约60°渐变到前撑约12°，外展约55°），髋部随腿转动并在单撑时抬高','双腿整圈伸直（按真实髋—踝全长）','第10/16步腿方位改到±135°，消除10→11、16→15倒转；11/12保持原方位，让腿先过、手再落','下方脚踝离地≥0.30 m','手的摆放保留原稿；第12/14步空手向远离腿的方向移15 cm，避开扫过的大腿','前双撑躯干后仰84°','单撑髋部相对胸口转20°'],mirrors:'14–16 由 10–12 镜像生成'};
   fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
