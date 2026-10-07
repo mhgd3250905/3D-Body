@@ -16,10 +16,10 @@ const doc=load('public/coach/flare-sequence.json'),steps=doc.steps,S=i=>steps[i]
 const bone=n=>motion.group.getObjectByName(n).getWorldPosition(new THREE.Vector3());
 const T={ // key 10, right hand planted, left = free / kick side. Azimuths: atan2(x,z), +x = body's left.
   spineAz:env('SAZ',-20),   // direction hips -> support shoulder, seen from above (points from the hips toward the hand)
-  spineEl:env('SEL',-10),    // hips above shoulder by this slope (negative = shoulder lower than hips)
+  spineEl:env('SEL',-25),    // hips above shoulder by this slope (negative = shoulder lower than hips)
   open:env('OPEN',-45),       // chest turned from facing the floor toward the free side
-  kickF:env('KF',0),kickA:env('KA',60),   // kick leg (pelvis frame): folded toward the free-side ear
-  lowF:env('LF',10),lowA:env('LA',30),     // sweep leg: back and low
+  kickF:env('KF',45),kickA:env('KA',60),   // kick leg (pelvis frame): folded toward the free-side ear
+  lowF:env('LF',50),lowA:env('LA',30),     // sweep leg: back and low
   shoulderUp:env('SHU',.46), // support shoulder height above the wrist (straight vertical arm)
 };
 function dirAzEl(az,el){az=rad(az);el=rad(el);return new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el),Math.cos(az)*Math.cos(el));}
@@ -106,6 +106,9 @@ for(let i=0;i<8;i++){const p=S(i),e=motion.applyPose(p),dy=e.pelvis[1]-p.pelvis[
 for(let i=0;i<8;i++){const p=S(i);motion.applyPose(p);const L=legLen()*.9995;for(const sd of ['left','right']){const h=bone(sd+'Thigh'),a=V(p.limbs[sd].ankle),na=h.clone().add(a.clone().sub(h).setLength(L)),d=na.clone().sub(a);
   p.limbs[sd].ankle=na.toArray();p.limbs[sd].kneePole=V(p.limbs[sd].kneePole).add(d).toArray();}}
 steps[8].pose=JSON.parse(JSON.stringify(S(0)));
+{const p=S(1);motion.applyPose(p);const hc=bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5),sc=bone('leftUpperArm').add(bone('rightUpperArm')).multiplyScalar(.5),down=hc.clone().sub(sc).normalize();
+ const a=bone('leftFoot').sub(bone('leftThigh')).normalize(),b=bone('rightFoot').sub(bone('rightThigh')).normalize(),n=a.clone().cross(b).normalize();
+ console.log('K10FOLD outOfLegPlane',Math.abs(90-deg(down.angleTo(n))).toFixed(0),'L',deg(down.angleTo(a)).toFixed(0),'R',deg(down.angleTo(b)).toFixed(0),'ankY',bone('leftFoot').y.toFixed(2),bone('rightFoot').y.toFixed(2),'head',bone('head').y.toFixed(2),'pel',p.pelvis[1].toFixed(2));}
 report(steps,'flare keys v12');
 if(process.argv.includes('--write')){doc.revision={...doc.revision,name:'v12 斜后方换手：肩顶起+踢腿上提',v12:['依据用户本人托马斯视频：第10/16步支撑臂竖直、肩顶在手正上方，头不再贴地','胸口向空手一侧打开，空手离地','空手侧腿已经向上踢（提向同侧耳），另一条腿向后低扫，剪刀发力带髋'],prevV11:doc.revision.name};
   fs.writeFileSync(new URL('../../public/coach/flare-sequence.json',import.meta.url),JSON.stringify(doc,null,2)+'\n');}
