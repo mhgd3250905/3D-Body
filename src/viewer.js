@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { muscleGroups, groupById } from './data.js';
 import { createCoachMotion } from './coach-motion.js';
@@ -31,6 +32,13 @@ export class BodyViewer {
     this.controls.addEventListener('change',()=>{this.dirty=true;this.callbacks.onCameraChange?.();});
     this.scene.add(new THREE.HemisphereLight(0xf4f1df,0x485873,2));
     const key=new THREE.DirectionalLight(0xffead2,3.7);key.position.set(-2.5,4,4);this.scene.add(key);
+    // Real contact shadows: hands, feet and the body now cast onto the floor.
+    this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-.0004;key.shadow.normalBias=.02;key.shadow.radius=6;
+    Object.assign(key.shadow.camera,{left:-1.9,right:1.9,top:1.9,bottom:-1.9,near:1,far:12});key.shadow.camera.updateProjectionMatrix();
+    const shadowCatcher=new THREE.Mesh(new THREE.PlaneGeometry(8,8),new THREE.ShadowMaterial({color:0x020611,opacity:.42}));shadowCatcher.rotation.x=-Math.PI/2;shadowCatcher.position.y=-.006;shadowCatcher.receiveShadow=true;this.scene.add(shadowCatcher);this.shadowCatcher=shadowCatcher;
+    // Soft studio reflections so skin, cotton and rubber read as different materials.
+    const pmrem=new THREE.PMREMGenerator(this.renderer);this.scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;this.scene.environmentIntensity=.32;pmrem.dispose();
     const rim=new THREE.DirectionalLight(0xe4efff,2);rim.position.set(2,2,-3);this.scene.add(rim);
     const fill=new THREE.DirectionalLight(0xcdd9f0,.8);fill.position.set(4,.7,2);this.scene.add(fill);
     this.anatomy=new THREE.Group();this.scene.add(this.anatomy);
@@ -92,7 +100,7 @@ export class BodyViewer {
     this.callbacks.onProgress?.(88,'载入运动人物与骨骼…');await nextFrame();
     const [gltf,rigResponse]=await Promise.all([new GLTFLoader().loadAsync('/coach/flare-coach.glb'),fetch('/coach/coach-rig.json')]);
     if(!rigResponse.ok)throw new Error('无法读取运动人物骨骼');
-    this.coach=gltf.scene;this.coach.name='Snow · Flare coach';
+    this.coach=gltf.scene;this.coach.name='Snow · Flare coach';this.coach.traverse(object=>{if(object.isMesh){object.castShadow=true;}});
     this.rigData=await rigResponse.json();
     this.motion=createCoachMotion({model:this.coach,rigData:this.rigData});
     this.motion.reset();this.scene.add(this.coach);
@@ -116,13 +124,43 @@ export class BodyViewer {
     this.applyAppearance();this.resetView();this.callbacks.onProgress?.(100,'人物与肌群已就绪');this.dirty=true;
     return this.manifest;
   }
+  // Even pacing: the authored keys sit at equal times but cover very different
+  // distances (and the loop's repeated end key adds a still second), so playback
+  // speed is modulated to keep hands, feet and pelvis travelling at a steady rate.
+  // Only the clock rate changes; poses, K frames and sequence times are untouched.
+  // Add ?pacing=raw to the URL to compare with the original timing.
+  pacingRate(time){
+    if(this.pacingDisabled??=new URLSearchParams(location.search).get('pacing')==='raw')return 1;
+    if(!this.pacing)this.pacing=this.computePacing();
+    const table=this.pacing;if(!table)return 1;
+    const bins=table.length,period=this.motion.getMetrics().period;
+    const x=((time%period+period)%period)/period*bins,i=Math.floor(x)%bins,f=x-Math.floor(x);
+    return table[i]*(1-f)+table[(i+1)%bins]*f;
+  }
+  computePacing(){
+    const motion=this.motion;if(!motion||!this.coach)return null;
+    const names=['pelvis','leftHand','rightHand','leftFoot','rightFoot'],nodes=names.map(name=>this.coach.getObjectByName(name)).filter(Boolean);
+    if(nodes.length<3)return null;
+    const period=motion.getMetrics().period,bins=240,saved=this.time,points=[],v=new THREE.Vector3();
+    for(let i=0;i<=bins;i++){motion.update(i*period/bins);this.coach.updateMatrixWorld(true);points.push(nodes.map(node=>node.getWorldPosition(v).clone()));}
+    motion.update(saved);this.coach.updateMatrixWorld(true);
+    const speed=[];for(let i=0;i<bins;i++){let d=0;for(let j=0;j<nodes.length;j++)d+=points[i][j].distanceTo(points[i+1][j]);speed.push(d);}
+    // light smoothing so the rate never jitters
+    const smooth=speed.map((_,i)=>{let sum=0,w=0;for(let k=-4;k<=4;k++){const wt=5-Math.abs(k);sum+=speed[(i+k+bins)%bins]*wt;w+=wt;}return sum/w;});
+    const mean=smooth.reduce((a,b)=>a+b,0)/bins;if(!(mean>0))return null;
+    const raw=smooth.map(value=>value<mean*.02?25:Math.min(25,Math.max(.35,Math.pow(mean/value,.8))));
+    // keep the overall cycle duration equal to the authored period
+    const cycle=raw.reduce((a,r)=>a+1/r,0)/bins,table=raw.map(r=>r*cycle);
+    if(new URLSearchParams(location.search).get('pacing')==='debug')console.log('pacing',JSON.stringify(Array.from({length:9},(_,k)=>{let t=0;for(let i=Math.floor(k*bins/9);i<Math.floor((k+1)*bins/9);i++)t+=period/bins/table[i];return +t.toFixed(2);})));
+    return table;
+  }
   animate(now){
     const delta=Math.min((now-this.previous)/1000,.06);this.previous=now;
     const previewFrame = this.callbacks.onAnimationFrame?.(delta) === true;
     if(!previewFrame&&this.playing&&this.mode==='motion'&&this.motion){
       const range=this.playbackRange;
-      if(range){const duration=range.endTime-range.startTime,elapsed=this.time-range.startTime+delta*this.speed;this.time=range.startTime+(elapsed%duration+duration)%duration;}
-      else this.time=(this.time+delta*this.speed)%this.motion.getMetrics().period;
+      if(range){const duration=range.endTime-range.startTime,elapsed=this.time-range.startTime+delta*this.speed*this.pacingRate(this.time);this.time=range.startTime+(elapsed%duration+duration)%duration;}
+      else this.time=(this.time+delta*this.speed*this.pacingRate(this.time))%this.motion.getMetrics().period;
       this.motion.update(this.time);this.callbacks.onTime?.(this.time);this.dirty=true;
     }
     const moved=this.poseEditor?.getState().dragging?false:this.controls.update();
@@ -219,6 +257,7 @@ export class BodyViewer {
     const prior=this.mode;this.mode=mode;this.selectedPart=null;this.selectedMesh.visible=false;this.hoverMesh.visible=false;
     this.stageGrid.material.opacity=mode==='motion' ? .12 : .32;
     this.poseEditor?.setEnabled(mode==='pose');
+    this.pacing=null;
     if(mode==='motion')this.motion?.update(this.time);
     else if(mode==='pose'){this.playing=false;this.layer='skin';this.focused=false;this.motion?.applyPose(this.motion.capturePose());this.poseEditor?.refresh();}
     else{this.playing=false;this.motion?.reset();if(prior==='motion'||prior==='pose'){this.layer='skin';this.focused=false;}}
