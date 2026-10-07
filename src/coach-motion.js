@@ -442,6 +442,23 @@ export function createCoachMotion({ model, rigData }) {
       .addScaledVector(next, 0.5 * t3 - 0.5 * t2);
   }
 
+  const PLANT_FULL = FLOOR + 0.06, PLANT_NONE = FLOOR + 0.12, ARM_STRAIGHT = 0.9985;
+  function plantedArmLift(requested, pelvis) {
+    let lift = 0, cap = Infinity;
+    for (const side of SIDES) {
+      const wrist = requested.limbs[side].wrist, value = limbs[side];
+      const full = value.upperArm + value.forearm - 2e-5, reach = full * ARM_STRAIGHT;
+      const shoulder = upperOffset(rest[side + 'Shoulder'], requested.bodyQuaternion, requested.torsoQuaternion).add(pelvis);
+      const d = shoulder.clone().sub(wrist), flat = Math.hypot(d.x, d.z);
+      // never lift a locked/low hand's shoulder out of its arm's reach
+      if (wrist.y < PLANT_NONE + 0.05 || requested.limbs[side].handLocked) cap = Math.min(cap, flat < full ? Math.sqrt(full * full - flat * flat) - d.y : 0);
+      const weight = THREE.MathUtils.clamp((PLANT_NONE - wrist.y) / (PLANT_NONE - PLANT_FULL), 0, 1);
+      if (weight <= 0 || d.length() >= reach || flat >= reach) continue;
+      lift = Math.max(lift, weight * (Math.sqrt(reach * reach - flat * flat) - d.y));
+    }
+    return Math.max(0, Math.min(lift, cap));
+  }
+
   function mapPoseTransition(pose, { start, end, blend }) {
     // A saved node's actual IK solution, including its fallback bend plane,
     // is the endpoint of the animation. The raw pole can be on the limb axis
@@ -452,6 +469,14 @@ export function createCoachMotion({ model, rigData }) {
       pose.limbs[side].wrist = first.solved[side].arm.end.clone().lerp(last.solved[side].arm.end, blend).toArray();
     }
     const requested = validatePose(pose), constrainedPelvis = projectBody(requested);
+    // A hand on the floor never bends (user, 2026-10-07: key of a good flare).
+    // Between keys the blended hips can sag toward a planted hand; lift the whole
+    // body (pelvis, legs) until every floor-contact arm is straight again.
+    const lift = plantedArmLift(requested, constrainedPelvis);
+    if (lift > 0) {
+      constrainedPelvis.y += lift; requested.pelvis.y += lift;
+      for (const side of SIDES) for (const key of ['ankle', 'kneePole']) if (pose.limbs[side][key]) pose.limbs[side][key][1] += lift;
+    }
     pose.pelvis = constrainedPelvis.toArray();
     const referenceAt = node => node.requested.bodyQuaternion.clone().multiply(node.requested.torsoQuaternion ?? IDENTITY).toArray();
     const upper = requested.bodyQuaternion.clone().multiply(requested.torsoQuaternion ?? IDENTITY);
@@ -880,6 +905,11 @@ export function createCoachMotion({ model, rigData }) {
     // current pose intact and cannot introduce NaNs into the live skeleton.
     const requested = validatePose(input);
     const constrainedPelvis = projectBody(requested);
+    const lift = plantedArmLift(requested, constrainedPelvis); // floor-contact arms stay straight
+    if (lift > 0) {
+      constrainedPelvis.y += lift; requested.pelvis.y += lift;
+      for (const side of SIDES) { requested.limbs[side].ankle.y += lift; if (requested.limbs[side].kneePole) requested.limbs[side].kneePole.y += lift; }
+    }
     const warnings = [];
     const solved = {};
     const at = name => rest[name].clone().sub(rest.pelvis).applyQuaternion(pelvisFrame(requested)).add(constrainedPelvis);
