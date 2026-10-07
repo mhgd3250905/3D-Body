@@ -533,7 +533,7 @@ export function createCoachMotion({ model, rigData }) {
     return !smoothOff && !periodicMotion && steps && steps.length >= 5 && !activeCorrections.length && !skippedSteps.length
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
-  const LATE_PLANT = { right: 0.5 }, LATE_CONVERGE = 1.0, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
+  const LATE_PLANT = { right: 0.5 }, LATE_CONVERGE = 1.0, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8, LATE_EASE_OUT = true;
   function lowestHandOffset(side, quaternion) {
     let low = Infinity;
     const wrist = rest[side + 'Wrist'];
@@ -644,7 +644,7 @@ export function createCoachMotion({ model, rigData }) {
           // instead of reaching out wide and sweeping in along the floor at the end
           if (LATE_PLANT[side]) {
             const cur = new THREE.Vector3().fromArray(pose.limbs[side].wrist), P = sw.plantWrist, S = sw.startWrist;
-            const f = 1 - THREE.MathUtils.smootherstep(sw.t, 0, LATE_CONVERGE), b = THREE.MathUtils.smoothstep(sw.t, 0, LATE_BLEND);
+            const u = THREE.MathUtils.clamp(sw.t / LATE_CONVERGE, 0, 1), f = LATE_EASE_OUT ? (1 - u) ** 3 * (1 + 3 * u) : 1 - THREE.MathUtils.smootherstep(sw.t, 0, LATE_CONVERGE), b = THREE.MathUtils.smoothstep(sw.t, 0, LATE_BLEND);
             const hx = THREE.MathUtils.lerp(cur.x, P.x + (S.x - P.x) * f, b), hz = THREE.MathUtils.lerp(cur.z, P.z + (S.z - P.z) * f, b);
             const g2 = (hx - shoulder.x) ** 2 + (hz - shoulder.z) ** 2;
             const y = g2 < R * R ? shoulder.y - Math.sqrt(R * R - g2) : shoulder.y;
