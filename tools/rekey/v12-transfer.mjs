@@ -91,7 +91,7 @@ function liftFront(p,y){for(let it=0;it<8;it++){motion.applyPose(p);const sh=bon
   return null;}
 const hipY=()=>bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5).y;
 {motion.applyPose(S(4));const h0=hipY();liftFront(S(4),env('Y13',.60));motion.applyPose(S(4));console.log('front hip',h0.toFixed(2),'->',hipY().toFixed(2));}
-for(const i of [3]){motion.applyPose(S(i));const h0=hipY();liftHipsSide(S(i),env('Y12H',h0+.06));motion.applyPose(S(i));console.log('pass hip',h0.toFixed(2),'->',hipY().toFixed(2));}
+for(const i of [3]){motion.applyPose(S(i));const h0=hipY();liftHipsSide(S(i),env('Y12H',.67));motion.applyPose(S(i));console.log('pass hip',h0.toFixed(2),'->',hipY().toFixed(2));}
 steps[5].pose=mirrorPose(S(3));
 // v17 (user screenshot of the side / side-into-back: hips a touch high; the low leg
 // should skim the floor and reach far out, trunk-leg fold kept). Keys 10/11 rotate
