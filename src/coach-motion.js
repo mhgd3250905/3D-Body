@@ -521,7 +521,7 @@ export function createCoachMotion({ model, rigData }) {
     return !smoothOff && !periodicMotion && steps && steps.length >= 5 && !activeCorrections.length && !skippedSteps.length
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
-  const APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
+  const APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
   function lowestHandOffset(side, quaternion) {
     let low = Infinity;
     const wrist = rest[side + 'Wrist'];
@@ -579,6 +579,7 @@ export function createCoachMotion({ model, rigData }) {
         if (hold2) {
           const plantQ = new THREE.Quaternion().fromArray(L[2].handQuaternion);
           swingLater[side].approach = true;
+          swingLater[side].plantWrist = nodes[2].solved[side].arm.end.clone();
           swingLater[side].plantLow = nodes[2].solved[side].arm.end.y + lowestHandOffset(side, plantQ);
           swingLater[side].startLow = nodes[1].solved[side].arm.end.y + lowestHandOffset(side, new THREE.Quaternion().fromArray(L[1].handQuaternion));
         }
@@ -600,6 +601,15 @@ export function createCoachMotion({ model, rigData }) {
       // v23: an incoming hand comes down steadily: its lowest point keeps a clearance
       // that shrinks to zero at contact, rather than hovering just above the floor
       if (sw.approach) {
+        // v24: like the left hand, the hand gets over its spot first and then drops:
+        // the horizontal gap closes ahead of the height, with the arm kept at its length
+        {
+          const wrist = new THREE.Vector3().fromArray(pose.limbs[side].wrist), R = THREE.MathUtils.lerp(limbs[side].upperArm + limbs[side].forearm + 1e-3, wrist.distanceTo(shoulder), THREE.MathUtils.smootherstep(t, 0.6, 1));
+          const k = 1 - APPROACH_OVER * THREE.MathUtils.smootherstep(t, 0, 1);
+          const target = sw.plantWrist.clone().add(new THREE.Vector3(wrist.x - sw.plantWrist.x, 0, wrist.z - sw.plantWrist.z).multiplyScalar(k));
+          const h2 = (target.x - shoulder.x) ** 2 + (target.z - shoulder.z) ** 2;
+          if (h2 < R * R) pose.limbs[side].wrist = target.setY(shoulder.y - Math.sqrt(R * R - h2)).toArray();
+        }
         const plantLow = sw.plantLow, q = new THREE.Quaternion().fromArray(pose.limbs[side].handQuaternion);
         const low = pose.limbs[side].wrist[1] + lowestHandOffset(side, q);
         const want = plantLow + Math.max(0, sw.startLow - plantLow) * Math.pow(1 - t, APPROACH_POW);
