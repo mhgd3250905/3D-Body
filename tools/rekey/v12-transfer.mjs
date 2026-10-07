@@ -39,7 +39,7 @@ function build(p){
   const q=bodyQ(spine,front);p.bodyQuaternion=q.toArray();p.pelvisQuaternion=q.toArray();
   const target=wr.clone().add(new THREE.Vector3(0,T.shoulderUp,0));
   for(let it=0;it<6;it++){const e=motion.applyPose(p);p.pelvis=e.pelvis.slice();motion.applyPose(p);const sh=bone('rightUpperArm');p.pelvis=V(p.pelvis).add(target.clone().sub(sh)).toArray();}
-  motion.applyPose(p);
+  p.pelvis=motion.applyPose(p).pelvis.slice(); // bake the straight-arm lift so legs are solved from the real hips
   const legDir=(F,A,sign)=>new THREE.Vector3(0,-Math.cos(rad(F)),Math.sin(rad(F))).multiplyScalar(Math.cos(rad(A))).add(new THREE.Vector3(sign*Math.sin(rad(A)),0,0)).normalize().applyQuaternion(q);
   setLeg(p,'left',legDir(T.kickF,T.kickA,1));setLeg(p,'right',legDir(T.lowF,T.lowA,-1));
   // free hand: just peeled off the floor (video: it stays low until the legs come round)
@@ -71,6 +71,41 @@ function freeHand(sd){const sg=sd==='left'?1:-1,F0=new THREE.Vector3(sg*.9825314
 for(const i of [0,1,2])diag(S(i),'before k'+(9+i));
 {const keep=S(1).limbs.right.handQuaternion.slice();build(S(1));fixEnds(S(1));S(1).limbs.right.handQuaternion=keep;}diag(S(1),'after  k10');
 steps[7].pose=mirrorPose(S(1));
+// v13 (user: front hips too low, height drops sharply from side to front):
+// rotate the front key about the shoulder line so hips rise; hands stay planted.
+function liftHipsSide(p,y){for(let it=0;it<8;it++){motion.applyPose(p);const sh=bone('rightUpperArm'),hc=bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5);
+  const r=hc.clone().sub(sh),flat=new THREE.Vector3(r.x,0,r.z);if(Math.abs(hc.y-y)<.004)return;
+  const axis=new THREE.Vector3().crossVectors(flat.normalize(),Y).normalize(),cur=Math.asin(r.y/r.length()),want=Math.asin(THREE.MathUtils.clamp((y-sh.y)/r.length(),-.98,.98));
+  let q=new THREE.Quaternion().setFromAxisAngle(axis,-(want-cur));if((r.clone().applyQuaternion(q).y>r.y)!==(want>cur))q.invert();
+  const rp=a=>V(a).sub(sh).applyQuaternion(q).add(sh).toArray(),rq=a=>q.clone().multiply(new THREE.Quaternion(...a)).toArray();
+  p.pelvis=rp(p.pelvis);p.bodyQuaternion=rq(p.bodyQuaternion);if(p.pelvisQuaternion)p.pelvisQuaternion=rq(p.pelvisQuaternion);
+  for(const sd of ['left','right']){for(const k of ['ankle','kneePole'])p.limbs[sd][k]=rp(p.limbs[sd][k]);if(p.limbs[sd].footQuaternion)p.limbs[sd].footQuaternion=rq(p.limbs[sd].footQuaternion);}
+  for(const k of ['wrist','elbowPole'])p.limbs.left[k]=rp(p.limbs.left[k]);if(p.limbs.left.handQuaternion)p.limbs.left.handQuaternion=rq(p.limbs.left.handQuaternion);}}
+function liftFront(p,y){for(let it=0;it<8;it++){motion.applyPose(p);const sh=bone('leftUpperArm').add(bone('rightUpperArm')).multiplyScalar(.5),hc=bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5);
+  const r=hc.clone().sub(sh),flat=new THREE.Vector3(r.x,0,r.z);if(Math.abs(hc.y-y)<.004)return hc.y;
+  const axis=new THREE.Vector3().crossVectors(flat.normalize(),Y).normalize(),cur=Math.asin(r.y/r.length()),want=Math.asin(THREE.MathUtils.clamp((y-sh.y)/r.length(),-.98,.98));
+  let q=new THREE.Quaternion().setFromAxisAngle(axis,-(want-cur));if((r.clone().applyQuaternion(q).y>r.y)!==(want>cur))q.invert();
+  const rp=a=>V(a).sub(sh).applyQuaternion(q).add(sh).toArray(),rq=a=>q.clone().multiply(new THREE.Quaternion(...a)).toArray();
+  p.pelvis=rp(p.pelvis);p.bodyQuaternion=rq(p.bodyQuaternion);if(p.pelvisQuaternion)p.pelvisQuaternion=rq(p.pelvisQuaternion);
+  for(const sd of ['left','right']){for(const k of ['ankle','kneePole'])p.limbs[sd][k]=rp(p.limbs[sd][k]);if(p.limbs[sd].footQuaternion)p.limbs[sd].footQuaternion=rq(p.limbs[sd].footQuaternion);}}
+  return null;}
+const hipY=()=>bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5).y;
+{motion.applyPose(S(4));const h0=hipY();liftFront(S(4),env('Y13',.64));motion.applyPose(S(4));console.log('front hip',h0.toFixed(2),'->',hipY().toFixed(2));}
+for(const i of [3]){motion.applyPose(S(i));const h0=hipY();liftHipsSide(S(i),env('Y12H',h0+.06));motion.applyPose(S(i));console.log('pass hip',h0.toFixed(2),'->',hipY().toFixed(2));}
+steps[5].pose=mirrorPose(S(3));
+// v13: every floor-contact arm straight (runtime lift in coach-motion handles the
+// vertical; a two-hand key also needs the hips centred so neither arm is short).
+const elbows=p=>{motion.applyPose(p);return ['left','right'].filter(s=>p.limbs[s].wrist[1]<.07).map(s=>{const a=bone(s+'UpperArm'),e=bone(s+'Forearm'),w=bone(s+'Hand');return deg(a.clone().sub(e).angleTo(w.clone().sub(e)));});};
+for(const i of [0,4]){const p=S(i),base=p.pelvis.slice(),shift=(dx,dz)=>{const q=JSON.parse(JSON.stringify(p));q.pelvis=[base[0]+dx,base[1],base[2]+dz];for(const sd of ['left','right'])for(const k of ['ankle','kneePole']){q.limbs[sd][k][0]+=dx;q.limbs[sd][k][2]+=dz;}return q;};
+  let best=null;for(let dx=-.08;dx<=.081;dx+=.01)for(let dz=-.08;dz<=.081;dz+=.01){const q=shift(dx,dz),m=Math.min(...elbows(q)),c=m-Math.hypot(dx,dz)*20;if(!best||c>best.c)best={c,m,q,dx,dz};}
+  console.log('key',9+i,'centre shift',best.dx.toFixed(2),best.dz.toFixed(2),'min elbow',best.m.toFixed(0));steps[i].pose=best.q;}
+steps[8].pose=JSON.parse(JSON.stringify(S(0)));
+// bake the runtime straight-arm lift into every key (pelvis + leg targets move together)
+for(let i=0;i<8;i++){const p=S(i),e=motion.applyPose(p),dy=e.pelvis[1]-p.pelvis[1];if(dy>1e-4){p.pelvis[1]+=dy;for(const sd of ['left','right'])for(const k of ['ankle','kneePole'])p.limbs[sd][k][1]+=dy;console.log('baked lift key',9+i,dy.toFixed(3));}}
+// straight legs from the real (solved) hip joints after every move above
+for(let i=0;i<8;i++){const p=S(i);motion.applyPose(p);const L=legLen()*.9995;for(const sd of ['left','right']){const h=bone(sd+'Thigh'),a=V(p.limbs[sd].ankle),na=h.clone().add(a.clone().sub(h).setLength(L)),d=na.clone().sub(a);
+  p.limbs[sd].ankle=na.toArray();p.limbs[sd].kneePole=V(p.limbs[sd].kneePole).add(d).toArray();}}
+steps[8].pose=JSON.parse(JSON.stringify(S(0)));
 report(steps,'flare keys v12');
 if(process.argv.includes('--write')){doc.revision={...doc.revision,name:'v12 斜后方换手：肩顶起+踢腿上提',v12:['依据用户本人托马斯视频：第10/16步支撑臂竖直、肩顶在手正上方，头不再贴地','胸口向空手一侧打开，空手离地','空手侧腿已经向上踢（提向同侧耳），另一条腿向后低扫，剪刀发力带髋'],prevV11:doc.revision.name};
   fs.writeFileSync(new URL('../../public/coach/flare-sequence.json',import.meta.url),JSON.stringify(doc,null,2)+'\n');}
