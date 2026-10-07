@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createFlareSequence } from './flare-sequence.js';
 import { interpolateLimbArc } from './limb-arc.js';
+import { installSpineHelpers } from './spine-helpers.js';
 import { OFFICIAL_FLARE_SEQUENCE } from './official-poses.js';
 import { createPeriodicFlare } from './periodic-flare.js';
 import { evaluateSegmentArc, evaluateSegmentOrbit, segmentGuideWeight } from './segment-guides.js';
@@ -124,6 +125,7 @@ export function createCoachMotion({ model, rigData }) {
   const bones = new Map();
   const meshes = [];
   const skeletons = new Set();
+  let spine = null;
   model.traverse(object => {
     if (object.isBone) bones.set(object.name, object);
     if (object.isSkinnedMesh) {
@@ -297,6 +299,7 @@ export function createCoachMotion({ model, rigData }) {
     // SkinnedMesh updates its bindMatrixInverse in updateMatrixWorld(), not
     // updateWorldMatrix(). This also keeps parent transforms from applying twice.
     model.updateMatrixWorld(true);
+    spine?.update();
     for (const skeleton of skeletons) skeleton.update();
     minimumFootHeight = Math.min(footFloor('left'), footFloor('right'));
     boundsDirty = true;
@@ -1335,6 +1338,12 @@ export function createCoachMotion({ model, rigData }) {
 
   model.userData.motionSource = 'Snow Rig / Blender Foundation';
   reset();
+  // Hidden lower/upper spine helpers (see spine-helpers.js); ?spine=off to compare.
+  if (!(typeof location !== 'undefined' && new URLSearchParams(location.search).get('spine') === 'off')) {
+    spine = installSpineHelpers({ model, meshes, skeletons, landmarks: rigData.landmarks });
+    finishPose();
+  }
+
   return { group: model, update, reset, setSequence, sampleTrajectory, samplePose, getSegmentGuideAt,
     getFootCurveSpan: (time, options) => sequence.spanAt(time, options),
     getFootCurveAt: (time, side) => sequence.curveAt(time, side),

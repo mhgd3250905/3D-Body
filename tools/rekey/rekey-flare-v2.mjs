@@ -38,6 +38,11 @@ yawLegs(S(1),132);pelvisY(S(1),.72);settle(S(1));console.log('tilt10',vPlane(S(1
 yawLegs(S(2),88);pelvisY(S(2),.62);settle(S(2));console.log('tilt11',vPlane(S(2),100,18,.32));lift(S(2),'right',.32);freeHand(S(2),'left',.58);
 yawLegs(S(3),42);pelvisY(S(3),.57);settle(S(3));console.log('tilt12',vPlane(S(3),104,10,.34));lift(S(3),'right',.34);
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),THREE.MathUtils.degToRad(-84)).toArray();
+// Hips turn against the chest while one hand supports (torso no longer a rigid plank).
+const HIP=Number(process.env.HIP_TWIST??-20);
+const hipTwist=(p,deg)=>{p.pelvisQuaternion=new THREE.Quaternion(...p.bodyQuaternion).multiply(new THREE.Quaternion().setFromAxisAngle(Y,THREE.MathUtils.degToRad(deg))).toArray();};
+hipTwist(S(1),HIP*.6);hipTwist(S(2),HIP);hipTwist(S(3),HIP*.6);
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
 const after=report(steps,'rekey v2');
 fs.writeFileSync(new URL('./steps-v2.json',import.meta.url),JSON.stringify(steps));
+if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
