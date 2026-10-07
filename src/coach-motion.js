@@ -533,7 +533,7 @@ export function createCoachMotion({ model, rigData }) {
     return !smoothOff && !periodicMotion && steps && steps.length >= 5 && !activeCorrections.length && !skippedSteps.length
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
-  const LATE_PLANT = { right: 0.5 }, LATE_CONVERGE = 1.0, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8, LATE_EASE_OUT = true;
+  const LATE_PLANT = { right: 0.7 }, LATE_CONVERGE = 0.85, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8, LATE_EASE_OUT = true, APPROACH_FLAT_TO_LATE = 0.55;
   function lowestHandOffset(side, quaternion) {
     let low = Infinity;
     const wrist = rest[side + 'Wrist'];
@@ -582,7 +582,7 @@ export function createCoachMotion({ model, rigData }) {
       // v23: a hand coming in to plant flattens its palm before contact, so it
       // lands palm-first instead of touching down on the fingertips and slapping flat
       if (hold2 && !hold1) {
-        const flat = THREE.MathUtils.smoothstep(t, APPROACH_FLAT_FROM, APPROACH_FLAT_TO);
+        const flat = THREE.MathUtils.smoothstep(t, APPROACH_FLAT_FROM, late ? APPROACH_FLAT_TO_LATE : APPROACH_FLAT_TO);
         if (flat > 0) limb.handQuaternion = new THREE.Quaternion().fromArray(limb.handQuaternion).slerp(new THREE.Quaternion().fromArray(L[2].handQuaternion), flat).toArray();
       }
       limb.footQuaternion = hermiteQ(...LB.map(l => l.footQuaternion), tBody);
