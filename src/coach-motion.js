@@ -443,6 +443,26 @@ export function createCoachMotion({ model, rigData }) {
   }
 
   const PLANT_FULL = FLOOR + 0.06, PLANT_NONE = FLOOR + 0.12, ARM_STRAIGHT = 0.9985;
+  // An airborne hand travels on a straight arm (user, 2026-10-07: from lift-off to
+  // re-plant the arm never bends). Keep the shoulder->wrist direction and extend
+  // to full reach; if that would go through the floor, slide along the floor ring.
+  function straightenFreeArms(requested, pelvis) {
+    for (const side of SIDES) {
+      const source = requested.limbs[side], value = limbs[side];
+      if (source.handLocked || source.wrist.y <= PLANT_FULL) continue;
+      const shoulder = upperOffset(rest[side + 'Shoulder'], requested.bodyQuaternion, requested.torsoQuaternion).add(pelvis);
+      const reach = (value.upperArm + value.forearm) * ARM_STRAIGHT, d = source.wrist.clone().sub(shoulder);
+      if (d.length() < 1e-6 || d.length() >= reach) continue;
+      const ext = shoulder.clone().addScaledVector(d.normalize(), reach), low = FLOOR + 0.03;
+      if (ext.y < low) {
+        const h = shoulder.y - low, flat = new THREE.Vector3(d.x, 0, d.z);
+        if (h < reach && flat.lengthSq() > 1e-8) ext.copy(shoulder).addScaledVector(flat.normalize(), Math.sqrt(reach * reach - h * h)).setY(low);
+        else ext.y = low;
+      }
+      source.wrist.copy(ext);
+    }
+  }
+
   function plantedArmLift(requested, pelvis) {
     let lift = 0, cap = Infinity;
     for (const side of SIDES) {
@@ -910,6 +930,7 @@ export function createCoachMotion({ model, rigData }) {
       constrainedPelvis.y += lift; requested.pelvis.y += lift;
       for (const side of SIDES) { requested.limbs[side].ankle.y += lift; if (requested.limbs[side].kneePole) requested.limbs[side].kneePole.y += lift; }
     }
+    straightenFreeArms(requested, constrainedPelvis);
     const warnings = [];
     const solved = {};
     const at = name => rest[name].clone().sub(rest.pelvis).applyQuaternion(pelvisFrame(requested)).add(constrainedPelvis);

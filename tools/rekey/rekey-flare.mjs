@@ -189,7 +189,7 @@ for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
 strad(S(4),{F:'auto',A,minY:.3});
 // v11 (user): bboy front is FOLDED (trunk-leg pike), not a gymnastic open body.
-if(process.env.F13!=='0'){const p=S(4);let y=p.pelvis[1];stradBody(p,+(process.env.F13??62),+(process.env.A13??34));for(let k=0;k<12&&lowAnkle(p)<.30;k++){p.pelvis[1]+=.02;stradBody(p,+(process.env.F13??62),+(process.env.A13??34));}}
+if(process.env.F13!=='0'){const p=S(4);let y=p.pelvis[1];stradBody(p,+(process.env.F13??62),+(process.env.A13??38));for(let k=0;k<12&&lowAnkle(p)<.30;k++){p.pelvis[1]+=.02;stradBody(p,+(process.env.F13??62),+(process.env.A13??38));}}
 onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(process.env.Y9??.36)});steps[8].pose=structuredClone(S(0));
 // v8 (user): shoes and hands must point the right way all the way round.
 // Feet: placed relative to the SHIN (not a stale world rotation from the original
