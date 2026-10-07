@@ -1563,7 +1563,16 @@ export function createCoachMotion({ model, rigData }) {
 
   model.userData.motionSource = 'Snow Rig / Blender Foundation';
   reset();
-  return { group: model, update, reset, setSequence, sampleTrajectory, samplePose, getSegmentGuideAt,
+  // How much slower the pose advances per second of clock time at `time`: the
+  // closing n-1 -> 0 transition of a smooth loop spans two clock seconds, so the
+  // viewer runs its clock twice as fast there and the seam keeps full speed.
+  function getLoopTimeScale(time) {
+    if (!smoothLoopActive()) return 1;
+    const n = sequence.steps.length - 1, seg = sequence.period / (n + 1);
+    const wrapped = ((time % sequence.period) + sequence.period) % sequence.period;
+    return wrapped > (n - 1) * seg ? 2 : 1;
+  }
+  return { group: model, update, reset, setSequence, sampleTrajectory, samplePose, getSegmentGuideAt, getLoopTimeScale,
     getFootCurveSpan: (time, options) => sequence.spanAt(time, options),
     getFootCurveAt: (time, side) => sequence.curveAt(time, side),
     setLayer, setHighlight, getMetrics, capturePose, applyPose, getEditableHandles, editHandle, solveJointPose, getGroundHandPose, alignGroundHands };

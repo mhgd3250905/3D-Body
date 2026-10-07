@@ -135,7 +135,15 @@ export class BodyViewer {
     const table=this.pacing;if(!table)return 1;
     const bins=table.length,period=this.motion.getMetrics().period;
     const x=((time%period+period)%period)/period*bins,i=Math.floor(x)%bins,f=x-Math.floor(x);
-    return table[i]*(1-f)+table[(i+1)%bins]*f;
+    const scale=this.motion.getLoopTimeScale?.(time)??1;
+    return (table[i]*(1-f)+table[(i+1)%bins]*f)*scale;
+  }
+  // integrate the paced clock in small sub-steps, so a frame that crosses a rate
+  // change (the smooth loop's seam) neither stalls nor jumps
+  paceStep(delta){
+    const sub=8,step=delta*this.speed/sub;let advance=0;
+    for(let i=0;i<sub;i++)advance+=step*this.pacingRate(this.time+advance);
+    return advance;
   }
   computePacing(){
     const motion=this.motion;if(!motion||!this.coach)return null;
@@ -144,13 +152,16 @@ export class BodyViewer {
     const period=motion.getMetrics().period,bins=240,saved=this.time,points=[],v=new THREE.Vector3();
     for(let i=0;i<=bins;i++){motion.update(i*period/bins);this.coach.updateMatrixWorld(true);points.push(nodes.map(node=>node.getWorldPosition(v).clone()));}
     motion.update(saved);this.coach.updateMatrixWorld(true);
-    const speed=[];for(let i=0;i<bins;i++){let d=0;for(let j=0;j<nodes.length;j++)d+=points[i][j].distanceTo(points[i+1][j]);speed.push(d);}
+    // speeds per unit of pose progress (the smooth loop's closing transition runs
+    // at half clock speed and is scaled back up in pacingRate)
+    const scaleAt=t=>motion.getLoopTimeScale?.(t)??1;
+    const speed=[];for(let i=0;i<bins;i++){let d=0;for(let j=0;j<nodes.length;j++)d+=points[i][j].distanceTo(points[i+1][j]);speed.push(d*scaleAt((i+.5)*period/bins));}
     // light smoothing so the rate never jitters
     const smooth=speed.map((_,i)=>{let sum=0,w=0;for(let k=-4;k<=4;k++){const wt=5-Math.abs(k);sum+=speed[(i+k+bins)%bins]*wt;w+=wt;}return sum/w;});
     const mean=smooth.reduce((a,b)=>a+b,0)/bins;if(!(mean>0))return null;
     const raw=smooth.map(value=>value<mean*.02?25:Math.min(25,Math.max(.35,Math.pow(mean/value,.8))));
     // keep the overall cycle duration equal to the authored period
-    const cycle=raw.reduce((a,r)=>a+1/r,0)/bins,table=raw.map(r=>r*cycle);
+    const cycle=raw.reduce((a,r,i)=>a+1/(r*scaleAt((i+.5)*period/bins)),0)/bins,table=raw.map(r=>r*cycle);
     if(new URLSearchParams(location.search).get('pacing')==='debug')console.log('pacing',JSON.stringify(Array.from({length:9},(_,k)=>{let t=0;for(let i=Math.floor(k*bins/9);i<Math.floor((k+1)*bins/9);i++)t+=period/bins/table[i];return +t.toFixed(2);})));
     return table;
   }
@@ -159,8 +170,8 @@ export class BodyViewer {
     const previewFrame = this.callbacks.onAnimationFrame?.(delta) === true;
     if(!previewFrame&&this.playing&&this.mode==='motion'&&this.motion){
       const range=this.playbackRange;
-      if(range){const duration=range.endTime-range.startTime,elapsed=this.time-range.startTime+delta*this.speed*this.pacingRate(this.time);this.time=range.startTime+(elapsed%duration+duration)%duration;}
-      else this.time=(this.time+delta*this.speed*this.pacingRate(this.time))%this.motion.getMetrics().period;
+      if(range){const duration=range.endTime-range.startTime,elapsed=this.time-range.startTime+this.paceStep(delta);this.time=range.startTime+(elapsed%duration+duration)%duration;}
+      else this.time=(this.time+this.paceStep(delta))%this.motion.getMetrics().period;
       this.motion.update(this.time);this.callbacks.onTime?.(this.time);this.dirty=true;
     }
     const moved=this.poseEditor?.getState().dragging?false:this.controls.update();
