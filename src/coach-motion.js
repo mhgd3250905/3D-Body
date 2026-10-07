@@ -532,7 +532,7 @@ export function createCoachMotion({ model, rigData }) {
     return !smoothOff && !periodicMotion && steps && steps.length >= 5 && !activeCorrections.length && !skippedSteps.length
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
-  const LATE_PLANT = { right: 0.5 }, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
+  const LATE_PLANT = { right: 0.5 }, LATE_CONVERGE = 1.0, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
   function lowestHandOffset(side, quaternion) {
     let low = Infinity;
     const wrist = rest[side + 'Wrist'];
@@ -607,6 +607,7 @@ export function createCoachMotion({ model, rigData }) {
           const plantQ = new THREE.Quaternion().fromArray(L[2].handQuaternion);
           swingLater[side].approach = true;
           swingLater[side].plantWrist = an[2].solved[side].arm.end.clone();
+          swingLater[side].startWrist = an[1].solved[side].arm.end.clone();
           swingLater[side].plantLow = an[2].solved[side].arm.end.y + lowestHandOffset(side, plantQ);
           swingLater[side].startLow = an[1].solved[side].arm.end.y + lowestHandOffset(side, new THREE.Quaternion().fromArray(L[1].handQuaternion));
         }
@@ -638,10 +639,20 @@ export function createCoachMotion({ model, rigData }) {
           const target = sw.plantWrist.clone().add(new THREE.Vector3(wrist.x - sw.plantWrist.x, 0, wrist.z - sw.plantWrist.z).multiplyScalar(k));
           const h2 = (target.x - shoulder.x) ** 2 + (target.z - shoulder.z) ** 2;
           if (h2 < R * R) pose.limbs[side].wrist = target.setY(shoulder.y - Math.sqrt(R * R - h2)).toArray();
+          // v26: a late-planting hand heads straight for its spot (like the left hand)
+          // instead of reaching out wide and sweeping in along the floor at the end
+          if (LATE_PLANT[side]) {
+            const cur = new THREE.Vector3().fromArray(pose.limbs[side].wrist), P = sw.plantWrist, S = sw.startWrist;
+            const f = 1 - THREE.MathUtils.smootherstep(sw.t, 0, LATE_CONVERGE), b = THREE.MathUtils.smoothstep(sw.t, 0, LATE_BLEND);
+            const hx = THREE.MathUtils.lerp(cur.x, P.x + (S.x - P.x) * f, b), hz = THREE.MathUtils.lerp(cur.z, P.z + (S.z - P.z) * f, b);
+            const g2 = (hx - shoulder.x) ** 2 + (hz - shoulder.z) ** 2;
+            const y = g2 < R * R ? shoulder.y - Math.sqrt(R * R - g2) : shoulder.y;
+            pose.limbs[side].wrist = [hx, THREE.MathUtils.lerp(cur.y, y, b), hz];
+          }
         }
         const plantLow = sw.plantLow, q = new THREE.Quaternion().fromArray(pose.limbs[side].handQuaternion);
         const low = pose.limbs[side].wrist[1] + lowestHandOffset(side, q);
-        const want = plantLow + Math.max(0, sw.startLow - plantLow) * Math.pow(1 - sw.t, APPROACH_POW);
+        const want = LATE_PLANT[side] ? plantLow : plantLow + Math.max(0, sw.startLow - plantLow) * Math.pow(1 - sw.t, APPROACH_POW);
         if (low < want) {
           // raise the wrist on its own sphere round the shoulder, so the arm length is kept
           const wrist = new THREE.Vector3().fromArray(pose.limbs[side].wrist), reach = wrist.distanceTo(shoulder);
