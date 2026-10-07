@@ -402,7 +402,8 @@ export function createCoachMotion({ model, rigData }) {
 
   function update(inputTime = 0) {
     const nextTime = ((Number.isFinite(inputTime) ? inputTime : 0) % sequence.period + sequence.period) % sequence.period;
-    applyPose(periodicMotion ? periodicMotion.sample(nextTime) : smoothLoopActive() ? smoothLoopSample(nextTime) : sequence.sample(nextTime), { alignBendPlanes: Boolean(periodicMotion) });
+    const smooth = !periodicMotion && smoothLoopActive();
+    applyPose(periodicMotion ? periodicMotion.sample(nextTime) : smooth ? smoothLoopSample(nextTime) : sequence.sample(nextTime), { alignBendPlanes: Boolean(periodicMotion), bodyOffset: smooth ? lateBodyOffset(nextTime) : 0 });
     mode = 'flare';
     time = nextTime;
     return model;
@@ -1189,8 +1190,54 @@ export function createCoachMotion({ model, rigData }) {
     return { requested, constrainedPelvis, warnings, solved };
   }
 
-  function applyPose(input, { alignBendPlanes = false } = {}) {
+  // v27 (user: as the right hand lands the whole body dips and pops back up): with
+  // both support arms straight, the hand-over from the left to the right arm put a
+  // sharp corner into the body height at the plant key. Around a late plant the body
+  // (hips, torso, head, legs) follows a smoothed height instead; the arms keep their
+  // exact paths, so the shoulders give the ~1 cm difference (a small shrug / push).
+  const BODY_SMOOTH_SIGMA = 0.22, BODY_SMOOTH_BEFORE = 0.9, BODY_SMOOTH_AFTER = 1.2, BODY_SMOOTH_EDGE = 0.3, BODY_SMOOTH_STEP = 0.02;
+  let bodySmoothCache = null;
+  function lateBodyOffset(sampleTime) {
+    const steps = sequence?.steps, n = steps ? steps.length - 1 : 0;
+    if (!n || !Object.keys(LATE_PLANT).length) return 0;
+    if (bodySmoothCache?.sequence !== sequence) {
+      const period = sequence.period, seg = period / (n + 1), windows = [];
+      for (const side of Object.keys(LATE_PLANT)) for (let k = 0; k < n; k++) {
+        if (steps[k].pose.limbs[side].handLocked && !steps[(k - 1 + n) % n].pose.limbs[side].handLocked) windows.push(k * seg);
+      }
+      const tables = windows.map(center => {
+        const from = center - BODY_SMOOTH_BEFORE - 3 * BODY_SMOOTH_SIGMA, count = Math.ceil((BODY_SMOOTH_BEFORE + BODY_SMOOTH_AFTER + 6 * BODY_SMOOTH_SIGMA) / BODY_SMOOTH_STEP) + 1;
+        const ys = Array.from({ length: count }, (_, j) => solvePose(smoothLoopSample(from + j * BODY_SMOOTH_STEP)).constrainedPelvis.y);
+        const radius = Math.ceil(3 * BODY_SMOOTH_SIGMA / BODY_SMOOTH_STEP), weights = Array.from({ length: 2 * radius + 1 }, (_, j) => Math.exp(-0.5 * ((j - radius) * BODY_SMOOTH_STEP / BODY_SMOOTH_SIGMA) ** 2));
+        const offset = ys.map((y, j) => {
+          if (j < radius || j >= count - radius) return 0;
+          let sum = 0, total = 0;
+          for (let m = -radius; m <= radius; m++) { sum += ys[j + m] * weights[m + radius]; total += weights[m + radius]; }
+          return sum / total - y;
+        });
+        return { center, from, offset, period };
+      });
+      bodySmoothCache = { sequence, tables };
+    }
+    let result = 0;
+    for (const { center, from, offset, period } of bodySmoothCache.tables) {
+      let dt = sampleTime - center;
+      dt -= Math.round(dt / period) * period;
+      if (dt < -BODY_SMOOTH_BEFORE || dt > BODY_SMOOTH_AFTER) continue;
+      const w = THREE.MathUtils.smoothstep(dt, -BODY_SMOOTH_BEFORE, -BODY_SMOOTH_BEFORE + BODY_SMOOTH_EDGE) * (1 - THREE.MathUtils.smoothstep(dt, BODY_SMOOTH_AFTER - BODY_SMOOTH_EDGE, BODY_SMOOTH_AFTER));
+      const x = (center + dt - from) / BODY_SMOOTH_STEP, j = Math.floor(x), f = x - j;
+      result += w * THREE.MathUtils.lerp(offset[j] ?? 0, offset[j + 1] ?? 0, f);
+    }
+    return result;
+  }
+
+  function applyPose(input, { alignBendPlanes = false, bodyOffset = 0 } = {}) {
     const { requested, constrainedPelvis, warnings, solved } = solvePose(input);
+    if (bodyOffset) {
+      constrainedPelvis.y += bodyOffset;
+      // straight legs ride along with the hips (a rigid shift keeps them straight)
+      for (const side of SIDES) for (const p of [solved[side].hip, solved[side].leg.middle, solved[side].leg.end]) p.y += bodyOffset;
+    }
     bendPlaneRotation = alignBendPlanes;
     mode = 'manual';
     groundLock = requested.groundLock;
