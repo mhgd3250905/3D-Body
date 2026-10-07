@@ -26,6 +26,8 @@ export function installSpineHelpers({ model, meshes, skeletons, landmarks }) {
   const armature = pelvis.parent;
   model.updateMatrixWorld(true);
 
+  const pelvisRestWorld = pelvis.matrixWorld.clone(), torsoRestWorld = torso.matrixWorld.clone();
+  const pelvisInverse = pelvisRestWorld.clone().invert(), torsoInverse = torsoRestWorld.clone().invert();
   const pelvisRest = new THREE.Vector3(...landmarks.pelvis).applyMatrix4(model.matrixWorld);
   const torsoRest = new THREE.Vector3(...landmarks.torso).applyMatrix4(model.matrixWorld);
   const helpers = SHARES.map((share, index) => {
@@ -46,9 +48,14 @@ export function installSpineHelpers({ model, meshes, skeletons, landmarks }) {
     let next = replaced.get(mesh.skeleton);
     if (!next) {
       const old = mesh.skeleton;
+      // A skin's inverse bind matrices may carry a per-mesh offset (for example
+      // KHR_mesh_quantization). The helpers' world matrices are deltas in the
+      // canonical rest frame, so each skeleton gets that same offset as the
+      // helpers' inverse: Q = pelvisRestWorld · pelvisInverse(this skin).
+      const offset = pelvisRestWorld.clone().multiply(old.boneInverses[old.bones.indexOf(pelvis)]);
       next = new THREE.Skeleton(
         [...old.bones, ...helpers.map(item => item.bone)],
-        [...old.boneInverses, ...helpers.map(() => new THREE.Matrix4())],
+        [...old.boneInverses, ...helpers.map(() => offset.clone())],
       );
       replaced.set(old, next);
     }
@@ -60,8 +67,6 @@ export function installSpineHelpers({ model, meshes, skeletons, landmarks }) {
   skeletons.clear();
   for (const skeleton of replaced.values()) skeleton.bones.length && skeletons.add(skeleton);
 
-  const pelvisInverse = [...replaced.values()][0].boneInverses[[...replaced.values()][0].bones.indexOf(pelvis)];
-  const torsoInverse = [...replaced.values()][0].boneInverses[[...replaced.values()][0].bones.indexOf(torso)];
   const dp = new THREE.Matrix4(), dt = new THREE.Matrix4();
   const qp = new THREE.Quaternion(), qt = new THREE.Quaternion(), qm = new THREE.Quaternion();
   const tp = new THREE.Vector3(), tt = new THREE.Vector3(), scale = new THREE.Vector3();
@@ -107,7 +112,8 @@ function redistribute(mesh, chain) {
   const vertex = new THREE.Vector3();
   let changed = false;
   for (let i = 0; i < position.count; i++) {
-    vertex.fromBufferAttribute(position, i).applyMatrix4(mesh.bindMatrix);
+    // Rest height through the bind pose (works for quantized / offset meshes too).
+    mesh.getVertexPosition(i, vertex).applyMatrix4(mesh.matrixWorld);
     if (vertex.y < BAND[0] - 0.02 || vertex.y > BAND[1] + 0.05) continue;
     let share = 0;
     const others = [];

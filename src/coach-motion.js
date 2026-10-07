@@ -135,6 +135,11 @@ export function createCoachMotion({ model, rigData }) {
       object.frustumCulled = false;
     }
   });
+  // Hidden lower/upper spine helpers (see spine-helpers.js); ?spine=off to compare.
+  // Installed while the model is still in its bind pose.
+  if (!(typeof location !== 'undefined' && new URLSearchParams(location.search).get('spine') === 'off')) {
+    spine = installSpineHelpers({ model, meshes, skeletons, landmarks: rigData.landmarks });
+  }
   const descriptors = new Map();
   for (const { name } of rigData.bones ?? []) {
     const bone = bones.get(name);
@@ -174,7 +179,8 @@ export function createCoachMotion({ model, rigData }) {
       for (let component = 0; component < 4; component++) {
         const weight = weights.getComponent(i, component);
         if (weight <= 1e-7) continue;
-        const name = mesh.skeleton.bones[indices.getComponent(i, component)]?.name;
+        const raw = mesh.skeleton.bones[indices.getComponent(i, component)]?.name;
+        const name = raw === 'spineLower' || raw === 'spineUpper' ? 'torso' : raw;
         descriptors.get(name)?.bounds.expandByPoint(vertex);
         for (const side of SIDES) {
           if (name === side + 'Hand' && weight > 0.70) {
@@ -1338,12 +1344,6 @@ export function createCoachMotion({ model, rigData }) {
 
   model.userData.motionSource = 'Snow Rig / Blender Foundation';
   reset();
-  // Hidden lower/upper spine helpers (see spine-helpers.js); ?spine=off to compare.
-  if (!(typeof location !== 'undefined' && new URLSearchParams(location.search).get('spine') === 'off')) {
-    spine = installSpineHelpers({ model, meshes, skeletons, landmarks: rigData.landmarks });
-    finishPose();
-  }
-
   return { group: model, update, reset, setSequence, sampleTrajectory, samplePose, getSegmentGuideAt,
     getFootCurveSpan: (time, options) => sequence.spanAt(time, options),
     getFootCurveAt: (time, side) => sequence.curveAt(time, side),
