@@ -521,6 +521,13 @@ export function createCoachMotion({ model, rigData }) {
     return !smoothOff && !periodicMotion && steps && steps.length >= 5 && !activeCorrections.length && !skippedSteps.length
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
+  const APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8;
+  function lowestHandOffset(side, quaternion) {
+    let low = Infinity;
+    const wrist = rest[side + 'Wrist'];
+    for (let i = 0; i < handPoints[side].length; i += 3) low = Math.min(low, handPoints[side][i].clone().sub(wrist).applyQuaternion(quaternion).y);
+    return Number.isFinite(low) ? low : -0.035;
+  }
   function smoothLoopSample(sampleTime) {
     const steps = sequence.steps, n = steps.length - 1;
     // Keys 0..n-1 keep their saved times (j * period / (n + 1)), so K markers,
@@ -544,6 +551,12 @@ export function createCoachMotion({ model, rigData }) {
       const hold1 = L[1].handLocked, hold2 = L[2].handLocked;
       limb.handLocked = hold1 && hold2;
       limb.handQuaternion = hermiteQ(...L.map(l => l.handQuaternion), t, hold1, hold2);
+      // v23: a hand coming in to plant flattens its palm before contact, so it
+      // lands palm-first instead of touching down on the fingertips and slapping flat
+      if (hold2 && !hold1) {
+        const flat = THREE.MathUtils.smoothstep(t, APPROACH_FLAT_FROM, APPROACH_FLAT_TO);
+        if (flat > 0) limb.handQuaternion = new THREE.Quaternion().fromArray(limb.handQuaternion).slerp(new THREE.Quaternion().fromArray(L[2].handQuaternion), flat).toArray();
+      }
       limb.footQuaternion = hermiteQ(...L.map(l => l.footQuaternion), t);
       limb.wrist = hermiteV(...nodes.map(node => node.solved[side].arm.end), t, hold1, hold2).toArray();
       if (!limb.handLocked) {
@@ -563,6 +576,12 @@ export function createCoachMotion({ model, rigData }) {
         const w = THREE.MathUtils.smoothstep(Math.min(world.y, swing.y), PLANT_FULL, PLANT_NONE + 0.1);
         limb.wrist = world.clone().lerp(swing, w).toArray();
         swingLater[side] = { local, world, w, shoulderS };
+        if (hold2) {
+          const plantQ = new THREE.Quaternion().fromArray(L[2].handQuaternion);
+          swingLater[side].approach = true;
+          swingLater[side].plantLow = nodes[2].solved[side].arm.end.y + lowestHandOffset(side, plantQ);
+          swingLater[side].startLow = nodes[1].solved[side].arm.end.y + lowestHandOffset(side, new THREE.Quaternion().fromArray(L[1].handQuaternion));
+        }
       }
       for (const key of ['elbowPole', 'kneePole']) limb[key] = hermiteV(...L.map(l => new THREE.Vector3().fromArray(l[key])), t).toArray();
     }
@@ -576,8 +595,21 @@ export function createCoachMotion({ model, rigData }) {
       const sw = swingLater[side];
       if (!sw) continue;
       const shoulder = upperOffset(rest[side + 'Shoulder'], requested.bodyQuaternion, requested.torsoQuaternion).add(constrainedPelvis);
-      const swing = shoulder.add(sw.local);
+      const swing = shoulder.clone().add(sw.local);
       pose.limbs[side].wrist = sw.world.clone().lerp(swing, sw.w).toArray();
+      // v23: an incoming hand comes down steadily: its lowest point keeps a clearance
+      // that shrinks to zero at contact, rather than hovering just above the floor
+      if (sw.approach) {
+        const plantLow = sw.plantLow, q = new THREE.Quaternion().fromArray(pose.limbs[side].handQuaternion);
+        const low = pose.limbs[side].wrist[1] + lowestHandOffset(side, q);
+        const want = plantLow + Math.max(0, sw.startLow - plantLow) * Math.pow(1 - t, APPROACH_POW);
+        if (low < want) {
+          // raise the wrist on its own sphere round the shoulder, so the arm length is kept
+          const wrist = new THREE.Vector3().fromArray(pose.limbs[side].wrist), reach = wrist.distanceTo(shoulder);
+          const dy = wrist.y + want - low - shoulder.y, flat = new THREE.Vector3(wrist.x - shoulder.x, 0, wrist.z - shoulder.z);
+          if (Math.abs(dy) < reach && flat.lengthSq() > 1e-10) pose.limbs[side].wrist = shoulder.clone().addScaledVector(flat.normalize(), Math.sqrt(reach * reach - dy * dy)).setY(shoulder.y + dy).toArray();
+        }
+      }
       requested.limbs[side].wrist.fromArray(pose.limbs[side].wrist);
     }
     const upper = requested.bodyQuaternion.clone().multiply(requested.torsoQuaternion ?? IDENTITY);
