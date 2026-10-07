@@ -1,0 +1,203 @@
+{
+  "id": "bodyparts3d-fitness-reference",
+  "source": "BodyParts3D",
+  "version": "4.0",
+  "sourceId": "FJ2810",
+  "sourcePartId": "FJ2810",
+  "sourceConceptId": "FMA7163",
+  "sourceName": "Skin",
+  "sourceCommit": "1c38bf35c254a891200d3cedecfd57abebe83d8d",
+  "sourceRepository": "https://github.com/ashemag/human-atlas",
+  "license": "CC-BY-4.0",
+  "attribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.",
+  "licenseUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
+  "asset": "/anatomy/muscle-reference.glb",
+  "blend": "assets/coach/muscle-reference.blend",
+  "units": "meters",
+  "referencePose": true,
+  "bounds": [
+    [
+      -0.3340040147304535,
+      1.3877787807814457e-17,
+      -0.14823779463768005
+    ],
+    [
+      0.332753986120224,
+      1.7263891696929932,
+      0.1467829942703247
+    ]
+  ],
+  "triangles": 61741,
+  "modelParts": [
+    {
+      "name": "BodyParts3D · complete fitness reference",
+      "sourcePartId": "FJ2810",
+      "partRole": "body-surface",
+      "vertices": 22881,
+      "triangles": 44945
+    },
+    {
+      "name": "BodyParts3D Skin-derived · athletic shorts",
+      "sourcePartId": "FJ2810",
+      "partRole": "clothing",
+      "vertices": 2841,
+      "triangles": 5678
+    },
+    {
+      "name": "Cosmetic · Skin-derived dark brown close crop",
+      "sourcePartId": "FJ2810",
+      "partRole": "cosmetic-hair",
+      "vertices": 5668,
+      "triangles": 11118
+    }
+  ],
+  "coordinates": {
+    "units": "meters",
+    "up": "+Y",
+    "anterior": "+Z",
+    "anatomicalLeft": "+X",
+    "bounds": [
+      [
+        -0.3340040147304535,
+        1.3877787807814457e-17,
+        -0.14823779463768005
+      ],
+      [
+        0.332753986120224,
+        1.7263891696929932,
+        0.1467829942703247
+      ]
+    ]
+  },
+  "body": {
+    "vertices": 22881,
+    "triangles": 44945,
+    "bounds": [
+      [
+        -0.3340040147304535,
+        1.3877787807814457e-17,
+        -0.1452392041683197
+      ],
+      [
+        0.332753986120224,
+        1.7194311618804932,
+        0.1467829942703247
+      ]
+    ],
+    "allBodyRegionsPreserved": true,
+    "sourceDuplicateFacesRemoved": 1,
+    "faceOpeningsClosed": 10
+  },
+  "shorts": {
+    "triangles": 5678,
+    "source": "Original Skin face subset, smoothed and offset as clothing",
+    "frontPanelFaces": 7,
+    "anatomicalStructure": false
+  },
+  "adaptations": [
+    "Converted atlas coordinates to Blender and exported back to the original meter/Y-up coordinates.",
+    "All source body regions retained, including head, hands and feet; one exact duplicate face removed for a valid export, with no central hole or body cropping.",
+    "Localized low-central forward skin contour was compressed and smoothed only in this derived copy.",
+    "Same-source Skin pelvis and upper-leg surfaces were copied, a plain front garment panel filled its existing boundary, then surfaces were offset, softly remeshed and hemmed into matte navy sports shorts.",
+    "The same-source head front surface was softened and eye/nose openings were closed for a low-detail mannequin appearance; visible eye structures were omitted.",
+    "A dark brown cosmetic close crop was derived from the original Skin scalp, softly subdivided and fitted outside that unchanged head surface.",
+    "Cosmetic scalp vertex colour below the hair closes visual seams while preserving all head coordinates.",
+    "Opaque pale grey body material and matte navy garment; original muscle geometry and names were not edited."
+  ],
+  "partsSource": [
+    {
+      "id": "FJ2810",
+      "name": "Skin",
+      "role": "full body surface"
+    }
+  ],
+  "cosmetics": [
+    {
+      "name": "Cosmetic · Skin-derived dark brown close crop",
+      "sourcePartId": "FJ2810",
+      "role": "cosmetic hair, not anatomy"
+    },
+    {
+      "name": "BodyParts3D Skin-derived · athletic shorts",
+      "sourcePartId": "FJ2810",
+      "role": "clothing, not anatomy"
+    }
+  ],
+  "privacy": {
+    "changedVertices": 1309,
+    "maximumChangeMeters": 0.045337382834398546,
+    "boundsOfAllowedRegion": {
+      "absXBelow": 0.09,
+      "yBetween": [
+        0.69,
+        0.965
+      ],
+      "frontZAbove": 0.005
+    },
+    "unchangedOutsidePrivacyAndHeadAppearance": true
+  },
+  "headAppearance": {
+    "style": "low-detail mannequin",
+    "visibleEyes": false,
+    "closedOpenings": 10,
+    "changedVertices": 1724,
+    "allowedRegion": {
+      "absXBelow": 0.078,
+      "yBetween": [
+        1.485,
+        1.665
+      ],
+      "frontZAbove": 0.006
+    },
+    "bodyCoordinatesOutsidePrivacyAndHeadUnchanged": true
+  },
+  "limitations": [
+    "Static adult male atlas reference; no animation rig or muscle activation measurements.",
+    "Not registered to Snow or to the current Flare pose.",
+    "No muscles, anatomical labels, eyes or expression controls were invented; the head is a simplified source-derived mannequin.",
+    "Privacy/clothing adaptations make the modified body surface unsuitable for precise anatomy measurements.",
+    "The original atlas muscle meshes remain separate and retain their original coordinates and identifiers."
+  ],
+  "renders": {
+    "front": "output/muscle-reference-20261007/front.png",
+    "back": "output/muscle-reference-20261007/back.png",
+    "portrait": "output/muscle-reference-20261007/portrait.png"
+  },
+  "verification": {
+    "sourceHashesBefore": {
+      "manifest.json": "87b548d0143a328ecc8a9691cfd95124a646e3a5082804fd1a76d19e1bb1b179",
+      "bones.bin": "89e115ff8809a03dc78804fc7972fa1730e5927548b1a616079d4064d8973e35",
+      "bones.bin.gz": "8c8e1117ac6aaa333d666a6e14c90897264d208c934bca26c319fdc174db33b0",
+      "muscles.bin": "75c2b823a795d340a680f6ac2915cf7af891ffa0ef1fd0dff9e4e6e16fa9f1ec",
+      "muscles.bin.gz": "13bf23f3cf2367e126a5616bb92f9833b39a29455188dfd69afdc381cfa87e9e",
+      "skin-manifest.json": "aaf2122842c65964c00a9f813ada438328f85c1d8424ea944756b003a43608b4",
+      "skin.bin": "4a8d6c96029905d9c39f282fabfd2335b6067b4b1dc9605729ae85ab56e7cd9c",
+      "skin.bin.gz": "fc7207e537a6f6da798c69a92864d183787b88124ec07a207b41ea54c297e612"
+    },
+    "sourceHashesAfter": {
+      "manifest.json": "87b548d0143a328ecc8a9691cfd95124a646e3a5082804fd1a76d19e1bb1b179",
+      "bones.bin": "89e115ff8809a03dc78804fc7972fa1730e5927548b1a616079d4064d8973e35",
+      "bones.bin.gz": "8c8e1117ac6aaa333d666a6e14c90897264d208c934bca26c319fdc174db33b0",
+      "muscles.bin": "75c2b823a795d340a680f6ac2915cf7af891ffa0ef1fd0dff9e4e6e16fa9f1ec",
+      "muscles.bin.gz": "13bf23f3cf2367e126a5616bb92f9833b39a29455188dfd69afdc381cfa87e9e",
+      "skin-manifest.json": "aaf2122842c65964c00a9f813ada438328f85c1d8424ea944756b003a43608b4",
+      "skin.bin": "4a8d6c96029905d9c39f282fabfd2335b6067b4b1dc9605729ae85ab56e7cd9c",
+      "skin.bin.gz": "fc7207e537a6f6da798c69a92864d183787b88124ec07a207b41ea54c297e612"
+    },
+    "sourceAssetsUnchanged": true,
+    "upstreamEyeSourceHashes": {
+      "atlas.json": "c359f4bcd2cba90b7411d66d5e9fc04dc81294d46cd5c1e8b212c824f2e5bbee"
+    }
+  },
+  "modifications": [
+    "Converted atlas coordinates to Blender and exported back to the original meter/Y-up coordinates.",
+    "All source body regions retained, including head, hands and feet; one exact duplicate face removed for a valid export, with no central hole or body cropping.",
+    "Localized low-central forward skin contour was compressed and smoothed only in this derived copy.",
+    "Same-source Skin pelvis and upper-leg surfaces were copied, a plain front garment panel filled its existing boundary, then surfaces were offset, softly remeshed and hemmed into matte navy sports shorts.",
+    "The same-source head front surface was softened and eye/nose openings were closed for a low-detail mannequin appearance; visible eye structures were omitted.",
+    "A dark brown cosmetic close crop was derived from the original Skin scalp, softly subdivided and fitted outside that unchanged head surface.",
+    "Cosmetic scalp vertex colour below the hair closes visual seams while preserving all head coordinates.",
+    "Opaque pale grey body material and matte navy garment; original muscle geometry and names were not edited."
+  ],
+  "glbSha256": "d77ee5ecffffa95afa5d71e0ff2ae05878956b98354243cdfbe33e70a9db8d7c"
+}

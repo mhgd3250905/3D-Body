@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-07T07:44:41.782Z",
+  "sameStage1": true,
+  "originalHashes": {
+    "托马斯/阶段1-可用动画-2026-10-06.json": "b68d9992dde6da810e31d785d8ba5b5e79ba62620e7cd2ff57260032fb480af3",
+    "public/coach/flare-sequence.json": "743b028afef5cb7a854a0445c24a1456ef0dc0b8171a8a85df29241be57cf787",
+    "托马斯/16.json": "f9a5f0b08ddeb0939f777aa628f7357f85de897ae7a78eb3d11badd93a0d9483"
+  },
+  "originalAnatomyUnchanged": true,
+  "oldAtlasReferenceUnchanged": true,
+  "distMatchesFinalAssetAndPublicDocuments": true,
+  "source": "Blender Studio Human Base Meshes 1.4.1",
+  "bodyGlbSha256": "47b9427d19d82cb4f573196028e1513c20b719c41a2a5fd961579360412f442d",
+  "meshCount": 2,
+  "triangles": 81002,
+  "independentEyesIncluded": false,
+  "originalPoses": 9,
+  "K": 2,
+  "smartGuides": 10,
+  "footCurves": 1,
+  "interpolation": "linear",
+  "teachingSha256": "8821ae6b85526db60410ad07f095069f70591c477dc28f0d96a15183f5dea454",
+  "localRotationKeptMain": true,
+  "browserErrorsAndWarnings": 0
+}

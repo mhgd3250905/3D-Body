@@ -1,0 +1,1781 @@
+{
+  "checkedAt": "2026-10-07T07:31:34.515Z",
+  "nodeVersion": "v24.15.0",
+  "passed": true,
+  "inputs": {
+    "glbSha256": "47b9427d19d82cb4f573196028e1513c20b719c41a2a5fd961579360412f442d",
+    "bytes": 2523408,
+    "metadataSha256": "75e449933cc747866bebb1880f679765936cd1f8c87490404783708ab338d922",
+    "bodyHeight": 1.6900311708450317
+  },
+  "cases": [
+    {
+      "id": "actual-load-concurrency-and-separate-owned-attributes",
+      "passed": true,
+      "detail": {
+        "bytes": 2523408,
+        "meshCount": 2,
+        "triangles": 81002,
+        "bounds": [
+          [
+            -0.44132739305496216,
+            0,
+            -0.11657273769378662
+          ],
+          [
+            0.4413275718688965,
+            1.6900311708450317,
+            0.17975743114948273
+          ]
+        ],
+        "readyCalls": 1,
+        "independentBodyAndClothingAttributes": true
+      }
+    },
+    {
+      "id": "13-groups-left-right-real-highlight-and-spatial-diagnosis",
+      "passed": true,
+      "detail": {
+        "selections": 26,
+        "allHighlight": true,
+        "allWithinOwnSide": true,
+        "frontBackNormalDirectionsConsistent": true
+      }
+    },
+    {
+      "id": "selected-part-side-switch-and-clear-re-show",
+      "passed": true,
+      "detail": {
+        "selectedPartUsesAnatomicalSide": true,
+        "clearHidesReference": true,
+        "reShowUsesNewGroupAndSide": true
+      }
+    },
+    {
+      "id": "position-normal-index-matrices-and-eyes-preserved",
+      "passed": true,
+      "detail": {
+        "meshesChecked": 2,
+        "eyesChecked": [],
+        "expectedCosmeticFaceMeshes": 0,
+        "independentEyesIncluded": false,
+        "positionNormalIndexAndMatricesUnchanged": true
+      }
+    },
+    {
+      "id": "normal-dispose-only-owned-resources-and-399-atlas-targets-preserved",
+      "passed": true,
+      "detail": {
+        "geometriesReleased": 2,
+        "materialsReleased": 2,
+        "borrowedAtlasMeshesChecked": 399,
+        "sourceGeometryDisposals": 0,
+        "sourceMaterialDisposals": 0
+      }
+    },
+    {
+      "id": "invalid-provenance-and-sha-load-can-retry",
+      "passed": true,
+      "detail": {
+        "rejected": [
+          "Invalid fitness reference provenance.",
+          "Fitness reference checksum mismatch."
+        ],
+        "retrySucceeded": true
+      }
+    },
+    {
+      "id": "dispose-during-fetch-and-parse-no-late-attach",
+      "passed": true,
+      "detail": {
+        "readyCalls": 0,
+        "fetchCancellationReleasedLateScene": true,
+        "parseCancellationReleasedLateScene": true
+      }
+    },
+    {
+      "id": "input-files-stable-during-diagnosis",
+      "passed": true,
+      "detail": {
+        "startHashes": {
+          "public/anatomy/fitness-reference.glb": "47b9427d19d82cb4f573196028e1513c20b719c41a2a5fd961579360412f442d",
+          "public/anatomy/fitness-reference.json": "75e449933cc747866bebb1880f679765936cd1f8c87490404783708ab338d922",
+          "public/anatomy/manifest.json": "87b548d0143a328ecc8a9691cfd95124a646e3a5082804fd1a76d19e1bb1b179",
+          "public/anatomy/muscles.bin": "75c2b823a795d340a680f6ac2915cf7af891ffa0ef1fd0dff9e4e6e16fa9f1ec",
+          "src/fitness-movement-context.js": "8c789eb43b605417160c330d982b0e2179d8fce8394af1ad0ad79dca916388fb",
+          "src/movement-surface-regions.js": "f6c7d0a00f4905d993a7eb2c8bb2df5b71beed8816241ad67ae502dde7430fe1"
+        },
+        "endHashes": {
+          "public/anatomy/fitness-reference.glb": "47b9427d19d82cb4f573196028e1513c20b719c41a2a5fd961579360412f442d",
+          "public/anatomy/fitness-reference.json": "75e449933cc747866bebb1880f679765936cd1f8c87490404783708ab338d922",
+          "public/anatomy/manifest.json": "87b548d0143a328ecc8a9691cfd95124a646e3a5082804fd1a76d19e1bb1b179",
+          "public/anatomy/muscles.bin": "75c2b823a795d340a680f6ac2915cf7af891ffa0ef1fd0dff9e4e6e16fa9f1ec",
+          "src/fitness-movement-context.js": "8c789eb43b605417160c330d982b0e2179d8fce8394af1ad0ad79dca916388fb",
+          "src/movement-surface-regions.js": "f6c7d0a00f4905d993a7eb2c8bb2df5b71beed8816241ad67ae502dde7430fe1"
+        }
+      }
+    }
+  ],
+  "issues": [],
+  "regionResults": [
+    {
+      "groupId": "deltoids",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 441,
+      "roles": {
+        "body-surface": {
+          "count": 441,
+          "peakWeight": 1,
+          "changedColourCount": 441,
+          "meanHighlightedWeight": 0.7744162014417367
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          0.14500896632671356,
+          1.2678102254867554,
+          -0.07159645855426788
+        ],
+        [
+          0.25550612807273865,
+          1.398638129234314,
+          0.07501474022865295
+        ]
+      ],
+      "weightedNormalZ": 0.1579168882663185,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.22149503231048584,
+            1.3616143465042114,
+            0.01569618284702301
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7744162014417367,
+      "targetBounds": [
+        [
+          0.14500896632671356,
+          1.2678102254867554,
+          -0.07159645855426788
+        ],
+        [
+          0.25550612807273865,
+          1.398638129234314,
+          0.07501474022865295
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "deltoids",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 435,
+      "roles": {
+        "body-surface": {
+          "count": 435,
+          "peakWeight": 1,
+          "changedColourCount": 435,
+          "meanHighlightedWeight": 0.7822777925551623
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          -0.25474315881729126,
+          1.268059253692627,
+          -0.0710470899939537
+        ],
+        [
+          -0.14918458461761475,
+          1.3987178802490234,
+          0.075023353099823
+        ]
+      ],
+      "weightedNormalZ": 0.16131846199598796,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.22816462814807892,
+            1.3515669107437134,
+            0.01532196905463934
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7822777925551623,
+      "targetBounds": [
+        [
+          -0.25474315881729126,
+          1.268059253692627,
+          -0.0710470899939537
+        ],
+        [
+          -0.14918458461761475,
+          1.3987178802490234,
+          0.075023353099823
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "rotator-cuff",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 577,
+      "roles": {
+        "body-surface": {
+          "count": 577,
+          "peakWeight": 1,
+          "changedColourCount": 577,
+          "meanHighlightedWeight": 0.7338663725960399
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          0.11804576963186264,
+          1.2770739793777466,
+          -0.09897933155298233
+        ],
+        [
+          0.24937835335731506,
+          1.4145317077636719,
+          0.07439057528972626
+        ]
+      ],
+      "weightedNormalZ": -0.14555718052800615,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.19341811537742615,
+            1.3723443746566772,
+            -0.027357250452041626
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7338663725960399,
+      "targetBounds": [
+        [
+          0.11804576963186264,
+          1.2770739793777466,
+          -0.09897933155298233
+        ],
+        [
+          0.24937835335731506,
+          1.4145317077636719,
+          0.07439057528972626
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "rotator-cuff",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 573,
+      "roles": {
+        "body-surface": {
+          "count": 573,
+          "peakWeight": 1,
+          "changedColourCount": 573,
+          "meanHighlightedWeight": 0.7381212255977627
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          -0.2494242787361145,
+          1.2768378257751465,
+          -0.09903640300035477
+        ],
+        [
+          -0.11786548793315887,
+          1.4146901369094849,
+          0.07430949062108994
+        ]
+      ],
+      "weightedNormalZ": -0.17174902227170247,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.19322210550308228,
+            1.372558355331421,
+            -0.027340101078152657
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7381212255977627,
+      "targetBounds": [
+        [
+          -0.2494242787361145,
+          1.2768378257751465,
+          -0.09903640300035477
+        ],
+        [
+          -0.11786548793315887,
+          1.4146901369094849,
+          0.07430949062108994
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "triceps",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 334,
+      "roles": {
+        "body-surface": {
+          "count": 334,
+          "peakWeight": 1,
+          "changedColourCount": 334,
+          "meanHighlightedWeight": 0.722914888830242
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          0.22925274074077606,
+          1.0858325958251953,
+          -0.07332462072372437
+        ],
+        [
+          0.3259064555168152,
+          1.3309558629989624,
+          0.0005401608068495989
+        ]
+      ],
+      "weightedNormalZ": -0.5590739333624453,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.28241971135139465,
+            1.194838285446167,
+            -0.04097968712449074
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.722914888830242,
+      "targetBounds": [
+        [
+          0.22925274074077606,
+          1.0858325958251953,
+          -0.07332462072372437
+        ],
+        [
+          0.3259064555168152,
+          1.3309558629989624,
+          0.0005401608068495989
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "triceps",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 306,
+      "roles": {
+        "body-surface": {
+          "count": 306,
+          "peakWeight": 1,
+          "changedColourCount": 306,
+          "meanHighlightedWeight": 0.7210221798980937
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          -0.3257145881652832,
+          1.085652470588684,
+          -0.07342816889286041
+        ],
+        [
+          -0.22896380722522736,
+          1.3312342166900635,
+          0.0023726196959614754
+        ]
+      ],
+      "weightedNormalZ": -0.5696725317428972,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.27748292684555054,
+            1.190764307975769,
+            -0.04721050709486008
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7210221798980937,
+      "targetBounds": [
+        [
+          -0.3257145881652832,
+          1.085652470588684,
+          -0.07342816889286041
+        ],
+        [
+          -0.22896380722522736,
+          1.3312342166900635,
+          0.0023726196959614754
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "serratus",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 320,
+      "roles": {
+        "body-surface": {
+          "count": 320,
+          "peakWeight": 1,
+          "changedColourCount": 320,
+          "meanHighlightedWeight": 0.6178007930051536
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          0.11723051965236664,
+          1.0664238929748535,
+          -0.027162836864590645
+        ],
+        [
+          0.19827885925769806,
+          1.2610949277877808,
+          0.10840407013893127
+        ]
+      ],
+      "weightedNormalZ": 0.3455888616931328,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.15405765175819397,
+            1.1849849224090576,
+            0.048022933304309845
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.6178007930051536,
+      "targetBounds": [
+        [
+          0.11723051965236664,
+          1.0664238929748535,
+          -0.027162836864590645
+        ],
+        [
+          0.19827885925769806,
+          1.2610949277877808,
+          0.10840407013893127
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "serratus",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 336,
+      "roles": {
+        "body-surface": {
+          "count": 336,
+          "peakWeight": 1,
+          "changedColourCount": 336,
+          "meanHighlightedWeight": 0.6145537155458615
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          -0.19835063815116882,
+          1.0664305686950684,
+          -0.027748391032218933
+        ],
+        [
+          -0.1173054575920105,
+          1.2614054679870605,
+          0.10957834124565125
+        ]
+      ],
+      "weightedNormalZ": 0.3380630962706261,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.15364325046539307,
+            1.1851630210876465,
+            0.047916509211063385
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.6145537155458615,
+      "targetBounds": [
+        [
+          -0.19835063815116882,
+          1.0664305686950684,
+          -0.027748391032218933
+        ],
+        [
+          -0.1173054575920105,
+          1.2614054679870605,
+          0.10957834124565125
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "scapular",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 521,
+      "roles": {
+        "body-surface": {
+          "count": 521,
+          "peakWeight": 0.9992316961288452,
+          "changedColourCount": 521,
+          "meanHighlightedWeight": 0.7091198274418855
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          0.000015900310245342553,
+          1.141605257987976,
+          -0.11075092107057571
+        ],
+        [
+          0.17515422403812408,
+          1.4290934801101685,
+          -0.03764260187745094
+        ]
+      ],
+      "weightedNormalZ": -0.8748186178431607,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.08347741514444351,
+            1.3264203071594238,
+            -0.10439437627792358
+          ]
+        }
+      ],
+      "peakWeight": 0.9992316961288452,
+      "meanHighlightedWeight": 0.7091198274418855,
+      "targetBounds": [
+        [
+          0.000015900310245342553,
+          1.141605257987976,
+          -0.11075092107057571
+        ],
+        [
+          0.17515422403812408,
+          1.4290934801101685,
+          -0.03764260187745094
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "scapular",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 508,
+      "roles": {
+        "body-surface": {
+          "count": 508,
+          "peakWeight": 0.9997925162315369,
+          "changedColourCount": 508,
+          "meanHighlightedWeight": 0.7304657369441404
+        },
+        "clothing": {
+          "count": 0,
+          "peakWeight": 0,
+          "changedColourCount": 0,
+          "meanHighlightedWeight": 0
+        }
+      },
+      "bounds": [
+        [
+          -0.1748131662607193,
+          1.1415895223617554,
+          -0.1113329827785492
+        ],
+        [
+          -0.009181372821331024,
+          1.4291614294052124,
+          -0.03869447484612465
+        ]
+      ],
+      "weightedNormalZ": -0.8780386947766387,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.08307184278964996,
+            1.3265366554260254,
+            -0.1043810099363327
+          ]
+        }
+      ],
+      "peakWeight": 0.9997925162315369,
+      "meanHighlightedWeight": 0.7304657369441404,
+      "targetBounds": [
+        [
+          -0.1748131662607193,
+          1.1415895223617554,
+          -0.1113329827785492
+        ],
+        [
+          -0.009181372821331024,
+          1.4291614294052124,
+          -0.03869447484612465
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "obliques",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 236,
+      "roles": {
+        "body-surface": {
+          "count": 205,
+          "peakWeight": 0.9577678442001343,
+          "changedColourCount": 205,
+          "meanHighlightedWeight": 0.6345538274544041
+        },
+        "clothing": {
+          "count": 31,
+          "peakWeight": 0.6122586131095886,
+          "changedColourCount": 31,
+          "meanHighlightedWeight": 0.3997251074160299
+        }
+      },
+      "bounds": [
+        [
+          0.07173948734998703,
+          0.9110679626464844,
+          0.02705489471554756
+        ],
+        [
+          0.14882807433605194,
+          1.1322323083877563,
+          0.1189442053437233
+        ]
+      ],
+      "weightedNormalZ": 0.6337987371807361,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.12667499482631683,
+            1.0135947465896606,
+            0.082473024725914
+          ]
+        }
+      ],
+      "peakWeight": 0.9577678442001343,
+      "meanHighlightedWeight": 0.6037076820256346,
+      "targetBounds": [
+        [
+          0.07173948734998703,
+          0.9110679626464844,
+          0.02705489471554756
+        ],
+        [
+          0.14882807433605194,
+          1.1322323083877563,
+          0.1189442053437233
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "obliques",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 264,
+      "roles": {
+        "body-surface": {
+          "count": 229,
+          "peakWeight": 0.9562191963195801,
+          "changedColourCount": 229,
+          "meanHighlightedWeight": 0.6481188238968495
+        },
+        "clothing": {
+          "count": 35,
+          "peakWeight": 0.619189441204071,
+          "changedColourCount": 35,
+          "meanHighlightedWeight": 0.41908426114491054
+        }
+      },
+      "bounds": [
+        [
+          -0.1484971046447754,
+          0.9101749658584595,
+          0.025321654975414276
+        ],
+        [
+          -0.07140375673770905,
+          1.132476568222046,
+          0.11841125786304474
+        ]
+      ],
+      "weightedNormalZ": 0.627399214141279,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.1261979043483734,
+            1.0135222673416138,
+            0.08264719694852829
+          ]
+        }
+      ],
+      "peakWeight": 0.9562191963195801,
+      "meanHighlightedWeight": 0.6177543932289788,
+      "targetBounds": [
+        [
+          -0.1484971046447754,
+          0.9101749658584595,
+          0.025321654975414276
+        ],
+        [
+          -0.07140375673770905,
+          1.132476568222046,
+          0.11841125786304474
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "erectors",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 286,
+      "roles": {
+        "body-surface": {
+          "count": 232,
+          "peakWeight": 1,
+          "changedColourCount": 232,
+          "meanHighlightedWeight": 0.8101286443656889
+        },
+        "clothing": {
+          "count": 54,
+          "peakWeight": 1,
+          "changedColourCount": 54,
+          "meanHighlightedWeight": 0.71205983835238
+        }
+      },
+      "bounds": [
+        [
+          0.009848548099398613,
+          0.9221830368041992,
+          -0.10040532797574997
+        ],
+        [
+          0.08069716393947601,
+          1.2744486331939697,
+          -0.059206798672676086
+        ]
+      ],
+      "weightedNormalZ": -0.9549015159707188,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.04539652168750763,
+            1.065118670463562,
+            -0.06863872706890106
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7916121565170221,
+      "targetBounds": [
+        [
+          0.009848548099398613,
+          0.9221830368041992,
+          -0.10040532797574997
+        ],
+        [
+          0.08069716393947601,
+          1.2744486331939697,
+          -0.059206798672676086
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "erectors",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 289,
+      "roles": {
+        "body-surface": {
+          "count": 233,
+          "peakWeight": 1,
+          "changedColourCount": 233,
+          "meanHighlightedWeight": 0.8070952683815117
+        },
+        "clothing": {
+          "count": 56,
+          "peakWeight": 1,
+          "changedColourCount": 56,
+          "meanHighlightedWeight": 0.7059821135231427
+        }
+      },
+      "bounds": [
+        [
+          -0.08038238435983658,
+          0.92226642370224,
+          -0.10020973533391953
+        ],
+        [
+          -0.009451242163777351,
+          1.274518609046936,
+          -0.058801423758268356
+        ]
+      ],
+      "weightedNormalZ": -0.9544571950404768,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.044984206557273865,
+            1.0649893283843994,
+            -0.0687488541007042
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7875024079245267,
+      "targetBounds": [
+        [
+          -0.08038238435983658,
+          0.92226642370224,
+          -0.10020973533391953
+        ],
+        [
+          -0.009451242163777351,
+          1.274518609046936,
+          -0.058801423758268356
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "hip-flexors",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 430,
+      "roles": {
+        "body-surface": {
+          "count": 257,
+          "peakWeight": 1,
+          "changedColourCount": 257,
+          "meanHighlightedWeight": 0.7957786405132903
+        },
+        "clothing": {
+          "count": 173,
+          "peakWeight": 1,
+          "changedColourCount": 173,
+          "meanHighlightedWeight": 0.7042086756642844
+        }
+      },
+      "bounds": [
+        [
+          0.02212219312787056,
+          0.7629660367965698,
+          0.030194181948900223
+        ],
+        [
+          0.16633862257003784,
+          0.9822918176651001,
+          0.1301870197057724
+        ]
+      ],
+      "weightedNormalZ": 0.8265795166124625,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.09780186414718628,
+            0.8812624216079712,
+            0.09296402335166931
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7589377011670623,
+      "targetBounds": [
+        [
+          0.02212219312787056,
+          0.7629660367965698,
+          0.030194181948900223
+        ],
+        [
+          0.16633862257003784,
+          0.9822918176651001,
+          0.1301870197057724
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "hip-flexors",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 463,
+      "roles": {
+        "body-surface": {
+          "count": 282,
+          "peakWeight": 1,
+          "changedColourCount": 282,
+          "meanHighlightedWeight": 0.7805117558925709
+        },
+        "clothing": {
+          "count": 181,
+          "peakWeight": 1,
+          "changedColourCount": 181,
+          "meanHighlightedWeight": 0.7116871158391731
+        }
+      },
+      "bounds": [
+        [
+          -0.1661149114370346,
+          0.7628769874572754,
+          0.030229976400732994
+        ],
+        [
+          -0.021835530176758766,
+          0.9821603298187256,
+          0.13016626238822937
+        ]
+      ],
+      "weightedNormalZ": 0.8195448359763593,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.09743504226207733,
+            0.8812669515609741,
+            0.09273485094308853
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7536062270596012,
+      "targetBounds": [
+        [
+          -0.1661149114370346,
+          0.7628769874572754,
+          0.030229976400732994
+        ],
+        [
+          -0.021835530176758766,
+          0.9821603298187256,
+          0.13016626238822937
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "quadriceps",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 514,
+      "roles": {
+        "body-surface": {
+          "count": 454,
+          "peakWeight": 1,
+          "changedColourCount": 454,
+          "meanHighlightedWeight": 0.7238189428388284
+        },
+        "clothing": {
+          "count": 60,
+          "peakWeight": 0.8022456765174866,
+          "changedColourCount": 60,
+          "meanHighlightedWeight": 0.5229412913322449
+        }
+      },
+      "bounds": [
+        [
+          0.03635064512491226,
+          0.4406853914260864,
+          0.0000953095150180161
+        ],
+        [
+          0.18823009729385376,
+          0.7952221632003784,
+          0.12595850229263306
+        ]
+      ],
+      "weightedNormalZ": 0.7190267548796642,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.10959009826183319,
+            0.6058772206306458,
+            0.09132109582424164
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7003701897446747,
+      "targetBounds": [
+        [
+          0.03635064512491226,
+          0.4406853914260864,
+          0.0000953095150180161
+        ],
+        [
+          0.18823009729385376,
+          0.7952221632003784,
+          0.12595850229263306
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "quadriceps",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 512,
+      "roles": {
+        "body-surface": {
+          "count": 452,
+          "peakWeight": 1,
+          "changedColourCount": 452,
+          "meanHighlightedWeight": 0.7175356959017505
+        },
+        "clothing": {
+          "count": 60,
+          "peakWeight": 0.7972081303596497,
+          "changedColourCount": 60,
+          "meanHighlightedWeight": 0.5192522257566452
+        }
+      },
+      "bounds": [
+        [
+          -0.18803063035011292,
+          0.4405211806297302,
+          0.003921307623386383
+        ],
+        [
+          -0.037059199064970016,
+          0.7951498627662659,
+          0.1260189414024353
+        ]
+      ],
+      "weightedNormalZ": 0.7116428552323663,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.10923363268375397,
+            0.6051114201545715,
+            0.09060125797986984
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.6942993517441209,
+      "targetBounds": [
+        [
+          -0.18803063035011292,
+          0.4405211806297302,
+          0.003921307623386383
+        ],
+        [
+          -0.037059199064970016,
+          0.7951498627662659,
+          0.1260189414024353
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "glutes",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 594,
+      "roles": {
+        "body-surface": {
+          "count": 315,
+          "peakWeight": 1,
+          "changedColourCount": 315,
+          "meanHighlightedWeight": 0.7759874641422242
+        },
+        "clothing": {
+          "count": 279,
+          "peakWeight": 1,
+          "changedColourCount": 279,
+          "meanHighlightedWeight": 0.7609325543740317
+        }
+      },
+      "bounds": [
+        [
+          0.009559080004692078,
+          0.7608562707901001,
+          -0.11653997749090195
+        ],
+        [
+          0.16611918807029724,
+          1.0060759782791138,
+          0.01028725691139698
+        ]
+      ],
+      "weightedNormalZ": -0.772453609269078,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.10193444788455963,
+            0.8992112874984741,
+            -0.07121003419160843
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7689162186450429,
+      "targetBounds": [
+        [
+          0.009559080004692078,
+          0.7608562707901001,
+          -0.11653997749090195
+        ],
+        [
+          0.16611918807029724,
+          1.0060759782791138,
+          0.01028725691139698
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "glutes",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 611,
+      "roles": {
+        "body-surface": {
+          "count": 325,
+          "peakWeight": 1,
+          "changedColourCount": 325,
+          "meanHighlightedWeight": 0.7775888985853929
+        },
+        "clothing": {
+          "count": 286,
+          "peakWeight": 1,
+          "changedColourCount": 286,
+          "meanHighlightedWeight": 0.7614351090017732
+        }
+      },
+      "bounds": [
+        [
+          -0.1655089557170868,
+          0.7608969211578369,
+          -0.11657273769378662
+        ],
+        [
+          -0.008994854986667633,
+          1.0060173273086548,
+          0.010174421593546867
+        ]
+      ],
+      "weightedNormalZ": -0.758214719396056,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.10301999002695084,
+            0.8848362565040588,
+            -0.07229677587747574
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.770027550269656,
+      "targetBounds": [
+        [
+          -0.1655089557170868,
+          0.7608969211578369,
+          -0.11657273769378662
+        ],
+        [
+          -0.008994854986667633,
+          1.0060173273086548,
+          0.010174421593546867
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "hip-rotators",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 611,
+      "roles": {
+        "body-surface": {
+          "count": 231,
+          "peakWeight": 1,
+          "changedColourCount": 231,
+          "meanHighlightedWeight": 0.7976499061821859
+        },
+        "clothing": {
+          "count": 380,
+          "peakWeight": 1,
+          "changedColourCount": 380,
+          "meanHighlightedWeight": 0.7797367340247882
+        }
+      },
+      "bounds": [
+        [
+          0.07690457999706268,
+          0.7649674415588379,
+          -0.10732321441173553
+        ],
+        [
+          0.18453605473041534,
+          0.9625614285469055,
+          0.055431053042411804
+        ]
+      ],
+      "weightedNormalZ": -0.16233465024284643,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.1532333642244339,
+            0.8747299909591675,
+            -0.038205355405807495
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7865091444476342,
+      "targetBounds": [
+        [
+          0.07690457999706268,
+          0.7649674415588379,
+          -0.10732321441173553
+        ],
+        [
+          0.18453605473041534,
+          0.9625614285469055,
+          0.055431053042411804
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "hip-rotators",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 655,
+      "roles": {
+        "body-surface": {
+          "count": 246,
+          "peakWeight": 1,
+          "changedColourCount": 246,
+          "meanHighlightedWeight": 0.7862124967623533
+        },
+        "clothing": {
+          "count": 409,
+          "peakWeight": 1,
+          "changedColourCount": 409,
+          "meanHighlightedWeight": 0.7732344660680277
+        }
+      },
+      "bounds": [
+        [
+          -0.18720166385173798,
+          0.7650133371353149,
+          -0.1073497012257576
+        ],
+        [
+          -0.07673443108797073,
+          0.9625400304794312,
+          0.0553475022315979
+        ]
+      ],
+      "weightedNormalZ": -0.16174688551978472,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.15229864418506622,
+            0.8746910095214844,
+            -0.03792208805680275
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7781086577486446,
+      "targetBounds": [
+        [
+          -0.18720166385173798,
+          0.7650133371353149,
+          -0.1073497012257576
+        ],
+        [
+          -0.07673443108797073,
+          0.9625400304794312,
+          0.0553475022315979
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "adductors",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 583,
+      "roles": {
+        "body-surface": {
+          "count": 421,
+          "peakWeight": 1,
+          "changedColourCount": 421,
+          "meanHighlightedWeight": 0.7962277579052714
+        },
+        "clothing": {
+          "count": 162,
+          "peakWeight": 0.9932768940925598,
+          "changedColourCount": 162,
+          "meanHighlightedWeight": 0.673251916412954
+        }
+      },
+      "bounds": [
+        [
+          0.002302309963852167,
+          0.49117112159729004,
+          -0.07510707527399063
+        ],
+        [
+          0.09674245864152908,
+          0.807226836681366,
+          0.08977159857749939
+        ]
+      ],
+      "weightedNormalZ": -0.06598437647447795,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.02798008732497692,
+            0.665151834487915,
+            -0.014748683199286461
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.76205608325389,
+      "targetBounds": [
+        [
+          0.002302309963852167,
+          0.49117112159729004,
+          -0.07510707527399063
+        ],
+        [
+          0.09674245864152908,
+          0.807226836681366,
+          0.08977159857749939
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "adductors",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 573,
+      "roles": {
+        "body-surface": {
+          "count": 427,
+          "peakWeight": 1,
+          "changedColourCount": 427,
+          "meanHighlightedWeight": 0.7922336267573493
+        },
+        "clothing": {
+          "count": 146,
+          "peakWeight": 0.9875128269195557,
+          "changedColourCount": 146,
+          "meanHighlightedWeight": 0.6588857576046905
+        }
+      },
+      "bounds": [
+        [
+          -0.09916625171899796,
+          0.49116286635398865,
+          -0.074326291680336
+        ],
+        [
+          -0.00238950178027153,
+          0.8071654438972473,
+          0.08963926136493683
+        ]
+      ],
+      "weightedNormalZ": -0.013226358245373425,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.023539217188954353,
+            0.6637136936187744,
+            -0.0017268822994083166
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7582566827847695,
+      "targetBounds": [
+        [
+          -0.09916625171899796,
+          0.49116286635398865,
+          -0.074326291680336
+        ],
+        [
+          -0.00238950178027153,
+          0.8071654438972473,
+          0.08963926136493683
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": null,
+      "passed": true
+    },
+    {
+      "groupId": "hamstrings",
+      "side": "left",
+      "shown": true,
+      "highlightedVertices": 635,
+      "roles": {
+        "body-surface": {
+          "count": 489,
+          "peakWeight": 1,
+          "changedColourCount": 489,
+          "meanHighlightedWeight": 0.7580594101078915
+        },
+        "clothing": {
+          "count": 146,
+          "peakWeight": 1,
+          "changedColourCount": 146,
+          "meanHighlightedWeight": 0.7511309816004479
+        }
+      },
+      "bounds": [
+        [
+          0.0452030673623085,
+          0.44640085101127625,
+          -0.0988030955195427
+        ],
+        [
+          0.19938082993030548,
+          0.8452820181846619,
+          0.005177142098546028
+        ]
+      ],
+      "weightedNormalZ": -0.768993134000038,
+      "anchors": [
+        {
+          "side": "left",
+          "position": [
+            0.13272549211978912,
+            0.6499487161636353,
+            -0.06129063665866852
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.7564664170967312,
+      "targetBounds": [
+        [
+          0.0452030673623085,
+          0.44640085101127625,
+          -0.0988030955195427
+        ],
+        [
+          0.19938082993030548,
+          0.8452820181846619,
+          0.005177142098546028
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    },
+    {
+      "groupId": "hamstrings",
+      "side": "right",
+      "shown": true,
+      "highlightedVertices": 635,
+      "roles": {
+        "body-surface": {
+          "count": 490,
+          "peakWeight": 1,
+          "changedColourCount": 490,
+          "meanHighlightedWeight": 0.7565156149316807
+        },
+        "clothing": {
+          "count": 145,
+          "peakWeight": 1,
+          "changedColourCount": 145,
+          "meanHighlightedWeight": 0.7551079815831677
+        }
+      },
+      "bounds": [
+        [
+          -0.19928845763206482,
+          0.4463517963886261,
+          -0.09892228245735168
+        ],
+        [
+          -0.045347604900598526,
+          0.8452989459037781,
+          0.004085767548531294
+        ]
+      ],
+      "weightedNormalZ": -0.7691606774817,
+      "anchors": [
+        {
+          "side": "right",
+          "position": [
+            -0.13241717219352722,
+            0.6499303579330444,
+            -0.061494890600442886
+          ]
+        }
+      ],
+      "peakWeight": 1,
+      "meanHighlightedWeight": 0.756194186844225,
+      "targetBounds": [
+        [
+          -0.19928845763206482,
+          0.4463517963886261,
+          -0.09892228245735168
+        ],
+        [
+          -0.045347604900598526,
+          0.8452989459037781,
+          0.004085767548531294
+        ]
+      ],
+      "correctSide": true,
+      "frontBackCorrect": true,
+      "passed": true
+    }
+  ],
+  "observations": {
+    "parseCalls": 4,
+    "fetchCounts": {
+      "/anatomy/fitness-reference.json": 6,
+      "/anatomy/fitness-reference.glb": 6
+    },
+    "sourceMeshesChecked": 399,
+    "sourceGeometryDisposals": 0,
+    "sourceMaterialDisposals": 0,
+    "clothingHighlighted": [
+      {
+        "groupId": "obliques",
+        "side": "left",
+        "vertices": 31
+      },
+      {
+        "groupId": "obliques",
+        "side": "right",
+        "vertices": 35
+      },
+      {
+        "groupId": "erectors",
+        "side": "left",
+        "vertices": 54
+      },
+      {
+        "groupId": "erectors",
+        "side": "right",
+        "vertices": 56
+      },
+      {
+        "groupId": "hip-flexors",
+        "side": "left",
+        "vertices": 173
+      },
+      {
+        "groupId": "hip-flexors",
+        "side": "right",
+        "vertices": 181
+      },
+      {
+        "groupId": "quadriceps",
+        "side": "left",
+        "vertices": 60
+      },
+      {
+        "groupId": "quadriceps",
+        "side": "right",
+        "vertices": 60
+      },
+      {
+        "groupId": "glutes",
+        "side": "left",
+        "vertices": 279
+      },
+      {
+        "groupId": "glutes",
+        "side": "right",
+        "vertices": 286
+      },
+      {
+        "groupId": "hip-rotators",
+        "side": "left",
+        "vertices": 380
+      },
+      {
+        "groupId": "hip-rotators",
+        "side": "right",
+        "vertices": 409
+      },
+      {
+        "groupId": "adductors",
+        "side": "left",
+        "vertices": 162
+      },
+      {
+        "groupId": "adductors",
+        "side": "right",
+        "vertices": 146
+      },
+      {
+        "groupId": "hamstrings",
+        "side": "left",
+        "vertices": 146
+      },
+      {
+        "groupId": "hamstrings",
+        "side": "right",
+        "vertices": 145
+      }
+    ],
+    "metadataClothingExclusionNote": null
+  },
+  "limitations": [
+    "Real local GLB parsing and real geometry/attribute diagnosis; no browser or WebGL shader compilation.",
+    "Nonzero weights establish painted vertices, not unobstructed visibility; occlusion, material appearance and responsive inspector layout require root browser acceptance.",
+    "Ellipsoidal paint marks broad locations; it does not validate precise anatomical segmentation or muscle activation.",
+    "This diagnosis observes production API outputs rather than reimplementing region formulas."
+  ]
+}

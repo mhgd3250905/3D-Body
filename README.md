@@ -8,15 +8,39 @@
 
 也可以在当前目录运行 `npm start`。端口被占用时，运行 `node tools/server.mjs --port 8811` 并打开对应地址。请通过本地服务打开，不要直接双击 `dist/index.html`。
 
+从 GitHub 首次克隆时，先运行 `npm ci` 和 `npm run build`，再运行 `npm start`；生成的 `dist` 不纳入 Git。接手当前成果、恢复阶段1完整轨迹、核对模型与了解本地 Blender 文件范围，请先读 [项目交接](docs/handoff-2026-10-07.md)。
+
+构建要求 Node.js `^20.19.0 || >=22.12.0`，当前验证使用 Node.js 24.15.0。
+
 ## 使用
 
-三维场景铺满窗口，左侧“步骤”栏和右侧“调整”栏可以独立开关，H 或右上角眼睛按钮同时收起／恢复两栏；全屏按钮可进入浏览器全屏。手机上一次显示一侧，载入姿势后自动收起侧栏，留出完整画布。所有模式、步骤、数值调整和训练说明都放在侧栏中。
+三维场景铺满窗口，左侧“步骤”栏和右侧“调整”栏可以独立开关，H 或右上角眼睛按钮同时收起／恢复两栏；全屏按钮可进入浏览器全屏。手机上一次显示一侧，载入姿势后自动收起侧栏，留出完整画布。模式选择、步骤编辑与数值调整放在侧栏中；动态肌群标签直接在动画画布中查看。
 
 默认进入“动作分解”，暂停显示你保存的原第 09 步后双撑。“肌群探索”提供 8 个 Flare 功能肌群，选择后显示对应的真实局部网格，右侧提供肌肉功能及相关练习。拖动空白处旋转、滚轮缩放，点击局部网格查看独立解剖名称。“完整人物”返回卡通人物，正面／背面／侧面按钮调整视角。Snow 与解剖参考的比例不同，局部解剖以单独细节视图呈现，不宣称两者精确配准。
 
 动作分解和姿势编辑共用正前方略俯视的推荐机位，按整组动作确定视距。切换步骤、播放或暂停保持镜头；手动旋转和缩放也会保留，点“复位镜头”恢复推荐机位。界面主色为蓝色。
 
-人物穿浅灰色上衣和哑光黑色短裤，柔和的布料反光减弱裤裆褶皱的明暗，保留已有姿势和服装轮廓。
+**发力提示** 直接叠加在现有动画中，默认开启。青蓝表示肩臂支撑，淡紫表示核心协调，青柠表示髋腿摆动。默认只保留身体上的柔和功能色区与小热点，不常驻文字卡片和长引线。鼠标移到发力区域或热点后，在人物旁展开这一组的具体肌群、当前作用与两个观察点；悬浮一次只显示一张卡片和最多一条对应引线，身体与卡片的同色编号辅助识别。从身体移到卡片有短暂关闭延迟，卡片屏幕尺寸受控，拉近镜头仍可阅读。
+
+点击发力区域或热点，会暂停在当前姿态并展开**全息肌群浮窗**。默认显示 Blender Studio 官方 Human Base Meshes 的完整 Realistic 男性人物，采用浅色低反光皮肤和哑光深蓝运动短裤，保留同源头、耳、颈、躯干、双臂与手足；派生面部低细节处理并闭合眼口深凹，不显示独立眼睛，官方源库中的原眼结构仍保留。体表与覆盖相关部位的服饰表面显示功能定位色区，静态短裤可提示其覆盖的髋前和臀部位置；深层肌群是所在部位示意，色区不是肌肉边界。具体肌群名称、左右与当前作用在窗口中查看。局部查看通过独立镜头放大完成，全身模型保留在场景中。
+
+左下角是同一场景实时渲染的 **3D 全身定位图**，点 **查看全身／返回局部** 切换取景；浮窗内有 **正面／背面** 与独立旋转、缩放、复位。切到 **解剖结构**，可查看原 BodyParts3D 肌群与同源完整体表，保留源名称、人体本人左右、原网格和原坐标。底部固定对应练法入口，点 **查看要点** 查看名称、目标、要点与步骤，点 **返回部位** 回到人体；训练只提供文字，不新增训练动作模型。
+
+默认人物由本地 Three.js `GLTFLoader` 读取 `public/anatomy/fitness-reference.glb`，来源、改动和校验记录在 `fitness-reference.json`；官方底模许可为 CC0，仅用于独立静态参考窗。表面色区是教学位置示意，不是内部肌肉几何或肌电测量。Realistic 人物与 BodyParts3D、Snow 使用独立模型，未做精确配准；原 BodyParts3D 二进制肌群和 `muscle-reference.glb` 继续保留在解剖结构模式，缺失肌肉仍注明。点击关闭或按 Esc 返回动画并保持暂停；播放或定位到其他时刻时收起浮窗。原动画时间、姿态、K 和路线保留，主镜头不因开关浮窗改变。
+
+最终静态参考为 **2 个网格、81,002 个三角形，约 2.52 MB（2,523,408 字节）**，只含身体和短裤。GLB SHA-256：`47b9427d19d82cb4f573196028e1513c20b719c41a2a5fd961579360412f442d`；实际来源与重建见 [docs/anatomy-assets.md](docs/anatomy-assets.md)。
+
+撑手接触环与摆腿短弧跟随当前实际动画，暂停后装饰也停止。可用画布底部的播放按钮、时间轴和速度控制暂停查看，也可用空格播放／暂停。右上角“发力提示”只开关这层导览，不改变原时间或机位。支撑信息以当前实际锁手为准，颜色与箭头大小不表示力值或肌电强度；新浏览器如需阶段1结果，仍须导入下面的快照。
+
+第二阶段以动画为主要入口：底部 **09–16** 可直接暂停到对应关键节点；**循环这段** 反复播放该节点到下一个仍启用的原节点，中间 K 与路线继续参与，点 **恢复整圈** 返回完整循环。拖动整圈时间轴会退出单段循环。首尾重复的第 09 步共用开头的 09→10 讲解区间。
+
+2026-10-07 按用户要求，当前优先优化托马斯动画、肌群提示和动态标签，**训练建模入口从标签中收起**。已有五种基础训练示范代码与教学数据保留，本轮不继续制作或扩展训练动作。摆腿箭头跟随保存动画的当前相对运动方向，停住的腿不显示摆动箭头；主动作 Snow 的短裤始终保持原哑光黑色，不参加功能着色。
+
+内容按动作任务提供训练参考与自查线索，不由某帧直接诊断肌肉偏弱。依据、适用范围及五种示范与后续练法的关系见 [第二阶段教学依据](docs/movement-teaching.md)，[离线公开副本](public/movement-teaching.md) 内容一致。
+
+原托马斯的悬浮卡片仍按用户自己的播放／暂停操作观察，不自动暂停。标签内的 **暂停／继续** 和 **反复看** 复用当前动画；**肌群分工** 可查看各肌群的具体作用。
+
+主动作 Snow 人物穿浅灰色上衣和哑光黑色短裤，柔和的布料反光减弱裤裆褶皱的明暗，保留已有姿势和服装轮廓。发力提示使用功能色区与低亮轮廓提色，不增加肌肉形状或额外发光；Snow 黑短裤不着色，上衣不会被髋腿色区染色，髋部的肌群与动作方向由卡片、引线和箭头说明。独立静态参考的深蓝短裤可作覆盖部位的功能位置提示，两种显示范围分别管理。
 
 “动作分解”使用你确认的完整循环 **9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 9**，最后一帧与第一帧是同一个原第 09 步。左侧显示各姿势的原步骤编号；拖动 9 秒慢放时间轴或用空格播放／暂停。四类支撑入口依次为后双撑、第一侧单手、前双撑、第二侧单手。“辅助训练”提供从掌根承重、主动推地、左右移重到分段全旋的 8 类练习。右上角“保存视图”将当前三维画面保存为 PNG。
 
@@ -89,17 +113,19 @@ node tools/verify-saved-loop-ui.mjs --module-only
 
 | 主题 | 当前来源 |
 | --- | --- |
+| 本次 GitHub 保存、运行步骤、阶段1恢复与下一会话约束 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[真实结果与核查证据](docs/evidence/2026-10-07/README.md) |
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
-| 解剖来源、覆盖范围与二进制校验 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
+| 默认静态健身人物、解剖结构来源、覆盖范围与加载 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
 | 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |
 | 动画 K 帧、时间轴、过渡备份与路径 | [docs/animation-editor.md](docs/animation-editor.md) |
 | 阶段1用户确认的完整动画 | [托马斯/阶段1-可用动画-2026-10-06.json](托马斯/阶段1-可用动画-2026-10-06.json)；通过动画 JSON 导入恢复，包含修改后的原帧、K 和路线 |
 | 数学周期轨迹、交替支撑与试验对比 | [docs/periodic-flare.md](docs/periodic-flare.md) |
 | 原第 9–16 步正式循环、来源与迁移 | [docs/flare-pose-presets.md](docs/flare-pose-presets.md)、[public/coach/flare-sequence.json](public/coach/flare-sequence.json)；用户导出源为 `托马斯/16.json` |
 | 肌群功能、训练依据与证据范围 | [docs/flare-research.md](docs/flare-research.md)；[public/research.md](public/research.md) 是内容一致的离线公开副本 |
+| 动画发力提示、阶段观察点与基础训练示范 | [docs/movement-teaching.md](docs/movement-teaching.md)；[public/movement-teaching.md](public/movement-teaching.md) 是一致的离线副本 |
 
 [docs/anatomy-landmarks.md](docs/anatomy-landmarks.md) 保留此前 BodyParts3D 自动绑定试验；[docs/ready-made-models.md](docs/ready-made-models.md)、[docs/rigged-model-options.md](docs/rigged-model-options.md)、[docs/skin-first-anatomy-options.md](docs/skin-first-anatomy-options.md) 保留此前资产选型。它们不是当前展示方案，价格与外部平台信息仅代表当时核查记录，本项目没有采购。
 
 可编辑 Blender 场景在 `assets/coach/flare-coach.blend`，原始 Snow 场景在 `assets/blender-studio-source/`，此前渲染在 `output/blender/coach-preview.png`。Git 保存当前代码、运行资产、文档与 `托马斯/` 的原始 JSON 导出和阶段动画快照；生成的 `dist/`、`output/`、下载素材、Blender 场景、缓存和 `托马斯/备份/` 留在本地且被忽略，不包含在 Git 提交中。原始素材和备份没有删除或重建。
 
-卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。本项目未发布或部署远程站点。
+卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。默认静态参考：**Human Base Meshes v1.4.1，Blender Studio 与社区贡献者**，CC0，采用 Realistic male 并在本机调整材质与运动短裤。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。本项目未发布或部署远程站点。
