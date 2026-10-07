@@ -17,7 +17,7 @@ const items = flare ? flareItems() : [
 ];
 const viewer = createMuscleViewer({ debugTools: query.has("tools"),
   container: document.getElementById('muscle-viewer'),
-  title: query.get('title') ?? (flare ? '托马斯全旋 · 核心肌群' : '目标肌群'), subtitle: query.get('subtitle') ?? (flare ? 'Flare · 3D 肌群位置' : '3D 位置示意'),
+  title: query.get('title') ?? (flare ? '托马斯全旋 · 核心肌群' : '目标肌群'), subtitle: query.get('subtitle') ?? (flare ? '3D 肌群位置' : '3D 位置示意'),
   items, ...(flare ? { sections: FLARE_SECTIONS, filters: flareFilters(), filter: query.get('filter') } : {}), accent: query.get('accent') ?? '#ff5a36', debug: query.has('debug'),
 });
 const wait = setInterval(() => {
