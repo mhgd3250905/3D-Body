@@ -1,5 +1,6 @@
-// Full-screen, phone-first 3D muscle viewer. A smooth CC0 body (Blender
-// Studio base mesh) with a fitness-app style muscle map drawn per pixel by
+// Full-screen, phone-first 3D muscle viewer. A smooth, gender-neutral
+// shop-window mannequin (derived offline from the CC0 Blender Studio base
+// mesh by tools/mannequin/build_mannequin.py) with a fitness-app style muscle map drawn per pixel by
 // muscle-map.js. Colours show WHERE a muscle group sits — never activation,
 // force or EMG. Offline: the model is served from /anatomy.
 import * as THREE from 'three';
@@ -8,7 +9,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { MUSCLE_BY_ID, applyMuscleMap, createMuscleUniforms, muscleAt, resolveGroup, setMuscleColour, setMuscleFocus, setMuscleSelection } from './muscle-map.js';
 import './muscle-viewer.css';
 
-const MODEL_URL = '/anatomy/fitness-reference.glb';
+const MODEL_URL = '/anatomy/mannequin-reference.glb';
 const LEVELS = { primary: '主要', secondary: '辅助', deep: '深层' };
 const SIDES = { left: '左侧', right: '右侧', both: '双侧' };
 const ICON = {
@@ -401,9 +402,9 @@ export function createMuscleViewer({ container, title = '目标肌群', subtitle
     if (disposed) return;
     model.traverse(object => {
       if (!object.isMesh) return;
-      const role = object.userData.partRole ?? object.userData.role;const clothing = role === 'clothing';
-      const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: clothing ? .85 : .6, metalness: 0, alphaToCoverage: clothing });
-      applyMuscleMap(material, uniforms, { clothing });object.material = material;meshes.push(object);
+      // one clean matte mannequin surface (no clothing in this asset)
+      const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .72, metalness: 0 });
+      applyMuscleMap(material, uniforms);object.material = material;meshes.push(object);
     });
     body.add(model);loaded = true;status.hidden = true;root.dataset.ready = 'true';intro();
   }).catch(error => { status.textContent = error.message || '人体模型未能载入';root.dataset.ready = 'error'; });

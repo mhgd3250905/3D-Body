@@ -1,0 +1,43 @@
+{
+  "source": "Blender Studio Human Base Meshes (via public/anatomy/fitness-reference.glb)",
+  "sourceId": "GEO-body_male_realistic",
+  "license": "CC0-1.0",
+  "units": "meters",
+  "upAxis": "+Y",
+  "frontAxis": "+Z",
+  "usedBy": "muscle viewer (src/muscle-viewer.js)",
+  "look": "gender-neutral shop-window mannequin: no clothing, smooth one-piece groin without sex features, faceless head, clean matte surface",
+  "parts": [
+    {
+      "name": "Fitness_Body_Surface",
+      "partRole": "body-surface",
+      "vertices": 37078,
+      "triangles": 74152
+    }
+  ],
+  "bounds": {
+    "min": [
+      -0.44132739305496216,
+      0.0,
+      -0.11125223335848608
+    ],
+    "max": [
+      0.4413275718688965,
+      1.6900274448515784,
+      0.17975743114948273
+    ]
+  },
+  "glbBytes": 1336352,
+  "glbSha256": "de698e9104fad9b31224938d628180fff2df95f03a6ea789cda4be432b8a41c5",
+  "modifications": [
+    "Shorts mesh and unused UVs removed; UV-seam duplicates welded; a loose 63-vertex mouth-cap shell dropped.",
+    "Groin/perineum: biharmonic fairing of 331 vertices -> smooth continuous mannequin surface.",
+    "Face (4530 vertices) and ears incl. canals (2832 vertices): radial re-fill about a head ellipsoid (membrane directions, harmonic radius) -> faceless head.",
+    "Soft blend band around faired patches, Laplacian smoothing of the head/neck junction, Taubin smoothing of the lower belly and a gentle whole-body Taubin pass (hands/feet protected); smooth vertex normals."
+  ],
+  "limits": [
+    "Static reference pose; proportions remain those of the source base mesh (broad shoulders).",
+    "Muscle panels are drawn per pixel by src/muscle-map.js: location only, never EMG or effort."
+  ],
+  "tool": "tools/mannequin/build_mannequin.py"
+}

@@ -1,6 +1,7 @@
-// Fitness-app style muscle map drawn on the smooth CC0 body (Blender Studio
-// base mesh). Each muscle is a soft, pillow-shaped panel; panels are separated
-// by clean grooves. Everything is computed per PIXEL from the surface position
+// Fitness-app style muscle map drawn on the smooth mannequin body (derived
+// from the CC0 Blender Studio base mesh). Each muscle is a soft panel; panels
+// meet in gentle, shallow valleys with a short colour feather instead of hard
+// groove lines, so the body stays clean and refined up close. Everything is computed per PIXEL from the surface position
 // (an anisotropic-ellipsoid Voronoi), so edges stay smooth at any zoom and on
 // any phone — no realistic sculpted muscle geometry, no jagged mesh borders.
 // It shows WHERE a muscle group sits, not how hard it works (not EMG).
@@ -12,7 +13,8 @@ import * as THREE from 'three';
 // [id, name, family, centre, radius, tiltZ (rad, + leans top outward), tiltX (rad), flags]
 // family: panels of one family are split by a fine inner line, not a groove.
 // flags: m = mirror seam is a groove (midline), a = abdominal segments,
-//        k = plain skin blocker, c = also shown through the shorts.
+//        k = plain blocker (head, hands, feet, joints stay unmarked),
+//        c = legacy flag from the dressed body (hip panels under the shorts).
 const RAW = [
   // skin (plain, never highlighted): head, hands, feet, knees, elbows
   ['skinHead', '', 'skin', [.000, 1.600, .010], [.105, .125, .125], 0, 0, 'k'],
@@ -124,8 +126,8 @@ export function createMuscleUniforms() {
     mmState: { value: MUSCLES.map(() => new THREE.Vector4(0, 0, 0, 0)) }, mmCol: { value: MUSCLES.map(() => new THREE.Color('#ff5a36')) }, mmMulti: { value: 0 },
     mmScale: { value: 1 }, mmTime: { value: 0 }, mmReveal: { value: 1 }, mmDebug: { value: 0 },
     mmAccent: { value: new THREE.Color('#ff5a36') }, mmAccent2: { value: new THREE.Color('#ffae5c') },
-    mmBase: { value: new THREE.Color('#939dab') }, mmSkin: { value: new THREE.Color('#7f8896') }, mmGroove: { value: new THREE.Color('#3f4859') },
-    mmFabric: { value: new THREE.Color('#1a2130') },
+    // one clean matte mannequin tone everywhere (no separate skin/clothing tones)
+    mmBase: { value: new THREE.Color('#9aa3b0') }, mmSkin: { value: new THREE.Color('#9aa3b0') }, mmGroove: { value: new THREE.Color('#56607a') },
   };
 }
 
@@ -134,122 +136,115 @@ const GLSL_HEAD = `
 uniform vec3 mmC[MM_N]; uniform vec3 mmR[MM_N]; uniform vec4 mmT[MM_N]; uniform vec4 mmF[MM_N];
 uniform vec4 mmState[MM_N]; uniform vec3 mmCol[MM_N]; uniform float mmMulti;
 uniform float mmScale; uniform float mmTime; uniform float mmReveal; uniform float mmDebug;
-uniform vec3 mmAccent; uniform vec3 mmAccent2; uniform vec3 mmBase; uniform vec3 mmSkin; uniform vec3 mmGroove; uniform vec3 mmFabric;
+uniform vec3 mmAccent; uniform vec3 mmAccent2; uniform vec3 mmBase; uniform vec3 mmSkin; uniform vec3 mmGroove;
 varying vec3 vMmPos;
-vec3 mmPc; float mmDimV; float mmS1; float mmEdge; float mmCloth; float mmRevealT; float mmSelV; float mmGrooveV; float mmIsMuscle; float mmFocusV; float mmCore; float mmShown; float mmIdx;
+// results of mmEval(): blended surface colour and emissive glow (no normal
+// perturbation: the mannequin geometry carries the shape, so no faceting or
+// derivative sparkles at panel borders up close)
+vec3 mmColour; vec3 mmGlow; float mmFront;
 vec3 mmHue(float i){ return 0.55 + 0.45 * cos(6.2831 * (i * 0.137 + vec3(0.0, 0.33, 0.67))); }
+float mmHatch(){
+  float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);
+  return smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);
+}
+// Colour + glow of one panel (i < 0: plain mannequin surface between panels).
+vec3 mmPanel(int i, float s, float sd, float shown, float hatch, out vec3 glow){
+  glow = vec3(0.0);
+  if (i < 0 || mmF[i].x < 0.5) return mmBase;
+  vec4 st = mmState[i];
+  float on = (st.y == 0.0 || st.y == sd) ? 1.0 : 0.0;
+  float sel = st.x * on, focus = st.z * on, dim = st.w;
+  float primary = step(0.9, sel), secondary = step(0.3, sel) * (1.0 - primary), deep = step(sel, -0.5);
+  float anySel = primary + secondary + deep;
+  vec3 pc = mmCol[i]; float core = smoothstep(0.0, 0.6, s);
+  vec3 hot = mmMulti > 0.5 ? pc * mix(0.80, 0.90, core) : mix(mmAccent2, pc, 0.55 + 0.45 * core);
+  vec3 col = mmBase;
+  col = mix(col, hot, primary * shown);
+  col = mix(col, mix(mmBase, pc, 0.52), secondary * shown);
+  col = mix(col, mix(mmBase, pc, 0.80), deep * shown * mix(0.18, 1.0, hatch));
+  col = mix(col, mix(mmBase, col, 0.10), dim * anySel * shown);
+  if (mmDebug > 0.5) col = mmHue(float(i));
+  float pulse = 0.5 + 0.5 * sin(mmTime * 2.4);
+  float lit = (step(0.3, sel) + deep * 0.6) * shown * (1.0 - 0.85 * dim);
+  glow = pc * lit * (0.10 + 0.08 * pulse + 0.40 * focus * pulse);
+  return col;
+}
+// Panels come from an anisotropic-ellipsoid Voronoi evaluated per pixel. The
+// two best panels are cross-faded across their border (no hard seam, no
+// groove line): a short colour feather plus a wide, very shallow tonal valley
+// that follows the panel shapes like a soft muscle edge.
 void mmEval(){
   vec3 p = vec3(abs(vMmPos.x), vMmPos.y, vMmPos.z) * mmScale; float sd = vMmPos.x >= 0.0 ? 1.0 : -1.0;
-  float b1 = -9.0, b2 = -9.0; int i1 = 0, i2 = 0;
+  // best three panels; the plain surface competes as panel -1 with score 0
+  float b1 = 0.0, b2 = -9.0, b3 = -9.0, b4 = -9.0; int i1 = -1, i2 = -1, i3 = -1; float best = -9.0;
   for (int i = 0; i < MM_N; i++) {
     vec3 d = p - mmC[i]; vec4 t = mmT[i];
     d.xy = vec2(d.x * t.x + d.y * t.y, d.y * t.x - d.x * t.y);
     d.yz = vec2(d.y * t.z + d.z * t.w, d.z * t.z - d.y * t.w);
-    float s = 1.0 - length(d / mmR[i]);
-    if (s > b1) { b2 = b1; i2 = i1; b1 = s; i1 = i; } else if (s > b2) { b2 = s; i2 = i; }
+    float s = 1.0 - length(d / mmR[i]); best = max(best, s);
+    if (s > b1) { b4 = b3; b3 = b2; i3 = i2; b2 = b1; i2 = i1; b1 = s; i1 = i; }
+    else if (s > b2) { b4 = b3; b3 = b2; i3 = i2; b2 = s; i2 = i; }
+    else if (s > b3) { b4 = b3; b3 = s; i3 = i; }
+    else b4 = max(b4, s);
   }
-  vec4 st = mmState[i1];
-  float on = (st.y == 0.0 || st.y == sd) ? 1.0 : 0.0;
-  mmCloth = mmF[i1].w; mmS1 = b1; mmSelV = st.x * on; mmFocusV = st.z * on; mmIdx = float(i1); mmPc = mmCol[i1]; mmDimV = st.w;
-  float s2 = max(b2, 0.0);
-  float gap = b1 - s2; float g = length(vec2(dFdx(gap), dFdy(gap))) + 1e-6; float px = gap / g;
-  bool sameFamily = b2 > 0.0 && mmF[i1].x == mmF[i2].x;
-  mmEdge = smoothstep(0.0, sameFamily ? 0.07 : 0.16, gap);
-  // grooves: a soft channel between muscles, a fine line inside one family.
-  // Widths are metric (score units) with a pixel floor, AA'd in pixel space.
-  float wpx = max((sameFamily ? 0.008 : 0.022) / g, sameFamily ? 0.6 : 1.05);
-  mmGrooveV = (1.0 - smoothstep(wpx - 0.65, wpx + 0.65, px)) * (sameFamily ? 0.55 : 1.0);
-  // midline seam (linea alba, spine) for mirrored central panels
-  if (mmF[i1].y > 0.5) {
-    float ax = abs(vMmPos.x) * mmScale; float ag = length(vec2(dFdx(ax), dFdy(ax))) + 1e-7;
-    float mw = max(0.0022 / ag, 0.7);
-    mmGrooveV = max(mmGrooveV, 1.0 - smoothstep(mw - 0.65, mw + 0.65, ax / ag));
-  }
-  // tendinous intersections of the rectus abdominis: fine horizontal lines
-  if (mmF[i1].z > 0.5) {
-    float yy = (p.y - 0.985) / 0.068; float fy = abs(fract(yy) - 0.5) * 0.068;
-    float yg = length(vec2(dFdx(p.y), dFdy(p.y))) + 1e-7; float lw = max(0.0016 / yg, 0.55);
-    float line = (1.0 - smoothstep(lw - 0.6, lw + 0.6, fy / yg)) * step(0.0, yy) * step(yy, 2.99);
-    mmGrooveV = max(mmGrooveV, line * 0.6);
-  }
-  float bg = length(vec2(dFdx(b1), dFdy(b1))) + 1e-6;
-  mmIsMuscle = smoothstep(-0.5, 0.7, b1 / bg) * (mmF[i1].x < 0.5 ? 0.0 : 1.0);
-  if (mmF[i1].x < 0.5) { mmSelV = 0.0; mmFocusV = 0.0; mmGrooveV *= 0.6; }
-  mmCore = smoothstep(0.0, 0.5, b1);
   // reveal: highlighted panels fill from their centre outwards
-  mmRevealT = 1.32 - 1.38 * mmReveal;
-  mmShown = smoothstep(mmRevealT - 0.05, mmRevealT + 0.01, b1 / 0.85 + 0.12);
+  float revealT = 1.32 - 1.38 * mmReveal;
+  float shown = smoothstep(revealT - 0.05, revealT + 0.01, best / 0.85 + 0.12);
+  float hatch = mmHatch();
+  vec3 g1, g2, g3;
+  vec3 c1 = mmPanel(i1, b1, sd, shown, hatch, g1);
+  vec3 c2 = mmPanel(i2, max(b2, 0.0), sd, shown, hatch, g2);
+  vec3 c3 = mmPanel(i3, max(b3, 0.0), sd, shown, hatch, g3);
+  // Everything is cross-faded symmetrically by score gaps, so it stays
+  // continuous wherever the ranking changes: 50/50 on a border, a panel's own
+  // colour ~5 mm inside it, a three-way blend at junctions.
+  float g12 = b1 - b2, g13 = b1 - b3;
+  float fw = 0.09;
+  // the third panel fades out before a fourth could replace it (continuity)
+  float k3 = smoothstep(0.0, 0.06, b3 - b4);
+  float w2 = 1.0 - smoothstep(0.0, fw, g12), w3 = (1.0 - smoothstep(0.0, fw, g13)) * k3;
+  float wsum = 1.0 + w2 + w3;
+  mmColour = (c1 + w2 * c2 + w3 * c3) / wsum; mmGlow = (g1 + w2 * g2 + w3 * g3) / wsum;
+  // a wide, shallow valley where two muscle panels meet (fainter inside a family)
+  float f1 = i1 >= 0 ? mmF[i1].x : 0.0, f2 = i2 >= 0 ? mmF[i2].x : 0.0, f3 = i3 >= 0 ? mmF[i3].x : 0.0;
+  float a12 = (f1 > 0.5 && f2 > 0.5) ? (f1 == f2 ? 0.35 : 1.0) : 0.0;
+  float a13 = (f1 > 0.5 && f3 > 0.5) ? (f1 == f3 ? 0.35 : 1.0) : 0.0;
+  // the pair's strength is cross-faded where the second and third panels swap
+  float amp = mix(a13, a12, 0.5 + 0.5 * smoothstep(0.0, 0.06, b2 - b3));
+  float valley = amp * (1.0 - smoothstep(0.0, 0.32, g12));
+  // midline (linea alba, spine) and abdominal segments: equally soft, faded
+  // out toward the panel border so nothing jumps where the ranking changes
+  float inside = smoothstep(0.0, 0.12, g12);
+  float mid = i1 >= 0 ? mmF[i1].y : 0.0, abSeg = i1 >= 0 ? mmF[i1].z : 0.0;
+  valley = max(valley, (1.0 - smoothstep(0.0, 0.018, abs(vMmPos.x) * mmScale)) * 0.7 * mid * inside);
+  if (abSeg > 0.5) {
+    float yy = (p.y - 0.985) / 0.068; float fy = abs(fract(yy) - 0.5) * 0.068;
+    float seg = (1.0 - smoothstep(0.0, 0.011, fy)) * smoothstep(-0.2, 0.2, yy) * smoothstep(3.2, 2.8, yy);
+    valley = max(valley, seg * 0.40 * inside);
+  }
+  mmColour *= 1.0 - 0.07 * valley;
+  mmColour = mix(mmColour, mmColour * mmGroove / max(mmBase, vec3(0.05)), 0.10 * valley);
+  float selTop = i1 >= 0 ? step(0.3, abs(mmState[i1].x)) : 0.0;
+  mmFront = smoothstep(0.0, 0.08, b1) * (1.0 - smoothstep(0.0, 0.10, abs(b1 / 0.85 + 0.12 - revealT))) * step(mmReveal, 0.985) * selTop;
 }`;
 
-export function applyMuscleMap(material, uniforms, { clothing = false } = {}) {
+export function applyMuscleMap(material, uniforms) {
   material.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = 'varying vec3 vMmPos;\n' + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvMmPos = transformed;');
     shader.fragmentShader = GLSL_HEAD + '\n' + shader.fragmentShader;
     shader.fragmentShader = shader.fragmentShader
       .replace('void main() {', 'void main() {\n mmEval();')
-      // pillow relief: height rises toward each panel's centre and dips into the grooves
-      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
-        {
-          float h = ${clothing ? '0.0' : 'mmEdge * mmIsMuscle'};
-          vec3 vSigmaX = dFdx(-vViewPosition), vSigmaY = dFdy(-vViewPosition);
-          vec3 R1 = cross(vSigmaY, normal), R2 = cross(normal, vSigmaX); float fDet = dot(vSigmaX, R1);
-          vec2 dH = vec2(dFdx(h), dFdy(h)) * 0.004;
-          vec3 grad = sign(fDet) * (dH.x * R1 + dH.y * R2);
-          normal = normalize(abs(fDet) * normal - grad);
-        }`)
       .replace('#include <color_fragment>', `#include <color_fragment>
-        {
-          float primary = step(0.9, mmSelV), secondary = step(0.3, mmSelV) * (1.0 - primary), deep = step(mmSelV, -0.5);
-          float sh = mmShown * mmIsMuscle;
-          vec3 pc = mmPc;
-          vec3 hot = mmMulti > 0.5
-            ? pc * mix(0.70, 0.86, smoothstep(0.0, 0.5, mmS1)) * mix(0.74, 1.0, mmEdge)
-            : mix(mmAccent2, pc, 0.55 + 0.45 * smoothstep(0.0, 0.5, mmS1)) * mix(0.78, 1.0, mmEdge);
-          float anySel = primary + secondary + deep;
-          float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);
-          float hatch = smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);
-          ${clothing ? `
-          vec3 col = mmFabric; sh *= mmCloth;
-          col = mix(col, mix(mmFabric, pc * mix(0.86, 1.0, mmEdge), 0.86), primary * sh);
-          col = mix(col, mix(mmFabric, pc, 0.42), secondary * sh);
-          col = mix(col, mix(mmFabric, pc, 0.70), deep * sh * mix(0.25, 1.0, hatch));
-          col = mix(col, mix(mmFabric, col, 0.12), mmDimV * anySel * sh);
-          col = mix(col, col * 0.6, mmGrooveV * mmIsMuscle * anySel * sh * 0.6);
-          ` : `
-          vec3 base = mix(mmSkin, mmBase * mix(0.80, 1.04, mmEdge), mmIsMuscle);
-          vec3 col = base;
-          col = mix(col, hot, primary * sh);
-          col = mix(col, mix(mmBase, pc, 0.52) * mix(0.85, 1.0, mmEdge), secondary * sh);
-          col = mix(col, mix(mmBase, pc, 0.80), deep * sh * mix(0.18, 1.0, hatch));
-          col = mix(col, mix(base, col, 0.10), mmDimV * anySel * sh);
-          if (mmDebug > 0.5) col = mix(mmSkin, mmHue(mmIdx), mmIsMuscle);
-          col = mix(col, mmGroove, mmGrooveV * mix(0.40, 0.82, mmIsMuscle));
-          `}
-          diffuseColor.rgb = col;
-          ${clothing ? `{
-            float ax = abs(vMmPos.x);
-            float cut = 0.778 + 1.05 * max(ax - 0.028, 0.0);
-            float e = vMmPos.y - cut; float ea = max(fwidth(e), 1e-5);
-            diffuseColor.a = smoothstep(-ea, ea, e);
-            if (diffuseColor.a < 0.01) discard;
-            col = mix(col, col * 1.5 + 0.03, (1.0 - smoothstep(0.0, 0.010, abs(vMmPos.y - 0.968))) * 0.6);
-            diffuseColor.rgb = col;
-          }` : ''}
-        }`)
+        diffuseColor.rgb = mmColour;`)
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         {
-          float lit = (step(0.3, mmSelV) + step(mmSelV, -0.5) * 0.6) * mmIsMuscle * (1.0 - mmGrooveV) * mmShown;
-          float pulse = 0.5 + 0.5 * sin(mmTime * 2.4);
-          float front = smoothstep(0.0, 0.08, mmS1) * (1.0 - smoothstep(0.0, 0.10, abs(mmS1 / 0.85 + 0.12 - mmRevealT))) * step(mmReveal, 0.985);
-          ${clothing ? 'lit *= mmCloth; front *= mmCloth;' : ''}
-          lit *= 1.0 - 0.85 * mmDimV;
-          totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse + 0.40 * mmFocusV * pulse) + front * 0.6 * step(0.3, abs(mmSelV)));
+          totalEmissiveRadiance += mmGlow + mmColour * mmFront * 0.6;
           float rim = pow(1.0 - clamp(abs(dot(normal, normalize(vViewPosition))), 0.0, 1.0), 3.0);
-          totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * ${clothing ? '0.18' : '0.32'};
+          totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.24;
         }`);
   };
-  material.customProgramCacheKey = () => 'muscle-map-v3' + (clothing ? '-c' : '');
+  material.customProgramCacheKey = () => 'muscle-map-mannequin-v1';
   material.needsUpdate = true;
 }
 
