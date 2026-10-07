@@ -53,7 +53,7 @@ function diag(p,label){const e=motion.applyPose(p);const head=bone('head'),sh=bo
     legs[sd]={flex:+deg(Math.atan2(l.z,-l.y)).toFixed(0),abd:+deg(Math.asin((sd==='left'?1:-1)*l.x)).toFixed(0),ankY:+e.limbs[sd].ankle[1].toFixed(2),fold:+(180-deg(d.angleTo(spineUp))).toFixed(0)};}
   console.log(label,{headY:+head.y.toFixed(2),pelY:+e.pelvis[1].toFixed(2),shoulderOverHand:+Math.hypot(sh.x-wr.x,sh.z-wr.z).toFixed(2),armLen:+sh.distanceTo(wr).toFixed(2)},JSON.stringify(legs));}
 const rad0=rad;
-const PF=+(process.env.PF??55);
+const PF=+(process.env.PF??0);
 motion.reset();const WQ=n=>motion.group.getObjectByName(n).getWorldQuaternion(new THREE.Quaternion());
 const REST={};for(const sd of ['left','right'])for(const b of ['Shin','Foot','Forearm','Hand'])REST[sd+b]=WQ(sd+b);
 const rel=n=>WQ(n).multiply(REST[n].clone().invert());
