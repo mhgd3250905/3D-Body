@@ -1195,7 +1195,7 @@ export function createCoachMotion({ model, rigData }) {
   // sharp corner into the body height at the plant key. Around a late plant the body
   // (hips, torso, head, legs) follows a smoothed height instead; the arms keep their
   // exact paths, so the shoulders give the ~1 cm difference (a small shrug / push).
-  const BODY_SMOOTH_SIGMA = 0.22, BODY_SMOOTH_BEFORE = 0.9, BODY_SMOOTH_AFTER = 1.2, BODY_SMOOTH_EDGE = 0.3, BODY_SMOOTH_STEP = 0.02, BODY_SMOOTH_MAX_GIVE = 0.015;
+  const BODY_SMOOTH_SIGMA = 0.22, BODY_SMOOTH_BEFORE = 0.9, BODY_SMOOTH_AFTER = 1.2, BODY_SMOOTH_EDGE = 0.3, BODY_SMOOTH_STEP = 0.02, BODY_SMOOTH_MAX_GIVE = 0.015, BODY_MONO_BEFORE = 0.85, BODY_MONO_AFTER = 1.15;
   let bodySmoothCache = null;
   function lateBodyOffset(sampleTime) {
     const steps = sequence?.steps, n = steps ? steps.length - 1 : 0;
@@ -1203,11 +1203,26 @@ export function createCoachMotion({ model, rigData }) {
     if (bodySmoothCache?.sequence !== sequence) {
       const period = sequence.period, seg = period / (n + 1), windows = [];
       for (const side of SIDES) for (let k = 0; k < n; k++) {
-        if (steps[k].pose.limbs[side].handLocked && !steps[(k - 1 + n) % n].pose.limbs[side].handLocked) windows.push(k * seg);
+        if (steps[k].pose.limbs[side].handLocked && !steps[(k - 1 + n) % n].pose.limbs[side].handLocked) windows.push({ center: k * seg, mono: side in LATE_PLANT });
       }
-      const tables = windows.map(center => {
-        const from = center - BODY_SMOOTH_BEFORE - 3 * BODY_SMOOTH_SIGMA, count = Math.ceil((BODY_SMOOTH_BEFORE + BODY_SMOOTH_AFTER + 6 * BODY_SMOOTH_SIGMA) / BODY_SMOOTH_STEP) + 1;
+      const tables = windows.map(({ center, mono }) => {
+        const from = center - Math.max(BODY_SMOOTH_BEFORE, BODY_MONO_BEFORE) - 3 * BODY_SMOOTH_SIGMA, count = Math.ceil((Math.max(BODY_SMOOTH_BEFORE, BODY_MONO_BEFORE) + Math.max(BODY_SMOOTH_AFTER, BODY_MONO_AFTER) + 6 * BODY_SMOOTH_SIGMA) / BODY_SMOOTH_STEP) + 1;
         const ys = Array.from({ length: count }, (_, j) => solvePose(smoothLoopSample(from + j * BODY_SMOOTH_STEP)).constrainedPelvis.y);
+        if (mono) {
+          // v30 (user: when the right hand takes the weight, the lower body drops and
+          // comes back up). Across the late plant the hips follow one monotone ease from
+          // the high point before it straight down toward the front, with no dip and no
+          // rebound. The arms keep their paths, so the shoulders absorb the difference.
+          const at = t => (t - from) / BODY_SMOOTH_STEP, ia = Math.round(at(center - BODY_MONO_BEFORE)), ib = Math.round(at(center + BODY_MONO_AFTER));
+          const slope = j => (ys[j + 1] - ys[j - 1]) / (2 * BODY_SMOOTH_STEP), span = (ib - ia) * BODY_SMOOTH_STEP;
+          const y0 = ys[ia], y1 = ys[ib], m0 = slope(ia) * span, m1 = slope(ib) * span;
+          const offset = ys.map((y, j) => {
+            if (j <= ia || j >= ib) return 0;
+            const u = (j - ia) / (ib - ia), u2 = u * u, u3 = u2 * u;
+            return (2 * u3 - 3 * u2 + 1) * y0 + (u3 - 2 * u2 + u) * m0 + (-2 * u3 + 3 * u2) * y1 + (u3 - u2) * m1 - y;
+          });
+          return { center, from, offset, period, before: BODY_MONO_BEFORE, after: BODY_MONO_AFTER, edge: 0 };
+        }
         // widest smoothing whose shoulder give stays within BODY_SMOOTH_MAX_GIVE
         let offset = null;
         for (let sigma = BODY_SMOOTH_SIGMA; sigma > 0.03; sigma *= 0.85) {
@@ -1220,16 +1235,16 @@ export function createCoachMotion({ model, rigData }) {
           });
           if (Math.max(...offset.map(Math.abs)) <= BODY_SMOOTH_MAX_GIVE) break;
         }
-        return { center, from, offset, period };
+        return { center, from, offset, period, before: BODY_SMOOTH_BEFORE, after: BODY_SMOOTH_AFTER, edge: BODY_SMOOTH_EDGE };
       });
       bodySmoothCache = { sequence, tables };
     }
     let result = 0;
-    for (const { center, from, offset, period } of bodySmoothCache.tables) {
+    for (const { center, from, offset, period, before, after, edge } of bodySmoothCache.tables) {
       let dt = sampleTime - center;
       dt -= Math.round(dt / period) * period;
-      if (dt < -BODY_SMOOTH_BEFORE || dt > BODY_SMOOTH_AFTER) continue;
-      const w = THREE.MathUtils.smoothstep(dt, -BODY_SMOOTH_BEFORE, -BODY_SMOOTH_BEFORE + BODY_SMOOTH_EDGE) * (1 - THREE.MathUtils.smoothstep(dt, BODY_SMOOTH_AFTER - BODY_SMOOTH_EDGE, BODY_SMOOTH_AFTER));
+      if (dt < -before || dt > after) continue;
+      const w = edge ? THREE.MathUtils.smoothstep(dt, -before, -before + edge) * (1 - THREE.MathUtils.smoothstep(dt, after - edge, after)) : 1;
       const x = (center + dt - from) / BODY_SMOOTH_STEP, j = Math.floor(x), f = x - j;
       result += w * THREE.MathUtils.lerp(offset[j] ?? 0, offset[j + 1] ?? 0, f);
     }
