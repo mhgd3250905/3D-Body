@@ -160,8 +160,8 @@ const PIKE={1:+(process.env.P10??62),2:+(process.env.P11??34),3:+(process.env.P1
 // flexion) and that upward drive raises hips + lower back. 14–16 mirror it (right leg kicks).
 const SCISSOR=process.env.SCISSOR==='0'?null:{
   1:{F:{left:+(process.env.K10??84),right:+(process.env.S10??40)},A:{left:34,right:26}},
-  2:{F:{left:+(process.env.K11??15),right:+(process.env.S11??-4)},A:{left:+(process.env.KA11??85),right:+(process.env.SA11??20)}},
-  3:{F:{left:+(process.env.K12??40),right:+(process.env.S12??22)},A:{left:+(process.env.KA12??62),right:28}}};
+  2:{F:{left:+(process.env.K11??50),right:+(process.env.S11??50)},A:{left:+(process.env.KA11??55),right:+(process.env.SA11??15)}},
+  3:{F:{left:+(process.env.K12??58),right:+(process.env.S12??45)},A:{left:+(process.env.KA12??45),right:+(process.env.SA12??25)}}};
 // v7, bboy first principles: the support shoulder pushes the whole trunk block up
 // (lower back + back + hips together) and rotates it; the pelvis does NOT twist away
 // from the chest. Legs: straight, a moderate straddle (bboy, not gymnastics), hanging
@@ -187,7 +187,10 @@ if(process.env.BBOY!=='0')for(const [i,y0] of LIFT){let y=y0;const p=S(i);if(SCI
 else for(const [i,y,az] of LIFT){liftHips(S(i),y);strad(S(i),{az,F:'auto',A,minY:.30});liftHips(S(i),y);}
 for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.36]])clearFreeArm(S(i),'left',g);
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
-strad(S(4),{F:'auto',A,minY:.3});onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(process.env.Y9??.36)});steps[8].pose=structuredClone(S(0));
+strad(S(4),{F:'auto',A,minY:.3});
+// v11 (user): bboy front is FOLDED (trunk-leg pike), not a gymnastic open body.
+if(process.env.F13!=='0'){const p=S(4);let y=p.pelvis[1];stradBody(p,+(process.env.F13??62),+(process.env.A13??34));for(let k=0;k<12&&lowAnkle(p)<.30;k++){p.pelvis[1]+=.02;stradBody(p,+(process.env.F13??62),+(process.env.A13??34));}}
+onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(process.env.Y9??.36)});steps[8].pose=structuredClone(S(0));
 // v8 (user): shoes and hands must point the right way all the way round.
 // Feet: placed relative to the SHIN (not a stale world rotation from the original
 // key): toes pointed PF degrees along the straight leg, no sickling, no roll.
@@ -214,11 +217,11 @@ for(let i=0;i<5;i++){S(i).limbs.right.handQuaternion=PLANT.slice();fixEnds(S(i))
 for(const i of [0,4]){const m=mirrorPose(S(i));S(i).limbs.left.handQuaternion=m.limbs.left.handQuaternion;}
 steps[8].pose=structuredClone(S(0));
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
-report(steps,'flare keys v10');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
+report(steps,'flare keys v11');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
 for(const x of steps)delete x.pose.__flex;
 {const Q=steps.map(x=>new THREE.Quaternion(...(x.pose.pelvisQuaternion??x.pose.bodyQuaternion))),B=steps.map(x=>new THREE.Quaternion(...x.pose.bodyQuaternion)),D=180/Math.PI;
  console.log('SUMMARY twist',Q.slice(0,8).map((q,i)=>(q.angleTo(B[i])*D).toFixed(0)).join(' '),'| pelvis steps',Q.slice(0,8).map((q,i)=>(q.angleTo(Q[i+1])*D).toFixed(0)).join(' '));}
 if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});
-  d.revision={name:'v10 侧面上方腿提向同侧耳后',v10:['第11步上方腿（空手侧）以外展约85°、屈髋约15°提向同侧耳后/后脑勺方向，脚踝高约1.65 m；第12步外展62°屈髋40°','向上发力带髋：第11/12步髋高 0.74→0.82、0.60→0.68 m','15/14步镜像'],prevV9:'v9 腿部主动剪刀摆动',v9:['单撑阶段空手一侧的腿主动踢向同侧耳朵（屈髋约74–84°），另一条腿从下方低扫绕到前面（屈髋约-4–40°），形成剪刀；平均屈髋保留v8的Y字','14–16镜像：换手后右腿上踢、左腿低扫'],prevV8:'v8 斜后方Y字屈髋+脚尖手掌朝向',v8:['第10/16步双腿Y字向躯干屈髋约62°，侧撑约34°，换腿约40°（参考原稿手K姿态）','脚掌按小腿方向重算：全程绷脚约55°，不内翻不外翻','支撑手整段不在地面转动（9→13 右手、13→9 左手方向固定），空手腕部自然伸直'],prev:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
+  d.revision={name:'v11 bboy折叠身体',v11:['用户：bboy正面/背面/大部分侧面上下半身都折叠，不像体操托马斯伸展；靠折叠用下背和髋带腿','躯干-腿折叠 背面77°/斜后60°/侧面52°/过渡50°/正面61°（v10 侧面25°、正面35°）','侧面上方腿仍提向同侧耳侧（屈髋50 外展55），下方腿也折叠（屈髋50 外展15）'],prevV10:'v10 侧面上方腿提向同侧耳后',v10:['第11步上方腿（空手侧）以外展约85°、屈髋约15°提向同侧耳后/后脑勺方向，脚踝高约1.65 m；第12步外展62°屈髋40°','向上发力带髋：第11/12步髋高 0.74→0.82、0.60→0.68 m','15/14步镜像'],prevV9:'v9 腿部主动剪刀摆动',v9:['单撑阶段空手一侧的腿主动踢向同侧耳朵（屈髋约74–84°），另一条腿从下方低扫绕到前面（屈髋约-4–40°），形成剪刀；平均屈髋保留v8的Y字','14–16镜像：换手后右腿上踢、左腿低扫'],prevV8:'v8 斜后方Y字屈髋+脚尖手掌朝向',v8:['第10/16步双腿Y字向躯干屈髋约62°，侧撑约34°，换腿约40°（参考原稿手K姿态）','脚掌按小腿方向重算：全程绷脚约55°，不内翻不外翻','支撑手整段不在地面转动（9→13 右手、13→9 左手方向固定），空手腕部自然伸直'],prev:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
     changes:['髋部带动双腿：腿在髋部坐标里保持分腿（屈髋由后撑约60°渐变到前撑约12°，外展约55°），髋部随腿转动并在单撑时抬高','双腿整圈伸直（按真实髋—踝全长）','第10/16步腿方位改到±135°，消除10→11、16→15倒转；11/12保持原方位，让腿先过、手再落','下方脚踝离地≥0.30 m','手的摆放保留原稿；第12/14步空手向远离腿的方向移15 cm，避开扫过的大腿','前双撑躯干后仰84°','单撑髋部相对胸口转20°'],mirrors:'14–16 由 10–12 镜像生成'};
   fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
