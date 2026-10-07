@@ -147,6 +147,10 @@ function liftHips(p,y,side='right'){
     for(const sd of ['left','right'])if(p.limbs[sd].footQuaternion)p.limbs[sd].footQuaternion=rq(p.limbs[sd].footQuaternion);
     if(p.limbs[free].handQuaternion)p.limbs[free].handQuaternion=rq(p.limbs[free].handQuaternion);}}
 const LIFT=[[1,+(process.env.Y10??.80),135],[2,+(process.env.Y11??.74),96],[3,+(process.env.Y12??.60),15]];
+// v8 (user): at the rear diagonals a bboy folds the legs in a Y toward the trunk
+// (hip flexion), not body and legs in one plane. Per-key pike, referenced to the
+// user's own hand keys (≈75° / 37° / 46°) but not copied.
+const PIKE={1:+(process.env.P10??62),2:+(process.env.P11??34),3:+(process.env.P12??40)};
 // v7, bboy first principles: the support shoulder pushes the whole trunk block up
 // (lower back + back + hips together) and rotates it; the pelvis does NOT twist away
 // from the chest. Legs: straight, a moderate straddle (bboy, not gymnastics), hanging
@@ -161,19 +165,44 @@ function stradBody(p,F=BF,Ab=BA){
     const old=new THREE.Quaternion(...(l.footQuaternion??[0,0,0,1]));l.ankle=ankle.toArray();l.kneePole=knee.toArray();}
 }
 const lowAnkle=p=>Math.min(p.limbs.left.ankle[1],p.limbs.right.ankle[1]);
-if(process.env.BBOY!=='0')for(const [i,y0] of LIFT){let y=y0;const p=S(i);stradBody(p);liftHips(p,y);
+if(process.env.BBOY!=='0')for(const [i,y0] of LIFT){let y=y0;const p=S(i);stradBody(p,PIKE[i]);liftHips(p,y);
   // still too low? push the trunk block higher rather than spreading or twisting
   for(let k=0;k<12&&lowAnkle(p)<.24;k++){y+=.02;liftHips(p,y);} p.__lift=y;}
 else for(const [i,y,az] of LIFT){liftHips(S(i),y);strad(S(i),{az,F:'auto',A,minY:.30});liftHips(S(i),y);}
 for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.36]])clearFreeArm(S(i),'left',g);
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
-strad(S(4),{F:'auto',A,minY:.3});onOrbit(S(0),180);strad(S(0),{F:'auto',A,minY:.3});steps[8].pose=structuredClone(S(0));
+strad(S(4),{F:'auto',A,minY:.3});onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(process.env.Y9??.36)});steps[8].pose=structuredClone(S(0));
+// v8 (user): shoes and hands must point the right way all the way round.
+// Feet: placed relative to the SHIN (not a stale world rotation from the original
+// key): toes pointed PF degrees along the straight leg, no sickling, no roll.
+// Planted hand: it does not spin on the floor, so its rotation is held for the whole
+// plant (9 -> 13 right hand; 13 -> 9 left hand by mirror). Free hand: wrist neutral,
+// fingers continuing the forearm.
+const PF=+(process.env.PF??55);
+motion.reset();const WQ=n=>motion.group.getObjectByName(n).getWorldQuaternion(new THREE.Quaternion());
+const REST={};for(const sd of ['left','right'])for(const b of ['Shin','Foot','Forearm','Hand'])REST[sd+b]=WQ(sd+b);
+const rel=n=>WQ(n).multiply(REST[n].clone().invert());
+function fixEnds(p){for(let it=0;it<2;it++){motion.applyPose(p);
+  for(const sd of ['left','right']){const l=p.limbs[sd];
+    l.footQuaternion=rel(sd+'Shin').multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(PF))).normalize().toArray();
+    if(!l.handLocked)l.handQuaternion=freeHand(sd);}}}
+// free hand: fingers continue the forearm, palm turned toward the floor as far as the arm allows
+function frameQ(a,b){const x=a.clone().normalize(),z=x.clone().cross(b).normalize(),y=z.clone().cross(x);return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x,y,z));}
+function freeHand(sd){const sg=sd==='left'?1:-1,F0=new THREE.Vector3(sg*.98253144,.05483374,.17783482).normalize(),N0=new THREE.Vector3(sg*.06068526,-.99777448,-.02762938);
+  const f=bone(sd+'Hand').sub(bone(sd+'Forearm')).normalize(),n=new THREE.Vector3(0,-1,0).addScaledVector(f,f.y);
+  if(n.lengthSq()<.04)n.set(0,0,-1).addScaledVector(f,-f.z);
+  return frameQ(f,n.normalize()).multiply(frameQ(F0,N0).invert()).normalize().toArray();}
+const PLANT=S(0).limbs.right.handQuaternion.slice();
+for(let i=0;i<5;i++){S(i).limbs.right.handQuaternion=PLANT.slice();fixEnds(S(i));}
+// left hand at 9 and 13 = mirror of the right hand there (both keys are self-symmetric)
+for(const i of [0,4]){const m=mirrorPose(S(i));S(i).limbs.left.handQuaternion=m.limbs.left.handQuaternion;}
+steps[8].pose=structuredClone(S(0));
 for(const [src,dst] of [[1,7],[2,6],[3,5]])steps[dst].pose=mirrorPose(steps[src].pose);
-report(steps,'flare keys v7');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
+report(steps,'flare keys v8');console.log('lift',steps.slice(1,4).map(x=>x.pose.__lift));for(const x of steps)delete x.pose.__lift;console.log('hip flexion per key',steps.slice(0,8).map(x=>x.pose.__flex));
 for(const x of steps)delete x.pose.__flex;
 {const Q=steps.map(x=>new THREE.Quaternion(...(x.pose.pelvisQuaternion??x.pose.bodyQuaternion))),B=steps.map(x=>new THREE.Quaternion(...x.pose.bodyQuaternion)),D=180/Math.PI;
  console.log('SUMMARY twist',Q.slice(0,8).map((q,i)=>(q.angleTo(B[i])*D).toFixed(0)).join(' '),'| pelvis steps',Q.slice(0,8).map((q,i)=>(q.angleTo(Q[i+1])*D).toFixed(0)).join(' '));}
 if(process.argv.includes('--write')){const R=new URL('../../public/coach/flare-sequence.json',import.meta.url);const d=JSON.parse(fs.readFileSync(R,'utf8'));d.steps.forEach((x,i)=>{x.pose=steps[i].pose;});
-  d.revision={name:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
+  d.revision={name:'v8 斜后方Y字屈髋+脚尖手掌朝向',v8:['第10/16步双腿Y字向躯干屈髋约62°，侧撑约34°，换腿约40°（参考原稿手K姿态）','脚掌按小腿方向重算：全程绷脚约55°，不内翻不外翻','支撑手整段不在地面转动（9→13 右手、13→9 左手方向固定），空手腕部自然伸直'],prev:'v7 肩顶躯干整体推起',date:'2026-10-07',basedOn:'flare-sequence-before-rekey-2026-10-07.json',script:'tools/rekey/rekey-flare.mjs',
     changes:['髋部带动双腿：腿在髋部坐标里保持分腿（屈髋由后撑约60°渐变到前撑约12°，外展约55°），髋部随腿转动并在单撑时抬高','双腿整圈伸直（按真实髋—踝全长）','第10/16步腿方位改到±135°，消除10→11、16→15倒转；11/12保持原方位，让腿先过、手再落','下方脚踝离地≥0.30 m','手的摆放保留原稿；第12/14步空手向远离腿的方向移15 cm，避开扫过的大腿','前双撑躯干后仰84°','单撑髋部相对胸口转20°'],mirrors:'14–16 由 10–12 镜像生成'};
   fs.writeFileSync(R,JSON.stringify(d,null,2)+'\n');}
