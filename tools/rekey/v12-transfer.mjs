@@ -93,6 +93,25 @@ const hipY=()=>bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5).y;
 {motion.applyPose(S(4));const h0=hipY();liftFront(S(4),env('Y13',.60));motion.applyPose(S(4));console.log('front hip',h0.toFixed(2),'->',hipY().toFixed(2));}
 for(const i of [3]){motion.applyPose(S(i));const h0=hipY();liftHipsSide(S(i),env('Y12H',h0+.06));motion.applyPose(S(i));console.log('pass hip',h0.toFixed(2),'->',hipY().toFixed(2));}
 steps[5].pose=mirrorPose(S(3));
+// v17 (user screenshot of the side / side-into-back: hips a touch high; the low leg
+// should skim the floor and reach far out, trunk-leg fold kept). Keys 10/11 rotate
+// about the support shoulder (arm stays straight), then the low (right) leg is
+// re-aimed: azimuth pulled away from the support hand, elevation set so the foot
+// sits FY above the floor. Keys 15/16 re-mirrored from 11/10.
+if(process.env.V17!=='0'){
+  const cfg={1:{y:env('Y10L',.79),fy:env('FY10',-1)},2:{y:env('Y11L',.76),fy:env('FY11',.30)}},AW=env('AWAY',0);
+  for(const i of [1,2]){const p=S(i);motion.applyPose(p);const h0=hipY();liftHipsSide(p,cfg[i].y);motion.applyPose(p);if(cfg[i].fy<0){fixEnds(p);motion.applyPose(p);console.log('v17 key',9+i,'hip',h0.toFixed(2),'->',hipY().toFixed(2),'(leg rigid)');continue;}
+    const hj=bone('rightThigh'),cur=V(p.limbs.right.ankle).sub(hj).normalize(),wr=V(p.limbs.right.wrist);
+    const curH=new THREE.Vector3(cur.x,0,cur.z).normalize(),away=new THREE.Vector3(hj.x-wr.x,0,hj.z-wr.z).normalize();
+    const az=curH.clone().lerp(away,AW).normalize(),L=legLen()*.9995,sinEl=THREE.MathUtils.clamp((cfg[i].fy+.07-hj.y)/L,-.99,.99);
+    const dir=az.multiplyScalar(Math.sqrt(1-sinEl*sinEl)).add(new THREE.Vector3(0,sinEl,0));
+    setLeg(p,'right',dir);fixEnds(p);motion.applyPose(p);console.log('v17 key',9+i,'hip',h0.toFixed(2),'->',hipY().toFixed(2),'lowFoot',bone('rightFoot').y.toFixed(2));}
+  // keep the trunk-leg fold: tip the top (kick) leg a few degrees further toward the chest
+  const KADD=env('KADD',15);if(KADD)for(const i of [1,2]){const p=S(i);motion.applyPose(p);const hj=bone('leftThigh'),d=V(p.limbs.left.ankle).sub(hj).normalize();
+    const up=bone('neck').sub(bone('leftThigh').add(bone('rightThigh')).multiplyScalar(.5)).normalize(),ax=d.clone().cross(up).normalize();
+    setLeg(p,'left',d.applyAxisAngle(ax,rad(KADD)));fixEnds(p);}
+  steps[6].pose=mirrorPose(S(2));steps[7].pose=mirrorPose(S(1));
+}
 // v13: every floor-contact arm straight (runtime lift in coach-motion handles the
 // vertical; a two-hand key also needs the hips centred so neither arm is short).
 const elbows=p=>{motion.applyPose(p);return ['left','right'].filter(s=>p.limbs[s].wrist[1]<.07).map(s=>{const a=bone(s+'UpperArm'),e=bone(s+'Forearm'),w=bone(s+'Hand');return deg(a.clone().sub(e).angleTo(w.clone().sub(e)));});};
@@ -105,7 +124,7 @@ steps[8].pose=JSON.parse(JSON.stringify(S(0)));
 // at each key its WORLD direction (legs ride the pelvis frame, so a pelvis-frame lead does nothing) is taken from a little later in its own
 // path (keys 10-12 right leg, 14-16 left leg), so it sweeps fast, then waits.
 if(process.env.SWEEP!=='0'){
-  const LEAD=(process.env.LEAD??'.2,.5,.25').split(',').map(Number),LEAD2=(process.env.LEAD2??'0,0,.15').split(',').map(Number);
+  const LEAD=(process.env.LEAD??'.4,.25,.3').split(',').map(Number),LEAD2=(process.env.LEAD2??'0,0,.15').split(',').map(Number);
   const local=[];for(let i=0;i<9;i++){const p=S(i);motion.applyPose(p);const iq=new THREE.Quaternion(...(p.pelvisQuaternion??p.bodyQuaternion)).invert();
     local[i]={};for(const sd of ['left','right'])local[i][sd]=V(p.limbs[sd].ankle).sub(bone(sd+'Thigh')).normalize();}
   // azimuth-only lead: the leg keeps its own elevation (fold/height unchanged) and
