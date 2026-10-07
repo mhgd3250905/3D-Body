@@ -100,6 +100,24 @@ for(const i of [0,4]){const p=S(i),base=p.pelvis.slice(),shift=(dx,dz)=>{const q
   let best=null;for(let dx=-.08;dx<=.081;dx+=.01)for(let dz=-.08;dz<=.081;dz+=.01){const q=shift(dx,dz),m=Math.min(...elbows(q)),c=m-Math.hypot(dx,dz)*20;if(!best||c>best.c)best={c,m,q,dx,dz};}
   console.log('key',9+i,'centre shift',best.dx.toFixed(2),best.dz.toFixed(2),'min elbow',best.m.toFixed(0));steps[i].pose=best.q;}
 steps[8].pose=JSON.parse(JSON.stringify(S(0)));
+// v16 (user: the LOW leg must whip round faster than the hips — its sweep throws
+// centrifugal force that helps the hips carry the body). Phase-lead the low leg:
+// at each key its WORLD direction (legs ride the pelvis frame, so a pelvis-frame lead does nothing) is taken from a little later in its own
+// path (keys 10-12 right leg, 14-16 left leg), so it sweeps fast, then waits.
+if(process.env.SWEEP!=='0'){
+  const LEAD=(process.env.LEAD??'.2,.5,.25').split(',').map(Number),LEAD2=(process.env.LEAD2??'0,0,.15').split(',').map(Number);
+  const local=[];for(let i=0;i<9;i++){const p=S(i);motion.applyPose(p);const iq=new THREE.Quaternion(...(p.pelvisQuaternion??p.bodyQuaternion)).invert();
+    local[i]={};for(const sd of ['left','right'])local[i][sd]=V(p.limbs[sd].ankle).sub(bone(sd+'Thigh')).normalize();}
+  // azimuth-only lead: the leg keeps its own elevation (fold/height unchanged) and
+  // swings ahead about the vertical by a fraction of its travel to the next key
+  const azOf=v=>Math.atan2(v.x,v.z);
+  const at=(sd,tau,i)=>{const a=Math.floor(tau),f=tau-a,v=local[i][sd].clone();
+    const az0=azOf(local[a][sd]),az1=azOf(local[a+1]?.[sd]??local[a][sd]);let dz=az1-az0;while(dz>Math.PI)dz-=2*Math.PI;while(dz<-Math.PI)dz+=2*Math.PI;
+    const target=az0+dz*f,cur=azOf(v);let rot=target-cur;while(rot>Math.PI)rot-=2*Math.PI;while(rot<-Math.PI)rot+=2*Math.PI;
+    return v.applyAxisAngle(Y,rot);};
+  for(const [base,sd] of [[0,'right'],[4,'left']])for(let j=1;j<=3;j++){const i=base+j,p=S(i),q=new THREE.Quaternion(...(p.pelvisQuaternion??p.bodyQuaternion));
+    motion.applyPose(p);setLeg(p,sd,at(sd,i+(base?LEAD2:LEAD)[j-1],i));fixEnds(p);}
+}
 // bake the runtime straight-arm lift into every key (pelvis + leg targets move together)
 for(let i=0;i<8;i++){const p=S(i),e=motion.applyPose(p),dy=e.pelvis[1]-p.pelvis[1];if(dy>1e-4){p.pelvis[1]+=dy;for(const sd of ['left','right'])for(const k of ['ankle','kneePole'])p.limbs[sd][k][1]+=dy;console.log('baked lift key',9+i,dy.toFixed(3));}}
 // straight legs from the real (solved) hip joints after every move above
