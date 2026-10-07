@@ -189,7 +189,7 @@ for(const [i,g] of [[1,+(process.env.G10??.46)],[2,+(process.env.G11??.42)],[3,.
 S(4).pelvis=[0,.49,.46];S(4).bodyQuaternion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),rad(-84)).toArray();
 strad(S(4),{F:'auto',A,minY:.3});
 // v11 (user): bboy front is FOLDED (trunk-leg pike), not a gymnastic open body.
-if(process.env.F13!=='0'){const p=S(4);let y=p.pelvis[1];stradBody(p,+(process.env.F13??62),+(process.env.A13??38));for(let k=0;k<12&&lowAnkle(p)<.30;k++){p.pelvis[1]+=.02;stradBody(p,+(process.env.F13??62),+(process.env.A13??38));}}
+if(process.env.F13!=='0'){const p=S(4);let y=p.pelvis[1];stradBody(p,+(process.env.F13??62),+(process.env.A13??42));for(let k=0;k<12&&lowAnkle(p)<.30;k++){p.pelvis[1]+=.02;stradBody(p,+(process.env.F13??62),+(process.env.A13??42));}}
 onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(process.env.Y9??.36)});steps[8].pose=structuredClone(S(0));
 // v8 (user): shoes and hands must point the right way all the way round.
 // Feet: placed relative to the SHIN (not a stale world rotation from the original
@@ -197,7 +197,7 @@ onOrbit(S(0),180);strad(S(0),{elev:+(process.env.E9??-40),F:"auto",A,minY:+(proc
 // Planted hand: it does not spin on the floor, so its rotation is held for the whole
 // plant (9 -> 13 right hand; 13 -> 9 left hand by mirror). Free hand: wrist neutral,
 // fingers continuing the forearm.
-const PF=+(process.env.PF??55);
+const PF=+(process.env.PF??0);
 motion.reset();const WQ=n=>motion.group.getObjectByName(n).getWorldQuaternion(new THREE.Quaternion());
 const REST={};for(const sd of ['left','right'])for(const b of ['Shin','Foot','Forearm','Hand'])REST[sd+b]=WQ(sd+b);
 const rel=n=>WQ(n).multiply(REST[n].clone().invert());
