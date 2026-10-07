@@ -12,6 +12,8 @@
 
 构建要求 Node.js `^20.19.0 || >=22.12.0`，当前验证使用 Node.js 24.15.0。
 
+仓库已公开：[mhgd3250905/3D-Body](https://github.com/mhgd3250905/3D-Body)。参与开发请先读 [PR 协作说明](CONTRIBUTING.md)，Fork 后向本仓库的 `master` 提交 PR。
+
 ## 使用
 
 三维场景铺满窗口，左侧“步骤”栏和右侧“调整”栏可以独立开关，H 或右上角眼睛按钮同时收起／恢复两栏；全屏按钮可进入浏览器全屏。手机上一次显示一侧，载入姿势后自动收起侧栏，留出完整画布。模式选择、步骤编辑与数值调整放在侧栏中；动态肌群标签直接在动画画布中查看。
@@ -114,6 +116,7 @@ node tools/verify-saved-loop-ui.mjs --module-only
 | 主题 | 当前来源 |
 | --- | --- |
 | 本次 GitHub 保存、运行步骤、阶段1恢复与下一会话约束 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[真实结果与核查证据](docs/evidence/2026-10-07/README.md) |
+| 外部开发、验证与 PR 提交 | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
 | 默认静态健身人物、解剖结构来源、覆盖范围与加载 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
 | 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |
