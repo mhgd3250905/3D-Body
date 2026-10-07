@@ -1190,31 +1190,36 @@ export function createCoachMotion({ model, rigData }) {
     return { requested, constrainedPelvis, warnings, solved };
   }
 
-  // v27 (user: as the right hand lands the whole body dips and pops back up): with
+  // v27/v28 (applied to every support hand-over, right and left). v27 (user: as the right hand lands the whole body dips and pops back up): with
   // both support arms straight, the hand-over from the left to the right arm put a
   // sharp corner into the body height at the plant key. Around a late plant the body
   // (hips, torso, head, legs) follows a smoothed height instead; the arms keep their
   // exact paths, so the shoulders give the ~1 cm difference (a small shrug / push).
-  const BODY_SMOOTH_SIGMA = 0.22, BODY_SMOOTH_BEFORE = 0.9, BODY_SMOOTH_AFTER = 1.2, BODY_SMOOTH_EDGE = 0.3, BODY_SMOOTH_STEP = 0.02;
+  const BODY_SMOOTH_SIGMA = 0.22, BODY_SMOOTH_BEFORE = 0.9, BODY_SMOOTH_AFTER = 1.2, BODY_SMOOTH_EDGE = 0.3, BODY_SMOOTH_STEP = 0.02, BODY_SMOOTH_MAX_GIVE = 0.015;
   let bodySmoothCache = null;
   function lateBodyOffset(sampleTime) {
     const steps = sequence?.steps, n = steps ? steps.length - 1 : 0;
     if (!n || !Object.keys(LATE_PLANT).length) return 0;
     if (bodySmoothCache?.sequence !== sequence) {
       const period = sequence.period, seg = period / (n + 1), windows = [];
-      for (const side of Object.keys(LATE_PLANT)) for (let k = 0; k < n; k++) {
+      for (const side of SIDES) for (let k = 0; k < n; k++) {
         if (steps[k].pose.limbs[side].handLocked && !steps[(k - 1 + n) % n].pose.limbs[side].handLocked) windows.push(k * seg);
       }
       const tables = windows.map(center => {
         const from = center - BODY_SMOOTH_BEFORE - 3 * BODY_SMOOTH_SIGMA, count = Math.ceil((BODY_SMOOTH_BEFORE + BODY_SMOOTH_AFTER + 6 * BODY_SMOOTH_SIGMA) / BODY_SMOOTH_STEP) + 1;
         const ys = Array.from({ length: count }, (_, j) => solvePose(smoothLoopSample(from + j * BODY_SMOOTH_STEP)).constrainedPelvis.y);
-        const radius = Math.ceil(3 * BODY_SMOOTH_SIGMA / BODY_SMOOTH_STEP), weights = Array.from({ length: 2 * radius + 1 }, (_, j) => Math.exp(-0.5 * ((j - radius) * BODY_SMOOTH_STEP / BODY_SMOOTH_SIGMA) ** 2));
-        const offset = ys.map((y, j) => {
-          if (j < radius || j >= count - radius) return 0;
-          let sum = 0, total = 0;
-          for (let m = -radius; m <= radius; m++) { sum += ys[j + m] * weights[m + radius]; total += weights[m + radius]; }
-          return sum / total - y;
-        });
+        // widest smoothing whose shoulder give stays within BODY_SMOOTH_MAX_GIVE
+        let offset = null;
+        for (let sigma = BODY_SMOOTH_SIGMA; sigma > 0.03; sigma *= 0.85) {
+          const radius = Math.ceil(3 * sigma / BODY_SMOOTH_STEP), weights = Array.from({ length: 2 * radius + 1 }, (_, j) => Math.exp(-0.5 * ((j - radius) * BODY_SMOOTH_STEP / sigma) ** 2));
+          offset = ys.map((y, j) => {
+            if (j < radius || j >= count - radius) return 0;
+            let sum = 0, total = 0;
+            for (let m = -radius; m <= radius; m++) { sum += ys[j + m] * weights[m + radius]; total += weights[m + radius]; }
+            return sum / total - y;
+          });
+          if (Math.max(...offset.map(Math.abs)) <= BODY_SMOOTH_MAX_GIVE) break;
+        }
         return { center, from, offset, period };
       });
       bodySmoothCache = { sequence, tables };
