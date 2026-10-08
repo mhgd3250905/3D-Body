@@ -166,6 +166,18 @@ abstract class AppLocalizations {
   /// **'镜头'**
   String get viewLabel;
 
+  /// No description provided for @switchToMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'切换到直立肌群人体'**
+  String get switchToMuscles;
+
+  /// No description provided for @switchToMotion.
+  ///
+  /// In zh, this message translates to:
+  /// **'切换到托马斯动作白膜'**
+  String get switchToMotion;
+
   /// No description provided for @fullLoop.
   ///
   /// In zh, this message translates to:
@@ -291,6 +303,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'深层肌群用斜线表示所在部位。'**
   String get deepNote;
+
+  /// No description provided for @deepMotionNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'深层肌群高亮表示所在部位。'**
+  String get deepMotionNote;
 
   /// No description provided for @bothSides.
   ///

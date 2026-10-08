@@ -113,7 +113,7 @@ export class FlarePlayer {
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
     this.controls.update();
-    if (this.dirty) { this.renderer.render(this.scene, this.camera); this.dirty = false; this.callbacks.onRender?.(); }
+    if (this.dirty) { this.renderer.render(this.displayScene ?? this.scene, this.camera); this.dirty = false; this.callbacks.onRender?.(); }
   }
   setTime(time) {
     this.time = THREE.MathUtils.clamp(time, 0, this.period);
@@ -123,6 +123,7 @@ export class FlarePlayer {
   pacingRate(time) { return pacingRate(this.pacing, this.motion, time, this.period); }
   paceStep(delta) { return paceStep(this.pacing, this.motion, this.time, delta, this.speed, this.period); }
   getMetrics() { return this.motion?.getMetrics() ?? null; }
+  setDisplayScene(scene = null) { this.displayScene = scene; this.dirty = true; }
   setVisible(visible) {
     this.visible = !!visible;
     if (this.visible && !document.hidden) { this.dirty = true; this.start(); }
@@ -130,11 +131,15 @@ export class FlarePlayer {
   }
   setQuality(value) {
     this.quality = value in QUALITY ? value : 'medium'; const quality = QUALITY[this.quality];
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality.ratio));
+    this.updatePixelRatio();
     this.renderer.shadowMap.enabled = quality.shadows; this.keyLight.castShadow = quality.shadows;
     this.shadowCatcher.visible = quality.shadows;
     this.coach?.traverse(object => { if (object.isMesh) object.castShadow = quality.shadows; });
     this.dirty = true; this.resize();
+  }
+  updatePixelRatio() {
+    const minimum = this.framingMode === 'detail' && this.quality !== 'low' ? 2 : 1;
+    this.renderer.setPixelRatio(Math.min(Math.max(window.devicePixelRatio || 1, minimum), Math.max(QUALITY[this.quality].ratio, minimum)));
   }
   resize() {
     const width = this.container.clientWidth, height = this.container.clientHeight;
@@ -150,13 +155,23 @@ export class FlarePlayer {
     this.offsetX = fullStage ? width * 10 / 390 : 0;
     this.camera.setViewOffset(width, height, this.offsetX - this.insetLeft / 2, this.offsetY, width, height);
     this.camera.updateProjectionMatrix(); this.renderer.setSize(width, height);
-    if (changed && this.autoFrame && this.motion) this.resetView(); this.dirty = true;
+    if (changed && this.autoFrame && this.motion) this.resetView();
+    if (changed && this.framingMode === 'detail') this.callbacks.onResize?.();
+    this.dirty = true;
   }
-  setFramingMode(value) { this.framingMode = value; this.resize(); }
+  setFramingMode(value) { this.framingMode = value; this.updatePixelRatio(); this.resize(); }
   resetView(direction = CAMERA_PRESETS.standard) {
     this.autoFrame = true;
     const fullStage = this.container.clientWidth <= 600 && this.container.clientHeight >= 500;
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.72 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
+  }
+  setCameraView(position, target) {
+    // A quick model switch must not carry an unfinished orbit into the next
+    // model's camera. Flush its damping before installing the saved view.
+    const damping = this.controls.enableDamping;
+    this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
+    this.controls.target.copy(target); this.camera.position.copy(position);
+    this.controls.update(); this.dirty = true;
   }
   fitBounds(box, direction, padding = 1) {
     if (box.isEmpty()) return;
@@ -170,8 +185,7 @@ export class FlarePlayer {
       const offset = new THREE.Vector3(x, y, z).sub(center), depth = offset.dot(dir);
       distance = Math.max(distance, depth + Math.abs(offset.dot(up)) / tan, depth + Math.abs(offset.dot(right)) / horizontal);
     }
-    this.controls.target.copy(center); this.camera.position.copy(center).addScaledVector(dir, distance * padding);
-    this.controls.update(); this.dirty = true;
+    this.setCameraView(center.clone().addScaledVector(dir, distance * padding), center);
   }
   project(point) {
     const v = point.clone().project(this.camera), rect = this.renderer.domElement.getBoundingClientRect();

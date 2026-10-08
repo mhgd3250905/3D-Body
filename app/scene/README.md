@@ -29,12 +29,13 @@ channel receives JSON strings. Web: parent iframe sends
 | `camera` | `view`: front, back, side, standard | Change camera without changing time |
 | `select` | `groupId` or null | Pause and color a functional surface region |
 | `detail` | `groupId` or null | Same paused pose, close camera; null restores main camera and preserves selection |
-| `quality` | `value`: low, medium, high | Pixel ratio 1/1.5/2; low disables shadow |
+| `detail_model` | `value`: motion, muscles | Swap the active detail model; retain the same group and paused time |
+| `quality` | `value`: low, medium, high | Home pixel ratio caps 1/1.5/2; medium/high detail uses at least 2; low disables shadow |
 | `visibility` | `visible` boolean | Hidden pauses and stops GPU rendering |
 
 `ready` includes `period`, `time`, `phase` (integer source step 9–16) and phase
 ticks. `state` includes `time`, `period`, `playing`, `speed`, `phase`, `selected`
-(nullable group ID), `detail`, `loop`, `quality`, `ready`, and `errorCode`.
+(nullable group ID), `detail`, `detailModel` (motion or muscles), `loop`, `quality`, `ready`, and `errorCode`.
 Commands emit state immediately; animation state is throttled to 10 Hz.
 Hotspot/mesh taps emit `select` with `groupId` and `time`; the host opens its
 detail UI and sends the `detail` command. `error` includes `code` and
@@ -66,8 +67,11 @@ behind the header, model and footer. Native WebViews should use a transparent
 background when that shared background is supplied by Flutter. The HTML uses
 `color-scheme: normal` to avoid the browser inserting an opaque dark iframe
 canvas. The tiny front/back views are copied from the existing renderer into
-one 2D thumbnail inside the card; this fixes glass-background occlusion and
-rounded clipping without creating another WebGL context or duplicating a model.
+one 2D thumbnail inside the card. Each view uses a complete MSAA render target
+at independent 2–3× density (1× in low quality), with explicit ACES/sRGB output
+and coverage-alpha correction. Results are cached per phase, size, quality and
+exposure; there is no per-frame GPU readback. This fixes glass-background
+occlusion and rounded clipping without another WebGL context or another model.
 
 This composition follows the package's exact `03_设计稿/v2_核心流程/h1-home.png`
 and HTML measurements. The package's `03_设计稿/README.md` explicitly says not
@@ -78,11 +82,30 @@ same paused time and retains the selected group; `select(null)` is the explicit
 clear command and `play` also clears selection.
 
 While paused, primary muscle anchors are tappable with 44 CSS px targets;
-the current skinned surface is also raycastable. The detail camera reuses the
-same mesh and pose. Its small scissored view shows the same whole body without
-a second WebGL context; tapping it switches full/close framing. Colors and
-hatched deep locations are approximate functional teaching panels. They are
-neither anatomical geometry nor muscle activation measurements.
+the current skinned surface is also raycastable. Detail opens with the same
+Thomas/Snow pose in the large view and the upright mannequin in the small
+scissored card. Tapping that card exchanges the two models; it then previews
+the alternative model. There is no top segmented switch or extra model button.
+Each model retains its own camera, and front/back/reset act on the large view.
+Exit restores the home camera and paused frame. Switching does not emit a new
+muscle hit or change its training content. Both models reuse the existing
+WebGL context and original geometry.
+
+The embedded host owns the accessible tap target over the entire 86×108 card;
+the DOM card remains available in a direct scene preview. Host taps restore
+visible rendering before changing the model. On Web, the scene's document
+visibility controls background rendering, so a host lifecycle/focus change
+when dragging the iframe cannot stop an on-screen canvas. Flutter navigation
+still sends explicit visibility changes for training/settings pages. Native
+hosts retain their lifecycle background handling.
+
+`muscle-material.js` adapts the imported functional shader without changing its
+source region definitions or hit testing. The action actor has a uniform white
+base and functional color fills, with no added muscle strokes, channels, edge
+darkening or deep hatching; original garment seams/geometry remain. The upright
+mannequin retains fine screen-bounded panel strokes and antialiased deep
+locations, with no extra normal relief. Colors are approximate functional
+teaching panels, not anatomical geometry or muscle activation measurements.
 
 ## Verification and provenance
 
@@ -112,5 +135,6 @@ a low-end-device frame rate improvement or a completed LOD pass.
 The compression API and optional preprocessing follow the
 [official glTF Transform extension documentation](https://gltf-transform.dev/modules/extensions/classes/EXTMeshoptCompression).
 
-`window.__flareScene` provides metrics, state, hotspots, camera, phase ticks and
-clock samples for focused browser verification. It exposes no scene objects.
+`window.__flareScene` provides metrics, state, hotspots, camera, render state,
+phase ticks and clock samples for focused browser verification. It exposes no
+scene objects.

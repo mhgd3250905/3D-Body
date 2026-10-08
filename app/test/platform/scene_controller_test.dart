@@ -83,7 +83,7 @@ void main() {
         'phase': 15,
         'playing': false,
         'selected': 'deltoids',
-      'detail': true,
+        'detail': true,
       });
       expect(controller.time, 6);
       expect(controller.phase, 15);
@@ -93,7 +93,7 @@ void main() {
         'source': 'flare-scene',
         'type': 'state',
         'selected': null,
-      'detail': false,
+        'detail': false,
       });
       expect(controller.selected, isNull);
       expect(controller.detail, isNull);
@@ -118,4 +118,138 @@ void main() {
       expect(sent.where((value) => value['type'] == 'play').length, 1);
     },
   );
+
+  test(
+    'switching detail models preserves paused frame and group across detail navigation',
+    () async {
+      final sent = <Map<String, Object?>>[];
+      final controller = SceneController(commandSink: sent.add);
+      addTearDown(controller.dispose);
+      controller.receiveEvent(_ready);
+      controller.setTime(2.375);
+      // Model choices are only meaningful inside the muscle detail page.
+      controller.setDetailModel('muscles');
+      expect(controller.detailModel, 'motion');
+      controller.setDetail('deltoids');
+      controller.setDetailModel('muscles');
+      await Future<void>.delayed(Duration.zero);
+      expect(controller.detailModel, 'muscles');
+      expect(controller.time, 2.375);
+      expect(controller.detail, 'deltoids');
+      expect(controller.selected, 'deltoids');
+      expect(controller.playing, isFalse);
+      expect(sent.last, {'type': 'detail_model', 'value': 'muscles'});
+
+      // A synergist selection or training page round-trip retains the model.
+      controller.setDetail('triceps');
+      controller.setVisible(false);
+      controller.setVisible(true);
+      expect(controller.detailModel, 'muscles');
+      expect(controller.detail, 'triceps');
+      expect(controller.selected, 'triceps');
+      expect(controller.time, 2.375);
+      controller.setDetail(null);
+      expect(controller.detailModel, 'motion');
+      expect(controller.selected, 'triceps');
+      expect(controller.time, 2.375);
+      controller.setDetail('deltoids');
+      expect(controller.detailModel, 'motion');
+      controller.setDetailModel('muscles');
+      controller.setTime(3);
+      expect(controller.detail, isNull);
+      expect(controller.detailModel, 'motion');
+      expect(controller.time, 3);
+      controller.setDetail('deltoids');
+      controller.setDetailModel('muscles');
+      controller.play();
+      expect(controller.detail, isNull);
+      expect(controller.selected, isNull);
+      expect(controller.detailModel, 'motion');
+      expect(controller.time, 3);
+    },
+  );
+
+  test(
+    'thumbnail model state follows the scene without becoming a new muscle hit',
+    () {
+      final controller = SceneController();
+      addTearDown(controller.dispose);
+      controller.receiveEvent(_ready);
+      controller.setDetail('deltoids');
+      final generation = controller.selectionGeneration;
+      expect(
+        controller.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'state',
+          'time': 2.375,
+          'playing': false,
+          'selected': 'deltoids',
+          'detail': true,
+          'detailModel': 'muscles',
+        }),
+        isTrue,
+      );
+      expect(controller.detailModel, 'muscles');
+      expect(controller.detail, 'deltoids');
+      expect(controller.selected, 'deltoids');
+      expect(controller.time, 2.375);
+      expect(controller.selectionGeneration, generation);
+      for (final invalid in <Object?>[
+        'other',
+        null,
+        1,
+        ['motion'],
+      ]) {
+        controller.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'state',
+          'detailModel': invalid,
+        });
+        expect(controller.detailModel, 'muscles');
+      }
+      // Older adapters omit the field; the current choice remains intact.
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'state',
+        'detail': true,
+      });
+      expect(controller.detailModel, 'muscles');
+      expect(
+        controller.receiveEvent({
+          'source': 'other-scene',
+          'type': 'state',
+          'detailModel': 'motion',
+        }),
+        isFalse,
+      );
+      controller.setDetailModel('invalid');
+      expect(controller.detailModel, 'muscles');
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'state',
+        'detail': false,
+        'detailModel': 'muscles',
+      });
+      expect(controller.detailModel, 'motion');
+      expect(controller.detail, isNull);
+      expect(controller.selected, 'deltoids');
+      expect(controller.time, 2.375);
+    },
+  );
+
+  test('leaving detail drops a model switch queued before readiness', () async {
+    final sent = <Map<String, Object?>>[];
+    final controller = SceneController(commandSink: sent.add);
+    addTearDown(controller.dispose);
+    controller.setDetail('deltoids');
+    controller.setDetailModel('muscles');
+    controller.setDetail(null);
+    controller.setDetail('triceps');
+    controller.receiveEvent(_ready);
+    await Future<void>.delayed(Duration.zero);
+    expect(controller.detailModel, 'motion');
+    expect(sent, [
+      {'type': 'detail', 'groupId': 'triceps'},
+    ]);
+  });
 }

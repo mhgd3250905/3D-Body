@@ -29,7 +29,7 @@ App 引用 v33 的独立副本。根目录原网页、`托马斯/` 导出、历�
 
 内容导入可用 `assets/data/import_content.py` 在本地复现，需要 Python/Pillow；它只读源包，生成 App 数据和图像副本。3D 构建按 `scene/README.md` 执行。`scene/tools/model-optimization.json` 已记录源/输出哈希：Snow从7,508,016字节压缩至2,390,231字节，人台从1,338,688至863,833字节，采用meshopt与gzip；未减面、未量化、未合并网格。3,572,742个属性值保持一致，三角形允许等价的循环顶点排序，原顶点、骨骼、蒙皮与动作保留。当前没有已验收的移动LOD。
 
-正背小图使用包内成熟CC0 Human Base Meshes人台，与主人物共用一个WebGL渲染上下文；小图的2D呈现副本解决玻璃卡片遮暗，不以静态假人图替代阶段同步。Snow、Three.js、meshoptimizer、fflate与Noto许可随包保存并在设置中可查看。fflate许可来自[作者仓库](https://github.com/101arrowz/fflate/blob/master/LICENSE)，meshoptimizer来自[对应版本](https://github.com/zeux/meshoptimizer/blob/v0.22/LICENSE.md)。
+正背小图使用包内成熟CC0 Human Base Meshes人台，与主人物共用一个WebGL渲染上下文。每个视图独立渲染到高密度MSAA目标，转换为正确的显示色彩后存入2D呈现副本，按阶段/尺寸缓存；普通质量的小图至少2倍采样，低质量保持1倍。相同人台复用于详情的大画面或小卡片，没有复制模型或新建WebGL上下文。原肌群区域、命中数据、网格和法线保留，精细化只调整体表教学边界的宽度/明暗与抗锯齿；动作白膜不显示这些边界或肌群斜线。Snow、Three.js、meshoptimizer、fflate与Noto许可随包保存并在设置中可查看。fflate许可来自[作者仓库](https://github.com/101arrowz/fflate/blob/master/LICENSE)，meshoptimizer来自[对应版本](https://github.com/zeux/meshoptimizer/blob/v0.22/LICENSE.md)。
 
 ## 署名与范围
 

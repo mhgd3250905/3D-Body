@@ -1,21 +1,21 @@
 # 本轮验证记录
 
-2026-10-08。本记录对应当前Flutter App与最终极简首页，包内历史测试和根目录旧网页的验证不代替本轮结果。首页视觉验收见仓库根 [design-qa.md](../../design-qa.md)。
+2026-10-08。本记录对应当前Flutter App、极简首页及用户确认的双模型详情。包内历史测试和根目录旧网页的验证不代替本轮结果。视觉验收见仓库根 [design-qa.md](../../design-qa.md)。
 
 ## 本地检查与构建
 
 | 检查 | 实际结果与范围 |
 | --- | --- |
-| Flutter静态分析 | `flutter analyze --no-pub` 无问题；时间轴最后调整后再分析，无问题 |
-| Flutter测试 | 完整运行36项通过：领域22、宿主9、界面5；最后把09–16刻度绑定真实关键帧后，复测5项界面测试通过 |
+| Flutter静态分析 | 最终双模型/生命周期改动后 `flutter analyze --no-pub` 无问题 |
+| Flutter测试 | 此前完整36项通过；本轮 `flutter test --no-pub --concurrency=1 test/platform/scene_controller_test.dart test/ui/flow_regressions_test.dart` 的14项全部通过，包含实际点击小卡片、同帧/选区/训练返回、320/390布局及生命周期回归 |
 | Flutter Web | `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功；最终构建包含相机随窗口尺寸重新取景修复，渲染资源随包提供 |
-| Android ARM64 | `flutter build apk --release --no-pub --target-platform android-arm64` 成功，最终文件35,940,250字节（Flutter输出34.3MB）；采用本地开发签名，未作为商店发布包验收 |
-| 场景构建 | `app/scene` 的 `npm run build` 成功，14个运行文件共4,104,796字节；无CDN依赖 |
+| Android ARM64 | `flutter build apk --release --no-pub --target-platform android-arm64` 成功，最终文件35,942,742字节（Flutter输出34.3MB），20:30:43生成；采用本地开发签名，未作为商店发布包验收 |
+| 场景构建 | `app/scene` 的 `npm run build` 成功，14个运行文件共4,112,683字节；无CDN依赖 |
 | 动作与模型校验 | `npm run verify` 成功，实际找到源参照；21个源文件哈希一致，181个姿态对照结果见下文 |
 | 默认循环构图 | `node tools/verify-framing.mjs` 成功；390×650场景、每0.05秒一个姿态，每8个蒙皮顶点取样，不是遍历每个顶点 |
 | 原网页 | 根目录 `npm run build` 成功并生成 `dist`；原网页代码与原始动作导出保留 |
 
-最终安卓试用包：`app/build/app/outputs/flutter-apk/app-release.apk`。SHA-256：`e459acb1057389beded956621a05d786b38cb66eae48592dcd883bc28726baaf`。此前的 `app-debug.apk` 是模拟器检查产物，不是最终首页的交付包。
+最终安卓试用包：`app/build/app/outputs/flutter-apk/app-release.apk`。SHA-256：`96c3406de3934a13cf37a64b9439f4c0eef51bd97461f5b33b9fc094afc8fc6b`。此前的 `app-debug.apk` 是模拟器检查产物，不是当前交付包。
 
 第一次最终Web构建曾因PowerShell宿主内存异常中止；改用系统Windows PowerShell重新执行后成功。先前Wasm干运行已成功，本次最终构建跳过重复干运行。最终构建成功是包生成证据，不代表原生3D或真机性能已通过。
 
@@ -30,6 +30,12 @@
 `browser-check.json` 保留的是早期390×380宿主检查，`home-contract-check.json` 保留的是早期接口检查；它们不是最终首页截图或全部M2人工命中表。
 
 ## 浏览器直接验证
+
+本轮双模型详情由代理亲自在同一Codex内置浏览器操作。默认大画面为托马斯白膜，小卡片为直立肌群人体；整块86×108小卡片是唯一模型切换入口，没有顶部segment。白膜没有额外肌群沟槽、边界或深层斜线；直立人体保留细分界线。两种模式均真实渲染，源数据和原网格没有替换。
+
+曾实际复现“文字切了、模型不更新”：拖动3D后，宿主将仍可见的场景置为 `visible:false/running:false`。现在Web场景按自身document visibility停启，Flutter导航仍关闭离屏场景；原生生命周期继续管理后台停止。小卡片在宿主层接收点击并恢复可见渲染，场景内按钮保留直接预览回退。最终重走同一拖动路径后，`visible:true/running:true`，模型与视角都实际变化；两次交换及返回首页始终为阶段11、2.0秒、三角肌。证据为 `output/design-qa/20261008/dual-model/browser-check-final.json`。此前包含故障的 `browser-check.json` 仅作为修复过程记录。
+
+当前最终截图为同目录 `detail-motion.png`、`detail-muscles.png`、`models-final.png`；同输入视觉对照 `compare-request.png` 已实际打开检查。320×700的两种模型也实际操作并截图。旋转后交换、从肌群模型进入对应训练再返回均保持时刻/肌群/模型；本轮未为检查新增训练完成记录。最终控制台0 error、0 warn。每次实现后的首次交互复核由代理完成，不交给用户代测。
 
 使用Codex内置浏览器打开 `http://127.0.0.1:8820/`，检查最终构建；390×844与320×700均实际截图。完整原稿和实现同输入对照见 `output/design-qa/20261008/compare-final.png`，小控件局部对照见 `compare-controls.png`，最终画面为 `home-final.jpg` 与 `home-small.jpg`。手机系统框与状态栏不作为App内容复制。
 

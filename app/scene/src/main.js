@@ -24,6 +24,7 @@ function state() {
   return { type: 'state', time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
     speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
+    detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
     quality: player?.quality ?? 'medium', ready, errorCode };
 }
 function emitState(force = false) {
@@ -61,6 +62,9 @@ function closeDetail() {
   phaseMap?.setHidden(false);
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
+function updateDetailNote() {
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '肌群位置示意 · 对应同一部位' : '动作白膜 · 保持当前暂停姿态';
+}
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
   if (!groupId) {
@@ -69,7 +73,7 @@ function setSelected(groupId, detail = detailed) {
     selected = groupId; detailed = !!detail; const phase = phaseAt(player.time);
     surface.show(selected, phase.items, detailed);
     if (detailed) {
-      detailView.open(selected, phase); detailNote.hidden = false;
+      detailView.open(selected, phase); detailNote.hidden = false; updateDetailNote();
       phaseMap?.setHidden(true);
       for (const prop of player.stageProps) prop.visible = false;
     }
@@ -112,11 +116,11 @@ function command(value) {
       break;
     }
     case 'reset':
-      player.resetView(); if (detailed && selected) detailView.open(selected, phaseAt(player.time)); break;
+      if (detailed && selected) detailView.reset(phaseAt(player.time)); else player.resetView(); break;
     case 'camera': {
       if (!CAMERA_PRESETS[input.view]) return;
-      player.resetView(CAMERA_PRESETS[input.view]);
-      if (detailed && selected) detailView.open(selected, phaseAt(player.time)); break;
+      if (detailed && selected) detailView.reset(phaseAt(player.time), CAMERA_PRESETS[input.view]);
+      else player.resetView(CAMERA_PRESETS[input.view]); break;
     }
     case 'select': if (input.groupId == null || GROUPS[input.groupId]) setSelected(input.groupId ?? null); else return; break;
     case 'detail':
@@ -126,6 +130,9 @@ function command(value) {
       } else if (GROUPS[input.groupId]) setSelected(input.groupId, true);
       else return;
       break;
+    case 'detail_model':
+      if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
+      detailView.setModel(input.value, phaseAt(player.time)); updateDetailNote(); break;
     case 'quality': player.setQuality(input.value); break;
     case 'visibility': player.setVisible(input.visible); break;
     default: return;
@@ -148,15 +155,17 @@ async function boot() {
     player = new FlarePlayer(stage, {
       onTime: () => emitState(),
       onRender: () => { refreshHotspots(); if (detailed) detailView?.renderMini(); else phaseMap?.render(); },
+      onResize: () => { if (detailed) detailView?.refit(phaseAt(player.time)); },
       onContext: restored => {
-        if (restored) { errorCode = null; status.hidden = true; emitState(true); }
+        if (restored) { phaseMap?.refreshEnvironment(); errorCode = null; status.hidden = true; emitState(true); }
         else { surface?.releaseGpu(); phaseMap?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
     await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
     player.resetView();
     const skinned = buildMmRest(player.motion, player.coach);
-    hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned); detailView = createDetailView(player);
+    hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
+    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); });
     detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
     const canvas = player.renderer.domElement;
     canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });
@@ -164,7 +173,10 @@ async function boot() {
     canvas.addEventListener('pointerup', event => {
       const down = pointerDown; pointerDown = null;
       if (!down || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
-      const hit = hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items); if (hit) selectFromTap(hit.groupId);
+      const hit = detailed && detailView.getModel() === 'muscles'
+        ? phaseMap.pickSurface(event.clientX, event.clientY, player.camera, canvas.getBoundingClientRect())
+        : hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items);
+      if (hit) selectFromTap(hit.groupId);
     });
     ready = true; status.hidden = true; player.dirty = true;
     const geometryStats = skinned.reduce((stats, mesh) => ({ meshes: stats.meshes + 1, vertices: stats.vertices + mesh.geometry.attributes.position.count,
@@ -175,6 +187,10 @@ async function boot() {
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
       hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
       getPhaseMap: () => phaseMap?.getState(),
+      getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
+        frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
+        pixelRatio: player.renderer.getPixelRatio(), framingMode: player.framingMode,
+        bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
       getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect }),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },

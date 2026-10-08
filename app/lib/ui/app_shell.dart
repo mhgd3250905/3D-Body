@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -140,6 +141,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     });
     _scene.select(group.id);
     _scene.setDetail(group.id);
+    _syncSceneVisibility();
   }
 
   void _returnToMotion() {
@@ -147,6 +149,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _detail = null;
     });
     _scene.setDetail(null);
+    _syncSceneVisibility();
+  }
+
+  void _swapDetailCard() {
+    if (_detail == null || !_watchVisible) return;
+    _syncSceneVisibility();
+    _scene.setDetailModel(
+      _scene.detailModel == 'motion' ? 'muscles' : 'motion',
+    );
   }
 
   void _openDrill(Drill drill) {
@@ -216,7 +227,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) {
       _scene.pause();
-      _scene.setVisible(false);
+      // An embedded Web scene owns document visibility. Host focus/lifecycle
+      // changes can otherwise stop a canvas that is still on screen.
+      // Navigation still uses _syncSceneVisibility to hide an offstage scene.
+      if (!kIsWeb && state != AppLifecycleState.inactive) {
+        _scene.setVisible(false);
+      }
       unawaited(store.setLastTime(_scene.time));
     } else {
       store.refreshDate();
@@ -474,6 +490,36 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       controller: _scene,
                     )
                   : const ColoredBox(color: FlareColors.background),
+              if (detail != null)
+                Positioned(
+                  left: 12,
+                  bottom: 31,
+                  width: 86,
+                  height: 108,
+                  child: Semantics(
+                    label: _scene.detailModel == 'motion'
+                        ? s.switchToMuscles
+                        : s.switchToMotion,
+                    button: true,
+                    onTap: _swapDetailCard,
+                    child: ExcludeSemantics(
+                      child: TextButton(
+                        key: const ValueKey('detail-card'),
+                        onPressed: _swapDetailCard,
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(86, 108),
+                          backgroundColor: const Color(0x01171922),
+                          overlayColor: const Color(0x22ffffff),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const SizedBox.expand(),
+                      ),
+                    ),
+                  ),
+                ),
               if (detail == null)
                 Positioned(
                   right: 16,
@@ -623,7 +669,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     DrillTile(drill: drill, onTap: () => _openDrill(drill)),
                   BodyText(s.teachingNote, color: FlareColors.muted),
                   if (detail.deep)
-                    BodyText(s.deepNote, color: FlareColors.muted),
+                    BodyText(
+                      _scene.detailModel == 'muscles'
+                          ? s.deepNote
+                          : s.deepMotionNote,
+                      color: FlareColors.muted,
+                    ),
                   if (detail.note != null) ...[
                     SectionTitle(s.sourceNote),
                     BodyText(detail.note!),

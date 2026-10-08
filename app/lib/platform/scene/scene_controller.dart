@@ -25,6 +25,7 @@ class SceneController extends ChangeNotifier {
   int _phase = 9;
   String? _selected;
   String? _detail;
+  String _detailModel = 'motion';
   String? _errorCode;
   int _selectionGeneration = 0;
 
@@ -36,6 +37,7 @@ class SceneController extends ChangeNotifier {
   int get phase => _phase;
   String? get selected => _selected;
   String? get detail => _detail;
+  String get detailModel => _detailModel;
   String? get errorCode => _errorCode;
 
   /// Advances only for an actual scene hit, never a command acknowledgement.
@@ -66,6 +68,7 @@ class SceneController extends ChangeNotifier {
     _time = value.clamp(0, _period).toDouble();
     _playing = false;
     _detail = null;
+    _resetDetailModel();
     command({'type': 'seek', 'time': _time});
     notifyListeners();
   }
@@ -75,6 +78,7 @@ class SceneController extends ChangeNotifier {
     _playing = true;
     _selected = null;
     _detail = null;
+    _resetDetailModel();
     command({'type': 'play'});
     notifyListeners();
   }
@@ -106,11 +110,33 @@ class SceneController extends ChangeNotifier {
 
   void setDetail(String? groupId) {
     if (_disposed) return;
+    if (_detail == null || groupId == null) _resetDetailModel();
     _detail = groupId;
     _playing = false;
     if (groupId != null) _selected = groupId;
     command({'type': 'detail', 'groupId': groupId});
     notifyListeners();
+  }
+
+  /// Both detail models observe the same paused source frame and muscle group.
+  void setDetailModel(String value) {
+    if (_disposed ||
+        _detail == null ||
+        !_detailModels.contains(value) ||
+        _detailModel == value) {
+      return;
+    }
+    _detailModel = value;
+    _playing = false;
+    command({'type': 'detail_model', 'value': value});
+    notifyListeners();
+  }
+
+  static const _detailModels = {'motion', 'muscles'};
+
+  void _resetDetailModel() {
+    _detailModel = 'motion';
+    _pending.remove('detail_model');
   }
 
   void setLoop(double? start, double? end) =>
@@ -218,6 +244,11 @@ class SceneController extends ChangeNotifier {
     if (event.containsKey('detail')) {
       final detail = event['detail'];
       _detail = detail is bool ? (detail ? _selected : null) : _groupId(detail);
+    }
+    if (_detail == null || _playing) {
+      _resetDetailModel();
+    } else if (_detailModels.contains(event['detailModel'])) {
+      _detailModel = event['detailModel'] as String;
     }
     if (type == 'ready') {
       _ready = true;

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS } from './phase.js';
+import { applyFunctionalSurface } from './muscle-material.js';
 
 // Adapted from the package's mmRest.ts. The attribute is attached to the
 // original Snow vertices. It is a teaching map, not an anatomical registration.
@@ -91,18 +92,11 @@ export function createHitTester(player, skinned) {
 export function createSurfaceSelection(skinned) {
   const uniforms = MM.createMuscleUniforms(), originals = new Map(), mapped = new Map();
   uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
-  uniforms.mmBase.value.set('#737b88'); uniforms.mmSkin.value.set('#59606c'); uniforms.mmGroove.value.set('#2b313c');
+  uniforms.mmBase.value.set('#818b99'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
   for (const mesh of skinned) {
     originals.set(mesh, mesh.material);
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.68, metalness: 0 });
-    MM.applyMuscleMap(material, uniforms, { clothing: false }); const base = material.onBeforeCompile;
-    material.onBeforeCompile = (shader, renderer) => {
-      base(shader, renderer);
-      shader.vertexShader = 'attribute vec3 mmRest;\n' + shader.vertexShader.replace('vMmPos = transformed;', 'vMmPos = mmRest;');
-      // Color panels are a surface cue; avoid introducing a sculpted muscle bulge.
-      shader.fragmentShader = shader.fragmentShader.replace('vec2(dFdx(h), dFdy(h)) * 0.004', 'vec2(0.0)');
-    };
-    material.customProgramCacheKey = () => 'flare-posed-functional-surface-v1'; mapped.set(mesh, material);
+    applyFunctionalSurface(material, uniforms, { posed: true }); mapped.set(mesh, material);
   }
   function show(groupId, items, detail = false) {
     if (!groupId) { restore(); return; }
