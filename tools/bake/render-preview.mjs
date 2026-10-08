@@ -8,7 +8,8 @@ import path from 'node:path';
 
 const arg = (name, fallback) => { const i = process.argv.indexOf('--' + name); return i >= 0 ? process.argv[i + 1] : fallback; };
 const root = path.resolve(new URL('../..', import.meta.url).pathname);
-const glb = path.resolve(arg('glb', path.join(root, 'tools/bake/out/flare-coach-v38-animated.glb')));
+const VER = arg('ver', process.env.BAKE_VER || 'v41');
+const glb = path.resolve(arg('glb', path.join(root, `tools/bake/out/flare-coach-${VER}-animated.glb`)));
 const dir = path.resolve(arg('dir', path.join(root, 'tools/bake/out/frames')));
 const fps = Number(arg('fps', 30)), size = Number(arg('size', 720));
 fs.mkdirSync(dir, { recursive: true });
@@ -17,7 +18,7 @@ const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#e9ebee;overflow:hidden;font:14px system-ui,sans-serif}
 #l{position:fixed;left:14px;top:12px;color:#444}#t{position:fixed;right:14px;top:12px;color:#444;font-variant-numeric:tabular-nums}</style>
 <script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script></head><body>
-<div id="l">flare-coach-v38-animated.glb · AnimationMixer · clip flare_v38_loop</div><div id="t"></div>
+<div id="l">flare-coach-${VER}-animated.glb · AnimationMixer · clip flare_${VER}_loop</div><div id="t"></div>
 <script type="module">
 import * as THREE from 'three';import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 const S=${size};const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(S,S);renderer.setPixelRatio(1);document.body.appendChild(renderer.domElement);
@@ -28,7 +29,7 @@ const floor=new THREE.Mesh(new THREE.CircleGeometry(2.2,64),new THREE.MeshStanda
 const grid=new THREE.GridHelper(4,20,'#b9bdc2','#c9ccd0');grid.position.y=0.001;scene.add(grid);
 const camera=new THREE.PerspectiveCamera(34,1,0.05,50);camera.position.set(3.0,1.55,3.9);camera.lookAt(0,0.68,0);
 const gltf=await new GLTFLoader().loadAsync('/model.glb');scene.add(gltf.scene);
-const clip=gltf.animations.find(a=>a.name==='flare_v38_loop');const mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();
+const clip=gltf.animations.find(a=>a.name===`flare_${VER}_loop`);const mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();
 window.duration=clip.duration;window.go=t=>{mixer.setTime(t);document.getElementById('t').textContent=t.toFixed(2)+' / '+clip.duration.toFixed(2)+' s  (1×)';renderer.render(scene,camera);};
 window.go(0);document.documentElement.dataset.ready='1';
 </script></body></html>`;

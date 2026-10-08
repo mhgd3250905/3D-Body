@@ -1,16 +1,16 @@
 // Bake step 2/2: turn capture.json (tools/bake/capture.mjs) into app-ready files and verify.
 //
-//   flare-coach-v38-animated.glb   public/coach/flare-coach.glb + the two runtime spine helper
+//   flare-coach-<ver>-animated.glb  public/coach/flare-coach.glb + the two runtime spine helper
 //                                  bones (with the runtime's redistributed waist weights) +
-//                                  AnimationClip "flare_v38_loop" (LINEAR, ~60 fps, seamless)
-//   flare-v38-baked-60fps.json     raw per-frame bone transforms for other engines
-//   flare-v38-phases.json          per-frame phase / support hand / active muscle groups
+//                                  AnimationClip "flare_<ver>_loop" (LINEAR, ~60 fps, seamless)
+//   flare-<ver>-baked-60fps.json   raw per-frame bone transforms for other engines
+//   flare-<ver>-phases.json       per-frame phase / support hand / active muscle groups
 //
 // Verification: the written GLB is re-loaded with GLTFLoader, played with AnimationMixer
 // at every baked frame and at 24 live probe times between frames, and joint world
 // positions + 1/97 of Coach_Body's skinned vertices are compared to the live runtime.
 //
-// usage: node tools/bake/build-glb.mjs [--capture tools/bake/out/capture.json] [--out tools/bake/out]
+// usage: node tools/bake/build-glb.mjs [--capture tools/bake/out/capture.json] [--out tools/bake/out] [--ver v41] [--source 'Flare v41 runtime (git ...)']
 import fs from 'node:fs';
 import path from 'node:path';
 import * as THREE from 'three';
@@ -27,7 +27,8 @@ const arg = (name, fallback) => { const i = process.argv.indexOf('--' + name); r
 const root = path.resolve(new URL('../..', import.meta.url).pathname);
 const capturePath = arg('capture', path.join(root, 'tools/bake/out/capture.json'));
 const outDir = arg('out', path.join(root, 'tools/bake/out'));
-const CLIP = arg('clip', 'flare_v38_loop');
+const VER = arg('ver', process.env.BAKE_VER || 'v41'), SRC = arg('source', process.env.BAKE_SOURCE || `Flare ${VER} runtime`);
+const CLIP = arg('clip', `flare_${VER}_loop`);
 fs.mkdirSync(outDir, { recursive: true });
 const cap = JSON.parse(fs.readFileSync(capturePath, 'utf8'));
 const rigData = JSON.parse(fs.readFileSync(path.join(root, 'public/coach/coach-rig.json'), 'utf8'));
@@ -62,9 +63,9 @@ cap.names.forEach((name, j) => {
 const clip = new THREE.AnimationClip(CLIP, cap.loopWall, tracks);
 
 // ---------- 3. export ----------
-model.name = 'flare_coach_v38';
+model.name = `flare_coach_${VER}`;
 const glb = await new GLTFExporter().parseAsync(model, { binary: true, animations: [clip], onlyVisible: false });
-const glbPath = path.join(outDir, 'flare-coach-v38-animated.glb');
+const glbPath = path.join(outDir, `flare-coach-${VER}-animated.glb`);
 fs.writeFileSync(glbPath, Buffer.from(glb));
 
 // ---------- 4. verify: reload + AnimationMixer vs live runtime ----------
@@ -98,15 +99,15 @@ verify.examples = [0, 90, 180, 270, 360, 450].map(i => ({ frame: i, wall: +frame
 // ---------- 5. raw JSON ----------
 const r6 = x => Math.round(x * 1e6) / 1e6;
 const baked = {
-  format: 'flare-baked-v1', clip: CLIP, source: 'Flare v38 runtime (git fb4c7c0, tag v38-backup), viewer default URL params, paced clock, speed 1',
+  format: 'flare-baked-v1', clip: CLIP, source: `${SRC}, viewer default URL params, paced clock, speed 1`,
   fps: 60, effectiveFps: (F - 1) / cap.loopWall, frameCount: F, uniqueFrames: F - 1, duration: cap.loopWall, loop: 'seamless (last frame == first frame)',
   units: 'metres; quaternions [x,y,z,w]', coordinateSystem: 'three.js / glTF: right-handed, +Y up, character origin on the floor (y = 0)',
   hierarchy: 'every bone is a direct child of the armature node "Coach_Rig" (parallel deform bones, no bone-to-bone parenting); Coach_Rig and the scene root are identity for the whole clip, so local == model space',
-  bones: cap.names, helperBones: spine.helpers, helperNote: 'spineLower/spineUpper only exist in flare-coach-v38-animated.glb (runtime waist-skinning helpers). With the original flare-coach.glb use the 20 deform bones and ignore them.',
+  bones: cap.names, helperBones: spine.helpers, helperNote: `spineLower/spineUpper only exist in flare-coach-${VER}-animated.glb (runtime waist-skinning helpers). With the original flare-coach.glb use the 20 deform bones and ignore them.`,
   frameTimes: Array.from(times, r6), sequenceTime: frames.map(f => r6(f.raw)), sequencePeriod: cap.period,
   tracks: Object.fromEntries(cap.names.map((n, j) => [n, { position: poss[j].map(r6), quaternion: quats[j].map(r6) }])),
 };
-fs.writeFileSync(path.join(outDir, 'flare-v38-baked-60fps.json'), JSON.stringify(baked));
+fs.writeFileSync(path.join(outDir, `flare-${VER}-baked-60fps.json`), JSON.stringify(baked));
 
 // ---------- 6. phase / support / muscle timeline ----------
 const timeline = phaseTimeline(cap.sequence, { smooth: cap.smoothLoop });
@@ -129,7 +130,7 @@ const phases = {
   groups: Object.fromEntries(FLARE_GROUPS.map(g => [g.groupId, { label: g.label, section: g.section, colour: g.colour }])),
   frames: per,
 };
-fs.writeFileSync(path.join(outDir, 'flare-v38-phases.json'), JSON.stringify(phases));
+fs.writeFileSync(path.join(outDir, `flare-${VER}-phases.json`), JSON.stringify(phases));
 fs.writeFileSync(path.join(outDir, 'verify.json'), JSON.stringify(verify, null, 2));
 console.log(JSON.stringify(verify, null, 2));
 console.log('glb', (fs.statSync(glbPath).size / 1e6).toFixed(2), 'MB');
