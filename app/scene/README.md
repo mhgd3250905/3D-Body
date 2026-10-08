@@ -104,7 +104,14 @@ source region definitions or hit testing. The action actor has a uniform white
 base and functional color fills, with no added muscle strokes, channels, edge
 darkening or deep hatching; original garment seams/geometry remain. The upright
 mannequin retains fine screen-bounded panel strokes and antialiased deep
-locations, with no extra normal relief. Colors are approximate functional
+locations, with no extra normal relief. Diagram ink is composited after ACES
+and sRGB encoding so bright lighting and focus emission cannot wash it out.
+Stable adjacent-panel pairs use signed screen derivatives to keep fine curves
+continuous; candidate changes/triple junctions fall back to the source gradient.
+Midline derivatives use signed X. Region scores and hit tests remain unchanged.
+The wrapper has no second lifecycle observer: the app shell is the single
+owner of navigation/native visibility, and Web document visibility belongs to
+the player. Colors are approximate functional
 teaching panels, not anatomical geometry or muscle activation measurements.
 
 ## Verification and provenance

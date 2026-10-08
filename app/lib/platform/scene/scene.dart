@@ -10,39 +10,15 @@ export 'scene_controller.dart';
 
 /// Keep this widget mounted beneath Flutter's overlays to preserve the GLB,
 /// camera and paused frame when navigating to details or training pages.
-class SceneView extends StatefulWidget {
+/// The app shell owns navigation/native lifecycle visibility; the Web scene
+/// owns document visibility. A second observer here would stop iframe drags
+/// on focus loss, or restart an offstage scene when the app resumes.
+class SceneView extends StatelessWidget {
   const SceneView({super.key, required this.controller});
 
   final SceneController controller;
 
   @override
-  State<SceneView> createState() => _SceneViewState();
-}
-
-class _SceneViewState extends State<SceneView> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      widget.controller.setVisible(true);
-    } else {
-      widget.controller.pause();
-      widget.controller.setVisible(false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) =>
-      platform.ScenePlatformView(controller: widget.controller);
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+      platform.ScenePlatformView(controller: controller);
 }
