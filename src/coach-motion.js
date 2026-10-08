@@ -543,6 +543,37 @@ export function createCoachMotion({ model, rigData }) {
       && !footCurves.length && !segmentGuides.length && samePelvisKey(steps[0].pose, steps[steps.length - 1].pose);
   }
   const LIFTOFF_CAP_FADE = 0.12, LATE_VERTICAL_RAISE = true, SHOULDER_GIVE = 0.03, LATE_SNAP = [0.003, 0.03];
+  // v41 (user: a raised shoe looked twisted on the shin like a sprained ankle): during
+  // playback a foot keeps its hook (shin-foot angle) but its yaw about the shin axis
+  // follows the knee (thigh front), and its inversion/eversion roll stays small. The keys'
+  // world foot orientations had drifted up to 110 deg from the knee at the sides. Both
+  // are soft limits (L*tanh(x/L)), so a small natural offset stays and nothing pops.
+  // ?ankle=0 (or globalThis.__COACH_ANKLE_OFF) restores v38.
+  const ANKLE_ALIGN = !((typeof location !== 'undefined' && new URLSearchParams(location.search).get('ankle') === '0') || globalThis.__COACH_ANKLE_OFF === true);
+  const ANKLE_TWIST_LIMIT = 8 * Math.PI / 180, ANKLE_ROLL_LIMIT = 6 * Math.PI / 180;
+  function alignFootToKnee(side, footArray, hip, ankle, frame, thighTwist = 0) {
+    const legAxis = ankle.clone().sub(hip);
+    if (legAxis.lengthSq() < 1e-10) return footArray;
+    const ax = legAxis.normalize();
+    const thighRest = rest[side + 'Knee'].clone().sub(rest[side + 'Hip']);
+    const thighRotation = rotationFor(thighRest, ax, frame);
+    if (thighTwist) thighRotation.multiply(new THREE.Quaternion().setFromAxisAngle(thighRest.clone().normalize(), thighTwist));
+    const foot = new THREE.Quaternion().fromArray(footArray);
+    const perp = v => v.addScaledVector(ax, -v.dot(ax));
+    const knee = perp(FRONT.clone().applyQuaternion(thighRotation)), toe = perp(FRONT.clone().applyQuaternion(foot));
+    if (knee.lengthSq() < 1e-8 || toe.lengthSq() < 1e-8) return footArray;
+    const twist = Math.atan2(knee.clone().cross(toe).dot(ax), knee.dot(toe));
+    const keepTwist = ANKLE_TWIST_LIMIT * Math.tanh(twist / ANKLE_TWIST_LIMIT);
+    foot.premultiply(new THREE.Quaternion().setFromAxisAngle(ax, keepTwist - twist));
+    const f = FRONT.clone().applyQuaternion(foot), lateral = new THREE.Vector3(1, 0, 0).applyQuaternion(foot);
+    const ideal = new THREE.Vector3().crossVectors(f, ax).normalize();
+    lateral.addScaledVector(f, -lateral.dot(f)).normalize();
+    let roll = Math.atan2(ideal.clone().cross(lateral).dot(f), ideal.dot(lateral));
+    if (Math.abs(roll) > Math.PI / 2) roll -= Math.sign(roll) * Math.PI;
+    const keepRoll = ANKLE_ROLL_LIMIT * Math.tanh(roll / ANKLE_ROLL_LIMIT);
+    foot.premultiply(new THREE.Quaternion().setFromAxisAngle(f.normalize(), keepRoll - roll));
+    return foot.normalize().toArray();
+  }
   const LATE_PLANT = { right: 0.7 }, LATE_CONVERGE = 0.85, LATE_BLEND = 0.3, APPROACH_OVER = 0.6, APPROACH_FLAT_FROM = 0.0, APPROACH_FLAT_TO = 0.75, APPROACH_POW = 1.8, LATE_EASE_OUT = true, APPROACH_FLAT_TO_LATE = 0.55;
   function lowestHandOffset(side, quaternion) {
     let low = Infinity;
@@ -725,6 +756,7 @@ export function createCoachMotion({ model, rigData }) {
         return root.clone().add(hermiteV(...vs, t).applyQuaternion(curFrame)).toArray();
       };
       pose.limbs[side].ankle = leg.target;
+      if (ANKLE_ALIGN) pose.limbs[side].footQuaternion = alignFootToKnee(side, pose.limbs[side].footQuaternion, hip, new THREE.Vector3().fromArray(leg.target), frame, pose.limbs[side].thighTwist ?? 0);
       pose.limbs[side].kneePole = splinePole(node => node.solved[side].hip, node => node.requested.limbs[side].kneePole, node => pelvisFrame(node.requested), frame, hip);
       const shoulder = upperOffset(rest[side + 'Shoulder'], requested.bodyQuaternion, requested.torsoQuaternion).add(constrainedPelvis);
       const arm = interpolateLimbArc({
