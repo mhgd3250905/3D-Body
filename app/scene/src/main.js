@@ -64,7 +64,7 @@ function closeDetail() {
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
 function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '肌群位置示意 · 对应同一部位' : '动作示意 · 保持当前暂停姿态';
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转' : '固定视角';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
@@ -166,7 +166,7 @@ async function boot() {
     player.resetView();
     const skinned = buildMmRest(player.motion, player.coach);
     hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
-    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); });
+    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); }, () => surface.focusDirection());
     detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
     const canvas = player.renderer.domElement;
     canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });

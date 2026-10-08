@@ -146,14 +146,34 @@ function verifyOriginalAppearance(mesh) {
   }
 }
 const groupIds = Object.keys(GROUPS); assert.equal(groupIds.length, 17, 'Expected all 17 app muscle groups');
-let selectionCases = 0;
+let selectionCases = 0, tintedCases = 0, groinLeaks = 0, handLeaks = 0, curatedAngles = 0;
+const restAt = (mesh, i) => new THREE.Vector3().fromBufferAttribute(mesh.geometry.attributes.mmRest, i);
 for (const tick of phaseTicks) {
   motion.update(tick.time); const frozen = motion.getMetrics();
   for (const groupId of groupIds) {
+    // Home selection: the athlete is untouched (original material identity).
+    selection.show(groupId, phaseAt(tick.time).items, false);
+    for (const mesh of meshes) assert.equal(mesh.material, originalMaterials.get(mesh), 'Home selection replaced an actor material: ' + mesh.name);
+    // Detail: covered parts wear a detail-only proxy of their own material;
+    // face, hair, hands and shoes keep their original material objects.
     selection.show(groupId, phaseAt(tick.time).items, true);
+    let tinted = false;
     for (const mesh of meshes) {
-      assert.equal(mesh.material, originalMaterials.get(mesh), 'Selection replaced an original actor material: ' + mesh.name);
+      if (isCoveredActorPart(mesh)) {
+        for (const material of [].concat(mesh.material)) assert.ok(selection.isProxy(material), 'Detail tint is not a proxy: ' + mesh.name);
+        const w = mesh.geometry.attributes.focusW.array;
+        for (let i = 0; i < w.length; i++) {
+          if (w[i] <= 0.05) continue; tinted = true; const p = restAt(mesh, i);
+          if (Math.abs(p.x) < 0.07 && p.y > 0.72 && p.y < 0.90) groinLeaks++;
+          if (Math.abs(p.x) > 0.36 && p.y < 0.88) handLeaks++;
+        }
+      } else assert.equal(mesh.material, originalMaterials.get(mesh), 'Detail tinted an untinted part: ' + mesh.name);
       verifyOriginalAppearance(mesh);
+    }
+    if (tinted) {
+      tintedCases++; const dir = selection.focusDirection();
+      assert.ok(dir && dir.y >= 0.11 && Math.abs(dir.length() - 1) < 1e-6, 'Curated angle looks from below or is invalid: ' + groupId);
+      curatedAngles++;
     }
     for (const mesh of [...coveredMeshes, ...faceMeshes]) assert.equal(mesh.visible, true, 'Selection hid the original outfit or face: ' + mesh.name);
     assert.deepEqual(motion.getMetrics().joints, frozen.joints, 'Selection changed the paused pose');
@@ -163,6 +183,9 @@ for (const tick of phaseTicks) {
     selectionCases++;
   }
 }
+assert.equal(groinLeaks, 0, 'Detail tint reached the groin guard');
+assert.equal(handLeaks, 0, 'Detail tint reached the hands');
+assert.ok(tintedCases >= selectionCases * 0.8, 'Too few groups produce a visible detail tint: ' + tintedCases + '/' + selectionCases);
 let vertices = 0, triangles = 0;
 for (const mesh of meshes) {
   vertices += mesh.geometry.attributes.position.count; triangles += mesh.geometry.index.count / 3;
@@ -241,5 +264,5 @@ console.log(JSON.stringify({ status: 'passed', referenceAvailable: availableRefe
   historicalStudyHeadVertices: studyHead.geometry.attributes.position.count, historicalStudyHeadTriangles: studyHead.geometry.index.count / 3,
   runtimeStudyAttached: false, selectionCases, selectedGroups: groupIds.length, selectedPhases: phaseTicks.length,
   originalOutfitAndFaceVisibleDuringSelection: true, originalMaterialAppearancePreserved: true,
-  originalMaterialIdentityDuringSelection: true, originalMaterialIdentityRestored: true,
+  homeSelectionMaterialIdentity: true, detailTintProxyOnly: true, tintedCases, curatedAngles, groinLeaks, handLeaks, originalMaterialIdentityRestored: true,
   garmentAndFaceVisibilityRestored: true, bundledFiles: allBuiltFiles.length, bundledBytes }, null, 2));
