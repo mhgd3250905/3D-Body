@@ -1,5 +1,11 @@
 # Flare Anatomy Studio
 
+## Flutter App（2026-10-08 开始）
+
+按用户提供的专家制作包推进的 Flutter 工程在 [app/](app/README.md)。页面、训练计时与本地记录使用 Flutter；3D 原样接入制作包的 v33 动作核心，以本地 Three.js 渲染，模型和素材离线打包。原网页、动作导出与个人草稿继续保留。
+
+双击 `start-flutter.cmd` 打开已构建的 App 浏览器预览（`http://127.0.0.1:8820/`）。首次构建与 Android/iOS 运行见 [App 使用说明](app/README.md)，专家 M0–M7 与本次真实完成范围见 [App 路线与进度](app/docs/development-roadmap.md)。以下内容仍描述现有网页。
+
 用友善卡通运动人物理解 Flare（托马斯全旋），把支撑、移重、转体与摆腿连接到辅助训练。人物由本机 Blender 基于官方免费 Snow 模型制作，详细肌群来自真实 BodyParts3D。参考用户提供的 [human-atlas](https://github.com/ashemag/human-atlas)。本阶段资产与工具费用为 0 元。
 
 ## 打开

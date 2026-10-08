@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "source": "source/coach/flare-coach.glb",
+  "intermediate": "source/coach/flare-coach.meshopt.glb",
+  "runtime": "public/coach/flare-coach.meshopt.glb.gz",
+  "compression": "EXT_meshopt_compression without quantization or reorder, then gzip level 9",
+  "quantization": false,
+  "simplification": false,
+  "meshMerging": false,
+  "toolVersions": {
+    "gltfTransformCore": "4.2.1",
+    "gltfTransformExtensions": "4.2.1",
+    "meshoptimizer": "0.22.0"
+  },
+  "sourceBytes": 7508016,
+  "meshoptBytes": 3435840,
+  "runtimeBytes": 2390231,
+  "sourceSha256": "ea6a8739aeb6d8b68a5ac4f50c6094bfec30c61b8612cb317cea4745172c14ff",
+  "meshoptSha256": "977c329d3d1de57a116882e6106e80616d000c1159e0fde32554edddbf5e0422",
+  "runtimeSha256": "08c4b04b579df5be7155766999429f01d26e303c605727e767742714694139b2",
+  "modelLicense": "Snow Rig, Blender Foundation, CC BY 4.0; project modifications preserved",
+  "reproduce": "npm ci && npm run optimize:model && npm run build && npm run verify",
+  "miniature": {
+    "source": "source/anatomy/mannequin-reference.glb",
+    "runtime": "public/anatomy/mannequin-reference.meshopt.glb.gz",
+    "sourceBytes": 1338688,
+    "meshoptBytes": 987832,
+    "runtimeBytes": 863833,
+    "sourceSha256": "ac4c0dd92d42504a949fd0aff0063aaff0886a68278f95878bc3da9df177e056",
+    "runtimeSha256": "b8278a0e5049e432df1ae523a32576490bea1450916a0f5ad09232e25fadbcd6",
+    "license": "Blender Studio Human Base Meshes, CC0-1.0"
+  }
+}

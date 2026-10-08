@@ -1,0 +1,8 @@
+# Preserve imported source hashes and bundled/licensed bytes across platforms.
+scene/src/legacy/** -text
+scene/src/public/** -text
+scene/public/** -text
+scene/source/** -text
+assets/scene/** -text
+assets/licenses/** -text
+assets/data/stages-source.ts -text

@@ -2,6 +2,7 @@ node_modules/
 .reference/
 output/playwright/.cache/
 *.log
+/.playwright-cli/
 
 # Generated builds, checks and local asset archives stay on disk.
 /dist/

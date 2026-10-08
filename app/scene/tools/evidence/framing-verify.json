@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-08",
+  "status": "passed",
+  "reference": "03_设计稿/v2_核心流程/h1-home.png",
+  "viewport": [390, 650],
+  "iframeAppTop": 108,
+  "padding": 0.72,
+  "staticOffset": [10, 138],
+  "sampledPoses": 181,
+  "sequenceStepSeconds": 0.05,
+  "vertexStride": 8,
+  "projectedVertexMin": [7.410050854667757, 54.82742466328216],
+  "projectedVertexMax": [369.32996319257205, 357.3341181473531],
+  "camera": [0.9939347585647511, 2.9501417958728355, 5.626171934398312],
+  "miniature": { "left": 14, "bottom": 18, "width": 148, "height": 174 },
+  "referenceDifference": "The static h1 frame's 53 px left shift would crop the real full loop. The chosen fixed envelope shifts left by 10 px, up by 40 px, keeps complete limbs, and never follows the athlete; this implementation choice is not a separate user approval.",
+  "trajectory": "None; the package README explicitly excludes h1/h2 dotted leg paths.",
+  "reproduce": "cd app/scene; node tools/verify-framing.mjs"
+}

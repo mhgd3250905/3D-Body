@@ -1,0 +1,415 @@
+{
+  "meta": {
+    "status": "draft-unreviewed",
+    "note": "课程为用户提供包中的第一版草稿，尚待 breaking 教练审核；周数仅为示意。进度由本人记录，不代表动作掌握、AI 评分或医疗评估。全部阶段可浏览。",
+    "source": "09_实施计划/code/src/features/path/stages.ts"
+  },
+  "stages": [
+    {
+      "n": 1,
+      "weeks": [
+        1,
+        2
+      ],
+      "pro": false,
+      "gates": [
+        {
+          "id": "compression20",
+          "text": "屈体压缩 20 秒",
+          "kind": "hold",
+          "target": 20,
+          "unit": "s"
+        },
+        {
+          "id": "wristPainFree",
+          "text": "手腕伸展无痛",
+          "kind": "pain-free",
+          "target": 1,
+          "unit": "reps"
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "手腕热身（每次必做）",
+          "phases": [],
+          "drills": [
+            "forearms-A"
+          ],
+          "minutes": 6,
+          "id": "stage-1-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "肩胛稳定",
+          "phases": [
+            9,
+            13
+          ],
+          "drills": [
+            "serratus-A",
+            "scapular-A",
+            "triceps-A"
+          ],
+          "minutes": 15,
+          "id": "stage-1-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "压缩力量",
+          "phases": [
+            9,
+            12
+          ],
+          "drills": [
+            "hip-flexors-A",
+            "abs-A"
+          ],
+          "minutes": 15,
+          "id": "stage-1-lesson-3"
+        }
+      ],
+      "id": "stage-1",
+      "title": "基础准备"
+    },
+    {
+      "n": 2,
+      "weeks": [
+        1,
+        3
+      ],
+      "pro": false,
+      "gates": [
+        {
+          "id": "sideSupport10",
+          "text": "每只手侧撑 10 秒",
+          "kind": "hold",
+          "target": 10,
+          "unit": "s"
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "直臂支撑",
+          "phases": [
+            9,
+            13
+          ],
+          "drills": [
+            "triceps-B",
+            "deltoids-A"
+          ],
+          "minutes": 18,
+          "id": "stage-2-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "单手移重",
+          "phases": [
+            10,
+            14
+          ],
+          "drills": [
+            "serratus-A",
+            "rotator-cuff-A",
+            "forearms-A"
+          ],
+          "minutes": 18,
+          "id": "stage-2-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "三点支撑到侧撑",
+          "phases": [
+            10,
+            11
+          ],
+          "drills": [
+            "deltoids-A",
+            "obliques-A"
+          ],
+          "minutes": 18,
+          "id": "stage-2-lesson-3"
+        }
+      ],
+      "id": "stage-2",
+      "title": "支撑控制"
+    },
+    {
+      "n": 3,
+      "weeks": [
+        2,
+        3
+      ],
+      "pro": true,
+      "gates": [
+        {
+          "id": "circles3",
+          "text": "3 个干净的开腿绕环",
+          "kind": "reps",
+          "target": 3,
+          "unit": "reps"
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "跨步绕环",
+          "phases": [
+            12,
+            13,
+            14
+          ],
+          "drills": [
+            "hip-abductors-A",
+            "adductors-A"
+          ],
+          "minutes": 18,
+          "id": "stage-3-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "脚辅助后撑 · 高 V 开腿",
+          "phases": [
+            9,
+            11
+          ],
+          "drills": [
+            "hip-abductors-A",
+            "glute-max-A",
+            "erectors-A"
+          ],
+          "minutes": 18,
+          "id": "stage-3-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "高 V 侧撑保持",
+          "phases": [
+            11,
+            15
+          ],
+          "drills": [
+            "deltoids-A",
+            "obliques-A",
+            "hip-abductors-A"
+          ],
+          "minutes": 18,
+          "id": "stage-3-lesson-3"
+        }
+      ],
+      "id": "stage-3",
+      "title": "腿部绕环"
+    },
+    {
+      "n": 4,
+      "weeks": [
+        2,
+        3
+      ],
+      "pro": true,
+      "gates": [
+        {
+          "id": "ai9to11",
+          "text": "AI 检测 09–11 得分 ≥70",
+          "kind": "ai",
+          "target": 70,
+          "unit": "score",
+          "phases": [
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "后撑换手到侧撑",
+          "phases": [
+            9,
+            10,
+            11
+          ],
+          "drills": [
+            "deltoids-A",
+            "triceps-A",
+            "rotator-cuff-B"
+          ],
+          "minutes": 20,
+          "id": "stage-4-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "髋保持高度",
+          "phases": [
+            10,
+            11,
+            16
+          ],
+          "drills": [
+            "obliques-B",
+            "erectors-A"
+          ],
+          "minutes": 20,
+          "id": "stage-4-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "落手：掌先平、手臂竖直",
+          "phases": [
+            13,
+            14
+          ],
+          "drills": [
+            "forearms-B",
+            "serratus-B"
+          ],
+          "minutes": 20,
+          "id": "stage-4-lesson-3"
+        }
+      ],
+      "id": "stage-4",
+      "title": "半圈托马斯"
+    },
+    {
+      "n": 5,
+      "weeks": [
+        2,
+        3
+      ],
+      "pro": true,
+      "gates": [
+        {
+          "id": "aiFull",
+          "text": "整圈 AI 得分 ≥70",
+          "kind": "ai",
+          "target": 70,
+          "unit": "score",
+          "phases": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "起势（kick-in）",
+          "phases": [
+            9,
+            10
+          ],
+          "drills": [
+            "glute-max-A",
+            "hamstrings-A"
+          ],
+          "minutes": 20,
+          "id": "stage-5-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "一整圈",
+          "phases": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ],
+          "drills": [
+            "deltoids-B",
+            "abs-B"
+          ],
+          "minutes": 22,
+          "id": "stage-5-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "第二侧（左手）",
+          "phases": [
+            14,
+            15,
+            16
+          ],
+          "drills": [
+            "deltoids-A",
+            "lats-A"
+          ],
+          "minutes": 20,
+          "id": "stage-5-lesson-3"
+        }
+      ],
+      "id": "stage-5",
+      "title": "完整托马斯"
+    },
+    {
+      "n": 6,
+      "weeks": [
+        3,
+        6
+      ],
+      "pro": true,
+      "gates": [
+        {
+          "id": "linked2",
+          "text": "连续 2 圈",
+          "kind": "reps",
+          "target": 2,
+          "unit": "reps"
+        }
+      ],
+      "lessons": [
+        {
+          "n": 1,
+          "title": "节奏：匀速无停顿",
+          "phases": [
+            16,
+            9,
+            10
+          ],
+          "drills": [
+            "abs-C",
+            "triceps-C"
+          ],
+          "minutes": 22,
+          "id": "stage-6-lesson-1"
+        },
+        {
+          "n": 2,
+          "title": "耐力",
+          "phases": [],
+          "drills": [
+            "deltoids-C",
+            "hip-flexors-C"
+          ],
+          "minutes": 25,
+          "id": "stage-6-lesson-2"
+        },
+        {
+          "n": 3,
+          "title": "连续托马斯",
+          "phases": [],
+          "drills": [
+            "scapular-C",
+            "obliques-C"
+          ],
+          "minutes": 25,
+          "id": "stage-6-lesson-3"
+        }
+      ],
+      "id": "stage-6",
+      "title": "连续托马斯"
+    }
+  ]
+}

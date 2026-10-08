@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-08",
+  "check": "Same-origin browser iframe at app y108..758, 390x844 viewport",
+  "verificationScope": "Contract and miniature dimensions were observed in the first h1 scene pass. The final static pan and 2D thumbnail brightness fix were built and module-verified afterward; integrated final visual verification belongs to the root App design QA.",
+  "returnFromDetail": {
+    "time": 2,
+    "playing": false,
+    "phase": 11,
+    "selected": "deltoids",
+    "detail": false,
+    "sameCamera": true,
+    "samePoseJoints": true
+  },
+  "phase11Legend": [
+    { "groupId": "deltoids", "label": "三角肌" },
+    { "groupId": "obliques", "label": "腹斜肌" },
+    { "groupId": "hip-abductors", "label": "臀中肌" }
+  ],
+  "actorHotspotsWhilePlaying": 0,
+  "bodyBackground": "rgba(0, 0, 0, 0)",
+  "iframeTransparencyLiveProbe": "Overriding color-scheme to normal removed the UA dark iframe rectangle in the scene browser; the same change is now in the source bundle",
+  "miniatureRendererImplementation": "Final source uses one main WebGL renderer and copies front/back views into a tiny 2D card canvas. Final brightness and rounded clipping are awaiting root integrated App screenshot QA",
+  "limits": "Full integrated Flutter design QA is performed by the root task. The static reference pose cannot define the real loop's full camera envelope."
+}

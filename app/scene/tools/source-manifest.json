@@ -1,0 +1,112 @@
+{
+  "motionRevision": "v33",
+  "package": "flare-app-info.zip",
+  "files": [
+    {
+      "sha256": "f76cfe32a84c05ccf9f918422062c4a333dee487f4d03a0ce2e311f22fb8e062",
+      "destination": "src/legacy/coach-motion.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/coach-motion.js"
+    },
+    {
+      "sha256": "ff1d0fce1701fb89901b79b3084c4523987435027f9abb42b68f5e95b21afbe7",
+      "destination": "src/legacy/flare-sequence.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/flare-sequence.js"
+    },
+    {
+      "sha256": "8f671c4b0319b50db1f7044c709ba8a34441d07554e8791f04d1ea6af100980c",
+      "destination": "src/legacy/limb-arc.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/limb-arc.js"
+    },
+    {
+      "sha256": "8bc2190f7253f33ad0479c0f89bbdd6be897ba1e894cc670baa4796628cb8aba",
+      "destination": "src/legacy/spine-helpers.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/spine-helpers.js"
+    },
+    {
+      "sha256": "be1f8c2136f595143ff30fd1d06428df6db01c8166bd47a3fc2002cfc1208aff",
+      "destination": "src/legacy/official-poses.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/official-poses.js"
+    },
+    {
+      "sha256": "7956291740aef906d8f6c7b364e00712be7bf390057875a591724bff17c9221a",
+      "destination": "src/legacy/periodic-flare.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/periodic-flare.js"
+    },
+    {
+      "sha256": "abdc8084beeb78ad3aba630f23b7910adf99d5f3153fc6d9bd6ba72d3ddff65a",
+      "destination": "src/legacy/segment-guides.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/segment-guides.js"
+    },
+    {
+      "sha256": "e84319c8e35e0e9d0be2e91a51d4757753cb4e5955f0a8d4656ada0b67fc1213",
+      "destination": "src/legacy/segment-guide-motion.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/segment-guide-motion.js"
+    },
+    {
+      "sha256": "e7485ce61f0b7611340bc100ec9ebe5f72122d1f8a4252f669a77ca664baf340",
+      "destination": "src/legacy/foot-curves.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/foot-curves.js"
+    },
+    {
+      "sha256": "892941861e779627871566a3394f5669b5b15ab82f2d4a0329f26dab0cc9ea7d",
+      "destination": "src/legacy/flare-phase-muscles.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/flare-phase-muscles.js"
+    },
+    {
+      "sha256": "c238642fe482301a38857cf2e6eb9d44f175ae92de5b1b7d1a01a031b1450c95",
+      "destination": "src/legacy/flare-muscle-groups.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/flare-muscle-groups.js"
+    },
+    {
+      "sha256": "512e938cfac74d1c75bc8b14433e3f68aeec5663626eb48daf28e09d88f3a0cf",
+      "destination": "src/legacy/muscle-map.js",
+      "source": "08_源代码/3D-Body-design-muscle-sync/src/muscle-map.js"
+    },
+    {
+      "sha256": "ea6a8739aeb6d8b68a5ac4f50c6094bfec30c61b8612cb317cea4745172c14ff",
+      "destination": "source/coach/flare-coach.glb",
+      "source": "05_动作与3D资产/models/flare-coach.glb"
+    },
+    {
+      "sha256": "b8566c2206181d1ea26568c42af927dd2414130709f1715c25a42fc2c4cdad1a",
+      "destination": "public/coach/coach-rig.json",
+      "source": "05_动作与3D资产/models/coach-rig.json"
+    },
+    {
+      "sha256": "ae3d95542929d97395639107ea13b1cdf0d2e721fc749292b5fcd505d0f039aa",
+      "destination": "public/coach/ATTRIBUTION-coach.md",
+      "source": "05_动作与3D资产/models/ATTRIBUTION-coach.md"
+    },
+    {
+      "sha256": "924eab450e68727e2b51925553d19bf96b7dc3b811bc5a603765f946c9dda375",
+      "destination": "public/coach/flare-sequence.json",
+      "source": "05_动作与3D资产/sequence/flare-sequence.json"
+    },
+    {
+      "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f",
+      "destination": "public/coach/flare-sequence-before-9-16.json",
+      "source": "05_动作与3D资产/sequence/history/flare-sequence-before-9-16.json"
+    },
+    {
+      "sha256": "924eab450e68727e2b51925553d19bf96b7dc3b811bc5a603765f946c9dda375",
+      "destination": "src/public/coach/flare-sequence.json",
+      "source": "05_动作与3D资产/sequence/flare-sequence.json"
+    },
+    {
+      "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f",
+      "destination": "src/public/coach/flare-sequence-before-9-16.json",
+      "source": "05_动作与3D资产/sequence/history/flare-sequence-before-9-16.json"
+    },
+    {
+      "destination": "source/anatomy/mannequin-reference.glb",
+      "sha256": "ac4c0dd92d42504a949fd0aff0063aaff0886a68278f95878bc3da9df177e056",
+      "source": "05_动作与3D资产/models/mannequin-reference.glb"
+    },
+    {
+      "destination": "source/anatomy/mannequin-reference.json",
+      "sha256": "025f3c6e72d2fd59cda59e806ae211292d93ec01ac132178d9f3958689a33817",
+      "source": "05_动作与3D资产/models/mannequin-reference.json"
+    }
+  ],
+  "version": 1
+}

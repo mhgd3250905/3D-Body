@@ -1,0 +1,2042 @@
+{
+ "$schema": "./phase-muscles.schema.json",
+ "generatedFrom": "design/muscle-sync@43da6c8 src/flare-phase-muscles.js + src/flare-muscle-groups.js + src/muscle-map.js + public/coach/flare-sequence.json",
+ "note": "教学重点，不是肌电（EMG）；颜色只区分肌群，不表示用力大小。",
+ "sections": [
+  {
+   "id": "support",
+   "label": "支撑（肩臂）",
+   "short": "支撑"
+  },
+  {
+   "id": "core",
+   "label": "核心折叠",
+   "short": "核心"
+  },
+  {
+   "id": "legs",
+   "label": "腿部绕环",
+   "short": "腿部"
+  }
+ ],
+ "groups": [
+  {
+   "groupId": "deltoids",
+   "section": "support",
+   "colour": "#4cc9f0",
+   "label": "三角肌",
+   "view": "front",
+   "role": "前、中、后束协同控制承重肩，接住每一次换手。",
+   "panels": [
+    "deltFront",
+    "deltSide",
+    "deltRear"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "rotator-cuff",
+   "section": "support",
+   "colour": "#a29bfe",
+   "label": "肩袖肌群",
+   "view": "back",
+   "role": "位于深层，帮助稳定肱骨头，支撑方向不断变化时护住肩关节。",
+   "note": "仅用冈下肌位置示意（斜线＝深层）；冈上肌、小圆肌、肩胛下肌未单独绘制。",
+   "panels": [
+    "infraspinatus"
+   ],
+   "deep": true
+  },
+  {
+   "groupId": "triceps",
+   "section": "support",
+   "colour": "#2f6bff",
+   "label": "肱三头肌",
+   "view": "back",
+   "role": "伸肘锁住支撑臂，手臂保持伸直受控。",
+   "panels": [
+    "triceps"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "forearms",
+   "section": "support",
+   "label": "前臂 · 腕屈伸肌",
+   "colour": "#9ad1e8",
+   "view": "front",
+   "role": "掌根撑地时控制手腕与手指，平稳落手、卸载。",
+   "note": "屈肌群与伸肌群各合为一块面板；手部小肌群未绘制。",
+   "panels": [
+    "forearmFlex",
+    "forearmExt"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "serratus",
+   "section": "support",
+   "colour": "#5eead4",
+   "label": "前锯肌",
+   "view": "front",
+   "role": "让肩胛贴着胸廓前伸，主动把地面推远。",
+   "note": "只画出胸廓侧面可见的部分；被肩胛骨覆盖的部分未绘制。",
+   "panels": [
+    "serratus"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "scapular",
+   "section": "support",
+   "label": "斜方肌中下部 · 菱形肌",
+   "colour": "#86efc4",
+   "view": "back",
+   "role": "协同调整肩胛位置，维持肩带与地面之间的支撑空间。",
+   "note": "菱形肌在斜方肌深层，这里与斜方肌中下部合为一块面板。",
+   "panels": [
+    "scapular"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "chest",
+   "section": "support",
+   "colour": "#6f8dff",
+   "label": "胸大肌",
+   "view": "front",
+   "role": "前撑转侧撑时，配合控制上臂相对胸廓的方向。",
+   "panels": [
+    "pec"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "lats",
+   "section": "support",
+   "colour": "#00a896",
+   "label": "背阔肌",
+   "view": "back",
+   "role": "连接上臂与躯干，参与肩部下压与身体随支撑转移。",
+   "panels": [
+    "lats"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "abs",
+   "section": "core",
+   "colour": "#c466ff",
+   "label": "腹直肌（含深层腹横肌）",
+   "view": "front",
+   "role": "卷腹折叠躯干，与深层腹横肌一起稳住骨盆，给抬腿留出空间。",
+   "note": "面板为腹直肌；腹横肌位于深层，没有单独面板。",
+   "panels": [
+    "abs"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "obliques",
+   "section": "core",
+   "colour": "#ff6fb5",
+   "label": "腹斜肌",
+   "view": "front",
+   "role": "参与躯干旋转与侧向控制，让肩与骨盆随摆腿转动。",
+   "note": "面板为腹外斜肌；腹内斜肌在其深层，未单独绘制。",
+   "panels": [
+    "oblique"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "erectors",
+   "section": "core",
+   "colour": "#e3b3ff",
+   "label": "竖脊肌",
+   "view": "back",
+   "role": "控制脊柱伸展与躯干位置，后撑时帮助保持髋高。",
+   "note": "腰方肌（腰部深层）暂无面板，未显示。",
+   "panels": [
+    "erectors"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "hip-flexors",
+   "section": "core",
+   "colour": "#ff9ec7",
+   "label": "髋屈肌",
+   "view": "front",
+   "role": "位于骨盆深处，主动屈髋，把长腿从身体前方抬过去。",
+   "note": "髂腰肌在深层（斜线），与阔筋膜张肌合为一块面板示意；股直肌见股四头肌。",
+   "panels": [
+    "hipFlexor"
+   ],
+   "deep": true
+  },
+  {
+   "groupId": "glute-max",
+   "section": "legs",
+   "colour": "#ffb703",
+   "label": "臀大肌",
+   "view": "back",
+   "role": "髋伸展与后方扫腿（深层髋旋转肌配合调整腿的方向）。",
+   "note": "深层髋外旋肌群没有单独面板。",
+   "panels": [
+    "glutes"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "hip-abductors",
+   "section": "legs",
+   "colour": "#ff7b2e",
+   "label": "臀中肌 · 髋外展",
+   "view": "back",
+   "role": "主动开腿并控制骨盆，离地后双腿不合拢。",
+   "note": "臀小肌在臀中肌深层，未单独绘制。",
+   "panels": [
+    "gluteMed"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "adductors",
+   "section": "legs",
+   "colour": "#b5e655",
+   "label": "内收肌群",
+   "view": "front",
+   "role": "控制腿向中线回收与开度变化，衔接下一段扫腿。",
+   "note": "长收肌、短收肌、大收肌、股薄肌合为一块面板。",
+   "panels": [
+    "adductors"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "quadriceps",
+   "section": "legs",
+   "colour": "#ffe45c",
+   "label": "股四头肌",
+   "view": "front",
+   "role": "保持膝部伸直，让长腿连续绕行。",
+   "note": "股中间肌位于深层，未单独绘制。",
+   "panels": [
+    "quadRect",
+    "quadLat",
+    "quadMed"
+   ],
+   "deep": false
+  },
+  {
+   "groupId": "hamstrings",
+   "section": "legs",
+   "colour": "#e9a46a",
+   "label": "腘绳肌",
+   "view": "back",
+   "role": "后侧长腿线条，参与髋伸与膝部控制。",
+   "panels": [
+    "hamLat",
+    "hamMed"
+   ],
+   "deep": false
+  }
+ ],
+ "phases": [
+  {
+   "source": 9,
+   "id": "rear-support",
+   "name": "后侧支撑",
+   "detail": "长腿过前方",
+   "caption": "双手推地撑住身体，屈髋把开立的长腿抬过身体前方；腹部卷紧，臀中肌保持开腿。",
+   "primary": [
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "双臂伸直锁肘，把身体撑离地面。"
+    },
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "肩前倾在手的上方，控制承重肩。"
+    },
+    {
+     "id": "hip-flexors",
+     "side": "both",
+     "why": "主动屈髋，把长腿抬过身体前方。"
+    },
+    {
+     "id": "abs",
+     "side": "both",
+     "why": "卷腹折叠躯干，给抬腿留出空间。"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "both",
+     "why": "双腿保持大开度，过前方时不合拢。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "serratus",
+     "side": "support"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    },
+    {
+     "id": "adductors",
+     "side": "both"
+    },
+    {
+     "id": "quadriceps",
+     "side": "both"
+    }
+   ]
+  },
+  {
+   "source": 10,
+   "id": "first-transfer",
+   "name": "第一侧移重",
+   "detail": "单手接重",
+   "caption": "重量从双手移到单手：支撑侧三角肌、肱三头肌和前锯肌一起接住体重，腕屈肌稳住掌根；腹斜肌把骨盆转向侧面。",
+   "primary": [
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "整个上身的重量转到这一侧肩上。"
+    },
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "支撑臂伸肘锁住，不让手肘弯塌。"
+    },
+    {
+     "id": "serratus",
+     "side": "support",
+     "why": "肩胛贴住胸廓前伸，主动把地面推远。"
+    },
+    {
+     "id": "forearms",
+     "side": "support",
+     "why": "掌根刚接住体重，腕屈肌控制手腕不塌。"
+    },
+    {
+     "id": "obliques",
+     "side": "both",
+     "why": "转动躯干，让骨盆跟着摆腿转向侧面。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "rotator-cuff",
+     "side": "support"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "free"
+    },
+    {
+     "id": "glute-max",
+     "side": "support"
+    }
+   ]
+  },
+  {
+   "source": 11,
+   "id": "first-support",
+   "name": "第一侧支撑",
+   "detail": "高 V 开腿",
+   "caption": "单手撑起全身、身体侧立：支撑肩最吃力，肩袖护住肩关节；腹斜肌把髋撑高，臀中肌打开高 V 字腿。",
+   "primary": [
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "单臂承担全身重量，肩部负荷最大的时刻。"
+    },
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "手臂保持笔直，身体才能侧立撑高。"
+    },
+    {
+     "id": "rotator-cuff",
+     "side": "support",
+     "why": "手臂举过头承重，肩袖把肱骨头稳在关节里。"
+    },
+    {
+     "id": "obliques",
+     "side": "both",
+     "why": "侧面核心把骨盆撑高，身体不往下塌。"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "both",
+     "why": "臀中肌外展双腿，撑开高 V 字。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "serratus",
+     "side": "support"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    },
+    {
+     "id": "lats",
+     "side": "support"
+    },
+    {
+     "id": "adductors",
+     "side": "both"
+    }
+   ]
+  },
+  {
+   "source": 12,
+   "id": "first-pass",
+   "name": "第一侧换腿",
+   "detail": "准备回撑",
+   "caption": "身体转向正面，双腿像剪刀一样换位过前：屈髋肌和腹直肌把腿带到前方，内收肌控制两腿交错；另一只手准备回撑。",
+   "primary": [
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "仍是单手支撑，伸肘把身体顶住。"
+    },
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "身体转向正面，承重肩随之转动控制。"
+    },
+    {
+     "id": "hip-flexors",
+     "side": "both",
+     "why": "屈髋把扫行的腿带到身体前方。"
+    },
+    {
+     "id": "abs",
+     "side": "both",
+     "why": "收腹折叠，骨盆抬住，给腿让出通道。"
+    },
+    {
+     "id": "adductors",
+     "side": "both",
+     "why": "两腿剪刀式交错，内收肌控制开合。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "obliques",
+     "side": "both"
+    },
+    {
+     "id": "quadriceps",
+     "side": "both"
+    },
+    {
+     "id": "serratus",
+     "side": "support"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    }
+   ]
+  },
+  {
+   "source": 13,
+   "id": "front-support",
+   "name": "前侧支撑",
+   "detail": "开腿扫后方",
+   "caption": "双手在身后撑地、胸口朝上：肱三头肌、三角肌和胸大肌像做臂屈伸一样顶住身体；双腿保持大开度，准备向后扫。",
+   "primary": [
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "双手在身后推地，伸肘把身体顶起。"
+    },
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "肩在后伸位承重，前束最吃力。"
+    },
+    {
+     "id": "chest",
+     "side": "support",
+     "why": "胸大肌协助肩部在后伸位推地。"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "both",
+     "why": "双腿抬高大开度，准备向后扫。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "scapular",
+     "side": "support"
+    },
+    {
+     "id": "hip-flexors",
+     "side": "both"
+    },
+    {
+     "id": "abs",
+     "side": "both"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    },
+    {
+     "id": "glute-max",
+     "side": "both"
+    }
+   ]
+  },
+  {
+   "source": 14,
+   "id": "second-transfer",
+   "name": "第二侧移重",
+   "detail": "换手接重",
+   "caption": "换到另一只手单撑：支撑侧肩臂和前锯肌重新接住体重，腕屈肌稳住掌根；臀大肌带长腿从前方扫向后方。",
+   "primary": [
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "体重换到这一侧肩上，重新接住。"
+    },
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "新的支撑臂伸肘锁住。"
+    },
+    {
+     "id": "serratus",
+     "side": "support",
+     "why": "肩胛前伸推地，肩不往下沉。"
+    },
+    {
+     "id": "forearms",
+     "side": "support",
+     "why": "掌根刚接重，腕屈肌控制手腕。"
+    },
+    {
+     "id": "glute-max",
+     "side": "both",
+     "why": "伸髋发力，把长腿从前方扫向后方。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "rotator-cuff",
+     "side": "support"
+    },
+    {
+     "id": "obliques",
+     "side": "both"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "free"
+    },
+    {
+     "id": "hamstrings",
+     "side": "both"
+    }
+   ]
+  },
+  {
+   "source": 15,
+   "id": "second-support",
+   "name": "第二侧支撑",
+   "detail": "高 V 开腿",
+   "caption": "另一侧单手侧撑：支撑肩与肩袖承担全身重量；腹斜肌撑高骨盆，臀中肌保持高 V 开腿。",
+   "primary": [
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "单臂承担全身重量，肩部负荷最大的时刻。"
+    },
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "手臂保持笔直，身体才能侧立撑高。"
+    },
+    {
+     "id": "rotator-cuff",
+     "side": "support",
+     "why": "手臂举过头承重，肩袖把肱骨头稳在关节里。"
+    },
+    {
+     "id": "obliques",
+     "side": "both",
+     "why": "侧面核心把骨盆撑高，身体不往下塌。"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "both",
+     "why": "臀中肌外展双腿，撑开高 V 字。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "serratus",
+     "side": "support"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    },
+    {
+     "id": "lats",
+     "side": "support"
+    },
+    {
+     "id": "adductors",
+     "side": "both"
+    }
+   ]
+  },
+  {
+   "source": 16,
+   "id": "second-pass",
+   "name": "第二侧换腿",
+   "detail": "准备接圈",
+   "caption": "身体转回朝下，双腿扫过后方：臀大肌伸髋带腿，竖脊肌保持髋部高度，腹斜肌把身体旋回；另一只手准备落地接回下一圈。",
+   "primary": [
+    {
+     "id": "deltoids",
+     "side": "support",
+     "why": "单手支撑中身体旋回，承重肩随之控制。"
+    },
+    {
+     "id": "triceps",
+     "side": "support",
+     "why": "伸肘撑住，直到另一只手落地。"
+    },
+    {
+     "id": "glute-max",
+     "side": "both",
+     "why": "伸髋把长腿扫过身体后方。"
+    },
+    {
+     "id": "erectors",
+     "side": "both",
+     "why": "背部伸展肌群保持髋部高度，不塌腰。"
+    },
+    {
+     "id": "obliques",
+     "side": "both",
+     "why": "躯干旋回，把身体接回后侧支撑。"
+    }
+   ],
+   "secondary": [
+    {
+     "id": "hamstrings",
+     "side": "both"
+    },
+    {
+     "id": "serratus",
+     "side": "support"
+    },
+    {
+     "id": "forearms",
+     "side": "support"
+    },
+    {
+     "id": "hip-abductors",
+     "side": "both"
+    }
+   ]
+  }
+ ],
+ "timeline": {
+  "period": 9,
+  "keys": [
+   {
+    "time": 0,
+    "index": 0,
+    "source": 9,
+    "phaseId": "rear-support",
+    "support": "both",
+    "items": [
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "both",
+      "why": "双臂伸直锁肘，把身体撑离地面。"
+     },
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "both",
+      "why": "肩前倾在手的上方，控制承重肩。"
+     },
+     {
+      "groupId": "hip-flexors",
+      "level": "primary",
+      "side": "both",
+      "why": "主动屈髋，把长腿抬过身体前方。"
+     },
+     {
+      "groupId": "abs",
+      "level": "primary",
+      "side": "both",
+      "why": "卷腹折叠躯干，给抬腿留出空间。"
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "primary",
+      "side": "both",
+      "why": "双腿保持大开度，过前方时不合拢。"
+     },
+     {
+      "groupId": "serratus",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "adductors",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "quadriceps",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 1,
+    "index": 1,
+    "source": 10,
+    "phaseId": "first-transfer",
+    "support": "right",
+    "items": [
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "right",
+      "why": "整个上身的重量转到这一侧肩上。"
+     },
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "right",
+      "why": "支撑臂伸肘锁住，不让手肘弯塌。"
+     },
+     {
+      "groupId": "serratus",
+      "level": "primary",
+      "side": "right",
+      "why": "肩胛贴住胸廓前伸，主动把地面推远。"
+     },
+     {
+      "groupId": "forearms",
+      "level": "primary",
+      "side": "right",
+      "why": "掌根刚接住体重，腕屈肌控制手腕不塌。"
+     },
+     {
+      "groupId": "obliques",
+      "level": "primary",
+      "side": "both",
+      "why": "转动躯干，让骨盆跟着摆腿转向侧面。"
+     },
+     {
+      "groupId": "rotator-cuff",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "glute-max",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 2,
+    "index": 2,
+    "source": 11,
+    "phaseId": "first-support",
+    "support": "right",
+    "items": [
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "right",
+      "why": "单臂承担全身重量，肩部负荷最大的时刻。"
+     },
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "right",
+      "why": "手臂保持笔直，身体才能侧立撑高。"
+     },
+     {
+      "groupId": "rotator-cuff",
+      "level": "primary",
+      "side": "right",
+      "why": "手臂举过头承重，肩袖把肱骨头稳在关节里。"
+     },
+     {
+      "groupId": "obliques",
+      "level": "primary",
+      "side": "both",
+      "why": "侧面核心把骨盆撑高，身体不往下塌。"
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "primary",
+      "side": "both",
+      "why": "臀中肌外展双腿，撑开高 V 字。"
+     },
+     {
+      "groupId": "serratus",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "lats",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "adductors",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 3,
+    "index": 3,
+    "source": 12,
+    "phaseId": "first-pass",
+    "support": "right",
+    "items": [
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "right",
+      "why": "仍是单手支撑，伸肘把身体顶住。"
+     },
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "right",
+      "why": "身体转向正面，承重肩随之转动控制。"
+     },
+     {
+      "groupId": "hip-flexors",
+      "level": "primary",
+      "side": "both",
+      "why": "屈髋把扫行的腿带到身体前方。"
+     },
+     {
+      "groupId": "abs",
+      "level": "primary",
+      "side": "both",
+      "why": "收腹折叠，骨盆抬住，给腿让出通道。"
+     },
+     {
+      "groupId": "adductors",
+      "level": "primary",
+      "side": "both",
+      "why": "两腿剪刀式交错，内收肌控制开合。"
+     },
+     {
+      "groupId": "obliques",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "quadriceps",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "serratus",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 4,
+    "index": 4,
+    "source": 13,
+    "phaseId": "front-support",
+    "support": "both",
+    "items": [
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "both",
+      "why": "双手在身后推地，伸肘把身体顶起。"
+     },
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "both",
+      "why": "肩在后伸位承重，前束最吃力。"
+     },
+     {
+      "groupId": "chest",
+      "level": "primary",
+      "side": "both",
+      "why": "胸大肌协助肩部在后伸位推地。"
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "primary",
+      "side": "both",
+      "why": "双腿抬高大开度，准备向后扫。"
+     },
+     {
+      "groupId": "scapular",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "hip-flexors",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "abs",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "glute-max",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 5,
+    "index": 5,
+    "source": 14,
+    "phaseId": "second-transfer",
+    "support": "left",
+    "items": [
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "left",
+      "why": "体重换到这一侧肩上，重新接住。"
+     },
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "left",
+      "why": "新的支撑臂伸肘锁住。"
+     },
+     {
+      "groupId": "serratus",
+      "level": "primary",
+      "side": "left",
+      "why": "肩胛前伸推地，肩不往下沉。"
+     },
+     {
+      "groupId": "forearms",
+      "level": "primary",
+      "side": "left",
+      "why": "掌根刚接重，腕屈肌控制手腕。"
+     },
+     {
+      "groupId": "glute-max",
+      "level": "primary",
+      "side": "both",
+      "why": "伸髋发力，把长腿从前方扫向后方。"
+     },
+     {
+      "groupId": "rotator-cuff",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "obliques",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "secondary",
+      "side": "right",
+      "why": ""
+     },
+     {
+      "groupId": "hamstrings",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 6,
+    "index": 6,
+    "source": 15,
+    "phaseId": "second-support",
+    "support": "left",
+    "items": [
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "left",
+      "why": "单臂承担全身重量，肩部负荷最大的时刻。"
+     },
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "left",
+      "why": "手臂保持笔直，身体才能侧立撑高。"
+     },
+     {
+      "groupId": "rotator-cuff",
+      "level": "primary",
+      "side": "left",
+      "why": "手臂举过头承重，肩袖把肱骨头稳在关节里。"
+     },
+     {
+      "groupId": "obliques",
+      "level": "primary",
+      "side": "both",
+      "why": "侧面核心把骨盆撑高，身体不往下塌。"
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "primary",
+      "side": "both",
+      "why": "臀中肌外展双腿，撑开高 V 字。"
+     },
+     {
+      "groupId": "serratus",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "lats",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "adductors",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   },
+   {
+    "time": 7,
+    "index": 7,
+    "source": 16,
+    "phaseId": "second-pass",
+    "support": "left",
+    "items": [
+     {
+      "groupId": "deltoids",
+      "level": "primary",
+      "side": "left",
+      "why": "单手支撑中身体旋回，承重肩随之控制。"
+     },
+     {
+      "groupId": "triceps",
+      "level": "primary",
+      "side": "left",
+      "why": "伸肘撑住，直到另一只手落地。"
+     },
+     {
+      "groupId": "glute-max",
+      "level": "primary",
+      "side": "both",
+      "why": "伸髋把长腿扫过身体后方。"
+     },
+     {
+      "groupId": "erectors",
+      "level": "primary",
+      "side": "both",
+      "why": "背部伸展肌群保持髋部高度，不塌腰。"
+     },
+     {
+      "groupId": "obliques",
+      "level": "primary",
+      "side": "both",
+      "why": "躯干旋回，把身体接回后侧支撑。"
+     },
+     {
+      "groupId": "hamstrings",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     },
+     {
+      "groupId": "serratus",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "forearms",
+      "level": "secondary",
+      "side": "left",
+      "why": ""
+     },
+     {
+      "groupId": "hip-abductors",
+      "level": "secondary",
+      "side": "both",
+      "why": ""
+     }
+    ]
+   }
+  ]
+ },
+ "musclePanels": [
+  {
+   "id": "skinHead",
+   "name": "",
+   "family": "skin",
+   "centre": [
+    0,
+    1.6,
+    0.01
+   ],
+   "radius": [
+    0.105,
+    0.125,
+    0.125
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": true,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "skinHand",
+   "name": "",
+   "family": "skin",
+   "centre": [
+    0.4,
+    0.78,
+    0.09
+   ],
+   "radius": [
+    0.065,
+    0.105,
+    0.09
+   ],
+   "tiltZ": 0.35,
+   "tiltX": 0,
+   "skin": true,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "skinFoot",
+   "name": "",
+   "family": "skin",
+   "centre": [
+    0.17,
+    0.03,
+    0.03
+   ],
+   "radius": [
+    0.08,
+    0.085,
+    0.15
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": true,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "skinKnee",
+   "name": "",
+   "family": "skin",
+   "centre": [
+    0.135,
+    0.47,
+    0.03
+   ],
+   "radius": [
+    0.06,
+    0.04,
+    0.07
+   ],
+   "tiltZ": 0.05,
+   "tiltX": 0,
+   "skin": true,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "skinShin",
+   "name": "",
+   "family": "skin",
+   "centre": [
+    0.128,
+    0.3,
+    0.01
+   ],
+   "radius": [
+    0.026,
+    0.15,
+    0.03
+   ],
+   "tiltZ": -0.05,
+   "tiltX": 0,
+   "skin": true,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "neck",
+   "name": "胸锁乳突肌",
+   "family": "neck",
+   "centre": [
+    0.03,
+    1.47,
+    0.055
+   ],
+   "radius": [
+    0.0336,
+    0.091,
+    0.055999999999999994
+   ],
+   "tiltZ": 0.25,
+   "tiltX": -0.45,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "trapUpper",
+   "name": "斜方肌上部",
+   "family": "trap",
+   "centre": [
+    0.075,
+    1.43,
+    -0.03
+   ],
+   "radius": [
+    0.13999999999999999,
+    0.105,
+    0.105
+   ],
+   "tiltZ": -0.3,
+   "tiltX": 0.1,
+   "skin": false,
+   "midline": true,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "deltFront",
+   "name": "三角肌前束",
+   "family": "delt",
+   "centre": [
+    0.18,
+    1.34,
+    0.05
+   ],
+   "radius": [
+    0.0672,
+    0.119,
+    0.0672
+   ],
+   "tiltZ": 0.25,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "deltSide",
+   "name": "三角肌中束",
+   "family": "delt",
+   "centre": [
+    0.215,
+    1.33,
+    0
+   ],
+   "radius": [
+    0.0672,
+    0.126,
+    0.08399999999999999
+   ],
+   "tiltZ": 0.3,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "deltRear",
+   "name": "三角肌后束",
+   "family": "delt",
+   "centre": [
+    0.18,
+    1.34,
+    -0.06
+   ],
+   "radius": [
+    0.0672,
+    0.119,
+    0.0672
+   ],
+   "tiltZ": 0.25,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "pec",
+   "name": "胸大肌",
+   "family": "pec",
+   "centre": [
+    0.08,
+    1.29,
+    0.12
+   ],
+   "radius": [
+    0.147,
+    0.11199999999999999,
+    0.105
+   ],
+   "tiltZ": 0.1,
+   "tiltX": 0,
+   "skin": false,
+   "midline": true,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "biceps",
+   "name": "肱二头肌",
+   "family": "biceps",
+   "centre": [
+    0.245,
+    1.19,
+    0.035
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.154,
+    0.063
+   ],
+   "tiltZ": 0.36,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "triceps",
+   "name": "肱三头肌",
+   "family": "triceps",
+   "centre": [
+    0.258,
+    1.2,
+    -0.045
+   ],
+   "radius": [
+    0.063,
+    0.182,
+    0.06999999999999999
+   ],
+   "tiltZ": 0.36,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "forearmFlex",
+   "name": "前臂屈肌群",
+   "family": "forearm",
+   "centre": [
+    0.335,
+    0.98,
+    0.05
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.154,
+    0.055999999999999994
+   ],
+   "tiltZ": 0.37,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "forearmExt",
+   "name": "前臂伸肌群",
+   "family": "forearm",
+   "centre": [
+    0.35,
+    0.98,
+    0
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.154,
+    0.063
+   ],
+   "tiltZ": 0.37,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "serratus",
+   "name": "前锯肌",
+   "family": "serratus",
+   "centre": [
+    0.135,
+    1.18,
+    0.075
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.08399999999999999,
+    0.06999999999999999
+   ],
+   "tiltZ": -0.15,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "abs",
+   "name": "腹直肌",
+   "family": "abs",
+   "centre": [
+    0.036,
+    1.03,
+    0.14
+   ],
+   "radius": [
+    0.0672,
+    0.301,
+    0.08399999999999999
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": true,
+   "abs": true,
+   "throughShorts": false
+  },
+  {
+   "id": "oblique",
+   "name": "腹外斜肌",
+   "family": "oblique",
+   "centre": [
+    0.132,
+    1.02,
+    0.06
+   ],
+   "radius": [
+    0.06999999999999999,
+    0.16799999999999998,
+    0.11199999999999999
+   ],
+   "tiltZ": 0.08,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "infraspinatus",
+   "name": "冈下肌（肩袖）",
+   "family": "infra",
+   "centre": [
+    0.11,
+    1.29,
+    -0.095
+   ],
+   "radius": [
+    0.077,
+    0.077,
+    0.063
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "scapular",
+   "name": "菱形肌 / 斜方肌中下部",
+   "family": "trap",
+   "centre": [
+    0.04,
+    1.25,
+    -0.1
+   ],
+   "radius": [
+    0.06999999999999999,
+    0.182,
+    0.063
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": true,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "lats",
+   "name": "背阔肌",
+   "family": "lats",
+   "centre": [
+    0.125,
+    1.13,
+    -0.065
+   ],
+   "radius": [
+    0.098,
+    0.182,
+    0.098
+   ],
+   "tiltZ": -0.15,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "erectors",
+   "name": "竖脊肌",
+   "family": "erectors",
+   "centre": [
+    0.035,
+    0.99,
+    -0.075
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.182,
+    0.063
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": true,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "gluteMed",
+   "name": "臀中肌",
+   "family": "gluteMed",
+   "centre": [
+    0.15,
+    0.91,
+    -0.03
+   ],
+   "radius": [
+    0.077,
+    0.08399999999999999,
+    0.091
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "glutes",
+   "name": "臀大肌",
+   "family": "glutes",
+   "centre": [
+    0.085,
+    0.83,
+    -0.085
+   ],
+   "radius": [
+    0.13999999999999999,
+    0.126,
+    0.098
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": true,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "hipFlexor",
+   "name": "髂腰肌 / 阔筋膜张肌",
+   "family": "hipFlexor",
+   "centre": [
+    0.12,
+    0.87,
+    0.08
+   ],
+   "radius": [
+    0.077,
+    0.091,
+    0.06999999999999999
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "quadRect",
+   "name": "股直肌",
+   "family": "quads",
+   "centre": [
+    0.105,
+    0.65,
+    0.1
+   ],
+   "radius": [
+    0.063,
+    0.22399999999999998,
+    0.06999999999999999
+   ],
+   "tiltZ": 0.05,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "quadLat",
+   "name": "股外侧肌",
+   "family": "quads",
+   "centre": [
+    0.165,
+    0.64,
+    0.068
+   ],
+   "radius": [
+    0.063,
+    0.22399999999999998,
+    0.077
+   ],
+   "tiltZ": 0.05,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "quadMed",
+   "name": "股内侧肌",
+   "family": "quads",
+   "centre": [
+    0.085,
+    0.52,
+    0.075
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.11199999999999999,
+    0.063
+   ],
+   "tiltZ": 0.02,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "adductors",
+   "name": "内收肌群",
+   "family": "adductors",
+   "centre": [
+    0.05,
+    0.67,
+    0.01
+   ],
+   "radius": [
+    0.063,
+    0.196,
+    0.08399999999999999
+   ],
+   "tiltZ": 0.05,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "hamLat",
+   "name": "股二头肌",
+   "family": "ham",
+   "centre": [
+    0.162,
+    0.62,
+    -0.042
+   ],
+   "radius": [
+    0.063,
+    0.238,
+    0.06999999999999999
+   ],
+   "tiltZ": 0.04,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "hamMed",
+   "name": "半腱肌 / 半膜肌",
+   "family": "ham",
+   "centre": [
+    0.085,
+    0.62,
+    -0.055
+   ],
+   "radius": [
+    0.063,
+    0.238,
+    0.06999999999999999
+   ],
+   "tiltZ": 0.04,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": true
+  },
+  {
+   "id": "tibialis",
+   "name": "胫骨前肌",
+   "family": "tibialis",
+   "centre": [
+    0.178,
+    0.32,
+    -0.01
+   ],
+   "radius": [
+    0.036399999999999995,
+    0.16799999999999998,
+    0.0448
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "calfMed",
+   "name": "腓肠肌内侧头",
+   "family": "calf",
+   "centre": [
+    0.13,
+    0.35,
+    -0.085
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.13999999999999999,
+    0.063
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  },
+  {
+   "id": "calfLat",
+   "name": "腓肠肌外侧头",
+   "family": "calf",
+   "centre": [
+    0.18,
+    0.35,
+    -0.08
+   ],
+   "radius": [
+    0.055999999999999994,
+    0.13999999999999999,
+    0.063
+   ],
+   "tiltZ": 0,
+   "tiltX": 0,
+   "skin": false,
+   "midline": false,
+   "abs": false,
+   "throughShorts": false
+  }
+ ],
+ "groupPanels": {
+  "deltoids": {
+   "label": "三角肌",
+   "muscles": [
+    "deltFront",
+    "deltSide",
+    "deltRear"
+   ]
+  },
+  "rotator-cuff": {
+   "label": "肩袖肌群",
+   "muscles": [
+    "infraspinatus"
+   ],
+   "deep": true
+  },
+  "triceps": {
+   "label": "肱三头肌",
+   "muscles": [
+    "triceps"
+   ]
+  },
+  "serratus": {
+   "label": "前锯肌",
+   "muscles": [
+    "serratus"
+   ]
+  },
+  "scapular": {
+   "label": "肩胛稳定肌群",
+   "muscles": [
+    "scapular"
+   ]
+  },
+  "obliques": {
+   "label": "腹斜肌",
+   "muscles": [
+    "oblique"
+   ]
+  },
+  "erectors": {
+   "label": "竖脊肌",
+   "muscles": [
+    "erectors"
+   ]
+  },
+  "hip-flexors": {
+   "label": "髋屈肌",
+   "muscles": [
+    "hipFlexor"
+   ],
+   "deep": true
+  },
+  "quadriceps": {
+   "label": "股四头肌",
+   "muscles": [
+    "quadRect",
+    "quadLat",
+    "quadMed"
+   ]
+  },
+  "glutes": {
+   "label": "臀肌",
+   "muscles": [
+    "glutes",
+    "gluteMed"
+   ]
+  },
+  "glute-max": {
+   "label": "臀大肌",
+   "muscles": [
+    "glutes"
+   ]
+  },
+  "hip-abductors": {
+   "label": "臀中肌 · 髋外展",
+   "muscles": [
+    "gluteMed"
+   ]
+  },
+  "hip-rotators": {
+   "label": "髋外旋肌群",
+   "muscles": [
+    "glutes"
+   ],
+   "deep": true
+  },
+  "adductors": {
+   "label": "内收肌群",
+   "muscles": [
+    "adductors"
+   ]
+  },
+  "hamstrings": {
+   "label": "腘绳肌",
+   "muscles": [
+    "hamLat",
+    "hamMed"
+   ]
+  },
+  "chest": {
+   "label": "胸大肌",
+   "muscles": [
+    "pec"
+   ]
+  },
+  "pectorals": {
+   "label": "胸肌",
+   "muscles": [
+    "pec"
+   ]
+  },
+  "abs": {
+   "label": "腹直肌",
+   "muscles": [
+    "abs"
+   ]
+  },
+  "biceps": {
+   "label": "肱二头肌",
+   "muscles": [
+    "biceps"
+   ]
+  },
+  "forearms": {
+   "label": "前臂肌群",
+   "muscles": [
+    "forearmFlex",
+    "forearmExt"
+   ]
+  },
+  "traps": {
+   "label": "斜方肌",
+   "muscles": [
+    "trapUpper",
+    "scapular"
+   ]
+  },
+  "lats": {
+   "label": "背阔肌",
+   "muscles": [
+    "lats"
+   ]
+  },
+  "calves": {
+   "label": "小腿三头肌",
+   "muscles": [
+    "calfMed",
+    "calfLat"
+   ]
+  },
+  "tibialis": {
+   "label": "胫骨前肌",
+   "muscles": [
+    "tibialis"
+   ]
+  },
+  "neck": {
+   "label": "颈部肌群",
+   "muscles": [
+    "neck"
+   ]
+  }
+ }
+}

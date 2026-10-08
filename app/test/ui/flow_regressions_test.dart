@@ -1,0 +1,599 @@
+import 'dart:convert';
+
+import 'package:flare/control/learning_store.dart';
+import 'package:flare/l10n/app_localizations.dart';
+import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/components.dart';
+import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/motion_controls.dart';
+import 'package:flare/ui/theme.dart';
+import 'package:flare/ui/timer_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import '../domain/fixtures.dart';
+
+class MemoryStateStorage implements LocalStateStorage {
+  String? value;
+  @override
+  Future<String?> read(String key) async => value;
+  @override
+  Future<void> write(String key, String value) async => this.value = value;
+}
+
+Widget testApp(Widget home) => MaterialApp(
+  theme: flareTheme(),
+  locale: const Locale('zh'),
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: home,
+);
+
+Future<void> phoneSize(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+}
+
+Future<void> tapVisible(WidgetTester tester, Finder finder) async {
+  if (finder.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      finder,
+      350,
+      scrollable: find.byType(Scrollable).last,
+    );
+  }
+  await tester.ensureVisible(finder);
+  await tester.pump();
+  await tester.tap(finder);
+  await tester.pump();
+}
+
+void assertNoFlutterError(WidgetTester tester) {
+  expect(
+    tester.takeException(),
+    isNull,
+    reason: 'Core phone flow must not overflow or throw',
+  );
+}
+
+// Composite Material buttons expose the same semantics through a parent
+// annotation and their child container; target the outer advertised control.
+Finder labeledControl(String label) =>
+    find.bySemanticsLabel(RegExp('^${RegExp.escape(label)}')).first;
+
+void assertLeanHome(WidgetTester tester) {
+  expect(find.byType(NavigationBar), findsNothing);
+  expect(find.byType(Slider), findsNothing);
+  expect(find.byType(ActionChip), findsNothing);
+  expect(find.byType(MotionTimeline), findsOneWidget);
+  final scene = find.byWidgetPredicate(
+    (widget) => widget is ColoredBox && widget.color == FlareColors.background,
+  );
+  expect(scene, findsOneWidget);
+  expect(
+    tester.getSize(scene).height,
+    greaterThan(550),
+    reason:
+        'The phone scene must retain the space recovered from persistent tool rows',
+  );
+  expect(
+    tester.getSize(find.byType(MotionTimeline)).height,
+    lessThanOrEqualTo(56),
+  );
+}
+
+void main() {
+  final catalog = loadCatalogFixture();
+
+  testWidgets(
+    'phone safety → phase muscle → drill → local pain record → same paused frame',
+    (tester) async {
+      await phoneSize(tester);
+      final semantics = tester.ensureSemantics();
+      try {
+        final storage = MemoryStateStorage();
+        final store = LearningStore(catalog: catalog, storage: storage);
+        await store.initialize();
+        final commands = <Map<String, Object?>>[];
+        final scene = SceneController(commandSink: commands.add);
+        addTearDown(store.dispose);
+        addTearDown(scene.dispose);
+
+        await tester.pumpWidget(
+          testApp(
+            FlareShell(
+              catalog: catalog,
+              store: store,
+              sceneController: scene,
+              enableScene: false,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final enter = find.widgetWithText(FilledButton, '进入 3D 动作');
+        await tester.scrollUntilVisible(enter, 350);
+        expect(tester.widget<FilledButton>(enter).onPressed, isNull);
+        expect(store.safetyAccepted, isFalse);
+        assertNoFlutterError(tester);
+
+        await tapVisible(tester, find.text('我已了解安全提示'));
+        await tapVisible(tester, enter);
+        await tester.pumpAndSettle();
+        expect(store.safetyAccepted, isTrue);
+        expect(find.byType(WelcomePage), findsNothing);
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'ready',
+          'period': 9,
+          'time': 0,
+          'phase': {'source': 9},
+        });
+        await tester.pump();
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'state',
+          'time': 2.0,
+          'playing': true,
+          'phase': {'source': 11},
+        });
+        await tester.pumpAndSettle();
+        expect(find.text('第一侧支撑'), findsOneWidget);
+        expect(find.text('2.0 / 9.0 s'), findsOneWidget);
+        assertLeanHome(tester);
+        assertNoFlutterError(tester);
+
+        await tester.tap(labeledControl('暂停后可点选肌群'));
+        await tester.pumpAndSettle();
+        expect(scene.playing, isFalse);
+        expect(scene.time, 2.0);
+        await tester.tap(labeledControl('更多'));
+        await tester.pumpAndSettle();
+        await tapVisible(tester, labeledControl('11 第一侧支撑'));
+        await tester.pumpAndSettle();
+        expect(scene.time, catalog.phaseTime(11));
+        expect(scene.playing, isFalse);
+        assertLeanHome(tester);
+        await tester.tap(labeledControl('点选肌群查看详解'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ListTile, '三角肌'));
+        await tester.pumpAndSettle();
+        expect(scene.time, 2.0);
+        expect(scene.playing, isFalse);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(
+          find.text(catalog.phaseBySource(11)!.muscle('deltoids')!.why!),
+          findsOneWidget,
+        );
+
+        final tile = find.byWidgetPredicate(
+          (widget) => widget is DrillTile && widget.drill.id == 'deltoids-A',
+        );
+        await tapVisible(tester, tile);
+        await tester.pumpAndSettle();
+        final detail = tester.widget<DrillDetailPage>(
+          find.byType(DrillDetailPage),
+        );
+        expect(detail.drill.id, 'deltoids-A');
+        expect(find.text('动作示意图'), findsOneWidget);
+        expect(scene.time, 2.0);
+        expect(scene.selected, 'deltoids');
+        assertNoFlutterError(tester);
+
+        await tapVisible(tester, find.text('加入今日训练'));
+        await tester.pumpAndSettle();
+        expect(store.todayIds, ['deltoids-A']);
+        await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
+        expect(find.byType(TrainingTimerPage), findsOneWidget);
+        expect(
+          tester
+              .widget<TrainingTimerPage>(find.byType(TrainingTimerPage))
+              .drill
+              .id,
+          'deltoids-A',
+        );
+        assertNoFlutterError(tester);
+
+        await tapVisible(tester, find.text('不适，停止练习'));
+        await tester.pump(const Duration(milliseconds: 150));
+        expect(store.sessions, hasLength(1));
+        expect(store.sessions.single.drillId, 'deltoids-A');
+        expect(store.sessions.single.pain, isTrue);
+        expect(store.sessions.single.completed, isFalse);
+        expect(find.text('已保存在本机'), findsOneWidget);
+        await tapVisible(tester, find.widgetWithText(FilledButton, '完成'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('返回'));
+        await tester.pumpAndSettle();
+        expect(find.byType(DrillDetailPage), findsNothing);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.time, 2.0);
+        expect(scene.playing, isFalse);
+        expect(store.lastTime, 2.0);
+        assertNoFlutterError(tester);
+
+        await tester.tap(labeledControl('返回同一帧'));
+        await tester.pumpAndSettle();
+        expect(scene.time, 2.0);
+        expect(scene.playing, isFalse);
+        expect(scene.detail, isNull);
+        expect(scene.selected, 'deltoids');
+        assertLeanHome(tester);
+        expect(find.text('2.0 / 9.0 s'), findsOneWidget);
+        // An old state acknowledgement is not a new user selection.
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'state',
+          'time': 2.0,
+          'playing': false,
+          'selected': 'deltoids',
+          'detail': false,
+        });
+        await tester.pumpAndSettle();
+        expect(scene.detail, isNull);
+        assertLeanHome(tester);
+        // A later real hotspot for the retained muscle must still open.
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'select',
+          'time': 2.0,
+          'groupId': 'deltoids',
+        });
+        await tester.pumpAndSettle();
+        expect(scene.detail, 'deltoids');
+        await tester.tap(labeledControl('返回同一帧'));
+        await tester.pumpAndSettle();
+        expect(scene.detail, isNull);
+        expect(scene.selected, 'deltoids');
+        await tester.tap(labeledControl('播放'));
+        await tester.pumpAndSettle();
+        expect(scene.selected, isNull);
+        expect(scene.playing, isTrue);
+        expect(scene.time, 2.0);
+        await tester.tap(labeledControl('更多'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ListTile, '记录'));
+        await tester.pumpAndSettle();
+        expect(find.text('记录了不适'), findsOneWidget);
+        expect(
+          find.text(catalog.drillById('deltoids-A')!.name),
+          findsOneWidget,
+        );
+        final restored = LearningStore(catalog: catalog, storage: storage);
+        await restored.initialize();
+        expect(restored.sessions, hasLength(1));
+        expect(restored.todayIds, ['deltoids-A']);
+        expect(restored.sessions.single.pain, isTrue);
+        restored.dispose();
+        assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'compact home keeps navigation discoverable and timeline drag/keyboard seek paused',
+    (tester) async {
+      await phoneSize(tester);
+      final semantics = tester.ensureSemantics();
+      try {
+        final store = LearningStore(
+          catalog: catalog,
+          storage: MemoryStateStorage(),
+        );
+        await store.initialize();
+        await store.acknowledgeSafety();
+        await store.setLastTime(2);
+        final commands = <Map<String, Object?>>[];
+        final scene = SceneController(commandSink: commands.add);
+        addTearDown(store.dispose);
+        addTearDown(scene.dispose);
+        await tester.pumpWidget(
+          testApp(
+            FlareShell(
+              catalog: catalog,
+              store: store,
+              sceneController: scene,
+              enableScene: false,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'ready',
+          'time': 0.0,
+          'period': 9.0,
+          'phase': {'source': 9},
+        });
+        await tester.pumpAndSettle();
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'state',
+          'time': 2.0,
+          'playing': true,
+          'phase': {'source': 11},
+        });
+        await tester.pumpAndSettle();
+        assertLeanHome(tester);
+
+        await tester.tap(labeledControl('路径'));
+        await tester.pumpAndSettle();
+        expect(find.byType(PathPage), findsOneWidget);
+        expect(scene.playing, isFalse);
+        expect(scene.time, 2.0);
+        await tester.tap(find.byTooltip('返回'));
+        await tester.pumpAndSettle();
+        assertLeanHome(tester);
+
+        // Reach the public timeline through actual keyboard traversal, rather
+        // than programmatically focusing a private implementation field.
+        var timelineFocused = false;
+        for (var step = 0; step < 12 && !timelineFocused; step++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          final focusContext = FocusManager.instance.primaryFocus?.context;
+          timelineFocused =
+              focusContext != null &&
+              (focusContext.widget is MotionTimeline ||
+                  focusContext
+                          .findAncestorWidgetOfExactType<MotionTimeline>() !=
+                      null);
+        }
+        expect(
+          timelineFocused,
+          isTrue,
+          reason: 'Timeline must be keyboard reachable',
+        );
+        scene.play();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+        await tester.pumpAndSettle();
+        expect(scene.time, closeTo(2.1, 0.0001));
+        expect(scene.playing, isFalse);
+        expect(store.lastTime, closeTo(2.1, 0.0001));
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+        await tester.pumpAndSettle();
+        expect(scene.time, closeTo(2.0, 0.0001));
+
+        final timeline = find.byType(MotionTimeline);
+        final bounds = tester.getRect(timeline);
+        scene.play();
+        await tester.pump();
+        await tester.dragFrom(
+          Offset(bounds.left + bounds.width * .25, bounds.center.dy),
+          Offset(bounds.width * .5, 0),
+        );
+        await tester.pumpAndSettle();
+        final between14And15 =
+            (catalog.phaseTime(14) + catalog.phaseTime(15)) / 2;
+        expect(scene.time, closeTo(between14And15, 0.0001));
+        expect(scene.playing, isFalse);
+        expect(
+          commands.lastWhere((command) => command['type'] == 'seek')['time'],
+          closeTo(between14And15, 0.0001),
+        );
+
+        // The printed source tick is a pose landmark, not a uniform time label.
+        // Clicking its actual position must select that exact catalog pose time.
+        scene.play();
+        await tester.pump();
+        await tester.tap(
+          find.descendant(of: timeline, matching: find.text('11')),
+        );
+        await tester.pumpAndSettle();
+        expect(scene.time, closeTo(catalog.phaseTime(11), 0.0001));
+        expect(scene.playing, isFalse);
+        expect(store.lastTime, closeTo(catalog.phaseTime(11), 0.0001));
+        expect(
+          commands.lastWhere((command) => command['type'] == 'seek')['time'],
+          closeTo(catalog.phaseTime(11), 0.0001),
+        );
+        assertLeanHome(tester);
+        assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'first scene ready applies speed without overwriting saved paused time',
+    (tester) async {
+      await phoneSize(tester);
+      final storage = MemoryStateStorage();
+      final store = LearningStore(catalog: catalog, storage: storage);
+      await store.initialize();
+      await store.acknowledgeSafety();
+      await store.updateSettings(speed: 0.25);
+      await store.setLastTime(2.375);
+      final commands = <Map<String, Object?>>[];
+      final scene = SceneController(commandSink: commands.add);
+      addTearDown(scene.dispose);
+      addTearDown(store.dispose);
+      await tester.pumpWidget(
+        testApp(
+          FlareShell(
+            catalog: catalog,
+            store: store,
+            sceneController: scene,
+            enableScene: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      scene.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'ready',
+        'time': 0.0,
+        'period': 9.0,
+        'phase': {'source': 9},
+      });
+      await tester.pumpAndSettle();
+      expect(scene.time, 2.375);
+      expect(scene.speed, 0.25);
+      expect(store.lastTime, 2.375);
+      expect(
+        commands
+            .where((command) => command['type'] == 'seek')
+            .map((command) => command['time']),
+        [2.375],
+      );
+      expect((jsonDecode(storage.value!) as Map)['lastTime'], 2.375);
+      assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'expert self-assessment uses five original items and exact dips counts',
+    (tester) async {
+      await phoneSize(tester);
+      final storage = MemoryStateStorage();
+      final store = LearningStore(catalog: catalog, storage: storage);
+      await store.initialize();
+      addTearDown(store.dispose);
+      Map<String, int>? saved;
+      await tester.pumpWidget(
+        testApp(
+          Scaffold(
+            body: SafeArea(
+              child: AssessmentPage(
+                initialGrades: {
+                  for (final id in LearningStore.assessmentIds) id: 2,
+                },
+                onSave: (grades) async {
+                  saved = grades;
+                  await store.recordAssessment(grades);
+                },
+                onSkip: () async {},
+                onBack: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final dips = find.byWidgetPredicate(
+        (widget) =>
+            widget is DropdownButton<int> &&
+            widget.items!.any(
+              (item) =>
+                  item.child is Text &&
+                  (item.child as Text).data == '0–3 次 · 入门',
+            ),
+      );
+      if (dips.evaluate().isEmpty) {
+        await tester.scrollUntilVisible(find.text('受控臂屈伸次数'), 200);
+      }
+      final choices = tester.widget<DropdownButton<int>>(dips).items!;
+      expect(choices.map((choice) => (choice.child as Text).data), [
+        '0–3 次 · 入门',
+        '4–7 次 · 基础',
+        '8–12 次 · 良好',
+        '13 次以上 · 优秀',
+      ]);
+      await tapVisible(tester, dips);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('8–12 次 · 良好').last);
+      await tester.pumpAndSettle();
+      await tapVisible(tester, find.widgetWithText(FilledButton, '保存自评起点'));
+      await tester.pumpAndSettle();
+      expect(saved!.keys.toSet(), {
+        'wrist',
+        'pike',
+        'straddle',
+        'dips',
+        'lsit',
+      });
+      expect(saved!['dips'], 3);
+      expect(store.assessmentGrades, saved);
+      expect(store.startStage, 2);
+      final restored = LearningStore(catalog: catalog, storage: storage);
+      await restored.initialize();
+      expect(restored.assessmentGrades['dips'], 3);
+      expect(
+        restored.assessmentGrades.keys.toSet(),
+        LearningStore.assessmentIds,
+      );
+      restored.dispose();
+      assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'real rep drill completes three sets and saves only one completed local record',
+    (tester) async {
+      await phoneSize(tester);
+      final storage = MemoryStateStorage();
+      final store = LearningStore(catalog: catalog, storage: storage);
+      await store.initialize();
+      final drill = catalog.drillById('triceps-A')!;
+      var closed = false;
+      addTearDown(store.dispose);
+      await tester.pumpWidget(
+        testApp(
+          Scaffold(
+            body: SafeArea(
+              child: TrainingTimerPage(
+                drill: drill,
+                store: store,
+                onClose: () => closed = true,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tapVisible(tester, find.widgetWithText(FilledButton, '开始'));
+      for (var set = 1; set <= 3; set++) {
+        // Stopwatch intentionally uses real monotonic time, unlike WidgetTester's
+        // fake Timer clock. Wait one bounded countdown, then drive the UI poll.
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 3100));
+        });
+        await tester.pump(const Duration(milliseconds: 150));
+        expect(find.text('第 $set / 3 组'), findsOneWidget);
+        for (var rep = 0; rep < drill.dose.min; rep++) {
+          await tapVisible(tester, find.widgetWithText(FilledButton, '完成 1 次'));
+        }
+        await tester.pump(const Duration(milliseconds: 150));
+        assertNoFlutterError(tester);
+        if (set < 3) {
+          expect(find.text('组间休息'), findsNWidgets(2));
+          await tapVisible(tester, find.text('结束休息'));
+        }
+      }
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(store.sessions, hasLength(1));
+      expect(store.sessions.single.drillId, 'triceps-A');
+      expect(store.sessions.single.completedSets, 3);
+      expect(store.sessions.single.completed, isTrue);
+      expect(store.sessions.single.pain, isFalse);
+      expect(find.text('已保存在本机'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 450));
+      expect(
+        store.sessions,
+        hasLength(1),
+        reason: 'Periodic finish polls must not append another session',
+      );
+      await tapVisible(tester, find.widgetWithText(FilledButton, '完成'));
+      expect(closed, isTrue);
+      final restored = LearningStore(catalog: catalog, storage: storage);
+      await restored.initialize();
+      expect(restored.sessions.single.completedSets, 3);
+      restored.dispose();
+      assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+}

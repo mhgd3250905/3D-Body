@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-08",
+  "scope": "Initial M0/M1 browser baseline at 390x380, before the later h1 home layout refinements; do not use as final home design QA",
+  "sceneOrigin": "http://127.0.0.1:8842",
+  "runtime": "Chrome, same-origin host iframe, mobile touch viewport",
+  "viewport": { "width": 390, "height": 380, "devicePixelRatio": 2 },
+  "loadedModelBytes": { "coach": 2390231, "mannequin": 863833 },
+  "checks": {
+    "visibleSnowNaturalMesh": true,
+    "actualStaticCc0MannequinFrontAndBack": true,
+    "phaseMapDuringPlayback": 11,
+    "actorHotspotsDuringPlayback": 0,
+    "pauseFreezesExactJoints": true,
+    "seekUsesSourcePhase11AtTime2": true,
+    "phaseLoopRemainsWithin2And3": true,
+    "hotspotEmitsSelect": true,
+    "posedMeshRaycastShoulder": { "groupId": "deltoids", "side": "right", "panelId": "deltFront", "inPhase": true },
+    "posedMeshRaycastFlank": { "groupId": "obliques", "side": "left", "panelId": "oblique", "inPhase": true },
+    "samePoseDetailKeepsExactJoints": true,
+    "detailCloseRestoresMainCamera": true,
+    "miniSurfaceTapDuringPlay": { "type": "select", "groupId": "deltoids", "time": 2.2449630697029153, "playingAfterTap": false },
+    "cameraResetInDetail": { "time": 2, "selected": "deltoids", "detail": true, "sameJoints": true },
+    "hostVisibilityFalsePauses": true,
+    "sourceFilterRejectsChildSelfMessage": true,
+    "nonlocalRuntimeResourceUrls": [],
+    "singleForcedGpuLossAndRecovery": { "posePreserved": true, "visibleRenderRestored": true, "errorCodeAfterRecovery": null },
+    "finalConsoleWarningsOrErrors": []
+  },
+  "limits": [
+    "Desktop Chrome mobile emulation; no physical Android/iOS GPU or low-memory performance signoff.",
+    "Miniature is a static anatomical-position teaching reference and is not registered to the moving Snow skeleton.",
+    "Lossless compression keeps original triangle counts; no simplification or LOD is claimed."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "referenceAvailable": true,
+  "copiedFiles": 21,
+  "paritySamples": 181,
+  "jointMaxErrorMm": 0,
+  "quaternionMaxErrorRadians": 5.960464477539063E-08,
+  "kneeMinDegrees": 176.2338525905178,
+  "plantedElbowMinDegrees": 178.28768463523568,
+  "freeElbowMinDegrees": 179.9262709962686,
+  "limbMaxLengthErrorMeters": 3.885780586188048E-16,
+  "pacingMaxError": 0,
+  "substepClockMaxError": 0,
+  "phaseWallSecondsAt1x": [
+    1.20979591880066,
+    1.3995277956593453,
+    1.019867717703888,
+    0.8514723105580543,
+    0.936317809702281,
+    1.0522584556278696,
+    1.4939153740163895,
+    1.03013291977906
+  ],
+  "vertices": 211060,
+  "triangles": 332206,
+  "losslessAttributeValues": 3572742,
+  "triangleCyclicRotations": 44792,
+  "compressedCoachBytes": 2390231,
+  "compressedMiniatureBytes": 863833,
+  "bundledFiles": 14,
+  "bundledBytes": 4104696
+}

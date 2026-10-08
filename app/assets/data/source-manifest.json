@@ -1,0 +1,707 @@
+{
+  "version": 1,
+  "sourcePackage": "flare-app-info.zip/flare-app-package",
+  "source": "用户提供的 2026-10-08 Flare App 制作包；原 PNG 保留在 .reference 的未修改解压副本中。",
+  "attribution": "51 张训练图是包内 AI 生成的教学示意图，非真人示范。本次仅以 Pillow 作离线 WebP 转码和缩略，未调用生成服务。素材来源说明见包内 07_训练库/README.md 与 数据结构.md。",
+  "conversion": {
+    "format": "webp",
+    "quality": 82,
+    "sizes": [
+      1024,
+      512
+    ],
+    "network": false
+  },
+  "files": [
+    {
+      "source": "06_肌群数据/phase-muscles.json",
+      "asset": "assets/data/phase-muscles.json",
+      "sha256": "cebd33825c3436316078cf54547cceba1d4a039b7f2a87f39425a9d0aa8ba818"
+    },
+    {
+      "source": "06_肌群数据/phase-muscles.schema.json",
+      "asset": "assets/data/phase-muscles.schema.json",
+      "sha256": "2bb347a92ab7c1d538c680893a62d5f764559524afaa4728e4c27339857631d7"
+    },
+    {
+      "source": "07_训练库/drills.json",
+      "asset": "assets/data/drills.json",
+      "sha256": "dafdd37b200b7a694c9b0d5e7b0e2599a25f47ee70cf2ee4caa9a52e078107de"
+    },
+    {
+      "source": "07_训练库/drills.schema.json",
+      "asset": "assets/data/drills.schema.json",
+      "sha256": "8624642fd43056c1ca785a9760ecaedecc2b680f6887feb73aeda33a973b21a4"
+    },
+    {
+      "source": "09_实施计划/code/src/features/path/stages.ts",
+      "asset": "assets/data/stages-source.ts",
+      "sha256": "8af9c6e5d93e26001bfa289214c11506444fe613149b29ef4751923495b3e872"
+    }
+  ],
+  "images": {
+    "deltoids-A": {
+      "source": "07_训练库/img/deltoids-A.png",
+      "sourceSha256": "494d48b569c0dc15939ade615a07fd1e6b8c646833ae6db370608e25cac82e1a",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/deltoids-A.webp",
+      "imageSha256": "5f6e16fdc62c8bd67daeb5826df3c189aed334389c7a26cdc19f1ea1e81cbf15",
+      "thumbnailAsset": "assets/drills/deltoids-A-512.webp",
+      "thumbnailSha256": "eefc52a837ca44551cc219d07c46e8035ce93e34b79feaac719efbc3e19739ec",
+      "note": null
+    },
+    "deltoids-B": {
+      "source": "07_训练库/img/deltoids-B.png",
+      "sourceSha256": "5ba29fa44e2b46e5b24678afb4e9b7ae85ac3d3850b49337952afd8899b0d250",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/deltoids-B.webp",
+      "imageSha256": "1d1bf547e40794b695b1cb04b2dbfeafda93f2e435705ca8828363085e0d26ce",
+      "thumbnailAsset": "assets/drills/deltoids-B-512.webp",
+      "thumbnailSha256": "73536f87d9d4ba3c0301b4df5641c7287f63a7a141ce5aeb923239d45a7db6c0",
+      "note": null
+    },
+    "deltoids-C": {
+      "source": "07_训练库/img/deltoids-C.png",
+      "sourceSha256": "ffadc936008481737f27392cc9e96f10200277404e0457902d79f3e6c7b19358",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/deltoids-C.webp",
+      "imageSha256": "79a85a49db4391655d4ab14d184826a9637d27091d15894ca4198da612662af4",
+      "thumbnailAsset": "assets/drills/deltoids-C-512.webp",
+      "thumbnailSha256": "9a460598691c0caac035ff774b50ddcb69c889a6dc998afbee8a023a5c5bfb0c",
+      "note": null
+    },
+    "rotator-cuff-A": {
+      "source": "07_训练库/img/rotator-cuff-A.png",
+      "sourceSha256": "2713c61cab3a6f6fdd27785aaf0af5cd6f3c9936cc12b6d8133a128e057cbc01",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/rotator-cuff-A.webp",
+      "imageSha256": "a13fe68921d9397d9a122888e4cb36293b407d204fc19beea5f7a60800930909",
+      "thumbnailAsset": "assets/drills/rotator-cuff-A-512.webp",
+      "thumbnailSha256": "1b0ba77d0732ceda46fd99867ad002e3d9f12f1d83f48f7c5fa3adf6635edb9d",
+      "note": null
+    },
+    "rotator-cuff-B": {
+      "source": "07_训练库/img/rotator-cuff-B.png",
+      "sourceSha256": "7b315d80f6d4306c1a30d12e79b69b64dc6172e1d19e9491f2cb03142411918d",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/rotator-cuff-B.webp",
+      "imageSha256": "657898f5b9efdcd45ebc0cd9cc7c4941b6b6fdc0fab180047f5815129dd7d989",
+      "thumbnailAsset": "assets/drills/rotator-cuff-B-512.webp",
+      "thumbnailSha256": "b0788147de1aeac925ba1b72bf5baed1f09be7b1e64445d1f591b38c07a54f2f",
+      "note": null
+    },
+    "rotator-cuff-C": {
+      "source": "07_训练库/img/rotator-cuff-C.png",
+      "sourceSha256": "44a0d9e376f2466faa8a025cd62147cfa401ba92111b1ec9ed4435a7a0cb92ce",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/rotator-cuff-C.webp",
+      "imageSha256": "fc7863ae2fc91a33c7be910bea5bda250cef32a883fe598d82b67dcdf3e39ad7",
+      "thumbnailAsset": "assets/drills/rotator-cuff-C-512.webp",
+      "thumbnailSha256": "4d95c8cdb4a9f17bc91175e1a21553c03f676660f1f7b56d5053f32d1bda0a91",
+      "note": null
+    },
+    "triceps-A": {
+      "source": "07_训练库/img/triceps-A.png",
+      "sourceSha256": "057b77623ac0857c43931cad89cad3088203fc8e1f339bc9410ab2dad51512a9",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/triceps-A.webp",
+      "imageSha256": "69b2f234ac3cfb1e5f9021594e6e1acbcb89f01e7ea121050c1a0cb9699ac551",
+      "thumbnailAsset": "assets/drills/triceps-A-512.webp",
+      "thumbnailSha256": "f6e8b5ffbe6029938ee81dd9e2090742a2a9674a94049b4b041ab28f9f80e1a5",
+      "note": null
+    },
+    "triceps-B": {
+      "source": "07_训练库/img/triceps-B.png",
+      "sourceSha256": "007894be24fdac9532b88e3c7fcb96504164cead55e4a2bc919e40438cd4e163",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/triceps-B.webp",
+      "imageSha256": "b98c73a56b2eb3675aa33775421d7e039b2f810dd13f9d9081f2fe63122d7b4f",
+      "thumbnailAsset": "assets/drills/triceps-B-512.webp",
+      "thumbnailSha256": "054ada5ee771259055f4e228b156b9cbba0d12d26d35daeb415eeea5e26655e9",
+      "note": null
+    },
+    "triceps-C": {
+      "source": "07_训练库/img/triceps-C.png",
+      "sourceSha256": "8be7d894dc21059ae14879bd2ec9a7760c72405c55e73b9e8b6ef8fdafb1350b",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/triceps-C.webp",
+      "imageSha256": "af92ca4f6a22232d748bd66bacaaae5e1e6d304c3e130872f48be17ffcfb3918",
+      "thumbnailAsset": "assets/drills/triceps-C-512.webp",
+      "thumbnailSha256": "e01ddf75eaa178f5d31fb0e849743c184e4ba3756fbbfa697e0619d90de557b1",
+      "note": null
+    },
+    "forearms-A": {
+      "source": "07_训练库/img/forearms-A.png",
+      "sourceSha256": "fecc8ba21f1b27201d445448df65e484edaaab055e36aee1081b1b6330afbd6d",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/forearms-A.webp",
+      "imageSha256": "af29256bd0fb67933d7f1e1c0a7f7f98c76ba088d622f0cceb7dc6100dce05b5",
+      "thumbnailAsset": "assets/drills/forearms-A-512.webp",
+      "thumbnailSha256": "9f86f82d34bc4f44d358f359bbf0ca2ebf97e7b6e8b6ead5dfb7da0da96c587e",
+      "note": "包内标记：手腕方向示意有轻微瑕疵，动作以文字要点为准。"
+    },
+    "forearms-B": {
+      "source": "07_训练库/img/forearms-B.png",
+      "sourceSha256": "77c638b27ec0bba3b0e2d45066077c6619dfaaa579341bdb2a3665909e5e4770",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/forearms-B.webp",
+      "imageSha256": "68b0399f660620483b8e55f26983255d8f927e961080ff42338e3ea444cdda4f",
+      "thumbnailAsset": "assets/drills/forearms-B-512.webp",
+      "thumbnailSha256": "f23dd5e0938e7a7f55761f814716a0f4fa8be2c35278f65d290a79abe7c94f22",
+      "note": null
+    },
+    "forearms-C": {
+      "source": "07_训练库/img/forearms-C.png",
+      "sourceSha256": "48023cf33aa8adb9ba329dedcbfcc077b38988862b23038e7144c1e866fcf641",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/forearms-C.webp",
+      "imageSha256": "8cbe5880c91bbc4a02b889e3bf23577231c8fe2565c5c0ed83d3bd11158c0f93",
+      "thumbnailAsset": "assets/drills/forearms-C-512.webp",
+      "thumbnailSha256": "2ad4f38227b4ec5415b395523cb26985d7cfed137b6aade6ce869f02cd5a508c",
+      "note": null
+    },
+    "serratus-A": {
+      "source": "07_训练库/img/serratus-A.png",
+      "sourceSha256": "2e48726e068ce28333b4e1baa6901915ec0b567764b1c7e134d3147743ace8af",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/serratus-A.webp",
+      "imageSha256": "7063e041cf4a3c97b6a80ab6784559143735991a636303c7bf9c59ea956ea173",
+      "thumbnailAsset": "assets/drills/serratus-A-512.webp",
+      "thumbnailSha256": "0d2421966db8c6bb9130a7ce8cf3ab34ffc69330f089d22a2606ee888f5e8c60",
+      "note": null
+    },
+    "serratus-B": {
+      "source": "07_训练库/img/serratus-B.png",
+      "sourceSha256": "47de1b6a5db30da11bfe3bb94f25735dbffea6def931ea1b4e77f6eece78bc3a",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/serratus-B.webp",
+      "imageSha256": "65f52b479961bda90f638c43ad0f2c6bf549e2a65887fd1f96be236d6fef2c36",
+      "thumbnailAsset": "assets/drills/serratus-B-512.webp",
+      "thumbnailSha256": "9c411b7cac7583b05f629b87a9e59389234c8e881150c5b9b2226e72b755acf7",
+      "note": null
+    },
+    "serratus-C": {
+      "source": "07_训练库/img/serratus-C.png",
+      "sourceSha256": "e0c389a7f38d8aa8250f93b11982ff6be0d49e488197768be6f3946f2c387cfd",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/serratus-C.webp",
+      "imageSha256": "e2e239870bc5bb7a5d10fbdc3ef7bf342106a8455232b805cdc5f51633b255f1",
+      "thumbnailAsset": "assets/drills/serratus-C-512.webp",
+      "thumbnailSha256": "0da88a0672bd1f35c1c53c9bc24c5eb1d182ca205a9e00baac23889b5816bda2",
+      "note": null
+    },
+    "scapular-A": {
+      "source": "07_训练库/img/scapular-A.png",
+      "sourceSha256": "32ff79bbf95f110f1fc053d1062a3289742649c0600ff61d5c56478d13441635",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/scapular-A.webp",
+      "imageSha256": "94e20065e723d5d8178b4d6b50a240fb70c198f4ac832ac177bb2aa1964f533b",
+      "thumbnailAsset": "assets/drills/scapular-A-512.webp",
+      "thumbnailSha256": "b005f77a832664672acc96bdbe716062736b1f8849719b3633907dfb0be1ee22",
+      "note": null
+    },
+    "scapular-B": {
+      "source": "07_训练库/img/scapular-B.png",
+      "sourceSha256": "67761d51a9b28a9e1dcc32a2bde1da038134b93cd78f686ac31215b2cf0b4ceb",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/scapular-B.webp",
+      "imageSha256": "a455219d4430fca75d08af4b0e227e9ac41d49983276add72f2f25215bd9f034",
+      "thumbnailAsset": "assets/drills/scapular-B-512.webp",
+      "thumbnailSha256": "b2e3293b9eefe774f2d23163741607b20bf10e388fab5284e53200fc062a5199",
+      "note": null
+    },
+    "scapular-C": {
+      "source": "07_训练库/img/scapular-C.png",
+      "sourceSha256": "b4b2bd3bde669c845e3e0eb041613a92c5da69c1d565fc909a5fa6fd44efbacc",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/scapular-C.webp",
+      "imageSha256": "1b03ecf3f34a5e4a4d9e4f8431c2c669aa055888c893857d528d9243e846061a",
+      "thumbnailAsset": "assets/drills/scapular-C-512.webp",
+      "thumbnailSha256": "79c7ae9d5974bc101122683de23a06edfe0c8fd2df0ca5aae9f226f882ff4573",
+      "note": null
+    },
+    "chest-A": {
+      "source": "07_训练库/img/chest-A.png",
+      "sourceSha256": "784254cf62c972bdc4e91608bdcdc0bf453aba9d61d3c00e4f20d644b04c8659",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/chest-A.webp",
+      "imageSha256": "853fa67e35dc3de7ea16136a8952280e54055fe321c81bb0eb82d8f061f2fc18",
+      "thumbnailAsset": "assets/drills/chest-A-512.webp",
+      "thumbnailSha256": "2e561052bf16074192240ed359ad691f6aa5d0ef489803ee4a19e26af7015c68",
+      "note": null
+    },
+    "chest-B": {
+      "source": "07_训练库/img/chest-B.png",
+      "sourceSha256": "b0a2fd0b78593d3722d15842eba71473a53f6364c54ca725999d369027f31664",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/chest-B.webp",
+      "imageSha256": "2a7b0fd46e8525c7c77759247b84562b1a8190d06113a8dfd3a507a4b0164df9",
+      "thumbnailAsset": "assets/drills/chest-B-512.webp",
+      "thumbnailSha256": "e552e37c4d887c2c7de14265cee6b04191395891910987cd0bd46c5df1a656b4",
+      "note": null
+    },
+    "chest-C": {
+      "source": "07_训练库/img/chest-C.png",
+      "sourceSha256": "462112ad88053aa35434f4f8457b9464dc4f2adea63371eb2923d7117169ddcc",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/chest-C.webp",
+      "imageSha256": "8ff90aa7b2bfd14095ef5ba6fcc03e761ac8cbedea9816c79f8e42dd6373ccf6",
+      "thumbnailAsset": "assets/drills/chest-C-512.webp",
+      "thumbnailSha256": "bc9c0d4e10183680d87dca490dc3cb0911c9c4618f05cecf8c239953738ae639",
+      "note": null
+    },
+    "lats-A": {
+      "source": "07_训练库/img/lats-A.png",
+      "sourceSha256": "901c93ce8ef17c52133cc3f90dbb6cb71ae990946a0e4ddf0fe633bb62affde0",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/lats-A.webp",
+      "imageSha256": "9568ba17a80d2c698d95f692787c2b8be60f951f6f5b30107e02ccefea9a6f80",
+      "thumbnailAsset": "assets/drills/lats-A-512.webp",
+      "thumbnailSha256": "ac39c02c3cf24243ebe2548d2b1eb96dcbcc23548135d87c72041998b324e213",
+      "note": null
+    },
+    "lats-B": {
+      "source": "07_训练库/img/lats-B.png",
+      "sourceSha256": "81e77f0ad1a5577ff95ef9b5305289a8413ed3d5c1d12a1974886c213833e945",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/lats-B.webp",
+      "imageSha256": "646d4549127f0a25f345c08d628dd1b679ba486f30e8191d9f7601fd4a216958",
+      "thumbnailAsset": "assets/drills/lats-B-512.webp",
+      "thumbnailSha256": "caad3670cf6e92b09f2b8ea0acedc97107ec1c3761fc3c1613062ec227bbfd9a",
+      "note": null
+    },
+    "lats-C": {
+      "source": "07_训练库/img/lats-C.png",
+      "sourceSha256": "4fb59328fafc45068d39e5a96182f99bf3fbf5ba1975d2c3d4875f3a2e49eb5b",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/lats-C.webp",
+      "imageSha256": "a7f042944dd77ca9df644aa567eb079ee6351bddff4945b9bad7391ed23276fd",
+      "thumbnailAsset": "assets/drills/lats-C-512.webp",
+      "thumbnailSha256": "20c0212aeee1a7e2e9744b06446193460809bef29ec9a8f2dff1e2010f801081",
+      "note": null
+    },
+    "abs-A": {
+      "source": "07_训练库/img/abs-A.png",
+      "sourceSha256": "2e1d7cb42d453f988fe0d86ed3f93e7b3124d4fb0dcf7bc6b22c6946d87bdaf1",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/abs-A.webp",
+      "imageSha256": "b0a1e6d4921815f4ade64cc6557da2d6a99ee4b8ff07871055f20a5e4a2a432d",
+      "thumbnailAsset": "assets/drills/abs-A-512.webp",
+      "thumbnailSha256": "be77b710b0d7a66c7575f5235b879f72e536cc66cd336aa9977ac2043bd4092e",
+      "note": null
+    },
+    "abs-B": {
+      "source": "07_训练库/img/abs-B.png",
+      "sourceSha256": "461a19c3c7063813bbe5dd775349c6b389674abb74cbfb9f3cbf00774bb427bb",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/abs-B.webp",
+      "imageSha256": "363c5cdfd4a221827085dd1d5bd89db18fa6f17bd04f209767de1989109457a2",
+      "thumbnailAsset": "assets/drills/abs-B-512.webp",
+      "thumbnailSha256": "dfc689b97070826a454dda5ed6f808d65a00773469c639e1e0db81c3e781fa6e",
+      "note": null
+    },
+    "abs-C": {
+      "source": "07_训练库/img/abs-C.png",
+      "sourceSha256": "df31be804b283f1ef749fe2aecd8493caca3ee035c2a0aabf1871212382fa9cd",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/abs-C.webp",
+      "imageSha256": "7c7d0bdff8d054c9d653939a3160ec503b3ce525e828feb15a4935228df9694c",
+      "thumbnailAsset": "assets/drills/abs-C-512.webp",
+      "thumbnailSha256": "3f8845e63b238c3e01769e18c49a8d4a7488f33a982aeb568bb71d512aed6114",
+      "note": null
+    },
+    "obliques-A": {
+      "source": "07_训练库/img/obliques-A.png",
+      "sourceSha256": "08e864f778899548876cda8f0163837629ac6d3b84b63b3d0f3c02250a4b2e9b",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/obliques-A.webp",
+      "imageSha256": "a845f2c1e44ffec1182313c5b3eee60b23092b89815d61f46a1c474e6c553b33",
+      "thumbnailAsset": "assets/drills/obliques-A-512.webp",
+      "thumbnailSha256": "8f15315dc9fb69ed1c2964ff75f0157130303a1525a94c862da23a3fc2dd9b06",
+      "note": null
+    },
+    "obliques-B": {
+      "source": "07_训练库/img/obliques-B.png",
+      "sourceSha256": "c4715f4ab0dc460d47aac0de36f2f6ca330416535eb9ee79b0b23c5d04c73aa7",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/obliques-B.webp",
+      "imageSha256": "c69356d2945d245706f18bf9de7ce445c3c0b11a860b99596a1e151712a6b04c",
+      "thumbnailAsset": "assets/drills/obliques-B-512.webp",
+      "thumbnailSha256": "1c3950f806853214e2d4add41e9c2513262fd89468a6cba1fc2799f21a2129ff",
+      "note": null
+    },
+    "obliques-C": {
+      "source": "07_训练库/img/obliques-C.png",
+      "sourceSha256": "78ae928de3b9707e5862c1efc8bec42d058b4d84e8bc18a2076aa3b7f5c082b0",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/obliques-C.webp",
+      "imageSha256": "b0ddcf4083d42919a17aeb23156a112b87b01e282fa2910f66ca8e636e2bea9d",
+      "thumbnailAsset": "assets/drills/obliques-C-512.webp",
+      "thumbnailSha256": "a83aea3ed09965b95d2a80b25ca7678c5bf693955402ce86acdb9e3b47ce7d31",
+      "note": null
+    },
+    "erectors-A": {
+      "source": "07_训练库/img/erectors-A.png",
+      "sourceSha256": "278f5215475479357da86e6f02debb69d9cc734aec5b4f2277ab313fa081cf01",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/erectors-A.webp",
+      "imageSha256": "4dcf9f7b0f185d0137be5dcde3a7ae7f4eff4b027058908b7ebe8824bd5145b3",
+      "thumbnailAsset": "assets/drills/erectors-A-512.webp",
+      "thumbnailSha256": "836332001dbb2e74faef513730db7fb85fc0e171b14fdc0f2f8a2b062aec5c98",
+      "note": null
+    },
+    "erectors-B": {
+      "source": "07_训练库/img/erectors-B.png",
+      "sourceSha256": "29c6d782e1b0b3724202ae13f068303ee0373be7108fae2d56a32a9643df30cc",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/erectors-B.webp",
+      "imageSha256": "0f5ca272576c1a672e1f3ff191b8f9fc9f58f727061e19597f2e790b6afc265f",
+      "thumbnailAsset": "assets/drills/erectors-B-512.webp",
+      "thumbnailSha256": "f226830d2f8f46ca8783f3bc7c09f271bae316de7ebed3862d27f8736e992733",
+      "note": null
+    },
+    "erectors-C": {
+      "source": "07_训练库/img/erectors-C.png",
+      "sourceSha256": "12e993859d5694702d61917f5e9882d254a8848ee5bd6a5f8772f8cc16796702",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/erectors-C.webp",
+      "imageSha256": "a949ec435690c00d75bef9304e04c0cc253d5aaaa322b292efe7ba3336e7daa8",
+      "thumbnailAsset": "assets/drills/erectors-C-512.webp",
+      "thumbnailSha256": "a99f9f42974e211804a8a9e954f0bb9e9a0de834e4cc89a53f1a60d2ec49eb18",
+      "note": null
+    },
+    "hip-flexors-A": {
+      "source": "07_训练库/img/hip-flexors-A.png",
+      "sourceSha256": "7358a8cc4ea71b24f622ee77917e44de0bae7ffe254eabc4f72fc3fca8b90484",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-flexors-A.webp",
+      "imageSha256": "eb59f5a9131d96ccd2bc933d718f66d317a58213d54b961bb75a59cd2e597f39",
+      "thumbnailAsset": "assets/drills/hip-flexors-A-512.webp",
+      "thumbnailSha256": "9b38afacf97549c8114c27b83c21a6f102e09741aef17c62fab86906db53bce3",
+      "note": null
+    },
+    "hip-flexors-B": {
+      "source": "07_训练库/img/hip-flexors-B.png",
+      "sourceSha256": "5be4cbe313fd58fa2bbc25302c04ee1254a48495992e05a9545a00d2a54f7228",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-flexors-B.webp",
+      "imageSha256": "7e41ada8110334a18f18757b52e2d8d274021c27f301b647868f6a1bf74bd750",
+      "thumbnailAsset": "assets/drills/hip-flexors-B-512.webp",
+      "thumbnailSha256": "4dd4419c3b981f9d68cc1e5312432128f0440a46e03b0bdd6a5e519ca29aaaaa",
+      "note": null
+    },
+    "hip-flexors-C": {
+      "source": "07_训练库/img/hip-flexors-C.png",
+      "sourceSha256": "17b9ac982a4019d1419e0e5d5197a2ff05a3006ff163f5fd1d74e991a347cd54",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-flexors-C.webp",
+      "imageSha256": "6debfead1af49113a92636feb1fc775394fb54fd38345ab94679f95439fa97f4",
+      "thumbnailAsset": "assets/drills/hip-flexors-C-512.webp",
+      "thumbnailSha256": "4a3c68450c0946502e07bb479bcec26d57cbf6bae3f83b7b432da7e5928a22a3",
+      "note": null
+    },
+    "glute-max-A": {
+      "source": "07_训练库/img/glute-max-A.png",
+      "sourceSha256": "3d20b5d58818ac650c69bf3700765f8d6ba4580df1dcac38e78a8f49f0cebec5",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/glute-max-A.webp",
+      "imageSha256": "2ccf561245e2d304c05b5169c2cdb8ecfc63ea4323b507dcf9bc939d42421b8d",
+      "thumbnailAsset": "assets/drills/glute-max-A-512.webp",
+      "thumbnailSha256": "6d6a74c5683a5b555e1240f19c2bfc866b0b73913669995d01f4bffc04a18f00",
+      "note": null
+    },
+    "glute-max-B": {
+      "source": "07_训练库/img/glute-max-B.png",
+      "sourceSha256": "c60214b4a60f0da65e11eab7a3ae6b99544c8ed0f16f3503f401e590c7c7b46d",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/glute-max-B.webp",
+      "imageSha256": "9ed32edaa963a1c091d96b35d2a1c41b587f210ffc558ddc766abc7c6b48a18d",
+      "thumbnailAsset": "assets/drills/glute-max-B-512.webp",
+      "thumbnailSha256": "2d6a356496e8b385702c9d871133c6282bb6be33d819358a495969495d830f43",
+      "note": null
+    },
+    "glute-max-C": {
+      "source": "07_训练库/img/glute-max-C.png",
+      "sourceSha256": "972611c17a02586034927f6be9d55d4baf1e8c42a907b0e89552b896e7169921",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/glute-max-C.webp",
+      "imageSha256": "fcb5508f62851f2a373c900fdffcc2a53906f86bfb7f81657e9d888b20078191",
+      "thumbnailAsset": "assets/drills/glute-max-C-512.webp",
+      "thumbnailSha256": "d97c57f16a877124c089dea310b01d0c48aeaec36164a2506deef56ed63423d0",
+      "note": null
+    },
+    "hip-abductors-A": {
+      "source": "07_训练库/img/hip-abductors-A.png",
+      "sourceSha256": "4944be8a330106130a7e5ea212ac953500e3b0edb18a75ebcf9888f109720e46",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-abductors-A.webp",
+      "imageSha256": "ddef307527ffa720835babd3386f580dbcfeaee0a7b15a5962776baa83d6898c",
+      "thumbnailAsset": "assets/drills/hip-abductors-A-512.webp",
+      "thumbnailSha256": "6b1f55840bc9c2ac4ea6018c4f24851bd07a57b149733abc2a014ae00d8ad86f",
+      "note": null
+    },
+    "hip-abductors-B": {
+      "source": "07_训练库/img/hip-abductors-B.png",
+      "sourceSha256": "7d99325e43d407d089c231e91e581941f36e74b739bb30427eeee63821ad7df4",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-abductors-B.webp",
+      "imageSha256": "855cfa57d5fa9b8167121cbe65698f3da22ac5e0e5bd3c6e141f675949ad8728",
+      "thumbnailAsset": "assets/drills/hip-abductors-B-512.webp",
+      "thumbnailSha256": "a81e8e1eb437d9d6ea1dc0d9209b3fd9316dcb8f5bf114924c9cd9644b1ec230",
+      "note": null
+    },
+    "hip-abductors-C": {
+      "source": "07_训练库/img/hip-abductors-C.png",
+      "sourceSha256": "ee757c747484bcb0c4352e850c6a534f90451892e9439aa94763d4ab994feda4",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hip-abductors-C.webp",
+      "imageSha256": "d8b7ae7cb823fc0f4603d4d8a2d94e71e660aaa2fe809a3865ea596052635a0c",
+      "thumbnailAsset": "assets/drills/hip-abductors-C-512.webp",
+      "thumbnailSha256": "558a0492fa92c2c0183a49cf0134dcab3bf5ceb3547ff95cffcd0325124162c0",
+      "note": null
+    },
+    "adductors-A": {
+      "source": "07_训练库/img/adductors-A.png",
+      "sourceSha256": "9b060f19b55e5c7702c0b2695bf877cb727e7cdc293b824a50913590c48ceaeb",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/adductors-A.webp",
+      "imageSha256": "a1329b2c316ec24412ee222f69a0fc42b902cec6b01578af6381f15ad762af77",
+      "thumbnailAsset": "assets/drills/adductors-A-512.webp",
+      "thumbnailSha256": "439c0dc2580dc3fc0f6648b3e8fa93206392423e94f3099a522e8b66c8bcc675",
+      "note": null
+    },
+    "adductors-B": {
+      "source": "07_训练库/img/adductors-B.png",
+      "sourceSha256": "24f6d325d90dc632e7bbe89d414509728f90595609950c46db53f4f717b92d69",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/adductors-B.webp",
+      "imageSha256": "017f26a06d816f122378d66c4e61b07046a3d3331373193b3dd1b448c1b96e53",
+      "thumbnailAsset": "assets/drills/adductors-B-512.webp",
+      "thumbnailSha256": "bd30dc1c851e57def8be5c11be4a7f716c8d5cfb37f3100e0f8403ecd4c8325c",
+      "note": "包内标记：哥本哈根侧撑姿势示意有轻微瑕疵，动作以文字要点为准。"
+    },
+    "adductors-C": {
+      "source": "07_训练库/img/adductors-C.png",
+      "sourceSha256": "a91d4b417e170221d3b435023f1546d9c9a9408ca7ad750267a0728796d13682",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/adductors-C.webp",
+      "imageSha256": "7e145676aebe5bbd90a2fa957b3b1a31ec132b56318c93af774edbcbc6151448",
+      "thumbnailAsset": "assets/drills/adductors-C-512.webp",
+      "thumbnailSha256": "35cfd504e7e677ca587fd6691aa725ab43263b401b94fbea94521b9a140200e7",
+      "note": null
+    },
+    "quadriceps-A": {
+      "source": "07_训练库/img/quadriceps-A.png",
+      "sourceSha256": "73efdb951f81405ce2c6adec82508a923e650dcddc91d018e945cb3055b92907",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/quadriceps-A.webp",
+      "imageSha256": "50ab02688dbd025cfadf83abe7ed24e86ce08e026a6cbf5b3139e828c63f0c79",
+      "thumbnailAsset": "assets/drills/quadriceps-A-512.webp",
+      "thumbnailSha256": "ffa4b9bfd1cc9f6527c494438d06ff35c50ee8a66937ed76f8698b6c7303257c",
+      "note": "包内标记：反向北欧姿势示意有轻微瑕疵，动作以文字要点为准。"
+    },
+    "quadriceps-B": {
+      "source": "07_训练库/img/quadriceps-B.png",
+      "sourceSha256": "1ef808da6b458945e8992b9f2b8a75abd1ea9ed2970679545d95fba57ba6fe05",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/quadriceps-B.webp",
+      "imageSha256": "87318dbe6f8d422e47613994561aa6920b8e4a79d4aefe5e5dd1f776a29a9042",
+      "thumbnailAsset": "assets/drills/quadriceps-B-512.webp",
+      "thumbnailSha256": "a48fde1b5095b2125e345e3b90d45660dccd61a74349d85d04f9ae1bec424df2",
+      "note": null
+    },
+    "quadriceps-C": {
+      "source": "07_训练库/img/quadriceps-C.png",
+      "sourceSha256": "806e95f8946464fe53434df6499b077453a09f895998e3872a504d8610655478",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/quadriceps-C.webp",
+      "imageSha256": "19bf8ff33dd4efb133a1180bd4b95c2842af7e25c72e852e8571da4dfa28fe83",
+      "thumbnailAsset": "assets/drills/quadriceps-C-512.webp",
+      "thumbnailSha256": "d003e431bb963854fdbb6830372b3d32aa0849a084025023fbdb136068785a8a",
+      "note": null
+    },
+    "hamstrings-A": {
+      "source": "07_训练库/img/hamstrings-A.png",
+      "sourceSha256": "fa114b3b1381b0e922d678f5e6d2f7a9468d01baa9018dc826b5d3c36138d7bc",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hamstrings-A.webp",
+      "imageSha256": "ee4a05c4f72bedcbaf8421004e239e52eaf02bcd7da2d56685a27c68a0e8e23a",
+      "thumbnailAsset": "assets/drills/hamstrings-A-512.webp",
+      "thumbnailSha256": "2cca8c628ff52460f288aec390a8ef32eaa2901c568cca57f4eba559c5c1d35e",
+      "note": null
+    },
+    "hamstrings-B": {
+      "source": "07_训练库/img/hamstrings-B.png",
+      "sourceSha256": "0b17c854438b8985e3a5ac515f618075c612a1d58335f68d58bfbd46d8968faa",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hamstrings-B.webp",
+      "imageSha256": "dff0944280bbcc71e7e35130195f9b85d4ae325572d0ea4878b166f350290b58",
+      "thumbnailAsset": "assets/drills/hamstrings-B-512.webp",
+      "thumbnailSha256": "a564c5c9e56e02ae19936a92136e09e0b5556c371e5784e1c96317cb22e02c0b",
+      "note": null
+    },
+    "hamstrings-C": {
+      "source": "07_训练库/img/hamstrings-C.png",
+      "sourceSha256": "e19377ecaa29f9768e1690e955e715cfb722ae38b965e1f1bb871a639e978448",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "imageAsset": "assets/drills/hamstrings-C.webp",
+      "imageSha256": "d774b7e48e6ad087f3b3306a6b5d9701fa58d6409e740cf156747916cbe15867",
+      "thumbnailAsset": "assets/drills/hamstrings-C-512.webp",
+      "thumbnailSha256": "0d23e1ebef777dbbd6e166bdf09be6dd0a0407a6997644b5825843b785c1c703",
+      "note": null
+    }
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Flare phase → muscle data",
+  "type": "object",
+  "required": [
+    "sections",
+    "groups",
+    "phases"
+  ],
+  "properties": {
+    "note": {
+      "type": "string"
+    },
+    "generatedFrom": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "short"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "support",
+              "core",
+              "legs"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "short": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "minItems": 17,
+      "items": {
+        "type": "object",
+        "required": [
+          "groupId",
+          "section",
+          "colour",
+          "label",
+          "view",
+          "role"
+        ],
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "pattern": "^[a-z-]+$"
+          },
+          "section": {
+            "enum": [
+              "support",
+              "core",
+              "legs"
+            ]
+          },
+          "colour": {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$"
+          },
+          "label": {
+            "type": "string"
+          },
+          "view": {
+            "enum": [
+              "front",
+              "back"
+            ]
+          },
+          "role": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "panels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deep": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "id",
+          "name",
+          "detail",
+          "caption",
+          "primary",
+          "secondary"
+        ],
+        "properties": {
+          "source": {
+            "type": "integer",
+            "minimum": 9,
+            "maximum": 16
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "primary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "side",
+                "why"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z-]+$"
+                },
+                "side": {
+                  "enum": [
+                    "support",
+                    "free",
+                    "both",
+                    "left",
+                    "right"
+                  ]
+                },
+                "why": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "secondary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "side"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z-]+$"
+                },
+                "side": {
+                  "enum": [
+                    "support",
+                    "free",
+                    "both",
+                    "left",
+                    "right"
+                  ]
+                },
+                "why": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "properties": {
+        "period": {
+          "type": "number"
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "time": {
+                "type": "number"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "source": {
+                "type": "integer"
+              },
+              "phaseId": {
+                "type": "string"
+              },
+              "support": {
+                "enum": [
+                  "left",
+                  "right",
+                  "both"
+                ]
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "groupId": {
+                      "type": "string",
+                      "pattern": "^[a-z-]+$"
+                    },
+                    "level": {
+                      "enum": [
+                        "primary",
+                        "secondary"
+                      ]
+                    },
+                    "side": {
+                      "enum": [
+                        "left",
+                        "right",
+                        "both"
+                      ]
+                    },
+                    "why": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "musclePanels": {
+      "type": "array"
+    },
+    "groupPanels": {
+      "type": "object"
+    }
+  }
+}
