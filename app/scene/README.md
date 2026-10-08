@@ -101,7 +101,7 @@ hosts retain their lifecycle background handling.
 
 `muscle-material.js` adapts the imported functional shader without changing its
 source region definitions or hit testing. The muscle-display action actor has
-a bright white glazed-ceramic base and functional color fills, with no added muscle strokes,
+a soft warm ivory matte-ceramic base and readable functional color fills, with no added muscle strokes,
 channels, edge darkening or deep hatching. Its separate study skin and blank
 head replace the clothed body and facial parts only while a group is selected.
 The upright mannequin retains fine screen-bounded panel strokes and antialiased deep
@@ -127,10 +127,10 @@ Neck surfaces and skin weights are prepared to join the existing body. Shoes
 and the prepared source hand/foot surfaces are retained. The normal clothed
 actor and its face remain intact for unselected viewing and playback.
 
-The selected study display uses a nonmetallic white glazed-ceramic physical
-material, with controlled surface roughness and a clearcoat reflection layer.
-Functional colors stay on the surface while the ceramic lighting reveals its
-shape. It reuses the existing offline `RoomEnvironment`; no downloaded HDR,
+The selected study display uses a nonmetallic warm ivory matte-ceramic physical
+material with subdued glaze reflection. Functional colors stay readable on
+the surface while the softer ceramic lighting reveals its shape. It reuses
+the existing offline `RoomEnvironment`; no downloaded HDR,
 texture or new lighting asset is added. This material applies only to the
 selected white actor, not to the normal clothed actor or the upright mannequin
 with its fine diagram lines. Blender source editing and runtime material

@@ -5,7 +5,7 @@
 Source: [Snow, Blender Studio](https://studio.blender.org/characters/snow/).
 License: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
 
-Modified locally for the selected-muscle white glazed-ceramic study display. This derivative
+Modified locally for the selected-muscle warm ivory matte-ceramic study display. This derivative
 uses the same mature Snow skin, original prepared hand and foot surfaces,
 footwear and compact 20-bone deformation rig as the project's clothed coach.
 The skin beneath the tee and shorts is restored instead of exposing the
@@ -25,8 +25,8 @@ timing are preserved. Functional colors are teaching locations, not internal
 anatomical geometry or muscle activation measurements. The independent CC0
 upright mannequin is not part of this Snow derivative.
 
-The selected runtime surface uses a bright nonmetallic white ceramic base and
-a glaze reflection layer, with functional highlight colors. It reuses the
+The selected runtime surface uses a soft nonmetallic warm ivory matte-ceramic
+base with subdued glaze reflection and readable functional highlight colors. It reuses the
 project's offline `RoomEnvironment` without additional downloaded materials.
 The normal clothed actor and the upright mannequin retain their own materials.
 This runtime presentation is separate from the editable Blender skin/head

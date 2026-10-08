@@ -60,7 +60,7 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     replace('float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);\n          float hatch = smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);',
       'float stripe = (vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0;\n          float footprint = fwidth(stripe);\n          float hA = max(footprint, 0.02);\n          float hatch = mix(smoothstep(0.5 - hA, 0.5 + hA, abs(fract(stripe) - 0.5) * 2.0), 0.5, smoothstep(0.3, 0.8, footprint));');
     if (posed) {
-      // The action actor is white glazed ceramic with color fills only.
+      // The action actor is warm matte ceramic with color fills only.
       // Fine anatomical strokes belong exclusively to the supplied mannequin.
       replace('vec3 base = mix(mmSkin, mmBase * mix(0.985, 1.015, mmEdge), mmIsMuscle);', 'vec3 base = mmBase;');
       replace('float sh = mmShown * mmIsMuscle * mmPanelCoverage;', 'float sh = mmShown * mmIsMuscle;');

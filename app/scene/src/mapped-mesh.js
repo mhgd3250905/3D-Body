@@ -95,14 +95,14 @@ export function createSurfaceSelection(skinned) {
   const hasStudySkin = skinned.some(mesh => mesh.userData.studySkin);
   const hasStudyHead = skinned.some(mesh => mesh.userData.studyHead);
   uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
-  uniforms.mmBase.value.set('#faf9f6'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
+  uniforms.mmBase.value.set('#d3c7ad'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
   for (const mesh of skinned) {
     originals.set(mesh, mesh.material);
     visibility.set(mesh, mesh.visible);
-    // White glazed ceramic: dielectric reflections from the existing offline
-    // studio environment, with a soft glaze rather than a skin-like surface.
-    const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.30, metalness: 0,
-      clearcoat: 0.55, clearcoatRoughness: 0.22, ior: 1.46 });
+    // Warm matte ceramic keeps curved surfaces readable under the existing
+    // studio lights; restrained dielectric reflection avoids bright glints.
+    const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0,
+      clearcoat: 0.02, clearcoatRoughness: 0.72, specularIntensity: 0.35, ior: 1.46 });
     applyFunctionalSurface(material, uniforms, { posed: true }); mapped.set(mesh, material);
   }
   function show(groupId, items, detail = false) {
