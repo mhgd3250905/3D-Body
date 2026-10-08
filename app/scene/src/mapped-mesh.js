@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS } from './phase.js';
 import { CORE_BONES, createCoreMapping } from './core-mapping.js';
+import { applyFunctionalSurface, setFunctionalFocus } from './muscle-material.js';
+import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 
 // Adapted from the package's mmRest.ts. The attribute is attached to the
 // original Snow vertices. It is a teaching map, not an anatomical registration.
@@ -91,12 +93,32 @@ export function createHitTester(player, skinned) {
 }
 
 export function createSurfaceSelection(skinned) {
-  // Selection determines the lesson and camera, never the motion appearance.
-  // The athlete always retains its original clothes, face and material objects.
-  // Functional colors are displayed solely on the upright reference mannequin.
-  const originals = new Map(skinned.map(mesh => [mesh, mesh.material]));
-  function restore() { for (const [mesh, material] of originals) mesh.material = material; }
-  return { show: restore, restore,
-    releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); },
-    dispose: restore };
+  const originals = new Map(skinned.map(mesh => [mesh, { material: mesh.material, visible: mesh.visible }]));
+  const uniforms = MM.createMuscleUniforms(), mapped = new Map();
+  uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
+  for (const mesh of skinned) {
+    // Render the retained same-source neutral mannequin only in detail. Home
+    // and playback restore the exact original garment and face materials.
+    const material = new THREE.MeshPhysicalMaterial({ color: '#d3c7ad', roughness: 0.82, metalness: 0,
+      clearcoat: 0.02, clearcoatRoughness: 0.72, specularIntensity: 0.35, ior: 1.46 });
+    if (mesh.userData.studySkin) applyFunctionalSurface(material, uniforms, { posed: true });
+    mapped.set(mesh, material);
+  }
+  function restore() { for (const [mesh, saved] of originals) { mesh.material = saved.material; mesh.visible = saved.visible; } }
+  function show(groupId, items, detail = false) {
+    if (!groupId || !detail) { restore(); return; }
+    const group = MM.resolveGroup(groupId), side = items.find(item => item.groupId === groupId)?.side ?? 'both';
+    MM.setMuscleSelection(uniforms, (group?.muscles ?? []).map(muscle => ({ muscle, side,
+      colour: '#e58b90', level: group.deep ? 'deep' : 'primary', dim: 0 })));
+    setFunctionalFocus(uniforms, group?.muscles ?? [], side);
+    for (const [mesh, material] of mapped) {
+      mesh.material = material;
+      if (mesh.userData.studySkin || mesh.userData.studyHead) mesh.visible = true;
+      else if (isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh)) mesh.visible = false;
+    }
+  }
+  return { show, restore, getState: () => ({ selectedPanels: uniforms.mmState.value.map((value, index) => value.z ? index : -1).filter(index => index >= 0),
+    side: uniforms.mmFocusSide?.value ?? 0, colour: '#e58b90', base: '#d3c7ad' }),
+    releaseGpu() { for (const material of new Set([...originals.values()].flatMap(value => [].concat(value.material)))) material.dispose(); for (const material of mapped.values()) material.dispose(); },
+    dispose() { restore(); for (const material of mapped.values()) material.dispose(); } };
 }

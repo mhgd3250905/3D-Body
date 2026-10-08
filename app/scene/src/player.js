@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createCoachMotion } from './legacy/coach-motion.js';
-import { computePacing, pacingRate, paceStep } from './pacing.js';
+import { createBakedMotion } from './baked-motion.js';
+import { attachStudyBody, attachStudyHead, prepareStudySpine } from './study-body.js';
 import { loadOfflineGlb } from './assets.js';
 
 export const CAMERA_PRESETS = {
@@ -79,17 +79,21 @@ export class FlarePlayer {
 
   async load() {
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
-    // The motion actor always keeps its supplied outfit and face. Historical
-    // unclothed study derivatives are not loaded or attached to this scene.
-    const [gltf, rig] = await Promise.all([
-      loadOfflineGlb('./coach/flare-coach.meshopt.glb.gz'),
+    const [gltf, rig, study, studyHead] = await Promise.all([
+      loadOfflineGlb('./coach/flare-coach-v38-animated.meshopt.glb.gz'),
       fetch(new URL('./coach/coach-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
+      loadOfflineGlb('./coach/flare-coach-study-body.meshopt.glb.gz'),
+      loadOfflineGlb('./coach/flare-coach-study-head.meshopt.glb.gz'),
     ]);
-    if (this.disposed) { disposeTree(gltf.scene); return; }
+    if (this.disposed) { for (const value of [gltf, study, studyHead]) disposeTree(value.scene); return; }
     this.coach = gltf.scene;
-    this.motion = createCoachMotion({ model: this.coach, rigData: rig });
+    // Only the retained study meshes receive helper weights. The baked actor
+    // already includes them; never install helpers or IK on it a second time.
+    for (const value of [study, studyHead]) prepareStudySpine(value.scene, rig);
+    attachStudyBody(this.coach, study.scene); attachStudyHead(this.coach, studyHead.scene);
+    this.motion = createBakedMotion(gltf, rig);
     this.coach.traverse(object => { if (object.isMesh) object.castShadow = this.renderer.shadowMap.enabled; });
     this.scene.add(this.coach); this.period = this.motion.getMetrics().period;
     for (let i = 0; i < 18; i++) {
@@ -97,7 +101,6 @@ export class FlarePlayer {
       this.loopBounds.union(new THREE.Box3(new THREE.Vector3().fromArray(bounds.min), new THREE.Vector3().fromArray(bounds.max)));
     }
     this.loopBounds.expandByScalar(rig.height * 0.045);
-    this.pacing = computePacing(this.coach, this.motion, 0);
     this.setTime(0); this.resetView(); this.start();
   }
 
@@ -109,9 +112,7 @@ export class FlarePlayer {
   tick(now) {
     const delta = Math.min(Math.max((now - this.last) / 1000, 0), 0.06); this.last = now;
     if (this.motion && this.playing) {
-      const advance = this.paceStep(delta);
-      if (this.loopRange) { const [a, b] = this.loopRange, duration = b - a; this.time = a + (((this.time - a + advance) % duration) + duration) % duration; }
-      else this.time = (this.time + advance) % this.period;
+      this.time = this.motion.clock.advance(this.time, delta, this.speed, this.loopRange);
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
     this.controls.update();
@@ -122,8 +123,8 @@ export class FlarePlayer {
     this.motion?.update(this.time); this.coach?.updateMatrixWorld(true); this.dirty = true;
     this.callbacks.onTime?.(this.time);
   }
-  pacingRate(time) { return pacingRate(this.pacing, this.motion, time, this.period); }
-  paceStep(delta) { return paceStep(this.pacing, this.motion, this.time, delta, this.speed, this.period); }
+  pacingRate(time) { return (this.motion.clock.toSequence(Math.min(this.motion.clock.toWall(time) + 0.001, this.motion.clock.duration)) - time) / 0.001; }
+  paceStep(delta) { return this.motion.clock.advance(this.time, delta, this.speed, this.loopRange) - this.time; }
   getMetrics() { return this.motion?.getMetrics() ?? null; }
   setDisplayScene(scene = null) { this.displayScene = scene; this.dirty = true; }
   setVisible(visible) {
@@ -152,7 +153,7 @@ export class FlarePlayer {
     this.insetLeft = this.framingMode === 'detail' || fullStage ? 0 : height <= 320 ? 48 : 64;
     // h1 embeds the 650px stage at global y108. Lift the visual composition
     // 40px from the first pass. Only 10px of the static reference's horizontal
-    // shift is safe for the entire v33 loop; preserve complete hands/feet.
+    // shift is retained for v38; its slightly wider envelope is fitted below.
     this.offsetY = fullStage ? height * (0.5 - 187 / 650) : 0;
     this.offsetX = fullStage ? width * 10 / 390 : 0;
     this.camera.setViewOffset(width, height, this.offsetX - this.insetLeft / 2, this.offsetY, width, height);
@@ -165,7 +166,7 @@ export class FlarePlayer {
   resetView(direction = CAMERA_PRESETS.standard) {
     this.autoFrame = true;
     const fullStage = this.container.clientWidth <= 600 && this.container.clientHeight >= 500;
-    this.fitBounds(this.loopBounds, direction, fullStage ? 0.72 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
+    this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
   }
   setCameraView(position, target) {
     // A quick model switch must not carry an unfinished orbit into the next
@@ -199,6 +200,7 @@ export class FlarePlayer {
     this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
     this.renderer.domElement.removeEventListener('webglcontextrestored', this.onContextRestored);
     this.controls.removeEventListener('change', this.onControlsChange); this.controls.dispose();
+    this.motion?.dispose();
     disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
   }
 }

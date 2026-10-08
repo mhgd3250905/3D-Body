@@ -60,6 +60,7 @@ function refreshHotspots() {
 }
 function closeDetail() {
   detailView?.close(); detailed = false; detailNote.hidden = true;
+  surface?.restore();
   phaseMap?.setHidden(false);
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
@@ -188,6 +189,7 @@ async function boot() {
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
       hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
       getPhaseMap: () => phaseMap?.getState(),
+      getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
       getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,

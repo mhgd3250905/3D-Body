@@ -307,7 +307,7 @@ abstract class AppLocalizations {
   /// No description provided for @deepMotionNote.
   ///
   /// In zh, this message translates to:
-  /// **'深层肌群位置请切换到直立肌群人体查看。'**
+  /// **'深层肌群高亮表示所在部位。'**
   String get deepMotionNote;
 
   /// No description provided for @bothSides.

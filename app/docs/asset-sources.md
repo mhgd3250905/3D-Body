@@ -1,6 +1,6 @@
 # 资产来源与复现
 
-App 的导入基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`。本地解压副本位于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`，该副本保留原文件。以下“包内路径”均相对于这一目录。历史白膜派生复用项目已保留的同源 Snow 原始 Blender 文件，没有下载或更换作者资产；当前不加载或挂接该派生。
+App 的内容与设计导入基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`。本地解压副本位于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`，该副本保留原文件。以下原包“包内路径”均相对于这一目录。2026-10-09动作另采用 `Flare-v38-motion-package.zip` 推荐的烘焙 GLB，来源和兼容记录见 [v38 接入说明](motion-v38.md)。此前同源 Snow 白膜派生按用户最新要求恢复用于指定肌群详情，没有下载或更换作者资产；首页仍使用原着装人物。
 
 ## 不可变基线
 
@@ -11,14 +11,14 @@ App 的导入基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`。�
 | 解压包 | 913 个文件，含索引与清单；`00_START_HERE/MANIFEST.tsv` 记录其余911个文件的大小与哈希 |
 | 动作版本 | 包标明 `design/muscle-sync@43da6c8`，动作 v33，提交 `b7602c8`；来源仍为原步骤09–16再接回09 |
 
-App 引用 v33 的独立副本。根目录原网页、`托马斯/` 导出、历史序列、个人步骤与 `Air-Flare/` 不因导入而更新。包内历史 README/署名说明的旧布局或旧动作记录不能覆盖当前 App 的实施规范。
+上述 v33 文件作为独立、不可变的原包基线保留，不再作为当前播放动画。新动作来源记录于 `scene/tools/v38-source-manifest.json`，原清单继续保留。根目录原网页、`托马斯/` 导出、历史序列、个人步骤与 `Air-Flare/` 不因导入而更新。包内历史 README/署名说明的旧布局或旧动作记录不能覆盖当前 App 的实施规范。
 
 ## 采用范围
 
 | App 文件 | 包内来源与说明 |
 | --- | --- |
 | `scene/src/legacy/*.js` | `08_源代码/3D-Body-design-muscle-sync/src/` 中12个动作/肌群模块；原样复制，逐文件哈希见 `scene/tools/source-manifest.json` |
-| `scene/src/public/coach/` 与场景动作资产 | `05_动作与3D资产/sequence/`、`models/coach-rig.json`；保留 JS 相对导入路径和 v33 序列 |
+| `scene/src/public/coach/` 与原场景动作资产 | `05_动作与3D资产/sequence/`、`models/coach-rig.json`；保留 JS 相对导入路径和 v33 序列基线，当前播放另用 v38 烘焙片段 |
 | Snow 教练原网格 | `05_动作与3D资产/models/flare-coach.glb`，7,508,016字节；源 SHA-256 `ea6a8739aeb6d8b68a5ac4f50c6094bfec30c61b8612cb317cea4745172c14ff` |
 | `assets/data/phase-muscles.json` | `06_肌群数据/phase-muscles.json`；17肌群、8阶段、左右与教学说明 |
 | `assets/data/drills.json`、Schema | `07_训练库/` 原内容，51训练；原字段不改，App 按来源清单找到本地 WebP |
@@ -29,27 +29,29 @@ App 引用 v33 的独立副本。根目录原网页、`托马斯/` 导出、历�
 
 内容导入可用 `assets/data/import_content.py` 在本地复现，需要 Python/Pillow；它只读源包，生成 App 数据和图像副本。3D 构建按 [scene/README.md](../scene/README.md) 执行。[原模型压缩记录](../scene/tools/model-optimization.json) 已记录源/输出哈希：正常着装 Snow 从7,508,016字节压缩至2,390,231字节，人台从1,338,688至863,833字节，采用meshopt与gzip；未减面、未量化、未合并网格。这两个原模型的3,572,742个属性值保持一致，三角形允许等价的循环顶点排序。白膜派生的制作与压缩范围另见下文，不能把其 Blender 局部改网格说成原网格完全不变。当前没有已验收的移动LOD。
 
-正背小图使用包内成熟CC0 Human Base Meshes人台，与主人物共用一个WebGL渲染上下文。每个视图独立渲染到高密度MSAA目标，转换为正确的显示色彩后存入2D呈现副本，按阶段/尺寸缓存；普通质量的小图至少2倍采样，低质量保持1倍。相同人台复用于详情的大画面或小卡片，没有复制模型或新建WebGL上下文。人台原肌群区域、命中数据、网格和法线保留，精细化只调整体表教学边界的宽度/明暗与抗锯齿；着装动作人物保留原材质，不显示肌群色区、分区线或肌群斜线。Snow、Three.js、meshoptimizer、fflate与Noto许可随包保存并在设置中可查看。fflate许可来自[作者仓库](https://github.com/101arrowz/fflate/blob/master/LICENSE)，meshoptimizer来自[对应版本](https://github.com/zeux/meshoptimizer/blob/v0.22/LICENSE.md)。
+正背小图使用包内成熟CC0 Human Base Meshes人台，与主人物共用一个WebGL渲染上下文。每个视图独立渲染到高密度MSAA目标，转换为正确的显示色彩后存入2D呈现副本，按阶段/尺寸缓存；普通质量的小图至少2倍采样，低质量保持1倍。相同人台复用于详情的大画面或小卡片，没有复制模型或新建WebGL上下文。人台原肌群区域、命中数据、网格和法线保留，精细化只调整体表教学边界的宽度/明暗与抗锯齿；首页着装动作人物保留原材质，不显示肌群色区。详情的暖米白哑光动作模特仅提示当前浅红柔边位置，不显示分区线或肌群斜线。Snow、Three.js、meshoptimizer、fflate与Noto许可随包保存并在设置中可查看。fflate许可来自[作者仓库](https://github.com/101arrowz/fflate/blob/master/LICENSE)，meshoptimizer来自[对应版本](https://github.com/zeux/meshoptimizer/blob/v0.22/LICENSE.md)。
 
 ## 署名与范围
 
-直立人台的肌群精细化修改 `scene/src/muscle-material.js` 的表现适配：原分区的细灰描边放到显示色彩转换后，采用有边界保护的屏幕导数做抗锯齿，保留人台的原网格、法线、区域与命中数据。没有画入新解剖结构；动作人物保持原材料对象，不显示肌群高亮或边缘效果。该细线阶段的视觉证据保留在仓库 `output/design-qa/20261008/fine-muscle-lines/`。
+直立人台的肌群精细化修改 `scene/src/muscle-material.js` 的表现适配：原分区的细灰描边放到显示色彩转换后，采用有边界保护的屏幕导数做抗锯齿，保留人台的原网格、法线、区域与命中数据。没有画入新解剖结构；动作模特的柔边只表示近似位置，不产生新的真实肌肉网格。该细线阶段的历史视觉证据保留在仓库 `output/design-qa/20261008/fine-muscle-lines/`，不充当新版动作播放验收。
 
-## 当前着装动作教学
+## 当前 v38 与模型分工
 
-托马斯在所有模式和自由拖拽角度下都保留原上衣、短裤、面孔与原材料对象，只作同帧动作查看，不叠加肌群高亮、描边或纹路。默认布局仍是大动作画面、小直立人台，点击卡片交换；首页未选中的同步小图保持原阶段功能色。只有直立 CC0 人台显示当前群组的浅红选区与轻柔外缘淡影，保留精细分区边线和原展示材质，指定肌群详情中其余阶段色收起，没有改网格或加绑定。源分区定义、评分算法、动作和原骨架保留；动作人物的相对校准教学坐标当前只供点击命中，不用于表面着色。深层区域仍表示教学位置，不是真实内部解剖边界。历史动作柔边 shader 原型源保留，但当前不使用。
+按2026-10-09最新明确要求，采用包内 v38 烘焙角色动画，用 AnimationMixer 播放已有22骨/44轨道，不再次执行 IK、安装腰骨或叠加 paced clock。首页保留原上衣、短裤、面孔与原材质；指定肌群详情恢复暖米白哑光、无衣、无五官模特，仅显示当前群组浅红柔边位置，不画肌肉纹路或硬轮廓，不叠加其他阶段色。模特复用同源派生皮肤/头部，与新版演员共享动作骨骼；绑定与腰部权重适配必须按新版检查，不能把此前20骨记录当作22骨适配已通过的证据。
 
-[calibrate-muscle-map.mjs](../scene/tools/calibrate-muscle-map.mjs) 使用原三角面的平面交线测量动作身体与静态参考身体的可信核心截面，生成 [core-calibration.json](../scene/src/core-calibration.json)；其中保存模型来源哈希、骨锚配对和截面接受/拒绝记录。被手臂连接污染或存在开断的上端测量不采用，向真实髋/肩骨锚连续回退。[core-mapping.js](../scene/src/core-mapping.js) 仅按 `pelvis`、`torso`、`spineLower`、`spineUpper` 的原蒙皮权重混合修正 `mmRest` 教学坐标：校准 Snow 较窄腰部相对于直立人台的横向比例，并以髋/肩原点作连续纵向和前后小偏移。不缩放身体厚度，不改几何、法线、颈头、骨骼或动作时刻；静态人台的分区和命中保留原定义。当前托马斯只用校准后的坐标处理衣物体表的近似点击命中，不用它着色；不是独立真实肌肉网格或精确解剖配准。复现与定向检查命令为 `npm run calibrate:muscles`、`npm run verify:muscles`。
+默认布局仍是大动作画面、小直立人台，点击卡片交换；首页未选中的同步小图保持原阶段功能色。直立 CC0 人台显示当前群组的浅红选区与轻柔外缘淡影，保留精细分区边线和原展示材质，指定肌群详情中其余阶段色收起，没有改该人台网格或加动作绑定。源分区定义和评分算法保留；深层区域仍表示教学位置，不是真实内部解剖边界。离开详情恢复着装与原面孔，保留暂停时刻和选择。
 
-## 历史同源白膜派生（当前不加载）
+[calibrate-muscle-map.mjs](../scene/tools/calibrate-muscle-map.mjs) 使用原三角面的平面交线测量动作身体与静态参考身体的可信核心截面，生成 [core-calibration.json](../scene/src/core-calibration.json)；其中保存模型来源哈希、骨锚配对和截面接受/拒绝记录。被手臂连接污染或存在开断的上端测量不采用，向真实髋/肩骨锚连续回退。[core-mapping.js](../scene/src/core-mapping.js) 按 `pelvis`、`torso`、`spineLower`、`spineUpper` 的蒙皮权重混合修正 `mmRest` 教学坐标：校准 Snow 较窄腰部相对于直立人台的横向比例，并以髋/肩原点作连续纵向和前后小偏移。不缩放身体厚度，不改源分区、法线或动作时刻；静态人台的分区和命中保留原定义。该坐标用于近似点击位置和详情模特柔边教学色区，不是独立真实肌肉网格或精确解剖配准。复现与定向检查命令为 `npm run calibrate:muscles`、`npm run verify:muscles`；旧版完整皮肤采样结果需与新版适配验证区分。
 
-此前制作的白膜副本还原了衣物下的同源完整皮肤，局部平顺肚脐与裆部，并采用无五官头部和暖米白陶瓷材质。用户随后取消这一展示。当前运行时不加载或挂接 `flare-coach-study-body`、`flare-coach-study-head`，也不切换到其裸露皮肤、空白面孔或陶瓷材质。源文件、可编辑副本、渲染和压缩产物作为历史制作资产保留，没有删除或重置。
+## 恢复采用的同源哑光模特
+
+此前制作的白膜副本还原了衣物下的同源完整皮肤，局部平顺肚脐与裆部，并采用无五官头部和暖米白哑光材质。用户于2026-10-08取消展示并形成历史检查点，随后在2026-10-09明确要求恢复这一外观用于指定肌群详情。当前重新采用 `flare-coach-study-body` 与 `flare-coach-study-head`，首页仍显示原衣物和原脸；源文件、可编辑副本、历史渲染和压缩产物均保留，没有删除或重置。
 
 历史源文件是仓库 `assets/blender-studio-source/snow-rig-v4/Snow/snow_v4.2.blend`，制作时读取现有 `assets/coach/flare-coach.blend` 的20骨静态骨架与已准备的手足。脚本 [build_coach_study.py](../../tools/blender/build_coach_study.py) 与同目录 `sculpt_coach_study.py` 在副本上恢复皮肤、处理腹部和裆部、衔接颈部，并从同源面部、头皮、耳和颈制作无五官头部。头部使用局部体素重建、平滑和减面；不是球体或其他程序化体块拼接的人头。制作保留原 `.blend`、正常着装模型、动作源文件和个人草稿，没有重新制作动作骨架。
 
-历史可编辑派生保存为仓库 `assets/coach/flare-coach-study.blend`，完整编辑导出是 `scene/source/coach/flare-coach-study.glb`，实际 Blender 渲染与制作报告在 `output/coach-study-20261008/`。此前的部件输出是 `coach/flare-coach-study-body.meshopt.glb.gz` 和 `coach/flare-coach-study-head.meshopt.glb.gz`，当前不加载。保留的 `study-body.js` 历史适配曾借用同名20骨，同时保留各部件的源逆绑定矩阵与绑定矩阵，处理 glTF 网格坐标偏移；原 v33 动作时序与21份动作/资产导入基线没有被修改。
+可编辑派生保存为仓库 `assets/coach/flare-coach-study.blend`，完整编辑导出是 `scene/source/coach/flare-coach-study.glb`，实际 Blender 渲染与制作报告在 `output/coach-study-20261008/`。部件输出是 `coach/flare-coach-study-body.meshopt.glb.gz` 和 `coach/flare-coach-study-head.meshopt.glb.gz`。源部件各含20骨，新版适配借用动作人物同名骨并处理已烘焙腰部辅助骨与权重，保留部件逆绑定矩阵、绑定矩阵和 glTF 网格坐标偏移；原 v33 动作/资产导入基线没有被修改。
 
-历史复现工具 `npm run optimize:study` 对完成的两个部件 GLB 做无损 meshopt 编码和 gzip，没有再次量化或减面。**无损指相对 Blender 已制作的派生 GLB**，不表示其头部与原 Snow 拓扑相同。[白膜压缩记录](../scene/tools/study-body-optimization.json) 保存具体大小、哈希与部件记录；[白膜署名](../scene/public/coach/ATTRIBUTION-study.md) 说明历史同源修改与 CC BY 4.0。历史复现命令见 [场景说明](../scene/README.md#historical-white-muscle-study-derivative)。本次资产、工具和服务费用为0元。
+复现工具 `npm run optimize:study` 对完成的两个部件 GLB 做无损 meshopt 编码和 gzip，没有再次量化或减面。**无损指相对 Blender 已制作的派生 GLB**，不表示其头部与原 Snow 拓扑相同。[白膜压缩记录](../scene/tools/study-body-optimization.json) 保存具体大小、哈希与源部件记录；[白膜署名](../scene/public/coach/ATTRIBUTION-study.md) 说明同源修改与 CC BY 4.0。制作复现命令见 [场景说明](../scene/README.md#warm-ivory-matte-study-derivative)。本次资产、工具和服务费用为0元。
 
 Snow Rig © Blender Foundation | studio.blender.org，CC BY 4.0，已修改。原作者成熟人体表面与绑定是本人物的基础，App 内与商店素材应保留署名和修改说明。Human Base Meshes 来源为 CC0；BodyParts3D **数据**为 CC BY 4.0，human-atlas **应用代码**为 MIT，二者许可不同。完整来源说明在 `assets/licenses/Snow-ATTRIBUTION.md`、`Anatomy-ATTRIBUTION.md`，软件许可证也保留在该目录。
 

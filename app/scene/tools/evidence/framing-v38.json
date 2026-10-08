@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "motionRevision": "v38",
+  "playback": "AnimationMixer",
+  "scope": "default-clothed-home-loop-projection",
+  "viewport": [
+    390,
+    650
+  ],
+  "padding": 0.75,
+  "staticOffset": [
+    10,
+    138
+  ],
+  "sampledPoses": 181,
+  "vertexStride": 8,
+  "projectedVertexMin": [
+    3.8108144307844145,
+    52.16563660380425
+  ],
+  "projectedVertexMax": [
+    361.1503133833226,
+    374.78894182809995
+  ],
+  "camera": [
+    1.0713387455122088,
+    3.0428734051254107,
+    6.013750516266062
+  ]
+}

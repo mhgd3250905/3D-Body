@@ -114,7 +114,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deepNote => '深层肌群用斜线表示所在部位。';
 
   @override
-  String get deepMotionNote => '深层肌群位置请切换到直立肌群人体查看。';
+  String get deepMotionNote => '深层肌群高亮表示所在部位。';
 
   @override
   String get bothSides => '双侧';
