@@ -29,7 +29,7 @@ const floor=new THREE.Mesh(new THREE.CircleGeometry(2.2,64),new THREE.MeshStanda
 const grid=new THREE.GridHelper(4,20,'#b9bdc2','#c9ccd0');grid.position.y=0.001;scene.add(grid);
 const camera=new THREE.PerspectiveCamera(34,1,0.05,50);camera.position.set(3.0,1.55,3.9);camera.lookAt(0,0.68,0);
 const gltf=await new GLTFLoader().loadAsync('/model.glb');scene.add(gltf.scene);
-const clip=gltf.animations.find(a=>a.name===`flare_${VER}_loop`);const mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();
+const clip=gltf.animations.find(a=>a.name==='flare_${VER}_loop');const mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();
 window.duration=clip.duration;window.go=t=>{mixer.setTime(t);document.getElementById('t').textContent=t.toFixed(2)+' / '+clip.duration.toFixed(2)+' s  (1×)';renderer.render(scene,camera);};
 window.go(0);document.documentElement.dataset.ready='1';
 </script></body></html>`;
