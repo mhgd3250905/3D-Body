@@ -4,6 +4,8 @@
 
 先读 [README](README.md)、[项目约定](AGENTS.md) 和 [当前交接](docs/handoff-2026-10-07.md)，明确当前展示方案、已确认的动画与尚待用户反馈的部分。
 
+继续当前 Flutter App 请先读 [2026-10-08 开发版交接](app/docs/handoff-2026-10-08.md)、[实施路线台账](app/docs/development-roadmap.md) 与 [实际页面截图](app/docs/screenshots/2026-10-08/README.md)。双击 `start-flutter.cmd` 使用8820预览；以下8810命令用于保留的原网页。托马斯动作人物始终穿衣、不显示白膜或肌群高亮，详细肌群位置通过独立直立人台查看。
+
 ## 本地运行
 
 克隆自己的 Fork，在项目目录使用 Node.js `^20.19.0 || >=22.12.0`；当前验证版本为 24.15.0。

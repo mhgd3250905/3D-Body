@@ -39,7 +39,7 @@ export function createDetailView(player, phaseMap, onModelChange) {
   function showScene() {
     phaseMap.refreshEnvironment(); player.setDisplayScene(model === 'muscles' ? phaseMap.scene : null);
     mini.querySelector('span').textContent = model === 'motion' ? '查看肌群 ↗' : '查看动作 ↗';
-    mini.setAttribute('aria-label', model === 'motion' ? '切换到全身肌群模型' : '切换到托马斯动作白膜');
+    mini.setAttribute('aria-label', model === 'motion' ? '切换到全身肌群模型' : '切换到托马斯动作');
   }
   function open(groupId, phase) {
     const entering = !saved, changed = selected !== groupId;

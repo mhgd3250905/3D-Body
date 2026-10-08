@@ -1,9 +1,19 @@
 import * as THREE from 'three';
-import { applyMuscleMap } from './legacy/muscle-map.js';
+import { applyMuscleMap, setMuscleFocus } from './legacy/muscle-map.js';
+
+export function setFunctionalFocus(uniforms, ids = [], side = 'both') {
+  setMuscleFocus(uniforms, ids);
+  // Phase groups can share panels and merge their source side flags. Keep
+  // the current selection's own side for its red fill and union contour.
+  uniforms.mmFocusSide.value = side === 'left' ? 1 : side === 'right' ? -1 : 0;
+}
 
 // The imported shader defines functional regions and hit testing. Adapt only
 // their presentation here; retain the supplied geometry, normals and source.
 export function applyFunctionalSurface(material, uniforms, { posed = false, thumbnail = false, density = null } = {}) {
+  uniforms.mmFocusSide ??= { value: 0 };
+  uniforms.mmFocusColour ??= { value: new THREE.Color('#e58b90') };
+  uniforms.mmFocusInk ??= { value: new THREE.Color('#a7777b') };
   applyMuscleMap(material, uniforms);
   const compile = material.onBeforeCompile;
   const strokeDensity = density ?? { value: 1 };
@@ -16,11 +26,43 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     compile(shader, renderer);
     shader.uniforms.mmStrokeDensity = strokeDensity;
     if (posed) shader.vertexShader = 'attribute vec3 mmRest;\n' + shader.vertexShader.replace('vMmPos = transformed;', 'vMmPos = mmRest;');
-    shader.fragmentShader = 'uniform float mmStrokeDensity;\nfloat mmPanelCoverage;\n' + shader.fragmentShader;
+    shader.fragmentShader = `uniform float mmStrokeDensity;
+uniform float mmFocusSide; uniform vec3 mmFocusColour; uniform vec3 mmFocusInk;
+float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
+` + shader.fragmentShader;
     const replace = (from, to) => {
       if (!shader.fragmentShader.includes(from)) throw new Error('functional_shader_source_mismatch');
       shader.fragmentShader = shader.fragmentShader.replace(from, to);
     };
+    // GLSL leaves reversed smoothstep limits undefined. Express the source
+    // abdominal transitions explicitly so they agree with CPU region picking.
+    replace('smoothstep(1.13, 1.08, p.y)', '(1.0 - smoothstep(1.08, 1.13, p.y))');
+    replace('smoothstep(0.003, -0.003, sx)', '(1.0 - smoothstep(-0.003, 0.003, sx))');
+    // Accumulate the complete selected union, including each authored lobe.
+    // Comparing only the winning two panels would draw internal muscle seams
+    // and miss the exterior when both winners belong to the selected group.
+    replace('float b1 = -9.0, b2 = -9.0, sAbs = -9.0; int i1 = -1, i2 = -1;',
+      'float b1 = -9.0, b2 = -9.0, sAbs = -9.0; int i1 = -1, i2 = -1; float focusScore = -9.0, otherScore = 0.0;');
+    replace('if (k == MM_ABS) { sAbs = s; continue; }', `if (k == MM_ABS) { sAbs = s; continue; }
+    if (mmState[k].z > 0.5 && mmF[k].x > 0.5) focusScore = max(focusScore, s);
+    else otherScore = max(otherScore, s);`);
+    replace('if (sa > b1) {', `if (mmState[MM_ABS].z > 0.5) focusScore = max(focusScore, sa);
+    else otherScore = max(otherScore, sa);
+    if (sa > b1) {`);
+    replace('mmShown = smoothstep(mmRevealT - 0.05, mmRevealT + 0.01, b1 / 0.85 + 0.12);',
+      `mmShown = smoothstep(mmRevealT - 0.05, mmRevealT + 0.01, b1 / 0.85 + 0.12);
+  float focusMargin = focusScore - otherScore;
+  float focusGradient = length(vec2(dFdx(focusMargin), dFdy(focusMargin))) + 1e-6;
+  float focusPx = focusMargin / focusGradient;
+  if (abs(mmFocusSide) > 0.5) {
+    float sideCoord = vMmPos.x * mmFocusSide;
+    float sideGradient = length(vec2(dFdx(sideCoord), dFdy(sideCoord))) + 1e-7;
+    focusPx = min(focusPx, sideCoord / sideGradient);
+  }
+  float focusFeather = ${posed ? '3.0 * mmStrokeDensity' : '0.65'};
+  mmFocusCoverage = smoothstep(-focusFeather, focusFeather, focusPx);
+  float focusWidth = 1.6 * mmStrokeDensity;
+  mmFocusOutline = (1.0 - smoothstep(0.0, focusWidth, abs(focusPx))) * mmFocusCoverage;`);
     // Preserve the original smooth normals completely. Even a zero dH leaves
     // a redundant normalisation by a screen-space determinant at creases.
     const relief = /#include <normal_fragment_maps>\s*\{\s*float h = mmEdge \* mmIsMuscle;[\s\S]*?normal = normalize\(abs\(fDet\) \* normal - grad\);\s*\}/;
@@ -55,21 +97,25 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     // Ink belongs to the diagram, not the physical material. Lighting and
     // ACES otherwise wash it out on the bright mannequin and selected panels.
     replace('col = mix(col, mmGroove, mmGrooveV * mix(0.40, 0.82, mmIsMuscle));', '');
+    replace('diffuseColor.rgb = col;', `diffuseColor.rgb = mix(${posed ? 'base' : 'col'}, mmFocusColour, mmFocusCoverage);`);
     replace('* (1.0 - mmGrooveV) * mmShown;', '* mmShown;');
     replace('lit *= 1.0 - 0.85 * mmDimV;', 'lit *= (1.0 - 0.85 * mmDimV) * mmPanelCoverage;');
+    replace('totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse + 0.40 * mmFocusV * pulse) + front * 0.6 * step(0.3, abs(mmSelV)));',
+      posed ? 'totalEmissiveRadiance += mmFocusColour * (0.04 * mmFocusCoverage);'
+        : 'totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse) + front * 0.6 * step(0.3, abs(mmSelV))) * (1.0 - mmFocusCoverage) + mmFocusColour * (0.04 * mmFocusCoverage);');
     replace('float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);\n          float hatch = smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);',
       'float stripe = (vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0;\n          float footprint = fwidth(stripe);\n          float hA = max(footprint, 0.02);\n          float hatch = mix(smoothstep(0.5 - hA, 0.5 + hA, abs(fract(stripe) - 0.5) * 2.0), 0.5, smoothstep(0.3, 0.8, footprint));');
     if (posed) {
-      // The action actor is warm matte ceramic with color fills only.
-      // Fine anatomical strokes belong exclusively to the supplied mannequin.
-      replace('vec3 base = mix(mmSkin, mmBase * mix(0.985, 1.015, mmEdge), mmIsMuscle);', 'vec3 base = mmBase;');
+      // Motion shows an approximate area with a feathered edge; a sharper
+      // selected boundary belongs to the upright teaching reference.
+      replace('vec3 base = mix(mmSkin, mmBase * mix(0.985, 1.015, mmEdge), mmIsMuscle);', 'vec3 base = diffuseColor.rgb;');
       replace('float sh = mmShown * mmIsMuscle * mmPanelCoverage;', 'float sh = mmShown * mmIsMuscle;');
       replace('float hatch = mix(smoothstep(0.5 - hA, 0.5 + hA, abs(fract(stripe) - 0.5) * 2.0), 0.5, smoothstep(0.3, 0.8, footprint));', 'float hatch = 1.0;');
       replace('lit *= (1.0 - 0.85 * mmDimV) * mmPanelCoverage;', 'lit *= 1.0 - 0.85 * mmDimV;');
       shader.fragmentShader = shader.fragmentShader.replace(/vec3 hot = mmMulti > 0\.5[\s\S]*?mix\(0\.96, 1\.0, mmEdge\);/, 'vec3 hot = pc;');
       replace('mix(mmBase, pc, 0.52) * mix(0.97, 1.0, mmEdge)', 'mix(mmBase, pc, 0.52)');
-      // Let the physical glaze produce the rim reflection. A blue emissive
-      // outline makes the white ceramic look like grey skin under a glow.
+      // Keep the original material's lighting. There is no blue emissive rim
+      // or all-body recoloring when a muscle is selected.
       replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;', '');
     }
     if (thumbnail) {
@@ -89,7 +135,13 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
       const output = thumbnail ? 'gl_FragColor = sRGBTransferOETF(gl_FragColor);' : '#include <colorspace_fragment>';
       replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmGroove, 1.0)).rgb;\n float coverage = clamp(mmGrooveV * mmIsMuscle * 0.68, 0.0, 1.0);\n gl_FragColor.rgb = mix(gl_FragColor.rgb, min(gl_FragColor.rgb, ink), coverage);\n}');
     }
+    if (!posed) {
+      // The upright reference retains a faint feathered inner shadow. Motion
+      // uses only its soft fill transition, with no hard or dark contour.
+      const output = thumbnail ? 'gl_FragColor = sRGBTransferOETF(gl_FragColor);' : '#include <colorspace_fragment>';
+      replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmFocusInk, 1.0)).rgb;\n gl_FragColor.rgb = mix(gl_FragColor.rgb, ink, mmFocusOutline * 0.26);\n}');
+    }
   };
-  material.customProgramCacheKey = () => 'flare-functional-surface-v6-' + Number(posed) + '-' + Number(thumbnail);
+  material.customProgramCacheKey = () => 'flare-functional-surface-v9-' + Number(posed) + '-' + Number(thumbnail);
   material.needsUpdate = true;
 }

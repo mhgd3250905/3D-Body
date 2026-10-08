@@ -99,56 +99,87 @@ when dragging the iframe cannot stop an on-screen canvas. Flutter navigation
 still sends explicit visibility changes for training/settings pages. Native
 hosts retain their lifecycle background handling.
 
-`muscle-material.js` adapts the imported functional shader without changing its
-source region definitions or hit testing. The muscle-display action actor has
-a soft warm ivory matte-ceramic base and readable functional color fills, with no added muscle strokes,
-channels, edge darkening or deep hatching. Its separate study skin and blank
-head replace the clothed body and facial parts only while a group is selected.
+`muscle-material.js` adapts the upright reference's functional shader without
+changing its source region definitions or scoring algorithm. The action actor
+always retains its original tee, shorts, face and material object identities.
+It shows the same paused action frame without muscle highlights, outlines or
+patterns. The historical Thomas soft-edge overlay shader prototype is retained
+as source but is not used. The historical white study body/head are
+not loaded or attached. The large action view, small upright reference and
+click-to-swap card layout remain.
 The upright mannequin retains fine screen-bounded panel strokes and antialiased deep
 locations, with no extra normal relief. Diagram ink is composited after ACES
 and sRGB encoding so bright lighting and focus emission cannot wash it out.
 Stable adjacent-panel pairs use signed screen derivatives to keep fine curves
 continuous; candidate changes/triple junctions fall back to the source gradient.
-Midline derivatives use signed X. Region scores and hit tests remain unchanged.
+Midline derivatives use signed X. The reference mannequin's region scores and
+hit tests remain unchanged.
+The upright mannequin keeps those original fine panel divisions and also
+marks only the current selected group in pale red with a gentle outer shadow;
+other phase color fills are hidden in a specific muscle detail. The
+unselected home front/back map retains the ordinary phase teaching colors.
+Selection emphasizes existing functional regions; a deep region is still a
+teaching location, not an actual internal anatomical boundary. Source region
+definitions and scoring, action and the original deform rig are preserved;
+the current action surface uses calibrated teaching coordinates only for click
+hit testing, not for coloring, as described below.
 The wrapper has no second lifecycle observer: the app shell is the single
 owner of navigation/native visibility, and Web document visibility belongs to
 the player. Colors are approximate functional
 teaching panels, not anatomical geometry or muscle activation measurements.
 
-## White muscle study derivative
+## Relative core teaching-map calibration
 
-The study actor is a derivative of the same retained Snow source, not a new
-download or a replacement actor rig. It restores the source skin beneath the
-tee and shorts, smooths the navel and central front groin locally, and uses a
-soft featureless mannequin head. The head is sculpted from Snow's own face,
-bare skull, ears and neck, with voxel welding, smoothing and decimation in
-Blender. It is not assembled from spheres or other geometric body primitives.
-Neck surfaces and skin weights are prepared to join the existing body. Shoes
-and the prepared source hand/foot surfaces are retained. The normal clothed
-actor and its face remain intact for unselected viewing and playback.
+`tools/calibrate-muscle-map.mjs` measures trustworthy core cross sections by
+intersecting the original body triangles with planes. `src/core-calibration.json`
+records source hashes, original bone anchor pairs, and accepted/rejected slices.
+Upper measurements polluted by arm connections or open sections are rejected
+and blend back toward the real hip/shoulder bone anchors. `src/core-mapping.js`
+corrects Snow's narrower waist relative to the static reference, rather than
+projecting the same absolute region width onto both bodies.
 
-The selected study display uses a nonmetallic warm ivory matte-ceramic physical
-material with subdued glaze reflection. Functional colors stay readable on
-the surface while the softer ceramic lighting reveals its shape. It reuses
-the existing offline `RoomEnvironment`; no downloaded HDR,
-texture or new lighting asset is added. This material applies only to the
-selected white actor, not to the normal clothed actor or the upright mannequin
-with its fine diagram lines. Blender source editing and runtime material
-presentation are separate steps; a source render alone is not a browser
-visual acceptance result.
+Only the `mmRest` teaching coordinates blended by the existing pelvis, torso,
+spineLower and spineUpper skin weights change. Hip/shoulder anchors provide
+continuous small vertical and front/back offsets; body thickness is not
+scaled. Geometry, normals, neck/head mapping, bones and action timing remain
+unchanged. Only the action hit tester currently uses the calibrated `mmRest`;
+the static reference retains its original region definitions and hit testing.
+This provides approximate click locations on clothing and exposed surfaces,
+without creating independent muscle meshes or claiming exact anatomical registration. From
+`app/scene`, reproduce and check with:
 
-`study-body.js` attaches the body and head to the existing 20 named deform
-bones after checking the rest transforms. Each part keeps its own inverse bind
-matrices and bind matrix, including any glTF mesh coordinate offset; it does
-not borrow another mesh's inverse binds or start a second motion controller.
-The supplied v33 timing, 12 legacy modules and all 21 imported baseline files
-are preserved. The existing motion's spine helpers still apply to the study
-skin. `mapped-mesh.js` hides the original clipped skin, tee, shorts and facial
-parts only for selection, using authored node ancestry to cover multi-material
-glTF primitives; restore returns their materials and saved visibility.
-The upright CC0 mannequin and its fine panel lines are unchanged.
+```powershell
+npm run calibrate:muscles
+npm run verify:muscles
+```
 
-Reproduce with the retained source and the existing clothed coach present.
+## Historical white muscle study derivative
+
+The user cancelled the white study display. Its bare body, featureless head
+and warm ivory ceramic material are retained as historical editable assets,
+but the current app does not load or attach their body/head GLBs. Thomas keeps
+the original clothing, face and materials in all modes and at every free-orbit
+angle. No source files, historical renders or editing derivatives are deleted.
+
+The historical derivative reuses the retained Snow source, not a new download
+or replacement rig. It restores skin beneath the tee and shorts, locally
+smooths the navel and central front groin, and sculpts a blank head from Snow's
+own face, bare skull, ears and neck through voxel welding, smoothing and
+decimation in Blender. Neck surfaces and weights were prepared to join the
+body; footwear and prepared source hands/feet were retained. No geometric
+primitive body or replacement head was used. The normal clothed actor was
+preserved throughout.
+
+The retained `study-body.js` describes the previous attachment approach:
+the body/head reused the original 20 named bones after rest-transform checks,
+while keeping each part's own inverse binds and bind matrix, including mesh
+offsets. The previous study display hid the clipped skin, tee, shorts and
+facial parts by authored glTF ancestry. That path is not active now. The
+supplied v33 timing, 12 legacy modules and all 21 imported baseline files are
+preserved, and the upright CC0 reference remains independent.
+
+To reproduce only the historical derivative, use the retained source and the
+existing clothed coach.
 From the repository root, use the local Blender installation (adjust its path
 if needed):
 
@@ -167,14 +198,12 @@ back and head renders and `build-report.json` are in
 ```powershell
 npm ci
 npm run optimize:study
-npm run build
-npm run verify
 ```
 
-The runtime adds only `coach/flare-coach-study-body.meshopt.glb.gz` and
-`coach/flare-coach-study-head.meshopt.glb.gz` for the study derivative, alongside
-the normal actor and upright reference. The full editing GLB and `.blend`
-are not bundled. [Study optimization metadata](tools/study-body-optimization.json)
+The historical outputs are `coach/flare-coach-study-body.meshopt.glb.gz` and
+`coach/flare-coach-study-head.meshopt.glb.gz`; the current player does not load
+or attach them. The full editing GLB and `.blend` are not bundled.
+[Study optimization metadata](tools/study-body-optimization.json)
 records exact source/output sizes and hashes;
 [study attribution](public/coach/ATTRIBUTION-study.md) records the license and
 modifications. Meshopt/gzip compression preserves the completed Blender GLB's
@@ -191,7 +220,8 @@ against the supplied package's motion, clock parity against the original
 bundle checks. It compares decoded attributes of each source/runtime model pair
 and checks that triangle vertices, winding and face order are preserved; the
 normal actor and upright reference account for the original 3,572,742 values.
-It also checks study binding and restoration of garment/face visibility.
+The original actor, clothing, face and independent reference retain their
+source geometry; historical study records are not current display acceptance.
 Original Snow licensing is in `public/coach/ATTRIBUTION-coach.md`;
 CC0 mannequin provenance is in `public/anatomy/mannequin-reference.json` and
 `ATTRIBUTION.md`; Three.js, meshoptimizer and fflate licenses are in
@@ -205,7 +235,7 @@ The unchanged normal actor uses `coach/flare-coach.meshopt.glb.gz`
 (2,390,231 bytes) and the upright reference uses
 `anatomy/mannequin-reference.meshopt.glb.gz` (863,833 bytes).
 `tools/model-optimization.json` records their exact sizes, hashes and commands;
-the added study body/head are recorded in `tools/study-body-optimization.json`.
+the unloaded historical body/head are recorded in `tools/study-body-optimization.json`.
 The local fflate 0.8.3 decoder handles gzip before the
 bundled Three.js MeshoptDecoder reads the GLB, including older WebViews without
 DecompressionStream. Compression reduces package bytes; the original 332,206

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS, phaseAt } from './phase.js';
 import { loadOfflineGlb } from './assets.js';
-import { applyFunctionalSurface } from './muscle-material.js';
+import { applyFunctionalSurface, setFunctionalFocus } from './muscle-material.js';
 
 // Two views of the supplied mature CC0 mannequin. This remains a static
 // teaching reference: phase colors follow Snow's clock, not its skeleton.
@@ -63,15 +63,17 @@ export async function createPhaseMap(player, onSelect) {
     const items = [...phase.items], selected = [];
     if (groupId && !items.some(item => item.groupId === groupId)) items.push({ groupId, side: 'both', level: 'primary', colour: GROUPS[groupId].colour });
     for (const item of items) {
+      if (groupId && item.groupId !== groupId) continue;
       const group = MM.resolveGroup(item.groupId); if (!group) continue;
       for (const muscle of group.muscles) selected.push({ muscle, side: item.side, colour: item.colour,
         level: group.deep && item.level === 'primary' ? 'deep' : item.level,
         dim: groupId ? item.groupId === groupId ? 0 : 0.85 : item.level === 'primary' ? 0 : 0.5 });
     }
-    MM.setMuscleSelection(uniforms, selected); MM.setMuscleFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : []);
+    MM.setMuscleSelection(uniforms, selected);
+    setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], items.find(item => item.groupId === groupId)?.side);
   }
   function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); renderKey = null; refreshEnvironment(); }
-  function restorePhase() { focus = null; source = null; renderKey = null; MM.setMuscleFocus(uniforms, []); }
+  function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }
   function refreshEnvironment() { scene.environment = player.scene.environment; }
   function render() {
     if (hidden) return;

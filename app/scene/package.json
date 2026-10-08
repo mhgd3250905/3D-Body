@@ -8,7 +8,9 @@
     "build": "vite build",
     "verify": "node ../tools/verify-scene.mjs",
     "optimize:model": "node tools/optimize-model.mjs",
-    "optimize:study": "node tools/optimize-study-body.mjs"
+    "optimize:study": "node tools/optimize-study-body.mjs",
+    "calibrate:muscles": "node tools/calibrate-muscle-map.mjs",
+    "verify:muscles": "node tools/verify-muscle-regions.mjs"
   },
   "dependencies": {
     "fflate": "0.8.3",

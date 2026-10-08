@@ -1,0 +1,82 @@
+{
+  "versionTag": "app-checkpoint-2026-10-08",
+  "appVersion": "0.1.0+1",
+  "origin": "http://127.0.0.1:8821/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "sceneEntry": "index-CrYsLGvO.js",
+  "representativeImages": [
+    {
+      "file": "01-welcome.png",
+      "bytes": 38872,
+      "sha256": "842b0fb7cc49c1bc4cadda37896e8b80c4fa822c0ff45eb1491582b6cc0aaf5b"
+    },
+    {
+      "file": "02-assessment.png",
+      "bytes": 27594,
+      "sha256": "5c640c7ac1f810b26de2d4ea8263c5fac53401d92985ec987197a13cce72ea8c"
+    },
+    {
+      "file": "05-more.png",
+      "bytes": 21463,
+      "sha256": "9e7090203db3b55dd4945b8e1ac5f7fe84abca79353b0311b1b95e6ec04b5360"
+    },
+    {
+      "file": "06-home-paused.png",
+      "bytes": 25143,
+      "sha256": "13160112f586d0484e7083ea122d72b3e73bc3513956844dec26776fef91d1d3"
+    },
+    {
+      "file": "07-muscle-picker.png",
+      "bytes": 22687,
+      "sha256": "0d4e8535436a1a7e9b513e6a553cfe85271ba726bbf0a27e1bee02ae4bb5093d"
+    },
+    {
+      "file": "09-detail-motion.png",
+      "bytes": 36932,
+      "sha256": "132518136f4fe2aea49d870a3a0fd399304bc7f4de605970e572d9ea5d92fb0f"
+    },
+    {
+      "file": "17-drill-detail.png",
+      "bytes": 28880,
+      "sha256": "0cec9bfea3b7bdbc44f712c5d09f6e9bb5d3ac0269e386fe794a31c5b2b9a73c"
+    },
+    {
+      "file": "19-timer-ready.png",
+      "bytes": 20700,
+      "sha256": "495c0353fa500fe65b97505098fbd0699a978b423dde6933ee2787535a932422"
+    },
+    {
+      "file": "22-training-library.png",
+      "bytes": 35570,
+      "sha256": "37b3cf9ad91cac203f6df23ae60da1c0e4e9253a7b3af410bab9f6abab120f40"
+    },
+    {
+      "file": "23-learning-path.png",
+      "bytes": 31274,
+      "sha256": "d3a1e34da93c81c7b7ca025f77df8e2b35a6305b6e93fcd26eb14e2cebaf647e"
+    },
+    {
+      "file": "24-lesson.png",
+      "bytes": 21822,
+      "sha256": "148753b286b0a691d72f2a35d6a8ffbf1b1f0f6cef96052883acf7ab1e4de2a2"
+    },
+    {
+      "file": "25-progress.png",
+      "bytes": 22442,
+      "sha256": "afd5d2f2a2741f235281ff4be1d939979210b49c63a6e67f2cdd6f7615079dab"
+    },
+    {
+      "file": "26-settings.png",
+      "bytes": 57668,
+      "sha256": "82ddf0e8b04915c0bacd0d13c068bf55aeaf43095741ba2369bb37d0425053bb"
+    },
+    {
+      "file": "27-licenses.png",
+      "bytes": 21242,
+      "sha256": "6c2946d6db0ecdb79d7b7c9c23cb40d7dbbd1c4399c9c458c3e3d8e841d41e11"
+    }
+  ]
+}

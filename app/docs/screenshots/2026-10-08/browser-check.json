@@ -1,0 +1,643 @@
+{
+  "checks": [
+    {
+      "label": "detail-motion-front",
+      "state": {
+        "type": "state",
+        "time": 2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "medium",
+        "ready": true,
+        "errorCode": null
+      },
+      "camera": {
+        "position": [
+          -0.10055539041597804,
+          0.9269809751637819,
+          1.6135974949760665
+        ],
+        "target": [
+          -0.10055539041597804,
+          0.7010906930260826,
+          0.10766228072473812
+        ],
+        "aspect": 1.3220338983050848
+      },
+      "render": {
+        "visible": true,
+        "running": true,
+        "dirty": false,
+        "contextLost": false,
+        "frame": 562,
+        "calls": 1,
+        "triangles": 74274,
+        "pixelRatio": 2,
+        "framingMode": "detail",
+        "bufferSize": [
+          780,
+          590
+        ]
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        }
+      ],
+      "map": {
+        "phase": 11,
+        "hidden": true,
+        "focus": "abs",
+        "views": [
+          "front",
+          "back"
+        ],
+        "legend": [
+          {
+            "groupId": "deltoids",
+            "label": "三角肌"
+          },
+          {
+            "groupId": "obliques",
+            "label": "腹斜肌"
+          },
+          {
+            "groupId": "hip-abductors",
+            "label": "臀中肌"
+          }
+        ],
+        "referencePose": "static CC0 mannequin",
+        "resolution": [
+          188,
+          166
+        ],
+        "renderCount": 8,
+        "samples": 4
+      }
+    },
+    {
+      "label": "detail-muscles-front",
+      "state": {
+        "type": "state",
+        "time": 2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "muscles",
+        "quality": "medium",
+        "ready": true,
+        "errorCode": null
+      },
+      "camera": {
+        "position": [
+          8.940696716308595e-8,
+          1.1951667944594915,
+          3.5357243145552255
+        ],
+        "target": [
+          8.940696716308595e-8,
+          0.845015585422516,
+          0.034212224185466766
+        ],
+        "aspect": 1.3220338983050848
+      },
+      "render": {
+        "visible": true,
+        "running": true,
+        "dirty": false,
+        "contextLost": false,
+        "frame": 564,
+        "calls": 22,
+        "triangles": 332206,
+        "pixelRatio": 2,
+        "framingMode": "detail",
+        "bufferSize": [
+          780,
+          590
+        ]
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        }
+      ],
+      "map": {
+        "phase": 11,
+        "hidden": true,
+        "focus": "abs",
+        "views": [
+          "front",
+          "back"
+        ],
+        "legend": [
+          {
+            "groupId": "deltoids",
+            "label": "三角肌"
+          },
+          {
+            "groupId": "obliques",
+            "label": "腹斜肌"
+          },
+          {
+            "groupId": "hip-abductors",
+            "label": "臀中肌"
+          }
+        ],
+        "referencePose": "static CC0 mannequin",
+        "resolution": [
+          188,
+          166
+        ],
+        "renderCount": 8,
+        "samples": 4
+      }
+    },
+    {
+      "label": "detail-motion-drag",
+      "state": {
+        "type": "state",
+        "time": 2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "medium",
+        "ready": true,
+        "errorCode": null
+      },
+      "camera": {
+        "position": [
+          -0.5958264750830872,
+          2.09335580340342,
+          0.4753193277197535
+        ],
+        "target": [
+          -0.10055539041597804,
+          0.7010906930260826,
+          0.10766228072473812
+        ],
+        "aspect": 1.3220338983050848
+      },
+      "render": {
+        "visible": true,
+        "running": true,
+        "dirty": false,
+        "contextLost": false,
+        "frame": 612,
+        "calls": 1,
+        "triangles": 74274,
+        "pixelRatio": 2,
+        "framingMode": "detail",
+        "bufferSize": [
+          780,
+          590
+        ]
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "visible": true,
+          "studySkin": false,
+          "studyHead": false
+        }
+      ],
+      "map": {
+        "phase": 11,
+        "hidden": true,
+        "focus": "abs",
+        "views": [
+          "front",
+          "back"
+        ],
+        "legend": [
+          {
+            "groupId": "deltoids",
+            "label": "三角肌"
+          },
+          {
+            "groupId": "obliques",
+            "label": "腹斜肌"
+          },
+          {
+            "groupId": "hip-abductors",
+            "label": "臀中肌"
+          }
+        ],
+        "referencePose": "static CC0 mannequin",
+        "resolution": [
+          188,
+          166
+        ],
+        "renderCount": 8,
+        "samples": 4
+      }
+    }
+  ],
+  "logs": [],
+  "captureOrigin": "http://127.0.0.1:8821/",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  }
+}

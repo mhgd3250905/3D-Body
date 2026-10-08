@@ -11,7 +11,7 @@ import { createCoachMotion } from '../scene/src/legacy/coach-motion.js';
 import { computePacing, pacingRate, paceStep } from '../scene/src/pacing.js';
 import { buildMmRest, createSurfaceSelection } from '../scene/src/mapped-mesh.js';
 import { attachStudyBody, attachStudyHead, isCoveredActorPart, isOriginalActorHeadPart } from '../scene/src/study-body.js';
-import { phaseAt, phaseTicks } from '../scene/src/phase.js';
+import { GROUPS, phaseAt, phaseTicks } from '../scene/src/phase.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sceneRoot = path.join(root, 'app/scene');
@@ -67,13 +67,26 @@ compareGeometry(originalMini, compressedMini);
 const originalStudy = await loadModel(path.join(sceneRoot, 'source/coach/flare-coach-study-body.glb'));
 const compressedStudy = await loadModel(path.join(sceneRoot, 'public/coach/flare-coach-study-body.meshopt.glb.gz'));
 compareGeometry(originalStudy, compressedStudy);
-const studyBody = attachStudyBody(model, compressedStudy);
-assert.equal(studyBody.visible, false, 'Study skin must not replace the default outfit');
+// Keep historical derivative assets independently verifiable. They are not
+// attached to the runtime actor, whose geometry and original outfit remain.
+const studyBody = attachStudyBody(originalModel, compressedStudy);
+assert.equal(studyBody.visible, false, 'Historical study skin must start hidden');
 const originalHead = await loadModel(path.join(sceneRoot, 'source/coach/flare-coach-study-head.glb'));
 const compressedHead = await loadModel(path.join(sceneRoot, 'public/coach/flare-coach-study-head.meshopt.glb.gz'));
 compareGeometry(originalHead, compressedHead);
-const studyHead = attachStudyHead(model, compressedHead);
-assert.equal(studyHead.visible, false, 'Study head must not replace the default face');
+const studyHead = attachStudyHead(originalModel, compressedHead);
+assert.equal(studyHead.visible, false, 'Historical study head must start hidden');
+assert.equal(studyBody.skeleton.bones.length, 20);
+assert.equal(studyHead.skeleton.bones.length, 20);
+for (const historical of [studyBody, studyHead]) {
+  assert.deepEqual(historical.skeleton.bones.map(bone => bone.name), rigBoneNames());
+  for (const inverse of historical.skeleton.boneInverses) assert.ok(inverse.elements.every(Number.isFinite), 'Invalid historical inverse bind');
+}
+function rigBoneNames() { return compressedStudy.getObjectByName('Coach_Body').skeleton.bones.map(bone => bone.name); }
+assert.ok(!model.getObjectByName('Coach_Study_Body') && !model.getObjectByName('Coach_Study_Head'), 'Runtime actor attached a historical study model');
+const runtimePlayerSource = fs.readFileSync(path.join(sceneRoot, 'src/player.js'), 'utf8');
+assert.ok(!/attachStudy(?:Body|Head)\s*\(/.test(runtimePlayerSource), 'Runtime player still attaches a study model');
+assert.ok(!/loadOfflineGlb\([^\n]*flare-coach-study/.test(runtimePlayerSource), 'Runtime player still loads a study model');
 const rig = JSON.parse(fs.readFileSync(path.join(sceneRoot, 'public/coach/coach-rig.json'), 'utf8'));
 const motion = createCoachMotion({ model, rigData: rig });
 let referenceMotion, viewerPrototype, referenceModel;
@@ -106,20 +119,50 @@ motion.update(2); const beforeMap = motion.getMetrics();
 const meshes = buildMmRest(motion, model); assert.ok(meshes.length >= 12);
 assert.deepEqual(motion.getMetrics().joints, beforeMap.joints, 'Surface mapping changed the frozen pose');
 const selection = createSurfaceSelection(meshes);
-selection.show('glute-max', phaseAt(5).items, true);
-assert.equal(studyBody.visible, true, 'Muscle mode must show the restored full skin');
-assert.equal(studyHead.visible, true, 'Muscle mode must show the blank mannequin head');
 const coveredMeshes = meshes.filter(isCoveredActorPart);
 assert.ok(coveredMeshes.length >= 3, 'Expected the clipped body and both garments');
-for (const mesh of coveredMeshes) assert.equal(mesh.visible, false, 'Garment or clipped skin remained visible: ' + mesh.name);
 const faceMeshes = meshes.filter(isOriginalActorHeadPart);
 assert.ok(faceMeshes.length >= 8, 'Expected the original face, hair and eye/mouth parts');
-for (const mesh of faceMeshes) assert.equal(mesh.visible, false, 'Original facial feature remained visible: ' + mesh.name);
-selection.restore();
-assert.equal(studyBody.visible, false);
-assert.equal(studyHead.visible, false);
-for (const mesh of coveredMeshes) assert.equal(mesh.visible, true);
-for (const mesh of faceMeshes) assert.equal(mesh.visible, true);
+assert.ok(!meshes.some(mesh => mesh.userData.studySkin || mesh.userData.studyHead), 'Runtime geometry contains a study derivative');
+const originalMaterials = new Map(meshes.map(mesh => [mesh, mesh.material]));
+const originalVisibility = new Map(meshes.map(mesh => [mesh, mesh.visible]));
+const materialFields = ['roughness', 'metalness', 'opacity', 'transparent', 'side', 'alphaTest', 'vertexColors',
+  'map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap', 'alphaMap'];
+const materialSnapshots = new Map();
+for (const mesh of meshes) for (const material of [].concat(mesh.material)) materialSnapshots.set(material, {
+  type: material.type, color: material.color?.toArray(), emissive: material.emissive?.toArray(),
+  fields: Object.fromEntries(materialFields.map(field => [field, material[field]])),
+});
+function verifyOriginalAppearance(mesh) {
+  assert.equal(mesh.visible, originalVisibility.get(mesh), 'Selection changed visibility: ' + mesh.name);
+  const originals = [].concat(originalMaterials.get(mesh)), active = [].concat(mesh.material);
+  assert.equal(active.length, originals.length, 'Selection changed material slots: ' + mesh.name);
+  for (let index = 0; index < originals.length; index++) {
+    const before = materialSnapshots.get(originals[index]), after = active[index];
+    assert.equal(after.type, before.type, 'Selection changed material type: ' + mesh.name);
+    assert.deepEqual(after.color?.toArray(), before.color, 'Selection replaced authored color: ' + mesh.name);
+    assert.deepEqual(after.emissive?.toArray(), before.emissive, 'Selection changed authored emissive: ' + mesh.name);
+    for (const field of materialFields) assert.equal(after[field], before.fields[field], 'Selection changed ' + field + ': ' + mesh.name);
+  }
+}
+const groupIds = Object.keys(GROUPS); assert.equal(groupIds.length, 17, 'Expected all 17 app muscle groups');
+let selectionCases = 0;
+for (const tick of phaseTicks) {
+  motion.update(tick.time); const frozen = motion.getMetrics();
+  for (const groupId of groupIds) {
+    selection.show(groupId, phaseAt(tick.time).items, true);
+    for (const mesh of meshes) {
+      assert.equal(mesh.material, originalMaterials.get(mesh), 'Selection replaced an original actor material: ' + mesh.name);
+      verifyOriginalAppearance(mesh);
+    }
+    for (const mesh of [...coveredMeshes, ...faceMeshes]) assert.equal(mesh.visible, true, 'Selection hid the original outfit or face: ' + mesh.name);
+    assert.deepEqual(motion.getMetrics().joints, frozen.joints, 'Selection changed the paused pose');
+    assert.equal(motion.getMetrics().time, tick.time, 'Selection changed the paused time');
+    selection.restore();
+    for (const mesh of meshes) { assert.equal(mesh.material, originalMaterials.get(mesh), 'Restore did not return original material identity'); verifyOriginalAppearance(mesh); }
+    selectionCases++;
+  }
+}
 let vertices = 0, triangles = 0;
 for (const mesh of meshes) {
   vertices += mesh.geometry.attributes.position.count; triangles += mesh.geometry.index.count / 3;
@@ -194,6 +237,9 @@ console.log(JSON.stringify({ status: 'passed', referenceAvailable: availableRefe
   freeElbowMinDegrees: freeElbowMin, limbMaxLengthErrorMeters: maxSegmentError, pacingMaxError: maxPacingError,
   substepClockMaxError: maxClockStepError, phaseWallSecondsAt1x: wallDurations, vertices, triangles,
   losslessAttributeValues, triangleCyclicRotations, compressedCoachBytes: optimization.runtimeBytes, compressedMiniatureBytes: optimization.miniature.runtimeBytes,
-  studyBodyVertices: studyBody.geometry.attributes.position.count, studyBodyTriangles: studyBody.geometry.index.count / 3,
-  studyHeadVertices: studyHead.geometry.attributes.position.count, studyHeadTriangles: studyHead.geometry.index.count / 3,
+  historicalStudyBodyVertices: studyBody.geometry.attributes.position.count, historicalStudyBodyTriangles: studyBody.geometry.index.count / 3,
+  historicalStudyHeadVertices: studyHead.geometry.attributes.position.count, historicalStudyHeadTriangles: studyHead.geometry.index.count / 3,
+  runtimeStudyAttached: false, selectionCases, selectedGroups: groupIds.length, selectedPhases: phaseTicks.length,
+  originalOutfitAndFaceVisibleDuringSelection: true, originalMaterialAppearancePreserved: true,
+  originalMaterialIdentityDuringSelection: true, originalMaterialIdentityRestored: true,
   garmentAndFaceVisibilityRestored: true, bundledFiles: allBuiltFiles.length, bundledBytes }, null, 2));

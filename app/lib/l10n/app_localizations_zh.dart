@@ -48,7 +48,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get switchToMuscles => '切换到直立肌群人体';
 
   @override
-  String get switchToMotion => '切换到托马斯动作白膜';
+  String get switchToMotion => '切换到托马斯动作';
 
   @override
   String get fullLoop => '完整循环 · 8 个阶段';
@@ -114,7 +114,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deepNote => '深层肌群用斜线表示所在部位。';
 
   @override
-  String get deepMotionNote => '深层肌群高亮表示所在部位。';
+  String get deepMotionNote => '深层肌群位置请切换到直立肌群人体查看。';
 
   @override
   String get bothSides => '双侧';

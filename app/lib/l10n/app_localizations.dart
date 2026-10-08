@@ -175,7 +175,7 @@ abstract class AppLocalizations {
   /// No description provided for @switchToMotion.
   ///
   /// In zh, this message translates to:
-  /// **'切换到托马斯动作白膜'**
+  /// **'切换到托马斯动作'**
   String get switchToMotion;
 
   /// No description provided for @fullLoop.
@@ -307,7 +307,7 @@ abstract class AppLocalizations {
   /// No description provided for @deepMotionNote.
   ///
   /// In zh, this message translates to:
-  /// **'深层肌群高亮表示所在部位。'**
+  /// **'深层肌群位置请切换到直立肌群人体查看。'**
   String get deepMotionNote;
 
   /// No description provided for @bothSides.

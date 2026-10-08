@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS } from './phase.js';
-import { applyFunctionalSurface } from './muscle-material.js';
-import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
+import { CORE_BONES, createCoreMapping } from './core-mapping.js';
 
 // Adapted from the package's mmRest.ts. The attribute is attached to the
 // original Snow vertices. It is a teaching map, not an anatomical registration.
@@ -17,7 +16,7 @@ const SEG = {
 
 export function buildMmRest(motion, coach) {
   const savedTime = motion.getMetrics().time; motion.reset(); coach.updateMatrixWorld(true);
-  const joints = motion.getMetrics().joints, mappings = {};
+  const joints = motion.getMetrics().joints, mappings = {}, mapCore = createCoreMapping(joints);
   const landmark = (name, side) => new THREE.Vector3(side === 'left' ? Q[name][0] : -Q[name][0], Q[name][1], Q[name][2]);
   for (const side of ['left', 'right']) for (const [bone, [a, b, qa, qb]] of Object.entries(SEG)) {
     const P0 = new THREE.Vector3().fromArray(joints[side + a]), P1 = new THREE.Vector3().fromArray(joints[side + b]);
@@ -39,8 +38,9 @@ export function buildMmRest(motion, coach) {
       indices.fromBufferAttribute(si, i); weights.fromBufferAttribute(sw, i); acc.set(0, 0, 0); let total = 0;
       for (let k = 0; k < 4; k++) {
         const weight = weights.getComponent(k); if (weight <= 0) continue;
-        const map = mappings[bones[indices.getComponent(k)]?.name];
+        const bone = bones[indices.getComponent(k)]?.name, map = mappings[bone];
         if (map) mapped.copy(tmp).sub(map.P0).applyQuaternion(map.rotation).multiplyScalar(map.scale).add(map.Q0);
+        else if (CORE_BONES.has(bone)) mapCore(tmp, mapped);
         else mapped.copy(tmp);
         acc.addScaledVector(mapped, weight); total += weight;
       }
@@ -91,47 +91,12 @@ export function createHitTester(player, skinned) {
 }
 
 export function createSurfaceSelection(skinned) {
-  const uniforms = MM.createMuscleUniforms(), originals = new Map(), mapped = new Map(), visibility = new Map();
-  const hasStudySkin = skinned.some(mesh => mesh.userData.studySkin);
-  const hasStudyHead = skinned.some(mesh => mesh.userData.studyHead);
-  uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
-  uniforms.mmBase.value.set('#d3c7ad'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
-  for (const mesh of skinned) {
-    originals.set(mesh, mesh.material);
-    visibility.set(mesh, mesh.visible);
-    // Warm matte ceramic keeps curved surfaces readable under the existing
-    // studio lights; restrained dielectric reflection avoids bright glints.
-    const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0,
-      clearcoat: 0.02, clearcoatRoughness: 0.72, specularIntensity: 0.35, ior: 1.46 });
-    applyFunctionalSurface(material, uniforms, { posed: true }); mapped.set(mesh, material);
-  }
-  function show(groupId, items, detail = false) {
-    if (!groupId) { restore(); return; }
-    const phaseItems = [...items];
-    if (!phaseItems.some(item => item.groupId === groupId)) phaseItems.push({ groupId, level: 'primary', side: 'both', colour: GROUPS[groupId].colour });
-    const selection = [];
-    for (const item of phaseItems) {
-      if (!detail && item.groupId !== groupId) continue;
-      const group = MM.resolveGroup(item.groupId); if (!group) continue;
-      for (const muscle of group.muscles) selection.push({ muscle, side: item.side, colour: item.colour,
-        level: group.deep && item.level === 'primary' ? 'deep' : item.level,
-        dim: item.groupId === groupId ? 0 : item.level === 'primary' ? 0.45 : 0.7 });
-    }
-    MM.setMuscleSelection(uniforms, selection); MM.setMuscleFocus(uniforms, MM.resolveGroup(groupId)?.muscles ?? []);
-    for (const [mesh, material] of mapped) {
-      mesh.material = material;
-      if (hasStudySkin) {
-        if (mesh.userData.studySkin) mesh.visible = true;
-        else if (isCoveredActorPart(mesh)) mesh.visible = false;
-      }
-      if (hasStudyHead) {
-        if (mesh.userData.studyHead) mesh.visible = true;
-        else if (isOriginalActorHeadPart(mesh)) mesh.visible = false;
-      }
-    }
-  }
-  function restore() { for (const [mesh, material] of originals) { mesh.material = material; mesh.visible = visibility.get(mesh); } }
-  return { show, restore,
-    releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); for (const material of mapped.values()) material.dispose(); },
-    dispose() { restore(); for (const material of mapped.values()) material.dispose(); } };
+  // Selection determines the lesson and camera, never the motion appearance.
+  // The athlete always retains its original clothes, face and material objects.
+  // Functional colors are displayed solely on the upright reference mannequin.
+  const originals = new Map(skinned.map(mesh => [mesh, mesh.material]));
+  function restore() { for (const [mesh, material] of originals) mesh.material = material; }
+  return { show: restore, restore,
+    releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); },
+    dispose: restore };
 }

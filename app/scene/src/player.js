@@ -4,7 +4,6 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createCoachMotion } from './legacy/coach-motion.js';
 import { computePacing, pacingRate, paceStep } from './pacing.js';
 import { loadOfflineGlb } from './assets.js';
-import { attachStudyBody, attachStudyHead } from './study-body.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -80,16 +79,16 @@ export class FlarePlayer {
 
   async load() {
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
-    const [gltf, rig, study, studyHead] = await Promise.all([
+    // The motion actor always keeps its supplied outfit and face. Historical
+    // unclothed study derivatives are not loaded or attached to this scene.
+    const [gltf, rig] = await Promise.all([
       loadOfflineGlb('./coach/flare-coach.meshopt.glb.gz'),
       fetch(new URL('./coach/coach-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
-      loadOfflineGlb('./coach/flare-coach-study-body.meshopt.glb.gz'),
-      loadOfflineGlb('./coach/flare-coach-study-head.meshopt.glb.gz'),
     ]);
-    if (this.disposed) { disposeTree(gltf.scene); disposeTree(study.scene); disposeTree(studyHead.scene); return; }
-    this.coach = gltf.scene; attachStudyBody(this.coach, study.scene); attachStudyHead(this.coach, studyHead.scene);
+    if (this.disposed) { disposeTree(gltf.scene); return; }
+    this.coach = gltf.scene;
     this.motion = createCoachMotion({ model: this.coach, rigData: rig });
     this.coach.traverse(object => { if (object.isMesh) object.castShadow = this.renderer.shadowMap.enabled; });
     this.scene.add(this.coach); this.period = this.motion.getMetrics().period;

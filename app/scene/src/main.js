@@ -64,7 +64,7 @@ function closeDetail() {
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
 function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '肌群位置示意 · 对应同一部位' : '动作白膜 · 保持当前暂停姿态';
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '肌群位置示意 · 对应同一部位' : '动作示意 · 保持当前暂停姿态';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
