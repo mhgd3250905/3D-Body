@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @settings.
   ///
   /// In zh, this message translates to:
-  /// **'设置与关于'**
+  /// **'设置'**
   String get settings;
 
   /// No description provided for @motionBrand.
@@ -883,7 +883,7 @@ abstract class AppLocalizations {
   /// No description provided for @history.
   ///
   /// In zh, this message translates to:
-  /// **'训练记录'**
+  /// **'记录'**
   String get history;
 
   /// No description provided for @historyEmpty.
@@ -1011,6 +1011,378 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'关闭'**
   String get close;
+
+  /// No description provided for @pausedAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂停于 {time} 秒'**
+  String pausedAt(String time);
+
+  /// No description provided for @phaseHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'{source} · {name}'**
+  String phaseHeading(String source, String name);
+
+  /// No description provided for @primaryShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'主力'**
+  String get primaryShort;
+
+  /// No description provided for @secondaryShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'协同'**
+  String get secondaryShort;
+
+  /// No description provided for @together.
+  ///
+  /// In zh, this message translates to:
+  /// **'一起发力'**
+  String get together;
+
+  /// No description provided for @trainGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'练{name}'**
+  String trainGroup(String name);
+
+  /// No description provided for @moreCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'+{count}'**
+  String moreCount(int count);
+
+  /// No description provided for @deepMotionHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'深层肌群 · 颜色示意所在部位'**
+  String get deepMotionHint;
+
+  /// No description provided for @deepMusclesHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'深层肌群 · 斜线示意所在部位'**
+  String get deepMusclesHint;
+
+  /// No description provided for @noDrillForTier.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个肌群暂无该器械档的训练'**
+  String get noDrillForTier;
+
+  /// No description provided for @brandEyebrow.
+  ///
+  /// In zh, this message translates to:
+  /// **'FLARE'**
+  String get brandEyebrow;
+
+  /// No description provided for @welcomeHeadline.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯全旋'**
+  String get welcomeHeadline;
+
+  /// No description provided for @welcomeLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟着动作，看懂每一刻哪里在发力。'**
+  String get welcomeLine;
+
+  /// No description provided for @startApp.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始'**
+  String get startApp;
+
+  /// No description provided for @welcomeFootPrefix.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续即表示已阅读'**
+  String get welcomeFootPrefix;
+
+  /// No description provided for @safetySheetEyebrow.
+  ///
+  /// In zh, this message translates to:
+  /// **'练之前'**
+  String get safetySheetEyebrow;
+
+  /// No description provided for @safetySheetTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'三件事'**
+  String get safetySheetTitle;
+
+  /// No description provided for @safetyRule1.
+  ///
+  /// In zh, this message translates to:
+  /// **'每次先热身手腕'**
+  String get safetyRule1;
+
+  /// No description provided for @safetyRule1Note.
+  ///
+  /// In zh, this message translates to:
+  /// **'约 6 分钟，学习路径第一课就是它'**
+  String get safetyRule1Note;
+
+  /// No description provided for @safetyRule2.
+  ///
+  /// In zh, this message translates to:
+  /// **'刺痛、麻木、头晕就停'**
+  String get safetyRule2;
+
+  /// No description provided for @safetyRule2Note.
+  ///
+  /// In zh, this message translates to:
+  /// **'酸可以，痛不行'**
+  String get safetyRule2Note;
+
+  /// No description provided for @safetyRule3.
+  ///
+  /// In zh, this message translates to:
+  /// **'这是动作教学'**
+  String get safetyRule3;
+
+  /// No description provided for @safetyRule3Note.
+  ///
+  /// In zh, this message translates to:
+  /// **'不能替代教练、医生或康复治疗；初次全旋请有人陪同'**
+  String get safetyRule3Note;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In zh, this message translates to:
+  /// **'我知道了'**
+  String get gotIt;
+
+  /// No description provided for @startWithAssessment.
+  ///
+  /// In zh, this message translates to:
+  /// **'先做入门自评'**
+  String get startWithAssessment;
+
+  /// No description provided for @libraryHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'按肌群找动作'**
+  String get libraryHint;
+
+  /// No description provided for @moreProgressHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'本周 {count} 天'**
+  String moreProgressHint(int count);
+
+  /// No description provided for @playbackSpeed.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放速度'**
+  String get playbackSpeed;
+
+  /// No description provided for @phaseMoment.
+  ///
+  /// In zh, this message translates to:
+  /// **'{source} · 这一刻的主力'**
+  String phaseMoment(String source);
+
+  /// No description provided for @othersInvolved.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他参与 · {names}'**
+  String othersInvolved(String names);
+
+  /// No description provided for @groupCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'等 {count} 组'**
+  String groupCount(int count);
+
+  /// No description provided for @allSections.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部部位'**
+  String get allSections;
+
+  /// No description provided for @search.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索'**
+  String get search;
+
+  /// No description provided for @closeSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭搜索'**
+  String get closeSearch;
+
+  /// No description provided for @spec.
+  ///
+  /// In zh, this message translates to:
+  /// **'剂量'**
+  String get spec;
+
+  /// No description provided for @moreCuesAndSafety.
+  ///
+  /// In zh, this message translates to:
+  /// **'更多要点、常见错误与安全'**
+  String get moreCuesAndSafety;
+
+  /// No description provided for @addTodayShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入今日'**
+  String get addTodayShort;
+
+  /// No description provided for @setOfTotal.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {current} 组 / 共 {total} 组'**
+  String setOfTotal(int current, int total);
+
+  /// No description provided for @ofReps.
+  ///
+  /// In zh, this message translates to:
+  /// **'/ {count} 次'**
+  String ofReps(int count);
+
+  /// No description provided for @secondsUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'秒'**
+  String get secondsUnit;
+
+  /// No description provided for @painStopShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'不适，停止练习'**
+  String get painStopShort;
+
+  /// No description provided for @pathTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'学习路径'**
+  String get pathTitle;
+
+  /// No description provided for @continueLesson.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续 · {title}'**
+  String continueLesson(String title);
+
+  /// No description provided for @allDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部完成'**
+  String get allDone;
+
+  /// No description provided for @stageGates.
+  ///
+  /// In zh, this message translates to:
+  /// **'阶段自评 · 自行确认'**
+  String get stageGates;
+
+  /// No description provided for @weekDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'本周练习天数'**
+  String get weekDays;
+
+  /// No description provided for @streak.
+  ///
+  /// In zh, this message translates to:
+  /// **'连续天数'**
+  String get streak;
+
+  /// No description provided for @recent.
+  ///
+  /// In zh, this message translates to:
+  /// **'最近'**
+  String get recent;
+
+  /// No description provided for @weekdayLabels.
+  ///
+  /// In zh, this message translates to:
+  /// **'一,二,三,四,五,六,日'**
+  String get weekdayLabels;
+
+  /// No description provided for @todayLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天'**
+  String get todayLabel;
+
+  /// No description provided for @completed.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成'**
+  String get completed;
+
+  /// No description provided for @playbackGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放'**
+  String get playbackGroup;
+
+  /// No description provided for @otherGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get otherGroup;
+
+  /// No description provided for @aboutFlare.
+  ///
+  /// In zh, this message translates to:
+  /// **'关于 Flare'**
+  String get aboutFlare;
+
+  /// No description provided for @aboutHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'版本、来源与许可、本地数据'**
+  String get aboutHint;
+
+  /// No description provided for @safetyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'练之前的三件事'**
+  String get safetyHint;
+
+  /// No description provided for @teachingTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'教学说明'**
+  String get teachingTitle;
+
+  /// No description provided for @licenses.
+  ///
+  /// In zh, this message translates to:
+  /// **'开源许可'**
+  String get licenses;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 分钟'**
+  String minutesShort(int count);
+
+  /// No description provided for @lessonPhases.
+  ///
+  /// In zh, this message translates to:
+  /// **'相关动作阶段'**
+  String get lessonPhases;
+
+  /// No description provided for @phasesShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'阶段 {list}'**
+  String phasesShort(String list);
+
+  /// No description provided for @countUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'次'**
+  String get countUnit;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ extension FlareStrings on BuildContext {
   AppLocalizations get strings => AppLocalizations.of(this);
 }
 
+/// Quiet container used sparingly: grouped rows and small spec blocks.
 class SurfaceCard extends StatelessWidget {
   const SurfaceCard({super.key, required this.child, this.padding = 16});
   final Widget child;
@@ -16,10 +17,28 @@ class SurfaceCard extends StatelessWidget {
     padding: EdgeInsets.all(padding),
     decoration: BoxDecoration(
       color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.white.withValues(alpha: .07)),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: FlareColors.hairline),
     ),
     child: child,
+  );
+}
+
+/// Small grey label above a block ("一起发力", "最近").
+class Eyebrow extends StatelessWidget {
+  const Eyebrow(this.text, {super.key, this.color = FlareColors.dim});
+  final String text;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(
+      color: color,
+      fontSize: 12,
+      height: 1.4,
+      letterSpacing: .4,
+      fontWeight: FontWeight.w500,
+    ),
   );
 }
 
@@ -28,10 +47,231 @@ class SectionTitle extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 20, bottom: 10),
-    child: Text(
-      text,
-      style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+    padding: const EdgeInsets.only(top: 22, bottom: 10, left: 2),
+    child: Eyebrow(text),
+  );
+}
+
+/// The one primary action of a page. Full width, accent, generous height.
+class PrimaryAction extends StatelessWidget {
+  const PrimaryAction({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.arrow = false,
+    this.icon,
+  });
+  final String label;
+  final VoidCallback? onPressed;
+  final bool arrow;
+  final IconData? icon;
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: double.infinity,
+    height: 56,
+    child: FilledButton(
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+          Flexible(
+            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+          if (arrow) ...[
+            const SizedBox(width: 8),
+            const Icon(Icons.arrow_forward_rounded, size: 19),
+          ],
+        ],
+      ),
+    ),
+  );
+}
+
+/// Round glass control, matching the home header buttons.
+class RoundIconButton extends StatelessWidget {
+  const RoundIconButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    this.diameter = 40,
+  });
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback? onPressed;
+  final double diameter;
+  @override
+  Widget build(BuildContext context) => IconButton(
+    onPressed: onPressed,
+    tooltip: tooltip,
+    style: IconButton.styleFrom(
+      fixedSize: Size.square(diameter),
+      minimumSize: const Size.square(44),
+      backgroundColor: FlareColors.control,
+      foregroundColor: const Color(0xffebebef),
+      side: const BorderSide(color: FlareColors.controlBorder, width: .5),
+      shape: const CircleBorder(),
+    ),
+    icon: Icon(icon, size: 18),
+  );
+}
+
+/// Pill tag with a colour dot. Tappable when [onTap] is given.
+class DotTag extends StatelessWidget {
+  const DotTag({super.key, required this.label, this.color, this.onTap});
+  final String label;
+  final Color? color;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) => Material(
+    color: const Color(0xff1c1c21),
+    shape: const StadiumBorder(side: BorderSide(color: FlareColors.hairline)),
+    child: InkWell(
+      customBorder: const StadiumBorder(),
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 36),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (color != null) ...[
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 7),
+              ],
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: FlareColors.secondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// Rounded group of rows separated by hairlines (settings, menus).
+class RowGroup extends StatelessWidget {
+  const RowGroup({super.key, required this.children});
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: FlareColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: FlareColors.hairline),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Column(
+      children: [
+        for (var i = 0; i < children.length; i++) ...[
+          if (i > 0) const Divider(indent: 16, endIndent: 16),
+          children[i],
+        ],
+      ],
+    ),
+  );
+}
+
+class FlareRow extends StatelessWidget {
+  const FlareRow({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    this.onTap,
+  });
+  final String title;
+  final String? subtitle;
+  final Widget? leading;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 56),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            if (leading != null) ...[leading!, const SizedBox(width: 14)],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: FlareColors.dim,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            trailing ??
+                (onTap == null
+                    ? const SizedBox.shrink()
+                    : const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 20,
+                        color: FlareColors.dim,
+                      )),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+/// Quiet disclosure: a single grey line that opens to reveal detail.
+class Disclosure extends StatelessWidget {
+  const Disclosure({super.key, required this.title, required this.children});
+  final String title;
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+    child: ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 12),
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+      iconColor: FlareColors.dim,
+      collapsedIconColor: FlareColors.dim,
+      shape: const Border(),
+      collapsedShape: const Border(),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 14, color: FlareColors.secondary),
+      ),
+      children: children,
     ),
   );
 }
@@ -57,71 +297,153 @@ class TierSelector extends StatelessWidget {
   );
 }
 
+/// Compact list row for a drill (today's list, lesson drills).
 class DrillTile extends StatelessWidget {
   const DrillTile({
     super.key,
     required this.drill,
     required this.onTap,
     this.trailing,
+    this.color,
+    this.groupLabel,
   });
   final Drill drill;
   final VoidCallback onTap;
   final Widget? trailing;
+  final Color? color;
+  final String? groupLabel;
   @override
-  Widget build(BuildContext context) => Card(
-    margin: const EdgeInsets.only(bottom: 10),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Material(
+      color: FlareColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  drill.thumbnailAsset,
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      drill.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      drill.prescription,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: FlareColors.dim,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              trailing ??
+                  const Padding(
+                    padding: EdgeInsets.only(right: 6),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: FlareColors.dim,
+                    ),
+                  ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// Image-first tile for the two-column library grid.
+class DrillCard extends StatelessWidget {
+  const DrillCard({
+    super.key,
+    required this.drill,
+    required this.onTap,
+    required this.groupLabel,
+    required this.color,
+  });
+  final Drill drill;
+  final VoidCallback onTap;
+  final String groupLabel;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Material(
     color: FlareColors.surface,
+    borderRadius: BorderRadius.circular(20),
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                drill.thumbnailAsset,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: Image.asset(drill.thumbnailAsset, fit: BoxFit.cover)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  drill.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        groupLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: FlareColors.dim,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    drill.name,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    drill.prescription,
-                    style: const TextStyle(
-                      color: FlareColors.muted,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    '${drill.tierLabel} · ${drill.equipment}',
-                    style: const TextStyle(
-                      color: FlareColors.muted,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            trailing ??
-                const Icon(Icons.chevron_right, color: FlareColors.muted),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );

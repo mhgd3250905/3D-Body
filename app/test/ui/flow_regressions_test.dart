@@ -118,14 +118,19 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final enter = find.widgetWithText(FilledButton, '进入 3D 动作');
-        await tester.scrollUntilVisible(enter, 350);
-        expect(tester.widget<FilledButton>(enter).onPressed, isNull);
+        final enter = find.widgetWithText(FilledButton, '开始');
+        expect(enter, findsOneWidget);
         expect(store.safetyAccepted, isFalse);
         assertNoFlutterError(tester);
 
-        await tapVisible(tester, find.text('我已了解安全提示'));
-        await tapVisible(tester, enter);
+        // Start shows the three-rule safety card once; dismissing it does not
+        // accept, only the explicit acknowledgement does.
+        await tester.tap(enter);
+        await tester.pumpAndSettle();
+        expect(find.text('三件事'), findsOneWidget);
+        expect(store.safetyAccepted, isFalse);
+        assertNoFlutterError(tester);
+        await tester.tap(find.widgetWithText(FilledButton, '我知道了'));
         await tester.pumpAndSettle();
         expect(store.safetyAccepted, isTrue);
         expect(find.byType(WelcomePage), findsNothing);
@@ -154,17 +159,31 @@ void main() {
         await tester.pumpAndSettle();
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
+        // More keeps only the four entries and speed.
         await tester.tap(labeledControl('更多'));
         await tester.pumpAndSettle();
-        await tapVisible(tester, labeledControl('11 第一侧支撑'));
+        for (final label in ['训练', '学习路径', '记录', '设置']) {
+          expect(find.widgetWithText(ListTile, label), findsOneWidget);
+        }
+        expect(find.byType(SegmentedButton<double>), findsOneWidget);
+        expect(find.byType(ActionChip), findsNothing);
+        assertNoFlutterError(tester);
+        await tester.tapAt(const Offset(195, 40));
         await tester.pumpAndSettle();
-        expect(scene.time, catalog.phaseTime(11));
         expect(scene.playing, isFalse);
+        expect(scene.time, 2.0);
         assertLeanHome(tester);
         await tester.tap(labeledControl('点选肌群查看详解'));
         await tester.pumpAndSettle();
-        await tester.tap(find.widgetWithText(ListTile, '三角肌'));
+        // The picker leads with this moment's primary groups only.
+        expect(find.text('第一侧支撑'), findsWidgets);
+        expect(find.textContaining('其他参与'), findsOneWidget);
+        await tester.tap(find.text('三角肌').last);
         await tester.pumpAndSettle();
+        expect(find.text('暂停于 2.0 秒'), findsOneWidget);
+        expect(find.text('正面'), findsNothing);
+        expect(find.text('背面'), findsNothing);
+        expect(find.byType(DrillTile), findsNothing);
         expect(scene.time, 2.0);
         expect(scene.playing, isFalse);
         expect(scene.selected, 'deltoids');
@@ -245,22 +264,19 @@ void main() {
         });
         await tester.pumpAndSettle();
 
-        final tile = find.byWidgetPredicate(
-          (widget) => widget is DrillTile && widget.drill.id == 'deltoids-A',
-        );
-        await tapVisible(tester, tile);
+        expect(find.widgetWithText(FilledButton, '练三角肌'), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('train-group')));
         await tester.pumpAndSettle();
         final detail = tester.widget<DrillDetailPage>(
           find.byType(DrillDetailPage),
         );
         expect(detail.drill.id, 'deltoids-A');
-        expect(find.text('动作示意图'), findsOneWidget);
         expect(scene.time, 2.0);
         expect(scene.selected, 'deltoids');
         expect(scene.detailModel, 'muscles');
         assertNoFlutterError(tester);
 
-        await tapVisible(tester, find.text('加入今日训练'));
+        await tester.tap(find.byTooltip('加入今日训练'));
         await tester.pumpAndSettle();
         expect(store.todayIds, ['deltoids-A']);
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
@@ -407,15 +423,12 @@ void main() {
           const Size(86, 108),
         );
         expect(scene.detailModel, 'motion');
-        expect(find.text('深层肌群高亮表示所在部位。'), findsOneWidget);
-        expect(find.text('深层肌群用斜线表示所在部位。'), findsNothing);
+        expect(find.text('深层肌群 · 颜色示意所在部位'), findsOneWidget);
+        expect(find.text('深层肌群 · 斜线示意所在部位'), findsNothing);
         assertNoFlutterError(tester);
       }
       final generation = scene.selectionGeneration;
-      final beforeDrills = tester
-          .widgetList<DrillTile>(find.byType(DrillTile))
-          .map((tile) => tile.drill.id)
-          .toList();
+      expect(find.byKey(const ValueKey('train-group')), findsOneWidget);
       scene.receiveEvent({
         'source': 'flare-scene',
         'type': 'state',
@@ -431,15 +444,10 @@ void main() {
       expect(scene.selected, 'rotator-cuff');
       expect(scene.time, 2.0);
       expect(scene.selectionGeneration, generation);
-      expect(find.text('深层肌群用斜线表示所在部位。'), findsOneWidget);
-      expect(find.text('深层肌群高亮表示所在部位。'), findsNothing);
+      expect(find.text('深层肌群 · 斜线示意所在部位'), findsOneWidget);
+      expect(find.text('深层肌群 · 颜色示意所在部位'), findsNothing);
       expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-      expect(
-        tester
-            .widgetList<DrillTile>(find.byType(DrillTile))
-            .map((tile) => tile.drill.id),
-        beforeDrills,
-      );
+      expect(find.byKey(const ValueKey('train-group')), findsOneWidget);
       assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
     },
@@ -840,14 +848,14 @@ void main() {
           await Future<void>.delayed(const Duration(milliseconds: 3100));
         });
         await tester.pump(const Duration(milliseconds: 150));
-        expect(find.text('第 $set / 3 组'), findsOneWidget);
+        expect(find.text('第 $set 组 / 共 3 组'), findsOneWidget);
         for (var rep = 0; rep < drill.dose.min; rep++) {
           await tapVisible(tester, find.widgetWithText(FilledButton, '完成 1 次'));
         }
         await tester.pump(const Duration(milliseconds: 150));
         assertNoFlutterError(tester);
         if (set < 3) {
-          expect(find.text('组间休息'), findsNWidgets(2));
+          expect(find.text('秒 · 组间休息'), findsOneWidget);
           await tapVisible(tester, find.text('结束休息'));
         }
       }

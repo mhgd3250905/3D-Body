@@ -5,7 +5,6 @@ import '../domain/catalog_models.dart';
 import '../domain/dose.dart';
 import '../domain/drill_timer.dart';
 import 'components.dart';
-import 'content_pages.dart';
 import 'theme.dart';
 
 class TrainingTimerPage extends StatefulWidget {
@@ -105,6 +104,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   Widget build(BuildContext context) {
     final s = context.strings;
     final snap = _timer.snapshot;
+    final dose = widget.drill.dose;
     final finished =
         snap.phase == TimerPhase.finished || snap.phase == TimerPhase.abandoned;
     final title = switch (snap.phase) {
@@ -117,201 +117,326 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       TimerPhase.finished => s.finished,
       TimerPhase.abandoned => s.abandoned,
     };
-    final timeMode = widget.drill.dose.mode == DoseMode.time;
+    final timeMode = dose.mode == DoseMode.time;
     final clockPhase =
         snap.phase == TimerPhase.countdown || snap.phase == TimerPhase.rest;
+    final paused = snap.phase == TimerPhase.paused;
+    final waiting =
+        snap.phase == TimerPhase.ready || snap.phase == TimerPhase.nextSide;
     final value = finished
         ? '✓'
-        : timeMode || clockPhase
+        : waiting
+        ? snap.target.toString()
+        : timeMode || clockPhase || paused && !_pausedReps(snap)
         ? ((snap.remainingMs + 999) ~/ 1000).toString()
         : snap.reps.toString();
+    final unit = finished
+        ? title
+        : waiting
+        ? '${timeMode ? s.secondsUnit : s.countUnit} · $title'
+        : clockPhase || timeMode
+        ? '${s.secondsUnit} · $title'
+        : dose.mode == DoseMode.reps
+        ? s.ofReps(snap.target)
+        : title;
+    final progress = finished
+        ? 1.0
+        : snap.phase == TimerPhase.countdown
+        ? 1 - snap.remainingMs / 3000
+        : snap.phase == TimerPhase.rest
+        ? 1 - snap.remainingMs / (dose.restSec * 1000).clamp(1, 1 << 30)
+        : timeMode && (snap.phase == TimerPhase.work || paused)
+        ? 1 - snap.remainingMs / (snap.target * 1000)
+        : dose.mode == DoseMode.reps
+        ? snap.reps / snap.target
+        : 0.0;
+    final ringColor = snap.phase == TimerPhase.rest || paused
+        ? FlareColors.secondary
+        : finished
+        ? FlareColors.success
+        : FlareColors.accent;
+    final canPause = [
+      TimerPhase.work,
+      TimerPhase.countdown,
+      TimerPhase.rest,
+    ].contains(snap.phase);
+    final (String, VoidCallback?)? primary = switch (snap.phase) {
+      TimerPhase.ready ||
+      TimerPhase.nextSide => (s.start, () => setState(_timer.start)),
+      TimerPhase.work when dose.mode == DoseMode.reps => (
+        s.completeRep,
+        () => setState(_timer.rep),
+      ),
+      TimerPhase.work => (s.completeSet, () => setState(_timer.completeSet)),
+      TimerPhase.rest => (s.skipRest, () => setState(_timer.skipRest)),
+      TimerPhase.paused => (s.resume, () => setState(_timer.resume)),
+      TimerPhase.finished || TimerPhase.abandoned => (
+        s.done,
+        _saving || _saveFailed ? null : widget.onClose,
+      ),
+      TimerPhase.countdown => null,
+    };
+    final side = snap.side == null
+        ? null
+        : snap.side == 'left'
+        ? s.leftSide
+        : s.rightSide;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) unawaited(_exit());
       },
-      child: Column(
-        children: [
-          PageHeader(
-            title: title,
-            onBack: _saving ? null : () => unawaited(_exit()),
-          ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-              children: [
-                Text(
-                  widget.drill.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  s.setsLabel(snap.set, snap.sets) +
-                      (snap.side == null
-                          ? ''
-                          : ' · ${snap.side == 'left' ? s.leftSide : s.rightSide}'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: FlareColors.muted),
-                ),
-                if (snap.blockLabel.isNotEmpty)
-                  Text(
-                    snap.blockLabel,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: FlareColors.accent),
-                  ),
-                const SizedBox(height: 26),
-                Center(
-                  child: SizedBox(
-                    width: 230,
-                    height: 230,
-                    child: Stack(
-                      alignment: Alignment.center,
+      child: ColoredBox(
+        color: FlareColors.background,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: SizedBox(
+                height: 48,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: RoundIconButton(
+                        icon: Icons.close_rounded,
+                        tooltip: s.exitTimer,
+                        onPressed: _saving ? null : () => unawaited(_exit()),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox.expand(
-                          child: CircularProgressIndicator(
-                            value: finished
-                                ? 1
-                                : timeMode && snap.phase == TimerPhase.work
-                                ? (1 - snap.remainingMs / (snap.target * 1000))
-                                      .clamp(0, 1)
-                                : widget.drill.dose.mode == DoseMode.reps &&
-                                      snap.phase == TimerPhase.work
-                                ? (snap.reps / snap.target).clamp(0, 1)
-                                : 0,
-                            backgroundColor: FlareColors.raised,
-                            strokeWidth: 5,
+                        Eyebrow(s.setOfTotal(snap.set, snap.sets)),
+                        if (side != null || snap.blockLabel.isNotEmpty)
+                          Text(
+                            [
+                              if (snap.blockLabel.isNotEmpty) snap.blockLabel,
+                              ?side,
+                            ].join(' · '),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              value,
-                              style: const TextStyle(
-                                fontSize: 72,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              title,
-                              style: const TextStyle(color: FlareColors.muted),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                if (widget.drill.dose.mode == DoseMode.manual)
-                  BodyText(s.manualMode),
-                if (_pain)
-                  SurfaceCard(
-                    child: BodyText(s.painMessage, color: Colors.amber),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+                children: [
+                  Center(
+                    child: SizedBox.square(
+                      dimension: 248,
+                      child: CustomPaint(
+                        painter: _RingPainter(
+                          progress.clamp(0.0, 1.0).toDouble(),
+                          ringColor,
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                value,
+                                style: const TextStyle(
+                                  fontSize: 76,
+                                  height: 1.05,
+                                  fontWeight: FontWeight.w700,
+                                  fontFeatures: [FontFeature.tabularFigures()],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                unit,
+                                style: const TextStyle(
+                                  color: FlareColors.dim,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                if (_saving) Text(s.saving, textAlign: TextAlign.center),
-                if (_saved)
+                  const SizedBox(height: 28),
                   Text(
-                    s.saved,
+                    widget.drill.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: FlareColors.success),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                if (_saveFailed) ...[
-                  BodyText(s.saveFailed),
-                  OutlinedButton(onPressed: _persist, child: Text(s.retry)),
-                ],
-                const SizedBox(height: 14),
-                if (snap.phase == TimerPhase.ready ||
-                    snap.phase == TimerPhase.nextSide)
-                  FilledButton(
-                    onPressed: () => setState(_timer.start),
-                    child: Text(s.start),
-                  ),
-                if (snap.phase == TimerPhase.work &&
-                    widget.drill.dose.mode == DoseMode.reps)
-                  FilledButton(
-                    onPressed: () => setState(_timer.rep),
-                    child: Text(s.completeRep),
-                  ),
-                if (snap.phase == TimerPhase.work &&
-                    widget.drill.dose.mode == DoseMode.manual)
-                  FilledButton(
-                    onPressed: () => setState(_timer.completeSet),
-                    child: Text(s.completeSet),
-                  ),
-                if (snap.phase == TimerPhase.work &&
-                    widget.drill.dose.mode != DoseMode.manual)
-                  TextButton(
-                    onPressed: () => setState(_timer.completeSet),
-                    child: Text(s.completeSet),
-                  ),
-                if (snap.phase == TimerPhase.paused)
-                  FilledButton(
-                    onPressed: () => setState(_timer.resume),
-                    child: Text(s.resume),
-                  ),
-                if ([
-                  TimerPhase.work,
-                  TimerPhase.countdown,
-                  TimerPhase.rest,
-                ].contains(snap.phase))
-                  OutlinedButton(
-                    onPressed: () => setState(_timer.pause),
-                    child: Text(s.pause),
-                  ),
-                if (snap.phase == TimerPhase.rest)
+                  if (widget.drill.cues.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.drill.cues.first,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: FlareColors.secondary,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => setState(_timer.skipRest),
-                          child: Text(s.skipRest),
+                      for (var i = 1; i <= snap.sets; i++)
+                        Container(
+                          width: 22,
+                          height: 3,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            color: i <= snap.completedSets
+                                ? FlareColors.accent
+                                : i == snap.set && !finished
+                                ? FlareColors.accent.withValues(alpha: .45)
+                                : FlareColors.controlBorder,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => setState(() => _timer.addRest()),
-                          child: Text(s.addRest),
-                        ),
-                      ),
                     ],
                   ),
-                if (finished)
-                  FilledButton(
-                    onPressed: _saving || _saveFailed ? null : widget.onClose,
-                    child: Text(s.done),
-                  ),
-                if (!finished)
-                  TextButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        _pain = true;
-                        _timer.abandon();
-                      });
-                      unawaited(_persist());
-                    },
-                    icon: const Icon(
-                      Icons.stop_circle_outlined,
-                      color: Colors.amber,
+                  const SizedBox(height: 18),
+                  if (dose.mode == DoseMode.manual && !finished)
+                    _note(s.manualMode),
+                  if (paused) _note(s.backgroundPause),
+                  if (_pain) _note(s.painMessage, color: Colors.amber),
+                  if (_saving) _note(s.saving),
+                  if (_saved) _note(s.saved, color: FlareColors.success),
+                  if (_saveFailed) ...[
+                    _note(s.saveFailed),
+                    Center(
+                      child: OutlinedButton(
+                        onPressed: _persist,
+                        child: Text(s.retry),
+                      ),
                     ),
-                    label: Text(
-                      s.painStop,
-                      style: const TextStyle(color: Colors.amber),
+                  ],
+                  if (snap.phase == TimerPhase.rest)
+                    Center(
+                      child: TextButton(
+                        onPressed: () => setState(() => _timer.addRest()),
+                        child: Text(
+                          s.addRest,
+                          style: const TextStyle(color: FlareColors.secondary),
+                        ),
+                      ),
                     ),
-                  ),
-                const SizedBox(height: 18),
-                BodyText(s.backgroundPause, color: FlareColors.muted),
-                const SizedBox(height: 12),
-                for (final cue in widget.drill.cues) BodyText('• $cue'),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+              child: Row(
+                children: [
+                  if (canPause) ...[
+                    RoundIconButton(
+                      icon: Icons.pause_rounded,
+                      tooltip: s.pause,
+                      diameter: 56,
+                      onPressed: () => setState(_timer.pause),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: primary == null
+                        ? const SizedBox(height: 56)
+                        : PrimaryAction(
+                            label: primary.$1,
+                            onPressed: primary.$2,
+                          ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 44,
+              child: finished
+                  ? null
+                  : TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _pain = true;
+                          _timer.abandon();
+                        });
+                        unawaited(_persist());
+                      },
+                      icon: const Icon(
+                        Icons.back_hand_outlined,
+                        size: 16,
+                        color: Colors.amber,
+                      ),
+                      label: Text(
+                        s.painStop,
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 6),
+          ],
+        ),
       ),
     );
   }
+
+  bool _pausedReps(TimerSnapshot snap) =>
+      widget.drill.dose.mode != DoseMode.time && snap.remainingMs == 0;
+
+  Widget _note(String text, {Color color = FlareColors.dim}) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      text,
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 13, height: 1.5, color: color),
+    ),
+  );
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter(this.progress, this.color);
+  final double progress;
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = (Offset.zero & size).deflate(6);
+    canvas.drawArc(
+      rect,
+      0,
+      6.283185307,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..color = const Color(0xff222228),
+    );
+    if (progress <= 0) return;
+    canvas.drawArc(
+      rect,
+      -1.5707963,
+      6.283185307 * progress,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.round
+        ..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.progress != progress || old.color != color;
 }

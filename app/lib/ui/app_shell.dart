@@ -42,8 +42,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Lesson? _lesson;
   MuscleGroup? _detail;
   int _handledSelection = 0;
-  int? _loopSource;
   double _lastSavedTime = -1;
+  String _quality = 'balanced';
   Catalog get catalog => widget.catalog;
   LearningStore get store => widget.store;
 
@@ -179,7 +179,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _lesson = null;
       _drill = null;
       _detail = null;
-      _loopSource = source;
     });
     _scene.setDetail(null);
     _scene.select(null);
@@ -325,6 +324,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       if (!_watchVisible && !_timing && drill != null)
                         DrillDetailPage(
                           drill: drill,
+                          group: catalog.groupById(drill.groupId),
                           onBack: _back,
                           added: store.todayIds.contains(drill.id),
                           onAdd: () => _result(store.addToToday(drill.id)),
@@ -443,7 +443,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             children: [
               _roundControl(
                 label: detail == null ? s.path : s.returnToMotion,
-                icon: detail == null ? Icons.route_outlined : Icons.arrow_back,
+                icon: detail == null
+                    ? Icons.route_outlined
+                    : Icons.arrow_back_ios_new_rounded,
                 onTap: detail == null ? () => _changeTab(2) : _returnToMotion,
               ),
               Expanded(
@@ -451,7 +453,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      s.motionBrand,
+                      detail == null
+                          ? s.motionBrand
+                          : s.phaseHeading(
+                              phase.source.toString().padLeft(2, '0'),
+                              phase.name,
+                            ),
                       style: const TextStyle(
                         color: Color(0xff73737b),
                         fontSize: 11,
@@ -461,7 +468,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       ),
                     ),
                     Text(
-                      detail?.label ?? s.fullLoop,
+                      detail == null
+                          ? s.fullLoop
+                          : s.pausedAt(_scene.time.toStringAsFixed(1)),
                       style: const TextStyle(
                         fontSize: 15,
                         height: 1.35,
@@ -471,16 +480,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-              _roundControl(
-                label: s.more,
-                icon: Icons.more_horiz,
-                onTap: _showMore,
-              ),
+              if (detail == null)
+                _roundControl(
+                  label: s.more,
+                  icon: Icons.more_horiz,
+                  onTap: _showMore,
+                )
+              else
+                const SizedBox(width: 44),
             ],
           ),
         ),
         Expanded(
-          flex: detail == null ? 5 : 3,
+          flex: detail == null ? 5 : 11,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -571,126 +583,139 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         if (detail == null) ...[
           _transport(context, phase),
-        ] else ...[
-          SizedBox(
-            height: 48,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => _scene.setCamera('front'),
-                  child: Text(s.front),
-                ),
-                TextButton(
-                  onPressed: () => _scene.setCamera('back'),
-                  child: Text(s.back),
-                ),
-                IconButton(
-                  onPressed: _scene.reset,
-                  tooltip: s.resetView,
-                  icon: const Icon(Icons.center_focus_strong),
-                ),
-              ],
-            ),
-          ),
+        ] else
+          _detailPanel(context, phase, detail),
+      ],
+    );
+  }
+
+  Widget _detailPanel(BuildContext context, Phase phase, MuscleGroup detail) {
+    final s = context.strings;
+    final muscle = phase.muscle(detail.id);
+    final primary = phase.primary.any((item) => item.id == detail.id);
+    final section = catalog.sections
+        .where((item) => item.id == detail.section)
+        .firstOrNull;
+    final together = catalog.synergists(phase, detail.id, limit: 99);
+    final shown = together.take(2).toList();
+    final drill =
+        catalog.drillsFor(detail.id, tier: store.settings.tier).firstOrNull ??
+        catalog.drillsFor(detail.id).firstOrNull;
+    final color = Color(detail.colorValue);
+    return Expanded(
+      flex: 7,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           Expanded(
-            flex: 4,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: color.withValues(alpha: .6),
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Eyebrow(
+                        [
+                          if (section != null) section.short,
+                          primary ? s.primaryShort : s.secondaryShort,
+                          switch (muscle?.resolvedSide(
+                            catalog.supportFor(phase.source),
+                          )) {
+                            'left' => s.leftSide,
+                            'right' => s.rightSide,
+                            _ => s.bothSides,
+                          },
+                        ].join(' · '),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Text(
                     detail.label,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-                      color: Color(detail.colorValue),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    switch (phase
-                        .muscle(detail.id)
-                        ?.resolvedSide(catalog.supportFor(phase.source))) {
-                      'left' => s.leftSide,
-                      'right' => s.rightSide,
-                      _ => s.bothSides,
-                    },
                     style: const TextStyle(
-                      color: FlareColors.muted,
-                      fontSize: 12,
+                      fontSize: 32,
+                      height: 1.2,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  SurfaceCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Text(
+                    muscle?.why ?? detail.role,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.55,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                  if (detail.deep) ...[
+                    const SizedBox(height: 6),
+                    Eyebrow(
+                      _scene.detailModel == 'muscles'
+                          ? s.deepMusclesHint
+                          : s.deepMotionHint,
+                    ),
+                  ],
+                  if (together.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Text(
-                          s.whyHere,
-                          style: const TextStyle(
-                            color: FlareColors.muted,
-                            fontSize: 12,
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 2),
+                          child: Eyebrow(s.together),
                         ),
-                        const SizedBox(height: 8),
-                        BodyText(phase.muscle(detail.id)?.why ?? detail.role),
-                        const SizedBox(height: 8),
-                        BodyText(phase.caption, color: FlareColors.muted),
+                        for (final group in shown)
+                          DotTag(
+                            label: group.label,
+                            color: Color(group.colorValue),
+                            onTap: () => _openGroup(group),
+                          ),
+                        if (together.length > shown.length)
+                          DotTag(
+                            label: s.moreCount(together.length - shown.length),
+                            onTap: _showMuscles,
+                          ),
                       ],
                     ),
-                  ),
-                  SectionTitle(s.secondary),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    children: [
-                      for (final item in catalog.synergists(phase, detail.id))
-                        if (catalog.groupById(item.id)
-                            case final MuscleGroup group)
-                          ActionChip(
-                            label: Text(group.label),
-                            onPressed: () => _openGroup(group),
-                          ),
-                    ],
-                  ),
-                  SectionTitle(s.relatedDrills),
-                  TierSelector(
-                    value: store.settings.tier,
-                    onChanged: (tier) =>
-                        _result(store.updateSettings(tier: tier)),
-                  ),
-                  const SizedBox(height: 12),
-                  for (final drill in catalog.drillsFor(
-                    detail.id,
-                    tier: store.settings.tier,
-                  ))
-                    DrillTile(drill: drill, onTap: () => _openDrill(drill)),
-                  BodyText(s.teachingNote, color: FlareColors.muted),
-                  if (detail.deep)
-                    BodyText(
-                      _scene.detailModel == 'muscles'
-                          ? s.deepNote
-                          : s.deepMotionNote,
-                      color: FlareColors.muted,
-                    ),
-                  if (detail.note != null) ...[
-                    SectionTitle(s.sourceNote),
-                    BodyText(detail.note!),
                   ],
-                  const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    onPressed: _returnToMotion,
-                    icon: const Icon(Icons.arrow_back),
-                    label: Text(s.returnToMotion),
-                  ),
                 ],
               ),
             ),
           ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              20,
+              4,
+              20,
+              (18 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 18),
+            ),
+            child: PrimaryAction(
+              key: const ValueKey('train-group'),
+              label: s.trainGroup(detail.label),
+              arrow: true,
+              onPressed: drill == null ? null : () => _openDrill(drill),
+            ),
+          ),
         ],
-      ],
+      ),
     );
   }
 
@@ -772,7 +797,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _seek(double time) {
-    setState(() => _loopSource = null);
     _scene.setLoop(null, null);
     _scene.setTime(time);
   }
@@ -823,108 +847,106 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     final wasPlaying = _scene.playing;
     _scene.pause();
-    final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
+    final stage = catalog.stageByNumber(store.currentStage);
     final value = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      showDragHandle: true,
-      backgroundColor: FlareColors.surface,
       builder: (sheetContext) => SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * .82,
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  s.more,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final entry in [
+                (
+                  'library',
+                  s.library,
+                  s.libraryHint,
+                  Icons.fitness_center_rounded,
                 ),
-                const SizedBox(height: 12),
-                for (final entry in [
-                  ('library', s.library, Icons.fitness_center_outlined),
-                  ('progress', s.progress, Icons.bar_chart_rounded),
-                  ('settings', s.settings, Icons.tune_rounded),
-                ])
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(entry.$3, size: 20),
-                    title: Text(entry.$2),
-                    trailing: const Icon(Icons.chevron_right, size: 18),
-                    onTap: () => Navigator.pop(sheetContext, entry.$1),
-                  ),
-                const Divider(height: 24),
-                SectionTitle(s.speedLabel),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    for (final speed in [.25, .5, 1.0])
-                      ChoiceChip(
-                        label: Text('${speed == 1 ? '1' : speed}×'),
-                        selected: _scene.speed == speed,
-                        onSelected: (_) =>
-                            Navigator.pop(sheetContext, 'speed:$speed'),
-                      ),
-                  ],
+                (
+                  'path',
+                  s.pathTitle,
+                  stage == null
+                      ? null
+                      : '${s.stageLabel(stage.n)} · ${stage.title}',
+                  Icons.route_outlined,
                 ),
-                SectionTitle(s.phaseLabel),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  children: [
-                    for (final item in catalog.phases)
-                      Semantics(
-                        label: '${item.source} ${item.name}',
-                        child: ActionChip(
-                          label: Text(item.source.toString().padLeft(2, '0')),
-                          onPressed: () => Navigator.pop(
-                            sheetContext,
-                            'phase:${item.source}',
+                (
+                  'progress',
+                  s.progress,
+                  s.moreProgressHint(store.weekTrainingDays),
+                  Icons.insights_rounded,
+                ),
+                ('settings', s.settings, null, Icons.tune_rounded),
+              ])
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                  minTileHeight: 64,
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: FlareColors.raised,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(entry.$4, size: 19),
+                  ),
+                  title: Text(
+                    entry.$2,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: entry.$3 == null
+                      ? null
+                      : Text(
+                          entry.$3!,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: FlareColors.dim,
                           ),
                         ),
-                      ),
-                  ],
-                ),
-                TextButton.icon(
-                  icon: const Icon(Icons.repeat_rounded, size: 18),
-                  label: Text(
-                    _loopSource == null ? s.practiceLoop : s.restoreLoop,
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: FlareColors.dim,
                   ),
-                  onPressed: () => Navigator.pop(sheetContext, 'loop'),
+                  onTap: () => Navigator.pop(sheetContext, entry.$1),
                 ),
-                SectionTitle(s.viewLabel),
-                Wrap(
-                  spacing: 8,
+              const Divider(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
                   children: [
-                    for (final item in [
-                      ('front', s.front),
-                      ('back', s.back),
-                      ('side', s.side),
-                    ])
-                      OutlinedButton(
-                        onPressed: () =>
-                            Navigator.pop(sheetContext, 'camera:${item.$1}'),
-                        child: Text(item.$2),
+                    Text(
+                      s.playbackSpeed,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: FlareColors.secondary,
                       ),
-                    OutlinedButton(
-                      onPressed: () => Navigator.pop(sheetContext, 'reset'),
-                      child: Text(s.resetView),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: SegmentedButton<double>(
+                        showSelectedIcon: false,
+                        segments: const [
+                          ButtonSegment(value: .25, label: Text('0.25×')),
+                          ButtonSegment(value: .5, label: Text('0.5×')),
+                          ButtonSegment(value: 1.0, label: Text('1×')),
+                        ],
+                        selected: {_scene.speed},
+                        onSelectionChanged: (values) => Navigator.pop(
+                          sheetContext,
+                          'speed:${values.first}',
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: () => Navigator.pop(sheetContext, 'muscles'),
-                  child: Text(s.muscles),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -937,115 +959,217 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     switch (value) {
       case 'library':
         _changeTab(1);
+      case 'path':
+        _changeTab(2);
       case 'progress':
         _changeTab(3);
       case 'settings':
         setState(() => _settings = true);
         _syncSceneVisibility();
-      case 'loop':
-        _toggleLoop(phase.source);
-      case 'reset':
-        _scene.reset();
-        if (wasPlaying && _detail == null) _scene.play();
-      case 'muscles':
-        await _showMuscles();
       default:
         if (value.startsWith('speed:')) {
           final speed = double.parse(value.substring(6));
           _scene.setSpeed(speed);
           unawaited(store.updateSettings(speed: speed));
-        } else if (value.startsWith('phase:')) {
-          _seek(catalog.phaseTime(int.parse(value.substring(6))));
-        } else if (value.startsWith('camera:')) {
-          _scene.setCamera(value.substring(7));
-        }
-        if (wasPlaying &&
-            _detail == null &&
-            (value.startsWith('speed:') || value.startsWith('camera:'))) {
-          _scene.play();
+          if (wasPlaying && _detail == null) _scene.play();
         }
     }
-  }
-
-  void _toggleLoop(int source) {
-    if (_loopSource != null) {
-      setState(() => _loopSource = null);
-      _scene.setLoop(null, null);
-      return;
-    }
-    setState(() => _loopSource = source);
-    final start = catalog.phaseTime(source);
-    final end = source == 16 ? catalog.period : catalog.phaseTime(source + 1);
-    _scene.setTime(start);
-    _scene.setLoop(start, end);
-    _scene.play();
   }
 
   Future<void> _showMuscles() async {
     _scene.pause();
     final s = context.strings;
     final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
-    final primary = phase.primary.map((item) => item.id).toSet();
-    final groups = [
-      ...catalog.groups.where((item) => primary.contains(item.id)),
-      ...catalog.groups.where((item) => !primary.contains(item.id)),
+    final primary = [
+      for (final item in phase.primary)
+        if (catalog.groupById(item.id) case final MuscleGroup group)
+          (group, item.why ?? group.role),
     ];
+    final ids = primary.map((item) => item.$1.id).toSet();
+    final others = [
+      for (final item in phase.secondary)
+        if (!ids.contains(item.id))
+          if (catalog.groupById(item.id) case final MuscleGroup group) group,
+    ];
+    Widget row(BuildContext sheet, MuscleGroup group, String? why) => InkWell(
+      onTap: () => Navigator.pop(sheet, group),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 3,
+              height: why == null ? 22 : 40,
+              decoration: BoxDecoration(
+                color: Color(group.colorValue),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group.label,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (why != null) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      why,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: FlareColors.dim,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: FlareColors.dim,
+            ),
+          ],
+        ),
+      ),
+    );
     final group = await showModalBottomSheet<MuscleGroup>(
       context: context,
-      showDragHandle: true,
       isScrollControlled: true,
-      backgroundColor: FlareColors.surface,
-      builder: (sheetContext) => SafeArea(
-        child: SizedBox(
-          height: MediaQuery.sizeOf(context).height * .72,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  s.muscles,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+      builder: (sheetContext) {
+        var expanded = false;
+        return StatefulBuilder(
+          builder: (sheetContext, setSheet) => SafeArea(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * .78,
               ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    for (final item in groups)
-                      ListTile(
-                        leading: CircleAvatar(
-                          radius: 5,
-                          backgroundColor: Color(item.colorValue),
-                        ),
-                        title: Text(item.label),
-                        subtitle: primary.contains(item.id)
-                            ? Text(s.primary)
-                            : null,
-                        trailing: const Icon(Icons.chevron_right, size: 18),
-                        onTap: () => Navigator.pop(sheetContext, item),
-                      ),
                     Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: BodyText(s.teachingNote, color: FlareColors.muted),
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Eyebrow(
+                            s.phaseMoment(
+                              phase.source.toString().padLeft(2, '0'),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            phase.name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    for (final item in primary)
+                      row(sheetContext, item.$1, item.$2),
+                    if (others.isNotEmpty && !expanded)
+                      InkWell(
+                        onTap: () => setSheet(() => expanded = true),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
+                          child: Row(
+                            children: [
+                              for (final other in others.take(6))
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  margin: const EdgeInsets.only(right: 4),
+                                  decoration: BoxDecoration(
+                                    color: Color(other.colorValue),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  s.othersInvolved(
+                                    others
+                                            .take(2)
+                                            .map((g) => g.label)
+                                            .join('、') +
+                                        (others.length > 2
+                                            ? s.groupCount(others.length)
+                                            : ''),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: FlareColors.secondary,
+                                  ),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.expand_more_rounded,
+                                size: 20,
+                                color: FlareColors.dim,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (expanded) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Divider(height: 20),
+                      ),
+                      for (final other in others)
+                        row(sheetContext, other, null),
+                    ],
                   ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
     if (mounted && group != null) _openGroup(group);
   }
 
   Widget _settingsPage(BuildContext context) {
     final s = context.strings;
+    Widget segmented<T>(
+      List<(T, String)> items,
+      T selected,
+      ValueChanged<T> on,
+    ) => SegmentedButton<T>(
+      showSelectedIcon: false,
+      style: const ButtonStyle(visualDensity: VisualDensity.compact),
+      segments: [
+        for (final item in items)
+          ButtonSegment(value: item.$1, label: Text(item.$2)),
+      ],
+      selected: {selected},
+      onSelectionChanged: (values) => on(values.first),
+    );
+    Widget line(String label, Widget control) => Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 15))),
+          control,
+        ],
+      ),
+    );
     return Column(
       children: [
         PageHeader(title: s.settings, onBack: _back),
@@ -1053,70 +1177,57 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
-              SectionTitle(s.speedLabel),
-              SegmentedButton<double>(
-                segments: const [
-                  ButtonSegment(value: .25, label: Text('0.25×')),
-                  ButtonSegment(value: .5, label: Text('0.5×')),
-                  ButtonSegment(value: 1.0, label: Text('1×')),
-                ],
-                selected: {store.settings.speed},
-                onSelectionChanged: (values) {
-                  _scene.setSpeed(values.first);
-                  unawaited(store.updateSettings(speed: values.first));
-                },
-              ),
-              SectionTitle(s.qualityLabel),
-              Wrap(
-                spacing: 8,
+              SectionTitle(s.playbackGroup),
+              RowGroup(
                 children: [
-                  for (final item in [
-                    ('battery', s.battery),
-                    ('balanced', s.balanced),
-                    ('high', s.high),
-                  ])
-                    OutlinedButton(
-                      onPressed: () => _scene.setQuality(item.$1),
-                      child: Text(item.$2),
+                  line(
+                    s.speedLabel,
+                    segmented<double>(
+                      const [(.25, '0.25×'), (.5, '0.5×'), (1.0, '1×')],
+                      store.settings.speed,
+                      (value) {
+                        _scene.setSpeed(value);
+                        unawaited(store.updateSettings(speed: value));
+                      },
                     ),
+                  ),
+                  line(
+                    s.qualityLabel,
+                    segmented<String>(
+                      [
+                        ('battery', s.battery),
+                        ('balanced', s.balanced),
+                        ('high', s.high),
+                      ],
+                      _quality,
+                      (value) {
+                        setState(() => _quality = value);
+                        _scene.setQuality(value);
+                      },
+                    ),
+                  ),
                 ],
               ),
-              SectionTitle(s.aboutTitle),
-              BodyText(s.aboutBody),
-              SectionTitle(s.privacyTitle),
-              BodyText(s.privacyBody),
-              SectionTitle(s.creditsTitle),
-              BodyText(s.creditsBody),
-              const SizedBox(height: 20),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final backup = jsonEncode({
-                    'format': 'flare.local.backup.v1',
-                    'exportedAt': DateTime.now().toUtc().toIso8601String(),
-                    'safetyAccepted': store.safetyAccepted,
-                    'settings': store.settings.toJson(),
-                    'lastTime': store.lastTime,
-                    'todayIds': store.todayIds,
-                    'sessions': store.sessions
-                        .map((session) => session.toJson())
-                        .toList(),
-                    'completedLessonIds': store.completedLessonIds.toList(),
-                    'gateReports': store.gateReports,
-                    'assessmentGrades': store.assessmentGrades,
-                  });
-                  await Clipboard.setData(ClipboardData(text: backup));
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(s.backupCopied)));
-                },
-                icon: const Icon(Icons.copy),
-                label: Text(s.exportBackup),
-              ),
-              const SizedBox(height: 14),
-              OutlinedButton(
-                onPressed: () => showLicensePage(context: context),
-                child: Text(s.creditsTitle),
+              SectionTitle(s.otherGroup),
+              RowGroup(
+                children: [
+                  FlareRow(
+                    title: s.safety,
+                    subtitle: s.safetyHint,
+                    onTap: () => showSafetySheet(context),
+                  ),
+                  FlareRow(
+                    title: s.aboutFlare,
+                    subtitle: s.aboutHint,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => Scaffold(
+                          body: SafeArea(child: _aboutPage(context)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1124,4 +1235,72 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       ],
     );
   }
+
+  Widget _aboutPage(BuildContext outer) => Builder(
+    builder: (context) {
+      final s = context.strings;
+      return Column(
+        children: [
+          PageHeader(
+            title: s.aboutFlare,
+            onBack: () => Navigator.of(context).pop(),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              children: [
+                BodyText(s.aboutBody),
+                SectionTitle(s.teachingTitle),
+                BodyText(s.teachingNote, color: FlareColors.secondary),
+                const SizedBox(height: 6),
+                BodyText(s.contentDraftNote, color: FlareColors.secondary),
+                const SizedBox(height: 6),
+                BodyText(s.courseDraft, color: FlareColors.secondary),
+                SectionTitle(s.privacyTitle),
+                BodyText(s.privacyBody, color: FlareColors.secondary),
+                SectionTitle(s.creditsTitle),
+                BodyText(s.creditsBody, color: FlareColors.secondary),
+                const SizedBox(height: 22),
+                RowGroup(
+                  children: [
+                    FlareRow(
+                      title: s.exportBackup,
+                      leading: const Icon(Icons.copy_rounded, size: 18),
+                      onTap: () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: _backupJson()),
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(s.backupCopied)));
+                      },
+                    ),
+                    FlareRow(
+                      title: s.licenses,
+                      leading: const Icon(Icons.article_outlined, size: 18),
+                      onTap: () => showLicensePage(context: context),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+  String _backupJson() => jsonEncode({
+    'format': 'flare.local.backup.v1',
+    'exportedAt': DateTime.now().toUtc().toIso8601String(),
+    'safetyAccepted': store.safetyAccepted,
+    'settings': store.settings.toJson(),
+    'lastTime': store.lastTime,
+    'todayIds': store.todayIds,
+    'sessions': store.sessions.map((session) => session.toJson()).toList(),
+    'completedLessonIds': store.completedLessonIds.toList(),
+    'gateReports': store.gateReports,
+    'assessmentGrades': store.assessmentGrades,
+  });
 }
