@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS } from './phase.js';
 import { applyFunctionalSurface } from './muscle-material.js';
+import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 
 // Adapted from the package's mmRest.ts. The attribute is attached to the
 // original Snow vertices. It is a teaching map, not an anatomical registration.
@@ -90,12 +91,18 @@ export function createHitTester(player, skinned) {
 }
 
 export function createSurfaceSelection(skinned) {
-  const uniforms = MM.createMuscleUniforms(), originals = new Map(), mapped = new Map();
+  const uniforms = MM.createMuscleUniforms(), originals = new Map(), mapped = new Map(), visibility = new Map();
+  const hasStudySkin = skinned.some(mesh => mesh.userData.studySkin);
+  const hasStudyHead = skinned.some(mesh => mesh.userData.studyHead);
   uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
-  uniforms.mmBase.value.set('#818b99'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
+  uniforms.mmBase.value.set('#faf9f6'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
   for (const mesh of skinned) {
     originals.set(mesh, mesh.material);
-    const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.68, metalness: 0 });
+    visibility.set(mesh, mesh.visible);
+    // White glazed ceramic: dielectric reflections from the existing offline
+    // studio environment, with a soft glaze rather than a skin-like surface.
+    const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.30, metalness: 0,
+      clearcoat: 0.55, clearcoatRoughness: 0.22, ior: 1.46 });
     applyFunctionalSurface(material, uniforms, { posed: true }); mapped.set(mesh, material);
   }
   function show(groupId, items, detail = false) {
@@ -111,9 +118,19 @@ export function createSurfaceSelection(skinned) {
         dim: item.groupId === groupId ? 0 : item.level === 'primary' ? 0.45 : 0.7 });
     }
     MM.setMuscleSelection(uniforms, selection); MM.setMuscleFocus(uniforms, MM.resolveGroup(groupId)?.muscles ?? []);
-    for (const [mesh, material] of mapped) mesh.material = material;
+    for (const [mesh, material] of mapped) {
+      mesh.material = material;
+      if (hasStudySkin) {
+        if (mesh.userData.studySkin) mesh.visible = true;
+        else if (isCoveredActorPart(mesh)) mesh.visible = false;
+      }
+      if (hasStudyHead) {
+        if (mesh.userData.studyHead) mesh.visible = true;
+        else if (isOriginalActorHeadPart(mesh)) mesh.visible = false;
+      }
+    }
   }
-  function restore() { for (const [mesh, material] of originals) mesh.material = material; }
+  function restore() { for (const [mesh, material] of originals) { mesh.material = material; mesh.visible = visibility.get(mesh); } }
   return { show, restore,
     releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); for (const material of mapped.values()) material.dispose(); },
     dispose() { restore(); for (const material of mapped.values()) material.dispose(); } };

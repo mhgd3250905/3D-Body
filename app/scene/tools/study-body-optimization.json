@@ -1,0 +1,27 @@
+{
+  "source": "source/coach/flare-coach-study-body.glb",
+  "runtime": "public/coach/flare-coach-study-body.meshopt.glb.gz",
+  "sourceBytes": 3368980,
+  "meshoptBytes": 1527524,
+  "runtimeBytes": 1236931,
+  "sourceSha256": "74575fd0b87177ab20e04adea180d3ce6d83dd98cb0d7b874bc7181740aafd2c",
+  "runtimeSha256": "c65863d734dc7210b6787dfc2101af0fd70c85109a8ae5f1caa432151f60eb7a",
+  "license": "Snow Rig, Blender Foundation, CC BY 4.0; same source skin restored beneath clothing",
+  "bones": 20,
+  "quantization": false,
+  "simplification": false,
+  "reproduce": "Run tools/blender/build_coach_study.py in Blender, then npm run optimize:study and npm run build",
+  "head": {
+    "source": "source/coach/flare-coach-study-head.glb",
+    "runtime": "public/coach/flare-coach-study-head.meshopt.glb.gz",
+    "sourceBytes": 938188,
+    "meshoptBytes": 435768,
+    "runtimeBytes": 382447,
+    "sourceSha256": "cdab782f31c7bca353cba39b61e99ff1ce63d72236b722730f34a9dd8f5078b2",
+    "runtimeSha256": "36bb7379e29c8ef7cffe48b1f2f13dbcde1457237e203494e9e343561a02fbcb",
+    "license": "Snow Rig, Blender Foundation, CC BY 4.0; same mature head smoothed into a featureless mannequin",
+    "bones": 20,
+    "quantization": false,
+    "simplification": false
+  }
+}

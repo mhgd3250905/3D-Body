@@ -4,6 +4,7 @@ import { phaseAt, phaseTicks, GROUPS } from './phase.js';
 import { computeHotspots } from './hotspots.js';
 import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-mesh.js';
 import { createDetailView } from './detail.js';
+import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 import { createPhaseMap } from './phase-map.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
@@ -187,6 +188,8 @@ async function boot() {
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
       hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
       getPhaseMap: () => phaseMap?.getState(),
+      getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
+        .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
       getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
         frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
         pixelRatio: player.renderer.getPixelRatio(), framingMode: player.framingMode,

@@ -100,10 +100,11 @@ still sends explicit visibility changes for training/settings pages. Native
 hosts retain their lifecycle background handling.
 
 `muscle-material.js` adapts the imported functional shader without changing its
-source region definitions or hit testing. The action actor has a uniform white
-base and functional color fills, with no added muscle strokes, channels, edge
-darkening or deep hatching; original garment seams/geometry remain. The upright
-mannequin retains fine screen-bounded panel strokes and antialiased deep
+source region definitions or hit testing. The muscle-display action actor has
+a bright white glazed-ceramic base and functional color fills, with no added muscle strokes,
+channels, edge darkening or deep hatching. Its separate study skin and blank
+head replace the clothed body and facial parts only while a group is selected.
+The upright mannequin retains fine screen-bounded panel strokes and antialiased deep
 locations, with no extra normal relief. Diagram ink is composited after ACES
 and sRGB encoding so bright lighting and focus emission cannot wash it out.
 Stable adjacent-panel pairs use signed screen derivatives to keep fine curves
@@ -114,26 +115,98 @@ owner of navigation/native visibility, and Web document visibility belongs to
 the player. Colors are approximate functional
 teaching panels, not anatomical geometry or muscle activation measurements.
 
+## White muscle study derivative
+
+The study actor is a derivative of the same retained Snow source, not a new
+download or a replacement actor rig. It restores the source skin beneath the
+tee and shorts, smooths the navel and central front groin locally, and uses a
+soft featureless mannequin head. The head is sculpted from Snow's own face,
+bare skull, ears and neck, with voxel welding, smoothing and decimation in
+Blender. It is not assembled from spheres or other geometric body primitives.
+Neck surfaces and skin weights are prepared to join the existing body. Shoes
+and the prepared source hand/foot surfaces are retained. The normal clothed
+actor and its face remain intact for unselected viewing and playback.
+
+The selected study display uses a nonmetallic white glazed-ceramic physical
+material, with controlled surface roughness and a clearcoat reflection layer.
+Functional colors stay on the surface while the ceramic lighting reveals its
+shape. It reuses the existing offline `RoomEnvironment`; no downloaded HDR,
+texture or new lighting asset is added. This material applies only to the
+selected white actor, not to the normal clothed actor or the upright mannequin
+with its fine diagram lines. Blender source editing and runtime material
+presentation are separate steps; a source render alone is not a browser
+visual acceptance result.
+
+`study-body.js` attaches the body and head to the existing 20 named deform
+bones after checking the rest transforms. Each part keeps its own inverse bind
+matrices and bind matrix, including any glTF mesh coordinate offset; it does
+not borrow another mesh's inverse binds or start a second motion controller.
+The supplied v33 timing, 12 legacy modules and all 21 imported baseline files
+are preserved. The existing motion's spine helpers still apply to the study
+skin. `mapped-mesh.js` hides the original clipped skin, tee, shorts and facial
+parts only for selection, using authored node ancestry to cover multi-material
+glTF primitives; restore returns their materials and saved visibility.
+The upright CC0 mannequin and its fine panel lines are unchanged.
+
+Reproduce with the retained source and the existing clothed coach present.
+From the repository root, use the local Blender installation (adjust its path
+if needed):
+
+```powershell
+& 'E:\AII\toolchains\blender\4.5.3\blender-4.5.3-windows-x64\blender.exe' --background --factory-startup 'E:\AII-3D\3D-Body\assets\blender-studio-source\snow-rig-v4\Snow\snow_v4.2.blend' --python 'E:\AII-3D\3D-Body\tools\blender\build_coach_study.py'
+```
+
+The script uses `prepare_coach_hands.py`, `fix_coach_joints.py`,
+`refine_coach_ankles.py` and `sculpt_coach_study.py` beside it. It reads the
+original files without replacing them, saves the editable
+`assets/coach/flare-coach-study.blend`, and exports the full editing GLB plus
+separate body/head GLBs under `app/scene/source/coach/`. Actual Blender front,
+back and head renders and `build-report.json` are in
+`output/coach-study-20261008/` at the repository root. From `app/scene`, run:
+
+```powershell
+npm ci
+npm run optimize:study
+npm run build
+npm run verify
+```
+
+The runtime adds only `coach/flare-coach-study-body.meshopt.glb.gz` and
+`coach/flare-coach-study-head.meshopt.glb.gz` for the study derivative, alongside
+the normal actor and upright reference. The full editing GLB and `.blend`
+are not bundled. [Study optimization metadata](tools/study-body-optimization.json)
+records exact source/output sizes and hashes;
+[study attribution](public/coach/ATTRIBUTION-study.md) records the license and
+modifications. Meshopt/gzip compression preserves the completed Blender GLB's
+decoded attributes and triangles. This lossless runtime encoding is separate
+from the deliberate Blender sculpting, head remeshing and decimation: the
+study derivative is not claimed to retain the original Snow head topology.
+No model, plugin or paid generation service was purchased.
+
 ## Verification and provenance
 
 Run `npm run verify` for source/asset hashes, 181 poses sampled every 0.05 s
 against the supplied package's motion, clock parity against the original
 `BodyViewer` methods, 0.01 s knee/elbow measurements, phase support, and offline
-bundle checks. It also compares all 3,572,742 decoded geometry attribute values
-for both models and checks that triangle vertices, winding and face order are
-preserved. Original Snow licensing is in `public/coach/ATTRIBUTION-coach.md`;
+bundle checks. It compares decoded attributes of each source/runtime model pair
+and checks that triangle vertices, winding and face order are preserved; the
+normal actor and upright reference account for the original 3,572,742 values.
+It also checks study binding and restoration of garment/face visibility.
+Original Snow licensing is in `public/coach/ATTRIBUTION-coach.md`;
 CC0 mannequin provenance is in `public/anatomy/mannequin-reference.json` and
 `ATTRIBUTION.md`; Three.js, meshoptimizer and fflate licenses are in
-`public/licenses`. No generated replacement body, fee or mesh simplification
-is involved.
+`public/licenses`. The local study derivative's changes and licensing are
+documented separately above.
 
 `npm run optimize:model` uses pinned glTF Transform 4.2.1 and meshoptimizer
 0.22.0, adds EXT_meshopt_compression without running quantize/reorder/simplify,
 and applies gzip level 9. The package's original GLBs remain under `source`.
-The runtime ships only `coach/flare-coach.meshopt.glb.gz` (2,390,231 bytes) and
-`anatomy/mannequin-reference.meshopt.glb.gz` (863,833 bytes); the complete scene
-bundle is about 4.1 MB. `tools/model-optimization.json` records exact sizes,
-hashes and commands. The local fflate 0.8.3 decoder handles gzip before the
+The unchanged normal actor uses `coach/flare-coach.meshopt.glb.gz`
+(2,390,231 bytes) and the upright reference uses
+`anatomy/mannequin-reference.meshopt.glb.gz` (863,833 bytes).
+`tools/model-optimization.json` records their exact sizes, hashes and commands;
+the added study body/head are recorded in `tools/study-body-optimization.json`.
+The local fflate 0.8.3 decoder handles gzip before the
 bundled Three.js MeshoptDecoder reads the GLB, including older WebViews without
 DecompressionStream. Compression reduces package bytes; the original 332,206
 coach triangles and 74,274 mannequin triangles remain, so this does not claim

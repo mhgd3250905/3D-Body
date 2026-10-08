@@ -3,7 +3,7 @@
   "referenceAvailable": true,
   "copiedFiles": 21,
   "paritySamples": 181,
-  "jointMaxErrorMm": 0,
+  "jointMaxErrorMm": 0.0004968792904384847,
   "quaternionMaxErrorRadians": 5.960464477539063e-8,
   "kneeMinDegrees": 176.2338525905178,
   "plantedElbowMinDegrees": 178.28768463523568,
@@ -21,12 +21,17 @@
     1.4939153740163895,
     1.03013291977906
   ],
-  "vertices": 211060,
-  "triangles": 332206,
-  "losslessAttributeValues": 3572742,
-  "triangleCyclicRotations": 44792,
+  "vertices": 269542,
+  "triangles": 423902,
+  "losslessAttributeValues": 4893246,
+  "triangleCyclicRotations": 58948,
   "compressedCoachBytes": 2390231,
   "compressedMiniatureBytes": 863833,
-  "bundledFiles": 14,
-  "bundledBytes": 4113650
+  "studyBodyVertices": 41813,
+  "studyBodyTriangles": 58552,
+  "studyHeadVertices": 16669,
+  "studyHeadTriangles": 33144,
+  "garmentAndFaceVisibilityRestored": true,
+  "bundledFiles": 17,
+  "bundledBytes": 5737900
 }

@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createCoachMotion } from './legacy/coach-motion.js';
 import { computePacing, pacingRate, paceStep } from './pacing.js';
 import { loadOfflineGlb } from './assets.js';
+import { attachStudyBody, attachStudyHead } from './study-body.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -55,7 +56,6 @@ export class FlarePlayer {
       // GL bindings while loss is active; the arrays/materials remain reusable
       // and the restored renderer uploads them to its fresh resource cache.
       disposeTree(this.scene);
-      this.coach?.traverse(object => { object.skeleton?.boneTexture?.dispose(); });
       this.keyLight.shadow.map?.dispose(); this.keyLight.shadow.map = null;
       // Release the environment's old context handles while the context is
       // lost. After restore, build a new PMREM rather than deleting stale GPU
@@ -80,14 +80,17 @@ export class FlarePlayer {
 
   async load() {
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
-    const [gltf, rig] = await Promise.all([
+    const [gltf, rig, study, studyHead] = await Promise.all([
       loadOfflineGlb('./coach/flare-coach.meshopt.glb.gz'),
       fetch(new URL('./coach/coach-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
+      loadOfflineGlb('./coach/flare-coach-study-body.meshopt.glb.gz'),
+      loadOfflineGlb('./coach/flare-coach-study-head.meshopt.glb.gz'),
     ]);
-    if (this.disposed) { disposeTree(gltf.scene); return; }
-    this.coach = gltf.scene; this.motion = createCoachMotion({ model: this.coach, rigData: rig });
+    if (this.disposed) { disposeTree(gltf.scene); disposeTree(study.scene); disposeTree(studyHead.scene); return; }
+    this.coach = gltf.scene; attachStudyBody(this.coach, study.scene); attachStudyHead(this.coach, studyHead.scene);
+    this.motion = createCoachMotion({ model: this.coach, rigData: rig });
     this.coach.traverse(object => { if (object.isMesh) object.castShadow = this.renderer.shadowMap.enabled; });
     this.scene.add(this.coach); this.period = this.motion.getMetrics().period;
     for (let i = 0; i < 18; i++) {
@@ -212,12 +215,13 @@ function litFloor() {
 }
 
 function disposeTree(root) {
-  const geometries = new Set(), materials = new Set(), textures = new Set();
+  const geometries = new Set(), materials = new Set(), textures = new Set(), skeletons = new Set();
   root.traverse(object => {
     if (object.geometry) geometries.add(object.geometry);
+    if (object.skeleton) skeletons.add(object.skeleton);
     for (const material of object.material ? [].concat(object.material) : []) {
       materials.add(material); for (const value of Object.values(material)) if (value?.isTexture) textures.add(value);
     }
   });
-  for (const value of [...geometries, ...materials, ...textures]) value.dispose();
+  for (const value of [...geometries, ...materials, ...textures, ...skeletons]) value.dispose();
 }

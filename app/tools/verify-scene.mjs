@@ -9,7 +9,8 @@ import { GLTFLoader } from '../scene/node_modules/three/examples/jsm/loaders/GLT
 import { MeshoptDecoder } from '../scene/node_modules/three/examples/jsm/libs/meshopt_decoder.module.js';
 import { createCoachMotion } from '../scene/src/legacy/coach-motion.js';
 import { computePacing, pacingRate, paceStep } from '../scene/src/pacing.js';
-import { buildMmRest } from '../scene/src/mapped-mesh.js';
+import { buildMmRest, createSurfaceSelection } from '../scene/src/mapped-mesh.js';
+import { attachStudyBody, attachStudyHead, isCoveredActorPart, isOriginalActorHeadPart } from '../scene/src/study-body.js';
 import { phaseAt, phaseTicks } from '../scene/src/phase.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -63,6 +64,16 @@ compareGeometry(originalModel, model);
 const originalMini = await loadModel(path.join(sceneRoot, 'source/anatomy/mannequin-reference.glb'));
 const compressedMini = await loadModel(path.join(sceneRoot, 'public/anatomy/mannequin-reference.meshopt.glb.gz'));
 compareGeometry(originalMini, compressedMini);
+const originalStudy = await loadModel(path.join(sceneRoot, 'source/coach/flare-coach-study-body.glb'));
+const compressedStudy = await loadModel(path.join(sceneRoot, 'public/coach/flare-coach-study-body.meshopt.glb.gz'));
+compareGeometry(originalStudy, compressedStudy);
+const studyBody = attachStudyBody(model, compressedStudy);
+assert.equal(studyBody.visible, false, 'Study skin must not replace the default outfit');
+const originalHead = await loadModel(path.join(sceneRoot, 'source/coach/flare-coach-study-head.glb'));
+const compressedHead = await loadModel(path.join(sceneRoot, 'public/coach/flare-coach-study-head.meshopt.glb.gz'));
+compareGeometry(originalHead, compressedHead);
+const studyHead = attachStudyHead(model, compressedHead);
+assert.equal(studyHead.visible, false, 'Study head must not replace the default face');
 const rig = JSON.parse(fs.readFileSync(path.join(sceneRoot, 'public/coach/coach-rig.json'), 'utf8'));
 const motion = createCoachMotion({ model, rigData: rig });
 let referenceMotion, viewerPrototype, referenceModel;
@@ -94,6 +105,21 @@ for (const [name, p] of Object.entries(first)) assert.ok(new THREE.Vector3().fro
 motion.update(2); const beforeMap = motion.getMetrics();
 const meshes = buildMmRest(motion, model); assert.ok(meshes.length >= 12);
 assert.deepEqual(motion.getMetrics().joints, beforeMap.joints, 'Surface mapping changed the frozen pose');
+const selection = createSurfaceSelection(meshes);
+selection.show('glute-max', phaseAt(5).items, true);
+assert.equal(studyBody.visible, true, 'Muscle mode must show the restored full skin');
+assert.equal(studyHead.visible, true, 'Muscle mode must show the blank mannequin head');
+const coveredMeshes = meshes.filter(isCoveredActorPart);
+assert.ok(coveredMeshes.length >= 3, 'Expected the clipped body and both garments');
+for (const mesh of coveredMeshes) assert.equal(mesh.visible, false, 'Garment or clipped skin remained visible: ' + mesh.name);
+const faceMeshes = meshes.filter(isOriginalActorHeadPart);
+assert.ok(faceMeshes.length >= 8, 'Expected the original face, hair and eye/mouth parts');
+for (const mesh of faceMeshes) assert.equal(mesh.visible, false, 'Original facial feature remained visible: ' + mesh.name);
+selection.restore();
+assert.equal(studyBody.visible, false);
+assert.equal(studyHead.visible, false);
+for (const mesh of coveredMeshes) assert.equal(mesh.visible, true);
+for (const mesh of faceMeshes) assert.equal(mesh.visible, true);
 let vertices = 0, triangles = 0;
 for (const mesh of meshes) {
   vertices += mesh.geometry.attributes.position.count; triangles += mesh.geometry.index.count / 3;
@@ -155,6 +181,8 @@ walk(built); const bundledBytes = allBuiltFiles.reduce((sum, file) => sum + fs.s
 assert.ok(bundledBytes < 9 * 1024 * 1024, 'Scene unexpectedly loads a large atlas');
 assert.equal(hash(path.join(built, 'coach/flare-coach.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach.meshopt.glb.gz')));
 assert.equal(hash(path.join(built, 'anatomy/mannequin-reference.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/anatomy/mannequin-reference.meshopt.glb.gz')));
+assert.equal(hash(path.join(built, 'coach/flare-coach-study-body.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach-study-body.meshopt.glb.gz')));
+assert.equal(hash(path.join(built, 'coach/flare-coach-study-head.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach-study-head.meshopt.glb.gz')));
 assert.ok(!allBuiltFiles.some(file => /muscles\.bin|bones\.bin|fitness-reference|flare-coach\.glb$/.test(file)), 'Unneeded atlas or duplicate original body bundled');
 const optimization = JSON.parse(fs.readFileSync(path.join(sceneRoot, 'tools/model-optimization.json'), 'utf8'));
 assert.equal(hash(path.join(sceneRoot, optimization.source)), optimization.sourceSha256);
@@ -166,4 +194,6 @@ console.log(JSON.stringify({ status: 'passed', referenceAvailable: availableRefe
   freeElbowMinDegrees: freeElbowMin, limbMaxLengthErrorMeters: maxSegmentError, pacingMaxError: maxPacingError,
   substepClockMaxError: maxClockStepError, phaseWallSecondsAt1x: wallDurations, vertices, triangles,
   losslessAttributeValues, triangleCyclicRotations, compressedCoachBytes: optimization.runtimeBytes, compressedMiniatureBytes: optimization.miniature.runtimeBytes,
-  bundledFiles: allBuiltFiles.length, bundledBytes }, null, 2));
+  studyBodyVertices: studyBody.geometry.attributes.position.count, studyBodyTriangles: studyBody.geometry.index.count / 3,
+  studyHeadVertices: studyHead.geometry.attributes.position.count, studyHeadTriangles: studyHead.geometry.index.count / 3,
+  garmentAndFaceVisibilityRestored: true, bundledFiles: allBuiltFiles.length, bundledBytes }, null, 2));

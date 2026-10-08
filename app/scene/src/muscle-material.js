@@ -60,7 +60,7 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     replace('float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);\n          float hatch = smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);',
       'float stripe = (vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0;\n          float footprint = fwidth(stripe);\n          float hA = max(footprint, 0.02);\n          float hatch = mix(smoothstep(0.5 - hA, 0.5 + hA, abs(fract(stripe) - 0.5) * 2.0), 0.5, smoothstep(0.3, 0.8, footprint));');
     if (posed) {
-      // The action actor is a plain white study model with color fills only.
+      // The action actor is white glazed ceramic with color fills only.
       // Fine anatomical strokes belong exclusively to the supplied mannequin.
       replace('vec3 base = mix(mmSkin, mmBase * mix(0.985, 1.015, mmEdge), mmIsMuscle);', 'vec3 base = mmBase;');
       replace('float sh = mmShown * mmIsMuscle * mmPanelCoverage;', 'float sh = mmShown * mmIsMuscle;');
@@ -68,6 +68,9 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
       replace('lit *= (1.0 - 0.85 * mmDimV) * mmPanelCoverage;', 'lit *= 1.0 - 0.85 * mmDimV;');
       shader.fragmentShader = shader.fragmentShader.replace(/vec3 hot = mmMulti > 0\.5[\s\S]*?mix\(0\.96, 1\.0, mmEdge\);/, 'vec3 hot = pc;');
       replace('mix(mmBase, pc, 0.52) * mix(0.97, 1.0, mmEdge)', 'mix(mmBase, pc, 0.52)');
+      // Let the physical glaze produce the rim reflection. A blue emissive
+      // outline makes the white ceramic look like grey skin under a glow.
+      replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;', '');
     }
     if (thumbnail) {
       // r170 disables tone mapping and outputs linear RGB for ordinary render
@@ -87,6 +90,6 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
       replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmGroove, 1.0)).rgb;\n float coverage = clamp(mmGrooveV * mmIsMuscle * 0.68, 0.0, 1.0);\n gl_FragColor.rgb = mix(gl_FragColor.rgb, min(gl_FragColor.rgb, ink), coverage);\n}');
     }
   };
-  material.customProgramCacheKey = () => 'flare-functional-surface-v5-' + Number(posed) + '-' + Number(thumbnail);
+  material.customProgramCacheKey = () => 'flare-functional-surface-v6-' + Number(posed) + '-' + Number(thumbnail);
   material.needsUpdate = true;
 }

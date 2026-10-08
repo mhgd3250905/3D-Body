@@ -1,35 +1,39 @@
 # 本轮验证记录
 
-2026-10-08。本记录对应当前Flutter App、极简首页、用户确认的双模型详情，以及最新直立肌群细线/重复生命周期监听修正。包内历史测试和根目录旧网页的验证不代替本轮结果。视觉验收见仓库根 [design-qa.md](../../design-qa.md)。
+2026-10-08。本记录对应当前Flutter App、极简首页、双模型详情、直立肌群细线，以及最新同源中性人体与白色陶瓷白膜。包内历史测试和根目录旧网页的验证不代替本轮结果。视觉验收见仓库根 [design-qa.md](../../design-qa.md)。
 
 ## 本地检查与构建
 
 | 检查 | 实际结果与范围 |
 | --- | --- |
-| Flutter静态分析 | 移除SceneView重复生命周期监听后 `flutter analyze --no-pub` 无问题 |
-| Flutter测试 | 此前完整36项通过；本轮再次运行 `flutter test --no-pub --concurrency=1 test/platform/scene_controller_test.dart test/ui/flow_regressions_test.dart` 的14项全部通过，包含实际点击小卡片、同帧/选区/训练返回、320/390布局及AppShell生命周期。嵌入的真实平台场景没有在这些组件测试中创建，重复监听故障由本轮浏览器实测发现与复验 |
+| Flutter静态分析 | 上一轮移除SceneView重复生命周期监听后 `flutter analyze --no-pub` 无问题；本次仅改场景与资产，没有Dart修改，未重复运行 |
+| Flutter测试 | 此前完整36项通过；上一轮 `flutter test --no-pub --concurrency=1 test/platform/scene_controller_test.dart test/ui/flow_regressions_test.dart` 的14项全部通过，包含实际点击小卡片、同帧/选区/训练返回、320/390布局及AppShell生命周期。嵌入的真实平台场景没有在这些组件测试中创建；本次以实际浏览器验证新资产和陶瓷材质，没有重跑Dart测试 |
 | Flutter Web | `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功；最终构建包含相机随窗口尺寸重新取景修复，渲染资源随包提供 |
-| Android ARM64 | `flutter build apk --release --no-pub --target-platform android-arm64` 成功，最终文件35,942,970字节（Flutter输出34.3MB），20:55:28生成；采用本地开发签名，未作为商店发布包验收 |
-| 场景构建 | `app/scene` 的Vite构建成功，14个运行文件共4,113,650字节；当前入口JS `index-CUUmAU87.js`，无CDN依赖 |
-| 动作与模型校验 | `npm run verify` 成功，实际找到源参照；21个源文件哈希一致，181个姿态对照结果见下文 |
-| 默认循环构图 | `node tools/verify-framing.mjs` 成功；390×650场景、每0.05秒一个姿态，每8个蒙皮顶点取样，不是遍历每个顶点 |
-| 原网页 | 根目录 `npm run build` 成功并生成 `dist`；原网页代码与原始动作导出保留 |
+| Android ARM64 | `flutter build apk --release --no-pub --target-platform android-arm64` 成功，最终文件37,565,629字节（Flutter输出35.8MB），22:12:10 +08:00生成；采用本地开发签名，未作为商店发布包验收 |
+| 场景构建 | `app/scene` 的Vite构建成功，17个运行文件共5,737,900字节；当前入口JS `index-7hPZrJXM.js`，无CDN依赖，包含两块派生皮肤和许可说明 |
+| 动作与模型校验 | 最终 `node tools/verify-scene.mjs` 成功，实际找到源参照；21个源文件哈希一致，181个姿态对照，派生身体/头部无损压缩以及衣服/原面孔恢复检查通过 |
+| 默认循环构图 | 上一轮 `node tools/verify-framing.mjs` 成功；该脚本只加载原coach，390×650场景、每0.05秒一个姿态，每8个蒙皮顶点取样。本次陶瓷白膜另外在实际浏览器检查阶段11和14，不把旧原模型抽样当成派生皮肤全顶点检查 |
+| 原网页 | 上一轮根目录 `npm run build` 成功并生成 `dist`；本次未修改原网页，未重复构建，原始动作导出保留 |
 
-最终安卓试用包：`app/build/app/outputs/flutter-apk/app-release.apk`。SHA-256：`c95d56ff86e6445cecceb307571be42ba353034383b5da916b3fe156e1fa6881`。此前的 `app-debug.apk` 是模拟器检查产物，不是当前交付包。
+最终安卓试用包：`app/build/app/outputs/flutter-apk/app-release.apk`。SHA-256：`3187a0c8e323c11ca8d7448b15c04603ffdac8374781f1a358b5b185974ba4d2`。此前的 `app-debug.apk` 是模拟器检查产物，不是当前交付包。
 
 第一次最终Web构建曾因PowerShell宿主内存异常中止；改用系统Windows PowerShell重新执行后成功。先前Wasm干运行已成功，本次最终构建跳过重复干运行。最终构建成功是包生成证据，不代表原生3D或真机性能已通过。
 
 ## 动作和资产
 
-直接生成证据为 `app/scene/tools/evidence/model-verify.json`：`referenceAvailable: true`，每0.05秒与包内v33原版对照，共181个姿态，关节最大差0 mm，四元数最大角差约5.96×10⁻⁸ rad，播放节奏与子步骤时钟差均为0。直腿最小176.234°，支撑肘最小178.288°，自由肘最小179.926°，循环骨长最大浮点差约3.89×10⁻¹⁶ m。
+直接生成证据为 `app/scene/tools/evidence/model-verify.json`：`referenceAvailable: true`，每0.05秒与包内v33原版对照，共181个姿态，关节最大差约0.000497 mm，四元数最大角差约5.96×10⁻⁸ rad，播放节奏与子步骤时钟差均为0。直腿最小176.234°，支撑肘最小178.288°，自由肘最小179.926°，循环骨长最大浮点差约3.89×10⁻¹⁶ m。
 
-无损检查对照了3,572,742个模型属性值，保留顶点、蒙皮、骨骼与三角形绕序；44,792个三角形仅有等价循环索引旋转。Snow从7,508,016字节压缩为2,390,231字节，人台从1,338,688字节压缩为863,833字节。未减面或量化，不能据此宣称移动端帧率改善。源/输出哈希及复现命令见 `app/scene/tools/model-optimization.json`。
+最终无损检查对照原Snow、人台、派生身体与空白头，共4,893,246个模型属性值；58,948个三角形仅有等价循环索引旋转。原Snow从7,508,016字节压缩为2,390,231字节，人台从1,338,688字节压缩为863,833字节。新身体为41,813顶点/58,552三角形，GLB 3,368,980字节压缩为1,236,931字节；空白头为16,669顶点/33,144三角形，GLB 938,188字节压缩为382,447字节。两块皮肤各有原20骨并使用各自逆绑定矩阵。原Snow21份基线保持，身体局部雕修和头部重网格属于用户授权的派生制作；之后的运行时压缩未再减面或量化。不能据此宣称移动端帧率改善。哈希和命令见 `model-optimization.json` 与 `study-body-optimization.json`。
 
 默认固定机位的投影抽样边界为x=7.410–369.330、y=54.827–357.334，落在390×650场景内。该结果见 `framing-verify.json`；它说明已检查的181个姿态和每8顶点抽样不越界。实际浏览器同时确认了全循环和小屏人物构图。机位保持固定，用户开始旋转后保留手动镜头；默认状态窗口缩放会重新取景。
 
 `browser-check.json` 保留的是早期390×380宿主检查，`home-contract-check.json` 保留的是早期接口检查；它们不是最终首页截图或全部M2人工命中表。
 
 ## 浏览器直接验证
+
+最新为 `output/design-qa/20261008/garment-free-study/` 的陶瓷白膜。代理直接在最终Web构建检查无五官面孔、肚脐移除、局部中性裆部、衣服隐藏、颈胸连接、白色釉层与可读高亮。阶段11/2.0秒/腹斜肌的正背视角、真实画布拖动及320×700交换两次均保持渲染和同帧；播放恢复所有原服装、眼口、眉、头发并隐藏新皮肤。阶段14/5.0秒的另一侧支撑也实际检查。最终0 error/0 warn，证据为 `browser-check-final.json` 的 `final-ceramic-*`。
+
+`compare-ceramic-full.png`、`compare-ceramic-model.png`、`compare-ceramic-detail.png` 和 `compare-neutral-detail.png` 均由实际同输入截图组成并打开检查。最新白膜底色是非金属暖白物理材质，使用现有离线RoomEnvironment和柔和釉层；不会改变直立人体细线。完整无五官头可见于 `final-ceramic-home-window.png`。以下保留较早细线和交互检查的事实，最新白膜外观以上述证据为准。
 
 最新细线证据为 `output/design-qa/20261008/fine-muscle-lines/`。正面优化前后均在390×844、密度1截图/密度2场景、阶段11/2.0秒/三角肌右侧/同一相机捕获；完整和局部对照已实际打开。实际检查正面、背面、画布滚轮放大、首页正背小图、白膜小卡片及320×700模型交换。线条改为光照与显示编码后的细灰描边，保持原分区、法线与网格；跨边界梯度连续性修正没有增加新区域。没有新增顶部控件。
 
