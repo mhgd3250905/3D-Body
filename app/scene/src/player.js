@@ -175,22 +175,43 @@ export class FlarePlayer {
     this.controls.target.copy(target); this.camera.position.copy(position);
     this.controls.update(); this.dirty = true;
   }
-  /** Ease the camera to a view instead of cutting to it (detail open/close). */
-  glideTo(position, target, ms = 640) {
+  /** Ease the camera to a view instead of cutting to it (detail open/close).
+   * The camera orbits the subject: the target moves in a straight line, the
+   * offset from it travels on a sphere (shortest azimuth, never over the top)
+   * and the distance eases geometrically. A straight position lerp would cut
+   * through or past the body when the two views face opposite sides, which
+   * reads as a sudden zoom-in and a flip. Longer turns get a little more time. */
+  glideTo(position, target, ms = null) {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!this.running || reduce || ms <= 0) { this.setCameraView(position, target); return; }
+    if (!this.running || reduce || ms === 0) { this.setCameraView(position, target); return; }
     const damping = this.controls.enableDamping;
     this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
-    this.glide = { fromP: this.camera.position.clone(), fromT: this.controls.target.clone(),
-      toP: position.clone(), toT: target.clone(), start: performance.now(), ms };
+    const fromT = this.controls.target.clone(), toT = target.clone();
+    const from = new THREE.Spherical().setFromVector3(this.camera.position.clone().sub(fromT));
+    const to = new THREE.Spherical().setFromVector3(position.clone().sub(toT));
+    let dTheta = to.theta - from.theta;
+    dTheta = Math.atan2(Math.sin(dTheta), Math.cos(dTheta));
+    const turn = Math.abs(dTheta) + Math.abs(to.phi - from.phi);
+    const duration = ms ?? Math.round(Math.min(900, 560 + turn * 110));
+    this.glide = { fromP: this.camera.position.clone(), fromT, toP: position.clone(), toT,
+      from, dTheta, to, start: performance.now(), ms: duration };
     this.dirty = true;
   }
   stepGlide(now) {
     const g = this.glide; if (!g) return;
-    const k = Math.min(1, Math.max(0, (now - g.start) / g.ms));
+    const raw = (now - g.start) / g.ms, k = raw >= 1 - 1e-9 ? 1 : Math.max(0, raw);
+    // Ease-in-out cubic: a soft start, a settled landing.
     const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-    this.camera.position.lerpVectors(g.fromP, g.toP, e); this.controls.target.lerpVectors(g.fromT, g.toT, e);
-    if (k >= 1) this.glide = null;
+    if (k >= 1) {
+      this.controls.target.copy(g.toT); this.camera.position.copy(g.toP); this.glide = null;
+    } else {
+      this.controls.target.lerpVectors(g.fromT, g.toT, e);
+      const radius = Math.max(1e-4, g.from.radius) * Math.pow(Math.max(1e-4, g.to.radius) / Math.max(1e-4, g.from.radius), e);
+      const phi = THREE.MathUtils.clamp(g.from.phi + (g.to.phi - g.from.phi) * e, 0.05, Math.PI - 0.05);
+      const offset = new THREE.Vector3().setFromSpherical(new THREE.Spherical(radius, phi, g.from.theta + g.dTheta * e));
+      this.camera.position.copy(this.controls.target).add(offset);
+    }
+    this.camera.lookAt(this.controls.target);
     this.dirty = true;
   }
   fitBounds(box, direction, padding = 1, glide = false) {

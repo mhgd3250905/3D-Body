@@ -523,6 +523,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get together => '一起发力';
 
   @override
+  String get sceneNone => '无器械';
+
+  @override
+  String get sceneHome => '居家';
+
+  @override
+  String get sceneGym => '健身房';
+
+  @override
+  String get sceneNoneHint => '徒手，随时随地';
+
+  @override
+  String get sceneHomeHint => '弹力带、哑铃等家用器械';
+
+  @override
+  String get sceneGymHint => '器械和自由重量';
+
+  @override
+  String get chooseScene => '选一个训练场景';
+
+  @override
   String trainGroup(String name) {
     return '练$name';
   }

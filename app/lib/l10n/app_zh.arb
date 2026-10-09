@@ -214,6 +214,13 @@
   "primaryShort": "主力",
   "secondaryShort": "协同",
   "together": "一起发力",
+  "sceneNone": "无器械",
+  "sceneHome": "居家",
+  "sceneGym": "健身房",
+  "sceneNoneHint": "徒手，随时随地",
+  "sceneHomeHint": "弹力带、哑铃等家用器械",
+  "sceneGymHint": "器械和自由重量",
+  "chooseScene": "选一个训练场景",
   "trainGroup": "练{name}",
   "@trainGroup": {
     "placeholders": {

@@ -6,9 +6,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/muscle_knowledge.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
+import 'loader_mark.dart';
 import 'motion_controls.dart';
 import 'motion.dart';
 import 'timer_page.dart';
@@ -174,6 +176,84 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _scene.pause();
     setState(() => _drill = drill);
     _syncSceneVisibility();
+  }
+
+  /// Training opens on a scene choice: no equipment, at home, or at the gym,
+  /// each one this group's drill for that tier. The tier used last (from
+  /// settings) is marked so the usual pick is one tap.
+  Future<void> _chooseDrillScene(MuscleGroup group) async {
+    if (_sheetOpen) return;
+    _sheetOpen = true;
+    try {
+      final s = context.strings;
+      final usual = store.settings.tier;
+      final options =
+          [
+                ('A', s.sceneNone, s.sceneNoneHint),
+                ('B', s.sceneHome, s.sceneHomeHint),
+                ('C', s.sceneGym, s.sceneGymHint),
+              ]
+              .map(
+                (o) => (o, catalog.drillsFor(group.id, tier: o.$1).firstOrNull),
+              )
+              .where((e) => e.$2 != null)
+              .toList();
+      if (options.isEmpty) return;
+      final picked = await showModalBottomSheet<Drill>(
+        context: context,
+        sheetAnimationStyle: FlareMotion.sheetStyle(context),
+        isScrollControlled: true,
+        builder: (sheetContext) => SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Eyebrow(s.chooseScene),
+                      const SizedBox(height: 4),
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          s.trainGroup(group.label),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                for (final (i, entry) in options.indexed)
+                  FadeSlideIn(
+                    delay: Duration(milliseconds: 40 * i),
+                    offset: 8,
+                    child: _SceneOption(
+                      key: ValueKey('scene-${entry.$1.$1}'),
+                      label: entry.$1.$2,
+                      hint: entry.$1.$3,
+                      drill: entry.$2!,
+                      usual: entry.$1.$1 == usual,
+                      onTap: () {
+                        FlareHaptics.selection();
+                        Navigator.pop(sheetContext, entry.$2);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (picked != null && mounted) _openDrill(picked);
+    } finally {
+      _sheetOpen = false;
+    }
   }
 
   void _openLesson(Lesson lesson) {
@@ -707,9 +787,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         .firstOrNull;
     final together = catalog.synergists(phase, detail.id, limit: 99);
     final shown = together.take(2).toList();
-    final drill =
-        catalog.drillsFor(detail.id, tier: store.settings.tier).firstOrNull ??
-        catalog.drillsFor(detail.id).firstOrNull;
+    final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
       flex: 7,
@@ -811,6 +889,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ],
                       ),
                     ],
+                    if (muscleKnowledge[detail.id] case final about?) ...[
+                      const SizedBox(height: 18),
+                      Text(
+                        about,
+                        key: const ValueKey('muscle-knowledge'),
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.65,
+                          color: FlareColors.dim,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -827,7 +917,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               key: const ValueKey('train-group'),
               label: s.trainGroup(detail.label),
               arrow: true,
-              onPressed: drill == null ? null : () => _openDrill(drill),
+              onPressed: hasDrills ? () => _chooseDrillScene(detail) : null,
             ),
           ),
         ],
@@ -1466,68 +1556,37 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   });
 }
 
-/// Placeholder while the 3D scene boots: the dressed hero render, faint and
-/// slowly breathing, so the stage never sits empty and the real figure
-/// arrives as a cross-fade rather than a pop.
-class SceneLoading extends StatefulWidget {
+/// Placeholder while the 3D scene boots: the vector loading mark (the
+/// icon's athlete in a flare inside a turning orbit) with one quiet line.
+/// The scene's own canvas loader draws the same mark in the same place, so
+/// the hand-over to the WebView and then to the real figure is a dissolve.
+class SceneLoading extends StatelessWidget {
   const SceneLoading({super.key, required this.label});
   final String label;
-  @override
-  State<SceneLoading> createState() => _SceneLoadingState();
-}
-
-class _SceneLoadingState extends State<SceneLoading>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _breath = AnimationController(
-    vsync: this,
-    duration: FlareMotion.breath,
-  );
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (FlareMotion.reduced(context)) {
-      _breath.value = .5;
-    } else if (!_breath.isAnimating) {
-      _breath.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _breath.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: widget.label,
+    label: label,
     liveRegion: true,
-    child: Column(
-      children: [
-        Expanded(
-          child: AnimatedBuilder(
-            animation: _breath,
-            builder: (context, child) => Opacity(
-              opacity: .12 + .1 * FlareMotion.dissolve.transform(_breath.value),
-              child: child,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(48, 24, 48, 8),
-              // The real, dressed Thomas render, never a blank mannequin.
-              child: Image.asset(
-                'assets/brand/hero-thomas.webp',
-                fit: BoxFit.contain,
-                excludeFromSemantics: true,
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const ExcludeSemantics(child: FlareLoaderMark()),
+          const SizedBox(height: 10),
+          ExcludeSemantics(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.5,
+                letterSpacing: .6,
+                color: FlareColors.dim,
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 28),
-          child: Eyebrow(widget.label),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -1623,6 +1682,111 @@ class _SceneError extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+/// One scene in the training choice: the drill's picture, the scene in a
+/// word, what it needs, and the drill it opens.
+class _SceneOption extends StatelessWidget {
+  const _SceneOption({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.drill,
+    required this.usual,
+    required this.onTap,
+  });
+  final String label;
+  final String hint;
+  final Drill drill;
+  final bool usual;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Semantics(
+      button: true,
+      label: '$label，${drill.name}，${drill.prescription}',
+      onTap: onTap,
+      excludeSemantics: true,
+      child: Pressable(
+        scale: .98,
+        child: Material(
+          color: FlareColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: usual
+                  ? FlareColors.accent.withValues(alpha: .55)
+                  : Colors.transparent,
+              width: 1.2,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: ColoredBox(
+                      color: FlareColors.raised,
+                      child: Image.asset(
+                        drillArt(drill.thumbnailAsset),
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        frameBuilder: (context, child, frame, sync) =>
+                            fadeInFrame(context, child, frame, sync),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          hint,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: FlareColors.dim,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${drill.name} · ${drill.prescription}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: FlareColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     ),
   );

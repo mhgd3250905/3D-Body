@@ -14,6 +14,10 @@ const hotspotLayer = document.querySelector('#hotspots'), detailNote = document.
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
 let pending = [], pointerDown = null, lastState = 0, hotspotButtons = new Map();
 
+// Android WebView ignores user-select on long-press in some builds: stop the
+// selection and the system callout at the source as well.
+for (const type of ['contextmenu', 'selectstart', 'dragstart']) document.addEventListener(type, event => event.preventDefault());
+
 function post(event) {
   const message = { source: 'flare-scene', ...event };
   if (window.FlareHost?.postMessage) window.FlareHost.postMessage(JSON.stringify(message));
@@ -35,7 +39,7 @@ function emitState(force = false) {
   lastState = now; post(state());
 }
 function showError(code, recoverable = false) {
-  errorCode = code; status.hidden = false; status.dataset.error = 'true';
+  errorCode = code; status.classList.remove('leaving'); status.hidden = false; status.dataset.error = 'true';
   statusText.textContent = recoverable ? '三维画面暂时中断，正在等待图形恢复。也可重新载入。' : '三维动作暂时无法载入，请重新载入。';
   retry.hidden = false; post({ type: 'error', code, errorCode: code }); emitState(true);
 }
@@ -66,7 +70,7 @@ function closeDetail() {
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
 function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转' : '固定视角';
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转 · 双指缩放' : '拖动旋转';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
@@ -188,7 +192,10 @@ async function boot() {
         : hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items);
       if (hit) selectFromTap(hit.groupId);
     });
-    ready = true; status.hidden = true; player.dirty = true;
+    ready = true; player.dirty = true;
+    // The loading mark dissolves into the first frame instead of cutting.
+    status.classList.add('leaving');
+    setTimeout(() => { if (ready && !errorCode) status.hidden = true; status.classList.remove('leaving'); }, 340);
     const geometryStats = skinned.reduce((stats, mesh) => ({ meshes: stats.meshes + 1, vertices: stats.vertices + mesh.geometry.attributes.position.count,
       triangles: stats.triangles + (mesh.geometry.index?.count ?? mesh.geometry.attributes.position.count) / 3 }), { meshes: 0, vertices: 0, triangles: 0 });
     // Diagnostics return data copies, not scene objects. The playback bridge is
