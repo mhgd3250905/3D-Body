@@ -14,6 +14,10 @@ const hotspotLayer = document.querySelector('#hotspots'), detailNote = document.
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
 let pending = [], pointerDown = null, lastState = 0, hotspotButtons = new Map();
 
+// Android WebView ignores user-select on long-press in some builds: stop the
+// selection and the system callout at the source as well.
+for (const type of ['contextmenu', 'selectstart', 'dragstart']) document.addEventListener(type, event => event.preventDefault());
+
 function post(event) {
   const message = { source: 'flare-scene', ...event };
   if (window.FlareHost?.postMessage) window.FlareHost.postMessage(JSON.stringify(message));
@@ -66,7 +70,7 @@ function closeDetail() {
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
 function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转' : '固定视角';
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转 · 双指缩放' : '拖动旋转';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;

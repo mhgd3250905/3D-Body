@@ -1,5 +1,10 @@
 :root { color-scheme: normal; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 * { box-sizing: border-box; }
+/* The stage is an app surface, not a page: no text selection, no long-press
+   callout ("复制/全选/网页搜索"), no grey/blue tap flash, no drag ghost. */
+html, body, * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; -webkit-user-drag: none; }
+button { outline: none; }
+button:focus:not(:focus-visible) { outline: none; }
 html, body, #stage { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 body { background: transparent; }
 #stage { position: relative; background: transparent; }

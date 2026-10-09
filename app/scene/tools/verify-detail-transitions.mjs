@@ -71,7 +71,9 @@ function interruptedRoundTrip(player, detail, label) {
   detail.setModel('motion', {});
   expectView(player, expected, label);
   assert.equal(player.glide, null, 'return installs the final locked camera');
-  assert.equal(player.controls.enabled, false, 'athlete camera remains locked');
+  assert.equal(player.controls.enabled, true, 'athlete view can be turned');
+  assert.equal(player.controls.enableZoom, false, 'athlete view never zooms');
+  assert.equal(player.controls.enablePan, false, 'athlete view never pans');
   assert.equal(player.time, time, 'model round trip preserves the animation frame');
 }
 
@@ -125,4 +127,27 @@ function interruptedRoundTrip(player, detail, label) {
   expectView(player, { position: homePosition, target: homeTarget }, 'reopening during return home');
 }
 
-console.log('Detail transitions verified: interrupted opening/reset/group changes, saved views, same frame, and home return.');
+{
+  // Opposite-side views: the glide orbits around the subject instead of
+  // cutting past it (no sudden zoom-in, no flip over the top).
+  const { player } = harness();
+  const target = new THREE.Vector3(0, .5, 0);
+  player.setCameraView(new THREE.Vector3(-4, 1.2, -.4), target);
+  const toP = new THREE.Vector3(3.2, 1.6, .6);
+  player.glideTo(toP, target);
+  const fromR = 4.0, toR = toP.clone().sub(target).length();
+  let minR = Infinity, maxStep = 0, last = player.camera.position.clone();
+  for (let i = 1; i <= 120; i++) {
+    player.stepGlide(player.glide ? player.glide.start + player.glide.ms * i / 120 : 0);
+    const offset = player.camera.position.clone().sub(player.controls.target);
+    minR = Math.min(minR, offset.length()); maxStep = Math.max(maxStep, player.camera.position.distanceTo(last));
+    assert.ok(offset.y > 0, 'glide never dips under the subject');
+    last = player.camera.position.clone();
+    if (!player.glide) break;
+  }
+  assert.ok(minR > Math.min(fromR, toR) * 0.97, `glide keeps its distance (min ${minR.toFixed(3)})`);
+  assert.ok(maxStep < 0.35, `glide has no jumps (max step ${maxStep.toFixed(3)})`);
+  assert.ok(player.camera.position.distanceTo(toP) < 1e-9, 'glide lands exactly');
+}
+
+console.log('Detail transitions verified: orbiting glide (no cut-through), interrupted opening/reset/group changes, saved views, same frame, and home return.');

@@ -43,10 +43,12 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     player.fitBounds(box, dir, model === 'muscles' ? 1.08 : 1.04, glide); player.autoFrame = false;
   }
   function lockCamera() {
-    // The athlete is shown only from a curated angle: no orbit, no zoom.
-    // The upright reference keeps free rotation for anatomy study.
-    const locked = !!selected && model === 'motion';
-    player.controls.enabled = !locked; player.controls.enableZoom = !locked;
+    // The athlete opens on a curated angle and may be turned in any
+    // direction, but never zoomed or panned: the whole body stays framed.
+    // The upright reference keeps free rotation and zoom for anatomy study.
+    const athlete = !!selected && model === 'motion';
+    player.controls.enabled = true; player.controls.enableRotate = true;
+    player.controls.enableZoom = !athlete; player.controls.enablePan = false;
   }
   function fadeIn() {
     // Swapping athlete <-> reference model dissolves in instead of cutting.

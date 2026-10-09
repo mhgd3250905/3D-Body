@@ -8,9 +8,9 @@
 | 4 | 肌群详情·托马斯动作视图 | 设计变更（用户已确认）：动作视图允许触摸各方向旋转，禁止缩放远近；直立人台不变 | detail.js lockCamera 改为 enableRotate=true、enableZoom=false、enablePan=false，“固定视角”标签改文案；同步改 verify-scene 断言与文档显示契约 | 待做 |
 | 5 | 肌群详情·训练入口 | 设计变更（用户确认）：点“练XX”后先选场景：无器械 / 居家 / 健身房，再进入对应训练动作页 | drills.json 每个肌群已有 A 徒手 / B 家用器械 / C 健身房 三档（各 17 条），新增场景选择弹层或页，接入 FlareStage `_route()` | 待做 |
 | 6 | 肌群详情·标题下空白 | 设计变更（用户建议）：标题下方用小字讲该肌群在托马斯中的作用与基础知识 | 现有 group.role 一句；为 17 个肌群补 2–3 句知识文案（作用、哪一相最吃力、常见薄弱表现），不写肌电百分比 | 待做 |
+| 7 | 启动加载 | 设计变更（用户建议）：打开 App 时 3D 模型加载的转圈太粗糙，改为 canvas 矢量绘制的 logo 加载动画 | 场景 index.html 内联 canvas 动画（首帧即显示，不等 bundle），Flutter 侧占位同款 | 待做 |
 
 截图：device-feedback-2026-10-09/
-| 7 | 启动加载 | 设计变更（用户建议）：打开 App 时 3D 模型加载的转圈太粗糙，改为 canvas 矢量绘制的 logo 加载动画 | 场景 index.html 内联 canvas 动画（首帧即显示，不等 bundle），Flutter 侧占位同款 | 待做 |
 
 ## 计划（按步推进，每步一个提交 + tag + bundle 备份）
 1. S1 WebView 触控卫生：#1 #2（style.css 全局 user-select/touch-callout/tap-highlight/outline）
