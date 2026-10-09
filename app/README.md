@@ -1,10 +1,12 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-09 PR #6已审核修复并合并：按用户真机反馈，详情动作视图改为允许旋转、禁止缩放/平移，覆盖此前固定机位要求；三场景训练选择、肌群知识及矢量加载已接入并补充审核修复。主目录、离线Web与开发签名试用APK已同步为PR6版；证据见 docs/pr6-audit-2026-10-09.md。
+2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21、当前试用APK/本地Web见 [版本台账](docs/version-ledger.md)，软件/浏览器证据及真机限制见 [PR7审核](docs/pr7-audit-2026-10-09.md)。
 
-历史：2026-10-09 PR #5交互动效及三项审核修复已合并；随后合并PR #3网页肌群界面，App仍播放原v41烘焙动作。Web计时的32位移位上限问题已修复，真实浏览器倒数可进入工作/换侧；长期前后台及真机验收仍待完成。该阶段试用APK为根项目 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`，44,046,265字节；当前最新 `output/releases/Flare-v41-PR6-20261009-arm64.apk`，44,114,581字节，开发签名；已上传Play的AAB保持原文件。详见 [本轮验证](docs/verification.md)。
+历史：2026-10-09 PR #6已审核修复并合并：按用户真机反馈，详情动作视图改为允许旋转、禁止缩放/平移，覆盖此前固定机位要求；三场景训练选择、肌群知识及矢量加载已接入并补充审核修复。当时主目录、离线Web与开发签名试用APK已同步为PR6版；证据见 docs/pr6-audit-2026-10-09.md。
 
-2026-10-09此前PR #4阶段已合入51套1024/512浅色训练图，原深色图保留。该阶段历史APK用具名 `output/releases/Flare-v41-light-20261009-arm64.apk` 定位；通用 `build/app/outputs/flutter-apk/app-release.apk` 现已更新为PR6版。同日Play接入将版本升为 `1.0.0+1`（提交 `92e459f`），上传密钥签名AAB已上传封闭测试轨道并送审；本轮未替换。历史包及当时发布观察见 [版本台账](docs/version-ledger.md)，证据见 [verification.md](docs/verification.md)。
+历史：2026-10-09 PR #5交互动效及三项审核修复已合并；随后合并PR #3网页肌群界面，App仍播放原v41烘焙动作。Web计时的32位移位上限问题已修复，真实浏览器倒数可进入工作/换侧；长期前后台及真机验收仍待完成。该阶段试用APK为根项目 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`，44,046,265字节；后续PR6包 `output/releases/Flare-v41-PR6-20261009-arm64.apk`，44,114,581字节，开发签名，保留历史。当前包身份归入 [版本台账](docs/version-ledger.md)；已上传Play的AAB保持原文件。详见 [本轮验证](docs/verification.md)。
+
+2026-10-09此前PR #4阶段已合入51套1024/512浅色训练图，原深色图保留。该阶段历史APK用具名 `output/releases/Flare-v41-light-20261009-arm64.apk` 定位；通用 `build/app/outputs/flutter-apk/app-release.apk` 用于当前本地交付，内容以版本台账及哈希判定。同日Play接入将版本升为 `1.0.0+1`（提交 `92e459f`），上传密钥签名AAB已上传封闭测试轨道并送审；本轮未替换。历史包及当时发布观察见 [版本台账](docs/version-ledger.md)，证据见 [verification.md](docs/verification.md)。
 
 当前默认为与网页同步的 **v41 烘焙动作**，原服装/面孔、PR #2精简界面和深浅主题保留。当前合约与复现入口为 [motion-v41.md](docs/motion-v41.md)，版本/交付与发布观察归入 [版本管理台账](docs/version-ledger.md)，实施及待验收项归入 [实施路线](docs/development-roadmap.md)。v38和米白无衣模特记录保留为历史。
 
