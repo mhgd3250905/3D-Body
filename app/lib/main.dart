@@ -73,6 +73,8 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     // Custom tokens switch with the theme at once; a colour lerp would mix
     // the two palettes for a few frames.
     themeAnimationDuration: Duration.zero,
+    // One scroll feel on every platform: iOS rubber-band edges.
+    scrollBehavior: const FlareScrollBehavior(),
     builder: (context, child) {
       FlareColors.use(Theme.of(context).brightness);
       return child!;

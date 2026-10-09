@@ -325,3 +325,18 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
     listTileTheme: ListTileThemeData(textColor: p.text, iconColor: p.text),
   );
 }
+
+/// iOS-style scrolling everywhere: bouncing edges instead of Android's glow,
+/// so lists feel the same on every phone.
+class FlareScrollBehavior extends MaterialScrollBehavior {
+  const FlareScrollBehavior();
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) => child;
+}

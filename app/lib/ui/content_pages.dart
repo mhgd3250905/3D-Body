@@ -403,139 +403,191 @@ class _LibraryPageState extends State<LibraryPage> {
           ),
         ),
         Expanded(
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList.list(
-                  children: [
-                    if (_searching) ...[
-                      TextField(
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: s.searchDrills,
-                          prefixIcon: const Icon(Icons.search_rounded),
-                        ),
-                        onChanged: (value) => setState(() => _query = value),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (final item in [
-                            ('A', s.tierA),
-                            ('B', s.tierB),
-                            ('C', s.tierC),
-                          ])
-                            _FilterPill(
-                              label: item.$2,
-                              selected: tier == item.$1,
-                              onTap: () {
-                                if (tier == item.$1) return;
-                                FlareHaptics.selection();
-                                widget.store.updateSettings(tier: item.$1);
-                              },
-                            ),
-                          PopupMenuButton<String?>(
-                            tooltip: s.allSections,
-                            color: FlareColors.popup,
-                            initialValue: _section,
-                            onSelected: (value) => setState(
-                              () => _section = value == '' ? null : value,
-                            ),
-                            itemBuilder: (_) => [
-                              PopupMenuItem(
-                                value: '',
-                                child: Text(s.allSections),
-                              ),
-                              for (final section in catalog.sections)
-                                PopupMenuItem(
-                                  value: section.id,
-                                  child: Text(section.short),
+          child: ScrollEdge(
+            child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverList.list(
+                    children: [
+                      // The search field folds open under the header.
+                      AnimatedSize(
+                        duration: FlareMotion.of(context, FlareMotion.fade),
+                        curve: FlareMotion.settle,
+                        alignment: Alignment.topCenter,
+                        child: _searching
+                            ? FadeSlideIn(
+                                offset: 6,
+                                duration: FlareMotion.fade,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: TextField(
+                                    autofocus: true,
+                                    textInputAction: TextInputAction.search,
+                                    decoration: InputDecoration(
+                                      hintText: s.searchDrills,
+                                      prefixIcon: const Icon(
+                                        Icons.search_rounded,
+                                      ),
+                                    ),
+                                    onChanged: (value) =>
+                                        setState(() => _query = value),
+                                  ),
                                 ),
-                            ],
-                            child: IgnorePointer(
-                              child: _FilterPill(
-                                label: sectionLabel,
-                                selected: false,
-                                onTap: () {},
-                                trailing: Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Icon(
-                                    Icons.expand_more_rounded,
-                                    size: 16,
-                                    color: FlareColors.dim,
+                              )
+                            : const SizedBox(width: double.infinity),
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final item in [
+                              ('A', s.tierA),
+                              ('B', s.tierB),
+                              ('C', s.tierC),
+                            ])
+                              _FilterPill(
+                                label: item.$2,
+                                selected: tier == item.$1,
+                                onTap: () {
+                                  if (tier == item.$1) return;
+                                  FlareHaptics.selection();
+                                  widget.store.updateSettings(tier: item.$1);
+                                },
+                              ),
+                            Pressable(
+                              scale: .95,
+                              child: PopupMenuButton<String?>(
+                                tooltip: s.allSections,
+                                color: FlareColors.popup,
+                                initialValue: _section,
+                                onSelected: (value) => setState(
+                                  () => _section = value == '' ? null : value,
+                                ),
+                                itemBuilder: (_) => [
+                                  PopupMenuItem(
+                                    value: '',
+                                    child: Text(s.allSections),
+                                  ),
+                                  for (final section in catalog.sections)
+                                    PopupMenuItem(
+                                      value: section.id,
+                                      child: Text(section.short),
+                                    ),
+                                ],
+                                child: IgnorePointer(
+                                  child: _FilterPill(
+                                    label: sectionLabel,
+                                    selected: false,
+                                    onTap: () {},
+                                    trailing: Padding(
+                                      padding: EdgeInsets.only(left: 2),
+                                      child: Icon(
+                                        Icons.expand_more_rounded,
+                                        size: 16,
+                                        color: FlareColors.dim,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (widget.store.todayIds.isNotEmpty) ...[
-                      SectionTitle(s.today),
-                      for (final id in widget.store.todayIds)
-                        if (catalog.drillById(id) case final Drill drill)
-                          DrillTile(
-                            drill: drill,
-                            onTap: () => widget.onDrill(drill),
-                            trailing: IconButton(
-                              tooltip: s.remove,
-                              icon: Icon(
-                                Icons.remove_circle_outline,
-                                size: 20,
-                                color: FlareColors.dim,
-                              ),
-                              onPressed: () => widget.onRemove(id),
-                            ),
-                          ),
-                    ],
-                    const SizedBox(height: 16),
-                    if (drills.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 40),
-                        child: Center(
-                          child: Text(
-                            s.noResults,
-                            style: TextStyle(color: FlareColors.dim),
-                          ),
+                          ],
                         ),
                       ),
-                  ],
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                sliver: SliverGrid.builder(
-                  itemCount: drills.length,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 220,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: .78,
+                      if (widget.store.todayIds.isNotEmpty) ...[
+                        SectionTitle(s.today),
+                        for (final id in widget.store.todayIds)
+                          if (catalog.drillById(id) case final Drill drill)
+                            DrillTile(
+                              drill: drill,
+                              onTap: () => widget.onDrill(drill),
+                              trailing: IconButton(
+                                tooltip: s.remove,
+                                icon: Icon(
+                                  Icons.remove_circle_outline,
+                                  size: 20,
+                                  color: FlareColors.dim,
+                                ),
+                                onPressed: () {
+                                  FlareHaptics.light();
+                                  widget.onRemove(id);
+                                  final messenger = ScaffoldMessenger.of(
+                                    context,
+                                  );
+                                  messenger
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                      SnackBar(
+                                        content: Text(s.removedFromToday),
+                                        duration: const Duration(seconds: 4),
+                                        action: SnackBarAction(
+                                          label: s.undo,
+                                          onPressed: () =>
+                                              widget.store.addToToday(id),
+                                        ),
+                                      ),
+                                    );
+                                },
+                              ),
+                            ),
+                      ],
+                      const SizedBox(height: 16),
+                      if (drills.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.search_off_rounded,
+                                  size: 28,
+                                  color: FlareColors.dim,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  s.noResults,
+                                  style: TextStyle(color: FlareColors.dim),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  itemBuilder: (context, index) {
-                    final drill = drills[index];
-                    final group = catalog.groupById(drill.groupId)!;
-                    // Re-keyed per filter so a new result set eases in,
-                    // staggered from the top.
-                    return FadeSlideIn(
-                      key: ValueKey('$tier|$_section|$_query|${drill.id}'),
-                      delay: FadeSlideIn.stagger(index),
-                      child: DrillCard(
-                        drill: drill,
-                        groupLabel: group.label,
-                        color: Color(group.colorValue),
-                        onTap: () => widget.onDrill(drill),
-                      ),
-                    );
-                  },
                 ),
-              ),
-            ],
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  sliver: SliverGrid.builder(
+                    itemCount: drills.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 220,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: .78,
+                        ),
+                    itemBuilder: (context, index) {
+                      final drill = drills[index];
+                      final group = catalog.groupById(drill.groupId)!;
+                      // Re-keyed per filter so a new result set eases in,
+                      // staggered from the top.
+                      return FadeSlideIn(
+                        key: ValueKey('$tier|$_section|$_query|${drill.id}'),
+                        delay: FadeSlideIn.stagger(index),
+                        child: DrillCard(
+                          drill: drill,
+                          groupLabel: group.label,
+                          color: Color(group.colorValue),
+                          onTap: () => widget.onDrill(drill),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -620,142 +672,176 @@ class DrillDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
+            child: Stack(
               children: [
-                Stack(
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.08,
-                      child: Image.asset(
-                        drillArt(drill.imageAsset),
-                        fit: BoxFit.cover,
-                        frameBuilder: (context, child, frame, sync) =>
-                            fadeInFrame(context, child, frame, sync),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              FlareColors.background.withValues(alpha: 0),
-                              FlareColors.background.withValues(alpha: 0),
-                              FlareColors.background,
-                            ],
-                            stops: [0, .72, 1],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      top: (8 - top).clamp(0, 8).toDouble() + 8,
-                      child: Row(
-                        children: [
-                          RoundIconButton(
-                            icon: Icons.arrow_back_ios_new_rounded,
-                            tooltip: s.goBack,
-                            onPressed: onBack,
-                          ),
-                          const Spacer(),
-                          RoundIconButton(
-                            icon: added
-                                ? Icons.bookmark_added_rounded
-                                : Icons.bookmark_add_outlined,
-                            tooltip: added ? s.addedToday : s.addToday,
-                            onPressed: added ? null : onAdd,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                Positioned.fill(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
                     children: [
-                      Row(
+                      Stack(
                         children: [
-                          if (group != null) ...[
-                            Container(
-                              width: 6,
-                              height: 6,
+                          AspectRatio(
+                            aspectRatio: 1.08,
+                            child: Image.asset(
+                              drillArt(drill.imageAsset),
+                              fit: BoxFit.cover,
+                              frameBuilder: (context, child, frame, sync) =>
+                                  fadeInFrame(context, child, frame, sync),
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: Color(group!.colorValue),
-                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    FlareColors.background.withValues(alpha: 0),
+                                    FlareColors.background.withValues(alpha: 0),
+                                    FlareColors.background,
+                                  ],
+                                  stops: [0, .72, 1],
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 7),
-                          ],
-                          Expanded(
-                            child: Eyebrow(
-                              [
-                                if (group != null) group!.label,
-                                drill.tierLabel,
-                              ].join(' · '),
-                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        drill.name,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        drill.nameEn,
-                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
-                      ),
-                      const SizedBox(height: 18),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: FlareColors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: FlareColors.hairline),
-                        ),
-                        child: IntrinsicHeight(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _spec(s.spec, drill.prescription),
-                              const VerticalDivider(width: 1),
-                              _spec(s.equipment, drill.equipment),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
-                      const Divider(),
-                      Disclosure(
-                        title: s.moreCuesAndSafety,
-                        children: [
-                          for (var i = 0; i < rest.length; i++)
-                            _cue(i + 2, rest[i]),
-                          SectionTitle(s.mistake),
-                          BodyText(drill.mistake),
-                          SectionTitle(s.drillWhy),
-                          BodyText(drill.why),
-                          SectionTitle(s.safety),
-                          BodyText(drill.safety ?? s.safetyBody),
-                          if (drill.illustrationNote != null) ...[
-                            SectionTitle(s.illustration),
-                            BodyText(
-                              drill.illustrationNote!,
-                              color: FlareColors.dim,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                if (group != null) ...[
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: Color(group!.colorValue),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 7),
+                                ],
+                                Expanded(
+                                  child: Eyebrow(
+                                    [
+                                      if (group != null) group!.label,
+                                      drill.tierLabel,
+                                    ].join(' · '),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              drill.name,
+                              style: const TextStyle(
+                                fontSize: 28,
+                                height: 1.2,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              drill.nameEn,
+                              style: TextStyle(
+                                color: FlareColors.dim,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: FlareColors.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: FlareColors.hairline),
+                              ),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _spec(s.spec, drill.prescription),
+                                    const VerticalDivider(width: 1),
+                                    _spec(s.equipment, drill.equipment),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 22),
+                            for (var i = 0; i < shown.length; i++)
+                              _cue(i, shown[i]),
+                            const Divider(),
+                            Disclosure(
+                              title: s.moreCuesAndSafety,
+                              children: [
+                                for (var i = 0; i < rest.length; i++)
+                                  _cue(i + 2, rest[i]),
+                                SectionTitle(s.mistake),
+                                BodyText(drill.mistake),
+                                SectionTitle(s.drillWhy),
+                                BodyText(drill.why),
+                                SectionTitle(s.safety),
+                                BodyText(drill.safety ?? s.safetyBody),
+                                if (drill.illustrationNote != null) ...[
+                                  SectionTitle(s.illustration),
+                                  BodyText(
+                                    drill.illustrationNote!,
+                                    color: FlareColors.dim,
+                                  ),
+                                ],
+                              ],
                             ),
                           ],
-                        ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Back and save stay pinned while the picture scrolls away.
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  top: (8 - top).clamp(0, 8).toDouble() + 8,
+                  child: Row(
+                    children: [
+                      RoundIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        tooltip: s.goBack,
+                        onPressed: onBack,
+                      ),
+                      const Spacer(),
+                      AnimatedSwitcher(
+                        duration: FlareMotion.of(context, FlareMotion.fade),
+                        transitionBuilder: (child, animation) =>
+                            ScaleTransition(
+                              scale: Tween(begin: .7, end: 1.0).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutBack,
+                                ),
+                              ),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            ),
+                        child: RoundIconButton(
+                          key: ValueKey(added),
+                          icon: added
+                              ? Icons.bookmark_added_rounded
+                              : Icons.bookmark_add_outlined,
+                          tooltip: added ? s.addedToday : s.addToday,
+                          onPressed: added
+                              ? null
+                              : () {
+                                  FlareHaptics.light();
+                                  onAdd();
+                                },
+                        ),
                       ),
                     ],
                   ),
@@ -805,7 +891,8 @@ class _PathPageState extends State<PathPage> {
       if (gatesContext != null) {
         Scrollable.ensureVisible(
           gatesContext,
-          duration: const Duration(milliseconds: 250),
+          duration: FlareMotion.of(context, FlareMotion.push),
+          curve: FlareMotion.settle,
           alignment: .1,
         );
       }
@@ -900,7 +987,10 @@ class _PathPageState extends State<PathPage> {
                     dense: true,
                     value: store.gateReports[gate.id] ?? false,
                     onChanged: unlocked
-                        ? (value) => widget.onGate(gate.id, value ?? false)
+                        ? (value) {
+                            FlareHaptics.selection();
+                            widget.onGate(gate.id, value ?? false);
+                          }
                         : null,
                     title: Text(
                       gate.text,
@@ -942,77 +1032,126 @@ class _PathPageState extends State<PathPage> {
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            children: [
-              for (final (index, stage) in stages.indexed)
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: ScrollEdge(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              children: [
+                for (final (index, stage) in stages.indexed)
+                  // No IntrinsicHeight: the rail is painted behind, so a
+                  // stage can fold open or shut smoothly.
+                  Stack(
                     children: [
-                      Column(
+                      if (index != stages.length - 1)
+                        Positioned(
+                          left: 13.5,
+                          top: 42,
+                          bottom: 0,
+                          child: Container(
+                            width: 1,
+                            color: FlareColors.controlBorder,
+                          ),
+                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 14),
-                          _marker(stage, stage.n == store.currentStage),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 14),
+                            child: _marker(
+                              stage,
+                              stage.n == store.currentStage,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
                           Expanded(
-                            child: index == stages.length - 1
-                                ? const SizedBox()
-                                : Container(
-                                    width: 1,
-                                    color: FlareColors.controlBorder,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () => setState(
+                                    () => _open = open == stage.n ? 0 : stage.n,
                                   ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                stage.title,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      store.isStageUnlocked(
+                                                        stage.n,
+                                                      )
+                                                      ? FlareColors.text
+                                                      : FlareColors.secondary,
+                                                ),
+                                              ),
+                                              if (open == stage.n) ...[
+                                                const SizedBox(height: 4),
+                                                Eyebrow(
+                                                  store.isStagePassed(stage.n)
+                                                      ? s.passed
+                                                      : store.isStageUnlocked(
+                                                          stage.n,
+                                                        )
+                                                      ? s.current
+                                                      : s.locked,
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                        AnimatedRotation(
+                                          turns: open == stage.n ? .5 : 0,
+                                          duration: FlareMotion.of(
+                                            context,
+                                            FlareMotion.fade,
+                                          ),
+                                          curve: FlareMotion.settle,
+                                          child: Icon(
+                                            Icons.expand_more_rounded,
+                                            size: 20,
+                                            color: FlareColors.dim,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                // The stage opens and closes as one smooth fold.
+                                AnimatedSize(
+                                  duration: FlareMotion.of(
+                                    context,
+                                    FlareMotion.push,
+                                  ),
+                                  curve: FlareMotion.settle,
+                                  alignment: Alignment.topCenter,
+                                  child: open == stage.n
+                                      ? FadeSlideIn(
+                                          key: ValueKey('stage-${stage.n}'),
+                                          offset: 8,
+                                          child: _lessons(stage, next),
+                                        )
+                                      : const SizedBox(width: double.infinity),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () => setState(
-                                () => _open = open == stage.n ? 0 : stage.n,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      stage.title,
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: store.isStageUnlocked(stage.n)
-                                            ? FlareColors.text
-                                            : FlareColors.secondary,
-                                      ),
-                                    ),
-                                    if (open == stage.n) ...[
-                                      const SizedBox(height: 4),
-                                      Eyebrow(
-                                        store.isStagePassed(stage.n)
-                                            ? s.passed
-                                            : store.isStageUnlocked(stage.n)
-                                            ? s.current
-                                            : s.locked,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (open == stage.n) _lessons(stage, next),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         Padding(
@@ -1067,46 +1206,49 @@ class LessonPage extends StatelessWidget {
           onBack: onBack,
         ),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            children: [
-              if (lesson.phases.isNotEmpty) ...[
-                SectionTitle(s.lessonPhases),
-                RowGroup(
-                  children: [
-                    for (final source in lesson.phases)
-                      if (catalog.phaseBySource(source) case final Phase phase)
-                        FlareRow(
-                          title: phase.name,
-                          subtitle: phase.caption,
-                          leading: Text(
-                            source.toString().padLeft(2, '0'),
-                            style: TextStyle(
-                              color: FlareColors.accent,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+          child: ScrollEdge(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              children: [
+                if (lesson.phases.isNotEmpty) ...[
+                  SectionTitle(s.lessonPhases),
+                  RowGroup(
+                    children: [
+                      for (final source in lesson.phases)
+                        if (catalog.phaseBySource(source)
+                            case final Phase phase)
+                          FlareRow(
+                            title: phase.name,
+                            subtitle: phase.caption,
+                            leading: Text(
+                              source.toString().padLeft(2, '0'),
+                              style: TextStyle(
+                                color: FlareColors.accent,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: onWatch,
-                  icon: const Icon(Icons.view_in_ar_outlined, size: 18),
-                  label: Text(s.watchPhases),
-                ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: onWatch,
+                    icon: const Icon(Icons.view_in_ar_outlined, size: 18),
+                    label: Text(s.watchPhases),
+                  ),
+                ],
+                SectionTitle(s.suggestedDrills),
+                for (final id in lesson.drills)
+                  if (catalog.drillById(id) case final Drill drill)
+                    DrillTile(drill: drill, onTap: () => onDrill(drill)),
+                if (!unlocked)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Eyebrow(s.locked),
+                  ),
               ],
-              SectionTitle(s.suggestedDrills),
-              for (final id in lesson.drills)
-                if (catalog.drillById(id) case final Drill drill)
-                  DrillTile(drill: drill, onTap: () => onDrill(drill)),
-              if (!unlocked)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Eyebrow(s.locked),
-                ),
-            ],
+            ),
           ),
         ),
         Padding(
@@ -1114,7 +1256,12 @@ class LessonPage extends StatelessWidget {
           child: PrimaryAction(
             icon: complete ? Icons.check_rounded : null,
             label: complete ? s.lessonCompleted : s.markLesson,
-            onPressed: unlocked && !complete ? onComplete : null,
+            onPressed: unlocked && !complete
+                ? () {
+                    FlareHaptics.success();
+                    onComplete();
+                  }
+                : null,
           ),
         ),
       ],
@@ -1155,51 +1302,56 @@ class _AssessmentPageState extends State<AssessmentPage> {
           onBack: widget.onBack,
         ),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            children: [
-              for (final item in [
-                ('wrist', s.wristTest),
-                ('pike', s.compressionTest),
-                ('straddle', s.hipTest),
-                ('dips', s.dipsTest),
-                ('lsit', s.supportTest),
-              ]) ...[
-                SectionTitle(item.$2),
-                DropdownButtonFormField<int>(
-                  initialValue: _grades[item.$1],
-                  isExpanded: true,
-                  dropdownColor: FlareColors.popup,
-                  borderRadius: BorderRadius.circular(16),
-                  items: [
-                    for (final grade
-                        in item.$1 == 'dips'
-                            ? [
-                                (1, s.dipsGrade1),
-                                (2, s.dipsGrade2),
-                                (3, s.dipsGrade3),
-                                (4, s.dipsGrade4),
-                              ]
-                            : [
-                                (1, s.grade1),
-                                (2, s.grade2),
-                                (3, s.grade3),
-                                (4, s.grade4),
-                              ])
-                      DropdownMenuItem(
-                        value: grade.$1,
-                        child: Text(
-                          grade.$2,
-                          style: const TextStyle(fontSize: 14),
+          child: ScrollEdge(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              children: [
+                for (final item in [
+                  ('wrist', s.wristTest),
+                  ('pike', s.compressionTest),
+                  ('straddle', s.hipTest),
+                  ('dips', s.dipsTest),
+                  ('lsit', s.supportTest),
+                ]) ...[
+                  SectionTitle(item.$2),
+                  DropdownButtonFormField<int>(
+                    initialValue: _grades[item.$1],
+                    isExpanded: true,
+                    dropdownColor: FlareColors.popup,
+                    borderRadius: BorderRadius.circular(16),
+                    items: [
+                      for (final grade
+                          in item.$1 == 'dips'
+                              ? [
+                                  (1, s.dipsGrade1),
+                                  (2, s.dipsGrade2),
+                                  (3, s.dipsGrade3),
+                                  (4, s.dipsGrade4),
+                                ]
+                              : [
+                                  (1, s.grade1),
+                                  (2, s.grade2),
+                                  (3, s.grade3),
+                                  (4, s.grade4),
+                                ])
+                        DropdownMenuItem(
+                          value: grade.$1,
+                          child: Text(
+                            grade.$2,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _grades[item.$1] = value);
-                  },
-                ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        FlareHaptics.selection();
+                        setState(() => _grades[item.$1] = value);
+                      }
+                    },
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
         Padding(
@@ -1291,91 +1443,102 @@ class ProgressPage extends StatelessWidget {
       children: [
         PageHeader(title: s.history, onBack: onBack),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-            children: [
-              Row(
-                children: [
-                  _stat('${store.weekTrainingDays}', s.weekDays),
-                  const SizedBox(width: 12),
-                  _stat('${store.streakDays}', s.streak),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (var i = 0; i < 7; i++)
-                    Column(
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color:
-                                trained.contains(monday.add(Duration(days: i)))
-                                ? FlareColors.accent
-                                : FlareColors.surface,
-                            border: monday.add(Duration(days: i)) == day
-                                ? Border.all(
-                                    color: FlareColors.secondary,
-                                    width: 1,
-                                  )
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          labels[i],
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: FlareColors.dim,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-              SectionTitle(s.recent),
-              if (store.sessions.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Text(
-                    s.historyEmpty,
-                    style: TextStyle(color: FlareColors.dim),
-                  ),
-                )
-              else
-                RowGroup(
+          child: ScrollEdge(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              children: [
+                Row(
                   children: [
-                    for (final session in store.sessions.reversed.take(30))
-                      if (catalog.drillById(session.drillId)
-                          case final Drill drill)
-                        FlareRow(
-                          title: drill.name,
-                          subtitle:
-                              '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel)} · ${s.setsLabel(session.completedSets, session.plannedSets)}',
-                          trailing: Text(
-                            session.pain
-                                ? s.painFlag
-                                : session.completed
-                                ? s.completed
-                                : s.incomplete,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: session.pain
-                                  ? FlareColors.warning
-                                  : session.completed
-                                  ? FlareColors.secondary
-                                  : FlareColors.dim,
-                            ),
-                          ),
-                          onTap: () => onDrill(drill),
-                        ),
+                    _stat('${store.weekTrainingDays}', s.weekDays),
+                    const SizedBox(width: 12),
+                    _stat('${store.streakDays}', s.streak),
                   ],
                 ),
-            ],
+                const SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    for (var i = 0; i < 7; i++)
+                      Semantics(
+                        label: trained.contains(monday.add(Duration(days: i)))
+                            ? s.trainedOn('周${labels[i]}')
+                            : s.notTrainedOn('周${labels[i]}'),
+                        child: ExcludeSemantics(
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color:
+                                      trained.contains(
+                                        monday.add(Duration(days: i)),
+                                      )
+                                      ? FlareColors.accent
+                                      : FlareColors.palette.track,
+                                  border: monday.add(Duration(days: i)) == day
+                                      ? Border.all(
+                                          color: FlareColors.secondary,
+                                          width: 1,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                labels[i],
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: FlareColors.dim,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SectionTitle(s.recent),
+                if (store.sessions.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      s.historyEmpty,
+                      style: TextStyle(color: FlareColors.dim),
+                    ),
+                  )
+                else
+                  RowGroup(
+                    children: [
+                      for (final session in store.sessions.reversed.take(30))
+                        if (catalog.drillById(session.drillId)
+                            case final Drill drill)
+                          FlareRow(
+                            title: drill.name,
+                            subtitle:
+                                '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel)} · ${s.setsLabel(session.completedSets, session.plannedSets)}',
+                            trailing: Text(
+                              session.pain
+                                  ? s.painFlag
+                                  : session.completed
+                                  ? s.completed
+                                  : s.incomplete,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: session.pain
+                                    ? FlareColors.warning
+                                    : session.completed
+                                    ? FlareColors.secondary
+                                    : FlareColors.dim,
+                              ),
+                            ),
+                            onTap: () => onDrill(drill),
+                          ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
       ],

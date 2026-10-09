@@ -499,3 +499,59 @@ class BodyText extends StatelessWidget {
 String drillArt(String asset) => FlareColors.palette.isDark
     ? asset
     : asset.replaceFirst('assets/drills/', 'assets/drills/light/');
+
+/// Scroll-under edges for a page body: a hairline fades in under the header
+/// once content scrolls beneath it, and another above the bottom action while
+/// more content waits below, the way iOS bars separate only when needed.
+class ScrollEdge extends StatefulWidget {
+  const ScrollEdge({super.key, required this.child, this.bottom = true});
+  final Widget child;
+  final bool bottom;
+  @override
+  State<ScrollEdge> createState() => _ScrollEdgeState();
+}
+
+class _ScrollEdgeState extends State<ScrollEdge> {
+  bool _under = false;
+  bool _more = false;
+
+  bool _onMetrics(ScrollMetrics metrics) {
+    if (metrics.axis != Axis.vertical) return false;
+    final under = metrics.pixels > 1;
+    final more = metrics.extentAfter > 1;
+    if (under != _under || more != _more) {
+      setState(() {
+        _under = under;
+        _more = more;
+      });
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget line(bool visible, Alignment alignment) => Align(
+      alignment: alignment,
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          opacity: visible ? 1 : 0,
+          duration: FlareMotion.of(context, FlareMotion.quick),
+          child: Container(height: .6, color: FlareColors.controlBorder),
+        ),
+      ),
+    );
+    return NotificationListener<ScrollMetricsNotification>(
+      onNotification: (n) => n.depth == 0 && _onMetrics(n.metrics),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (n) => n.depth == 0 && _onMetrics(n.metrics),
+        child: Stack(
+          children: [
+            Positioned.fill(child: widget.child),
+            line(_under, Alignment.topCenter),
+            if (widget.bottom) line(_more, Alignment.bottomCenter),
+          ],
+        ),
+      ),
+    );
+  }
+}

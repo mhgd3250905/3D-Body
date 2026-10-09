@@ -1305,80 +1305,82 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       children: [
         PageHeader(title: s.settings, onBack: _back),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-            children: [
-              SectionTitle(s.appearanceGroup),
-              RowGroup(
-                children: [
-                  line(
-                    s.appearanceLabel,
-                    segmented<String>(
-                      [
-                        ('system', s.themeSystem),
-                        ('dark', s.themeDark),
-                        ('light', s.themeLight),
-                      ],
-                      store.settings.themeMode,
-                      (value) =>
-                          _result(store.updateSettings(themeMode: value)),
+          child: ScrollEdge(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              children: [
+                SectionTitle(s.appearanceGroup),
+                RowGroup(
+                  children: [
+                    line(
+                      s.appearanceLabel,
+                      segmented<String>(
+                        [
+                          ('system', s.themeSystem),
+                          ('dark', s.themeDark),
+                          ('light', s.themeLight),
+                        ],
+                        store.settings.themeMode,
+                        (value) =>
+                            _result(store.updateSettings(themeMode: value)),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SectionTitle(s.playbackGroup),
-              RowGroup(
-                children: [
-                  line(
-                    s.speedLabel,
-                    segmented<double>(
-                      const [(.25, '0.25×'), (.5, '0.5×'), (1.0, '1×')],
-                      store.settings.speed,
-                      (value) {
-                        _scene.setSpeed(value);
-                        unawaited(store.updateSettings(speed: value));
-                      },
+                  ],
+                ),
+                SectionTitle(s.playbackGroup),
+                RowGroup(
+                  children: [
+                    line(
+                      s.speedLabel,
+                      segmented<double>(
+                        const [(.25, '0.25×'), (.5, '0.5×'), (1.0, '1×')],
+                        store.settings.speed,
+                        (value) {
+                          _scene.setSpeed(value);
+                          unawaited(store.updateSettings(speed: value));
+                        },
+                      ),
                     ),
-                  ),
-                  line(
-                    s.qualityLabel,
-                    segmented<String>(
-                      [
-                        ('battery', s.battery),
-                        ('balanced', s.balanced),
-                        ('high', s.high),
-                      ],
-                      _quality,
-                      (value) {
-                        setState(() => _quality = value);
-                        _scene.setQuality(value);
-                      },
+                    line(
+                      s.qualityLabel,
+                      segmented<String>(
+                        [
+                          ('battery', s.battery),
+                          ('balanced', s.balanced),
+                          ('high', s.high),
+                        ],
+                        _quality,
+                        (value) {
+                          setState(() => _quality = value);
+                          _scene.setQuality(value);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SectionTitle(s.otherGroup),
-              RowGroup(
-                children: [
-                  FlareRow(
-                    title: s.safety,
-                    subtitle: s.safetyHint,
-                    onTap: () => showSafetySheet(context),
-                  ),
-                  FlareRow(
-                    title: s.aboutFlare,
-                    subtitle: s.aboutHint,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => Scaffold(
-                          body: SafeArea(child: _aboutPage(context)),
+                  ],
+                ),
+                SectionTitle(s.otherGroup),
+                RowGroup(
+                  children: [
+                    FlareRow(
+                      title: s.safety,
+                      subtitle: s.safetyHint,
+                      onTap: () => showSafetySheet(context),
+                    ),
+                    FlareRow(
+                      title: s.aboutFlare,
+                      subtitle: s.aboutHint,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => Scaffold(
+                            body: SafeArea(child: _aboutPage(context)),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -1398,44 +1400,46 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               onBack: () => Navigator.of(context).pop(),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                children: [
-                  BodyText(s.aboutBody),
-                  SectionTitle(s.teachingTitle),
-                  BodyText(s.teachingNote, color: FlareColors.secondary),
-                  const SizedBox(height: 6),
-                  BodyText(s.contentDraftNote, color: FlareColors.secondary),
-                  const SizedBox(height: 6),
-                  BodyText(s.courseDraft, color: FlareColors.secondary),
-                  SectionTitle(s.privacyTitle),
-                  BodyText(s.privacyBody, color: FlareColors.secondary),
-                  SectionTitle(s.creditsTitle),
-                  BodyText(s.creditsBody, color: FlareColors.secondary),
-                  const SizedBox(height: 22),
-                  RowGroup(
-                    children: [
-                      FlareRow(
-                        title: s.exportBackup,
-                        leading: const Icon(Icons.copy_rounded, size: 18),
-                        onTap: () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: _backupJson()),
-                          );
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(s.backupCopied)),
-                          );
-                        },
-                      ),
-                      FlareRow(
-                        title: s.licenses,
-                        leading: const Icon(Icons.article_outlined, size: 18),
-                        onTap: () => showLicensePage(context: context),
-                      ),
-                    ],
-                  ),
-                ],
+              child: ScrollEdge(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  children: [
+                    BodyText(s.aboutBody),
+                    SectionTitle(s.teachingTitle),
+                    BodyText(s.teachingNote, color: FlareColors.secondary),
+                    const SizedBox(height: 6),
+                    BodyText(s.contentDraftNote, color: FlareColors.secondary),
+                    const SizedBox(height: 6),
+                    BodyText(s.courseDraft, color: FlareColors.secondary),
+                    SectionTitle(s.privacyTitle),
+                    BodyText(s.privacyBody, color: FlareColors.secondary),
+                    SectionTitle(s.creditsTitle),
+                    BodyText(s.creditsBody, color: FlareColors.secondary),
+                    const SizedBox(height: 22),
+                    RowGroup(
+                      children: [
+                        FlareRow(
+                          title: s.exportBackup,
+                          leading: const Icon(Icons.copy_rounded, size: 18),
+                          onTap: () async {
+                            await Clipboard.setData(
+                              ClipboardData(text: _backupJson()),
+                            );
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(s.backupCopied)),
+                            );
+                          },
+                        ),
+                        FlareRow(
+                          title: s.licenses,
+                          leading: const Icon(Icons.article_outlined, size: 18),
+                          onTap: () => showLicensePage(context: context),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
