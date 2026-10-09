@@ -34,6 +34,7 @@ PR #2 已合并，合并提交 `8537146d9168fdc95a86da802d7dabeeba64fbb4`。随�
 - 3D 场景收到 `{type: theme}` 命令，只换页面外壳（加载层、小卡底色、阶段小人体卡、热点描边）；托马斯、灯光与材质两套主题完全一致。
 - 验证：`flutter analyze` 无问题；`flutter test --no-pub` 43/43 通过（新增主题切换持久化+场景命令、旧设置兼容两项）；`flutter build web` 成功；场景 `npm run build`、`npm run verify` 通过。
 - 截图：`screenshots/2026-10-09/light/`（18 张浅色），深色在同目录上一级。
+- 浅色训练图：`assets/drills/light/` 51 张配套图，浅色主题下训练库、今日训练、训练详情都换用；`catalog_dose_test` 会断言每张都存在且是 WebP。
 
 ---
 

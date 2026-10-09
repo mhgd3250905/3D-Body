@@ -322,7 +322,7 @@ class DrillTile extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
-                  drill.thumbnailAsset,
+                  drillArt(drill.thumbnailAsset),
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
@@ -391,7 +391,12 @@ class DrillCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: Image.asset(drill.thumbnailAsset, fit: BoxFit.cover)),
+          Expanded(
+            child: Image.asset(
+              drillArt(drill.thumbnailAsset),
+              fit: BoxFit.cover,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
             child: Column(
@@ -451,3 +456,9 @@ class BodyText extends StatelessWidget {
     ),
   );
 }
+
+/// Training illustrations come as a dark studio set and a matching light set
+/// (same pose, framing and highlight) under `assets/drills/light/`.
+String drillArt(String asset) => FlareColors.palette.isDark
+    ? asset
+    : asset.replaceFirst('assets/drills/', 'assets/drills/light/');

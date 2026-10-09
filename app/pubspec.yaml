@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/data/
     - assets/drills/
+    - assets/drills/light/
     - assets/scene/
     - assets/scene/assets/
     - assets/scene/coach/
