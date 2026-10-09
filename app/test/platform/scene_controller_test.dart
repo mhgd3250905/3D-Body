@@ -237,6 +237,47 @@ void main() {
     },
   );
 
+  test(
+    'startup acknowledgement cannot discard a queued model restoration',
+    () async {
+      final firstCommand = Completer<void>();
+      final sent = <Map<String, Object?>>[];
+      final controller = SceneController(
+        commandSink: (command) async {
+          sent.add(command);
+          if (sent.length == 1) await firstCommand.future;
+        },
+      );
+      addTearDown(controller.dispose);
+      controller.setViewInset(280, animate: false);
+      controller.setTime(2.375);
+      controller.setDetail('triceps');
+      controller.setDetailModel('muscles');
+      controller.receiveEvent({..._ready, 'time': 0});
+      // main.js posts its initial full state immediately after ready. The
+      // native viewport command is still awaiting acknowledgement at this point.
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'state',
+        'ready': true,
+        'time': 0,
+        'playing': false,
+        'selected': null,
+        'detail': false,
+        'detailModel': 'motion',
+        'errorCode': null,
+      });
+      firstCommand.complete();
+      await Future<void>.delayed(Duration.zero);
+      expect(sent, [
+        {'type': 'viewport', 'bottom': 280.0, 'animate': false},
+        {'type': 'seek', 'time': 2.375},
+        {'type': 'detail', 'groupId': 'triceps'},
+        {'type': 'detail_model', 'value': 'muscles'},
+      ]);
+    },
+  );
+
   test('leaving detail drops a model switch queued before readiness', () async {
     final sent = <Map<String, Object?>>[];
     final controller = SceneController(commandSink: sent.add);

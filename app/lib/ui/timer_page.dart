@@ -320,38 +320,38 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: SizedBox(
-                height: 48,
-                child: Stack(
-                  alignment: Alignment.center,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Row(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: RoundIconButton(
-                        icon: Icons.close_rounded,
-                        tooltip: s.exitTimer,
-                        onPressed: _saving
-                            ? null
-                            : () => unawaited(_requestExit()),
+                    RoundIconButton(
+                      icon: Icons.close_rounded,
+                      tooltip: s.exitTimer,
+                      onPressed: _saving
+                          ? null
+                          : () => unawaited(_requestExit()),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Eyebrow(s.setOfTotal(snap.set, snap.sets)),
+                          if (side != null || snap.blockLabel.isNotEmpty)
+                            Text(
+                              [
+                                if (snap.blockLabel.isNotEmpty) snap.blockLabel,
+                                ?side,
+                              ].join(' · '),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Eyebrow(s.setOfTotal(snap.set, snap.sets)),
-                        if (side != null || snap.blockLabel.isNotEmpty)
-                          Text(
-                            [
-                              if (snap.blockLabel.isNotEmpty) snap.blockLabel,
-                              ?side,
-                            ].join(' · '),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                      ],
-                    ),
+                    const SizedBox(width: 44),
                   ],
                 ),
               ),
