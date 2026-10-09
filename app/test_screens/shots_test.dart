@@ -530,4 +530,24 @@ void main() {
     _appearance.value = _brightness;
     await tester.pumpAndSettle();
   });
+
+  testWidgets('23 progress, empty', (tester) async {
+    final (store, _) = await setup(tester);
+    await tester.pumpWidget(
+      app(
+        Scaffold(
+          body: SafeArea(
+            child: ProgressPage(
+              catalog: catalog,
+              store: store,
+              onDrill: (_) {},
+              onBack: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await shot(tester, '23-progress-empty');
+  });
 }

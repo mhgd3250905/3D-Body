@@ -55,3 +55,42 @@
 ## 验证
 
 见 `verification.md`「2026-10-09 交互打磨」一节。
+
+---
+
+# 第二轮摸排（2026-10-09 下午）
+
+范围同上，深浅两套重新走查；截图改为带 iPhone 安全区（顶 47 / 底 34）的 390×844，改前用 `polish-pass` 标签同一套脚本重拍（`work/polish/r2-before/`），改后见 `docs/screenshots/2026-10-09-polish-r2/`（`contact-sheet-before-after.png`：上行改前、中行改后、下行主题切换半程与新增状态）。
+
+## 发现与处理
+
+| ID | 页面 | 问题 | 严重度 | 处理 | 状态 |
+|---|---|---|---|---|---|
+| M1 | 全局 | 深色 / 浅色 / 跟随系统切换整屏瞬切，3D 外壳同时硬切 | P1 | `ThemeCrossFade`：切换前从 RepaintBoundary 取上一帧，叠在新主题上 360ms easeInOut 淡出；token 仍一帧切换（不出现两套配色混合）；中途再切从当前画面接续。3D 视图是平台视图拍不到，用 `ThemeFadeWindow` 在旧画面里留窗、在 WebView 下方补旧背景同步淡出；场景 `theme` 命令带 `duration`，CSS 外壳按 `--theme-fade` 过渡，小地图底色逐帧插值；减弱动态效果全部瞬切 | ✅ e903033 ⏳ 真机 |
+| M2 | 全局 | 动效参数散落：340/240/380/620/1100/1600ms 字面量，easeOut/easeIn/easeInOutCubic/easeOutBack 混用；折叠类分别用 push 420、fade 260、340 三种时长 | P2 | `FlareMotion` 一套 token：曲线 settle/standard/exit/dissolve/spring，时长 push/pop/modal/sheet/sheetClose/expand/collapse/theme/enter/fade/quick/press/release/celebrate/afterglow/breath；所有折叠统一 expand 340 / collapse 240，箭头旋转与折叠同步 | ✅ e903033 |
+| T6 | 计时 | 完成的 ✓ 是字体字形，笔画与圆环粗细不一 | P2 | 改为与圆环同粗、圆头的描线动画（spring 轻微回弹） | ✅ e903033 |
+| A1 | 自评 | 5 个 Material 下拉框（上轮保留） | P2 | 每项一张卡片 + 四档分段选择，短标签「未完成 / 能完成 / 较稳定 / 很轻松」，臂屈伸「0–3 / 4–7 / 8–12 / 13+」；所选档完整说明显示在下方，读屏读完整说明；文案在 ARB | ✅ ea47c7c |
+| G6 | 设置 / 更多 / 等级 | 分段控件是 Material 描边样式，与 iOS 观感不一 | P2 | 新组件 `FlareSegmented`：凹槽轨道 + 滑动滑块（浅色白滑块带投影），可点、可拖动跨段（松手才提交），selection 触感，互斥按钮语义 | ✅ ea47c7c |
+| S1 | 训练详情 | 大图未延伸到状态栏下（上轮保留） | P2 | 壳层改为每页自管顶部安全区，训练详情全出血；返回 / 收藏固定在状态栏下方 | ✅ ea47c7c |
+| D3 | 训练详情 | 滚动后固定的两个按钮浮在正文上，没有底，与文字重叠 | P1 | 大图与大标题滚走后形成磨砂小导航条（背景 + 细线），并淡入动作名（iOS 大标题收起） | ✅ ea47c7c |
+| G7 | 全局 | 没有任何地方设置状态栏样式（无 AppBar），iOS 深色下会出现黑色状态栏图标压在黑底上 | P1 | `AnnotatedRegion` 随主题切换亮/暗图标，状态栏透明，Android 导航栏同底色 | ✅ ea47c7c ⏳ 真机 |
+| G8 | 全局 | 对比度：浅色 dim 3.1:1、深色卡片上 dim 3.9:1；浅色橙色文字 2.9:1；浅色 warning 3.3:1、success 3.2:1 | P1 | dim 深 #80808a / 浅 #74747d，浅色 muted #5f5f69（保持与 dim 的层级），浅色 success #188540、warning #9c6512；新增 `accentInk`（浅色 #c94e1c，4.2–4.6:1）用于橙色文字与文字按钮，填充仍用原 accent；场景浅色外壳同步 | ✅ ea47c7c |
+| G9 | 全局 | 图标 outlined / rounded 实心混用（例：tune、insights、fitness_center 实心，route、article 描线） | P2 | 统一：物件类用 outlined，箭头 / 关闭 / 搜索等字形用 rounded，只有「已收藏」用实心表示选中 | ✅ ea47c7c |
+| G10 | 全局 | 页面标题与分组标题不是读屏 header，无法按标题跳转 | P2 | PageHeader 标题、SectionTitle、自评卡片标题标为 header | ✅ ea47c7c |
+| E1 | 全局 | 存储失败用 MaterialBanner，安卓味重、挤压页头 | P2 | 页内安静提示：图标 + 一句话 + 一个操作，liveRegion 播报 | ✅ ea47c7c |
+| E2 | 记录 / 训练库 | 空记录只有一行灰字，训练库空结果与之样式不同 | P2 | 统一 `EmptyNote`（淡图标 + 一句话，居中，读屏读一句） | ✅ 本节提交 |
+| O1 | 全局 | 小屏 + 大字号是否溢出 | P1 | 新增测试：320×640、字号 ×1.3、深浅两套，自评 / 训练详情 / 学习路径 / 记录 / 训练库均无溢出 | ✅ ea47c7c |
+| O2 | 全局 | 英文溢出 | P2 | 当前只有 zh ARB，界面无英文版；英文只出现在动作英文名等内容字段，已在 320pt 用例中覆盖。将来加 en ARB 时需重跑同一用例 | ➖ |
+| Y1 | 全局 | 字号与间距节奏 | P2 | 复核后现有字号阶梯 30/28/24 标题 · 16/15 正文 · 14/13 次要 · 12/11 标签基本一致，间距以 4/8 为步进；本轮只修了自评卡片与空态，未做全量 type-scale 重构（收益低、改动面大） | ➖ |
+| X3 | 全局 | 整屏淡化依赖 `toImageSync`：Web(CanvasKit) 与 iOS/Android WebView 上平台视图不入截图，帧耗时未知 | P1 | 已用留窗 + 下层补底规避；截图失败时 try/catch 回退瞬切。需浏览器与真机确认无闪烁、无掉帧 | ⏳ 真机 |
+| X4 | 分段控件 | 拖动跨段与系统手势（iOS 边缘返回）在真机上的配合 | P2 | 组件测试已覆盖点选 / 拖动 / 语义；手感需真机 | ⏳ 真机 |
+
+沿用上轮保留：A2（关于页 Navigator，行为一致）、X1（3D 舞台不启用左缘返回）、T5（屏幕常亮 / 提示音，M3）、X2（帧率与触感，真机）。
+
+## 一致性约定（第二轮补充）
+
+- 动效只用 `FlareMotion` token：进入 settle，离开 exit，整屏 / 整块淡化 dissolve，弹入 spring；折叠 expand 340 / collapse 240；主题切换 theme 360。新增动画不得写字面量时长。
+- 分段选择一律 `FlareSegmented`；选项文案过长时用短标签 + 下方完整说明，`semanticLabels` 给读屏完整文本。
+- 橙色作文字或细线时用 `accentInk`，作填充时用 `accent`。
+- 页面自管顶部安全区；需要出血的页面（目前只有训练详情）自行处理状态栏，并在内容滚到状态栏下时形成小导航条。
+- 空态用 `EmptyNote`：一个淡图标 + 一句话。

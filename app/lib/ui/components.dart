@@ -472,6 +472,44 @@ class DrillCard extends StatelessWidget {
   );
 }
 
+/// One quiet empty state for the whole app: a light glyph and one line,
+/// centred, read as a single sentence.
+class EmptyNote extends StatelessWidget {
+  const EmptyNote({
+    super.key,
+    required this.icon,
+    required this.text,
+    this.top = 28,
+  });
+  final IconData icon;
+  final String text;
+  final double top;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.fromLTRB(24, top, 24, 12),
+    child: Semantics(
+      container: true,
+      label: text,
+      excludeSemantics: true,
+      child: Column(
+        children: [
+          Icon(icon, size: 26, color: FlareColors.dim),
+          const SizedBox(height: 10),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.45,
+              color: FlareColors.muted,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 class BodyText extends StatelessWidget {
   const BodyText(this.text, {super.key, this.color});
   final String text;

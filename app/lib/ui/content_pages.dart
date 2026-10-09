@@ -540,24 +540,10 @@ class _LibraryPageState extends State<LibraryPage> {
                       ],
                       const SizedBox(height: 16),
                       if (drills.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.search_off_rounded,
-                                  size: 28,
-                                  color: FlareColors.dim,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  s.noResults,
-                                  style: TextStyle(color: FlareColors.dim),
-                                ),
-                              ],
-                            ),
-                          ),
+                        EmptyNote(
+                          icon: Icons.search_off_rounded,
+                          text: s.noResults,
+                          top: 40,
                         ),
                     ],
                   ),
@@ -1675,13 +1661,7 @@ class ProgressPage extends StatelessWidget {
                 ),
                 SectionTitle(s.recent),
                 if (store.sessions.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      s.historyEmpty,
-                      style: TextStyle(color: FlareColors.dim),
-                    ),
-                  )
+                  EmptyNote(icon: Icons.insights_outlined, text: s.historyEmpty)
                 else
                   RowGroup(
                     children: [

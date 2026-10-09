@@ -189,4 +189,23 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  testWidgets('empty history reads as one quiet sentence', (tester) async {
+    final store = LearningStore(catalog: catalog, storage: _Memory());
+    await store.initialize();
+    addTearDown(store.dispose);
+    await tester.pumpWidget(
+      _app(
+        ProgressPage(
+          catalog: catalog,
+          store: store,
+          onDrill: (_) {},
+          onBack: () {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(EmptyNote), findsOneWidget);
+    expect(find.bySemanticsLabel('完成一次计时训练，记录会留在这里'), findsOneWidget);
+  });
 }

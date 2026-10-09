@@ -214,3 +214,15 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 - `flutter build web --release --no-pub --no-web-resources-cdn` 成功（编译 63.1 秒，沙箱 Linux）。
 - 场景（`scene/`）本轮未改动，未重跑 `npm run build/verify`；托马斯原服装、固定机位规则不受影响（载入占位使用原装托马斯渲染图）。
 - 限制：触感强度、左缘返回与 WebView 手势的配合、动效帧率、3D 载入占位时长均需 iOS/Android 真机确认；屏幕常亮与提示音未做（需原生能力，留 M3）。
+
+## 2026-10-09 第二轮打磨（PR #5，北京时间约 12:00–13:10）
+
+- 摸排表：`docs/interaction-audit-2026-10-09.md`「第二轮摸排」一节（18 项：已修 14，保留 2，待真机 2；上轮保留的 A1、S1 本轮已修）。
+- 提交：`e903033` 整屏主题淡化（`ThemeCrossFade` / `ThemeFadeWindow`，场景 CSS 与小地图同步）、统一动效 token、计时完成描线对勾；`ea47c7c` iOS 分段控件、自评分级选择、训练详情出血大图与收起导航条、状态栏样式、对比度、图标统一、语义标题、存储错误提示；其后一提交为空态统一与本文档、截图。
+- `dart analyze lib test test_screens`：无问题。
+- `flutter test --no-pub`（已去除代理变量）：68/68 通过（上轮 59 + 新 9：`theme_fade_test` 4 项——淡化过程与透明度曲线、淡化中再切从当前画面接续、3D 窗口留窗与下层补底、减弱动态效果瞬切；`polish_round2_test` 5 项——分段控件点选 / 拖动松手提交 / 互斥语义、训练详情出血与磨砂导航条、320×640 字号 ×1.3 深浅两套 5 个页面无溢出、空记录单句语义）。`flow_regressions_test` 的外观切换用例改为断言整屏淡化与场景 `duration`，自评用例改为分段选择，「更多」弹层用例改为 `FlareSegmented`。
+- `test_screens/shots_test.dart` 深浅两套各 11/11 通过（新增 iPhone 安全区、22a/b/c 主题切换前 / 半程 / 后、23 空记录）。改前截图用 `polish-pass` 标签在独立 worktree 以同一脚本重拍。精选与对照：`docs/screenshots/2026-10-09-polish-r2/`（`contact-sheet-before-after.png`）。逐张目检：无文字截断、溢出或同色贴底；半程截图确为两帧均匀交叉。
+- 场景：`cd scene && npm run build && npm run verify` 两次（主题过渡、浅色外壳对比度）均通过；`scene/tools/evidence/v41-verify.json` 浮点噪声已 `git checkout` 还原。托马斯原服装、脸与材质未动，托马斯姿态详情固定机位未动；未接触正式循环、阶段 1 快照、导出与个人数据，未新增任何肌电数据。
+- `flutter build web --release --no-pub --no-web-resources-cdn` 成功（编译 63.7 秒，沙箱 Linux）。沙箱无浏览器，未在 Web 运行时实测淡化。
+- 每次提交前还原 `analysis_options.yaml`、`pubspec.lock`（沙箱 pub 缓存重建后 `flutter pub get` 会改写二者），未提交 `build/`。
+- 限制 / 待真机：`toImageSync` 截帧在 Web(CanvasKit)、iOS WKWebView、Android 平台视图下的实际表现与帧耗时（失败会回退瞬切）；状态栏图标颜色；分段控件拖动与系统边缘手势配合；上轮遗留的触感、帧率、屏幕常亮。
