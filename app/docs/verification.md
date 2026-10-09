@@ -320,7 +320,7 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 
 ## 2026-10-09 真机反馈修复（device-feedback）
 - `dart analyze lib test test_screens`：无问题
-- `flutter test --no-pub`：70/70 通过（新增肌群知识文案测试；流程测试改为先选训练场景）
+- `flutter test --no-pub`：69/69 通过（新增肌群知识文案测试；流程测试改为先选训练场景）
 - 截图 shots_test 深浅各 11/11 通过（新增 08b-train-scene）
 - `npm run build && npm run verify` 通过；`node tools/verify-detail-transitions.mjs` 通过（新增弧线过渡断言）
 - 加载动画分帧以 @napi-rs/canvas 离屏渲染核对（沙箱无 Chromium）
