@@ -150,10 +150,10 @@
       {
         "probe": 13,
         "wall": 5.009105199879575,
-        "sequenceTime": 4.569836390612943,
+        "sequenceTime": 4.5698363906129424,
         "joint": "rightHand",
-        "jointErrorMm": 0.08476343098010959,
-        "skinErrorMm": 0.08657114710768733
+        "jointErrorMm": 0.08476343098012787,
+        "skinErrorMm": 0.08657114710810976
       },
       {
         "probe": 14,

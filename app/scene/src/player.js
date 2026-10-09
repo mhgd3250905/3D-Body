@@ -13,7 +13,12 @@ const QUALITY = { low: { ratio: 1, shadows: false }, medium: { ratio: 1.5, shado
 export class FlarePlayer {
   constructor(container, callbacks = {}) {
     this.container = container; this.callbacks = callbacks;
-    this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(32, 1, 0.02, 40);
+    this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(32, 1, 0.02, 40); this.baseFov = 32;
+    // The canvas always fills the whole stage; the host covers its bottom
+    // `viewInset` px with chrome (transport or the detail panel). The view is
+    // framed into the visible part above it, so entering or leaving detail is
+    // a camera move, never a WebView resize.
+    this.viewInset = 0; this.viewInsetTarget = 0;
     this.time = 0; this.period = 9; this.playing = false; this.speed = 0.5; this.loopRange = null;
     this.visible = true; this.disposed = false; this.contextLost = false; this.dirty = true;
     this.framingMode = 'main';
@@ -114,7 +119,28 @@ export class FlarePlayer {
     }
     this.stepGlide(now);
     this.controls.update();
-    if (this.dirty) { this.renderer.render(this.displayScene ?? this.scene, this.camera); this.dirty = false; this.callbacks.onRender?.(); }
+    if (this.dirty) { this.render(); this.dirty = false; this.callbacks.onRender?.(); }
+  }
+  render() {
+    const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
+    if (inset > 0 && inset < height) {
+      // Nothing is drawn under the host's chrome: clear all, draw above it.
+      r.setScissorTest(false); r.clear();
+      r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
+      r.render(this.displayScene ?? this.scene, this.camera); r.setScissorTest(false);
+    } else r.render(this.displayScene ?? this.scene, this.camera);
+  }
+  /** Bottom px of the stage hidden under host chrome. A running glide carries
+   * the change; otherwise it eases on its own (reduced motion: at once). */
+  setViewInset(px, animate = true) {
+    const value = Math.max(0, Number(px) || 0);
+    if (Math.abs(value - this.viewInsetTarget) < 0.5 && !this.glide) return;
+    this.viewInsetTarget = value;
+    if (this.glide) { this.glide.toInset = value; return; }
+    if (animate && this.running && Math.abs(value - this.viewInset) > 0.5) {
+      this.glideTo(this.camera.position.clone(), this.controls.target.clone(), 420);
+    } else { this.viewInset = value; this.applyProjection(); }
+    this.dirty = true;
   }
   setTime(time) {
     this.time = THREE.MathUtils.clamp(time, 0, this.period);
@@ -145,25 +171,37 @@ export class FlarePlayer {
   resize() {
     const width = this.container.clientWidth, height = this.container.clientHeight;
     if (!(width > 0 && height > 0)) return;
-    const changed = this.camera.aspect !== width / height;
-    this.camera.aspect = width / height;
-    const fullStage = this.framingMode === 'main' && width <= 600 && height >= 500;
-    this.insetLeft = this.framingMode === 'detail' || fullStage ? 0 : height <= 320 ? 48 : 64;
-    // h1 embeds the 650px stage at global y108. Lift the visual composition
-    // 40px from the first pass. Only 10px of the static reference's horizontal
-    // shift is retained for v38; its slightly wider envelope is fitted below.
-    this.offsetY = fullStage ? height * (0.5 - 187 / 650) : 0;
-    this.offsetX = fullStage ? width * 10 / 390 : 0;
-    this.camera.setViewOffset(width, height, this.offsetX - this.insetLeft / 2, this.offsetY, width, height);
-    this.camera.updateProjectionMatrix(); this.renderer.setSize(width, height);
+    const changed = this.lastSize !== `${width}x${height}`;
+    this.lastSize = `${width}x${height}`;
+    this.applyProjection(); this.renderer.setSize(width, height);
     if (changed && this.autoFrame && this.motion) this.resetView();
     if (changed && this.framingMode === 'detail') this.callbacks.onResize?.();
     this.dirty = true;
   }
+  /** Visible stage height for an inset (the part above the host's chrome). */
+  visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - inset); }
+  applyProjection() {
+    const width = this.container.clientWidth, height = this.container.clientHeight;
+    if (!(width > 0 && height > 0)) return;
+    const visible = this.visibleHeight();
+    // The visible part keeps the base field of view; the canvas below it is
+    // the same lens extended, so framing matches a stage of that height.
+    this.camera.aspect = width / height;
+    this.camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(this.baseFov / 2)) * height / visible));
+    const fullStage = this.framingMode === 'main' && width <= 600 && visible >= 500;
+    this.insetLeft = this.framingMode === 'detail' || fullStage ? 0 : visible <= 320 ? 48 : 64;
+    // h1 embeds the 650px stage at global y108. Lift the visual composition
+    // 40px from the first pass. Only 10px of the static reference's horizontal
+    // shift is retained for v38; its slightly wider envelope is fitted below.
+    this.offsetY = (fullStage ? visible * (0.5 - 187 / 650) : 0) + (height - visible) / 2;
+    this.offsetX = fullStage ? width * 10 / 390 : 0;
+    this.camera.setViewOffset(width, height, this.offsetX - this.insetLeft / 2, this.offsetY, width, height);
+    this.camera.updateProjectionMatrix();
+  }
   setFramingMode(value) { this.framingMode = value; this.updatePixelRatio(); this.resize(); }
   resetView(direction = CAMERA_PRESETS.standard) {
     this.autoFrame = true;
-    const fullStage = this.container.clientWidth <= 600 && this.container.clientHeight >= 500;
+    const fullStage = this.container.clientWidth <= 600 && this.visibleHeight(this.viewInsetTarget) >= 500;
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
   }
   setCameraView(position, target) {
@@ -173,6 +211,7 @@ export class FlarePlayer {
     const damping = this.controls.enableDamping;
     this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
     this.controls.target.copy(target); this.camera.position.copy(position);
+    if (this.viewInset !== this.viewInsetTarget) { this.viewInset = this.viewInsetTarget; this.applyProjection(); }
     this.controls.update(); this.dirty = true;
   }
   /** Ease the camera to a view instead of cutting to it (detail open/close).
@@ -194,7 +233,7 @@ export class FlarePlayer {
     const turn = Math.abs(dTheta) + Math.abs(to.phi - from.phi);
     const duration = ms ?? Math.round(Math.min(900, 560 + turn * 110));
     this.glide = { fromP: this.camera.position.clone(), fromT, toP: position.clone(), toT,
-      from, dTheta, to, start: performance.now(), ms: duration };
+      from, dTheta, to, start: performance.now(), ms: duration, fromInset: this.viewInset, toInset: this.viewInsetTarget };
     this.dirty = true;
   }
   stepGlide(now) {
@@ -202,6 +241,10 @@ export class FlarePlayer {
     const raw = (now - g.start) / g.ms, k = raw >= 1 - 1e-9 ? 1 : Math.max(0, raw);
     // Ease-in-out cubic: a soft start, a settled landing.
     const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    if (g.fromInset !== undefined) {
+      this.viewInset = k >= 1 ? g.toInset : g.fromInset + (g.toInset - g.fromInset) * e;
+      this.applyProjection();
+    }
     if (k >= 1) {
       this.controls.target.copy(g.toT); this.camera.position.copy(g.toP); this.glide = null;
     } else {
@@ -219,8 +262,10 @@ export class FlarePlayer {
     const dir = direction.clone().normalize(), center = box.getCenter(new THREE.Vector3());
     const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir).normalize();
     const up = new THREE.Vector3().crossVectors(dir, right).normalize();
-    const tan = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
-    const horizontal = tan * this.camera.aspect * Math.max(0.4, (this.container.clientWidth - (this.insetLeft || 0)) / this.container.clientWidth);
+    // Fit the box into the visible part the view will have once settled.
+    const tan = Math.tan(THREE.MathUtils.degToRad(this.baseFov / 2));
+    const aspect = this.container.clientWidth / this.visibleHeight(this.viewInsetTarget);
+    const horizontal = tan * aspect * Math.max(0.4, (this.container.clientWidth - (this.insetLeft || 0)) / this.container.clientWidth);
     let distance = 0.6;
     for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
       const offset = new THREE.Vector3(x, y, z).sub(center), depth = offset.dot(dir);

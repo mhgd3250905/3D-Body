@@ -50,6 +50,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   String _quality = 'balanced';
   String? _sceneTheme;
   String? _stageKey;
+  double _stageArea = 0, _sentInset = -1;
+  bool _insetSent = false;
   bool _holdWatch = false;
 
   /// One sheet at a time: a quick double tap must not stack two sheets.
@@ -151,6 +153,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _detail = group;
     });
     _scene.select(group.id);
+    // Inset first, so the scene frames the athlete above the panel in the
+    // same glide that opens the detail.
+    _sentInset = _viewInsetFor(context, true);
+    _scene.setViewInset(_sentInset);
     _scene.setDetail(group.id);
     _syncSceneVisibility();
   }
@@ -159,6 +165,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() {
       _detail = null;
     });
+    _sentInset = _viewInsetFor(context, false);
+    _scene.setViewInset(_sentInset);
     _scene.setDetail(null);
     _syncSceneVisibility();
   }
@@ -660,122 +668,186 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         ),
         Expanded(
-          flex: detail == null ? 5 : 11,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Under the live view: during an appearance dissolve the old
-              // frame's backdrop fades out here, behind the athlete.
-              ThemeFadeWindow(enabled: widget.enableScene && _watchVisible),
-              widget.enableScene
-                  ? SceneView(
-                      key: ValueKey(_sceneGeneration),
-                      controller: _scene,
-                    )
-                  : ColoredBox(color: FlareColors.background),
-              // The figure fades up out of a quiet placeholder instead of
-              // popping in; a failure gets one calm message and a retry.
-              IgnorePointer(
-                ignoring: _scene.errorCode == null,
-                child: AnimatedSwitcher(
-                  duration: FlareMotion.of(context, FlareMotion.push),
-                  switchInCurve: FlareMotion.settle,
-                  switchOutCurve: FlareMotion.exit,
-                  child: _scene.errorCode != null
-                      ? _SceneError(
-                          key: const ValueKey('scene-error'),
-                          message: s.sceneFailed,
-                          retry: s.retry,
-                          onRetry: () {
-                            _scene.pause();
-                            setState(() {
-                              _configured = false;
-                              _sceneGeneration++;
-                            });
-                          },
+          child: LayoutBuilder(
+            builder: (context, box) {
+              // The 3D view always fills this whole area, behind the
+              // transport or the detail panel; only the part above them is
+              // drawn. Entering or leaving detail moves the camera and this
+              // inset together, so the WebView itself never resizes.
+              _stageArea = box.maxHeight;
+              final inset = _viewInsetFor(context, detail != null);
+              _sendViewInset(inset);
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Under the live view: during an appearance dissolve the
+                  // old frame's backdrop fades out here, behind the athlete.
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: inset,
+                    child: ThemeFadeWindow(
+                      enabled: widget.enableScene && _watchVisible,
+                    ),
+                  ),
+                  widget.enableScene
+                      ? SceneView(
+                          key: ValueKey(_sceneGeneration),
+                          controller: _scene,
                         )
-                      : widget.enableScene && !_scene.ready
-                      ? SceneLoading(
-                          key: const ValueKey('scene-loading'),
-                          label: s.sceneLoading,
-                        )
-                      : const SizedBox.shrink(key: ValueKey('scene-ready')),
-                ),
-              ),
-              if (detail != null)
-                Positioned(
-                  left: 12,
-                  bottom: 31,
-                  width: 86,
-                  height: 108,
-                  child: Semantics(
-                    label: _scene.detailModel == 'motion'
-                        ? s.switchToMuscles
-                        : s.switchToMotion,
-                    button: true,
-                    onTap: _swapDetailCard,
-                    child: ExcludeSemantics(
-                      child: TextButton(
-                        key: const ValueKey('detail-card'),
-                        onPressed: _swapDetailCard,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(86, 108),
-                          backgroundColor: FlareColors.background.withValues(
-                            alpha: .004,
-                          ),
-                          overlayColor: FlareColors.text.withValues(alpha: .13),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                      : ColoredBox(color: FlareColors.background),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        flex: detail == null ? 5 : 11,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // The figure fades up out of a quiet placeholder instead of
+                            // popping in; a failure gets one calm message and a retry.
+                            IgnorePointer(
+                              ignoring: _scene.errorCode == null,
+                              child: AnimatedSwitcher(
+                                duration: FlareMotion.of(
+                                  context,
+                                  FlareMotion.push,
+                                ),
+                                switchInCurve: FlareMotion.settle,
+                                switchOutCurve: FlareMotion.exit,
+                                child: _scene.errorCode != null
+                                    ? _SceneError(
+                                        key: const ValueKey('scene-error'),
+                                        message: s.sceneFailed,
+                                        retry: s.retry,
+                                        onRetry: () {
+                                          _scene.pause();
+                                          setState(() {
+                                            _configured = false;
+                                            _sceneGeneration++;
+                                          });
+                                        },
+                                      )
+                                    : widget.enableScene && !_scene.ready
+                                    ? SceneLoading(
+                                        key: const ValueKey('scene-loading'),
+                                        label: s.sceneLoading,
+                                      )
+                                    : const SizedBox.shrink(
+                                        key: ValueKey('scene-ready'),
+                                      ),
+                              ),
+                            ),
+                            if (detail != null)
+                              Positioned(
+                                left: 12,
+                                bottom: 31,
+                                width: 86,
+                                height: 108,
+                                child: Semantics(
+                                  label: _scene.detailModel == 'motion'
+                                      ? s.switchToMuscles
+                                      : s.switchToMotion,
+                                  button: true,
+                                  onTap: _swapDetailCard,
+                                  child: ExcludeSemantics(
+                                    child: TextButton(
+                                      key: const ValueKey('detail-card'),
+                                      onPressed: _swapDetailCard,
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: const Size(86, 108),
+                                        backgroundColor: FlareColors.background
+                                            .withValues(alpha: .004),
+                                        overlayColor: FlareColors.text
+                                            .withValues(alpha: .13),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const SizedBox.expand(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (detail == null)
+                              Positioned(
+                                right: 16,
+                                bottom: 18,
+                                child: TextButton.icon(
+                                  onPressed: _scene.playing
+                                      ? _scene.pause
+                                      : _showMuscles,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: FlareColors.secondary,
+                                    backgroundColor: FlareColors.control,
+                                    side: BorderSide(
+                                      color: FlareColors.controlBorder,
+                                      width: .5,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    minimumSize: const Size(0, 44),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  icon: Icon(
+                                    _scene.playing
+                                        ? Icons.pause_rounded
+                                        : Icons.touch_app_outlined,
+                                    size: 12,
+                                  ),
+                                  label: Text(
+                                    _scene.playing
+                                        ? s.playingHint
+                                        : s.pausedHint,
+                                    style: const TextStyle(fontSize: 11),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                        child: const SizedBox.expand(),
                       ),
-                    ),
+                      if (detail == null) ...[
+                        FadeSlideIn(
+                          key: const ValueKey('transport'),
+                          offset: 10,
+                          child: _transport(context, phase),
+                        ),
+                      ] else
+                        _detailPanel(context, phase, detail),
+                    ],
                   ),
-                ),
-              if (detail == null)
-                Positioned(
-                  right: 16,
-                  bottom: 18,
-                  child: TextButton.icon(
-                    onPressed: _scene.playing ? _scene.pause : _showMuscles,
-                    style: TextButton.styleFrom(
-                      foregroundColor: FlareColors.secondary,
-                      backgroundColor: FlareColors.control,
-                      side: BorderSide(
-                        color: FlareColors.controlBorder,
-                        width: .5,
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      minimumSize: const Size(0, 44),
-                      shape: const StadiumBorder(),
-                    ),
-                    icon: Icon(
-                      _scene.playing
-                          ? Icons.pause_rounded
-                          : Icons.touch_app_outlined,
-                      size: 12,
-                    ),
-                    label: Text(
-                      _scene.playing ? s.playingHint : s.pausedHint,
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                  ),
-                ),
-            ],
+                ],
+              );
+            },
           ),
         ),
-        if (detail == null) ...[
-          FadeSlideIn(
-            key: const ValueKey('transport'),
-            offset: 10,
-            child: _transport(context, phase),
-          ),
-        ] else
-          _detailPanel(context, phase, detail),
       ],
     );
+  }
+
+  /// Height of the chrome over the bottom of the 3D view: the transport on
+  /// the watch screen, the detail panel (7 of 18 parts) in detail.
+  double _viewInsetFor(BuildContext context, bool detail) {
+    if (_stageArea <= 0) return 0;
+    if (detail) return _stageArea * 7 / 18;
+    return 56 +
+        (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30).toDouble();
+  }
+
+  void _sendViewInset(double inset) {
+    if ((inset - _sentInset).abs() < .5) return;
+    _sentInset = inset;
+    // The first value lands at once; later ones ease with the camera.
+    final first = !_insetSent;
+    _insetSent = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _scene.setViewInset(inset, animate: !first);
+    });
   }
 
   Widget _detailPanel(BuildContext context, Phase phase, MuscleGroup detail) {

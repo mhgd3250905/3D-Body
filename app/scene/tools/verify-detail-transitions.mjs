@@ -24,12 +24,12 @@ function harness() {
     controls: { target: homeTarget.clone(), enableDamping: false, update() {} },
     container: { clientWidth: 390, clientHeight: 340, append() {} },
     renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390 } },
-    running: true, autoFrame: true, framingMode: 'main', time: 2.375,
+    running: true, autoFrame: true, framingMode: 'main', time: 2.375, viewInset: 0, viewInsetTarget: 0, baseFov: 32,
     getMetrics: () => ({ bounds: { min: [-1, 0, -1], max: [1, 1, 1] } }),
     setFramingMode(value) { this.framingMode = value; },
     setDisplayScene(value) { this.displayScene = value; },
   };
-  for (const method of ['setCameraView', 'glideTo', 'stepGlide', 'fitBounds']) {
+  for (const method of ['setCameraView', 'glideTo', 'stepGlide', 'fitBounds', 'visibleHeight', 'applyProjection', 'setViewInset']) {
     player[method] = FlarePlayer.prototype[method];
   }
   player.camera.position.copy(homePosition);
@@ -150,4 +150,34 @@ function interruptedRoundTrip(player, detail, label) {
   assert.ok(player.camera.position.distanceTo(toP) < 1e-9, 'glide lands exactly');
 }
 
-console.log('Detail transitions verified: orbiting glide (no cut-through), interrupted opening/reset/group changes, saved views, same frame, and home return.');
+{
+  // Entering detail never resizes the stage: the host covers the bottom with
+  // its panel and the framing eases into the part above it, in one glide.
+  const { player, detail } = harness();
+  player.container.clientHeight = 800;
+  player.applyProjection();
+  player.setViewInset(86, false);
+  assert.equal(player.viewInset, 86);
+  player.setViewInset(300);
+  detail.open('triceps', {});
+  const g = player.glide;
+  assert.ok(g && g.toInset === 300 && g.fromInset < 300, 'detail glide carries the panel inset');
+  let lastInset = player.viewInset, lastFov = player.camera.fov;
+  for (let i = 1; i <= 60; i++) {
+    player.stepGlide(g.start + g.ms * i / 60);
+    assert.ok(player.viewInset >= lastInset - 1e-9, 'inset eases one way');
+    assert.ok(Math.abs(player.camera.fov - lastFov) < 2.5, 'lens eases, no jump');
+    lastInset = player.viewInset; lastFov = player.camera.fov;
+  }
+  assert.equal(player.viewInset, 300);
+  const visible = 800 - 300;
+  assert.ok(Math.abs(Math.tan(THREE.MathUtils.degToRad(player.camera.fov / 2)) * visible / 800 - Math.tan(THREE.MathUtils.degToRad(16))) < 1e-9, 'visible part keeps the base lens');
+  // Leaving: the inset arrives first, then the return glide takes it home.
+  player.setViewInset(86);
+  detail.close();
+  assert.equal(player.glide.toInset, 86, 'return glide carries the home inset');
+  finishGlide(player);
+  assert.equal(player.viewInset, 86);
+}
+
+console.log('Detail transitions verified: fixed-size stage with eased panel inset, orbiting glide (no cut-through), interrupted opening/reset/group changes, saved views, same frame, and home return.');

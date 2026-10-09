@@ -14,7 +14,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 .hotspot::before { content: ''; display: block; width: 13px; height: 13px; margin: auto; border: 2px solid #eef0fa; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px #10111644, 0 2px 7px #0008; }
 .hotspot:hover::before, .hotspot:focus-visible::before, .hotspot[data-selected="true"]::before { width: 19px; height: 19px; box-shadow: 0 0 0 6px #ffffff22, 0 0 18px var(--accent); }
 .hotspot:focus-visible { outline: 2px solid #ff8b59; outline-offset: -4px; }
-#status { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #101116; z-index: 4; color: #8e8e98; font-size: 12px; letter-spacing: .6px; text-align: center; padding: 24px; transition: opacity 320ms cubic-bezier(.22,.9,.24,1); }
+#status { position: absolute; inset: 0 0 var(--inset-bottom, 0px) 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #101116; z-index: 4; color: #8e8e98; font-size: 12px; letter-spacing: .6px; text-align: center; padding: 24px; transition: opacity 320ms cubic-bezier(.22,.9,.24,1); }
 #status.leaving { opacity: 0; pointer-events: none; }
 #loader { width: 132px; height: 132px; }
 #status[data-error="true"] #loader { display: none; }
@@ -22,12 +22,12 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 #status[hidden], #retry[hidden], #detail-note[hidden] { display: none; }
 #status-text { max-width: 290px; margin: 0; line-height: 1.5; }
 #retry { font: inherit; color: #fff; background: #393b46; border: 1px solid #ffffff33; border-radius: 9px; padding: 9px 16px; cursor: pointer; }
-#detail-note { position: absolute; bottom: 34px; right: 16px; text-align: right; color: #8e8e98; font-size: 10.5px; letter-spacing: .3px; pointer-events: none; }
+#detail-note { position: absolute; bottom: calc(34px + var(--inset-bottom, 0px)); right: 16px; text-align: right; color: #8e8e98; font-size: 10.5px; letter-spacing: .3px; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { #status { transition: none; } }
-.minimap { position: absolute; bottom: 31px; left: 12px; width: 86px; height: 108px; z-index: 3; border: 1px solid #ffffff22; border-radius: 10px; background: transparent; padding: 0; overflow: hidden; cursor: pointer; }
+.minimap { position: absolute; bottom: calc(31px + var(--inset-bottom, 0px)); left: 12px; width: 86px; height: 108px; z-index: 3; border: 1px solid #ffffff22; border-radius: 10px; background: transparent; padding: 0; overflow: hidden; cursor: pointer; }
 .minimap[hidden] { display: none; }
 .minimap span { position: absolute; bottom: 0; left: 0; right: 0; color: #d6d6de; background: #17192299; letter-spacing: .4px; font: 600 9.5px/22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-.phase-map { position: absolute; z-index: 2; bottom: 18px; left: 14px; width: 148px; padding: 8px 8px 9px; border: 1px solid #ffffff20; border-radius: 20px; overflow: hidden; background: rgba(30,30,34,.7); box-shadow: 0 8px 24px #0004, inset 0 1px #ffffff0b; color: #ebebf5a3; }
+.phase-map { position: absolute; z-index: 2; bottom: calc(18px + var(--inset-bottom, 0px)); left: 14px; width: 148px; padding: 8px 8px 9px; border: 1px solid #ffffff20; border-radius: 20px; overflow: hidden; background: rgba(30,30,34,.7); box-shadow: 0 8px 24px #0004, inset 0 1px #ffffff0b; color: #ebebf5a3; }
 .phase-map[hidden] { display: none; }
 .phase-map header { display: flex; align-items: center; gap: 6px; padding: 0 2px 6px; font-size: 11px; line-height: 13px; font-weight: 600; }
 .phase-map header i { width: 6px; height: 6px; border-radius: 50%; background: #ff6a3d; box-shadow: 0 0 6px #ff6a3d88; }

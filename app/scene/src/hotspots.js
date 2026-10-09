@@ -30,7 +30,7 @@ export function computeHotspots(player, items, minGap = 45) {
     const candidates = sides.map(side => ({ side, point: anchor(j, side) }));
     candidates.sort((a, b) => a.point.distanceToSquared(player.camera.position) - b.point.distanceToSquared(player.camera.position));
     const candidate = candidates[0], projected = player.project(candidate.point);
-    if (projected.behind || projected.x < 12 || projected.y < 12 || projected.x > player.container.clientWidth - 12 || projected.y > player.container.clientHeight - 12) continue;
+    if (projected.behind || projected.x < 12 || projected.y < 12 || projected.x > player.container.clientWidth - 12 || projected.y > player.visibleHeight() - 12) continue;
     if (output.some(hotspot => Math.hypot(hotspot.x - projected.x, hotspot.y - projected.y) < minGap)) continue;
     output.push({ ...projected, groupId: item.groupId, label: item.label, colour: item.colour, side: candidate.side });
   }
