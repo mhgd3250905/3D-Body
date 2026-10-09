@@ -6,6 +6,8 @@
 
 ## PR6审核修复与交付（已合并）
 
+PR7本地候选（未推送/未合并）：产品保存点 `d1c38860bdb64cf342b7ba221886cd085f2e52ae`，已整合最新目标96cd9b1并解决冲突；详情连续投影与稳定画布已补修、定向验证通过。候选开发APK `output/releases/Flare-v41-PR7-candidate-20261009-arm64.apk`，44,115,257字节，SHA-256 `b87e654235683ea639e55031471217b7057e687a4ba79a5c34c85346ec1d51f6`，仍1.0.0+1/动作v41；隔离Web预览8860。候选未替换下方当前L04或P01；审核与限制见 [PR7审核](pr7-audit-2026-10-09.md)。
+
 原来源 `2b87db57a9589ba0fe92d6a0710506a36295d49c`，真实目标 `f1d526aba2fbfc7bebe10131e07d530beb1327b6`；隔离修复产品保存为 `4bc81b830f45279fbaa6631a269a590112f6ae96`，tree `3d35127c3fcb2ff13c2c56af1ce376a82901d840`。最终审核源 `d5c11e46bfdfd1c3e7dc87e71ffa851be3f9c843`，用户授权后17:05:14合并为 `aa3c726a66594c23cf66a1b4a7938366ea73dede`；两者完整tree同为 `213951ce7a2879366fafc4fe998db1b38354c365`。产品目录相对4bc81b8差异为0。App仍1.0.0+1/动作v41；当前主目录包为L04，Play P01保持。新机位交互、训练场景、知识与加载见 [PR6审核](pr6-audit-2026-10-09.md)。
 
 隔离候选APK保留在 `E:/AII-3D/3D-Body-worktrees/pr-6-audit/output/releases/Flare-v41-PR6-candidate-20261009-arm64.apk`，同一包已同步到主目录L04及通用APK路径；字节/哈希均核对相等。隔离Web预览8858、直接场景8857是审核入口，主目录稳定App入口8820。末尾交付文档保存不改变已验证产品内容；文档提交完整SHA由Git定位。

@@ -1,0 +1,243 @@
+{
+  "status": "passed",
+  "apkBytes": 44115257,
+  "apkSha256": "b87e654235683ea639e55031471217b7057e687a4ba79a5c34c85346ec1d51f6",
+  "packageSceneFiles": [
+    "index.html",
+    "assets/index-DTq4Fm3g.css",
+    "assets/index-VERqU8U3.js"
+  ],
+  "home": {
+    "state": {
+      "type": "state",
+      "time": 2,
+      "period": 9,
+      "playing": false,
+      "speed": 0.5,
+      "phase": 11,
+      "selected": null,
+      "detail": false,
+      "loop": null,
+      "detailModel": "motion",
+      "quality": "medium",
+      "ready": true,
+      "errorCode": null
+    },
+    "camera": {
+      "position": [
+        1.1619761156911386,
+        3.2100321472532682,
+        6.503367394517658
+      ],
+      "target": [
+        0.000476112691548125,
+        0.7579765853652434,
+        0.050589600075487295
+      ],
+      "aspect": 0.529891304347826,
+      "projectionMatrix": [
+        5.812357406401515,
+        0,
+        0,
+        0,
+        0,
+        3.0799176474138457,
+        0,
+        0,
+        0.05128205128205126,
+        -0.4918478260869566,
+        -1.0010005002501252,
+        -1,
+        0,
+        0,
+        -0.04002001000500251,
+        0
+      ],
+      "fov": 35.97556924495136,
+      "viewInset": 86,
+      "viewInsetTarget": 86,
+      "offsetX": 10,
+      "offsetY": 181,
+      "gliding": false
+    },
+    "render": {
+      "visible": true,
+      "running": true,
+      "dirty": false,
+      "contextLost": false,
+      "frame": 10640,
+      "calls": 24,
+      "triangles": 332210,
+      "pixelRatio": 1,
+      "framingMode": "main",
+      "bufferSize": [
+        390,
+        736
+      ]
+    },
+    "rect": {
+      "width": 390,
+      "height": 736
+    }
+  },
+  "detail": {
+    "state": {
+      "type": "state",
+      "time": 2,
+      "period": 9,
+      "playing": false,
+      "speed": 0.5,
+      "phase": 11,
+      "selected": "deltoids",
+      "detail": true,
+      "loop": null,
+      "detailModel": "motion",
+      "quality": "medium",
+      "ready": true,
+      "errorCode": null
+    },
+    "camera": {
+      "position": [
+        -3.863091594229357,
+        1.6428415720916865,
+        -1.261006713983037
+      ],
+      "target": [
+        0.1285810333709787,
+        0.7592792872690949,
+        0.32512759258498375
+      ],
+      "aspect": 0.529891304347826,
+      "projectionMatrix": [
+        4.0219526121561255,
+        0,
+        0,
+        0,
+        0,
+        2.131197715680555,
+        0,
+        0,
+        0,
+        -0.3888888888888889,
+        -1.0010005002501252,
+        -1,
+        0,
+        0,
+        -0.04002001000500251,
+        0
+      ],
+      "fov": 50.273791526896815,
+      "viewInset": 286.22222222222223,
+      "viewInsetTarget": 286.22222222222223,
+      "offsetX": 0,
+      "offsetY": 143.11111111111111,
+      "gliding": false
+    },
+    "render": {
+      "visible": true,
+      "running": true,
+      "dirty": false,
+      "contextLost": false,
+      "frame": 10961,
+      "calls": 1,
+      "triangles": 74274,
+      "pixelRatio": 1,
+      "framingMode": "detail",
+      "bufferSize": [
+        390,
+        736
+      ]
+    },
+    "rect": {
+      "width": 390,
+      "height": 736
+    }
+  },
+  "returned": {
+    "state": {
+      "type": "state",
+      "time": 2,
+      "period": 9,
+      "playing": false,
+      "speed": 0.5,
+      "phase": 11,
+      "selected": "deltoids",
+      "detail": false,
+      "loop": null,
+      "detailModel": "motion",
+      "quality": "medium",
+      "ready": true,
+      "errorCode": null
+    },
+    "camera": {
+      "position": [
+        1.1619761156911386,
+        3.2100321472532682,
+        6.503367394517658
+      ],
+      "target": [
+        0.000476112691548125,
+        0.7579765853652434,
+        0.050589600075487295
+      ],
+      "aspect": 0.529891304347826,
+      "projectionMatrix": [
+        5.812357406401515,
+        0,
+        0,
+        0,
+        0,
+        3.0799176474138457,
+        0,
+        0,
+        0.05128205128205126,
+        -0.4918478260869566,
+        -1.0010005002501252,
+        -1,
+        0,
+        0,
+        -0.04002001000500251,
+        0
+      ],
+      "fov": 35.97556924495136,
+      "viewInset": 86,
+      "viewInsetTarget": 86,
+      "offsetX": 10,
+      "offsetY": 181,
+      "gliding": false
+    },
+    "render": {
+      "visible": true,
+      "running": true,
+      "dirty": false,
+      "contextLost": false,
+      "frame": 11211,
+      "calls": 24,
+      "triangles": 332210,
+      "pixelRatio": 1,
+      "framingMode": "main",
+      "bufferSize": [
+        390,
+        736
+      ]
+    },
+    "rect": {
+      "width": 390,
+      "height": 736
+    }
+  },
+  "openingStats": {
+    "count": 256,
+    "maxOffsetStep": 1.7828657950906859,
+    "maxInsetStep": 8.984309382073718
+  },
+  "returningStats": {
+    "count": 244,
+    "maxOffsetStep": 1.3544706462921567,
+    "maxInsetStep": 8.413761022686003
+  },
+  "dragInset": [
+    286.22222222222223,
+    286.22222222222223
+  ]
+}
