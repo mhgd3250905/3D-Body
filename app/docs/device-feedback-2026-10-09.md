@@ -5,7 +5,7 @@
 | 1 | 详情 3D 舞台（同步发力卡片） | 长按文字弹出系统“复制/全选/网页搜索/分享”菜单，文字被选中高亮 | WebView 内 HTML 文字可选：缺 `user-select:none`、`-webkit-touch-callout:none` | 已修 |
 | 2 | 详情 3D 舞台（肌群标记点） | 点击标记点出现蓝色方框 | WebView 默认点按高亮：缺 `-webkit-tap-highlight-color: transparent`，并检查 focus outline | 已修 |
 | 3 | 暂停→点触摸点→肌群详情 | 镜头过渡时先猛地放大、像翻身，再缩小（首页侧面撑地→详情正面镜头） | player.glideTo 对相机位置做直线插值：起止两侧相对时路径穿过模型附近，距离骤减、朝向翻转。改为绕目标球面插值（方向 slerp、距离单独缓动），角度过大时限速或改淡入 | 已修 |
-| 4 | 肌群详情·托马斯动作视图 | 设计变更（用户已确认）：动作视图允许触摸各方向旋转，禁止缩放远近；直立人台不变 | detail.js lockCamera 改为 enableRotate=true、enableZoom=false、enablePan=false，“固定视角”标签改文案；同步改 verify-scene 断言与文档显示契约 | 已做 |
+| 4 | 肌群详情·托马斯动作视图 | 设计变更（用户已确认）：动作视图允许触摸各方向旋转，禁止缩放远近；直立人台不变 | detail.js lockCamera 改为 enableRotate=true、enableZoom=false、enablePan=false，“固定视角”标签改文案；同步改 verify-detail-transitions 断言与文档显示契约 | 已做 |
 | 5 | 肌群详情·训练入口 | 设计变更（用户确认）：点“练XX”后先选场景：无器械 / 居家 / 健身房，再进入对应训练动作页 | drills.json 每个肌群已有 A 徒手 / B 家用器械 / C 健身房 三档（各 17 条），新增场景选择弹层或页，接入 FlareStage `_route()` | 已做 |
 | 6 | 肌群详情·标题下空白 | 设计变更（用户建议）：标题下方用小字讲该肌群在托马斯中的作用与基础知识 | 现有 group.role 一句；为 17 个肌群补 2–3 句知识文案（作用、哪一相最吃力、常见薄弱表现），不写肌电百分比 | 已做 |
 | 7 | 启动加载 | 设计变更（用户建议）：打开 App 时 3D 模型加载的转圈太粗糙，改为 canvas 矢量绘制的 logo 加载动画 | 场景 index.html 内联 canvas 动画（首帧即显示，不等 bundle），Flutter 侧占位同款 | 已做 |
@@ -39,3 +39,7 @@
 
 截图：screenshots/2026-10-09-device-feedback/（深浅各 3 张 + loader-frames.png 动画分帧）。
 待真机：Android WebView 长按是否完全无菜单、弧线过渡观感与帧率、加载动画帧率。
+
+## 本机审核补充（PR6候选）
+
+作者上表记录不替代本机验证；已补训练卡片辅助技术点击动作、加载淡出CSS、减少动态效果后的主题重绘、键盘焦点提示，以及肌群知识的功能/观察措辞。当前显示契约已同步；实际检查、包及未验证范围见 [PR6审核](pr6-audit-2026-10-09.md)。尚未推送/合并，不创建或操作上表作者tag。

@@ -4,6 +4,12 @@
 
 本文件是代码检查点、版本、安装包及发布观察的当前台账。实施与待验收项由 [development-roadmap.md](development-roadmap.md) 维护；测试命令、source state 与限制由 [verification.md](verification.md) 维护；动作来源与播放合约由 [motion-v41.md](motion-v41.md) 维护。下文路径均相对于根项目 `E:\AII-3D\3D-Body`。
 
+## PR6本地审核候选（未推送/未合并）
+
+原来源 `2b87db57a9589ba0fe92d6a0710506a36295d49c`，真实目标 `f1d526aba2fbfc7bebe10131e07d530beb1327b6`；隔离修复产品保存为 `4bc81b830f45279fbaa6631a269a590112f6ae96`，tree `3d35127c3fcb2ff13c2c56af1ce376a82901d840`。App仍1.0.0+1/动作v41；尚未替换下方主目录L01或Play P01。新机位交互、训练场景、知识与加载见 [PR6审核](pr6-audit-2026-10-09.md)。
+
+候选APK在E盘隔离副本 `E:/AII-3D/3D-Body-worktrees/pr-6-audit/output/releases/Flare-v41-PR6-candidate-20261009-arm64.apk`，开发签名，44,114,581字节，SHA-256 `cb14cc10fc40f288fd692b7202e496dd644141390a32ef22577319593925ad7b`；Web预览8858、直接场景8857。末尾文档保存不改变已验证产品树，完整候选SHA以Git定位；远端与主目录交付状态仍按下表。
+
 ## 当前身份
 
 | 维度 | 当前值 | 判定依据与边界 |

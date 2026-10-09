@@ -1,3 +1,11 @@
+# PR6本地审核候选（2026-10-09，未推送/未合并）
+
+修复产品源 `4bc81b830f45279fbaa6631a269a590112f6ae96`，tree `3d35127c3fcb2ff13c2c56af1ce376a82901d840`；原PR源2b87db5、真实目标f1d526a。`flutter analyze --no-pub`无问题，`flutter test --no-pub --concurrency=1 test/ui test/data/muscle_knowledge_test.dart` 36项通过；快速镜头/同帧回归与v41 540帧/136案例通过；离线Web、开发APK构建成功，场景HTML/JS/CSS与两种包逐字节相同。实际手机尺寸浏览器验证、5项审核补修及未验证范围见 [PR6审核](pr6-audit-2026-10-09.md)。
+
+主目录此前交付与Play AAB保持不变。以下PR5/PR3是已合并检查点，PR6作者69项自报位于末尾，不能替代本机36项定向验证。
+
+---
+
 # 当前验证：PR #5 / #3 顺序整合（2026-10-09）
 
 已按用户“一条龙推进”的安排，先审核修复并合并PR #5，再合并PR #3。#5合并 `3fcf859b44f8b1b45736f5faaa8fff3cb82512ec`；#3合并 `f44f5922f8aaba76bbc82adfd6c618b4a06ce706`。每次执行前核对源/真实目标，GitHub均确认MERGED；最终产品树 `107d301bf6fa5edc83d27c06f1d10ffeed83ebb5` 与已验证隔离副本一致。无CI或已有review，本次AI结论与已执行合并分别记录，未提交GitHub review/评论。
