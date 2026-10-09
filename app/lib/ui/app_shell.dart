@@ -598,7 +598,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           },
                         )
                       : widget.enableScene && !_scene.ready
-                      ? _SceneLoading(
+                      ? SceneLoading(
                           key: const ValueKey('scene-loading'),
                           label: s.sceneLoading,
                         )
@@ -1465,14 +1465,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 /// Placeholder while the 3D scene boots: the dressed hero render, faint and
 /// slowly breathing, so the stage never sits empty and the real figure
 /// arrives as a cross-fade rather than a pop.
-class _SceneLoading extends StatefulWidget {
-  const _SceneLoading({super.key, required this.label});
+class SceneLoading extends StatefulWidget {
+  const SceneLoading({super.key, required this.label});
   final String label;
   @override
-  State<_SceneLoading> createState() => _SceneLoadingState();
+  State<SceneLoading> createState() => _SceneLoadingState();
 }
 
-class _SceneLoadingState extends State<_SceneLoading>
+class _SceneLoadingState extends State<SceneLoading>
     with SingleTickerProviderStateMixin {
   late final AnimationController _breath = AnimationController(
     vsync: this,

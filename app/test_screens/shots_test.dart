@@ -392,4 +392,92 @@ void main() {
     await tester.pumpAndSettle();
     await shot(tester, '18-assessment');
   });
+
+  testWidgets('19 timer confirm, 20 timer finished', (tester) async {
+    final (store, _) = await setup(tester);
+    var now = 0;
+    final drill = catalog.drillById('triceps-A')!;
+    await tester.pumpWidget(
+      app(
+        Scaffold(
+          body: SafeArea(
+            child: TrainingTimerPage(
+              drill: drill,
+              store: store,
+              now: () => now,
+              onClose: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    Future<void> advance(int ms) async {
+      for (var left = ms; left > 0; left -= 1000) {
+        now += left.clamp(1, 1000);
+        await tester.pump(const Duration(milliseconds: 150));
+      }
+    }
+
+    Future<void> tapText(String label) async {
+      await tester.tap(find.widgetWithText(FilledButton, label));
+      await tester.pump();
+    }
+
+    await tapText('开始');
+    await advance(3000);
+    await tapText('完成 1 次');
+    await tester.tap(find.byTooltip('结束本次练习'));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await shot(tester, '19-timer-confirm');
+    await tester.tap(find.text('继续练'));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    for (var set = 1; set <= drill.dose.sets; set++) {
+      if (set > 1) await advance(3000);
+      final reps = set == 1 ? drill.dose.min - 1 : drill.dose.min;
+      for (var rep = 0; rep < reps; rep++) {
+        await tapText('完成 1 次');
+      }
+      await tester.pump(const Duration(milliseconds: 150));
+      if (set < drill.dose.sets) {
+        await tester.tap(find.text('结束休息'));
+        await tester.pump();
+      }
+    }
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await shot(tester, '20-timer-finished');
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('21 scene loading', (tester) async {
+    await setup(tester);
+    await tester.pumpWidget(
+      app(
+        Scaffold(
+          body: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: const Alignment(0, -.2),
+                radius: 1.05,
+                colors: FlareColors.stage,
+                stops: const [0, .52, 1],
+              ),
+            ),
+            child: const SafeArea(child: SceneLoading(label: '正在载入 3D 动作')),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 800));
+    await shot(tester, '21-scene-loading');
+    await tester.pumpWidget(const SizedBox());
+  });
 }
