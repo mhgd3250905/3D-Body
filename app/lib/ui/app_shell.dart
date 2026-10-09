@@ -742,6 +742,27 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           controller: _scene,
                         )
                       : ColoredBox(color: FlareColors.background),
+                  if (widget.enableScene)
+                    // The native view and HTML start with a dark surface.
+                    // Cover the whole stage, including the transport, until
+                    // ready; the dissolve gives queued theme commands time
+                    // to settle without exposing the bootstrap background.
+                    IgnorePointer(
+                      child: AnimatedSwitcher(
+                        duration: FlareMotion.of(context, FlareMotion.push),
+                        switchInCurve: FlareMotion.settle,
+                        switchOutCurve: FlareMotion.exit,
+                        child: !_scene.ready
+                            ? ColoredBox(
+                                key: const ValueKey('scene-loading-backdrop'),
+                                color: FlareColors.background,
+                                child: const SizedBox.expand(),
+                              )
+                            : const SizedBox.shrink(
+                                key: ValueKey('scene-loaded-backdrop'),
+                              ),
+                      ),
+                    ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
