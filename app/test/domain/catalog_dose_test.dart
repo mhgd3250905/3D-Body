@@ -119,7 +119,13 @@ void main() {
       for (final drill in catalog.drills) {
         final metadata = images[drill.id] as Map;
         expect(metadata['sourceSha256'], matches(RegExp(r'^[0-9a-f]{64}$')));
-        for (final path in [drill.imageAsset, drill.thumbnailAsset]) {
+        for (final path in [
+          drill.imageAsset,
+          drill.thumbnailAsset,
+          // Light theme twin: same pose and highlight on a warm white sweep.
+          drill.imageAsset.replaceFirst('drills/', 'drills/light/'),
+          drill.thumbnailAsset.replaceFirst('drills/', 'drills/light/'),
+        ]) {
           final header = File(path).readAsBytesSync().sublist(0, 12);
           expect(String.fromCharCodes(header.sublist(0, 4)), 'RIFF');
           expect(String.fromCharCodes(header.sublist(8, 12)), 'WEBP');
