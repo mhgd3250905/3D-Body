@@ -105,7 +105,7 @@ Future<bool?> showSafetySheet(
                       ),
                       child: Text(
                         '${index + 1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: FlareColors.accent,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -127,7 +127,7 @@ Future<bool?> showSafetySheet(
                           const SizedBox(height: 3),
                           Text(
                             rule.$2,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               height: 1.45,
                               color: FlareColors.dim,
@@ -152,7 +152,7 @@ Future<bool?> showSafetySheet(
                 },
                 child: Text(
                   s.startWithAssessment,
-                  style: const TextStyle(color: FlareColors.secondary),
+                  style: TextStyle(color: FlareColors.secondary),
                 ),
               ),
           ],
@@ -193,11 +193,11 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       backgroundColor: FlareColors.background,
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment(0, -.35),
             radius: 1.0,
-            colors: [Color(0xff2b2b31), Color(0xff151518), Color(0xff08080a)],
+            colors: FlareColors.stage,
             stops: [0, .55, 1],
           ),
         ),
@@ -220,7 +220,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     const SizedBox(height: 12),
                     Text(
                       s.brandEyebrow,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: FlareColors.accent,
                         fontSize: 12,
                         letterSpacing: 3,
@@ -239,7 +239,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     const SizedBox(height: 10),
                     Text(
                       s.welcomeLine,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         height: 1.5,
                         color: FlareColors.secondary,
@@ -260,7 +260,7 @@ class _WelcomePageState extends State<WelcomePage> {
                             children: [
                               TextSpan(
                                 text: ' ${s.safety}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: FlareColors.secondary,
                                   decoration: TextDecoration.underline,
                                   decorationColor: FlareColors.dim,
@@ -268,7 +268,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               ),
                             ],
                           ),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: FlareColors.dim,
                           ),
@@ -301,7 +301,7 @@ class _FilterPill extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(right: 8),
     child: Material(
-      color: selected ? FlareColors.text : const Color(0xff1c1c21),
+      color: selected ? FlareColors.solid : FlareColors.pill,
       shape: StadiumBorder(
         side: BorderSide(
           color: selected ? Colors.transparent : FlareColors.hairline,
@@ -323,7 +323,7 @@ class _FilterPill extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                     color: selected
-                        ? const Color(0xff111113)
+                        ? FlareColors.onSolid
                         : FlareColors.secondary,
                   ),
                 ),
@@ -417,7 +417,7 @@ class _LibraryPageState extends State<LibraryPage> {
                             ),
                           PopupMenuButton<String?>(
                             tooltip: s.allSections,
-                            color: const Color(0xff1f1f24),
+                            color: FlareColors.popup,
                             initialValue: _section,
                             onSelected: (value) => setState(
                               () => _section = value == '' ? null : value,
@@ -438,7 +438,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                 label: sectionLabel,
                                 selected: false,
                                 onTap: () {},
-                                trailing: const Padding(
+                                trailing: Padding(
                                   padding: EdgeInsets.only(left: 2),
                                   child: Icon(
                                     Icons.expand_more_rounded,
@@ -461,7 +461,7 @@ class _LibraryPageState extends State<LibraryPage> {
                             onTap: () => widget.onDrill(drill),
                             trailing: IconButton(
                               tooltip: s.remove,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.remove_circle_outline,
                                 size: 20,
                                 color: FlareColors.dim,
@@ -477,7 +477,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         child: Center(
                           child: Text(
                             s.noResults,
-                            style: const TextStyle(color: FlareColors.dim),
+                            style: TextStyle(color: FlareColors.dim),
                           ),
                         ),
                       ),
@@ -568,7 +568,7 @@ class DrillDetailPage extends StatelessWidget {
           ),
           child: Text(
             '${index + 1}',
-            style: const TextStyle(fontSize: 11, color: FlareColors.secondary),
+            style: TextStyle(fontSize: 11, color: FlareColors.secondary),
           ),
         ),
         const SizedBox(width: 12),
@@ -596,26 +596,37 @@ class DrillDetailPage extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    AspectRatio(
-                      aspectRatio: 1.08,
-                      child: Image.asset(drill.imageAsset, fit: BoxFit.cover),
+                    // The illustrations are dark studio renders: on the dark
+                    // theme they melt into the page, on light they sit as a
+                    // rounded photo plate.
+                    ClipRRect(
+                      borderRadius: FlareColors.palette.isDark
+                          ? BorderRadius.zero
+                          : const BorderRadius.vertical(
+                              bottom: Radius.circular(28),
+                            ),
+                      child: AspectRatio(
+                        aspectRatio: 1.08,
+                        child: Image.asset(drill.imageAsset, fit: BoxFit.cover),
+                      ),
                     ),
-                    const Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0x00000000),
-                              Color(0x00000000),
-                              FlareColors.background,
-                            ],
-                            stops: [0, .72, 1],
+                    if (FlareColors.palette.isDark)
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                FlareColors.background.withValues(alpha: 0),
+                                FlareColors.background.withValues(alpha: 0),
+                                FlareColors.background,
+                              ],
+                              stops: [0, .72, 1],
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     Positioned(
                       left: 16,
                       right: 16,
@@ -641,7 +652,12 @@ class DrillDetailPage extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+                  padding: EdgeInsets.fromLTRB(
+                    22,
+                    FlareColors.palette.isDark ? 4 : 20,
+                    22,
+                    20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -680,10 +696,7 @@ class DrillDetailPage extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         drill.nameEn,
-                        style: const TextStyle(
-                          color: FlareColors.dim,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
                       ),
                       const SizedBox(height: 18),
                       Container(
@@ -797,11 +810,7 @@ class _PathPageState extends State<PathPage> {
         ),
       ),
       child: passed
-          ? const Icon(
-              Icons.check_rounded,
-              size: 16,
-              color: FlareColors.success,
-            )
+          ? Icon(Icons.check_rounded, size: 16, color: FlareColors.success)
           : Text(
               '${stage.n}',
               style: TextStyle(
@@ -1022,7 +1031,7 @@ class LessonPage extends StatelessWidget {
                           subtitle: phase.caption,
                           leading: Text(
                             source.toString().padLeft(2, '0'),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: FlareColors.accent,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -1110,7 +1119,7 @@ class _AssessmentPageState extends State<AssessmentPage> {
                 DropdownButtonFormField<int>(
                   initialValue: _grades[item.$1],
                   isExpanded: true,
-                  dropdownColor: const Color(0xff1f1f24),
+                  dropdownColor: FlareColors.popup,
                   borderRadius: BorderRadius.circular(16),
                   items: [
                     for (final grade
@@ -1162,7 +1171,7 @@ class _AssessmentPageState extends State<AssessmentPage> {
             onPressed: _busy ? null : widget.onSkip,
             child: Text(
               s.skipAssessment,
-              style: const TextStyle(color: FlareColors.secondary),
+              style: TextStyle(color: FlareColors.secondary),
             ),
           ),
         ),
@@ -1269,7 +1278,7 @@ class ProgressPage extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           labels[i],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             color: FlareColors.dim,
                           ),
@@ -1284,7 +1293,7 @@ class ProgressPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     s.historyEmpty,
-                    style: const TextStyle(color: FlareColors.dim),
+                    style: TextStyle(color: FlareColors.dim),
                   ),
                 )
               else
@@ -1306,7 +1315,7 @@ class ProgressPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               color: session.pain
-                                  ? Colors.amber
+                                  ? FlareColors.warning
                                   : session.completed
                                   ? FlareColors.secondary
                                   : FlareColors.dim,

@@ -39,12 +39,22 @@ class FlareBootstrap extends StatefulWidget {
 
 class _FlareBootstrapState extends State<FlareBootstrap> {
   late Future<(Catalog, LearningStore)> _loading;
+  LearningStore? _store;
+  String _themeMode = 'system';
 
   Future<(Catalog, LearningStore)> _load() async {
     final catalog = await Catalog.load();
     final store = LearningStore(catalog: catalog);
     await store.initialize();
+    _store?.removeListener(_storeChanged);
+    _store = store..addListener(_storeChanged);
+    if (mounted) _storeChanged();
     return (catalog, store);
+  }
+
+  void _storeChanged() {
+    final mode = _store?.settings.themeMode ?? 'system';
+    if (mode != _themeMode && mounted) setState(() => _themeMode = mode);
   }
 
   @override
@@ -57,7 +67,16 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   Widget build(BuildContext context) => MaterialApp(
     onGenerateTitle: (context) => context.strings.appName,
     debugShowCheckedModeBanner: false,
-    theme: flareTheme(),
+    theme: flareTheme(Brightness.light),
+    darkTheme: flareTheme(Brightness.dark),
+    themeMode: themeModeOf(_themeMode),
+    // Custom tokens switch with the theme at once; a colour lerp would mix
+    // the two palettes for a few frames.
+    themeAnimationDuration: Duration.zero,
+    builder: (context, child) {
+      FlareColors.use(Theme.of(context).brightness);
+      return child!;
+    },
     locale: const Locale('zh'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
@@ -91,6 +110,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
 
   @override
   void dispose() {
+    _store?.removeListener(_storeChanged);
     _webSemantics?.dispose();
     super.dispose();
   }

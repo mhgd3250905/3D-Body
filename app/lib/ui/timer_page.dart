@@ -43,7 +43,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       now: () => _clock.elapsedMilliseconds,
     );
     WidgetsBinding.instance.addObserver(this);
-    _ticker = Timer.periodic(const Duration(milliseconds: 150), (_) {
+    _ticker = Timer.periodic(Duration(milliseconds: 150), (_) {
       _timer.tick();
       if (!mounted) return;
       setState(() {});
@@ -191,7 +191,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: SizedBox(
                 height: 48,
                 child: Stack(
@@ -215,7 +215,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                               if (snap.blockLabel.isNotEmpty) snap.blockLabel,
                               ?side,
                             ].join(' · '),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -228,7 +228,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 12),
                 children: [
                   Center(
                     child: SizedBox.square(
@@ -244,17 +244,17 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                             children: [
                               Text(
                                 value,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 76,
                                   height: 1.05,
                                   fontWeight: FontWeight.w700,
                                   fontFeatures: [FontFeature.tabularFigures()],
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
                                 unit,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: FlareColors.dim,
                                   fontSize: 13,
                                 ),
@@ -265,28 +265,25 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28),
                   Text(
                     widget.drill.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                   ),
                   if (widget.drill.cues.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       widget.drill.cues.first,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         height: 1.5,
                         color: FlareColors.secondary,
                       ),
                     ),
                   ],
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -294,7 +291,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                         Container(
                           width: 22,
                           height: 3,
-                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          margin: EdgeInsets.symmetric(horizontal: 3),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
                             color: i <= snap.completedSets
@@ -306,11 +303,11 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                         ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  SizedBox(height: 18),
                   if (dose.mode == DoseMode.manual && !finished)
                     _note(s.manualMode),
                   if (paused) _note(s.backgroundPause),
-                  if (_pain) _note(s.painMessage, color: Colors.amber),
+                  if (_pain) _note(s.painMessage, color: FlareColors.warning),
                   if (_saving) _note(s.saving),
                   if (_saved) _note(s.saved, color: FlareColors.success),
                   if (_saveFailed) ...[
@@ -328,7 +325,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                         onPressed: () => setState(() => _timer.addRest()),
                         child: Text(
                           s.addRest,
-                          style: const TextStyle(color: FlareColors.secondary),
+                          style: TextStyle(color: FlareColors.secondary),
                         ),
                       ),
                     ),
@@ -336,7 +333,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+              padding: EdgeInsets.fromLTRB(20, 4, 20, 4),
               child: Row(
                 children: [
                   if (canPause) ...[
@@ -346,11 +343,11 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                       diameter: 56,
                       onPressed: () => setState(_timer.pause),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                   ],
                   Expanded(
                     child: primary == null
-                        ? const SizedBox(height: 56)
+                        ? SizedBox(height: 56)
                         : PrimaryAction(
                             label: primary.$1,
                             onPressed: primary.$2,
@@ -371,21 +368,21 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                         });
                         unawaited(_persist());
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.back_hand_outlined,
                         size: 16,
-                        color: Colors.amber,
+                        color: FlareColors.warning,
                       ),
                       label: Text(
                         s.painStop,
-                        style: const TextStyle(
-                          color: Colors.amber,
+                        style: TextStyle(
+                          color: FlareColors.warning,
                           fontSize: 13,
                         ),
                       ),
                     ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
           ],
         ),
       ),
@@ -395,12 +392,16 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   bool _pausedReps(TimerSnapshot snap) =>
       widget.drill.dose.mode != DoseMode.time && snap.remainingMs == 0;
 
-  Widget _note(String text, {Color color = FlareColors.dim}) => Padding(
+  Widget _note(String text, {Color? color}) => Padding(
     padding: const EdgeInsets.only(bottom: 8),
     child: Text(
       text,
       textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 13, height: 1.5, color: color),
+      style: TextStyle(
+        fontSize: 13,
+        height: 1.5,
+        color: color ?? FlareColors.dim,
+      ),
     ),
   );
 }
@@ -420,7 +421,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6
-        ..color = const Color(0xff222228),
+        ..color = FlareColors.track,
     );
     if (progress <= 0) return;
     canvas.drawArc(

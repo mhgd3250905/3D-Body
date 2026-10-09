@@ -26,14 +26,14 @@ class SurfaceCard extends StatelessWidget {
 
 /// Small grey label above a block ("一起发力", "最近").
 class Eyebrow extends StatelessWidget {
-  const Eyebrow(this.text, {super.key, this.color = FlareColors.dim});
+  const Eyebrow(this.text, {super.key, this.color});
   final String text;
-  final Color color;
+  final Color? color;
   @override
   Widget build(BuildContext context) => Text(
     text,
     style: TextStyle(
-      color: color,
+      color: color ?? FlareColors.dim,
       fontSize: 12,
       height: 1.4,
       letterSpacing: .4,
@@ -110,8 +110,8 @@ class RoundIconButton extends StatelessWidget {
       fixedSize: Size.square(diameter),
       minimumSize: const Size.square(44),
       backgroundColor: FlareColors.control,
-      foregroundColor: const Color(0xffebebef),
-      side: const BorderSide(color: FlareColors.controlBorder, width: .5),
+      foregroundColor: FlareColors.controlIcon,
+      side: BorderSide(color: FlareColors.controlBorder, width: .5),
       shape: const CircleBorder(),
     ),
     icon: Icon(icon, size: 18),
@@ -126,8 +126,8 @@ class DotTag extends StatelessWidget {
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) => Material(
-    color: const Color(0xff1c1c21),
-    shape: const StadiumBorder(side: BorderSide(color: FlareColors.hairline)),
+    color: FlareColors.pill,
+    shape: StadiumBorder(side: BorderSide(color: FlareColors.hairline)),
     child: InkWell(
       customBorder: const StadiumBorder(),
       onTap: onTap,
@@ -151,10 +151,7 @@ class DotTag extends StatelessWidget {
               ],
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: FlareColors.secondary,
-                ),
+                style: TextStyle(fontSize: 13, color: FlareColors.secondary),
               ),
             ],
           ),
@@ -227,10 +224,7 @@ class FlareRow extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       subtitle!,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: FlareColors.dim,
-                      ),
+                      style: TextStyle(fontSize: 12, color: FlareColors.dim),
                     ),
                   ],
                 ],
@@ -239,7 +233,7 @@ class FlareRow extends StatelessWidget {
             trailing ??
                 (onTap == null
                     ? const SizedBox.shrink()
-                    : const Icon(
+                    : Icon(
                         Icons.chevron_right_rounded,
                         size: 20,
                         color: FlareColors.dim,
@@ -269,7 +263,7 @@ class Disclosure extends StatelessWidget {
       collapsedShape: const Border(),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 14, color: FlareColors.secondary),
+        style: TextStyle(fontSize: 14, color: FlareColors.secondary),
       ),
       children: children,
     ),
@@ -353,16 +347,13 @@ class DrillTile extends StatelessWidget {
                       drill.prescription,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: FlareColors.dim,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: FlareColors.dim, fontSize: 12),
                     ),
                   ],
                 ),
               ),
               trailing ??
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(right: 6),
                     child: Icon(
                       Icons.chevron_right_rounded,
@@ -432,10 +423,7 @@ class DrillCard extends StatelessWidget {
                         groupLabel,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: FlareColors.dim,
-                        ),
+                        style: TextStyle(fontSize: 11, color: FlareColors.dim),
                       ),
                     ),
                   ],
@@ -459,7 +447,7 @@ class BodyText extends StatelessWidget {
     style: TextStyle(
       fontSize: 14,
       height: 1.65,
-      color: color ?? const Color(0xffd8d8df),
+      color: color ?? FlareColors.body,
     ),
   );
 }

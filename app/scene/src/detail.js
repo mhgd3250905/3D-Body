@@ -102,7 +102,7 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
       scissorTest: renderer.getScissorTest(), color: renderer.getClearColor(new THREE.Color()), alpha: renderer.getClearAlpha() };
     try {
       renderer.setScissorTest(true); renderer.setScissor(x, y, width, height); renderer.setViewport(x, y, width, height);
-      renderer.setClearColor(0x171922, 1); renderer.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera);
+      renderer.setClearColor(document.documentElement.dataset.theme === 'light' ? 0xeceae5 : 0x171922, 1); renderer.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera);
     } finally {
       renderer.setViewport(previous.viewport); renderer.setScissor(previous.scissor); renderer.setScissorTest(previous.scissorTest); renderer.setClearColor(previous.color, previous.alpha);
     }

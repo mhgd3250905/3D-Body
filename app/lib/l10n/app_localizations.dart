@@ -1383,6 +1383,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'次'**
   String get countUnit;
+
+  /// No description provided for @appearanceGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'外观'**
+  String get appearanceGroup;
+
+  /// No description provided for @appearanceLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'主题'**
+  String get appearanceLabel;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get themeSystem;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In zh, this message translates to:
+  /// **'深色'**
+  String get themeDark;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In zh, this message translates to:
+  /// **'浅色'**
+  String get themeLight;
 }
 
 class _AppLocalizationsDelegate

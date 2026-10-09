@@ -882,4 +882,78 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+
+  testWidgets('appearance switch persists, repaints and tells the scene', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    final storage = MemoryStateStorage();
+    final store = LearningStore(catalog: catalog, storage: storage);
+    await store.initialize();
+    await store.acknowledgeSafety();
+    expect(store.settings.themeMode, 'system');
+    final commands = <Map<String, Object?>>[];
+    final scene = SceneController(commandSink: commands.add);
+    addTearDown(store.dispose);
+    addTearDown(scene.dispose);
+    addTearDown(() => FlareColors.use(Brightness.dark));
+    await tester.pumpWidget(
+      ListenableBuilder(
+        listenable: store,
+        builder: (context, _) => MaterialApp(
+          theme: flareTheme(Brightness.light),
+          darkTheme: flareTheme(Brightness.dark),
+          themeMode: themeModeOf(store.settings.themeMode),
+          themeAnimationDuration: Duration.zero,
+          locale: const Locale('zh'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) {
+            FlareColors.use(Theme.of(context).brightness);
+            return child!;
+          },
+          home: FlareShell(
+            catalog: catalog,
+            store: store,
+            sceneController: scene,
+            enableScene: false,
+          ),
+        ),
+      ),
+    );
+    scene.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'ready',
+      'period': 9,
+      'time': 2.0,
+      'phase': {'source': 11},
+    });
+    await tester.pumpAndSettle();
+    await tester.tap(labeledControl('更多'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '设置'));
+    await tester.pumpAndSettle();
+    expect(find.text('跟随系统'), findsOneWidget);
+    await tester.tap(find.text('浅色'));
+    await tester.pumpAndSettle();
+    expect(store.settings.themeMode, 'light');
+    expect(FlareColors.palette.isDark, isFalse);
+    expect(commands.lastWhere((value) => value['type'] == 'theme'), {
+      'type': 'theme',
+      'value': 'light',
+    });
+    assertNoFlutterError(tester);
+    await tester.tap(find.text('深色'));
+    await tester.pumpAndSettle();
+    expect(FlareColors.palette.isDark, isTrue);
+    expect(commands.lastWhere((value) => value['type'] == 'theme'), {
+      'type': 'theme',
+      'value': 'dark',
+    });
+    final restored = LearningStore(catalog: catalog, storage: storage);
+    await restored.initialize();
+    expect(restored.settings.themeMode, 'dark');
+    restored.dispose();
+    await tester.pumpWidget(const SizedBox());
+  });
 }

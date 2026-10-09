@@ -93,6 +93,12 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
+  if (input.type === 'theme') {
+    // Appearance only: page chrome and the miniature's backdrop. The athlete,
+    // lighting and materials are identical in both themes.
+    if (['dark', 'light'].includes(input.value)) { document.documentElement.dataset.theme = input.value; if (player) player.dirty = true; }
+    return;
+  }
   if (!ready) { pending.push(input); if (pending.length > 32) pending.shift(); return; }
   switch (input.type) {
     case 'play':

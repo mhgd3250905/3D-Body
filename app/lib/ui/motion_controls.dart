@@ -125,7 +125,7 @@ class _MotionTimelineState extends State<MotionTimeline> {
                                   child: LinearProgressIndicator(
                                     minHeight: 3,
                                     value: (fraction * 8 - i).clamp(0, 1),
-                                    backgroundColor: const Color(0xff303035),
+                                    backgroundColor: FlareColors.track,
                                     color: i < fraction * 8 - 1
                                         ? FlareColors.accent.withValues(
                                             alpha: .55,
@@ -145,7 +145,15 @@ class _MotionTimelineState extends State<MotionTimeline> {
                           width: 12,
                           height: 12,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: FlareColors.palette.isDark
+                                ? Colors.white
+                                : FlareColors.surface,
+                            border: FlareColors.palette.isDark
+                                ? null
+                                : Border.all(
+                                    color: FlareColors.accent,
+                                    width: 2,
+                                  ),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -174,8 +182,8 @@ class _MotionTimelineState extends State<MotionTimeline> {
                                     height: 1.2,
                                     fontWeight: FontWeight.w600,
                                     color: phase.source == widget.phase
-                                        ? const Color(0xffff8a63)
-                                        : const Color(0xff63636b),
+                                        ? FlareColors.accent
+                                        : FlareColors.dim,
                                   ),
                                 ),
                               ),

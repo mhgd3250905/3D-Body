@@ -44,6 +44,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   int _handledSelection = 0;
   double _lastSavedTime = -1;
   String _quality = 'balanced';
+  String? _sceneTheme;
   Catalog get catalog => widget.catalog;
   LearningStore get store => widget.store;
 
@@ -79,6 +80,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _configuring = true;
       _configured = true;
       _scene.setSpeed(store.settings.speed);
+      if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
       _scene.setTime(restoredTime);
       if (store.safetyAccepted && _watchVisible) _scene.play();
       _configuring = false;
@@ -250,6 +252,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // Depend on the theme so an appearance switch repaints every page.
+    final theme = Theme.of(context).brightness == Brightness.light
+        ? 'light'
+        : 'dark';
+    if (theme != _sceneTheme) {
+      _sceneTheme = theme;
+      _scene.setTheme(theme);
+    }
     final s = context.strings;
     if (!store.safetyAccepted) {
       return WelcomePage(
@@ -277,11 +287,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       child: DecoratedBox(
         // The stage surface is the supplied graphite token, shared by the
         // floating header, transparent 3D view and compact transport.
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment(0, -.2),
             radius: 1.05,
-            colors: [Color(0xff2b2b31), Color(0xff151518), Color(0xff08080a)],
+            colors: FlareColors.stage,
             stops: [0, .52, 1],
           ),
         ),
@@ -459,8 +469,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               phase.source.toString().padLeft(2, '0'),
                               phase.name,
                             ),
-                      style: const TextStyle(
-                        color: Color(0xff73737b),
+                      style: TextStyle(
+                        color: FlareColors.dim,
                         fontSize: 11,
                         height: 1.25,
                         letterSpacing: .4,
@@ -501,7 +511,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       key: ValueKey(_sceneGeneration),
                       controller: _scene,
                     )
-                  : const ColoredBox(color: FlareColors.background),
+                  : ColoredBox(color: FlareColors.background),
               if (detail != null)
                 Positioned(
                   left: 12,
@@ -521,8 +531,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: const Size(86, 108),
-                          backgroundColor: const Color(0x01171922),
-                          overlayColor: const Color(0x22ffffff),
+                          backgroundColor: FlareColors.background.withValues(
+                            alpha: .004,
+                          ),
+                          overlayColor: FlareColors.text.withValues(alpha: .13),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -539,10 +551,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   child: TextButton.icon(
                     onPressed: _scene.playing ? _scene.pause : _showMuscles,
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xffa4a4ae),
-                      backgroundColor: const Color(0xff18181c),
-                      side: const BorderSide(
-                        color: Color(0xff38383e),
+                      foregroundColor: FlareColors.secondary,
+                      backgroundColor: FlareColors.control,
+                      side: BorderSide(
+                        color: FlareColors.controlBorder,
                         width: .5,
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -657,7 +669,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   const SizedBox(height: 8),
                   Text(
                     muscle?.why ?? detail.role,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       height: 1.55,
                       color: FlareColors.secondary,
@@ -751,7 +763,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       children: [
                         Text(
                           phase.source.toString().padLeft(2, '0'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: FlareColors.accent,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -771,9 +783,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ),
                         Text(
                           '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: Color(0xff73737b),
+                            color: FlareColors.dim,
                           ),
                         ),
                       ],
@@ -825,15 +837,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 height: diameter,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: solid ? Colors.white : const Color(0xff18181c),
-                  border: Border.all(color: const Color(0xff3b3b42), width: .5),
+                  color: solid ? FlareColors.solid : FlareColors.control,
+                  border: Border.all(
+                    color: FlareColors.controlBorder,
+                    width: .5,
+                  ),
                 ),
                 child: Icon(
                   icon,
                   size: diameter == 48 ? 23 : 18,
-                  color: solid
-                      ? const Color(0xff111113)
-                      : const Color(0xffebebef),
+                  color: solid ? FlareColors.onSolid : FlareColors.controlIcon,
                 ),
               ),
             ),
@@ -903,12 +916,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       ? null
                       : Text(
                           entry.$3!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: FlareColors.dim,
                           ),
                         ),
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.chevron_right_rounded,
                     size: 20,
                     color: FlareColors.dim,
@@ -922,7 +935,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   children: [
                     Text(
                       s.playbackSpeed,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: FlareColors.secondary,
                       ),
@@ -1023,20 +1036,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       why,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: FlareColors.dim,
-                      ),
+                      style: TextStyle(fontSize: 13, color: FlareColors.dim),
                     ),
                   ],
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: FlareColors.dim,
-            ),
+            Icon(Icons.chevron_right_rounded, size: 20, color: FlareColors.dim),
           ],
         ),
       ),
@@ -1111,13 +1117,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 13,
                                     color: FlareColors.secondary,
                                   ),
                                 ),
                               ),
-                              const Icon(
+                              Icon(
                                 Icons.expand_more_rounded,
                                 size: 20,
                                 color: FlareColors.dim,
@@ -1177,6 +1183,24 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
+              SectionTitle(s.appearanceGroup),
+              RowGroup(
+                children: [
+                  line(
+                    s.appearanceLabel,
+                    segmented<String>(
+                      [
+                        ('system', s.themeSystem),
+                        ('dark', s.themeDark),
+                        ('light', s.themeLight),
+                      ],
+                      store.settings.themeMode,
+                      (value) =>
+                          _result(store.updateSettings(themeMode: value)),
+                    ),
+                  ),
+                ],
+              ),
               SectionTitle(s.playbackGroup),
               RowGroup(
                 children: [
@@ -1239,54 +1263,58 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Widget _aboutPage(BuildContext outer) => Builder(
     builder: (context) {
       final s = context.strings;
-      return Column(
-        children: [
-          PageHeader(
-            title: s.aboutFlare,
-            onBack: () => Navigator.of(context).pop(),
-          ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-              children: [
-                BodyText(s.aboutBody),
-                SectionTitle(s.teachingTitle),
-                BodyText(s.teachingNote, color: FlareColors.secondary),
-                const SizedBox(height: 6),
-                BodyText(s.contentDraftNote, color: FlareColors.secondary),
-                const SizedBox(height: 6),
-                BodyText(s.courseDraft, color: FlareColors.secondary),
-                SectionTitle(s.privacyTitle),
-                BodyText(s.privacyBody, color: FlareColors.secondary),
-                SectionTitle(s.creditsTitle),
-                BodyText(s.creditsBody, color: FlareColors.secondary),
-                const SizedBox(height: 22),
-                RowGroup(
-                  children: [
-                    FlareRow(
-                      title: s.exportBackup,
-                      leading: const Icon(Icons.copy_rounded, size: 18),
-                      onTap: () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: _backupJson()),
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(s.backupCopied)));
-                      },
-                    ),
-                    FlareRow(
-                      title: s.licenses,
-                      leading: const Icon(Icons.article_outlined, size: 18),
-                      onTap: () => showLicensePage(context: context),
-                    ),
-                  ],
-                ),
-              ],
+      Theme.of(context);
+      return ColoredBox(
+        color: FlareColors.background,
+        child: Column(
+          children: [
+            PageHeader(
+              title: s.aboutFlare,
+              onBack: () => Navigator.of(context).pop(),
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                children: [
+                  BodyText(s.aboutBody),
+                  SectionTitle(s.teachingTitle),
+                  BodyText(s.teachingNote, color: FlareColors.secondary),
+                  const SizedBox(height: 6),
+                  BodyText(s.contentDraftNote, color: FlareColors.secondary),
+                  const SizedBox(height: 6),
+                  BodyText(s.courseDraft, color: FlareColors.secondary),
+                  SectionTitle(s.privacyTitle),
+                  BodyText(s.privacyBody, color: FlareColors.secondary),
+                  SectionTitle(s.creditsTitle),
+                  BodyText(s.creditsBody, color: FlareColors.secondary),
+                  const SizedBox(height: 22),
+                  RowGroup(
+                    children: [
+                      FlareRow(
+                        title: s.exportBackup,
+                        leading: const Icon(Icons.copy_rounded, size: 18),
+                        onTap: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: _backupJson()),
+                          );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.backupCopied)),
+                          );
+                        },
+                      ),
+                      FlareRow(
+                        title: s.licenses,
+                        leading: const Icon(Icons.article_outlined, size: 18),
+                        onTap: () => showLicensePage(context: context),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
     },
   );

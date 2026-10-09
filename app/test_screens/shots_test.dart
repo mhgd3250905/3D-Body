@@ -32,13 +32,20 @@ class MemoryStateStorage implements LocalStateStorage {
 }
 
 final _boundary = GlobalKey();
+final _light = Platform.environment['SHOTS_THEME'] == 'light';
+final _brightness = _light ? Brightness.light : Brightness.dark;
+final _dir = _light ? 'build/shots-light' : 'build/shots';
 final stages = <String, List<double>>{};
 
 Widget app(Widget home) => RepaintBoundary(
   key: _boundary,
   child: MaterialApp(
     debugShowCheckedModeBanner: false,
-    theme: flareTheme(),
+    theme: flareTheme(_brightness),
+    builder: (context, child) {
+      FlareColors.use(Theme.of(context).brightness);
+      return child!;
+    },
     locale: const Locale('zh'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
@@ -88,7 +95,7 @@ Future<void> shot(WidgetTester tester, String name) async {
         _boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3);
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
-    File('build/shots/$name.png')
+    File('$_dir/$name.png')
       ..createSync(recursive: true)
       ..writeAsBytesSync(data!.buffer.asUint8List());
   });
@@ -98,7 +105,7 @@ void main() {
   final catalog = loadCatalogFixture();
   setUpAll(loadFonts);
   tearDownAll(
-    () => File('build/shots/stage.json')
+    () => File('$_dir/stage.json')
       ..createSync(recursive: true)
       ..writeAsStringSync(jsonEncode(stages)),
   );

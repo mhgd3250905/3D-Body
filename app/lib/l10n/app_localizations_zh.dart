@@ -690,4 +690,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get countUnit => '次';
+
+  @override
+  String get appearanceGroup => '外观';
+
+  @override
+  String get appearanceLabel => '主题';
+
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
+  String get themeDark => '深色';
+
+  @override
+  String get themeLight => '浅色';
 }
