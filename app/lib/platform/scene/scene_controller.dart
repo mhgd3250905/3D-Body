@@ -26,6 +26,11 @@ class SceneController extends ChangeNotifier {
   String? _selected;
   String? _detail;
   String _detailModel = 'motion';
+
+  /// The platform reclaimed the WebView's content process (iOS memory
+  /// pressure). The host may restart the scene without asking the user.
+  static const processTerminated = 'scene-process-terminated';
+
   String? _errorCode;
   int _selectionGeneration = 0;
 

@@ -39,6 +39,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool _configured = false;
   bool _configuring = false;
   int _sceneGeneration = 0;
+  DateTime? _lastAutoRestart;
   bool _settings = false;
   bool _assessment = false;
   bool _timing = false;
@@ -84,8 +85,34 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
+  /// A fresh WebView; [_sceneChanged] restores time, inset and detail once it
+  /// reports ready.
+  void _restartScene() {
+    _scene.pause();
+    setState(() {
+      _configured = false;
+      _sceneGeneration++;
+    });
+  }
+
   void _sceneChanged() {
     if (!mounted || _configuring) return;
+    if (_scene.errorCode == SceneController.processTerminated) {
+      // iOS dropped the WebContent process. Restart quietly, but only once a
+      // minute so a scene that keeps crashing still surfaces its error card.
+      final now = DateTime.now();
+      final last = _lastAutoRestart;
+      if (last == null || now.difference(last) > const Duration(minutes: 1)) {
+        _lastAutoRestart = now;
+        scheduleMicrotask(() {
+          if (mounted &&
+              _scene.errorCode == SceneController.processTerminated) {
+            _restartScene();
+          }
+        });
+        return;
+      }
+    }
     if (_scene.ready && !_configured) {
       final restoredTime = store.lastTime;
       final restoredModel = _scene.detailModel;
@@ -739,13 +766,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         key: const ValueKey('scene-error'),
                                         message: s.sceneFailed,
                                         retry: s.retry,
-                                        onRetry: () {
-                                          _scene.pause();
-                                          setState(() {
-                                            _configured = false;
-                                            _sceneGeneration++;
-                                          });
-                                        },
+                                        onRetry: _restartScene,
                                       )
                                     : widget.enableScene && !_scene.ready
                                     ? SceneLoading(

@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'scene_asset_server.dart';
 import 'scene_controller.dart';
@@ -50,7 +51,14 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
         return;
       }
       _server = server;
-      final webView = WebViewController(
+      final webView = WebViewController.fromPlatformCreationParams(
+        Platform.isIOS
+            // WebGL needs no media; inline playback keeps any future clip
+            // from taking over the screen.
+            ? WebKitWebViewControllerCreationParams(
+                allowsInlineMediaPlayback: true,
+              )
+            : const PlatformWebViewControllerCreationParams(),
         onPermissionRequest: (request) => unawaited(request.deny()),
       );
       await webView.setJavaScriptMode(JavaScriptMode.unrestricted);
@@ -59,6 +67,10 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
       if (!_active(generation)) return;
       await webView.enableZoom(false);
       if (!_active(generation)) return;
+      if (webView.platform case final WebKitWebViewController wk) {
+        await configureWebKitStage(wk);
+        if (!_active(generation)) return;
+      }
       await webView.addJavaScriptChannel(
         'FlareHost',
         onMessageReceived: (message) {
@@ -79,9 +91,16 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
                 : NavigationDecision.prevent;
           },
           onWebResourceError: (error) {
-            if (_active(generation) && error.isForMainFrame == true) {
-              widget.controller.reportError('scene-load-failed');
-            }
+            if (!_active(generation) || error.isForMainFrame != true) return;
+            // iOS reclaims a WebContent process under memory pressure (often
+            // while the app is in the background). The page is gone, not
+            // broken: the host restarts the scene once on its own.
+            widget.controller.reportError(
+              error.errorType ==
+                      WebResourceErrorType.webContentProcessTerminated
+                  ? SceneController.processTerminated
+                  : 'scene-load-failed',
+            );
           },
         ),
       );
@@ -157,4 +176,18 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     if (server != null) unawaited(server.close());
     super.dispose();
   }
+}
+
+/// iOS stage behaviour that CSS cannot reach: a full-bleed WebGL canvas must
+/// not rubber-band, show scroll bars, open link previews on a long press, or
+/// navigate on an edge swipe (the app owns its left-edge back gesture).
+@visibleForTesting
+Future<void> configureWebKitStage(WebKitWebViewController wk) async {
+  await wk.setOverScrollMode(WebViewOverScrollMode.never);
+  await wk.setVerticalScrollBarEnabled(false);
+  await wk.setHorizontalScrollBarEnabled(false);
+  await wk.setAllowsLinkPreview(false);
+  await wk.setAllowsBackForwardNavigationGestures(false);
+  // Safari Web Inspector for debug/profile builds only (iOS 16.4+).
+  await wk.setInspectable(!kReleaseMode);
 }

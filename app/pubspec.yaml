@@ -13,11 +13,16 @@ dependencies:
     sdk: flutter
   shared_preferences: 2.5.6
   webview_flutter: 4.14.1
+  # iOS-only stage settings (bounce, link preview, inspector); same version
+  # webview_flutter resolves transitively.
+  webview_flutter_wkwebview: 3.26.2
   web: 1.1.1
   cupertino_icons: 1.0.8
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
 
