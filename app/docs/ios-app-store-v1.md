@@ -61,6 +61,8 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 
 按 [Apple 当前截图规格](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) 准备中尺寸灵动岛 iPhone 的 1206×2622 截图；另提供 Pro Max 的 1320×2868 截图。格式为无透明通道的 JPEG；最终以提交界面的要求复核。
 
+上传前已再次只读核对实际 App Store Connect 页面：当前必需槽位接受 `1206×2622` / `1179×2556`，仍为 `0/10` 张。首批 10 张据此选用本机 `screenshots/pro/` 的 1206×2622 原图，浅色五页面后接深色五页面；更正本机初始选择 Pro Max 的草稿计划，安装包 S1 不变。10 张 JPEG 均可解码、为 RGB 无透明、原始 manifest 哈希一致，没有缩放或合成；Pro Max 图继续保留为其他尺寸素材。名称 9 / 30 字符、副标题 13 / 30、关键词 36 / 100，分隔逗号无额外空格；限制据 [Apple 产品页说明](https://developer.apple.com/app-store/product-page/) 核对。本机 `app-store-preflight-s1.json` 与 `app-store-draft-plan-s1.json` 保存检查与选图顺序；尚未保存到平台。
+
 当前候选源为 `83f0920ea9e5d613526b89cb2c1768f304d84700`，身份 `dev.mhgd.flare / 1.0.0 (1)`；C01/C02/C03 未签名归档保留。用户明确授权后已注册标识、创建 [Flare 托马斯 Apple App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info)，并导出本机 `candidate/Flare-1.0.0-build1-app-store-S1.ipa`：50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`。Apple Distribution 严格深度验签、明确分发描述文件、三个 arm64 可执行文件、四份隐私清单及 251 份与 C03 相同的 Flutter 资源均通过核查；`candidate-manifest-s1.json` 绑定源、身份与哈希。
 
 创建 App 时 Apple 提示访问设置保存失败，但确认 App 已创建、所有团队用户可访问，与所选“完全访问权限”一致。App 的商店草稿初始化为 `1.0`、准备提交；尚未保存本文其他商店元数据、上传或提审。下一步按精确 S1 IPA 的授权上传，并按具体授权调整商店版本及保存文案/截图；TestFlight 分发、正式审核与发布分别确认，真机与素材发布权等门禁继续保留。

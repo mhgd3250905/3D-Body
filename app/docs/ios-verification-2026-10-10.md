@@ -137,3 +137,5 @@ C03 独立保存到 `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-unsigned-r3.x
 重新核对指定 Playwright Chrome profile 时 Apple 网页登录已过期，由用户在页面完成登录；Developer 门户随后确认已有 `dev.mhgd.flare`。App Store Connect 已创建并核对 [Flare 托马斯](https://appstoreconnect.apple.com/apps/6821186142/distribution/info)，名称、Bundle ID、简体中文与 SKU 均匹配。Apple 创建时提示访问设置保存失败，但确认 App 已创建且所有团队用户可访问，与所选完全访问一致；未重复点击创建或修改其他团队权限。Apple 初始化的商店版本为 `1.0`、准备提交；后续按具体授权调整为候选版本并保存文案/截图。
 
 S1 尚未上传、分发、真机验收或正式提审。提交文案及隐私/年龄/素材权利事项见 [商店材料](ios-app-store-v1.md)，逐项验收见 [执行台账](ios-plan-2026-10-09.md)。
+
+上传前另完成商店字段/选图预检：实际页面要求中尺寸灵动岛 iPhone，支持 1206×2622，当前 0/10 张；本机初始 Pro Max 选图计划已改为 10 张已有 Pro 原图（浅色五页、深色五页）。逐张 JPEG 解码、RGB 无透明、尺寸和原始哈希通过；名称 9 / 30、副标题 13 / 30、关键词 36 / 100 字符及逗号空格规则符合 [Apple 产品页限制](https://developer.apple.com/app-store/product-page/)。证据在 `app-store-preflight-s1.json`，计划在 `app-store-draft-plan-s1.json`；文案/网址及截图槽位仍为空，没有平台保存或 IPA 上传，产品源与 S1 哈希保持。
