@@ -316,3 +316,12 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 - `flutter build web --release --no-pub --no-web-resources-cdn` 成功（编译 63.7 秒，沙箱 Linux）。沙箱无浏览器，未在 Web 运行时实测淡化。
 - 每次提交前还原 `analysis_options.yaml`、`pubspec.lock`（沙箱 pub 缓存重建后 `flutter pub get` 会改写二者），未提交 `build/`。
 - 限制 / 待真机：`toImageSync` 截帧在 Web(CanvasKit)、iOS WKWebView、Android 平台视图下的实际表现与帧耗时（失败会回退瞬切）；状态栏图标颜色；分段控件拖动与系统边缘手势配合；上轮遗留的触感、帧率、屏幕常亮。
+
+
+## 2026-10-09 真机反馈修复（device-feedback）
+- `dart analyze lib test test_screens`：无问题
+- `flutter test --no-pub`：70/70 通过（新增肌群知识文案测试；流程测试改为先选训练场景）
+- 截图 shots_test 深浅各 11/11 通过（新增 08b-train-scene）
+- `npm run build && npm run verify` 通过；`node tools/verify-detail-transitions.mjs` 通过（新增弧线过渡断言）
+- 加载动画分帧以 @napi-rs/canvas 离屏渲染核对（沙箱无 Chromium）
+- 台账：docs/device-feedback-2026-10-09.md
