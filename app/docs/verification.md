@@ -1,4 +1,23 @@
-# 当前验证：网页 / App v41（2026-10-09）
+# 当前验证：PR #4 浅色训练图与最终 App（2026-10-09）
+
+先保存并正常推送v41提交 `e27f4cd8ff7b6848de50da2377e76cb00542dabb`，再按用户授权审核合并PR #4。固定源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`、目标 `e27f4cd8ff7b6848de50da2377e76cb00542dabb`、PR报告基准 `8537146d9168fdc95a86da802d7dabeeba64fbb4`；结束前查询源未变化。GitHub没有CI记录或现有review，本次AI审核未发现阻塞项，未提交GitHub review。实际合并 `bb94d849099d6a2985aa72c00373ce17d81a9993`（2026-10-09 09:47北京时间），原项目已快进；其tree `cbf81746bca8eb4146c0f99b7b3744db02cb89cf` 与已验证隔离副本完全相同。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| 浅色资源 | 51训练ID、102张WebP全部Pillow解码成功，1024×1024及512×512正确，无缺少/多余/串图，共1,188,470字节；同名缩略对大图缩放的最大单通道RMS为2.085/255 |
+| 图像审核 | 实际逐对查看全部51套深浅图，并放大hamstrings-A、obliques-C，无新增严重动作或器械错误。前者高亮稍延伸臀部、后者器械浅银色仍保留为示意差异 |
+| 代码 | 训练卡、列表、详情均选用主题图；light子目录明确打包；Theme依赖重建正常，无遗漏的训练图消费点 |
+| Flutter | analyze无问题（4.9秒）；catalog_dose与flow_regressions针对性13项通过，覆盖资产/剂量和主题/交互。首次命令误引用不存在的theme_test文件，修正为现有flow后整组通过；首次失败不算通过 |
+| 离线Web | `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功（25.7秒） |
+| Android | 首次Gradle daemon异常退出；仅对构建进程设置2G堆、2 workers、无常驻daemon后重试成功（23.7秒），产品构建配置未改。ARM64 APK44,045,329字节，SHA-256 `4040188f0c6dfad56e77afb7b99e6878bfefc51e0103e875ef66df5efeb7bfe5`，本地开发签名 |
+| 包内核对 | 从实际APK ZIP及Web读取102张浅图、v41烘焙模型和场景入口，均与源逐字节相等；v41场景/动作未变，不重复其已通过的540帧验收 |
+| 浏览器 | E盘隔离8854预览以390×844查看浅色库/详情/今日训练，再切回深色原图；0 error / 0 warn。仅写隔离数据，没有清理8820个人数据 |
+
+实景与资源、图像、APK/Web检查见 [证据索引](screenshots/2026-10-09-pr4/README.md)。最终安装包为 `app/build/app/outputs/flutter-apk/app-release.apk`，具名副本为 `output/releases/Flare-v41-light-20261009-arm64.apk`；合并前v41包独立保留为 `output/releases/Flare-v41-before-pr4-20261009-arm64.apk`。原项目8820预览已更新。全部副本、缓存、证据和构建在E盘；真机安装和性能、长期训练倒数及源动作重放/脚部高度限制仍未验收，不能因本次图像变更称作已解决。
+
+---
+
+# 历史验证：网页 / App v41接入（2026-10-09）
 
 PR #2 已合并，合并提交 `8537146d9168fdc95a86da802d7dabeeba64fbb4`。随后按用户要求从 PR #3 固定来源 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 同步动作、领口蒙皮和时钟；保留网页编辑器与 PR #2 的 App 界面。结束前重新查询：PR #3 仍 OPEN，来源 SHA 与目标 SHA 均未变化，GitHub 没有 CI 或已提交审核结论。本轮是动作适配，没有整体合入 PR #3 的网页首页重构。
 

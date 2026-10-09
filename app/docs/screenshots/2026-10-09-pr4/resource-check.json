@@ -1,0 +1,1258 @@
+{
+  "summary": {
+    "ids": 51,
+    "files": 102,
+    "missing": [],
+    "unexpected": [],
+    "dimensions": [
+      [
+        512,
+        512
+      ],
+      [
+        1024,
+        1024
+      ]
+    ],
+    "bytes": 1188470,
+    "maxThumbnailRms": 2.08462586044291,
+    "thumbnailRmsWorst": [
+      {
+        "id": "quadriceps-C",
+        "suffix": "-512",
+        "size": [
+          512,
+          512
+        ],
+        "format": "WEBP",
+        "bytes": 10912,
+        "sha256": "9f2aeeeb0b40dd99610a90785e1d2044a88e9ad96b0e449a6a35119fb6264d42",
+        "thumbRms": 2.08462586044291
+      },
+      {
+        "id": "hip-abductors-C",
+        "suffix": "-512",
+        "size": [
+          512,
+          512
+        ],
+        "format": "WEBP",
+        "bytes": 11800,
+        "sha256": "d6e73d48dfac28fd842b2c9608ea4db3c43749797907411a7de0670011f43ce8",
+        "thumbRms": 2.0713090909127145
+      },
+      {
+        "id": "hip-flexors-C",
+        "suffix": "-512",
+        "size": [
+          512,
+          512
+        ],
+        "format": "WEBP",
+        "bytes": 8410,
+        "sha256": "f0fd025deb223c99809a3934a7edc70c1447da057bc1f9c3907a50192596684d",
+        "thumbRms": 2.0458525222323845
+      },
+      {
+        "id": "chest-C",
+        "suffix": "-512",
+        "size": [
+          512,
+          512
+        ],
+        "format": "WEBP",
+        "bytes": 7492,
+        "sha256": "fbbfc87edaba729115090e3d9496f76125c3dbe0c9d00fcdb2f4bbf36a45fdb9",
+        "thumbRms": 1.9555609808952519
+      },
+      {
+        "id": "obliques-C",
+        "suffix": "-512",
+        "size": [
+          512,
+          512
+        ],
+        "format": "WEBP",
+        "bytes": 10302,
+        "sha256": "c0f220fc557a70bcf21a4c2dcc64c252935171be6d67ead66b34b8eb5e7e212c",
+        "thumbRms": 1.9166386920159004
+      }
+    ],
+    "decoded": 102
+  },
+  "files": [
+    {
+      "id": "abs-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 13206,
+      "sha256": "70098c204372a9c4a23bb4d8263c3369bf7fa5b6b7d844056cc057847ded47c7"
+    },
+    {
+      "id": "abs-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 4948,
+      "sha256": "e6592817a54949d4c62c0ddc487859b2cf126320b2252c6491783d816dd4baf4",
+      "thumbRms": 1.6745948415365375
+    },
+    {
+      "id": "abs-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14690,
+      "sha256": "de60dccc251ec9a346771a61b4f458c640282b799477d1e9ff7195cf22a3c9dc"
+    },
+    {
+      "id": "abs-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6168,
+      "sha256": "c615a81de769192635b004d92ff658a25571b23e91e30a6324c8c9686fd74427",
+      "thumbRms": 1.7206931487366872
+    },
+    {
+      "id": "abs-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14252,
+      "sha256": "06667a9eed530fffa784460f3030faf6c267735f7fb07017be5577e8cf286406"
+    },
+    {
+      "id": "abs-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5898,
+      "sha256": "e10b53f57309d28deba000ef150b06a1347604acfeea69d7b2a93b3529701e99",
+      "thumbRms": 1.6723951439711027
+    },
+    {
+      "id": "adductors-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12570,
+      "sha256": "32e71ab9a05b0c64178751ac38f88959adb32342b8be80027ebb20a31392fd1c"
+    },
+    {
+      "id": "adductors-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5244,
+      "sha256": "8540156f8be62e751060918c8a583c62b3b5897d6ce08c374116dadf92533ed7",
+      "thumbRms": 1.6857109476199594
+    },
+    {
+      "id": "adductors-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15436,
+      "sha256": "47fee63d0f0db2a46a17de44120a969018b0b6ea184972cd2036a9fb4387741d"
+    },
+    {
+      "id": "adductors-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6614,
+      "sha256": "f4485a4f395d257b2e12edb905d8a4a796764416bf05b4eec8656d6a84f0356b",
+      "thumbRms": 1.8897925191355953
+    },
+    {
+      "id": "adductors-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17492,
+      "sha256": "4e05b86e1db693d1d57028943e410d828a0cb6a30e2af99a3a712c594812ca56"
+    },
+    {
+      "id": "adductors-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7608,
+      "sha256": "53b2a840e4c3c85a4488a0b8e3c885ef9353971f8242e62553c56aefc38cb9b8",
+      "thumbRms": 1.8696619978830733
+    },
+    {
+      "id": "chest-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 18028,
+      "sha256": "1dd7159f695811cfca4607799da91619b0f164e01b993c8e93aef326b24fc251"
+    },
+    {
+      "id": "chest-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7562,
+      "sha256": "54b60acf55d1ec9f062d501e1c7d9459bf8910d661b303c099f326e3690c7b42",
+      "thumbRms": 1.8287227338112804
+    },
+    {
+      "id": "chest-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 16546,
+      "sha256": "9b70e7f8ca948326b1c109c55d8b292ea0fd6f0afa9ac3cdacdee7e6b616e422"
+    },
+    {
+      "id": "chest-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6592,
+      "sha256": "070fdb5c42c5bf7c0dd8508908bbb8d36fbe93daac48a622b2ae355ae72934c4",
+      "thumbRms": 1.7911008192660152
+    },
+    {
+      "id": "chest-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17582,
+      "sha256": "cfd85960135b42c50faa18a92fb8815072a50045c4078678eeb788d35a2b7cd5"
+    },
+    {
+      "id": "chest-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7492,
+      "sha256": "fbbfc87edaba729115090e3d9496f76125c3dbe0c9d00fcdb2f4bbf36a45fdb9",
+      "thumbRms": 1.9555609808952519
+    },
+    {
+      "id": "deltoids-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15576,
+      "sha256": "aa4aac9d290ee893d427dacfd0ac461a97ad28d0aeb6a3a35644429f2fbb2096"
+    },
+    {
+      "id": "deltoids-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6406,
+      "sha256": "381e0a32ff07d508aa034b3c868abc8aef369a92db8a4049e536f7a21bd77c71",
+      "thumbRms": 1.8135614904218207
+    },
+    {
+      "id": "deltoids-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 16902,
+      "sha256": "88a6a918b7213a12b545fa925af3c6f0d9a97c0e0c693ded1528a41b8bcb2c39"
+    },
+    {
+      "id": "deltoids-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6490,
+      "sha256": "a10366030c29c89702b61c2f2a469504b2519dc31500fc378dfeba49a82f0edc",
+      "thumbRms": 1.6575439005427768
+    },
+    {
+      "id": "deltoids-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 22460,
+      "sha256": "bb3a97c5552e47b4feb0d84ae1b47a506326b9c3984bba058d1cad8f9fd8d182"
+    },
+    {
+      "id": "deltoids-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 8998,
+      "sha256": "c341a0d61b0a15186b266fd23161f13cc0079f2a8d150ada070638d18bcab485",
+      "thumbRms": 1.89736016241975
+    },
+    {
+      "id": "erectors-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12346,
+      "sha256": "fe13b8f8b0bad257dbbc51942f47d248caa3efd82bd0725152c3f0d1c8bf6abf"
+    },
+    {
+      "id": "erectors-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 4824,
+      "sha256": "689d5504896504875848567dcda80f5bacab4105fa82541efb316feb2f9c0d00",
+      "thumbRms": 1.6763695882286491
+    },
+    {
+      "id": "erectors-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15670,
+      "sha256": "2e246fe135c404807368e2d11877792b45ab20232802e9ff42a5fa2201debb96"
+    },
+    {
+      "id": "erectors-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6342,
+      "sha256": "1158335cd2f5336cd62133b7caf1d9293eb90ceadcbbb27ac491d6ed893576dc",
+      "thumbRms": 1.7677863741274795
+    },
+    {
+      "id": "erectors-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 22022,
+      "sha256": "919b675db63f0bb6f7bfe7b6ba87754385f44725290a1bfd8cde2be574d228a3"
+    },
+    {
+      "id": "erectors-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 8774,
+      "sha256": "e039c2eb5a5fc2c1754b1f1e83fc771d31abb9285e2b840280242a8cd618695c",
+      "thumbRms": 1.8742277462398722
+    },
+    {
+      "id": "forearms-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12806,
+      "sha256": "53e3ba711ca0917ad2f4775ccb1b3eea50f8e0566c8234ab5451c22ea4762764"
+    },
+    {
+      "id": "forearms-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5024,
+      "sha256": "79b3a43ba5245b96811161e65eac717f3be6dc4ecdadea0139509ee487a4f518",
+      "thumbRms": 1.699145786867418
+    },
+    {
+      "id": "forearms-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 13674,
+      "sha256": "965bbf3aeb45bec81ba3b9f6ad7271259baed49ec5c6e07ec79bc9a1e23aa6d2"
+    },
+    {
+      "id": "forearms-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6018,
+      "sha256": "76f6f4c5f79ec1ff6a336e31f685fb902f876933a239698df258d3ed888ab50a",
+      "thumbRms": 1.6485798127994657
+    },
+    {
+      "id": "forearms-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14126,
+      "sha256": "a0a0915b30e7fd28b2dbcdf14ed7265e7974a16840329d04e789f7ea173e536e"
+    },
+    {
+      "id": "forearms-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5998,
+      "sha256": "f5bd9db4abd2c08c467252b72aa1cfe2ef9b45715f61298fe3ece99e4b7c3ca5",
+      "thumbRms": 1.6033038837057245
+    },
+    {
+      "id": "glute-max-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15018,
+      "sha256": "e41e9f9eda9d41350c970af1fe6e9e0ca7f88d7dee448d9a90cdb14385b37d00"
+    },
+    {
+      "id": "glute-max-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6110,
+      "sha256": "dbcda3234b63f1b73d3483569c3676e88d3018e236a2bc82cf7ec5d6312dfd52",
+      "thumbRms": 1.7982586384776176
+    },
+    {
+      "id": "glute-max-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14248,
+      "sha256": "832066e852f4048a9414e68e1263a6b799be05cb1241777c1d4829910738ef91"
+    },
+    {
+      "id": "glute-max-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6044,
+      "sha256": "6c1270edb31c12d91c1b8f30192eff81e0847a13d2b54d5a92bc5fa5046d59da",
+      "thumbRms": 1.7752240966316672
+    },
+    {
+      "id": "glute-max-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 16562,
+      "sha256": "473bc51280a38c0fe8f5d8b4edc8d2ea2d510dc525d62b0de938256ce2bb3a30"
+    },
+    {
+      "id": "glute-max-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6846,
+      "sha256": "826810fba75747f3be35f957beca7e0fe6a9d41c75d5a58150de1de62a8d1f4c",
+      "thumbRms": 1.7812328672421667
+    },
+    {
+      "id": "hamstrings-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14622,
+      "sha256": "19c3e52e1ab73fb9a103df036645b7314cb436c6143861bfae6f449517379271"
+    },
+    {
+      "id": "hamstrings-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6236,
+      "sha256": "34366f949fd9b83065bb1bb63035fb3d06de25f2f36a930c7d76e2e83ebd59e0",
+      "thumbRms": 1.659304698884516
+    },
+    {
+      "id": "hamstrings-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14490,
+      "sha256": "48039df4401a5fdf907f5dcc7df89c0af43641707e9b062526bd67f0eb8cb1eb"
+    },
+    {
+      "id": "hamstrings-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5988,
+      "sha256": "294ffe1bd376356a73dfa622321eed6967d0e7b15cbf9ee358e85d153dddbccc",
+      "thumbRms": 1.708100217715508
+    },
+    {
+      "id": "hamstrings-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 18286,
+      "sha256": "4679025346697b7636b36310736b0539c62512619e73d9a23814d0bc437d643c"
+    },
+    {
+      "id": "hamstrings-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7294,
+      "sha256": "6b6272f90dbd7b0c569e0b7870628a1b68f286b1ac31b5ec9dd6949b1354c46e",
+      "thumbRms": 1.709066962290184
+    },
+    {
+      "id": "hip-abductors-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15816,
+      "sha256": "b3ba454429f4735966df6cdafc7ca7c1be76c43190922a557c78bbc9b1b6f542"
+    },
+    {
+      "id": "hip-abductors-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6578,
+      "sha256": "0bbae4f6456a54c2f14b45b42fbd6f6104b801e9e08db016b8bd1bf8d3f1713d",
+      "thumbRms": 1.7610798626737072
+    },
+    {
+      "id": "hip-abductors-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14566,
+      "sha256": "675948adb51d2d878b1474182c87832b69e1b602823965864c5f7b6e31bbbd1a"
+    },
+    {
+      "id": "hip-abductors-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5990,
+      "sha256": "7cc20264427913e9c86b2961047e6d91d97ce7111cb2398d389244c76cd38dff",
+      "thumbRms": 1.8059827771891697
+    },
+    {
+      "id": "hip-abductors-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 30620,
+      "sha256": "6197052a7157a09cbb271fccfabb9c3ac90e605136082b2a812e21f01cdf9290"
+    },
+    {
+      "id": "hip-abductors-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 11800,
+      "sha256": "d6e73d48dfac28fd842b2c9608ea4db3c43749797907411a7de0670011f43ce8",
+      "thumbRms": 2.0713090909127145
+    },
+    {
+      "id": "hip-flexors-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12560,
+      "sha256": "9f8d76c7c8986925adaaa188405f90b8bca5634ccbf0cbff747f7faa506df5ae"
+    },
+    {
+      "id": "hip-flexors-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5066,
+      "sha256": "5d64e5d2c4fd0113114583f0ddb92ac6d9937fc2775b8dae4f7d5ac143f690bb",
+      "thumbRms": 1.669921875
+    },
+    {
+      "id": "hip-flexors-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17508,
+      "sha256": "49ea3ba4d7a71e8cfc6e9f564ecdf44a6fee162d32bd29c5bc24d4e6a26a9eec"
+    },
+    {
+      "id": "hip-flexors-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7206,
+      "sha256": "c8487750bd224bbe0f4f0fa6feb075a97425fd5b05b8a00d29599da09a9c31e4",
+      "thumbRms": 1.6852198136482077
+    },
+    {
+      "id": "hip-flexors-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 21686,
+      "sha256": "a0f840f317a79b57afe1f790ceda0b0bf5475c4475d440f1d358f95f42813750"
+    },
+    {
+      "id": "hip-flexors-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 8410,
+      "sha256": "f0fd025deb223c99809a3934a7edc70c1447da057bc1f9c3907a50192596684d",
+      "thumbRms": 2.0458525222323845
+    },
+    {
+      "id": "lats-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 16540,
+      "sha256": "8f41e64761534c478a2abde4ca21b4f707eee17ac2e0d470b3fb74d8ae044eed"
+    },
+    {
+      "id": "lats-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6968,
+      "sha256": "4c6f661fe990cc6f54e50c01ca93d6938429882e8670a352baa7c76381f9d84e",
+      "thumbRms": 1.6255151958993215
+    },
+    {
+      "id": "lats-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 18552,
+      "sha256": "67de08e37bf059283bdbed3d33fe39e22046a875f60013a26208fbf41a893efe"
+    },
+    {
+      "id": "lats-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6984,
+      "sha256": "8e74d2d7d3d35026ad001d849c56e393b08f2ce80eba92a9f0ac38b62d7c2c3b",
+      "thumbRms": 1.8090450638302933
+    },
+    {
+      "id": "lats-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 18886,
+      "sha256": "30b96f40b6e2ac955ac76c4cc3ddb37b71f0c2f5299bb666c8f94c11bd229cd4"
+    },
+    {
+      "id": "lats-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7896,
+      "sha256": "ca1064ef193ed1d8ffc7bf4b71427c38636eaf19ef4a986c99abb337e6d82b70",
+      "thumbRms": 1.6855480065900026
+    },
+    {
+      "id": "obliques-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14674,
+      "sha256": "d869783088fb6015867be71fd82b120c4dd01ff6804ac89cee7703410ed67d21"
+    },
+    {
+      "id": "obliques-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6052,
+      "sha256": "47e5f4aa3242d9ddda056388bc1ae3021ea35ea6c221aed16f2301094f141d58",
+      "thumbRms": 1.5891585689525733
+    },
+    {
+      "id": "obliques-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17344,
+      "sha256": "5b24daefd575477edf95ff408b581e0cc50b5fc9de70ebb6d432cb97b5de7966"
+    },
+    {
+      "id": "obliques-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6972,
+      "sha256": "77fb257a587dadf00aaf6e49ccb5e89588b13650903dec21942f973eda8906c5",
+      "thumbRms": 1.6640716695756752
+    },
+    {
+      "id": "obliques-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 27140,
+      "sha256": "f0e234292a97c45eccf703171146269fcee54f2941cfcd0069ad2d5375968bee"
+    },
+    {
+      "id": "obliques-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 10302,
+      "sha256": "c0f220fc557a70bcf21a4c2dcc64c252935171be6d67ead66b34b8eb5e7e212c",
+      "thumbRms": 1.9166386920159004
+    },
+    {
+      "id": "quadriceps-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12102,
+      "sha256": "f32f372b37342ca68ac810078917f3e512ed6c4b610c16c6c84cd75c4d834824"
+    },
+    {
+      "id": "quadriceps-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5000,
+      "sha256": "407071a39c6d330cba16e88f4c5500e0ff6d42dd6becdfabe4c2685ba745937b",
+      "thumbRms": 1.4485763400960052
+    },
+    {
+      "id": "quadriceps-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 13060,
+      "sha256": "3fa842c6c4aaa21368d92aa78e2e2ca9c1b7a0cd820c2340172ff72757feb8df"
+    },
+    {
+      "id": "quadriceps-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5324,
+      "sha256": "d3aacb6cce19bafbac4f8b63702e8c8a9d0a9d5ba0db36decbd984d323209531",
+      "thumbRms": 1.6263023439584792
+    },
+    {
+      "id": "quadriceps-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 26486,
+      "sha256": "ac18c2c2613d7ee335c5ff0fd311307d8636d6dc75b1990e8acfb10ab35e07ab"
+    },
+    {
+      "id": "quadriceps-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 10912,
+      "sha256": "9f2aeeeb0b40dd99610a90785e1d2044a88e9ad96b0e449a6a35119fb6264d42",
+      "thumbRms": 2.08462586044291
+    },
+    {
+      "id": "rotator-cuff-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14740,
+      "sha256": "8eca8c49f43c5f5a5f9659bfaa9d8cf3c84bac8772720445ab51ee7e893d6ba7"
+    },
+    {
+      "id": "rotator-cuff-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6228,
+      "sha256": "127bf735d47ae3dd0dd97e5e1c2e951636ad655fccf0c8007d020a30a833d909",
+      "thumbRms": 1.6666440326425342
+    },
+    {
+      "id": "rotator-cuff-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17648,
+      "sha256": "55457062422f794aa125159547a6edb07afd5da76259436a8763b2c37acd840e"
+    },
+    {
+      "id": "rotator-cuff-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6866,
+      "sha256": "853ff3aef90fd78e2a8e98cb9078804c5c5d8def0d110b25c84f91691047045a",
+      "thumbRms": 1.6932050553240738
+    },
+    {
+      "id": "rotator-cuff-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 21000,
+      "sha256": "068e52a36d9ed157b16414802d50a66acb6482b66804a576f8e19c4913de814c"
+    },
+    {
+      "id": "rotator-cuff-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 8774,
+      "sha256": "9e991a47909ed5de42a637076164324493a5afcfeeb19bad5406bcb52be0b76a",
+      "thumbRms": 1.9051930983990835
+    },
+    {
+      "id": "scapular-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 13840,
+      "sha256": "d0f0e8a676436496c59d18bd6ab9e9a067a2891e28eb0d02393d713a747a5cf4"
+    },
+    {
+      "id": "scapular-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5756,
+      "sha256": "958a8eba5293a47dcc9af8787bdf7c376824521bbc814b1d4c6e8b2eaa06987d",
+      "thumbRms": 1.5818576293618565
+    },
+    {
+      "id": "scapular-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 19408,
+      "sha256": "0c123df27e9e4fbe3dd567de3b2e919c507ef9b44f0e9d5f9e9d22e01b782cba"
+    },
+    {
+      "id": "scapular-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7814,
+      "sha256": "5ed041fb427cb301e442f050918d283c678d82a910da7192c119ded29621ea75",
+      "thumbRms": 1.8009750692197746
+    },
+    {
+      "id": "scapular-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 16376,
+      "sha256": "80b5f4ef4bc4265f8d539a8c1450a2e8572723dbad9fa33da16c531198f86b08"
+    },
+    {
+      "id": "scapular-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6426,
+      "sha256": "a905f1f8a3721dcf22a2c1df00892b0b2713f72566a859c4f90bd5c0305f4639",
+      "thumbRms": 1.7457299589568855
+    },
+    {
+      "id": "serratus-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 12240,
+      "sha256": "f90f3b60b40fb856d6b29086f7b2f839c9ee8a6135322d74b967aaef94df33ef"
+    },
+    {
+      "id": "serratus-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 4844,
+      "sha256": "9ebb1e45a7de32abd289946e44e6086d9033890eaa8348f6e8a0e223a4cd1f06",
+      "thumbRms": 1.5561283661521499
+    },
+    {
+      "id": "serratus-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 11910,
+      "sha256": "f35ffaf2bff7eeb68f0227dc9c6fa172f493e08d8af7baadf5cfc004cc0a9c45"
+    },
+    {
+      "id": "serratus-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5032,
+      "sha256": "407c1ba31f42af48770d0da1856bd8c8c7b880748a7f84b70e23bc58ae9b6ec7",
+      "thumbRms": 1.5133139697837255
+    },
+    {
+      "id": "serratus-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 17532,
+      "sha256": "79742f9d2d8cf042f8293635ac700664ec79adf5b3e27c9237e0e527abc4aaa4"
+    },
+    {
+      "id": "serratus-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 7694,
+      "sha256": "60e21ec9e09fdff98ee359945a4bbc75dce34b6a9f31c9187f6f9c9a492fd7de",
+      "thumbRms": 1.657734907026047
+    },
+    {
+      "id": "triceps-A",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 14066,
+      "sha256": "a52b463b177d62515258077ab4b328c5fb2ad25f550c6a8ece1c7346f7003930"
+    },
+    {
+      "id": "triceps-A",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5732,
+      "sha256": "0f049785faf73c76c8ef856fc44ee035c7c5034b3c42dc22f524322d98107fe7",
+      "thumbRms": 1.7028909224893074
+    },
+    {
+      "id": "triceps-B",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 13742,
+      "sha256": "c41c588c8dd3882a5931ac3585097be0142d62cc7628e96aa15219a00525fee5"
+    },
+    {
+      "id": "triceps-B",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 5960,
+      "sha256": "7547056c685ed43c1d2aa7be45e13281f3d314b7831fb567e2dcfe2c827219c7",
+      "thumbRms": 1.57141863832183
+    },
+    {
+      "id": "triceps-C",
+      "suffix": "",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "WEBP",
+      "bytes": 15484,
+      "sha256": "5ffa2c14bd7053721db749ac7f3f11ddb62379e1c4da59e517e457603e777ba4"
+    },
+    {
+      "id": "triceps-C",
+      "suffix": "-512",
+      "size": [
+        512,
+        512
+      ],
+      "format": "WEBP",
+      "bytes": 6230,
+      "sha256": "4af76a585ca67137052a8adec1b874950b5690380b72038b3e7aa818d0d583eb",
+      "thumbRms": 1.6936071581978
+    }
+  ]
+}

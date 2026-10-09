@@ -1,0 +1,16 @@
+{
+  "sourceHead": "3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3",
+  "examinedPairs": 51,
+  "contactSheetPairImageSize": 240,
+  "detailPairs": [
+    "hamstrings-A",
+    "obliques-C"
+  ],
+  "detailPairImageSize": 768,
+  "blockingNewVisualFindings": [],
+  "observedDifferences": {
+    "hamstrings-A": "Light version extends the orange rear-thigh region onto the buttock; hip hinge, single-leg stance, no equipment match the dark original.",
+    "obliques-C": "Machine is light silver with small outline differences; high pulley/cable/hand line and woodchop pose match the dark original."
+  },
+  "limits": "Review checked exercise identity, obvious pose/equipment/highlight changes; it is not a coach biomechanical certification. Existing original-image teaching limitations remain."
+}

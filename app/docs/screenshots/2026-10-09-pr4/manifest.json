@@ -1,0 +1,33 @@
+{
+  "source": "actual-browser-screenshots",
+  "date": "2026-10-09",
+  "reviewedHead": "3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3",
+  "mergedCommit": "bb94d849099d6a2985aa72c00373ce17d81a9993",
+  "files": [
+    {
+      "file": "dark-detail.jpg",
+      "bytes": 30647,
+      "sha256": "8776d69ff1037132aa3f07e5bcf5278fb06e8d623bb9a059eabe724582f2b1dc"
+    },
+    {
+      "file": "dark-library.jpg",
+      "bytes": 30199,
+      "sha256": "b96aaeb690092cbbe084d63aef05b2128cc9a41131bbe4dcf7b8be9cdedb27e3"
+    },
+    {
+      "file": "light-detail.jpg",
+      "bytes": 30704,
+      "sha256": "1a3be8f345c1228b71715a0fdac1b4d1c2c9bb93d3e54c9835ca144f486d470a"
+    },
+    {
+      "file": "light-library.jpg",
+      "bytes": 36093,
+      "sha256": "849b0e80e04e4489ea0bc472d563053f68ed2ca55de139d12ea7e00b371d4686"
+    },
+    {
+      "file": "light-today.jpg",
+      "bytes": 34136,
+      "sha256": "9b9a3e4f3e4c369caf5ca3d0094eda27dbd3afc53a1fa76af3bbe33c6d174124"
+    }
+  ]
+}
