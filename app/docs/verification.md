@@ -347,3 +347,9 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 - `npm run build && npm run verify` 通过；`node tools/verify-detail-transitions.mjs` 通过（新增弧线过渡断言）
 - 加载动画分帧以 @napi-rs/canvas 离屏渲染核对（沙箱无 Chromium）
 - 台账：docs/device-feedback-2026-10-09.md
+
+## iOS 准备（2026-10-09，Hark，无 Mac）
+
+- 内容：iOS 15.0 / 仅 iPhone、深色启动屏、单尺寸图标、Info.plist（zh-Hans、出口合规）、PrivacyInfo.xcprivacy、WKWebView 舞台设置、WebContent 进程回收自动恢复、`integration_test/ios_smoke_test.dart`、`tools/ios/` 脚本。规划和验收见 [ios-plan-2026-10-09.md](ios-plan-2026-10-09.md)。
+- 沙箱验证：`dart analyze lib test test_screens integration_test` 无问题；`flutter test --no-pub` 73/73；plist 可以解析；pbxproj 括号配平。
+- 未验证：Xcode 编译、签名、模拟器和真机运行、冒烟测试，全部按 ios-plan 的 I01–I12 在 Mac 上验收，不把本节记作 iOS 通过。

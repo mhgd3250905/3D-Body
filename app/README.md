@@ -29,7 +29,7 @@ flutter run -d chrome
 
 当前本机预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`：采用优化编译与本地开发签名，用于手机验证。模拟器调试包另保留为同目录 `app-debug.apk`。Google Play 封闭测试使用 `build/app/outputs/bundle/release/app-release.aab`（`1.0.0+1`，release上传密钥签名），已上传Play并送审；Play显示其优化后新安装约33.9MB。
 
-安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
+安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证：步骤、任务与验收见 [docs/ios-plan-2026-10-09.md](docs/ios-plan-2026-10-09.md)，Mac 上先运行 `bash tools/ios/doctor.sh`。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
 
 只修改 Dart 页面无需重新制作 3D 包；修改场景代码或模型后，先在 `app/scene` 执行：
 
