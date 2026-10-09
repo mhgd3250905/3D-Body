@@ -269,6 +269,13 @@ void main() {
         expect(find.widgetWithText(FilledButton, '练三角肌'), findsOneWidget);
         await tester.tap(find.byKey(const ValueKey('train-group')));
         await tester.pumpAndSettle();
+        // Training first asks for a scene: no equipment, home, or gym.
+        expect(find.text('选一个训练场景'), findsOneWidget);
+        expect(find.byKey(const ValueKey('scene-A')), findsOneWidget);
+        expect(find.byKey(const ValueKey('scene-B')), findsOneWidget);
+        expect(find.byKey(const ValueKey('scene-C')), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('scene-A')));
+        await tester.pumpAndSettle();
         final detail = tester.widget<DrillDetailPage>(
           find.byType(DrillDetailPage),
         );

@@ -176,6 +176,84 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
+  /// Training opens on a scene choice: no equipment, at home, or at the gym,
+  /// each one this group's drill for that tier. The tier used last (from
+  /// settings) is marked so the usual pick is one tap.
+  Future<void> _chooseDrillScene(MuscleGroup group) async {
+    if (_sheetOpen) return;
+    _sheetOpen = true;
+    try {
+      final s = context.strings;
+      final usual = store.settings.tier;
+      final options =
+          [
+                ('A', s.sceneNone, s.sceneNoneHint),
+                ('B', s.sceneHome, s.sceneHomeHint),
+                ('C', s.sceneGym, s.sceneGymHint),
+              ]
+              .map(
+                (o) => (o, catalog.drillsFor(group.id, tier: o.$1).firstOrNull),
+              )
+              .where((e) => e.$2 != null)
+              .toList();
+      if (options.isEmpty) return;
+      final picked = await showModalBottomSheet<Drill>(
+        context: context,
+        sheetAnimationStyle: FlareMotion.sheetStyle(context),
+        isScrollControlled: true,
+        builder: (sheetContext) => SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Eyebrow(s.chooseScene),
+                      const SizedBox(height: 4),
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          s.trainGroup(group.label),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                for (final (i, entry) in options.indexed)
+                  FadeSlideIn(
+                    delay: Duration(milliseconds: 40 * i),
+                    offset: 8,
+                    child: _SceneOption(
+                      key: ValueKey('scene-${entry.$1.$1}'),
+                      label: entry.$1.$2,
+                      hint: entry.$1.$3,
+                      drill: entry.$2!,
+                      usual: entry.$1.$1 == usual,
+                      onTap: () {
+                        FlareHaptics.selection();
+                        Navigator.pop(sheetContext, entry.$2);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (picked != null && mounted) _openDrill(picked);
+    } finally {
+      _sheetOpen = false;
+    }
+  }
+
   void _openLesson(Lesson lesson) {
     setState(() => _lesson = lesson);
     _syncSceneVisibility();
@@ -707,9 +785,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         .firstOrNull;
     final together = catalog.synergists(phase, detail.id, limit: 99);
     final shown = together.take(2).toList();
-    final drill =
-        catalog.drillsFor(detail.id, tier: store.settings.tier).firstOrNull ??
-        catalog.drillsFor(detail.id).firstOrNull;
+    final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
       flex: 7,
@@ -827,7 +903,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               key: const ValueKey('train-group'),
               label: s.trainGroup(detail.label),
               arrow: true,
-              onPressed: drill == null ? null : () => _openDrill(drill),
+              onPressed: hasDrills ? () => _chooseDrillScene(detail) : null,
             ),
           ),
         ],
@@ -1623,6 +1699,110 @@ class _SceneError extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+/// One scene in the training choice: the drill's picture, the scene in a
+/// word, what it needs, and the drill it opens.
+class _SceneOption extends StatelessWidget {
+  const _SceneOption({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.drill,
+    required this.usual,
+    required this.onTap,
+  });
+  final String label;
+  final String hint;
+  final Drill drill;
+  final bool usual;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Semantics(
+      button: true,
+      label: '$label，${drill.name}，${drill.prescription}',
+      excludeSemantics: true,
+      child: Pressable(
+        scale: .98,
+        child: Material(
+          color: FlareColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: usual
+                  ? FlareColors.accent.withValues(alpha: .55)
+                  : Colors.transparent,
+              width: 1.2,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: ColoredBox(
+                      color: FlareColors.raised,
+                      child: Image.asset(
+                        drillArt(drill.thumbnailAsset),
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        frameBuilder: (context, child, frame, sync) =>
+                            fadeInFrame(context, child, frame, sync),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          hint,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: FlareColors.dim,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${drill.name} · ${drill.prescription}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: FlareColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     ),
   );

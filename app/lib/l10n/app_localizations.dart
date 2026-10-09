@@ -1090,6 +1090,48 @@ abstract class AppLocalizations {
   /// **'一起发力'**
   String get together;
 
+  /// No description provided for @sceneNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'无器械'**
+  String get sceneNone;
+
+  /// No description provided for @sceneHome.
+  ///
+  /// In zh, this message translates to:
+  /// **'居家'**
+  String get sceneHome;
+
+  /// No description provided for @sceneGym.
+  ///
+  /// In zh, this message translates to:
+  /// **'健身房'**
+  String get sceneGym;
+
+  /// No description provided for @sceneNoneHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'徒手，随时随地'**
+  String get sceneNoneHint;
+
+  /// No description provided for @sceneHomeHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'弹力带、哑铃等家用器械'**
+  String get sceneHomeHint;
+
+  /// No description provided for @sceneGymHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'器械和自由重量'**
+  String get sceneGymHint;
+
+  /// No description provided for @chooseScene.
+  ///
+  /// In zh, this message translates to:
+  /// **'选一个训练场景'**
+  String get chooseScene;
+
   /// No description provided for @trainGroup.
   ///
   /// In zh, this message translates to:

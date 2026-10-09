@@ -274,6 +274,9 @@ void main() {
     await shot(tester, '07-detail-muscles');
     await tester.tap(find.byKey(const ValueKey('train-group')));
     await tester.pumpAndSettle();
+    await shot(tester, '08b-train-scene');
+    await tester.tap(find.byKey(const ValueKey('scene-A')));
+    await tester.pumpAndSettle();
     await shot(tester, '09-drill-detail');
     await tester.tap(find.text('更多要点、常见错误与安全'));
     await tester.pumpAndSettle();
