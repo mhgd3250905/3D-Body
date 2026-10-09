@@ -23,13 +23,13 @@ function harness() {
     camera: new THREE.PerspectiveCamera(32, 1, .02, 40),
     controls: { target: homeTarget.clone(), enableDamping: false, update() {} },
     container: { clientWidth: 390, clientHeight: 340, append() {} },
-    renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390 } },
+    renderer: { setSize() {}, domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390 } },
+    callbacks: {}, updatePixelRatio() {},
     running: true, autoFrame: true, framingMode: 'main', time: 2.375, viewInset: 0, viewInsetTarget: 0, baseFov: 32,
     getMetrics: () => ({ bounds: { min: [-1, 0, -1], max: [1, 1, 1] } }),
-    setFramingMode(value) { this.framingMode = value; },
     setDisplayScene(value) { this.displayScene = value; },
   };
-  for (const method of ['setCameraView', 'glideTo', 'stepGlide', 'fitBounds', 'visibleHeight', 'applyProjection', 'setViewInset']) {
+  for (const method of ['setCameraView', 'glideTo', 'stepGlide', 'fitBounds', 'visibleHeight', 'applyProjection', 'updateFramingTarget', 'setViewInset', 'setFramingMode', 'resize']) {
     player[method] = FlarePlayer.prototype[method];
   }
   player.camera.position.copy(homePosition);
@@ -45,6 +45,24 @@ function harness() {
 
 function view(player) {
   return { position: player.camera.position.clone(), target: player.controls.target.clone() };
+}
+
+{
+  const { player, detail } = harness();
+  player.resize();
+  let allocations = 0, ratioChanges = 0;
+  player.renderer.setSize = () => allocations++;
+  player.updatePixelRatio = () => ratioChanges++;
+  player.setViewInset(86, false);
+  player.setViewInset(120); detail.open('triceps', {});
+  finishGlide(player);
+  player.setViewInset(86); detail.close();
+  finishGlide(player);
+  assert.equal(allocations, 0, 'detail transitions must not rewrite canvas dimensions');
+  assert.equal(ratioChanges, 0, 'detail transitions must not switch canvas resolution');
+  player.container.clientWidth = 320;
+  player.resize();
+  assert.equal(allocations, 1, 'a real window resize still resizes the canvas');
 }
 
 function destination(player) {
@@ -180,4 +198,70 @@ function interruptedRoundTrip(player, detail, label) {
   assert.equal(player.viewInset, 86);
 }
 
-console.log('Detail transitions verified: fixed-size stage with eased panel inset, orbiting glide (no cut-through), interrupted opening/reset/group changes, saved views, same frame, and home return.');
+{
+  // Exercise the actual framing-mode switch. A stage tall enough for the
+  // home composition becomes shorter than 500 px above the detail panel.
+  // Neither switching modes nor crossing that height may cut the projection.
+  const { player, detail } = harness();
+  player.container.clientHeight = 740;
+  player.resize(); player.setViewInset(86, false);
+  const beforeOpen = player.camera.projectionMatrix.clone();
+  player.setViewInset(300); detail.open('triceps', {});
+  assert.ok(player.camera.projectionMatrix.equals(beforeOpen), 'opening preserves the first projection');
+  finishGlide(player);
+  const beforeClose = player.camera.projectionMatrix.clone();
+  player.setViewInset(86); detail.close();
+  assert.ok(player.camera.projectionMatrix.equals(beforeClose), 'closing preserves the first projection');
+  const g = player.glide;
+  let previousY = player.offsetY, previousX = player.offsetX;
+  for (let i = 1; i <= 120; i++) {
+    player.stepGlide(g.start + g.ms * i / 120);
+    assert.ok(Math.abs(player.offsetY - previousY) < 6, 'projection crosses 500 px without a vertical jump');
+    assert.ok(Math.abs(player.offsetX - previousX) < 1, 'projection has no horizontal jump');
+    previousY = player.offsetY; previousX = player.offsetX;
+  }
+  assert.equal(player.viewInset, 86);
+  assert.ok(Math.abs(player.viewBias.y - (0.5 - 187 / 650)) < 1e-9, 'home composition is restored');
+}
+
+{
+  const { player, detail } = harness();
+  player.container.clientHeight = 740;
+  player.resize(); player.setViewInset(86, false);
+  player.setViewInset(300); detail.open('triceps', {});
+  const g = player.glide;
+  player.stepGlide(g.start + g.ms / 3);
+  const camera = view(player);
+  // This is the OrbitControls start listener's interruption: the user's
+  // orbit takes over the camera while the panel projection keeps settling.
+  player.glide = null; player.autoFrame = false;
+  player.stepGlide(g.start + g.ms);
+  expectView(player, camera, 'pointer takes over the camera');
+  assert.equal(player.viewInset, 300, 'pointer interruption cannot strand the inset');
+  assert.equal(player.projectionGlide, null);
+  assert.equal(player.viewBias.y, 0, 'detail composition finishes after pointer interruption');
+}
+
+{
+  const previousMatchMedia = globalThis.matchMedia;
+  globalThis.matchMedia = () => ({ matches: true });
+  try {
+    const { player, detail } = harness();
+    player.container.clientHeight = 740;
+    player.resize(); player.setViewInset(86, false);
+    player.setViewInset(300); detail.open('triceps', {});
+    assert.equal(player.glide, null, 'reduced motion installs the detail camera at once');
+    assert.equal(player.projectionGlide, null, 'reduced motion leaves no projection animation');
+    assert.equal(player.viewInset, 300);
+    assert.equal(player.viewBias.y, 0);
+    player.setViewInset(86); detail.close();
+    assert.equal(player.glide, null);
+    assert.equal(player.viewInset, 86);
+    assert.ok(Math.abs(player.viewBias.y - (0.5 - 187 / 650)) < 1e-9);
+  } finally {
+    if (previousMatchMedia === undefined) delete globalThis.matchMedia;
+    else globalThis.matchMedia = previousMatchMedia;
+  }
+}
+
+console.log('Detail transitions verified: fixed-size stage with continuous projection and panel inset, pointer interruption, reduced motion, orbiting glide (no cut-through), interrupted opening/reset/group changes, saved views, same frame, and home return.');

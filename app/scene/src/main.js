@@ -220,7 +220,10 @@ async function boot() {
         frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
         pixelRatio: player.renderer.getPixelRatio(), framingMode: player.framingMode,
         bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
-      getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect }),
+      getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect,
+        projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
+        viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
+        gliding: !!player.glide || !!player.projectionGlide }),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },
     });

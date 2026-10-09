@@ -1,5 +1,9 @@
 * text=auto
 
+# Vite preserves inline HTML newlines; avoid doubled CRs in generated scenes.
+app/scene/index.html text eol=lf
+app/assets/scene/index.html text eol=lf
+
 # Keep exported poses and asset manifests byte-for-byte across platforms.
 *.json -text
 *.glb binary

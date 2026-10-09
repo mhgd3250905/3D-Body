@@ -88,12 +88,23 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (!mounted || _configuring) return;
     if (_scene.ready && !_configured) {
       final restoredTime = store.lastTime;
+      final restoredModel = _scene.detailModel;
       _configuring = true;
       _configured = true;
+      // A replacement WebView has no viewport state, even when its size is
+      // unchanged. Install the inset before seek/play can frame the new view.
+      _sentInset = _viewInsetFor(context, _detail != null);
+      _insetSent = true;
+      _scene.setViewInset(_sentInset, animate: false);
       _scene.setSpeed(store.settings.speed);
       if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
       _scene.setTime(restoredTime);
-      if (store.safetyAccepted && _watchVisible) _scene.play();
+      if (_detail case final group?) {
+        _scene.setDetail(group.id);
+        _scene.setDetailModel(restoredModel);
+      } else if (store.safetyAccepted && _watchVisible) {
+        _scene.play();
+      }
       _configuring = false;
       _refreshView();
       return;
@@ -278,6 +289,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _drill = null;
       _detail = null;
     });
+    _sentInset = _viewInsetFor(context, false);
+    _scene.setViewInset(_sentInset);
     _scene.setDetail(null);
     _scene.select(null);
     _scene.setTime(catalog.phaseTime(source));
@@ -301,6 +314,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _back() {
     if (_timing) return;
+    if (_drill == null &&
+        _lesson == null &&
+        !_settings &&
+        !_assessment &&
+        _detail != null) {
+      _returnToMotion();
+      return;
+    }
     setState(() {
       if (_drill != null) {
         _drill = null;
@@ -310,9 +331,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _settings = false;
       } else if (_assessment) {
         _assessment = false;
-      } else if (_detail != null) {
-        _detail = null;
-        _scene.setDetail(null);
       } else {
         _tab = 0;
       }
@@ -846,7 +864,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final first = !_insetSent;
     _insetSent = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _scene.setViewInset(inset, animate: !first);
+      if (mounted && (_sentInset - inset).abs() < .5) {
+        _scene.setViewInset(inset, animate: !first);
+      }
     });
   }
 

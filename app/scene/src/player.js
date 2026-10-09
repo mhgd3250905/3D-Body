@@ -134,12 +134,17 @@ export class FlarePlayer {
    * the change; otherwise it eases on its own (reduced motion: at once). */
   setViewInset(px, animate = true) {
     const value = Math.max(0, Number(px) || 0);
-    if (Math.abs(value - this.viewInsetTarget) < 0.5 && !this.glide) return;
+    if (Math.abs(value - this.viewInsetTarget) < 0.5 && Math.abs(value - this.viewInset) < 0.5 && !this.glide) return;
     this.viewInsetTarget = value;
-    if (this.glide) { this.glide.toInset = value; return; }
+    this.updateFramingTarget();
+    if (animate && this.projectionGlide) {
+      this.projectionGlide.toInset = value;
+      this.projectionGlide.toBias = { ...this.viewBiasTarget };
+      return;
+    }
     if (animate && this.running && Math.abs(value - this.viewInset) > 0.5) {
       this.glideTo(this.camera.position.clone(), this.controls.target.clone(), 420);
-    } else { this.viewInset = value; this.applyProjection(); }
+    } else { this.projectionGlide = null; this.viewInset = value; this.viewBias = { ...this.viewBiasTarget }; this.applyProjection(); }
     this.dirty = true;
   }
   setTime(time) {
@@ -165,21 +170,32 @@ export class FlarePlayer {
     this.dirty = true; this.resize();
   }
   updatePixelRatio() {
-    const minimum = this.framingMode === 'detail' && this.quality !== 'low' ? 2 : 1;
-    this.renderer.setPixelRatio(Math.min(Math.max(window.devicePixelRatio || 1, minimum), Math.max(QUALITY[this.quality].ratio, minimum)));
+    // The quality setting owns resolution. Changing detail mode must not
+    // reallocate the canvas buffer midway through a camera transition.
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QUALITY[this.quality].ratio));
   }
   resize() {
     const width = this.container.clientWidth, height = this.container.clientHeight;
     if (!(width > 0 && height > 0)) return;
     const changed = this.lastSize !== `${width}x${height}`;
     this.lastSize = `${width}x${height}`;
-    this.applyProjection(); this.renderer.setSize(width, height);
+    this.updateFramingTarget();
+    this.applyProjection();
+    if (changed) this.renderer.setSize(width, height);
     if (changed && this.autoFrame && this.motion) this.resetView();
     if (changed && this.framingMode === 'detail') this.callbacks.onResize?.();
     this.dirty = true;
   }
   /** Visible stage height for an inset (the part above the host's chrome). */
   visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - inset); }
+  updateFramingTarget() {
+    const width = this.container.clientWidth, visible = this.visibleHeight(this.viewInsetTarget);
+    const fullStage = this.framingMode === 'main' && width <= 600 && visible >= 500;
+    this.insetLeft = this.framingMode === 'detail' || fullStage ? 0 : visible <= 320 ? 48 : 64;
+    this.viewBiasTarget = { x: fullStage ? 10 / 390 : -this.insetLeft / (2 * Math.max(1, width)),
+      y: fullStage ? 0.5 - 187 / 650 : 0 };
+    this.viewBias ??= { ...this.viewBiasTarget };
+  }
   applyProjection() {
     const width = this.container.clientWidth, height = this.container.clientHeight;
     if (!(width > 0 && height > 0)) return;
@@ -188,30 +204,30 @@ export class FlarePlayer {
     // the same lens extended, so framing matches a stage of that height.
     this.camera.aspect = width / height;
     this.camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(this.baseFov / 2)) * height / visible));
-    const fullStage = this.framingMode === 'main' && width <= 600 && visible >= 500;
-    this.insetLeft = this.framingMode === 'detail' || fullStage ? 0 : visible <= 320 ? 48 : 64;
+    if (!this.viewBias) this.updateFramingTarget();
     // h1 embeds the 650px stage at global y108. Lift the visual composition
     // 40px from the first pass. Only 10px of the static reference's horizontal
     // shift is retained for v38; its slightly wider envelope is fitted below.
-    this.offsetY = (fullStage ? visible * (0.5 - 187 / 650) : 0) + (height - visible) / 2;
-    this.offsetX = fullStage ? width * 10 / 390 : 0;
-    this.camera.setViewOffset(width, height, this.offsetX - this.insetLeft / 2, this.offsetY, width, height);
+    this.offsetY = visible * this.viewBias.y + (height - visible) / 2;
+    this.offsetX = width * this.viewBias.x;
+    this.camera.setViewOffset(width, height, this.offsetX, this.offsetY, width, height);
     this.camera.updateProjectionMatrix();
   }
-  setFramingMode(value) { this.framingMode = value; this.updatePixelRatio(); this.resize(); }
+  setFramingMode(value) { this.framingMode = value; this.resize(); }
   resetView(direction = CAMERA_PRESETS.standard) {
     this.autoFrame = true;
     const fullStage = this.container.clientWidth <= 600 && this.visibleHeight(this.viewInsetTarget) >= 500;
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
   }
   setCameraView(position, target) {
-    this.glide = null;
+    this.glide = null; this.projectionGlide = null;
     // A quick model switch must not carry an unfinished orbit into the next
     // model's camera. Flush its damping before installing the saved view.
     const damping = this.controls.enableDamping;
     this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
     this.controls.target.copy(target); this.camera.position.copy(position);
-    if (this.viewInset !== this.viewInsetTarget) { this.viewInset = this.viewInsetTarget; this.applyProjection(); }
+    this.viewInset = this.viewInsetTarget;
+    this.updateFramingTarget(); this.viewBias = { ...this.viewBiasTarget }; this.applyProjection();
     this.controls.update(); this.dirty = true;
   }
   /** Ease the camera to a view instead of cutting to it (detail open/close).
@@ -232,19 +248,30 @@ export class FlarePlayer {
     dTheta = Math.atan2(Math.sin(dTheta), Math.cos(dTheta));
     const turn = Math.abs(dTheta) + Math.abs(to.phi - from.phi);
     const duration = ms ?? Math.round(Math.min(900, 560 + turn * 110));
+    this.updateFramingTarget();
     this.glide = { fromP: this.camera.position.clone(), fromT, toP: position.clone(), toT,
-      from, dTheta, to, start: performance.now(), ms: duration, fromInset: this.viewInset, toInset: this.viewInsetTarget };
+      from, dTheta, to, start: performance.now(), ms: duration, fromInset: this.viewInset, toInset: this.viewInsetTarget,
+      fromBias: { ...this.viewBias }, toBias: { ...this.viewBiasTarget } };
+    // Pointer orbiting interrupts only the camera. The host's panel still
+    // settles into place, so its inset and projection must finish separately.
+    this.projectionGlide = this.glide;
     this.dirty = true;
   }
   stepGlide(now) {
+    const projection = this.projectionGlide;
+    if (projection) {
+      const k = THREE.MathUtils.clamp((now - projection.start) / projection.ms, 0, 1);
+      const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      this.viewInset = projection.fromInset + (projection.toInset - projection.fromInset) * e;
+      this.viewBias = { x: THREE.MathUtils.lerp(projection.fromBias.x, projection.toBias.x, e),
+        y: THREE.MathUtils.lerp(projection.fromBias.y, projection.toBias.y, e) };
+      if (k >= 1) { this.viewInset = projection.toInset; this.viewBias = { ...projection.toBias }; this.projectionGlide = null; }
+      this.applyProjection(); this.dirty = true;
+    }
     const g = this.glide; if (!g) return;
     const raw = (now - g.start) / g.ms, k = raw >= 1 - 1e-9 ? 1 : Math.max(0, raw);
     // Ease-in-out cubic: a soft start, a settled landing.
     const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-    if (g.fromInset !== undefined) {
-      this.viewInset = k >= 1 ? g.toInset : g.fromInset + (g.toInset - g.fromInset) * e;
-      this.applyProjection();
-    }
     if (k >= 1) {
       this.controls.target.copy(g.toT); this.camera.position.copy(g.toP); this.glide = null;
     } else {
