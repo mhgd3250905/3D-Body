@@ -1,12 +1,16 @@
-# PR6本地审核候选（2026-10-09，未推送/未合并）
+# PR6审核修复与交付（2026-10-09，已合并）
 
 修复产品源 `4bc81b830f45279fbaa6631a269a590112f6ae96`，tree `3d35127c3fcb2ff13c2c56af1ce376a82901d840`；原PR源2b87db5、真实目标f1d526a。`flutter analyze --no-pub`无问题，`flutter test --no-pub --concurrency=1 test/ui test/data/muscle_knowledge_test.dart` 36项通过；快速镜头/同帧回归与v41 540帧/136案例通过；离线Web、开发APK构建成功，场景HTML/JS/CSS与两种包逐字节相同。实际手机尺寸浏览器验证、5项审核补修及未验证范围见 [PR6审核](pr6-audit-2026-10-09.md)。
 
-主目录此前交付与Play AAB保持不变。以下PR5/PR3是已合并检查点，PR6作者69项自报位于末尾，不能替代本机36项定向验证。
+用户明确授权“推进合并吧”后，17:05:14（北京时间）合并为 `aa3c726a66594c23cf66a1b4a7938366ea73dede`；与最终审核源 `d5c11e46bfdfd1c3e7dc87e71ffa851be3f9c843` 完整tree同为 `213951ce7a2879366fafc4fe998db1b38354c365`。主目录快进同步，Web/APK复制自已验证隔离构建；当前包 `output/releases/Flare-v41-PR6-20261009-arm64.apk`，44,114,581字节，SHA-256 `cb14cc10fc40f288fd692b7202e496dd644141390a32ef22577319593925ad7b`，开发签名。旧Web/APK保存在 `output/releases/before-pr6-20261009/`；Play AAB哈希保持原值，未上传。最终交付文档只更新状态，不改变已验证产品内容。
+
+以下PR5/PR3是历史已合并检查点，PR6作者69项自报位于末尾，不能替代本机36项定向验证。
+
+交付复核：主目录Web的282个来源文件与隔离构建逐文件SHA-256相同；9份交付文档111本地链接存在，`git diff --check`通过，合并后的产品目录与4bc81b8差异为0。实际刷新8820后进入穿衣详情和三场景弹层，三张训练卡显示完整，当前tab日志0 error/0 warn；主目录交付实景保存在本机 `output/releases/PR6-main-delivery.png`。这次只核对同步与交付，没有重复已通过的软件测试，真机范围仍按PR6审核限制。
 
 ---
 
-# 当前验证：PR #5 / #3 顺序整合（2026-10-09）
+# 历史验证：PR #5 / #3 顺序整合（2026-10-09）
 
 已按用户“一条龙推进”的安排，先审核修复并合并PR #5，再合并PR #3。#5合并 `3fcf859b44f8b1b45736f5faaa8fff3cb82512ec`；#3合并 `f44f5922f8aaba76bbc82adfd6c618b4a06ce706`。每次执行前核对源/真实目标，GitHub均确认MERGED；最终产品树 `107d301bf6fa5edc83d27c06f1d10ffeed83ebb5` 与已验证隔离副本一致。无CI或已有review，本次AI结论与已执行合并分别记录，未提交GitHub review/评论。
 
