@@ -2,7 +2,7 @@
 
 开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品为 `63e45e875183bbea344c8b66063dba56e154df08`，加载层保存点为 `3a85bd95b40408aba2723511c2b6dc98606165a2`，最终系统减弱动效修复为 `83f0920ea9e5d613526b89cb2c1768f304d84700`；后续文档提交不改变产品内容。保留 v41 动作、原模型和网页编辑器，未替换 Google Play 的已送审包。
 
-当前结果是模拟器验证和未签名 Release 归档；尚无已签名 IPA、TestFlight 或正式 App Review 记录。用户要求先完成无需真机的工作，再连接 iPhone。真机性能、触感、离线网络证据和 iOS 15 兼容性仍需设备验证。
+当前已完成模拟器验证、App 注册/创建及 App Store 分发 IPA S1 静态验包；尚未上传、TestFlight 分发或正式 App Review。用户要求先完成无需真机的工作，再连接 iPhone。真机性能、触感、离线网络证据和 iOS 15 兼容性仍需设备验证。
 
 ## 修复与回归
 
@@ -111,10 +111,29 @@ FLARE_IOS_EVIDENCE_DIR="$IOS_EVIDENCE_DIR/screenshots/pro" \
 "$FLUTTER_BIN" build ipa --release --no-codesign --no-pub --target=lib/main.dart
 ```
 
-最终 Archive C03 成功（32.9 秒），产品源 `83f0920ea9e5d613526b89cb2c1768f304d84700`；`1.0.0` / Build `1` / `dev.mhgd.flare`，最低 iOS 15.0，仅 iPhone，竖屏与左右横屏。主可执行文件、App.framework 和 Flutter.framework 均为 arm64。主 App 没有签名或 embedded provisioning profile，Flutter 明确跳过 IPA 导出，不能作为上传包。
+未签名检查点 Archive C03 成功（32.9 秒），产品源 `83f0920ea9e5d613526b89cb2c1768f304d84700`；`1.0.0` / Build `1` / `dev.mhgd.flare`，最低 iOS 15.0，仅 iPhone，竖屏与左右横屏。主可执行文件、App.framework 和 Flutter.framework 均为 arm64。C03 主 App 没有签名或 embedded provisioning profile，Flutter 当时跳过 IPA 导出，不能将 C03 作为上传包。
 
-归档内四份有效隐私清单均声明不追踪、不收集数据：App 的 UserDefaults 理由 CA92.1，SharedPreferences 的 UserDefaults 理由 1C8F.1，Flutter 的 FileTimestamp 理由 0A2A.1/C617.1 与 SystemBootTime 理由 35F9.1；WKWebView 资源清单没有访问 API 声明。最终签名包与真机流量还要复核。
+归档内四份有效隐私清单均声明不追踪、不收集数据：App 的 UserDefaults 理由 CA92.1，SharedPreferences 的 UserDefaults 理由 1C8F.1，Flutter 的 FileTimestamp 理由 0A2A.1/C617.1 与 SystemBootTime 理由 35F9.1；WKWebView 资源清单没有访问 API 声明。S1 签名包已复核这些清单，真机流量继续待验。
 
-最终候选独立保存到 `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive`，215,768,913 字节、305 个普通文件；`candidate-manifest-r3.json` 记录源提交、身份、归档文件/字节数、三个可执行文件 SHA-256 与四份清单。C01/C02 归档及各自 manifest 保留作历史证据。未生成 IPA，所以没有 IPA 哈希。
+C03 独立保存到 `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive`，215,768,913 字节、305 个普通文件；`candidate-manifest-r3.json` 记录源提交、身份、归档文件/字节数、三个可执行文件 SHA-256 与四份清单。C01/C02/C03 归档及各自 manifest 保留作历史证据；当时没有 IPA。
 
-此前用用户指定的 Playwright Chrome profile 只读核对 Apple 页面时，账号已登录、有其他已发布应用；Identifiers 列表尚无 `dev.mhgd.flare`，App Store Connect 尚无 Flare 条目。本任务未注册标识、创建 App、下载签名、上传、分发或提交审核；操作前再次核对账号和外部状态。提交文案及隐私/年龄/素材权利事项见 [商店材料](ios-app-store-v1.md)，逐项验收见 [执行台账](ios-plan-2026-10-09.md)。
+### 用户授权后的签名候选 S1
+
+用户明确批准注册 `dev.mhgd.flare`、创建“Flare 托马斯”（简体中文，SKU `flare-ios-v1`）、按需配置签名并本地导出、普通推送分支；上传与提审另行确认。`ios/main@cb6aabb` 已普通推送，`git ls-remote` 返回相同 SHA。生产目录与产品源 `83f0920` 相同，本轮只记录发布事实，没有修改生产源码。
+
+使用工程 `Runner.xcworkspace` / `Runner` / `Release` / `generic/platform=iOS` 归档，明确 `FLUTTER_TARGET=lib/main.dart`、本机 Team、自动签名及已授权的 `-allowProvisioningUpdates`；`xcodebuild -exportArchive` 使用本机权限 0600 的导出配置，`method=app-store-connect`、`destination=export`，关闭自动修改版本/Build。归档和导出均成功；原始日志及配置只保留在本机私密目录，不输出或提交账号/Team/证书身份。
+
+| 检查 | S1 已核对结果 |
+|---|---|
+| 身份 | `dev.mhgd.flare / 1.0.0 (1)`，源 `83f0920`，最低 iOS 15.0，仅 iPhone |
+| 分发 IPA | `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-app-store-S1.ipa`，50,095,200 字节 |
+| SHA-256 | `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c` |
+| 签名 | `verify_ipa.sh` 与 `codesign --verify --deep --strict` 通过，Apple Distribution 证书；提取叶证书与 embedded profile 中的证书一致 |
+| 描述文件 | 明确 App Store 分发，Bundle ID 与授权 Team 匹配；无设备白名单/企业全设备属性；`get-task-allow=false`、`beta-reports-active=true`，未过期 |
+| 架构与资源 | Runner、App.framework、Flutter.framework 三个可执行文件均 arm64；251 份 Flutter 资源的文件集合与逐文件 SHA-256 均与 C03 相同 |
+| 隐私 | 四份清单均有效、不追踪、不收集；访问 API 理由与 C03 保持一致，真机实际流量待验 |
+| 本机证据 | `signed-ipa-s1-verification.log`、`candidate/candidate-manifest-s1.json`、`authorized-release-step-20261010.json` |
+
+重新核对指定 Playwright Chrome profile 时 Apple 网页登录已过期，由用户在页面完成登录；Developer 门户随后确认已有 `dev.mhgd.flare`。App Store Connect 已创建并核对 [Flare 托马斯](https://appstoreconnect.apple.com/apps/6821186142/distribution/info)，名称、Bundle ID、简体中文与 SKU 均匹配。Apple 创建时提示访问设置保存失败，但确认 App 已创建且所有团队用户可访问，与所选完全访问一致；未重复点击创建或修改其他团队权限。Apple 初始化的商店版本为 `1.0`、准备提交；后续按具体授权调整为候选版本并保存文案/截图。
+
+S1 尚未上传、分发、真机验收或正式提审。提交文案及隐私/年龄/素材权利事项见 [商店材料](ios-app-store-v1.md)，逐项验收见 [执行台账](ios-plan-2026-10-09.md)。

@@ -1,6 +1,6 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-10 iOS v1：专用开发分支 `ios/main` 基于 PR #8，已完成 Mac 模拟器构建与真实 WKWebView/首启/主题/计时/本地记录验证，修复恢复模型状态、小屏大字、浅色加载层及 iOS 系统减弱动效；初始全套 96 项测试通过，最终 analyze 与 60 项相关 UI 测试通过，真实系统开关下的原生流程复测通过。40 张深浅原生截图及未签名 Release Archive 已保存。最终产品提交 `83f0920`，详细结果见 [iOS 验证](docs/ios-verification-2026-10-10.md)、[执行台账](docs/ios-plan-2026-10-09.md) 与 [商店材料](docs/ios-app-store-v1.md)。签名、真机和 Apple 提审按实际状态继续推进，Android/Web 的既有交付保留。
+2026-10-10 iOS v1：专用开发分支 `ios/main` 基于 PR #8，已完成 Mac 模拟器构建与真实 WKWebView/首启/主题/计时/本地记录验证，修复恢复模型状态、小屏大字、浅色加载层及 iOS 系统减弱动效；初始全套 96 项测试通过，最终 analyze 与 60 项相关 UI 测试通过，真实系统开关下的原生流程复测通过。40 张深浅原生截图及历史未签名 Archive 保留。用户授权后已普通推送 iOS 分支，注册 `dev.mhgd.flare`、创建 Apple App 条目，并导出通过验包的 App Store 分发 IPA S1（50,095,200 字节）。最终产品提交仍为 `83f0920`，详细结果及精确哈希见 [iOS 验证](docs/ios-verification-2026-10-10.md)、[执行台账](docs/ios-plan-2026-10-09.md) 与 [商店材料](docs/ios-app-store-v1.md)。尚未上传、分发或提审；继续先完成无需真机的工作，Android/Web 的既有交付保留。
 
 2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21、当前试用APK/本地Web见 [版本台账](docs/version-ledger.md)，软件/浏览器证据及真机限制见 [PR7审核](docs/pr7-audit-2026-10-09.md)。
 

@@ -1,6 +1,6 @@
 # iOS v1 商店提交材料
 
-当前处于本地实现与验证阶段；本文是可审核的提交草稿，不表示已上传或提审。开发分支 `ios/main` 基于 PR #8 的 ad72f1c，保留 Android、网页、v41 动作与原素材。
+当前已完成本机验证、签名候选 S1 及 Apple App 创建；本文其余商店内容仍是可审核草稿，不表示已上传或提审。开发分支 `ios/main` 基于 PR #8 的 ad72f1c，已按用户授权普通推送，保留 Android、网页、v41 动作与原素材。
 
 ## 应用信息草稿
 
@@ -10,9 +10,9 @@
 | 副标题 | 离线3D动作学习与肌群训练 |
 | 主语言 | 简体中文（zh-Hans） |
 | 平台 | iOS；iPhone；最低 iOS 15.0 |
-| Bundle ID | dev.mhgd.flare；注册前核对在当前开发者账号中可用 |
-| SKU | flare-ios-v1；候选值，创建 App 前确认 |
-| 版本 / 首次构建号 | 1.0.0 / 1；上传前核对 App Store Connect 是否已使用此构建号 |
+| Bundle ID | dev.mhgd.flare；用户授权后已注册，并在 Developer 门户/Apple App 中核对 |
+| SKU | flare-ios-v1；已创建并核对，主要语言为简体中文 |
+| 版本 / 首次构建号 | 签名候选 1.0.0 / 1；Apple 新建商店草稿初始化为 1.0，后续按授权调整；尚未上传 |
 | 主要分类 | 健康健美 |
 | 次要分类 | 教育 |
 | 关键词 | 托马斯,全旋,Flare,街舞,体能,肌群,动作分解,离线训练,训练计时 |
@@ -51,7 +51,7 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 
 ## 隐私与年龄分级核对
 
-- 当前源码没有账号、分析、广告或远程数据上传；本地设置与训练记录通过 `shared_preferences` 保存。实际未签名归档的四份隐私清单均可解析、不追踪、不收集数据；App 的 UserDefaults 理由 CA92.1、插件的 1C8F.1，以及 Flutter 的 FileTimestamp/SystemBootTime 理由已核对。以最终签名包及真机网络证据继续复核，详见 [归档核查](ios-verification-2026-10-10.md)。
+- 当前源码没有账号、分析、广告或远程数据上传；本地设置与训练记录通过 `shared_preferences` 保存。S1 签名包的四份隐私清单均可解析、不追踪、不收集数据；App 的 UserDefaults 理由 CA92.1、插件的 1C8F.1，以及 Flutter 的 FileTimestamp/SystemBootTime 理由已复核。最终 App Privacy 还要结合真机网络证据，详见 [验包核查](ios-verification-2026-10-10.md)。
 - 年龄分级按实际健身教学内容填写 Apple 问卷，包含健康/健身主题；最终评级由 Apple 计算，不预设 4+，不选择 Made for Kids。
 - 训练图和品牌图在现有来源文档中仍标有发布前授权核对事项；最终提审前由素材提供者确认发布权。已保留 Snow、Human Base Meshes、Three.js 等署名和许可入口。
 
@@ -61,7 +61,9 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 
 按 [Apple 当前截图规格](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) 准备中尺寸灵动岛 iPhone 的 1206×2622 截图；另提供 Pro Max 的 1320×2868 截图。格式为无透明通道的 JPEG；最终以提交界面的要求复核。
 
-当前本地候选源为 `83f0920ea9e5d613526b89cb2c1768f304d84700`，身份 `dev.mhgd.flare / 1.0.0 (1)`；未签名 Archive C03 已独立保存并验证，215,768,913 字节，305 个普通文件。本机 `candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` 与 `candidate/candidate-manifest-r3.json` 绑定该源提交，尚无 IPA。此前只读核对 Apple 登录页面时，账号尚无该标识或 Flare App 条目；外部操作前再次核对。下一步先按具体授权注册/签名和创建条目；导出后记录精确 IPA 字节数、SHA-256、验签和真机证据，再分别授权上传/分发/正式审核。
+当前候选源为 `83f0920ea9e5d613526b89cb2c1768f304d84700`，身份 `dev.mhgd.flare / 1.0.0 (1)`；C01/C02/C03 未签名归档保留。用户明确授权后已注册标识、创建 [Flare 托马斯 Apple App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info)，并导出本机 `candidate/Flare-1.0.0-build1-app-store-S1.ipa`：50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`。Apple Distribution 严格深度验签、明确分发描述文件、三个 arm64 可执行文件、四份隐私清单及 251 份与 C03 相同的 Flutter 资源均通过核查；`candidate-manifest-s1.json` 绑定源、身份与哈希。
+
+创建 App 时 Apple 提示访问设置保存失败，但确认 App 已创建、所有团队用户可访问，与所选“完全访问权限”一致。App 的商店草稿初始化为 `1.0`、准备提交；尚未保存本文其他商店元数据、上传或提审。下一步按精确 S1 IPA 的授权上传，并按具体授权调整商店版本及保存文案/截图；TestFlight 分发、正式审核与发布分别确认，真机与素材发布权等门禁继续保留。
 
 先完成无需真机的验证，再由用户连接 iPhone。构建、上传处理、TestFlight 可安装和正式 App Review 是不同状态，逐项登记在 [iOS 执行台账](ios-plan-2026-10-09.md) 与 [版本台账](version-ledger.md) 中。账号、签名和联系信息不写入 Git。
 

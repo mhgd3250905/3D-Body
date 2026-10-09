@@ -8,18 +8,19 @@
 
 | 字段 | 已核对结果 |
 |---|---|
-| 分支 / 基线 | `ios/main` / PR #8 `ad72f1cc481080072526be918e48748dbec20794`；主目录 master 与原网页服务保留，尚未 push iOS 分支 |
+| 分支 / 基线 | `ios/main` / PR #8 `ad72f1cc481080072526be918e48748dbec20794`；用户授权后首次普通 push `cb6aabbcca4689ea5b66611db92943c8f6dbed49`，远端已核对；主目录 master 与原网页服务保留 |
 | 最终产品源 | `83f0920ea9e5d613526b89cb2c1768f304d84700`；初始产品 `63e45e8` 修复恢复/大字/构建/启动图，`3a85bd9` 修复浅色加载层，最终补修 iOS Reduce Motion 标志与零时长页面/尺寸动画；原 v41/Android 内容来源保留 |
 | 应用身份 | `dev.mhgd.flare`，`1.0.0 (1)`，Flare 托马斯；最低 iOS 15.0，仅 iPhone，竖屏及左右横屏 |
 | C01 历史本机归档 | 源 `63e45e8`；215,767,270 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned.xcarchive` 与 `candidate-manifest.json` 保留 |
 | C02 历史本机归档 | 源 `3a85bd9`；215,767,406 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r2.xcarchive` 与 `candidate-manifest-r2.json` 保留 |
-| C03 当前本机归档 | 源 `83f0920`；`UNSIGNED_ARCHIVE_LOCAL_VALIDATED`；215,768,913 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` |
-| 候选核查 | 最终生产目录与产品提交一致；三个可执行文件 SHA-256 及四份有效隐私清单记录于相邻 `candidate-manifest-r3.json`，没有 IPA 哈希或上传记录 |
+| C03 未签名检查点 | 源 `83f0920`；`UNSIGNED_ARCHIVE_LOCAL_VALIDATED`；215,768,913 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` 保留 |
+| S1 当前分发候选 | 同一产品源 `83f0920`，`SIGNED_IPA_LOCAL_VALIDATED`；Apple Distribution 签名，50,095,200 字节；本机 `candidate/Flare-1.0.0-build1-app-store-S1.ipa`，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c` |
+| 候选核查 | 严格深度验签通过；三个可执行文件均 arm64，描述文件/证书/授权 Team 明确匹配，`get-task-allow=false`、`beta-reports-active=true`；四份隐私清单有效，251 份 Flutter 资源与 C03 相同。相邻 `candidate-manifest-s1.json` 记录身份/哈希，尚未上传 |
 | 截图 | 四种 iPhone 模拟器、两主题、五页面，共 40 张；来自 `63e45e8` 就绪页面，后续加载与系统动效修复另以原生流程/录像核对，默认动效下的就绪页面素材继续复用；PNG 原件/无透明 JPEG及本机 `screenshot-manifest.json` 不入 Git |
-| Apple 状态 | 此前用指定 Playwright 配置只读核对时，账号尚无该 Bundle ID 或 Flare App 条目；本任务未注册/创建、下载签名、上传、分发或提交审核，执行外部操作前再次核对 |
-| 验收边界 | 初始全套 96 项测试、最终 60 项相关 UI 测试/analyze、原生系统减弱动效流程通过；历史实际中断恢复证据保留。锁屏返回、真机、签名 IPA、TestFlight 与商店审核继续待验证或授权 |
+| Apple 状态 | Xcode 自动配置后，指定 Playwright 配置核对门户已有 `dev.mhgd.flare`；[Flare 托马斯 App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 已创建，简体中文、SKU `flare-ios-v1`。Apple 初始化商店版本为 `1.0`、准备提交；尚未上传、分发或提交审核 |
+| 验收边界 | 初始全套 96 项测试、最终 60 项相关 UI 测试/analyze、原生系统减弱动效流程及 S1 验包通过；历史实际中断恢复证据保留。锁屏返回、真机、TestFlight 与商店审核继续待验证或授权 |
 
-详细命令和设备证据见 [iOS 验证](ios-verification-2026-10-10.md)，逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，可审阅的描述、隐私与截图说明见 [商店材料](ios-app-store-v1.md)。本轮只本地提交；文档保存点由 `git log` 定位，不预填自身 SHA。以下保留 Android/Web 交付台账。
+详细命令和设备证据见 [iOS 验证](ios-verification-2026-10-10.md)，逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，可审阅的描述、隐私与截图说明见 [商店材料](ios-app-store-v1.md)。注册、签名、App 创建及普通 push 均来自用户本次明确授权；上传、TestFlight 分发和提审另行确认。文档保存点由 `git log` 定位，不预填自身 SHA。以下保留 Android/Web 交付台账。
 
 ## PR7审核修复与交付（已合并）
 

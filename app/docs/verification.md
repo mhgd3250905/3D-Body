@@ -4,7 +4,9 @@
 
 iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒训练完成、实际后台 94.3 秒暂停及冷重启记录保留；同一调试进程持续 24 分 18 秒。加载层保存点 `3a85bd9` 在 Pro 模拟器两次实际 WebContent 中断恢复/重试通过（1422ms，33 次状态确认）；平台恢复代码随后未改变。最终产品另通过系统 Reduce Motion 开启时的真实首启/主题/详情/计时/原生存储验证，Flutter 与 WKWebView 均读取到该偏好，加载图标静止。该场景加载窗口记录 5 个资源、外部来源为零，不是完整抓包或飞行模式验收。最终未签名 arm64 Archive C03 绑定 `83f0920`，215,768,913 字节；本机 `candidate/candidate-manifest-r3.json` 记录身份与校验。
 
-这些是本机软件/模拟器证据；锁屏返回因 Simulator 持续黑屏未完成，真机手势/性能/触感、飞行模式、旧 iOS、签名 IPA 和 Apple 提审仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，提交草稿见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
+用户授权注册、签名与普通推送后，`ios/main@cb6aabb` 已推送并核对远端；Apple 门户的 `dev.mhgd.flare` 与 App Store Connect“Flare 托马斯”（简体中文、SKU `flare-ios-v1`）已核对。产品源仍为 `83f0920`，App Store 分发 IPA S1 已导出并验签，50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`；三个 arm64 可执行文件、明确匹配的分发描述文件、四份隐私清单及 251 份与 C03 相同的 Flutter 资源通过核查。上传与提审未获授权，尚未执行；证据见本机 `candidate/candidate-manifest-s1.json`。
+
+这些是本机软件/模拟器与静态验包证据；锁屏返回因 Simulator 持续黑屏未完成，真机手势/性能/触感、飞行模式、旧 iOS、TestFlight 和 Apple 提审仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，提交草稿见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
 
 ---
 
