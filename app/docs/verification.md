@@ -7,13 +7,32 @@
 | 浅色资源 | 51训练ID、102张WebP全部Pillow解码成功，1024×1024及512×512正确，无缺少/多余/串图，共1,188,470字节；同名缩略对大图缩放的最大单通道RMS为2.085/255 |
 | 图像审核 | 实际逐对查看全部51套深浅图，并放大hamstrings-A、obliques-C，无新增严重动作或器械错误。前者高亮稍延伸臀部、后者器械浅银色仍保留为示意差异 |
 | 代码 | 训练卡、列表、详情均选用主题图；light子目录明确打包；Theme依赖重建正常，无遗漏的训练图消费点 |
-| Flutter | analyze无问题（4.9秒）；catalog_dose与flow_regressions针对性13项通过，覆盖资产/剂量和主题/交互。首次命令误引用不存在的theme_test文件，修正为现有flow后整组通过；首次失败不算通过 |
+| Flutter | `flutter analyze --no-pub` 无问题（4.9秒）；`flutter test --no-pub --concurrency=1 test/domain/catalog_dose_test.dart test/ui/flow_regressions_test.dart` 13项通过，覆盖资产/剂量和主题/交互。首次命令误引用不存在的theme_test文件，修正为现有flow后整组通过；首次失败不算通过 |
 | 离线Web | `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功（25.7秒） |
-| Android | 首次Gradle daemon异常退出；仅对构建进程设置2G堆、2 workers、无常驻daemon后重试成功（23.7秒），产品构建配置未改。ARM64 APK44,045,329字节，SHA-256 `4040188f0c6dfad56e77afb7b99e6878bfefc51e0103e875ef66df5efeb7bfe5`，本地开发签名 |
+| Android | `flutter build apk --release --no-pub --target-platform android-arm64` 首次daemon异常退出；进程环境 `GRADLE_OPTS=-Dorg.gradle.jvmargs=-Xmx2G -Dorg.gradle.workers.max=2 -Dorg.gradle.daemon=false` 重试成功（23.7秒），产品配置未改。ARM64 APK44,045,329字节，SHA-256 `4040188f0c6dfad56e77afb7b99e6878bfefc51e0103e875ef66df5efeb7bfe5`，本地开发签名 |
 | 包内核对 | 从实际APK ZIP及Web读取102张浅图、v41烘焙模型和场景入口，均与源逐字节相等；v41场景/动作未变，不重复其已通过的540帧验收 |
 | 浏览器 | E盘隔离8854预览以390×844查看浅色库/详情/今日训练，再切回深色原图；0 error / 0 warn。仅写隔离数据，没有清理8820个人数据 |
 
 实景与资源、图像、APK/Web检查见 [证据索引](screenshots/2026-10-09-pr4/README.md)。最终安装包为 `app/build/app/outputs/flutter-apk/app-release.apk`，具名副本为 `output/releases/Flare-v41-light-20261009-arm64.apk`；合并前v41包独立保留为 `output/releases/Flare-v41-before-pr4-20261009-arm64.apk`。原项目8820预览已更新。全部副本、缓存、证据和构建在E盘；真机安装和性能、长期训练倒数及源动作重放/脚部高度限制仍未验收，不能因本次图像变更称作已解决。
+
+---
+
+## 证据source state与本次文档收束
+
+上述PR4测试/构建执行于e27与固定源3b25的已合并隔离工作树；之后保存为 `afb4e294b524ab4627604b30fa3f71ec6a51d44c`。其tree与实际GitHub合并 `bb94d849099d6a2985aa72c00373ce17d81a9993` 均为 `cbf81746bca8eb4146c0f99b7b3744db02cb89cf`，`git diff --quiet afb4e29 bb94d84` 为0。隔离提交本身不是主分支祖先，用树相同证明内容一致，不混同提交身份。
+
+| 证据 | 命令/结果与当时来源 | 对当前运行内容的适用性 |
+| --- | --- | --- |
+| PR4静态分析/13测试 | 上表完整命令，2026-10-09本会话实际CLI通过；source为上述tree | bb94到 `b20bd33c4635c8d8a9c59990e2587036afc197e8` 仅文档/截图/证据；`git diff --quiet afb4e29 b20bd33 -- app/lib app/assets app/pubspec.yaml app/pubspec.lock app/android` 为0 |
+| PR4 Web/APK、图像/浏览器 | 上表构建与实际审计，2026-10-09；同tree；截图是浏览器观察，不是设备性能证明 | 同上，产品/配置未变，44,045,329字节是最终包；不复用旧5c579包作为最终包 |
+| v41动作/两端/构图 | 下方v41历史节中的 `node app/tools/verify-v41.mjs`、`node tools/verify-web-app-v41.mjs`、`node app/scene/tools/verify-framing.mjs`；2026-10-09 e27保存点实际通过 | `git diff --quiet e27f4cd b20bd33 -- src public/coach app/scene app/assets/scene app/tools` 为0，540帧证据适用；本轮没有重新执行它 |
+| 49项Flutter | 下方PR2历史节的全量命令和当时实际通过记录 | PR4不是全量重跑，不冒称最终Dart全量49项重新通过 |
+
+本次closeout基线 `e27f4cd8ff7b6848de50da2377e76cb00542dabb` 是用户PR4前保存点，已核对为Preflight HEAD `b20bd33c4635c8d8a9c59990e2587036afc197e8` 祖先；delta为3提交/124路径：102浅图、14截图/证据、4当前文档、2UI、1配置、1测试。完整初检tracked改动0、untracked用户素材 `Air-Flare/air-flare-demo.mp4` 1项，保留不读内容、不提交。
+
+2026-10-09本次实际运行一次性 `E:\Apps\nodejs\node.exe -e` 文档检查：限定7份修改文档，解析本地Markdown链接并核对Git tracked来源，97个链接通过；台账提交/版本/包字节与哈希字段一致；v41历史验证正文与Preflight HEAD归一换行后逐字相等；产品源码/配置、日期交接和截图的 `git diff --quiet HEAD -- <限定路径>` 为0。`git diff --check` 通过；完整复检为上述7份本Agent文档修改与同一1项用户素材，无新增未解释项。证据对应 `b20bd33` 上本次仅文档的工作树；没有运行或读取build/APK/日志，也没有全仓扫描或重复产品测试。
+
+实际检查的当前canonical为根/app的AGENTS与README，以及 `development-roadmap.md`、`asset-sources.md`、`motion-v41.md`、本文件；v38及2026-10-08 App/2026-10-07网页交接仅作历史背景。对齐范围仅这些当前入口/台账中已确定的版本/外观/记录矛盾；历史交接、截图、代码、模型与配置不改。必要验证为7个修改文档的本地链接、事实字段/证据SHA/遗留当前措辞、历史块不变与完整工作区归属、`git diff --check`；产品代码/配置有限delta为0，故本次文档变更不重新构建或跑Flutter/3D全量。文档检查与Git提交后实际SHA以本次收束回执为准，不预填自身提交。
 
 ---
 
