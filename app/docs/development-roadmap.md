@@ -1,6 +1,6 @@
 # Flutter 实施路线与待验收台账
 
-2026-10-10 iOS 进展：已在专用 `ios/main` 接手 PR #8，Mac 构建环境、四机型原生模拟器流程、40 张深浅截图与未签名 Release Archive 通过；修复 WKWebView 状态恢复、大字布局和浅色主题加载层。最终产品提交 `3a85bd9`，初始全套 96 项软件测试及最终 57 项相关 UI 测试通过，analyze 无问题。真机、生产签名、TestFlight、素材发布权和 Apple 提审继续按 [iOS 台账](ios-plan-2026-10-09.md) 推进；原 Android/Web 交付与 Play 包保留。
+2026-10-10 iOS 进展：已在专用 `ios/main` 接手 PR #8，Mac 构建环境、四机型原生模拟器流程、40 张深浅截图与未签名 Release Archive 通过；修复 WKWebView 状态恢复、大字布局、浅色加载层及 iOS 系统减弱动效。最终产品提交 `83f0920`，初始全套 96 项软件测试及最终 60 项相关 UI 测试通过，analyze 无问题；真实系统开关下的原生流程复测通过。真机、生产签名、TestFlight、素材发布权和 Apple 提审继续按 [iOS 台账](ios-plan-2026-10-09.md) 推进；原 Android/Web 交付与 Play 包保留。
 
 2026-10-09当前开发版：PR #2精简界面/深浅主题、网页/App同步v41与穿衣详情、PR #4的51套浅色训练图、PR #5交互动效/审核修复与PR #3网页肌群界面，PR5/PR3已按顺序合并，随后PR #6真机反馈（可转详情、三场景训练、知识、加载与审核补修）及PR #7固定舞台/连续投影/稳定画布/返回与重载补修已合并。Google Play上架版本仍 `1.0.0+1`（提交 `92e459f` 的release签名AAB已进入封闭测试送审，本轮不替换或重传）；此前收束基线为 `0.1.0+1`。内部内容修订不等于M0–M7完整验收。本文件维护M0–M7实施与T01–T05待验收状态；代码检查点、版本/安装包与发布观察统一归入 [版本管理台账](version-ledger.md)；动作合约为 [motion-v41.md](motion-v41.md)，证据及source state归入 [verification.md](verification.md)。
 

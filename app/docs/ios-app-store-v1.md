@@ -57,11 +57,11 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 
 ## 截图与候选包
 
-已取得四种 iPhone 模拟器 × 深浅主题 × 五页面的 40 张真实原生截图，包含实际 WKWebView 3D。保留 PNG 原件和无透明 JPEG；未缩放或合成，不使用关闭 3D 的组件测试截图作为商店素材。本机为 `~/ios-release-artifacts/flare-v1-20261009/screenshots/`，`screenshot-manifest.json` 记录逐张尺寸与哈希，不入 Git。截图来自初始产品 `63e45e8` 的就绪页面；最终补修只影响加载阶段，另以冷启动录像和实际进程恢复复测核对，没有重拍全部截图。
+已取得四种 iPhone 模拟器 × 深浅主题 × 五页面的 40 张真实原生截图，包含实际 WKWebView 3D。保留 PNG 原件和无透明 JPEG；未缩放或合成，不使用关闭 3D 的组件测试截图作为商店素材。本机为 `~/ios-release-artifacts/flare-v1-20261009/screenshots/`，`screenshot-manifest.json` 记录逐张尺寸与哈希，不入 Git。截图来自初始产品 `63e45e8` 的就绪页面；后续加载与系统减弱动效修复另以原生流程/录像核对，默认动效下的就绪页面素材继续复用，没有重拍全部截图。
 
 按 [Apple 当前截图规格](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) 准备中尺寸灵动岛 iPhone 的 1206×2622 截图；另提供 Pro Max 的 1320×2868 截图。格式为无透明通道的 JPEG；最终以提交界面的要求复核。
 
-当前本地候选源为 `3a85bd95b40408aba2723511c2b6dc98606165a2`，身份 `dev.mhgd.flare / 1.0.0 (1)`；未签名 Archive C02 已独立保存并验证，215,767,406 字节，305 个普通文件。本机 `candidate/Flare-1.0.0-build1-unsigned-r2.xcarchive` 与 `candidate/candidate-manifest-r2.json` 绑定该源提交，尚无 IPA。Apple 登录页面只读核对后，当前账号尚无该标识或 Flare App 条目。下一步先按具体授权注册/签名和创建条目；导出后记录精确 IPA 字节数、SHA-256、验签和真机证据，再分别授权上传/分发/正式审核。
+当前本地候选源为 `83f0920ea9e5d613526b89cb2c1768f304d84700`，身份 `dev.mhgd.flare / 1.0.0 (1)`；未签名 Archive C03 已独立保存并验证，215,768,913 字节，305 个普通文件。本机 `candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` 与 `candidate/candidate-manifest-r3.json` 绑定该源提交，尚无 IPA。此前只读核对 Apple 登录页面时，账号尚无该标识或 Flare App 条目；外部操作前再次核对。下一步先按具体授权注册/签名和创建条目；导出后记录精确 IPA 字节数、SHA-256、验签和真机证据，再分别授权上传/分发/正式审核。
 
 先完成无需真机的验证，再由用户连接 iPhone。构建、上传处理、TestFlight 可安装和正式 App Review 是不同状态，逐项登记在 [iOS 执行台账](ios-plan-2026-10-09.md) 与 [版本台账](version-ledger.md) 中。账号、签名和联系信息不写入 Git。
 
