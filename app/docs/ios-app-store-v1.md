@@ -1,0 +1,68 @@
+# iOS v1 商店提交材料
+
+当前处于本地实现与验证阶段；本文是可审核的提交草稿，不表示已上传或提审。开发分支 `ios/main` 基于 PR #8 的 ad72f1c，保留 Android、网页、v41 动作与原素材。
+
+## 应用信息草稿
+
+| 字段 | 候选值 |
+|---|---|
+| 名称 | Flare 托马斯 |
+| 副标题 | 离线3D动作学习与肌群训练 |
+| 主语言 | 简体中文（zh-Hans） |
+| 平台 | iOS；iPhone；最低 iOS 15.0 |
+| Bundle ID | dev.mhgd.flare；注册前核对在当前开发者账号中可用 |
+| SKU | flare-ios-v1；候选值，创建 App 前确认 |
+| 版本 / 首次构建号 | 1.0.0 / 1；上传前核对 App Store Connect 是否已使用此构建号 |
+| 主要分类 | 健康健美 |
+| 次要分类 | 教育 |
+| 关键词 | 托马斯,全旋,Flare,街舞,体能,肌群,动作分解,离线训练,训练计时 |
+| 隐私政策 | https://flare-privacy.294851575.workers.dev/；已用指定 Playwright 配置读取 |
+| 技术支持候选 | https://flare-privacy.294851575.workers.dev/；现有页面含应用信息和联系方法。https://github.com/mhgd3250905/3D-Body/issues 亦已打开，可作为项目反馈入口 |
+| 价格与发布方式 | 免费；建议审核通过后手动发布，最终由用户复核 |
+
+### 描述
+
+用 3D 动作理解托马斯全旋的每个阶段，再安排适合自己的练习。
+
+Flare 将一个动作循环分成 8 个阶段。你可以播放、暂停、调整速度或拖动进度，查看当前姿态和参与肌群；进入详情后，可旋转人物，并在动作人物与直立肌群人台之间交换视图。
+
+- 3D 动作与肌群说明：帮助理解支撑、摆腿和身体控制，颜色表示教学位置与功能关联。
+- 训练库：按徒手、居家和健身房场景选择练习，查看要点、常见错误与安全提醒。
+- 跟练计时：准备、工作、休息与完成；切到后台后暂停，回到前台可手动继续。
+- 学习路径与本地记录：记录自己的训练和自评，逐步安排练习。
+- 离线使用：模型、训练图和内容随安装包提供，无需账号；设置和记录保存在本机。
+- 深浅主题：支持深色、浅色与跟随系统。
+
+动作与肌群色区是教学示意，自评和练习记录不会自动证明技能达标。内容不能替代教练现场指导或医疗建议；出现疼痛、不适或疲劳时应停止练习。
+
+### 首版更新说明
+
+首个 iOS 版本：离线 3D 托马斯动作、肌群详情、训练库与计时、学习路径、本地记录及深浅主题。
+
+## 给 App Review 的说明草稿
+
+本应用无需注册或登录，没有广告、内购或订阅。首次启动点击“开始”，阅读安全说明并点击“我知道了”即可使用全部功能。
+
+首页展示安装包内的 3D 动作。暂停后点击“点选肌群查看详解”，选择肌群进入详情；点左下方的小人台卡片可交换动作人物与肌群人台，返回后仍保持同一暂停帧。详情底部可选择徒手、居家或健身房训练；训练内容、计时、记录和学习路径由 Flutter 原生界面提供。
+
+3D 渲染使用 WKWebView。`127.0.0.1` 是设备内临时端口的本地资产服务，仅加载安装包内的模型与脚本，不访问外部站点或上传用户数据。应用不申请相机、麦克风、位置或 HealthKit 权限。
+
+Apple 开发者账号、Team、签名材料与审核联系信息只保留在本机或 App Store Connect，不写入 Git。本文没有填写个人联系信息。
+
+## 隐私与年龄分级核对
+
+- 当前源码没有账号、分析、广告或远程数据上传；本地设置与训练记录通过 `shared_preferences` 保存。实际未签名归档的四份隐私清单均可解析、不追踪、不收集数据；App 的 UserDefaults 理由 CA92.1、插件的 1C8F.1，以及 Flutter 的 FileTimestamp/SystemBootTime 理由已核对。以最终签名包及真机网络证据继续复核，详见 [归档核查](ios-verification-2026-10-10.md)。
+- 年龄分级按实际健身教学内容填写 Apple 问卷，包含健康/健身主题；最终评级由 Apple 计算，不预设 4+，不选择 Made for Kids。
+- 训练图和品牌图在现有来源文档中仍标有发布前授权核对事项；最终提审前由素材提供者确认发布权。已保留 Snow、Human Base Meshes、Three.js 等署名和许可入口。
+
+## 截图与候选包
+
+已取得四种 iPhone 模拟器 × 深浅主题 × 五页面的 40 张真实原生截图，包含实际 WKWebView 3D。保留 PNG 原件和无透明 JPEG；未缩放或合成，不使用关闭 3D 的组件测试截图作为商店素材。本机为 `~/ios-release-artifacts/flare-v1-20261009/screenshots/`，`screenshot-manifest.json` 记录逐张尺寸与哈希，不入 Git。截图来自初始产品 `63e45e8` 的就绪页面；最终补修只影响加载阶段，另以冷启动录像和实际进程恢复复测核对，没有重拍全部截图。
+
+按 [Apple 当前截图规格](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) 准备中尺寸灵动岛 iPhone 的 1206×2622 截图；另提供 Pro Max 的 1320×2868 截图。格式为无透明通道的 JPEG；最终以提交界面的要求复核。
+
+当前本地候选源为 `3a85bd95b40408aba2723511c2b6dc98606165a2`，身份 `dev.mhgd.flare / 1.0.0 (1)`；未签名 Archive C02 已独立保存并验证，215,767,406 字节，305 个普通文件。本机 `candidate/Flare-1.0.0-build1-unsigned-r2.xcarchive` 与 `candidate/candidate-manifest-r2.json` 绑定该源提交，尚无 IPA。Apple 登录页面只读核对后，当前账号尚无该标识或 Flare App 条目。下一步先按具体授权注册/签名和创建条目；导出后记录精确 IPA 字节数、SHA-256、验签和真机证据，再分别授权上传/分发/正式审核。
+
+先完成无需真机的验证，再由用户连接 iPhone。构建、上传处理、TestFlight 可安装和正式 App Review 是不同状态，逐项登记在 [iOS 执行台账](ios-plan-2026-10-09.md) 与 [版本台账](version-ledger.md) 中。账号、签名和联系信息不写入 Git。
+
+参考：[Flutter iOS 发布流程](https://docs.flutter.dev/deployment/ios)、[Apple 年龄分级问卷](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/)。

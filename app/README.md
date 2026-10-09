@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-10-10 iOS v1：专用开发分支 `ios/main` 基于 PR #8，已完成 Mac 模拟器构建与真实 WKWebView/首启/主题/计时/本地记录验证，修复恢复模型状态、小屏大字和浅色主题加载层；初始全套 96 项测试通过，最终加载层补修后 analyze 与 57 项相关 UI 测试通过，40 张深浅原生截图及未签名 Release Archive 已保存。最终产品提交 `3a85bd9`，详细结果见 [iOS 验证](docs/ios-verification-2026-10-10.md)、[执行台账](docs/ios-plan-2026-10-09.md) 与 [商店材料](docs/ios-app-store-v1.md)。签名、真机和 Apple 提审按实际状态继续推进，Android/Web 的既有交付保留。
+
 2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21、当前试用APK/本地Web见 [版本台账](docs/version-ledger.md)，软件/浏览器证据及真机限制见 [PR7审核](docs/pr7-audit-2026-10-09.md)。
 
 历史：2026-10-09 PR #6已审核修复并合并：按用户真机反馈，详情动作视图改为允许旋转、禁止缩放/平移，覆盖此前固定机位要求；三场景训练选择、肌群知识及矢量加载已接入并补充审核修复。当时主目录、离线Web与开发签名试用APK已同步为PR6版；证据见 docs/pr6-audit-2026-10-09.md。
@@ -29,7 +31,7 @@ flutter run -d chrome
 
 当前本机预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`：采用优化编译与本地开发签名，用于手机验证。模拟器调试包另保留为同目录 `app-debug.apk`。Google Play 封闭测试使用 `build/app/outputs/bundle/release/app-release.aab`（`1.0.0+1`，release上传密钥签名），已上传Play并送审；Play显示其优化后新安装约33.9MB。
 
-安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证：步骤、任务与验收见 [docs/ios-plan-2026-10-09.md](docs/ios-plan-2026-10-09.md)，Mac 上先运行 `bash tools/ios/doctor.sh`。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
+安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 已在 macOS/Xcode 环境完成模拟器与未签名归档验证：步骤、任务及尚待真机/发布的事项见 [iOS 执行台账](docs/ios-plan-2026-10-09.md)。Mac 上先运行 `FLUTTER_BIN=/SDK路径/bin/flutter bash tools/ios/doctor.sh`，脚本保留已有配置改动；安装或 smoke 必须指定设备 ID。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
 
 只修改 Dart 页面无需重新制作 3D 包；修改场景代码或模型后，先在 `app/scene` 执行：
 
