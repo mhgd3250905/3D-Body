@@ -24,8 +24,16 @@ class TimerSnapshot {
     required this.target,
     required this.completedSets,
     required this.activeWorkMs,
+    this.pausedFrom,
+    this.durationMs = 0,
   });
   final TimerPhase phase;
+  final TimerPhase? pausedFrom;
+
+  /// The current block survives a pause, including any extra rest time.
+  final int durationMs;
+  TimerPhase get effectivePhase =>
+      phase == TimerPhase.paused ? pausedFrom ?? TimerPhase.work : phase;
   final int set;
   final int sets;
   final String? side;
@@ -106,6 +114,8 @@ class DrillTimer {
         (_phase == TimerPhase.paused && _pausedFrom == TimerPhase.work);
     return TimerSnapshot(
       phase: _phase,
+      pausedFrom: _phase == TimerPhase.paused ? _pausedFrom : null,
+      durationMs: _blockDuration,
       set: _set,
       sets: dose.sets,
       side: _side,

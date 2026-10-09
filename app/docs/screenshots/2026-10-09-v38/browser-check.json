@@ -1,0 +1,4830 @@
+{
+  "date": "2026-10-09",
+  "build": "index-qDcAYCLr.js",
+  "viewportScreenshots": [
+    390,
+    844
+  ],
+  "checks": [
+    {
+      "label": "half-speed-selected",
+      "camera": {
+        "aspect": 0.6,
+        "position": [
+          1.0713387455122092,
+          3.042873405125411,
+          6.013750516266063
+        ],
+        "target": [
+          -0.0020371599015563957,
+          0.7768576048074616,
+          0.0505510417451428
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.6929386446166297,
+            1.5376238582787731,
+            0.7687232659555201
+          ],
+          "min": [
+            -0.8196979099664602,
+            -0.008993231843060112,
+            -0.15044460054904385
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            0.3865046085593129,
+            0.7268662550176993,
+            0.03048271947524401
+          ],
+          "leftAnkle": [
+            -0.7166722067897642,
+            0.23904177506867735,
+            0.5911358929244184
+          ],
+          "leftElbow": [
+            0.2356779357271652,
+            0.25824595716626714,
+            -0.0095832998771114
+          ],
+          "leftHip": [
+            -0.2699397049713155,
+            0.49846715207320885,
+            0.03057122871682849
+          ],
+          "leftKnee": [
+            -0.47942250525856595,
+            0.3899649354209592,
+            0.293035608179541
+          ],
+          "leftPalm": [
+            0.281543919241108,
+            0.005936262895369415,
+            0.010609239407046151
+          ],
+          "leftShoulder": [
+            0.25634267888843554,
+            0.5138725753505486,
+            -0.022384695260221993
+          ],
+          "leftToe": [
+            -0.7006193725966732,
+            0.40758261715844946,
+            0.6522611025650855
+          ],
+          "leftWrist": [
+            0.21500003451759575,
+            0.031341669921072235,
+            3.0299820596990656e-8
+          ],
+          "neck": [
+            0.25626682826482816,
+            0.7006196693978999,
+            0.02231631742068666
+          ],
+          "pelvis": [
+            -0.23997762197151917,
+            0.5853851644058936,
+            0.05252049919837255
+          ],
+          "rightAnkle": [
+            -0.42490503619835146,
+            1.4053211506462828,
+            0.0998511105192825
+          ],
+          "rightElbow": [
+            -0.0179026991112623,
+            1.0354641599591308,
+            0.05644916448890332
+          ],
+          "rightHip": [
+            -0.30356787757436277,
+            0.6533438306317509,
+            0.06902990384943464
+          ],
+          "rightKnee": [
+            -0.3480543477543639,
+            1.0032705577128245,
+            0.08014222803057341
+          ],
+          "rightPalm": [
+            -0.25919661086181034,
+            1.20769353557709,
+            0.038874267312164035
+          ],
+          "rightShoulder": [
+            0.17884992627057816,
+            0.870769179459406,
+            0.06623918640525482
+          ],
+          "rightToe": [
+            -0.24863139350874416,
+            1.4414279249929225,
+            0.09496237904041362
+          ],
+          "rightWrist": [
+            -0.19254256995842584,
+            1.18182792556971,
+            0.04749557872090121
+          ],
+          "shoulderCenter": [
+            0.21759630990697887,
+            0.6923208936648761,
+            0.021927280733378796
+          ],
+          "torso": [
+            0.21759630990697887,
+            0.6923208936648761,
+            0.021927280733378796
+          ],
+          "waist": [
+            -0.10270197616631016,
+            0.6174686526982915,
+            0.04334272627153949
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 5.824833386205218,
+        "wallTime": 6.41817698404041
+      },
+      "render": {
+        "bufferSize": [
+          390,
+          650
+        ],
+        "calls": 24,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 646,
+        "framingMode": "main",
+        "pixelRatio": 1,
+        "running": true,
+        "triangles": 332210,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [],
+        "side": 0
+      },
+      "state": {
+        "detail": false,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 15,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": null,
+        "speed": 0.5,
+        "time": 5.824833386205218,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "label": "final-home-frame11",
+      "camera": {
+        "aspect": 0.6,
+        "position": [
+          1.0713387455122092,
+          3.042873405125411,
+          6.013750516266063
+        ],
+        "target": [
+          -0.0020371599015563957,
+          0.7768576048074616,
+          0.0505510417451428
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          390,
+          650
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 650,
+        "framingMode": "main",
+        "pixelRatio": 1,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [],
+        "side": 0
+      },
+      "state": {
+        "detail": false,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": null,
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "label": "final-detail-motion-frame11",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          0.23143170637039032,
+          1.2571879611520576,
+          1.6428665657222077
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 655,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "final-upright-frame11",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          8.940696716308596e-8,
+          1.1951667944594917,
+          3.5357243145552255
+        ],
+        "target": [
+          8.940696716308596e-8,
+          0.845015585422516,
+          0.034212224185466766
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 5,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 659,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 139232,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "muscles",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "detail-after-real-orbit",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          -0.9129364359967004,
+          1.9660126983486437,
+          0.6377469487632381
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 707,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "detail-reset-view",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          0.23143170637039012,
+          1.257187961152058,
+          1.64286656572221
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 751,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "detail-back-view",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          -0.03828340511422065,
+          0.9222749321182367,
+          -1.4187876513428312
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 753,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "320-upright-swap",
+      "camera": {
+        "aspect": 1.3733905579399142,
+        "position": [
+          8.940696716308596e-8,
+          1.1951667944594917,
+          3.5357243145552255
+        ],
+        "target": [
+          8.940696716308596e-8,
+          0.845015585422516,
+          0.034212224185466766
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          640,
+          466
+        ],
+        "calls": 5,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 757,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 139232,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "muscles",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "320-motion-swap",
+      "camera": {
+        "aspect": 1.3733905579399142,
+        "position": [
+          -0.03828340511422066,
+          0.914932067515126,
+          -1.369835220655426
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          640,
+          466
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 759,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "home-return-same-frame",
+      "camera": {
+        "aspect": 0.6324110671936759,
+        "position": [
+          1.0713387455122092,
+          3.042873405125411,
+          6.013750516266063
+        ],
+        "target": [
+          -0.0020371599015563957,
+          0.7768576048074616,
+          0.0505510417451428
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          320,
+          506
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 764,
+        "framingMode": "main",
+        "pixelRatio": 1,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": false,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "label": "segment-loop-playing",
+      "camera": {
+        "aspect": 0.6,
+        "position": [
+          1.0713387455122092,
+          3.042873405125411,
+          6.013750516266063
+        ],
+        "target": [
+          -0.0020371599015563957,
+          0.7768576048074616,
+          0.0505510417451428
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.8754134211311817,
+            1.551497580570304,
+            0.8034907529618855
+          ],
+          "min": [
+            -0.6805076025417167,
+            -0.006511791543485801,
+            -0.0766068692663816
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3861946960363072,
+            0.7208729165384147,
+            0.163687516929913
+          ],
+          "leftAnkle": [
+            0.40328544204322847,
+            1.416826387184552,
+            0.1797691170537953
+          ],
+          "leftElbow": [
+            0.007719160120514212,
+            1.043026292775017,
+            0.20162025302279388
+          ],
+          "leftHip": [
+            0.306146585206738,
+            0.6613175245361578,
+            0.14938008871175637
+          ],
+          "leftKnee": [
+            0.3395364086829178,
+            1.0124891064084849,
+            0.16010333981221217
+          ],
+          "leftPalm": [
+            0.23865453549282772,
+            1.2297150748983852,
+            0.20289630389335211
+          ],
+          "leftShoulder": [
+            -0.17930894071299852,
+            0.8672974935851074,
+            0.19309902370657067
+          ],
+          "leftToe": [
+            0.22737436237179012,
+            1.454936132681364,
+            0.18148304176537416
+          ],
+          "leftWrist": [
+            0.1736903466360109,
+            1.199237956485022,
+            0.20896902232844433
+          ],
+          "neck": [
+            -0.25639432379266136,
+            0.6981608012313235,
+            0.14489035374525158
+          ],
+          "pelvis": [
+            0.2428518359766394,
+            0.592946762636571,
+            0.13344672454502168
+          ],
+          "rightAnkle": [
+            0.7733761619410446,
+            0.2535764965431207,
+            0.6199548944263413
+          ],
+          "rightElbow": [
+            -0.23549270556633917,
+            0.25842846801673924,
+            0.09609264697458404
+          ],
+          "rightHip": [
+            0.27282781304437587,
+            0.5081315381341053,
+            0.10442934389809944
+          ],
+          "rightKnee": [
+            0.5073359056615923,
+            0.4018162991120318,
+            0.34577191718636147
+          ],
+          "rightPalm": [
+            -0.2817671698299695,
+            0.006568005304433466,
+            0.11070819209341796
+          ],
+          "rightShoulder": [
+            -0.25608845629875576,
+            0.5142967145686225,
+            0.08951474457868483
+          ],
+          "rightToe": [
+            0.7683391703766724,
+            0.42058844689318775,
+            0.6868999090713681
+          ],
+          "rightWrist": [
+            -0.21499995418366813,
+            0.03133879534473438,
+            0.1000000312187483
+          ],
+          "shoulderCenter": [
+            -0.21769868490014233,
+            0.6907971502487404,
+            0.14130690368641263
+          ],
+          "torso": [
+            -0.21769868490014233,
+            0.6907971502487404,
+            0.14130690368641263
+          ],
+          "waist": [
+            0.10468266299890704,
+            0.6223049140307856,
+            0.13580539324730392
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2.0993105979861406,
+        "wallTime": 2.5801647872413778
+      },
+      "render": {
+        "bufferSize": [
+          390,
+          650
+        ],
+        "calls": 24,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 780,
+        "framingMode": "main",
+        "pixelRatio": 1,
+        "running": true,
+        "triangles": 332210,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": false,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": {
+          "end": 3,
+          "start": 2
+        },
+        "period": 9,
+        "phase": 11,
+        "playing": true,
+        "quality": "medium",
+        "ready": true,
+        "selected": null,
+        "speed": 0.5,
+        "time": 2.0993105979861406,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "label": "segment-loop-after-several-cycles",
+      "camera": {
+        "aspect": 0.6,
+        "position": [
+          1.0713387455122092,
+          3.042873405125411,
+          6.013750516266063
+        ],
+        "target": [
+          -0.0020371599015563957,
+          0.7768576048074616,
+          0.0505510417451428
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.6427065408170143,
+            1.4971122707931226,
+            1.005362318193506
+          ],
+          "min": [
+            -0.7089072124658411,
+            -0.006523553667691306,
+            -0.14511602423369974
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.37679653928562873,
+            0.7364031108560445,
+            0.04983595936757046
+          ],
+          "leftAnkle": [
+            0.4672732446459437,
+            1.3712384549239265,
+            0.29415055742045104
+          ],
+          "leftElbow": [
+            0.052305171282475416,
+            0.99691686108151,
+            0.053579709847302814
+          ],
+          "leftHip": [
+            0.29058346702920346,
+            0.633947648507726,
+            0.21476510718107697
+          ],
+          "leftKnee": [
+            0.3603249837655351,
+            0.9780760701505192,
+            0.2502890133522831
+          ],
+          "leftPalm": [
+            0.3176677098776042,
+            1.113246094077222,
+            -0.004073238283336222
+          ],
+          "leftShoulder": [
+            -0.16756297000166437,
+            0.8731285764419995,
+            0.10116256924087565
+          ],
+          "leftToe": [
+            0.2899528044721719,
+            1.399642793658113,
+            0.2818762406227031
+          ],
+          "leftWrist": [
+            0.24755551442950915,
+            1.1067702525622567,
+            0.011040404014828809
+          ],
+          "neck": [
+            -0.24926216277413227,
+            0.7026394288138718,
+            0.06751551028133784
+          ],
+          "pelvis": [
+            0.2256366264415578,
+            0.5676703330245133,
+            0.19676853004023315
+          ],
+          "rightAnkle": [
+            0.5415523013796553,
+            0.21031768914377463,
+            0.8447432763357579
+          ],
+          "rightElbow": [
+            -0.23562018304629784,
+            0.2572485229545808,
+            0.07652653908910378
+          ],
+          "rightHip": [
+            0.2522236249964283,
+            0.4770958265733816,
+            0.19190179066120816
+          ],
+          "rightKnee": [
+            0.3883735581727681,
+            0.3653183680869559,
+            0.49769910249630234
+          ],
+          "rightPalm": [
+            -0.28176485429065956,
+            0.006575751632301063,
+            0.11070712487315582
+          ],
+          "rightShoulder": [
+            -0.2559590147046109,
+            0.511680237029891,
+            0.0484766440481878
+          ],
+          "rightToe": [
+            0.4926147027608586,
+            0.37640948540414854,
+            0.8939228355248081
+          ],
+          "rightWrist": [
+            -0.21499995418046217,
+            0.031353243292419286,
+            0.10000003122244606
+          ],
+          "shoulderCenter": [
+            -0.2117609352049501,
+            0.6924043865559968,
+            0.07481961034408746
+          ],
+          "torso": [
+            -0.2117609352049501,
+            0.6924043865559968,
+            0.07481961034408746
+          ],
+          "waist": [
+            0.0944145023820958,
+            0.6050931338357945,
+            0.160183351965431
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2.3465094969589506,
+        "wallTime": 2.880713552281078
+      },
+      "render": {
+        "bufferSize": [
+          390,
+          650
+        ],
+        "calls": 24,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 3478,
+        "framingMode": "main",
+        "pixelRatio": 1,
+        "running": true,
+        "triangles": 332210,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": false,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": {
+          "end": 3,
+          "start": 2
+        },
+        "period": 9,
+        "phase": 11,
+        "playing": true,
+        "quality": "medium",
+        "ready": true,
+        "selected": null,
+        "speed": 0.5,
+        "time": 2.3465094969589506,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": false
+        }
+      ]
+    },
+    {
+      "label": "drill-hidden-scene",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          0.23143170637039032,
+          1.2571879611520576,
+          1.6428665657222077
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 5,
+        "contextLost": false,
+        "dirty": true,
+        "frame": 3525,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": false,
+        "triangles": 139232,
+        "visible": false
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "label": "drill-return-same-frame",
+      "camera": {
+        "aspect": 1.3220338983050848,
+        "position": [
+          0.23143170637039032,
+          1.2571879611520576,
+          1.6428665657222077
+        ],
+        "target": [
+          -0.03828340511422085,
+          0.6877893924623235,
+          0.14444927969659144
+        ]
+      },
+      "metrics": {
+        "bounds": {
+          "max": [
+            0.936223557449852,
+            1.564399850653535,
+            0.7183236854078958
+          ],
+          "min": [
+            -0.6842056569298374,
+            -0.007488104865245759,
+            -0.1127199578242002
+          ]
+        },
+        "clip": "flare_v38_loop",
+        "clipDuration": 8.99166202545166,
+        "joints": {
+          "head": [
+            -0.3829254243462341,
+            0.7121106916514237,
+            0.1995604669103421
+          ],
+          "leftAnkle": [
+            0.3798917745963109,
+            1.427880207132426,
+            0.169264250653553
+          ],
+          "leftElbow": [
+            0.003762392771612389,
+            1.0411041502797649,
+            0.251069307757431
+          ],
+          "leftHip": [
+            0.3063586141177924,
+            0.6706643931275984,
+            0.12046375408558992
+          ],
+          "leftKnee": [
+            0.3289348606509108,
+            1.022332502042396,
+            0.13971663238713297
+          ],
+          "leftPalm": [
+            0.22835682516824513,
+            1.2334476311573022,
+            0.2744561745935049
+          ],
+          "leftShoulder": [
+            -0.17695472656236655,
+            0.8611781166254634,
+            0.2210510959661126
+          ],
+          "leftToe": [
+            0.20467516816944004,
+            1.466245699607669,
+            0.1843383138610132
+          ],
+          "leftWrist": [
+            0.16410108171483673,
+            1.2010804729705198,
+            0.2775618601520976
+          ],
+          "neck": [
+            -0.25492305716936414,
+            0.6939378520952738,
+            0.16789992013428212
+          ],
+          "pelvis": [
+            0.2431569759251504,
+            0.6020275021338102,
+            0.10532498469480836
+          ],
+          "rightAnkle": [
+            0.8281787589956133,
+            0.2699896373678791,
+            0.5252024990654204
+          ],
+          "rightElbow": [
+            -0.23545312536314067,
+            0.2584619178600448,
+            0.10102222264657086
+          ],
+          "rightHip": [
+            0.2719740394095982,
+            0.5201790264424098,
+            0.06784746342707026
+          ],
+          "rightKnee": [
+            0.5323614593892221,
+            0.4157782186605132,
+            0.2819576016665366
+          ],
+          "rightPalm": [
+            -0.28168051063057764,
+            0.006317218176063122,
+            0.11066892369349654
+          ],
+          "rightShoulder": [
+            -0.25619039919660236,
+            0.5144006682991835,
+            0.09980241081609752
+          ],
+          "rightToe": [
+            0.8330490673529314,
+            0.43245694575711174,
+            0.6025371804404382
+          ],
+          "rightWrist": [
+            -0.2149999540649552,
+            0.03133712917899145,
+            0.1000000313560424
+          ],
+          "shoulderCenter": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "torso": [
+            -0.21657253552952385,
+            0.6877893975052596,
+            0.1604267603522585
+          ],
+          "waist": [
+            0.10523389530137273,
+            0.6277590966356098,
+            0.12185661452571564
+          ]
+        },
+        "license": "CC BY 4.0",
+        "motionRevision": "v38",
+        "neutralHeight": 1.9,
+        "period": 9,
+        "playback": "AnimationMixer",
+        "skinning": {
+          "authoredWeights": true,
+          "batches": 24,
+          "bones": 22
+        },
+        "source": "Snow Rig © Blender Foundation | studio.blender.org",
+        "time": 2,
+        "wallTime": 2.4800647872413792
+      },
+      "render": {
+        "bufferSize": [
+          780,
+          590
+        ],
+        "calls": 1,
+        "contextLost": false,
+        "dirty": false,
+        "frame": 3527,
+        "framingMode": "detail",
+        "pixelRatio": 2,
+        "running": true,
+        "triangles": 74274,
+        "visible": true
+      },
+      "selection": {
+        "base": "#d3c7ad",
+        "colour": "#e58b90",
+        "selectedPanels": [
+          17
+        ],
+        "side": 0
+      },
+      "state": {
+        "detail": true,
+        "detailModel": "motion",
+        "errorCode": null,
+        "loop": null,
+        "period": 9,
+        "phase": 11,
+        "playing": false,
+        "quality": "medium",
+        "ready": true,
+        "selected": "obliques",
+        "speed": 0.5,
+        "time": 2,
+        "type": "state"
+      },
+      "surface": [
+        {
+          "name": "Coach_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Brows",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Eye_Glints",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_1",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh004_2",
+          "part": "Coach_Eyes",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_1",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_2",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh001_3",
+          "part": "Coach_Face",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Hair",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Lower_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Tongue",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Training_Shorts",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Mesh005_1",
+          "part": "Coach_Training_Tee",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Gums",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Upper_Teeth",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": false,
+          "visible": false
+        },
+        {
+          "name": "Coach_Study_Body",
+          "part": "Coach_Rig",
+          "studyHead": false,
+          "studySkin": true,
+          "visible": true
+        },
+        {
+          "name": "Coach_Study_Head",
+          "part": "Coach_Rig",
+          "studyHead": true,
+          "studySkin": false,
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "logs": [],
+  "scope": "UI actions only; read-only diagnostics; no training started or record added"
+}

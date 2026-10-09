@@ -6,7 +6,7 @@
   "library": "训练",
   "path": "路径",
   "progress": "记录",
-  "settings": "设置与关于",
+  "settings": "设置",
   "motionBrand": "FLARE · 托马斯全旋",
   "more": "更多",
   "timeline": "动作时间轴",
@@ -35,7 +35,7 @@
   "secondary": "协同作用",
   "teachingNote": "色区是教学位置示意，不代表肌电、肌力或真实肌肉边界。",
   "deepNote": "深层肌群用斜线表示所在部位。",
-  "deepMotionNote": "深层肌群位置请切换到直立肌群人体查看。",
+  "deepMotionNote": "深层肌群高亮表示所在部位。",
   "bothSides": "双侧",
   "leftSide": "左侧",
   "rightSide": "右侧",
@@ -90,13 +90,40 @@
   "manualMode": "按原训练说明完成，再手动确认本组",
   "backgroundPause": "切到后台时练习会暂停；回来后点继续",
   "setsLabel": "第 {current} / {total} 组",
-  "@setsLabel": {"placeholders": {"current": {"type": "int"}, "total": {"type": "int"}}},
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "countLabel": "{count} 次",
-  "@countLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "secondsLabel": "{seconds} 秒",
-  "@secondsLabel": {"placeholders": {"seconds": {"type": "int"}}},
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "stageLabel": "阶段 {stage}",
-  "@stageLabel": {"placeholders": {"stage": {"type": "int"}}},
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
   "courseDraft": "学习路径草案 · 18 课。课程与自评门槛尚待教练审核，不自动判断你已掌握动作。",
   "locked": "完成前一阶段课程与自评后开启",
   "current": "当前阶段",
@@ -135,7 +162,7 @@
   "safetyBody": "先热身手腕和肩部。按自己的能力练习，出现疼痛或头晕时停止。初次尝试全旋时，请在适合的场地由有经验的人陪同。内容用于动作学习，不作诊断。",
   "ackSafety": "我已了解安全提示",
   "enterApp": "进入 3D 动作",
-  "history": "训练记录",
+  "history": "记录",
   "historyEmpty": "完成一次计时训练，记录会留在这里",
   "sessionCount": "训练次数",
   "activeMinutes": "练习分钟",
@@ -156,5 +183,170 @@
   "exportBackup": "复制本地备份",
   "backupCopied": "备份已复制，请保存到自己的文件",
   "contentDraftNote": "训练为教学建议，图示不替代逐条动作说明。",
-  "close": "关闭"
+  "close": "关闭",
+  "pausedAt": "暂停于 {time} 秒",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "主力",
+  "secondaryShort": "协同",
+  "together": "一起发力",
+  "trainGroup": "练{name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "深层肌群 · 颜色示意所在部位",
+  "deepMusclesHint": "深层肌群 · 斜线示意所在部位",
+  "noDrillForTier": "这个肌群暂无该器械档的训练",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "托马斯全旋",
+  "welcomeLine": "跟着动作，看懂每一刻哪里在发力。",
+  "startApp": "开始",
+  "welcomeFootPrefix": "继续即表示已阅读",
+  "safetySheetEyebrow": "练之前",
+  "safetySheetTitle": "三件事",
+  "safetyRule1": "每次先热身手腕",
+  "safetyRule1Note": "约 6 分钟，学习路径第一课就是它",
+  "safetyRule2": "刺痛、麻木、头晕就停",
+  "safetyRule2Note": "酸可以，痛不行",
+  "safetyRule3": "这是动作教学",
+  "safetyRule3Note": "不能替代教练、医生或康复治疗；初次全旋请有人陪同",
+  "gotIt": "我知道了",
+  "startWithAssessment": "先做入门自评",
+  "libraryHint": "按肌群找动作",
+  "moreProgressHint": "本周 {count} 天",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "播放速度",
+  "phaseMoment": "{source} · 这一刻的主力",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "其他参与 · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "等 {count} 组",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "全部部位",
+  "search": "搜索",
+  "closeSearch": "关闭搜索",
+  "spec": "剂量",
+  "moreCuesAndSafety": "更多要点、常见错误与安全",
+  "addTodayShort": "加入今日",
+  "setOfTotal": "第 {current} 组 / 共 {total} 组",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} 次",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "秒",
+  "painStopShort": "不适，停止练习",
+  "pathTitle": "学习路径",
+  "continueLesson": "继续 · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "全部完成",
+  "confirmStageGates": "待确认 · 本阶段过关条件",
+  "stageGates": "阶段自评 · 自行确认",
+  "weekDays": "本周练习天数",
+  "streak": "连续天数",
+  "recent": "最近",
+  "weekdayLabels": "一,二,三,四,五,六,日",
+  "todayLabel": "今天",
+  "completed": "完成",
+  "playbackGroup": "播放",
+  "otherGroup": "其他",
+  "aboutFlare": "关于 Flare",
+  "aboutHint": "版本、来源与许可、本地数据",
+  "safetyHint": "练之前的三件事",
+  "teachingTitle": "教学说明",
+  "licenses": "开源许可",
+  "minutesShort": "{count} 分钟",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "相关动作阶段",
+  "phasesShort": "阶段 {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "次",
+  "appearanceGroup": "外观",
+  "appearanceLabel": "主题",
+  "themeSystem": "跟随系统",
+  "themeDark": "深色",
+  "themeLight": "浅色"
 }

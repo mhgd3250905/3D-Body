@@ -27,7 +27,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get progress => '记录';
 
   @override
-  String get settings => '设置与关于';
+  String get settings => '设置';
 
   @override
   String get motionBrand => 'FLARE · 托马斯全旋';
@@ -114,7 +114,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deepNote => '深层肌群用斜线表示所在部位。';
 
   @override
-  String get deepMotionNote => '深层肌群位置请切换到直立肌群人体查看。';
+  String get deepMotionNote => '深层肌群高亮表示所在部位。';
 
   @override
   String get bothSides => '双侧';
@@ -411,7 +411,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get enterApp => '进入 3D 动作';
 
   @override
-  String get history => '训练记录';
+  String get history => '记录';
 
   @override
   String get historyEmpty => '完成一次计时训练，记录会留在这里';
@@ -478,4 +478,234 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get close => '关闭';
+
+  @override
+  String pausedAt(String time) {
+    return '暂停于 $time 秒';
+  }
+
+  @override
+  String phaseHeading(String source, String name) {
+    return '$source · $name';
+  }
+
+  @override
+  String get primaryShort => '主力';
+
+  @override
+  String get secondaryShort => '协同';
+
+  @override
+  String get together => '一起发力';
+
+  @override
+  String trainGroup(String name) {
+    return '练$name';
+  }
+
+  @override
+  String moreCount(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get deepMotionHint => '深层肌群 · 颜色示意所在部位';
+
+  @override
+  String get deepMusclesHint => '深层肌群 · 斜线示意所在部位';
+
+  @override
+  String get noDrillForTier => '这个肌群暂无该器械档的训练';
+
+  @override
+  String get brandEyebrow => 'FLARE';
+
+  @override
+  String get welcomeHeadline => '托马斯全旋';
+
+  @override
+  String get welcomeLine => '跟着动作，看懂每一刻哪里在发力。';
+
+  @override
+  String get startApp => '开始';
+
+  @override
+  String get welcomeFootPrefix => '继续即表示已阅读';
+
+  @override
+  String get safetySheetEyebrow => '练之前';
+
+  @override
+  String get safetySheetTitle => '三件事';
+
+  @override
+  String get safetyRule1 => '每次先热身手腕';
+
+  @override
+  String get safetyRule1Note => '约 6 分钟，学习路径第一课就是它';
+
+  @override
+  String get safetyRule2 => '刺痛、麻木、头晕就停';
+
+  @override
+  String get safetyRule2Note => '酸可以，痛不行';
+
+  @override
+  String get safetyRule3 => '这是动作教学';
+
+  @override
+  String get safetyRule3Note => '不能替代教练、医生或康复治疗；初次全旋请有人陪同';
+
+  @override
+  String get gotIt => '我知道了';
+
+  @override
+  String get startWithAssessment => '先做入门自评';
+
+  @override
+  String get libraryHint => '按肌群找动作';
+
+  @override
+  String moreProgressHint(int count) {
+    return '本周 $count 天';
+  }
+
+  @override
+  String get playbackSpeed => '播放速度';
+
+  @override
+  String phaseMoment(String source) {
+    return '$source · 这一刻的主力';
+  }
+
+  @override
+  String othersInvolved(String names) {
+    return '其他参与 · $names';
+  }
+
+  @override
+  String groupCount(int count) {
+    return '等 $count 组';
+  }
+
+  @override
+  String get allSections => '全部部位';
+
+  @override
+  String get search => '搜索';
+
+  @override
+  String get closeSearch => '关闭搜索';
+
+  @override
+  String get spec => '剂量';
+
+  @override
+  String get moreCuesAndSafety => '更多要点、常见错误与安全';
+
+  @override
+  String get addTodayShort => '加入今日';
+
+  @override
+  String setOfTotal(int current, int total) {
+    return '第 $current 组 / 共 $total 组';
+  }
+
+  @override
+  String ofReps(int count) {
+    return '/ $count 次';
+  }
+
+  @override
+  String get secondsUnit => '秒';
+
+  @override
+  String get painStopShort => '不适，停止练习';
+
+  @override
+  String get pathTitle => '学习路径';
+
+  @override
+  String continueLesson(String title) {
+    return '继续 · $title';
+  }
+
+  @override
+  String get allDone => '全部完成';
+
+  @override
+  String get confirmStageGates => '待确认 · 本阶段过关条件';
+
+  @override
+  String get stageGates => '阶段自评 · 自行确认';
+
+  @override
+  String get weekDays => '本周练习天数';
+
+  @override
+  String get streak => '连续天数';
+
+  @override
+  String get recent => '最近';
+
+  @override
+  String get weekdayLabels => '一,二,三,四,五,六,日';
+
+  @override
+  String get todayLabel => '今天';
+
+  @override
+  String get completed => '完成';
+
+  @override
+  String get playbackGroup => '播放';
+
+  @override
+  String get otherGroup => '其他';
+
+  @override
+  String get aboutFlare => '关于 Flare';
+
+  @override
+  String get aboutHint => '版本、来源与许可、本地数据';
+
+  @override
+  String get safetyHint => '练之前的三件事';
+
+  @override
+  String get teachingTitle => '教学说明';
+
+  @override
+  String get licenses => '开源许可';
+
+  @override
+  String minutesShort(int count) {
+    return '$count 分钟';
+  }
+
+  @override
+  String get lessonPhases => '相关动作阶段';
+
+  @override
+  String phasesShort(String list) {
+    return '阶段 $list';
+  }
+
+  @override
+  String get countUnit => '次';
+
+  @override
+  String get appearanceGroup => '外观';
+
+  @override
+  String get appearanceLabel => '主题';
+
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
+  String get themeDark => '深色';
+
+  @override
+  String get themeLight => '浅色';
 }

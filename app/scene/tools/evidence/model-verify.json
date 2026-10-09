@@ -1,5 +1,6 @@
 {
   "status": "passed",
+  "scope": "historical-v33-source-and-runtime-parity",
   "referenceAvailable": true,
   "copiedFiles": 21,
   "paritySamples": 181,
@@ -31,15 +32,6 @@
   "historicalStudyBodyTriangles": 58552,
   "historicalStudyHeadVertices": 16669,
   "historicalStudyHeadTriangles": 33144,
-  "runtimeStudyAttached": false,
-  "selectionCases": 136,
-  "selectedGroups": 17,
-  "selectedPhases": 8,
-  "originalOutfitAndFaceVisibleDuringSelection": true,
-  "originalMaterialAppearancePreserved": true,
-  "originalMaterialIdentityDuringSelection": true,
-  "originalMaterialIdentityRestored": true,
-  "garmentAndFaceVisibilityRestored": true,
-  "bundledFiles": 17,
-  "bundledBytes": 5744966
+  "bundledFiles": 18,
+  "bundledBytes": 8560091
 }

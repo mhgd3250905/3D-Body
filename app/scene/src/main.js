@@ -60,11 +60,12 @@ function refreshHotspots() {
 }
 function closeDetail() {
   detailView?.close(); detailed = false; detailNote.hidden = true;
+  surface?.restore();
   phaseMap?.setHidden(false);
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
 }
 function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '肌群位置示意 · 对应同一部位' : '动作示意 · 保持当前暂停姿态';
+  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转' : '固定视角';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
@@ -93,6 +94,12 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
+  if (input.type === 'theme') {
+    // Appearance only: page chrome and the miniature's backdrop. The athlete,
+    // lighting and materials are identical in both themes.
+    if (['dark', 'light'].includes(input.value)) { document.documentElement.dataset.theme = input.value; if (player) player.dirty = true; }
+    return;
+  }
   if (!ready) { pending.push(input); if (pending.length > 32) pending.shift(); return; }
   switch (input.type) {
     case 'play':
@@ -166,7 +173,7 @@ async function boot() {
     player.resetView();
     const skinned = buildMmRest(player.motion, player.coach);
     hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
-    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); });
+    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); }, () => surface.focusDirection());
     detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
     const canvas = player.renderer.domElement;
     canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });
@@ -188,6 +195,7 @@ async function boot() {
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
       hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
       getPhaseMap: () => phaseMap?.getState(),
+      getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
       getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,

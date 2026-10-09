@@ -1,0 +1,37 @@
+{
+  "version": "v38",
+  "package": "Flare-v38-motion-package.zip",
+  "packageSha256": "bce665b282faa003bcc84836e420930a2e8a54d31a709f34ea189f1c56210dee",
+  "sourceBytes": 7989316,
+  "runtimeBytes": 2609745,
+  "encoding": "Lossless meshopt + gzip; no quantization, simplification or animation resampling",
+  "clip": "flare_v38_loop",
+  "license": "Snow Rig / Blender Foundation CC BY 4.0, modified",
+  "files": [
+    {
+      "destination": "source/coach/flare-coach-v38-animated.glb",
+      "bytes": 7989316,
+      "sha256": "bd2f5cb722a16e342486bda435574ac0e2aa632d2843d32d7420d64bcd386ff5"
+    },
+    {
+      "destination": "source/coach/flare-sequence-v38.json",
+      "bytes": 26260,
+      "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+    },
+    {
+      "destination": "src/v38-phases.json",
+      "bytes": 261060,
+      "sha256": "de26e0e4b0d94f61b4fd94a414fbd79e698aedd13ed4314161dc0580a6b3de19"
+    },
+    {
+      "destination": "src/v38-clock.json",
+      "bytes": 9632,
+      "sha256": "360d2b4a241c6264ff2c0a279fbd47119beaf6fcc6a36cfc155f52a25e423f47"
+    },
+    {
+      "destination": "public/coach/flare-coach-v38-animated.meshopt.glb.gz",
+      "bytes": 2609745,
+      "sha256": "15caa09f5fc7643b2dca93993afe30522e046dba3b8f34e7c4d63e906c75a492"
+    }
+  ]
+}

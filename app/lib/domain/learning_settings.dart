@@ -6,7 +6,10 @@ class LearningSettings {
     this.sound = true,
     this.haptics = true,
     this.weeklyGoal = 3,
+    this.themeMode = 'system',
   });
+
+  static const themeModes = ['system', 'dark', 'light'];
 
   final String tier;
   final double speed;
@@ -15,6 +18,9 @@ class LearningSettings {
   final bool haptics;
   final int weeklyGoal;
 
+  /// Appearance: follow the device, or force dark / light.
+  final String themeMode;
+
   LearningSettings copyWith({
     String? tier,
     double? speed,
@@ -22,6 +28,7 @@ class LearningSettings {
     bool? sound,
     bool? haptics,
     int? weeklyGoal,
+    String? themeMode,
   }) => LearningSettings(
     tier: tier ?? this.tier,
     speed: speed ?? this.speed,
@@ -29,13 +36,15 @@ class LearningSettings {
     sound: sound ?? this.sound,
     haptics: haptics ?? this.haptics,
     weeklyGoal: weeklyGoal ?? this.weeklyGoal,
+    themeMode: themeMode ?? this.themeMode,
   );
 
   bool get valid =>
       ['A', 'B', 'C'].contains(tier) &&
       [0.25, 0.5, 1.0].contains(speed) &&
       weeklyGoal >= 1 &&
-      weeklyGoal <= 7;
+      weeklyGoal <= 7 &&
+      themeModes.contains(themeMode);
 
   Map<String, dynamic> toJson() => {
     'tier': tier,
@@ -44,6 +53,7 @@ class LearningSettings {
     'sound': sound,
     'haptics': haptics,
     'weeklyGoal': weeklyGoal,
+    'themeMode': themeMode,
   };
 
   factory LearningSettings.fromJson(Map<String, dynamic> json) =>
@@ -54,5 +64,7 @@ class LearningSettings {
         sound: json['sound'] as bool,
         haptics: json['haptics'] as bool,
         weeklyGoal: json['weeklyGoal'] as int,
+        // Older local states predate appearance and follow the device.
+        themeMode: json['themeMode'] as String? ?? 'system',
       );
 }

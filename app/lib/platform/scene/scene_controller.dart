@@ -152,6 +152,9 @@ class SceneController extends ChangeNotifier {
   void setQuality(String quality) =>
       command({'type': 'quality', 'value': quality});
 
+  /// Page chrome appearance inside the scene: 'dark' or 'light'.
+  void setTheme(String value) => command({'type': 'theme', 'value': value});
+
   /// Before GLB readiness (or while a native call is in flight), retain only
   /// the latest command for each setting and preserve their intended order.
   void command(Map<String, Object?> value) {

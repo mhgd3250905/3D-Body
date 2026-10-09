@@ -349,4 +349,19 @@ void main() {
       expect((updated['settings'] as Map)['futureCameraChoice'], 'back');
     },
   );
+
+  test('settings saved before appearance existed follow the device', () {
+    final legacy = LearningSettings.fromJson({
+      'tier': 'B',
+      'speed': 0.5,
+      'cues': true,
+      'sound': true,
+      'haptics': true,
+      'weeklyGoal': 3,
+    });
+    expect(legacy.themeMode, 'system');
+    expect(legacy.valid, isTrue);
+    expect(legacy.copyWith(themeMode: 'sepia').valid, isFalse);
+    expect(legacy.copyWith(themeMode: 'light').toJson()['themeMode'], 'light');
+  });
 }

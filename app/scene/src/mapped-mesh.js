@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as MM from './legacy/muscle-map.js';
 import { GROUPS } from './phase.js';
 import { CORE_BONES, createCoreMapping } from './core-mapping.js';
+import { isCoveredActorPart } from './study-body.js';
 
 // Adapted from the package's mmRest.ts. The attribute is attached to the
 // original Snow vertices. It is a teaching map, not an anatomical registration.
@@ -90,13 +91,126 @@ export function createHitTester(player, skinned) {
   return { pick, prepare };
 }
 
+// Teaching-frame guards (metres, 1.69 m reference body). Hip flexors and
+// adductors fade out at the groin, and hands never carry a tint; the upright
+// reference shows the complete regions.
+function surfaceGuard(x, y) {
+  const ax = Math.abs(x);
+  const across = 1 - THREE.MathUtils.smoothstep(ax, 0.07, 0.12);
+  const along = THREE.MathUtils.smoothstep(y, 0.66, 0.72) * (1 - THREE.MathUtils.smoothstep(y, 0.90, 0.96));
+  const hand = THREE.MathUtils.smoothstep(ax, 0.33, 0.36) * (1 - THREE.MathUtils.smoothstep(y, 0.88, 0.92));
+  return (1 - across * along) * (1 - hand);
+}
+
+const FOCUS_CHUNK = `{ float flareW = smoothstep(0.12, 0.75, vFocusW);
+  float flareDark = 1.0 - smoothstep(0.02, 0.25, dot(diffuseColor.rgb, vec3(0.333)));
+  flareFocusGlow = focusTint * flareW * mix(0.06, 0.30, flareDark);
+  diffuseColor.rgb = mix(diffuseColor.rgb, focusTint, flareW * mix(0.78, 0.62, flareDark)); }`;
+
+function focusMaterial(material, tint) {
+  // A detail-only proxy: same type, maps and authored values as the
+  // original; only the shader adds a soft group-coloured tint.
+  const copy = material.clone(), compile = material.onBeforeCompile;
+  copy.userData = { ...material.userData, flareFocusProxyOf: material.uuid };
+  copy.onBeforeCompile = (shader, renderer) => {
+    compile?.call(copy, shader, renderer); shader.uniforms.focusTint = tint;
+    shader.vertexShader = 'attribute float focusW;\nvarying float vFocusW;\n' + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvFocusW = focusW;');
+    let fragment = 'uniform vec3 focusTint;\nvarying float vFocusW;\n' + shader.fragmentShader;
+    fragment = fragment.replace('void main() {', 'void main() {\nvec3 flareFocusGlow = vec3(0.0);');
+    fragment = fragment.replace('#include <color_fragment>', '#include <color_fragment>\n' + FOCUS_CHUNK);
+    fragment = fragment.includes('#include <emissivemap_fragment>')
+      ? fragment.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += flareFocusGlow;')
+      : fragment;
+    shader.fragmentShader = fragment;
+  };
+  copy.customProgramCacheKey = () => 'flare-motion-focus-v3-' + (material.customProgramCacheKey?.() ?? '') + material.type;
+  return copy;
+}
+
 export function createSurfaceSelection(skinned) {
-  // Selection determines the lesson and camera, never the motion appearance.
-  // The athlete always retains its original clothes, face and material objects.
-  // Functional colors are displayed solely on the upright reference mannequin.
+  // Home selection never changes the athlete's appearance. Detail only: a
+  // soft functional tint painted over the athlete's own clothes and skin.
+  // Face, hair, hands and shoes are never tinted, no garment is hidden and the
+  // mesh, rig, motion and visibility are unchanged. Restore returns the
+  // original material objects.
   const originals = new Map(skinned.map(mesh => [mesh, mesh.material]));
-  function restore() { for (const [mesh, material] of originals) mesh.material = material; }
-  return { show: restore, restore,
-    releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); },
-    dispose: restore };
+  const painted = new Map(), point = new THREE.Vector3(), tint = { value: new THREE.Color('#ff6a3d') };
+  let active = false, selectedGroup = null, selectedPanels = [], selectedSide = 0;
+  for (const mesh of skinned) {
+    if (!isCoveredActorPart(mesh)) continue;
+    const geometry = mesh.geometry, rest = geometry.getAttribute('mmRest'), count = rest.count;
+    const panel = new Int16Array(count).fill(-1), side = new Int8Array(count), guard = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      point.fromBufferAttribute(rest, i); guard[i] = surfaceGuard(point.x, point.y);
+      const hit = MM.muscleAt(point, 1.69);
+      if (hit) { panel[i] = MM.MUSCLES.indexOf(MM.MUSCLE_BY_ID[hit.id]); side[i] = hit.side === 'left' ? 1 : -1; }
+    }
+    // Vertex neighbours via the index buffer, welded across UV seams by position.
+    const key = new Map(), weld = new Int32Array(count), pos = geometry.attributes.position;
+    for (let i = 0; i < count; i++) {
+      const k = Math.round(pos.getX(i) * 2e3) + ',' + Math.round(pos.getY(i) * 2e3) + ',' + Math.round(pos.getZ(i) * 2e3);
+      if (!key.has(k)) key.set(k, i); weld[i] = key.get(k);
+    }
+    const index = geometry.index.array, edges = new Int32Array(index.length * 2);
+    for (let t = 0, e = 0; t < index.length; t += 3) for (const [a, b] of [[0, 1], [1, 2], [2, 0]]) { edges[e++] = weld[index[t + a]]; edges[e++] = weld[index[t + b]]; }
+    const attribute = new THREE.BufferAttribute(new Float32Array(count), 1); geometry.setAttribute('focusW', attribute);
+    const material = Array.isArray(mesh.material) ? mesh.material.map(m => focusMaterial(m, tint)) : focusMaterial(mesh.material, tint);
+    painted.set(mesh, { panel, side, guard, edges, weld, attribute, material });
+  }
+  function show(groupId, items, detail = false) {
+    restore(); if (!groupId || !detail || !GROUPS[groupId]) return;
+    // The highlight wears the group's own colour, matching the home map and legend.
+    tint.value.set(GROUPS[groupId].colour ?? '#ff6a3d');
+    const panels = new Set((MM.resolveGroup(groupId)?.muscles ?? []).map(id => MM.MUSCLES.indexOf(MM.MUSCLE_BY_ID[id])));
+    const item = items.find(value => value.groupId === groupId), wanted = item?.side === 'left' ? 1 : item?.side === 'right' ? -1 : 0;
+    selectedGroup = groupId; selectedPanels = [...panels].sort((a, b) => a - b); selectedSide = wanted;
+    for (const [mesh, data] of painted) {
+      const { panel, side, guard, edges, weld, attribute } = data, count = panel.length;
+      let w = new Float32Array(count);
+      for (let i = 0; i < count; i++) w[i] = panels.has(panel[i]) && (!wanted || side[i] === wanted) ? 1 : 0;
+      // Feather along the surface: neighbour-averaging passes on welded vertices.
+      const sum = new Float32Array(count), n = new Float32Array(count);
+      for (let pass = 0; pass < 5; pass++) {
+        sum.fill(0); n.fill(0);
+        for (let e = 0; e < edges.length; e += 2) { const a = edges[e], b = edges[e + 1]; sum[a] += w[b]; n[a]++; sum[b] += w[a]; n[b]++; }
+        const next = new Float32Array(count);
+        for (let i = 0; i < count; i++) next[i] = n[i] ? (w[i] + sum[i]) / (1 + n[i]) : w[i];
+        w = next;
+      }
+      for (let i = 0; i < count; i++) attribute.array[i] = w[weld[i]] * guard[i];
+      attribute.needsUpdate = true; mesh.material = data.material;
+    }
+    active = true;
+  }
+  // Camera direction facing the tinted surface in the current pose: area- and
+  // weight-averaged posed normals, lifted to a gentle elevation and never
+  // looking up from below. Null when nothing is tinted.
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), ab = new THREE.Vector3(), ac = new THREE.Vector3();
+  function focusDirection() {
+    if (!active) return null;
+    const sum = new THREE.Vector3(); let total = 0;
+    for (const [mesh, data] of painted) {
+      const weights = data.attribute.array, index = mesh.geometry.index.array; mesh.skeleton.update();
+      for (let t = 0; t < index.length; t += 3) {
+        const w = (weights[index[t]] + weights[index[t + 1]] + weights[index[t + 2]]) / 3; if (w < 0.1) continue;
+        mesh.getVertexPosition(index[t], a).applyMatrix4(mesh.matrixWorld);
+        mesh.getVertexPosition(index[t + 1], b).applyMatrix4(mesh.matrixWorld);
+        mesh.getVertexPosition(index[t + 2], c).applyMatrix4(mesh.matrixWorld);
+        ab.subVectors(b, a); ac.subVectors(c, a); sum.addScaledVector(ab.cross(ac), w * 0.5); total += w;
+      }
+    }
+    if (!total || sum.lengthSq() < 1e-12) return null;
+    const d = sum.normalize(); d.y = Math.max(0.12, Math.min(0.55, d.y + 0.15));
+    return d.normalize();
+  }
+  function restore() {
+    for (const [mesh, material] of originals) mesh.material = material;
+    active = false; selectedGroup = null; selectedPanels = []; selectedSide = 0;
+  }
+  const proxies = () => [...painted.values()].flatMap(data => [].concat(data.material));
+  return { show, restore, focusDirection, isProxy: material => proxies().includes(material),
+    getState: () => ({ active, groupId: selectedGroup, selectedPanels: [...selectedPanels], side: selectedSide,
+      colour: '#' + tint.value.getHexString(), appearance: 'original-outfit-detail-proxy' }),
+    releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); for (const m of proxies()) m.dispose(); },
+    dispose() { restore(); for (const m of proxies()) m.dispose(); } };
 }

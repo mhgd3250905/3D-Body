@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "scope": "v38-baked-playback-and-restored-detail-mannequin",
+  "localSourcesOnly": true,
+  "frames": 540,
+  "tracks": 44,
+  "bones": 22,
+  "loopDurationAt1xSeconds": 8.991662,
+  "loopDurationAtHalfSpeedSeconds": 17.983324,
+  "clockRoundtripError": 0,
+  "losslessAttributeValues": 3349896,
+  "triangleCyclicRotations": 35065,
+  "inverseBindValues": 7744,
+  "losslessTrackValues": 106920,
+  "boneMaxErrorMm": 0.0013966780282626443,
+  "skinMaxErrorMm": 0.0016526928925446123,
+  "compatibilityJointMaxErrorMm": 0.5242724886404799,
+  "worstBone": {
+    "frame": 373,
+    "bone": "leftFoot",
+    "time": 5.663362
+  },
+  "skinVertexStride": 97,
+  "selectedGroups": 17,
+  "selectedPhases": 8,
+  "selectionCases": 136,
+  "studyVertexSamples": 82144,
+  "studyWaistHelpersBound": true,
+  "originalMaterialIdentityAndVisibilityRestored": true,
+  "limitation": "Does not verify visual shader output, real browser clicking, or native device performance."
+}

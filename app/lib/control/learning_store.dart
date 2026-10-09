@@ -286,9 +286,11 @@ class LearningStore extends ChangeNotifier {
     bool? sound,
     bool? haptics,
     int? weeklyGoal,
+    String? themeMode,
   }) {
     _ensureInitialized();
     final next = _settings.copyWith(
+      themeMode: themeMode,
       tier: tier,
       speed: speed,
       cues: cues,
