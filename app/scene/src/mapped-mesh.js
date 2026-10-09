@@ -135,7 +135,7 @@ export function createSurfaceSelection(skinned) {
   // original material objects.
   const originals = new Map(skinned.map(mesh => [mesh, mesh.material]));
   const painted = new Map(), point = new THREE.Vector3(), tint = { value: new THREE.Color('#ff6a3d') };
-  let active = false;
+  let active = false, selectedGroup = null, selectedPanels = [], selectedSide = 0;
   for (const mesh of skinned) {
     if (!isCoveredActorPart(mesh)) continue;
     const geometry = mesh.geometry, rest = geometry.getAttribute('mmRest'), count = rest.count;
@@ -163,6 +163,7 @@ export function createSurfaceSelection(skinned) {
     tint.value.set(GROUPS[groupId].colour ?? '#ff6a3d');
     const panels = new Set((MM.resolveGroup(groupId)?.muscles ?? []).map(id => MM.MUSCLES.indexOf(MM.MUSCLE_BY_ID[id])));
     const item = items.find(value => value.groupId === groupId), wanted = item?.side === 'left' ? 1 : item?.side === 'right' ? -1 : 0;
+    selectedGroup = groupId; selectedPanels = [...panels].sort((a, b) => a - b); selectedSide = wanted;
     for (const [mesh, data] of painted) {
       const { panel, side, guard, edges, weld, attribute } = data, count = panel.length;
       let w = new Float32Array(count);
@@ -202,9 +203,14 @@ export function createSurfaceSelection(skinned) {
     const d = sum.normalize(); d.y = Math.max(0.12, Math.min(0.55, d.y + 0.15));
     return d.normalize();
   }
-  function restore() { for (const [mesh, material] of originals) mesh.material = material; active = false; }
+  function restore() {
+    for (const [mesh, material] of originals) mesh.material = material;
+    active = false; selectedGroup = null; selectedPanels = []; selectedSide = 0;
+  }
   const proxies = () => [...painted.values()].flatMap(data => [].concat(data.material));
   return { show, restore, focusDirection, isProxy: material => proxies().includes(material),
+    getState: () => ({ active, groupId: selectedGroup, selectedPanels: [...selectedPanels], side: selectedSide,
+      colour: '#' + tint.value.getHexString(), appearance: 'original-outfit-detail-proxy' }),
     releaseGpu() { for (const material of new Set([...originals.values()].flat())) material.dispose(); for (const m of proxies()) m.dispose(); },
     dispose() { restore(); for (const m of proxies()) m.dispose(); } };
 }

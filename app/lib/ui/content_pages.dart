@@ -777,6 +777,22 @@ class PathPage extends StatefulWidget {
 
 class _PathPageState extends State<PathPage> {
   int? _open;
+  final _currentGatesKey = GlobalKey();
+
+  void _showCurrentGates() {
+    setState(() => _open = widget.store.currentStage);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final gatesContext = _currentGatesKey.currentContext;
+      if (gatesContext != null) {
+        Scrollable.ensureVisible(
+          gatesContext,
+          duration: const Duration(milliseconds: 250),
+          alignment: .1,
+        );
+      }
+    });
+  }
 
   Lesson? _nextLesson() {
     final store = widget.store;
@@ -854,23 +870,28 @@ class _PathPageState extends State<PathPage> {
                 ),
             ],
           ),
-          if (stage.gates.isNotEmpty) ...[
-            SectionTitle(s.stageGates),
-            for (final gate in stage.gates)
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                value: store.gateReports[gate.id] ?? false,
-                onChanged: unlocked
-                    ? (value) => widget.onGate(gate.id, value ?? false)
-                    : null,
-                title: Text(
-                  gate.text,
-                  style: const TextStyle(fontSize: 13, height: 1.45),
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-          ],
+          if (stage.gates.isNotEmpty)
+            Column(
+              key: stage.n == store.currentStage ? _currentGatesKey : null,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionTitle(s.stageGates),
+                for (final gate in stage.gates)
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    value: store.gateReports[gate.id] ?? false,
+                    onChanged: unlocked
+                        ? (value) => widget.onGate(gate.id, value ?? false)
+                        : null,
+                    title: Text(
+                      gate.text,
+                      style: const TextStyle(fontSize: 13, height: 1.45),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+              ],
+            ),
           if (!unlocked)
             Padding(
               padding: const EdgeInsets.only(top: 6),
@@ -888,6 +909,9 @@ class _PathPageState extends State<PathPage> {
     final stages = widget.catalog.stages;
     final open = _open ?? store.currentStage;
     final next = _nextLesson();
+    final allDone = stages
+        .where((stage) => stage.n >= store.startStage)
+        .every((stage) => store.isStagePassed(stage.n));
     return Column(
       children: [
         PageHeader(
@@ -976,8 +1000,16 @@ class _PathPageState extends State<PathPage> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
           child: PrimaryAction(
-            label: next == null ? s.allDone : s.continueLesson(next.title),
-            onPressed: next == null ? null : () => widget.onLesson(next),
+            label: next != null
+                ? s.continueLesson(next.title)
+                : allDone
+                ? s.allDone
+                : s.confirmStageGates,
+            onPressed: next != null
+                ? () => widget.onLesson(next)
+                : allDone
+                ? null
+                : _showCurrentGates,
           ),
         ),
       ],
@@ -1231,9 +1263,9 @@ class ProgressPage extends StatelessWidget {
       for (final session in store.sessions)
         if (session.completedSets > 0 || session.activeSeconds > 0)
           DateTime(
-            session.startedAt.toLocal().year,
-            session.startedAt.toLocal().month,
-            session.startedAt.toLocal().day,
+            session.endedAt.toLocal().year,
+            session.endedAt.toLocal().month,
+            session.endedAt.toLocal().day,
           ),
     };
     final labels = s.weekdayLabels.split(',');

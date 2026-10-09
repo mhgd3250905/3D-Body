@@ -307,7 +307,7 @@ abstract class AppLocalizations {
   /// No description provided for @deepMotionNote.
   ///
   /// In zh, this message translates to:
-  /// **'深层肌群位置请切换到直立肌群人体查看。'**
+  /// **'深层肌群高亮表示所在部位。'**
   String get deepMotionNote;
 
   /// No description provided for @bothSides.
@@ -1275,6 +1275,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'全部完成'**
   String get allDone;
+
+  /// No description provided for @confirmStageGates.
+  ///
+  /// In zh, this message translates to:
+  /// **'待确认 · 本阶段过关条件'**
+  String get confirmStageGates;
 
   /// No description provided for @stageGates.
   ///

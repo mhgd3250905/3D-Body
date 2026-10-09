@@ -35,7 +35,7 @@
   "secondary": "协同作用",
   "teachingNote": "色区是教学位置示意，不代表肌电、肌力或真实肌肉边界。",
   "deepNote": "深层肌群用斜线表示所在部位。",
-  "deepMotionNote": "深层肌群位置请切换到直立肌群人体查看。",
+  "deepMotionNote": "深层肌群高亮表示所在部位。",
   "bothSides": "双侧",
   "leftSide": "左侧",
   "rightSide": "右侧",
@@ -311,6 +311,7 @@
     }
   },
   "allDone": "全部完成",
+  "confirmStageGates": "待确认 · 本阶段过关条件",
   "stageGates": "阶段自评 · 自行确认",
   "weekDays": "本周练习天数",
   "streak": "连续天数",

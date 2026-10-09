@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-09",
+  "dimensions": [
+    390,
+    844
+  ],
+  "screenshots": [
+    {
+      "file": "01-home.png",
+      "bytes": 23991,
+      "sha256": "2fd52f4789ecf1052f00bf391a1e8d807cda2947a7e5229d94caa2910c44222a"
+    },
+    {
+      "file": "02-detail-motion.png",
+      "bytes": 35296,
+      "sha256": "4904507ff329d5313a6df92156f10db73f379b82b29ebbc73c6ad96e10f339db"
+    },
+    {
+      "file": "03-detail-muscles.png",
+      "bytes": 32378,
+      "sha256": "6ddc888caecb7dd47ae16f63ccfafe9cc57b602c80ec895607a3f6f93d3aa606"
+    }
+  ]
+}

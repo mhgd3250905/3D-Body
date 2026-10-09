@@ -1,4 +1,12 @@
 import * as THREE from 'three';
+import { installSpineHelpers } from './legacy/spine-helpers.js';
+
+export function prepareStudySpine(model, rig) {
+  const meshes = [], skeletons = new Set();
+  model.traverse(mesh => { if (mesh.isSkinnedMesh) { meshes.push(mesh); skeletons.add(mesh.skeleton); } });
+  if (model.getObjectByName('spineLower')) throw new Error('study_spine_already_prepared');
+  return installSpineHelpers({ model, meshes, skeletons, landmarks: rig.landmarks });
+}
 
 // A multi-material garment is a named glTF group containing primitives whose
 // generated names need not include the garment's authored node name.
@@ -32,7 +40,7 @@ function attachStudyPart(coach, study, sourceName, referenceName, name, flag) {
   coach.traverse(object => { if (object.isBone) bones.set(object.name, object); });
   const original = coach.getObjectByName(referenceName);
   const source = study.getObjectByName(sourceName);
-  if (!original?.isSkinnedMesh || !source?.isSkinnedMesh || source.skeleton.bones.length !== 20) {
+  if (!original?.isSkinnedMesh || !source?.isSkinnedMesh || ![20, 22].includes(source.skeleton.bones.length)) {
     throw new Error('study_skin_missing');
   }
   const bound = source.skeleton.bones.map(bone => {

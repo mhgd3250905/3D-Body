@@ -13,10 +13,15 @@ class TrainingTimerPage extends StatefulWidget {
     required this.drill,
     required this.store,
     required this.onClose,
+    this.now,
   });
   final Drill drill;
   final LearningStore store;
   final VoidCallback onClose;
+
+  /// Optional monotonic clock for deterministic timer interaction tests.
+  @visibleForTesting
+  final int Function()? now;
   @override
   State<TrainingTimerPage> createState() => _TrainingTimerPageState();
 }
@@ -40,7 +45,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     _clock.start();
     _timer = DrillTimer(
       widget.drill.dose,
-      now: () => _clock.elapsedMilliseconds,
+      now: widget.now ?? () => _clock.elapsedMilliseconds,
     );
     WidgetsBinding.instance.addObserver(this);
     _ticker = Timer.periodic(Duration(milliseconds: 150), (_) {
@@ -105,9 +110,10 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     final s = context.strings;
     final snap = _timer.snapshot;
     final dose = widget.drill.dose;
+    final phase = snap.effectivePhase;
     final finished =
         snap.phase == TimerPhase.finished || snap.phase == TimerPhase.abandoned;
-    final title = switch (snap.phase) {
+    final phaseTitle = switch (phase) {
       TimerPhase.ready => s.timerReady,
       TimerPhase.countdown => s.countdown,
       TimerPhase.work => s.work,
@@ -117,17 +123,18 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       TimerPhase.finished => s.finished,
       TimerPhase.abandoned => s.abandoned,
     };
+    final paused = snap.phase == TimerPhase.paused;
+    final title = paused ? '$phaseTitle · ${s.paused}' : phaseTitle;
     final timeMode = dose.mode == DoseMode.time;
     final clockPhase =
-        snap.phase == TimerPhase.countdown || snap.phase == TimerPhase.rest;
-    final paused = snap.phase == TimerPhase.paused;
+        phase == TimerPhase.countdown || phase == TimerPhase.rest;
     final waiting =
         snap.phase == TimerPhase.ready || snap.phase == TimerPhase.nextSide;
     final value = finished
         ? '✓'
         : waiting
         ? snap.target.toString()
-        : timeMode || clockPhase || paused && !_pausedReps(snap)
+        : timeMode || clockPhase
         ? ((snap.remainingMs + 999) ~/ 1000).toString()
         : snap.reps.toString();
     final unit = finished
@@ -137,17 +144,13 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
         : clockPhase || timeMode
         ? '${s.secondsUnit} · $title'
         : dose.mode == DoseMode.reps
-        ? s.ofReps(snap.target)
+        ? '${s.ofReps(snap.target)}${paused ? ' · ${s.paused}' : ''}'
         : title;
     final progress = finished
         ? 1.0
-        : snap.phase == TimerPhase.countdown
-        ? 1 - snap.remainingMs / 3000
-        : snap.phase == TimerPhase.rest
-        ? 1 - snap.remainingMs / (dose.restSec * 1000).clamp(1, 1 << 30)
-        : timeMode && (snap.phase == TimerPhase.work || paused)
-        ? 1 - snap.remainingMs / (snap.target * 1000)
-        : dose.mode == DoseMode.reps
+        : clockPhase || timeMode && phase == TimerPhase.work
+        ? 1 - snap.remainingMs / snap.durationMs.clamp(1, 1 << 30)
+        : dose.mode == DoseMode.reps && phase == TimerPhase.work
         ? snap.reps / snap.target
         : 0.0;
     final ringColor = snap.phase == TimerPhase.rest || paused
@@ -233,33 +236,39 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                   Center(
                     child: SizedBox.square(
                       dimension: 248,
-                      child: CustomPaint(
-                        painter: _RingPainter(
-                          progress.clamp(0.0, 1.0).toDouble(),
-                          ringColor,
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                value,
-                                style: TextStyle(
-                                  fontSize: 76,
-                                  height: 1.05,
-                                  fontWeight: FontWeight.w700,
-                                  fontFeatures: [FontFeature.tabularFigures()],
+                      child: Semantics(
+                        key: const ValueKey('training-progress'),
+                        value: '${(progress.clamp(0.0, 1.0) * 100).round()}%',
+                        child: CustomPaint(
+                          painter: _RingPainter(
+                            progress.clamp(0.0, 1.0).toDouble(),
+                            ringColor,
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: 76,
+                                    height: 1.05,
+                                    fontWeight: FontWeight.w700,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                unit,
-                                style: TextStyle(
-                                  color: FlareColors.dim,
-                                  fontSize: 13,
+                                SizedBox(height: 4),
+                                Text(
+                                  unit,
+                                  style: TextStyle(
+                                    color: FlareColors.dim,
+                                    fontSize: 13,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -306,7 +315,6 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                   SizedBox(height: 18),
                   if (dose.mode == DoseMode.manual && !finished)
                     _note(s.manualMode),
-                  if (paused) _note(s.backgroundPause),
                   if (_pain) _note(s.painMessage, color: FlareColors.warning),
                   if (_saving) _note(s.saving),
                   if (_saved) _note(s.saved, color: FlareColors.success),
@@ -388,9 +396,6 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       ),
     );
   }
-
-  bool _pausedReps(TimerSnapshot snap) =>
-      widget.drill.dose.mode != DoseMode.time && snap.remainingMs == 0;
 
   Widget _note(String text, {Color? color}) => Padding(
     padding: const EdgeInsets.only(bottom: 8),
