@@ -103,7 +103,9 @@ class DrillTimer {
         : (_phase == TimerPhase.finished || _phase == TimerPhase.abandoned)
         ? _terminalAt
         : now;
-    final elapsed = (time - _blockStart).clamp(0, 1 << 53);
+    // Web bitwise shifts use 32-bit operands: `1 << 53` becomes zero in
+    // dart2js, which would freeze every countdown and timed block.
+    final elapsed = (time - _blockStart).clamp(0, 9007199254740991);
     return _blockDuration > 0 ? elapsed.clamp(0, _blockDuration) : elapsed;
   }
 

@@ -159,7 +159,7 @@ void main() {
     }
 
     expect(dotColor('一'), FlareColors.accent);
-    expect(dotColor('日'), FlareColors.surface);
+    expect(dotColor('日'), FlareColors.palette.track);
     expect(tester.takeException(), isNull);
   });
 }

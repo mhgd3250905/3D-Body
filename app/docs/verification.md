@@ -211,3 +211,34 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 按 [实施路线](development-roadmap.md) 先完成Android真机启动、本地3D、前后台与飞行模式检查，再取得手机帧率、冷启动、内存/发热、特写延迟，以及17肌群×8阶段的人工点选表。≥45fps、命中率≥95%、iOS、VoiceOver/TalkBack和大字体均尚未验收。原生常亮/声音/触感/休息通知、课程与自评阈值审核、完整数据导出恢复、正式标识/签名及商店发布继续留在各里程碑，不能标记为已完成。
 
 后续只按受影响范围复测：Dart修改运行分析和相关测试；场景修改先构建/校验再核对App实际画面。必要检查通过后停止扩大测试。
+
+## 2026-10-09 动效与过渡
+
+- `lib/ui/motion.dart`：统一动效。`FlareStage` 让壳层的状态式导航也有过渡：更深的页面从右侧推入，原页面左移并变暗；返回时反过来；计时页作为模态从底部升起；同级页面交叉淡入。两侧页面都按 key 保持挂载，状态不会丢。空页面（3D 舞台）不接收触摸。`FadeSlideIn` 负责错落入场，`Pressable` 负责按下缩放，系统开启“减弱动态效果”时全部直接切换。
+- 应用位置：训练库网格按筛选错落入场；卡片和主按钮按下有回弹；筛选胶囊颜色渐变；底部弹层用统一曲线，肌群弹层展开时平滑长高；Disclosure 展开更顺；首页与肌群详情的标题交叉淡入，详情文字随镜头浮现；计时数字滚动切换，圆环和颜色补间过渡，当前组指示条变宽。主题去掉水波纹，改为轻微高亮；关于页改用 Cupertino 过渡。
+- 场景：`player.glideTo` 让镜头在打开、切换、关闭肌群详情以及舞台尺寸变化时平滑移动（easeInOutCubic，640ms），用户一拖动就中断；切换托马斯和人台时画布淡入；minimap 浮现。同样遵循 prefers-reduced-motion。
+- 验证：`dart analyze lib test test_screens` 无问题；`flutter test --no-pub` 52/52 通过（新增 `test/ui/motion_test.dart`：推入、返回、模态、状态保留、减弱动态效果；`flow_regressions_test` 在计时模态落定后再点击）；`shots_test` 7/7 通过，静止画面与之前一致；`flutter build web --release` 成功；`scene npm run build && npm run verify` 通过。
+- 待真机：iOS WebView 上的推入帧率、镜头滑动的观感。
+
+## 2026-10-09 交互打磨（PR #5）
+
+- 摸排表：`docs/interaction-audit-2026-10-09.md`（33 项：P0 2、P1 14、P2 17；已修 27，保留 4，待真机 2）。
+- 提交：`d9625e0` 左缘滑动返回 / 触感词汇 / 图片淡入 / 时间轴刻度；`b7e904b` 计时中途关闭先确认、计时触感、完成收尾；`5947c1f` 全局按下态、防双开弹层、3D 载入占位与失败态、等宽数字；`e8c6258` 滚动细线、弹性滚动、学习路径折叠、训练库撤销与搜索、训练详情固定页头；其后文档与截图提交。
+- `dart analyze lib test test_screens`：无问题。
+- `flutter test --no-pub`：59/59 通过（原 52 + 新 7：`motion_test` 左缘返回跟手/回弹、非边缘不触发；`timer_pause_ui_test` 中途关闭会暂停并询问、未开始直接退出；`interaction_polish_test` 双击「更多」只开一个弹层、速度在弹层内生效、训练库左缘滑回舞台）。`path_progress_regression_test` 的未训练周点颜色断言随设计改为 `track`。
+- `test_screens/shots_test.dart` 深浅两套 9/9 通过，新增 19 计时确认、20 计时完成、21 3D 载入占位；精选与前后对照：`docs/screenshots/2026-10-09-polish/`（`contact-sheet-before-after.png`）。
+- `flutter build web --release --no-pub --no-web-resources-cdn` 成功（编译 63.1 秒，沙箱 Linux）。
+- 场景（`scene/`）本轮未改动，未重跑 `npm run build/verify`；托马斯原服装、固定机位规则不受影响（载入占位使用原装托马斯渲染图）。
+- 限制：触感强度、左缘返回与 WebView 手势的配合、动效帧率、3D 载入占位时长均需 iOS/Android 真机确认；屏幕常亮与提示音未做（需原生能力，留 M3）。
+
+## 2026-10-09 第二轮打磨（PR #5，北京时间约 12:00–13:10）
+
+- 摸排表：`docs/interaction-audit-2026-10-09.md`「第二轮摸排」一节（18 项：已修 14，保留 2，待真机 2；上轮保留的 A1、S1 本轮已修）。
+- 提交：`e903033` 整屏主题淡化（`ThemeCrossFade` / `ThemeFadeWindow`，场景 CSS 与小地图同步）、统一动效 token、计时完成描线对勾；`ea47c7c` iOS 分段控件、自评分级选择、训练详情出血大图与收起导航条、状态栏样式、对比度、图标统一、语义标题、存储错误提示；其后一提交为空态统一与本文档、截图。
+- `dart analyze lib test test_screens`：无问题。
+- `flutter test --no-pub`（已去除代理变量）：68/68 通过（上轮 59 + 新 9：`theme_fade_test` 4 项——淡化过程与透明度曲线、淡化中再切从当前画面接续、3D 窗口留窗与下层补底、减弱动态效果瞬切；`polish_round2_test` 5 项——分段控件点选 / 拖动松手提交 / 互斥语义、训练详情出血与磨砂导航条、320×640 字号 ×1.3 深浅两套 5 个页面无溢出、空记录单句语义）。`flow_regressions_test` 的外观切换用例改为断言整屏淡化与场景 `duration`，自评用例改为分段选择，「更多」弹层用例改为 `FlareSegmented`。
+- `test_screens/shots_test.dart` 深浅两套各 11/11 通过（新增 iPhone 安全区、22a/b/c 主题切换前 / 半程 / 后、23 空记录）。改前截图用 `polish-pass` 标签在独立 worktree 以同一脚本重拍。精选与对照：`docs/screenshots/2026-10-09-polish-r2/`（`contact-sheet-before-after.png`）。逐张目检：无文字截断、溢出或同色贴底；半程截图确为两帧均匀交叉。
+- 场景：`cd scene && npm run build && npm run verify` 两次（主题过渡、浅色外壳对比度）均通过；`scene/tools/evidence/v41-verify.json` 浮点噪声已 `git checkout` 还原。托马斯原服装、脸与材质未动，托马斯姿态详情固定机位未动；未接触正式循环、阶段 1 快照、导出与个人数据，未新增任何肌电数据。
+- `flutter build web --release --no-pub --no-web-resources-cdn` 成功（编译 63.7 秒，沙箱 Linux）。沙箱无浏览器，未在 Web 运行时实测淡化。
+- 每次提交前还原 `analysis_options.yaml`、`pubspec.lock`（沙箱 pub 缓存重建后 `flutter pub get` 会改写二者），未提交 `build/`。
+- 限制 / 待真机：`toImageSync` 截帧在 Web(CanvasKit)、iOS WKWebView、Android 平台视图下的实际表现与帧耗时（失败会回退瞬切）；状态栏图标颜色；分段控件拖动与系统边缘手势配合；上轮遗留的触感、帧率、屏幕常亮。

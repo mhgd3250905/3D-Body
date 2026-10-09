@@ -5,6 +5,7 @@ import '../domain/catalog_models.dart';
 import '../domain/dose.dart';
 import '../domain/drill_timer.dart';
 import 'components.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 class TrainingTimerPage extends StatefulWidget {
@@ -37,6 +38,9 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   bool _saving = false;
   bool _saved = false;
   bool _saveFailed = false;
+  bool _confirming = false;
+  TimerPhase? _lastPhase;
+  int? _lastCount;
   @override
   void initState() {
     super.initState();
@@ -51,6 +55,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     _ticker = Timer.periodic(Duration(milliseconds: 150), (_) {
       _timer.tick();
       if (!mounted) return;
+      _feedback(_timer.snapshot);
       setState(() {});
       if (_timer.snapshot.phase == TimerPhase.finished &&
           !_saved &&
@@ -59,6 +64,126 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
         unawaited(_persist());
       }
     });
+  }
+
+  /// Haptics carry the timer when the phone is on the floor: a tick for each
+  /// countdown second and the last three seconds of a timed block, a firm tap
+  /// when work starts, a light one for rest, and a success pattern at the end.
+  void _feedback(TimerSnapshot snap) {
+    final phase = snap.phase;
+    final timed =
+        phase == TimerPhase.countdown ||
+        phase == TimerPhase.rest ||
+        (phase == TimerPhase.work && widget.drill.dose.mode == DoseMode.time);
+    final count = timed ? (snap.remainingMs + 999) ~/ 1000 : null;
+    if (count != null &&
+        count != _lastCount &&
+        count <= 3 &&
+        count > 0 &&
+        phase == _lastPhase) {
+      FlareHaptics.selection();
+    }
+    _lastCount = count;
+    if (phase == _lastPhase) return;
+    final from = _lastPhase;
+    _lastPhase = phase;
+    if (from == null) return;
+    switch (phase) {
+      case TimerPhase.countdown:
+        if (from != TimerPhase.paused) FlareHaptics.selection();
+      case TimerPhase.work when from == TimerPhase.countdown:
+        FlareHaptics.heavy();
+      case TimerPhase.rest || TimerPhase.nextSide:
+        FlareHaptics.medium();
+      case TimerPhase.finished:
+        FlareHaptics.success();
+      default:
+        break;
+    }
+  }
+
+  void _act(VoidCallback action) {
+    FlareHaptics.light();
+    setState(action);
+  }
+
+  bool get _inProgress {
+    final phase = _timer.snapshot.phase;
+    return phase != TimerPhase.ready &&
+        phase != TimerPhase.finished &&
+        phase != TimerPhase.abandoned;
+  }
+
+  /// Closing mid-session asks first (the clock waits while it asks), so a
+  /// stray tap on the corner never ends a workout.
+  Future<void> _requestExit() async {
+    if (_confirming) return;
+    if (!_inProgress) return _exit();
+    final running = const [
+      TimerPhase.work,
+      TimerPhase.countdown,
+      TimerPhase.rest,
+    ].contains(_timer.snapshot.phase);
+    if (running) setState(_timer.pause);
+    _confirming = true;
+    final s = context.strings;
+    final end = await showModalBottomSheet<bool>(
+      context: context,
+      sheetAnimationStyle: FlareMotion.sheetStyle(context),
+      builder: (sheet) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                s.endSessionTitle,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                s.endSessionBody,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: FlareColors.secondary,
+                ),
+              ),
+              const SizedBox(height: 22),
+              PrimaryAction(
+                label: s.keepTraining,
+                onPressed: () => Navigator.pop(sheet, false),
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                height: 48,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheet, true),
+                  child: Text(
+                    s.endSessionConfirm,
+                    style: TextStyle(
+                      color: FlareColors.warning,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    _confirming = false;
+    if (!mounted) return;
+    if (end == true) {
+      await _exit();
+    } else if (running && _timer.snapshot.phase == TimerPhase.paused) {
+      setState(_timer.resume);
+    }
   }
 
   Future<void> _persist() async {
@@ -165,14 +290,14 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     ].contains(snap.phase);
     final (String, VoidCallback?)? primary = switch (snap.phase) {
       TimerPhase.ready ||
-      TimerPhase.nextSide => (s.start, () => setState(_timer.start)),
+      TimerPhase.nextSide => (s.start, () => _act(_timer.start)),
       TimerPhase.work when dose.mode == DoseMode.reps => (
         s.completeRep,
-        () => setState(_timer.rep),
+        () => _act(_timer.rep),
       ),
-      TimerPhase.work => (s.completeSet, () => setState(_timer.completeSet)),
-      TimerPhase.rest => (s.skipRest, () => setState(_timer.skipRest)),
-      TimerPhase.paused => (s.resume, () => setState(_timer.resume)),
+      TimerPhase.work => (s.completeSet, () => _act(_timer.completeSet)),
+      TimerPhase.rest => (s.skipRest, () => _act(_timer.skipRest)),
+      TimerPhase.paused => (s.resume, () => _act(_timer.resume)),
       TimerPhase.finished || TimerPhase.abandoned => (
         s.done,
         _saving || _saveFailed ? null : widget.onClose,
@@ -187,7 +312,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) unawaited(_exit());
+        if (!didPop) unawaited(_requestExit());
       },
       child: ColoredBox(
         color: FlareColors.background,
@@ -205,7 +330,9 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                       child: RoundIconButton(
                         icon: Icons.close_rounded,
                         tooltip: s.exitTimer,
-                        onPressed: _saving ? null : () => unawaited(_exit()),
+                        onPressed: _saving
+                            ? null
+                            : () => unawaited(_requestExit()),
                       ),
                     ),
                     Column(
@@ -236,41 +363,94 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                   Center(
                     child: SizedBox.square(
                       dimension: 248,
-                      child: Semantics(
-                        key: const ValueKey('training-progress'),
-                        value: '${(progress.clamp(0.0, 1.0) * 100).round()}%',
-                        child: CustomPaint(
-                          painter: _RingPainter(
-                            progress.clamp(0.0, 1.0).toDouble(),
-                            ringColor,
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  value,
-                                  style: TextStyle(
-                                    fontSize: 76,
-                                    height: 1.05,
-                                    fontWeight: FontWeight.w700,
-                                    fontFeatures: [
-                                      FontFeature.tabularFigures(),
-                                    ],
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        fit: StackFit.expand,
+                        children: [
+                          if (snap.phase == TimerPhase.finished)
+                            const _FinishGlow(),
+                          Semantics(
+                            key: const ValueKey('training-progress'),
+                            value:
+                                '${(progress.clamp(0.0, 1.0) * 100).round()}%',
+                            // The ring glides to each new value and colour
+                            // instead of jumping per tick or per rep.
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween(
+                                end: progress.clamp(0.0, 1.0).toDouble(),
+                              ),
+                              duration: FlareMotion.of(
+                                context,
+                                FlareMotion.enter,
+                              ),
+                              curve: FlareMotion.settle,
+                              builder: (context, ringValue, child) =>
+                                  TweenAnimationBuilder<Color?>(
+                                    tween: ColorTween(end: ringColor),
+                                    duration: FlareMotion.of(
+                                      context,
+                                      FlareMotion.fade,
+                                    ),
+                                    builder: (context, color, child) =>
+                                        CustomPaint(
+                                          painter: _RingPainter(
+                                            ringValue,
+                                            color ?? ringColor,
+                                          ),
+                                          child: child,
+                                        ),
+                                    child: child,
                                   ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Each new count rolls up into place.
+                                    AnimatedSwitcher(
+                                      duration: FlareMotion.of(
+                                        context,
+                                        FlareMotion.collapse,
+                                      ),
+                                      switchInCurve: FlareMotion.settle,
+                                      switchOutCurve: FlareMotion.exit,
+                                      transitionBuilder: (child, animation) {
+                                        final incoming =
+                                            child.key == ValueKey(value);
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: SlideTransition(
+                                            position: Tween(
+                                              begin: Offset(
+                                                0,
+                                                incoming ? .32 : -.32,
+                                              ),
+                                              end: Offset.zero,
+                                            ).animate(animation),
+                                            child: child,
+                                          ),
+                                        );
+                                      },
+                                      child: _CountText(
+                                        value,
+                                        key: ValueKey(value),
+                                        celebrate:
+                                            snap.phase == TimerPhase.finished,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      unit,
+                                      style: TextStyle(
+                                        color: FlareColors.dim,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  unit,
-                                  style: TextStyle(
-                                    color: FlareColors.dim,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -280,10 +460,13 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                   ),
-                  if (widget.drill.cues.isNotEmpty) ...[
+                  if (snap.phase == TimerPhase.finished ||
+                      widget.drill.cues.isNotEmpty) ...[
                     SizedBox(height: 8),
                     Text(
-                      widget.drill.cues.first,
+                      snap.phase == TimerPhase.finished
+                          ? s.finishedLine(snap.completedSets)
+                          : widget.drill.cues.first,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -297,8 +480,10 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       for (var i = 1; i <= snap.sets; i++)
-                        Container(
-                          width: 22,
+                        AnimatedContainer(
+                          duration: FlareMotion.of(context, FlareMotion.fade),
+                          curve: FlareMotion.standard,
+                          width: i == snap.set && !finished ? 30 : 22,
                           height: 3,
                           margin: EdgeInsets.symmetric(horizontal: 3),
                           decoration: BoxDecoration(
@@ -330,7 +515,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                   if (snap.phase == TimerPhase.rest)
                     Center(
                       child: TextButton(
-                        onPressed: () => setState(() => _timer.addRest()),
+                        onPressed: () => _act(_timer.addRest),
                         child: Text(
                           s.addRest,
                           style: TextStyle(color: FlareColors.secondary),
@@ -344,15 +529,23 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
               padding: EdgeInsets.fromLTRB(20, 4, 20, 4),
               child: Row(
                 children: [
-                  if (canPause) ...[
-                    RoundIconButton(
-                      icon: Icons.pause_rounded,
-                      tooltip: s.pause,
-                      diameter: 56,
-                      onPressed: () => setState(_timer.pause),
-                    ),
-                    SizedBox(width: 12),
-                  ],
+                  // The pause button slides in and out instead of making the
+                  // primary button jump in width.
+                  AnimatedSize(
+                    duration: FlareMotion.of(context, FlareMotion.fade),
+                    curve: FlareMotion.settle,
+                    child: canPause
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: RoundIconButton(
+                              icon: Icons.pause_rounded,
+                              tooltip: s.pause,
+                              diameter: 56,
+                              onPressed: () => _act(_timer.pause),
+                            ),
+                          )
+                        : const SizedBox(height: 56),
+                  ),
                   Expanded(
                     child: primary == null
                         ? SizedBox(height: 56)
@@ -370,6 +563,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                   ? null
                   : TextButton.icon(
                       onPressed: () {
+                        FlareHaptics.medium();
                         setState(() {
                           _pain = true;
                           _timer.abandon();
@@ -445,4 +639,113 @@ class _RingPainter extends CustomPainter {
   @override
   bool shouldRepaint(_RingPainter old) =>
       old.progress != progress || old.color != color;
+}
+
+/// The big count. The finishing check springs in once; numbers stay still.
+class _CountText extends StatelessWidget {
+  const _CountText(this.value, {super.key, this.celebrate = false});
+  final String value;
+  final bool celebrate;
+  @override
+  Widget build(BuildContext context) {
+    final text = Text(
+      value,
+      style: TextStyle(
+        fontSize: 76,
+        height: 1.05,
+        fontWeight: FontWeight.w700,
+        color: celebrate ? FlareColors.success : null,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    );
+    if (!celebrate) return text;
+    // The finish is a drawn stroke, not a font glyph: it writes itself in
+    // with the ring's weight and round caps, with a small spring.
+    return Semantics(
+      label: value,
+      child: SizedBox(
+        width: 84,
+        height: 80,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: FlareMotion.of(context, FlareMotion.celebrate),
+          curve: Curves.linear,
+          builder: (context, t, _) => Transform.scale(
+            scale: .8 + .2 * FlareMotion.spring.transform(t),
+            child: CustomPaint(
+              painter: _CheckPainter(
+                FlareMotion.settle.transform((t / .8).clamp(0, 1)),
+                FlareColors.success,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CheckPainter extends CustomPainter {
+  _CheckPainter(this.t, this.color);
+  final double t;
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (t <= 0) return;
+    final w = size.width, h = size.height;
+    final path = Path()
+      ..moveTo(w * .12, h * .54)
+      ..lineTo(w * .4, h * .8)
+      ..lineTo(w * .9, h * .18);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 9
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = color;
+    final metric = path.computeMetrics().first;
+    canvas.drawPath(metric.extractPath(0, metric.length * t), paint);
+  }
+
+  @override
+  bool shouldRepaint(_CheckPainter old) => old.t != t || old.color != color;
+}
+
+/// One soft ring of light that leaves the finished ring and fades: a quiet
+/// "done" instead of confetti.
+class _FinishGlow extends StatelessWidget {
+  const _FinishGlow();
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+    child: TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: FlareMotion.of(context, FlareMotion.afterglow),
+      curve: FlareMotion.settle,
+      builder: (context, t, _) =>
+          CustomPaint(painter: _GlowPainter(t, FlareColors.success)),
+    ),
+  );
+}
+
+class _GlowPainter extends CustomPainter {
+  _GlowPainter(this.t, this.color);
+  final double t;
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (t >= 1) return;
+    final radius = (size.shortestSide / 2 - 6) * (1 + .14 * t);
+    canvas.drawCircle(
+      size.center(Offset.zero),
+      radius,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6 * (1 - t) + 1
+        ..color = color.withValues(alpha: .45 * (1 - t))
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GlowPainter old) => old.t != t || old.color != color;
 }

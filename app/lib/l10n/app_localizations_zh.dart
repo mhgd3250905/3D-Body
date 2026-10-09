@@ -377,6 +377,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get grade4 => '轻松完成，准备进阶';
 
   @override
+  String get gradeShort1 => '未完成';
+
+  @override
+  String get gradeShort2 => '能完成';
+
+  @override
+  String get gradeShort3 => '较稳定';
+
+  @override
+  String get gradeShort4 => '很轻松';
+
+  @override
+  String get dipsShort1 => '0–3';
+
+  @override
+  String get dipsShort2 => '4–7';
+
+  @override
+  String get dipsShort3 => '8–12';
+
+  @override
+  String get dipsShort4 => '13+';
+
+  @override
   String get saveAssessment => '保存自评起点';
 
   @override
@@ -708,4 +732,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeLight => '浅色';
+
+  @override
+  String get sceneLoading => '正在载入 3D 动作';
+
+  @override
+  String get endSessionTitle => '结束这次练习？';
+
+  @override
+  String get endSessionBody => '已完成的部分会存为一条未完成记录。';
+
+  @override
+  String get endSessionConfirm => '结束并保存';
+
+  @override
+  String get keepTraining => '继续练';
+
+  @override
+  String get removedFromToday => '已移出今日训练';
+
+  @override
+  String get undo => '撤销';
+
+  @override
+  String get addedTodayToast => '已加入今日训练';
+
+  @override
+  String trainedOn(String day) {
+    return '$day，已训练';
+  }
+
+  @override
+  String notTrainedOn(String day) {
+    return '$day，未训练';
+  }
+
+  @override
+  String finishedLine(int sets) {
+    return '$sets 组全部完成';
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../data/catalog.dart';
 import 'components.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 /// A compact, accessible scrubber. Its eight segments represent the eight
@@ -27,6 +28,18 @@ class MotionTimeline extends StatefulWidget {
 
 class _MotionTimelineState extends State<MotionTimeline> {
   bool _focused = false;
+  bool _dragging = false;
+
+  @override
+  void didUpdateWidget(MotionTimeline old) {
+    super.didUpdateWidget(old);
+    // Scrubbing ticks once per pose boundary, like a detent wheel.
+    if (_dragging && old.phase != widget.phase) FlareHaptics.selection();
+  }
+
+  void _setDragging(bool value) {
+    if (_dragging != value) setState(() => _dragging = value);
+  }
 
   // Pin the real source poses to their printed ticks. Interpolation between
   // ticks uses their original durations; the scene still owns actual time.
@@ -104,8 +117,13 @@ class _MotionTimelineState extends State<MotionTimeline> {
               return GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapDown: (event) => seek(event.localPosition.dx),
-                onHorizontalDragStart: (event) => seek(event.localPosition.dx),
+                onHorizontalDragStart: (event) {
+                  _setDragging(true);
+                  seek(event.localPosition.dx);
+                },
                 onHorizontalDragUpdate: (event) => seek(event.localPosition.dx),
+                onHorizontalDragEnd: (_) => _setDragging(false),
+                onHorizontalDragCancel: () => _setDragging(false),
                 child: SizedBox(
                   height: 40,
                   child: Stack(
@@ -141,28 +159,34 @@ class _MotionTimelineState extends State<MotionTimeline> {
                       Positioned(
                         left: (width - 12) * fraction,
                         top: 10.5,
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: FlareColors.palette.isDark
-                                ? Colors.white
-                                : FlareColors.surface,
-                            border: FlareColors.palette.isDark
-                                ? null
-                                : Border.all(
-                                    color: FlareColors.accent,
-                                    width: 2,
+                        // The thumb swells under the finger while scrubbing.
+                        child: AnimatedScale(
+                          scale: _dragging ? 1.35 : 1,
+                          duration: FlareMotion.of(context, FlareMotion.quick),
+                          curve: FlareMotion.settle,
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: FlareColors.palette.isDark
+                                  ? Colors.white
+                                  : FlareColors.surface,
+                              border: FlareColors.palette.isDark
+                                  ? null
+                                  : Border.all(
+                                      color: FlareColors.accent,
+                                      width: 2,
+                                    ),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: FlareColors.accent.withValues(
+                                    alpha: .35,
                                   ),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: FlareColors.accent.withValues(
-                                  alpha: .35,
+                                  spreadRadius: _focused ? 5 : 3,
                                 ),
-                                spreadRadius: _focused ? 5 : 3,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -182,7 +206,7 @@ class _MotionTimelineState extends State<MotionTimeline> {
                                     height: 1.2,
                                     fontWeight: FontWeight.w600,
                                     color: phase.source == widget.phase
-                                        ? FlareColors.accent
+                                        ? FlareColors.accentInk
                                         : FlareColors.dim,
                                   ),
                                 ),
