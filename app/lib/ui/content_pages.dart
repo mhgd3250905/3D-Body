@@ -596,37 +596,29 @@ class DrillDetailPage extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    // The illustrations are dark studio renders: on the dark
-                    // theme they melt into the page, on light they sit as a
-                    // rounded photo plate.
-                    ClipRRect(
-                      borderRadius: FlareColors.palette.isDark
-                          ? BorderRadius.zero
-                          : const BorderRadius.vertical(
-                              bottom: Radius.circular(28),
-                            ),
-                      child: AspectRatio(
-                        aspectRatio: 1.08,
-                        child: Image.asset(drill.imageAsset, fit: BoxFit.cover),
+                    AspectRatio(
+                      aspectRatio: 1.08,
+                      child: Image.asset(
+                        drillArt(drill.imageAsset),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    if (FlareColors.palette.isDark)
-                      Positioned.fill(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                FlareColors.background.withValues(alpha: 0),
-                                FlareColors.background.withValues(alpha: 0),
-                                FlareColors.background,
-                              ],
-                              stops: [0, .72, 1],
-                            ),
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              FlareColors.background.withValues(alpha: 0),
+                              FlareColors.background.withValues(alpha: 0),
+                              FlareColors.background,
+                            ],
+                            stops: [0, .72, 1],
                           ),
                         ),
                       ),
+                    ),
                     Positioned(
                       left: 16,
                       right: 16,
@@ -652,12 +644,7 @@ class DrillDetailPage extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    22,
-                    FlareColors.palette.isDark ? 4 : 20,
-                    22,
-                    20,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

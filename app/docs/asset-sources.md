@@ -60,3 +60,7 @@ Snow Rig © Blender Foundation | studio.blender.org，CC BY 4.0，已修改。�
 当前 App 的肌群面板是体表功能位置示意，没有载入真实 BodyParts3D 图集。不得把 shader 色区称作精确内部解剖；源缺少腹直肌、腹横肌、背阔肌等独立结构时，不能借其他肌肉冒充。Snow、人台和真实解剖不宣称精确配准。
 
 训练图与图标由用户提供的包记为 `generate_image` 生成。本次仅离线转码、缩略和复用，未调用生成服务；包内没有完整的生成服务商业使用证据，公开发布前需补来源条款记录。`forearms-A`、`adductors-B`、`quadriceps-A` 的已知姿势瑕疵继续标记，所有训练图均为示意图，以文字要点为准。包中商店截图来自设计稿，不能当作当前 App 的真实截图；`v1.1` AI 截图不用于当前开发版。
+
+## 浅色训练图（2026-10-09）
+
+`assets/drills/light/*.webp`（51 张，1024/512 两种尺寸，quality82）是 `assets/drills/` 同名深色图的浅色配套：以深色图为参考，用 Hark `generate_image` 编辑生成，保持姿势、构图、器械和高亮色不变，只把背景换成暖白摄影棚、去掉橙色轮廓光。浅色主题下由 `drillArt()` 选用。和原图一样都是示意图，以文字要点为准。逐张对照已人工检查过；hamstrings-A 的高亮略微延伸到臀部，obliques-C 的器械变成浅银色。
