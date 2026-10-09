@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 extension FlareStrings on BuildContext {
@@ -66,24 +67,30 @@ class PrimaryAction extends StatelessWidget {
   final bool arrow;
   final IconData? icon;
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    height: 56,
-    child: FilledButton(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
-          Flexible(
-            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-          ),
-          if (arrow) ...[
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_rounded, size: 19),
+  Widget build(BuildContext context) => Pressable(
+    scale: .975,
+    child: SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: FilledButton(
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 20),
+              const SizedBox(width: 8),
+            ],
+            Flexible(
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            if (arrow) ...[
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_forward_rounded, size: 19),
+            ],
           ],
-        ],
+        ),
       ),
     ),
   );
@@ -261,6 +268,15 @@ class Disclosure extends StatelessWidget {
       collapsedIconColor: FlareColors.dim,
       shape: const Border(),
       collapsedShape: const Border(),
+      expansionAnimationStyle: AnimationStyle(
+        curve: FlareMotion.settle,
+        duration: FlareMotion.of(context, const Duration(milliseconds: 340)),
+        reverseCurve: Curves.easeInOutCubic,
+        reverseDuration: FlareMotion.of(
+          context,
+          const Duration(milliseconds: 240),
+        ),
+      ),
       title: Text(
         title,
         style: TextStyle(fontSize: 14, color: FlareColors.secondary),
@@ -309,58 +325,61 @@ class DrillTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 10),
-    child: Material(
-      color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(18),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  drillArt(drill.thumbnailAsset),
-                  width: 64,
-                  height: 64,
-                  fit: BoxFit.cover,
+    child: Pressable(
+      scale: .98,
+      child: Material(
+        color: FlareColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    drillArt(drill.thumbnailAsset),
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      drill.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        drill.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        drill.prescription,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                trailing ??
+                    Padding(
+                      padding: EdgeInsets.only(right: 6),
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        color: FlareColors.dim,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      drill.prescription,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: FlareColors.dim, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              trailing ??
-                  Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      color: FlareColors.dim,
-                    ),
-                  ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -382,61 +401,66 @@ class DrillCard extends StatelessWidget {
   final String groupLabel;
   final Color color;
   @override
-  Widget build(BuildContext context) => Material(
-    color: FlareColors.surface,
-    borderRadius: BorderRadius.circular(20),
-    clipBehavior: Clip.antiAlias,
-    child: InkWell(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: Image.asset(
-              drillArt(drill.thumbnailAsset),
-              fit: BoxFit.cover,
+  Widget build(BuildContext context) => Pressable(
+    child: Material(
+      color: FlareColors.surface,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Image.asset(
+                drillArt(drill.thumbnailAsset),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  drill.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    drill.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        groupLabel,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 11, color: FlareColors.dim),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          groupLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: FlareColors.dim,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );

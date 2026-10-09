@@ -10,6 +10,7 @@ import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
 import 'motion_controls.dart';
+import 'motion.dart';
 import 'timer_page.dart';
 import 'theme.dart';
 
@@ -45,6 +46,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double _lastSavedTime = -1;
   String _quality = 'balanced';
   String? _sceneTheme;
+  String? _stageKey;
+  bool _holdWatch = false;
   Catalog get catalog => widget.catalog;
   LearningStore get store => widget.store;
 
@@ -279,6 +282,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _assessment ||
         _detail != null ||
         _tab != 0;
+    final route = _route(context);
+    if (route.$1 != _stageKey) {
+      // Keep the live stage on screen while a page slides over or off it.
+      if (_stageKey == 'watch' || route.$1 == 'watch') _holdWatch = true;
+      _stageKey = route.$1;
+    }
     return PopScope(
       canPop: !canBack && !_timing,
       onPopInvokedWithResult: (didPop, _) {
@@ -296,7 +305,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         ),
         child: Scaffold(
-          backgroundColor: _watchVisible
+          backgroundColor: _watchVisible || _holdWatch
               ? Colors.transparent
               : FlareColors.background,
           body: SafeArea(
@@ -328,102 +337,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     fit: StackFit.expand,
                     children: [
                       Offstage(
-                        offstage: !_watchVisible,
+                        offstage: !_watchVisible && !_holdWatch,
                         child: _watchPage(context),
                       ),
-                      if (!_watchVisible && !_timing && drill != null)
-                        DrillDetailPage(
-                          drill: drill,
-                          group: catalog.groupById(drill.groupId),
-                          onBack: _back,
-                          added: store.todayIds.contains(drill.id),
-                          onAdd: () => _result(store.addToToday(drill.id)),
-                          onStart: () {
-                            setState(() => _timing = true);
-                            _syncSceneVisibility();
-                          },
-                        ),
-                      if (_timing && drill != null)
-                        TrainingTimerPage(
-                          drill: drill,
-                          store: store,
-                          onClose: () {
-                            setState(() => _timing = false);
-                            _syncSceneVisibility();
-                          },
-                        ),
-                      if (!_watchVisible &&
-                          !_timing &&
-                          drill == null &&
-                          lesson != null)
-                        LessonPage(
-                          catalog: catalog,
-                          lesson: lesson,
-                          store: store,
-                          onBack: _back,
-                          onDrill: _openDrill,
-                          onWatch: () => _showLessonMotion(lesson),
-                          onComplete: () => _result(
-                            store.completeLesson(lesson.id),
-                            s.lessonCompleted,
-                          ),
-                        ),
-                      if (_settings && !_timing && drill == null)
-                        _settingsPage(context),
-                      if (_assessment && !_timing && drill == null)
-                        AssessmentPage(
-                          initialGrades: store.assessmentGrades,
-                          onBack: _back,
-                          onSave: (grades) async {
-                            final success = await store.recordAssessment(
-                              grades,
-                            );
-                            if (!mounted || !success) return;
-                            setState(() {
-                              _assessment = false;
-                              _tab = 2;
-                            });
-                            _syncSceneVisibility();
-                          },
-                          onSkip: () async {
-                            final success = await store.skipAssessment();
-                            if (!mounted || !success) return;
-                            setState(() => _assessment = false);
-                            _syncSceneVisibility();
-                          },
-                        ),
-                      if (!_watchVisible &&
-                          !_settings &&
-                          !_assessment &&
-                          !_timing &&
-                          drill == null &&
-                          lesson == null)
-                        switch (_tab) {
-                          1 => LibraryPage(
-                            catalog: catalog,
-                            store: store,
-                            onBack: _back,
-                            onDrill: _openDrill,
-                            onRemove: (id) =>
-                                _result(store.removeFromToday(id)),
-                          ),
-                          2 => PathPage(
-                            catalog: catalog,
-                            store: store,
-                            onBack: _back,
-                            onLesson: _openLesson,
-                            onGate: (id, passed) =>
-                                _result(store.reportGate(id, passed)),
-                            onAssessment: () =>
-                                setState(() => _assessment = true),
-                          ),
-                          _ => ProgressPage(
-                            catalog: catalog,
-                            store: store,
-                            onBack: _back,
-                            onDrill: _openDrill,
-                          ),
+                      FlareStage(
+                        pageKey: route.$1,
+                        depth: route.$2,
+                        modal: route.$3,
+                        onSettled: () {
+                          if (mounted && _holdWatch) {
+                            setState(() => _holdWatch = false);
+                          }
                         },
+                        child: route.$4,
+                      ),
                     ],
                   ),
                 ),
@@ -433,6 +360,130 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  /// The page the shell shows now: its key, depth, whether it is modal, and
+  /// the page itself (null is the 3D stage underneath).
+  (String, int, bool, Widget?) _route(BuildContext context) {
+    final s = context.strings;
+    final drill = _drill;
+    final lesson = _lesson;
+    if (_timing && drill != null) {
+      return (
+        'timer:${drill.id}',
+        9,
+        true,
+        TrainingTimerPage(
+          drill: drill,
+          store: store,
+          onClose: () {
+            setState(() => _timing = false);
+            _syncSceneVisibility();
+          },
+        ),
+      );
+    }
+    if (drill != null) {
+      return (
+        'drill:${drill.id}',
+        lesson != null ? 3 : 2,
+        false,
+        DrillDetailPage(
+          drill: drill,
+          group: catalog.groupById(drill.groupId),
+          onBack: _back,
+          added: store.todayIds.contains(drill.id),
+          onAdd: () => _result(store.addToToday(drill.id)),
+          onStart: () {
+            setState(() => _timing = true);
+            _syncSceneVisibility();
+          },
+        ),
+      );
+    }
+    if (lesson != null) {
+      return (
+        'lesson:${lesson.id}',
+        2,
+        false,
+        LessonPage(
+          catalog: catalog,
+          lesson: lesson,
+          store: store,
+          onBack: _back,
+          onDrill: _openDrill,
+          onWatch: () => _showLessonMotion(lesson),
+          onComplete: () =>
+              _result(store.completeLesson(lesson.id), s.lessonCompleted),
+        ),
+      );
+    }
+    if (_settings) return ('settings', 1, false, _settingsPage(context));
+    if (_assessment) {
+      return (
+        'assessment',
+        2,
+        false,
+        AssessmentPage(
+          initialGrades: store.assessmentGrades,
+          onBack: _back,
+          onSave: (grades) async {
+            final success = await store.recordAssessment(grades);
+            if (!mounted || !success) return;
+            setState(() {
+              _assessment = false;
+              _tab = 2;
+            });
+            _syncSceneVisibility();
+          },
+          onSkip: () async {
+            final success = await store.skipAssessment();
+            if (!mounted || !success) return;
+            setState(() => _assessment = false);
+            _syncSceneVisibility();
+          },
+        ),
+      );
+    }
+    return switch (_tab) {
+      0 => ('watch', 0, false, null),
+      1 => (
+        'tab1',
+        1,
+        false,
+        LibraryPage(
+          catalog: catalog,
+          store: store,
+          onBack: _back,
+          onDrill: _openDrill,
+          onRemove: (id) => _result(store.removeFromToday(id)),
+        ),
+      ),
+      2 => (
+        'tab2',
+        1,
+        false,
+        PathPage(
+          catalog: catalog,
+          store: store,
+          onBack: _back,
+          onLesson: _openLesson,
+          onGate: (id, passed) => _result(store.reportGate(id, passed)),
+          onAssessment: () => setState(() => _assessment = true),
+        ),
+      ),
+      _ => (
+        'tab$_tab',
+        1,
+        false,
+        ProgressPage(
+          catalog: catalog,
+          store: store,
+          onBack: _back,
+          onDrill: _openDrill,
+        ),
+      ),
+    };
   }
 
   Widget _watchPage(BuildContext context) {
@@ -459,35 +510,40 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 onTap: detail == null ? () => _changeTab(2) : _returnToMotion,
               ),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      detail == null
-                          ? s.motionBrand
-                          : s.phaseHeading(
-                              phase.source.toString().padLeft(2, '0'),
-                              phase.name,
-                            ),
-                      style: TextStyle(
-                        color: FlareColors.dim,
-                        fontSize: 11,
-                        height: 1.25,
-                        letterSpacing: .4,
-                        fontWeight: FontWeight.w600,
+                child: AnimatedSwitcher(
+                  duration: FlareMotion.of(context, FlareMotion.fade),
+                  switchInCurve: FlareMotion.settle,
+                  child: Column(
+                    key: ValueKey(detail?.id ?? 'home'),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        detail == null
+                            ? s.motionBrand
+                            : s.phaseHeading(
+                                phase.source.toString().padLeft(2, '0'),
+                                phase.name,
+                              ),
+                        style: TextStyle(
+                          color: FlareColors.dim,
+                          fontSize: 11,
+                          height: 1.25,
+                          letterSpacing: .4,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      detail == null
-                          ? s.fullLoop
-                          : s.pausedAt(_scene.time.toStringAsFixed(1)),
-                      style: const TextStyle(
-                        fontSize: 15,
-                        height: 1.35,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        detail == null
+                            ? s.fullLoop
+                            : s.pausedAt(_scene.time.toStringAsFixed(1)),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          height: 1.35,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               if (detail == null)
@@ -594,7 +650,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             ),
           ),
         if (detail == null) ...[
-          _transport(context, phase),
+          FadeSlideIn(
+            key: const ValueKey('transport'),
+            offset: 10,
+            child: _transport(context, phase),
+          ),
         ] else
           _detailPanel(context, phase, detail),
       ],
@@ -622,93 +682,100 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withValues(alpha: .6),
-                              blurRadius: 6,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Eyebrow(
-                        [
-                          if (section != null) section.short,
-                          primary ? s.primaryShort : s.secondaryShort,
-                          switch (muscle?.resolvedSide(
-                            catalog.supportFor(phase.source),
-                          )) {
-                            'left' => s.leftSide,
-                            'right' => s.rightSide,
-                            _ => s.bothSides,
-                          },
-                        ].join(' · '),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    detail.label,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      height: 1.2,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    muscle?.why ?? detail.role,
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.55,
-                      color: FlareColors.secondary,
-                    ),
-                  ),
-                  if (detail.deep) ...[
-                    const SizedBox(height: 6),
-                    Eyebrow(
-                      _scene.detailModel == 'muscles'
-                          ? s.deepMusclesHint
-                          : s.deepMotionHint,
-                    ),
-                  ],
-                  if (together.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
+              // Each muscle's story eases up as the camera settles on it.
+              child: FadeSlideIn(
+                key: ValueKey('detail-${detail.id}'),
+                delay: FadeSlideIn.stagger(2, step: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 2),
-                          child: Eyebrow(s.together),
+                        Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: color.withValues(alpha: .6),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
                         ),
-                        for (final group in shown)
-                          DotTag(
-                            label: group.label,
-                            color: Color(group.colorValue),
-                            onTap: () => _openGroup(group),
-                          ),
-                        if (together.length > shown.length)
-                          DotTag(
-                            label: s.moreCount(together.length - shown.length),
-                            onTap: _showMuscles,
-                          ),
+                        const SizedBox(width: 8),
+                        Eyebrow(
+                          [
+                            if (section != null) section.short,
+                            primary ? s.primaryShort : s.secondaryShort,
+                            switch (muscle?.resolvedSide(
+                              catalog.supportFor(phase.source),
+                            )) {
+                              'left' => s.leftSide,
+                              'right' => s.rightSide,
+                              _ => s.bothSides,
+                            },
+                          ].join(' · '),
+                        ),
                       ],
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      detail.label,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        height: 1.2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      muscle?.why ?? detail.role,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.55,
+                        color: FlareColors.secondary,
+                      ),
+                    ),
+                    if (detail.deep) ...[
+                      const SizedBox(height: 6),
+                      Eyebrow(
+                        _scene.detailModel == 'muscles'
+                            ? s.deepMusclesHint
+                            : s.deepMotionHint,
+                      ),
+                    ],
+                    if (together.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 2),
+                            child: Eyebrow(s.together),
+                          ),
+                          for (final group in shown)
+                            DotTag(
+                              label: group.label,
+                              color: Color(group.colorValue),
+                              onTap: () => _openGroup(group),
+                            ),
+                          if (together.length > shown.length)
+                            DotTag(
+                              label: s.moreCount(
+                                together.length - shown.length,
+                              ),
+                              onTap: _showMuscles,
+                            ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -863,6 +930,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final stage = catalog.stageByNumber(store.currentStage);
     final value = await showModalBottomSheet<String>(
       context: context,
+      sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
       builder: (sheetContext) => SafeArea(
         child: SingleChildScrollView(
@@ -1049,6 +1117,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
     final group = await showModalBottomSheet<MuscleGroup>(
       context: context,
+      sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
       builder: (sheetContext) {
         var expanded = false;
@@ -1060,87 +1129,97 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Eyebrow(
-                            s.phaseMoment(
-                              phase.source.toString().padLeft(2, '0'),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            phase.name,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    for (final item in primary)
-                      row(sheetContext, item.$1, item.$2),
-                    if (others.isNotEmpty && !expanded)
-                      InkWell(
-                        onTap: () => setSheet(() => expanded = true),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
-                          child: Row(
-                            children: [
-                              for (final other in others.take(6))
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  margin: const EdgeInsets.only(right: 4),
-                                  decoration: BoxDecoration(
-                                    color: Color(other.colorValue),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  s.othersInvolved(
-                                    others
-                                            .take(2)
-                                            .map((g) => g.label)
-                                            .join('、') +
-                                        (others.length > 2
-                                            ? s.groupCount(others.length)
-                                            : ''),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: FlareColors.secondary,
-                                  ),
-                                ),
+                // The sheet grows smoothly when the rest of the group opens.
+                child: AnimatedSize(
+                  duration: FlareMotion.of(context, FlareMotion.push),
+                  curve: FlareMotion.settle,
+                  alignment: Alignment.topCenter,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Eyebrow(
+                              s.phaseMoment(
+                                phase.source.toString().padLeft(2, '0'),
                               ),
-                              Icon(
-                                Icons.expand_more_rounded,
-                                size: 20,
-                                color: FlareColors.dim,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              phase.name,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    if (expanded) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Divider(height: 20),
-                      ),
-                      for (final other in others)
-                        row(sheetContext, other, null),
+                      for (final item in primary)
+                        row(sheetContext, item.$1, item.$2),
+                      if (others.isNotEmpty && !expanded)
+                        InkWell(
+                          onTap: () => setSheet(() => expanded = true),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
+                            child: Row(
+                              children: [
+                                for (final other in others.take(6))
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    margin: const EdgeInsets.only(right: 4),
+                                    decoration: BoxDecoration(
+                                      color: Color(other.colorValue),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    s.othersInvolved(
+                                      others
+                                              .take(2)
+                                              .map((g) => g.label)
+                                              .join('、') +
+                                          (others.length > 2
+                                              ? s.groupCount(others.length)
+                                              : ''),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: FlareColors.secondary,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.expand_more_rounded,
+                                  size: 20,
+                                  color: FlareColors.dim,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (expanded) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Divider(height: 20),
+                        ),
+                        for (final (index, other) in others.indexed)
+                          FadeSlideIn(
+                            delay: FadeSlideIn.stagger(index, step: 26),
+                            offset: 8,
+                            child: row(sheetContext, other, null),
+                          ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),

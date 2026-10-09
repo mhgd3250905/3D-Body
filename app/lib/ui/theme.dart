@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
 /// One complete set of colour tokens. Dark is the original graphite stage;
 /// light is a warm paper stage with the same orange accent, tuned so text,
@@ -204,6 +205,19 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
     scaffoldBackgroundColor: p.background,
     canvasColor: p.background,
     useMaterial3: true,
+    // Quiet, iOS-like touch feedback: a soft highlight instead of a ripple
+    // spreading across cards; cards add their own press-scale.
+    splashFactory: NoSplash.splashFactory,
+    highlightColor: p.text.withValues(alpha: .06),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
+      },
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: p.background,
       surfaceTintColor: Colors.transparent,

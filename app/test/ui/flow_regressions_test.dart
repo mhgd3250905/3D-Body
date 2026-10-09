@@ -280,6 +280,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(store.todayIds, ['deltoids-A']);
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
+        // The timer rises as a modal sheet; let it land before touching it.
+        await tester.pump(const Duration(milliseconds: 500));
         expect(find.byType(TrainingTimerPage), findsOneWidget);
         expect(
           tester

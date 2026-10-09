@@ -46,3 +46,10 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 :root[data-theme="light"] .phase-map-view { background: #efeee9; }
 :root[data-theme="light"] .phase-map-view > span { color: #8b8b94; }
 :root[data-theme="light"] .phase-map-legend button { color: #4b4b54; }
+
+/* Model switch dissolve and soft minimap entrance. */
+@keyframes flare-swap { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+canvas.model-swap { animation: flare-swap 360ms cubic-bezier(.22,.9,.24,1); }
+@keyframes flare-rise { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+.minimap:not([hidden]) { animation: flare-rise 420ms cubic-bezier(.22,.9,.24,1) both; }
+@media (prefers-reduced-motion: reduce) { canvas.model-swap, .minimap:not([hidden]) { animation: none; } }

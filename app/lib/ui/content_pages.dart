@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 class PageHeader extends StatelessWidget {
@@ -71,6 +72,7 @@ Future<bool?> showSafetySheet(
   final s = context.strings;
   return showModalBottomSheet<bool>(
     context: context,
+    sheetAnimationStyle: FlareMotion.sheetStyle(context),
     isScrollControlled: true,
     builder: (sheet) => SafeArea(
       child: SingleChildScrollView(
@@ -300,35 +302,42 @@ class _FilterPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(right: 8),
-    child: Material(
-      color: selected ? FlareColors.solid : FlareColors.pill,
-      shape: StadiumBorder(
-        side: BorderSide(
-          color: selected ? Colors.transparent : FlareColors.hairline,
+    child: AnimatedContainer(
+      duration: FlareMotion.of(context, FlareMotion.fade),
+      curve: FlareMotion.standard,
+      decoration: ShapeDecoration(
+        color: selected ? FlareColors.solid : FlareColors.pill,
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: selected ? Colors.transparent : FlareColors.hairline,
+          ),
         ),
       ),
-      child: InkWell(
-        customBorder: const StadiumBorder(),
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 36),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    color: selected
-                        ? FlareColors.onSolid
-                        : FlareColors.secondary,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                      color: selected
+                          ? FlareColors.onSolid
+                          : FlareColors.secondary,
+                    ),
                   ),
-                ),
-                ?trailing,
-              ],
+                  ?trailing,
+                ],
+              ),
             ),
           ),
         ),
@@ -497,11 +506,17 @@ class _LibraryPageState extends State<LibraryPage> {
                   itemBuilder: (context, index) {
                     final drill = drills[index];
                     final group = catalog.groupById(drill.groupId)!;
-                    return DrillCard(
-                      drill: drill,
-                      groupLabel: group.label,
-                      color: Color(group.colorValue),
-                      onTap: () => widget.onDrill(drill),
+                    // Re-keyed per filter so a new result set eases in,
+                    // staggered from the top.
+                    return FadeSlideIn(
+                      key: ValueKey('$tier|$_section|$_query|${drill.id}'),
+                      delay: FadeSlideIn.stagger(index),
+                      child: DrillCard(
+                        drill: drill,
+                        groupLabel: group.label,
+                        color: Color(group.colorValue),
+                        onTap: () => widget.onDrill(drill),
+                      ),
                     );
                   },
                 ),

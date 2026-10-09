@@ -29,7 +29,8 @@ export class FlarePlayer {
     this.onControlsChange = () => { this.dirty = true; };
     this.controls.addEventListener('change', this.onControlsChange);
     this.autoFrame = true;
-    this.controls.addEventListener('start', () => { this.autoFrame = false; });
+    this.controls.addEventListener('start', () => { this.autoFrame = false; this.glide = null; });
+    this.glide = null;
     this.scene.add(new THREE.HemisphereLight(0xf6f2ea, 0x3c3a3e, 2));
     this.keyLight = new THREE.DirectionalLight(0xffead2, 3.7); this.keyLight.position.set(-2.5, 4, 4); this.scene.add(this.keyLight);
     const rim = new THREE.DirectionalLight(0xf0f2ff, 2.2); rim.position.set(2, 2, -3); this.scene.add(rim);
@@ -111,6 +112,7 @@ export class FlarePlayer {
       this.time = this.motion.clock.advance(this.time, delta, this.speed, this.loopRange);
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
+    this.stepGlide(now);
     this.controls.update();
     if (this.dirty) { this.renderer.render(this.displayScene ?? this.scene, this.camera); this.dirty = false; this.callbacks.onRender?.(); }
   }
@@ -165,6 +167,7 @@ export class FlarePlayer {
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
   }
   setCameraView(position, target) {
+    this.glide = null;
     // A quick model switch must not carry an unfinished orbit into the next
     // model's camera. Flush its damping before installing the saved view.
     const damping = this.controls.enableDamping;
@@ -172,7 +175,25 @@ export class FlarePlayer {
     this.controls.target.copy(target); this.camera.position.copy(position);
     this.controls.update(); this.dirty = true;
   }
-  fitBounds(box, direction, padding = 1) {
+  /** Ease the camera to a view instead of cutting to it (detail open/close). */
+  glideTo(position, target, ms = 640) {
+    const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!this.running || reduce || ms <= 0) { this.setCameraView(position, target); return; }
+    const damping = this.controls.enableDamping;
+    this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
+    this.glide = { fromP: this.camera.position.clone(), fromT: this.controls.target.clone(),
+      toP: position.clone(), toT: target.clone(), start: performance.now(), ms };
+    this.dirty = true;
+  }
+  stepGlide(now) {
+    const g = this.glide; if (!g) return;
+    const k = Math.min(1, Math.max(0, (now - g.start) / g.ms));
+    const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    this.camera.position.lerpVectors(g.fromP, g.toP, e); this.controls.target.lerpVectors(g.fromT, g.toT, e);
+    if (k >= 1) this.glide = null;
+    this.dirty = true;
+  }
+  fitBounds(box, direction, padding = 1, glide = false) {
     if (box.isEmpty()) return;
     const dir = direction.clone().normalize(), center = box.getCenter(new THREE.Vector3());
     const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir).normalize();
@@ -184,7 +205,8 @@ export class FlarePlayer {
       const offset = new THREE.Vector3(x, y, z).sub(center), depth = offset.dot(dir);
       distance = Math.max(distance, depth + Math.abs(offset.dot(up)) / tan, depth + Math.abs(offset.dot(right)) / horizontal);
     }
-    this.setCameraView(center.clone().addScaledVector(dir, distance * padding), center);
+    const position = center.clone().addScaledVector(dir, distance * padding);
+    if (glide) this.glideTo(position, center); else this.setCameraView(position, center);
   }
   project(point) {
     const v = point.clone().project(this.camera), rect = this.renderer.domElement.getBoundingClientRect();

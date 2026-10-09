@@ -5,6 +5,7 @@ import '../domain/catalog_models.dart';
 import '../domain/dose.dart';
 import '../domain/drill_timer.dart';
 import 'components.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 class TrainingTimerPage extends StatefulWidget {
@@ -239,24 +240,73 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                       child: Semantics(
                         key: const ValueKey('training-progress'),
                         value: '${(progress.clamp(0.0, 1.0) * 100).round()}%',
-                        child: CustomPaint(
-                          painter: _RingPainter(
-                            progress.clamp(0.0, 1.0).toDouble(),
-                            ringColor,
+                        // The ring glides to each new value and colour
+                        // instead of jumping per tick or per rep.
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween(
+                            end: progress.clamp(0.0, 1.0).toDouble(),
                           ),
+                          duration: FlareMotion.of(
+                            context,
+                            const Duration(milliseconds: 380),
+                          ),
+                          curve: FlareMotion.settle,
+                          builder: (context, ringValue, child) =>
+                              TweenAnimationBuilder<Color?>(
+                                tween: ColorTween(end: ringColor),
+                                duration: FlareMotion.of(
+                                  context,
+                                  FlareMotion.fade,
+                                ),
+                                builder: (context, color, child) => CustomPaint(
+                                  painter: _RingPainter(
+                                    ringValue,
+                                    color ?? ringColor,
+                                  ),
+                                  child: child,
+                                ),
+                                child: child,
+                              ),
                           child: Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  value,
-                                  style: TextStyle(
-                                    fontSize: 76,
-                                    height: 1.05,
-                                    fontWeight: FontWeight.w700,
-                                    fontFeatures: [
-                                      FontFeature.tabularFigures(),
-                                    ],
+                                // Each new count rolls up into place.
+                                AnimatedSwitcher(
+                                  duration: FlareMotion.of(
+                                    context,
+                                    const Duration(milliseconds: 240),
+                                  ),
+                                  switchInCurve: FlareMotion.settle,
+                                  switchOutCurve: Curves.easeIn,
+                                  transitionBuilder: (child, animation) {
+                                    final incoming =
+                                        child.key == ValueKey(value);
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: SlideTransition(
+                                        position: Tween(
+                                          begin: Offset(
+                                            0,
+                                            incoming ? .32 : -.32,
+                                          ),
+                                          end: Offset.zero,
+                                        ).animate(animation),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    value,
+                                    key: ValueKey(value),
+                                    style: TextStyle(
+                                      fontSize: 76,
+                                      height: 1.05,
+                                      fontWeight: FontWeight.w700,
+                                      fontFeatures: [
+                                        FontFeature.tabularFigures(),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -297,8 +347,10 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       for (var i = 1; i <= snap.sets; i++)
-                        Container(
-                          width: 22,
+                        AnimatedContainer(
+                          duration: FlareMotion.of(context, FlareMotion.fade),
+                          curve: FlareMotion.standard,
+                          width: i == snap.set && !finished ? 30 : 22,
                           height: 3,
                           margin: EdgeInsets.symmetric(horizontal: 3),
                           decoration: BoxDecoration(
