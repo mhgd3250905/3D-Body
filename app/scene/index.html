@@ -43,7 +43,6 @@
         function draw(now) {
           var t = reduce ? 1.2 : (now - t0) / 1000, light = document.documentElement.dataset.theme === 'light';
           var accent = light ? '#f2602f' : '#ff6a3d';
-          if (st) st.style.background = light ? '#f5f4f1' : '#101116';
           g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, S, S);
           g.lineCap = 'round'; g.lineJoin = 'round';
           var cx = 66, cy = 64, r = 50, intro = Math.min(1, t / .6);
@@ -91,6 +90,11 @@
         if (st && window.MutationObserver) new MutationObserver(function () {
           if (!raf && !st.hidden && st.dataset.error !== 'true') raf = requestAnimationFrame(draw);
         }).observe(st, { attributes: true, attributeFilter: ['hidden', 'data-error'] });
+        // A reduced-motion mark has no continuous frames. Repaint its colors
+        // when the host supplies the appearance after the initial paint.
+        if (window.MutationObserver) new MutationObserver(function () {
+          if (!raf && st && !st.hidden && st.dataset.error !== 'true') raf = requestAnimationFrame(draw);
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         window.__flareLoaderDraw = draw;
       })();
     </script>

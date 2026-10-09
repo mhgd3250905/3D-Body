@@ -1710,6 +1710,7 @@ class _SceneOption extends StatelessWidget {
     child: Semantics(
       button: true,
       label: '$label，${drill.name}，${drill.prescription}',
+      onTap: onTap,
       excludeSemantics: true,
       child: Pressable(
         scale: .98,

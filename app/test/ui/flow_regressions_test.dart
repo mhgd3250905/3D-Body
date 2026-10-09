@@ -12,6 +12,7 @@ import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/theme_fade.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -274,6 +275,44 @@ void main() {
         expect(find.byKey(const ValueKey('scene-A')), findsOneWidget);
         expect(find.byKey(const ValueKey('scene-B')), findsOneWidget);
         expect(find.byKey(const ValueKey('scene-C')), findsOneWidget);
+        // System back cancels the choice without navigating away from the
+        // paused detail; reopening must release the one-sheet guard.
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('选一个训练场景'), findsNothing);
+        expect(find.byType(DrillDetailPage), findsNothing);
+        expect(scene.time, 2.0);
+        expect(scene.detailModel, 'muscles');
+
+        for (final (tier, label) in [('B', '居家'), ('C', '健身房')]) {
+          await tester.tap(find.byKey(const ValueKey('train-group')));
+          await tester.pumpAndSettle();
+          final option = tester.getSemantics(labeledControl(label));
+          expect(
+            option.getSemanticsData().hasAction(SemanticsAction.tap),
+            isTrue,
+          );
+          // Activate the advertised accessibility node, not the InkWell.
+          option.owner!.performAction(option.id, SemanticsAction.tap);
+          await tester.pumpAndSettle();
+          expect(
+            tester
+                .widget<DrillDetailPage>(find.byType(DrillDetailPage))
+                .drill
+                .id,
+            'deltoids-$tier',
+          );
+          expect(scene.time, 2.0);
+          expect(scene.detailModel, 'muscles');
+          await tester.tap(find.byTooltip('返回'));
+          await tester.pumpAndSettle();
+          expect(find.byType(DrillDetailPage), findsNothing);
+          expect(scene.detail, 'deltoids');
+          expect(scene.playing, isFalse);
+          assertNoFlutterError(tester);
+        }
+        await tester.tap(find.byKey(const ValueKey('train-group')));
+        await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('scene-A')));
         await tester.pumpAndSettle();
         final detail = tester.widget<DrillDetailPage>(

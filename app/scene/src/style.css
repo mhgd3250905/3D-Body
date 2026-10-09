@@ -3,8 +3,8 @@
 /* The stage is an app surface, not a page: no text selection, no long-press
    callout ("复制/全选/网页搜索"), no grey/blue tap flash, no drag ghost. */
 html, body, * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; -webkit-user-drag: none; }
-button { outline: none; }
 button:focus:not(:focus-visible) { outline: none; }
+button:focus-visible { outline: 2px solid #ff8b59; outline-offset: 2px; }
 html, body, #stage { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 body { background: transparent; }
 #stage { position: relative; background: transparent; }
@@ -43,8 +43,10 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 /* Appearance switches dissolve over --theme-fade (set per switch by the app,
    0ms on first load and with reduced motion), in step with the app. */
 :root { --theme-fade: 0ms; }
-#status, #retry, #detail-note, .minimap, .minimap span, .hotspot::before, .phase-map, .phase-map-view, .phase-map-view > span, .phase-map-legend button {
+#retry, #detail-note, .minimap, .minimap span, .hotspot::before, .phase-map, .phase-map-view, .phase-map-view > span, .phase-map-legend button {
   transition-property: background-color, color, border-color, box-shadow; transition-duration: var(--theme-fade); transition-timing-function: ease-in-out; }
+#status { transition: opacity 320ms cubic-bezier(.22,.9,.24,1), background-color var(--theme-fade) ease-in-out, color var(--theme-fade) ease-in-out; }
+@media (prefers-reduced-motion: reduce) { #status { transition: none; } }
 @media (prefers-reduced-motion: reduce) { :root { --theme-fade: 0ms !important; } }
 
 /* Light appearance: warm paper chrome, same athlete and lighting. */
