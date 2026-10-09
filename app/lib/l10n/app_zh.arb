@@ -348,5 +348,37 @@
   "appearanceLabel": "主题",
   "themeSystem": "跟随系统",
   "themeDark": "深色",
-  "themeLight": "浅色"
+  "themeLight": "浅色",
+  "sceneLoading": "正在载入 3D 动作",
+  "endSessionTitle": "结束这次练习？",
+  "endSessionBody": "已完成的部分会存为一条未完成记录。",
+  "endSessionConfirm": "结束并保存",
+  "keepTraining": "继续练",
+  "removedFromToday": "已移出今日训练",
+  "undo": "撤销",
+  "addedTodayToast": "已加入今日训练",
+  "trainedOn": "{day}，已训练",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "{day}，未训练",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "finishedLine": "{sets} 组全部完成",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  }
 }

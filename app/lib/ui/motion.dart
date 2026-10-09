@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'theme.dart';
 
@@ -34,6 +37,42 @@ abstract final class FlareMotion {
   );
 }
 
+/// Touch feedback vocabulary, used sparingly the way iOS does: a tick for
+/// selections and scrubbing, a light tap for toggles and primary actions, a
+/// firmer tap when a training block starts, and a success pattern at the end.
+abstract final class FlareHaptics {
+  static void selection() => unawaited(HapticFeedback.selectionClick());
+  static void light() => unawaited(HapticFeedback.lightImpact());
+  static void medium() => unawaited(HapticFeedback.mediumImpact());
+  static void heavy() => unawaited(HapticFeedback.heavyImpact());
+
+  /// Two quick taps, the closest built-in to UIKit's success notification.
+  static void success() {
+    unawaited(HapticFeedback.mediumImpact());
+    Future<void>.delayed(
+      const Duration(milliseconds: 120),
+      () => unawaited(HapticFeedback.lightImpact()),
+    );
+  }
+}
+
+/// Builds an image that fades in once decoded instead of popping in, unless it
+/// was already in memory (synchronous) or motion is reduced.
+Widget fadeInFrame(
+  BuildContext context,
+  Widget child,
+  int? frame,
+  bool wasSynchronouslyLoaded,
+) {
+  if (wasSynchronouslyLoaded || FlareMotion.reduced(context)) return child;
+  return AnimatedOpacity(
+    opacity: frame == null ? 0 : 1,
+    duration: FlareMotion.fade,
+    curve: Curves.easeOut,
+    child: child,
+  );
+}
+
 enum _Kind { push, pop, modalIn, modalOut, fade }
 
 /// Animated page host for the shell's state-driven navigation.
@@ -54,6 +93,7 @@ class FlareStage extends StatefulWidget {
     required this.child,
     this.modal = false,
     this.onSettled,
+    this.onSwipeBack,
   });
   final Object pageKey;
   final int depth;
@@ -61,14 +101,24 @@ class FlareStage extends StatefulWidget {
   final bool modal;
   final VoidCallback? onSettled;
 
+  /// When set, a drag from the left edge carries the page with the finger
+  /// (iOS swipe-back); releasing far or fast enough calls this to go back,
+  /// and the pop continues from where the finger let go.
+  final VoidCallback? onSwipeBack;
+
   @override
   State<FlareStage> createState() => _FlareStageState();
 }
 
-class _FlareStageState extends State<FlareStage>
-    with SingleTickerProviderStateMixin {
+class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(vsync: this)
     ..addStatusListener(_status);
+
+  /// Finger-driven offset of the current page, 0 at rest, 1 fully off.
+  late final AnimationController _swipe = AnimationController(vsync: this);
+  late final Listenable _motion = Listenable.merge([_controller, _swipe]);
+  double _popFrom = 0;
+  bool _swiping = false;
   Widget? _previous;
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
@@ -103,6 +153,10 @@ class _FlareStageState extends State<FlareStage>
       _Kind.modalIn || _Kind.modalOut => FlareMotion.modal,
       _Kind.fade => FlareMotion.fade,
     });
+    // A pop released from a swipe carries on from the finger's position.
+    _popFrom = kind == _Kind.pop ? _swipe.value : 0;
+    _swipe.value = 0;
+    _swiping = false;
     if (duration == Duration.zero) {
       _previous = null;
       _previousKey = null;
@@ -115,13 +169,53 @@ class _FlareStageState extends State<FlareStage>
     _kind = kind;
     _previous = old.child;
     _previousKey = old.pageKey;
-    _controller.duration = duration;
+    _controller.duration = _popFrom > 0
+        ? duration * (1 - _popFrom).clamp(.35, 1)
+        : duration;
     _controller.forward(from: 0);
   }
+
+  void _dragStart(DragStartDetails _) {
+    if (animating) return;
+    _swipe.stop();
+    _swiping = true;
+  }
+
+  void _dragUpdate(DragUpdateDetails details) {
+    if (!_swiping) return;
+    final width = MediaQuery.sizeOf(context).width;
+    _swipe.value = (_swipe.value + details.delta.dx / width).clamp(0, 1);
+  }
+
+  void _dragEnd(DragEndDetails details) {
+    if (!_swiping) return;
+    _swiping = false;
+    final velocity = details.primaryVelocity ?? 0;
+    final commit = velocity > 700 || (_swipe.value > .4 && velocity > -300);
+    if (commit && widget.onSwipeBack != null) {
+      widget.onSwipeBack!();
+      // If the shell refused to go back, settle the page home again.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !animating && _swipe.value > 0) _settleSwipe();
+      });
+    } else {
+      _settleSwipe();
+    }
+  }
+
+  void _settleSwipe() => _swipe.animateBack(
+    0,
+    duration: FlareMotion.of(
+      context,
+      Duration(milliseconds: (320 * _swipe.value).round().clamp(120, 320)),
+    ),
+    curve: FlareMotion.settle,
+  );
 
   @override
   void dispose() {
     _controller.dispose();
+    _swipe.dispose();
     super.dispose();
   }
 
@@ -147,12 +241,49 @@ class _FlareStageState extends State<FlareStage>
         : null;
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
+    final canSwipe =
+        widget.onSwipeBack != null && widget.child != null && !widget.modal;
     return Stack(
       fit: StackFit.expand,
       children: [
+        // While a swipe peels the page away, a dimmed backdrop sits beneath.
+        AnimatedBuilder(
+          key: const ValueKey('_swipe-underlay'),
+          animation: _swipe,
+          builder: (context, _) => _swipe.value == 0 || animating
+              ? const SizedBox.shrink()
+              : IgnorePointer(
+                  child: ColoredBox(
+                    color: Color.alphaBlend(
+                      Colors.black.withValues(alpha: .22 * (1 - _swipe.value)),
+                      FlareColors.background,
+                    ),
+                  ),
+                ),
+        ),
         if (previous != null && !previousOnTop) previous,
         current,
         if (previous != null && previousOnTop) previous,
+        if (canSwipe && !animating)
+          Positioned(
+            key: const ValueKey('_swipe-edge'),
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 18,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onHorizontalDragStart: _dragStart,
+              onHorizontalDragUpdate: _dragUpdate,
+              onHorizontalDragEnd: _dragEnd,
+              onHorizontalDragCancel: () {
+                if (_swiping) {
+                  _swiping = false;
+                  _settleSwipe();
+                }
+              },
+            ),
+          ),
       ],
     );
   }
@@ -170,7 +301,7 @@ class _FlareStageState extends State<FlareStage>
       child: IgnorePointer(
         ignoring: empty || !incoming,
         child: AnimatedBuilder(
-          animation: _controller,
+          animation: _motion,
           child: RepaintBoundary(child: child),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
@@ -188,11 +319,12 @@ class _FlareStageState extends State<FlareStage>
                   dim = .22 * t;
                 }
               case _Kind.pop:
+                final from = _popFrom;
                 if (incoming) {
-                  dx = -.28 * (1 - t) * width;
-                  dim = .22 * (1 - t);
+                  dx = -.28 * (1 - from) * (1 - t) * width;
+                  dim = .22 * (1 - from) * (1 - t);
                 } else {
-                  dx = t * width;
+                  dx = (from + (1 - from) * t) * width;
                   shadow = true;
                 }
               case _Kind.modalIn:
@@ -220,6 +352,10 @@ class _FlareStageState extends State<FlareStage>
                 } else {
                   opacity = 1 - Curves.easeIn.transform(v);
                 }
+            }
+            if (!animating && incoming && _swipe.value > 0) {
+              dx = _swipe.value * width;
+              shadow = true;
             }
             // Keep one widget shape at rest and in flight: changing the
             // wrappers would remount the page and drop its state.

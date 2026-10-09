@@ -104,4 +104,80 @@ void main() {
     expect(find.text('one'), findsNothing);
     expect(tester.getTopLeft(find.text('two')).dx, lessThan(400));
   });
+
+  testWidgets('edge swipe carries the page and goes back past halfway', (
+    tester,
+  ) async {
+    var page = 'deep';
+    var backs = 0;
+    late StateSetter update;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, setState) {
+            update = setState;
+            return FlareStage(
+              pageKey: page,
+              depth: page == 'deep' ? 2 : 1,
+              onSwipeBack: page == 'deep'
+                  ? () {
+                      backs++;
+                      update(() => page = 'shallow');
+                    }
+                  : null,
+              child: Center(child: Text(page)),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final width = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+
+    // A short drag follows the finger, then springs back home.
+    final short = await tester.startGesture(const Offset(4, 300));
+    await short.moveBy(const Offset(40, 0));
+    await short.moveBy(const Offset(40, 0));
+    await tester.pump();
+    final center = tester.getCenter(find.text('deep')).dx;
+    expect(center, greaterThan(width / 2 + 40));
+    await short.up();
+    await tester.pumpAndSettle();
+    expect(backs, 0);
+    expect(tester.getCenter(find.text('deep')).dx, closeTo(width / 2, 1));
+
+    // A long drag commits; the pop continues from the finger.
+    final long = await tester.startGesture(const Offset(4, 300));
+    for (var i = 0; i < 10; i++) {
+      await long.moveBy(Offset(width * .06, 0));
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await long.up();
+    await tester.pump();
+    expect(backs, 1);
+    expect(
+      tester.getCenter(find.text('deep')).dx,
+      greaterThan(width / 2 + width * .4),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('deep'), findsNothing);
+    expect(find.text('shallow'), findsOneWidget);
+  });
+
+  testWidgets('a drag away from the edge does not swipe back', (tester) async {
+    var backs = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FlareStage(
+          pageKey: 'deep',
+          depth: 2,
+          onSwipeBack: () => backs++,
+          child: const Center(child: Text('deep')),
+        ),
+      ),
+    );
+    await tester.dragFrom(const Offset(120, 300), const Offset(300, 0));
+    await tester.pumpAndSettle();
+    expect(backs, 0);
+  });
 }

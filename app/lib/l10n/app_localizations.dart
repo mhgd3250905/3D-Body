@@ -1419,6 +1419,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'浅色'**
   String get themeLight;
+
+  /// No description provided for @sceneLoading.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在载入 3D 动作'**
+  String get sceneLoading;
+
+  /// No description provided for @endSessionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束这次练习？'**
+  String get endSessionTitle;
+
+  /// No description provided for @endSessionBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'已完成的部分会存为一条未完成记录。'**
+  String get endSessionBody;
+
+  /// No description provided for @endSessionConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束并保存'**
+  String get endSessionConfirm;
+
+  /// No description provided for @keepTraining.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续练'**
+  String get keepTraining;
+
+  /// No description provided for @removedFromToday.
+  ///
+  /// In zh, this message translates to:
+  /// **'已移出今日训练'**
+  String get removedFromToday;
+
+  /// No description provided for @undo.
+  ///
+  /// In zh, this message translates to:
+  /// **'撤销'**
+  String get undo;
+
+  /// No description provided for @addedTodayToast.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加入今日训练'**
+  String get addedTodayToast;
+
+  /// No description provided for @trainedOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'{day}，已训练'**
+  String trainedOn(String day);
+
+  /// No description provided for @notTrainedOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'{day}，未训练'**
+  String notTrainedOn(String day);
+
+  /// No description provided for @finishedLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sets} 组全部完成'**
+  String finishedLine(int sets);
 }
 
 class _AppLocalizationsDelegate
