@@ -7,6 +7,8 @@ import 'data/catalog.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/app_shell.dart';
 import 'ui/components.dart';
+import 'ui/loader_mark.dart';
+import 'ui/motion.dart';
 import 'ui/theme.dart';
 import 'ui/theme_fade.dart';
 
@@ -92,7 +94,9 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                   ? Brightness.light
                   : Brightness.dark,
             ),
-        child: ThemeCrossFade(brightness: brightness, child: child!),
+        child: FlareMotionPreferences(
+          child: ThemeCrossFade(brightness: brightness, child: child!),
+        ),
       );
     },
     locale: const Locale('zh'),
@@ -119,7 +123,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                       ),
                     ],
                   )
-                : const CircularProgressIndicator(),
+                : const FlareLoaderMark(),
           ),
         );
       },

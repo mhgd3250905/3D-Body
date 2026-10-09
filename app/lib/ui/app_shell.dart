@@ -1419,7 +1419,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 12),
                 // The sheet grows smoothly when the rest of the group opens.
-                child: AnimatedSize(
+                child: FlareSizeTransition(
                   duration: FlareMotion.of(context, FlareMotion.expand),
                   curve: FlareMotion.settle,
                   alignment: Alignment.topCenter,

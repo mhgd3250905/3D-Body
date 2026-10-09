@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 Future<void> _until(
   WidgetTester tester,
@@ -94,6 +95,41 @@ void main() {
       timeout: const Duration(seconds: 45),
     );
     expect(scene.errorCode, isNull);
+
+    final systemReduceMotion =
+        binding.platformDispatcher.accessibilityFeatures.reduceMotion;
+    final appDisableAnimations = MediaQuery.disableAnimationsOf(
+      tester.element(find.byType(FlareShell)),
+    );
+    final webView = tester.widget<WebViewWidget>(find.byType(WebViewWidget));
+    final rawDiagnostics = await webView.platform.params.controller
+        .runJavaScriptReturningResult('''JSON.stringify({
+          reduceMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+          origin: location.origin,
+          resourceCount: performance.getEntriesByType('resource').length,
+          externalOrigins: Array.from(new Set(
+            performance.getEntriesByType('resource')
+              .map(entry => new URL(entry.name, location.href))
+              .filter(url => ['http:', 'https:'].includes(url.protocol) &&
+                url.origin !== location.origin)
+              .map(url => url.origin)
+          ))
+        })''');
+    dynamic decoded = jsonDecode(rawDiagnostics.toString());
+    if (decoded is String) decoded = jsonDecode(decoded);
+    final diagnostics = (decoded as Map).cast<String, dynamic>();
+    expect(Uri.parse(diagnostics['origin'] as String).host, '127.0.0.1');
+    expect(diagnostics['resourceCount'], greaterThan(0));
+    expect(diagnostics['externalOrigins'], isEmpty);
+    if (const bool.fromEnvironment('FLARE_EXPECT_REDUCED_MOTION')) {
+      expect(
+        systemReduceMotion,
+        true,
+        reason: 'enable iOS Reduce Motion first',
+      );
+      expect(appDisableAnimations, true);
+      expect(diagnostics['reduceMotion'], true);
+    }
 
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.more_horiz_rounded));
@@ -198,6 +234,12 @@ void main() {
       'abandonedRecordIsNotCompletion': true,
       'nativePreferencesRoundTripOk': true,
       'activeSeconds': session.activeSeconds,
+      'systemReduceMotion': systemReduceMotion,
+      'appDisableAnimations': appDisableAnimations,
+      'webReduceMotion': diagnostics['reduceMotion'],
+      'sceneResourceCount': diagnostics['resourceCount'],
+      'externalSceneResourceOrigins': diagnostics['externalOrigins'],
+      'sceneOriginIsLoopback': true,
     };
     final screenshots = binding.reportData?['screenshots'];
     binding.reportData = {...report, 'screenshots': ?screenshots};

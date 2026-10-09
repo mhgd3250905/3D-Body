@@ -531,7 +531,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                 children: [
                   // The pause button slides in and out instead of making the
                   // primary button jump in width.
-                  AnimatedSize(
+                  FlareSizeTransition(
                     duration: FlareMotion.of(context, FlareMotion.fade),
                     curve: FlareMotion.settle,
                     child: canPause

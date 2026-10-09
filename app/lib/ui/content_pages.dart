@@ -417,7 +417,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   sliver: SliverList.list(
                     children: [
                       // The search field folds open under the header.
-                      AnimatedSize(
+                      FlareSizeTransition(
                         duration: FlareMotion.of(context, FlareMotion.expand),
                         curve: FlareMotion.settle,
                         alignment: Alignment.topCenter,
@@ -1225,7 +1225,7 @@ class _PathPageState extends State<PathPage> {
                                   ),
                                 ),
                                 // The stage opens and closes as one smooth fold.
-                                AnimatedSize(
+                                FlareSizeTransition(
                                   duration: FlareMotion.of(
                                     context,
                                     FlareMotion.expand,

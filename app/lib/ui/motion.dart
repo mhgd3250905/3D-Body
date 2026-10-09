@@ -5,6 +5,52 @@ import 'package:flutter/services.dart';
 
 import 'theme.dart';
 
+/// Maps iOS Reduce Motion and the existing animation preference onto the
+/// same inherited value, including when the system setting changes live.
+class FlareMotionPreferences extends StatefulWidget {
+  const FlareMotionPreferences({super.key, required this.child});
+  final Widget child;
+
+  @override
+  State<FlareMotionPreferences> createState() => _FlareMotionPreferencesState();
+}
+
+class _FlareMotionPreferencesState extends State<FlareMotionPreferences>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAccessibilityFeatures() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final reduce = WidgetsBinding
+        .instance
+        .platformDispatcher
+        .accessibilityFeatures
+        .reduceMotion;
+    return MediaQuery(
+      data: media.copyWith(
+        disableAnimations: media.disableAnimations || reduce,
+      ),
+      child: widget.child,
+    );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+}
+
 /// One motion language for the whole app.
 ///
 /// Pages push in from the right over a dimmed, slightly receding page, the
@@ -71,6 +117,32 @@ abstract final class FlareMotion {
     reverseCurve: exit,
     reverseDuration: of(context, sheetClose),
   );
+}
+
+/// A zero-duration size change lays out directly: AnimatedSize can notify its
+/// own layout listeners synchronously when its duration is zero.
+class FlareSizeTransition extends StatelessWidget {
+  const FlareSizeTransition({
+    super.key,
+    required this.duration,
+    required this.child,
+    this.curve = FlareMotion.settle,
+    this.alignment = Alignment.center,
+  });
+  final Duration duration;
+  final Widget child;
+  final Curve curve;
+  final AlignmentGeometry alignment;
+
+  @override
+  Widget build(BuildContext context) => duration == Duration.zero
+      ? child
+      : AnimatedSize(
+          duration: duration,
+          curve: curve,
+          alignment: alignment,
+          child: child,
+        );
 }
 
 /// Touch feedback vocabulary, used sparingly the way iOS does: a tick for
@@ -162,7 +234,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   bool get animating => _previousKey != null;
 
   void _status(AnimationStatus status) {
-    if (status != AnimationStatus.completed) return;
+    if (status != AnimationStatus.completed || !animating) return;
     setState(() {
       _previous = null;
       _previousKey = null;
