@@ -96,6 +96,126 @@ void assertLeanHome(WidgetTester tester) {
 void main() {
   final catalog = loadCatalogFixture();
 
+  testWidgets('fixed stage sends home inset before system back camera glide', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    final store = LearningStore(
+      catalog: catalog,
+      storage: MemoryStateStorage(),
+    );
+    await store.initialize();
+    await store.acknowledgeSafety();
+    await store.setLastTime(2.375);
+    final commands = <Map<String, Object?>>[];
+    final scene = SceneController(commandSink: commands.add);
+    addTearDown(store.dispose);
+    addTearDown(scene.dispose);
+    await tester.pumpWidget(
+      testApp(
+        FlareShell(
+          catalog: catalog,
+          store: store,
+          sceneController: scene,
+          enableScene: false,
+        ),
+      ),
+    );
+    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+    await tester.pumpAndSettle();
+    final stage = find.byWidgetPredicate(
+      (widget) =>
+          widget is ColoredBox && widget.color == FlareColors.background,
+    );
+    final homeSize = tester.getSize(stage);
+    final homeInset = commands.lastWhere(
+      (c) => c['type'] == 'viewport',
+    )['bottom'];
+    scene.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'select',
+      'groupId': 'triceps',
+      'time': 2.375,
+    });
+    await tester.pumpAndSettle();
+    expect(tester.getSize(stage), homeSize);
+    expect(scene.time, 2.375);
+    commands.clear();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(scene.detail, isNull);
+    expect(scene.time, 2.375);
+    expect(tester.getSize(stage), homeSize);
+    final viewport = commands.indexWhere((c) => c['type'] == 'viewport');
+    final close = commands.indexWhere(
+      (c) => c['type'] == 'detail' && c['groupId'] == null,
+    );
+    expect(viewport, greaterThanOrEqualTo(0));
+    expect(close, greaterThan(viewport));
+    expect(commands[viewport]['bottom'], homeInset);
+    assertNoFlutterError(tester);
+  });
+
+  testWidgets('scene retry reinstalls inset and paused detail before framing', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    final store = LearningStore(
+      catalog: catalog,
+      storage: MemoryStateStorage(),
+    );
+    await store.initialize();
+    await store.acknowledgeSafety();
+    await store.setLastTime(2.375);
+    final commands = <Map<String, Object?>>[];
+    final scene = SceneController(commandSink: commands.add);
+    addTearDown(store.dispose);
+    addTearDown(scene.dispose);
+    await tester.pumpWidget(
+      testApp(
+        FlareShell(
+          catalog: catalog,
+          store: store,
+          sceneController: scene,
+          enableScene: false,
+        ),
+      ),
+    );
+    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+    await tester.pumpAndSettle();
+    scene.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'select',
+      'groupId': 'triceps',
+      'time': 2.375,
+    });
+    await tester.pumpAndSettle();
+    scene.setDetailModel('muscles');
+    await tester.pumpAndSettle();
+    final inset = commands.lastWhere((c) => c['type'] == 'viewport')['bottom'];
+    scene.reportError('scene_load_failed');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('重试'));
+    await tester.pumpAndSettle();
+    commands.clear();
+    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+    await tester.pumpAndSettle();
+    final viewport = commands.indexWhere((c) => c['type'] == 'viewport');
+    final seek = commands.indexWhere((c) => c['type'] == 'seek');
+    expect(viewport, greaterThanOrEqualTo(0));
+    expect(seek, greaterThan(viewport));
+    expect(commands[viewport], {
+      'type': 'viewport',
+      'bottom': inset,
+      'animate': false,
+    });
+    expect(scene.detail, 'triceps');
+    expect(scene.detailModel, 'muscles');
+    expect(scene.playing, isFalse);
+    expect(scene.time, 2.375);
+    assertNoFlutterError(tester);
+  });
+
   testWidgets(
     'phone safety → phase muscle → drill → local pain record → same paused frame',
     (tester) async {

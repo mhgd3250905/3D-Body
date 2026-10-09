@@ -27,8 +27,11 @@ for (const padding of [0.75]) {
   const camera = new THREE.PerspectiveCamera(32, 390 / 650, 0.02, 40);
   camera.setViewOffset(390, 650, 10, 138, 390, 650); camera.updateProjectionMatrix();
   const controls = { target: new THREE.Vector3(), update() { const d = camera.position.clone().sub(this.target), length = d.length(); camera.position.copy(this.target).addScaledVector(d.normalize(), THREE.MathUtils.clamp(length, 0.45, 7)); camera.lookAt(this.target); camera.updateMatrixWorld(true); } };
-  const fake = { camera, controls, container: { clientWidth: 390 }, insetLeft: 0,
-    setCameraView: FlarePlayer.prototype.setCameraView };
+  const fake = { camera, controls, container: { clientWidth: 390, clientHeight: 650 }, insetLeft: 0,
+    baseFov: 32, viewInset: 0, viewInsetTarget: 0, framingMode: 'main' };
+  for (const method of ['setCameraView', 'visibleHeight', 'applyProjection', 'updateFramingTarget']) {
+    fake[method] = FlarePlayer.prototype[method];
+  }
   FlarePlayer.prototype.fitBounds.call(fake, box, CAMERA_PRESETS.standard, padding);
   const min = new THREE.Vector2(Infinity, Infinity), max = new THREE.Vector2(-Infinity, -Infinity), p = new THREE.Vector3();
   for (let frame = 0; frame <= 180; frame++) {

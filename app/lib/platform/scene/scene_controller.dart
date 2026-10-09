@@ -108,6 +108,13 @@ class SceneController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Bottom px of the 3D view covered by host chrome. The scene frames into
+  /// the part above it and eases the change with its camera.
+  void setViewInset(double bottom, {bool animate = true}) {
+    if (_disposed) return;
+    command({'type': 'viewport', 'bottom': bottom, 'animate': animate});
+  }
+
   void setDetail(String? groupId) {
     if (_disposed) return;
     if (_detail == null || groupId == null) _resetDetailModel();

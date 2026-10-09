@@ -12,7 +12,7 @@ const stage = document.querySelector('#stage'), status = document.querySelector(
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots'), detailNote = document.querySelector('#detail-note');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
-let pending = [], pointerDown = null, lastState = 0, hotspotButtons = new Map();
+let viewInset = 0, pending = [], pointerDown = null, lastState = 0, hotspotButtons = new Map();
 
 // Android WebView ignores user-select on long-press in some builds: stop the
 // selection and the system callout at the source as well.
@@ -106,6 +106,14 @@ function command(value) {
     if (applyTheme(input.value, input.duration) && player) player.dirty = true;
     return;
   }
+  if (input.type === 'viewport') {
+    // The host's chrome covers the bottom `bottom` px of the stage. DOM
+    // overlays sit above it; the camera eases its framing into what is left.
+    const bottom = Math.max(0, Number(input.bottom) || 0);
+    viewInset = bottom; stage.style.setProperty('--inset-bottom', `${bottom}px`);
+    player?.setViewInset(bottom, ready && input.animate !== false);
+    return;
+  }
   if (!ready) { pending.push(input); if (pending.length > 32) pending.shift(); return; }
   switch (input.type) {
     case 'play':
@@ -175,6 +183,7 @@ async function boot() {
         else { surface?.releaseGpu(); phaseMap?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
+    player.setViewInset(viewInset, false);
     await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
     player.resetView();
     const skinned = buildMmRest(player.motion, player.coach);
@@ -211,7 +220,10 @@ async function boot() {
         frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
         pixelRatio: player.renderer.getPixelRatio(), framingMode: player.framingMode,
         bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
-      getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect }),
+      getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect,
+        projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
+        viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
+        gliding: !!player.glide || !!player.projectionGlide }),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },
     });
