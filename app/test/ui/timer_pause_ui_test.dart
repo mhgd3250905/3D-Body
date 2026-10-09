@@ -77,6 +77,13 @@ class _TimerHarness {
   }
 }
 
+/// The timer ticks forever, so step frames instead of pumpAndSettle.
+Future<void> settleSheet(WidgetTester tester) async {
+  for (var i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
 void main() {
   testWidgets('rep countdown pause preserves seconds, status and progress', (
     tester,
@@ -168,6 +175,43 @@ void main() {
     await clock.advance(tester, 15000);
     expect(find.text('30'), findsOneWidget);
     expect(clock.progress(tester), '60%');
+    await clock.dispose(tester);
+  });
+
+  testWidgets('closing mid-session asks first and the clock waits', (
+    tester,
+  ) async {
+    final clock = _TimerHarness();
+    await clock.open(tester, 'triceps-A');
+    await clock.tap(tester, '开始');
+    await clock.advance(tester, 3000);
+    await clock.tap(tester, '完成 1 次');
+    await tester.tap(find.byTooltip('结束本次练习'));
+    await settleSheet(tester);
+    expect(find.text('结束这次练习？'), findsOneWidget);
+    // The work block is paused while the question is open.
+    await clock.advance(tester, 8000);
+    expect(find.textContaining('已暂停'), findsOneWidget);
+    await tester.tap(find.text('继续练'));
+    await settleSheet(tester);
+    expect(find.text('结束这次练习？'), findsNothing);
+    expect(find.textContaining('已暂停'), findsNothing);
+    expect(find.byTooltip('暂停'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('结束本次练习'));
+    await settleSheet(tester);
+    await tester.tap(find.text('结束并保存'));
+    await settleSheet(tester);
+    expect(find.text('已保存在本机'), findsOneWidget);
+    await clock.dispose(tester);
+  });
+
+  testWidgets('closing before starting leaves without asking', (tester) async {
+    final clock = _TimerHarness();
+    await clock.open(tester, 'triceps-A');
+    await tester.tap(find.byTooltip('结束本次练习'));
+    await settleSheet(tester);
+    expect(find.text('结束这次练习？'), findsNothing);
     await clock.dispose(tester);
   });
 }

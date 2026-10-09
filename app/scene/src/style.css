@@ -34,15 +34,29 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 .phase-map-legend i { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 @media (max-height: 320px) { .phase-map { width: 108px; padding: 6px; bottom: 6px; left: 6px; border-radius: 14px; } .phase-map-view { height: 83px; } .phase-map header { font-size: 9px; line-height: 12px; padding-bottom: 3px; } .phase-map-legend { gap: 2px 5px; margin-top: 4px; padding: 0; } .phase-map-legend button { font-size: 8px; line-height: 10px; } }
 
+/* Appearance switches dissolve over --theme-fade (set per switch by the app,
+   0ms on first load and with reduced motion), in step with the app. */
+:root { --theme-fade: 0ms; }
+#status, .spinner, #retry, #detail-note, .minimap, .minimap span, .hotspot::before, .phase-map, .phase-map-view, .phase-map-view > span, .phase-map-legend button {
+  transition-property: background-color, color, border-color, box-shadow; transition-duration: var(--theme-fade); transition-timing-function: ease-in-out; }
+@media (prefers-reduced-motion: reduce) { :root { --theme-fade: 0ms !important; } }
+
 /* Light appearance: warm paper chrome, same athlete and lighting. */
 :root[data-theme="light"] #status { background: #f5f4f1eb; color: #4b4b54; }
 :root[data-theme="light"] .spinner { border-color: #0000001a; border-top-color: #f2602f; }
 :root[data-theme="light"] #retry { color: #16161a; background: #ffffff; border-color: #dedcd6; }
-:root[data-theme="light"] #detail-note { color: #8b8b94; }
+:root[data-theme="light"] #detail-note { color: #74747d; }
 :root[data-theme="light"] .minimap { border-color: #0000001f; box-shadow: 0 6px 18px #0000001a; }
 :root[data-theme="light"] .minimap span { color: #4b4b54; background: #ffffffcc; }
 :root[data-theme="light"] .hotspot::before { border-color: #ffffff; box-shadow: 0 0 0 5px #ffffff99, 0 2px 7px #0003; }
 :root[data-theme="light"] .phase-map { background: rgba(255,255,255,.78); border-color: #0000000f; box-shadow: 0 8px 24px #0000001a, inset 0 1px #ffffff; color: #4b4b54; }
 :root[data-theme="light"] .phase-map-view { background: #efeee9; }
-:root[data-theme="light"] .phase-map-view > span { color: #8b8b94; }
+:root[data-theme="light"] .phase-map-view > span { color: #74747d; }
 :root[data-theme="light"] .phase-map-legend button { color: #4b4b54; }
+
+/* Model switch dissolve and soft minimap entrance. */
+@keyframes flare-swap { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+canvas.model-swap { animation: flare-swap 360ms cubic-bezier(.22,.9,.24,1); }
+@keyframes flare-rise { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+.minimap:not([hidden]) { animation: flare-rise 420ms cubic-bezier(.22,.9,.24,1) both; }
+@media (prefers-reduced-motion: reduce) { canvas.model-swap, .minimap:not([hidden]) { animation: none; } }

@@ -8,6 +8,7 @@ import 'l10n/app_localizations.dart';
 import 'ui/app_shell.dart';
 import 'ui/components.dart';
 import 'ui/theme.dart';
+import 'ui/theme_fade.dart';
 
 SemanticsHandle? _webSemantics;
 
@@ -70,12 +71,29 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     theme: flareTheme(Brightness.light),
     darkTheme: flareTheme(Brightness.dark),
     themeMode: themeModeOf(_themeMode),
-    // Custom tokens switch with the theme at once; a colour lerp would mix
-    // the two palettes for a few frames.
+    // Custom tokens switch with the theme in one frame (a colour lerp would
+    // mix the two palettes); ThemeCrossFade dissolves the old frame away
+    // over the new one instead.
     themeAnimationDuration: Duration.zero,
+    // One scroll feel on every platform: iOS rubber-band edges.
+    scrollBehavior: const FlareScrollBehavior(),
     builder: (context, child) {
-      FlareColors.use(Theme.of(context).brightness);
-      return child!;
+      final brightness = Theme.of(context).brightness;
+      FlareColors.use(brightness);
+      // No AppBar sets the status bar, so the app does: light icons on the
+      // graphite stage, dark ones on paper, edge-to-edge on Android.
+      final dark = brightness == Brightness.dark;
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: (dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+            .copyWith(
+              statusBarColor: const Color(0x00000000),
+              systemNavigationBarColor: FlareColors.background,
+              systemNavigationBarIconBrightness: dark
+                  ? Brightness.light
+                  : Brightness.dark,
+            ),
+        child: ThemeCrossFade(brightness: brightness, child: child!),
+      );
     },
     locale: const Locale('zh'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,

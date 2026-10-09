@@ -7,7 +7,9 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/motion_controls.dart';
+import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
+import 'package:flare/ui/theme_fade.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +71,7 @@ void assertLeanHome(WidgetTester tester) {
   expect(find.byType(NavigationBar), findsNothing);
   expect(find.byType(Slider), findsNothing);
   expect(find.byType(ActionChip), findsNothing);
-  expect(find.byType(SegmentedButton<String>), findsNothing);
+  expect(find.byType(FlareSegmented<String>), findsNothing);
   expect(find.text('动作白膜'), findsNothing);
   expect(find.text('肌群模型'), findsNothing);
   expect(find.byKey(const ValueKey('detail-card')), findsNothing);
@@ -165,7 +167,7 @@ void main() {
         for (final label in ['训练', '学习路径', '记录', '设置']) {
           expect(find.widgetWithText(ListTile, label), findsOneWidget);
         }
-        expect(find.byType(SegmentedButton<double>), findsOneWidget);
+        expect(find.byType(FlareSegmented<double>), findsOneWidget);
         expect(find.byType(ActionChip), findsNothing);
         assertNoFlutterError(tester);
         await tester.tapAt(const Offset(195, 40));
@@ -280,6 +282,8 @@ void main() {
         await tester.pumpAndSettle();
         expect(store.todayIds, ['deltoids-A']);
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
+        // The timer rises as a modal sheet; let it land before touching it.
+        await tester.pump(const Duration(milliseconds: 500));
         expect(find.byType(TrainingTimerPage), findsOneWidget);
         expect(
           tester
@@ -768,29 +772,20 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final dips = find.byWidgetPredicate(
-        (widget) =>
-            widget is DropdownButton<int> &&
-            widget.items!.any(
-              (item) =>
-                  item.child is Text &&
-                  (item.child as Text).data == '0–3 次 · 入门',
-            ),
-      );
-      if (dips.evaluate().isEmpty) {
-        await tester.scrollUntilVisible(find.text('受控臂屈伸次数'), 200);
+      // Five four-step selectors with short labels; the full wording of the
+      // chosen step sits under each and is what a screen reader hears.
+      expect(find.byType(FlareSegmented<int>), findsNWidgets(5));
+      await tester.scrollUntilVisible(find.text('13+'), 200);
+      await tester.pumpAndSettle();
+      for (final label in ['0–3', '4–7', '8–12', '13+']) {
+        expect(find.text(label), findsOneWidget);
       }
-      final choices = tester.widget<DropdownButton<int>>(dips).items!;
-      expect(choices.map((choice) => (choice.child as Text).data), [
-        '0–3 次 · 入门',
-        '4–7 次 · 基础',
-        '8–12 次 · 良好',
-        '13 次以上 · 优秀',
-      ]);
-      await tapVisible(tester, dips);
+      expect(find.text('4–7 次 · 基础'), findsOneWidget);
+      expect(find.bySemanticsLabel('8–12 次 · 良好'), findsOneWidget);
+      await tester.tap(find.text('8–12'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('8–12 次 · 良好').last);
-      await tester.pumpAndSettle();
+      expect(find.text('8–12 次 · 良好'), findsOneWidget);
+      expect(find.text('4–7 次 · 基础'), findsNothing);
       await tapVisible(tester, find.widgetWithText(FilledButton, '保存自评起点'));
       await tester.pumpAndSettle();
       expect(saved!.keys.toSet(), {
@@ -909,8 +904,9 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
-            FlareColors.use(Theme.of(context).brightness);
-            return child!;
+            final brightness = Theme.of(context).brightness;
+            FlareColors.use(brightness);
+            return ThemeCrossFade(brightness: brightness, child: child!);
           },
           home: FlareShell(
             catalog: catalog,
@@ -938,17 +934,32 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.settings.themeMode, 'light');
     expect(FlareColors.palette.isDark, isFalse);
+    // The system was already light: the first appearance is applied as is.
     expect(commands.lastWhere((value) => value['type'] == 'theme'), {
       'type': 'theme',
       'value': 'light',
     });
     assertNoFlutterError(tester);
     await tester.tap(find.text('深色'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
+    // The whole screen dissolves from the old (light) appearance.
+    expect(
+      tester.state<ThemeCrossFadeState>(find.byType(ThemeCrossFade)).fading,
+      isTrue,
+    );
     await tester.pumpAndSettle();
+    expect(
+      tester.state<ThemeCrossFadeState>(find.byType(ThemeCrossFade)).fading,
+      isFalse,
+    );
     expect(FlareColors.palette.isDark, isTrue);
+    // Switches after the first carry the dissolve duration for the scene's
+    // CSS, in step with the app's cross-fade.
     expect(commands.lastWhere((value) => value['type'] == 'theme'), {
       'type': 'theme',
       'value': 'dark',
+      'duration': FlareMotion.theme.inMilliseconds,
     });
     final restored = LearningStore(catalog: catalog, storage: storage);
     await restored.initialize();

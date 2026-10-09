@@ -6,6 +6,7 @@ import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-m
 import { createDetailView } from './detail.js';
 import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 import { createPhaseMap } from './phase-map.js';
+import { applyTheme } from './theme.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
@@ -97,7 +98,8 @@ function command(value) {
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
     // lighting and materials are identical in both themes.
-    if (['dark', 'light'].includes(input.value)) { document.documentElement.dataset.theme = input.value; if (player) player.dirty = true; }
+    // An optional duration (ms) dissolves the chrome in step with the app.
+    if (applyTheme(input.value, input.duration) && player) player.dirty = true;
     return;
   }
   if (!ready) { pending.push(input); if (pending.length > 32) pending.shift(); return; }

@@ -814,6 +814,54 @@ abstract class AppLocalizations {
   /// **'轻松完成，准备进阶'**
   String get grade4;
 
+  /// No description provided for @gradeShort1.
+  ///
+  /// In zh, this message translates to:
+  /// **'未完成'**
+  String get gradeShort1;
+
+  /// No description provided for @gradeShort2.
+  ///
+  /// In zh, this message translates to:
+  /// **'能完成'**
+  String get gradeShort2;
+
+  /// No description provided for @gradeShort3.
+  ///
+  /// In zh, this message translates to:
+  /// **'较稳定'**
+  String get gradeShort3;
+
+  /// No description provided for @gradeShort4.
+  ///
+  /// In zh, this message translates to:
+  /// **'很轻松'**
+  String get gradeShort4;
+
+  /// No description provided for @dipsShort1.
+  ///
+  /// In zh, this message translates to:
+  /// **'0–3'**
+  String get dipsShort1;
+
+  /// No description provided for @dipsShort2.
+  ///
+  /// In zh, this message translates to:
+  /// **'4–7'**
+  String get dipsShort2;
+
+  /// No description provided for @dipsShort3.
+  ///
+  /// In zh, this message translates to:
+  /// **'8–12'**
+  String get dipsShort3;
+
+  /// No description provided for @dipsShort4.
+  ///
+  /// In zh, this message translates to:
+  /// **'13+'**
+  String get dipsShort4;
+
   /// No description provided for @saveAssessment.
   ///
   /// In zh, this message translates to:
@@ -1419,6 +1467,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'浅色'**
   String get themeLight;
+
+  /// No description provided for @sceneLoading.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在载入 3D 动作'**
+  String get sceneLoading;
+
+  /// No description provided for @endSessionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束这次练习？'**
+  String get endSessionTitle;
+
+  /// No description provided for @endSessionBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'已完成的部分会存为一条未完成记录。'**
+  String get endSessionBody;
+
+  /// No description provided for @endSessionConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束并保存'**
+  String get endSessionConfirm;
+
+  /// No description provided for @keepTraining.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续练'**
+  String get keepTraining;
+
+  /// No description provided for @removedFromToday.
+  ///
+  /// In zh, this message translates to:
+  /// **'已移出今日训练'**
+  String get removedFromToday;
+
+  /// No description provided for @undo.
+  ///
+  /// In zh, this message translates to:
+  /// **'撤销'**
+  String get undo;
+
+  /// No description provided for @addedTodayToast.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加入今日训练'**
+  String get addedTodayToast;
+
+  /// No description provided for @trainedOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'{day}，已训练'**
+  String trainedOn(String day);
+
+  /// No description provided for @notTrainedOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'{day}，未训练'**
+  String notTrainedOn(String day);
+
+  /// No description provided for @finishedLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sets} 组全部完成'**
+  String finishedLine(int sets);
 }
 
 class _AppLocalizationsDelegate
