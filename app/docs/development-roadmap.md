@@ -47,9 +47,10 @@ PR #3仍OPEN，源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；动作/脚踝/�
 | 包 | 来源及根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
 | 当前v41+PR4，ARM64开发签名 | 已验证tree `cbf81746bca8eb4146c0f99b7b3744db02cb89cf`（实际合并bb94）；`app/build/app/outputs/flutter-apk/app-release.apk`，具名 `output/releases/Flare-v41-light-20261009-arm64.apk` | 44,045,329；`4040188f0c6dfad56e77afb7b99e6878bfefc51e0103e875ef66df5efeb7bfe5` |
+| Play封闭测试AAB `1.0.0+1` | 提交 `92e459f`（树+本机gitignored密钥构建）；`app/build/app/outputs/bundle/release/app-release.aab`，已上传Play Console | 77,816,786；`9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
 | 合并前v41备份，ARM64开发签名 | e27保存点；`output/releases/Flare-v41-before-pr4-20261009-arm64.apk` | 42,836,141；`5c579985b1ed6b7db3ba988400bd2a3d88065e102f2cf83f12d883b6f430a9c7` |
 
-长期本地入口：App `http://127.0.0.1:8820/`，网页 `http://127.0.0.1:8810/`；隔离截图端口只作当时证据。当前release采用开发debug签名，不是商店生产签名；没有公开部署或商店上传。
+长期本地入口：App `http://127.0.0.1:8820/`，网页 `http://127.0.0.1:8810/`；隔离截图端口只作当时证据。上表APK为开发签名试用包；Play封闭测试AAB为release上传密钥签名（见Play发布台账），两者并存不混用。除Play Console上传外，没有公开部署。
 
 ## Google Play发布台账（2026-10-09启动）
 

@@ -1,6 +1,6 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-09当前版已合并PR #4，51项训练均有1024/512浅色配套图，随主题用于训练库、今日训练和详情；原深色图与网页/App v41动作保留。最终ARM64试用包为 `build/app/outputs/flutter-apk/app-release.apk`，具名副本和合并前包在根项目E盘 `output/releases/`。实际验证见 [verification.md](docs/verification.md)。
+2026-10-09当前版已合并PR #4，51项训练均有1024/512浅色配套图，随主题用于训练库、今日训练和详情；原深色图与网页/App v41动作保留。最终ARM64试用包为 `build/app/outputs/flutter-apk/app-release.apk`，具名副本和合并前包在根项目E盘 `output/releases/`。同日稍晚按用户授权启动Google Play上架：版本升 `1.0.0+1`（提交 `92e459f`），生产签名AAB已上传封闭测试轨道并送审，详见 [verification.md](docs/verification.md) 与 [实施路线](docs/development-roadmap.md) 的Play发布台账。
 
 当前默认为与网页同步的 **v41 烘焙动作**，原服装/面孔、PR #2精简界面和深浅主题保留。当前合约与复现入口为 [motion-v41.md](docs/motion-v41.md)，版本/交付和待验收台账归入 [实施路线](docs/development-roadmap.md)。v38和米白无衣模特记录保留为历史。
 
@@ -21,9 +21,9 @@ flutter run -d chrome
 
 浏览器数据按浏览器与网址保存；需要稳定预览地址时可加 `--web-port 8840`。依赖首次安装需要网络，安装后的 App 内容随包提供。
 
-当前本机预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`：采用优化编译与本地开发签名，用于手机验证，尚未作为商店发布包验收。模拟器调试包另保留为同目录 `app-debug.apk`。
+当前本机预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`：采用优化编译与本地开发签名，用于手机验证。模拟器调试包另保留为同目录 `app-debug.apk`。Google Play 封闭测试使用 `build/app/outputs/bundle/release/app-release.aab`（`1.0.0+1`，release上传密钥签名），已上传Play并送审；Play显示其优化后新安装约33.9MB。
 
-安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。当前 Android 标识 `dev.mhgd.flare` 用于本地开发，正式产品标识与签名在发布前另行确认。
+安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
 
 只修改 Dart 页面无需重新制作 3D 包；修改场景代码或模型后，先在 `app/scene` 执行：
 

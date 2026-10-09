@@ -1,4 +1,20 @@
-# 当前验证：PR #4 浅色训练图与最终 App（2026-10-09）
+# 当前验证：Google Play 封闭测试送审（2026-10-09）
+
+按用户显式授权（"直接帮我做、按推荐选择、不用问"）完成Play Console接入。closeout基线 `1519c4dd70cf6b658c5fa4ac5445343645ab057c`（接力记录的阶段基线），阶段提交 `92e459f`（release签名配置+`1.0.0+1`）与 `6e99c05`（T05台账初记）。上传密钥 `keys/flare-upload.jks` 与 `app/android/key.properties` 均gitignored，仅E盘本机保存；无密钥环境构建自动回退debug签名，行为不变。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| AAB构建 | `flutter build appbundle --release` EXIT=0（2026-10-09本会话）；产物77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119`。前两次失败为Kotlin DSL写法与密钥相对路径，修正后成功；失败不算通过 |
+| 签名与版本 | 构建时工作树即 `92e459f` 提交内容（pubspec `1.0.0+1`、gradle读取key.properties）；validateSigningRelease通过。Play Console显示版本1(1.0.0)、目标SDK 36、API 24+，优化后新安装33.9MB |
+| 静态分析 | `flutter analyze --no-pub` 无问题（closeout时复验，见下） |
+| Play接入 | 应用 `dev.mhgd.flare` 创建；11/11设置清单完成（隐私政策Worker、内容分级全年龄/PEGI 3、数据安全零收集、受众13+、类别健康与健身、无广告、广告ID"否"、健康声明"活动和健身"、登录/政府/金融声明）；商品详情zh-CN含7张475×844(9:16)截图、512图标、1024×500置顶大图 |
+| 送审状态 | 封闭测试Alpha轨道：AAB+178国家+测试者邮箱列表"Flare Closed Testers"（含mhgd3250905@gmail.com）；发布概览15项更改已送审，页面显示"正在审核中"（Google称通常7天内）。预检曾阻塞于"广告ID声明不完整"，如实补报"否"后通过 |
+
+Play页面状态是送审时外部观察，不替代审核结论。真机安装/性能仍为T02、长期前台计时仍为T01；生产发布被平台锁定为"≥12名测试者连续14天后申请正式版权限"，测试加入链接 `https://play.google.com/apps/testing/dev.mhgd.flare`。隐私政策 `https://flare-privacy.294851575.workers.dev` 部署于Cloudflare Workers（源码在根项目 `output/store/flare-privacy-worker/`，本机资源）；商店素材在 `output/store/`。本轮closeout必要验证：3份修改文档本地链接/事实字段检查、`git diff --check`、`flutter analyze --no-pub`；未重跑产品测试与3D验证（产品代码有限delta仅build.gradle.kts/pubspec，且analyze通过）。
+
+---
+
+# 历史验证：PR #4 浅色训练图与最终 App（2026-10-09）
 
 先保存并正常推送v41提交 `e27f4cd8ff7b6848de50da2377e76cb00542dabb`，再按用户授权审核合并PR #4。固定源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`、目标 `e27f4cd8ff7b6848de50da2377e76cb00542dabb`、PR报告基准 `8537146d9168fdc95a86da802d7dabeeba64fbb4`；结束前查询源未变化。GitHub没有CI记录或现有review，本次AI审核未发现阻塞项，未提交GitHub review。实际合并 `bb94d849099d6a2985aa72c00373ce17d81a9993`（2026-10-09 09:47北京时间），原项目已快进；其tree `cbf81746bca8eb4146c0f99b7b3744db02cb89cf` 与已验证隔离副本完全相同。
 
