@@ -13,15 +13,51 @@ import 'theme.dart';
 /// app reads as one material instead of instant cuts. When the system asks
 /// for reduced motion every duration collapses to zero.
 abstract final class FlareMotion {
-  /// Fast out, long soft landing (close to UIKit's navigation spring).
+  // Curves. Every animation in the app uses one of these.
+
+  /// Fast out, long soft landing (close to UIKit's navigation spring). The
+  /// default for anything that arrives or moves into place.
   static const Curve settle = Cubic(.22, .9, .24, 1);
   static const Curve standard = Cubic(.3, 0, .1, 1);
+
+  /// Leaving: starts gently and accelerates away.
+  static const Curve exit = Curves.easeInCubic;
+
+  /// Symmetric dissolves (appearance switch, cross-fades of a whole view).
+  static const Curve dissolve = Curves.easeInOut;
+
+  /// Small overshoot for things that pop in: a check mark, a saved icon.
+  static const Curve spring = Curves.easeOutBack;
+
+  // Durations. Reduced motion collapses each to zero through [of].
   static const Duration push = Duration(milliseconds: 420);
   static const Duration pop = Duration(milliseconds: 360);
   static const Duration modal = Duration(milliseconds: 460);
+  static const Duration sheet = Duration(milliseconds: 420);
+  static const Duration sheetClose = Duration(milliseconds: 260);
+
+  /// Folding a section open, and closed again.
+  static const Duration expand = Duration(milliseconds: 340);
+  static const Duration collapse = Duration(milliseconds: 240);
+
+  /// Whole-screen dissolve between dark and light.
+  static const Duration theme = Duration(milliseconds: 360);
+
+  /// Content entering a list or a swapped panel.
+  static const Duration enter = Duration(milliseconds: 420);
   static const Duration fade = Duration(milliseconds: 260);
   static const Duration quick = Duration(milliseconds: 180);
-  static const Duration sheet = Duration(milliseconds: 420);
+
+  /// Press feedback: sink fast, spring back slower.
+  static const Duration press = Duration(milliseconds: 110);
+  static const Duration release = Duration(milliseconds: 320);
+
+  /// One-off celebrations (the finish check) and their afterglow.
+  static const Duration celebrate = Duration(milliseconds: 620);
+  static const Duration afterglow = Duration(milliseconds: 1100);
+
+  /// Slow ambient loops (the loading placeholder's breath).
+  static const Duration breath = Duration(milliseconds: 1600);
 
   static bool reduced(BuildContext context) =>
       MediaQuery.maybeDisableAnimationsOf(context) ?? false;
@@ -32,8 +68,8 @@ abstract final class FlareMotion {
   static AnimationStyle sheetStyle(BuildContext context) => AnimationStyle(
     curve: settle,
     duration: of(context, sheet),
-    reverseCurve: Curves.easeInCubic,
-    reverseDuration: of(context, const Duration(milliseconds: 260)),
+    reverseCurve: exit,
+    reverseDuration: of(context, sheetClose),
   );
 }
 
@@ -68,7 +104,7 @@ Widget fadeInFrame(
   return AnimatedOpacity(
     opacity: frame == null ? 0 : 1,
     duration: FlareMotion.fade,
-    curve: Curves.easeOut,
+    curve: FlareMotion.settle,
     child: child,
   );
 }
@@ -412,7 +448,7 @@ class FadeSlideIn extends StatefulWidget {
     required this.child,
     this.delay = Duration.zero,
     this.offset = 14,
-    this.duration = const Duration(milliseconds: 420),
+    this.duration = FlareMotion.enter,
   });
   final Widget child;
   final Duration delay;
@@ -511,11 +547,9 @@ class _PressableState extends State<Pressable> {
       scale: _down ? widget.scale : 1,
       duration: FlareMotion.of(
         context,
-        _down
-            ? const Duration(milliseconds: 110)
-            : const Duration(milliseconds: 320),
+        _down ? FlareMotion.press : FlareMotion.release,
       ),
-      curve: _down ? Curves.easeOut : Curves.easeOutBack,
+      curve: _down ? Curves.easeOut : FlareMotion.spring,
       child: widget.child,
     ),
   );

@@ -276,12 +276,9 @@ class Disclosure extends StatelessWidget {
       collapsedShape: const Border(),
       expansionAnimationStyle: AnimationStyle(
         curve: FlareMotion.settle,
-        duration: FlareMotion.of(context, const Duration(milliseconds: 340)),
-        reverseCurve: Curves.easeInOutCubic,
-        reverseDuration: FlareMotion.of(
-          context,
-          const Duration(milliseconds: 240),
-        ),
+        duration: FlareMotion.of(context, FlareMotion.expand),
+        reverseCurve: FlareMotion.standard,
+        reverseDuration: FlareMotion.of(context, FlareMotion.collapse),
       ),
       title: Text(
         title,
@@ -555,3 +552,4 @@ class _ScrollEdgeState extends State<ScrollEdge> {
     );
   }
 }
+

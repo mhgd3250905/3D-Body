@@ -153,7 +153,13 @@ class SceneController extends ChangeNotifier {
       command({'type': 'quality', 'value': quality});
 
   /// Page chrome appearance inside the scene: 'dark' or 'light'.
-  void setTheme(String value) => command({'type': 'theme', 'value': value});
+  /// Switches the scene's chrome to [value] ('dark' or 'light'). A non-zero
+  /// [duration] cross-fades it in CSS, in step with the app's dissolve.
+  void setTheme(String value, {Duration duration = Duration.zero}) => command({
+    'type': 'theme',
+    'value': value,
+    if (duration > Duration.zero) 'duration': duration.inMilliseconds,
+  });
 
   /// Before GLB readiness (or while a native call is in flight), retain only
   /// the latest command for each setting and preserve their intended order.

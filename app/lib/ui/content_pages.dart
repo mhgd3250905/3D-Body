@@ -413,7 +413,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     children: [
                       // The search field folds open under the header.
                       AnimatedSize(
-                        duration: FlareMotion.of(context, FlareMotion.fade),
+                        duration: FlareMotion.of(context, FlareMotion.expand),
                         curve: FlareMotion.settle,
                         alignment: Alignment.topCenter,
                         child: _searching
@@ -821,7 +821,7 @@ class DrillDetailPage extends StatelessWidget {
                               scale: Tween(begin: .7, end: 1.0).animate(
                                 CurvedAnimation(
                                   parent: animation,
-                                  curve: Curves.easeOutBack,
+                                  curve: FlareMotion.spring,
                                 ),
                               ),
                               child: FadeTransition(
@@ -1114,7 +1114,7 @@ class _PathPageState extends State<PathPage> {
                                           turns: open == stage.n ? .5 : 0,
                                           duration: FlareMotion.of(
                                             context,
-                                            FlareMotion.fade,
+                                            FlareMotion.expand,
                                           ),
                                           curve: FlareMotion.settle,
                                           child: Icon(
@@ -1131,7 +1131,7 @@ class _PathPageState extends State<PathPage> {
                                 AnimatedSize(
                                   duration: FlareMotion.of(
                                     context,
-                                    FlareMotion.push,
+                                    FlareMotion.expand,
                                   ),
                                   curve: FlareMotion.settle,
                                   alignment: Alignment.topCenter,

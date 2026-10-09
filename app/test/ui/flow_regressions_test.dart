@@ -7,7 +7,9 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/motion_controls.dart';
+import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
+import 'package:flare/ui/theme_fade.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -911,8 +913,9 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) {
-            FlareColors.use(Theme.of(context).brightness);
-            return child!;
+            final brightness = Theme.of(context).brightness;
+            FlareColors.use(brightness);
+            return ThemeCrossFade(brightness: brightness, child: child!);
           },
           home: FlareShell(
             catalog: catalog,
@@ -940,17 +943,32 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.settings.themeMode, 'light');
     expect(FlareColors.palette.isDark, isFalse);
+    // The system was already light: the first appearance is applied as is.
     expect(commands.lastWhere((value) => value['type'] == 'theme'), {
       'type': 'theme',
       'value': 'light',
     });
     assertNoFlutterError(tester);
     await tester.tap(find.text('深色'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
+    // The whole screen dissolves from the old (light) appearance.
+    expect(
+      tester.state<ThemeCrossFadeState>(find.byType(ThemeCrossFade)).fading,
+      isTrue,
+    );
     await tester.pumpAndSettle();
+    expect(
+      tester.state<ThemeCrossFadeState>(find.byType(ThemeCrossFade)).fading,
+      isFalse,
+    );
     expect(FlareColors.palette.isDark, isTrue);
+    // Switches after the first carry the dissolve duration for the scene's
+    // CSS, in step with the app's cross-fade.
     expect(commands.lastWhere((value) => value['type'] == 'theme'), {
       'type': 'theme',
       'value': 'dark',
+      'duration': FlareMotion.theme.inMilliseconds,
     });
     final restored = LearningStore(catalog: catalog, storage: storage);
     await restored.initialize();

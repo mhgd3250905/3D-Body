@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GROUPS } from './phase.js';
 import { resolveGroup, MUSCLE_BY_ID } from './legacy/muscle-map.js';
 import { CAMERA_PRESETS } from './player.js';
+import { mixColor, themeSettling } from './theme.js';
 
 export function createDetailView(player, phaseMap, onModelChange, focusDirection = () => null) {
   let saved = null, selected = null, model = 'motion', views = {};
@@ -109,7 +110,7 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
       scissorTest: renderer.getScissorTest(), color: renderer.getClearColor(new THREE.Color()), alpha: renderer.getClearAlpha() };
     try {
       renderer.setScissorTest(true); renderer.setScissor(x, y, width, height); renderer.setViewport(x, y, width, height);
-      renderer.setClearColor(document.documentElement.dataset.theme === 'light' ? 0xeceae5 : 0x171922, 1); renderer.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera);
+      renderer.setClearColor(mixColor(0x171922, 0xeceae5), 1); if (themeSettling()) player.dirty = true; renderer.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera);
     } finally {
       renderer.setViewport(previous.viewport); renderer.setScissor(previous.scissor); renderer.setScissorTest(previous.scissorTest); renderer.setClearColor(previous.color, previous.alpha);
     }

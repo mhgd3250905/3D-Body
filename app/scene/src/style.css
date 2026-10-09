@@ -34,6 +34,13 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 .phase-map-legend i { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 @media (max-height: 320px) { .phase-map { width: 108px; padding: 6px; bottom: 6px; left: 6px; border-radius: 14px; } .phase-map-view { height: 83px; } .phase-map header { font-size: 9px; line-height: 12px; padding-bottom: 3px; } .phase-map-legend { gap: 2px 5px; margin-top: 4px; padding: 0; } .phase-map-legend button { font-size: 8px; line-height: 10px; } }
 
+/* Appearance switches dissolve over --theme-fade (set per switch by the app,
+   0ms on first load and with reduced motion), in step with the app. */
+:root { --theme-fade: 0ms; }
+#status, .spinner, #retry, #detail-note, .minimap, .minimap span, .hotspot::before, .phase-map, .phase-map-view, .phase-map-view > span, .phase-map-legend button {
+  transition-property: background-color, color, border-color, box-shadow; transition-duration: var(--theme-fade); transition-timing-function: ease-in-out; }
+@media (prefers-reduced-motion: reduce) { :root { --theme-fade: 0ms !important; } }
+
 /* Light appearance: warm paper chrome, same athlete and lighting. */
 :root[data-theme="light"] #status { background: #f5f4f1eb; color: #4b4b54; }
 :root[data-theme="light"] .spinner { border-color: #0000001a; border-top-color: #f2602f; }

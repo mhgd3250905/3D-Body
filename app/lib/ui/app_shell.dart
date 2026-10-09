@@ -13,6 +13,7 @@ import 'motion_controls.dart';
 import 'motion.dart';
 import 'timer_page.dart';
 import 'theme.dart';
+import 'theme_fade.dart';
 
 class FlareShell extends StatefulWidget {
   const FlareShell({
@@ -264,8 +265,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ? 'light'
         : 'dark';
     if (theme != _sceneTheme) {
+      // The first appearance is applied as is; later switches fade in step
+      // with the app's whole-screen dissolve.
+      final duration = _sceneTheme == null
+          ? Duration.zero
+          : FlareMotion.of(context, FlareMotion.theme);
       _sceneTheme = theme;
-      _scene.setTheme(theme);
+      _scene.setTheme(theme, duration: duration);
     }
     final s = context.strings;
     if (!store.safetyAccepted) {
@@ -570,6 +576,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // Under the live view: during an appearance dissolve the old
+              // frame's backdrop fades out here, behind the athlete.
+              ThemeFadeWindow(enabled: widget.enableScene && _watchVisible),
               widget.enableScene
                   ? SceneView(
                       key: ValueKey(_sceneGeneration),
@@ -582,8 +591,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 ignoring: _scene.errorCode == null,
                 child: AnimatedSwitcher(
                   duration: FlareMotion.of(context, FlareMotion.push),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
+                  switchInCurve: FlareMotion.settle,
+                  switchOutCurve: FlareMotion.exit,
                   child: _scene.errorCode != null
                       ? _SceneError(
                           key: const ValueKey('scene-error'),
@@ -1174,7 +1183,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 padding: const EdgeInsets.only(bottom: 12),
                 // The sheet grows smoothly when the rest of the group opens.
                 child: AnimatedSize(
-                  duration: FlareMotion.of(context, FlareMotion.push),
+                  duration: FlareMotion.of(context, FlareMotion.expand),
                   curve: FlareMotion.settle,
                   alignment: Alignment.topCenter,
                   child: Column(
@@ -1476,7 +1485,7 @@ class _SceneLoadingState extends State<SceneLoading>
     with SingleTickerProviderStateMixin {
   late final AnimationController _breath = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1600),
+    duration: FlareMotion.breath,
   );
 
   @override
@@ -1505,7 +1514,7 @@ class _SceneLoadingState extends State<SceneLoading>
           child: AnimatedBuilder(
             animation: _breath,
             builder: (context, child) => Opacity(
-              opacity: .12 + .1 * Curves.easeInOut.transform(_breath.value),
+              opacity: .12 + .1 * FlareMotion.dissolve.transform(_breath.value),
               child: child,
             ),
             child: Padding(

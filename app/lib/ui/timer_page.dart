@@ -381,7 +381,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                               ),
                               duration: FlareMotion.of(
                                 context,
-                                const Duration(milliseconds: 380),
+                                FlareMotion.enter,
                               ),
                               curve: FlareMotion.settle,
                               builder: (context, ringValue, child) =>
@@ -409,10 +409,10 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                                     AnimatedSwitcher(
                                       duration: FlareMotion.of(
                                         context,
-                                        const Duration(milliseconds: 240),
+                                        FlareMotion.collapse,
                                       ),
                                       switchInCurve: FlareMotion.settle,
-                                      switchOutCurve: Curves.easeIn,
+                                      switchOutCurve: FlareMotion.exit,
                                       transitionBuilder: (child, animation) {
                                         final incoming =
                                             child.key == ValueKey(value);
@@ -659,15 +659,56 @@ class _CountText extends StatelessWidget {
       ),
     );
     if (!celebrate) return text;
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: .6, end: 1),
-      duration: FlareMotion.of(context, const Duration(milliseconds: 620)),
-      curve: Curves.easeOutBack,
-      builder: (context, scale, child) =>
-          Transform.scale(scale: scale, child: child),
-      child: text,
+    // The finish is a drawn stroke, not a font glyph: it writes itself in
+    // with the ring's weight and round caps, with a small spring.
+    return Semantics(
+      label: value,
+      child: SizedBox(
+        width: 84,
+        height: 80,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: FlareMotion.of(context, FlareMotion.celebrate),
+          curve: Curves.linear,
+          builder: (context, t, _) => Transform.scale(
+            scale: .8 + .2 * FlareMotion.spring.transform(t),
+            child: CustomPaint(
+              painter: _CheckPainter(
+                FlareMotion.settle.transform((t / .8).clamp(0, 1)),
+                FlareColors.success,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
+}
+
+class _CheckPainter extends CustomPainter {
+  _CheckPainter(this.t, this.color);
+  final double t;
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (t <= 0) return;
+    final w = size.width, h = size.height;
+    final path = Path()
+      ..moveTo(w * .12, h * .54)
+      ..lineTo(w * .4, h * .8)
+      ..lineTo(w * .9, h * .18);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 9
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..color = color;
+    final metric = path.computeMetrics().first;
+    canvas.drawPath(metric.extractPath(0, metric.length * t), paint);
+  }
+
+  @override
+  bool shouldRepaint(_CheckPainter old) => old.t != t || old.color != color;
 }
 
 /// One soft ring of light that leaves the finished ring and fades: a quiet
@@ -678,8 +719,8 @@ class _FinishGlow extends StatelessWidget {
   Widget build(BuildContext context) => IgnorePointer(
     child: TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: FlareMotion.of(context, const Duration(milliseconds: 1100)),
-      curve: Curves.easeOutCubic,
+      duration: FlareMotion.of(context, FlareMotion.afterglow),
+      curve: FlareMotion.settle,
       builder: (context, t, _) =>
           CustomPaint(painter: _GlowPainter(t, FlareColors.success)),
     ),
