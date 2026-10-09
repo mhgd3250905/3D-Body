@@ -10,6 +10,7 @@ import '../data/muscle_knowledge.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
+import 'loader_mark.dart';
 import 'motion_controls.dart';
 import 'motion.dart';
 import 'timer_page.dart';
@@ -853,18 +854,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         color: FlareColors.secondary,
                       ),
                     ),
-                    if (muscleKnowledge[detail.id] case final about?) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        about,
-                        key: const ValueKey('muscle-knowledge'),
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.65,
-                          color: FlareColors.dim,
-                        ),
-                      ),
-                    ],
                     if (detail.deep) ...[
                       const SizedBox(height: 6),
                       Eyebrow(
@@ -898,6 +887,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               onTap: _showMuscles,
                             ),
                         ],
+                      ),
+                    ],
+                    if (muscleKnowledge[detail.id] case final about?) ...[
+                      const SizedBox(height: 18),
+                      Text(
+                        about,
+                        key: const ValueKey('muscle-knowledge'),
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.65,
+                          color: FlareColors.dim,
+                        ),
                       ),
                     ],
                   ],
@@ -1555,68 +1556,37 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   });
 }
 
-/// Placeholder while the 3D scene boots: the dressed hero render, faint and
-/// slowly breathing, so the stage never sits empty and the real figure
-/// arrives as a cross-fade rather than a pop.
-class SceneLoading extends StatefulWidget {
+/// Placeholder while the 3D scene boots: the vector loading mark (the
+/// icon's athlete in a flare inside a turning orbit) with one quiet line.
+/// The scene's own canvas loader draws the same mark in the same place, so
+/// the hand-over to the WebView and then to the real figure is a dissolve.
+class SceneLoading extends StatelessWidget {
   const SceneLoading({super.key, required this.label});
   final String label;
-  @override
-  State<SceneLoading> createState() => _SceneLoadingState();
-}
-
-class _SceneLoadingState extends State<SceneLoading>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _breath = AnimationController(
-    vsync: this,
-    duration: FlareMotion.breath,
-  );
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (FlareMotion.reduced(context)) {
-      _breath.value = .5;
-    } else if (!_breath.isAnimating) {
-      _breath.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    _breath.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: widget.label,
+    label: label,
     liveRegion: true,
-    child: Column(
-      children: [
-        Expanded(
-          child: AnimatedBuilder(
-            animation: _breath,
-            builder: (context, child) => Opacity(
-              opacity: .12 + .1 * FlareMotion.dissolve.transform(_breath.value),
-              child: child,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(48, 24, 48, 8),
-              // The real, dressed Thomas render, never a blank mannequin.
-              child: Image.asset(
-                'assets/brand/hero-thomas.webp',
-                fit: BoxFit.contain,
-                excludeFromSemantics: true,
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const ExcludeSemantics(child: FlareLoaderMark()),
+          const SizedBox(height: 10),
+          ExcludeSemantics(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.5,
+                letterSpacing: .6,
+                color: FlareColors.dim,
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 28),
-          child: Eyebrow(widget.label),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -1800,7 +1770,7 @@ class _SceneOption extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           '${drill.name} · ${drill.prescription}',
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 13,

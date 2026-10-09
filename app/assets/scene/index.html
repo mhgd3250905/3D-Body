@@ -5,14 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#101116" />
     <title>Flare 动作舞台</title>
-    <script type="module" crossorigin src="./assets/index-WAq7sVz3.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DsklCyfX.css">
+    <script type="module" crossorigin src="./assets/index-DpXEQ2pR.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DX5bJGEW.css">
   </head>
   <body>
     <main id="stage" aria-label="可旋转缩放的托马斯全旋动作人物">
       <div id="hotspots" aria-label="暂停后的肌群位置"></div>
-      <div id="status" role="status"><span class="spinner"></span><p id="status-text">正在载入动作人物</p><button id="retry" hidden>重新载入</button></div>
-      <div id="detail-note" hidden>固定视角</div>
+      <div id="status" role="status"><canvas id="loader" width="132" height="132" aria-hidden="true"></canvas><p id="status-text">正在载入动作人物</p><button id="retry" hidden>重新载入</button></div>
+      <div id="detail-note" hidden>拖动旋转</div>
     </main>
+    <style>
+      /* First paint, before the bundle and its stylesheet arrive. */
+      html, body { margin: 0; height: 100%; background: transparent; }
+      #status { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #101116; color: #8e8e98; font: 500 12px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .6px; }
+      #loader { width: 132px; height: 132px; }
+    </style>
+    <script>
+      // Vector loading mark, drawn on canvas: the app icon's athlete in a
+      // one-hand flare, legs sweeping the V while the open orbit ring turns.
+      // Inline so it shows on first paint; stops itself once the stage is up.
+      (function () {
+        var c = document.getElementById('loader'), st = document.getElementById('status');
+        if (!c || !c.getContext) return;
+        var g = c.getContext('2d'), dpr = Math.min(3, window.devicePixelRatio || 1), S = 132;
+        c.width = S * dpr; c.height = S * dpr;
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var t0 = performance.now(), raf = 0;
+        function ease(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+        function blob(p, r) { g.beginPath(); g.arc(p[0], p[1], r, 0, Math.PI * 2); g.fill(); }
+        // A tapered limb: radius ra at a, rb at b, rounded both ends.
+        function limb(a, b, ra, rb) {
+          var dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, ang = Math.atan2(dy, dx);
+          var tilt = Math.asin(Math.max(-1, Math.min(1, (ra - rb) / d)));
+          g.beginPath();
+          g.arc(a[0], a[1], ra, ang + Math.PI / 2 + tilt, ang + Math.PI * 1.5 - tilt);
+          g.arc(b[0], b[1], rb, ang - Math.PI / 2 - tilt, ang + Math.PI / 2 + tilt);
+          g.closePath(); g.fill();
+        }
+        function draw(now) {
+          var t = reduce ? 1.2 : (now - t0) / 1000, light = document.documentElement.dataset.theme === 'light';
+          var accent = light ? '#f2602f' : '#ff6a3d';
+          if (st) st.style.background = light ? '#f5f4f1' : '#101116';
+          g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, S, S);
+          g.lineCap = 'round'; g.lineJoin = 'round';
+          var cx = 66, cy = 64, r = 50, intro = Math.min(1, t / .6);
+          // The mark fades in as one layer, so overlapping limbs never show seams.
+          c.style.opacity = String(ease(intro)); c.style.transform = 'scale(' + (.94 + .06 * ease(intro)) + ')'; var fade = 1;
+          // Floor glow under the support hand: a soft ellipse, no edges.
+          g.save(); g.globalAlpha = fade; g.translate(cx, 114); g.scale(1, .28);
+          var glow = g.createRadialGradient(0, 0, 0, 0, 0, 36);
+          glow.addColorStop(0, light ? 'rgba(242,96,47,.26)' : 'rgba(255,106,61,.34)'); glow.addColorStop(1, 'rgba(255,106,61,0)');
+          g.fillStyle = glow; g.beginPath(); g.arc(0, 0, 36, 0, Math.PI * 2); g.fill(); g.restore();
+          // Orbit: two open arcs, one long and one short, turning with a soft
+          // surge each lap; their gaps breathe.
+          var lap = 1.9, k = (t % lap) / lap, spin = (Math.floor(t / lap) + ease(k)) * Math.PI * 2 * .5;
+          var breath = .5 + .5 * Math.sin(t * 2.2);
+          g.strokeStyle = accent;
+          g.globalAlpha = fade * .95; g.lineWidth = 2.4;
+          g.beginPath(); g.arc(cx, cy, r, spin - 2.1 - .25 * breath, spin + 1.05); g.stroke();
+          g.globalAlpha = fade * .55; g.lineWidth = 1.6;
+          g.beginPath(); g.arc(cx, cy, r, spin + 1.55, spin + 2.35 + .2 * breath); g.stroke();
+          // Comet head on the long arc.
+          var hx = cx + r * Math.cos(spin + 1.05), hy = cy + r * Math.sin(spin + 1.05);
+          g.globalAlpha = fade; g.fillStyle = accent; g.beginPath(); g.arc(hx, hy, 2.6, 0, Math.PI * 2); g.fill();
+          // Athlete, as in the app icon: support hand flat on the floor,
+          // straight arm, thick tilted torso, head tucked low, free arm
+          // reaching back, legs a wide tapered V that sweeps the flare.
+          var hand = [65, 112], shoulder = [63, 79], hip = [75, 53], head = [50.5, 79.5];
+          var swing = Math.sin(t * 2.6) * .30, spread = .80 + .05 * Math.sin(t * 5.2);
+          var base = -Math.PI / 2 + .1 + swing, L = 37;
+          function at(o, ang, len) { return [o[0] + len * Math.cos(ang), o[1] + len * Math.sin(ang)]; }
+          g.globalAlpha = fade; g.fillStyle = accent;
+          limb(hand, shoulder, 2.6, 3.4);
+          limb(shoulder, hip, 6.6, 5.4);
+          limb(shoulder, [46 + 2.5 * Math.sin(t * 2.6), 57], 2.8, 1.9);
+          var k1 = at(hip, base - spread, L), k2 = at(hip, base + spread, L);
+          limb(hip, k1, 4.6, 2.2); limb(hip, k2, 4.6, 2.2);
+          blob(at(hip, base - spread, L + 1.5), 2.9); blob(at(hip, base + spread, L + 1.5), 2.9);
+          limb([hand[0] - 7, hand[1] + .4], [hand[0] + 5, hand[1] + .4], 1.6, 1.6);
+          limb([56, 79], shoulder, 2.4, 3);
+          blob(head, 6.4);
+          g.globalAlpha = 1;
+          if (!reduce && st && !st.hidden && st.dataset.error !== 'true') raf = requestAnimationFrame(draw); else raf = 0;
+        }
+        raf = requestAnimationFrame(draw);
+        // A later error or reload shows the status again: resume the mark.
+        if (st && window.MutationObserver) new MutationObserver(function () {
+          if (!raf && !st.hidden && st.dataset.error !== 'true') raf = requestAnimationFrame(draw);
+        }).observe(st, { attributes: true, attributeFilter: ['hidden', 'data-error'] });
+        window.__flareLoaderDraw = draw;
+      })();
+    </script>
   </body>
 </html>
