@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/muscle_knowledge.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
@@ -852,6 +853,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         color: FlareColors.secondary,
                       ),
                     ),
+                    if (muscleKnowledge[detail.id] case final about?) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        about,
+                        key: const ValueKey('muscle-knowledge'),
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.65,
+                          color: FlareColors.dim,
+                        ),
+                      ),
+                    ],
                     if (detail.deep) ...[
                       const SizedBox(height: 6),
                       Eyebrow(
