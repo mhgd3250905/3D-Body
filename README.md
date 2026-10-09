@@ -10,7 +10,7 @@
 
 2026-10-09 已按用户认可的 PR #2 整合全页面精简与深浅主题：详情动作人物保留原服装和面孔，用当前群组柔边代理高亮，固定全身机位；直立人台可旋转，卡片交换与同帧返回保持。当前使用 v41 烘焙动画，后续动作优化同步网页与 App。最初v38的米白无衣详情外观、截图和派生资产保留为历史。
 
-Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记录；本地Three.js AnimationMixer播放v41烘焙GLB，模型和素材离线打包。首页与详情使用原穿衣Snow，详情仅当前群组柔边代理高亮；独立直立人台保留精细分区线与当前选区，卡片交换和同帧返回保持。两种人物不宣称精确解剖配准。动作合约见 [v41同步说明](app/docs/motion-v41.md)，版本/安装包/待验收台账见 [实施路线](app/docs/development-roadmap.md)，实际证据见 [App验证记录](app/docs/verification.md)。
+Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记录；本地Three.js AnimationMixer播放v41烘焙GLB，模型和素材离线打包。首页与详情使用原穿衣Snow，详情仅当前群组柔边代理高亮；独立直立人台保留精细分区线与当前选区，卡片交换和同帧返回保持。两种人物不宣称精确解剖配准。动作合约见 [v41同步说明](app/docs/motion-v41.md)，版本/安装包/发布观察见 [版本管理台账](app/docs/version-ledger.md)，实施及待验收项见 [实施路线](app/docs/development-roadmap.md)，实际证据见 [App验证记录](app/docs/verification.md)。
 
 当前接手先读 [v41 同步说明](app/docs/motion-v41.md)。[v38 接入说明](app/docs/motion-v38.md)、[2026-10-08 App 交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留此前检查点，其中动作版本及详情外观已被当前要求覆盖；训练、课程、本地数据与设备验证的未完成事项仍有效。
 
@@ -32,13 +32,17 @@ Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记
 
 ## 使用
 
-三维场景铺满窗口，左侧“步骤”栏和右侧“调整”栏可以独立开关，H 或右上角眼睛按钮同时收起／恢复两栏；全屏按钮可进入浏览器全屏。手机上一次显示一侧，载入姿势后自动收起侧栏，留出完整画布。模式选择、步骤编辑与数值调整放在侧栏中；动态肌群标签直接在动画画布中查看。
+当前网页首页采用石墨灰舞台、简化标题与“更多”菜单；左侧“步骤”、右侧“调整”可分别开关，H保留两栏快捷键。手机初始收起侧栏，桌面初始展开步骤栏。模式及视图工具收进“更多”，底部时间轴、09–16节点、速度与单段循环保留。同步肌群面板随当前阶段更新，点“全屏3D”查看独立教学人台。
 
 默认进入“动作分解”，暂停显示你保存的原第 09 步后双撑。“肌群探索”提供 8 个 Flare 功能肌群，选择后显示对应的真实局部网格，右侧提供肌肉功能及相关练习。拖动空白处旋转、滚轮缩放，点击局部网格查看独立解剖名称。“完整人物”返回卡通人物，正面／背面／侧面按钮调整视角。Snow 与解剖参考的比例不同，局部解剖以单独细节视图呈现，不宣称两者精确配准。
 
-动作分解和姿势编辑共用正前方略俯视的推荐机位，按整组动作确定视距。切换步骤、播放或暂停保持镜头；手动旋转和缩放也会保留，点“复位镜头”恢复推荐机位。界面主色为蓝色。
+动作分解和姿势编辑共用推荐机位，切换步骤、播放或暂停保持镜头。网页主画布仍可旋转和缩放；复位入口在对应视图工具中。全屏肌群窗口隔离背景快捷键，关闭后保持原暂停时刻与焦点。
 
-**发力提示** 直接叠加在现有动画中，默认开启。青蓝表示肩臂支撑，淡紫表示核心协调，青柠表示髋腿摆动。默认只保留身体上的柔和功能色区与小热点，不常驻文字卡片和长引线。鼠标移到发力区域或热点后，在人物旁展开这一组的具体肌群、当前作用与两个观察点；悬浮一次只显示一张卡片和最多一条对应引线，身体与卡片的同色编号辅助识别。从身体移到卡片有短暂关闭延迟，卡片屏幕尺寸受控，拉近镜头仍可阅读。
+### 保留入口与历史导览说明
+
+以下记录此前蓝色界面、身体发力提示及有短裤参考浮窗；当前默认首页以以上PR3界面、同步面板与 `mannequin-reference.glb` 教学人台为准，发力导览不默认开启。旧解释/资产用于保留功能与来源追溯，不能当作当前首页外观。
+
+**发力提示** 在此前入口直接叠加在动画中，当时默认开启。青蓝表示肩臂支撑，淡紫表示核心协调，青柠表示髋腿摆动。默认只保留身体上的柔和功能色区与小热点，不常驻文字卡片和长引线。鼠标移到发力区域或热点后，在人物旁展开这一组的具体肌群、当前作用与两个观察点；悬浮一次只显示一张卡片和最多一条对应引线，身体与卡片的同色编号辅助识别。从身体移到卡片有短暂关闭延迟，卡片屏幕尺寸受控，拉近镜头仍可阅读。
 
 点击发力区域或热点，会暂停在当前姿态并展开**全息肌群浮窗**。默认显示 Blender Studio 官方 Human Base Meshes 的完整 Realistic 男性人物，采用浅色低反光皮肤和哑光深蓝运动短裤，保留同源头、耳、颈、躯干、双臂与手足；派生面部低细节处理并闭合眼口深凹，不显示独立眼睛，官方源库中的原眼结构仍保留。体表与覆盖相关部位的服饰表面显示功能定位色区，静态短裤可提示其覆盖的髋前和臀部位置；深层肌群是所在部位示意，色区不是肌肉边界。具体肌群名称、左右与当前作用在窗口中查看。局部查看通过独立镜头放大完成，全身模型保留在场景中。
 
@@ -59,6 +63,8 @@ Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记
 原托马斯的悬浮卡片仍按用户自己的播放／暂停操作观察，不自动暂停。标签内的 **暂停／继续** 和 **反复看** 复用当前动画；**肌群分工** 可查看各肌群的具体作用。
 
 主动作 Snow 人物穿浅灰色上衣和哑光黑色短裤，柔和的布料反光减弱裤裆褶皱的明暗，保留已有姿势和服装轮廓。发力提示使用功能色区与低亮轮廓提色，不增加肌肉形状或额外发光；Snow 黑短裤不着色，上衣不会被髋腿色区染色，髋部的肌群与动作方向由卡片、引线和箭头说明。独立静态参考的深蓝短裤可作覆盖部位的功能位置提示，两种显示范围分别管理。
+
+### 当前循环与原编辑器
 
 “动作分解”使用你确认的完整循环 **9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 9**，最后一帧与第一帧是同一个原第 09 步。左侧显示各姿势的原步骤编号；拖动 9 秒慢放时间轴或用空格播放／暂停。四类支撑入口依次为后双撑、第一侧单手、前双撑、第二侧单手。“辅助训练”提供从掌根承重、主动推地、左右移重到分段全旋的 8 类练习。右上角“保存视图”将当前三维画面保存为 PNG。
 
@@ -134,7 +140,8 @@ node app/tools/verify-v41.mjs
 | 主题 | 当前来源 |
 | --- | --- |
 | 当前App动作与显示契约 | [app/docs/motion-v41.md](app/docs/motion-v41.md) |
-| 当前M0–M7进度、版本/安装包/待验收台账 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |
+| 当前代码检查点、版本/安装包及发布观察 | [app/docs/version-ledger.md](app/docs/version-ledger.md) |
+| 当前M0–M7进度与待验收项 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |
 | 当前验证及证据source state | [app/docs/verification.md](app/docs/verification.md) |
 | 2026-10-07网页历史保存与阶段1恢复 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[当时核查证据](docs/evidence/2026-10-07/README.md) |
 | 外部开发、验证与 PR 提交 | [CONTRIBUTING.md](CONTRIBUTING.md) |
@@ -152,4 +159,4 @@ node app/tools/verify-v41.mjs
 
 可编辑 Blender 场景在 `assets/coach/flare-coach.blend`，原始 Snow 场景在 `assets/blender-studio-source/`，此前渲染在 `output/blender/coach-preview.png`。Git 保存当前代码、运行资产、文档与 `托马斯/` 的原始 JSON 导出和阶段动画快照；生成的 `dist/`、`output/`、下载素材、Blender 场景、缓存和 `托马斯/备份/` 留在本地且被忽略，不包含在 Git 提交中。原始素材和备份没有删除或重建。
 
-卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。默认静态参考：**Human Base Meshes v1.4.1，Blender Studio 与社区贡献者**，CC0，采用 Realistic male 并在本机调整材质与运动短裤。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。本项目未发布或部署远程站点。
+卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。静态参考来源：**Human Base Meshes v1.4.1，Blender Studio 与社区贡献者**，CC0。当前网页人台 `mannequin-reference` 从既有Realistic male体表派生，去掉短裤并局部平顺裆部；有短裤的 `fitness-reference` 及原始资产保留。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。App/网页预览未远程部署；Play送审阶段已部署隐私政策Worker，见版本台账的发布观察。

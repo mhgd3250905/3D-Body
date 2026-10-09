@@ -16,6 +16,60 @@
 
 ---
 
+## 2026-10-09 版本台账文档收束
+
+用户显式要求建立版本管理台账，调用cockpit-closeout，并保存、提交、push。本轮先完成只读Preflight，再执行文档对齐；不新增产品功能或改版号，不读取凭据、日志或构建产物，不重新构建或上传。新 [version-ledger.md](version-ledger.md) 是版本/安装包/发布观察的当前来源；[development-roadmap.md](development-roadmap.md) 继续拥有M0–M7与T01–T05验收状态。
+
+### Preflight与改动归属
+
+| 字段 | 已核对事实 |
+| --- | --- |
+| 仓库边界与分支 | `git rev-parse --show-toplevel` 为 `E:/AII-3D/3D-Body`；`master`，origin为 `https://github.com/mhgd3250905/3D-Body.git` |
+| baseline / 依据 | 完整 `f87881ca29588b983f8c96126cbed4e8a514009a`，可核对ref `f87881c`；上一轮接力恢复后、整合PR5前的已记录起点。`git rev-parse --verify <ref>^{commit}` 成功，`git merge-base --is-ancestor <baseline> HEAD` 为0 |
+| Preflight HEAD | `1b94e9614dc5d1c035ecb056554c7e11015b0b07`，上轮交付文档保存点；不是任意选取的历史提交 |
+| stage delta | `git log --first-parent <baseline>..HEAD` 为PR5合并、PR3合并、交付文档3提交；包含来源分支历史时 `git rev-list --count` 为76。`git diff --name-status --no-renames` 共149路径：M46/A101/D2；13文档、38截图、19 App运行源码、9 App检查、30网页源码/入口、5生成场景、12资产/历史备份、23工具 |
+| 收束scope | PR5→PR3整合后的代码行为、当前版本、交付物与验证记录的文档对齐；按用户要求新建版本台账。代码、配置、模型、包、个人数据及历史导出不改，Play外部状态不在线刷新 |
+| 完整工作区初检 | `git status --porcelain=v1 --untracked-files=all` 完整输出：tracked/staged/unstaged/deleted/renamed均0；untracked只有 `Air-Flare/air-flare-demo.mp4` 1项，属于阶段前已记录的用户素材；不读内容、不提交、不清理 |
+| 本轮改动归属 | 9份文档：8 tracked修改与1新增 `app/docs/version-ledger.md`，均为本Agent确定性对齐；用户素材仍1项。没有其他改动 |
+
+### Canonical discovery与核对结果
+
+从根/App AGENTS与README的明确入口沿一跳发现当前来源，不扫描全仓、不以历史候选替代当前合约。实际读取与核对如下；PR审核文档作为上轮验证证据读取，不扩大canonical发现范围。
+
+| 实际路径 | current / archive判定与对应主题 | 核对及对齐结果 |
+| --- | --- | --- |
+| `AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md` | current，目录约定与使用/接手入口 | 统一指向版本台账和实施/待验收来源；根README更新PR3默认界面，把旧蓝色/发力提示/有短裤浮窗说明标为保留入口与历史；区分应用预览和已部署隐私Worker |
+| `app/docs/development-roadmap.md` | current，M0–M7/T01–T05；末尾e27→b20段为archive/history | M0旧版号修正为1.0.0+1；补PR5/PR3，迁出版本/包/Play记录至新台账；旧收束边界保留为历史，新增本轮边界 |
+| `app/docs/verification.md` | 顶部current；PR4、v41接入、v38及PR5作者自报段为archive/history | 保留历史测试事实，明确作者52/59/68项与本机定向回归不可混同；新增source state和本轮文档验证 |
+| `app/docs/motion-v41.md`、`app/docs/asset-sources.md` | current合约/来源；其v38与白膜段为archive/history | v41固定来源、烘焙/网页分工、穿衣详情与个人备份一致；未修改这些文件 |
+| `docs/friendly-coach.md`、`docs/anatomy-assets.md` | current人物/解剖来源；旧浮窗、早期v4–v21/制作数字为archive/history | 补当前网页加载的mannequin-reference身份和CC0派生范围；保留旧fitness-reference与BodyParts3D出处，旧数字不冒充当前几何验收 |
+| `public/coach/ATTRIBUTION.md` | current Snow署名/修改范围 | v41蒙皮、原20可编辑关节、原导出保留说明一致；未修改 |
+
+实际加载路径另只读核对 `src/muscle-viewer.js`、`src/muscle-sync.js` 与 `public/anatomy/mannequin-reference.json`，两模块均加载mannequin-reference；本次只复用上轮GLB核对，不读取模型。App版本/包名用非敏感源配置核对，不读取key.properties或密钥。
+
+### 复用证据与source state
+
+下表命令是2026-10-09上一轮本机CLI/浏览器的实际证据，本次没有重跑。PR5源 `4e434c29add93b9cf0a992090ba4dfc270b7f1d1` 与实际合并 `3fcf859b44f8b1b45736f5faaa8fff3cb82512ec` 的完整tree均 `eb853c24c5ea58b754753afd591c2ee3b5616c47`；最终PR3源 `53d788bf3bf8817907453234136e6f1bb90f04a7` 与合并 `f44f5922f8aaba76bbc82adfd6c618b4a06ce706` 的完整tree均 `107d301bf6fa5edc83d27c06f1d10ffeed83ebb5`。树身份已用Git本地重新核对。
+
+| 证据 / 命令与当时结果 | 对应source state / 当前适用性 |
+| --- | --- |
+| App `flutter analyze --no-pub`；`flutter test --no-pub --concurrency=1 test/ui test/domain/drill_timer_test.dart test/platform/scene_controller_test.dart`，47项受影响检查在主题4项修复复测后通过；真实dart2js `dart compile js -O4 test_web/drill_timer_runtime_check.dart -o build/timer-web.js`，再 `node -e "globalThis.self = globalThis; require('./build/timer-web.js')"` 通过 | PR5修复后的隔离工作树保存为4e434c2；最终PR3没有改变这些App代码/测试/配置，限定路径Git比较为0。12项计时领域/UI额外复测作为上轮补充，不合并成全量次数 |
+| `node app/scene/tools/verify-detail-transitions.mjs`；在 `app/scene` 执行 `npm run build`、`npm run verify`，通过快速交换机位/同帧、v41 540帧/22骨/44轨道及136案例 | PR5已验证场景；PR3与此场景内容相同；最终产品树适用 |
+| 根 `npm run build`；`node tools/verify-web-motion-v41.mjs --source E:/AII-3D/3D-Body-worktrees/motion-v41-source`；`node tools/verify-web-app-v41.mjs`，双入口构建、181采样/个人迁移和540帧对照通过 | 最终PR3隔离工作树/上述107d产品树；骨差0.000533mm、时钟差0。旧 `node tools/verify-official-poses.mjs` 两边同为5通过/23失败，按旧契约基线记录，不写通过 |
+| App `flutter build web --no-pub --no-web-resources-cdn --no-wasm-dry-run`；`flutter build apk --release --no-pub --target-platform android-arm64`，成功；apksigner验证开发签名，L01字节/哈希见版本台账 | 最终PR3产品树；构建时环境与签名材料另在本机，不能称Git树单独包含安装包或密钥 |
+| 8855/8856浏览器实际操作：App同帧/主题/训练倒数及退出保存，网页全屏键盘/焦点/交错窗口、编辑器JSON入口通过；截图见本轮索引 | 上述实际离线构建的外部观察；不是Android/iOS设备、长期计时或45fps证据 |
+| Play `flutter build appbundle --release`、上传与送审页面观察 | 源 `92e459f54b620c6d72d2a920521e3e3a72b785e9` 加本机签名材料；只证明先前P01及当时状态，不可用作当前产品/审核结论 |
+
+证据适用性的本次只读证明：`git diff --stat f44f592..1b94e96` 只有8份文档；`git diff --quiet f44f592 HEAD -- app/lib app/scene app/assets app/test app/test_web app/pubspec.yaml app/pubspec.lock app/android src public tools index.html muscle-viewer.html vite.config.js package.json package-lock.json` 为0。本轮9份变更也全部是文档。上一轮产品测试/构建仍适用；完整HEAD tree包含文档变化，不能说它仍等于107d产品检查点的完整tree。
+
+### Agent-reported alignment与本轮必要验证
+
+已处理finding：独立版本来源缺失、M0旧版本号、PR4旧包仍标当前/旧通用路径、遗漏Play/PR5/PR3/1b94检查点、PR4旧收束边界未标历史、Play状态时间限定、旧网页显示/人台身份，以及作者自报与本机证据混同。已确定finding清零；T01–T05及23项旧脚本基线失败继续如实保留。
+
+必要验证为在根目录通过Node stdin执行一次性文档检查（不纳入产品测试）：限定9份改动文档的本地Markdown链接/锚点、版本/哈希/字节/SHA与原记录对应、提交/ref/tree身份、上轮验证到当前产品路径差异、保留历史验证正文、工作区路径及归属；另执行 `git diff --check` 与完整status复检。首轮实际结果：108个本地链接、12个锚点、19个Git对象身份、4组包字节/哈希一致；历史验证正文除明确archive注记外不变，产品路径差异0，PR5到最终App路径差异0，状态为9份Agent文档及1项用户素材。入口微调后的对应复检也通过：仍为108链接/12锚点，`git diff --check`通过、产品差异0、HEAD未变；完整status仍是上述9份文档与1项用户素材。证据绑定为Preflight HEAD上上述9份文档的工作树，随后以实际提交SHA定位。没有运行Flutter、3D或构建全量检查。
+
+---
+
 # Google Play 封闭测试送审记录（2026-10-09）
 
 按用户显式授权（"直接帮我做、按推荐选择、不用问"）完成Play Console接入。closeout基线 `1519c4dd70cf6b658c5fa4ac5445343645ab057c`（接力记录的阶段基线），阶段提交 `92e459f`（release签名配置+`1.0.0+1`）与 `6e99c05`（T05台账初记）。上传密钥 `keys/flare-upload.jks` 与 `app/android/key.properties` 均gitignored，仅E盘本机保存；无密钥环境构建自动回退debug签名，行为不变。
@@ -230,7 +284,9 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 
 后续只按受影响范围复测：Dart修改运行分析和相关测试；场景修改先构建/校验再核对App实际画面。必要检查通过后停止扩大测试。
 
-## 2026-10-09 动效与过渡
+## 历史：PR5作者自报的动效与过渡（2026-10-09）
+
+以下三节为PR5来源提交随附的历史自报验证，环境与source state不同于本轮本机整合审核；52/59/68项和作者截图不合并成当前HEAD的全量通过证明。本轮实际回归、构建与浏览器证据以本文顶部及本次source state表为准。
 
 - `lib/ui/motion.dart`：统一动效。`FlareStage` 让壳层的状态式导航也有过渡：更深的页面从右侧推入，原页面左移并变暗；返回时反过来；计时页作为模态从底部升起；同级页面交叉淡入。两侧页面都按 key 保持挂载，状态不会丢。空页面（3D 舞台）不接收触摸。`FadeSlideIn` 负责错落入场，`Pressable` 负责按下缩放，系统开启“减弱动态效果”时全部直接切换。
 - 应用位置：训练库网格按筛选错落入场；卡片和主按钮按下有回弹；筛选胶囊颜色渐变；底部弹层用统一曲线，肌群弹层展开时平滑长高；Disclosure 展开更顺；首页与肌群详情的标题交叉淡入，详情文字随镜头浮现；计时数字滚动切换，圆环和颜色补间过渡，当前组指示条变宽。主题去掉水波纹，改为轻微高亮；关于页改用 Cupertino 过渡。

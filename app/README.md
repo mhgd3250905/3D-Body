@@ -2,9 +2,9 @@
 
 2026-10-09最新：PR #5交互动效及三项审核修复已合并；随后合并PR #3网页肌群界面，App仍播放原v41烘焙动作。Web计时的32位移位上限问题已修复，真实浏览器倒数可进入工作/换侧；长期前后台及真机验收仍待完成。当前试用APK为根项目 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`，44,046,265字节，开发签名；已上传Play的AAB保持原文件。详见 [本轮验证](docs/verification.md)。
 
-2026-10-09当前版已合并PR #4，51项训练均有1024/512浅色配套图，随主题用于训练库、今日训练和详情；原深色图与网页/App v41动作保留。最终ARM64试用包为 `build/app/outputs/flutter-apk/app-release.apk`，具名副本和合并前包在根项目E盘 `output/releases/`。同日稍晚按用户授权启动Google Play上架：版本升 `1.0.0+1`（提交 `92e459f`），生产签名AAB已上传封闭测试轨道并送审，详见 [verification.md](docs/verification.md) 与 [实施路线](docs/development-roadmap.md) 的Play发布台账。
+2026-10-09此前PR #4阶段已合入51套1024/512浅色训练图，原深色图保留。该阶段历史APK用具名 `output/releases/Flare-v41-light-20261009-arm64.apk` 定位；通用 `build/app/outputs/flutter-apk/app-release.apk` 现已更新为PR5/PR3版。同日Play接入将版本升为 `1.0.0+1`（提交 `92e459f`），上传密钥签名AAB已上传封闭测试轨道并送审；本轮未替换。历史包及当时发布观察见 [版本台账](docs/version-ledger.md)，证据见 [verification.md](docs/verification.md)。
 
-当前默认为与网页同步的 **v41 烘焙动作**，原服装/面孔、PR #2精简界面和深浅主题保留。当前合约与复现入口为 [motion-v41.md](docs/motion-v41.md)，版本/交付和待验收台账归入 [实施路线](docs/development-roadmap.md)。v38和米白无衣模特记录保留为历史。
+当前默认为与网页同步的 **v41 烘焙动作**，原服装/面孔、PR #2精简界面和深浅主题保留。当前合约与复现入口为 [motion-v41.md](docs/motion-v41.md)，版本/交付与发布观察归入 [版本管理台账](docs/version-ledger.md)，实施及待验收项归入 [实施路线](docs/development-roadmap.md)。v38和米白无衣模特记录保留为历史。
 
 2026-10-09当前体验：PR #2的精简页面与跟随系统/深色/浅色主题，v41烘焙动画；详情使用原穿衣人物的当前群组柔边代理高亮和固定机位，直立人台可旋转，小卡片交换与同帧返回保持。PR #4浅色训练图随主题选用，原深色图保留。后续动作优化同步网页/App；历史无衣模特和对应截图保留。
 
@@ -48,4 +48,4 @@ npm run build
 
 设置中的“复制本地备份”把部分状态复制为 JSON，需自行保存到文件；当前没有备份导入入口，它还不是完整的迁移方案。
 
-接手先读 [v41合约](docs/motion-v41.md)，再核对 [实施路线及台账](docs/development-roadmap.md)、[资产来源](docs/asset-sources.md)、[验证记录](docs/verification.md) 和 [本地数据说明](docs/privacy-local.md)。[v38接入记录](docs/motion-v38.md)、[2026-10-08交接](docs/handoff-2026-10-08.md) 与 [当时截图](docs/screenshots/2026-10-08/README.md) 保留历史事实，不能当作当前动作或外观的验收。3D接口和复现细节见 [scene/README.md](scene/README.md)。
+接手先读 [v41合约](docs/motion-v41.md)，再核对 [版本管理台账](docs/version-ledger.md)、[实施路线及待验收项](docs/development-roadmap.md)、[资产来源](docs/asset-sources.md)、[验证记录](docs/verification.md) 和 [本地数据说明](docs/privacy-local.md)。[v38接入记录](docs/motion-v38.md)、[2026-10-08交接](docs/handoff-2026-10-08.md) 与 [当时截图](docs/screenshots/2026-10-08/README.md) 保留历史事实，不能当作当前动作或外观的验收。3D接口和复现细节见 [scene/README.md](scene/README.md)。

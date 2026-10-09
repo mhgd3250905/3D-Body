@@ -6,7 +6,7 @@
 
 2026-10-09已整合PR #2的精简界面、深浅主题、穿衣详情代理高亮与固定机位，默认动作随后统一为网页/App v41。PR #4的51套浅色训练图随主题选用，深色原图保留。人台可旋转，双模型交换及同帧返回保持；原始导出、个人动画和草稿保留。
 
-先读本目录 README、`docs/development-roadmap.md`、`docs/asset-sources.md` 与 `docs/verification.md`。根目录 AGENTS 及用户最新明确要求继续适用；制作包的 Capacitor 是建议，当前 Flutter 选择来自用户指令。路线保持 M0–M7，按当前事实记录阶段，不把草稿、占位或桌面证据记成真机/发布验收。
+先读本目录 README、`docs/version-ledger.md`、`docs/development-roadmap.md`、`docs/asset-sources.md` 与 `docs/verification.md`。版本/安装包/发布观察以version-ledger为准，实施及待验收项以development-roadmap为准。根目录 AGENTS 及用户最新明确要求继续适用；制作包的 Capacitor 是建议，当前 Flutter 选择来自用户指令。路线保持 M0–M7，按当前事实记录阶段，不把草稿、占位或桌面证据记成真机/发布验收。
 
 ## 目录职责
 
