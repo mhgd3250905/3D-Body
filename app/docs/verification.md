@@ -1,4 +1,22 @@
-# 当前验证：Google Play 封闭测试送审（2026-10-09）
+# 当前验证：PR #5 / #3 顺序整合（2026-10-09）
+
+已按用户“一条龙推进”的安排，先审核修复并合并PR #5，再合并PR #3。#5合并 `3fcf859b44f8b1b45736f5faaa8fff3cb82512ec`；#3合并 `f44f5922f8aaba76bbc82adfd6c618b4a06ce706`。每次执行前核对源/真实目标，GitHub均确认MERGED；最终产品树 `107d301bf6fa5edc83d27c06f1d10ffeed83ebb5` 与已验证隔离副本一致。无CI或已有review，本次AI结论与已执行合并分别记录，未提交GitHub review/评论。
+
+| 检查 | 实际结果 |
+| --- | --- |
+| 查实修复 | PR5快速交换详情保存中间机位、减少动态效果时主题控制器销毁异常；另修复主分支已有Web计时`1 << 53`编译为0。PR3全屏肌群快捷键穿透，现隔离背景快捷键、约束焦点并正确释放交错窗口的背景锁 |
+| Flutter | analyze无问题；受影响UI/计时/桥接共47项，43项首轮通过、主题4项修复后通过；计时修复后12项领域/UI复测通过。真实dart2js产物另通过倒数、暂停、左右、休息、完成、大时钟起点及实际单调时钟 |
+| 动作与场景 | 场景构建/verify通过；v41 540帧22骨44轨道及136肌群/阶段案例通过，代理裆/手泄漏0。快速进入/重置/切群组交换及同帧/首页机位回归通过；网页/App540帧对照骨差最大0.000533mm，时钟往返差0 |
+| 网页/个人数据 | 根Vite双入口构建通过；当前v41专用检查181采样及个人正式选择/草稿/K/路线/备份失败通过。旧official-poses脚本两边均23失败、报告相同，保留为历史测试契约待更新，不宣称该旧脚本通过 |
+| 浏览器 | 独立8855/8856，390×844及网页桌面布局：原穿衣详情/高亮、同帧交换返回、主题设置、训练退出确认/保存通过。修复后实际倒数进入12秒工作并换到右侧；全屏Space/H/斜线保持后台暂停，按钮Space激活/Tab/同帧关闭与交错重开通过，原编辑器/JSON入口保留；控制台0 error/0 warn |
+| 构建与APK | 离线Flutter Web成功；`flutter build apk --release --no-pub --target-platform android-arm64`成功（123秒）。开发签名APK44,046,265字节，SHA-256 `00bddde38ab954068f85428e398a0de83f5e336f82cc09403e9f3a863468da86`，apksigner验证通过；包名dev.mhgd.flare，1.0.0+1，API24+ |
+| 主项目交付 | 原项目master快进，已验证dist/Web/APK同步回主目录。新APK具名 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`；旧dist/Web/APK另存 `output/releases/before-pr5-pr3-20261009/`。用户Air-Flare素材保留；已送审AAB哈希仍 `9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
+
+详见 [PR #5审核](pr5-audit-2026-10-09.md)、[PR #3审核](pr3-audit-2026-10-09.md) 和 [实际截图](screenshots/2026-10-09-pr5-pr3/README.md)。本轮未上传新Play包；长期前后台计时、触感/iOS手势、真机性能/温度/内存及教练审核继续待真实证据。默认动作、脸/服装、历史资产与个人浏览器数据保留。生成JS的Three.js shader来源空白单独注明，不把它当作手写源码空白检查失败。
+
+---
+
+# Google Play 封闭测试送审记录（2026-10-09）
 
 按用户显式授权（"直接帮我做、按推荐选择、不用问"）完成Play Console接入。closeout基线 `1519c4dd70cf6b658c5fa4ac5445343645ab057c`（接力记录的阶段基线），阶段提交 `92e459f`（release签名配置+`1.0.0+1`）与 `6e99c05`（T05台账初记）。上传密钥 `keys/flare-upload.jks` 与 `app/android/key.properties` 均gitignored，仅E盘本机保存；无密钥环境构建自动回退debug签名，行为不变。
 

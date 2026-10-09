@@ -1,6 +1,6 @@
 # Flutter 实施路线与交付台账
 
-2026-10-09当前开发版：PR #2精简界面/深浅主题、网页/App同步v41与穿衣详情、PR #4的51套浅色训练图。当日稍晚为Google Play上架升版 `1.0.0+1`（提交 `92e459f`，release签名AAB已进入封闭测试送审，见下方"Google Play发布台账"）；此前收束基线为 `0.1.0+1`。内部内容修订不等于M0–M7完整验收。本文件统一维护实施、版本/安装包和待验收台账；动作合约为 [motion-v41.md](motion-v41.md)，证据及source state归入 [verification.md](verification.md)。
+2026-10-09当前开发版：PR #2精简界面/深浅主题、网页/App同步v41与穿衣详情、PR #4的51套浅色训练图、PR #5交互动效/审核修复与PR #3网页肌群界面，两个新PR已按顺序合并。Google Play上架版本仍 `1.0.0+1`（提交 `92e459f` 的release签名AAB已进入封闭测试送审，本轮不替换或重传）；此前收束基线为 `0.1.0+1`。内部内容修订不等于M0–M7完整验收。本文件统一维护实施、版本/安装包和待验收台账；动作合约为 [motion-v41.md](motion-v41.md)，证据及source state归入 [verification.md](verification.md)。
 
 产品范围来自制作包的 `01_产品方案/产品方案.md`，里程碑与验收来自 `09_实施计划/实施计划.md`。外层 PDF 与包内 PDF 哈希相同，没有第二套实施计划。本路线沿用 M0–M7 顺序，技术栈按用户明确要求采用 Flutter。
 
@@ -38,7 +38,7 @@
 | PR #4合并 | `bb94d849099d6a2985aa72c00373ce17d81a9993` | 51套浅色配套图；固定源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`，GitHub已MERGED |
 | 最终App证据保存 | `b20bd33c4635c8d8a9c59990e2587036afc197e8` | 审核/实景/交付记录已push；产品内容同PR4合并，新增提交仅文档与证据 |
 
-PR #3仍OPEN，源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；动作/脚踝/领口已由v41保存点选择性接入网页/App，未整体合并其首页改版。不能把“动作已接入”记作“PR已合并”。当前 `0.1.0+1` 未自行升级，提交区分内部修订。
+后续PR #5已合并为 `3fcf859b44f8b1b45736f5faaa8fff3cb82512ec`，固定修复源 `4e434c29add93b9cf0a992090ba4dfc270b7f1d1`；PR #3已合并为 `f44f5922f8aaba76bbc82adfd6c618b4a06ce706`，固定修复源 `53d788bf3bf8817907453234136e6f1bb90f04a7`。此前v41选择性接入的源 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 仍是烘焙来源；本次网页首页整合不改变动作源。当前版本 `1.0.0+1`，与已上传Play AAB区别在产品提交及签名/文件哈希，未生成新Play版本。
 
 ## 安装包台账
 
@@ -46,6 +46,7 @@ PR #3仍OPEN，源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；动作/脚踝/�
 
 | 包 | 来源及根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
+| 当前PR5+PR3，本地开发签名APK | 已验证产品树 `107d301bf6fa5edc83d27c06f1d10ffeed83ebb5`（合并f44f592）；`app/build/app/outputs/flutter-apk/app-release.apk`，具名 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`；Flutter目标arm64，插件另含其原生ABI | 44,046,265；`00bddde38ab954068f85428e398a0de83f5e336f82cc09403e9f3a863468da86` |
 | 当前v41+PR4，ARM64开发签名 | 已验证tree `cbf81746bca8eb4146c0f99b7b3744db02cb89cf`（实际合并bb94）；`app/build/app/outputs/flutter-apk/app-release.apk`，具名 `output/releases/Flare-v41-light-20261009-arm64.apk` | 44,045,329；`4040188f0c6dfad56e77afb7b99e6878bfefc51e0103e875ef66df5efeb7bfe5` |
 | Play封闭测试AAB `1.0.0+1` | 提交 `92e459f`（树+本机gitignored密钥构建）；`app/build/app/outputs/bundle/release/app-release.aab`，已上传Play Console | 77,816,786；`9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
 | 合并前v41备份，ARM64开发签名 | e27保存点；`output/releases/Flare-v41-before-pr4-20261009-arm64.apk` | 42,836,141；`5c579985b1ed6b7db3ba988400bd2a3d88065e102f2cf83f12d883b6f430a9c7` |
@@ -67,7 +68,7 @@ PR #3仍OPEN，源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；动作/脚踝/�
 
 | ID | 状态 | 目标与通过证据 |
 | --- | --- | --- |
-| T01 长期训练计时 | 待真实前台复测 | 准备→工作→休息→完成，暂停/继续、计次/左右和保存无丢失；前后台中断。现有回归/暂停截图不替代整段实测 |
+| T01 长期训练计时 | Web停3秒已修复；长期/真机仍待复测 | dart2js移位上限造成elapsed为0的问题已修复，编译JS检查与浏览器真实倒数→工作→换侧通过。准备→工作→休息→完成、保存及前后台中断仍须长期设备验收 |
 | T02 设备与3D | 待Android真机/iOS环境 | 当前APK安装、本地加载、构图、点选/互换/返回同帧；≥45fps、冷启动/温度/内存与人工命中表 |
 | T03 内容/数据 | 待审核与闭环 | M4教练审核、M5完整导出/恢复/安全删除/时区；M3原生热身/通知/触感继续 |
 | T04 动作/示意限制 | 已记录，未另行优化 | 源姿态序列化重放约4.06cm关节差、最低脚部约−8.66mm保留；三项原训练图姿势瑕疵与浅图两项差异仍在，以文字要点为准 |

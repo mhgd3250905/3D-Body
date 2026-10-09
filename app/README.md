@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-10-09最新：PR #5交互动效及三项审核修复已合并；随后合并PR #3网页肌群界面，App仍播放原v41烘焙动作。Web计时的32位移位上限问题已修复，真实浏览器倒数可进入工作/换侧；长期前后台及真机验收仍待完成。当前试用APK为根项目 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`，44,046,265字节，开发签名；已上传Play的AAB保持原文件。详见 [本轮验证](docs/verification.md)。
+
 2026-10-09当前版已合并PR #4，51项训练均有1024/512浅色配套图，随主题用于训练库、今日训练和详情；原深色图与网页/App v41动作保留。最终ARM64试用包为 `build/app/outputs/flutter-apk/app-release.apk`，具名副本和合并前包在根项目E盘 `output/releases/`。同日稍晚按用户授权启动Google Play上架：版本升 `1.0.0+1`（提交 `92e459f`），生产签名AAB已上传封闭测试轨道并送审，详见 [verification.md](docs/verification.md) 与 [实施路线](docs/development-roadmap.md) 的Play发布台账。
 
 当前默认为与网页同步的 **v41 烘焙动作**，原服装/面孔、PR #2精简界面和深浅主题保留。当前合约与复现入口为 [motion-v41.md](docs/motion-v41.md)，版本/交付和待验收台账归入 [实施路线](docs/development-roadmap.md)。v38和米白无衣模特记录保留为历史。

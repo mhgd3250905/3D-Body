@@ -18,7 +18,7 @@ GLTFExporter 在烘焙导出时会归一化源法线；后续压缩的“无损�
 
 ## 网页编辑与个人数据
 
-网页采用同一来源的 v41 运行时、正式九步和领口模型，仅同步动作相关模块与时钟，不套用 PR #3 的整套网页界面。原动作模型/JSON 备份在 `public/coach/flare-coach-before-web-v41.glb` 与 `flare-sequence-before-web-v41.json`。
+网页采用同一来源的 v41 运行时、正式九步和领口模型。最初接入仅同步动作相关模块与时钟；2026-10-09后续审核合并PR #3的同步肌群面板与网页界面，原编辑器保留，动作运行代码、GLB和正式序列没有再次修改。原动作模型/JSON备份在 `public/coach/flare-coach-before-web-v41.glb` 与 `flare-sequence-before-web-v41.json`。
 
 默认内置循环升级到 v41；已有个人发布的正式动画、K、路线、姿势库和草稿保留自己的来源。两端一致性验证针对当前内置默认循环，个人旧动画不冒称为 v41。迁移和切换入口的备份行为见 [网页来源清单](../../public/coach/motion-v41-web-manifest.json) 和 [实际验证工具](../../tools/verify-web-motion-v41.mjs)。
 
