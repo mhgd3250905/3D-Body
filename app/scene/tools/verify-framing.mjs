@@ -14,12 +14,11 @@ async function load(name) {
   const bytes = gunzipSync(fs.readFileSync(new URL('../public/coach/' + name, import.meta.url)));
   return new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 }
-const [gltf, study, head] = await Promise.all([load('flare-coach-v38-animated.meshopt.glb.gz'),
-  load('flare-coach-study-body.meshopt.glb.gz'), load('flare-coach-study-head.meshopt.glb.gz')]);
+const revision = process.argv.includes('--v38') ? 'v38' : 'v41';
+const gltf = await load(`flare-coach-${revision}-animated.meshopt.glb.gz`);
 const model = gltf.scene;
-const rigData = JSON.parse(fs.readFileSync(new URL('../public/coach/coach-rig.json', import.meta.url), 'utf8'));
-prepareStudySpine(study.scene, rigData); prepareStudySpine(head.scene, rigData);
-attachStudyBody(model, study.scene); attachStudyHead(model, head.scene);
+const rigFile = revision === 'v41' ? 'coach-v41-rig.json' : 'coach-rig.json';
+const rigData = JSON.parse(fs.readFileSync(new URL('../public/coach/' + rigFile, import.meta.url), 'utf8'));
 const motion = createBakedMotion(gltf, rigData), meshes = [], box = new THREE.Box3();
 model.traverse(mesh => { if (mesh.isSkinnedMesh && mesh.visible) meshes.push(mesh); });
 for (let i = 0; i < 18; i++) { motion.update(i / 2); const b = motion.getMetrics().bounds; box.union(new THREE.Box3(new THREE.Vector3().fromArray(b.min), new THREE.Vector3().fromArray(b.max))); }
@@ -44,7 +43,7 @@ for (const padding of [0.75]) {
   }
   assert.ok(min.x >= 3 && max.x <= 387 && min.y >= 3 && max.y <= 647,
     'Authored body crosses the default stage boundary: ' + JSON.stringify({ min: min.toArray(), max: max.toArray(), camera: camera.position.toArray() }));
-  console.log(JSON.stringify({ status: 'passed', motionRevision: 'v38', playback: 'AnimationMixer',
+  console.log(JSON.stringify({ status: 'passed', motionRevision: revision, playback: 'AnimationMixer',
     scope: 'default-clothed-home-loop-projection', viewport: [390, 650], padding, staticOffset: [10, 138], sampledPoses: 181,
     vertexStride: 8, projectedVertexMin: min.toArray(), projectedVertexMax: max.toArray(), camera: camera.position.toArray() }, null, 2));
 }

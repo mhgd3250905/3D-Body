@@ -11,7 +11,7 @@ import { createCoachMotion } from '../scene/src/legacy/coach-motion.js';
 import { createBakedClock, createBakedMotion } from '../scene/src/baked-motion.js';
 import { attachStudyBody, attachStudyHead, prepareStudySpine, isCoveredActorPart, isOriginalActorHeadPart } from '../scene/src/study-body.js';
 import { buildMmRest, createSurfaceSelection } from '../scene/src/mapped-mesh.js';
-import { GROUPS, phaseAt, phaseTicks } from '../scene/src/phase.js';
+import { GROUPS, phaseAtV38 as phaseAt, phaseTicksV38 as phaseTicks } from '../scene/src/phase.js';
 import { resolveGroup, MUSCLE_BY_ID } from '../scene/src/legacy/muscle-map.js';
 
 // Independent local-source checks. They work in a fresh clone without the ZIP

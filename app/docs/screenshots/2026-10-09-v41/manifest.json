@@ -1,0 +1,27 @@
+{
+  "source": "actual-browser-screenshots",
+  "date": "2026-10-09",
+  "motionSourceCommit": "53d72b412840a942fefc818836b68ad2a2d7e0d1",
+  "files": [
+    {
+      "file": "app-deltoid-stage11.jpg",
+      "bytes": 20133,
+      "sha256": "9bff0c787e11d7200c7f3961b1e3b7875e447805458829fad069763f312759ef"
+    },
+    {
+      "file": "app-stage11.jpg",
+      "bytes": 21898,
+      "sha256": "9917110e63dd8d6678dc53e63d9cfd961f5d3bee1491390ed7b2ddf2632f3bce"
+    },
+    {
+      "file": "web-pose-editor.jpg",
+      "bytes": 84910,
+      "sha256": "87ac1c398b1044c61bc55357d15ef72607b9d890cc0e8fca66127828d13021bb"
+    },
+    {
+      "file": "web-stage11.jpg",
+      "bytes": 41685,
+      "sha256": "ddf83cf97a33f241660145d39c51ca0a4f69b1192a59ca3a6488497b9a4bf942"
+    }
+  ]
+}

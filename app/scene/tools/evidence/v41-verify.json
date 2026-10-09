@@ -1,0 +1,248 @@
+{
+  "status": "passed",
+  "scope": "v41-source-bake-compression-root-vs-app-clock-phases-and-clothed-selection",
+  "commit": "53d72b412840a942fefc818836b68ad2a2d7e0d1",
+  "frames": 540,
+  "tracks": 44,
+  "bones": 22,
+  "rawPositionValues": 633180,
+  "normalizedNormalMaxError": 0,
+  "rawNormalNormalizationMaxDiff": 0.001595157853373435,
+  "helperWeightValues": 1688480,
+  "losslessAttributeValues": 3349896,
+  "triangleCyclicRotations": 35065,
+  "inverseBindValues": 7744,
+  "losslessTrackValues": 106920,
+  "seamTrackMaxError": 0,
+  "rootBoneMaxErrorMm": 0.0005329349374352341,
+  "rootSkinMaxErrorMm": 0.0005658056585111674,
+  "rootMatrixMaxError": 6.938358478453255e-7,
+  "clockRoundtripError": 0,
+  "rootPacingMaxError": 0,
+  "rootMinFootHeightMm": -8.6590365440469,
+  "liveParity": {
+    "version": "v41",
+    "scope": "node-live-runtime-vs-animation-mixer",
+    "capturedFrames": 540,
+    "uniqueFrames": 539,
+    "bones": 22,
+    "tracks": 44,
+    "loopWall": 8.991662288489888,
+    "viewerFrames60": 540,
+    "integrationStep": 0.0004166666666666667,
+    "frameJointMaxErrorMm": 0.0005329349374352341,
+    "frameSkinMaxErrorMm": 0.0005658056585111674,
+    "liveProbeCount": 24,
+    "probeJointMaxErrorMm": 0.23084280202022758,
+    "probeSkinMaxErrorMm": 0.2362187381869877,
+    "skinVertexStride": 97,
+    "skinVertexCountPerFrame": 288,
+    "skinCheckedEveryFrame": true,
+    "determinismMaxDiff": 0,
+    "rootAndArmatureIdentity": true,
+    "boneScalesConstantUnit": true,
+    "seamBoneMaxErrorMm": 0,
+    "probes": [
+      {
+        "probe": 0,
+        "wall": 0.13862146028088576,
+        "sequenceTime": 0.1145824016947078,
+        "joint": "rightForearm",
+        "jointErrorMm": 0.23084280202022758,
+        "skinErrorMm": 0.2362187381869877
+      },
+      {
+        "probe": 1,
+        "wall": 0.5132740556346311,
+        "sequenceTime": 0.3939360707668828,
+        "joint": "leftFoot",
+        "jointErrorMm": 0.037035475941699904,
+        "skinErrorMm": 0.03720218433606901
+      },
+      {
+        "probe": 2,
+        "wall": 0.8879266509883764,
+        "sequenceTime": 0.6659195106970377,
+        "joint": "leftFoot",
+        "jointErrorMm": 0.035469677898614375,
+        "skinErrorMm": 0.0357686030476677
+      },
+      {
+        "probe": 3,
+        "wall": 1.2625792463421217,
+        "sequenceTime": 0.9769226497062794,
+        "joint": "rightFoot",
+        "jointErrorMm": 0.05034702280724455,
+        "skinErrorMm": 0.05329877828852629
+      },
+      {
+        "probe": 4,
+        "wall": 1.6372318416958673,
+        "sequenceTime": 1.2829835483865242,
+        "joint": "leftHand",
+        "jointErrorMm": 0.03555560602358217,
+        "skinErrorMm": 0.042938553074872605
+      },
+      {
+        "probe": 5,
+        "wall": 2.0118844370496123,
+        "sequenceTime": 1.556997262706549,
+        "joint": "leftHand",
+        "jointErrorMm": 0.08475982063031375,
+        "skinErrorMm": 0.08630808588617818
+      },
+      {
+        "probe": 6,
+        "wall": 2.386537032403358,
+        "sequenceTime": 1.9003657746284806,
+        "joint": "leftHand",
+        "jointErrorMm": 0.01874896074809218,
+        "skinErrorMm": 0.032653167168343634
+      },
+      {
+        "probe": 7,
+        "wall": 2.761189627757103,
+        "sequenceTime": 2.2550754235122237,
+        "joint": "leftHand",
+        "jointErrorMm": 0.05261178542616589,
+        "skinErrorMm": 0.07043947301394209
+      },
+      {
+        "probe": 8,
+        "wall": 3.135842223110848,
+        "sequenceTime": 2.529074295688954,
+        "joint": "leftHand",
+        "jointErrorMm": 0.004828892318972408,
+        "skinErrorMm": 0.005077443962169838
+      },
+      {
+        "probe": 9,
+        "wall": 3.5104948184645934,
+        "sequenceTime": 2.820462291140949,
+        "joint": "leftHand",
+        "jointErrorMm": 0.04505221773261796,
+        "skinErrorMm": 0.05305271353994595
+      },
+      {
+        "probe": 10,
+        "wall": 3.885147413818339,
+        "sequenceTime": 3.2507162951273716,
+        "joint": "leftFoot",
+        "jointErrorMm": 0.024943009415752927,
+        "skinErrorMm": 0.025639437779779457
+      },
+      {
+        "probe": 11,
+        "wall": 4.259800009172084,
+        "sequenceTime": 3.6936759099916605,
+        "joint": "leftFoot",
+        "jointErrorMm": 0.0531954597943138,
+        "skinErrorMm": 0.05348739919545127
+      },
+      {
+        "probe": 12,
+        "wall": 4.634452604525829,
+        "sequenceTime": 4.166692934404117,
+        "joint": "rightFoot",
+        "jointErrorMm": 0.03334418186872465,
+        "skinErrorMm": 0.03945888053095536
+      },
+      {
+        "probe": 13,
+        "wall": 5.009105199879575,
+        "sequenceTime": 4.569836390612943,
+        "joint": "rightHand",
+        "jointErrorMm": 0.08476343098010959,
+        "skinErrorMm": 0.08657114710768733
+      },
+      {
+        "probe": 14,
+        "wall": 5.383757795233319,
+        "sequenceTime": 4.992072178383878,
+        "joint": "rightFoot",
+        "jointErrorMm": 0.06501633760132679,
+        "skinErrorMm": 0.07401429212823861
+      },
+      {
+        "probe": 15,
+        "wall": 5.758410390587065,
+        "sequenceTime": 5.326691828231627,
+        "joint": "rightHand",
+        "jointErrorMm": 0.030084328570033226,
+        "skinErrorMm": 0.031402780758790404
+      },
+      {
+        "probe": 16,
+        "wall": 6.1330629859408115,
+        "sequenceTime": 5.596418323551759,
+        "joint": "rightHand",
+        "jointErrorMm": 0.04827187927871101,
+        "skinErrorMm": 0.053480804600158666
+      },
+      {
+        "probe": 17,
+        "wall": 6.5077155812945575,
+        "sequenceTime": 5.909250510758449,
+        "joint": "leftFoot",
+        "jointErrorMm": 0.023942396520473256,
+        "skinErrorMm": 0.0396463198656126
+      },
+      {
+        "probe": 18,
+        "wall": 6.882368176648302,
+        "sequenceTime": 6.294840148432985,
+        "joint": "rightHand",
+        "jointErrorMm": 0.05895162294499529,
+        "skinErrorMm": 0.07902177883408867
+      },
+      {
+        "probe": 19,
+        "wall": 7.257020772002047,
+        "sequenceTime": 6.603919823663014,
+        "joint": "rightHand",
+        "jointErrorMm": 0.0035472233673424524,
+        "skinErrorMm": 0.0037849251662304146
+      },
+      {
+        "probe": 20,
+        "wall": 7.631673367355792,
+        "sequenceTime": 6.903990215942759,
+        "joint": "spineLower",
+        "jointErrorMm": 0.051723484254934414,
+        "skinErrorMm": 0.05264937305149393
+      },
+      {
+        "probe": 21,
+        "wall": 8.006325962709537,
+        "sequenceTime": 7.456191372754968,
+        "joint": "rightHand",
+        "jointErrorMm": 0.015307135410093533,
+        "skinErrorMm": 0.015552329948754872
+      },
+      {
+        "probe": 22,
+        "wall": 8.380978558063283,
+        "sequenceTime": 8.019383963424412,
+        "joint": "rightPatella",
+        "jointErrorMm": 0.09651521820960972,
+        "skinErrorMm": 0.09208355540371546
+      },
+      {
+        "probe": 23,
+        "wall": 8.75563115341703,
+        "sequenceTime": 8.599212639021742,
+        "joint": "rightFoot",
+        "jointErrorMm": 0.02374678044169914,
+        "skinErrorMm": 0.023879773342269196
+      }
+    ]
+  },
+  "selectionCases": 136,
+  "tintedCases": 136,
+  "curatedAngles": 136,
+  "groinLeaks": 0,
+  "handLeaks": 0,
+  "originalFaceMaterialIdentity": true,
+  "runtimeStudyAttached": false,
+  "limitation": "CPU parity is not browser shader output, full-surface floor acceptance, native device performance, or clinical validation."
+}

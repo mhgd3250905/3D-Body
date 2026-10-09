@@ -79,8 +79,8 @@ export class FlarePlayer {
   async load() {
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
     const [gltf, rig] = await Promise.all([
-      loadOfflineGlb('./coach/flare-coach-v38-animated.meshopt.glb.gz'),
-      fetch(new URL('./coach/coach-rig.json', document.baseURI)).then(response => {
+      loadOfflineGlb('./coach/flare-coach-v41-animated.meshopt.glb.gz'),
+      fetch(new URL('./coach/coach-v41-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
     ]);

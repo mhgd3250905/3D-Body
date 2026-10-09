@@ -1,0 +1,122 @@
+{
+  "repository": "https://github.com/mhgd3250905/3D-Body",
+  "commit": "53d72b412840a942fefc818836b68ad2a2d7e0d1",
+  "sourceAsset": "public/coach/flare-coach.glb",
+  "sourceAssetSha256": "c14683e4ffa8ebbb3e6712af8e04ee3276059398cec03b1192d5b67c179b858f",
+  "files": [
+    {
+      "source": "src/viewer.js",
+      "destination": "source/v41-runtime/src/viewer.js",
+      "bytes": 36240,
+      "sha256": "d83da3d7caf9327457ebcddbb916ae78cd0ea8c6bb15ccabe2c8bbfb4813e2c4"
+    },
+    {
+      "source": "src/coach-motion.js",
+      "destination": "source/v41-runtime/src/coach-motion.js",
+      "bytes": 115396,
+      "sha256": "66ab706932a4f2937e890e14af2061c1c995b149c08a2f79ea9b38d5e617637c"
+    },
+    {
+      "source": "src/spine-helpers.js",
+      "destination": "source/v41-runtime/src/spine-helpers.js",
+      "bytes": 6806,
+      "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a"
+    },
+    {
+      "source": "src/flare-phase-muscles.js",
+      "destination": "source/v41-runtime/src/flare-phase-muscles.js",
+      "bytes": 12621,
+      "sha256": "9948dcad4a1104b796effc0f5ca239648c7e3476e5eace6689bcc04e3ff07963"
+    },
+    {
+      "source": "src/flare-muscle-groups.js",
+      "destination": "source/v41-runtime/src/flare-muscle-groups.js",
+      "bytes": 8424,
+      "sha256": "6e3acc0b17350ee5a6ee7fa1299725659d45b395ec3e086197720abceeac32ee"
+    },
+    {
+      "source": "src/transition-edits.js",
+      "destination": "source/v41-runtime/src/transition-edits.js",
+      "bytes": 11373,
+      "sha256": "e1eb8dace42e789e22b2faf8dd673cfaad00201585aa8d6f1b9b820d3a7f70a9"
+    },
+    {
+      "source": "src/data.js",
+      "destination": "source/v41-runtime/src/data.js",
+      "bytes": 20568,
+      "sha256": "8a09a6e288299466f76a5597959ac33232b5ad637b932f7577a19571055311b0"
+    },
+    {
+      "source": "src/pose-editor.js",
+      "destination": "source/v41-runtime/src/pose-editor.js",
+      "bytes": 19147,
+      "sha256": "a91511647793398726ad0452d3d1825498c701206badf29b1a434b32a9d3d6c8"
+    },
+    {
+      "source": "src/trajectory-guide.js",
+      "destination": "source/v41-runtime/src/trajectory-guide.js",
+      "bytes": 22522,
+      "sha256": "decc64fd80d7b850fbcb76e20d2a5f41764e655f4220f7f2d333aac24df46418"
+    },
+    {
+      "source": "src/movement-guide.js",
+      "destination": "source/v41-runtime/src/movement-guide.js",
+      "bytes": 43240,
+      "sha256": "ea5ea038a7aaf02252fbfbbdb177463534c6aa3233304bbe1629cc161773361d"
+    },
+    {
+      "source": "src/flare-sequence.js",
+      "destination": "source/v41-runtime/src/flare-sequence.js",
+      "bytes": 23795,
+      "sha256": "70af6dc13e4f41a6f405f66f4cf19c5574211a8dcd72b3a075785625b7dfd37c"
+    },
+    {
+      "source": "src/limb-arc.js",
+      "destination": "source/v41-runtime/src/limb-arc.js",
+      "bytes": 7231,
+      "sha256": "ac20bb20357c1cb2f7ace3b9b250e1b9de5933b1b92d72984189afef71a2a8dc"
+    },
+    {
+      "source": "src/official-poses.js",
+      "destination": "source/v41-runtime/src/official-poses.js",
+      "bytes": 7177,
+      "sha256": "38c22d1b2282fc6a7f3df246dae296160b3dc525e9703d86b343f405bd08b34b"
+    },
+    {
+      "source": "src/periodic-flare.js",
+      "destination": "source/v41-runtime/src/periodic-flare.js",
+      "bytes": 7767,
+      "sha256": "0608de1c78709c28de98d36f41d4e53a40a5767736b5f4e8378462540f8ef338"
+    },
+    {
+      "source": "src/segment-guides.js",
+      "destination": "source/v41-runtime/src/segment-guides.js",
+      "bytes": 10151,
+      "sha256": "2b2c7b8f41cdf2943ea123f25abb2edf61bf11c1d46ab3acdd56bfd29884e8ce"
+    },
+    {
+      "source": "src/segment-guide-motion.js",
+      "destination": "source/v41-runtime/src/segment-guide-motion.js",
+      "bytes": 4036,
+      "sha256": "7d85ff8edcc076a79623a70446c1efed07e0988536f2fbb7f9a97fef551fea17"
+    },
+    {
+      "source": "src/foot-curves.js",
+      "destination": "source/v41-runtime/src/foot-curves.js",
+      "bytes": 3628,
+      "sha256": "2900b131bfc192a7c2f6e66608e9a0dd78d5aa0f04c258ba488297443ffa63f5"
+    },
+    {
+      "source": "public/coach/flare-sequence.json",
+      "destination": "source/v41-runtime/public/coach/flare-sequence.json",
+      "bytes": 26260,
+      "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+    },
+    {
+      "source": "public/coach/flare-sequence-before-9-16.json",
+      "destination": "source/v41-runtime/public/coach/flare-sequence-before-9-16.json",
+      "bytes": 24249,
+      "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f"
+    }
+  ]
+}

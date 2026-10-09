@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import clockData from './v38-clock.json' with { type: 'json' };
+import clockData from './v41-clock.json' with { type: 'json' };
+import historicalClockData from './v38-clock.json' with { type: 'json' };
 
 // The host retains its authored 0–9 sequence domain. Only this boundary maps
 // it to the already-paced animation clip; no second pacing/IK pass is applied.
@@ -20,9 +21,12 @@ export function createBakedClock(data = clockData) {
   return { toWall, toSequence, advance, duration: wall.at(-1), period: sequence.at(-1) };
 }
 
-export function createBakedMotion(gltf, rig, clock = createBakedClock()) {
-  const model = gltf.scene, clip = gltf.animations.find(value => value.name === 'flare_v38_loop');
-  if (!clip || clip.tracks.length !== 44) throw new Error('v38_clip_missing');
+export function createBakedMotion(gltf, rig, clock = null) {
+  const model = gltf.scene, clip = gltf.animations.find(value => value.name === 'flare_v41_loop')
+    ?? gltf.animations.find(value => value.name === 'flare_v38_loop');
+  if (!clip || clip.tracks.length !== 44) throw new Error('baked_clip_missing');
+  const revision = clip.name === 'flare_v41_loop' ? 'v41' : 'v38';
+  clock ??= createBakedClock(revision === 'v41' ? clockData : historicalClockData);
   model.updateMatrixWorld(true);
   const bones = new Map(), rest = new Map(), meshes = [], boxes = new Map();
   model.traverse(object => {
@@ -32,7 +36,7 @@ export function createBakedMotion(gltf, rig, clock = createBakedClock()) {
     }
     if (object.isSkinnedMesh) { object.frustumCulled = false; meshes.push(object); }
   });
-  if (bones.size !== 22) throw new Error('v38_rig_mismatch');
+  if (bones.size !== 22) throw new Error('baked_rig_mismatch');
   const point = new THREE.Vector3();
   for (const mesh of meshes) {
     mesh.skeleton.update();
@@ -94,7 +98,7 @@ export function createBakedMotion(gltf, rig, clock = createBakedClock()) {
       bounds = { min: union.min.toArray(), max: union.max.toArray() };
     }
     return { time, period: clock.period, joints, bounds, neutralHeight: rig.height, source: rig.source, license: rig.license,
-      motionRevision: 'v38', playback: 'AnimationMixer', clip: clip.name, wallTime: clock.toWall(time), clipDuration: clip.duration,
+      motionRevision: revision, playback: 'AnimationMixer', clip: clip.name, wallTime: clock.toWall(time), clipDuration: clip.duration,
       skinning: { bones: bones.size, batches: meshes.length, authoredWeights: true } };
   }
   return { reset, update, getMetrics, clock, dispose() { mixer.stopAllAction(); mixer.uncacheRoot(model); } };

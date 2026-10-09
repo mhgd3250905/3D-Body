@@ -11,7 +11,7 @@ import { createCoachMotion } from '../scene/src/legacy/coach-motion.js';
 import { computePacing, pacingRate, paceStep } from '../scene/src/pacing.js';
 import { buildMmRest } from '../scene/src/mapped-mesh.js';
 import { attachStudyBody, attachStudyHead } from '../scene/src/study-body.js';
-import { GROUPS, phaseAt, phaseTicks } from '../scene/src/phase.js';
+import { GROUPS, phaseAtV38 as phaseAt, phaseTicksV38 as phaseTicks } from '../scene/src/phase.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sceneRoot = path.join(root, 'app/scene');

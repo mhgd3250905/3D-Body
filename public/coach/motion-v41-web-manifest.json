@@ -1,0 +1,115 @@
+{
+  "format": "flare-web-motion-source-manifest",
+  "version": 1,
+  "target": "v41",
+  "source": {
+    "repository": "mhgd3250905/3D-Body",
+    "pullRequest": 3,
+    "commit": "53d72b412840a942fefc818836b68ad2a2d7e0d1",
+    "files": [
+      {
+        "path": "src/coach-motion.js",
+        "sha256": "66ab706932a4f2937e890e14af2061c1c995b149c08a2f79ea9b38d5e617637c",
+        "bytes": 115396
+      },
+      {
+        "path": "src/spine-helpers.js",
+        "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a",
+        "bytes": 6806
+      },
+      {
+        "path": "src/viewer.js",
+        "sha256": "d83da3d7caf9327457ebcddbb916ae78cd0ea8c6bb15ccabe2c8bbfb4813e2c4",
+        "bytes": 36240
+      },
+      {
+        "path": "public/coach/flare-coach.glb",
+        "sha256": "c14683e4ffa8ebbb3e6712af8e04ee3276059398cec03b1192d5b67c179b858f",
+        "bytes": 7508016
+      },
+      {
+        "path": "public/coach/flare-sequence.json",
+        "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184",
+        "bytes": 26260
+      }
+    ]
+  },
+  "targetFiles": [
+    {
+      "path": "src/coach-motion.js",
+      "sha256": "94b2d94bbc2291135c5cffc24d021437bbf884f7c815cd5cba90ab4187f66764",
+      "bytes": 116046
+    },
+    {
+      "path": "src/spine-helpers.js",
+      "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a",
+      "bytes": 6806
+    },
+    {
+      "path": "src/viewer.js",
+      "sha256": "2dc5d2c59d0a649f668e4288d8b43f1e4b118961d3744015ffcd622399f1d27f",
+      "bytes": 32794
+    },
+    {
+      "path": "src/official-poses.js",
+      "sha256": "c19711fc85aa767df5615d78cb1171d8f3f5cb69e10b6cdecb0c9cc6c9eb92a2",
+      "bytes": 10210
+    },
+    {
+      "path": "src/main.js",
+      "sha256": "747def38e3ff41a2ba6a16c31a8cf81f6775bc48b77c30919e9f71c0a7bd7c29",
+      "bytes": 44183
+    },
+    {
+      "path": "index.html",
+      "sha256": "8ca67644806fe03d7f8bf89252b7519655fabe420034dd82ea76d26f5e27c0f2",
+      "bytes": 13816
+    },
+    {
+      "path": "public/coach/flare-coach.glb",
+      "sha256": "c14683e4ffa8ebbb3e6712af8e04ee3276059398cec03b1192d5b67c179b858f",
+      "bytes": 7508016
+    },
+    {
+      "path": "public/coach/flare-sequence.json",
+      "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184",
+      "bytes": 26260
+    }
+  ],
+  "previousDefaultBackups": [
+    {
+      "path": "public/coach/flare-coach-before-web-v41.glb",
+      "sha256": "ffb7333e94662e2e27846cee2e3413c184109fd72863e8a2254a3975dcc3c85f",
+      "bytes": 15070632
+    },
+    {
+      "path": "public/coach/flare-sequence-before-web-v41.json",
+      "sha256": "743b028afef5cb7a854a0445c24a1456ef0dc0b8171a8a85df29241be57cf787",
+      "bytes": 25507
+    }
+  ],
+  "adaptation": [
+    "Source GLB and sequence copied byte for byte; original exports remain untouched.",
+    "Only the source viewer pacing methods and clock advance were copied; scene appearance and editor UI are retained.",
+    "Manual mode preserves the paused surface and original editable arm/leg constraints; live default update and pacing remain source-identical.",
+    "Actual trajectory sampling now uses the same smooth pose and body offset as playback.",
+    "Authored K/routes/explicit linear interpolation retain the original editable interpolation and clock.",
+    "Pacing invalidates on both viewer and direct motion sequence changes.",
+    "Automatic migration backs up old default and K bytes; explicit published personal selections remain active.",
+    "The visible v41 default button first stores an independent selection backup; no personal pose library or K draft is overwritten."
+  ],
+  "verification": {
+    "command": "node tools/verify-web-motion-v41.mjs --source <read-only PR 3 source checkout>",
+    "node": "24.15.0",
+    "samples": 181,
+    "maximumSourceJointDifferenceMeters": 0,
+    "maximumTrajectoryJointDifferenceMeters": 0,
+    "maximumSourceClockRateDifference": 0,
+    "manualAndKFidelityChecksPassed": true,
+    "storageBackupAndRejectedWriteChecksPassed": true
+  },
+  "limitations": [
+    "A captured smooth playback frame is not an exact serialized manual pose: source t=0.45s direct capture/reapply retains the historical 0.040632031807641064 m maximum joint difference. Entering the editor itself does not reapply or shift the frame.",
+    "Source shoe floor penetration is retained rather than silently changing the default waveform; browser visual verification remains part of integration."
+  ]
+}

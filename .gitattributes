@@ -8,3 +8,6 @@
 *.png binary
 *.jpg binary
 *.zip binary
+
+# Immutable v41 oracle hashes cover the original checkout bytes, including CRLF.
+app/scene/source/v41-runtime/** -text

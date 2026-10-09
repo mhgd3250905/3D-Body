@@ -1,5 +1,7 @@
 # Flutter App 工作约定
 
+当前动作同步为网页/App v41，合约为 `docs/motion-v41.md`，历史v38与下文裸肤约定不覆盖当前动作或PR #2穿衣详情。App不执行源IK/节奏积分，采用烘焙GLB、对应时钟和阶段；旧资产清单保留。工作副本、缓存和输出在E盘，禁止新增C盘项目资源。
+
 2026-10-09 PR #2 整合的最新外观合约覆盖下文此前裸肤详情约定：全页面精简与深浅主题，详情人物原服装/原面孔，仅当前群组柔边代理着色；固定动作机位，人台可旋转，双模型小卡片交换及同帧返回保持。动画保留 v38 烘焙 GLB/AnimationMixer。后续 v41 动作优化必须同步网页与 App，保留原始导出和个人草稿。
 
 先读本目录 README、`docs/development-roadmap.md`、`docs/asset-sources.md` 与 `docs/verification.md`。根目录 AGENTS 及用户最新明确要求继续适用；制作包的 Capacitor 是建议，当前 Flutter 选择来自用户指令。路线保持 M0–M7，按当前事实记录阶段，不把草稿、占位或桌面证据记成真机/发布验收。

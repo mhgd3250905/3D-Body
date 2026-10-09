@@ -1,5 +1,7 @@
 # 资产来源与复现
 
+当前默认动作采用PR #3固定提交 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 的v41网格/运行时，独立清单为 `scene/tools/v41-source-manifest.json`，复现见 [v41同步](motion-v41.md)。当前穿衣详情代理高亮，不加载历史白膜；下方旧制作包、v38和白膜记录保留历史，不覆盖当前合约。
+
 App 的内容与设计导入基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`。本地解压副本位于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`，该副本保留原文件。以下原包“包内路径”均相对于这一目录。2026-10-09动作另采用 `Flare-v38-motion-package.zip` 推荐的烘焙 GLB，来源和兼容记录见 [v38 接入说明](motion-v38.md)。此前同源 Snow 白膜派生按用户最新要求恢复用于指定肌群详情，没有下载或更换作者资产；首页仍使用原着装人物。
 
 ## 不可变基线

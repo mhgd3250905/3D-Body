@@ -2,11 +2,13 @@
 
 ## Flutter App（2026-10-08 开始）
 
+当前默认动作已统一为网页/App **v41**，来源为 PR #3 的脚踝扭转与领口蒙皮修正；App继续烘焙播放，网页保留原编辑器。复现、同步验证及个人旧动画切换见 [v41动作同步](app/docs/motion-v41.md)。下方v38与无衣模特描述为此前记录，不覆盖当前v41和PR #2穿衣详情合约。
+
 2026-10-09 已按用户认可的 PR #2 整合全页面精简与深浅主题：详情动作人物保留原服装和面孔，用当前群组柔边代理高亮，固定全身机位；直立人台可旋转，卡片交换与同帧返回保持。动画仍为 v38 烘焙播放。此合约覆盖下方最初接入 v38 时的米白无衣详情外观，历史截图和派生资产保留。后续动作优化同步网页与 App。
 
 按用户提供的专家制作包推进的 Flutter 工程在 [app/](app/README.md)。页面、训练计时与本地记录使用 Flutter；3D 按 2026-10-09 用户要求更新为动作包推荐的 v38 烘焙 GLB，以本地 Three.js AnimationMixer 播放，模型和素材离线打包。首页保留原穿衣 Snow；指定肌群详情恢复暖米白哑光、无衣、无五官的同源动作模特，仅显示当前群组的浅红柔边教学区域，没有肌肉分区纹路或其他阶段色。保留大动作画面、小直立人台及点击卡片交换布局；直立肌群人台保留精细分区线、当前浅红选区与轻柔淡影。首页未选中的同步小图保持原阶段功能色。两种人物不宣称精确解剖配准，原网页、动作导出、个人草稿与历史检查点继续保留。来源、时钟及外观适配见 [v38 接入说明](app/docs/motion-v38.md)，当前验证以 [App 验证记录](app/docs/verification.md) 为准。
 
-当前接手先读 [v38 接入说明](app/docs/motion-v38.md)。[2026-10-08 App 交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留该检查点的实际状态，其中 v33 动作及取消白膜的决定已被最新要求覆盖；训练、课程、本地数据与设备验证的未完成事项仍有效。
+当前接手先读 [v41 同步说明](app/docs/motion-v41.md)。[v38 接入说明](app/docs/motion-v38.md)、[2026-10-08 App 交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留此前检查点，其中动作版本及详情外观已被当前要求覆盖；训练、课程、本地数据与设备验证的未完成事项仍有效。
 
 双击 `start-flutter.cmd` 打开已构建的 App 浏览器预览（`http://127.0.0.1:8820/`）。首次构建与 Android/iOS 运行见 [App 使用说明](app/README.md)，专家 M0–M7 与本次真实完成范围见 [App 路线与进度](app/docs/development-roadmap.md)。以下内容仍描述现有网页。
 
@@ -111,10 +113,12 @@ npm run build
 
 整段调整的记录、范围拆分、骨架计算与界面分别位于 `src/segment-guides.js`、`src/segment-guide-range.js`、`src/segment-guide-motion.js`、`src/segment-guide-editor.js`，时间轴范围与标记由 `src/transition-transport.js` 处理。最新骨架修复见 [智能过渡髋腿扭转修复](docs/animation-editor.md#2026-10-06-智能过渡髋腿扭转修复)；时间轴操作见 [智能调节时间轴锁定检查](docs/animation-editor.md#2026-10-06-智能调节时间轴锁定检查)。此前旋转中心、中点重绘与整段检查作为历史记录保留。
 
-当前正式循环的轻量检查命令如下，检查保存值、循环闭合、采用与迁移逻辑，不启动浏览器：
+当前 v41 默认循环与两端同步的轻量检查命令如下，不启动浏览器；来源逐项哈希见 `public/coach/motion-v41-web-manifest.json`：
 
 ```powershell
-node tools/verify-saved-loop-ui.mjs --module-only
+node tools/verify-web-motion-v41.mjs
+node tools/verify-web-app-v41.mjs
+node app/tools/verify-v41.mjs
 ```
 
 可选的针对性浏览器检查、前置条件与历史测试的适用范围见 `docs/pose-editor.md`。旧检查脚本包含早期五步、旧 ID、旧时间轴或旧存储键的固定断言，不能作为当前版本通过证据。

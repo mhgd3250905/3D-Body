@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 8842",
     "build": "vite build",
-    "verify": "node ../tools/verify-scene.mjs && node ../tools/verify-v38.mjs",
+    "verify": "node ../tools/verify-scene.mjs && node ../tools/verify-v38.mjs && node ../tools/verify-v41.mjs",
+    "bake:v41": "node tools/bake-v41-node.mjs",
+    "optimize:v41": "node tools/optimize-v41.mjs",
     "optimize:v38": "node tools/optimize-v38.mjs",
     "optimize:model": "node tools/optimize-model.mjs",
     "optimize:study": "node tools/optimize-study-body.mjs",
