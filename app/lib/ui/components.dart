@@ -110,18 +110,21 @@ class RoundIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double diameter;
   @override
-  Widget build(BuildContext context) => IconButton(
-    onPressed: onPressed,
-    tooltip: tooltip,
-    style: IconButton.styleFrom(
-      fixedSize: Size.square(diameter),
-      minimumSize: const Size.square(44),
-      backgroundColor: FlareColors.control,
-      foregroundColor: FlareColors.controlIcon,
-      side: BorderSide(color: FlareColors.controlBorder, width: .5),
-      shape: const CircleBorder(),
+  Widget build(BuildContext context) => Pressable(
+    scale: .9,
+    child: IconButton(
+      onPressed: onPressed,
+      tooltip: tooltip,
+      style: IconButton.styleFrom(
+        fixedSize: Size.square(diameter),
+        minimumSize: const Size.square(44),
+        backgroundColor: FlareColors.control,
+        foregroundColor: FlareColors.controlIcon,
+        side: BorderSide(color: FlareColors.controlBorder, width: .5),
+        shape: const CircleBorder(),
+      ),
+      icon: Icon(icon, size: 18),
     ),
-    icon: Icon(icon, size: 18),
   );
 }
 
@@ -132,35 +135,38 @@ class DotTag extends StatelessWidget {
   final Color? color;
   final VoidCallback? onTap;
   @override
-  Widget build(BuildContext context) => Material(
-    color: FlareColors.pill,
-    shape: StadiumBorder(side: BorderSide(color: FlareColors.hairline)),
-    child: InkWell(
-      customBorder: const StadiumBorder(),
-      onTap: onTap,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 36),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (color != null) ...[
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
+  Widget build(BuildContext context) => Pressable(
+    scale: .95,
+    child: Material(
+      color: FlareColors.pill,
+      shape: StadiumBorder(side: BorderSide(color: FlareColors.hairline)),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 36),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (color != null) ...[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
+                  const SizedBox(width: 7),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 13, color: FlareColors.secondary),
                 ),
-                const SizedBox(width: 7),
               ],
-              Text(
-                label,
-                style: TextStyle(fontSize: 13, color: FlareColors.secondary),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -344,6 +350,8 @@ class DrillTile extends StatelessWidget {
                     width: 64,
                     height: 64,
                     fit: BoxFit.cover,
+                    frameBuilder: (context, child, frame, sync) =>
+                        fadeInFrame(context, child, frame, sync),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -412,9 +420,14 @@ class DrillCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Image.asset(
-                drillArt(drill.thumbnailAsset),
-                fit: BoxFit.cover,
+              child: ColoredBox(
+                color: FlareColors.raised,
+                child: Image.asset(
+                  drillArt(drill.thumbnailAsset),
+                  fit: BoxFit.cover,
+                  frameBuilder: (context, child, frame, sync) =>
+                      fadeInFrame(context, child, frame, sync),
+                ),
               ),
             ),
             Padding(

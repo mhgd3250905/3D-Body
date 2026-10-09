@@ -217,6 +217,8 @@ class _WelcomePageState extends State<WelcomePage> {
                         'assets/brand/hero-thomas.webp',
                         fit: BoxFit.contain,
                         semanticLabel: s.welcomeHeadline,
+                        frameBuilder: (context, child, frame, sync) =>
+                            fadeInFrame(context, child, frame, sync),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -302,41 +304,50 @@ class _FilterPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(right: 8),
-    child: AnimatedContainer(
-      duration: FlareMotion.of(context, FlareMotion.fade),
-      curve: FlareMotion.standard,
-      decoration: ShapeDecoration(
-        color: selected ? FlareColors.solid : FlareColors.pill,
-        shape: StadiumBorder(
-          side: BorderSide(
-            color: selected ? Colors.transparent : FlareColors.hairline,
+    child: Semantics(
+      selected: selected,
+      button: true,
+      child: Pressable(
+        scale: .95,
+        child: AnimatedContainer(
+          duration: FlareMotion.of(context, FlareMotion.fade),
+          curve: FlareMotion.standard,
+          decoration: ShapeDecoration(
+            color: selected ? FlareColors.solid : FlareColors.pill,
+            shape: StadiumBorder(
+              side: BorderSide(
+                color: selected ? Colors.transparent : FlareColors.hairline,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 36),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                      color: selected
-                          ? FlareColors.onSolid
-                          : FlareColors.secondary,
-                    ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              customBorder: const StadiumBorder(),
+              onTap: onTap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 36),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: selected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: selected
+                              ? FlareColors.onSolid
+                              : FlareColors.secondary,
+                        ),
+                      ),
+                      ?trailing,
+                    ],
                   ),
-                  ?trailing,
-                ],
+                ),
               ),
             ),
           ),
@@ -421,8 +432,11 @@ class _LibraryPageState extends State<LibraryPage> {
                             _FilterPill(
                               label: item.$2,
                               selected: tier == item.$1,
-                              onTap: () =>
-                                  widget.store.updateSettings(tier: item.$1),
+                              onTap: () {
+                                if (tier == item.$1) return;
+                                FlareHaptics.selection();
+                                widget.store.updateSettings(tier: item.$1);
+                              },
                             ),
                           PopupMenuButton<String?>(
                             tooltip: s.allSections,
@@ -616,6 +630,8 @@ class DrillDetailPage extends StatelessWidget {
                       child: Image.asset(
                         drillArt(drill.imageAsset),
                         fit: BoxFit.cover,
+                        frameBuilder: (context, child, frame, sync) =>
+                            fadeInFrame(context, child, frame, sync),
                       ),
                     ),
                     Positioned.fill(

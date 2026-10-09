@@ -48,6 +48,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   String? _sceneTheme;
   String? _stageKey;
   bool _holdWatch = false;
+
+  /// One sheet at a time: a quick double tap must not stack two sheets.
+  bool _sheetOpen = false;
   Catalog get catalog => widget.catalog;
   LearningStore get store => widget.store;
 
@@ -159,6 +162,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _swapDetailCard() {
     if (_detail == null || !_watchVisible) return;
+    FlareHaptics.light();
     _syncSceneVisibility();
     _scene.setDetailModel(
       _scene.detailModel == 'motion' ? 'muscles' : 'motion',
@@ -349,6 +353,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             setState(() => _holdWatch = false);
                           }
                         },
+                        onSwipeBack: canBack && !_timing && route.$4 != null
+                            ? _back
+                            : null,
                         child: route.$4,
                       ),
                     ],
@@ -540,6 +547,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           fontSize: 15,
                           height: 1.35,
                           fontWeight: FontWeight.w600,
+                          fontFeatures: [FontFeature.tabularFigures()],
                         ),
                       ),
                     ],
@@ -568,6 +576,35 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       controller: _scene,
                     )
                   : ColoredBox(color: FlareColors.background),
+              // The figure fades up out of a quiet placeholder instead of
+              // popping in; a failure gets one calm message and a retry.
+              IgnorePointer(
+                ignoring: _scene.errorCode == null,
+                child: AnimatedSwitcher(
+                  duration: FlareMotion.of(context, FlareMotion.push),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  child: _scene.errorCode != null
+                      ? _SceneError(
+                          key: const ValueKey('scene-error'),
+                          message: s.sceneFailed,
+                          retry: s.retry,
+                          onRetry: () {
+                            _scene.pause();
+                            setState(() {
+                              _configured = false;
+                              _sceneGeneration++;
+                            });
+                          },
+                        )
+                      : widget.enableScene && !_scene.ready
+                      ? _SceneLoading(
+                          key: const ValueKey('scene-loading'),
+                          label: s.sceneLoading,
+                        )
+                      : const SizedBox.shrink(key: ValueKey('scene-ready')),
+                ),
+              ),
               if (detail != null)
                 Positioned(
                   left: 12,
@@ -630,25 +667,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             ],
           ),
         ),
-        if (_scene.errorCode != null)
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(child: Text(s.sceneFailed)),
-                TextButton(
-                  onPressed: () {
-                    _scene.pause();
-                    setState(() {
-                      _configured = false;
-                      _sceneGeneration++;
-                    });
-                  },
-                  child: Text(s.retry),
-                ),
-              ],
-            ),
-          ),
         if (detail == null) ...[
           FadeSlideIn(
             key: const ValueKey('transport'),
@@ -818,7 +836,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   : Icons.play_arrow_rounded,
               diameter: 48,
               solid: !_scene.playing,
-              onTap: () => _scene.playing ? _scene.pause() : _scene.play(),
+              onTap: () {
+                FlareHaptics.light();
+                _scene.playing ? _scene.pause() : _scene.play();
+              },
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -853,6 +874,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           style: TextStyle(
                             fontSize: 11,
                             color: FlareColors.dim,
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
                       ],
@@ -892,11 +914,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     child: SizedBox(
       width: diameter < 44 ? 44 : diameter,
       height: diameter < 44 ? 44 : diameter,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkResponse(
+      child: Pressable(
+        scale: .9,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: onTap,
-          radius: diameter / 2 + 6,
           child: ExcludeSemantics(
             child: Center(
               child: Container(
@@ -924,6 +946,26 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   );
 
   Future<void> _showMore() async {
+    if (_sheetOpen) return;
+    _sheetOpen = true;
+    try {
+      await _presentMore();
+    } finally {
+      _sheetOpen = false;
+    }
+  }
+
+  Future<void> _showMuscles() async {
+    if (_sheetOpen) return;
+    _sheetOpen = true;
+    try {
+      await _presentMuscles();
+    } finally {
+      _sheetOpen = false;
+    }
+  }
+
+  Future<void> _presentMore() async {
     final s = context.strings;
     final wasPlaying = _scene.playing;
     _scene.pause();
@@ -932,102 +974,110 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       context: context,
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
-      builder: (sheetContext) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final entry in [
-                (
-                  'library',
-                  s.library,
-                  s.libraryHint,
-                  Icons.fitness_center_rounded,
-                ),
-                (
-                  'path',
-                  s.pathTitle,
-                  stage == null
-                      ? null
-                      : '${s.stageLabel(stage.n)} · ${stage.title}',
-                  Icons.route_outlined,
-                ),
-                (
-                  'progress',
-                  s.progress,
-                  s.moreProgressHint(store.weekTrainingDays),
-                  Icons.insights_rounded,
-                ),
-                ('settings', s.settings, null, Icons.tune_rounded),
-              ])
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                  minTileHeight: 64,
-                  leading: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: FlareColors.raised,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(entry.$4, size: 19),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheet) => SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final entry in [
+                  (
+                    'library',
+                    s.library,
+                    s.libraryHint,
+                    Icons.fitness_center_rounded,
                   ),
-                  title: Text(
-                    entry.$2,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  (
+                    'path',
+                    s.pathTitle,
+                    stage == null
+                        ? null
+                        : '${s.stageLabel(stage.n)} · ${stage.title}',
+                    Icons.route_outlined,
                   ),
-                  subtitle: entry.$3 == null
-                      ? null
-                      : Text(
-                          entry.$3!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: FlareColors.dim,
+                  (
+                    'progress',
+                    s.progress,
+                    s.moreProgressHint(store.weekTrainingDays),
+                    Icons.insights_rounded,
+                  ),
+                  ('settings', s.settings, null, Icons.tune_rounded),
+                ])
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                    minTileHeight: 64,
+                    leading: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: FlareColors.raised,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(entry.$4, size: 19),
+                    ),
+                    title: Text(
+                      entry.$2,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: entry.$3 == null
+                        ? null
+                        : Text(
+                            entry.$3!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: FlareColors.dim,
+                            ),
                           ),
-                        ),
-                  trailing: Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: FlareColors.dim,
+                    trailing: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: FlareColors.dim,
+                    ),
+                    onTap: () => Navigator.pop(sheetContext, entry.$1),
                   ),
-                  onTap: () => Navigator.pop(sheetContext, entry.$1),
-                ),
-              const Divider(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  children: [
-                    Text(
-                      s.playbackSpeed,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: FlareColors.secondary,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: SegmentedButton<double>(
-                        showSelectedIcon: false,
-                        segments: const [
-                          ButtonSegment(value: .25, label: Text('0.25×')),
-                          ButtonSegment(value: .5, label: Text('0.5×')),
-                          ButtonSegment(value: 1.0, label: Text('1×')),
-                        ],
-                        selected: {_scene.speed},
-                        onSelectionChanged: (values) => Navigator.pop(
-                          sheetContext,
-                          'speed:${values.first}',
+                const Divider(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    children: [
+                      Text(
+                        s.playbackSpeed,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: FlareColors.secondary,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SegmentedButton<double>(
+                          showSelectedIcon: false,
+                          segments: const [
+                            ButtonSegment(value: .25, label: Text('0.25×')),
+                            ButtonSegment(value: .5, label: Text('0.5×')),
+                            ButtonSegment(value: 1.0, label: Text('1×')),
+                          ],
+                          selected: {_scene.speed},
+                          // Speed applies in place; the sheet stays so the
+                          // new choice is visible, and play resumes on close.
+                          onSelectionChanged: (values) {
+                            FlareHaptics.selection();
+                            _scene.setSpeed(values.first);
+                            unawaited(
+                              store.updateSettings(speed: values.first),
+                            );
+                            setSheet(() {});
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1047,17 +1097,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       case 'settings':
         setState(() => _settings = true);
         _syncSceneVisibility();
-      default:
-        if (value.startsWith('speed:')) {
-          final speed = double.parse(value.substring(6));
-          _scene.setSpeed(speed);
-          unawaited(store.updateSettings(speed: speed));
-          if (wasPlaying && _detail == null) _scene.play();
-        }
     }
   }
 
-  Future<void> _showMuscles() async {
+  Future<void> _presentMuscles() async {
     _scene.pause();
     final s = context.strings;
     final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
@@ -1244,7 +1287,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ButtonSegment(value: item.$1, label: Text(item.$2)),
       ],
       selected: {selected},
-      onSelectionChanged: (values) => on(values.first),
+      onSelectionChanged: (values) {
+        FlareHaptics.selection();
+        on(values.first);
+      },
     );
     Widget line(String label, Widget control) => Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
@@ -1410,4 +1456,114 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     'gateReports': store.gateReports,
     'assessmentGrades': store.assessmentGrades,
   });
+}
+
+/// Placeholder while the 3D scene boots: the dressed hero render, faint and
+/// slowly breathing, so the stage never sits empty and the real figure
+/// arrives as a cross-fade rather than a pop.
+class _SceneLoading extends StatefulWidget {
+  const _SceneLoading({super.key, required this.label});
+  final String label;
+  @override
+  State<_SceneLoading> createState() => _SceneLoadingState();
+}
+
+class _SceneLoadingState extends State<_SceneLoading>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _breath = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (FlareMotion.reduced(context)) {
+      _breath.value = .5;
+    } else if (!_breath.isAnimating) {
+      _breath.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _breath.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: widget.label,
+    liveRegion: true,
+    child: Column(
+      children: [
+        Expanded(
+          child: AnimatedBuilder(
+            animation: _breath,
+            builder: (context, child) => Opacity(
+              opacity: .12 + .1 * Curves.easeInOut.transform(_breath.value),
+              child: child,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(48, 24, 48, 8),
+              // The real, dressed Thomas render, never a blank mannequin.
+              child: Image.asset(
+                'assets/brand/hero-thomas.webp',
+                fit: BoxFit.contain,
+                excludeFromSemantics: true,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 28),
+          child: Eyebrow(widget.label),
+        ),
+      ],
+    ),
+  );
+}
+
+class _SceneError extends StatelessWidget {
+  const _SceneError({
+    super.key,
+    required this.message,
+    required this.retry,
+    required this.onRetry,
+  });
+  final String message;
+  final String retry;
+  final VoidCallback onRetry;
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.view_in_ar_outlined, size: 28, color: FlareColors.dim),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: FlareColors.secondary,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Pressable(
+            child: OutlinedButton(
+              onPressed: () {
+                FlareHaptics.light();
+                onRetry();
+              },
+              child: Text(retry),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
