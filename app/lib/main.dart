@@ -80,7 +80,20 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     builder: (context, child) {
       final brightness = Theme.of(context).brightness;
       FlareColors.use(brightness);
-      return ThemeCrossFade(brightness: brightness, child: child!);
+      // No AppBar sets the status bar, so the app does: light icons on the
+      // graphite stage, dark ones on paper, edge-to-edge on Android.
+      final dark = brightness == Brightness.dark;
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: (dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+            .copyWith(
+              statusBarColor: const Color(0x00000000),
+              systemNavigationBarColor: FlareColors.background,
+              systemNavigationBarIconBrightness: dark
+                  ? Brightness.light
+                  : Brightness.dark,
+            ),
+        child: ThemeCrossFade(brightness: brightness, child: child!),
+      );
     },
     locale: const Locale('zh'),
     localizationsDelegates: AppLocalizations.localizationsDelegates,

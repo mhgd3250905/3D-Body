@@ -318,53 +318,61 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           backgroundColor: _watchVisible || _holdWatch
               ? Colors.transparent
               : FlareColors.background,
+          // Pages own their top inset: most sit below the status bar, the
+          // drill page lets its picture run underneath it.
           body: SafeArea(
+            top: false,
             child: Column(
               children: [
                 if (store.storageError != null)
-                  MaterialBanner(
-                    content: Text(
-                      store.corruptState ? s.storageReadFailed : s.saveFailed,
+                  SafeArea(
+                    bottom: false,
+                    child: _StorageNotice(
+                      message: store.corruptState
+                          ? s.storageReadFailed
+                          : s.saveFailed,
+                      action: store.corruptState ? s.settings : s.retry,
+                      onAction: store.corruptState
+                          ? () {
+                              setState(() => _settings = true);
+                              _syncSceneVisibility();
+                            }
+                          : () => _result(store.retrySave()),
                     ),
-                    actions: [
-                      if (!store.corruptState)
-                        TextButton(
-                          onPressed: () => _result(store.retrySave()),
-                          child: Text(s.retry),
-                        ),
-                      if (store.corruptState)
-                        TextButton(
-                          onPressed: () {
-                            setState(() => _settings = true);
-                            _syncSceneVisibility();
-                          },
-                          child: Text(s.settings),
-                        ),
-                    ],
                   ),
                 Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Offstage(
-                        offstage: !_watchVisible && !_holdWatch,
-                        child: _watchPage(context),
-                      ),
-                      FlareStage(
-                        pageKey: route.$1,
-                        depth: route.$2,
-                        modal: route.$3,
-                        onSettled: () {
-                          if (mounted && _holdWatch) {
-                            setState(() => _holdWatch = false);
-                          }
-                        },
-                        onSwipeBack: canBack && !_timing && route.$4 != null
-                            ? _back
-                            : null,
-                        child: route.$4,
-                      ),
-                    ],
+                  child: MediaQuery.removePadding(
+                    context: context,
+                    removeTop: store.storageError != null,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Offstage(
+                          offstage: !_watchVisible && !_holdWatch,
+                          child: SafeArea(
+                            bottom: false,
+                            child: _watchPage(context),
+                          ),
+                        ),
+                        FlareStage(
+                          pageKey: route.$1,
+                          depth: route.$2,
+                          modal: route.$3,
+                          onSettled: () {
+                            if (mounted && _holdWatch) {
+                              setState(() => _holdWatch = false);
+                            }
+                          },
+                          onSwipeBack: canBack && !_timing && route.$4 != null
+                              ? _back
+                              : null,
+                          child:
+                              route.$4 == null || route.$1.startsWith('drill:')
+                              ? route.$4
+                              : SafeArea(bottom: false, child: route.$4!),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -563,7 +571,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               if (detail == null)
                 _roundControl(
                   label: s.more,
-                  icon: Icons.more_horiz,
+                  icon: Icons.more_horiz_rounded,
                   onTap: _showMore,
                 )
               else
@@ -664,7 +672,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       shape: const StadiumBorder(),
                     ),
                     icon: Icon(
-                      _scene.playing ? Icons.pause : Icons.touch_app_outlined,
+                      _scene.playing
+                          ? Icons.pause_rounded
+                          : Icons.touch_app_outlined,
                       size: 12,
                     ),
                     label: Text(
@@ -861,7 +871,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         Text(
                           phase.source.toString().padLeft(2, '0'),
                           style: TextStyle(
-                            color: FlareColors.accent,
+                            color: FlareColors.accentInk,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
@@ -995,7 +1005,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     'library',
                     s.library,
                     s.libraryHint,
-                    Icons.fitness_center_rounded,
+                    Icons.fitness_center_outlined,
                   ),
                   (
                     'path',
@@ -1009,9 +1019,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     'progress',
                     s.progress,
                     s.moreProgressHint(store.weekTrainingDays),
-                    Icons.insights_rounded,
+                    Icons.insights_outlined,
                   ),
-                  ('settings', s.settings, null, Icons.tune_rounded),
+                  ('settings', s.settings, null, Icons.tune_outlined),
                 ])
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 4),
@@ -1062,22 +1072,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: SegmentedButton<double>(
-                          showSelectedIcon: false,
+                        child: FlareSegmented<double>(
+                          expand: true,
                           segments: const [
-                            ButtonSegment(value: .25, label: Text('0.25×')),
-                            ButtonSegment(value: .5, label: Text('0.5×')),
-                            ButtonSegment(value: 1.0, label: Text('1×')),
+                            (.25, '0.25×'),
+                            (.5, '0.5×'),
+                            (1.0, '1×'),
                           ],
-                          selected: {_scene.speed},
+                          selected: _scene.speed,
                           // Speed applies in place; the sheet stays so the
                           // new choice is visible, and play resumes on close.
-                          onSelectionChanged: (values) {
-                            FlareHaptics.selection();
-                            _scene.setSpeed(values.first);
-                            unawaited(
-                              store.updateSettings(speed: values.first),
-                            );
+                          onChanged: (value) {
+                            _scene.setSpeed(value);
+                            unawaited(store.updateSettings(speed: value));
                             setSheet(() {});
                           },
                         ),
@@ -1288,19 +1295,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       List<(T, String)> items,
       T selected,
       ValueChanged<T> on,
-    ) => SegmentedButton<T>(
-      showSelectedIcon: false,
-      style: const ButtonStyle(visualDensity: VisualDensity.compact),
-      segments: [
-        for (final item in items)
-          ButtonSegment(value: item.$1, label: Text(item.$2)),
-      ],
-      selected: {selected},
-      onSelectionChanged: (values) {
-        FlareHaptics.selection();
-        on(values.first);
-      },
-    );
+    ) => FlareSegmented<T>(segments: items, selected: selected, onChanged: on);
     Widget line(String label, Widget control) => Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
       child: Row(
@@ -1429,7 +1424,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       children: [
                         FlareRow(
                           title: s.exportBackup,
-                          leading: const Icon(Icons.copy_rounded, size: 18),
+                          leading: const Icon(Icons.copy_outlined, size: 18),
                           onTap: () async {
                             await Clipboard.setData(
                               ClipboardData(text: _backupJson()),
@@ -1533,6 +1528,58 @@ class _SceneLoadingState extends State<SceneLoading>
           child: Eyebrow(widget.label),
         ),
       ],
+    ),
+  );
+}
+
+/// Quiet inline notice for a storage problem: one line and one action,
+/// instead of a Material banner.
+class _StorageNotice extends StatelessWidget {
+  const _StorageNotice({
+    required this.message,
+    required this.action,
+    required this.onAction,
+  });
+  final String message;
+  final String action;
+  final VoidCallback onAction;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+    child: Semantics(
+      liveRegion: true,
+      container: true,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: FlareColors.palette.raised,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: FlareColors.hairline),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
+          child: Row(
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 18,
+                color: FlareColors.warning,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.35,
+                    color: FlareColors.secondary,
+                  ),
+                ),
+              ),
+              TextButton(onPressed: onAction, child: Text(action)),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }

@@ -45,13 +45,13 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 :root[data-theme="light"] #status { background: #f5f4f1eb; color: #4b4b54; }
 :root[data-theme="light"] .spinner { border-color: #0000001a; border-top-color: #f2602f; }
 :root[data-theme="light"] #retry { color: #16161a; background: #ffffff; border-color: #dedcd6; }
-:root[data-theme="light"] #detail-note { color: #8b8b94; }
+:root[data-theme="light"] #detail-note { color: #74747d; }
 :root[data-theme="light"] .minimap { border-color: #0000001f; box-shadow: 0 6px 18px #0000001a; }
 :root[data-theme="light"] .minimap span { color: #4b4b54; background: #ffffffcc; }
 :root[data-theme="light"] .hotspot::before { border-color: #ffffff; box-shadow: 0 0 0 5px #ffffff99, 0 2px 7px #0003; }
 :root[data-theme="light"] .phase-map { background: rgba(255,255,255,.78); border-color: #0000000f; box-shadow: 0 8px 24px #0000001a, inset 0 1px #ffffff; color: #4b4b54; }
 :root[data-theme="light"] .phase-map-view { background: #efeee9; }
-:root[data-theme="light"] .phase-map-view > span { color: #8b8b94; }
+:root[data-theme="light"] .phase-map-view > span { color: #74747d; }
 :root[data-theme="light"] .phase-map-legend button { color: #4b4b54; }
 
 /* Model switch dissolve and soft minimap entrance. */

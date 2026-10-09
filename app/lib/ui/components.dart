@@ -49,7 +49,7 @@ class SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 22, bottom: 10, left: 2),
-    child: Eyebrow(text),
+    child: Semantics(header: true, child: Eyebrow(text)),
   );
 }
 
@@ -294,19 +294,15 @@ class TierSelector extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    child: SegmentedButton<String>(
-      showSelectedIcon: false,
-      segments: [
-        ButtonSegment(value: 'A', label: Text(context.strings.tierA)),
-        ButtonSegment(value: 'B', label: Text(context.strings.tierB)),
-        ButtonSegment(value: 'C', label: Text(context.strings.tierC)),
-      ],
-      selected: {value},
-      onSelectionChanged: (values) => onChanged(values.first),
-      style: const ButtonStyle(visualDensity: VisualDensity.compact),
-    ),
+  Widget build(BuildContext context) => FlareSegmented<String>(
+    expand: true,
+    segments: [
+      ('A', context.strings.tierA),
+      ('B', context.strings.tierB),
+      ('C', context.strings.tierC),
+    ],
+    selected: value,
+    onChanged: onChanged,
   );
 }
 
@@ -553,3 +549,186 @@ class _ScrollEdgeState extends State<ScrollEdge> {
   }
 }
 
+/// iOS-style segmented control: a recessed track with one thumb that slides
+/// to the chosen segment. Tap a segment, or drag the thumb across. Segments
+/// share one width (the widest label) unless [expand] fills the row.
+class FlareSegmented<T> extends StatefulWidget {
+  const FlareSegmented({
+    super.key,
+    required this.segments,
+    required this.selected,
+    required this.onChanged,
+    this.expand = false,
+    this.semanticLabels,
+  });
+  final List<(T, String)> segments;
+  final T selected;
+  final ValueChanged<T> onChanged;
+  final bool expand;
+
+  /// Fuller spoken labels when the visible ones are abbreviated.
+  final List<String>? semanticLabels;
+
+  @override
+  State<FlareSegmented<T>> createState() => _FlareSegmentedState<T>();
+}
+
+class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
+  int? _dragIndex;
+
+  int get _selectedIndex {
+    final index = widget.segments.indexWhere((s) => s.$1 == widget.selected);
+    return index < 0 ? 0 : index;
+  }
+
+  void _choose(int index) {
+    if (index < 0 || index >= widget.segments.length) return;
+    final value = widget.segments[index].$1;
+    if (value == widget.selected) return;
+    FlareHaptics.selection();
+    widget.onChanged(value);
+  }
+
+  int _indexAt(double dx, double width) => (dx / width * widget.segments.length)
+      .floor()
+      .clamp(0, widget.segments.length - 1);
+
+  @override
+  Widget build(BuildContext context) {
+    final count = widget.segments.length;
+    final shown = _dragIndex ?? _selectedIndex;
+    final dark = FlareColors.palette.isDark;
+    final row = Row(
+      mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
+      children: [
+        for (var i = 0; i < count; i++)
+          Expanded(
+            child: Semantics(
+              button: true,
+              inMutuallyExclusiveGroup: true,
+              selected: i == _selectedIndex,
+              label: widget.semanticLabels?[i] ?? widget.segments[i].$2,
+              onTap: () => _choose(i),
+              excludeSemantics: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => _choose(i),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      duration: FlareMotion.of(context, FlareMotion.quick),
+                      style: TextStyle(
+                        fontFamily: 'FlareSans',
+                        fontSize: 13,
+                        height: 1.2,
+                        letterSpacing: .2,
+                        color: i == shown
+                            ? FlareColors.text
+                            : FlareColors.palette.muted,
+                        fontWeight: i == shown
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
+                      child: Text(
+                        widget.segments[i].$2,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+    final control = Container(
+      height: 34,
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: FlareColors.palette.segmentTrack,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Builder(
+        builder: (context) => GestureDetector(
+          onHorizontalDragStart: (d) => setState(
+            () =>
+                _dragIndex = _indexAt(d.localPosition.dx, context.size!.width),
+          ),
+          onHorizontalDragUpdate: (d) {
+            final index = _indexAt(d.localPosition.dx, context.size!.width);
+            if (index != _dragIndex) {
+              FlareHaptics.selection();
+              setState(() => _dragIndex = index);
+            }
+          },
+          onHorizontalDragEnd: (_) {
+            final index = _dragIndex;
+            setState(() => _dragIndex = null);
+            if (index != null && widget.segments[index].$1 != widget.selected) {
+              widget.onChanged(widget.segments[index].$1);
+            }
+          },
+          onHorizontalDragCancel: () => setState(() => _dragIndex = null),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: AnimatedAlign(
+                  alignment: Alignment(
+                    count == 1 ? 0 : -1 + 2 * shown / (count - 1),
+                    0,
+                  ),
+                  duration: FlareMotion.of(context, FlareMotion.fade),
+                  curve: FlareMotion.settle,
+                  child: FractionallySizedBox(
+                    widthFactor: 1 / count,
+                    heightFactor: 1,
+                    child: AnimatedScale(
+                      scale: _dragIndex != null ? .96 : 1,
+                      duration: FlareMotion.of(context, FlareMotion.quick),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: FlareColors.palette.segmentThumb,
+                          borderRadius: BorderRadius.circular(8),
+                          border: dark
+                              ? null
+                              : Border.all(
+                                  color: const Color(0x0a000000),
+                                  width: .5,
+                                ),
+                          boxShadow: dark
+                              ? null
+                              : const [
+                                  BoxShadow(
+                                    color: Color(0x1f000000),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 3),
+                                  ),
+                                  BoxShadow(
+                                    color: Color(0x0a000000),
+                                    blurRadius: 1,
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              row,
+            ],
+          ),
+        ),
+      ),
+    );
+    return Semantics(
+      container: true,
+      child: widget.expand
+          ? SizedBox(width: double.infinity, child: control)
+          : IntrinsicWidth(child: control),
+    );
+  }
+}

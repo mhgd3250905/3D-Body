@@ -377,6 +377,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get grade4 => '轻松完成，准备进阶';
 
   @override
+  String get gradeShort1 => '未完成';
+
+  @override
+  String get gradeShort2 => '能完成';
+
+  @override
+  String get gradeShort3 => '较稳定';
+
+  @override
+  String get gradeShort4 => '很轻松';
+
+  @override
+  String get dipsShort1 => '0–3';
+
+  @override
+  String get dipsShort2 => '4–7';
+
+  @override
+  String get dipsShort3 => '8–12';
+
+  @override
+  String get dipsShort4 => '13+';
+
+  @override
   String get saveAssessment => '保存自评起点';
 
   @override

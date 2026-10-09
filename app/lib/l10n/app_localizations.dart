@@ -814,6 +814,54 @@ abstract class AppLocalizations {
   /// **'轻松完成，准备进阶'**
   String get grade4;
 
+  /// No description provided for @gradeShort1.
+  ///
+  /// In zh, this message translates to:
+  /// **'未完成'**
+  String get gradeShort1;
+
+  /// No description provided for @gradeShort2.
+  ///
+  /// In zh, this message translates to:
+  /// **'能完成'**
+  String get gradeShort2;
+
+  /// No description provided for @gradeShort3.
+  ///
+  /// In zh, this message translates to:
+  /// **'较稳定'**
+  String get gradeShort3;
+
+  /// No description provided for @gradeShort4.
+  ///
+  /// In zh, this message translates to:
+  /// **'很轻松'**
+  String get gradeShort4;
+
+  /// No description provided for @dipsShort1.
+  ///
+  /// In zh, this message translates to:
+  /// **'0–3'**
+  String get dipsShort1;
+
+  /// No description provided for @dipsShort2.
+  ///
+  /// In zh, this message translates to:
+  /// **'4–7'**
+  String get dipsShort2;
+
+  /// No description provided for @dipsShort3.
+  ///
+  /// In zh, this message translates to:
+  /// **'8–12'**
+  String get dipsShort3;
+
+  /// No description provided for @dipsShort4.
+  ///
+  /// In zh, this message translates to:
+  /// **'13+'**
+  String get dipsShort4;
+
   /// No description provided for @saveAssessment.
   ///
   /// In zh, this message translates to:

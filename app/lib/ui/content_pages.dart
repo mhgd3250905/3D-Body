@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
@@ -42,14 +44,17 @@ class PageHeader extends StatelessWidget {
         ),
         if (title.isNotEmpty) ...[
           const SizedBox(height: 14),
-          Padding(
-            padding: const EdgeInsets.only(left: 4),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: large ? 30 : 24,
-                height: 1.2,
-                fontWeight: FontWeight.w700,
+          Semantics(
+            header: true,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: large ? 30 : 24,
+                  height: 1.2,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -108,7 +113,7 @@ Future<bool?> showSafetySheet(
                       child: Text(
                         '${index + 1}',
                         style: TextStyle(
-                          color: FlareColors.accent,
+                          color: FlareColors.accentInk,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
@@ -225,7 +230,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     Text(
                       s.brandEyebrow,
                       style: TextStyle(
-                        color: FlareColors.accent,
+                        color: FlareColors.accentInk,
                         fontSize: 12,
                         letterSpacing: 3,
                         fontWeight: FontWeight.w700,
@@ -506,7 +511,7 @@ class _LibraryPageState extends State<LibraryPage> {
                               trailing: IconButton(
                                 tooltip: s.remove,
                                 icon: Icon(
-                                  Icons.remove_circle_outline,
+                                  Icons.remove_circle_outline_rounded,
                                   size: 20,
                                   color: FlareColors.dim,
                                 ),
@@ -595,7 +600,7 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 }
 
-class DrillDetailPage extends StatelessWidget {
+class DrillDetailPage extends StatefulWidget {
   const DrillDetailPage({
     super.key,
     required this.drill,
@@ -611,6 +616,24 @@ class DrillDetailPage extends StatelessWidget {
   final VoidCallback onStart;
   final VoidCallback onAdd;
   final bool added;
+
+  @override
+  State<DrillDetailPage> createState() => _DrillDetailPageState();
+}
+
+class _DrillDetailPageState extends State<DrillDetailPage> {
+  /// Scroll offset, driving the compact bar that forms once the picture and
+  /// the large title have scrolled away (no rebuild of the page itself).
+  final _offset = ValueNotifier<double>(0);
+
+  Drill get drill => widget.drill;
+  MuscleGroup? get group => widget.group;
+
+  @override
+  void dispose() {
+    _offset.dispose();
+    super.dispose();
+  }
 
   Widget _spec(String label, String value) => Expanded(
     child: Padding(
@@ -663,7 +686,12 @@ class DrillDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
+    // The picture runs under the status bar; the controls sit below it.
     final top = MediaQuery.paddingOf(context).top;
+    final width = MediaQuery.sizeOf(context).width;
+    const heroAspect = 1.0;
+    final heroHeight = width / heroAspect;
+    final barHeight = top + 60;
     final shown = drill.cues.take(2).toList();
     final rest = drill.cues.skip(2).toList();
     return ColoredBox(
@@ -675,143 +703,223 @@ class DrillDetailPage extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 1.08,
-                            child: Image.asset(
-                              drillArt(drill.imageAsset),
-                              fit: BoxFit.cover,
-                              frameBuilder: (context, child, frame, sync) =>
-                                  fadeInFrame(context, child, frame, sync),
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    FlareColors.background.withValues(alpha: 0),
-                                    FlareColors.background.withValues(alpha: 0),
-                                    FlareColors.background,
-                                  ],
-                                  stops: [0, .72, 1],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (n) {
+                      if (n.depth == 0 && n.metrics.axis == Axis.vertical) {
+                        _offset.value = n.metrics.pixels;
+                      }
+                      return false;
+                    },
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        Stack(
                           children: [
-                            Row(
-                              children: [
-                                if (group != null) ...[
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: BoxDecoration(
-                                      color: Color(group!.colorValue),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 7),
-                                ],
-                                Expanded(
-                                  child: Eyebrow(
-                                    [
-                                      if (group != null) group!.label,
-                                      drill.tierLabel,
-                                    ].join(' · '),
+                            AspectRatio(
+                              aspectRatio: heroAspect,
+                              child: Image.asset(
+                                drillArt(drill.imageAsset),
+                                fit: BoxFit.cover,
+                                frameBuilder: (context, child, frame, sync) =>
+                                    fadeInFrame(context, child, frame, sync),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      FlareColors.background.withValues(
+                                        alpha: 0,
+                                      ),
+                                      FlareColors.background.withValues(
+                                        alpha: 0,
+                                      ),
+                                      FlareColors.background,
+                                    ],
+                                    stops: [0, .72, 1],
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              drill.name,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                height: 1.2,
-                                fontWeight: FontWeight.w700,
                               ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              drill.nameEn,
-                              style: TextStyle(
-                                color: FlareColors.dim,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 18),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: FlareColors.surface,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: FlareColors.hairline),
-                              ),
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    _spec(s.spec, drill.prescription),
-                                    const VerticalDivider(width: 1),
-                                    _spec(s.equipment, drill.equipment),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 22),
-                            for (var i = 0; i < shown.length; i++)
-                              _cue(i, shown[i]),
-                            const Divider(),
-                            Disclosure(
-                              title: s.moreCuesAndSafety,
-                              children: [
-                                for (var i = 0; i < rest.length; i++)
-                                  _cue(i + 2, rest[i]),
-                                SectionTitle(s.mistake),
-                                BodyText(drill.mistake),
-                                SectionTitle(s.drillWhy),
-                                BodyText(drill.why),
-                                SectionTitle(s.safety),
-                                BodyText(drill.safety ?? s.safetyBody),
-                                if (drill.illustrationNote != null) ...[
-                                  SectionTitle(s.illustration),
-                                  BodyText(
-                                    drill.illustrationNote!,
-                                    color: FlareColors.dim,
-                                  ),
-                                ],
-                              ],
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  if (group != null) ...[
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        color: Color(group!.colorValue),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 7),
+                                  ],
+                                  Expanded(
+                                    child: Eyebrow(
+                                      [
+                                        if (group != null) group!.label,
+                                        drill.tierLabel,
+                                      ].join(' · '),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                drill.name,
+                                style: const TextStyle(
+                                  fontSize: 28,
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                drill.nameEn,
+                                style: TextStyle(
+                                  color: FlareColors.dim,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(height: 18),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: FlareColors.surface,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: FlareColors.hairline,
+                                  ),
+                                ),
+                                child: IntrinsicHeight(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      _spec(s.spec, drill.prescription),
+                                      const VerticalDivider(width: 1),
+                                      _spec(s.equipment, drill.equipment),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 22),
+                              for (var i = 0; i < shown.length; i++)
+                                _cue(i, shown[i]),
+                              const Divider(),
+                              Disclosure(
+                                title: s.moreCuesAndSafety,
+                                children: [
+                                  for (var i = 0; i < rest.length; i++)
+                                    _cue(i + 2, rest[i]),
+                                  SectionTitle(s.mistake),
+                                  BodyText(drill.mistake),
+                                  SectionTitle(s.drillWhy),
+                                  BodyText(drill.why),
+                                  SectionTitle(s.safety),
+                                  BodyText(drill.safety ?? s.safetyBody),
+                                  if (drill.illustrationNote != null) ...[
+                                    SectionTitle(s.illustration),
+                                    BodyText(
+                                      drill.illustrationNote!,
+                                      color: FlareColors.dim,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Once the picture and title have gone, a compact bar forms
+                // behind the pinned controls: frosted backdrop, hairline and
+                // the drill's name, the way an iOS large title collapses.
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: barHeight,
+                  child: IgnorePointer(
+                    child: ValueListenableBuilder<double>(
+                      valueListenable: _offset,
+                      builder: (context, offset, _) {
+                        final bar =
+                            ((offset - (heroHeight - barHeight - 24)) / 32)
+                                .clamp(0.0, 1.0);
+                        final title =
+                            ((offset - (heroHeight + 40 - barHeight)) / 24)
+                                .clamp(0.0, 1.0);
+                        if (bar == 0) return const SizedBox.expand();
+                        return ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(
+                              sigmaX: 18 * bar,
+                              sigmaY: 18 * bar,
+                            ),
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: FlareColors.background.withValues(
+                                  alpha: .86 * bar,
+                                ),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: FlareColors.controlBorder.withValues(
+                                      alpha: bar,
+                                    ),
+                                    width: .6,
+                                  ),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(72, top, 72, 0),
+                                child: Center(
+                                  child: Opacity(
+                                    opacity: title,
+                                    child: Transform.translate(
+                                      offset: Offset(0, 6 * (1 - title)),
+                                      child: Text(
+                                        drill.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 // Back and save stay pinned while the picture scrolls away.
                 Positioned(
                   left: 16,
                   right: 16,
-                  top: (8 - top).clamp(0, 8).toDouble() + 8,
+                  top: top + 8,
                   child: Row(
                     children: [
                       RoundIconButton(
                         icon: Icons.arrow_back_ios_new_rounded,
                         tooltip: s.goBack,
-                        onPressed: onBack,
+                        onPressed: widget.onBack,
                       ),
                       const Spacer(),
                       AnimatedSwitcher(
@@ -830,16 +938,16 @@ class DrillDetailPage extends StatelessWidget {
                               ),
                             ),
                         child: RoundIconButton(
-                          key: ValueKey(added),
-                          icon: added
+                          key: ValueKey(widget.added),
+                          icon: widget.added
                               ? Icons.bookmark_added_rounded
                               : Icons.bookmark_add_outlined,
-                          tooltip: added ? s.addedToday : s.addToday,
-                          onPressed: added
+                          tooltip: widget.added ? s.addedToday : s.addToday,
+                          onPressed: widget.added
                               ? null
                               : () {
                                   FlareHaptics.light();
-                                  onAdd();
+                                  widget.onAdd();
                                 },
                         ),
                       ),
@@ -851,7 +959,10 @@ class DrillDetailPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
-            child: PrimaryAction(label: s.startTimer, onPressed: onStart),
+            child: PrimaryAction(
+              label: s.startTimer,
+              onPressed: widget.onStart,
+            ),
           ),
         ],
       ),
@@ -937,7 +1048,7 @@ class _PathPageState extends State<PathPage> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: current ? FlareColors.accent : FlareColors.dim,
+                color: current ? FlareColors.accentInk : FlareColors.dim,
               ),
             ),
     );
@@ -1223,7 +1334,7 @@ class LessonPage extends StatelessWidget {
                             leading: Text(
                               source.toString().padLeft(2, '0'),
                               style: TextStyle(
-                                color: FlareColors.accent,
+                                color: FlareColors.accentInk,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1313,41 +1424,29 @@ class _AssessmentPageState extends State<AssessmentPage> {
                   ('dips', s.dipsTest),
                   ('lsit', s.supportTest),
                 ]) ...[
-                  SectionTitle(item.$2),
-                  DropdownButtonFormField<int>(
-                    initialValue: _grades[item.$1],
-                    isExpanded: true,
-                    dropdownColor: FlareColors.popup,
-                    borderRadius: BorderRadius.circular(16),
-                    items: [
-                      for (final grade
-                          in item.$1 == 'dips'
-                              ? [
-                                  (1, s.dipsGrade1),
-                                  (2, s.dipsGrade2),
-                                  (3, s.dipsGrade3),
-                                  (4, s.dipsGrade4),
-                                ]
-                              : [
-                                  (1, s.grade1),
-                                  (2, s.grade2),
-                                  (3, s.grade3),
-                                  (4, s.grade4),
-                                ])
-                        DropdownMenuItem(
-                          value: grade.$1,
-                          child: Text(
-                            grade.$2,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        FlareHaptics.selection();
-                        setState(() => _grades[item.$1] = value);
-                      }
-                    },
+                  // One card per test: a four-step selector with short
+                  // labels, and the full wording of the chosen step below.
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: _GradeCard(
+                      title: item.$2,
+                      grades: item.$1 == 'dips'
+                          ? [
+                              (s.dipsShort1, s.dipsGrade1),
+                              (s.dipsShort2, s.dipsGrade2),
+                              (s.dipsShort3, s.dipsGrade3),
+                              (s.dipsShort4, s.dipsGrade4),
+                            ]
+                          : [
+                              (s.gradeShort1, s.grade1),
+                              (s.gradeShort2, s.grade2),
+                              (s.gradeShort3, s.grade3),
+                              (s.gradeShort4, s.grade4),
+                            ],
+                      value: _grades[item.$1]!,
+                      onChanged: (value) =>
+                          setState(() => _grades[item.$1] = value),
+                    ),
                   ),
                 ],
               ],
@@ -1378,6 +1477,81 @@ class _AssessmentPageState extends State<AssessmentPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _GradeCard extends StatelessWidget {
+  const _GradeCard({
+    required this.title,
+    required this.grades,
+    required this.value,
+    required this.onChanged,
+  });
+  final String title;
+
+  /// (short label, full description) for grades 1–4.
+  final List<(String, String)> grades;
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final full = grades[(value - 1).clamp(0, grades.length - 1)].$2;
+    return SurfaceCard(
+      padding: 14,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 2, bottom: 12),
+            child: Semantics(
+              header: true,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  height: 1.3,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          FlareSegmented<int>(
+            expand: true,
+            segments: [
+              for (var i = 0; i < grades.length; i++) (i + 1, grades[i].$1),
+            ],
+            semanticLabels: [for (final grade in grades) grade.$2],
+            selected: value,
+            onChanged: onChanged,
+          ),
+          const SizedBox(height: 10),
+          AnimatedSwitcher(
+            duration: FlareMotion.of(context, FlareMotion.fade),
+            switchInCurve: FlareMotion.settle,
+            switchOutCurve: FlareMotion.exit,
+            layoutBuilder: (current, previous) => Stack(
+              alignment: Alignment.topLeft,
+              children: [...previous, ?current],
+            ),
+            child: Padding(
+              key: ValueKey(value),
+              padding: const EdgeInsets.only(left: 2),
+              child: ExcludeSemantics(
+                child: Text(
+                  full,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: FlareColors.secondary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -11,6 +11,7 @@ class FlarePalette {
     required this.surface,
     required this.raised,
     required this.accent,
+    required this.accentInk,
     required this.onAccent,
     required this.muted,
     required this.success,
@@ -37,6 +38,8 @@ class FlarePalette {
     required this.selectedSegment,
     required this.dragHandle,
     required this.snack,
+    required this.segmentTrack,
+    required this.segmentThumb,
   });
 
   final Brightness brightness;
@@ -44,6 +47,10 @@ class FlarePalette {
   final Color surface;
   final Color raised;
   final Color accent;
+
+  /// Accent as text or a thin glyph on the page (AA contrast); [accent] is
+  /// for fills.
+  final Color accentInk;
   final Color onAccent;
   final Color muted;
   final Color success;
@@ -77,6 +84,10 @@ class FlarePalette {
   final Color dragHandle;
   final Color snack;
 
+  /// iOS-style segmented control: recessed track and the sliding thumb.
+  final Color segmentTrack;
+  final Color segmentThumb;
+
   bool get isDark => brightness == Brightness.dark;
 
   static const dark = FlarePalette(
@@ -85,13 +96,14 @@ class FlarePalette {
     surface: Color(0xff17171b),
     raised: Color(0xff202026),
     accent: Color(0xffff6a3d),
+    accentInk: Color(0xffff6a3d),
     onAccent: Color(0xff1d0a03),
     muted: Color(0xffa6a6b2),
     success: Color(0xff30d158),
     warning: Color(0xffffc233),
     text: Color(0xfff2f2f5),
     secondary: Color(0xffc9c9d1),
-    dim: Color(0xff74747e),
+    dim: Color(0xff80808a),
     hairline: Color(0x14ffffff),
     control: Color(0xff18181c),
     controlBorder: Color(0xff38383f),
@@ -111,6 +123,8 @@ class FlarePalette {
     selectedSegment: Color(0xff2e2e35),
     dragHandle: Color(0xff4a4a52),
     snack: Color(0xff26262c),
+    segmentTrack: Color(0xff1c1c21),
+    segmentThumb: Color(0xff3a3a42),
   );
 
   static const light = FlarePalette(
@@ -119,13 +133,14 @@ class FlarePalette {
     surface: Color(0xffffffff),
     raised: Color(0xffefeee9),
     accent: Color(0xfff2602f),
+    accentInk: Color(0xffc94e1c),
     onAccent: Color(0xff2a0d02),
-    muted: Color(0xff6c6c76),
-    success: Color(0xff1f9d4c),
-    warning: Color(0xffb7791f),
+    muted: Color(0xff5f5f69),
+    success: Color(0xff188540),
+    warning: Color(0xff9c6512),
     text: Color(0xff16161a),
     secondary: Color(0xff4b4b54),
-    dim: Color(0xff8b8b94),
+    dim: Color(0xff74747d),
     hairline: Color(0x14000000),
     control: Color(0xffffffff),
     controlBorder: Color(0xffdedcd6),
@@ -145,6 +160,8 @@ class FlarePalette {
     selectedSegment: Color(0xff16161a),
     dragHandle: Color(0xffcfcdc6),
     snack: Color(0xff26262c),
+    segmentTrack: Color(0xffe8e6e1),
+    segmentThumb: Color(0xffffffff),
   );
 }
 
@@ -160,6 +177,7 @@ abstract final class FlareColors {
   static Color get surface => palette.surface;
   static Color get raised => palette.raised;
   static Color get accent => palette.accent;
+  static Color get accentInk => palette.accentInk;
   static Color get onAccent => palette.onAccent;
   static Color get muted => palette.muted;
   static Color get success => palette.success;
@@ -248,7 +266,7 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: p.accent),
+      style: TextButton.styleFrom(foregroundColor: p.accentInk),
     ),
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(minimumSize: const Size(48, 48)),

@@ -14,7 +14,9 @@ import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
+import 'package:flare/ui/theme_fade.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -34,23 +36,43 @@ class MemoryStateStorage implements LocalStateStorage {
 final _boundary = GlobalKey();
 final _light = Platform.environment['SHOTS_THEME'] == 'light';
 final _brightness = _light ? Brightness.light : Brightness.dark;
+
+/// Flipped by the dissolve shot to catch the appearance switch mid-fade.
+final _appearance = ValueNotifier<Brightness>(_brightness);
 final _dir = _light ? 'build/shots-light' : 'build/shots';
 final stages = <String, List<double>>{};
 
 Widget app(Widget home) => RepaintBoundary(
   key: _boundary,
-  child: MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: flareTheme(_brightness),
-    builder: (context, child) {
-      FlareColors.use(Theme.of(context).brightness);
-      return child!;
-    },
-    locale: const Locale('zh'),
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: home,
+  child: ValueListenableBuilder<Brightness>(
+    valueListenable: _appearance,
+    builder: (context, brightness, _) => MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: flareTheme(brightness),
+      themeAnimationDuration: Duration.zero,
+      builder: (context, child) {
+        final brightness = Theme.of(context).brightness;
+        FlareColors.use(brightness);
+        return ThemeCrossFade(brightness: brightness, child: child!);
+      },
+      locale: const Locale('zh'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: home,
+    ),
   ),
+);
+
+Future<void> capture(WidgetTester tester, String name) => tester.runAsync(
+  () async {
+    final boundary =
+        _boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final image = await boundary.toImage(pixelRatio: 3);
+    final data = await image.toByteData(format: ui.ImageByteFormat.png);
+    File('$_dir/$name.png')
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(data!.buffer.asUint8List());
+  },
 );
 
 Future<void> loadFonts() async {
@@ -117,7 +139,13 @@ void main() {
   }) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
+    // iPhone-like insets: status bar / Dynamic Island and home indicator.
+    tester.view.padding = const FakeViewPadding(top: 47, bottom: 34);
+    tester.view.viewPadding = const FakeViewPadding(top: 47, bottom: 34);
     addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
+    _appearance.value = _brightness;
     final store = LearningStore(
       catalog: catalog,
       storage: MemoryStateStorage(),
@@ -479,5 +507,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 800));
     await shot(tester, '21-scene-loading');
     await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('22 appearance dissolve, halfway', (tester) async {
+    final (store, scene) = await setup(tester);
+    await shell(tester, store, scene);
+    await tester.tap(find.bySemanticsLabel('更多').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '设置'));
+    await tester.pumpAndSettle();
+    await shot(tester, '22a-settings-before-switch');
+    _appearance.value = _light ? Brightness.dark : Brightness.light;
+    await tester.pump();
+    expect(
+      tester.state<ThemeCrossFadeState>(find.byType(ThemeCrossFade)).fading,
+      isTrue,
+    );
+    await tester.pump(FlareMotion.theme ~/ 2);
+    await capture(tester, '22b-appearance-dissolve-half');
+    await tester.pumpAndSettle();
+    await capture(tester, '22c-settings-after-switch');
+    _appearance.value = _brightness;
+    await tester.pumpAndSettle();
   });
 }

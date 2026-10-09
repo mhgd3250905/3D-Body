@@ -206,7 +206,7 @@ class _MotionTimelineState extends State<MotionTimeline> {
                                     height: 1.2,
                                     fontWeight: FontWeight.w600,
                                     color: phase.source == widget.phase
-                                        ? FlareColors.accent
+                                        ? FlareColors.accentInk
                                         : FlareColors.dim,
                                   ),
                                 ),
