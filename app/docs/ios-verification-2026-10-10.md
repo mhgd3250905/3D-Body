@@ -2,7 +2,7 @@
 
 开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；当前 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 
-当前已完成模拟器验证、App 创建及商店草稿保存；S1 被 Apple 上传前验证拒绝，修复后的 S2 已通过本地签名和 Apple 验证，用户另行明确授权后上传成功；Apple Build 1 已处理为 VALID。随后按单独授权完成仅指定单账号的内部测试组，关闭自动分发，构建“正在测试”、账号“已邀请”，测试说明已保存。邀请接受与实际安装尚未确认，正式 App Review 未提交。用户要求先完成无需真机的工作，再连接 iPhone；真机性能、触感、离线网络证据及旧 iOS 兼容性继续待验。
+Apple 当前候选为 S2 Build 1，已处理为 VALID 并按单独授权进入仅指定单账号的内部组；自动分发关闭，构建“正在测试”、账号“已邀请”。商店文案/截图及后续授权的审核信息、构建绑定、手动发布、免费/全部 175 个地区供应、关闭 Mac/Vision Pro 商店供应均已保存；用户确认素材发布权。最新本地 S3 源 `b81026a` 删除关于页旧版本文字并递增 Build 为 2，已通过 10 项相关 UI 测试、analyze、本机签名验包及 Apple 上传前验证，尚未上传。公开隐私政策[修订草稿](privacy-policy-ios-v1-draft.md)已准备、尚未发布。邀请接受、实际安装、真机和最终合规继续待验，正式 App Review 未提交；按用户要求先完成无需真机的工作。
 
 ## 修复与回归
 
@@ -170,4 +170,28 @@ S1 静态核查通过后，用户另外授权精确该文件上传与商店草�
 
 创建“Flare iOS v1”内部组时，先取消默认勾选的自动分发，再点击创建；添加已处理的 S2 `1.0.0 (1)`，在测试员选择器中只勾选指定的一名账号并添加。重新加载后群组为 **1 名测试员、1 个构建版本**，构建为“正在测试”、账号为“已邀请”，设置仍显示“手动分发 Xcode 构建版本”。60 字测试说明已保存并重新加载核对。2026-10-10 10:37–10:40（本机时间）留证；S2 的 50,642,770 字节及原 SHA-256 再次核对不变。
 
-本机 `authorized-testflight-internal-s2-20261010.json`、`testflight-internal-s2-20261010.json` 与更新后的 `testflight-internal-plan-s2.json` 记录授权与平台状态；测试员身份和原始页面只在权限受限私密目录。Apple 的“已邀请”不证明邮件已到达、邀请已接受或真机已安装；未开外部组、公开链接、外部 Beta Review 或正式 App Review。下一步须先完成无需真机的资料准备，再用同一 S2 Build 1 进行真实 TestFlight 安装与 I03–I11 设备验收；最终合规与正式提审继续分别确认。
+本机 `authorized-testflight-internal-s2-20261010.json`、`testflight-internal-s2-20261010.json` 与更新后的 `testflight-internal-plan-s2.json` 记录授权与平台状态；测试员身份和原始页面只在权限受限私密目录。Apple 的“已邀请”不证明邮件已到达、邀请已接受或真机已安装；未开外部组、公开链接、外部 Beta Review 或正式 App Review。后续设备验收须绑定最新获准、实际已上传并分发的候选；当前 S3 尚未上传，不能把 S2 配置状态记作 S3 已就绪。
+
+### 已授权的剩余商店草稿
+
+用户同意推荐的草稿方案、明确首发“免费，全部可售地区”，并确认深浅训练图与品牌图发布权后，保存了 S2 绑定、无需登录、292 字审核说明、复用本账号已发布 App 的版权和四项审核联系人、审核通过后手动发布。重新加载后联系人、版权与审核说明均比对一致；个人信息只存 Apple 页面与本机权限受限目录。
+
+Apple 服务端响应中，174 个自动地区价格与 1 个基准价格的 `customerPrice` 均为零；175 个供应地区的 `available=true`、`preOrderEnabled=false`，将来新增地区供应开启。Mac 与 Vision Pro 两项公开商店供应标志均为 false。商店版本仍为准备提交；年龄、Content Rights、App Privacy 最终问卷和 App Review 尚未提交。本机 `app-store-remaining-draft-s2-20261010.json` 与原预检记录关联留证，不含私人联系信息。
+
+### 关于页文案补修后的本地候选 S3
+
+实际关于页使用 `aboutBody`；其旧“本地开发版 0.1.0”前缀与正式 `1.0.0` 不一致。通过 ARB 源删除此前缀并运行 `flutter gen-l10n`，不另加版本读取依赖；已上传 Build 1 不复用，`pubspec.yaml` 递增为 `1.0.0+2`。同一源提交保存了公开隐私页修订草稿，未修改实际存储、数据流、模型、图像或场景实现。
+
+| 检查 | S3 结果 |
+|---|---|
+| 产品源 / 身份 | `b81026afad35e808cf0acb30714874f06b5b44dd`；`dev.mhgd.flare / 1.0.0 (2)` |
+| 软件检查 | `flutter analyze --no-pub` 退出 0；`flutter test --no-pub test/ui/flow_regressions_test.dart --reporter expanded` 10 项通过；生成翻译及 Release config-only 成功 |
+| Archive / export | Runner workspace/scheme、Release、generic iOS 归档与 App Store 导出成功；复用已有签名资源，本次不带 `-allowProvisioningUpdates`；导出禁止自动改变版本/Build |
+| IPA | `candidate/Flare-1.0.0-build2-app-store-S3.ipa`；50,089,766 字节；SHA-256 `e6d4a856302df2a30a5498ccfa0a0cd2bf08540c8f1f7376ce788fd04a0d09ba` |
+| 签名 / 执行文件 | zsh Skill 验包退出 0，严格深度验签通过；描述文件、实际签名证书、授权 Team 和应用标识匹配，未过期、App Store 分发、`get-task-allow=false`；Runner/App/Flutter 三个执行文件均只含 arm64 |
+| 资源 / 隐私 | 249 份 Flutter 资源中 248 份与 S2 哈希相同；模型、训练图、场景及运行数据全部不变，两个生成源码继续排除；四份隐私清单与 S2 字节一致并可解析 |
+| 生成字体 | S2 带完整 MaterialIcons 字体 1,645,184 字节，S3 为 5,136 字节子集，含 35 个字符映射；源码引用的 28 种 Icons 常量在当前 Flutter SDK 与 IPA 字体 cmap 中全部匹配，无缺失字形 |
+| Apple 验证 | 使用已授权本机现有发布凭据运行 `altool --validate-app`，退出 0，无验证错误；未执行上传 |
+| 状态 / 限制 | `VALIDATED_AWAITING_EXACT_UPLOAD_AUTHORIZATION`；S3 未上传、未分发、未正式提审；没有重新运行全套原生模拟器流程或完成真机验收 |
+
+本机 `candidate-manifest-s3.json`、`s3-signing-checks.json`、`s3-asset-comparison.json`、`s3-icon-glyph-coverage.json` 与 `apple-validation-s3.json` 绑定上述结果；原始日志只在私密目录。S3 上传、商店绑定与内部组更新需要新的精确候选授权，不能沿用 S2 哈希授权；最终真机与合规声明仍需对应实际获准的最终 Build。

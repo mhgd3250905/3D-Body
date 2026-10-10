@@ -1,12 +1,14 @@
 # iOS v1 本地验证（2026-10-10）
 
-专用分支 `ios/main` 基于 PR #8，当前产品源 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`；此前 `83f0920` 已修复 WKWebView 恢复、小屏大字、构建配置、启动图、浅色加载及系统减弱动效，初始 96 项及后续 60 项 UI 测试/原生减弱动效流程证据保留。本次仅将 `assets/data/` 目录声明改为明确的六个 JSON，排除仓库的 Python/TypeScript 生成工具；6 项内容测试、analyze、S2 归档/签名和 Apple 上传前验证通过。四机型 40 张就绪截图来自 `63e45e8`，后续修复另有原生复测，S2 未重跑全套模拟器流程。
+专用分支 `ios/main` 基于 PR #8，最新本地产品源 `b81026afad35e808cf0acb30714874f06b5b44dd`，S3 `1.0.0 (2)`；关于页删除旧开发版本前缀，10 项相关 UI 测试、analyze、签名验包和 Apple 上传前验证通过，尚未上传。249 份 Flutter 资源中 248 份与 S2 相同，生成 MaterialIcons 子集覆盖源码全部 28 种图标；模型、图像、场景、运行数据与四份隐私清单均不变。Apple 当前仍是 `a4ef59f` 的 S2 `1.0.0 (1)`，已在内部测试。此前 `83f0920` 的 60 项 UI/原生系统减弱动效证据、S2 的 6 项内容测试，以及四机型 40 张 `63e45e8` 就绪截图分别保留；S2/S3 未重跑全套原生流程。
 
 iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒训练完成、实际后台 94.3 秒暂停及冷重启记录保留；同一调试进程持续 24 分 18 秒。加载层保存点 `3a85bd9` 在 Pro 模拟器两次实际 WebContent 中断恢复/重试通过（1422ms，33 次状态确认）；平台恢复代码随后未改变。最终产品另通过系统 Reduce Motion 开启时的真实首启/主题/详情/计时/原生存储验证，Flutter 与 WKWebView 均读取到该偏好，加载图标静止。该场景加载窗口记录 5 个资源、外部来源为零，不是完整抓包或飞行模式验收。最终未签名 arm64 Archive C03 绑定 `83f0920`，215,768,913 字节；本机 `candidate/candidate-manifest-r3.json` 记录身份与校验。
 
 用户授权注册、签名与普通推送后，Apple 门户和 App Store Connect 的 `dev.mhgd.flare` 已核对。随后用户批准精确 S1 上传与商店草稿保存；S1 被 Apple 上传前验证以生成脚本未签名（90035）拒绝，未上传。修复后 S2 为 `dev.mhgd.flare / 1.0.0 (1)`，50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；严格验签、描述文件/证书、三个 arm64 执行文件和四份隐私清单通过，Apple 验证退出 0。商店版本、中文文案、分类、支持/隐私网址和 10 张截图已保存，服务器截图状态全部 COMPLETE、顺序/校验和一致；用户另行批准 S2 精确文件后已通过 `altool --upload-package` 上传，退出 0；按回执查询 Apple Build 1 为 VALID。随后按单独授权创建“Flare iOS v1”内部组，关闭自动分发，仅添加指定的一名现有团队账号及 S2 构建；重新加载后构建“正在测试”、账号“已邀请”，60 字测试说明与本地草稿一致。本机 `testflight-internal-s2-20261010.json`、`candidate/candidate-manifest-s2.json` 及 `app-store-draft-saved-20261010.json` 留证。
 
-这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认，真机手势/性能/触感、飞行模式、旧 iOS 和 Apple 提审仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，提交草稿与只读表单缺口见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
+新增授权的 S2 商店绑定、无需登录、审核说明、复用版权与联系人、手动发布、免费/全部 175 个地区供应以及关闭 Mac/Vision Pro 商店供应已保存；服务端确认 175 个地区价格均为零、供应全开、预购关闭，两项平台供应标志均为 false。用户已确认训练图与品牌图发布权。公开隐私页的本地存储、备份和 iOS 删除措辞已准备[修订草稿](privacy-policy-ios-v1-draft.md)，尚未发布。
+
+这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认，真机手势/性能/触感、飞行模式、旧 iOS、最终合规及 App Review 仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，商店保存事实与最终门禁见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
 
 ---
 
@@ -114,7 +116,7 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 | 签名与版本 | 构建时工作树即 `92e459f` 提交内容（pubspec `1.0.0+1`、gradle读取key.properties）；validateSigningRelease通过。Play Console显示版本1(1.0.0)、目标SDK 36、API 24+，优化后新安装33.9MB |
 | 静态分析 | `flutter analyze --no-pub` 无问题（closeout时复验，见下） |
 | Play接入 | 应用 `dev.mhgd.flare` 创建；11/11设置清单完成（隐私政策Worker、内容分级全年龄/PEGI 3、数据安全零收集、受众13+、类别健康与健身、无广告、广告ID"否"、健康声明"活动和健身"、登录/政府/金融声明）；商品详情zh-CN含7张475×844(9:16)截图、512图标、1024×500置顶大图 |
-| 送审状态 | 封闭测试Alpha轨道：AAB+178国家+测试者邮箱列表"Flare Closed Testers"（含mhgd3250905@gmail.com）；发布概览15项更改已送审，页面显示"正在审核中"（Google称通常7天内）。预检曾阻塞于"广告ID声明不完整"，如实补报"否"后通过 |
+| 送审状态 | 封闭测试Alpha轨道：AAB+178国家+测试者邮箱列表"Flare Closed Testers"（含指定测试账号（邮箱仅在平台与本机私密记录））；发布概览15项更改已送审，页面显示"正在审核中"（Google称通常7天内）。预检曾阻塞于"广告ID声明不完整"，如实补报"否"后通过 |
 
 Play页面状态是送审时外部观察，不替代审核结论。真机安装/性能仍为T02、长期前台计时仍为T01；生产发布被平台锁定为"≥12名测试者连续14天后申请正式版权限"，测试加入链接 `https://play.google.com/apps/testing/dev.mhgd.flare`。隐私政策 `https://flare-privacy.294851575.workers.dev` 部署于Cloudflare Workers（源码在根项目 `output/store/flare-privacy-worker/`，本机资源）；商店素材在 `output/store/`。本轮closeout必要验证：3份修改文档本地链接/事实字段检查、`git diff --check`、`flutter analyze --no-pub`；未重跑产品测试与3D验证（产品代码有限delta仅build.gradle.kts/pubspec，且analyze通过）。
 
