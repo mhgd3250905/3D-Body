@@ -1,8 +1,8 @@
 # iOS v1 本地验证（2026-10-10）
 
-开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品为 `63e45e875183bbea344c8b66063dba56e154df08`，加载层保存点为 `3a85bd95b40408aba2723511c2b6dc98606165a2`，最终系统减弱动效修复为 `83f0920ea9e5d613526b89cb2c1768f304d84700`；后续文档提交不改变产品内容。保留 v41 动作、原模型和网页编辑器，未替换 Google Play 的已送审包。
+开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；当前 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 
-当前已完成模拟器验证、App 注册/创建及 App Store 分发 IPA S1 静态验包；尚未上传、TestFlight 分发或正式 App Review。用户要求先完成无需真机的工作，再连接 iPhone。真机性能、触感、离线网络证据和 iOS 15 兼容性仍需设备验证。
+当前已完成模拟器验证、App 创建及商店草稿保存；S1 被 Apple 上传前验证拒绝，修复后的 S2 已通过本地签名和 Apple 验证，等待新精确文件上传授权。尚未上传、TestFlight 分发或正式 App Review。用户要求先完成无需真机的工作，再连接 iPhone；真机性能、触感、离线网络证据及旧 iOS 兼容性继续待验。
 
 ## 修复与回归
 
@@ -113,11 +113,11 @@ FLARE_IOS_EVIDENCE_DIR="$IOS_EVIDENCE_DIR/screenshots/pro" \
 
 未签名检查点 Archive C03 成功（32.9 秒），产品源 `83f0920ea9e5d613526b89cb2c1768f304d84700`；`1.0.0` / Build `1` / `dev.mhgd.flare`，最低 iOS 15.0，仅 iPhone，竖屏与左右横屏。主可执行文件、App.framework 和 Flutter.framework 均为 arm64。C03 主 App 没有签名或 embedded provisioning profile，Flutter 当时跳过 IPA 导出，不能将 C03 作为上传包。
 
-归档内四份有效隐私清单均声明不追踪、不收集数据：App 的 UserDefaults 理由 CA92.1，SharedPreferences 的 UserDefaults 理由 1C8F.1，Flutter 的 FileTimestamp 理由 0A2A.1/C617.1 与 SystemBootTime 理由 35F9.1；WKWebView 资源清单没有访问 API 声明。S1 签名包已复核这些清单，真机流量继续待验。
+归档内四份有效隐私清单均声明不追踪、不收集数据：App 的 UserDefaults 理由 CA92.1，SharedPreferences 的 UserDefaults 理由 1C8F.1，Flutter 的 FileTimestamp 理由 0A2A.1/C617.1 与 SystemBootTime 理由 35F9.1；WKWebView 资源清单没有访问 API 声明。S1/S2 签名包均已复核这些清单，真机流量继续待验。
 
 C03 独立保存到 `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive`，215,768,913 字节、305 个普通文件；`candidate-manifest-r3.json` 记录源提交、身份、归档文件/字节数、三个可执行文件 SHA-256 与四份清单。C01/C02/C03 归档及各自 manifest 保留作历史证据；当时没有 IPA。
 
-### 用户授权后的签名候选 S1
+### 历史：用户授权后的签名候选 S1
 
 用户明确批准注册 `dev.mhgd.flare`、创建“Flare 托马斯”（简体中文，SKU `flare-ios-v1`）、按需配置签名并本地导出、普通推送分支；上传与提审另行确认。`ios/main@cb6aabb` 已普通推送，`git ls-remote` 返回相同 SHA。生产目录与产品源 `83f0920` 相同，本轮只记录发布事实，没有修改生产源码。
 
@@ -136,6 +136,22 @@ C03 独立保存到 `IOS_EVIDENCE_DIR/candidate/Flare-1.0.0-build1-unsigned-r3.x
 
 重新核对指定 Playwright Chrome profile 时 Apple 网页登录已过期，由用户在页面完成登录；Developer 门户随后确认已有 `dev.mhgd.flare`。App Store Connect 已创建并核对 [Flare 托马斯](https://appstoreconnect.apple.com/apps/6821186142/distribution/info)，名称、Bundle ID、简体中文与 SKU 均匹配。Apple 创建时提示访问设置保存失败，但确认 App 已创建且所有团队用户可访问，与所选完全访问一致；未重复点击创建或修改其他团队权限。Apple 初始化的商店版本为 `1.0`、准备提交；后续按具体授权调整为候选版本并保存文案/截图。
 
-S1 尚未上传、分发、真机验收或正式提审。提交文案及隐私/年龄/素材权利事项见 [商店材料](ios-app-store-v1.md)，逐项验收见 [执行台账](ios-plan-2026-10-09.md)。
+S1 静态核查通过后，用户另外授权精确该文件上传与商店草稿保存。Apple 上传前验证返回 90035，指出 `Runner.app/Frameworks/App.framework/flutter_assets/assets/data/import_content.py` 是未签名代码；没有执行 S1 上传，旧包及原始验证日志保留。
 
-上传前另完成商店字段/选图预检：实际页面要求中尺寸灵动岛 iPhone，支持 1206×2622，当前 0/10 张；本机初始 Pro Max 选图计划已改为 10 张已有 Pro 原图（浅色五页、深色五页）。逐张 JPEG 解码、RGB 无透明、尺寸和原始哈希通过；名称 9 / 30、副标题 13 / 30、关键词 36 / 100 字符及逗号空格规则符合 [Apple 产品页限制](https://developer.apple.com/app-store/product-page/)。证据在 `app-store-preflight-s1.json`，计划在 `app-store-draft-plan-s1.json`；文案/网址及截图槽位仍为空，没有平台保存或 IPA 上传，产品源与 S1 哈希保持。
+上传前预检曾将首批选图由 Pro Max 更正为当前必需中尺寸 iPhone 的十张 Pro 原图（1206×2622）。用户批准后已保存版本 `1.0.0`、中文描述/关键词/副标题、健康健美/教育分类和支持/隐私网址；重新加载或重开编辑框核对一致。十张截图在平台为 `10/10`，服务器状态全部 `COMPLETE`、无错误，原始大小/校验和及浅色五页后深色五页的顺序一致。证据为 `app-store-draft-saved-20261010.json` 和 `app-store-screenshot-server-evidence.json`，不是 IPA 上传或正式合规声明。
+### 修复 Apple 上传前验证后的候选 S2
+
+`a4ef59f` 只将 `pubspec.yaml` 的整目录数据资产改为六个明确 JSON，仓库内的 `import_content.py` 和 `stages-source.ts` 原件保留。运行所需四个 JSON、模型/图像及页面源码未改；执行 `flutter test --no-pub test/domain/catalog_dose_test.dart test/data/muscle_knowledge_test.dart --reporter expanded`，6 项通过。清理该工作副本的可再生构建缓存后 `flutter pub get`、`flutter analyze --no-pub` 通过；相同 workspace/scheme 的 Release 归档及 App Store 导出成功，没有重新配置账号或创建证书。
+
+| 检查 | S2 结果 |
+|---|---|
+| 精确源 / 身份 | `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`；`dev.mhgd.flare / 1.0.0 (1)` |
+| 本机 IPA | `candidate/Flare-1.0.0-build1-app-store-S2.ipa`；50,642,770 字节 |
+| SHA-256 | `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f` |
+| 验签 / 分发 | 严格深度验签通过；同一 App Store 描述文件未过期，实际签名证书与描述文件及授权 Team 匹配，`get-task-allow=false`、无设备清单/企业标记 |
+| 架构 / 隐私 | Runner、App.framework、Flutter.framework 均 arm64；四份隐私清单可解析、无追踪/收集声明且逐文件字节与 S1 相同 |
+| 资源差异 | S1 的 251 份改为 249 份，排除两份生成源码，无新增资源；245 份文件哈希不变。AssetManifest.bin 随资产列表更新；清理重建后的 MaterialIcons 字体从 5,136 至 1,645,184 字节，图标源与应用代码未改 |
+| Apple 上传前验证 | 使用当前账号现有发布凭据，`xcrun altool --validate-app -f <S2> -t ios … --output-format json` 退出 0，返回无验证错误 |
+| 状态 / 边界 | `SIGNED_IPA_LOCAL_AND_APPLE_PREFLIGHT_VALIDATED`；替代文件上传再次确认，尚未上传/分发/提审；没有重跑全套模拟器流程或验证真机 |
+
+本机 `candidate-manifest-s2.json`、`s2-signing-checks.json`、`s2-asset-comparison.json`、`signed-ipa-s2-verification.log` 留存结果；包含账号/签名元数据的原始归档、导出和 Apple 日志只在权限受限私密目录。S1 上传授权绑定旧哈希，S2 不沿用；分发、合规、提审和公开发布仍各自需要授权。

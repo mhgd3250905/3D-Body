@@ -1,10 +1,10 @@
 # iOS v1 本地验证（2026-10-10）
 
-专用分支 `ios/main` 基于 PR #8，最终产品保存点 `83f0920ea9e5d613526b89cb2c1768f304d84700`。已修复 WKWebView 恢复命令被旧状态丢弃、小屏大字溢出、构建脚本还原配置、透明启动图、浅色加载层及 iOS 系统减弱动效。初始产品 `63e45e8` 的全套 96 项单元/组件测试通过；最终 analyze 无问题、60 项相关 UI 测试通过，包含三项修前失败的减弱动效回归。四种 iPhone 模拟器的原生流程与 40 张深浅截图完成；截图取自初始产品就绪页面，后续加载与系统动效修复另有原生复测。
+专用分支 `ios/main` 基于 PR #8，当前产品源 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`；此前 `83f0920` 已修复 WKWebView 恢复、小屏大字、构建配置、启动图、浅色加载及系统减弱动效，初始 96 项及后续 60 项 UI 测试/原生减弱动效流程证据保留。本次仅将 `assets/data/` 目录声明改为明确的六个 JSON，排除仓库的 Python/TypeScript 生成工具；6 项内容测试、analyze、S2 归档/签名和 Apple 上传前验证通过。四机型 40 张就绪截图来自 `63e45e8`，后续修复另有原生复测，S2 未重跑全套模拟器流程。
 
 iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒训练完成、实际后台 94.3 秒暂停及冷重启记录保留；同一调试进程持续 24 分 18 秒。加载层保存点 `3a85bd9` 在 Pro 模拟器两次实际 WebContent 中断恢复/重试通过（1422ms，33 次状态确认）；平台恢复代码随后未改变。最终产品另通过系统 Reduce Motion 开启时的真实首启/主题/详情/计时/原生存储验证，Flutter 与 WKWebView 均读取到该偏好，加载图标静止。该场景加载窗口记录 5 个资源、外部来源为零，不是完整抓包或飞行模式验收。最终未签名 arm64 Archive C03 绑定 `83f0920`，215,768,913 字节；本机 `candidate/candidate-manifest-r3.json` 记录身份与校验。
 
-用户授权注册、签名与普通推送后，`ios/main@cb6aabb` 已推送并核对远端；Apple 门户的 `dev.mhgd.flare` 与 App Store Connect“Flare 托马斯”（简体中文、SKU `flare-ios-v1`）已核对。产品源仍为 `83f0920`，App Store 分发 IPA S1 已导出并验签，50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`；三个 arm64 可执行文件、明确匹配的分发描述文件、四份隐私清单及 251 份与 C03 相同的 Flutter 资源通过核查。上传与提审未获授权，尚未执行；证据见本机 `candidate/candidate-manifest-s1.json`。
+用户授权注册、签名与普通推送后，Apple 门户和 App Store Connect 的 `dev.mhgd.flare` 已核对。随后用户批准精确 S1 上传与商店草稿保存；S1 被 Apple 上传前验证以生成脚本未签名（90035）拒绝，未上传。修复后 S2 为 `dev.mhgd.flare / 1.0.0 (1)`，50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；严格验签、描述文件/证书、三个 arm64 执行文件和四份隐私清单通过，Apple 验证退出 0。商店版本、中文文案、分类、支持/隐私网址和 10 张截图已保存，服务器截图状态全部 COMPLETE、顺序/校验和一致；S2 上传等待新精确文件授权。本机 `candidate/candidate-manifest-s2.json` 及 `app-store-draft-saved-20261010.json` 留证。
 
 这些是本机软件/模拟器与静态验包证据；锁屏返回因 Simulator 持续黑屏未完成，真机手势/性能/触感、飞行模式、旧 iOS、TestFlight 和 Apple 提审仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，提交草稿见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
 
