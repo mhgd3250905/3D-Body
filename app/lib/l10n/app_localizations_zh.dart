@@ -459,8 +459,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutTitle => '关于 Flare';
 
   @override
-  String get aboutBody =>
-      '本地开发版 0.1.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。';
+  String get aboutBody => '观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。';
 
   @override
   String get privacyTitle => '本地数据与隐私';
