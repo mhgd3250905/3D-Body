@@ -1,6 +1,6 @@
 # iOS v1 合规问卷复核草稿
 
-2026-10-10：以下为本机准备的填写提案，尚未保存或发布 Apple 最终声明。产品源固定为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，候选 S4 为 `dev.mhgd.flare / 1.0.0 (3)`；IPA 50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`。Apple 当前实际交付仍是 S2 Build 1；精确 S4 上传、草稿绑定及内部组更新已请求授权，待用户回复。
+2026-10-10：以下为本机准备的填写提案，尚未保存或发布 Apple 最终声明。产品源固定为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，候选 S4 为 `dev.mhgd.flare / 1.0.0 (3)`；IPA 50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`。Apple 当前实际候选已更新为 S4 Build 3：用户精确授权后已上传并处理为 VALID、绑定草稿并加入原内部组，自动分发关闭；最终合规声明仍未保存。
 
 通过指定 Playwright 配置只读打开了本 App 的年龄、内容版权、医疗设备及数据收集对话框，四个初始表单均未选中任何答案，随后取消或关闭，没有点击保存、完成或发布。年龄问卷的前八个功能字段来自实际第 1 步；其余类别按 [Apple 当前分类定义](https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/)准备，后续以实际表单为准。
 
@@ -63,7 +63,7 @@
 | 复制本地备份 | 用户点击后复制 JSON 到系统剪贴板，没有 App 备份服务器 | 使用测试数据；剪贴板或用户自行保存的副本由用户与系统管理 |
 | 第三方代码与系统服务 | 当前未初始化广告、分析或远程记录 SDK；四份隐私清单已核查 | 结合实际最终 Release 路径检查；仅凭清单空数组不能完成声明 |
 
-Apple 区分只在设备上处理的数据和可由开发者或合作方访问的设备外传输；WebView 也需要纳入实际数据流核对。参见 [App Privacy 官方定义](https://developer.apple.com/app-store/app-privacy-details/)。公开政策的精确修订见 [政策草稿](privacy-policy-ios-v1-draft.md)，已准备但未获准部署。本轮未保存数据收集答案、未发布隐私标签。
+Apple 区分只在设备上处理的数据和可由开发者或合作方访问的设备外传输；WebView 也需要纳入实际数据流核对。参见 [App Privacy 官方定义](https://developer.apple.com/app-store/app-privacy-details/)。公开政策的精确修订见 [修订记录](privacy-policy-ios-v1-draft.md)，已按单独授权部署并核对批准模块与公开 HTML 哈希。本轮未保存数据收集答案、未发布隐私标签。
 
 ## 账户与地区的当前事实
 
@@ -78,4 +78,4 @@ DSA 自评与联系方式要求见 [Apple DSA 说明](https://developer.apple.co
 
 ## 最终操作边界
 
-先完成已请求的精确 S4 上传与内部测试更新、公开政策更新；按用户要求完成无需真机的准备后，再安排真实 TestFlight 安装与设备证据。最终年龄、内容版权、医疗设备及 App Privacy 声明由发行者复核并另行授权；正式 App Review 与手动公开发布继续分别确认。S4、公开政策及最终声明当前均未执行相应平台写入。
+精确 S4 上传、草稿绑定、原单账号内部测试更新及现有公开政策页修订已按分别授权完成。无需真机的准备已完成，用户要求等其回来连接 iPhone 后继续真实 TestFlight 安装与设备证据。最终年龄、内容版权、医疗设备及 App Privacy 声明由发行者复核并另行授权；正式 App Review 与手动公开发布继续分别确认，本轮未执行这些最终写入。

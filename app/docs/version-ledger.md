@@ -9,24 +9,25 @@
 | 字段 | 已核对结果 |
 |---|---|
 | 分支 / 基线 | `ios/main` / PR #8 `ad72f1cc481080072526be918e48748dbec20794`；用户授权后首次普通 push `cb6aabbcca4689ea5b66611db92943c8f6dbed49`，远端已核对；主目录 master 与原网页服务保留 |
-| Apple 当前产品源 | `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`；S2 收窄数据资产打包，排除仓库的 Python/TypeScript 生成源码；已上传、内部测试并绑定商店草稿 |
-| 最新本地产品源 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`；S4 继承旧版本文案补修，清理已过期的素材授权提示并递增 Build 为 3，署名和许可保留；尚未上传 |
-| 应用身份 | `dev.mhgd.flare`，营销版本 `1.0.0`；Apple 当前 S2 Build 1，最新本地 S4 Build 3；Flare 托马斯，最低 iOS 15.0，仅 iPhone，竖屏及左右横屏 |
+| Apple 当前产品源 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`；S4 清理关于页旧版本和过期授权提示，完整署名保留；已上传、内部测试并绑定商店草稿 |
+| 最新本地产品源 | 同为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，Build 3；后续仅维护验证/发布文档，不重导出或改变获准 IPA |
+| 应用身份 | `dev.mhgd.flare`，营销版本 `1.0.0`；当前 S4 Build 3，S2 Build 1 保留历史；Flare 托马斯，最低 iOS 15.0，仅 iPhone，竖屏及左右横屏 |
 | C01 历史本机归档 | 源 `63e45e8`；215,767,270 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned.xcarchive` 与 `candidate-manifest.json` 保留 |
 | C02 历史本机归档 | 源 `3a85bd9`；215,767,406 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r2.xcarchive` 与 `candidate-manifest-r2.json` 保留 |
 | C03 未签名检查点 | 源 `83f0920`；`UNSIGNED_ARCHIVE_LOCAL_VALIDATED`；215,768,913 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` 保留 |
 | S1 历史分发候选 | 源 `83f0920`；本机静态验包通过，但 Apple 上传前验证因 `assets/data/import_content.py` 未签名报 90035，未上传；50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`，原 IPA 与清单保留 |
-| S2 当前 Apple 分发候选 | 源 `a4ef59f`，Apple Distribution；50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；本机 `candidate/Flare-1.0.0-build1-app-store-S2.ipa`，Apple 上传前验证退出 0；用户分别授权精确上传与内部测试，已处理为 VALID，当前 `INTERNAL_TESTING` |
+| S2 历史 Apple 分发候选 | 源 `a4ef59f`，Apple Distribution；50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；本机 `candidate/Flare-1.0.0-build1-app-store-S2.ipa`，Apple 上传前验证退出 0；用户分别授权精确上传与内部测试，已处理为 VALID，作为历史构建保留在内部组 |
 | S3 历史本地候选 | 源 `b81026a`，`1.0.0 (2)`，Apple Distribution；50,089,766 字节，SHA-256 `e6d4a856302df2a30a5498ccfa0a0cd2bf08540c8f1f7376ce788fd04a0d09ba`；本机 `candidate/Flare-1.0.0-build2-app-store-S3.ipa`；10 项相关 UI 测试、analyze、签名与 Apple 验证通过，已被本地 S4 取代，未上传/分发 |
-| S4 最新本地候选 | 源 `7ffa5e6`，`1.0.0 (3)`，Apple Distribution；50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`；本机 `candidate/Flare-1.0.0-build3-app-store-S4.ipa`；10 项 UI 测试、analyze、严格验签和 Apple 验证通过，249 份资源及四份隐私清单与 S3 相同。`VALIDATED_AWAITING_EXACT_UPLOAD_AUTHORIZATION`；同源调试版关于页原生复查已通过，精确上传/草稿绑定/内部组更新授权已请求并待回复 |
+| S4 当前 Apple 候选 | 源 `7ffa5e6`，`1.0.0 (3)`，Apple Distribution；50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`；本机 `candidate/Flare-1.0.0-build3-app-store-S4.ipa`；10 项 UI 测试、analyze、严格验签、Apple 验证和同源调试版关于页复查通过。用户精确授权后原文件上传，上传后哈希不变，已处理为 VALID / APP_STORE_ELIGIBLE；当前内部测试及商店草稿均使用 Build 3，真机待验 |
 | 候选核查 | S2 严格深度验签、三个 arm64 执行文件、描述文件/实际证书/授权 Team、`get-task-allow=false` 及四份隐私清单通过；Flutter 资源 249 份，排除两个生成源码，245 份与 S1 哈希一致，资产清单与生成 MaterialIcons 字体变化。本机 `candidate-manifest-s2.json`、`s2-signing-checks.json` 与 `s2-asset-comparison.json` 留证 |
 | S3 补充核查 | 同样的签名、证书/描述文件绑定、三个 arm64 执行文件与隐私检查通过；四份隐私清单与 S2 字节一致，249 份 Flutter 资源中 248 份哈希相同，仅 MaterialIcons 改为构建生成子集，源码 28 种图标所需字形全部存在；本机 S3 manifest、signing/asset/icon/Apple validation 记录留证 |
 | 截图 | 四种 iPhone 模拟器、两主题、五页面，共 40 张；来自 `63e45e8` 就绪页面，后续加载与系统动效修复另以原生流程/录像核对，默认动效下的就绪页面素材继续复用；PNG 原件/无透明 JPEG及本机 `screenshot-manifest.json` 不入 Git |
-| Apple 状态 | [Flare 托马斯 App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 为 `1.0.0`、准备提交；文案/分类/网址和 10 张截图已保存，截图全部 COMPLETE。S2 VALID、APP_STORE_ELIGIBLE，已绑定商店草稿和内部组“Flare iOS v1”；组内仅 1 名指定账号及 1 个 S2 构建，自动分发关闭、构建“正在测试”、账号“已邀请”。新增授权的审核信息、版权/联系人、手动发布、免费/全部 175 个地区供应均已保存，Mac/Vision Pro 商店供应关闭；S4 尚未上传，未正式提审 |
-| 验收边界 | 初始 96 项、`83f0920` 的 60 项相关 UI/原生减弱动效流程、S2 的 6 项内容测试及 S3/S4 各 10 项相关 UI 测试分别留证；S2/S3/S4 analyze、签名与 Apple 验证通过，未重跑全套原生流程。素材发布权已由用户确认；S4 调试版已升级并保留原偏好，同源调试版关于页文字、署名与图标原生复查通过；公开隐私页修订、内部邀请接受/安装、真机与最终合规/审核继续待完成 |
+| Apple 状态 | [Flare 托马斯 App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 为 `1.0.0`、准备提交；既有文案/分类/网址、10 张 COMPLETE 截图和审核/供应配置保留。S4 VALID、APP_STORE_ELIGIBLE，草稿重新加载仍绑定 Build 3；原内部组“Flare iOS v1”仅 1 名指定账号，保留 S2 与 S4 两个构建，自动分发关闭、S4 正在测试、账号已邀请。构建通知允许，邮件送达及真实安装未确认；正式提审未执行 |
+| 验收边界 | 初始 96 项、83f0920 的 60 项相关 UI/原生减弱动效、S2 的 6 项内容测试及 S3/S4 各 10 项相关 UI 测试分别留证；S2/S3/S4 analyze、签名与 Apple 验证通过，未重跑全套原生流程。S4 同源调试版关于页复查通过、偏好保留；公开政策修订已部署。用户要求等其回来连接 iPhone 后继续内部邀请接受/安装、真机、最终合规及审核 |
+| 公开隐私页 | 现有 [flare-privacy](https://flare-privacy.294851575.workers.dev/) 已按单独授权更新为 2026-10-10 文案；生产模块 3,060 字节、SHA-256 `efa675a77737fc1380426a3721de65567e5ad9d77128759b102c02697c4721f0`，公开 HTML 2,805 字节、SHA-256 `1ddfc8ca7bb23d70d92dcb2098aac6181cf58c1b10ba832bc3c8b0e2180c9306`，均与批准文件一致；联系段落及现有配置保留 |
 | 合规复核草稿 | [26 个年龄字段及版权/隐私/医疗设备提案](ios-compliance-v1-draft.md)已在本机准备；四类实际对话框只读核对后关闭，未保存或发布。补入健康健美分类所需的受监管医疗设备声明；现有 App 页面为非交易商状态，ICP 未见已保存号，最终声明和适用地区许可仍待复核 |
 
-详细命令和设备证据见 [iOS 验证](ios-verification-2026-10-10.md)，逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，可审阅的描述、隐私与截图说明见 [商店材料](ios-app-store-v1.md)。注册、签名、App 创建、普通 push、精确 S2 上传/内部测试及新增商店字段保存分别来自用户明确授权；S1 验证失败后未上传。S4 精确上传/内测更新、公开隐私页更新、外部测试、最终合规与正式提审继续按对应授权推进。文档保存点由 `git log` 定位，不预填自身 SHA。以下保留 Android/Web 交付台账。
+详细命令和设备证据见 [iOS 验证](ios-verification-2026-10-10.md)，逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，可审阅的描述、隐私与截图说明见 [商店材料](ios-app-store-v1.md)。注册、签名、App 创建、普通 push、精确 S2 上传/内部测试及新增商店字段保存分别来自用户明确授权；S1 验证失败后未上传。S4 精确上传/草稿绑定/原单账号内测更新及现有公开隐私页更新已分别获得授权并完成；外部测试、最终合规、正式提审与公开发布继续按对应授权推进。文档保存点由 `git log` 定位，不预填自身 SHA。以下保留 Android/Web 交付台账。
 
 ## PR7审核修复与交付（已合并）
 
