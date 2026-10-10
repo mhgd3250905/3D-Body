@@ -182,7 +182,7 @@
   "privacyTitle": "本地数据与隐私",
   "privacyBody": "设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。",
   "creditsTitle": "模型与素材来源",
-  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由用户提供的素材包提供，发布前需补齐授权核对。",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由应用发行者提供。",
   "speedLabel": "默认播放速度",
   "qualityLabel": "画面质量",
   "balanced": "均衡",

@@ -1003,7 +1003,7 @@ abstract class AppLocalizations {
   /// No description provided for @creditsBody.
   ///
   /// In zh, this message translates to:
-  /// **'Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由用户提供的素材包提供，发布前需补齐授权核对。'**
+  /// **'Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由应用发行者提供。'**
   String get creditsBody;
 
   /// No description provided for @speedLabel.
