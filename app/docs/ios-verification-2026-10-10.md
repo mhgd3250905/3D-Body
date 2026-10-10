@@ -1,8 +1,8 @@
 # iOS v1 本地验证（2026-10-10）
 
-开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；当前 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
+开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；S2 产品源 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 
-Apple 当前仍为 S2 Build 1，已处理为 VALID、绑定商店草稿并进入指定单账号内部组，自动分发关闭；已授权的商店信息、免费/全部 175 个地区供应、手动发布及关闭 Mac/Vision Pro 商店供应已保存，素材发布权由用户确认。最新本地 S4 源 `7ffa5e6`、`1.0.0 (3)` 清理关于页两处过期文案，10 项相关 UI 测试、analyze、签名验包与 Apple 验证通过，未上传。Build 3 调试版已升级至自建模拟器，本地偏好未变，界面复查因 Mac 锁屏仍待完成。公开隐私政策[修订草稿](privacy-policy-ios-v1-draft.md)已准备；源码读取待 Cloudflare 登录，未发布。真机、最终合规与正式 App Review 待完成，按用户要求先完成无需真机的工作。
+Apple 当前仍为 S2 Build 1，已处理为 VALID、绑定商店草稿并进入指定单账号内部组，自动分发关闭；已授权的商店信息、免费/全部 175 个地区供应、手动发布及关闭 Mac/Vision Pro 商店供应已保存，素材发布权由用户确认。最新本地 S4 源 `7ffa5e6`、`1.0.0 (3)` 清理关于页两处过期文案，10 项相关 UI 测试、analyze、签名验包与 Apple 验证通过，未上传。Build 3 调试版已升级至自建模拟器，本地偏好未变，同源调试版关于页文字、署名、布局和图标原生复查通过。公开隐私政策[修订草稿](privacy-policy-ios-v1-draft.md)已准备；现有 Worker 源码及部署元数据已备份，精确修订通过语法和六种本地 handler 核查，未发布。真机、最终合规与正式 App Review 待完成，按用户要求先完成无需真机的工作。
 
 ## 修复与回归
 
@@ -198,7 +198,7 @@ Apple 服务端响应中，174 个自动地区价格与 1 个基准价格的 `cu
 
 ### 原生关于页核对与本地候选 S4
 
-在自建 iPhone 13 模拟器的原已安装 Build 1 关于页，实际观察到旧“本地开发版 0.1.0”及“发布前需补齐授权核对”。前者已在 S3 删除；后者在当前 `creditsBody` 中仍存在，与用户已确认素材发布权的事实不符。S4 仅从 ARB 清理该过期提示，将来源表述为应用发行者提供；Snow CC BY 4.0、Human Base Meshes CC0、Three.js MIT 及教学示意限制均保留。生成翻译由工具更新，Build 递增为 3。
+在自建 iPhone 13 模拟器的原已安装 Build 1 关于页，实际观察到旧“本地开发版 0.1.0”及“发布前需补齐授权核对”。前者已在 S3 删除；后者在 S3 的 `creditsBody` 中仍存在，与用户已确认素材发布权的事实不符。S4 仅从 ARB 清理该过期提示，将来源表述为应用发行者提供；Snow CC BY 4.0、Human Base Meshes CC0、Three.js MIT 及教学示意限制均保留。生成翻译由工具更新，Build 递增为 3。
 
 | 检查 | S4 结果 |
 |---|---|
@@ -210,7 +210,14 @@ Apple 服务端响应中，174 个自动地区价格与 1 个基准价格的 `cu
 | 资源 / 隐私 | 249 份资源与 S3 的集合及逐文件 SHA-256 全部一致；四份有效隐私清单字节一致；28 种源码图标的所需字形均存在 |
 | Apple 验证 | 现有本机发布凭据，`altool --validate-app` 退出 0，无错误；没有上传 |
 | 本机原生准备 | 正式 `lib/main.dart` 的 Debug Simulator Build 3 构建、安装和启动成功；升级前后既有偏好文件哈希相同，无数据重置。该调试版不是签名 App Store IPA |
-| 界面门禁 | S3 调试升级后原生工具报告 Mac 锁屏；S4 已准备好同一模拟器，新的关于页文字与图标尚待手动解锁后核对。没有将 UI 检查记作通过 |
-| 状态 | `VALIDATED_AWAITING_NATIVE_ABOUT_AND_EXACT_UPLOAD_AUTHORIZATION`；未上传、未内测更新、未真机验收或提审。先完成关于页复查，再确认精确 S4 上传/草稿绑定/内部组更新 |
+| 界面门禁 | 用户手动解锁后，在同源 Debug Build 3 中实际进入设置 → 关于 Flare；旧版本文字及过期授权提示均消失，完整署名和教学/草稿限制保留；布局、返回/备份/许可图标正常。上下段原生截图留证，未点击复制备份或把此检查当作签名 IPA/真机执行 |
+| 原生截图 | 本机发布证据目录的 `native-about-s4-top.png` 与 `native-about-s4-bottom.png`；Simulator 保存的原图，身份已核对为 dev.mhgd.flare / 1.0.0 (3)，不入 Git |
+| 状态 | `VALIDATED_AWAITING_EXACT_UPLOAD_AUTHORIZATION`；原生关于页复查通过，精确 S4 上传/草稿绑定/内部组更新授权已请求并待回复；未上传、未内测更新、未真机验收或提审 |
 
 本机 `candidate-manifest-s4.json`、`s4-signing-checks.json`、`s4-asset-comparison.json`、`s4-icon-glyph-coverage.json`、`apple-validation-s4.json` 与 `native-about-s4-build.json` 留证。S2 是当前 Apple 交付，S3 是保留的历史本地候选；所有旧文件与原授权边界保留。
+
+### 公开隐私页现有源码与精确修订准备
+
+2026-10-10 通过用户指定的 Playwright 配置恢复访问现有 `flare-privacy`，读取生产 `index.js`、部署元数据、空路由与空绑定列表，并保存私密备份。原模块 SHA-256 为 `91ac729876aaa1765d8fdb2908498b718fd0e13f0fe4cc707f330ce2f8aa12f2`；解码后的 HTML 与当前公开 HTTP 200 响应字节一致，早期 DOM 基线仅有标签间空白差异。联系方式未进入 Git。
+
+[政策草稿](privacy-policy-ios-v1-draft.md)对应的精确补丁只替换 HTML 文案、标题与日期，原 fetch handler、响应头、样式、联系段落及现有服务配置保留；3,060 字节，SHA-256 `efa675a77737fc1380426a3721de65567e5ad9d77128759b102c02697c4721f0`。`node --input-type=module --check` 退出 0；原/新模块在两条路径 × GET/HEAD/POST 的六种本地调用中，状态与响应头一致、新响应与预览 HTML 完全相同，不发送网络请求。尚未公开部署，需单独授权；最终 App Privacy 仍待精确候选真机流量及发行者确认。
