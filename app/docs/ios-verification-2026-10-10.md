@@ -2,7 +2,7 @@
 
 开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；当前 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 
-Apple 当前候选为 S2 Build 1，已处理为 VALID 并按单独授权进入仅指定单账号的内部组；自动分发关闭，构建“正在测试”、账号“已邀请”。商店文案/截图及后续授权的审核信息、构建绑定、手动发布、免费/全部 175 个地区供应、关闭 Mac/Vision Pro 商店供应均已保存；用户确认素材发布权。最新本地 S3 源 `b81026a` 删除关于页旧版本文字并递增 Build 为 2，已通过 10 项相关 UI 测试、analyze、本机签名验包及 Apple 上传前验证，尚未上传。公开隐私政策[修订草稿](privacy-policy-ios-v1-draft.md)已准备、尚未发布。邀请接受、实际安装、真机和最终合规继续待验，正式 App Review 未提交；按用户要求先完成无需真机的工作。
+Apple 当前仍为 S2 Build 1，已处理为 VALID、绑定商店草稿并进入指定单账号内部组，自动分发关闭；已授权的商店信息、免费/全部 175 个地区供应、手动发布及关闭 Mac/Vision Pro 商店供应已保存，素材发布权由用户确认。最新本地 S4 源 `7ffa5e6`、`1.0.0 (3)` 清理关于页两处过期文案，10 项相关 UI 测试、analyze、签名验包与 Apple 验证通过，未上传。Build 3 调试版已升级至自建模拟器，本地偏好未变，界面复查因 Mac 锁屏仍待完成。公开隐私政策[修订草稿](privacy-policy-ios-v1-draft.md)已准备；源码读取待 Cloudflare 登录，未发布。真机、最终合规与正式 App Review 待完成，按用户要求先完成无需真机的工作。
 
 ## 修复与回归
 
@@ -192,6 +192,25 @@ Apple 服务端响应中，174 个自动地区价格与 1 个基准价格的 `cu
 | 资源 / 隐私 | 249 份 Flutter 资源中 248 份与 S2 哈希相同；模型、训练图、场景及运行数据全部不变，两个生成源码继续排除；四份隐私清单与 S2 字节一致并可解析 |
 | 生成字体 | S2 带完整 MaterialIcons 字体 1,645,184 字节，S3 为 5,136 字节子集，含 35 个字符映射；源码引用的 28 种 Icons 常量在当前 Flutter SDK 与 IPA 字体 cmap 中全部匹配，无缺失字形 |
 | Apple 验证 | 使用已授权本机现有发布凭据运行 `altool --validate-app`，退出 0，无验证错误；未执行上传 |
-| 状态 / 限制 | `VALIDATED_AWAITING_EXACT_UPLOAD_AUTHORIZATION`；S3 未上传、未分发、未正式提审；没有重新运行全套原生模拟器流程或完成真机验收 |
+| 状态 / 限制 | 历史 S3 验证通过；因过期授权提示补修被本地 S4 取代，未上传/分发；没有重新运行全套原生模拟器流程或完成真机验收 |
 
-本机 `candidate-manifest-s3.json`、`s3-signing-checks.json`、`s3-asset-comparison.json`、`s3-icon-glyph-coverage.json` 与 `apple-validation-s3.json` 绑定上述结果；原始日志只在私密目录。S3 上传、商店绑定与内部组更新需要新的精确候选授权，不能沿用 S2 哈希授权；最终真机与合规声明仍需对应实际获准的最终 Build。
+本机 `candidate-manifest-s3.json`、`s3-signing-checks.json`、`s3-asset-comparison.json`、`s3-icon-glyph-coverage.json` 与 `apple-validation-s3.json` 绑定上述结果；原始日志只在私密目录。S3 未上传；发现素材授权旧提示后，当前推荐候选改为下述 S4。旧 S3 请求不能作为 S4 授权；最终设备与合规声明须对应实际获准的最终 Build。
+
+### 原生关于页核对与本地候选 S4
+
+在自建 iPhone 13 模拟器的原已安装 Build 1 关于页，实际观察到旧“本地开发版 0.1.0”及“发布前需补齐授权核对”。前者已在 S3 删除；后者在当前 `creditsBody` 中仍存在，与用户已确认素材发布权的事实不符。S4 仅从 ARB 清理该过期提示，将来源表述为应用发行者提供；Snow CC BY 4.0、Human Base Meshes CC0、Three.js MIT 及教学示意限制均保留。生成翻译由工具更新，Build 递增为 3。
+
+| 检查 | S4 结果 |
+|---|---|
+| 产品源 / 身份 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`；`dev.mhgd.flare / 1.0.0 (3)` |
+| 软件 | `flutter gen-l10n`、`flutter analyze --no-pub`、10 项 `flow_regressions_test` 均成功，diff check 通过 |
+| 签名候选 | Runner Release Archive 与 App Store export 成功，复用已有资源，未使用 `-allowProvisioningUpdates`，导出不自动改版本/Build |
+| IPA | `candidate/Flare-1.0.0-build3-app-store-S4.ipa`；50,089,798 字节；SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f` |
+| 静态核查 | zsh 严格验包退出 0；App Store 描述文件未过期、实际证书/授权 Team/标识匹配、get-task-allow=false、beta-reports-active=true；三个执行文件只含 arm64 |
+| 资源 / 隐私 | 249 份资源与 S3 的集合及逐文件 SHA-256 全部一致；四份有效隐私清单字节一致；28 种源码图标的所需字形均存在 |
+| Apple 验证 | 现有本机发布凭据，`altool --validate-app` 退出 0，无错误；没有上传 |
+| 本机原生准备 | 正式 `lib/main.dart` 的 Debug Simulator Build 3 构建、安装和启动成功；升级前后既有偏好文件哈希相同，无数据重置。该调试版不是签名 App Store IPA |
+| 界面门禁 | S3 调试升级后原生工具报告 Mac 锁屏；S4 已准备好同一模拟器，新的关于页文字与图标尚待手动解锁后核对。没有将 UI 检查记作通过 |
+| 状态 | `VALIDATED_AWAITING_NATIVE_ABOUT_AND_EXACT_UPLOAD_AUTHORIZATION`；未上传、未内测更新、未真机验收或提审。先完成关于页复查，再确认精确 S4 上传/草稿绑定/内部组更新 |
+
+本机 `candidate-manifest-s4.json`、`s4-signing-checks.json`、`s4-asset-comparison.json`、`s4-icon-glyph-coverage.json`、`apple-validation-s4.json` 与 `native-about-s4-build.json` 留证。S2 是当前 Apple 交付，S3 是保留的历史本地候选；所有旧文件与原授权边界保留。
