@@ -52,7 +52,7 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 ## 隐私与年龄分级核对
 
 - 当前源码没有账号、分析、广告或远程数据上传；本地设置与训练记录通过 `shared_preferences` 保存。S4 的四份隐私清单与 S3/S2 字节一致，均可解析、不追踪、不收集数据；App 的 UserDefaults 理由 CA92.1、插件的 1C8F.1，以及 Flutter 的 FileTimestamp/SystemBootTime 理由已复核。最终 App Privacy 还要结合实际最终候选的真机网络证据，详见 [验包核查](ios-verification-2026-10-10.md)。
-- 年龄分级按实际健身教学内容填写 Apple 问卷，包含健康/健身主题；最终评级由 Apple 计算，不预设 4+，不选择 Made for Kids。
+- 年龄分级按实际健身教学内容填写 Apple 问卷，“健康或健身主题”拟选“是”；最终评级由 Apple 计算，不预设 4+，不选择 Made for Kids。完整字段提案、内容版权、医疗设备及地区复核见 [合规问卷草稿](ios-compliance-v1-draft.md)，尚未保存最终声明。
 - 2026-10-10 用户明确确认深浅训练图与品牌图具备 App Store 发布权；这是发行者确认，并非独立法律核验。原始来源记录及 Snow、Human Base Meshes、Three.js 等署名和许可入口继续保留，最终 Content Rights 问卷另行确认。
 - 公开隐私页仍是 2026-10-09 文案；本地保存、剪贴板备份及 iOS“卸载 App”保留数据的措辞修订见[政策草稿](privacy-policy-ios-v1-draft.md)。尚未更新现有公开服务，最终声明前需要完成相应修订与设备核验。
 
@@ -87,6 +87,9 @@ Apple 当前候选 S2 源为 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`，身份
 | 年龄分级 | 问卷尚未保存 | 包含健身教学主题，无诊断/治疗功能；按 [Apple 问卷](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/) 回答并由 Apple 计算评级，不预填最终年龄数字 |
 | 内容版权 | 第三方内容声明尚未填写；用户已确认训练图和品牌图发布权 | App 含已列出来源的模型/软件，按实际内容填写并单独确认最终声明 |
 | App Privacy | 隐私网址已保存，数据收集问卷未开始 / 发布；政策修订草稿已准备 | 使用实际最终候选的真机流量证据完成最终声明，公开政策修订另行授权；本地处理或五条模拟器资源请求不能替代完整网络验收 |
+| 受监管医疗设备 | 当前未声明；本机拟选“否” | 健康健美分类与美/英/EU/EEA 供应触发必填要求；按 [Apple 说明](https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status)及发行者实际用途复核后另行授权保存 |
+| EU DSA | 当前 App 页面显示已有非交易商状态 | 由发行者按实际经营事实复核，本轮未修改账户或 App 声明 |
+| 中国大陆 App 备案 | 页面显示 ICP 说明及“设置”入口，未见已保存号 | 适用性和本 App 的有效资料仍待核对；已保存 175 地区供应不代表地区许可均已完成 |
 
 本机 `app-store-final-preflight-s2-20261010.json` 保留最初观察，并关联 `app-store-remaining-draft-s2-20261010.json` 的已授权保存结果。后者记录 174 个自动价格与 1 个基准价格均为零、175 个供应地区及两项平台开关；不含个人联系人。内部测试里的 Mac/Vision Pro 测试选项仍沿用平台默认，与此处公开商店供应开关不同；相应设备功能未验收。
 
