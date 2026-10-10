@@ -1,6 +1,6 @@
 # iOS v1 商店提交材料
 
-当前已完成本机验证、Apple App 创建及商店草稿保存。用户批准精确 S1 上传后，Apple 上传前验证因包内生成脚本未签名（90035）拒绝；修复后的 S2 已通过签名验包和 Apple 验证，等待新文件的上传授权。本文的版本、描述、关键词、副标题、分类、支持/隐私网址及首批 10 张原生截图已保存到平台；审核说明、最终合规等其余内容继续保留草稿。`ios/main` 基于 PR #8，Android、网页、v41 动作与原素材保留。
+当前已完成本机验证、Apple App 创建及商店草稿保存。用户批准精确 S1 上传后，Apple 上传前验证因包内生成脚本未签名（90035）拒绝；修复后的 S2 通过签名验包和 Apple 验证，用户另外批准精确新文件后已上传，Apple 处理状态 VALID。本文的版本、描述、关键词、副标题、分类、支持/隐私网址及首批 10 张原生截图已保存到平台；审核说明、最终合规等其余内容继续保留草稿。`ios/main` 基于 PR #8，Android、网页、v41 动作与原素材保留。
 
 ## 应用信息草稿
 
@@ -12,7 +12,7 @@
 | 平台 | iOS；iPhone；最低 iOS 15.0 |
 | Bundle ID | dev.mhgd.flare；用户授权后已注册，并在 Developer 门户/Apple App 中核对 |
 | SKU | flare-ios-v1；已创建并核对，主要语言为简体中文 |
-| 版本 / 首次构建号 | S2 1.0.0 / 1；商店草稿已按授权由 1.0 改为 1.0.0，尚未上传 IPA |
+| 版本 / 首次构建号 | S2 1.0.0 / 1；商店草稿已按授权由 1.0 改为 1.0.0；S2 已上传并完成 Apple 处理 |
 | 主要分类 | 健康健美 |
 | 次要分类 | 教育 |
 | 关键词 | 托马斯,全旋,Flare,街舞,体能,肌群,动作分解,离线训练,训练计时 |
@@ -65,7 +65,7 @@ Apple 开发者账号、Team、签名材料与审核联系信息只保留在本�
 
 当前候选 S2 源为 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`，身份 `dev.mhgd.flare / 1.0.0 (1)`；本机 `candidate/Flare-1.0.0-build1-app-store-S2.ipa` 为 50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`。严格深度验签、明确的分发描述文件/实际证书、三个 arm64 执行文件及四份隐私清单通过；Apple `altool --validate-app` 退出 0。S1 的静态验包曾通过，但被 Apple 以 `assets/data/import_content.py` 未签名报 90035 拒绝，因此未上传。S2 仅修改资产声明，排除该 Python 文件与 `stages-source.ts`，两份源码仍保留在仓库；249 份 Flutter 资源中 245 份与 S1 哈希相同，其余为资产清单和重建的 MaterialIcons 字体。旧 S1/C01–C03 与证据继续保留。
 
-创建 App 时 Apple 提示访问设置保存失败，但确认 App 已创建、所有团队用户可访问，与所选“完全访问权限”一致。当前 [Flare 托马斯 Apple App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 为商店版本 `1.0.0`、准备提交；授权范围内的商店字段和截图已保存，尚无 IPA 上传。S2 哈希与原授权 S1 不同，上传前再次确认精确候选；TestFlight 分发、最终合规声明、正式审核与发布分别确认，真机与素材发布权等门禁继续保留。
+创建 App 时 Apple 提示访问设置保存失败，但确认 App 已创建、所有团队用户可访问，与所选“完全访问权限”一致。当前 [Flare 托马斯 Apple App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 为商店版本 `1.0.0`、准备提交；授权范围内的商店字段和截图已保存。S2 哈希与原授权 S1 不同，用户另外明确批准后已上传；Apple Build 1 为 VALID，TestFlight 页面为准备提交、尚未分发。TestFlight 分发、最终合规声明、正式审核与发布分别确认，真机与素材发布权等门禁继续保留。
 
 先完成无需真机的验证，再由用户连接 iPhone。构建、上传处理、TestFlight 可安装和正式 App Review 是不同状态，逐项登记在 [iOS 执行台账](ios-plan-2026-10-09.md) 与 [版本台账](version-ledger.md) 中。账号、签名和联系信息不写入 Git。
 

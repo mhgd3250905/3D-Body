@@ -2,7 +2,7 @@
 
 开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；当前 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 
-当前已完成模拟器验证、App 创建及商店草稿保存；S1 被 Apple 上传前验证拒绝，修复后的 S2 已通过本地签名和 Apple 验证，等待新精确文件上传授权。尚未上传、TestFlight 分发或正式 App Review。用户要求先完成无需真机的工作，再连接 iPhone；真机性能、触感、离线网络证据及旧 iOS 兼容性继续待验。
+当前已完成模拟器验证、App 创建及商店草稿保存；S1 被 Apple 上传前验证拒绝，修复后的 S2 已通过本地签名和 Apple 验证，用户另行明确授权后上传成功；Apple Build 1 已处理为 VALID，TestFlight 页面准备提交。尚未 TestFlight 分发或正式 App Review。用户要求先完成无需真机的工作，再连接 iPhone；真机性能、触感、离线网络证据及旧 iOS 兼容性继续待验。
 
 ## 修复与回归
 
@@ -152,6 +152,14 @@ S1 静态核查通过后，用户另外授权精确该文件上传与商店草�
 | 架构 / 隐私 | Runner、App.framework、Flutter.framework 均 arm64；四份隐私清单可解析、无追踪/收集声明且逐文件字节与 S1 相同 |
 | 资源差异 | S1 的 251 份改为 249 份，排除两份生成源码，无新增资源；245 份文件哈希不变。AssetManifest.bin 随资产列表更新；清理重建后的 MaterialIcons 字体从 5,136 至 1,645,184 字节，图标源与应用代码未改 |
 | Apple 上传前验证 | 使用当前账号现有发布凭据，`xcrun altool --validate-app -f <S2> -t ios … --output-format json` 退出 0，返回无验证错误 |
-| 状态 / 边界 | `SIGNED_IPA_LOCAL_AND_APPLE_PREFLIGHT_VALIDATED`；替代文件上传再次确认，尚未上传/分发/提审；没有重跑全套模拟器流程或验证真机 |
+| 状态 / 边界 | `PROCESSED_VALID`；用户另行授权精确 S2 后上传成功，Apple Build 1 已完成处理；尚未分发/提审，没有重跑全套模拟器流程或验证真机 |
 
 本机 `candidate-manifest-s2.json`、`s2-signing-checks.json`、`s2-asset-comparison.json`、`signed-ipa-s2-verification.log` 留存结果；包含账号/签名元数据的原始归档、导出和 Apple 日志只在权限受限私密目录。S1 上传授权绑定旧哈希，S2 不沿用；分发、合规、提审和公开发布仍各自需要授权。
+
+### S2 上传与 Apple 处理
+
+用户明确回复“允许上传这份 S2”后，重新核对源、身份、50,642,770 字节及 SHA-256 一致；当时 TestFlight 页面无构建版本。使用本机现有发布凭据执行 `xcrun altool --upload-package <精确 S2> … --output-format json --show-progress`，工具退出 0，Apple 回执无上传错误。原 IPA 未重新打包或导出，上传后哈希保持；S1 未上传。
+
+按成功回执查询 `altool --build-status --delivery-id <私密回执标识> … --output-format json`，退出 0，`build-status=VALID`、`import-status=VALID`、`is-on-app-store-connect=true`、`build-audience-type=APP_STORE_ELIGIBLE`。Apple 显示上传日期为 2026/10/10 10:13:23（本机时间），最低 iOS 15.0，`uses-non-exempt-encryption=false`；该值来自已上传构建，不是本轮手动提交的最终合规声明。指定 Playwright 配置重新加载后，版本 1.0.0 的构建版本 1 显示“准备提交”，邀请/安装等列为未开始。
+
+本机 `app-store-upload-s2.json`、`candidate/upload-attempt-s2.json` 及更新后的 `candidate-manifest-s2.json` 绑定授权、精确文件和处理结果；凭据、交付回执及原始日志仅在权限受限目录。已准备仅本人内部测试组“Flare iOS v1”的本地计划，显式关闭默认开启的自动分发；尚未创建群组、添加测试员或发送邀请，待该项单独授权。正式 App Review、真机验收和最终隐私/年龄/素材权利等仍未完成。
