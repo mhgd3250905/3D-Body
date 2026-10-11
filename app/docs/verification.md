@@ -10,7 +10,7 @@
 
 真实Chrome GUI：英语390的phase11标签/图例完整显示Gluteus medius，13px；详情CTA为Train Gluteus medius，知识视口70.22px，滚动前后footer、iframe及暂停时刻固定，跳训练搜索框视觉预填短名且得到对应居家1项。俄语与阿语320标签/图例完整、13px，提示与同步卡避让；阿语RTL保持。[最终截图](screenshots/2026-10-11-L39/README.md)与[报告](../../output/drill-media-20261011/L39-browser-ui-check.json)区分软件28组合回归和限定实景，不声称14语言全部页面人工验收。
 
-L39未安装手机：当前adb无设备；此前L38的保留数据安装及冷启动属历史事实，用户自行验收、不再操作手机UI。iOS构建、原生14语/读屏、母语审核、长期计时和T01–T06继续待验收；未全量suite/push/商店发布。原视频、根dist/编辑器、个人数据与用户候选素材保留。
+构建时L39未安装；用户随后连接手机，23:04:32通过adb install -r保留数据更新成功，firstInstallTime保持2026-10-08 17:53:04。启动指令Status ok、COLD 350ms；不操作手机UI，用户自行验收。安装与启动不扩大为功能验收，[安装回执](../../output/drill-media-20261011/L39-device-install.json)。iOS构建、原生14语/读屏、母语审核、长期计时和T01–T06继续待验收；未全量suite/push/商店发布。原视频、根dist/编辑器、个人数据与用户候选素材保留。
 
 ---
 

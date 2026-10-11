@@ -8,7 +8,7 @@
 
 本地检查点以 `feat(app): refine L39 compact localized labels` 定位，无push/标签/发布。具名开发包 `output/releases/Flare-v41-compact-labels-L39-20261011-arm64.apk` 与通用APK一致：96,747,542字节，SHA-256 `bdd84b36447102e3cc0a7c198bef41197bc3155f357c209df2bba58232c66511`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；原Debug证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。Web/ARM64 release构建通过，[包核对](../../output/drill-media-20261011/L39-package-check.json)36项资源源/Web/APK一致，旧L38及Play P01哈希保持。
 
-分析无问题，12项定向回归通过，其中真实打包字体下14语言×320/390两宽度×17短名及8阶段名布局通过；结构/字体覆盖检查通过。[实景截图](screenshots/2026-10-11-L39/README.md)与[浏览器报告](../../output/drill-media-20261011/L39-browser-ui-check.json)保留英文390详情/CTA/独立滚动和俄语/阿语320实景。手机当前adb未连接，L39未安装；此前L38保留数据安装和用户自行验收的授权保持，不记为L39验收。
+分析无问题，12项定向回归通过，其中真实打包字体下14语言×320/390两宽度×17短名及8阶段名布局通过；结构/字体覆盖检查通过。[实景截图](screenshots/2026-10-11-L39/README.md)与[浏览器报告](../../output/drill-media-20261011/L39-browser-ui-check.json)保留英文390详情/CTA/独立滚动和俄语/阿语320实景。构建时手机未连接；随后23:04:32保留数据覆盖安装L39成功，firstInstallTime仍为2026-10-08 17:53:04；启动Status ok、TotalTime 350ms。用户自行验收，不将安装/启动记为功能验收。[安装回执](../../output/drill-media-20261011/L39-device-install.json)。
 
 ## 历史：2026-10-11 L38：离线国际化
 
@@ -124,7 +124,7 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 | 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
 | App 包版本 / Android 包名 | `1.0.0+1` / `dev.mhgd.flare` | `app/pubspec.yaml` 与 Android 源配置；`0.1.0+1` 仅属 Play 接入前历史版本 |
 | 动作内容版本 | `v41` | 固定来源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；本轮没有另改动作、脸或衣物。v41 不等于 App 第 41 个发布版本 |
-| 当前本地试用包 | 上方 L39，开发签名 APK | 未安装L39；此前L38已保留数据安装，用户自行验收。L28图标与L26银色条目认可属于历史范围 |
+| 当前本地试用包 | 上方 L39，开发签名 APK | L39已保留数据覆盖安装并启动，用户自行验收。L28图标与L26银色条目认可属于历史范围 |
 | Play 已上传包 | 下表 P01，上传密钥签名 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9`；是先前送审包，不等于本地最新产品 |
 | 验收状态 | 定向软件验证通过；T01–T06 按路线继续 | 不把 APK 生成、文档提交或 Cockpit 检查点记成真机、教练或商店验收 |
 
@@ -166,7 +166,7 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 ## 安装包与本地预览
 
-当前为L39；通用/具名包身份见上方L39记录，未安装手机。此前L38已保留数据安装，用户自行验收。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L37及更早包的构建、进程与验收均为保留历史证据，不覆盖L38安装或原生播放验收。
+当前为L39；通用/具名包身份见上方L39记录，已保留数据安装并启动，用户自行验收。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L37及更早包的构建、进程与验收均为保留历史证据，不覆盖L38安装或原生播放验收。
 
 L26具名包与通用APK一致；场景使用 `index-DBRgBX7q.js` / `index-1IjNUedj.css`，APK内JS与源构建SHA-256均为`80a439211f0f4d12582dab1d8b8fd40b15d5f065aebde77b70cbf0b09822f3f8`。17张银色肌群图片逐项核对包内哈希与摄影报告相同，共592,628字节，并按用户最终选择从同一APK恢复到源资产；L24图文/点击证据保留。手机进程17949及启动日志抽样无异常；没有安装黄色试作。交付/运行/选择记录为 `output/releases/L26-metal-muscle-image-items-delivery.json`、`L26-runtime-check.json`、`L26-silver-selection.json`。原L05–L25具名包与试作报告保留，Play包保持。
 
@@ -178,7 +178,7 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 
 | ID / 状态 | 来源、用途与根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
-| L39 当前紧凑标签 APK | L38基线2648cb8加本轮源码；`output/releases/Flare-v41-compact-labels-L39-20261011-arm64.apk`，与通用APK相同；原Debug开发签名、1.0.0+1、arm64；未安装 | 96,747,542；`bdd84b36447102e3cc0a7c198bef41197bc3155f357c209df2bba58232c66511` |
+| L39 当前紧凑标签 APK | L38基线2648cb8加本轮源码；`output/releases/Flare-v41-compact-labels-L39-20261011-arm64.apk`，与通用APK相同；原Debug开发签名、1.0.0+1、arm64；23:04:32保留数据安装，启动350ms，待用户验收 | 96,747,542；`bdd84b36447102e3cc0a7c198bef41197bc3155f357c209df2bba58232c66511` |
 | L38 历史国际化 APK | 本地2648cb8；`output/releases/Flare-v41-international-L38-20261011-arm64.apk`；已保留数据安装、用户自行验收 | 96,737,945；`0f71c0d2f86a93ba6d3cdaad24fa6ddd56dec6a07563cbd7ebc3e60f87ec983e` |
 | L37 历史肌群知识 APK | HEAD 96e1db0加未提交工作树；`output/releases/Flare-v41-muscle-knowledge-L37-20261011-arm64.apk`，通用APK相同。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,838,331；`6331414c1f073ed98c42f92e34a5079ee6fc191d32de771ea37559063dc8de00` |
 | L36 历史界面精简 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-lean-ui-L36-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,772,795；`baac6c30a04be5e06404a265018e5b009ea8035896036716e463bd12620aea22` |
