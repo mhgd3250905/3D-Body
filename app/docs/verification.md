@@ -1290,3 +1290,8 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 2026-10-11 补充：真机已连接，镜像实际尝试安装精确 S4，Apple 安装数据接口返回 HTTP 404，失败阶段为 `ProcessingInstallInitiateResponse`，Flare 未安装或运行。测试员此前已核查为 ACCEPTED；功能、性能及隐私网络检查待安装恢复。今日后台未刷新，旧核查日期保留；详见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。本次仅更新文档，产品与 IPA 保持。
 
 专用分支 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，S4 `1.0.0 (3)`；关于页旧开发版本及过期授权提示已清理，署名和许可保留。10 项相关 UI 测试、analyze、归档/导出、严格验签、证书/描述文件及 Apple 验证通过；249 份运行资源与四份隐私清单和 S3 一致，28 种源码图标的字形齐全。同源 Debug Simulator Build 3 关于页原生复查通过，偏好保留；它不等于签名 IPA 或真机执行。精确 S4 IPA 获授权后已上传，上传后哈希不变，Apple 处理为 VALID / APP_STORE_ELIGIBLE；商店草稿重新加载为 Build 3，原单账号内部组的 S4 为 IN_BETA_TESTING、自动分发关闭，S2 历史构建保留。初始截图、系统减弱动效与 S2/S3 历史证据分别保留，未重跑整套原生流程。
+
+
+## 历史：iOS 本地记录 88523be
+
+2026-10-11 补充：真机已连接，镜像实际安装精确 S4 时返回 HTTP 404 / ProcessingInstallInitiateResponse，Flare 未安装或运行。浏览器连接已恢复，今日确认 S4 VALID、未过期、IN_BETA_TESTING，内部组一名测试员 ACCEPTED、自动分发关闭。上传回执确认 S4 已在用户提供的支持邮件要求的 48 小时窗口之后上传；原案例补充已准备、待授权发送。详见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。功能、性能和隐私网络真机检查待安装恢复，产品与 IPA 保持。

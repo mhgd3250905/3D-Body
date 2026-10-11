@@ -1,6 +1,6 @@
 # iOS v1 本地验证（2026-10-10）
 
-2026-10-11 补充：已在 iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 复现精确 S4 安装失败，Apple 安装数据接口返回 HTTP 404 / `Error Downloading Install Data`，App 未安装或执行。测试员此前已核查为 ACCEPTED；以下邀请配置与等待连接描述保留各阶段历史事实，最新设备证据及发布门禁见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。
+2026-10-11 补充：iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 的精确 S4 安装数据接口返回 HTTP 404 / Error Downloading Install Data，App 未安装或执行。指定浏览器已恢复，今日直接平台响应确认 S4 VALID、未过期、IN_BETA_TESTING，内部组仅一名 ACCEPTED 测试员、自动分发关闭。S4 上传已在用户提供的支持邮件要求的 48 小时窗口之后，原案例补充待授权发送。以下等待连接/邀请配置保留各阶段历史事实，最新证据与门禁见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。
 
 开发分支为 `ios/main`，来自 PR #8 的 `ad72f1cc481080072526be918e48748dbec20794`。初始产品 `63e45e875183bbea344c8b66063dba56e154df08`，加载层 `3a85bd95b40408aba2723511c2b6dc98606165a2`，系统减弱动效修复 `83f0920ea9e5d613526b89cb2c1768f304d84700`；S2 产品源 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9` 仅收窄资产打包以排除生成源码，原运行 JSON、v41、模型和页面代码保留。各原生证据仍绑定其实际源；未替换 Google Play 已送审包。
 

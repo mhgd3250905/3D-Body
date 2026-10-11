@@ -35,7 +35,7 @@ userFailureReason=所请求的 App 不可用或者不存在。
 
 2026-10-10 平台只读核查确认：会员及 Free/Paid Apps 协议有效，无待接受协议提示；原指定账号为 Account Holder / Admin，测试员 ACCEPTED；内部组仅该账号，自动分发关闭；S4 VALID、未过期、IN_BETA_TESTING，最低 iOS 15.0，支持 iPhone；草稿绑定 Build 3，正式审核未提交。
 
-2026-10-11 指定 Playwright profile 报告已被占用，未能刷新这些平台记录；没有换 profile、重置 Chrome 或读取会话凭据。今日真机界面和安装日志为新的直接证据，后台状态仍标记为前一日核查。
+2026-10-11 初次连接时，指定 Playwright profile 被占用，未能刷新平台记录。随后用户明确授权接手，浏览器连接已恢复；构建与内部组的今日复查见下节，前一日其他平台记录仍保留原核查日期。
 
 目前只有一台手机和一个测试账号，媒体与购买项目账号一致来自用户确认。历史测试列表的 Water Box 与手腕训练助手均显示“已移除 Build”，不能作为有效构建对照。用户解释此前曾因持续失败反复排查，旧构建过期记录不独立作为 Apple 后台自动失效的证据。
 
@@ -43,21 +43,39 @@ Flare 的代码和本机资产服务尚未运行，故此失败不来自运行�
 
 Apple 论坛有[相同 404 的开发者报告](https://developer.apple.com/forums/thread/849154)，该报告另有外部测试提交返回 `ENTITY_UNPROCESSABLE.BETA_CONTRACT_MISSING`。本账号尚未取得该错误，Beta Contract 仅是调查线索；未提交外部 Beta Review 进行探测。
 
-## Apple 支持说明草稿（未发送）
+## 2026-10-11 恢复浏览器与核对等待窗口
 
-**主题：有效内部 TestFlight 构建安装接口返回 HTTP 404，请核查测试分发关联**
+用户提供了此前 Apple 开发者支持的处理回复：要求至少等待 48 小时后上传另一个新构建。邮件接收时间由用户报告为北京时间 2026-10-08 10:32；据此截止时间为 2026-10-10 10:32。
 
-内部测试员可在 TestFlight 看到 Flare 托马斯 `1.0.0 (3)`，显示剩余 90 天，但点击安装提示“所请求的 App 不可用或不存在”。
+本机上传回执的 `uploadedAt=2026-10-10T06:42:37.531895+00:00` 对应北京时间 14:42:37，S4 上传比截止晚 4 小时 10 分 37 秒；14:44:43 确认处理为 VALID。这证明 S4 上传在所提供邮件的等待窗口之后，但不能据此证明 Apple 后台问题已修复。
 
-App Apple ID：`6821186142`；Bundle ID：`dev.mhgd.flare`。设备为 iPhone 16 Pro / iOS 26.5，TestFlight 4.4.0。直接复现时间为 2026-10-11 08:59:33–08:59:35（UTC+08:00；UTC 00:59:33–00:59:35）。
+用户明确授权接手指定浏览器后，只向该配置对应的 Chrome 主进程发送正常终止信号，保留配置目录与登录资料；本机 Playwright MCP 重新连接同一配置，App Store Connect 登录恢复。今日直接读取平台响应确认 S4 Build 3 为 VALID、未过期、最低 iOS 15.0、IN_BETA_TESTING；原内部组仍为内部组、自动分发关闭，仅一名测试员且状态 ACCEPTED。会员与 Free/Paid Apps 协议的核查日期仍为 2026-10-10，未将其改写为今日复查。
 
-设备日志显示该 App 的 `/v2/accounts/<redacted>/apps/6821186142/builds/<redacted>/install` 返回 HTTP 404，原因 `Error Downloading Install Data`，前一阶段为 `ProcessingInstallInitiateResponse`。App 未安装完成或启动；失败结果上报接口返回 200。
+原支持案例的文字留言入口可访问，尚未填入或发送消息。案例编号、私人留言链接与账号信息不写入 Git。当前准备沿原案例补充证据。
 
-2026-10-10 核查：构建 VALID、未过期、IN_BETA_TESTING；已加入内部组；测试员 ACCEPTED；会员及 Free/Paid Apps 协议有效，无待接受协议提示。同一测试员报告本开发者账号其他 App 曾有相同提示，尚未用其他手机、测试账号复现，影响范围未确定。
+## 原案例补充留言草稿（未发送）
 
-请由 App Store Connect / TestFlight 团队核查此 App、开发者账号与内部测试员之间的安装分发关联，并检查 Beta Contract 是否完整且正确关联。论坛有相同 404 与 Beta Contract 异常同时出现的报告，但本账号未取得 `BETA_CONTRACT_MISSING`，请根据后台记录确认实际原因。
+以下为待用户明确批准的精确正文，仅包含脱敏的应用身份、构建/设备信息、时序和错误证据。
 
-以上仅为脱敏草稿，未联系 [Apple 开发者支持](https://developer.apple.com/contact/)，未向第三方发送日志或附件。发送需用户单独授权；若需要私人账号资料或完整诊断附件，另行核对范围。
+Jasmine，您好：
+
+谢谢此前的调查处理。您在 2026 年 10 月 8 日的回复中要求等待至少 48 小时后上传新构建。邮件于北京时间 10 月 8 日 10:32 收到，等待窗口截止于 10 月 10 日 10:32。
+
+我们已于北京时间 10 月 10 日 14:42:37 成功上传新的 Flare 托马斯 1.0.0 (3)，比截止时间晚 4 小时 10 分 37 秒；14:44:43 确认处理完成。10 月 11 日再次核查，构建仍为 VALID、未过期、IN_BETA_TESTING；内部组只有一名测试员，状态 ACCEPTED，自动分发关闭。
+
+但在 iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 上仍无法安装，提示“所请求的 App 不可用或不存在”。App Apple ID：6821186142；Bundle ID：dev.mhgd.flare。
+
+北京时间 2026-10-11 08:59:33–08:59:35 的真机日志显示：
+https://testflight.apple.com/v2/accounts/<redacted>/apps/6821186142/builds/<redacted>/install
+HTTP 404
+serverFailureReason=Error Downloading Install Data
+previousPhaseDescription=ProcessingInstallInitiateResponse
+
+App 未安装完成或启动。同一测试员此前也报告本账号其他 App 有相同提示；目前仅一台手机和一个测试账号，影响范围尚未确定。
+
+请继续调查原案例，核查此 App、开发者账号与内部测试员的安装分发关联，并检查 Beta Contract 是否完整且正确关联。论坛中有类似 404 的报告，但我们尚未取得 BETA_CONTRACT_MISSING，具体根因仍需贵团队确认。谢谢。
+
+发送这份留言需用户单独授权；额外私人账号资料或完整诊断附件另行核对范围。
 
 ## 发布门禁
 

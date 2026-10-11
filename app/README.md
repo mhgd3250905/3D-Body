@@ -141,3 +141,8 @@ npm run build
 2026-10-11 真机进展：已连接 iPhone 16 Pro / iOS 26.5，按用户授权使用镜像复现 S4 `1.0.0 (3)` 安装失败。Apple 安装数据接口返回 HTTP 404 / `Error Downloading Install Data`，App 未安装或执行。精确候选保持，功能与隐私网络验收待安装恢复；证据与未发送的支持说明见 [安装诊断](docs/testflight-install-diagnostic-2026-10-11.md)。下段保留 2026-10-10 上传/邀请时的观察，最新安装状态以新记录为准。
 
 2026-10-10 iOS v1：专用 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6`、S4 `1.0.0 (3)`。用户精确授权后，原 IPA 已上传并处理为 VALID，商店草稿已绑定 Build 3；原内部组“Flare iOS v1”仍只有指定的一名账号，保留 S2 历史构建、自动分发关闭，Build 3 正在测试、账号已邀请。商店文案、10 张截图、审核信息、手动发布、免费/全部 175 个地区供应及关闭 Mac/Vision Pro 商店供应的既有配置保留。S4 的 10 项相关 UI 测试、analyze、签名和 Apple 验证通过，同源调试版关于页原生复查通过；精确候选身份见 [iOS 验证](docs/ios-verification-2026-10-10.md)与[版本台账](docs/version-ledger.md)。公开[隐私政策修订](docs/privacy-policy-ios-v1-draft.md)已按授权部署到现有 Worker，生产模块及公开响应均与批准版本匹配。用户要求等其回来连接 iPhone，再继续真机验证；最终合规、正式审核与公开发布尚未执行，Android/Web 既有交付保留。
+
+
+## 历史：iOS 本地记录 88523be
+
+2026-10-11 iOS 真机进展：iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 实际安装 S4 1.0.0 (3) 时，Apple 安装数据接口返回 HTTP 404，App 未安装。指定浏览器已按授权恢复；今日平台复查 S4 VALID、未过期、IN_BETA_TESTING，内部组仅一名 ACCEPTED 测试员且自动分发关闭。S4 于 10 月 10 日 14:42:37 上传，已在用户提供的 Apple 支持邮件所要求的 48 小时窗口之后。原案例补充留言已准备、待授权发送；详见 [安装诊断](docs/testflight-install-diagnostic-2026-10-11.md)。下段保留上传与邀请阶段的历史观察，精确候选及真机/审核门禁保持。
