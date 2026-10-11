@@ -133,3 +133,11 @@ npm run build
 设置中的“复制本地备份”把部分状态复制为 JSON，需自行保存到文件；当前没有备份导入入口，它还不是完整的迁移方案。
 
 接手先读 [v42合约](docs/motion-v42.md)，再核对 [版本管理台账](docs/version-ledger.md)、[实施路线及待验收项](docs/development-roadmap.md)、[资产来源](docs/asset-sources.md)、[验证记录](docs/verification.md) 和 [本地数据说明](docs/privacy-local.md)。[v41合约](docs/motion-v41.md)、[v38接入记录](docs/motion-v38.md)、[2026-10-08交接](docs/handoff-2026-10-08.md) 与 [当时截图](docs/screenshots/2026-10-08/README.md) 保留历史事实，不能当作当前动作或外观的验收。3D接口和复现细节见 [scene/README.md](scene/README.md)。
+
+
+
+## 历史：2026-10-11 iOS 安装及发布记录
+
+2026-10-11 真机进展：已连接 iPhone 16 Pro / iOS 26.5，按用户授权使用镜像复现 S4 `1.0.0 (3)` 安装失败。Apple 安装数据接口返回 HTTP 404 / `Error Downloading Install Data`，App 未安装或执行。精确候选保持，功能与隐私网络验收待安装恢复；证据与未发送的支持说明见 [安装诊断](docs/testflight-install-diagnostic-2026-10-11.md)。下段保留 2026-10-10 上传/邀请时的观察，最新安装状态以新记录为准。
+
+2026-10-10 iOS v1：专用 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6`、S4 `1.0.0 (3)`。用户精确授权后，原 IPA 已上传并处理为 VALID，商店草稿已绑定 Build 3；原内部组“Flare iOS v1”仍只有指定的一名账号，保留 S2 历史构建、自动分发关闭，Build 3 正在测试、账号已邀请。商店文案、10 张截图、审核信息、手动发布、免费/全部 175 个地区供应及关闭 Mac/Vision Pro 商店供应的既有配置保留。S4 的 10 项相关 UI 测试、analyze、签名和 Apple 验证通过，同源调试版关于页原生复查通过；精确候选身份见 [iOS 验证](docs/ios-verification-2026-10-10.md)与[版本台账](docs/version-ledger.md)。公开[隐私政策修订](docs/privacy-policy-ios-v1-draft.md)已按授权部署到现有 Worker，生产模块及公开响应均与批准版本匹配。用户要求等其回来连接 iPhone，再继续真机验证；最终合规、正式审核与公开发布尚未执行，Android/Web 既有交付保留。

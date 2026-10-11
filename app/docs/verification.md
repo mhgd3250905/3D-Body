@@ -1283,3 +1283,10 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认；用户要求等其回来连接 iPhone 后继续，真机手势/性能/触感、飞行模式、旧 iOS、最终合规及 App Review 仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，商店保存事实与最终门禁见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
 
 ---
+
+
+## 历史：2026-10-11 iOS 安装及发布记录
+
+2026-10-11 补充：真机已连接，镜像实际尝试安装精确 S4，Apple 安装数据接口返回 HTTP 404，失败阶段为 `ProcessingInstallInitiateResponse`，Flare 未安装或运行。测试员此前已核查为 ACCEPTED；功能、性能及隐私网络检查待安装恢复。今日后台未刷新，旧核查日期保留；详见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。本次仅更新文档，产品与 IPA 保持。
+
+专用分支 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，S4 `1.0.0 (3)`；关于页旧开发版本及过期授权提示已清理，署名和许可保留。10 项相关 UI 测试、analyze、归档/导出、严格验签、证书/描述文件及 Apple 验证通过；249 份运行资源与四份隐私清单和 S3 一致，28 种源码图标的字形齐全。同源 Debug Simulator Build 3 关于页原生复查通过，偏好保留；它不等于签名 IPA 或真机执行。精确 S4 IPA 获授权后已上传，上传后哈希不变，Apple 处理为 VALID / APP_STORE_ELIGIBLE；商店草稿重新加载为 Build 3，原单账号内部组的 S4 为 IN_BETA_TESTING、自动分发关闭，S2 历史构建保留。初始截图、系统减弱动效与 S2/S3 历史证据分别保留，未重跑整套原生流程。
