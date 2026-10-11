@@ -12,7 +12,7 @@ L28具名包 `output/releases/Flare-v41-teal-logo-20261011-arm64.apk` 与通用 
 
 51项资源/包核对通过，41项既有场景、银色肌群图、加载/首页图片在新旧APK间逐字节一致；Web 7项HTTP资产与构建文件相同，浏览器加载无pageerror。图标与署名在源/APK/Web一致；记录 `output/releases/L28-teal-logo-delivery.json`，来源与导出见 [asset-sources.md](asset-sources.md)。旧图标/平台资源及通用L26包均独立备份。
 
-用户确认真机效果并要求版本管理后，L28代码保存点以本地标签 `app-l28-20261011` 定位，完整提交SHA由 `git rev-parse app-l28-20261011^{commit}` 查询，不在提交正文预填自身SHA。基线为L26提交 `632fdb673d50908083e9fb43440886f2e2ac5684`；保存34张生产图标、选定B原图与完整提示词、导出工具、署名、当前入口及验证文档，以及[真机桌面图标裁图](screenshots/2026-10-11/L28-home-icon.png)。用户于12:19补验后回复“可以了”，该确认适用于本次图标效果。未push、上传或部署；APK、完整本机检查报告、未选候选及原图参考继续留在E盘，Air-Flare用户素材不纳入提交。
+用户确认真机效果并要求版本管理后，L28代码保存为 `3f0fda327a5e5716b89ba297447612148b542199`，标签 `app-l28-20261011` 指向同一提交。基线为L26提交 `632fdb673d50908083e9fb43440886f2e2ac5684`；保存34张生产图标、选定B原图与完整提示词、导出工具、署名、当前入口及验证文档，以及[真机桌面图标裁图](screenshots/2026-10-11/L28-home-icon.png)。用户于12:19补验后回复“可以了”，该确认适用于本次图标效果。初次保存仅在本地，随后用户明确授权文档收束及push；本次远端结果独立记在下方Git推送记录，不混同为商店发布。APK、完整本机检查报告、未选候选及原图参考继续留在E盘，Air-Flare用户素材不纳入提交。
 
 Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119`，未替换。根目录dist原编辑器及个人数据保留。
 
@@ -36,8 +36,8 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 | 维度 | 当前值 | 判定依据与边界 |
 | --- | --- | --- |
-| Git 分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | L26/L28均为本地检查点，未push；本地origin/master引用仍为812d948，本轮未联网刷新，不推断实时远端状态 |
-| 当前本地产品检查点 | 本地标签 `app-l28-20261011`，父提交为L26 `632fdb673d50908083e9fb43440886f2e2ac5684` | 当前源/APK/Web为L28；完整SHA由Git解析标签，不是新的商店发布版本 |
+| Git 分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | 12:48预检远端master为812d948，且是当前HEAD祖先；用户已授权正常push，最终结果以本文件Git推送记录为准 |
+| 当前本地产品检查点 | L28 `3f0fda327a5e5716b89ba297447612148b542199` / 标签 `app-l28-20261011`；父提交为L26 `632fdb673d50908083e9fb43440886f2e2ac5684` | 当前源/APK/Web为L28；后续closeout仅文档，不是新的商店发布版本 |
 | 历史PR7合并检查点 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | 与最终审核源b991aa3完整tree同为 `649b9f77189ec4830519825a1d730f54a638e088`；PR7阶段已验证产品源d1c3886之后仅文档/截图 |
 | 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
 | App 包版本 / Android 包名 | `1.0.0+1` / `dev.mhgd.flare` | `app/pubspec.yaml` 与 Android 源配置；`0.1.0+1` 仅属 Play 接入前历史版本 |
@@ -72,8 +72,10 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 | 10-09，PR7审核修复 | `d1c38860bdb64cf342b7ba221886cd085f2e52ae` | 固定舞台补修5项问题，分析/44项定向测试、场景/镜头/构图、离线Web/开发APK及实际浏览器通过 |
 | 10-09，PR7最终审核源 | `b991aa316745fed22348df286938deccf218aea0` | 已验证产品后仅文档/截图；普通push到dev/hark |
 | 10-09 18:00:53，PR7合并 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | MERGED，完整tree与最终审核源相同；主目录快进及L05/Web同步 |
+| 10-11，L26界面保存点 | `632fdb673d50908083e9fb43440886f2e2ac5684` | 87路径；启动/肌群/卡片/银色图文迭代，定向软件与资产核对，详见验证记录 |
+| 10-11，L28青绿图标保存点 | `3f0fda327a5e5716b89ba297447612148b542199` | 49路径；图标原图、34项导出、工具/来源/台账及真机裁图，标签app-l28-20261011 |
 
-[PR5 审核与回归](pr5-audit-2026-10-09.md)、[PR3 审核与回归](pr3-audit-2026-10-09.md) 保留源/目标、修复、实际操作及合并树证据。两项 PR 的 AI 审核、GitHub 实际合并与作者自报测试分别记录，不合并成“全仓全量通过”。本次版本台账提交的完整 SHA 由 Git 与 closeout 回执定位；不创建标签或空提交。
+[PR5 审核与回归](pr5-audit-2026-10-09.md)、[PR3 审核与回归](pr3-audit-2026-10-09.md) 保留源/目标、修复、实际操作及合并树证据。两项 PR 的 AI 审核、GitHub 实际合并与作者自报测试分别记录，不合并成“全仓全量通过”。10-09历史台账收束没有创建标签或空提交；10-11既有L28标签单独指向已保存的图标版本，本次closeout不另建标签。
 
 ## 安装包与本地预览
 
@@ -94,9 +96,9 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 | L25 历史米白肌群图文 APK | 截图专用米白哑光/柔光，17图片；用户反馈质感不足，最终采用L26；`output/releases/Flare-v41-ivory-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L26更新 | 45,443,237；`0e5e9ce330143f62904bc3cadf4d1e8d2c897f3f8bf5840c5116882c3a255e3c` |
 | L24 历史肌群图文条目 APK | 17张灰色人台渲染图用于主力/次要/详情协同肌群条目；图文入口保留，摄影材质由L25调整；`output/releases/Flare-v41-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L25更新 | 45,426,853；`c3f67e3236284bfa3baed458a0d6024f84342b3c5fdca2b548603264331f7a1b` |
 | L23 历史可见平滑卡片 APK | L22基础上保护完整卡片不穿地面、不出宿主可见舞台；场景修复保留在L24；`output/releases/Flare-v41-visible-smooth-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L24更新 | 45,011,424；`52cbb97123ebaec10096e6bc08248c4f2f6c2ca7a18f2eeec067206164e30750` |
-| L22 历史平滑卡片 APK | 取消淡入闪切，连续世界位置插值；圆点和细线、同侧卡片、双侧选择及身体避让保留；由L23补充边界保护；`output/releases/Flare-v41-smooth-adaptive-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径当前与L26相同 | 45,011,424；`4d7c0ef74d5b484b2f7aef21d87289c4283ba75537d47d3d3fc708cc7b010b9a` |
-| L21 历史同侧卡片 APK | 旋转挑选方便展示侧，同侧卡片和身体避让初版；由L22改为连续位置动画；`output/releases/Flare-v41-adaptive-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径当前与L26相同 | 45,011,424；`4e517f888d68b1e8b011e1fa5a6d2228f3f2686b2c9e9de6f1da83dbddef993b` |
-| L20 历史远距细线 APK | 圆点关闭身体深度遮挡，卡片移远并加入同色细引导线；后续L21–L23进一步修复；`output/releases/Flare-v41-guided-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径当前与L26相同 | 45,011,424；`ef3f3cf5b0cc5fe9e4b24d284fd7aa3e82f1a5217cb91b76747d111af16b81d3` |
+| L22 历史平滑卡片 APK | 取消淡入闪切，连续世界位置插值；圆点和细线、同侧卡片、双侧选择及身体避让保留；由L23补充边界保护；`output/releases/Flare-v41-smooth-adaptive-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；当前通用路径为L28 | 45,011,424；`4d7c0ef74d5b484b2f7aef21d87289c4283ba75537d47d3d3fc708cc7b010b9a` |
+| L21 历史同侧卡片 APK | 旋转挑选方便展示侧，同侧卡片和身体避让初版；由L22改为连续位置动画；`output/releases/Flare-v41-adaptive-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；当前通用路径为L28 | 45,011,424；`4e517f888d68b1e8b011e1fa5a6d2228f3f2686b2c9e9de6f1da83dbddef993b` |
+| L20 历史远距细线 APK | 圆点关闭身体深度遮挡，卡片移远并加入同色细引导线；后续L21–L23进一步修复；`output/releases/Flare-v41-guided-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；当前通用路径为L28 | 45,011,424；`ef3f3cf5b0cc5fe9e4b24d284fd7aa3e82f1a5217cb91b76747d111af16b81d3` |
 | L19 历史3D卡片 APK | 固定表面附近的3D卡片、自然深度；`output/releases/Flare-v41-world-muscle-cards-20261011-arm64.apk`保留，通用路径由L23更新。Android Debug开发签名、1.0.0+1、arm64；固定偏移规则由用户后续要求覆盖 | 45,003,232；`1b24ebef1af7925f5b847fdadb8ac956bc412acf6e178c7945612314fd087523` |
 | L18 历史优先肌群 APK | 最多3项与人体图统一；`output/releases/Flare-v41-priority-muscle-markers-20261011-arm64.apk`保留，通用路径由L19更新。Android Debug开发签名、1.0.0+1、arm64；屏幕布局由L19真实3D卡片替代 | 45,007,328；`c71fdbf581b8b998a9ed4e2e8a979a93860924d6eb050a84a20be8f2530b0f42` |
 | L17 历史主力圆点 APK | 812d948基线加此前修复，暂停展示全部主力肌群圆点及附近同色名称卡；`output/releases/Flare-v41-primary-muscle-markers-20261011-arm64.apk`保留，通用路径由L18更新。Android Debug开发签名、`1.0.0+1`、arm64；数量由L18精简 | 45,007,328；`8aef66f503e597b3499cf9397353265e6239b9cecfb33a43c1f2cdff42ebf293` |
@@ -118,7 +120,7 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 | L03 历史 v41、PR4 前 APK | e27 保存点；`output/releases/Flare-v41-before-pr4-20261009-arm64.apk`。开发签名、当时 `0.1.0+1` | 42,836,141；`5c579985b1ed6b7db3ba988400bd2a3d88065e102f2cf83f12d883b6f430a9c7` |
 | P01 已上传 Play 封闭测试 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9` 加本机 gitignored 签名材料；`app/build/app/outputs/bundle/release/app-release.aab`。上传密钥签名、`1.0.0+1`；本轮未替换或重传 | 77,816,786；`9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
 
-当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，已离线构建L26银色版，场景入口 `index-DBRgBX7q.js` / `index-1IjNUedj.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
+当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，当前为L28青绿图标与L26银色条目/功能，场景入口保持 `index-DBRgBX7q.js` / `index-1IjNUedj.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
 
 ## Play 发布观察
 
@@ -140,4 +142,8 @@ T01 长期计时、T02 Android 真机/iOS 性能与手势、T03 内容/数据、
 
 以后记录一项版本成果时，同时填写日期、包版本/动作版本、完整源 SHA（或明确工作树状态）、必要时 tree、验证命令及适用范围、包路径/字节/哈希/实际签名、Git 保存与外部发布状态。通用输出路径会被下一次构建更新，历史包用具名副本和哈希定位。文档提交可复用前一次产品证据，但须证明有限 delta 不影响被验证内容；构建成功、提交、push、送审与正式验收分别记账。
 
-此前PR5/PR3收束Preflight见 [版本台账收束记录](verification.md#2026-10-09-版本台账文档收束)，历史PR6交付见 [PR6审核](pr6-audit-2026-10-09.md)，当前交付见 [PR7审核](pr7-audit-2026-10-09.md)。本轮用户授权后已push并合并；不改版号、不重传Play包、不部署、不结束Cockpit session。
+此前PR5/PR3收束Preflight见 [版本台账收束记录](verification.md#2026-10-09-版本台账文档收束)，历史PR6交付见 [PR6审核](pr6-audit-2026-10-09.md)，历史PR7整合见 [PR7审核](pr7-audit-2026-10-09.md)。当前L28交付及10-11文档收束见本文开头与 [验证记录](verification.md)。本次仅保存文档并按明确授权正常push，不另行合并、不改版号、不重传Play包、不部署、不结束Cockpit session。
+
+## 2026-10-11 Git推送记录
+
+预检时间12:48（北京时间）：git ls-remote返回远端master为 `812d948b49616d8edce20fd7ec46d70129e0fa27`，本地为master，origin对应 `https://github.com/mhgd3250905/3D-Body.git`。远端提交是本地HEAD祖先，待推送的既有版本为L26和L28；远端尚无 `app-l28-20261011`。用户已明确授权push，使用普通快进及既有标签的原样推送，成功后另存实际回执；当前预检不是推送成功证明。

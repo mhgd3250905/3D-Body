@@ -1,3 +1,24 @@
+# L28文档收束与推送预检（2026-10-11）
+
+用户显式调用cockpit-closeout，要求台账管理、文档对齐、保存提交及push。Preflight全程只读通过后才编辑。范围是L28图标来源、版本/安装身份、当前入口、待验收及Git发布记录；不修改运行代码、模型、生产资源、包、签名或个人数据。当前产品保存点是下方L28，后续收束提交完整SHA由Git定位。
+
+| Preflight字段 | 实际结果与source state |
+| --- | --- |
+| baseline / 依据 | L26 `632fdb673d50908083e9fb43440886f2e2ac5684`，ref `632fdb6`；上轮已明确保存点，也是L28直接父提交；`git rev-parse --verify`及`git merge-base --is-ancestor`通过 |
+| HEAD / stage delta | `3f0fda327a5e5716b89ba297447612148b542199`；相同基线下1提交/49路径，M43/A6；34生产图标、1背景XML、2选定原图/提示词、1导出清单、1工具、9入口/来源/许可/台账文档、1真机裁图 |
+| 仓库及授权 | `git rev-parse --show-toplevel`为E:/AII-3D/3D-Body；当前master。用户授权正常push；12:48远端master为812d948，祖先核对通过，远端无L28标签 |
+| canonical发现 | 从根/App AGENTS及README明确入口一跳发现asset-sources、version-ledger、verification、development-roadmap、motion-v41。当前段落分别管理来源/图标、版本/包/发布、证据、M0–M7与T01–T05、动作合约；各自历史段落及旧v38/PR记录为archive，不能代替当前L28 |
+| 完整状态与归属 | `git status --porcelain=v1 --untracked-files=all`完整21项，无截断；tracked/staged/unstaged/deleted/renamed均0。用户视频Air-Flare/air-flare-demo.mp4为阶段前用户素材1项；app/assets/brand下PNG12与JSON8为本Agent的未选图标/抽卡历史20项，全部保留不提交、不读用户视频内容 |
+| 必要核对 | 12:48在上述完整HEAD运行一次性Node文档检查：9个入口/canonical文件169个本地Markdown链接均存在；逐图Get-FileHash与icon-manifest一致共34项，选定原图SHA一致，全部生产输出已入Git；git diff --check通过 |
+| 旧证据适用性 | L26到HEAD的app/lib、app/scene、app/test、app/test_web、app/assets/scene、app/assets/muscles、加载/首页图、pubspec与根src/public/tools有限路径差异为0。L26的软件/动作证据可用于未改部分，L28图标构建/51项交付及12:19真机观察对应提交前同一生产资源工作树；34源哈希与HEAD一致，提交前只有新增追溯文件/裁图及文档。真机观察只证明对应已安装包，不冒充全设备验收 |
+| 确定alignment findings | 路线仍写L28未提交；台账缺L26/L28完整SHA，Web身份写L26；历史标签/通用包/PR7说明沿用当前措辞；本次push授权、观察及完整Preflight尚未独立记账 |
+
+本次实际检查的current路径为 `AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`、`app/docs/asset-sources.md`、`app/docs/version-ledger.md`、`app/docs/verification.md`、`app/docs/development-roadmap.md`、`app/docs/motion-v41.md`。补充核对既有Snow署名、pubspec资产白名单、Android图标引用/背景、iOS Contents及Web manifest/index：均与选定图标清单对应；未改Snow署名或生产配置。动作/人物主题映射motion-v41，平台图标/来源映射asset-sources，Git/包映射version-ledger，观察与source state映射verification，验收边界映射roadmap；没有扩大到旧编辑器或其他项目。
+
+原图与34导出的逐图SHA、上轮构建命令和设备观察在下方L28段保留。34项哈希及有限产品delta证明已有证据继续适用于本次仅文档修改；本轮不读build产物/凭据/设备日志，不重建或重装。Alignment仅修正上述确定问题，提交前后再核对同一21项保留文件、有限文档delta、本地链接及空白。远端实际结果只在成功push后记录；Git上传不等于Play发布，T01–T05保持原状态。
+
+---
+
 # L28青绿色运动服图标交付（2026-10-11）
 
 用户选择新角度B。选定原图经尺寸导出及平台裁切留边，34项PNG尺寸/不透明要求/哈希通过；Android 5密度普通与adaptive前景的10项编译后像素，与源PNG逐项一致。圆形/iOS圆角/Android adaptive/Web maskable预览为 `output/imagegen/flare-logo-20261011/adopted-teal/crop-preview.png`。原图、全提示词、来源及SHA在 `assets/brand/icon-flare-angle2-b.imagegen.json` 与 `icon-manifest.json`，复现为 `node app/tools/export-brand-icons.mjs --sharp-root <existing sharp package>`。
