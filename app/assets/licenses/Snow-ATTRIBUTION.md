@@ -16,3 +16,5 @@ A local revision upgrade independently backs up the previous formal demonstratio
 The Flare demonstration replays the user's authored key poses, with interpolated transitions rather than motion capture. BodyParts3D muscles are shown separately as an anatomical reference; they are not anatomically registered inside this cartoon character. See /anatomy/ATTRIBUTION.md for the independent anatomy license.
 
 Made locally in Blender 4.5.3 LTS. No purchased assets, subscriptions, plugins, or paid generation services.
+
+The startup loading silhouette is a transparent, single-colour offline render of this same character and the v41 baked Flare loop. Materials are flattened only in the loading render; the interactive character and animation remain unchanged. See app/tools/render-flare-loading.* and the accompanying asset metadata for reproduction.

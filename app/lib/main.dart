@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'control/learning_store.dart';
 import 'data/catalog.dart';
 import 'l10n/app_localizations.dart';
+import 'platform/scene/scene_controller.dart';
 import 'ui/app_shell.dart';
 import 'ui/components.dart';
+import 'ui/startup_splash.dart';
 import 'ui/theme.dart';
 import 'ui/theme_fade.dart';
 
@@ -42,6 +45,11 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   late Future<(Catalog, LearningStore)> _loading;
   LearningStore? _store;
   String _themeMode = 'system';
+  final _scene = SceneController();
+  bool _launchComplete = false;
+  int _sceneRevision = 0;
+  bool _scenePresented = false;
+  String? _sceneError;
 
   Future<(Catalog, LearningStore)> _load() async {
     final catalog = await Catalog.load();
@@ -58,9 +66,30 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     if (mode != _themeMode && mounted) setState(() => _themeMode = mode);
   }
 
+  void _sceneChanged() {
+    if (!mounted || _launchComplete) return;
+    if (_scenePresented == _scene.presented &&
+        _sceneError == _scene.errorCode) {
+      return;
+    }
+    _scenePresented = _scene.presented;
+    _sceneError = _scene.errorCode;
+    // Attaching a replacement platform view notifies synchronously during
+    // build. Only startup readiness/error changes need to rebuild this host.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_launchComplete) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _scene.addListener(_sceneChanged);
     _loading = _load();
   }
 
@@ -101,26 +130,50 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     home: FutureBuilder<(Catalog, LearningStore)>(
       future: _loading,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final (catalog, store) = snapshot.data!;
-          return FlareShell(catalog: catalog, store: store);
-        }
-        return Scaffold(
-          body: Center(
-            child: snapshot.hasError
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(context.strings.storageReadFailed),
-                      const SizedBox(height: 16),
-                      FilledButton(
-                        onPressed: () => setState(() => _loading = _load()),
-                        child: Text(context.strings.retry),
+        final data = snapshot.data;
+        // Keep one splash State while data loads and the actual, full-sized
+        // WebView draws beneath it. Revealing it never recreates the scene.
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            ExcludeSemantics(
+              excluding: !_launchComplete,
+              child: IgnorePointer(
+                ignoring: !_launchComplete,
+                child: data == null
+                    ? const SizedBox.expand()
+                    : FlareShell(
+                        catalog: data.$1,
+                        store: data.$2,
+                        sceneController: _scene,
+                        sceneRevision: _sceneRevision,
+                        startupCovered: !_launchComplete,
                       ),
-                    ],
-                  )
-                : const CircularProgressIndicator(),
-          ),
+              ),
+            ),
+            FlareStartupSplash(
+              ready: snapshot.hasData && _scenePresented,
+              error: snapshot.hasError
+                  ? context.strings.storageReadFailed
+                  : _sceneError != null
+                  ? context.strings.sceneFailed
+                  : null,
+              onRetry: () {
+                setState(() {
+                  if (snapshot.hasError) {
+                    _loading = _load();
+                  } else {
+                    _sceneRevision++;
+                  }
+                });
+              },
+              onRevealed: () {
+                if (mounted && !_launchComplete) {
+                  setState(() => _launchComplete = true);
+                }
+              },
+            ),
+          ],
         );
       },
     ),
@@ -129,6 +182,8 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   @override
   void dispose() {
     _store?.removeListener(_storeChanged);
+    _scene.removeListener(_sceneChanged);
+    _scene.dispose();
     _webSemantics?.dispose();
     super.dispose();
   }

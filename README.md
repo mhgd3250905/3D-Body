@@ -1,10 +1,16 @@
 # Flare Anatomy Studio
 
-2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21、当前试用APK/本地Web见 [版本台账](app/docs/version-ledger.md)，软件/浏览器证据及真机限制见 [PR7审核](app/docs/pr7-audit-2026-10-09.md)。
+2026-10-11 当前App交付为 **L26**，默认动作仍为v41。启动页预加载同一场景，以真实Flare动作剪影等待人物首帧，再连续揭开界面；详情小卡保持高清全身，动作人物的当前肌群柔边高亮保留。
+
+暂停展示最多3项重点肌群，与同步人体图一致。圆点始终可见，同色卡片通过细引导线指向发力点，随旋转选侧、避开身体，并平滑移动且保护地面与画面边界。17张银色人台模型摄影用于主力、其他参与与协同肌群图文条目，用户已认可这项条目外观。
+
+所连Android手机与离线Flutter Web `app/build/web` 当前为L26；Google Play **P01** AAB保持，根目录 `dist` 原网页编辑器及个人数据保留。长期训练计时、全设备和其余3D观感仍按T01/T02待验收。包身份、证据与待办分别见 [版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md) 和 [实施路线](app/docs/development-roadmap.md)。
+
+历史：2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21、当时的软件/浏览器证据及限制见 [PR7审核](app/docs/pr7-audit-2026-10-09.md)，当前交付以版本台账为准。
 
 历史：2026-10-09 PR #6已审核修复并合并：按用户真机反馈，详情动作视图改为允许旋转、禁止缩放/平移，覆盖此前固定机位要求；三场景训练选择、肌群知识及矢量加载已接入并补充审核修复。当时主目录、离线Web与开发签名试用APK已同步为PR6版；证据见 app/docs/pr6-audit-2026-10-09.md。
 
-2026-10-09已按顺序审核修复并合并PR #5、PR #3：App加入统一动效、细节交互，并修复Web训练停在3秒与快速交换详情机位；网页采用同步肌群面板、全屏教学人台和简化菜单，原编辑器/个人数据保留。当前v41动作和已送审Play AAB不变；该阶段试用包为 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`；后续PR6包保留，当前包身份见 [版本台账](app/docs/version-ledger.md)。本轮证据和限制见 [当前验证](app/docs/verification.md)。
+历史：2026-10-09已按顺序审核修复并合并PR #5、PR #3：App加入统一动效、细节交互，并修复Web训练停在3秒与快速交换详情机位；网页采用同步肌群面板、全屏教学人台和简化菜单，原编辑器/个人数据保留。v41动作和已送审Play AAB保留；该阶段试用包为 `output/releases/Flare-v41-PR5-PR3-20261009-arm64.apk`，后续PR6包保留，当前包身份见版本台账。
 
 ## Flutter App（2026-10-08 开始）
 
@@ -16,7 +22,7 @@
 
 Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记录；本地Three.js AnimationMixer播放v41烘焙GLB，模型和素材离线打包。首页与详情使用原穿衣Snow，详情仅当前群组柔边代理高亮；独立直立人台保留精细分区线与当前选区，卡片交换和同帧返回保持。两种人物不宣称精确解剖配准。动作合约见 [v41同步说明](app/docs/motion-v41.md)，版本/安装包/发布观察见 [版本管理台账](app/docs/version-ledger.md)，实施及待验收项见 [实施路线](app/docs/development-roadmap.md)，实际证据见 [App验证记录](app/docs/verification.md)。
 
-当前接手先读 [v41 同步说明](app/docs/motion-v41.md)。[v38 接入说明](app/docs/motion-v38.md)、[2026-10-08 App 交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留此前检查点，其中动作版本及详情外观已被当前要求覆盖；训练、课程、本地数据与设备验证的未完成事项仍有效。
+当前接手先读 [App使用说明](app/README.md)、[版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)、[实施路线](app/docs/development-roadmap.md)、[资产来源](app/docs/asset-sources.md) 与 [v41同步说明](app/docs/motion-v41.md)。[v38接入说明](app/docs/motion-v38.md)、[2026-10-08 App交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留历史，不能代替当前交付或验收事实。
 
 双击 `start-flutter.cmd` 打开已构建的 App 浏览器预览（`http://127.0.0.1:8820/`）。首次构建与 Android/iOS 运行见 [App 使用说明](app/README.md)，专家 M0–M7 与本次真实完成范围见 [App 路线与进度](app/docs/development-roadmap.md)。以下内容仍描述现有网页。
 
@@ -28,7 +34,7 @@ Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记
 
 也可以在当前目录运行 `npm start`。端口被占用时，运行 `node tools/server.mjs --port 8811` 并打开对应地址。请通过本地服务打开，不要直接双击 `dist/index.html`。
 
-从 GitHub 首次克隆时，先运行 `npm ci` 和 `npm run build`，再运行 `npm start`；生成的 `dist` 不纳入 Git。接手当前成果、恢复阶段1完整轨迹、核对模型与了解本地 Blender 文件范围，请先读 [项目交接](docs/handoff-2026-10-07.md)。
+从 GitHub 首次克隆时，先运行 `npm ci` 和 `npm run build`，再运行 `npm start`；生成的 `dist` 不纳入 Git。[2026-10-07历史交接](docs/handoff-2026-10-07.md)用于恢复阶段1轨迹及核对当时模型/Blender范围；当前App接手按上方文档入口。
 
 构建要求 Node.js `^20.19.0 || >=22.12.0`，当前验证使用 Node.js 24.15.0。
 

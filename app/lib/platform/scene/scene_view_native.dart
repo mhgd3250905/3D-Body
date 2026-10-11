@@ -110,6 +110,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller == widget.controller) return;
     final wasReady = oldWidget.controller.ready;
+    final wasPresented = oldWidget.controller.presented;
     final snapshot = {
       'source': 'flare-scene',
       'type': 'ready',
@@ -124,6 +125,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     oldWidget.controller.detachCommandSink(_sink);
     widget.controller.attachCommandSink(_sink);
     if (wasReady) widget.controller.receiveEvent(snapshot);
+    if (wasPresented) widget.controller.retainPresentedView();
   }
 
   @override

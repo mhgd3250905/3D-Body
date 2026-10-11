@@ -4,6 +4,44 @@
 
 App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为v41与穿衣详情，不加载历史白膜派生。
 
+## 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
+
+用户反馈L25米白质感仍不足，授权尝试金属。L26的17张透明512×512 WebP共592,628字节，采用钛银色金属人台和保留原色的珐琅教学选区；模型、原分区、左右与逐组镜头沿用L24/L25，仅更改离线截图的材质、反射和光照，运行时人台保持。L26安装后用户先反馈不满意并要求试作黄色橡胶，随后看手机银色截图明确确认“这个银色可以 就这个了”；当前选用L26银色肌群图文条目外观。该确认仅覆盖此处肌群图片与条目，不扩大为全App或其他T02验收。
+
+截图使用物理材质与本地工作室环境反射，基础色 `#b8bdc5`、金属度0.88、粗糙度0.28；细微拉丝以0.025幅度改变表面粗糙度，按像素覆盖抑制不可分辨纹理，不修改原网格或法线。肌群区域使用原色、金属度0.10和粗糙度0.44，保持颜色清晰；透明背景、1024渲染后缩小为512的流程保持。
+
+当前摄影清单采用L26的 `muscle-photography-v3-titanium`，保存尺寸、材质/光照、镜头、输出字节与SHA-256及工具源哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。复现使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L26原始1024图、联系表和报告保留在同一目录。L24/L25素材报告和具名交付包保留作历史。
+
+人台继续来自Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，来源见 [解剖资产说明](../../docs/anatomy-assets.md)。反光、选区色和深层斜线只用于展示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径和L24图文组件保持。
+
+## 历史试作：肌群条目黄色橡胶摄影（2026-10-11，L27，未安装）
+
+用户曾要求试作黄色橡胶，截图专用人台采用暖金黄色哑光橡胶，原色肌群区域保留。L27试作的17张透明512×512 WebP共464,032字节，沿用原CC0人台、网格、功能分区、左右与逐组镜头；只调整离线摄影材质、微纹理和柔光，运行时人台及图文组件保持。
+
+摄影基础色 `#c99418`、粗糙度0.90、金属度0、清漆0；细小随机颗粒以0.015幅度改变粗糙度，并按像素覆盖抑制不可分辨纹理。原色教学区域粗糙度0.68，不改肌群颜色；柔和工作室光保持橡胶的漫反射和轮廓阴影。仍先渲染1024透明图，再缩小成512 WebP，不修改原网格或法线。
+
+L27试作摄影清单为 `muscle-photography-v4-yellow-rubber`，保存实际尺寸、字节、镜头、材质/光照与源/输出SHA-256。拍摄时使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；原始1024图、联系表和报告保留在仓库 `output/playwright/2026-10-11-muscle-thumbnails-rubber/`，此前灰色、米白和金属报告与具名包保留。当前摄影工具恢复银色参数，黄色试作参数以该目录的 `render-report.json` 为准。
+
+来源继续为Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，见 [解剖资产说明](../../docs/anatomy-assets.md)。黄色材质是展示风格；肌群色区和深层斜线表示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径保持 `assets/muscles/{groupId}.webp`。
+
+L27只生成图片并触发APK/Web构建，未安装到手机。用户之后查看手机银色截图，明确确认“这个银色可以 就这个了”；当前采用L26银色条目摄影，黄色仅保留试作记录。
+
+## 历史：肌群条目米白哑光摄影（2026-10-11，L25，摄影外观由L26调整）
+
+按用户要求将截图专用人台调整为暖米白哑光特写。L25的17张透明512×512 WebP共420,314字节，仍读取同一个CC0人台、沿用L24逐组镜头、原肌群分区与颜色；只调整摄影材质和柔光，不改变运行时人台。材质基础色 `#d8d0be`、粗糙度0.88、金属度0，柔和主光和补光保留人体轮廓；截图专用shader保留米白色，正式场景的灰阶转换保持。
+
+L25摄影清单当时为 `muscle-photography-v2-ivory`，记录实际尺寸、透明背景、镜头、输出字节与SHA-256，以及材质/光照和源文件哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-ivory/render-report.json`。复现仍用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 与 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L25原始1024图、联系表和报告保留在同一目录，L24输出目录保留作历史。
+
+来源继续为Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0。米白材质仅改善展示，肌群着色和深层斜线继续表示体表功能位置，不代表内部真实肌肉几何或与Snow精确配准；来源与限制见 [解剖资产说明](../../docs/anatomy-assets.md)。图文入口沿用L24组件，图片路径保持 `assets/muscles/{groupId}.webp`。
+
+## 历史：肌群条目模型摄影（2026-10-11，L24，摄影外观由L25调整）
+
+`assets/muscles/{groupId}.webp` 为17张实际模型渲染图，透明背景、512×512，共404,596字节。读取当前打包的 `scene/public/anatomy/mannequin-reference.meshopt.glb.gz`，逐个肌群使用原功能分区和原色高亮，分别选择能看清肩臂、躯干或髋腿的正面/背面三分之四取景。Three.js r170先以1024×1024离线渲染，再缩小为512×512 WebP；没有生成或替换人体网格。
+
+[摄影清单](../assets/muscles/manifest.json)保存模型与输出SHA-256、17个ID、镜头位置、取景范围、原分区、深层标记及工具源哈希。复现入口为 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs)，拍摄场景为 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js) 与同目录HTML；原始1024图、联系表和渲染报告保留在仓库 `output/playwright/2026-10-11-muscle-thumbnails/`。这些制作工具不进入App场景运行时。
+
+人台来自Blender Studio与社区贡献者的 Human Base Meshes v1.4.1 / `GEO-body_male_realistic`，采用既有项目派生，许可CC0-1.0；来源见 [解剖资产说明](../../docs/anatomy-assets.md)。图片表示体表功能位置，深层肌群沿用斜线代理，不是独立内部肌肉几何、肌电或与Snow的精确解剖配准。透明图由Flutter缩略图组件配合主题和肌群淡色底展示，主力、其他参与及协同肌群入口共用同一图片；原训练图继续保留。
+
 ## 不可变基线
 
 | 文件/范围 | 实测记录 |

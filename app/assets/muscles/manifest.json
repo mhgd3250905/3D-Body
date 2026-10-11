@@ -1,0 +1,639 @@
+{
+  "revision": "muscle-photography-v3-titanium",
+  "createdDate": "2026-10-11",
+  "source": "app/scene/public/anatomy/mannequin-reference.meshopt.glb.gz",
+  "sourceSha256": "b8278a0e5049e432df1ae523a32576490bea1450916a0f5ad09232e25fadbcd6",
+  "decodedGlbSha256": "23088862775b08a4996ad1188c9ac4638593c8900b3a36ff4ab8db8950cdc15b",
+  "groups": [
+    "deltoids",
+    "rotator-cuff",
+    "triceps",
+    "forearms",
+    "serratus",
+    "scapular",
+    "chest",
+    "lats",
+    "abs",
+    "obliques",
+    "erectors",
+    "hip-flexors",
+    "glute-max",
+    "hip-abductors",
+    "adductors",
+    "quadriceps",
+    "hamstrings"
+  ],
+  "renderer": {
+    "threeRevision": "170",
+    "width": 512,
+    "height": 512,
+    "renderWidth": 1024,
+    "renderHeight": 1024,
+    "alpha": true,
+    "meshCount": 1,
+    "vertices": 37141,
+    "toneMapping": "ACESFilmic",
+    "exposure": 1.06,
+    "material": "brushed titanium silver with original-colour enamel teaching regions",
+    "baseColour": "#b8bdc5",
+    "grooveColour": "#747c87",
+    "roughness": 0.28,
+    "metalness": 0.88,
+    "clearcoat": 0.12,
+    "clearcoatRoughness": 0.24,
+    "enamel": {
+      "metalness": 0.1,
+      "roughness": 0.44
+    },
+    "brush": {
+      "roughnessAmplitude": 0.025,
+      "cyclesPerMetre": 334.2253804929802,
+      "antialias": "fwidth footprint"
+    },
+    "lights": {
+      "environment": 1,
+      "hemisphere": 0.35,
+      "key": 1.4,
+      "fill": 0.45,
+      "edge": 0.6
+    },
+    "background": "transparent",
+    "groups": [
+      "deltoids",
+      "rotator-cuff",
+      "triceps",
+      "forearms",
+      "serratus",
+      "scapular",
+      "chest",
+      "lats",
+      "abs",
+      "obliques",
+      "erectors",
+      "hip-flexors",
+      "glute-max",
+      "hip-abductors",
+      "adductors",
+      "quadriceps",
+      "hamstrings"
+    ]
+  },
+  "images": [
+    {
+      "groupId": "deltoids",
+      "file": "app/assets/muscles/deltoids.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 31430,
+      "sha256": "f3e1c766323482664d3e18d83830348651061ad106fcb1426e76350bd8e57bc8",
+      "camera": {
+        "azimuth": 32,
+        "elevation": 7,
+        "target": [
+          0,
+          1.3,
+          0
+        ],
+        "span": 0.81,
+        "description": "front three-quarter shoulders and upper torso",
+        "position": [
+          2.1038773055810736,
+          1.78747737362059,
+          3.3669074969872415
+        ],
+        "projection": "orthographic"
+      },
+      "label": "三角肌",
+      "colour": "#4cc9f0",
+      "panels": [
+        "deltFront",
+        "deltSide",
+        "deltRear"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "rotator-cuff",
+      "file": "app/assets/muscles/rotator-cuff.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 34410,
+      "sha256": "8bb3f8cbc6c28cf0105dde23899ab2c8cf59add63df5151cd56ba8e7e8c0728b",
+      "camera": {
+        "azimuth": 165,
+        "elevation": 7,
+        "target": [
+          0,
+          1.29,
+          0
+        ],
+        "span": 0.7,
+        "description": "back three-quarter shoulder blades; deep region hatched",
+        "position": [
+          1.0275593887519558,
+          1.77747737362059,
+          -3.8349038466167147
+        ],
+        "projection": "orthographic"
+      },
+      "label": "肩袖肌群",
+      "colour": "#a29bfe",
+      "panels": [
+        "infraspinatus"
+      ],
+      "deepRegion": true
+    },
+    {
+      "groupId": "triceps",
+      "file": "app/assets/muscles/triceps.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 32960,
+      "sha256": "d3c9296259e8b9f76f36753ffaa8d7c1245b4105dd5a549400ee836efd688989",
+      "camera": {
+        "azimuth": 155,
+        "elevation": 6,
+        "target": [
+          0,
+          1.21,
+          0
+        ],
+        "span": 0.87,
+        "description": "back three-quarter complete upper arms and torso",
+        "position": [
+          1.681212458734422,
+          1.6281138530706138,
+          -3.605371752602858
+        ],
+        "projection": "orthographic"
+      },
+      "label": "肱三头肌",
+      "colour": "#2f6bff",
+      "panels": [
+        "triceps"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "forearms",
+      "file": "app/assets/muscles/forearms.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 32268,
+      "sha256": "b8ccc5acb0a4035695f905e8bcd9a90f98212279b8c985ab0f8fe8f97f5ff22e",
+      "camera": {
+        "azimuth": 20,
+        "elevation": 6,
+        "target": [
+          0,
+          1,
+          0
+        ],
+        "span": 1.02,
+        "description": "front three-quarter forearms, hands and elbow context",
+        "position": [
+          1.3605860847774902,
+          1.4181138530706139,
+          3.738179545150327
+        ],
+        "projection": "orthographic"
+      },
+      "label": "前臂 · 腕屈伸肌",
+      "colour": "#9ad1e8",
+      "panels": [
+        "forearmFlex",
+        "forearmExt"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "serratus",
+      "file": "app/assets/muscles/serratus.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 35260,
+      "sha256": "2281e5bda789eb99def9aee845f3537a7bee047ea626e45030d3c8320a86ad75",
+      "camera": {
+        "azimuth": 48,
+        "elevation": 6,
+        "target": [
+          0.02,
+          1.17,
+          0.015
+        ],
+        "span": 0.73,
+        "description": "front three-quarter ribs and shoulder girdle",
+        "position": [
+          2.9762952014676114,
+          1.5881138530706138,
+          2.676860155539735
+        ],
+        "projection": "orthographic"
+      },
+      "label": "前锯肌",
+      "colour": "#5eead4",
+      "panels": [
+        "serratus"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "scapular",
+      "file": "app/assets/muscles/scapular.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33084,
+      "sha256": "7dabc0229fa3746d792f53c1885ef6e3ae503bc7be3583f5d8dc822f128237ca",
+      "camera": {
+        "azimuth": 170,
+        "elevation": 8,
+        "target": [
+          0,
+          1.29,
+          -0.02
+        ],
+        "span": 0.72,
+        "description": "back shoulder blades and neck context",
+        "position": [
+          0.6878329821548965,
+          1.8466924038402617,
+          -3.9208946866284986
+        ],
+        "projection": "orthographic"
+      },
+      "label": "斜方肌中下部 · 菱形肌",
+      "colour": "#86efc4",
+      "panels": [
+        "scapular"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "chest",
+      "file": "app/assets/muscles/chest.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 33242,
+      "sha256": "6ebb7a94d0ca0582369bef0eab91695e3cd42d0e9f58a7f6788caf017a8cb6a8",
+      "camera": {
+        "azimuth": 18,
+        "elevation": 7,
+        "target": [
+          0,
+          1.3,
+          0.035
+        ],
+        "span": 0.76,
+        "description": "front three-quarter chest and shoulders",
+        "position": [
+          1.2268545142344882,
+          1.78747737362059,
+          3.8108699409686277
+        ],
+        "projection": "orthographic"
+      },
+      "label": "胸大肌",
+      "colour": "#6f8dff",
+      "panels": [
+        "pec"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "lats",
+      "file": "app/assets/muscles/lats.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 37770,
+      "sha256": "bf3cf5e8a5ee14ba3cd7457893c61df8481eb855a4655e800dbeb66d24b97058",
+      "camera": {
+        "azimuth": 155,
+        "elevation": 6,
+        "target": [
+          0,
+          1.15,
+          -0.02
+        ],
+        "span": 0.78,
+        "description": "back three-quarter lower shoulder blades and waist",
+        "position": [
+          1.681212458734422,
+          1.5681138530706138,
+          -3.625371752602858
+        ],
+        "projection": "orthographic"
+      },
+      "label": "背阔肌",
+      "colour": "#00a896",
+      "panels": [
+        "lats"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "abs",
+      "file": "app/assets/muscles/abs.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 43522,
+      "sha256": "a307024f6e6e11daf47915caacabe8520f246384049f0b54262c28e825d50758",
+      "camera": {
+        "azimuth": 16,
+        "elevation": 5,
+        "target": [
+          0,
+          1.04,
+          0.035
+        ],
+        "span": 0.76,
+        "description": "front abdominal wall, lower ribs and pelvis context",
+        "position": [
+          1.0983538898436902,
+          1.3886229709906326,
+          3.865415219889732
+        ],
+        "projection": "orthographic"
+      },
+      "label": "腹直肌（含深层腹横肌）",
+      "colour": "#c466ff",
+      "panels": [
+        "abs"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "obliques",
+      "file": "app/assets/muscles/obliques.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 42288,
+      "sha256": "281b313c7bd41f181ef0bf72cad056d4d862be629b33a6514058579850f154e0",
+      "camera": {
+        "azimuth": 38,
+        "elevation": 5,
+        "target": [
+          0,
+          1.08,
+          0.015
+        ],
+        "span": 0.75,
+        "description": "front three-quarter side waist, ribs and pelvis",
+        "position": [
+          2.453274790155051,
+          1.4286229709906326,
+          3.155048539129189
+        ],
+        "projection": "orthographic"
+      },
+      "label": "腹斜肌",
+      "colour": "#ff6fb5",
+      "panels": [
+        "oblique"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "erectors",
+      "file": "app/assets/muscles/erectors.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 37872,
+      "sha256": "b5be2842fd8eafd9f9f716693a8f0c9cce468af7858695831d94fb9ab75f3d6c",
+      "camera": {
+        "azimuth": 165,
+        "elevation": 4,
+        "target": [
+          0,
+          1.04,
+          -0.025
+        ],
+        "span": 0.75,
+        "description": "back lumbar spine with upper back and pelvis context",
+        "position": [
+          1.032754299667404,
+          1.3190258949765012,
+          -3.879291518093961
+        ],
+        "projection": "orthographic"
+      },
+      "label": "竖脊肌",
+      "colour": "#e3b3ff",
+      "panels": [
+        "erectors"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "hip-flexors",
+      "file": "app/assets/muscles/hip-flexors.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 36422,
+      "sha256": "0fb29611d637fbd044dd794c486360dcb76d395d199aa1315629807b36042a99",
+      "camera": {
+        "azimuth": 24,
+        "elevation": 6,
+        "target": [
+          0,
+          0.9,
+          0.03
+        ],
+        "span": 0.73,
+        "description": "front three-quarter pelvis and upper thigh; deep region hatched",
+        "position": [
+          1.6180339887498947,
+          1.318113853070614,
+          3.664163840159184
+        ],
+        "projection": "orthographic"
+      },
+      "label": "髋屈肌",
+      "colour": "#ff9ec7",
+      "panels": [
+        "hipFlexor"
+      ],
+      "deepRegion": true
+    },
+    {
+      "groupId": "glute-max",
+      "file": "app/assets/muscles/glute-max.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 34740,
+      "sha256": "c2b0599925147548c22c7d65b5e536d89f2e1e0d0455d2f53ed65e956a155f1f",
+      "camera": {
+        "azimuth": 158,
+        "elevation": 7,
+        "target": [
+          0,
+          0.89,
+          -0.03
+        ],
+        "span": 0.7,
+        "description": "back three-quarter pelvis, waist and upper thighs",
+        "position": [
+          1.4872573306977164,
+          1.3774773736205899,
+          -3.7110910668569272
+        ],
+        "projection": "orthographic"
+      },
+      "label": "臀大肌",
+      "colour": "#ffb703",
+      "panels": [
+        "glutes"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "hip-abductors",
+      "file": "app/assets/muscles/hip-abductors.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 37954,
+      "sha256": "86dcdfc308ee531dc0d9bc0955b43c9076d62c99cbb798029abb25a8a6dff8e1",
+      "camera": {
+        "azimuth": 135,
+        "elevation": 6,
+        "target": [
+          0,
+          0.94,
+          -0.01
+        ],
+        "span": 0.7,
+        "description": "back three-quarter lateral hip and waist",
+        "position": [
+          2.812932705013617,
+          1.3581138530706138,
+          -2.822932705013616
+        ],
+        "projection": "orthographic"
+      },
+      "label": "臀中肌 · 髋外展",
+      "colour": "#ff7b2e",
+      "panels": [
+        "gluteMed"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "adductors",
+      "file": "app/assets/muscles/adductors.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 28826,
+      "sha256": "4205eda1c8f8664e05adb23aaf697ad356894c92a3d1617653d97d05c2d37e44",
+      "camera": {
+        "azimuth": 14,
+        "elevation": 4,
+        "target": [
+          0,
+          0.67,
+          0.01
+        ],
+        "span": 0.76,
+        "description": "front medial thighs with pelvis and knees",
+        "position": [
+          0.9653303440837555,
+          0.9490258949765012,
+          3.881728538614723
+        ],
+        "projection": "orthographic"
+      },
+      "label": "内收肌群",
+      "colour": "#b5e655",
+      "panels": [
+        "adductors"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "quadriceps",
+      "file": "app/assets/muscles/quadriceps.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 30810,
+      "sha256": "43d7c33246597d2414671fc1a655f8cca2e94017d9223c0ed9aae7daad8f11d4",
+      "camera": {
+        "azimuth": 19,
+        "elevation": 4,
+        "target": [
+          0,
+          0.64,
+          0.025
+        ],
+        "span": 0.88,
+        "description": "front complete thigh panels with pelvis and knees",
+        "position": [
+          1.2991003471835891,
+          0.9190258949765012,
+          3.7978613594830173
+        ],
+        "projection": "orthographic"
+      },
+      "label": "股四头肌",
+      "colour": "#ffe45c",
+      "panels": [
+        "quadRect",
+        "quadLat",
+        "quadMed"
+      ],
+      "deepRegion": false
+    },
+    {
+      "groupId": "hamstrings",
+      "file": "app/assets/muscles/hamstrings.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 29770,
+      "sha256": "30bb99ec0d23ee63590ebb63c8010b668d63a6f13ef549672efb896730b66f97",
+      "camera": {
+        "azimuth": 165,
+        "elevation": 5,
+        "target": [
+          0,
+          0.64,
+          -0.025
+        ],
+        "span": 0.88,
+        "description": "back complete thigh panels with hips and knees",
+        "position": [
+          1.0313366419851993,
+          0.9886229709906327,
+          -3.8740007475962326
+        ],
+        "projection": "orthographic"
+      },
+      "label": "腘绳肌",
+      "colour": "#e9a46a",
+      "panels": [
+        "hamLat",
+        "hamMed"
+      ],
+      "deepRegion": false
+    }
+  ],
+  "license": "CC0-1.0",
+  "attribution": "Human Base Meshes v1.4.1, Blender Studio and community contributors; GEO-body_male_realistic, existing project mannequin derivative.",
+  "method": "Offline Three.js photography of the existing mature mesh with unchanged shader region definitions, one group at a time; transparent 1024px render downsampled to 512px WebP. Photography alone adds physical studio reflections and fine roughness brushing to the titanium body; source-colour regions have a less metallic enamel finish.",
+  "limits": "Colours show functional teaching locations. Deep structures use the existing hatched proxy. These are not independent internal muscle geometry, EMG, or exact anatomy/Snow registration.",
+  "sourceHashes": [
+    {
+      "file": "app/scene/src/legacy/muscle-map.js",
+      "sha256": "512e938cfac74d1c75bc8b14433e3f68aeec5663626eb48daf28e09d88f3a0cf"
+    },
+    {
+      "file": "app/scene/src/legacy/flare-muscle-groups.js",
+      "sha256": "c238642fe482301a38857cf2e6eb9d44f175ae92de5b1b7d1a01a031b1450c95"
+    },
+    {
+      "file": "app/scene/src/muscle-material.js",
+      "sha256": "cf6441219deb27a08a7473537248561e305136d057bee3e90dcc65cc63d40f26"
+    },
+    {
+      "file": "app/scene/tools/muscle-thumbnails.js",
+      "sha256": "ea764bfbc0a5966a52f846d11392917d429ea393cd19e45183b7d8de25b7e04b"
+    }
+  ],
+  "errors": []
+}

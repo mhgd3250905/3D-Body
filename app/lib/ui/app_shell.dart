@@ -10,10 +10,12 @@ import '../data/muscle_knowledge.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
-import 'loader_mark.dart';
+import 'flare_silhouette.dart';
 import 'motion_controls.dart';
+import 'muscle_widgets.dart';
 import 'motion.dart';
 import 'timer_page.dart';
+import 'startup_splash.dart';
 import 'theme.dart';
 import 'theme_fade.dart';
 
@@ -24,11 +26,15 @@ class FlareShell extends StatefulWidget {
     required this.store,
     this.sceneController,
     this.enableScene = true,
+    this.sceneRevision = 0,
+    this.startupCovered = false,
   });
   final Catalog catalog;
   final LearningStore store;
   final SceneController? sceneController;
   final bool enableScene;
+  final int sceneRevision;
+  final bool startupCovered;
   @override
   State<FlareShell> createState() => _FlareShellState();
 }
@@ -38,6 +44,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   int _tab = 0;
   bool _configured = false;
   bool _configuring = false;
+  bool _didPresentScene = false;
   int _sceneGeneration = 0;
   bool _settings = false;
   bool _assessment = false;
@@ -53,6 +60,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double _stageArea = 0, _sentInset = -1;
   bool _insetSent = false;
   bool _holdWatch = false;
+  final _stageBackdropKey = GlobalKey();
 
   /// One sheet at a time: a quick double tap must not stack two sheets.
   bool _sheetOpen = false;
@@ -86,6 +94,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _sceneChanged() {
     if (!mounted || _configuring) return;
+    if (!_scene.ready) {
+      // Recreated views and recovered WebGL contexts both need fresh settings.
+      // Their provisional clock must not replace the user's saved position.
+      _configured = false;
+      _didPresentScene = false;
+      _refreshView();
+      return;
+    }
     if (_scene.ready && !_configured) {
       final restoredTime = store.lastTime;
       final restoredModel = _scene.detailModel;
@@ -105,11 +121,24 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       } else if (store.safetyAccepted && _watchVisible) {
         _scene.play();
       }
+      // A recovered WebGL context may still belong to a hidden, prewarmed
+      // view. Let it produce its replacement frame before hiding it again.
+      _scene.setVisible(true);
+      if (widget.enableScene) _scene.requestPresentation();
       _configuring = false;
       _refreshView();
       return;
     }
-    if (!_scene.playing && (_scene.time - _lastSavedTime).abs() > .001) {
+    if (_scene.presented && !_didPresentScene) {
+      _didPresentScene = true;
+      // First-use welcome still requires explicit acknowledgement. Its model
+      // is now prewarmed, so stop its idle loop until the action is shown.
+      if (!_watchVisible) _scene.setVisible(false);
+    }
+    if (store.safetyAccepted &&
+        (_scene.presented || !widget.enableScene) &&
+        !_scene.playing &&
+        (_scene.time - _lastSavedTime).abs() > .001) {
       _lastSavedTime = _scene.time;
       unawaited(store.setLastTime(_scene.time));
     }
@@ -132,6 +161,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   bool get _watchVisible =>
+      store.safetyAccepted &&
       _tab == 0 &&
       _drill == null &&
       _lesson == null &&
@@ -139,11 +169,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       !_assessment &&
       !_timing;
 
+  bool get _preparingScene => widget.enableScene && !_scene.presented;
+
   void _syncSceneVisibility() {
-    _scene.setVisible(_watchVisible);
+    _scene.setVisible(_watchVisible || _preparingScene);
     if (!_watchVisible) {
       _scene.pause();
-      unawaited(store.setLastTime(_scene.time));
+      if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
+        unawaited(store.setLastTime(_scene.time));
+      }
     }
   }
 
@@ -348,7 +382,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       if (!kIsWeb && state != AppLifecycleState.inactive) {
         _scene.setVisible(false);
       }
-      unawaited(store.setLastTime(_scene.time));
+      if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
+        unawaited(store.setLastTime(_scene.time));
+      }
     } else {
       store.refreshDate();
       _syncSceneVisibility();
@@ -373,22 +409,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (theme != _sceneTheme) {
       // The first appearance is applied as is; later switches fade in step
       // with the app's whole-screen dissolve.
-      final duration = _sceneTheme == null
+      final duration =
+          _sceneTheme == null || (widget.enableScene && !_scene.presented)
           ? Duration.zero
           : FlareMotion.of(context, FlareMotion.theme);
       _sceneTheme = theme;
       _scene.setTheme(theme, duration: duration);
     }
     final s = context.strings;
-    if (!store.safetyAccepted) {
-      return WelcomePage(
-        onEnter: (assessment) async {
-          final accepted = await store.acknowledgeSafety();
-          if (!mounted || !accepted) return;
-          setState(() => _assessment = assessment);
-        },
-      );
-    }
     final drill = _drill;
     final lesson = _lesson;
     final canBack =
@@ -401,25 +429,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final route = _route(context);
     if (route.$1 != _stageKey) {
       // Keep the live stage on screen while a page slides over or off it.
-      if (_stageKey == 'watch' || route.$1 == 'watch') _holdWatch = true;
+      if (_stageKey != null && (_stageKey == 'watch' || route.$1 == 'watch')) {
+        _holdWatch = true;
+      }
       _stageKey = route.$1;
     }
-    return PopScope(
+    final shell = PopScope(
       canPop: !canBack && !_timing,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && !_timing) _back();
       },
       child: DecoratedBox(
+        key: _stageBackdropKey,
         // The stage surface is the supplied graphite token, shared by the
         // floating header, transparent 3D view and compact transport.
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(0, -.2),
-            radius: 1.05,
-            colors: FlareColors.stage,
-            stops: [0, .52, 1],
-          ),
-        ),
+        decoration: BoxDecoration(gradient: _stageGradient()),
         child: Scaffold(
           backgroundColor: _watchVisible || _holdWatch
               ? Colors.transparent
@@ -454,7 +478,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       fit: StackFit.expand,
                       children: [
                         Offstage(
-                          offstage: !_watchVisible && !_holdWatch,
+                          offstage:
+                              !_watchVisible && !_holdWatch && !_preparingScene,
                           child: SafeArea(
                             bottom: false,
                             child: _watchPage(context),
@@ -486,6 +511,27 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         ),
       ),
+    );
+    // Mount the real scene even on first use. The welcome page stays fully
+    // opaque and blocks interaction; acknowledgement never reloads the model.
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ExcludeSemantics(
+          excluding: !store.safetyAccepted,
+          child: IgnorePointer(ignoring: !store.safetyAccepted, child: shell),
+        ),
+        if (!store.safetyAccepted)
+          WelcomePage(
+            onEnter: (assessment) async {
+              final accepted = await store.acknowledgeSafety();
+              if (!mounted || !accepted) return;
+              setState(() => _assessment = assessment);
+              _syncSceneVisibility();
+              if (_scene.presented && _watchVisible) _scene.play();
+            },
+          ),
+      ],
     );
   }
 
@@ -711,10 +757,37 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   ),
                   widget.enableScene
                       ? SceneView(
-                          key: ValueKey(_sceneGeneration),
+                          key: ValueKey((
+                            _sceneGeneration,
+                            widget.sceneRevision,
+                          )),
                           controller: _scene,
                         )
                       : ColoredBox(color: FlareColors.background),
+                  SceneRevealLayer(
+                    enabled: widget.enableScene && !widget.startupCovered,
+                    presented: _scene.presented,
+                    bottomInset: inset,
+                    backdrop: _StageBackdropCover(ancestor: _stageBackdropKey),
+                    loading: SceneLoading(
+                      key: const ValueKey('scene-loading'),
+                      label: s.sceneLoading,
+                    ),
+                    error: widget.startupCovered || _scene.errorCode == null
+                        ? null
+                        : _SceneError(
+                            key: const ValueKey('scene-error'),
+                            message: s.sceneFailed,
+                            retry: s.retry,
+                            onRetry: () {
+                              _scene.pause();
+                              setState(() {
+                                _configured = false;
+                                _sceneGeneration++;
+                              });
+                            },
+                          ),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -723,46 +796,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            // The figure fades up out of a quiet placeholder instead of
-                            // popping in; a failure gets one calm message and a retry.
-                            IgnorePointer(
-                              ignoring: _scene.errorCode == null,
-                              child: AnimatedSwitcher(
-                                duration: FlareMotion.of(
-                                  context,
-                                  FlareMotion.push,
-                                ),
-                                switchInCurve: FlareMotion.settle,
-                                switchOutCurve: FlareMotion.exit,
-                                child: _scene.errorCode != null
-                                    ? _SceneError(
-                                        key: const ValueKey('scene-error'),
-                                        message: s.sceneFailed,
-                                        retry: s.retry,
-                                        onRetry: () {
-                                          _scene.pause();
-                                          setState(() {
-                                            _configured = false;
-                                            _sceneGeneration++;
-                                          });
-                                        },
-                                      )
-                                    : widget.enableScene && !_scene.ready
-                                    ? SceneLoading(
-                                        key: const ValueKey('scene-loading'),
-                                        label: s.sceneLoading,
-                                      )
-                                    : const SizedBox.shrink(
-                                        key: ValueKey('scene-ready'),
-                                      ),
-                              ),
-                            ),
                             if (detail != null)
                               Positioned(
                                 left: 12,
                                 bottom: 31,
                                 width: 86,
-                                height: 108,
+                                height: 136,
                                 child: Semantics(
                                   label: _scene.detailModel == 'motion'
                                       ? s.switchToMuscles
@@ -775,7 +814,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                       onPressed: _swapDetailCard,
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
-                                        minimumSize: const Size(86, 108),
+                                        minimumSize: const Size(86, 136),
                                         backgroundColor: FlareColors.background
                                             .withValues(alpha: .004),
                                         overlayColor: FlareColors.text
@@ -966,9 +1005,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             child: Eyebrow(s.together),
                           ),
                           for (final group in shown)
-                            DotTag(
-                              label: group.label,
-                              color: Color(group.colorValue),
+                            MuscleItemChip(
+                              group: group,
                               onTap: () => _openGroup(group),
                             ),
                           if (together.length > shown.length)
@@ -1313,49 +1351,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         if (!ids.contains(item.id))
           if (catalog.groupById(item.id) case final MuscleGroup group) group,
     ];
-    Widget row(BuildContext sheet, MuscleGroup group, String? why) => InkWell(
-      onTap: () => Navigator.pop(sheet, group),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 3,
-              height: why == null ? 22 : 40,
-              decoration: BoxDecoration(
-                color: Color(group.colorValue),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    group.label,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (why != null) ...[
-                    const SizedBox(height: 3),
-                    Text(
-                      why,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 13, color: FlareColors.dim),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, size: 20, color: FlareColors.dim),
-          ],
-        ),
-      ),
-    );
+    Widget row(BuildContext sheet, MuscleGroup group, String? why) =>
+        MuscleItemTile(
+          group: group,
+          subtitle: why,
+          onTap: () => Navigator.pop(sheet, group),
+        );
     final group = await showModalBottomSheet<MuscleGroup>(
       context: context,
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
@@ -1408,17 +1409,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
                             child: Row(
                               children: [
-                                for (final other in others.take(6))
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    margin: const EdgeInsets.only(right: 4),
-                                    decoration: BoxDecoration(
-                                      color: Color(other.colorValue),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                const SizedBox(width: 8),
+                                MuscleThumbnailStack(
+                                  groups: others.take(3).toList(),
+                                ),
+                                const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
                                     s.othersInvolved(
@@ -1648,10 +1642,174 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   });
 }
 
-/// Placeholder while the 3D scene boots: the vector loading mark (the
-/// icon's athlete in a flare inside a turning orbit) with one quiet line.
-/// The scene's own canvas loader draws the same mark in the same place, so
-/// the hand-over to the WebView and then to the real figure is a dissolve.
+RadialGradient _stageGradient() => flareStageGradient();
+
+/// The loading cover paints the exact full-page backdrop, cropped to the stage.
+/// Recreating a gradient in this smaller rectangle would shift its centre and
+/// produce a colour flash beneath the transport when the cover disappears.
+class _StageBackdropCover extends StatelessWidget {
+  const _StageBackdropCover({required this.ancestor});
+  final GlobalKey ancestor;
+
+  @override
+  Widget build(BuildContext context) => CustomPaint(
+    painter: _StageBackdropPainter(
+      ancestor: ancestor,
+      context: context,
+      gradient: _stageGradient(),
+    ),
+  );
+}
+
+class _StageBackdropPainter extends CustomPainter {
+  _StageBackdropPainter({
+    required this.ancestor,
+    required this.context,
+    required this.gradient,
+  });
+  final GlobalKey ancestor;
+  final BuildContext context;
+  final RadialGradient gradient;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final page = ancestor.currentContext?.findRenderObject();
+    final cover = context.findRenderObject();
+    var source = Offset.zero & size;
+    if (page is RenderBox && cover is RenderBox && page.hasSize) {
+      final offset = cover.localToGlobal(Offset.zero, ancestor: page);
+      source = (Offset.zero & page.size).shift(-offset);
+    }
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..shader = gradient.createShader(source),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_StageBackdropPainter oldDelegate) => true;
+}
+
+/// The mark leaves while the backdrop is still opaque; only then can the
+/// fully drawn scene dissolve in. Bridge readiness alone never starts it.
+class SceneRevealLayer extends StatefulWidget {
+  const SceneRevealLayer({
+    super.key,
+    required this.enabled,
+    required this.presented,
+    required this.bottomInset,
+    required this.backdrop,
+    required this.loading,
+    this.error,
+  });
+
+  final bool enabled;
+  final bool presented;
+  final double bottomInset;
+  final Widget backdrop;
+  final Widget loading;
+  final Widget? error;
+
+  @override
+  State<SceneRevealLayer> createState() => _SceneRevealLayerState();
+}
+
+class _SceneRevealLayerState extends State<SceneRevealLayer>
+    with SingleTickerProviderStateMixin {
+  static const _markEnd = 120 / 340;
+  late final AnimationController _reveal = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 340),
+    value: widget.presented && widget.error == null ? 1 : 0,
+  );
+
+  @override
+  void didUpdateWidget(SceneRevealLayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.presented || widget.error != null) {
+      _reveal.stop();
+      _reveal.value = 0;
+    } else if (!widget.enabled) {
+      // The app splash owns the initial reveal. Once it leaves, this cover
+      // must already be gone, independent of the two animations' frame order.
+      _reveal.stop();
+      _reveal.value = 1;
+    } else if (!oldWidget.presented || oldWidget.error != null) {
+      if (FlareMotion.reduced(context)) {
+        _reveal.value = 1;
+      } else {
+        _reveal.forward(from: 0);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _reveal.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.enabled && widget.error == null) {
+      return const SizedBox.shrink();
+    }
+    return AnimatedBuilder(
+      animation: _reveal,
+      builder: (context, _) {
+        if (_reveal.isCompleted && widget.error == null) {
+          return const SizedBox.shrink(key: ValueKey('scene-ready'));
+        }
+        final progress = _reveal.value;
+        final markOpacity = progress >= _markEnd - .000001
+            ? 0.0
+            : 1 -
+                  Curves.easeOut.transform(
+                    (progress / _markEnd).clamp(0.0, 1.0),
+                  );
+        final coverOpacity =
+            1 -
+            FlareMotion.dissolve.transform(
+              ((progress - _markEnd) / (1 - _markEnd)).clamp(0.0, 1.0),
+            );
+        return IgnorePointer(
+          ignoring: widget.error == null,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (widget.enabled)
+                Opacity(
+                  key: const ValueKey('scene-cover-opacity'),
+                  opacity: coverOpacity,
+                  child: widget.backdrop,
+                ),
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: widget.bottomInset,
+                child:
+                    widget.error ??
+                    (markOpacity <= 0
+                        ? const SizedBox.shrink()
+                        : Opacity(
+                            key: const ValueKey('scene-mark-opacity'),
+                            opacity: markOpacity,
+                            child: widget.loading,
+                          )),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Placeholder while the 3D scene boots: the baked v41 action silhouette
+/// with one quiet line. The lightweight asset needs no live model to play.
+/// Flutter owns the hosted scene's loading UI. The scene only draws its own
+/// loader when opened on its own, avoiding two marks during initialization.
 class SceneLoading extends StatelessWidget {
   const SceneLoading({super.key, required this.label});
   final String label;
@@ -1664,7 +1822,7 @@ class SceneLoading extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const ExcludeSemantics(child: FlareLoaderMark()),
+          const ExcludeSemantics(child: FlareLoadingSilhouette()),
           const SizedBox(height: 10),
           ExcludeSemantics(
             child: Text(

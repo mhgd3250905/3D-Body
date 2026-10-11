@@ -122,6 +122,7 @@ export class FlarePlayer {
     if (this.dirty) { this.render(); this.dirty = false; this.callbacks.onRender?.(); }
   }
   render() {
+    this.callbacks.onBeforeRender?.();
     const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
     if (inset > 0 && inset < height) {
       // Nothing is drawn under the host's chrome: clear all, draw above it.

@@ -22,6 +22,9 @@ class SceneController extends ChangeNotifier {
   double _speed = 0.5;
   bool _playing = false;
   bool _ready = false;
+  bool _presented = false;
+  static int _nextPresentationRequest = 0;
+  int? _presentationRequest;
   int _phase = 9;
   String? _selected;
   String? _detail;
@@ -34,6 +37,9 @@ class SceneController extends ChangeNotifier {
   double get speed => _speed;
   bool get playing => _playing;
   bool get ready => _ready;
+
+  /// The scene has drawn the requested configuration and committed its frame.
+  bool get presented => _presented;
   int get phase => _phase;
   String? get selected => _selected;
   String? get detail => _detail;
@@ -48,8 +54,9 @@ class SceneController extends ChangeNotifier {
     if (_disposed) return;
     _connection++;
     _sink = sink;
-    final changed = _ready || _errorCode != null;
+    final changed = _ready || _presented || _errorCode != null;
     _ready = false;
+    _invalidatePresentation();
     _errorCode = null;
     if (changed) notifyListeners();
   }
@@ -58,8 +65,9 @@ class SceneController extends ChangeNotifier {
     if (!identical(_sink, sink)) return;
     _connection++;
     _sink = null;
-    final changed = _ready;
+    final changed = _ready || _presented;
     _ready = false;
+    _invalidatePresentation();
     if (changed && !_disposed) notifyListeners();
   }
 
@@ -159,6 +167,31 @@ class SceneController extends ChangeNotifier {
   void setQuality(String quality) =>
       command({'type': 'quality', 'value': quality});
 
+  /// Request a first frame after the preceding settings have reached the view.
+  /// IDs are unique across controllers, so a retired view cannot unveil a new one.
+  void requestPresentation() {
+    if (_disposed) return;
+    _presentationRequest = ++_nextPresentationRequest;
+    final changed = _presented;
+    _presented = false;
+    command({'type': 'present', 'requestId': _presentationRequest});
+    if (changed) notifyListeners();
+  }
+
+  /// Platform adapters use this only when replacing the controller while
+  /// retaining the very same already-presented native view or iframe.
+  void retainPresentedView() {
+    if (_disposed || !_ready || _presented || _errorCode != null) return;
+    _presented = true;
+    notifyListeners();
+  }
+
+  void _invalidatePresentation() {
+    _presented = false;
+    _presentationRequest = null;
+    _pending.remove('present');
+  }
+
   /// Page chrome appearance inside the scene: 'dark' or 'light'.
   /// Switches the scene's chrome to [value] ('dark' or 'light'). A non-zero
   /// [duration] cross-fades it in CSS, in step with the app's dissolve.
@@ -225,11 +258,34 @@ class SceneController extends ChangeNotifier {
   bool receiveEvent(Map<Object?, Object?> event) {
     if (_disposed || event['source'] != 'flare-scene') return false;
     final type = event['type'];
-    if (!const {'ready', 'state', 'select', 'error'}.contains(type)) {
+    if (!const {
+      'ready',
+      'presented',
+      'state',
+      'select',
+      'error',
+    }.contains(type)) {
       return false;
+    }
+    if (type == 'presented') {
+      if (!_ready ||
+          _errorCode != null ||
+          _presentationRequest == null ||
+          event['requestId'] != _presentationRequest) {
+        return false;
+      }
     }
     if (type == 'error') {
       reportError('${event['errorCode'] ?? event['code'] ?? 'scene-error'}');
+      return true;
+    }
+    // Configuration acknowledgements describe intermediate frames. Keep the
+    // host chrome stable until the matching presented event supplies its final
+    // snapshot; errors and connection readiness still take effect immediately.
+    if (type == 'state' &&
+        _presentationRequest != null &&
+        event['ready'] != false &&
+        event['errorCode'] == null) {
       return true;
     }
     final period = event['period'];
@@ -266,11 +322,18 @@ class SceneController extends ChangeNotifier {
     } else if (_detailModels.contains(event['detailModel'])) {
       _detailModel = event['detailModel'] as String;
     }
+    if (type == 'presented') {
+      _presentationRequest = null;
+      _presented = true;
+    }
     if (type == 'ready') {
       _ready = true;
       _errorCode = null;
     } else {
-      if (event['ready'] is bool) _ready = event['ready'] as bool;
+      if (event['ready'] is bool) {
+        _ready = event['ready'] as bool;
+        if (!_ready) _invalidatePresentation();
+      }
       if (event.containsKey('errorCode')) {
         final error = event['errorCode'];
         _errorCode = error is String ? error : null;
@@ -292,6 +355,7 @@ class SceneController extends ChangeNotifier {
   void reportError(String code) {
     if (_disposed) return;
     _ready = false;
+    _invalidatePresentation();
     _playing = false;
     _errorCode = code;
     notifyListeners();

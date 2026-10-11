@@ -28,6 +28,7 @@ flutter:
     - assets/data/
     - assets/drills/
     - assets/drills/light/
+    - assets/muscles/
     - assets/scene/
     - assets/scene/assets/
     - assets/scene/coach/
@@ -36,6 +37,8 @@ flutter:
     - assets/licenses/
     - assets/brand/icon.png
     - assets/brand/hero-thomas.webp
+    - assets/brand/flare-loading.webp
+    - assets/brand/flare-loading-still.webp
   fonts:
     - family: FlareSans
       fonts:

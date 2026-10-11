@@ -1,4 +1,5 @@
 import { Vector3 } from 'three';
+import { phaseEmphasisItems } from './phase.js';
 
 const mid = (a, b) => a.clone().lerp(b, 0.5), lerp = (a, b, t) => a.clone().lerp(b, t);
 const other = side => side === 'left' ? 'right' : 'left';
@@ -22,17 +23,28 @@ export const ANCHORS = {
   hamstrings: (j, s) => lerp(j(s + 'Hip'), j(s + 'Knee'), 0.6),
 };
 
-export function computeHotspots(player, items, minGap = 45) {
+const shortNames = { 'hip-abductors': '臀中肌', 'hip-flexors': '髋屈肌群', abs: '腹直肌', 'rotator-cuff': '肩袖肌群', forearms: '前臂肌群', scapular: '肩胛肌群', adductors: '内收肌群' };
+
+export function computeHotspots(player, items, previous = [], depthSampler = null) {
   const joints = player.getMetrics().joints, j = name => new Vector3().fromArray(joints[name] ?? joints.pelvis), output = [];
-  for (const item of items.filter(value => value.level === 'primary')) {
+  // Share the miniature's priority selection so both views name the same groups.
+  for (const item of phaseEmphasisItems(items)) {
     const anchor = ANCHORS[item.groupId]; if (!anchor) continue;
     const sides = item.side === 'both' ? ['left', 'right'] : [item.side];
     const candidates = sides.map(side => ({ side, point: anchor(j, side) }));
     candidates.sort((a, b) => a.point.distanceToSquared(player.camera.position) - b.point.distanceToSquared(player.camera.position));
-    const candidate = candidates[0], projected = player.project(candidate.point);
-    if (projected.behind || projected.x < 12 || projected.y < 12 || projected.x > player.container.clientWidth - 12 || projected.y > player.visibleHeight() - 12) continue;
-    if (output.some(hotspot => Math.hypot(hotspot.x - projected.x, hotspot.y - projected.y) < minGap)) continue;
-    output.push({ ...projected, groupId: item.groupId, label: item.label, colour: item.colour, side: candidate.side });
+    // Keep the chosen side through small camera movements near the midline.
+    // A clearly nearer side can take over; the label still names the group.
+    const last = previous.find(value => value.groupId === item.groupId);
+    const retained = candidates.find(value => value.side === last?.side);
+    const fallback = retained && retained.point.distanceTo(player.camera.position) < candidates[0].point.distanceTo(player.camera.position) + .10 ? retained : candidates[0];
+    const sample = depthSampler?.sampleFacing(item.groupId, item.side, last);
+    const candidate = sample ?? fallback;
+    const projected = player.project(candidate.point);
+    output.push({ ...projected, groupId: item.groupId, label: item.label, name: shortNames[item.groupId] ?? item.label,
+      colour: item.colour, side: candidate.side, world: candidate.point.toArray(),
+      normal: sample?.normal.toArray() ?? [0, 0, 1], candidateKey: sample?.candidateKey,
+      depth: sample?.depth ?? 0, far: sample?.far ?? 0, occluded: sample?.occluded ?? false, facing: sample?.facing ?? 1 });
   }
   return output;
 }

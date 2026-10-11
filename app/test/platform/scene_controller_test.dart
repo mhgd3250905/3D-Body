@@ -12,6 +12,141 @@ const _ready = {
 };
 
 void main() {
+  test('bridge readiness waits for the matching presented frame', () async {
+    final sent = <Map<String, Object?>>[];
+    final controller = SceneController(commandSink: sent.add);
+    addTearDown(controller.dispose);
+    controller.receiveEvent(_ready);
+    expect(controller.ready, isTrue);
+    expect(controller.presented, isFalse);
+    controller.setTheme('light');
+    controller.setViewInset(86, animate: false);
+    controller.setTime(2.375);
+    controller.requestPresentation();
+    await Future<void>.delayed(Duration.zero);
+    expect(sent.map((c) => c['type']), [
+      'theme',
+      'viewport',
+      'seek',
+      'present',
+    ]);
+    final first = sent.last['requestId'] as int;
+    controller.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'state',
+      'time': 0,
+      'phase': 9,
+      'playing': false,
+    });
+    expect(controller.time, 2.375);
+    expect(controller.phase, 11);
+    expect(
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'presented',
+        'requestId': first - 1,
+      }),
+      isFalse,
+    );
+    expect(controller.presented, isFalse);
+    var notifications = 0;
+    controller.addListener(() => notifications++);
+    expect(
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'presented',
+        'requestId': first,
+        'time': 2.5,
+        'phase': 12,
+        'playing': true,
+      }),
+      isTrue,
+    );
+    expect(controller.presented, isTrue);
+    expect(controller.time, 2.5);
+    expect(controller.phase, 12);
+    expect(controller.playing, isTrue);
+    expect(notifications, 1);
+
+    controller.requestPresentation();
+    await Future<void>.delayed(Duration.zero);
+    final next = sent.last['requestId'] as int;
+    expect(next, greaterThan(first));
+    expect(controller.presented, isFalse);
+    expect(
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'presented',
+        'requestId': first,
+      }),
+      isFalse,
+    );
+    controller.reportError('graphics_context_lost');
+    expect(
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'presented',
+        'requestId': next,
+      }),
+      isFalse,
+    );
+    controller.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'state',
+      'ready': true,
+      'errorCode': null,
+    });
+    expect(controller.ready, isTrue);
+    expect(controller.presented, isFalse);
+    controller.requestPresentation();
+    await Future<void>.delayed(Duration.zero);
+    final recovered = sent.last['requestId'];
+    controller.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'presented',
+      'requestId': recovered,
+    });
+    expect(controller.presented, isTrue);
+  });
+
+  test(
+    'replacing a connection rejects the old presentation acknowledgement',
+    () async {
+      final sent = <Map<String, Object?>>[];
+      final controller = SceneController();
+      addTearDown(controller.dispose);
+      final SceneCommandSink firstSink = sent.add;
+      controller.attachCommandSink(firstSink);
+      controller.receiveEvent(_ready);
+      controller.requestPresentation();
+      await Future<void>.delayed(Duration.zero);
+      final oldId = sent.last['requestId'];
+      controller.detachCommandSink(firstSink);
+      expect(controller.presented, isFalse);
+      controller.attachCommandSink((command) => sent.add(command));
+      controller.receiveEvent(_ready);
+      expect(
+        controller.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'presented',
+          'requestId': oldId,
+        }),
+        isFalse,
+      );
+      expect(controller.presented, isFalse);
+      controller.requestPresentation();
+      await Future<void>.delayed(Duration.zero);
+      final newId = sent.last['requestId'];
+      expect(newId, isNot(oldId));
+      controller.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'presented',
+        'requestId': newId,
+      });
+      expect(controller.presented, isTrue);
+    },
+  );
+
   test(
     'commands wait for actual readiness and keep latest desired values',
     () async {

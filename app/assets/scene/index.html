@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#101116" />
     <title>Flare 动作舞台</title>
-    <script type="module" crossorigin src="./assets/index-VERqU8U3.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DTq4Fm3g.css">
+    <script>
+      // Flutter owns loading, errors and retry in both WebView and iframe.
+      // Decide before first paint so its placeholder never overlaps this one.
+      if (window.FlareHost?.postMessage || window.parent !== window) {
+        document.documentElement.dataset.hosted = 'true';
+      }
+    </script>
+    <style>
+      :root[data-hosted="true"] #status { display: none; }
+    </style>
+    <script type="module" crossorigin src="./assets/index-DBRgBX7q.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-1IjNUedj.css">
   </head>
   <body>
     <main id="stage" aria-label="可旋转缩放的托马斯全旋动作人物">
@@ -25,6 +35,7 @@
       // one-hand flare, legs sweeping the V while the open orbit ring turns.
       // Inline so it shows on first paint; stops itself once the stage is up.
       (function () {
+        if (document.documentElement.dataset.hosted === 'true') return;
         var c = document.getElementById('loader'), st = document.getElementById('status');
         if (!c || !c.getContext) return;
         var g = c.getContext('2d'), dpr = Math.min(3, window.devicePixelRatio || 1), S = 132;

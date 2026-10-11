@@ -14,6 +14,8 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
   uniforms.mmFocusSide ??= { value: 0 };
   uniforms.mmFocusColour ??= { value: new THREE.Color('#e58b90') };
   uniforms.mmFocusInk ??= { value: new THREE.Color('#a7777b') };
+  uniforms.mmHomeEmphasis ??= { value: 0 };
+  uniforms.mmEffort ??= { value: 0 };
   applyMuscleMap(material, uniforms);
   const compile = material.onBeforeCompile;
   const strokeDensity = density ?? { value: 1 };
@@ -28,6 +30,7 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     if (posed) shader.vertexShader = 'attribute vec3 mmRest;\n' + shader.vertexShader.replace('vMmPos = transformed;', 'vMmPos = mmRest;');
     shader.fragmentShader = `uniform float mmStrokeDensity;
 uniform float mmFocusSide; uniform vec3 mmFocusColour; uniform vec3 mmFocusInk;
+uniform float mmHomeEmphasis; uniform float mmEffort;
 float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
 ` + shader.fragmentShader;
     const replace = (from, to) => {
@@ -97,12 +100,29 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
     // Ink belongs to the diagram, not the physical material. Lighting and
     // ACES otherwise wash it out on the bright mannequin and selected panels.
     replace('col = mix(col, mmGroove, mmGrooveV * mix(0.40, 0.82, mmIsMuscle));', '');
-    replace('diffuseColor.rgb = col;', `diffuseColor.rgb = mix(${posed ? 'base' : 'col'}, mmFocusColour, mmFocusCoverage);`);
+    replace('diffuseColor.rgb = col;', posed
+      ? 'diffuseColor.rgb = mix(base, mmFocusColour, mmFocusCoverage);'
+      : `if (mmHomeEmphasis > 0.5) {
+            // Cached relaxed/contracted endpoints differ only inside selected
+            // panels. Keep the neutral body identical when the host blends them.
+            float homeEffort = clamp(mmEffort, 0.0, 1.0);
+            float homeCore = smoothstep(0.02, 0.46, mmS1) * smoothstep(0.0, 0.52, mmEdge);
+            vec3 homeBase = vec3(dot(base, vec3(0.2126, 0.7152, 0.0722)));
+            vec3 homeHot = pc * mix(0.65 - 0.10 * homeEffort, 1.15 + 0.35 * homeEffort, homeCore);
+            float homeCoverage = clamp(anySel, 0.0, 1.0) * sh * mix(1.0, mix(0.25, 1.0, hatch), deep);
+            col = mix(homeBase, homeHot, homeCoverage);
+          }
+          diffuseColor.rgb = mix(col, mmFocusColour, mmFocusCoverage);`);
     replace('* (1.0 - mmGrooveV) * mmShown;', '* mmShown;');
     replace('lit *= 1.0 - 0.85 * mmDimV;', 'lit *= (1.0 - 0.85 * mmDimV) * mmPanelCoverage;');
     replace('totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse + 0.40 * mmFocusV * pulse) + front * 0.6 * step(0.3, abs(mmSelV)));',
       posed ? 'totalEmissiveRadiance += mmFocusColour * (0.04 * mmFocusCoverage);'
-        : 'totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse) + front * 0.6 * step(0.3, abs(mmSelV))) * (1.0 - mmFocusCoverage) + mmFocusColour * (0.04 * mmFocusCoverage);');
+        : `if (mmHomeEmphasis > 0.5) {
+            float homeCore = smoothstep(0.02, 0.46, mmS1) * smoothstep(0.0, 0.52, mmEdge);
+            totalEmissiveRadiance += mmPc * lit * (0.05 + homeCore * (0.06 + 0.10 * clamp(mmEffort, 0.0, 1.0)));
+          } else {
+            totalEmissiveRadiance += mmPc * (lit * (0.10 + 0.08 * pulse) + front * 0.6 * step(0.3, abs(mmSelV))) * (1.0 - mmFocusCoverage) + mmFocusColour * (0.04 * mmFocusCoverage);
+          }`);
     replace('float hA = max(fwidth(vMmPos.y) * 140.0, 0.02);\n          float hatch = smoothstep(0.5 - hA, 0.5 + hA, abs(fract((vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0) - 0.5) * 2.0);',
       'float stripe = (vMmPos.x * 0.6 + vMmPos.y - vMmPos.z * 0.5) * 70.0;\n          float footprint = fwidth(stripe);\n          float hA = max(footprint, 0.02);\n          float hatch = mix(smoothstep(0.5 - hA, 0.5 + hA, abs(fract(stripe) - 0.5) * 2.0), 0.5, smoothstep(0.3, 0.8, footprint));');
     if (posed) {
@@ -117,6 +137,9 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
       // Keep the original material's lighting. There is no blue emissive rim
       // or all-body recoloring when a muscle is selected.
       replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;', '');
+    } else {
+      replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;',
+        'if (mmHomeEmphasis < 0.5) totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;');
     }
     if (thumbnail) {
       // r170 disables tone mapping and outputs linear RGB for ordinary render
@@ -133,7 +156,7 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
       // uses the existing groove swatch converted from Three's linear Color;
       // skin blockers keep the face, hands and feet free of diagram seams.
       const output = thumbnail ? 'gl_FragColor = sRGBTransferOETF(gl_FragColor);' : '#include <colorspace_fragment>';
-      replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmGroove, 1.0)).rgb;\n float coverage = clamp(mmGrooveV * mmIsMuscle * 0.68, 0.0, 1.0);\n gl_FragColor.rgb = mix(gl_FragColor.rgb, min(gl_FragColor.rgb, ink), coverage);\n}');
+      replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmGroove, 1.0)).rgb;\n float coverage = clamp(mmGrooveV * mmIsMuscle * 0.68, 0.0, 1.0);\n if (mmHomeEmphasis > 0.5) {\n  ink = vec3(dot(ink, vec3(0.2126, 0.7152, 0.0722)));\n  coverage *= mix(0.28, 0.68, step(0.3, abs(mmSelV)));\n }\n gl_FragColor.rgb = mix(gl_FragColor.rgb, min(gl_FragColor.rgb, ink), coverage);\n}');
     }
     if (!posed) {
       // The upright reference retains a faint feathered inner shadow. Motion
@@ -142,6 +165,6 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
       replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmFocusInk, 1.0)).rgb;\n gl_FragColor.rgb = mix(gl_FragColor.rgb, ink, mmFocusOutline * 0.26);\n}');
     }
   };
-  material.customProgramCacheKey = () => 'flare-functional-surface-v9-' + Number(posed) + '-' + Number(thumbnail);
+  material.customProgramCacheKey = () => 'flare-functional-surface-v10-' + Number(posed) + '-' + Number(thumbnail);
   material.needsUpdate = true;
 }

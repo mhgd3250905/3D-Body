@@ -213,6 +213,21 @@ void main() {
     expect(scene.detailModel, 'muscles');
     expect(scene.playing, isFalse);
     expect(scene.time, 2.375);
+    // WebGL recovery keeps the native view, so no retry button recreates the
+    // shell. A new readiness event must still restore its complete framing.
+    scene.reportError('graphics_context_lost');
+    await tester.pumpAndSettle();
+    commands.clear();
+    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+    await tester.pumpAndSettle();
+    expect(commands.first, {
+      'type': 'viewport',
+      'bottom': inset,
+      'animate': false,
+    });
+    expect(commands.any((command) => command['type'] == 'seek'), isTrue);
+    expect(scene.time, 2.375);
+    expect(scene.detailModel, 'muscles');
     assertNoFlutterError(tester);
   });
 
@@ -590,7 +605,7 @@ void main() {
         expect(find.text('肌群模型'), findsNothing);
         expect(
           tester.getSize(find.byKey(const ValueKey('detail-card'))),
-          const Size(86, 108),
+          const Size(86, 136),
         );
         expect(scene.detailModel, 'motion');
         expect(find.text('深层肌群 · 颜色示意所在部位'), findsOneWidget);

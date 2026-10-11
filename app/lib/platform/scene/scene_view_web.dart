@@ -75,6 +75,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller == widget.controller) return;
     final wasReady = oldWidget.controller.ready;
+    final wasPresented = oldWidget.controller.presented;
     oldWidget.controller.detachCommandSink(_sink);
     widget.controller.attachCommandSink(_sink);
     if (wasReady) {
@@ -91,6 +92,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
         'detail': oldWidget.controller.detail,
       });
     }
+    if (wasPresented) widget.controller.retainPresentedView();
   }
 
   @override
