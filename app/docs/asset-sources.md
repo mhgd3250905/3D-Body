@@ -118,3 +118,21 @@ Snow Rig © Blender Foundation | studio.blender.org，CC BY 4.0，已修改。�
 PR #4已合并，源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`，合并 `bb94d849099d6a2985aa72c00373ce17d81a9993`。`assets/drills/light/*.webp` 为51套/102文件，1024/512尺寸、quality82，共1,188,470字节。作者说明以深色图为参考，用Hark `generate_image` 编辑为暖白背景、去除橙色轮廓光；本轮只审核复用，未调用生成服务。
 
 `drillArt()`随主题在训练库、今日训练和详情选图，深色原图保留。102图解码/尺寸/ID/缩略对应及51对审阅通过；hamstrings-A高亮稍延伸臀部、obliques-C器械浅银色两项差异仍在，不声称逐像素保持原图。文件哈希与检查见 [资源记录](screenshots/2026-10-09-pr4/resource-check.json)，实际验证统一归入 [verification.md](verification.md)。
+
+## 动作视频与静态帧（2026-10-11）
+
+L31封面时刻追溯：源[organize-final-media.py](../../../3D-Pose/hark-4080-work/organize-final-media.py)用FFmpeg `-ss 1`制作原48张封面；[publish-local.py](../../../3D-Pose/hark-4080-revisions/publish-local.py)取30fps的 `c/0060.png`制作三张local封面，即2秒。媒体清单据此保存 `poster_time_seconds`，播放器从该姿态准备并等待实际首帧才揭开Flutter封面；未修改原海报或视频，也不把原视频第0帧记成黑屏。六代表抽帧对比与浏览器51项首帧检查共同核对时刻，实际记录见[验证](verification.md)。
+
+按用户授权，从 `E:\AII-3D\3D-Pose` 的已认可 **v1.0.0** 冻结动作库接入 App 的全部51个训练动作，A/B/C各17个，按原动作ID一一对应。来源入口为该项目的 [交接地图](../../../3D-Pose/交接/README.md) 和 [素材索引](../../../3D-Pose/交接/素材索引.json)，实际读取索引的 `frozen_path`，固定在 `版本归档/v1.0.0/`，不按工作副本修改时间或文件名最高版本推测正式选择。9个拉伸素材本次未导入。
+
+51个原MP4共 **42,955,778字节**，51张原JPEG海报共 **679,938字节**，总计43,635,716字节。资产为 `assets/drill_media/{id}.mp4` 与 `{id}.jpg`，复制后字节不修改、不转码、不重新渲染。视频均为H.264、1080×1080、30fps，每项时长和帧数以 [动作媒体清单](../assets/data/drill-media-manifest.json) 为准；清单的 `actions` 按ID索引，保存动作版本、冻结来源路径、原来源链接、视频/海报大小与SHA-256、原notes、可取得的QA和已知限制。复现入口 [import-drill-media.py](../tools/import-drill-media.py) 读取 App `assets/data/drills.json` 的51个ID与源索引，逐项预检后复制；相同哈希的已有媒体复用，不同哈希拒绝覆盖，目录中的其他文件保留。
+
+导入已核对所有视频和海报的源/目标SHA-256、视频头的格式/尺寸/帧数/时长、JPEG格式，并以FFmpeg串行CPU完整解码51段原视频，全部通过；重复运行导入时102个已有文件全部复用。此处验证范围是媒体完整性和准确选版，不是对源动作姿势、接触或所有QA重新审核。来源记录仍保留：`adductors-B` 为正式屈膝哥本哈根支撑保持版，未采用失败的动态草稿；`hip-abductors-B` 的原引擎pass=true同时保留240帧solver警告；`deltoids-B` 支撑肘皮肤与垫面仍约有10.31mm间隙，不改写为完美接触。
+
+本次51项中采用三项正式本地修订：`deltoids-B`、`hip-abductors-B`、`rotator-cuff-B` 均为 **v3-local**，直接按源索引固定 `_本地修订` 的冻结MP4/海报。`deltoids-B` 在 App 名称与视频范围对齐为“哑铃半程土耳其起立（至高桥）”，不是完整站立起身。其余48项保持索引所选原成片，不用integration旧参数或未通过草稿替换正式媒体。
+
+训练库、今日训练、详情及计时/计次训练入口采用同一动作的原海报作为静态帧，点击可播放原视频，再次点击可暂停，同一时刻最多播放一个动作。深浅主题共用原海报与原视频，不重新着色；海报是冻结动作库随片提供的JPEG，未由 App 重新截帧。此前深色 `assets/drills/*.webp` 与浅色 `assets/drills/light/*.webp` 保留为历史资源，本次训练UI不再引用它们。上节浅色图的主题选图行为因此是历史状态，不代表本次视频/静态帧接入后的训练UI。
+
+这51段是离线预录视频，不是可旋转的训练GLB。源60动作的三维参数仍为自定义时间线/姿态/IK模块，尚未输出逐训练动作的标准GLB AnimationClip；已有可播放的v41 GLB仍只属于托马斯循环。视频里的灰色无五官训练人台、描边、灯光、道具和目标肌群高亮属于源成片表现，本次接入没有改变 App 交互3D人物、原Snow面孔/服装或v41动作。肌群颜色表示训练目标，不表示实测激活百分比。
+
+许可及派生说明随包保存于 [Drill-media-ATTRIBUTION.md](../assets/licenses/Drill-media-ATTRIBUTION.md)：Snow Rig © Blender Foundation / Blender Studio，CC BY 4.0；训练头部参考来自源项目记录的Human Base Meshes，CC0。人物、紧凑变形骨架、灰色人台头、训练材质、高亮与道具等修改沿用源成片并保留来源说明。此次内部跨项目复用经用户授权；源checkout没有统一项目LICENSE，不将上游MIT扩大解释为全部本地引擎或媒体的许可。已有 [Snow署名](../assets/licenses/Snow-ATTRIBUTION.md) 与 [解剖来源说明](../assets/licenses/Anatomy-ATTRIBUTION.md) 继续保留。

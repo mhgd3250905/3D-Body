@@ -1,11 +1,10 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
+import 'drill_media.dart';
 
 class PageHeader extends StatelessWidget {
   const PageHeader({
@@ -25,43 +24,45 @@ class PageHeader extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
-          height: 44,
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
           child: Row(
             children: [
-              if (onBack != null)
-                RoundIconButton(
-                  icon: Icons.arrow_back_ios_new_rounded,
-                  tooltip: context.strings.goBack,
-                  onPressed: onBack,
+              SizedBox(
+                width: 44,
+                child: onBack == null
+                    ? null
+                    : RoundIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        tooltip: context.strings.goBack,
+                        onPressed: onBack,
+                      ),
+              ),
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: large ? 24 : 20,
+                      height: 1.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-              const Spacer(),
-              ?action,
+              ),
+              SizedBox(width: 44, child: action),
             ],
           ),
         ),
-        if (title.isNotEmpty) ...[
-          const SizedBox(height: 14),
-          Semantics(
-            header: true,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: large ? 30 : 24,
-                  height: 1.2,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ],
         if (subtitle != null)
           Padding(
-            padding: const EdgeInsets.only(left: 4, top: 6),
+            padding: const EdgeInsets.only(top: 6),
             child: Eyebrow(subtitle!),
           ),
       ],
@@ -300,12 +301,10 @@ class _FilterPill extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.trailing,
   });
   final String label;
   final bool selected;
   final VoidCallback? onTap;
-  final Widget? trailing;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(right: 8),
@@ -349,7 +348,6 @@ class _FilterPill extends StatelessWidget {
                               : FlareColors.secondary,
                         ),
                       ),
-                      ?trailing,
                     ],
                   ),
                 ),
@@ -370,41 +368,100 @@ class LibraryPage extends StatefulWidget {
     required this.onDrill,
     required this.onRemove,
     this.onBack,
+    this.initialGroup,
+    this.initialQuery,
+    this.onQueryChanged,
   });
   final Catalog catalog;
   final LearningStore store;
   final ValueChanged<Drill> onDrill;
   final ValueChanged<String> onRemove;
   final VoidCallback? onBack;
+  final MuscleGroup? initialGroup;
+  final String? initialQuery;
+  final ValueChanged<String>? onQueryChanged;
   @override
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  String _query = '';
+  late final TextEditingController _searchController;
+  String get _query => _searchController.text;
   String? _section;
-  bool _searching = false;
+  @override
+  void initState() {
+    super.initState();
+    _section = widget.initialGroup?.section;
+    _searchController = TextEditingController(
+      text: widget.initialQuery ?? widget.initialGroup?.label ?? '',
+    );
+  }
+
+  @override
+  void didUpdateWidget(LibraryPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialGroup != widget.initialGroup) {
+      _section = widget.initialGroup?.section;
+    }
+    if (oldWidget.initialQuery != widget.initialQuery ||
+        oldWidget.initialGroup != widget.initialGroup) {
+      final query = widget.initialQuery ?? widget.initialGroup?.label ?? '';
+      if (_query != query) {
+        _searchController.value = TextEditingValue(
+          text: query,
+          selection: TextSelection.collapsed(offset: query.length),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _selectSection(String? section) {
+    _section = section;
+  }
+
+  void _queryChanged(String value) {
+    setState(() {});
+    widget.onQueryChanged?.call(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final catalog = widget.catalog;
     final tier = widget.store.settings.tier;
     final drills = catalog.searchDrills(_query, tier: tier, section: _section);
-    final sectionLabel = _section == null
-        ? s.allSections
-        : catalog.sections.firstWhere((item) => item.id == _section).short;
     return Column(
       children: [
-        PageHeader(
-          title: s.library,
-          onBack: widget.onBack,
-          action: RoundIconButton(
-            icon: _searching ? Icons.close_rounded : Icons.search_rounded,
-            tooltip: _searching ? s.closeSearch : s.search,
-            onPressed: () => setState(() {
-              _searching = !_searching;
-              if (!_searching) _query = '';
-            }),
+        PageHeader(title: s.library, onBack: widget.onBack),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: TextField(
+            key: const ValueKey('library-search'),
+            controller: _searchController,
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: s.searchDrills,
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: _query.isEmpty
+                  ? null
+                  : IconButton(
+                      key: const ValueKey('library-clear-search'),
+                      tooltip: s.clearSearch,
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () {
+                        _searchController.clear();
+                        _queryChanged('');
+                      },
+                    ),
+            ),
+            onChanged: _queryChanged,
+            onSubmitted: (_) => FocusScope.of(context).unfocus(),
           ),
         ),
         Expanded(
@@ -416,41 +473,36 @@ class _LibraryPageState extends State<LibraryPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverList.list(
                     children: [
-                      // The search field folds open under the header.
-                      AnimatedSize(
-                        duration: FlareMotion.of(context, FlareMotion.expand),
-                        curve: FlareMotion.settle,
-                        alignment: Alignment.topCenter,
-                        child: _searching
-                            ? FadeSlideIn(
-                                offset: 6,
-                                duration: FlareMotion.fade,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
-                                  child: TextField(
-                                    autofocus: true,
-                                    textInputAction: TextInputAction.search,
-                                    decoration: InputDecoration(
-                                      hintText: s.searchDrills,
-                                      prefixIcon: const Icon(
-                                        Icons.search_rounded,
-                                      ),
-                                    ),
-                                    onChanged: (value) =>
-                                        setState(() => _query = value),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(width: double.infinity),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _FilterPill(
+                              label: s.allSections,
+                              selected: _section == null,
+                              onTap: () => setState(() => _selectSection(null)),
+                            ),
+                            for (final section in catalog.sections)
+                              _FilterPill(
+                                label: section.short,
+                                selected: _section == section.id,
+                                onTap: () {
+                                  FlareHaptics.selection();
+                                  setState(() => _selectSection(section.id));
+                                },
+                              ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 10),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
                             for (final item in [
-                              ('A', s.tierA),
-                              ('B', s.tierB),
-                              ('C', s.tierC),
+                              ('A', s.sceneNone),
+                              ('B', s.sceneHome),
+                              ('C', s.sceneGym),
                             ])
                               _FilterPill(
                                 label: item.$2,
@@ -461,47 +513,11 @@ class _LibraryPageState extends State<LibraryPage> {
                                   widget.store.updateSettings(tier: item.$1);
                                 },
                               ),
-                            Pressable(
-                              scale: .95,
-                              child: PopupMenuButton<String?>(
-                                tooltip: s.allSections,
-                                color: FlareColors.popup,
-                                initialValue: _section,
-                                onSelected: (value) => setState(
-                                  () => _section = value == '' ? null : value,
-                                ),
-                                itemBuilder: (_) => [
-                                  PopupMenuItem(
-                                    value: '',
-                                    child: Text(s.allSections),
-                                  ),
-                                  for (final section in catalog.sections)
-                                    PopupMenuItem(
-                                      value: section.id,
-                                      child: Text(section.short),
-                                    ),
-                                ],
-                                child: IgnorePointer(
-                                  child: _FilterPill(
-                                    label: sectionLabel,
-                                    selected: false,
-                                    onTap: () {},
-                                    trailing: Padding(
-                                      padding: EdgeInsets.only(left: 2),
-                                      child: Icon(
-                                        Icons.expand_more_rounded,
-                                        size: 16,
-                                        color: FlareColors.dim,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
-                      if (widget.store.todayIds.isNotEmpty) ...[
+                      if (_query.trim().isEmpty &&
+                          widget.store.todayIds.isNotEmpty) ...[
                         SectionTitle(s.today),
                         for (final id in widget.store.todayIds)
                           if (catalog.drillById(id) case final Drill drill)
@@ -550,31 +566,43 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  sliver: SliverGrid.builder(
-                    itemCount: drills.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 220,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: .78,
-                        ),
-                    itemBuilder: (context, index) {
-                      final drill = drills[index];
-                      final group = catalog.groupById(drill.groupId)!;
-                      // Re-keyed per filter so a new result set eases in,
-                      // staggered from the top.
-                      return FadeSlideIn(
-                        key: ValueKey('$tier|$_section|$_query|${drill.id}'),
-                        delay: FadeSlideIn.stagger(index),
-                        child: DrillCard(
-                          drill: drill,
-                          groupLabel: group.label,
-                          color: Color(group.colorValue),
-                          onTap: () => widget.onDrill(drill),
-                        ),
-                      );
-                    },
+                  sliver: SliverLayoutBuilder(
+                    builder: (context, constraints) => SliverGrid.builder(
+                      itemCount: drills.length,
+                      gridDelegate:
+                          constraints.crossAxisExtent <= 700 ||
+                              MediaQuery.sizeOf(context).shortestSide < 600
+                          ? const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: .78,
+                            )
+                          : const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 220,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: .78,
+                            ),
+                      itemBuilder: (context, index) {
+                        final drill = drills[index];
+                        final group = catalog.groupById(drill.groupId)!;
+                        // Re-keyed per filter so a new result set eases in,
+                        // staggered from the top.
+                        return FadeSlideIn(
+                          key: ValueKey(
+                            '$tier|$_section|$_query|${drill.id}',
+                          ),
+                          delay: FadeSlideIn.stagger(index),
+                          child: DrillCard(
+                            drill: drill,
+                            groupLabel: group.label,
+                            color: Color(group.colorValue),
+                            onTap: () => widget.onDrill(drill),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -608,18 +636,8 @@ class DrillDetailPage extends StatefulWidget {
 }
 
 class _DrillDetailPageState extends State<DrillDetailPage> {
-  /// Scroll offset, driving the compact bar that forms once the picture and
-  /// the large title have scrolled away (no rebuild of the page itself).
-  final _offset = ValueNotifier<double>(0);
-
   Drill get drill => widget.drill;
   MuscleGroup? get group => widget.group;
-
-  @override
-  void dispose() {
-    _offset.dispose();
-    super.dispose();
-  }
 
   Widget _spec(String label, String value) => Expanded(
     child: Padding(
@@ -672,12 +690,6 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    // The picture runs under the status bar; the controls sit below it.
-    final top = MediaQuery.paddingOf(context).top;
-    final width = MediaQuery.sizeOf(context).width;
-    const heroAspect = 1.0;
-    final heroHeight = width / heroAspect;
-    final barHeight = top + 60;
     final shown = drill.cues.take(2).toList();
     final rest = drill.cues.skip(2).toList();
     return ColoredBox(
@@ -685,257 +697,105 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (n) {
-                      if (n.depth == 0 && n.metrics.axis == Axis.vertical) {
-                        _offset.value = n.metrics.pixels;
-                      }
-                      return false;
+          PageHeader(
+            title: drill.name,
+            large: false,
+            onBack: widget.onBack,
+            action: RoundIconButton(
+              key: ValueKey(widget.added),
+              icon: widget.added
+                  ? Icons.bookmark_added_rounded
+                  : Icons.bookmark_add_outlined,
+              tooltip: widget.added ? s.addedToday : s.addToday,
+              onPressed: widget.added
+                  ? null
+                  : () {
+                      FlareHaptics.light();
+                      widget.onAdd();
                     },
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        Stack(
-                          children: [
-                            AspectRatio(
-                              aspectRatio: heroAspect,
-                              child: Image.asset(
-                                drillArt(drill.imageAsset),
-                                fit: BoxFit.cover,
-                                frameBuilder: (context, child, frame, sync) =>
-                                    fadeInFrame(context, child, frame, sync),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                DrillMediaCard(
+                  key: ValueKey('demo:${drill.id}'),
+                  drillId: drill.id,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          if (group != null) ...[
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: Color(group!.colorValue),
+                                shape: BoxShape.circle,
                               ),
                             ),
-                            Positioned.fill(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      FlareColors.background.withValues(
-                                        alpha: 0,
-                                      ),
-                                      FlareColors.background.withValues(
-                                        alpha: 0,
-                                      ),
-                                      FlareColors.background,
-                                    ],
-                                    stops: [0, .72, 1],
-                                  ),
-                                ),
-                              ),
-                            ),
+                            const SizedBox(width: 7),
                           ],
+                          Expanded(
+                            child: Eyebrow(
+                              [
+                                if (group != null) group!.label,
+                                drill.tierLabel,
+                              ].join(' · '),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        drill.nameEn,
+                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: FlareColors.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: FlareColors.hairline),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
-                          child: Column(
+                        child: IntrinsicHeight(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Row(
-                                children: [
-                                  if (group != null) ...[
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(
-                                        color: Color(group!.colorValue),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 7),
-                                  ],
-                                  Expanded(
-                                    child: Eyebrow(
-                                      [
-                                        if (group != null) group!.label,
-                                        drill.tierLabel,
-                                      ].join(' · '),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                drill.name,
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                drill.nameEn,
-                                style: TextStyle(
-                                  color: FlareColors.dim,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(height: 18),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: FlareColors.surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: FlareColors.hairline,
-                                  ),
-                                ),
-                                child: IntrinsicHeight(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      _spec(s.spec, drill.prescription),
-                                      const VerticalDivider(width: 1),
-                                      _spec(s.equipment, drill.equipment),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 22),
-                              for (var i = 0; i < shown.length; i++)
-                                _cue(i, shown[i]),
-                              const Divider(),
-                              Disclosure(
-                                title: s.moreCuesAndSafety,
-                                children: [
-                                  for (var i = 0; i < rest.length; i++)
-                                    _cue(i + 2, rest[i]),
-                                  SectionTitle(s.mistake),
-                                  BodyText(drill.mistake),
-                                  SectionTitle(s.drillWhy),
-                                  BodyText(drill.why),
-                                  SectionTitle(s.safety),
-                                  BodyText(drill.safety ?? s.safetyBody),
-                                  if (drill.illustrationNote != null) ...[
-                                    SectionTitle(s.illustration),
-                                    BodyText(
-                                      drill.illustrationNote!,
-                                      color: FlareColors.dim,
-                                    ),
-                                  ],
-                                ],
-                              ),
+                              _spec(s.spec, drill.prescription),
+                              const VerticalDivider(width: 1),
+                              _spec(s.equipment, drill.equipment),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Once the picture and title have gone, a compact bar forms
-                // behind the pinned controls: frosted backdrop, hairline and
-                // the drill's name, the way an iOS large title collapses.
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  height: barHeight,
-                  child: IgnorePointer(
-                    child: ValueListenableBuilder<double>(
-                      valueListenable: _offset,
-                      builder: (context, offset, _) {
-                        final bar =
-                            ((offset - (heroHeight - barHeight - 24)) / 32)
-                                .clamp(0.0, 1.0);
-                        final title =
-                            ((offset - (heroHeight + 40 - barHeight)) / 24)
-                                .clamp(0.0, 1.0);
-                        if (bar == 0) return const SizedBox.expand();
-                        return ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: 18 * bar,
-                              sigmaY: 18 * bar,
-                            ),
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: FlareColors.background.withValues(
-                                  alpha: .86 * bar,
-                                ),
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: FlareColors.controlBorder.withValues(
-                                      alpha: bar,
-                                    ),
-                                    width: .6,
-                                  ),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(72, top, 72, 0),
-                                child: Center(
-                                  child: Opacity(
-                                    opacity: title,
-                                    child: Transform.translate(
-                                      offset: Offset(0, 6 * (1 - title)),
-                                      child: Text(
-                                        drill.name,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                // Back and save stay pinned while the picture scrolls away.
-                Positioned(
-                  left: 16,
-                  right: 16,
-                  top: top + 8,
-                  child: Row(
-                    children: [
-                      RoundIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        tooltip: s.goBack,
-                        onPressed: widget.onBack,
                       ),
-                      const Spacer(),
-                      AnimatedSwitcher(
-                        duration: FlareMotion.of(context, FlareMotion.fade),
-                        transitionBuilder: (child, animation) =>
-                            ScaleTransition(
-                              scale: Tween(begin: .7, end: 1.0).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: FlareMotion.spring,
-                                ),
-                              ),
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
+                      const SizedBox(height: 22),
+                      for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
+                      const Divider(),
+                      Disclosure(
+                        title: s.moreCuesAndSafety,
+                        children: [
+                          for (var i = 0; i < rest.length; i++)
+                            _cue(i + 2, rest[i]),
+                          SectionTitle(s.mistake),
+                          BodyText(drill.mistake),
+                          SectionTitle(s.drillWhy),
+                          BodyText(drill.why),
+                          SectionTitle(s.safety),
+                          BodyText(drill.safety ?? s.safetyBody),
+                          if (drill.illustrationNote != null) ...[
+                            SectionTitle(s.illustration),
+                            BodyText(
+                              drill.illustrationNote!,
+                              color: FlareColors.dim,
                             ),
-                        child: RoundIconButton(
-                          key: ValueKey(widget.added),
-                          icon: widget.added
-                              ? Icons.bookmark_added_rounded
-                              : Icons.bookmark_add_outlined,
-                          tooltip: widget.added ? s.addedToday : s.addToday,
-                          onPressed: widget.added
-                              ? null
-                              : () {
-                                  FlareHaptics.light();
-                                  widget.onAdd();
-                                },
-                        ),
+                          ],
+                        ],
                       ),
                     ],
                   ),

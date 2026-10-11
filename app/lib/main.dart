@@ -20,6 +20,7 @@ void main() {
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
       ('Snow Rig', 'Snow-ATTRIBUTION.md'),
+      ('训练动作示范', 'Drill-media-ATTRIBUTION.md'),
       ('Human Base Meshes', 'Anatomy-ATTRIBUTION.md'),
       ('Three.js', 'three-MIT.txt'),
       ('meshoptimizer', 'meshoptimizer-MIT.txt'),

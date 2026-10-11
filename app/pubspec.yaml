@@ -13,9 +13,12 @@ dependencies:
     sdk: flutter
   shared_preferences: 2.5.6
   webview_flutter: 4.14.1
+  webview_flutter_android: 4.14.1
+  webview_flutter_wkwebview: 3.26.2
   web: 1.1.1
   cupertino_icons: 1.0.8
 
+  intl: 0.20.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -28,6 +31,7 @@ flutter:
     - assets/data/
     - assets/drills/
     - assets/drills/light/
+    - assets/drill_media/
     - assets/muscles/
     - assets/scene/
     - assets/scene/assets/

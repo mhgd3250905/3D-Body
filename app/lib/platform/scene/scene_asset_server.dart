@@ -58,6 +58,7 @@ class SceneAssetServer {
         final result = await _router.route(
           request.uri.toString(),
           method: request.method,
+          range: request.headers[HttpHeaders.rangeHeader]?.join(','),
         );
         if (_closed) return;
         final response = request.response;
@@ -65,7 +66,8 @@ class SceneAssetServer {
         response.headers.set(HttpHeaders.contentTypeHeader, result.contentType);
         response.headers.set(HttpHeaders.cacheControlHeader, 'no-store');
         response.headers.set('X-Content-Type-Options', 'nosniff');
-        response.contentLength = result.body.length;
+        result.headers.forEach(response.headers.set);
+        response.contentLength = result.contentLength;
         if (request.method != 'HEAD') response.add(result.body);
       }
       await request.response.close();

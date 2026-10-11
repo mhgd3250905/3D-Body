@@ -1,10 +1,74 @@
 # Flare 版本管理台账
 
-更新于 2026-10-11。当前开发内容已按 **PR #5 → PR #3 → PR #6 → PR #7** 顺序合并，并在当前工作区修复加载衔接、肌群表现、详情小卡与动作人物高亮边缘，加入启动预加载、真实动作剪影和暂停肌群标签，已安装到所连手机。App 包版本仍为 **1.0.0+1**，网页/App 默认动作仍为 **v41**。主目录与本地新版 APK 已包含这些后续修复，已上传 Google Play 的 AAB 没有包含它们。两者版本号相同，不能据此判断内容相同。
+更新于 2026-10-11。当前本地交付为 **L37 肌群知识与双侧人台**；首页字标美化、详情独立知识滚动、短屏适配与双侧人台已接入，L36精简及L35搜索行为保持。离线Flutter Web与ARM64开发APK已构建，L37未安装手机。App包版本仍为 **1.0.0+1**，首页网页/App默认动作仍为 **v41**。Play P01仍是此前已上传AAB，不能按相同版本号判断内容相同。
 
 本文件是代码检查点、版本、安装包及发布观察的当前台账。实施与待验收项由 [development-roadmap.md](development-roadmap.md) 维护；测试命令、source state 与限制由 [verification.md](verification.md) 维护；动作来源与播放合约由 [motion-v41.md](motion-v41.md) 维护。下文路径均相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-11 L28：采用青绿色运动服 Flare 图标 B
+## 2026-10-11 L37：肌群知识与双侧人台
+
+首页Flare斜体字标配青绿细线/点及中文小副标，header仍44。详情标题与一句阶段作用固定，中间独立圆角柔背景知识区滚动；沿用17组已审核文字分两段，作用更亮半粗、知识12.5常规，切肌群回到滚动顶部。协同卡/footer固定，长标题用36px FittedBox，320×700采用紧凑卡片/48px按钮修复54px溢出。详情直立人台全图/小图均展示当前肌群双侧，动作演员与首页同步图仍按阶段左右侧。
+
+源仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。具名包 `output/releases/Flare-v41-muscle-knowledge-L37-20261011-arm64.apk`与通用APK相同，89,838,331字节，SHA-256 `6331414c1f073ed98c42f92e34a5079ee6fc191d32de771ea37559063dc8de00`。Web/ARM64 release构建及原Debug签名通过，包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`，证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。[包核对](../../output/drill-media-20261011/L37-package-check.json)4项源/Web/APK一致，旧L36与Play P01哈希保持。
+
+分析无问题，13项定向测试及scene构建/v33、v38、v41验证136案例通过。[真实GUI](../../output/drill-media-20261011/L37-browser-ui-check.json)390人台肱三头肌双臂粉色、演员单侧蓝色；390/552知识滚动20/17px时固定区域、736/801px舞台与暂停时刻保持，552深浅主题及320紧凑布局无溢出通过，console错误/警告0。CPU双侧检查不扩大为视觉验收，证据与边界见 [verification.md](verification.md)。L37未安装/提交/push/发布，原生媒体/iOS/长期训练待验收；旧包、根目录dist与个人文件保留。
+
+## 历史：2026-10-11 L36：界面精简与常驻搜索
+
+包含L35常驻搜索、肌群名称预填与词/部位/场景联合检索。肌群详情去掉顶部阶段/暂停小字、拖动旋转提示及协助发力小标题，原header高度、舞台、底部卡片与按钮保持。首页标题为单行“Flare · 托马斯助手”，headingHeight仍44；同步phase-map卡宽180、视图高124（短高128/96），移除front/back视觉文字，保留两面含义的可访问标签。
+
+源仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。具名包 `output/releases/Flare-v41-lean-ui-L36-20261011-arm64.apk`与通用APK相同，89,772,795字节，SHA-256 `baac6c30a04be5e06404a265018e5b009ea8035896036716e463bd12620aea22`。Web/ARM64 release构建、原Debug签名及aapt2 `dev.mhgd.flare` / `1.0.0+1`通过；证书SHA-256仍 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。旧L35/L34具名包保留。
+
+全项目分析无问题，17项定向测试及scene构建/v33、v38、v41验证通过。[真实浏览器](../../output/drill-media-20261011/L36-browser-ui-check.json)390首页/详情精简、搜索预填/编辑/详情返回/场景切换及552清空/滚动常驻通过，console错误/警告均0。[包核对](../../output/drill-media-20261011/L36-package-check.json)场景入口/JS/CSS与未改媒体清单4项源/Web/APK一致，新具名/通用包相同，旧L35/L34哈希保持。验证边界见 [verification.md](verification.md)。L36未安装/提交/push/发布，原生媒体/iOS/长期训练待验收；Play P01、根目录dist与个人文件保留。
+
+## 历史：2026-10-11 L35：常驻搜索与肌群名称预填
+
+训练搜索框固定在标题下方常驻，去掉顶栏搜索/关闭开关与独立肌群标签。详情练习跳转预填肌群名称，按搜索词+部位+场景正常联合检索，不再保留隐藏groupId限制。编辑词或框内清除立即更新结果，切场景保留词，训练详情返回保留已编辑词，普通更多入口使用空词。有搜索词时不显示无关今日训练条目，store.todayIds保留；首页/模型与L34底部卡片/按钮布局保持。
+
+源仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，未提交、push或发布。具名包 `output/releases/Flare-v41-persistent-search-L35-20261011-arm64.apk`与通用APK已同步，89,772,795字节，SHA-256 `329e42b8898195e456a16ad5ceef1a0afff133047c277dc1810b652baa482c1e`。Web与ARM64 release构建、原Debug签名及aapt2 `dev.mhgd.flare` / `1.0.0+1`通过；证书SHA-256仍 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。旧L34具名包保留原哈希。
+
+全项目分析无问题，flow10+library4+muscle3共17项定向测试通过。L35独立浏览器验收尚未完成即继续L36，当前搜索浏览器结论见L36记录。L35未安装真机；旧包、Play P01、根目录dist与个人文件保留。
+
+## 历史：2026-10-11 L34：协助发力卡片下对齐
+
+协助发力整区移出标题/一句作用的纵向滚动区，固定在练习按钮上方，与按钮间距22px；标题和作用在上，中间保留弹性空间。协同卡片仍完整横滑，练习按钮固定，支撑/主力/左右等上方小字保持去除。精准训练、同帧返回与原媒体保持。
+
+源仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，未提交、push或发布。具名包 `output/releases/Flare-v41-muscle-footer-L34-20261011-arm64.apk`与通用APK已同步，89,903,867字节，SHA-256 `792ce4ae63ec097c2adfcb7226ee28a6e51267a1764c276525afea96b0e8d721`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；原Android Debug证书验证通过，SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。[L34包核对](../../output/drill-media-20261011/L34-package-check.json)通过，旧L33具名包保留原哈希。
+
+分析无问题，3项针对卡区位置/横滑/返回的测试通过，历史30项保持自身范围、不相加。[实际浏览器](../../output/drill-media-20261011/L34-browser-ui-check.json)390/552宽卡片与footer间距均22px，横滑400px前后两者矩形一致；阶段12、暂停3.3秒及736/801px舞台保持，console错误0。L34未安装真机，原生媒体/iOS/长期训练待验收；旧包、Play P01、根目录dist与个人文件保留。媒体未改，L33资产证据只在原字节保持范围沿用。
+
+## 历史：2026-10-11 L33：肌群详情与对应训练直达
+
+肌群详情下半区去掉核心/主力/双侧小字及长知识/深层说明；肌群色条标题下保留当前阶段的一句作用，再展示完整协同肌群160px银色卡片横滑。练习按钮固定在独立滚动区域下方，直接进入该肌群精准训练列表，不再先弹场景选择。列表显示可清除肌群标签，场景/部位/搜索按AND筛选；切场景保留肌群，清标签保留部位，全部或冲突部位取消肌群。列表返回肌群保持选择、暂停时刻与模型。
+
+源仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，未提交、push或发布。具名包 `output/releases/Flare-v41-muscle-training-L33-20261011-arm64.apk` 与通用 `app/build/app/outputs/flutter-apk/app-release.apk`已同步，89,903,867字节，SHA-256 `21aa23ed9d52fab0a716f8d0364df834cc51ba898495b67a91184f393d03ad41`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；Android Debug开发证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`验证通过。
+
+全项目分析无问题，独立30项定向测试通过。[实际浏览器核对](../../output/drill-media-20261011/L33-browser-ui-check.json)与[最终包核对](../../output/drill-media-20261011/L33-delivery-check.json)全通过：390/552两尺寸精准筛选、卡片播放/暂停与同帧返回，协同卡横滑400px前后footer矩形相同，console错误0。aapt2确认 `dev.mhgd.flare`、versionCode 1/versionName 1.0.0，证书为原Debug。L33未安装真机，手机此前仅安装L29原型；iOS、51项原生媒体与长期训练仍待验收。旧L32/L31/L30、Play P01、根目录dist与个人文件保留，详细证据见 [verification.md](verification.md)。
+
+## 历史：2026-10-11 L32：部位/场景联合筛选与子页居中标题
+
+训练第一行直接提供全部部位/支撑/核心/腿部，第二行无器械/居家/健身房对应A/B/C，两维按AND筛选并叠加搜索，切换任一维保留另一维，今日训练独立保留。子页标题顶部居中，左右44px均衡留位；覆盖训练、路径、课程、测评、记录、设置与关于，系统许可页也居中。训练详情用固定顶部实际训练名，移除滚动大标题/磨砂叠条；肌群详情与计时页显示居中实际标题，阶段/暂停及组/侧/子动作信息保留，首页样式保持。
+
+当前源仍为master `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，未提交、push或发布。具名包 `output/releases/Flare-v41-body-scene-filters-L32-20261011-arm64.apk` 与通用 `app/build/app/outputs/flutter-apk/app-release.apk`一致，89,838,331字节，SHA-256 `7ddcc1ad44ac39cb16968931ef3c72279ac5e32281d98f8823bb389703ed5353`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`，Android Debug开发证书SHA-256仍 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。L32未安装真机，旧L31/L30及Play P01保留。
+
+分析无问题，flow/timer/motion原20项与新增联合筛选/标题4项共24项通过；同子集的15项回归不重复相加。390×844浏览器已确认标题居中、两行筛选及核心+居家→无器械联合过滤。[子页浏览器核对](../../output/drill-media-20261011/L32-browser-ui-check.json)与[最终源/Web/APK核对](../../output/drill-media-20261011/L32-delivery-check.json)均通过；验证边界见 [verification.md](verification.md)。本轮未改场景/媒体资源，不重复场景验证；根目录dist与个人文件保留。
+
+## 历史：2026-10-11 L31：训练卡片首帧与手机两列修复
+
+手机短边<600或训练列表宽≤700时固定两列，手机横屏同样限制；桌面保留自适应。网格媒体取消Pressable缩放。点击后封面保留到实际首帧呈现，再用120ms淡出；减少动态时即时切换。素材封面对应48项1秒及 `deltoids-B`、`hip-abductors-B`、`rotator-cuff-B` 三项2秒，清单新增 `poster_time_seconds`，播放器先定位到该时刻、等seeked才ready，从封面相同姿态开始播放。视频/封面原字节保留。
+
+当前源仍为master `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，未创建L31提交/标签、未push或发布。具名包 `output/releases/Flare-v41-action-cards-L31-20261011-arm64.apk` 与通用 `app/build/app/outputs/flutter-apk/app-release.apk`相同，89,903,867字节，SHA-256 `1cae056b3ac59853ea4fa6916632d8e872d92a58797e3c681d9ba0d4362a0b62`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`，Android Debug开发证书SHA-256仍 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。
+
+分析、定向25项测试、JS首帧/seek时序及51/51真实浏览器首帧检查通过；390×844、552×909与844×390横屏均两列，延迟加载期间封面保持、首帧后播放、单播放器互斥及暂停帧稳定通过，console error/warn均0，详见 [verification.md](verification.md)。[L31最终包核对](../../output/drill-media-20261011/L31-delivery-check.json)通过：102项原视频/封面保持，播放器3文件与清单在源/Web/APK一致，旧L30具名包保持。L31未安装真机，原生51项媒体与iOS仍待验收；旧L28、Play P01、根目录dist与个人数据保留。
+
+## 历史：2026-10-11 L30：训练动作卡片
+
+训练库、今日训练、课程与A/B/C选择中的图片统一换成51个视频的静态帧；点画面播放，再点暂停，全局只保留一个训练媒体。详情去掉视频时间轴与控制底栏，计时/计次页默认显示可收起示范，演示循环不自动计次。`deltoids-B`改名“半程土耳其起立（至高桥）”，原ID与剂量保留。来源、已知限制及接入见 [训练视频交付](drill-media-2026-10-11.md)、[媒体清单](../assets/data/drill-media-manifest.json) 和 [署名](../assets/licenses/Drill-media-ATTRIBUTION.md)。
+
+当前源为master `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树，本轮未创建L30提交/标签、未push或发布。具名包 `output/releases/Flare-v41-action-cards-L30-20261011-arm64.apk` 与通用 `app/build/app/outputs/flutter-apk/app-release.apk` 相同，89,903,867字节，SHA-256 `e397f6b210bf700def573da63fabeceec1057d5ecc180f5d99256864111ca9ca`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；Android Debug开发证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`，不是生产上传签名。
+
+手机此前仅保留数据安装过L29旧控件原型，冷启动Status ok、849ms；未完成51项原生视频验收。手机现已被取走，L30未安装。浏览器51项媒体与互斥/详情/计次联动通过；定向36项测试、分析、场景验证及构建后烟雾证据见 [verification.md](verification.md)。[最终包核对](../../output/drill-media-20261011/final-delivery-check.json)全通过，51项视频/静态帧与源、APK、Web一致，旧L28及Play P01哈希保持；不扩大为真机验收。青绿图标、银色条目、根目录dist与个人数据保留。
+
+## 历史：2026-10-11 L28：采用青绿色运动服 Flare 图标 B
 
 用户选定新角度 B。当前源资源、通用/具名开发 APK 与离线 Flutter Web 已换用该图标，保留 L26 功能与银色肌群条目。34张品牌、Android、iOS和Web图标由同一选定原图导出；iOS仅同步资源，未进行Xcode构建。姿态来自用户的项目模型截图，imagegen调整图标人物、服装和光影；运行时人物、原服装、v41动画及加载剪影保持。
 
@@ -36,13 +100,13 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 | 维度 | 当前值 | 判定依据与边界 |
 | --- | --- | --- |
-| Git 分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | 12:52已正常push并远端核对L26/L28及收束文档至f89db3f；L28标签也已推送。本次回执提交仅文档，最终SHA以Git及push结果定位，详见Git推送记录 |
-| 当前本地产品检查点 | L28 `3f0fda327a5e5716b89ba297447612148b542199` / 标签 `app-l28-20261011`；父提交为L26 `632fdb673d50908083e9fb43440886f2e2ac5684` | 当前源/APK/Web为L28；后续closeout仅文档，不是新的商店发布版本 |
+| Git 分支 / 源基线 | `master`，HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`；远端 `origin` 为 `mhgd3250905/3D-Body` | L37改动尚在未提交工作树，本轮未push；下方12:52的L26/L28推送属于历史回执 |
+| 当前本地产品 | L37，HEAD加工作树；尚无L37提交/标签 | 肌群知识独立滚动、双侧人台与首页字标；L36精简/L35搜索保持，旧证据及L28保存点/标签保留历史 |
 | 历史PR7合并检查点 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | 与最终审核源b991aa3完整tree同为 `649b9f77189ec4830519825a1d730f54a638e088`；PR7阶段已验证产品源d1c3886之后仅文档/截图 |
 | 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
 | App 包版本 / Android 包名 | `1.0.0+1` / `dev.mhgd.flare` | `app/pubspec.yaml` 与 Android 源配置；`0.1.0+1` 仅属 Play 接入前历史版本 |
 | 动作内容版本 | `v41` | 固定来源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；本轮没有另改动作、脸或衣物。v41 不等于 App 第 41 个发布版本 |
-| 当前本地试用包 | 下表 L28，开发签名 APK | 保留数据安装成功，桌面/应用信息图标完整，桌面冷启动与原3D首页已实景核对；L26银色条目认可继续有效。`--release` 为优化构建，使用相同开发证书 |
+| 当前本地试用包 | 下表 L37，开发签名 APK | 已构建，未安装手机；手机此前仅安装L29原型并冷启动。L28图标与L26银色条目认可属于对应历史范围 |
 | Play 已上传包 | 下表 P01，上传密钥签名 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9`；是先前送审包，不等于本地最新产品 |
 | 验收状态 | 定向软件验证通过；T01–T05 按路线继续 | 不把 APK 生成、文档提交或 Cockpit 检查点记成真机、教练或商店验收 |
 
@@ -80,7 +144,7 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 ## 安装包与本地预览
 
-当前为L28；通用/具名包身份见上方L28记录。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L26及更早包的构建、进程与验收均为保留历史证据，不覆盖当前安装身份。
+当前为L37；通用/具名包身份见上方L37记录，L37尚未安装手机。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L36及更早包的构建、进程与验收均为保留历史证据，不覆盖L37安装或原生播放验收。
 
 L26具名包与通用APK一致；场景使用 `index-DBRgBX7q.js` / `index-1IjNUedj.css`，APK内JS与源构建SHA-256均为`80a439211f0f4d12582dab1d8b8fd40b15d5f065aebde77b70cbf0b09822f3f8`。17张银色肌群图片逐项核对包内哈希与摄影报告相同，共592,628字节，并按用户最终选择从同一APK恢复到源资产；L24图文/点击证据保留。手机进程17949及启动日志抽样无异常；没有安装黄色试作。交付/运行/选择记录为 `output/releases/L26-metal-muscle-image-items-delivery.json`、`L26-runtime-check.json`、`L26-silver-selection.json`。原L05–L25具名包与试作报告保留，Play包保持。
 
@@ -92,7 +156,15 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 
 | ID / 状态 | 来源、用途与根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
-| L28 当前青绿色Flare图标 APK | L26功能/银色条目加用户选定B图标；`output/releases/Flare-v41-teal-logo-20261011-arm64.apk`，与通用APK相同。Android Debug开发签名、1.0.0+1、arm64；12:07:18保留数据安装，12:19桌面/应用信息图标与桌面启动实景核对通过 | 46,151,845；`c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b` |
+| L37 当前肌群知识 APK | HEAD 96e1db0加未提交工作树；`output/releases/Flare-v41-muscle-knowledge-L37-20261011-arm64.apk`，通用APK相同。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,838,331；`6331414c1f073ed98c42f92e34a5079ee6fc191d32de771ea37559063dc8de00` |
+| L36 历史界面精简 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-lean-ui-L36-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,772,795；`baac6c30a04be5e06404a265018e5b009ea8035896036716e463bd12620aea22` |
+| L35 历史常驻搜索 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-persistent-search-L35-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,772,795；`329e42b8898195e456a16ad5ceef1a0afff133047c277dc1810b652baa482c1e` |
+| L34 历史协助发力下对齐 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-muscle-footer-L34-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,903,867；`792ce4ae63ec097c2adfcb7226ee28a6e51267a1764c276525afea96b0e8d721` |
+| L33 历史肌群详情/训练直达 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-muscle-training-L33-20261011-arm64.apk`保留，通用路径现为L34。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,903,867；`21aa23ed9d52fab0a716f8d0364df834cc51ba898495b67a91184f393d03ad41` |
+| L32 历史部位/场景筛选与标题 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-body-scene-filters-L32-20261011-arm64.apk`保留，通用路径现为L33。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,838,331；`7ddcc1ad44ac39cb16968931ef3c72279ac5e32281d98f8823bb389703ed5353` |
+| L31 历史训练卡片首帧/两列 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-action-cards-L31-20261011-arm64.apk`保留，通用路径现为L32。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,903,867；`1cae056b3ac59853ea4fa6916632d8e872d92a58797e3c681d9ba0d4362a0b62` |
+| L30 历史训练动作卡片 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-action-cards-L30-20261011-arm64.apk`保留，通用路径现为L31。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,903,867；`e397f6b210bf700def573da63fabeceec1057d5ecc180f5d99256864111ca9ca` |
+| L28 历史青绿色Flare图标 APK | L26功能/银色条目加用户选定B图标；`output/releases/Flare-v41-teal-logo-20261011-arm64.apk`，当时与通用APK相同，通用路径现为L30。Android Debug开发签名、1.0.0+1、arm64；12:07:18保留数据安装，12:19桌面/应用信息图标与桌面启动实景核对通过 | 46,151,845；`c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b` |
 | L26 历史银色肌群图文 APK | 钛银金属/细拉丝与原色肌群，17图片；当时已保留数据安装并冷启动，用户接受银色条目外观；`output/releases/Flare-v41-metal-muscle-image-items-20261011-arm64.apk`。Android Debug开发签名、1.0.0+1、arm64；通用路径已由L28更新，银色条目在L28保持 | 45,615,269；`b1c83d7ccadcabbbaa60bf7fa1b145176ce72abdc161f83b31e40dae54a0ca98` |
 | L25 历史米白肌群图文 APK | 截图专用米白哑光/柔光，17图片；用户反馈质感不足，最终采用L26；`output/releases/Flare-v41-ivory-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L26更新 | 45,443,237；`0e5e9ce330143f62904bc3cadf4d1e8d2c897f3f8bf5840c5116882c3a255e3c` |
 | L24 历史肌群图文条目 APK | 17张灰色人台渲染图用于主力/次要/详情协同肌群条目；图文入口保留，摄影材质由L25调整；`output/releases/Flare-v41-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L25更新 | 45,426,853；`c3f67e3236284bfa3baed458a0d6024f84342b3c5fdca2b548603264331f7a1b` |
@@ -121,7 +193,7 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 | L03 历史 v41、PR4 前 APK | e27 保存点；`output/releases/Flare-v41-before-pr4-20261009-arm64.apk`。开发签名、当时 `0.1.0+1` | 42,836,141；`5c579985b1ed6b7db3ba988400bd2a3d88065e102f2cf83f12d883b6f430a9c7` |
 | P01 已上传 Play 封闭测试 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9` 加本机 gitignored 签名材料；`app/build/app/outputs/bundle/release/app-release.aab`。上传密钥签名、`1.0.0+1`；本轮未替换或重传 | 77,816,786；`9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
 
-当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，当前为L28青绿图标与L26银色条目/功能，场景入口保持 `index-DBRgBX7q.js` / `index-1IjNUedj.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
+当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，当前为L37肌群知识与双侧人台，保留L36精简/L35搜索及L34卡片/footer布局、L32联合筛选/标题、L31训练首帧/手机两列、L28青绿图标与L26银色条目，场景入口为 `index-BuYy9_Wa.js` / `index-DLlJ_85v.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行；App预览服务已补视频MIME与Range响应。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
 
 ## Play 发布观察
 

@@ -139,8 +139,8 @@
         "groupId": "deltoids",
         "tier": "B",
         "tierLabel": "家用器械",
-        "name": "哑铃土耳其起立",
-        "nameEn": "Dumbbell Turkish Get-Up",
+      "name": "哑铃半程土耳其起立（至高桥）",
+      "nameEn": "Dumbbell Half Turkish Get-Up (to High Bridge)",
         "equipment": "轻哑铃或壶铃 · 瑜伽垫",
         "prescription": "3 组 × 每侧 2–3 次（慢速）",
         "cues": [
@@ -150,7 +150,7 @@
         "mistake": "负重臂向头后或身体前方倒，肩失去锁定。",
         "why": "在身体转向不断变化时稳住双肩，正是换手时三角肌要做的事。",
         "difficulty": 2,
-        "safety": "从很轻的重量开始，每一步做稳再进入下一步。肩前侧夹痛时缩短时长或改简单版本，不要硬撑。",
+      "safety": "从很轻的重量开始，每一步做稳再进入下一步。示范做到高桥后原路返回，不包含站起。肩前侧夹痛时缩短时长或改简单版本，不要硬撑。",
         "image": "img/deltoids-B.png"
       },
       "C": {

@@ -239,7 +239,7 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
     appBarTheme: AppBarTheme(
       backgroundColor: p.background,
       surfaceTintColor: Colors.transparent,
-      centerTitle: false,
+      centerTitle: true,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(

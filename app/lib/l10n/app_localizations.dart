@@ -139,7 +139,7 @@ abstract class AppLocalizations {
   /// No description provided for @motionBrand.
   ///
   /// In zh, this message translates to:
-  /// **'FLARE · 托马斯全旋'**
+  /// **'Flare · 托马斯助手'**
   String get motionBrand;
 
   /// No description provided for @more.
@@ -409,7 +409,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchDrills.
   ///
   /// In zh, this message translates to:
-  /// **'搜索训练或英文名称'**
+  /// **'搜索训练、肌群或英文名称'**
   String get searchDrills;
 
   /// No description provided for @libraryCount.
@@ -489,6 +489,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'移出今日训练'**
   String get remove;
+
+  /// No description provided for @clearMuscleFilter.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除肌群筛选'**
+  String get clearMuscleFilter;
 
   /// No description provided for @timerReady.
   ///
@@ -1090,6 +1096,12 @@ abstract class AppLocalizations {
   /// **'一起发力'**
   String get together;
 
+  /// No description provided for @assistMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'协助发力'**
+  String get assistMuscles;
+
   /// No description provided for @sceneNone.
   ///
   /// In zh, this message translates to:
@@ -1305,6 +1317,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'关闭搜索'**
   String get closeSearch;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空搜索'**
+  String get clearSearch;
 
   /// No description provided for @spec.
   ///
@@ -1569,6 +1587,48 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{day}，未训练'**
   String notTrainedOn(String day);
+
+  /// No description provided for @drillDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'观看动作示范'**
+  String get drillDemo;
+
+  /// No description provided for @hideDrillDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'收起示范'**
+  String get hideDrillDemo;
+
+  /// No description provided for @demoReplay.
+  ///
+  /// In zh, this message translates to:
+  /// **'重播'**
+  String get demoReplay;
+
+  /// No description provided for @demoSeek.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放进度'**
+  String get demoSeek;
+
+  /// No description provided for @demoSpeed.
+  ///
+  /// In zh, this message translates to:
+  /// **'示范速度'**
+  String get demoSpeed;
+
+  /// No description provided for @demoFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'视频暂时无法播放，请重试'**
+  String get demoFailed;
+
+  /// No description provided for @demoPaused.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练已暂停，示范也已暂停'**
+  String get demoPaused;
 
   /// No description provided for @finishedLine.
   ///

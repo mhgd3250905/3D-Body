@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -52,6 +53,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Drill? _drill;
   Lesson? _lesson;
   MuscleGroup? _detail;
+  MuscleGroup? _libraryGroup;
+  String _libraryQuery = '';
   int _handledSelection = 0;
   double _lastSavedTime = -1;
   String _quality = 'balanced';
@@ -188,6 +191,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _lesson = null;
       _settings = false;
       _assessment = false;
+      _libraryGroup = null;
+      _libraryQuery = '';
     });
     _syncSceneVisibility();
   }
@@ -231,82 +236,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
-  /// Training opens on a scene choice: no equipment, at home, or at the gym,
-  /// each one this group's drill for that tier. The tier used last (from
-  /// settings) is marked so the usual pick is one tap.
-  Future<void> _chooseDrillScene(MuscleGroup group) async {
-    if (_sheetOpen) return;
-    _sheetOpen = true;
-    try {
-      final s = context.strings;
-      final usual = store.settings.tier;
-      final options =
-          [
-                ('A', s.sceneNone, s.sceneNoneHint),
-                ('B', s.sceneHome, s.sceneHomeHint),
-                ('C', s.sceneGym, s.sceneGymHint),
-              ]
-              .map(
-                (o) => (o, catalog.drillsFor(group.id, tier: o.$1).firstOrNull),
-              )
-              .where((e) => e.$2 != null)
-              .toList();
-      if (options.isEmpty) return;
-      final picked = await showModalBottomSheet<Drill>(
-        context: context,
-        sheetAnimationStyle: FlareMotion.sheetStyle(context),
-        isScrollControlled: true,
-        builder: (sheetContext) => SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Eyebrow(s.chooseScene),
-                      const SizedBox(height: 4),
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          s.trainGroup(group.label),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                for (final (i, entry) in options.indexed)
-                  FadeSlideIn(
-                    delay: Duration(milliseconds: 40 * i),
-                    offset: 8,
-                    child: _SceneOption(
-                      key: ValueKey('scene-${entry.$1.$1}'),
-                      label: entry.$1.$2,
-                      hint: entry.$1.$3,
-                      drill: entry.$2!,
-                      usual: entry.$1.$1 == usual,
-                      onTap: () {
-                        FlareHaptics.selection();
-                        Navigator.pop(sheetContext, entry.$2);
-                      },
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      );
-      if (picked != null && mounted) _openDrill(picked);
-    } finally {
-      _sheetOpen = false;
-    }
+  void _openGroupTraining(MuscleGroup group) {
+    _scene.pause();
+    setState(() {
+      _tab = 1;
+      _libraryGroup = group;
+      _libraryQuery = group.label;
+      _drill = null;
+      _lesson = null;
+      _settings = false;
+      _assessment = false;
+    });
+    _syncSceneVisibility();
   }
 
   void _openLesson(Lesson lesson) {
@@ -348,7 +289,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _back() {
     if (_timing) return;
-    if (_drill == null &&
+    if (_tab == 0 &&
+        _drill == null &&
         _lesson == null &&
         !_settings &&
         !_assessment &&
@@ -367,6 +309,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _assessment = false;
       } else {
         _tab = 0;
+        _libraryGroup = null;
+        _libraryQuery = '';
       }
     });
     _syncSceneVisibility();
@@ -448,8 +392,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           backgroundColor: _watchVisible || _holdWatch
               ? Colors.transparent
               : FlareColors.background,
-          // Pages own their top inset: most sit below the status bar, the
-          // drill page lets its picture run underneath it.
+          // Titled pages sit below the status bar; the shared 3D stage owns
+          // its own inset.
           body: SafeArea(
             top: false,
             child: Column(
@@ -497,8 +441,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           onSwipeBack: canBack && !_timing && route.$4 != null
                               ? _back
                               : null,
-                          child:
-                              route.$4 == null || route.$1.startsWith('drill:')
+                          child: route.$4 == null
                               ? route.$4
                               : SafeArea(bottom: false, child: route.$4!),
                         ),
@@ -627,6 +570,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         LibraryPage(
           catalog: catalog,
           store: store,
+          initialGroup: _libraryGroup,
+          initialQuery: _libraryQuery,
+          onQueryChanged: (value) => _libraryQuery = value,
           onBack: _back,
           onDrill: _openDrill,
           onRemove: (id) => _result(store.removeFromToday(id)),
@@ -663,6 +609,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
     final detail = _detail;
+    // Retain the previous header height so simplifying its text does not
+    // resize the shared 3D stage or shift the athlete's framing.
+    final textScaler = MediaQuery.textScalerOf(context);
+    final headingHeight =
+        (textScaler.scale(11) * 1.25 + textScaler.scale(15) * 1.35).clamp(
+          44.0,
+          double.infinity,
+        );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -686,38 +640,48 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 child: AnimatedSwitcher(
                   duration: FlareMotion.of(context, FlareMotion.fade),
                   switchInCurve: FlareMotion.settle,
-                  child: Column(
-                    key: ValueKey(detail?.id ?? 'home'),
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        detail == null
-                            ? s.motionBrand
-                            : s.phaseHeading(
-                                phase.source.toString().padLeft(2, '0'),
-                                phase.name,
+                  child: detail == null
+                      ? SizedBox(
+                          key: const ValueKey('home'),
+                          height: headingHeight,
+                          child: Center(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _HomeWordmark(label: s.motionBrand),
+                            ),
+                          ),
+                        )
+                      : SizedBox(
+                          key: ValueKey(detail.id),
+                          height: headingHeight,
+                          child: LayoutBuilder(
+                            builder: (context, box) => FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: SizedBox(
+                                width: box.maxWidth,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      detail.label,
+                                      key: const ValueKey(
+                                        'muscle-detail-title',
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        height: 1.35,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                        style: TextStyle(
-                          color: FlareColors.dim,
-                          fontSize: 11,
-                          height: 1.25,
-                          letterSpacing: .4,
-                          fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        detail == null
-                            ? s.fullLoop
-                            : s.pausedAt(_scene.time.toStringAsFixed(1)),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          height: 1.35,
-                          fontWeight: FontWeight.w600,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
               if (detail == null)
@@ -912,145 +876,153 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Widget _detailPanel(BuildContext context, Phase phase, MuscleGroup detail) {
     final s = context.strings;
     final muscle = phase.muscle(detail.id);
-    final primary = phase.primary.any((item) => item.id == detail.id);
-    final section = catalog.sections
-        .where((item) => item.id == detail.section)
-        .firstOrNull;
     final together = catalog.synergists(phase, detail.id, limit: 99);
-    final shown = together.take(2).toList();
     final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
       flex: 7,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 6, 24, 8),
-              // Each muscle's story eases up as the camera settles on it.
-              child: FadeSlideIn(
-                key: ValueKey('detail-${detail.id}'),
-                delay: FadeSlideIn.stagger(2, step: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxHeight < 270;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(24, compact ? 6 : 10, 24, 0),
+                  child: FadeSlideIn(
+                    key: ValueKey('detail-${detail.id}'),
+                    delay: FadeSlideIn.stagger(2, step: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          width: 7,
-                          height: 7,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: color.withValues(alpha: .6),
-                                blurRadius: 6,
+                        Semantics(
+                          header: true,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 4,
+                                height: compact ? 24 : 30,
+                                margin: const EdgeInsets.only(
+                                  top: 3,
+                                  right: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: compact ? 26 : 36,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      detail.label,
+                                      key: const ValueKey('muscle-panel-title'),
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        height: 1.2,
+                                        letterSpacing: -.6,
+                                        fontWeight: FontWeight.w800,
+                                        color: FlareColors.text,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Eyebrow(
-                          [
-                            if (section != null) section.short,
-                            primary ? s.primaryShort : s.secondaryShort,
-                            switch (muscle?.resolvedSide(
-                              catalog.supportFor(phase.source),
-                            )) {
-                              'left' => s.leftSide,
-                              'right' => s.rightSide,
-                              _ => s.bothSides,
-                            },
-                          ].join(' · '),
+                        SizedBox(height: compact ? 4 : 6),
+                        Text(
+                          muscle?.why ?? detail.role,
+                          key: const ValueKey('muscle-role'),
+                          maxLines: compact ? 2 : null,
+                          overflow: compact ? TextOverflow.ellipsis : null,
+                          style: TextStyle(
+                            fontSize: compact ? 12.5 : 14.5,
+                            height: 1.35,
+                            fontWeight: FontWeight.w600,
+                            color: FlareColors.text.withValues(alpha: .88),
+                          ),
+                        ),
+                        SizedBox(height: compact ? 4 : 8),
+                        Expanded(
+                          child: _MuscleKnowledgeBlock(
+                            key: ValueKey('knowledge-${detail.id}'),
+                            text: (muscleKnowledge[detail.id] ?? detail.role)
+                                .replaceFirst('。', '。\n\n'),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      detail.label,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      muscle?.why ?? detail.role,
-                      style: TextStyle(
-                        fontSize: 16,
-                        height: 1.55,
-                        color: FlareColors.secondary,
-                      ),
-                    ),
-                    if (detail.deep) ...[
-                      const SizedBox(height: 6),
-                      Eyebrow(
-                        _scene.detailModel == 'muscles'
-                            ? s.deepMusclesHint
-                            : s.deepMotionHint,
-                      ),
-                    ],
-                    if (together.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 2),
-                            child: Eyebrow(s.together),
-                          ),
-                          for (final group in shown)
-                            MuscleItemChip(
-                              group: group,
-                              onTap: () => _openGroup(group),
-                            ),
-                          if (together.length > shown.length)
-                            DotTag(
-                              label: s.moreCount(
-                                together.length - shown.length,
+                  ),
+                ),
+              ),
+              if (together.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    compact ? 6 : 8,
+                    24,
+                    compact ? 6 : 8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SingleChildScrollView(
+                        key: const ValueKey('muscle-assist-cards'),
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final group in together) ...[
+                              MuscleAssistCard(
+                                group: group,
+                                compact: compact,
+                                onTap: () => _openGroup(group),
                               ),
-                              onTap: _showMuscles,
-                            ),
-                        ],
-                      ),
-                    ],
-                    if (muscleKnowledge[detail.id] case final about?) ...[
-                      const SizedBox(height: 18),
-                      Text(
-                        about,
-                        key: const ValueKey('muscle-knowledge'),
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.65,
-                          color: FlareColors.dim,
+                              const SizedBox(width: 10),
+                            ],
+                          ],
                         ),
                       ),
                     ],
-                  ],
+                  ),
+                ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: FlareColors.background,
+                  border: Border(
+                    top: BorderSide(color: FlareColors.hairline, width: .5),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    8,
+                    20,
+                    (12 - MediaQuery.viewPaddingOf(context).bottom).clamp(
+                      8,
+                      12,
+                    ),
+                  ),
+                  child: PrimaryAction(
+                    key: const ValueKey('train-group'),
+                    height: compact ? 48 : 56,
+                    label: s.trainGroup(detail.label),
+                    arrow: true,
+                    onPressed: hasDrills
+                        ? () => _openGroupTraining(detail)
+                        : null,
+                  ),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              4,
-              20,
-              (18 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 18),
-            ),
-            child: PrimaryAction(
-              key: const ValueKey('train-group'),
-              label: s.trainGroup(detail.label),
-              arrow: true,
-              onPressed: hasDrills ? () => _chooseDrillScene(detail) : null,
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -1642,6 +1614,126 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   });
 }
 
+class _MuscleKnowledgeBlock extends StatefulWidget {
+  const _MuscleKnowledgeBlock({super.key, required this.text});
+
+  final String text;
+
+  @override
+  State<_MuscleKnowledgeBlock> createState() => _MuscleKnowledgeBlockState();
+}
+
+class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: FlareColors.surface.withValues(alpha: .55),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: FlareColors.hairline, width: .5),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    child: ClipRect(
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.stylus,
+            PointerDeviceKind.invertedStylus,
+            PointerDeviceKind.trackpad,
+          },
+        ),
+        child: Scrollbar(
+          controller: _scroll,
+          thumbVisibility: true,
+          thickness: 2,
+          radius: const Radius.circular(2),
+          child: SingleChildScrollView(
+            key: const ValueKey('muscle-detail-content'),
+            controller: _scroll,
+            primary: false,
+            padding: const EdgeInsets.only(right: 8, bottom: 4),
+            child: Text(
+              widget.text,
+              key: const ValueKey('muscle-knowledge'),
+              style: TextStyle(
+                fontSize: 12.5,
+                height: 1.55,
+                color: FlareColors.secondary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// A compact wordmark with one accessible name and a teal brand accent.
+class _HomeWordmark extends StatelessWidget {
+  const _HomeWordmark({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = label.split(' · ');
+    final teal = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xff75dfd0)
+        : const Color(0xff16776f);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: parts.first,
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.w800,
+              fontStyle: FontStyle.italic,
+              letterSpacing: .3,
+              color: FlareColors.text,
+              decoration: TextDecoration.underline,
+              decorationColor: teal.withValues(alpha: .65),
+              decorationThickness: 2,
+            ),
+          ),
+          if (parts.length > 1) ...[
+            TextSpan(
+              text: ' · ',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: teal,
+              ),
+            ),
+            TextSpan(
+              text: parts.skip(1).join(' · '),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+                color: FlareColors.secondary,
+              ),
+            ),
+          ],
+        ],
+      ),
+      semanticsLabel: label,
+      maxLines: 1,
+      softWrap: false,
+      textAlign: TextAlign.center,
+    );
+  }
+}
+
 RadialGradient _stageGradient() => flareStageGradient();
 
 /// The loading cover paints the exact full-page backdrop, cropped to the stage.
@@ -1932,111 +2024,6 @@ class _SceneError extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    ),
-  );
-}
-
-/// One scene in the training choice: the drill's picture, the scene in a
-/// word, what it needs, and the drill it opens.
-class _SceneOption extends StatelessWidget {
-  const _SceneOption({
-    super.key,
-    required this.label,
-    required this.hint,
-    required this.drill,
-    required this.usual,
-    required this.onTap,
-  });
-  final String label;
-  final String hint;
-  final Drill drill;
-  final bool usual;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Semantics(
-      button: true,
-      label: '$label，${drill.name}，${drill.prescription}',
-      onTap: onTap,
-      excludeSemantics: true,
-      child: Pressable(
-        scale: .98,
-        child: Material(
-          color: FlareColors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
-              color: usual
-                  ? FlareColors.accent.withValues(alpha: .55)
-                  : Colors.transparent,
-              width: 1.2,
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: ColoredBox(
-                      color: FlareColors.raised,
-                      child: Image.asset(
-                        drillArt(drill.thumbnailAsset),
-                        width: 72,
-                        height: 72,
-                        fit: BoxFit.cover,
-                        frameBuilder: (context, child, frame, sync) =>
-                            fadeInFrame(context, child, frame, sync),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          label,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          hint,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: FlareColors.dim,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '${drill.name} · ${drill.prescription}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: FlareColors.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     ),
   );

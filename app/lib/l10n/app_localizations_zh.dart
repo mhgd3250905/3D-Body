@@ -30,7 +30,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settings => '设置';
 
   @override
-  String get motionBrand => 'FLARE · 托马斯全旋';
+  String get motionBrand => 'Flare · 托马斯助手';
 
   @override
   String get more => '更多';
@@ -165,7 +165,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legsSection => '髋腿摆动';
 
   @override
-  String get searchDrills => '搜索训练或英文名称';
+  String get searchDrills => '搜索训练、肌群或英文名称';
 
   @override
   String get libraryCount => '51 个训练 · 17 个肌群';
@@ -205,6 +205,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get remove => '移出今日训练';
+
+  @override
+  String get clearMuscleFilter => '清除肌群筛选';
 
   @override
   String get timerReady => '准备开始';
@@ -523,6 +526,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get together => '一起发力';
 
   @override
+  String get assistMuscles => '协助发力';
+
+  @override
   String get sceneNone => '无器械';
 
   @override
@@ -641,6 +647,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get closeSearch => '关闭搜索';
+
+  @override
+  String get clearSearch => '清空搜索';
 
   @override
   String get spec => '剂量';
@@ -787,6 +796,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String notTrainedOn(String day) {
     return '$day，未训练';
   }
+
+  @override
+  String get drillDemo => '观看动作示范';
+
+  @override
+  String get hideDrillDemo => '收起示范';
+
+  @override
+  String get demoReplay => '重播';
+
+  @override
+  String get demoSeek => '播放进度';
+
+  @override
+  String get demoSpeed => '示范速度';
+
+  @override
+  String get demoFailed => '视频暂时无法播放，请重试';
+
+  @override
+  String get demoPaused => '训练已暂停，示范也已暂停';
 
   @override
   String finishedLine(int sets) {

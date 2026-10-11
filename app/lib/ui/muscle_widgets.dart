@@ -177,6 +177,64 @@ class MuscleItemChip extends StatelessWidget {
   }
 }
 
+/// A related muscle card in the detail panel's horizontal collection.
+class MuscleAssistCard extends StatelessWidget {
+  const MuscleAssistCard({
+    super.key,
+    required this.group,
+    required this.onTap,
+    this.compact = false,
+  });
+
+  final MuscleGroup group;
+  final VoidCallback onTap;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: group.label,
+    onTap: onTap,
+    excludeSemantics: true,
+    child: SizedBox(
+      width: 160,
+      child: Material(
+        color: FlareColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: FlareColors.hairline),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(compact ? 8 : 10),
+            child: Row(
+              children: [
+                MuscleThumbnail(group: group, size: compact ? 32 : 48),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    group.label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                      color: FlareColors.text,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 /// A small preview of the groups behind a single "other muscles" entry.
 class MuscleThumbnailStack extends StatelessWidget {
   const MuscleThumbnailStack({super.key, required this.groups});

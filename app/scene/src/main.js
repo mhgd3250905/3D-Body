@@ -12,7 +12,7 @@ import { createPresentationGate } from './presentation.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
-const hotspotLayer = document.querySelector('#hotspots'), detailNote = document.querySelector('#detail-note');
+const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
 let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts;
 const hosted = document.documentElement.dataset.hosted === 'true';
@@ -76,19 +76,17 @@ function dismissStatus() {
   }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 340);
 }
 function refreshHotspots(rendered = false) {
-  if (!ready || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode) {
+  if (!ready || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+      || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     hotspots = []; callouts?.clear(); return;
   }
   if (rendered) hotspots = callouts?.update(phaseAt(player.time).items, selected) ?? [];
 }
 function closeDetail() {
-  detailView?.close(); detailed = false; detailNote.hidden = true;
+  detailView?.close(); detailed = false;
   surface?.restore();
   phaseMap?.setHidden(false);
   for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
-}
-function updateDetailNote() {
-  detailNote.textContent = detailView?.getModel() === 'muscles' ? '拖动旋转 · 双指缩放' : '拖动旋转';
 }
 function setSelected(groupId, detail = detailed) {
   player.playing = false;
@@ -98,7 +96,7 @@ function setSelected(groupId, detail = detailed) {
     selected = groupId; detailed = !!detail; const phase = phaseAt(player.time);
     surface.show(selected, phase.items, detailed);
     if (detailed) {
-      detailView.open(selected, phase); detailNote.hidden = false; updateDetailNote();
+      detailView.open(selected, phase);
       phaseMap?.setHidden(true);
       for (const prop of player.stageProps) prop.visible = false;
     }
@@ -176,7 +174,7 @@ function command(value) {
       break;
     case 'detail_model':
       if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
-      detailView.setModel(input.value, phaseAt(player.time)); updateDetailNote(); break;
+      detailView.setModel(input.value, phaseAt(player.time)); break;
     case 'quality': player.setQuality(input.value); break;
     case 'visibility': player.setVisible(input.visible); break;
     default: return;
@@ -221,7 +219,7 @@ async function boot() {
     const skinned = buildMmRest(player.motion, player.coach);
     callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, { hosted, depthSampler: createHotspotDepth(player, skinned) });
     hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
-    detailView = createDetailView(player, phaseMap, () => { updateDetailNote(); player.dirty = true; emitState(true); }, () => surface.focusDirection());
+    detailView = createDetailView(player, phaseMap, () => { player.dirty = true; emitState(true); }, () => surface.focusDirection());
     detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
     const canvas = player.renderer.domElement;
     canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });

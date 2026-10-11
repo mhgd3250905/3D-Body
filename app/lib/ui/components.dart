@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
+import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -61,17 +62,19 @@ class PrimaryAction extends StatelessWidget {
     required this.onPressed,
     this.arrow = false,
     this.icon,
+    this.height = 56,
   });
   final String label;
   final VoidCallback? onPressed;
   final bool arrow;
   final IconData? icon;
+  final double height;
   @override
   Widget build(BuildContext context) => Pressable(
     scale: .975,
     child: SizedBox(
       width: double.infinity,
-      height: 56,
+      height: height,
       child: FilledButton(
         onPressed: onPressed,
         child: Row(
@@ -338,13 +341,9 @@ class DrillTile extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    drillArt(drill.thumbnailAsset),
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    frameBuilder: (context, child, frame, sync) =>
-                        fadeInFrame(context, child, frame, sync),
+                  child: SizedBox.square(
+                    dimension: 64,
+                    child: DrillMediaCard(drillId: drill.id),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -403,6 +402,8 @@ class DrillCard extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) => Pressable(
+    // Playback is an in-place toggle; do not resize its live platform surface.
+    scale: 1,
     child: Material(
       color: FlareColors.surface,
       borderRadius: BorderRadius.circular(20),
@@ -415,12 +416,7 @@ class DrillCard extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: FlareColors.raised,
-                child: Image.asset(
-                  drillArt(drill.thumbnailAsset),
-                  fit: BoxFit.cover,
-                  frameBuilder: (context, child, frame, sync) =>
-                      fadeInFrame(context, child, frame, sync),
-                ),
+                child: DrillMediaCard(drillId: drill.id),
               ),
             ),
             Padding(

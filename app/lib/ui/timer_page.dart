@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../domain/catalog_models.dart';
@@ -7,6 +8,7 @@ import '../domain/drill_timer.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
+import 'drill_media.dart';
 
 class TrainingTimerPage extends StatefulWidget {
   const TrainingTimerPage({
@@ -39,6 +41,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   bool _saved = false;
   bool _saveFailed = false;
   bool _confirming = false;
+  bool _showDemo = true;
   TimerPhase? _lastPhase;
   int? _lastCount;
   @override
@@ -216,6 +219,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (kIsWeb && state == AppLifecycleState.inactive) return;
     if (state != AppLifecycleState.resumed) {
       _timer.suspendForBackground();
       if (mounted) setState(() {});
@@ -322,11 +326,10 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
               padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: SizedBox(
                 height: 48,
-                child: Stack(
-                  alignment: Alignment.center,
+                child: Row(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
+                    SizedBox.square(
+                      dimension: 44,
                       child: RoundIconButton(
                         icon: Icons.close_rounded,
                         tooltip: s.exitTimer,
@@ -335,23 +338,50 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                             : () => unawaited(_requestExit()),
                       ),
                     ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Eyebrow(s.setOfTotal(snap.set, snap.sets)),
-                        if (side != null || snap.blockLabel.isNotEmpty)
-                          Text(
-                            [
-                              if (snap.blockLabel.isNotEmpty) snap.blockLabel,
-                              ?side,
-                            ].join(' · '),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, box) => FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: SizedBox(
+                            width: box.maxWidth,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  widget.drill.name,
+                                  key: const ValueKey('timer-page-title'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    height: 1.35,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  [
+                                    s.setOfTotal(snap.set, snap.sets),
+                                    if (snap.blockLabel.isNotEmpty)
+                                      snap.blockLabel,
+                                    ?side,
+                                  ].join(' · '),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: FlareColors.dim,
+                                    fontSize: 11,
+                                    height: 1.25,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                      ],
+                        ),
+                      ),
                     ),
+                    const SizedBox(width: 44),
                   ],
                 ),
               ),
@@ -362,7 +392,8 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                 children: [
                   Center(
                     child: SizedBox.square(
-                      dimension: 248,
+                      dimension: (MediaQuery.sizeOf(context).height * .25)
+                          .clamp(160, 216),
                       child: Stack(
                         clipBehavior: Clip.none,
                         fit: StackFit.expand,
@@ -455,11 +486,6 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     ),
                   ),
                   SizedBox(height: 28),
-                  Text(
-                    widget.drill.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-                  ),
                   if (snap.phase == TimerPhase.finished ||
                       widget.drill.cues.isNotEmpty) ...[
                     SizedBox(height: 8),
@@ -498,6 +524,43 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     ],
                   ),
                   SizedBox(height: 18),
+                  if (snap.phase == TimerPhase.rest)
+                    Center(
+                      child: TextButton(
+                        onPressed: () => _act(_timer.addRest),
+                        child: Text(
+                          s.addRest,
+                          style: TextStyle(color: FlareColors.secondary),
+                        ),
+                      ),
+                    ),
+                  if (!finished) ...[
+                    Center(
+                      child: TextButton.icon(
+                        key: const ValueKey('timer-demo-toggle'),
+                        onPressed: () => setState(() => _showDemo = !_showDemo),
+                        icon: Icon(
+                          _showDemo
+                              ? Icons.expand_less
+                              : Icons.play_circle_outline,
+                        ),
+                        label: Text(_showDemo ? s.hideDrillDemo : s.drillDemo),
+                      ),
+                    ),
+                    if (_showDemo) ...[
+                      Center(
+                        child: SizedBox.square(
+                          dimension: (MediaQuery.sizeOf(context).height * .22)
+                              .clamp(140, 200),
+                          child: DrillMediaCard(
+                            drillId: widget.drill.id,
+                            active: !paused && !_confirming,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
                   if (dose.mode == DoseMode.manual && !finished)
                     _note(s.manualMode),
                   if (_pain) _note(s.painMessage, color: FlareColors.warning),
@@ -512,16 +575,6 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                       ),
                     ),
                   ],
-                  if (snap.phase == TimerPhase.rest)
-                    Center(
-                      child: TextButton(
-                        onPressed: () => _act(_timer.addRest),
-                        child: Text(
-                          s.addRest,
-                          style: TextStyle(color: FlareColors.secondary),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),

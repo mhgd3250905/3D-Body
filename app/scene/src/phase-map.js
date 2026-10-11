@@ -34,7 +34,7 @@ export async function createPhaseMap(player, onSelect) {
   // Keep its layout measurable without exposing an empty card during GLB or
   // shader initialization. Reveal only after the cached canvas is composed.
   panel.style.visibility = 'hidden';
-  panel.innerHTML = '<header><i></i><span>同步发力</span></header><div class="phase-map-view"><span>正面</span><span>背面</span></div><div class="phase-map-legend"></div>';
+  panel.innerHTML = '<header><i></i><span>同步发力</span></header><div class="phase-map-view"></div><div class="phase-map-legend"></div>';
   player.container.append(panel);
   const view = panel.querySelector('.phase-map-view'), legend = panel.querySelector('.phase-map-legend');
   // Keep one WebGL context. Render each view to a complete small MSAA target
@@ -77,14 +77,16 @@ export async function createPhaseMap(player, onSelect) {
     for (const item of items) {
       if (groupId && item.groupId !== groupId) continue;
       const group = MM.resolveGroup(item.groupId); if (!group) continue;
-      for (const muscle of group.muscles) selected.push({ muscle, side: item.side, colour: item.colour,
+      for (const muscle of group.muscles) selected.push({ muscle, side: groupId ? 'both' : item.side, colour: item.colour,
         level: group.deep && item.level === 'primary' ? 'deep' : item.level,
         dim: groupId ? item.groupId === groupId ? 0 : 0.85 : item.level === 'primary' ? 0 : 0.5 });
     }
     MM.setMuscleSelection(uniforms, selected);
     uniforms.mmHomeEmphasis.value = groupId ? 0 : 1;
     uniforms.mmEffort.value = 0;
-    setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], items.find(item => item.groupId === groupId)?.side);
+    // The standing reference teaches the whole paired group; the motion
+    // figure and the home phase map retain their phase-specific side.
+    setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], groupId ? 'both' : undefined);
   }
   function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); renderKey = null; refreshEnvironment(); }
   function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }

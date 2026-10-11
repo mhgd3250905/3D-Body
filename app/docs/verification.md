@@ -1,4 +1,100 @@
-# L28文档收束与推送预检（2026-10-11）
+# L37肌群知识与双侧人台验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。首页Flare斜体字标、青绿细线/点与中文小副标保持44px header；详情标题/一句作用固定，17组原审核知识分两段放入独立ScrollBar滚动区，作用亮半粗、知识12.5常规。协同卡/footer固定，切肌群重置滚动，长标题36px FittedBox；320×700紧凑卡片/48px按钮修复54px溢出。直立人台全图/小图双侧当前群组，演员/首页同步图保留阶段侧别。
+
+分析无问题，13项定向测试通过（原12项与320短屏修复1项，390/552复跑属同范围、不相加）。552组件测试所选阶段/作用行数可容纳知识，不要求无意义滚动；下述552真实浏览器phase12具有不同作用行数，已实际滚动，两者不混同。scene构建与v33/v38/v41验证136案例通过。离线Web/ARM64 release最终构建与原Debug签名通过，[包核对](../../output/drill-media-20261011/L37-package-check.json)场景index/JS/CSS及未改媒体清单4项源/Web/APK一致，通用/具名APK相同、旧L36/P01哈希保持，身份见 [版本台账](version-ledger.md)。当前场景入口 `index-BuYy9_Wa.js` / `index-DLlJ_85v.css`。
+
+[限定CPU检查](../../output/drill-media-20261011/L37-bilateral-check.json)直接执行phase-map选择函数与真实MM模块：phase14左/phase10右肱三头肌在人台detail均选择both、focusSide0，演员state仍+1/−1，首页priority子集保留阶段侧别；full/mini共用phaseMap.scene。不含顶点/GPU/shader模拟，不当作视觉通过。
+
+[真实GUI](../../output/drill-media-20261011/L37-browser-ui-check.json)390 phase15已核对人台双臂粉色、演员单侧蓝色，知识scroll0→20、固定区域与736px舞台保持；552 phase12肱三头肌scroll0→17，知识viewport/协同卡矩形、801px舞台与暂停时刻2.650467789970562严格不变。552深浅主题截图通过；320真实紧凑布局无溢出、按钮正常。标题/作用/footer固定与切肌群重置另由定向组件测试覆盖。console错误/警告均0，最终390人台截图为当前淡边框版本。
+
+L37未安装/提交/push/发布，手机此前只装L29原型。原生媒体/iOS/长期训练未验收，Play P01、旧包、根目录dist与个人文件保留；L36精简/L35搜索与L31媒体证据仍按各自范围使用。
+
+---
+
+# 历史：L36界面精简与常驻搜索验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。包含L35常驻搜索全部行为，详情去阶段/暂停小字、拖动旋转提示与协助发力小标题；header高度、舞台、底部卡片/footer保持。首页单行“Flare · 托马斯助手”、headingHeight44，phase-map宽180/视图高124（短高128/96）；front/back视觉文字移除，可访问标签保留两面含义。
+
+全项目分析无问题，flow10、library4、muscle3共17项定向测试通过。scene `npm run build`与`npm run verify`的v33/v38/v41检查通过，输出 `index-C1A1p886.js` / `index-DLlJ_85v.css`。离线Web与ARM64 release构建、原Debug证书签名和aapt2 `dev.mhgd.flare` / `1.0.0+1`通过；具名/通用APK相同，身份见 [版本台账](version-ledger.md)，旧L35/L34包保留。原媒体未改，历史资产证据沿用自身范围。
+
+[真实移动Chrome](../../output/drill-media-20261011/L36-browser-ui-check.json)通过：390首页标题正确、phaseCard180×182、view高124、两面视觉文字0、舞台736；髋屈肌详情阶段/暂停/协助标题与旋转提示元素均无，全身截图已核对。三角肌预填后改肩袖肌群得到rotator-cuff-A，训练详情返回保留编辑词，切居家得到rotator-cuff-B；552清空后支撑/B多项两列，滚动使首卡y240→196而搜索框矩形20/70/520/62严格不变。console错误/警告均0；独立CLI浏览器已关闭，用户IAB保留。
+
+[包核对](../../output/drill-media-20261011/L36-package-check.json)通过：场景index/JS/CSS及未改媒体清单4项源/Web/APK一致，新具名/通用包相同，旧L35/L34哈希保持。此核对只覆盖包身份与上述资产一致性。L36未安装/提交/push/发布，原生媒体/前后台/快速切换、iOS与长期训练待验收；Play P01、根目录dist、个人文件与计划存储保留。
+
+---
+
+# 历史：L35常驻搜索与肌群名称预填验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。搜索框固定在训练标题下方常驻，移除顶栏搜索/关闭开关与独立肌群chip。详情练习入口预填group.label，按query+section+tier检索，无隐藏groupId；编辑词/框内clear立即更新，切tier保留词，训练详情返回保留已编辑词，普通更多入口空query。有词时隐藏无关Today展示，不改store.todayIds。L34卡片/footer对齐、首页/模型保持。
+
+全项目分析无问题，flow10、library4、muscle3共17项定向测试通过。离线Flutter Web与ARM64 release开发APK构建、原Debug证书签名及aapt2包身份通过；版本仍1.0.0+1，包字节/哈希见 [版本台账](version-ledger.md)，旧L34具名包原哈希保留。当时未改scene/原媒体，不重复相应验证。独立浏览器验收尚未完成即继续L36，当前搜索浏览器结论见L36记录。
+
+L35未安装/提交/push/发布，手机此前仅安装L29原型；原生媒体/前后台/快速切换、iOS与长期训练未验收。Play P01、根目录dist、个人文件与本地训练计划保留。
+
+---
+
+# 历史：L34协助发力下对齐验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。本轮只调整app_shell布局：协助发力标题与完整横滑卡片移出上方标题/一句作用的Expanded纵向滚动区，作为固定底部block放在练习按钮上方，间距22px；支撑/主力/左右小字保持去除。标题作用在上，剩余空间留中间；精准训练、暂停时刻/模型与首页舞台保持。
+
+全项目分析无问题，`muscle_library_flow_test.dart`3项定向回归通过：卡区在footer上方12–28px且不属于标题纵向scroll，横滑前后卡片/footer坐标保持。历史L33独立30项证据保留自身范围，不与本次3项重复相加。离线Flutter Web与ARM64 release开发APK构建通过，原Debug证书及aapt2 `dev.mhgd.flare`、versionCode 1/versionName 1.0.0核对通过；[L34包身份](../../output/drill-media-20261011/L34-package-check.json)中具名/通用相同，旧L33包保留原哈希，完整身份见 [版本台账](version-ledger.md)。
+
+[真实浏览器](../../output/drill-media-20261011/L34-browser-ui-check.json)通过：三角肌390宽卡片y=680–748、footer770–826，552宽卡片745–813、footer835–891，gap均22px；横滑400px前后两者矩形不变，上方元信息缺席。阶段12暂停3.3秒，390/552舞台736/801px保持，console错误0。无新的场景/原媒体变动，不扩大场景或资产审计；L33媒体证据仅用于原字节未改部分。L34未安装/提交/push/发布，手机此前只装L29原型；原生媒体、iOS与长期计时未验收，Play P01、根目录dist及个人文件保留。
+
+---
+
+# 历史：L33肌群详情与精准训练验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。肌群详情下半区使用色条标题、阶段why一句作用、全量协同肌群160px银色卡横滑及固定底部练习按钮；核心/主力/双侧小字和长知识/深层说明从该面板移除。按钮直接进入exact-group训练列表，显示“清除肌群筛选”可访问标签；场景/部位/搜索按AND筛选，场景保留group，清标签保留section，全部或冲突section清group并同步Shell，训练详情返回不复活已清除group。返回肌群保留selected/time/model。
+
+全项目 `flutter analyze --no-pub`无问题。flow10项与timer/motion/library filters/muscle widgets/新增3项对应的20项共独立30项通过；此前flow10+新增3是其中子集，不重复相加。离线Flutter Web与ARM64 release开发APK已构建、原开发证书验证通过，版本仍1.0.0+1，具名/通用包身份只在 [版本台账](version-ledger.md) 维护。本轮未修改场景/原媒体，不重复scene验证；L31/L32的相关素材与原行为证据保留。
+
+Chrome实际 [L33浏览器核对](../../output/drill-media-20261011/L33-browser-ui-check.json)通过：390×844髋屈肌A/B/C各1项正确，清标签后保留核心C档4项，过滤卡片播放/暂停与训练详情返回保持过滤；返回原8.4秒、群组及736px舞台，固定按钮底边826px。552×909舞台801px、按钮底边891px；协同卡横滑400px前后footer矩形严格相同，两尺寸console错误0。[L33源/Web/APK核对](../../output/drill-media-20261011/L33-delivery-check.json)全通过，aapt2实际确认dev.mhgd.flare、versionCode 1/versionName 1.0.0，原Debug证书验证通过。手机此前只安装L29原型，L33未安装；原生51项媒体/前后台/快速切换、长期计时及iOS未验收。旧L32/L31/L30、Play P01、根目录dist和个人文件保留，未提交、push或发布。
+
+---
+
+# 历史：L32联合筛选与子页标题验证（2026-10-11）
+
+当前source state为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。训练第一行全部部位/支撑/核心/腿部、第二行无器械/居家/健身房，部位与A/B/C按AND筛选并叠加搜索；切换一维保留另一维，今日训练独立。共享PageHeader与训练详情固定顶部标题、肌群详情/计时实际标题均居中，左右44px留位；路径/课程/测评/记录/设置/关于与系统许可页同步，首页样式及3D舞台尺寸保持。
+
+`flutter analyze --no-pub`无问题。既有flow/timer/motion20项与新增联合筛选/标题4项共24项通过；此前两文件15项是同一子集，不重复相加。共享及训练详情标题允许两行，肌群/计时固定顶栏单行省略；等宽两侧留位避免偏移，肌群标题框按原两行文字缩放高度保留stage尺寸；计时顶栏保持48px，组/侧/子动作副标题保留。L31手机两列、实际首帧/封面姿态与51项媒体保持；本轮没有scene/媒体资产改动，因此不重复场景构建/验证，历史L30/L31证据仍按其范围使用。
+
+离线Flutter Web与ARM64 release开发APK构建/签名完成，版本1.0.0+1，包身份见 [版本台账](version-ledger.md)。390×844实际浏览器已确认标题中心x=195、顶部y=15.5，部位按钮y=66、场景y=114；核心+居家→无器械切换保持部位并更新训练结果。[子页浏览器核对](../../output/drill-media-20261011/L32-browser-ui-check.json)通过训练、设置、关于、记录、路径、自评、课程、训练详情、计时与肌群标题居中；半程土耳其长标题两行完整显示，肌群进出iframe高度同为736px，console错误/警告为0。552宽度标题中心x=276。[最终源/Web/APK核对](../../output/drill-media-20261011/L32-delivery-check.json)通过，102项媒体与播放器/清单、v41/图标/银色图保持，旧L31具名包哈希保持。L32未安装真机，原生51项媒体/前后台/快速切换、长期训练与iOS待验收；旧L31/L30、Play P01、根目录dist及个人文件保留，未提交、push或发布。
+
+---
+
+# 历史：L31卡片首帧与手机两列验证（2026-10-11）
+
+当前source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。L31修复点播时撤封面过早、封面与0秒动作姿态不一致及手机列数；视频/封面原字节不改，L30原互斥、详情/计时与循环不计次行为保留。包身份见 [版本台账](version-ledger.md)，交付与素材限制见 [训练视频交付](drill-media-2026-10-11.md)。
+
+手机短边<600或列表宽≤700固定两列（横屏同限），桌面自适应；媒体网格取消Pressable缩放。上层封面保留到播放器实际呈现首帧，再120ms淡出，减少动态时即时。48项封面对应1秒，`deltoids-B`、`hip-abductors-B`、`rotator-cuff-B`三项对应2秒；媒体清单/runtime/URL以 `poster_time_seconds`传入，metadata先seek、等待seeked才ready，不提前播放0秒。首帧事件使用requestVideoFrameCallback，旧WebView回退playing后双requestAnimationFrame与current-data检查；暂停/隐藏/销毁取消尚未完成的首帧监听和播放队列，恢复不自动播放。
+
+`flutter analyze --no-pub`无问题；数据、controller、UI flow、timer pause四个受影响测试文件25项通过，其中controller8项。JS实际代码的VM时序检查通过：[L31播放器时序记录](../../output/drill-media-20261011/L31-player-sequence-check.json)绑定代码SHA，1/2秒流程均为seek→ready→对应时刻play→first-frame，含取消/迟到、恢复、无首帧误报及旧WebView回退。真实浏览器 [51项媒体检查](../../output/drill-media-20261011/L31-browser-media-check.json)51/51通过初始封面seek、实际首帧及暂停；这不认证源姿态或代替原生验收。
+
+离线Flutter Web与ARM64 release开发APK构建/签名完成，版本仍1.0.0+1，具名/通用包身份归入台账。[布局与封面检查](../../output/drill-media-20261011/L31-browser-layout-and-cover.json)通过390×844、552×909与844×390横屏两列；人为延迟player/MP4加载时真实Flutter封面仍保持，截图人工确认，实际首帧后播放。单播放器互斥、暂停后hasFrame=true且当前帧稳定，console error/warn均0。[L31最终交付核对](../../output/drill-media-20261011/L31-delivery-check.json)通过：102项视频/封面原资产保持，3个player文件和清单在源/Web/APK一致，旧L30具名包保留原哈希。L31未安装真机，51项Android原生播放、前后台/快速切换、长期训练与iOS待验收；未提交、push或发布。旧L28、Play P01、根目录dist与个人数据保留。
+
+---
+
+# 历史：L30训练动作卡片验证（2026-10-11）
+
+当前source state为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。本轮交付为51项离线训练视频与静态帧卡片，版本仍1.0.0+1；包身份、字节、哈希与开发签名只在 [版本台账](version-ledger.md) 维护。详细接入、素材限制见 [训练视频交付](drill-media-2026-10-11.md)、[媒体清单](../assets/data/drill-media-manifest.json) 与 [署名](../assets/licenses/Drill-media-ATTRIBUTION.md)。未提交、未push或发布，L28及更早证据保留在下方历史章节。
+
+`flutter analyze --no-pub` 无问题，受影响范围的 `flutter test --no-pub` 定向36项通过。51项视频逐文件SHA与来源一致，51项完整ffmpeg解码通过；此检查只证明媒体完整性，不重新认证源动作姿态或消除原QA限制。所有训练展示已使用视频静态帧；`deltoids-B`文案改为半程土耳其起立至高桥，原ID、剂量、历史记录引用保持。
+
+浏览器逐视频检查51/51通过：播放、暂停、禁用、恢复后不自动播放及无视频时间轴/控制底栏，见 [逐视频记录](../../output/drill-media-20261011/browser-media-check.json)。[App流程记录](../../output/drill-media-20261011/browser-flow-check.json)通过列表互斥与再点暂停、详情手动播放、进入计时释放旧媒体、计时页播放不误暂停训练、训练暂停停视频、视频循环不自动计次及人工计次记录。计时/计次页默认显示可收起示范，训练时钟仍由DrillTimer拥有。
+
+曾在训练页隐藏iframe时因stage尺寸为0触发 `RangeError: A positive viewport is required`。`scene/src/main.js`现于refreshHotspots检测宽/高≤0并清空callouts返回；不改动画或取景算法。`node tools/verify-billboard-clearance.mjs`、`npm run build` 与 `npm run verify`（在app/scene）通过，v41仍540帧、22骨、44轨道及136选择案例。生成场景为 `index-Z1C3-Jvt.js` / `index-1IjNUedj.css`。
+
+`flutter build web --no-pub --no-web-resources-cdn` 与 `flutter build apk --release --no-pub --target-platform android-arm64`通过。Native loopback与App Web预览均支持MP4/JPEG、GET/HEAD和单Range的206/416，保留路径边界；独立8998端口的九组请求通过，临时服务已结束，见 [预览服务检查](../../output/drill-media-20261011/preview-server-check.json)。[最终交付核对](../../output/drill-media-20261011/final-delivery-check.json)全通过：具名/通用L30 APK一致，51项视频与封面在源/APK/Web逐项一致，旧L28与Play P01保留原哈希。
+
+最终L30离线Web在390×844实际浏览器烟雾通过：示范画面完整、185.67px；列表互斥、换分类释放媒体，详情/列表/计时切换无视频控制底栏。计时实际自然从3秒准备进入15秒工作再进入休息，视频播放不中断训练，训练暂停停示范并释放；深浅主题点播均通过，返回首页仅保留原scene；隐藏scene后console error/warn均0，见[最终烟雾记录](../../output/drill-media-20261011/browser-final-smoke.json)。此短流程不替代T01长期或原生前后台验收。
+
+手机此前仅保留数据安装L29旧控件原型，冷启动Status ok、849ms；没有完成51项原生视频验收。手机现已被取走，L30尚未安装。Android原生全部播放/切换/前后台、长期训练、性能/温度/内存及iOS仍待验证；软件与浏览器结果不扩大为设备或商店验收。Play P01、旧L28、根目录dist和个人数据保留。
+
+---
+
+# 历史：L28文档收束与推送预检（2026-10-11）
 
 用户显式调用cockpit-closeout，要求台账管理、文档对齐、保存提交及push。Preflight全程只读通过后才编辑。范围是L28图标来源、版本/安装身份、当前入口、待验收及Git发布记录；不修改运行代码、模型、生产资源、包、签名或个人数据。当前产品保存点是下方L28，后续收束提交完整SHA由Git定位。
 
@@ -23,7 +119,7 @@ Alignment已修正所有确定finding，保存为 `f89db3fa3fa227071b0dfccafa2d6
 
 ---
 
-# L28青绿色运动服图标交付（2026-10-11）
+# 历史：L28青绿色运动服图标交付（2026-10-11）
 
 用户选择新角度B。选定原图经尺寸导出及平台裁切留边，34项PNG尺寸/不透明要求/哈希通过；Android 5密度普通与adaptive前景的10项编译后像素，与源PNG逐项一致。圆形/iOS圆角/Android adaptive/Web maskable预览为 `output/imagegen/flare-logo-20261011/adopted-teal/crop-preview.png`。原图、全提示词、来源及SHA在 `assets/brand/icon-flare-angle2-b.imagegen.json` 与 `icon-manifest.json`，复现为 `node app/tools/export-brand-icons.mjs --sharp-root <existing sharp package>`。
 
