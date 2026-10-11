@@ -1,4 +1,20 @@
-# L39多语言紧凑标签验证（2026-10-11）
+# L40高密度3D清晰度验证（2026-10-11）
+
+源基线51b1e02（L39已安装记录），检查点以 `feat(app): sharpen L40 high-density rendering` 定位。只改场景渲染密度、质量别名、标签纹理滤波与只读诊断；不修改动作人物、机位、材质、几何、Flutter布局或媒体。默认medium/均衡DPR最多3、high最多4、low/省电最多1。标签4×CanvasTexture不生成mipmaps、minFilter LinearFilter。画质改变才重分配buffer，首页/详情/站立切换保持同一密度。
+
+`node tools/verify-render-quality.mjs` 通过宿主别名、3.25设备默认/高清、省电、非高密度、极端/非法值；已纳入npm run verify。scene build和v33/v38/v41契约通过136选择案例，12缩略图机位/density/输出转换/材质身份/失败恢复/资源所有权通过。只改JS场景，不重复无关Flutter全量测试。
+
+离线Web与ARM64 release构建成功，原Debug证书验证通过。[包核对](../../output/drill-media-20261011/L40-package-check.json)4项场景/媒体清单源/Web/APK一致，L39及Play P01旧哈希保持。入口index-C6GykFmW.js / index-D1CmUuBK.css，包身份见版本台账。
+
+真实Chrome为394×853、DPR3.25（对应所连1280×2772、520dpi手机）。拥有的浏览器临时路由旧L39 bundle作对照，未改稳定服务/用户标签页。相同phase15、time6.052980132450331及camera，旧591×1117/1.5密度，新1182×2235/3；两维翻倍、总像素约4倍。三个13px完整标签均4倍纹理、mipmaps=false；图像边缘与字体对照见[实景](screenshots/2026-10-11-L40/README.md)。实际UI切换省电/高清/均衡分别确认1/3.25/3密度，buffer394×745/1280×2421/1182×2235，等待bridge异步应用后读取。
+
+三个视图：主页动作与详情动作均完整身体；站立默认头/双脚完整、双侧当前区域保持。滚轮、鼠标拖动旋转及CDP两个触点模拟放大有效，相机距离缩短、方向变化，buffer1182×2235/密度3/暂停时刻保持；切回动作恢复原相机与帧。浏览器记录见[L40-render](../../output/drill-media-20261011/L40-browser-render-check.json)和[three-model](../../output/drill-media-20261011/L40-three-model-check.json)。console error/warn均0。默认完整身体与主动放大看局部是不同验证范围。
+
+23:22:18保留数据覆盖安装成功，firstInstallTime仍2026-10-08 17:53:04；启动指令Status ok/COLD428ms。用户自行验收，未操作手机UI，浏览器手势不代替原生双指/拖动或视觉验收。[安装回执](../../output/drill-media-20261011/L40-device-install.json)。更多像素会增加GPU成本，原生FPS/温度/电量、T01–T06/iOS仍待验收，未push/发布。用户候选资源、根dist和个人数据保持。
+
+---
+
+# 历史：L39多语言紧凑标签验证（2026-10-11）
 
 源基线为master `2648cb8d260777805d1cf70cb56c411af5c8b654`，本地检查点以 `feat(app): refine L39 compact localized labels` 定位。14×17准确短名已接入Flutter及3D；完整名称、训练结构与原数据保持。短屏提示避让，阶段名允许两行；首页transport为72px并同步场景inset，详情短屏9:8分区与正常11:7保持同一iframe舞台。简介测量换行后采用紧凑布局以保护知识区，文字块独立滚动。
 

@@ -37,6 +37,9 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       ctx.fillText(name, width / 2, height / 2 + .5);
     }
     const map = new THREE.CanvasTexture(canvas); map.colorSpace = THREE.SRGBColorSpace;
+    // The 4x text canvas already carries smooth glyph edges. Avoid a second
+    // mipmap blur when a small billboard is sampled near phone pixel density.
+    map.generateMipmaps = false; map.minFilter = THREE.LinearFilter;
     map.anisotropy = Math.min(4, player.renderer.capabilities.getMaxAnisotropy());
     const material = new THREE.SpriteMaterial({ map, transparent: true, depthTest: true, depthWrite: false, alphaTest: .02, toneMapped: false });
     const sprite = new THREE.Sprite(material), worldHeight = dot ? .07 : .15;
@@ -188,6 +191,8 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       point.callout = { ...projected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
         label: record.card.userData.label, fontSize: record.card.userData.fontSize,
+        textureSize: [record.card.material.map.image.width, record.card.material.map.image.height],
+        mipmaps: record.card.material.map.generateMipmaps,
         clearanceScore: record.clearanceScore,
         screenSide,
         moving, targetWorld: position.toArray(), opacity: record.card.material.opacity,
