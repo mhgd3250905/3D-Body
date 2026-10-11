@@ -1,5 +1,7 @@
 # iOS v1 合规问卷复核草稿
 
+2026-10-11 执行路径调整：用户明确要求绕开 TestFlight 分发故障，直接安装进行真机测试。S4 原 Release 归档的本机开发签名 D1 已装到 iPhone 16 Pro；运行资源、隐私清单和 arm64 程序非签名内容与商店 S4 核对一致。后续真机功能和流量复核使用该同归档安装版，完整记录安装来源及开发签名差异；商店仍绑定 S4，最终声明尚未保存。见 [直接安装记录](ios-direct-device-2026-10-11.md)。本文此前仅允许精确 TestFlight 安装的执行限制由用户最新明确要求调整，不能把直接安装误记成 TestFlight 恢复。
+
 2026-10-10：以下为本机准备的填写提案，尚未保存或发布 Apple 最终声明。产品源固定为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，候选 S4 为 `dev.mhgd.flare / 1.0.0 (3)`；IPA 50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`。Apple 当前实际候选已更新为 S4 Build 3：用户精确授权后已上传并处理为 VALID、绑定草稿并加入原内部组，自动分发关闭；最终合规声明仍未保存。
 
 通过指定 Playwright 配置只读打开了本 App 的年龄、内容版权、医疗设备及数据收集对话框，四个初始表单均未选中任何答案，随后取消或关闭，没有点击保存、完成或发布。年龄问卷的前八个功能字段来自实际第 1 步；其余类别按 [Apple 当前分类定义](https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/)准备，后续以实际表单为准。
@@ -35,7 +37,7 @@
 | 年龄类别与覆盖 | 不适用 | 不申请 Made for Kids；当前没有自定义 EULA 最低年龄要求 |
 | 年龄适用性网址 | 留空 | 当前没有专门说明年龄适用性的已发布网址 |
 
-“健康或健身主题”根据运动功能填写为“是”，不是把所有内容频率均填为“无”。最终评级由 Apple 按答案、地区及系统版本计算，本草稿不填写最终年龄数字。参见 [设置年龄分级](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/)。
+“健康或健身主题”根据运动功能填写为“是”，不是把所有内容频率均填为“无”。2026-10-11 已按本表实际走完七步问卷，在最终保存前看到 Apple 预计算为 **9+**，随后取消，未保存答案或评级。正式结果仍以最终保存和供应地区的 Apple 计算为准。参见 [设置年龄分级](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/)。
 
 实现依据：[本机资产服务](../lib/platform/scene/scene_asset_server.dart)、[原生 WebView 导航边界](../lib/platform/scene/scene_view_native.dart)、[本地数据](privacy-local.md)、[训练内容](../assets/data/drills.json)及 [ARB 安全文案](../lib/l10n/app_zh.arb)。画面复核使用保留的真实商店截图，不把其早期 source state 说成 S4 重新取证；S4 的模型、图像与场景资源没有变化，具体比较见 [验证记录](ios-verification-2026-10-10.md)。
 
@@ -53,7 +55,7 @@
 
 ## App Privacy 提案与真机门禁
 
-实际起始问题为“你或你的第三方合作伙伴是否会从此 App 中收集数据？”，拟选“否，我们不会从此 App 中收集数据”。此提案目前依赖源码、SDK/归档核查及本地资源证据，最终保存和发布仍须等待精确获准候选的 TestFlight 真机流程与流量核验。
+实际起始问题为“你或你的第三方合作伙伴是否会从此 App 中收集数据？”，拟选“否，我们不会从此 App 中收集数据”。提案依赖源码、SDK/归档核查、本地存储证据，以及同 S4 归档的 D1 真机流程。用户已反馈飞行模式且关闭 Wi-Fi 的冷启、3D/训练图加载通过。连接统计缺少有效进程归属；获准的两分钟 HTTP 记录正常结束，但 CFNetwork/HAR 均为零条，连已知 loopback 请求也未捕获，不能证明 WKWebView 无外传。完整网络覆盖仍是未解决的取证限制，发行者须在最终声明前复核这一点，不能把提案记作已发布或完整流量验收通过。
 
 | 数据或路径 | 当前实现 | 最终复核 |
 |---|---|---|
@@ -78,4 +80,4 @@ DSA 自评与联系方式要求见 [Apple DSA 说明](https://developer.apple.co
 
 ## 最终操作边界
 
-精确 S4 上传、草稿绑定、原单账号内部测试更新及现有公开政策页修订已按分别授权完成。无需真机的准备已完成，用户要求等其回来连接 iPhone 后继续真实 TestFlight 安装与设备证据。最终年龄、内容版权、医疗设备及 App Privacy 声明由发行者复核并另行授权；正式 App Review 与手动公开发布继续分别确认，本轮未执行这些最终写入。
+精确 S4 上传、草稿绑定、原单账号内部测试更新及现有公开政策页修订已按分别授权完成。用户要求绕开 TestFlight，现已完成同归档 D1 的核心真机流程；直接安装与 TestFlight 分发故障分别记录。最终年龄、内容版权、医疗设备及 App Privacy 声明由发行者复核并一次性确认后保存；正式 App Review 与手动公开发布继续分别确认，本轮未执行这些最终写入。旧机 FPS、完整生命周期/VoiceOver 和完整网络覆盖的限制须同时交出，不宣称原 A 级验收矩阵已全项通过。
