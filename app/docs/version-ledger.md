@@ -1,8 +1,16 @@
 # Flare 版本管理台账
 
-更新于2026-10-12，当前本地交付为 **L42 连续展开**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
+更新于2026-10-12，当前本地交付为 **L43 上下半屏**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-12 L42：知识卡片连续展开
+## 2026-10-12 L43：肌群详情上下半屏
+
+顶部栏下可用内容改为上下1:1，覆盖动作与站立两种详情模型。Flutter上下Expanded与scene viewport遮挡均使用50%，共享画布不缩放重建；相机按上半区完整取景，默认模型显示高度缩小，下半区介绍空间增加。站立缩放/旋转、动作旋转禁缩放/平移、同帧交换/返回和L42连续知识展开保持。内容能放下时直接显示全文，无须展开。
+
+源基线 `0606a586dfa21f8204427a550432273ead36b702`，本地检查点以 `feat(app): balance L43 muscle detail halves` 定位。具名包 `output/releases/Flare-v41-half-detail-L43-20261012-arm64.apk` 与通用APK一致，96,747,542字节，SHA-256 `b6b8ddd84b3a5efd54f63d8b66211228a84dfd0ac23a8b38c0621d514ee1703b`。包名dev.mhgd.flare/版本1.0.0+1/原Debug签名保持。Web/ARM64 release成功，[4资产核对](../../output/drill-media-20261012/L43-package-check.json)一致，L42/P01保留；未push/发布。
+
+分析无问题，11项定向测试通过；新增320/390两尺寸两模型半屏、知识展开不改分区与同帧返回回归。14语两尺寸布局通过。[中文394实景](screenshots/2026-10-12-L43/README.md)与[记录](../../output/drill-media-20261012/L43-browser-ui-check.json)核对两模型inset372.5/舞台745，各半；站立缩放/拖动旋转有效，切回动作及返回首页暂停时刻保持，画布1182×2235/密度3不变；console错误/警告0。00:30:46保留数据安装，firstInstallTime保持；启动Status ok/UNKNOWN(0)/Wait3014ms，[安装回执](../../output/drill-media-20261012/L43-device-install.json)。用户自行手机验收，未操作手机UI。
+
+## 历史：2026-10-12 L42：知识卡片连续展开
 
 用户要求修正L41展开时字体与换行变化。预览与阅读层共享卡片构造、14px/1.55文字样式、10px/4px内边距、0.5px边框和12px圆角，文字宽度一致；原预览在阅读层显示时隐藏，避免字形叠加。仅卡片矩形/阴影渐变，340ms展开/240ms收起遵循减少动态；收起以实际末帧交还滚动位置，阅读位置双向保留。右侧两个图标移除，点文字/上方外部关闭和多語语义保留。3D舞台、协同卡和练习按钮固定。
 

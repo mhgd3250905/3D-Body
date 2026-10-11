@@ -125,12 +125,9 @@ void main() {
           tester.element(knowledge),
         ).position;
         final introductionExtent = introductionPosition.maxScrollExtent;
-        if (size.width == 390) {
-          expect(introductionExtent, greaterThan(0));
-        }
-        await tester.drag(detailContent, const Offset(0, -250));
-        await tester.pumpAndSettle();
         if (introductionExtent > 0) {
+          await tester.drag(detailContent, const Offset(0, -250));
+          await tester.pumpAndSettle();
           expect(
             introductionPosition.pixels,
             greaterThan(0),
@@ -597,9 +594,13 @@ void main() {
           RegExp(r'[。.!؟।]'),
           (match) => '${match[0]}\n\n',
         );
-        await tester.tap(preview);
-        await tester.pumpAndSettle();
-        if (expanded.evaluate().isNotEmpty) {
+        final naturalPreviewPosition = Scrollable.of(
+          tester.element(find.byKey(const ValueKey('muscle-knowledge'))),
+        ).position;
+        if (naturalPreviewPosition.maxScrollExtent > 0) {
+          await tester.tap(preview);
+          await tester.pumpAndSettle();
+          expect(expanded, findsOneWidget);
           expect(_textValue(tester, expandedText), naturalText);
           final naturalPosition = Scrollable.of(
             tester.element(expandedText),
@@ -626,6 +627,137 @@ void main() {
       },
     );
   }
+
+  for (final size in [const Size(320, 700), const Size(390, 844)]) {
+    testWidgets(
+      'muscle detail keeps a half-height stage and panel through swaps at $size',
+      (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final sourceText = muscleKnowledge['deltoids']!;
+        final expandedSource = List.filled(8, sourceText).join(' ');
+        final expectedExpanded = expandedSource.replaceFirstMapped(
+          RegExp(r'[。.!؟।]'),
+          (match) => '${match[0]}\n\n',
+        );
+        final expandedCatalog = catalog.localized({sourceText: expandedSource});
+        final (_, scene) = await _pausedMuscle(tester, expandedCatalog);
+        final stage = find.byWidgetPredicate(
+          (widget) =>
+              widget is ColoredBox && widget.color == FlareColors.background,
+        );
+        final beforeStage = tester.getRect(stage);
+        final beforeHalves = _detailHalves(tester);
+        _expectHalfHeightRegions(beforeHalves, beforeStage);
+        expect(scene.detailModel, 'motion');
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
+
+        final preview = find.byKey(const ValueKey('muscle-knowledge-toggle'));
+        final expandedCard = find.byKey(
+          const ValueKey('muscle-knowledge-expanded-card'),
+        );
+        final expandedText = find.byKey(
+          const ValueKey('muscle-knowledge-expanded'),
+        );
+        await tester.tap(preview);
+        await tester.pumpAndSettle();
+        expect(expandedCard, findsOneWidget);
+        expect(_textValue(tester, expandedText), expectedExpanded);
+        _expectHalfHeightRegions(_detailHalves(tester), beforeStage);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+
+        await tester.tap(
+          find.byKey(const ValueKey('muscle-knowledge-reader-toggle')),
+        );
+        await tester.pumpAndSettle();
+        expect(expandedCard, findsNothing);
+        _expectHalfHeightRegions(_detailHalves(tester), beforeStage);
+
+        final generation = scene.selectionGeneration;
+        await tester.tap(find.byKey(const ValueKey('detail-card')));
+        await tester.pumpAndSettle();
+        expect(scene.detailModel, 'muscles');
+        expect(scene.selectionGeneration, generation);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
+        expect(tester.getRect(stage), beforeStage);
+        _expectHalfHeightRegions(_detailHalves(tester), beforeStage);
+
+        await tester.tap(preview);
+        await tester.pumpAndSettle();
+        expect(expandedCard, findsOneWidget);
+        expect(_textValue(tester, expandedText), expectedExpanded);
+        _expectHalfHeightRegions(_detailHalves(tester), beforeStage);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+
+        await tester.tap(
+          find.byKey(const ValueKey('muscle-knowledge-reader-toggle')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('detail-card')));
+        await tester.pumpAndSettle();
+        expect(scene.detailModel, 'motion');
+        expect(scene.selectionGeneration, generation);
+        _expectHalfHeightRegions(_detailHalves(tester), beforeStage);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
+
+        await tester.tap(labeledControl('返回同一帧'));
+        await tester.pumpAndSettle();
+        expect(scene.detail, isNull);
+        expect(scene.detailModel, 'motion');
+        expect(scene.selectionGeneration, generation);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.playing, isFalse);
+        expect(tester.getRect(stage), beforeStage);
+        assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+  }
+}
+
+typedef _DetailHalves = ({Rect upper, Rect lower});
+
+_DetailHalves _detailHalves(WidgetTester tester) {
+  final upperRegion = find
+      .ancestor(
+        of: find.byKey(const ValueKey('detail-card')),
+        matching: find.byType(Stack),
+      )
+      .first;
+  final lowerRegion = find
+      .ancestor(
+        of: find.byKey(const ValueKey('train-group')),
+        matching: find.byType(Column),
+      )
+      .first;
+  return (
+    upper: tester.getRect(upperRegion),
+    lower: tester.getRect(lowerRegion),
+  );
+}
+
+void _expectHalfHeightRegions(_DetailHalves halves, Rect stage) {
+  expect(halves.upper.top, closeTo(stage.top, 1));
+  expect(halves.upper.height, closeTo(stage.height / 2, 1));
+  expect(halves.upper.bottom, closeTo(halves.lower.top, 1));
+  expect(halves.lower.height, closeTo(stage.height / 2, 1));
+  expect(halves.lower.bottom, closeTo(stage.bottom, 1));
 }
 
 String _textValue(WidgetTester tester, Finder finder) {

@@ -797,11 +797,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: detail == null
-                            ? 5
-                            : MediaQuery.sizeOf(context).height < 760
-                            ? 9
-                            : 11,
+                        flex: detail == null ? 5 : 1,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -907,12 +903,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   /// Height of the chrome over the bottom of the 3D view: the transport on
-  /// the watch screen, or the detail panel (7/18, 8/17 on short screens).
+  /// the watch screen, or the lower half of the detail content area.
   double _viewInsetFor(BuildContext context, bool detail) {
     if (_stageArea <= 0) return 0;
     if (detail) {
-      return _stageArea *
-          (MediaQuery.sizeOf(context).height < 760 ? 8 / 17 : 7 / 18);
+      return _stageArea * .5;
     }
     return 72 +
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30).toDouble();
@@ -938,7 +933,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
-      flex: MediaQuery.sizeOf(context).height < 760 ? 8 : 7,
+      flex: 1,
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Translated role sentences often take two lines. Reserve room for

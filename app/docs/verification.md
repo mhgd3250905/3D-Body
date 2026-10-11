@@ -1,4 +1,18 @@
-# L42连续展开验证（2026-10-12）
+# L43上下半屏验证（2026-10-12）
+
+源基线0606a58，检查点以 `feat(app): balance L43 muscle detail halves` 定位。只调整详情上下Expanded为1:1及送scene的bottomInset为可用舞台高度50%；顶部栏、共享WebView/清晰度、scene资源和媒体保持。动作/站立共用分区，默认相机自动按上半区取景，站立自由旋转/缩放、动作旋转禁缩放/平移及同帧返回保持。L42文字字号/宽度/内边距/阅读位置连续性与无图标保持。
+
+全项目analyze无问题，11项定向回归通过：compact_localization_test 1项（14语×两尺寸×实际字体）；internationalization_test 3项；muscle_library_flow_test 7项。新增320×700/390×844检查上下区域各占stage高度50%且相邻、motion/muscles交换的分区/舞台/selectionGeneration/time/paused保持、两模型知识展开不改分区、返回时间与舞台保持。空间够时既有知识回归检查全文直接可见，确有溢出才拖动；24倍长文的连续展开/关闭检查保留。测试由GPT-6 Luna max更新、root整合，不重复全量suite。
+
+Web/ARM64 release成功，原Debug签名和aapt2包名/版本通过。[4资产源/Web/APK](../../output/drill-media-20261012/L43-package-check.json)一致；L42/P01哈希保持，本轮不改scene或训练资产。
+
+Chrome394×853/DPR3.25中文实景，两模型camera.viewInset及target均372.5px，iframe高745px，区域严格1:1；站立默认头/两脚完整，双侧腹斜肌保持。缩放相机距离缩短、拖动相机方向变化，切回动作恢复原机位/暂停时刻；返回首页time6.052980132450331保持，首页insetTarget恢复102。各模式buffer1182×2235/密度3保持，footer(x20,y785,w354,h56)不变；console error/warn=0。[实景](screenshots/2026-10-12-L43/README.md)及[记录](../../output/drill-media-20261012/L43-browser-ui-check.json)。浏览器手势不代替原生双指/性能验收。
+
+00:30:46保留数据安装，firstInstallTime2026-10-08 17:53:04保持；启动Status ok/UNKNOWN(0)/Wait3014ms，不声称冷启动性能。[回执](../../output/drill-media-20261012/L43-device-install.json)。用户自行验收，未手机UI操作；iOS/原生手势/设备矩阵及T01–T06待验收，未push/发布。原dist/编辑器/个人数据与候选素材保留。
+
+---
+
+# 历史：L42连续展开验证（2026-10-12）
 
 源基线5df32a3（L41），本地检查点以 `feat(app): refine L42 continuous knowledge expansion` 定位。共享卡片/文本样式：14px/1.55、相同宽度/10px横向与4px纵向padding/边框/圆角/背景，去掉右侧图标。预览字形在阅读层显示时隐藏；矩形和阴影动画，收起在实际末帧交还文字滚动位置，340ms/240ms仍尊重reduce motion。文字/上方外部点击收起；极长内容无条拖动，底部固定区域和场景不变。
 
