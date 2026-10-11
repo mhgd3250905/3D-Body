@@ -78,7 +78,10 @@ class Catalog {
 
   /// Translate presentation only, after parsing original doses and references.
   /// Language changes must never change saved IDs, targets or progress rules.
-  Catalog localized(Map<String, String> translations) {
+  Catalog localized(
+    Map<String, String> translations, {
+    Map<String, String> shortLabels = const {},
+  }) {
     String t(String value) => translations[value] ?? value;
     PhaseMuscle item(PhaseMuscle value) => PhaseMuscle(
       id: value.id,
@@ -99,6 +102,7 @@ class Catalog {
               section: v.section,
               colour: v.colour,
               label: t(v.label),
+              shortLabel: shortLabels[v.id] ?? t(v.label),
               view: v.view,
               role: t(v.role),
               deep: v.deep,
@@ -231,7 +235,7 @@ class Catalog {
         final group = _groups[drill.groupId]!;
         if (section != null && group.section != section) return false;
         final haystack = _searchText(
-          '${drill.name} ${drill.nameEn} ${drill.equipment} ${group.label} ${drill.tierLabel} ${_original?.drillById(drill.id)?.name ?? ''} ${_original?.groupById(drill.groupId)?.label ?? ''}',
+          '${drill.name} ${drill.nameEn} ${drill.equipment} ${group.label} ${group.shortLabel} ${drill.tierLabel} ${_original?.drillById(drill.id)?.name ?? ''} ${_original?.groupById(drill.groupId)?.label ?? ''}',
         );
         return terms.every(haystack.contains);
       }),

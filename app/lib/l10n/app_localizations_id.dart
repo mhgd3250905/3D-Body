@@ -84,10 +84,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get side => 'Samping';
 
   @override
-  String get pausedHint => 'Pilih otot untuk melihat detail';
+  String get pausedHint => 'Jelajahi otot';
 
   @override
-  String get playingHint => 'Jeda untuk memilih otot';
+  String get playingHint => 'Jeda lalu pilih';
 
   @override
   String get loadingScene => 'Menyiapkan gerakan 3D…';
@@ -167,8 +167,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get legsSection => 'Ayunan pinggul dan kaki';
 
   @override
-  String get searchDrills =>
-      'Cari latihan, otot, atau nama dalam bahasa Inggris';
+  String get searchDrills => 'Cari latihan atau otot';
 
   @override
   String get libraryCount => '51 latihan · 17 kelompok otot';
@@ -495,7 +494,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; pakaian, material, dan animasi telah diubah. Human Base Meshes · Blender Studio dan kontributor komunitas · CC0. Three.js · MIT. Area berwarna pada manekin adalah panel pembelajaran dan bukan pengganti mesh anatomi BodyParts3D yang tidak tersedia. Gambar latihan dan merek diberikan oleh pengguna; lisensinya masih perlu diperiksa sebelum dirilis.';
 
   @override
-  String get speedLabel => 'Kecepatan pemutaran bawaan';
+  String get speedLabel => 'Kecepatan bawaan';
 
   @override
   String get qualityLabel => 'Kualitas gambar';
@@ -868,7 +867,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Koordinasi kerja otot';
+  String get syncEffort => 'Peta otot';
 
   @override
   String get muscleMap => 'Peta otot';

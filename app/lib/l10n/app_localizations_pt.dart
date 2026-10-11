@@ -84,10 +84,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get side => 'Lado';
 
   @override
-  String get pausedHint => 'Selecione um músculo para saber mais';
+  String get pausedHint => 'Ver músculos';
 
   @override
-  String get playingHint => 'Pause para selecionar um músculo';
+  String get playingHint => 'Pause e explore';
 
   @override
   String get loadingScene => 'Preparando o movimento 3D…';
@@ -169,7 +169,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get legsSection => 'Balanço de quadril e pernas';
 
   @override
-  String get searchDrills => 'Buscar exercícios, músculos ou nomes em inglês';
+  String get searchDrills => 'Buscar exercícios ou músculos';
 
   @override
   String get libraryCount => '51 exercícios · 17 grupos musculares';
@@ -494,7 +494,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; roupas, materiais e animação modificados. Human Base Meshes · Blender Studio e colaboradores da comunidade · CC0. Three.js · MIT. As áreas coloridas do manequim são painéis didáticos e não substituem malhas anatômicas ausentes do BodyParts3D. As imagens de exercícios e da marca foram fornecidas pelo usuário; as licenças ainda precisam ser verificadas antes da publicação.';
 
   @override
-  String get speedLabel => 'Velocidade padrão de reprodução';
+  String get speedLabel => 'Velocidade padrão';
 
   @override
   String get qualityLabel => 'Qualidade de imagem';
@@ -568,7 +568,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String trainGroup(String name) {
-    return 'Treinar $name';
+    return 'Treine $name';
   }
 
   @override
@@ -866,7 +866,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Esforço coordenado';
+  String get syncEffort => 'Mapa muscular';
 
   @override
   String get muscleMap => 'Mapa muscular';

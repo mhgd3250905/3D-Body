@@ -1,0 +1,19 @@
+{
+  "deltoids": "Deltoids",
+  "rotator-cuff": "Rotator cuff",
+  "triceps": "Triceps",
+  "forearms": "Forearms",
+  "serratus": "Serratus anterior",
+  "scapular": "Traps & rhomboids",
+  "chest": "Pecs",
+  "lats": "Lats",
+  "abs": "Abs",
+  "obliques": "Obliques",
+  "erectors": "Erector spinae",
+  "hip-flexors": "Hip flexors",
+  "glute-max": "Gluteus maximus",
+  "hip-abductors": "Gluteus medius",
+  "adductors": "Adductors",
+  "quadriceps": "Quads",
+  "hamstrings": "Hamstrings"
+}

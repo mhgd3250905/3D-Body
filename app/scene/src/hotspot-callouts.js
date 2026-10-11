@@ -16,11 +16,11 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
     const ratio = 4, height = dot ? 24 : 30;
     ctx.font = `600 13px ${sceneFont}`;
-    // Long translations remain tappable; full names live in the detail/legend.
-    const letters = Array.from(name);
-    while (!dot && letters.length > 1 && ctx.measureText(name).width > 150) {
-      letters.pop(); name = letters.join('') + '…';
-    }
+    // Use the curated short name intact. Scale only as a fallback for font
+    // metrics that differ on a device; never truncate the muscle identity.
+    const measured = ctx.measureText(name).width;
+    const fontSize = Math.min(13, 13 * 150 / Math.max(150, measured));
+    ctx.font = `600 ${fontSize}px ${sceneFont}`;
     const width = dot ? 24 : Math.ceil(ctx.measureText(name).width + 20);
     canvas.width = width * ratio; canvas.height = height * ratio; ctx.scale(ratio, ratio);
     ctx.fillStyle = colour;
@@ -33,7 +33,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const linear = rgb.map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
       const l = linear[0] * .2126 + linear[1] * .7152 + linear[2] * .0722;
       ctx.fillStyle = 1.05 / (l + .05) >= (l + .05) / .06 ? '#ffffff' : '#17191f';
-      ctx.font = `600 13px ${sceneFont}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `600 ${fontSize}px ${sceneFont}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(name, width / 2, height / 2 + .5);
     }
     const map = new THREE.CanvasTexture(canvas); map.colorSpace = THREE.SRGBColorSpace;
@@ -43,7 +43,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     if (dot) { material.depthTest = false; sprite.renderOrder = 20; }
     else sprite.renderOrder = 10;
     sprite.scale.set(worldHeight * width / height, worldHeight, 1);
-    sprite.userData.dot = dot; root.add(sprite);
+    sprite.userData.dot = dot; sprite.userData.label = name; sprite.userData.fontSize = fontSize; root.add(sprite);
     return sprite;
   }
   function guide(colour) {
@@ -108,7 +108,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const map = player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
       if (map) obstacles.push({ left: map.left - rect.left, top: map.top - rect.top, width: map.width, height: map.height });
       const height = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget));
-      if (hosted) obstacles.push({ left: Math.max(0, rect.width - 208), top: height - 78, width: 208, height: 78 });
+      if (hosted) obstacles.push({ left: Math.max(0, rect.width - 208), top: height - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
       clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(p => player.project(p))),
         { width: rect.width, height, obstacles, gap: 8 });
       return clearance;
@@ -187,6 +187,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       }
       point.callout = { ...projected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
+        label: record.card.userData.label, fontSize: record.card.userData.fontSize,
         clearanceScore: record.clearanceScore,
         screenSide,
         moving, targetWorld: position.toArray(), opacity: record.card.material.opacity,

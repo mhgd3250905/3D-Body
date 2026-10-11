@@ -84,10 +84,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get side => 'बगल';
 
   @override
-  String get pausedHint => 'मांसपेशी चुनकर अधिक जानें';
+  String get pausedHint => 'मांसपेशी चुनें';
 
   @override
-  String get playingHint => 'मांसपेशी चुनने के लिए रोकें';
+  String get playingHint => 'पहले रोकें';
 
   @override
   String get loadingScene => '3D गतिविधि तैयार हो रही है…';
@@ -167,7 +167,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get legsSection => 'कूल्हे और पैरों का झूलना';
 
   @override
-  String get searchDrills => 'अभ्यास, मांसपेशी या अंग्रेज़ी नाम खोजें';
+  String get searchDrills => 'अभ्यास या मांसपेशियाँ खोजें';
 
   @override
   String get libraryCount => '51 अभ्यास · 17 मांसपेशी समूह';
@@ -493,7 +493,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; कपड़े, सामग्री और एनिमेशन में बदलाव किया गया। Human Base Meshes · Blender Studio और समुदाय के योगदानकर्ता · CC0. Three.js · MIT. मॉडल के रंगीन क्षेत्र शिक्षण पैनल हैं; वे अनुपलब्ध BodyParts3D शरीर-रचना मेश का विकल्प नहीं हैं। अभ्यास और ब्रांड की छवियाँ उपयोगकर्ता ने दी हैं; रिलीज़ से पहले लाइसेंस की जाँच बाकी है।';
 
   @override
-  String get speedLabel => 'डिफ़ॉल्ट प्लेबैक गति';
+  String get speedLabel => 'डिफ़ॉल्ट गति';
 
   @override
   String get qualityLabel => 'चित्र गुणवत्ता';
@@ -566,7 +566,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String trainGroup(String name) {
-    return '$name का अभ्यास';
+    return 'अभ्यास करें: $name';
   }
 
   @override
@@ -861,7 +861,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'मांसपेशियों का समन्वित प्रयास';
+  String get syncEffort => 'मांसपेशी मानचित्र';
 
   @override
   String get muscleMap => 'मांसपेशी मानचित्र';

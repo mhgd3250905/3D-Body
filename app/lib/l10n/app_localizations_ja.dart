@@ -84,10 +84,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get side => '側面';
 
   @override
-  String get pausedHint => '筋肉を選ぶと詳しく見られます';
+  String get pausedHint => '筋肉を見る';
 
   @override
-  String get playingHint => '一時停止すると筋肉を選べます';
+  String get playingHint => '一時停止して選ぶ';
 
   @override
   String get loadingScene => '3D動作を準備中…';
@@ -165,7 +165,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get legsSection => '股関節と脚の振り';
 
   @override
-  String get searchDrills => '種目、筋肉、英語名を検索';
+  String get searchDrills => '種目・筋肉を検索';
 
   @override
   String get libraryCount => '51種目 · 17筋群';
@@ -484,7 +484,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0。衣装、マテリアル、アニメーションを改変。Human Base Meshes · Blender Studio およびコミュニティの貢献者 · CC0。Three.js · MIT。人体モデルの色付き領域は学習用パネルであり、欠けている BodyParts3D の解剖メッシュの代わりではありません。種目とブランドの画像はユーザー提供です。公開前にライセンス確認が必要です。';
 
   @override
-  String get speedLabel => '既定の再生速度';
+  String get speedLabel => '既定の速度';
 
   @override
   String get qualityLabel => '画質';
@@ -846,7 +846,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => '筋肉の連動';
+  String get syncEffort => '筋肉マップ';
 
   @override
   String get muscleMap => '筋群マップ';

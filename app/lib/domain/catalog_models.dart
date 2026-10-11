@@ -28,7 +28,9 @@ class MuscleGroup {
     required this.deep,
     required List<String> panels,
     this.note,
-  }) : panels = List.unmodifiable(panels);
+    String? shortLabel,
+  }) : shortLabel = shortLabel ?? label,
+       panels = List.unmodifiable(panels);
 
   final String groupId;
   String get id => groupId;
@@ -36,6 +38,9 @@ class MuscleGroup {
   final String colour;
   int get colorValue => 0xff000000 | int.parse(colour.substring(1), radix: 16);
   final String label;
+
+  /// Concise presentation name; [label] retains the complete group identity.
+  final String shortLabel;
   final String view;
   final String role;
   final String? note;

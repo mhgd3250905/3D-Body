@@ -11,6 +11,8 @@ def read(path):
 
 arb = read(APP / 'lib/l10n/app_zh.arb')
 content = read(APP / 'assets/l10n/content_zh.json')
+groups = read(APP / 'assets/data/phase-muscles.json')['groups']
+group_ids = {group['groupId'] for group in groups}
 failures = []
 source_words = set()
 def collect(value):
@@ -28,6 +30,13 @@ if set(content) != source_words:
 for code in LOCALES:
     ui = read(APP / f'lib/l10n/app_{code}.arb')
     words = read(APP / f'assets/l10n/content_{code}.json')
+    short = read(APP / f'assets/l10n/muscle_short_{code}.json')
+    if set(short) != group_ids:
+        failures.append(f'{code}: short muscle label key coverage')
+    if any(not value.strip() or '…' in value or '...' in value for value in short.values()):
+        failures.append(f'{code}: empty or truncated short muscle name')
+    if len(set(short.values())) != len(group_ids):
+        failures.append(f'{code}: ambiguous duplicate short muscle names')
     if set(ui) != set(arb) or set(words) != set(content):
         failures.append(f'{code}: key coverage')
     if ui.get('@@locale') != code:

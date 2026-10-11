@@ -84,10 +84,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get side => '侧面';
 
   @override
-  String get pausedHint => '点选肌群查看详解';
+  String get pausedHint => '点选肌群';
 
   @override
-  String get playingHint => '暂停后可点选肌群';
+  String get playingHint => '暂停后查看';
 
   @override
   String get loadingScene => '正在准备 3D 动作…';
@@ -165,7 +165,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legsSection => '髋腿摆动';
 
   @override
-  String get searchDrills => '搜索训练、肌群或英文名称';
+  String get searchDrills => '搜索训练或肌群';
 
   @override
   String get libraryCount => '51 个训练 · 17 个肌群';
@@ -480,7 +480,7 @@ class AppLocalizationsZh extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由用户提供的素材包提供，发布前需补齐授权核对。';
 
   @override
-  String get speedLabel => '默认播放速度';
+  String get speedLabel => '默认速度';
 
   @override
   String get qualityLabel => '画面质量';
@@ -841,7 +841,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => '同步发力';
+  String get syncEffort => '肌群图';
 
   @override
   String get muscleMap => '肌群图';
@@ -947,10 +947,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get side => '側面';
 
   @override
-  String get pausedHint => '點選肌群查看詳解';
+  String get pausedHint => '點選肌群';
 
   @override
-  String get playingHint => '暫停后可點選肌群';
+  String get playingHint => '暫停後查看';
 
   @override
   String get loadingScene => '正在準備 3D 動作…';
@@ -1028,7 +1028,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legsSection => '髖腿擺動';
 
   @override
-  String get searchDrills => '搜索訓練、肌群或英文名稱';
+  String get searchDrills => '搜尋訓練或肌群';
 
   @override
   String get libraryCount => '51 個訓練 · 17 個肌群';
@@ -1343,7 +1343,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       'Snow Rig © Blender Foundation · CC BY 4.0，服飾、材質與動畫已修改。Human Base Meshes · Blender Studio 與社區貢獻者 · CC0。Three.js · MIT。人臺色區是教學面板，不能冒充缺失的 BodyParts3D 解剖網格。訓練圖與品牌圖由用戶提供的素材包提供，發布前需補齊授權核對。';
 
   @override
-  String get speedLabel => '默認播放速度';
+  String get speedLabel => '預設速度';
 
   @override
   String get qualityLabel => '畫面質量';
@@ -1636,7 +1636,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get endSessionBody => '已完成的部分會存為一條未完成記錄。';
 
   @override
-  String get endSessionConfirm => '結束并保存';
+  String get endSessionConfirm => '結束並儲存';
 
   @override
   String get keepTraining => '繼續練';
@@ -1661,7 +1661,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get drillDemo => '觀看動作示范';
+  String get drillDemo => '觀看動作示範';
 
   @override
   String get hideDrillDemo => '收起示范';
@@ -1704,7 +1704,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get syncEffort => '同步發力';
+  String get syncEffort => '肌群圖';
 
   @override
   String get muscleMap => '肌群圖';

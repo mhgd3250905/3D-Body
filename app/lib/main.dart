@@ -165,7 +165,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                   '自行回顾整圈：换手、开腿与节奏是否连贯': s.reviewFullLoop,
                   '腕屈': s.wristFlexion,
                   '腕伸': s.wristExtension,
-                }),
+                }, shortLabels: _content!.shortLabelsFor(language)),
               );
         // Keep one splash State while data loads and the actual, full-sized
         // WebView draws beneath it. Revealing it never recreates the scene.

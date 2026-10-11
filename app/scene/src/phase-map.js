@@ -109,7 +109,10 @@ export async function createPhaseMap(player, onSelect) {
         const button = document.createElement('button'); button.type = 'button';
         button.dataset.groupId = item.groupId; button.setAttribute('aria-label', sceneStrings.viewLabels?.[item.groupId] ?? '查看' + item.label);
         const dot = document.createElement('i'); dot.style.background = item.colour;
-        button.append(dot, groupLabel(item.groupId, shortNames[item.groupId] ?? item.label)); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
+        const text = document.createElement('span');
+        text.textContent = groupLabel(item.groupId, shortNames[item.groupId] ?? item.label);
+        button.title = GROUPS[item.groupId]?.label ?? item.label;
+        button.append(dot, text); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
       }
     }
     const r = view.getBoundingClientRect(); if (!(r.width > 0 && r.height > 0)) return false;

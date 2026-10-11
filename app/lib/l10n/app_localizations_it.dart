@@ -84,10 +84,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get side => 'Lato';
 
   @override
-  String get pausedHint => 'Seleziona un muscolo per saperne di più';
+  String get pausedHint => 'Esplora';
 
   @override
-  String get playingHint => 'Metti in pausa per selezionare un muscolo';
+  String get playingHint => 'Pausa e scegli';
 
   @override
   String get loadingScene => 'Preparazione del movimento 3D…';
@@ -169,7 +169,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get legsSection => 'Oscillazione di anche e gambe';
 
   @override
-  String get searchDrills => 'Cerca esercizi, muscoli o nomi in inglese';
+  String get searchDrills => 'Cerca esercizi o muscoli';
 
   @override
   String get libraryCount => '51 esercizi · 17 gruppi muscolari';
@@ -495,7 +495,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; abiti, materiali e animazione modificati. Human Base Meshes · Blender Studio e collaboratori della community · CC0. Three.js · MIT. Le aree colorate del modello sono pannelli didattici e non sostituiscono le mesh anatomiche mancanti di BodyParts3D. Le immagini degli esercizi e del marchio sono state fornite dall’utente; le licenze devono ancora essere verificate prima della pubblicazione.';
 
   @override
-  String get speedLabel => 'Velocità di riproduzione predefinita';
+  String get speedLabel => 'Velocità predefinita';
 
   @override
   String get qualityLabel => 'Qualità dell’immagine';
@@ -868,7 +868,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Sforzo coordinato';
+  String get syncEffort => 'Mappa muscolare';
 
   @override
   String get muscleMap => 'Mappa muscolare';

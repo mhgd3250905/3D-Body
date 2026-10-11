@@ -1,16 +1,26 @@
 # Flare 版本管理台账
 
-更新于2026-10-11，当前本地交付为 **L38 离线国际化**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
+更新于2026-10-11，当前本地交付为 **L39 多语言紧凑标签**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-11 L38：离线国际化
+## 2026-10-11 L39：多语言紧凑标签
+
+在L38基线 `2648cb8d260777805d1cf70cb56c411af5c8b654` 上补齐14×17肌群短名。以常用准确称呼缩短窄标签，例如 Gluteus medius、Triceps、Traps & rhomboids；完整肌群名与组成仍在知识、搜索和无障碍保留。首页提示文字缩短并避让同步卡，阶段名最多两行，详情短屏为知识区保留至少40px。CTA使用短名完整显示，跳训练预填短名，完整名称仍可搜索。阿语两项术语及印尼语肩胛组合语义同时校正。规则见[compact-labels](compact-labels.md)。
+
+本地检查点以 `feat(app): refine L39 compact localized labels` 定位，无push/标签/发布。具名开发包 `output/releases/Flare-v41-compact-labels-L39-20261011-arm64.apk` 与通用APK一致：96,747,542字节，SHA-256 `bdd84b36447102e3cc0a7c198bef41197bc3155f357c209df2bba58232c66511`。包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；原Debug证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。Web/ARM64 release构建通过，[包核对](../../output/drill-media-20261011/L39-package-check.json)36项资源源/Web/APK一致，旧L38及Play P01哈希保持。
+
+分析无问题，12项定向回归通过，其中真实打包字体下14语言×320/390两宽度×17短名及8阶段名布局通过；结构/字体覆盖检查通过。[实景截图](screenshots/2026-10-11-L39/README.md)与[浏览器报告](../../output/drill-media-20261011/L39-browser-ui-check.json)保留英文390详情/CTA/独立滚动和俄语/阿语320实景。手机当前adb未连接，L39未安装；此前L38保留数据安装和用户自行验收的授权保持，不记为L39验收。
+
+## 历史：2026-10-11 L38：离线国际化
 
 L38 国际化支持简体/繁体中文、英语、西班牙语、葡萄牙语、法语、德语、意大利语、俄语、日语、韩语、阿拉伯语、印地语及印尼语。默认跟随系统，未支持语言回退英语；设置→语言可手动切换并持久化。270项界面文案与591项内容映射离线打包，覆盖17肌群、8阶段、51训练及6阶段18课；ID、训练剂量和已有记录保持。阿拉伯语RTL与韩文/阿拉伯文/天城文字体已接入，3D标签和读屏文字同步；长分段按钮文字缩放适配。
 
 L37 已先保存为本地 master 提交 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`（`feat(app): save L37 action media and muscle detail checkpoint`）。L38 在该基线上实现，本阶段本地检查点以 `feat(app): add L38 offline internationalization` 提交定位；未推送或发布。用户的 Air-Flare 和20项图标候选文件未纳入检查点，原文件保留。
 
-具名包 `output/releases/Flare-v41-international-L38-20261011-arm64.apk` 与通用APK一致，96,737,945字节，SHA-256 `0f71c0d2f86a93ba6d3cdaad24fa6ddd56dec6a07563cbd7ebc3e60f87ec983e`。包名/版本为 `dev.mhgd.flare` / `1.0.0+1`，原Debug证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。离线Web与ARM64 release构建通过；[包核对](../../output/drill-media-20261011/L38-package-check.json)22项内容/字体/场景及未改媒体清单源/Web/APK字节一致，4字体均在两端FontManifest声明。旧L37及Play P01原哈希保持。
+具名包 `output/releases/Flare-v41-international-L38-20261011-arm64.apk` 构建时与通用APK一致，96,737,945字节，SHA-256 `0f71c0d2f86a93ba6d3cdaad24fa6ddd56dec6a07563cbd7ebc3e60f87ec983e`。包名/版本为 `dev.mhgd.flare` / `1.0.0+1`，原Debug证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。离线Web与ARM64 release构建通过；[包核对](../../output/drill-media-20261011/L38-package-check.json)22项内容/字体/场景及未改媒体清单源/Web/APK字节一致，4字体均在两端FontManifest声明。旧L37及Play P01原哈希保持。
 
-全项目分析无问题，33项定向回归通过，scene构建及v33/v38/v41验证136案例通过。[资源检查](../../output/drill-media-20261011/L38-resource-check.json)14语言270界面/591内容键、占位符、数字token及字体字符覆盖通过。[浏览器记录](../../output/drill-media-20261011/L38-browser-ui-check.json)和边界见验证记录。翻译由GPT-6 Luna max完成，未经过母语者或医疗人员审核。L38未安装真机、未iOS构建、未生产签名/商店提交。
+全项目分析无问题，33项定向回归通过，scene构建及v33/v38/v41验证136案例通过。[资源检查](../../output/drill-media-20261011/L38-resource-check.json)14语言270界面/591内容键、占位符、数字token及字体字符覆盖通过。[浏览器记录](../../output/drill-media-20261011/L38-browser-ui-check.json)和边界见验证记录。翻译由GPT-6 Luna max完成，未经过母语者或医疗人员审核。L38已保留数据覆盖安装真机，用户自行验收、未iOS构建、未生产签名/商店提交。
+
+2026-10-11后续：手机2602BRT18C连接后，`adb install -r` 成功，firstInstallTime仍为2026-10-08 17:53:04；冷启动指令Status ok、TotalTime 566ms。用户明确改为自行验收，已停止真机交互；不将安装/启动记作14语、视频、详情或长期计时验收。记录见 [安装回执](../../output/drill-media-20261011/L38-device-install.json)。
 
 ## 历史：2026-10-11 L37：肌群知识与双侧人台
 
@@ -108,13 +118,13 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 | 维度 | 当前值 | 判定依据与边界 |
 | --- | --- | --- |
-| Git 分支 / 源基线 | `master`；L37基线 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`；L38以本地提交 `feat(app): add L38 offline internationalization` 定位 | 本轮未push；下方12:52的L26/L28推送属于历史回执 |
-| 当前本地产品 | L38离线国际化，无新增标签 | 14语言界面、训练/知识/课程和3D标签；L37布局、双侧人台、媒体与旧包保持 |
+| Git 分支 / 源基线 | `master`；L38基线 `2648cb8d260777805d1cf70cb56c411af5c8b654`；L39以本地提交 `feat(app): refine L39 compact localized labels` 定位 | 本轮未push；下方12:52的L26/L28推送属于历史回执 |
+| 当前本地产品 | L39紧凑标签，无新增标签 | 14语言准确短名、提示/阶段布局；完整知识、双侧人台、媒体与旧包保持 |
 | 历史PR7合并检查点 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | 与最终审核源b991aa3完整tree同为 `649b9f77189ec4830519825a1d730f54a638e088`；PR7阶段已验证产品源d1c3886之后仅文档/截图 |
 | 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
 | App 包版本 / Android 包名 | `1.0.0+1` / `dev.mhgd.flare` | `app/pubspec.yaml` 与 Android 源配置；`0.1.0+1` 仅属 Play 接入前历史版本 |
 | 动作内容版本 | `v41` | 固定来源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；本轮没有另改动作、脸或衣物。v41 不等于 App 第 41 个发布版本 |
-| 当前本地试用包 | 上方 L38，开发签名 APK | 已构建，未安装手机；手机此前仅安装L29原型并冷启动。L28图标与L26银色条目认可属于对应历史范围 |
+| 当前本地试用包 | 上方 L39，开发签名 APK | 未安装L39；此前L38已保留数据安装，用户自行验收。L28图标与L26银色条目认可属于历史范围 |
 | Play 已上传包 | 下表 P01，上传密钥签名 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9`；是先前送审包，不等于本地最新产品 |
 | 验收状态 | 定向软件验证通过；T01–T06 按路线继续 | 不把 APK 生成、文档提交或 Cockpit 检查点记成真机、教练或商店验收 |
 
@@ -148,13 +158,15 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 | 10-11，L28青绿图标保存点 | `3f0fda327a5e5716b89ba297447612148b542199` | 49路径；图标原图、34项导出、工具/来源/台账及真机裁图，标签app-l28-20261011 |
 | 10-11 12:52，L28文档收束 | `f89db3fa3fa227071b0dfccafa2d6778a65a4413` | 3份文档修正；170个本地链接/既有验证正文及有限产品delta检查通过；普通push到master并远端核对成功 |
 | 10-11，L37版本保存 | `8c8ea19d89c5a64a7b226e5239379cd974107c8c` | 用户要求先保存已有工作；L29–L37动作媒体/肌群界面与文档，本地master，未push |
-| 10-11，L38国际化保存 | 以本地Git主题 `feat(app): add L38 offline internationalization` 定位 | 14语言、字体、目录/3D文案、偏好及33项定向回归；本地保存，未push/发布 |
+| 10-11，L38国际化保存 | `2648cb8d260777805d1cf70cb56c411af5c8b654` | 14语言、字体、目录/3D文案、偏好及33项定向回归；本地保存，未push/发布 |
+
+| 10-11，L39紧凑标签保存 | 以本地Git主题 `feat(app): refine L39 compact localized labels` 定位 | 14×17短名、窄屏布局、12定向回归/实景与包证据；未push/发布 |
 
 [PR5 审核与回归](pr5-audit-2026-10-09.md)、[PR3 审核与回归](pr3-audit-2026-10-09.md) 保留源/目标、修复、实际操作及合并树证据。两项 PR 的 AI 审核、GitHub 实际合并与作者自报测试分别记录，不合并成“全仓全量通过”。10-09历史台账收束没有创建标签或空提交；10-11既有L28标签单独指向已保存的图标版本，本次closeout不另建标签。
 
 ## 安装包与本地预览
 
-当前为L38；通用/具名包身份见上方L38记录，L38尚未安装手机。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L37及更早包的构建、进程与验收均为保留历史证据，不覆盖L38安装或原生播放验收。
+当前为L39；通用/具名包身份见上方L39记录，未安装手机。此前L38已保留数据安装，用户自行验收。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L37及更早包的构建、进程与验收均为保留历史证据，不覆盖L38安装或原生播放验收。
 
 L26具名包与通用APK一致；场景使用 `index-DBRgBX7q.js` / `index-1IjNUedj.css`，APK内JS与源构建SHA-256均为`80a439211f0f4d12582dab1d8b8fd40b15d5f065aebde77b70cbf0b09822f3f8`。17张银色肌群图片逐项核对包内哈希与摄影报告相同，共592,628字节，并按用户最终选择从同一APK恢复到源资产；L24图文/点击证据保留。手机进程17949及启动日志抽样无异常；没有安装黄色试作。交付/运行/选择记录为 `output/releases/L26-metal-muscle-image-items-delivery.json`、`L26-runtime-check.json`、`L26-silver-selection.json`。原L05–L25具名包与试作报告保留，Play包保持。
 
@@ -166,7 +178,9 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 
 | ID / 状态 | 来源、用途与根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
-| L37 当前肌群知识 APK | HEAD 96e1db0加未提交工作树；`output/releases/Flare-v41-muscle-knowledge-L37-20261011-arm64.apk`，通用APK相同。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,838,331；`6331414c1f073ed98c42f92e34a5079ee6fc191d32de771ea37559063dc8de00` |
+| L39 当前紧凑标签 APK | L38基线2648cb8加本轮源码；`output/releases/Flare-v41-compact-labels-L39-20261011-arm64.apk`，与通用APK相同；原Debug开发签名、1.0.0+1、arm64；未安装 | 96,747,542；`bdd84b36447102e3cc0a7c198bef41197bc3155f357c209df2bba58232c66511` |
+| L38 历史国际化 APK | 本地2648cb8；`output/releases/Flare-v41-international-L38-20261011-arm64.apk`；已保留数据安装、用户自行验收 | 96,737,945；`0f71c0d2f86a93ba6d3cdaad24fa6ddd56dec6a07563cbd7ebc3e60f87ec983e` |
+| L37 历史肌群知识 APK | HEAD 96e1db0加未提交工作树；`output/releases/Flare-v41-muscle-knowledge-L37-20261011-arm64.apk`，通用APK相同。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,838,331；`6331414c1f073ed98c42f92e34a5079ee6fc191d32de771ea37559063dc8de00` |
 | L36 历史界面精简 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-lean-ui-L36-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,772,795；`baac6c30a04be5e06404a265018e5b009ea8035896036716e463bd12620aea22` |
 | L35 历史常驻搜索 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-persistent-search-L35-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,772,795；`329e42b8898195e456a16ad5ceef1a0afff133047c277dc1810b652baa482c1e` |
 | L34 历史协助发力下对齐 APK | HEAD 96e1db0加当时工作树；`output/releases/Flare-v41-muscle-footer-L34-20261011-arm64.apk`保留，通用路径现为L37。Android Debug开发签名、1.0.0+1、arm64；未安装手机 | 89,903,867；`792ce4ae63ec097c2adfcb7226ee28a6e51267a1764c276525afea96b0e8d721` |
@@ -203,7 +217,7 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 | L03 历史 v41、PR4 前 APK | e27 保存点；`output/releases/Flare-v41-before-pr4-20261009-arm64.apk`。开发签名、当时 `0.1.0+1` | 42,836,141；`5c579985b1ed6b7db3ba988400bd2a3d88065e102f2cf83f12d883b6f430a9c7` |
 | P01 已上传 Play 封闭测试 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9` 加本机 gitignored 签名材料；`app/build/app/outputs/bundle/release/app-release.aab`。上传密钥签名、`1.0.0+1`；本轮未替换或重传 | 77,816,786；`9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119` |
 
-当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，当前为L37肌群知识与双侧人台，保留L36精简/L35搜索及L34卡片/footer布局、L32联合筛选/标题、L31训练首帧/手机两列、L28青绿图标与L26银色条目，场景入口为 `index-BuYy9_Wa.js` / `index-DLlJ_85v.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行；App预览服务已补视频MIME与Range响应。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
+当前网页静态交付在 `dist/`，保留PR3结果，网页主入口 `main-CIbWtwFq.js`；Flutter Web在 `app/build/web/`，当前为L39多语言紧凑标签（保留肌群知识与双侧人台），保留L36精简/L35搜索及L34卡片/footer布局、L32联合筛选/标题、L31训练首帧/手机两列、L28青绿图标与L26银色条目，场景入口为 `index-rojuNpVy.js` / `index-D1CmUuBK.css`。稳定本地入口为App `http://127.0.0.1:8820/`、网页 `http://127.0.0.1:8810/`，服务须运行；App预览服务已补视频MIME与Range响应。8855/8856是先前审核预览，8857/8858为PR6隔离审核入口，8860为PR7隔离预览。PR7更新前Web/APK备份在 `output/releases/before-pr7-20261009/`，PR6更新前备份在 `output/releases/before-pr6-20261009/`，更早dist/Web/APK备份在 `output/releases/before-pr5-pr3-20261009/`；没有清理旧资产、个人数据或Air-Flare。
 
 ## Play 发布观察
 

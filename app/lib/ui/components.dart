@@ -63,12 +63,14 @@ class PrimaryAction extends StatelessWidget {
     this.arrow = false,
     this.icon,
     this.height = 56,
+    this.semanticsLabel,
   });
   final String label;
   final VoidCallback? onPressed;
   final bool arrow;
   final IconData? icon;
   final double height;
+  final String? semanticsLabel;
   @override
   Widget build(BuildContext context) => Pressable(
     scale: .975,
@@ -86,7 +88,10 @@ class PrimaryAction extends StatelessWidget {
               const SizedBox(width: 8),
             ],
             Flexible(
-              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(label, semanticsLabel: semanticsLabel, maxLines: 1),
+              ),
             ),
             if (arrow) ...[
               const SizedBox(width: 8),

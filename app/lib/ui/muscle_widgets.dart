@@ -156,7 +156,7 @@ class MuscleItemChip extends StatelessWidget {
                   const SizedBox(width: 9),
                   Flexible(
                     child: Text(
-                      group.label,
+                      group.shortLabel,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -215,7 +215,7 @@ class MuscleAssistCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    group.label,
+                    group.shortLabel,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

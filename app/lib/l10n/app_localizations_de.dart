@@ -84,10 +84,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get side => 'Seite';
 
   @override
-  String get pausedHint => 'Muskel auswählen, um mehr zu erfahren';
+  String get pausedHint => 'Muskeln ansehen';
 
   @override
-  String get playingHint => 'Pausieren, um einen Muskel auszuwählen';
+  String get playingHint => 'Erst pausieren';
 
   @override
   String get loadingScene => '3D-Bewegung wird vorbereitet…';
@@ -168,7 +168,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get legsSection => 'Hüft- und Beinschwung';
 
   @override
-  String get searchDrills => 'Übungen, Muskeln oder englische Namen suchen';
+  String get searchDrills => 'Übungen oder Muskeln suchen';
 
   @override
   String get libraryCount => '51 Übungen · 17 Muskelgruppen';
@@ -496,7 +496,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; Kleidung, Materialien und Animation geändert. Human Base Meshes · Blender Studio und Community-Beitragende · CC0. Three.js · MIT. Farbige Bereiche am Modell sind didaktische Felder und ersetzen keine fehlenden BodyParts3D-Anatomiemeshes. Übungs- und Markenbilder stammen vom Nutzer; die Lizenzen müssen vor einer Veröffentlichung noch geprüft werden.';
 
   @override
-  String get speedLabel => 'Standard-Wiedergabegeschwindigkeit';
+  String get speedLabel => 'Standardtempo';
 
   @override
   String get qualityLabel => 'Bildqualität';
@@ -570,7 +570,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String trainGroup(String name) {
-    return '$name trainieren';
+    return 'Trainiere $name';
   }
 
   @override
@@ -870,7 +870,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Koordinierter Krafteinsatz';
+  String get syncEffort => 'Muskelkarte';
 
   @override
   String get muscleMap => 'Muskelkarte';

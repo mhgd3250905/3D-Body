@@ -25,8 +25,8 @@
   "back": "Arrière",
   "goBack": "Retour",
   "side": "Côté",
-  "pausedHint": "Sélectionnez un muscle pour en savoir plus",
-  "playingHint": "Mettez en pause pour sélectionner un muscle",
+  "pausedHint": "Explorer",
+  "playingHint": "Pausez pour voir",
   "loadingScene": "Préparation du mouvement 3D…",
   "sceneFailed": "La vue 3D est temporairement indisponible. Rouvrez la page du mouvement.",
   "retry": "Réessayer",
@@ -52,7 +52,7 @@
   "supportSection": "Appui des épaules et des bras",
   "coreSection": "Coordination du tronc",
   "legsSection": "Balancement des hanches et des jambes",
-  "searchDrills": "Rechercher des exercices, des muscles ou des noms anglais",
+  "searchDrills": "Exercices ou muscles",
   "libraryCount": "51 exercices · 17 groupes musculaires",
   "noResults": "Aucun exercice correspondant. Essayez une autre recherche.",
   "illustration": "Démonstration de l’exercice",
@@ -184,7 +184,7 @@
   "privacyBody": "Les réglages, l’entraînement du jour, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.",
   "creditsTitle": "Sources des modèles et des médias",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0 ; vêtements, matériaux et animation modifiés. Human Base Meshes · Blender Studio et contributeurs de la communauté · CC0. Three.js · MIT. Les zones colorées du mannequin sont des panneaux pédagogiques et ne remplacent pas les maillages anatomiques BodyParts3D manquants. Les images d’exercices et de marque ont été fournies par l’utilisateur ; les licences doivent encore être vérifiées avant publication.",
-  "speedLabel": "Vitesse de lecture par défaut",
+  "speedLabel": "Vitesse par défaut",
   "qualityLabel": "Qualité d’image",
   "balanced": "Équilibrée",
   "battery": "Économie de batterie",
@@ -223,7 +223,7 @@
   "sceneHomeHint": "Élastiques, haltères et autre matériel à domicile",
   "sceneGymHint": "Machines et poids libres",
   "chooseScene": "Choisissez un cadre d’entraînement",
-  "trainGroup": "Entraîner {name}",
+  "trainGroup": "Entraîne {name}",
   "@trainGroup": {
     "placeholders": {
       "name": {
@@ -418,7 +418,7 @@
       }
     }
   },
-  "syncEffort": "Effort coordonné",
+  "syncEffort": "Carte musculaire",
   "muscleMap": "Carte musculaire",
   "phaseMapAccessibility": "Cartes musculaires de face et de dos synchronisées avec la phase du mouvement",
   "viewGroup": "Voir {group}",

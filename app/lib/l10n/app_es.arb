@@ -25,8 +25,8 @@
   "back": "Espalda",
   "goBack": "Volver",
   "side": "Lado",
-  "pausedHint": "Selecciona un músculo para ver más",
-  "playingHint": "Pausa para seleccionar un músculo",
+  "pausedHint": "Ver músculos",
+  "playingHint": "Pausa y explora",
   "loadingScene": "Preparando el movimiento 3D…",
   "sceneFailed": "La vista 3D no está disponible temporalmente. Vuelve a abrir la página del movimiento.",
   "retry": "Reintentar",
@@ -52,7 +52,7 @@
   "supportSection": "Apoyo de hombros y brazos",
   "coreSection": "Coordinación del core",
   "legsSection": "Impulso de cadera y piernas",
-  "searchDrills": "Buscar ejercicios, músculos o nombres en inglés",
+  "searchDrills": "Buscar ejercicios o músculos",
   "libraryCount": "51 ejercicios · 17 grupos musculares",
   "noResults": "No hay ejercicios que coincidan. Prueba otra búsqueda.",
   "illustration": "Demostración del ejercicio",
@@ -184,7 +184,7 @@
   "privacyBody": "Los ajustes, el entrenamiento de hoy, las autoevaluaciones y los registros se guardan solo en este dispositivo. Los modelos y archivos multimedia vienen con la app; no se sube nada a un servidor. Los datos de la vista previa web pertenecen a ese navegador. Exporta una copia de seguridad antes de cambiar de dispositivo o reinstalar.",
   "creditsTitle": "Fuentes de modelos y contenido multimedia",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; ropa, materiales y animación modificados. Human Base Meshes · Blender Studio y colaboradores de la comunidad · CC0. Three.js · MIT. Las zonas coloreadas del maniquí son paneles didácticos y no sustituyen las mallas anatómicas de BodyParts3D que faltan. El usuario proporcionó las imágenes de ejercicios y marca; aún hay que comprobar las licencias antes de publicar.",
-  "speedLabel": "Velocidad de reproducción predeterminada",
+  "speedLabel": "Velocidad predeterminada",
   "qualityLabel": "Calidad de imagen",
   "balanced": "Equilibrada",
   "battery": "Ahorro de batería",
@@ -223,7 +223,7 @@
   "sceneHomeHint": "Bandas elásticas, mancuernas y otros equipos para casa",
   "sceneGymHint": "Máquinas y pesas libres",
   "chooseScene": "Elige un entorno de entrenamiento",
-  "trainGroup": "Entrenar {name}",
+  "trainGroup": "Entrena {name}",
   "@trainGroup": {
     "placeholders": {
       "name": {
@@ -418,7 +418,7 @@
       }
     }
   },
-  "syncEffort": "Esfuerzo coordinado",
+  "syncEffort": "Mapa muscular",
   "muscleMap": "Mapa muscular",
   "phaseMapAccessibility": "Mapas musculares frontal y posterior sincronizados con la fase del movimiento",
   "viewGroup": "Ver {group}",

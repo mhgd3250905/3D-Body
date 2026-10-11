@@ -595,7 +595,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           delay: FadeSlideIn.stagger(index),
                           child: DrillCard(
                             drill: drill,
-                            groupLabel: group.label,
+                            groupLabel: group.shortLabel,
                             color: Color(group.colorValue),
                             onTap: () => widget.onDrill(drill),
                           ),

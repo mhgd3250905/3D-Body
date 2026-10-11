@@ -185,7 +185,10 @@ void main() {
       var searchedLocalizedNames = 0;
 
       for (final code in languageNames.keys) {
-        final localized = source.localized(translations.forLanguage(code));
+        final localized = source.localized(
+          translations.forLanguage(code),
+          shortLabels: translations.shortLabelsFor(code),
+        );
         for (final drill in localized.drills) {
           if (drill.name == source.drillById(drill.id)!.name) continue;
           searchedLocalizedNames++;
@@ -197,10 +200,25 @@ void main() {
             reason: '$code localized drill ${drill.id}',
           );
         }
+        for (final group in localized.groups) {
+          for (final drill in localized.drills.where(
+            (d) => d.groupId == group.id,
+          )) {
+            for (final name in {group.shortLabel, group.label}) {
+              expect(
+                localized
+                    .searchDrills(name, tier: drill.tier)
+                    .any((match) => match.id == drill.id),
+                isTrue,
+                reason:
+                    '$code short/full muscle query ${group.id}/${drill.tier}',
+              );
+            }
+          }
+        }
       }
 
-      // At least the completed English resource must exercise non-Chinese names;
-      // unfinished locale values are allowed to be filled before the final run.
+      // Full translated names and curated short names both remain searchable.
       expect(searchedLocalizedNames, greaterThan(0));
     },
   );

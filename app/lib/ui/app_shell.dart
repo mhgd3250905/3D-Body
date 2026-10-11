@@ -257,7 +257,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() {
       _tab = 1;
       _libraryGroup = group;
-      _libraryQuery = group.label;
+      _libraryQuery = group.shortLabel;
       _drill = null;
       _lesson = null;
       _settings = false;
@@ -383,6 +383,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         'locale': s.localeName,
         'rtl': Directionality.of(context) == TextDirection.rtl,
         'groups': {for (final group in catalog.groups) group.id: group.label},
+        'shortGroups': {
+          for (final group in catalog.groups) group.id: group.shortLabel,
+        },
         'viewLabels': {
           for (final group in catalog.groups)
             group.id: s.viewGroup(group.label),
@@ -700,7 +703,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      detail.label,
+                                      detail.shortLabel,
+                                      semanticsLabel: detail.label,
                                       key: const ValueKey(
                                         'muscle-detail-title',
                                       ),
@@ -793,7 +797,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: detail == null ? 5 : 11,
+                        flex: detail == null
+                            ? 5
+                            : MediaQuery.sizeOf(context).height < 760
+                            ? 9
+                            : 11,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -834,35 +842,45 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             if (detail == null)
                               Positioned(
                                 right: 16,
-                                bottom: 18,
-                                child: TextButton.icon(
-                                  onPressed: _scene.playing
-                                      ? _scene.pause
-                                      : _showMuscles,
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: FlareColors.secondary,
-                                    backgroundColor: FlareColors.control,
-                                    side: BorderSide(
-                                      color: FlareColors.controlBorder,
-                                      width: .5,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    minimumSize: const Size(0, 44),
-                                    shape: const StadiumBorder(),
+                                bottom: box.maxWidth < 380 ? 228 : 18,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: box.maxWidth < 380
+                                        ? box.maxWidth * .46
+                                        : box.maxWidth - 218,
                                   ),
-                                  icon: Icon(
-                                    _scene.playing
-                                        ? Icons.pause_rounded
-                                        : Icons.touch_app_outlined,
-                                    size: 12,
-                                  ),
-                                  label: Text(
-                                    _scene.playing
-                                        ? s.playingHint
-                                        : s.pausedHint,
-                                    style: const TextStyle(fontSize: 11),
+                                  child: TextButton.icon(
+                                    key: const ValueKey('home-muscle-hint'),
+                                    onPressed: _scene.playing
+                                        ? _scene.pause
+                                        : _showMuscles,
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: FlareColors.secondary,
+                                      backgroundColor: FlareColors.control,
+                                      side: BorderSide(
+                                        color: FlareColors.controlBorder,
+                                        width: .5,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                      ),
+                                      minimumSize: const Size(0, 44),
+                                      shape: const StadiumBorder(),
+                                    ),
+                                    icon: Icon(
+                                      _scene.playing
+                                          ? Icons.pause_rounded
+                                          : Icons.touch_app_outlined,
+                                      size: 12,
+                                    ),
+                                    label: Text(
+                                      _scene.playing
+                                          ? s.playingHint
+                                          : s.pausedHint,
+                                      style: const TextStyle(fontSize: 11),
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -889,11 +907,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   /// Height of the chrome over the bottom of the 3D view: the transport on
-  /// the watch screen, the detail panel (7 of 18 parts) in detail.
+  /// the watch screen, or the detail panel (7/18, 8/17 on short screens).
   double _viewInsetFor(BuildContext context, bool detail) {
     if (_stageArea <= 0) return 0;
-    if (detail) return _stageArea * 7 / 18;
-    return 56 +
+    if (detail) {
+      return _stageArea *
+          (MediaQuery.sizeOf(context).height < 760 ? 8 / 17 : 7 / 18);
+    }
+    return 72 +
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30).toDouble();
   }
 
@@ -917,14 +938,35 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
-      flex: 7,
+      flex: MediaQuery.sizeOf(context).height < 760 ? 8 : 7,
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Translated role sentences often take two lines. Reserve room for
           // the independent knowledge viewport on phone-height panels.
+          final rolePainter =
+              TextPainter(
+                text: TextSpan(
+                  text: muscle?.why ?? detail.role,
+                  style: DefaultTextStyle.of(context).style.merge(
+                    const TextStyle(
+                      fontSize: 14.5,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                textDirection: Directionality.of(context),
+                textScaler: MediaQuery.textScalerOf(context),
+                maxLines: 2,
+              )..layout(
+                maxWidth: (constraints.maxWidth - 48).clamp(0, double.infinity),
+              );
+          final roleWraps = rolePainter.computeLineMetrics().length > 1;
+          rolePainter.dispose();
           final compact =
               constraints.maxHeight < 270 ||
-              (s.localeName != 'zh' && constraints.maxHeight < 330);
+              (constraints.maxHeight < 330 &&
+                  (s.localeName != 'zh' || roleWraps));
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -961,7 +1003,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                     fit: BoxFit.scaleDown,
                                     alignment: AlignmentDirectional.centerStart,
                                     child: Text(
-                                      detail.label,
+                                      detail.shortLabel,
+                                      semanticsLabel: detail.label,
                                       key: const ValueKey('muscle-panel-title'),
                                       style: TextStyle(
                                         fontSize: 30,
@@ -1059,7 +1102,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   child: PrimaryAction(
                     key: const ValueKey('train-group'),
                     height: compact ? 48 : 56,
-                    label: s.trainGroup(detail.label),
+                    label: s.trainGroup(detail.shortLabel),
+                    semanticsLabel: s.trainGroup(detail.label),
                     arrow: true,
                     onPressed: hasDrills
                         ? () => _openGroupTraining(detail)
@@ -1084,7 +1128,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
       ),
       child: SizedBox(
-        height: 56,
+        height: 72,
         child: Row(
           children: [
             _roundControl(
@@ -1119,10 +1163,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         Expanded(
                           child: Text(
                             phase.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            key: const ValueKey('home-phase-name'),
+                            maxLines: 2,
                             style: const TextStyle(
                               fontSize: 13,
+                              height: 1.15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

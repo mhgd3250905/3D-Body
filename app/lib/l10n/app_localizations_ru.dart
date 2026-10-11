@@ -84,10 +84,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get side => 'Сбоку';
 
   @override
-  String get pausedHint => 'Выберите мышцу, чтобы узнать больше';
+  String get pausedHint => 'Выбрать мышцы';
 
   @override
-  String get playingHint => 'Поставьте на паузу, чтобы выбрать мышцу';
+  String get playingHint => 'Сначала пауза';
 
   @override
   String get loadingScene => 'Подготовка 3D-движения…';
@@ -168,8 +168,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get legsSection => 'Мах ногами и движение бёдер';
 
   @override
-  String get searchDrills =>
-      'Поиск упражнений, мышц или названий на английском';
+  String get searchDrills => 'Поиск упражнений и мышц';
 
   @override
   String get libraryCount => '51 упражнение · 17 групп мышц';
@@ -496,7 +495,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; одежда, материалы и анимация изменены. Human Base Meshes · Blender Studio и участники сообщества · CC0. Three.js · MIT. Цветные области манекена — учебные панели, они не заменяют отсутствующие анатомические сетки BodyParts3D. Изображения упражнений и бренда предоставлены пользователем; перед выпуском ещё нужно проверить лицензии.';
 
   @override
-  String get speedLabel => 'Скорость воспроизведения по умолчанию';
+  String get speedLabel => 'Скорость по умолчанию';
 
   @override
   String get qualityLabel => 'Качество изображения';
@@ -568,7 +567,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String trainGroup(String name) {
-    return 'Тренировать: $name';
+    return 'Тренируй $name';
   }
 
   @override
@@ -866,7 +865,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Согласованная работа мышц';
+  String get syncEffort => 'Карта мышц';
 
   @override
   String get muscleMap => 'Карта мышц';

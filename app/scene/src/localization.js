@@ -26,6 +26,7 @@ export async function setSceneStrings(value) {
 }
 
 export function groupLabel(id, fallback) {
+  if (sceneStrings.shortGroups?.[id]) return sceneStrings.shortGroups[id];
   if (!sceneStrings.locale || sceneStrings.locale === 'zh') return fallback;
   return sceneStrings.groups?.[id] ?? fallback;
 }

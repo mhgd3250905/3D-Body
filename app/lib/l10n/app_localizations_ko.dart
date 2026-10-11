@@ -84,10 +84,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get side => '측면';
 
   @override
-  String get pausedHint => '근육을 선택해 자세히 보기';
+  String get pausedHint => '근육 보기';
 
   @override
-  String get playingHint => '일시정지하면 근육을 선택할 수 있습니다';
+  String get playingHint => '일시정지 후 선택';
 
   @override
   String get loadingScene => '3D 동작 준비 중…';
@@ -166,7 +166,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get legsSection => '엉덩이와 다리 스윙';
 
   @override
-  String get searchDrills => '운동, 근육 또는 영문 이름 검색';
+  String get searchDrills => '운동·근육 검색';
 
   @override
   String get libraryCount => '운동 51개 · 근육군 17개';
@@ -484,7 +484,7 @@ class AppLocalizationsKo extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; 의상, 재질, 애니메이션 수정. Human Base Meshes · Blender Studio 및 커뮤니티 기여자 · CC0. Three.js · MIT. 인체 모형의 색상 영역은 교육용 패널이며 누락된 BodyParts3D 해부 메시를 대신하지 않습니다. 운동과 브랜드 이미지는 사용자가 제공했으며 출시 전에 라이선스를 확인해야 합니다.';
 
   @override
-  String get speedLabel => '기본 재생 속도';
+  String get speedLabel => '기본 속도';
 
   @override
   String get qualityLabel => '화질';
@@ -846,7 +846,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => '근육 협응';
+  String get syncEffort => '근육 지도';
 
   @override
   String get muscleMap => '근육 지도';

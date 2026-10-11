@@ -1,4 +1,20 @@
-# L38离线国际化验证（2026-10-11）
+# L39多语言紧凑标签验证（2026-10-11）
+
+源基线为master `2648cb8d260777805d1cf70cb56c411af5c8b654`，本地检查点以 `feat(app): refine L39 compact localized labels` 定位。14×17准确短名已接入Flutter及3D；完整名称、训练结构与原数据保持。短屏提示避让，阶段名允许两行；首页transport为72px并同步场景inset，详情短屏9:8分区与正常11:7保持同一iframe舞台。简介测量换行后采用紧凑布局以保护知识区，文字块独立滚动。
+
+`flutter analyze --no-pub` 无问题。`flutter test --no-pub --concurrency=1 test/ui/compact_localization_test.dart test/ui/internationalization_test.dart test/ui/muscle_library_flow_test.dart test/data/catalog_localization_test.dart` 12项通过。紧凑布局测试加载4个实际离线字体，在14语言×320×700/390×844检查17标签150px内无省略、8阶段名两行可见、提示两行及界内、最宽肌群CTA/完整语义、标题和知识视口至少40px。数据回归检查全部训练14语短名/全名均可搜索，ID、剂量保持；知识/协同卡独立滚动与固定footer通过。同范围复跑不累加。
+
+资源结构14×270 ARB、14×591内容和14×17短名键/非空/唯一/占位符/数字序列检查通过；4字体联合cmap覆盖238短名。[资源记录](../../output/drill-media-20261011/L39-resource-check.json)。scene build/verify的v33/v38/v41历史契约136案例通过，本轮短名不改变22骨/44轨/540帧。场景入口 `index-rojuNpVy.js` / `index-D1CmUuBK.css`。
+
+离线Web和ARM64 release构建成功，原Debug证书验证通过。[包核对](../../output/drill-media-20261011/L39-package-check.json)36资源源/Web/APK完全一致，旧L38/P01哈希保持。具名APK字节/哈希见版本台账。
+
+真实Chrome GUI：英语390的phase11标签/图例完整显示Gluteus medius，13px；详情CTA为Train Gluteus medius，知识视口70.22px，滚动前后footer、iframe及暂停时刻固定，跳训练搜索框视觉预填短名且得到对应居家1项。俄语与阿语320标签/图例完整、13px，提示与同步卡避让；阿语RTL保持。[最终截图](screenshots/2026-10-11-L39/README.md)与[报告](../../output/drill-media-20261011/L39-browser-ui-check.json)区分软件28组合回归和限定实景，不声称14语言全部页面人工验收。
+
+L39未安装手机：当前adb无设备；此前L38的保留数据安装及冷启动属历史事实，用户自行验收、不再操作手机UI。iOS构建、原生14语/读屏、母语审核、长期计时和T01–T06继续待验收；未全量suite/push/商店发布。原视频、根dist/编辑器、个人数据与用户候选素材保留。
+
+---
+
+# 历史：L38离线国际化验证（2026-10-11）
 
 source base为master L37本地提交 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`；本阶段以 `feat(app): add L38 offline internationalization` 本地提交定位，未push或发布。14语言界面/目录/知识/课程、系统与手动语言、原数据迁移、3D字体/标签/读屏文字和RTL已接入。L37肌群固定标题/作用、独立知识滚动、协同卡/footer及双侧人台保持。
 
@@ -14,7 +30,7 @@ scene `npm run build`、`npm run verify` 通过v33/v38/v41 CPU/源码契约，54
 
 Chrome实际GUI通过14语言设置选择/本地标题更新；英语及阿拉伯语刷新后偏好保留；Arabic 390训练搜索本地肌群得到对应1项，详情标题/剂量/说明本地化且返回按钮在右，内容两列保持。韩文、天城文、阿拉伯文和繁中/日文设置截图已核对。390阿语最终知识视口84px、协同卡54px与footer底832px在844px屏内；双行作用的最低40px独立回归通过。3D实际字体加载、标签语言及小屏证据见 [浏览器记录](../../output/drill-media-20261011/L38-browser-ui-check.json)。[5张最终实景](screenshots/2026-10-11-L38/README.md)随源码保存；不扩展为14语言全部页面人工验收。
 
-Android `supportsRtl` 已配置；iOS Info.plist声明14语言，plist解析通过，Windows未执行iOS构建。语言选择由App自己的本地设置管理，未接入Android/iOS系统“单独App语言”同步接口。训练原视频及媒体清单字节保持。翻译由GPT-6 Luna max完成并经英语交叉审阅，未经过母语者/医疗人员审核；手机已取走，L38未安装或真机测试，T01–T05及多语言原生字体/读屏待验收。用户Air-Flare、图标候选、根dist/原编辑器/个人数据及Play P01保留。
+Android `supportsRtl` 已配置；iOS Info.plist声明14语言，plist解析通过，Windows未执行iOS构建。语言选择由App自己的本地设置管理，未接入Android/iOS系统“单独App语言”同步接口。训练原视频及媒体清单字节保持。翻译由GPT-6 Luna max完成并经英语交叉审阅，未经过母语者/医疗人员审核；后续手机已连接并保留数据覆盖安装L38，安装与冷启动指令通过；用户随后明确自行验收，已停止真机交互。语言、视频、肌群详情及T01–T06/原生读屏仍待用户验收，不将安装成功扩大为功能验收。安装回执见 [device-install](../../output/drill-media-20261011/L38-device-install.json)。用户Air-Flare、图标候选、根dist/原编辑器/个人数据及Play P01保留。
 
 ---
 

@@ -25,8 +25,8 @@
   "back": "Costas",
   "goBack": "Voltar",
   "side": "Lado",
-  "pausedHint": "Selecione um músculo para saber mais",
-  "playingHint": "Pause para selecionar um músculo",
+  "pausedHint": "Ver músculos",
+  "playingHint": "Pause e explore",
   "loadingScene": "Preparando o movimento 3D…",
   "sceneFailed": "A visualização 3D está temporariamente indisponível. Reabra a página do movimento.",
   "retry": "Tentar novamente",
@@ -52,7 +52,7 @@
   "supportSection": "Apoio de ombros e braços",
   "coreSection": "Coordenação do core",
   "legsSection": "Balanço de quadril e pernas",
-  "searchDrills": "Buscar exercícios, músculos ou nomes em inglês",
+  "searchDrills": "Buscar exercícios ou músculos",
   "libraryCount": "51 exercícios · 17 grupos musculares",
   "noResults": "Nenhum exercício encontrado. Tente outra busca.",
   "illustration": "Demonstração do exercício",
@@ -184,7 +184,7 @@
   "privacyBody": "Configurações, treino de hoje, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.",
   "creditsTitle": "Fontes de modelos e mídia",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; roupas, materiais e animação modificados. Human Base Meshes · Blender Studio e colaboradores da comunidade · CC0. Three.js · MIT. As áreas coloridas do manequim são painéis didáticos e não substituem malhas anatômicas ausentes do BodyParts3D. As imagens de exercícios e da marca foram fornecidas pelo usuário; as licenças ainda precisam ser verificadas antes da publicação.",
-  "speedLabel": "Velocidade padrão de reprodução",
+  "speedLabel": "Velocidade padrão",
   "qualityLabel": "Qualidade de imagem",
   "balanced": "Equilibrada",
   "battery": "Economia de bateria",
@@ -223,7 +223,7 @@
   "sceneHomeHint": "Elásticos, halteres e outros equipamentos para casa",
   "sceneGymHint": "Máquinas e pesos livres",
   "chooseScene": "Escolha um ambiente de treino",
-  "trainGroup": "Treinar {name}",
+  "trainGroup": "Treine {name}",
   "@trainGroup": {
     "placeholders": {
       "name": {
@@ -418,7 +418,7 @@
       }
     }
   },
-  "syncEffort": "Esforço coordenado",
+  "syncEffort": "Mapa muscular",
   "muscleMap": "Mapa muscular",
   "phaseMapAccessibility": "Mapas musculares frontal e posterior sincronizados com a fase do movimento",
   "viewGroup": "Ver {group}",

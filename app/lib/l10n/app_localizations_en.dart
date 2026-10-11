@@ -84,10 +84,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get side => 'Side';
 
   @override
-  String get pausedHint => 'Select a muscle to learn more';
+  String get pausedHint => 'Explore muscles';
 
   @override
-  String get playingHint => 'Pause to select a muscle';
+  String get playingHint => 'Pause to explore';
 
   @override
   String get loadingScene => 'Preparing 3D motion…';
@@ -168,7 +168,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legsSection => 'Hip and leg swing';
 
   @override
-  String get searchDrills => 'Search exercises, muscles, or English names';
+  String get searchDrills => 'Search exercises or muscles';
 
   @override
   String get libraryCount => '51 exercises · 17 muscle groups';
@@ -493,7 +493,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0; clothing, materials, and animation modified. Human Base Meshes · Blender Studio and community contributors · CC0. Three.js · MIT. Colored mannequin areas are teaching panels and do not stand in for missing BodyParts3D anatomy meshes. Exercise and brand images were supplied by the user; license checks still need to be completed before release.';
 
   @override
-  String get speedLabel => 'Default playback speed';
+  String get speedLabel => 'Default speed';
 
   @override
   String get qualityLabel => 'Image quality';
@@ -861,7 +861,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'Coordinated effort';
+  String get syncEffort => 'Muscle map';
 
   @override
   String get muscleMap => 'Muscle map';

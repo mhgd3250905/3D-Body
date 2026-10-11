@@ -274,13 +274,13 @@ abstract class AppLocalizations {
   /// No description provided for @pausedHint.
   ///
   /// In zh, this message translates to:
-  /// **'点选肌群查看详解'**
+  /// **'点选肌群'**
   String get pausedHint;
 
   /// No description provided for @playingHint.
   ///
   /// In zh, this message translates to:
-  /// **'暂停后可点选肌群'**
+  /// **'暂停后查看'**
   String get playingHint;
 
   /// No description provided for @loadingScene.
@@ -436,7 +436,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchDrills.
   ///
   /// In zh, this message translates to:
-  /// **'搜索训练、肌群或英文名称'**
+  /// **'搜索训练或肌群'**
   String get searchDrills;
 
   /// No description provided for @libraryCount.
@@ -1042,7 +1042,7 @@ abstract class AppLocalizations {
   /// No description provided for @speedLabel.
   ///
   /// In zh, this message translates to:
-  /// **'默认播放速度'**
+  /// **'默认速度'**
   String get speedLabel;
 
   /// No description provided for @qualityLabel.
@@ -1696,7 +1696,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncEffort.
   ///
   /// In zh, this message translates to:
-  /// **'同步发力'**
+  /// **'肌群图'**
   String get syncEffort;
 
   /// No description provided for @muscleMap.

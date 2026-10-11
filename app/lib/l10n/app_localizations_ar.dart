@@ -84,10 +84,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get side => 'الجانب';
 
   @override
-  String get pausedHint => 'اختر عضلة لمعرفة المزيد';
+  String get pausedHint => 'استكشف العضلات';
 
   @override
-  String get playingHint => 'أوقف الحركة مؤقتًا لاختيار عضلة';
+  String get playingHint => 'أوقف ثم اختر';
 
   @override
   String get loadingScene => 'جارٍ تجهيز الحركة ثلاثية الأبعاد…';
@@ -167,7 +167,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get legsSection => 'تأرجح الوركين والساقين';
 
   @override
-  String get searchDrills => 'ابحث عن تمارين أو عضلات أو أسماء بالإنجليزية';
+  String get searchDrills => 'ابحث عن تمارين أو عضلات';
 
   @override
   String get libraryCount => '51 تمرينًا · 17 مجموعة عضلية';
@@ -491,7 +491,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'Snow Rig © Blender Foundation · CC BY 4.0؛ تم تعديل الملابس والمواد والرسوم المتحركة. Human Base Meshes · Blender Studio والمساهمون من المجتمع · CC0. Three.js · MIT. المناطق الملونة على النموذج لوحات تعليمية ولا تحل محل الشبكات التشريحية المفقودة من BodyParts3D. قدّم المستخدم صور التمارين والعلامة؛ ويجب استكمال التحقق من التراخيص قبل الإصدار.';
 
   @override
-  String get speedLabel => 'سرعة التشغيل الافتراضية';
+  String get speedLabel => 'السرعة الافتراضية';
 
   @override
   String get qualityLabel => 'جودة الصورة';
@@ -856,7 +856,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get syncEffort => 'تنسيق عمل العضلات';
+  String get syncEffort => 'خريطة العضلات';
 
   @override
   String get muscleMap => 'خريطة العضلات';
