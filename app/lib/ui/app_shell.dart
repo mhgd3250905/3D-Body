@@ -1793,33 +1793,23 @@ class _MuscleKnowledgeBlock extends StatefulWidget {
 }
 
 class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
+  static const _padding = EdgeInsets.symmetric(horizontal: 10, vertical: 4);
   final _scroll = ScrollController();
-  final _readerScroll = ScrollController(keepScrollOffset: false);
+  ScrollController? _readerScroll;
   final _portal = OverlayPortalController();
   final _anchorKey = GlobalKey();
   Rect? _previewRect, _readerRect;
-  Timer? _closeTimer;
+  TextStyle? _flightStyle;
   bool _expanded = false;
 
-  TextStyle _style(BuildContext context, {bool reader = false}) =>
+  TextStyle _style(BuildContext context) =>
       DefaultTextStyle.of(context).style.merge(
-        TextStyle(
-          fontSize: reader ? 14 : 12.5,
-          height: reader ? 1.6 : 1.55,
-          color: FlareColors.secondary,
-        ),
+        TextStyle(fontSize: 14, height: 1.55, color: FlareColors.secondary),
       );
 
-  double _textHeight(
-    BuildContext context,
-    double width, {
-    bool reader = false,
-  }) {
+  double _textHeight(BuildContext context, double width) {
     final painter = TextPainter(
-      text: TextSpan(
-        text: widget.text,
-        style: _style(context, reader: reader),
-      ),
+      text: TextSpan(text: widget.text, style: _style(context)),
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(maxWidth: width.clamp(1, double.infinity));
@@ -1840,10 +1830,17 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
       rect.height,
       double.infinity,
     );
-    final height = (_textHeight(context, rect.width - 52, reader: true) + 28)
+    // Both cards share the exact text width, font, border and inner padding.
+    // A small rounding allowance prevents a complete paragraph losing 1px.
+    final height = (_textHeight(context, rect.width - 21).ceilToDouble() + 10)
         .clamp(rect.height, available);
-    _closeTimer?.cancel();
+    _readerScroll?.dispose();
+    _readerScroll = ScrollController(
+      initialScrollOffset: _scroll.hasClients ? _scroll.offset : 0,
+      keepScrollOffset: false,
+    );
     setState(() {
+      _flightStyle = _style(context);
       _previewRect = rect;
       _readerRect = Rect.fromLTRB(
         rect.left,
@@ -1860,14 +1857,19 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
   void _close() {
     if (!_portal.isShowing || !_expanded) return;
     setState(() => _expanded = false);
-    _closeTimer?.cancel();
-    final duration = FlareMotion.of(context, FlareMotion.collapse);
-    _closeTimer = Timer(duration, () {
-      if (mounted) {
-        _portal.hide();
-        setState(() {});
-      }
-    });
+  }
+
+  void _finishClose() {
+    if (!mounted || _expanded || !_portal.isShowing) return;
+    // Hand back the visible text position before revealing the original card.
+    // Finish on the actual last animation frame rather than a separate timer.
+    if (_scroll.hasClients && (_readerScroll?.hasClients ?? false)) {
+      _scroll.jumpTo(
+        _readerScroll!.offset.clamp(0, _scroll.position.maxScrollExtent),
+      );
+    }
+    _portal.hide();
+    setState(() {});
   }
 
   ScrollBehavior _scrollBehavior(BuildContext context) =>
@@ -1884,11 +1886,61 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
 
   @override
   void dispose() {
-    _closeTimer?.cancel();
     _scroll.dispose();
-    _readerScroll.dispose();
+    _readerScroll?.dispose();
     super.dispose();
   }
+
+  Widget _card(
+    BuildContext context, {
+    required bool reader,
+    double lift = 0,
+    bool canOpen = true,
+  }) => GestureDetector(
+    key: ValueKey(
+      reader ? 'muscle-knowledge-reader-toggle' : 'muscle-knowledge-toggle',
+    ),
+    behavior: HitTestBehavior.opaque,
+    onTap: reader ? _close : (canOpen ? _open : null),
+    child: Container(
+      key: reader
+          ? const ValueKey('muscle-knowledge-expanded-card')
+          : _anchorKey,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: FlareColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: FlareColors.hairline, width: .5),
+        boxShadow: lift <= 0
+            ? null
+            : [
+                BoxShadow(
+                  color: const Color(0x26000000).withValues(alpha: .15 * lift),
+                  blurRadius: 24 * lift,
+                  offset: Offset(0, 6 * lift),
+                ),
+              ],
+      ),
+      padding: _padding,
+      child: ScrollConfiguration(
+        behavior: _scrollBehavior(context),
+        child: SingleChildScrollView(
+          key: ValueKey(
+            reader ? 'muscle-knowledge-reader' : 'muscle-detail-content',
+          ),
+          controller: reader ? _readerScroll : _scroll,
+          primary: false,
+          child: Text(
+            widget.text,
+            key: ValueKey(
+              reader ? 'muscle-knowledge-expanded' : 'muscle-knowledge',
+            ),
+            style: reader ? _flightStyle! : _style(context),
+          ),
+        ),
+      ),
+    ),
+  );
 
   Widget _reader(BuildContext context) => Stack(
     children: [
@@ -1913,67 +1965,27 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
           _expanded ? FlareMotion.expand : FlareMotion.collapse,
         ),
         curve: FlareMotion.settle,
-        builder: (context, rect, child) =>
-            Positioned.fromRect(rect: rect!, child: child!),
-        child: Material(
-          type: MaterialType.transparency,
-          child: Container(
-            key: const ValueKey('muscle-knowledge-expanded-card'),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: FlareColors.surface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: FlareColors.hairline, width: .5),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x26000000),
-                  blurRadius: 24,
-                  offset: Offset(0, 6),
-                ),
-              ],
-            ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _close,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: ScrollConfiguration(
-                      behavior: _scrollBehavior(context),
-                      child: SingleChildScrollView(
-                        key: const ValueKey('muscle-knowledge-reader'),
-                        controller: _readerScroll,
-                        primary: false,
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                          12,
-                          12,
-                          40,
-                          12,
-                        ),
-                        child: Text(
-                          widget.text,
-                          key: const ValueKey('muscle-knowledge-expanded'),
-                          style: _style(context, reader: true),
-                        ),
-                      ),
-                    ),
-                  ),
-                  PositionedDirectional(
-                    end: 0,
-                    top: 0,
-                    child: IconButton(
-                      key: const ValueKey('muscle-knowledge-close'),
-                      tooltip: context.strings.close,
-                      onPressed: _close,
-                      icon: const Icon(Icons.unfold_less_rounded, size: 18),
-                      color: FlareColors.secondary,
-                    ),
-                  ),
-                ],
+        onEnd: _finishClose,
+        builder: (context, rect, _) {
+          final growth = _readerRect!.height - _previewRect!.height;
+          final lift = growth <= 0
+              ? 0.0
+              : ((rect!.height - _previewRect!.height) / growth).clamp(
+                  0.0,
+                  1.0,
+                );
+          return Positioned.fromRect(
+            rect: rect!,
+            child: Material(
+              type: MaterialType.transparency,
+              child: Semantics(
+                button: true,
+                hint: context.strings.close,
+                child: _card(context, reader: true, lift: lift),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     ],
   );
@@ -1982,68 +1994,21 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final overflow =
-          _textHeight(context, constraints.maxWidth - 38) >
-          constraints.maxHeight - 8;
+          _textHeight(context, constraints.maxWidth - 21) >
+          constraints.maxHeight - 9;
       return OverlayPortal(
         controller: _portal,
         overlayChildBuilder: _reader,
         child: ExcludeSemantics(
           excluding: _portal.isShowing,
-          child: Semantics(
-            button: overflow,
-            hint: overflow ? context.strings.more : null,
-            child: GestureDetector(
-              key: const ValueKey('muscle-knowledge-toggle'),
-              behavior: HitTestBehavior.opaque,
-              onTap: overflow ? _open : null,
-              child: Container(
-                key: _anchorKey,
-                decoration: BoxDecoration(
-                  color: FlareColors.surface.withValues(alpha: .55),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: FlareColors.hairline, width: .5),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipRect(
-                        child: ScrollConfiguration(
-                          behavior: _scrollBehavior(context),
-                          child: SingleChildScrollView(
-                            key: const ValueKey('muscle-detail-content'),
-                            controller: _scroll,
-                            primary: false,
-                            padding: const EdgeInsetsDirectional.only(
-                              end: 18,
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              widget.text,
-                              key: const ValueKey('muscle-knowledge'),
-                              style: _style(context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (overflow)
-                      PositionedDirectional(
-                        end: 0,
-                        bottom: 0,
-                        child: ExcludeSemantics(
-                          child: Icon(
-                            Icons.unfold_more_rounded,
-                            size: 16,
-                            color: FlareColors.dim,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+          child: Opacity(
+            opacity: _portal.isShowing ? 0 : 1,
+            child: Semantics(
+              button: overflow,
+              hint: overflow ? context.strings.more : null,
+              child: IgnorePointer(
+                ignoring: !overflow,
+                child: _card(context, reader: false, canOpen: overflow),
               ),
             ),
           ),

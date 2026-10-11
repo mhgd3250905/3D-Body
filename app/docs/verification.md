@@ -1,4 +1,18 @@
-# L41知识展开阅读验证（2026-10-11）
+# L42连续展开验证（2026-10-12）
+
+源基线5df32a3（L41），本地检查点以 `feat(app): refine L42 continuous knowledge expansion` 定位。共享卡片/文本样式：14px/1.55、相同宽度/10px横向与4px纵向padding/边框/圆角/背景，去掉右侧图标。预览字形在阅读层显示时隐藏；矩形和阴影动画，收起在实际末帧交还文字滚动位置，340ms/240ms仍尊重reduce motion。文字/上方外部点击收起；极长内容无条拖动，底部固定区域和场景不变。
+
+全项目analyze无问题，3测试文件合计9项通过：compact_localization_test 1项（14语言×320/390两尺寸×实际打包字体，有溢出时展开有界和按钮固定）；internationalization_test 3项；muscle_library_flow_test 5项。后者检查320/390展开100ms、收起100ms和结束的Text/RenderParagraph样式、TextScaler、段落宽高与相对padding一致；无Icon；预览scroll offset传入reader、继续阅读后关闭传回、重开/外部关闭保留位置。原超长全文/自然全文0滚动/换组销毁/固定控件与暂停帧检查保持。测试由GPT-6 Luna max更新、root整合；同子集复跑不累加。
+
+离线Web/ARM64 release成功，原Debug签名通过。[4资产源/Web/APK核对](../../output/drill-media-20261012/L42-package-check.json)一致，L41和P01哈希保持；场景与训练媒体未变，不重复全量Flutter/场景测试。
+
+Chrome394×853/DPR3.25中文实景：卡片宽346px保持，预览49.72px与展开120px，文字换行一致，右侧无图标。点击文字和上方外部关闭有效；footer(x20,y785,w354,h56)、iframe(x0,y108,w394,h745)、phase15/time6.052980132450331/quality medium在展开/关闭后完全相同，console error/warn=0。[截图](screenshots/2026-10-12-L42/README.md)及[记录](../../output/drill-media-20261012/L42-browser-ui-check.json)。实景范围为中文394，14语覆盖为组件回归。
+
+00:17:33通过adb install -r保留数据安装手机；firstInstallTime保持2026-10-08 17:53:04，启动Status ok/UNKNOWN(0)/Wait3014ms，不能视为冷启动性能。[安装回执](../../output/drill-media-20261012/L42-device-install.json)。用户自行验收，未操作手机UI；原生视觉/手势/读屏、iOS与T01–T06待验收。未push/发布，根dist/个人数据/候选资源保持。
+
+---
+
+# 历史：L41知识展开阅读验证（2026-10-11）
 
 基线e084268（L40），以 `feat(app): add L41 expandable muscle knowledge` 检查点定位。详细说明预览不显示Scrollbar/桌面自动滚动条；溢出点击OverlayPortal在原底边向上展开，340ms/收起240ms并尊重reduce motion。使用14px/1.6全文、已有14语more/close语义，内容长度计算含边框/舍入余量；长于屏幕时展开卡独立无条滚动。读完点全文、关闭图标或上方外部收起；协同卡/footer与3D舞台不参与位移，换肌群销毁旧层。
 

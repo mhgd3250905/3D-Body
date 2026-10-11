@@ -8,6 +8,7 @@ import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/muscle_widgets.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../domain/fixtures.dart';
@@ -388,8 +389,17 @@ void main() {
         ).position;
         expect(collapsedPosition.maxScrollExtent, greaterThan(0));
         _expectNoVisibleKnowledgeScrollbar(tester, collapsedText);
+        await tester.drag(
+          find.byKey(const ValueKey('muscle-detail-content')),
+          const Offset(0, -90),
+        );
+        await tester.pumpAndSettle();
+        expect(collapsedPosition.pixels, greaterThan(0));
+        final initialPreviewOffset = collapsedPosition.pixels;
 
         final beforePreview = tester.getRect(preview);
+        final beforePreviewText = tester.getRect(collapsedText);
+        final previewLayout = _paragraphSnapshot(tester, collapsedText);
         final beforeAssist = tester.getRect(assist);
         final beforeFooter = tester.getRect(footer);
         final beforeStage = tester.getRect(stage);
@@ -415,6 +425,46 @@ void main() {
           greaterThan(beforePreview.height),
           reason: 'The card must already be growing at the animation midpoint.',
         );
+        expect(
+          find.byKey(const ValueKey('muscle-knowledge-close')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: preview,
+            matching: find.byIcon(Icons.unfold_more_rounded),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: expanded,
+            matching: find.byIcon(Icons.unfold_less_rounded),
+          ),
+          findsNothing,
+        );
+        _expectParagraphLayoutMatches(
+          _paragraphSnapshot(tester, expandedText),
+          previewLayout,
+        );
+        expect(
+          Scrollable.of(tester.element(expandedText)).position.pixels,
+          closeTo(initialPreviewOffset, .1),
+          reason: 'The reader inherits the preview scroll position.',
+        );
+        final duringText = tester.getRect(expandedText);
+        expect(
+          duringText.left - duringRect.left,
+          closeTo(beforePreviewText.left - beforePreview.left, .1),
+        );
+        expect(
+          duringText.top - duringRect.top,
+          closeTo(beforePreviewText.top - beforePreview.top, .1),
+        );
+        expect(tester.getRect(assist), beforeAssist);
+        expect(tester.getRect(footer), beforeFooter);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
 
         await tester.pumpAndSettle();
         final expandedRect = tester.getRect(expanded);
@@ -425,7 +475,15 @@ void main() {
         expect(expandedRect.right, lessThanOrEqualTo(size.width));
         expect(expandedRect.height, greaterThan(duringRect.height));
         expect(_textValue(tester, expandedText), expectedText);
+        _expectParagraphLayoutMatches(
+          _paragraphSnapshot(tester, expandedText),
+          previewLayout,
+        );
         _expectNoVisibleKnowledgeScrollbar(tester, expandedText);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
 
         final expandedPosition = Scrollable.of(
           tester.element(expandedText),
@@ -437,6 +495,12 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(expandedPosition.pixels, greaterThan(0));
+        expect(expandedPosition.pixels, greaterThan(initialPreviewOffset));
+        final expandedOffset = expandedPosition.pixels;
+        _expectParagraphLayoutMatches(
+          _paragraphSnapshot(tester, expandedText),
+          previewLayout,
+        );
         _expectNoVisibleKnowledgeScrollbar(tester, expandedText);
 
         expect(tester.getRect(assist), beforeAssist);
@@ -447,22 +511,50 @@ void main() {
         expect(scene.detail, 'deltoids');
         expect(scene.playing, isFalse);
 
-        await tester.tap(find.byKey(const ValueKey('muscle-knowledge-close')));
-        await tester.pumpAndSettle();
-        expect(expanded, findsNothing);
-        expect(preview, findsOneWidget);
-        expect(
-          Scrollable.of(tester.element(collapsedText)).position.pixels,
-          0,
-          reason: 'Closing restores the preview to its top position.',
+        final readerToggle = find.byKey(
+          const ValueKey('muscle-knowledge-reader-toggle'),
+        );
+        expect(readerToggle, findsOneWidget);
+        await tester.tap(readerToggle);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(expanded, findsOneWidget);
+        final collapsingRect = tester.getRect(expanded);
+        expect(collapsingRect.height, greaterThan(beforePreview.height));
+        expect(collapsingRect.height, lessThan(expandedRect.height));
+        _expectParagraphLayoutMatches(
+          _paragraphSnapshot(tester, expandedText),
+          previewLayout,
         );
         expect(tester.getRect(assist), beforeAssist);
         expect(tester.getRect(footer), beforeFooter);
         expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+
+        await tester.pumpAndSettle();
+        expect(expanded, findsNothing);
+        expect(preview, findsOneWidget);
+        expect(
+          collapsedPosition.pixels,
+          closeTo(expandedOffset, .1),
+          reason: 'The preview inherits the reader scroll position on close.',
+        );
+        expect(tester.getRect(assist), beforeAssist);
+        expect(tester.getRect(footer), beforeFooter);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
 
         await tester.tap(preview);
         await tester.pumpAndSettle();
         expect(expanded, findsOneWidget);
+        expect(
+          Scrollable.of(tester.element(expandedText)).position.pixels,
+          closeTo(expandedOffset, .1),
+          reason: 'Reopening preserves the latest reader position.',
+        );
         await tester.tapAt(const Offset(2, 2));
         await tester.pumpAndSettle();
         expect(
@@ -470,6 +562,11 @@ void main() {
           findsNothing,
           reason: 'An outside tap should collapse the overlay.',
         );
+        expect(collapsedPosition.pixels, closeTo(expandedOffset, .1));
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
 
         await tester.tap(preview);
         await tester.pumpAndSettle();
@@ -514,7 +611,7 @@ void main() {
                 'A normal teaching note should fit fully in its reader card.',
           );
           await tester.tap(
-            find.byKey(const ValueKey('muscle-knowledge-close')),
+            find.byKey(const ValueKey('muscle-knowledge-reader-toggle')),
           );
           await tester.pumpAndSettle();
         }
@@ -534,6 +631,37 @@ void main() {
 String _textValue(WidgetTester tester, Finder finder) {
   final text = tester.widget<Text>(finder);
   return text.data ?? text.textSpan?.toPlainText() ?? '';
+}
+
+typedef _ParagraphLayout = ({
+  TextStyle? widgetStyle,
+  TextStyle? renderedStyle,
+  TextScaler textScaler,
+  double width,
+  double height,
+});
+
+_ParagraphLayout _paragraphSnapshot(WidgetTester tester, Finder finder) {
+  final text = tester.widget<Text>(finder);
+  final paragraph = tester.renderObject<RenderParagraph>(finder);
+  return (
+    widgetStyle: text.style,
+    renderedStyle: paragraph.text.style,
+    textScaler: MediaQuery.textScalerOf(tester.element(finder)),
+    width: paragraph.size.width,
+    height: paragraph.size.height,
+  );
+}
+
+void _expectParagraphLayoutMatches(
+  _ParagraphLayout actual,
+  _ParagraphLayout expected,
+) {
+  expect(actual.widgetStyle, expected.widgetStyle);
+  expect(actual.renderedStyle, expected.renderedStyle);
+  expect(actual.textScaler, expected.textScaler);
+  expect(actual.width, expected.width);
+  expect(actual.height, expected.height);
 }
 
 void _expectNoVisibleKnowledgeScrollbar(WidgetTester tester, Finder target) {

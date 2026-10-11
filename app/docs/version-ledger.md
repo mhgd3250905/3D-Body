@@ -1,8 +1,16 @@
 # Flare 版本管理台账
 
-更新于2026-10-11，当前本地交付为 **L41 展开阅读**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
+更新于2026-10-12，当前本地交付为 **L42 连续展开**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-11 L41：知识卡片展开阅读
+## 2026-10-12 L42：知识卡片连续展开
+
+用户要求修正L41展开时字体与换行变化。预览与阅读层共享卡片构造、14px/1.55文字样式、10px/4px内边距、0.5px边框和12px圆角，文字宽度一致；原预览在阅读层显示时隐藏，避免字形叠加。仅卡片矩形/阴影渐变，340ms展开/240ms收起遵循减少动态；收起以实际末帧交还滚动位置，阅读位置双向保留。右侧两个图标移除，点文字/上方外部关闭和多語语义保留。3D舞台、协同卡和练习按钮固定。
+
+源基线 `5df32a3a2e3e15e975d134fc863d92897583cd15`；本地检查点以 `feat(app): refine L42 continuous knowledge expansion` 定位。具名包 `output/releases/Flare-v41-continuous-knowledge-L42-20261012-arm64.apk` 与通用APK一致，96,747,542字节，SHA-256 `754090e2aefae0f14c1e4e925c0657c4069f0165a04a02c22246ad6dedd01d60`。包名dev.mhgd.flare/版本1.0.0+1/原Debug证书保持。Web/ARM64 release成功，[4资产核对](../../output/drill-media-20261012/L42-package-check.json)通过，L41/P01保持；未push/发布。
+
+分析无问题、9项定向测试通过；实际字体14语两尺寸展开边界及固定按钮、320/390中间动画排版/阅读位置连续性及无图标通过。[中文394实景](screenshots/2026-10-12-L42/README.md)与[浏览器记录](../../output/drill-media-20261012/L42-browser-ui-check.json)确认文字宽度不变、外部关闭和footer/舞台/暂停时刻保持，console错误/警告0。00:17:33保留数据安装，firstInstallTime保持2026-10-08 17:53:04；启动Status ok/Wait3014ms/LaunchState UNKNOWN(0)。[安装回执](../../output/drill-media-20261012/L42-device-install.json)。按用户要求不操作手机UI，用户自行验收。
+
+## 历史：2026-10-11 L41：知识卡片展开阅读
 
 去掉肌群详细说明的常驻滚动条和桌面自动滚动条。实际溢出时点预览，从原卡片底边向上动画展开全文，展开340ms、收起240ms，遵循减少动态设置；文字、收起按钮或上方外部点击收起。展开全文14px/1.6行高，常规内容无需滚动，极长内容在卡内无条拖动。协同卡/练习按钮/iframe与暂停帧不改变，切肌群销毁旧阅读层。已有多语more/close用于语义与关闭，不引入新未翻译文案；L40三个视图清晰度保持。
 

@@ -267,7 +267,7 @@ void main() {
               findsNothing,
             );
             await tester.tap(
-              find.byKey(const ValueKey('muscle-knowledge-close')),
+              find.byKey(const ValueKey('muscle-knowledge-reader-toggle')),
             );
             await tester.pumpAndSettle();
             expect(reader, findsNothing);
