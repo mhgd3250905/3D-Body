@@ -1305,3 +1305,8 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 ## 历史：iOS 本地记录 d1541f4
 
 2026-10-11 补充：真机已连接，镜像实际安装精确 S4 时返回 HTTP 404 / ProcessingInstallInitiateResponse，Flare 未安装或运行。浏览器连接已恢复，今日确认 S4 VALID、未过期、IN_BETA_TESTING，内部组一名测试员 ACCEPTED、自动分发关闭。上传回执确认 S4 已在用户提供的支持邮件要求的 48 小时窗口之后上传；原案例 349 字符精简稿已获批准并尝试提交，支持留言服务返回 HTTP 401 / LOGIN，尚未发送成功；原案例登录页已打开，待案例登记账号认证。详见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。功能、性能和隐私网络真机检查待安装恢复，产品与 IPA 保持。
+
+
+## 历史：iOS 本地记录 2f1bdb7
+
+2026-10-11 补充：真机已连接，镜像实际安装精确 S4 时返回 HTTP 404 / ProcessingInstallInitiateResponse，Flare 未安装或运行。浏览器连接已恢复，今日确认 S4 VALID、未过期、IN_BETA_TESTING，内部组一名测试员 ACCEPTED、自动分发关闭。上传回执确认 S4 已在用户提供的支持邮件要求的 48 小时窗口之后上传；原案例 349 字符精简稿已获批准，账号认证恢复后于北京时间 11:06:59 发送成功：HTTP 200、textCommitment=true，页面确认已发送；等待 Apple 处理结果。详见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。功能、性能和隐私网络真机检查待安装恢复，产品与 IPA 保持。
