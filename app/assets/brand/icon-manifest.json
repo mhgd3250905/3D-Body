@@ -1,0 +1,290 @@
+{
+  "selected": "new-angle-B-teal",
+  "source": "app/assets/brand/icon-flare-angle2-b.png",
+  "sourceSha256": "3728021f0dcc87c8f6d20e39d7aa74d1055afd960802e6dda16824c78bd280ad",
+  "sourceDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "background": "#111212",
+  "masterOccupancy": 1,
+  "legacyOccupancy": 0.88,
+  "adaptiveForegroundOccupancy": 0.62,
+  "webMaskableOccupancy": 0.78,
+  "attribution": "Snow Rig © Blender Foundation | studio.blender.org, CC BY 4.0; project/user-model pose; AI character, teal wardrobe, lighting and logo treatment.",
+  "changes": "Resize and crop-safe export only. Original candidate retained; live 3D model and loading animation unchanged.",
+  "records": [
+    {
+      "path": "app/assets/brand/icon.png",
+      "size": 1024,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 1424823,
+      "sha256": "4efb4ce324c70e63cfc0612450b5a16b403b94033723b15e367702ee9e834d8d"
+    },
+    {
+      "path": "app/assets/brand/icon-store-512.png",
+      "size": 512,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 360455,
+      "sha256": "9cab21ba7cdfa8baa2014d190a3dfcaf5071af58704802cd2dc45b64de15b81f"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "size": 48,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 3517,
+      "sha256": "9dd99e84686ac5ec5241ae753f5c224beda2bb166e712a8ce5de05b1a3d0d17f"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+      "size": 48,
+      "occupancy": 0.88,
+      "kind": "round",
+      "bytes": 4255,
+      "sha256": "9dfff9f170c9e5876c8da43aa239422042b2dce9e9011635ff42b69ef756588b"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+      "size": 108,
+      "occupancy": 0.62,
+      "kind": "adaptive",
+      "bytes": 9093,
+      "sha256": "1cb5e9d3965be68008c1250c903220dcb65822d1ff2ed0631ecbf8e2700bd325"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "size": 72,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 7158,
+      "sha256": "045f911d2475b3472236dc7bf97e0433a4f53fffbb32b3e340a486f2775db6a8"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+      "size": 72,
+      "occupancy": 0.88,
+      "kind": "round",
+      "bytes": 8480,
+      "sha256": "fc29114c4a161906a755cc889dd3bbf28c864eedd933376d8d7c3cfe8312fdb3"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+      "size": 162,
+      "occupancy": 0.62,
+      "kind": "adaptive",
+      "bytes": 18351,
+      "sha256": "d8c68f8578155190a9028c1f19bfba9775fae846c61c722d9b988ce5d0376ebf"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "size": 96,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 12041,
+      "sha256": "852f94788d18998414955e3d592af42a503845abf4546415b3a895492d1a2f73"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+      "size": 96,
+      "occupancy": 0.88,
+      "kind": "round",
+      "bytes": 13842,
+      "sha256": "f06a0302e59a57ed59a498e50b57494e81c7ff8d610d4810cb3dbc427c414262"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+      "size": 216,
+      "occupancy": 0.62,
+      "kind": "adaptive",
+      "bytes": 30912,
+      "sha256": "126b70df3bb938336803d1dc86fc45464dd5efad4c7004b9ffedd62e5f7de252"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "size": 144,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 25166,
+      "sha256": "d98790b4b0ab07bfc4cb9b8ddfcafdbbe715308e07e071d031829d46c9c2948a"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+      "size": 144,
+      "occupancy": 0.88,
+      "kind": "round",
+      "bytes": 27795,
+      "sha256": "487e051d22af50b05ae22917a363683833a450ec5d9c729893a29174eb7d9913"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "size": 324,
+      "occupancy": 0.62,
+      "kind": "adaptive",
+      "bytes": 64340,
+      "sha256": "013d0b6d31725ecee8de79de21f3e07669248538ae70a6b6b2416f457d115d76"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "size": 192,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 42442,
+      "sha256": "3a0f7b60789cc365e7f6a87e185a47a486ef9845504275c52251969c782accd9"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+      "size": 192,
+      "occupancy": 0.88,
+      "kind": "round",
+      "bytes": 46120,
+      "sha256": "d7be3b8c5da79f3c5b6600cd7528ef3f3ac22db28b38be7c2849ce4d1a7c5705"
+    },
+    {
+      "path": "app/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "size": 432,
+      "occupancy": 0.62,
+      "kind": "adaptive",
+      "bytes": 108887,
+      "sha256": "be262a12e0ce90d85fec966938ce0e22304c1f05c5cbd29ba9bf795c92a7564d"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-20.png",
+      "size": 20,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 1039,
+      "sha256": "6a2ac2a40a43f6db92759978d25e1152462abc68dc92843093a80667d2012a06"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-29.png",
+      "size": 29,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 1872,
+      "sha256": "d7c2c79aa49950e1d56dba82bfc4678ee05c820fc3a875a71416d82776518b51"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-40.png",
+      "size": 40,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 3169,
+      "sha256": "89b4be88cb1ca2378800e8a93b20bf5fe60a00d7ea6437817f6c2486f99764fc"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-58.png",
+      "size": 58,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 6143,
+      "sha256": "f5fa36d5a5cf0f433e695ec2bbb60abb06c218f3136772a276edfff3c3227a0c"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-60.png",
+      "size": 60,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 6479,
+      "sha256": "3161a61f54c9c614bc8705545b09ce54c473669a6892cf5de8d5fdece83c96df"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-80.png",
+      "size": 80,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 10830,
+      "sha256": "da960951bd1244b3c1dd73e417fcd00813fdb4caf4d05cc3ed37d1cbd2e82c34"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-87.png",
+      "size": 87,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 12617,
+      "sha256": "49b80c8dc3bf1fb150da94983576fdd4c85a078136af0edea676ce705b5f5353"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-120.png",
+      "size": 120,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 22429,
+      "sha256": "e1ce2516e0ec755aab8079010cee0e5c57b502eb73221b2a4e6b29cbbc3808a7"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-152.png",
+      "size": 152,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 34334,
+      "sha256": "01e12132c00b81578dc114be9c5505972cfaff96f9366fca285a74dc3ab30f2f"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-167.png",
+      "size": 167,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 40862,
+      "sha256": "dd2646070c080e6d9f5a7de83b7f8e3d1cd00f4c17b68d3d0ed0f2557e88a263"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-180.png",
+      "size": 180,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 46914,
+      "sha256": "6a65358aab2e03870cb5105159701c111243b9156007c02ff3d18a7636640b32"
+    },
+    {
+      "path": "app/ios/Runner/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+      "size": 1024,
+      "occupancy": 1,
+      "kind": "opaque",
+      "bytes": 1424823,
+      "sha256": "4efb4ce324c70e63cfc0612450b5a16b403b94033723b15e367702ee9e834d8d"
+    },
+    {
+      "path": "app/web/favicon.png",
+      "size": 48,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 3517,
+      "sha256": "9dd99e84686ac5ec5241ae753f5c224beda2bb166e712a8ce5de05b1a3d0d17f"
+    },
+    {
+      "path": "app/web/icons/Icon-192.png",
+      "size": 192,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 42442,
+      "sha256": "3a0f7b60789cc365e7f6a87e185a47a486ef9845504275c52251969c782accd9"
+    },
+    {
+      "path": "app/web/icons/Icon-maskable-192.png",
+      "size": 192,
+      "occupancy": 0.78,
+      "kind": "opaque",
+      "bytes": 34421,
+      "sha256": "9f269f550b4bd1eb3ae4c4ddfb159b417c375010538f78202f406f281a93bea7"
+    },
+    {
+      "path": "app/web/icons/Icon-512.png",
+      "size": 512,
+      "occupancy": 0.88,
+      "kind": "opaque",
+      "bytes": 284915,
+      "sha256": "50f3e7cbf9697c37a3a0b7d8aba5977d949fa1fef071e2331414802fa090503b"
+    },
+    {
+      "path": "app/web/icons/Icon-maskable-512.png",
+      "size": 512,
+      "occupancy": 0.78,
+      "kind": "opaque",
+      "bytes": 227263,
+      "sha256": "01f2599b9385d881231b4196e6ee59881ded4d29af2fdc3347a2d4902ba7b034"
+    }
+  ]
+}

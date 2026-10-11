@@ -1,8 +1,8 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-11 当前交付为 **L26**，所连Android手机及 `build/web` 离线预览均采用17张银色模型摄影的肌群图文条目。用户已认可这项条目外观；长期训练计时、全设备与其余3D观感仍按T01/T02待验收。Google Play **P01** AAB保持，根目录 `dist` 原网页编辑器保留。包身份与检查点只在 [版本台账](docs/version-ledger.md) 维护，证据见 [验证记录](docs/verification.md)，待办见 [实施路线](docs/development-roadmap.md)。
+2026-10-11 当前交付为 **L28**，在已认可的L26功能与银色肌群条目底座上换用用户选定的青绿色运动服 Flare 图标 B，Android/iOS/Web 图标资源已同步。所连Android手机已保留数据安装L28，`build/web` 离线预览已更新；手机冷启动通过，已真机核对桌面及应用信息图标完整、两鞋未裁切，桌面启动与原3D首页显示正常。17张银色模型摄影继续用于肌群图文条目；长期训练计时、全设备与其余3D观感仍按T01/T02待验收。Google Play **P01** AAB保持，根目录 `dist` 原网页编辑器及个人数据保留。包身份与检查点只在 [版本台账](docs/version-ledger.md) 维护，证据见 [验证记录](docs/verification.md)，待办见 [实施路线](docs/development-roadmap.md)。
 
-L26包含启动预加载、真实Flare动作剪影和人物首帧衔接，高清全身小卡及动作人物柔边高亮。暂停显示与人体图一致的最多3项重点肌群；可见圆点、同色细线卡片随旋转选侧与身体避让，位置平滑过渡并保护地面/画面边界。米白和黄色摄影试作保留历史，当前选用银色条目，运行时人台材质保持。
+L28沿用L26的启动预加载、原模型真实Flare动作剪影和人物首帧衔接、高清全身小卡及动作人物柔边高亮。暂停显示与人体图一致的最多3项重点肌群；可见圆点、同色细线卡片随旋转选侧与身体避让，位置平滑过渡并保护地面/画面边界。米白和黄色摄影试作保留历史，当前选用银色条目，运行时人物、v41动作与人台材质保持。新图标来源及复现见 [资产来源](docs/asset-sources.md)。
 
 历史：2026-10-09 PR #7已审核补修并合并：进出肌群详情保持固定3D舞台和画布缓冲区，构图连续过渡；拖动中断、系统返回与场景重载同步已补修。合并检查点e42df21，当时证据及限制见 [PR7审核](docs/pr7-audit-2026-10-09.md)，当前交付以版本台账为准。
 
@@ -31,7 +31,7 @@ flutter run -d chrome
 
 浏览器数据按浏览器与网址保存；需要稳定预览地址时可加 `--web-port 8840`。依赖首次安装需要网络，安装后的 App 内容随包提供。
 
-当前本机L26离线预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`，采用优化编译与原本地开发签名；具名L26包身份见版本台账。模拟器调试包另保留为同目录 `app-debug.apk`。Google Play P01仍是此前 `build/app/outputs/bundle/release/app-release.aab`（`1.0.0+1`，release上传密钥签名），与同版本号的本地L26内容不同；上传/送审历史及当前观察见版本台账。
+当前本机L28离线预览使用 `http://127.0.0.1:8820/`，也可在项目根目录双击 `start-flutter.cmd`。ARM64 安卓试用包在 `build/app/outputs/flutter-apk/app-release.apk`，采用优化编译与原本地开发签名；具名L28包身份见版本台账。模拟器调试包另保留为同目录 `app-debug.apk`。Google Play P01仍是此前 `build/app/outputs/bundle/release/app-release.aab`（`1.0.0+1`，release上传密钥签名），与同版本号的本地L28内容不同；上传/送审历史及当前观察见版本台账。
 
 安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
 

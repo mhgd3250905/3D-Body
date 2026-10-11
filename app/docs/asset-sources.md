@@ -4,6 +4,16 @@
 
 App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为v41与穿衣详情，不加载历史白膜派生。
 
+## 当前 App 图标：青绿色运动服 Flare 人物（2026-10-11，用户选定 B）
+
+用户明确选择新角度 B 的青绿色运动服人物。图标制作以当前 v41 人物的实际渲染起步，最终以用户提供的新角度截图 `output/imagegen/flare-logo-20261011/user-pose-angle-2.png` 为姿态与镜头基准，经内置 imagegen 二次处理角色面孔、青绿色运动服、光影及橙色旋转轨迹。它是用于品牌图标的 AI 图像处理派生；交互场景中的人物、原服装、网格、v41 动画、启动剪影与 L26 银色肌群条目保持。
+
+选定原图 [icon-flare-angle2-b.png](../assets/brand/icon-flare-angle2-b.png) 为1254×1254，SHA-256 `3728021f0dcc87c8f6d20e39d7aa74d1055afd960802e6dda16824c78bd280ad`；当前品牌母版 [icon.png](../assets/brand/icon.png) 为1024×1024不透明 PNG，SHA-256 `4efb4ce324c70e63cfc0612450b5a16b403b94033723b15e367702ee9e834d8d`。选定B的[完整提示词与来源记录](../assets/brand/icon-flare-angle2-b.imagegen.json)随L28进入Git；A/B/C完整抽卡记录 `app/assets/brand/icon-flare-angle2.imagegen.json`、未选候选图及此前设计保留在本机。
+
+[export-brand-icons.mjs](../tools/export-brand-icons.mjs) 将选定原图导出为34张 Android、iOS、Flutter Web 及品牌/商店图标；[icon-manifest.json](../assets/brand/icon-manifest.json) 保存尺寸、构图占比、字节与逐图 SHA-256。Android adaptive 前景与 Web maskable 采用留边构图，普通图标与 iOS 使用对应平台尺寸，品牌母版保持完整方图。此前 `icon.png` 来自原品牌包 `10_品牌与商店/app-icon/icon-master-1024.png`，原件与替换前的平台图标保留在 `output/imagegen/flare-logo-20261011/adopted-teal/before/`。
+
+原人物署名 **Snow Rig © Blender Foundation | studio.blender.org** 与 CC BY 4.0 来源保留于 [Snow-ATTRIBUTION.md](../assets/licenses/Snow-ATTRIBUTION.md)。本段记录用户选定的设计与资源同步；构建、安装与设备验证以版本台账和验证记录为准。
+
 ## 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
 
 用户反馈L25米白质感仍不足，授权尝试金属。L26的17张透明512×512 WebP共592,628字节，采用钛银色金属人台和保留原色的珐琅教学选区；模型、原分区、左右与逐组镜头沿用L24/L25，仅更改离线截图的材质、反射和光照，运行时人台保持。L26安装后用户先反馈不满意并要求试作黄色橡胶，随后看手机银色截图明确确认“这个银色可以 就这个了”；当前选用L26银色肌群图文条目外观。该确认仅覆盖此处肌群图片与条目，不扩大为全App或其他T02验收。
@@ -64,7 +74,7 @@ v33及后续v38清单、源文件保留为独立历史基线；当前来源为 `
 | `assets/data/drills.json`、Schema | `07_训练库/` 原内容，51训练；原字段不改，App 按来源清单找到本地 WebP |
 | `assets/data/course-stages.json` | `09_实施计划/code/src/features/path/stages.ts` 派生；原 TS 另保留为 `stages-source.ts`，课程与阈值标注草稿；运行时免费且采用人工自评 |
 | `assets/drills/*.webp` | `07_训练库/img/` 的51张 PNG，每张本地转码为1024/512两尺寸、quality82；原图保留，图像源/输出哈希见 `assets/data/source-manifest.json` |
-| `assets/brand/icon.png` | `10_品牌与商店/app-icon/icon-master-1024.png` 的本地副本 |
+| `assets/brand/icon.png` | 当前为用户选定的青绿色运动服 Flare 图标 B 的1024不透明派生；制作、原图与导出清单见上方当前图标段落。此前为 `10_品牌与商店/app-icon/icon-master-1024.png` 的本地副本，原件和替换前资源保留 |
 | `assets/fonts/FlareSans.ttf` | Google Fonts官方Noto Sans SC原字体的本地副本，字节不修改，仅文件名/Flutter族别名变化；OFL文本保留于 `assets/licenses/NotoSansSC-OFL.txt`；不依赖远程字体 |
 
 内容导入可用 `assets/data/import_content.py` 在本地复现，需要 Python/Pillow；它只读源包，生成 App 数据和图像副本。3D 构建按 [scene/README.md](../scene/README.md) 执行。[原模型压缩记录](../scene/tools/model-optimization.json) 已记录源/输出哈希：正常着装 Snow 从7,508,016字节压缩至2,390,231字节，人台从1,338,688至863,833字节，采用meshopt与gzip；未减面、未量化、未合并网格。这两个原模型的3,572,742个属性值保持一致，三角形允许等价的循环顶点排序。白膜派生的制作与压缩范围另见下文，不能把其 Blender 局部改网格说成原网格完全不变。当前没有已验收的移动LOD。

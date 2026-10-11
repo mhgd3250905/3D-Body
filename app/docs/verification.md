@@ -1,4 +1,18 @@
-# L26版本整理与接力检查点（2026-10-11）
+# L28青绿色运动服图标交付（2026-10-11）
+
+用户选择新角度B。选定原图经尺寸导出及平台裁切留边，34项PNG尺寸/不透明要求/哈希通过；Android 5密度普通与adaptive前景的10项编译后像素，与源PNG逐项一致。圆形/iOS圆角/Android adaptive/Web maskable预览为 `output/imagegen/flare-logo-20261011/adopted-teal/crop-preview.png`。原图、全提示词、来源及SHA在 `assets/brand/icon-flare-angle2-b.imagegen.json` 与 `icon-manifest.json`，复现为 `node app/tools/export-brand-icons.mjs --sharp-root <existing sharp package>`。
+
+用户确认后建立本地L28版本检查点 `app-l28-20261011`。本次版本整理仅补充选定素材来源、[桌面图标实景裁图](screenshots/2026-10-11/L28-home-icon.png)及Git身份文档；生产图标与既有L28构建内容相同，APK源文件与具名副本SHA仍为 `c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b`，Play P01哈希保持。保存前核对导出清单34项文件SHA及源图SHA、检查Git暂存范围和 `git diff --check`，不重复构建或扩大验收。
+
+`flutter build web --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功；`flutter build apk --release --no-pub --target-platform android-arm64` 成功，进程环境继续采用既有低内存Gradle参数。首次构建后补入本轮图标署名文本，重建Web/APK，再用既有开发证书签名；图标母版与署名在源/APK/Web逐字节一致。`apksigner verify --print-certs` 通过，开发证书SHA仍为 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。包字节/哈希及当前身份只在 [版本台账](version-ledger.md) 维护。
+
+交付核对共51项通过；与替换前L26 APK比较的41项场景、17银色图、加载与首页图片保持逐字节相同。实际HTTP读取Web7项图标/署名资产，与构建文件一致，favicon引用正确；430×932浏览器启动截图已保存，pageerror为0。检查报告为 `output/releases/L28-teal-logo-delivery.json` 与 `output/imagegen/flare-logo-20261011/adopted-teal/web-check.json`。
+
+`adb install -r --no-streaming` 于12:07:18（北京时间）成功，未卸载或清除数据；初次 `am start -W` 返回Status ok，进程18394，按PID抽样的AndroidRuntime/chromium错误日志为空。初次设备PIN锁屏，未输入或绕过凭据。用户随后解锁，12:19补验系统应用信息与桌面：青绿B图标已生效，人物、两鞋及橙色轨迹完整未裁切。桌面XML中Flare节点bounds为 `[339,570][640,896]`；force-stop后点击该节点中心冷启动，App进入原3D首页与同步人台，进程18954，按PID错误日志为空。实景证据为 `output/imagegen/flare-logo-20261011/adopted-teal/device-unlocked-appinfo.png`、`device-home-icon.png` 与 `device-launch.png`，记录 `output/releases/L28-teal-logo-device-check.json`。iOS仅完成12个被引用PNG的资源同步及尺寸/alpha检查，Windows未构建iOS。此次只改图标与署名，不运行Dart/场景全量测试；模型/功能既有证据继续按对应source state使用，不扩大为T01/T02完整验收。Play P01 AAB哈希保持。
+
+---
+
+# 历史：L26版本整理与接力检查点（2026-10-11）
 
 范围冻结为PR7交付基线 `812d948b49616d8edce20fd7ec46d70129e0fa27` 之后的App界面迭代：L06–L26加载/启动预热与剪影、高清全身小卡、柔边高亮、重点肌群一致性、3D卡片/圆点/细线及17银色图文条目。代码、生产资源、复现工具、已有定向测试及当前入口文档纳入本地检查点；不纳入 `Air-Flare/` 用户素材、个人数据、原导出、根编辑器、`build/`、`dist/`、`output/` 或签名材料。未改版号、标签、Play包或远端。完整checkpoint SHA由Git和本轮临时交接回执定位，不在提交中预填自身SHA。
 

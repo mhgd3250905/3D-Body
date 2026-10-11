@@ -4,7 +4,19 @@
 
 本文件是代码检查点、版本、安装包及发布观察的当前台账。实施与待验收项由 [development-roadmap.md](development-roadmap.md) 维护；测试命令、source state 与限制由 [verification.md](verification.md) 维护；动作来源与播放合约由 [motion-v41.md](motion-v41.md) 维护。下文路径均相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-11 真机界面迭代（当前工作区）
+## 2026-10-11 L28：采用青绿色运动服 Flare 图标 B
+
+用户选定新角度 B。当前源资源、通用/具名开发 APK 与离线 Flutter Web 已换用该图标，保留 L26 功能与银色肌群条目。34张品牌、Android、iOS和Web图标由同一选定原图导出；iOS仅同步资源，未进行Xcode构建。姿态来自用户的项目模型截图，imagegen调整图标人物、服装和光影；运行时人物、原服装、v41动画及加载剪影保持。
+
+L28具名包 `output/releases/Flare-v41-teal-logo-20261011-arm64.apk` 与通用 `app/build/app/outputs/flutter-apk/app-release.apk` 相同，46,151,845字节，SHA-256 `c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b`。使用既有 Android Debug 开发证书，包名/版本仍 `dev.mhgd.flare` / `1.0.0+1`；于12:07:18（北京时间）以 `adb install -r --no-streaming` 保留数据覆盖安装成功，初次启动Status ok、进程18394，定向错误日志为空。初次核对时手机PIN锁屏；用户随后解锁，于12:19补验桌面与应用信息页：青绿图标已生效，人物和两鞋完整未裁切。经桌面图标冷启动，原3D首页和同步人台正常显示，进程18954、按PID错误日志为空；该核对不扩大为完整设备或性能验收。
+
+51项资源/包核对通过，41项既有场景、银色肌群图、加载/首页图片在新旧APK间逐字节一致；Web 7项HTTP资产与构建文件相同，浏览器加载无pageerror。图标与署名在源/APK/Web一致；记录 `output/releases/L28-teal-logo-delivery.json`，来源与导出见 [asset-sources.md](asset-sources.md)。旧图标/平台资源及通用L26包均独立备份。
+
+用户确认真机效果并要求版本管理后，L28代码保存点以本地标签 `app-l28-20261011` 定位，完整提交SHA由 `git rev-parse app-l28-20261011^{commit}` 查询，不在提交正文预填自身SHA。基线为L26提交 `632fdb673d50908083e9fb43440886f2e2ac5684`；保存34张生产图标、选定B原图与完整提示词、导出工具、署名、当前入口及验证文档，以及[真机桌面图标裁图](screenshots/2026-10-11/L28-home-icon.png)。用户于12:19补验后回复“可以了”，该确认适用于本次图标效果。未push、上传或部署；APK、完整本机检查报告、未选候选及原图参考继续留在E盘，Air-Flare用户素材不纳入提交。
+
+Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d141a6a0f6f2cb9dcaedb741e1d2119`，未替换。根目录dist原编辑器及个人数据保留。
+
+## 历史：2026-10-11 L06–L26真机界面迭代
 
 用户最终明确选择手机截图中的L26银色版：17张钛银金属人台摄影用于主力、其他参与及详情协同肌群条目，已接受此项外观。手机保持已安装的L26，源缩略图/清单及通用APK均恢复并核对为同一银色版；离线Flutter Web已同步回L26。L23卡片空间/平滑表现保持。本阶段代码、资源与入口文档归入10-11本地版本检查点，历史具名包保留。黄色L27仅作试制并构建，未安装到手机，其素材报告保留，不作为当前选择。
 
@@ -24,13 +36,13 @@
 
 | 维度 | 当前值 | 判定依据与边界 |
 | --- | --- | --- |
-| Git 分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | L06–L26在10-11形成本地检查点，未push；本地origin/master引用仍为812d948，本轮未联网刷新，不推断实时远端状态 |
-| 当前本地产品检查点 | 10-11 L26界面迭代保存点，完整SHA由Git/交接回执定位 | 基线812d948，产品内容与已安装L26一致；不是新的商店发布版本 |
+| Git 分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | L26/L28均为本地检查点，未push；本地origin/master引用仍为812d948，本轮未联网刷新，不推断实时远端状态 |
+| 当前本地产品检查点 | 本地标签 `app-l28-20261011`，父提交为L26 `632fdb673d50908083e9fb43440886f2e2ac5684` | 当前源/APK/Web为L28；完整SHA由Git解析标签，不是新的商店发布版本 |
 | 历史PR7合并检查点 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | 与最终审核源b991aa3完整tree同为 `649b9f77189ec4830519825a1d730f54a638e088`；PR7阶段已验证产品源d1c3886之后仅文档/截图 |
 | 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
 | App 包版本 / Android 包名 | `1.0.0+1` / `dev.mhgd.flare` | `app/pubspec.yaml` 与 Android 源配置；`0.1.0+1` 仅属 Play 接入前历史版本 |
 | 动作内容版本 | `v41` | 固定来源 `53d72b412840a942fefc818836b68ad2a2d7e0d1`；本轮没有另改动作、脸或衣物。v41 不等于 App 第 41 个发布版本 |
-| 当前本地试用包 | 下表 L26，开发签名 APK | 已安装到所连真机，用户明确接受银色肌群条目外观；`--release` 表示优化构建，使用相同开发证书 |
+| 当前本地试用包 | 下表 L28，开发签名 APK | 保留数据安装成功，桌面/应用信息图标完整，桌面冷启动与原3D首页已实景核对；L26银色条目认可继续有效。`--release` 为优化构建，使用相同开发证书 |
 | Play 已上传包 | 下表 P01，上传密钥签名 AAB | 构建源 `92e459f54b620c6d72d2a920521e3e3a72b785e9`；是先前送审包，不等于本地最新产品 |
 | 验收状态 | 定向软件验证通过；T01–T05 按路线继续 | 不把 APK 生成、文档提交或 Cockpit 检查点记成真机、教练或商店验收 |
 
@@ -65,6 +77,8 @@
 
 ## 安装包与本地预览
 
+当前为L28；通用/具名包身份见上方L28记录。离线Web稳定预览为 `http://127.0.0.1:8820/`。下面L26及更早包的构建、进程与验收均为保留历史证据，不覆盖当前安装身份。
+
 L26具名包与通用APK一致；场景使用 `index-DBRgBX7q.js` / `index-1IjNUedj.css`，APK内JS与源构建SHA-256均为`80a439211f0f4d12582dab1d8b8fd40b15d5f065aebde77b70cbf0b09822f3f8`。17张银色肌群图片逐项核对包内哈希与摄影报告相同，共592,628字节，并按用户最终选择从同一APK恢复到源资产；L24图文/点击证据保留。手机进程17949及启动日志抽样无异常；没有安装黄色试作。交付/运行/选择记录为 `output/releases/L26-metal-muscle-image-items-delivery.json`、`L26-runtime-check.json`、`L26-silver-selection.json`。原L05–L25具名包与试作报告保留，Play包保持。
 
 历史L07增加 Flutter 加载遮挡并取消交叉淡出，沿用 L06 的开发证书覆盖安装；当时具名包与通用 APK 一致，Web产物仍为L06，以下L06/L05核对不代表L07界面验收。
@@ -75,7 +89,8 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 
 | ID / 状态 | 来源、用途与根项目路径 | 字节 / SHA-256 |
 | --- | --- | --- |
-| L26 当前银色肌群图文 APK | 钛银金属/细拉丝与原色肌群，17图片；已保留数据安装并冷启动，用户最终接受所示银色条目外观；`output/releases/Flare-v41-metal-muscle-image-items-20261011-arm64.apk`。Android Debug开发签名、1.0.0+1、arm64；通用路径与L26相同 | 45,615,269；`b1c83d7ccadcabbbaa60bf7fa1b145176ce72abdc161f83b31e40dae54a0ca98` |
+| L28 当前青绿色Flare图标 APK | L26功能/银色条目加用户选定B图标；`output/releases/Flare-v41-teal-logo-20261011-arm64.apk`，与通用APK相同。Android Debug开发签名、1.0.0+1、arm64；12:07:18保留数据安装，12:19桌面/应用信息图标与桌面启动实景核对通过 | 46,151,845；`c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b` |
+| L26 历史银色肌群图文 APK | 钛银金属/细拉丝与原色肌群，17图片；当时已保留数据安装并冷启动，用户接受银色条目外观；`output/releases/Flare-v41-metal-muscle-image-items-20261011-arm64.apk`。Android Debug开发签名、1.0.0+1、arm64；通用路径已由L28更新，银色条目在L28保持 | 45,615,269；`b1c83d7ccadcabbbaa60bf7fa1b145176ce72abdc161f83b31e40dae54a0ca98` |
 | L25 历史米白肌群图文 APK | 截图专用米白哑光/柔光，17图片；用户反馈质感不足，最终采用L26；`output/releases/Flare-v41-ivory-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L26更新 | 45,443,237；`0e5e9ce330143f62904bc3cadf4d1e8d2c897f3f8bf5840c5116882c3a255e3c` |
 | L24 历史肌群图文条目 APK | 17张灰色人台渲染图用于主力/次要/详情协同肌群条目；图文入口保留，摄影材质由L25调整；`output/releases/Flare-v41-muscle-image-items-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L25更新 | 45,426,853；`c3f67e3236284bfa3baed458a0d6024f84342b3c5fdca2b548603264331f7a1b` |
 | L23 历史可见平滑卡片 APK | L22基础上保护完整卡片不穿地面、不出宿主可见舞台；场景修复保留在L24；`output/releases/Flare-v41-visible-smooth-muscle-cards-20261011-arm64.apk`保留。Android Debug开发签名、1.0.0+1、arm64；通用路径由L24更新 | 45,011,424；`52cbb97123ebaec10096e6bc08248c4f2f6c2ca7a18f2eeec067206164e30750` |
