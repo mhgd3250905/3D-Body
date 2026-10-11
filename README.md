@@ -267,3 +267,10 @@ node app/tools/verify-v41.mjs
 2026-10-11 iOS 版本记录：专用 `ios/main`，S4 `1.0.0 (3)`，产品源 `7ffa5e6`，已于北京时间 12:26:29 正式提审，最后平台重读为 `WAITING_FOR_REVIEW`。尚未公开上架，审核后手动发布；同归档 D1 核心真机测试已完成，已列明的剩余限制不冒充全项验收通过。Android/Web 和已送审 Play 包保留各自身份。当前版本、包与发布观察见 [版本台账](app/docs/version-ledger.md)，实施/待验收见 [路线台账](app/docs/development-roadmap.md)，实际命令和 source state 见 [验证记录](app/docs/verification.md)。
 
 2026-10-11 当前App交付为 **L28**，在已认可的L26功能与银色肌群条目底座上换用用户选定的青绿色运动服 Flare 图标 B，Android/iOS/Web 图标资源已同步。默认动作仍为v41。启动页预加载同一场景，以原模型的真实Flare动作剪影等待人物首帧，再连续揭开界面；详情小卡保持高清全身，动作人物的当前肌群柔边高亮保留。
+
+
+## 历史：iOS L28 本地对齐（2026-10-11）
+
+2026-10-11 iOS 本地功能对齐：`ios/main` 已 rebase 到主线 `96e1db0`（L28），包含启动预加载/动作剪影、暂停重点标注、高清小卡、柔边高亮、银色肌群条目和青绿色图标；保留 WKWebView 恢复、iOS 系统减少动态效果和既有原生配置。本地开发版本为 `1.0.0+4`，与已送审 S4 `1.0.0 (3)` 分开记录；未替换或重新提交商店候选。 结果与限制见 [对齐记录](app/docs/ios-l28-rebase-2026-10-11.md)。
+
+2026-10-11 iOS 版本记录：专用 `ios/main`，S4 `1.0.0 (3)`，产品源 `7ffa5e6`，已于北京时间 12:26:29 正式提审，最后平台重读为 `WAITING_FOR_REVIEW`。尚未公开上架，审核后手动发布；同归档 D1 核心真机测试已完成，已列明的剩余限制不冒充全项验收通过。Android/Web 和已送审 Play 包保留各自身份。当前版本、包与发布观察见 [版本台账](app/docs/version-ledger.md)，实施/待验收见 [路线台账](app/docs/development-roadmap.md)，实际命令和 source state 见 [验证记录](app/docs/verification.md)。

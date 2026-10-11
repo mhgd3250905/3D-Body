@@ -100,3 +100,10 @@ README.md 是当前使用与文档入口；姿势编辑以 docs/pose-editor.md �
 2026-10-11 iOS 阶段当前记录：专用 `ios/main` 基于 PR #8，产品源 `7ffa5e6`，版本 `1.0.0 (3)`；精确 S4 于北京时间 12:26:29 正式提交，最后平台复查为 `WAITING_FOR_REVIEW`，审核后手动发布，尚未公开上架。同归档开发签名 D1 已完成核心真机流程，用户已接受明确列出的剩余验收限制；TestFlight 404 独立待 Apple 处理。iOS 身份与发布状态以 `app/docs/version-ledger.md` 为准，实际证据与局限以 `app/docs/verification.md` 为准，待验收项以 `app/docs/development-roadmap.md` 为准。下文 Android/Web 交付与历史动作记录继续保留，不用 iOS Build 3 冒充已送审 Play 包升级。
 
 2026-10-11 当前App交付为L28：在已认可L26功能与银色条目底座上换用用户选定的青绿色运动服Flare图标B，Android/iOS/Web图标资源已同步；运行时人物、v41动作与原模型启动剪影保持。启动页预加载同一场景，真实Flare动作剪影与人物首帧衔接；高清全身小卡、当前群组柔边高亮保持。暂停最多3项重点与人体图一致，圆点/细线卡片随旋转选侧、避让身体、平滑移动，并保护地面和画面边界。17张银色模型摄影用于肌群图文条目，用户已认可这项条目外观；运行时人台材质保持。
+
+
+## 历史：iOS L28 本地对齐（2026-10-11）
+
+2026-10-11 iOS 本地功能对齐：`ios/main` 已 rebase 到主线 `96e1db0`（L28），包含启动预加载/动作剪影、暂停重点标注、高清小卡、柔边高亮、银色肌群条目和青绿色图标；保留 WKWebView 恢复、iOS 系统减少动态效果和既有原生配置。本地开发版本为 `1.0.0+4`，与已送审 S4 `1.0.0 (3)` 分开记录；未替换或重新提交商店候选。 结果与限制见 [对齐记录](app/docs/ios-l28-rebase-2026-10-11.md)。
+
+2026-10-11 iOS 阶段当前记录：专用 `ios/main` 基于 PR #8，产品源 `7ffa5e6`，版本 `1.0.0 (3)`；精确 S4 于北京时间 12:26:29 正式提交，最后平台复查为 `WAITING_FOR_REVIEW`，审核后手动发布，尚未公开上架。同归档开发签名 D1 已完成核心真机流程，用户已接受明确列出的剩余验收限制；TestFlight 404 独立待 Apple 处理。iOS 身份与发布状态以 `app/docs/version-ledger.md` 为准，实际证据与局限以 `app/docs/verification.md` 为准，待验收项以 `app/docs/development-roadmap.md` 为准。下文 Android/Web 交付与历史动作记录继续保留，不用 iOS Build 3 冒充已送审 Play 包升级。

@@ -1,5 +1,6 @@
 import 'package:flare/ui/loader_mark.dart';
 import 'package:flare/ui/motion.dart';
+import 'package:flare/ui/flare_silhouette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,11 +17,11 @@ FlareLoaderPainter _painter(WidgetTester tester) =>
             .painter!
         as FlareLoaderPainter;
 
-Future<void> _openLoader(WidgetTester tester) async {
+Future<void> _openLoader(WidgetTester tester, {bool silhouette = false}) async {
   await tester.pumpWidget(
     MaterialApp(
       builder: (context, child) => FlareMotionPreferences(child: child!),
-      home: const Scaffold(body: Center(child: FlareLoaderMark())),
+      home: Scaffold(body: Center(child: silhouette ? const FlareLoadingSilhouette() : const FlareLoaderMark())),
     ),
   );
   await tester.pump();
@@ -78,6 +79,51 @@ void main() {
     expect(_painter(tester).t, greaterThan(resumed));
     await tester.pumpWidget(const SizedBox.shrink());
     expect(tester.binding.transientCallbackCount, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('live iOS motion preferences select the L28 silhouette asset', (
+    tester,
+  ) async {
+    final platform = tester.binding.platformDispatcher;
+    addTearDown(platform.clearAccessibilityFeaturesTestValue);
+    platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      reduceMotion: true,
+    );
+    await _openLoader(tester, silhouette: true);
+    final silhouette = tester.element(find.byType(FlareLoadingSilhouette));
+    String asset() =>
+        (tester
+                    .widget<Image>(
+                      find
+                          .descendant(
+                            of: find.byType(FlareLoadingSilhouette),
+                            matching: find.byType(Image),
+                          )
+                          .first,
+                    )
+                    .image
+                as AssetImage)
+            .assetName;
+    expect(asset(), FlareLoadingSilhouette.stillAsset);
+    platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures();
+    await tester.pump();
+    // Decode the offline WebP so frameBuilder no longer displays its fallback.
+    await tester.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pump();
+    expect(asset(), FlareLoadingSilhouette.animationAsset);
+    platform.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
+      reduceMotion: true,
+    );
+    await tester.pump();
+    expect(asset(), FlareLoadingSilhouette.stillAsset);
+    expect(
+      tester.element(find.byType(FlareLoadingSilhouette)),
+      same(silhouette),
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
     expect(tester.takeException(), isNull);
   });
 }

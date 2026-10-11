@@ -185,3 +185,10 @@ npm run build
 
 历史检查点（2026-10-10，上传与内部测试）：专用 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6`、S4 `1.0.0 (3)`。用户精确授权后，原 IPA 已上传并处理为 VALID，商店草稿已绑定 Build 3；原内部组“Flare iOS v1”仍只有指定的一名账号，保留 S2 历史构建、自动分发关闭，Build 3 正在测试、账号已邀请。商店文案、10 张截图、审核信息、手动发布、免费/全部 175 个地区供应及关闭 Mac/Vision Pro 商店供应的既有配置保留。S4 的 10 项相关 UI 测试、analyze、签名和 Apple 验证通过，同源调试版关于页原生复查通过；精确候选身份见 [iOS 验证](docs/ios-verification-2026-10-10.md)与[版本台账](docs/version-ledger.md)。公开[隐私政策修订](docs/privacy-policy-ios-v1-draft.md)已按授权部署到现有 Worker，生产模块及公开响应均与批准版本匹配。用户要求等其回来连接 iPhone，再继续真机验证；最终合规、正式审核与公开发布尚未执行，Android/Web 既有交付保留。
 安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 已完成 macOS/Xcode 模拟器、S4 分发验包、同归档 D1 核心真机流程及正式提审；目前等待 Apple 审核，尚未公开发布。步骤与仍未通过的验收项见 [iOS 执行台账](docs/ios-plan-2026-10-09.md)。Mac 上先运行 `FLUTTER_BIN=/SDK路径/bin/flutter bash tools/ios/doctor.sh`，脚本保留已有配置改动；安装或 smoke 必须指定设备 ID。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
+
+
+## 历史：iOS L28 本地对齐（2026-10-11）
+
+2026-10-11 iOS 本地功能对齐：`ios/main` 已 rebase 到主线 `96e1db0`（L28），包含启动预加载/动作剪影、暂停重点标注、高清小卡、柔边高亮、银色肌群条目和青绿色图标；保留 WKWebView 恢复、iOS 系统减少动态效果和既有原生配置。本地开发版本为 `1.0.0+4`，与已送审 S4 `1.0.0 (3)` 分开记录；未替换或重新提交商店候选。 结果与限制见 [对齐记录](docs/ios-l28-rebase-2026-10-11.md)。
+
+2026-10-11 最新发布状态：用户明确接受所列验收限制并批准最终声明和正式提审后，精确 S4 `1.0.0 (3)` 已于北京时间 12:26:29 提交；Apple 接口 HTTP 200，页面及服务端重读均为 `WAITING_FOR_REVIEW`。年龄、内容版权、非医疗设备和“不收集数据”隐私标签已保存/发布；原候选、免费/地区与手动发布方案保持，App 尚未公开发布。下文此前未执行的问卷/审核描述保留为历史检查点，当前以 [正式提审记录](docs/ios-app-review-submission-2026-10-11.md) 为准。

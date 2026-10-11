@@ -59,8 +59,15 @@ void main() {
     app.main();
     await _until(
       tester,
-      () => find.byType(WelcomePage).evaluate().isNotEmpty,
-      'first-launch page',
+      () =>
+          find.byType(WelcomePage).evaluate().isNotEmpty &&
+          find
+              .byKey(const ValueKey('startup-revealed'))
+              .evaluate()
+              .isNotEmpty &&
+          find.text('开始').hitTestable().evaluate().isNotEmpty,
+      'first-launch page with the prewarmed scene revealed',
+      timeout: const Duration(seconds: 45),
     );
     await tester.tap(find.text('开始'));
     await tester.pumpAndSettle();
