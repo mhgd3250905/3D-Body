@@ -146,3 +146,8 @@ npm run build
 ## 历史：iOS 本地记录 88523be
 
 2026-10-11 iOS 真机进展：iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 实际安装 S4 1.0.0 (3) 时，Apple 安装数据接口返回 HTTP 404，App 未安装。指定浏览器已按授权恢复；今日平台复查 S4 VALID、未过期、IN_BETA_TESTING，内部组仅一名 ACCEPTED 测试员且自动分发关闭。S4 于 10 月 10 日 14:42:37 上传，已在用户提供的 Apple 支持邮件所要求的 48 小时窗口之后。原案例补充留言已准备、待授权发送；详见 [安装诊断](docs/testflight-install-diagnostic-2026-10-11.md)。下段保留上传与邀请阶段的历史观察，精确候选及真机/审核门禁保持。
+
+
+## 历史：iOS 本地记录 be4265d
+
+2026-10-11 iOS 真机进展：iPhone 16 Pro / iOS 26.5 / TestFlight 4.4.0 实际安装 S4 1.0.0 (3) 时，Apple 安装数据接口返回 HTTP 404，App 未安装。指定浏览器已按授权恢复；今日平台复查 S4 VALID、未过期、IN_BETA_TESTING，内部组仅一名 ACCEPTED 测试员且自动分发关闭。S4 于 10 月 10 日 14:42:37 上传，已在用户提供的 Apple 支持邮件所要求的 48 小时窗口之后。原案例 858 字符留言已获批准，但表单限额 350 字符，尚未提交；349 字符精简稿待确认；详见 [安装诊断](docs/testflight-install-diagnostic-2026-10-11.md)。下段保留上传与邀请阶段的历史观察，精确候选及真机/审核门禁保持。
