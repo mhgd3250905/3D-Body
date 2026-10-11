@@ -1794,55 +1794,262 @@ class _MuscleKnowledgeBlock extends StatefulWidget {
 
 class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
   final _scroll = ScrollController();
+  final _readerScroll = ScrollController(keepScrollOffset: false);
+  final _portal = OverlayPortalController();
+  final _anchorKey = GlobalKey();
+  Rect? _previewRect, _readerRect;
+  Timer? _closeTimer;
+  bool _expanded = false;
+
+  TextStyle _style(BuildContext context, {bool reader = false}) =>
+      DefaultTextStyle.of(context).style.merge(
+        TextStyle(
+          fontSize: reader ? 14 : 12.5,
+          height: reader ? 1.6 : 1.55,
+          color: FlareColors.secondary,
+        ),
+      );
+
+  double _textHeight(
+    BuildContext context,
+    double width, {
+    bool reader = false,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: widget.text,
+        style: _style(context, reader: reader),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: width.clamp(1, double.infinity));
+    final height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  void _open() {
+    if (_portal.isShowing) return;
+    final anchor = _anchorKey.currentContext?.findRenderObject();
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (anchor is! RenderBox || overlay is! RenderBox) return;
+    final origin = overlay.localToGlobal(Offset.zero);
+    final rect = (anchor.localToGlobal(Offset.zero) - origin) & anchor.size;
+    final topLimit = MediaQuery.viewPaddingOf(context).top + 108;
+    final available = (rect.bottom - topLimit).clamp(
+      rect.height,
+      double.infinity,
+    );
+    final height = (_textHeight(context, rect.width - 52, reader: true) + 28)
+        .clamp(rect.height, available);
+    _closeTimer?.cancel();
+    setState(() {
+      _previewRect = rect;
+      _readerRect = Rect.fromLTRB(
+        rect.left,
+        rect.bottom - height,
+        rect.right,
+        rect.bottom,
+      );
+      _expanded = true;
+    });
+    _portal.show();
+    FlareHaptics.selection();
+  }
+
+  void _close() {
+    if (!_portal.isShowing || !_expanded) return;
+    setState(() => _expanded = false);
+    _closeTimer?.cancel();
+    final duration = FlareMotion.of(context, FlareMotion.collapse);
+    _closeTimer = Timer(duration, () {
+      if (mounted) {
+        _portal.hide();
+        setState(() {});
+      }
+    });
+  }
+
+  ScrollBehavior _scrollBehavior(BuildContext context) =>
+      ScrollConfiguration.of(context).copyWith(
+        scrollbars: false,
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.invertedStylus,
+          PointerDeviceKind.trackpad,
+        },
+      );
 
   @override
   void dispose() {
+    _closeTimer?.cancel();
     _scroll.dispose();
+    _readerScroll.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: FlareColors.surface.withValues(alpha: .55),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: FlareColors.hairline, width: .5),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    child: ClipRect(
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.invertedStylus,
-            PointerDeviceKind.trackpad,
-          },
+  Widget _reader(BuildContext context) => Stack(
+    children: [
+      Positioned(
+        left: 0,
+        right: 0,
+        top: 0,
+        height: _previewRect!.bottom,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _close,
+          child: const ColoredBox(color: Colors.transparent),
         ),
-        child: Scrollbar(
-          controller: _scroll,
-          thumbVisibility: true,
-          thickness: 2,
-          radius: const Radius.circular(2),
-          child: SingleChildScrollView(
-            key: const ValueKey('muscle-detail-content'),
-            controller: _scroll,
-            primary: false,
-            padding: const EdgeInsetsDirectional.only(end: 8, bottom: 4),
-            child: Text(
-              widget.text,
-              key: const ValueKey('muscle-knowledge'),
-              style: TextStyle(
-                fontSize: 12.5,
-                height: 1.55,
-                color: FlareColors.secondary,
+      ),
+      TweenAnimationBuilder<Rect?>(
+        tween: RectTween(
+          begin: _previewRect,
+          end: _expanded ? _readerRect : _previewRect,
+        ),
+        duration: FlareMotion.of(
+          context,
+          _expanded ? FlareMotion.expand : FlareMotion.collapse,
+        ),
+        curve: FlareMotion.settle,
+        builder: (context, rect, child) =>
+            Positioned.fromRect(rect: rect!, child: child!),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Container(
+            key: const ValueKey('muscle-knowledge-expanded-card'),
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: FlareColors.surface,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: FlareColors.hairline, width: .5),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x26000000),
+                  blurRadius: 24,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _close,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ScrollConfiguration(
+                      behavior: _scrollBehavior(context),
+                      child: SingleChildScrollView(
+                        key: const ValueKey('muscle-knowledge-reader'),
+                        controller: _readerScroll,
+                        primary: false,
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          12,
+                          12,
+                          40,
+                          12,
+                        ),
+                        child: Text(
+                          widget.text,
+                          key: const ValueKey('muscle-knowledge-expanded'),
+                          style: _style(context, reader: true),
+                        ),
+                      ),
+                    ),
+                  ),
+                  PositionedDirectional(
+                    end: 0,
+                    top: 0,
+                    child: IconButton(
+                      key: const ValueKey('muscle-knowledge-close'),
+                      tooltip: context.strings.close,
+                      onPressed: _close,
+                      icon: const Icon(Icons.unfold_less_rounded, size: 18),
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
-    ),
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final overflow =
+          _textHeight(context, constraints.maxWidth - 38) >
+          constraints.maxHeight - 8;
+      return OverlayPortal(
+        controller: _portal,
+        overlayChildBuilder: _reader,
+        child: ExcludeSemantics(
+          excluding: _portal.isShowing,
+          child: Semantics(
+            button: overflow,
+            hint: overflow ? context.strings.more : null,
+            child: GestureDetector(
+              key: const ValueKey('muscle-knowledge-toggle'),
+              behavior: HitTestBehavior.opaque,
+              onTap: overflow ? _open : null,
+              child: Container(
+                key: _anchorKey,
+                decoration: BoxDecoration(
+                  color: FlareColors.surface.withValues(alpha: .55),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: FlareColors.hairline, width: .5),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ClipRect(
+                        child: ScrollConfiguration(
+                          behavior: _scrollBehavior(context),
+                          child: SingleChildScrollView(
+                            key: const ValueKey('muscle-detail-content'),
+                            controller: _scroll,
+                            primary: false,
+                            padding: const EdgeInsetsDirectional.only(
+                              end: 18,
+                              bottom: 4,
+                            ),
+                            child: Text(
+                              widget.text,
+                              key: const ValueKey('muscle-knowledge'),
+                              style: _style(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (overflow)
+                      PositionedDirectional(
+                        end: 0,
+                        bottom: 0,
+                        child: ExcludeSemantics(
+                          child: Icon(
+                            Icons.unfold_more_rounded,
+                            size: 16,
+                            color: FlareColors.dim,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
   );
 }
 

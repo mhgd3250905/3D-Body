@@ -1,4 +1,18 @@
-# L40高密度3D清晰度验证（2026-10-11）
+# L41知识展开阅读验证（2026-10-11）
+
+基线e084268（L40），以 `feat(app): add L41 expandable muscle knowledge` 检查点定位。详细说明预览不显示Scrollbar/桌面自动滚动条；溢出点击OverlayPortal在原底边向上展开，340ms/收起240ms并尊重reduce motion。使用14px/1.6全文、已有14语more/close语义，内容长度计算含边框/舍入余量；长于屏幕时展开卡独立无条滚动。读完点全文、关闭图标或上方外部收起；协同卡/footer与3D舞台不参与位移，换肌群销毁旧层。
+
+全项目flutter analyze --no-pub无问题。3个测试文件共9项通过：compact_localization_test（1项包含14语言×两尺寸×真实4字体/短名及有溢出全文展开有界与固定按钮）、internationalization_test（3项RTL/知识及训练布局）、muscle_library_flow_test（5项原3项与新增320/390展开）。新增测试覆盖中间动画、底边对齐/顶部有界、24倍超长fixture全文及滚动、自然源文案reader maxScrollExtent=0、关闭按钮/外部关闭/换肌群销毁、舞台/卡片/footer/时间不变。换肌群允许原compact逻辑切换按钮48/56高度，仅底边固定。定向测试由GPT-6 Luna max与root整合；同子集复跑不累加。
+
+离线Web/ARM64 release构建成功，原Debug签名验证通过。[包核对](../../output/drill-media-20261011/L41-package-check.json)4资产源/Web/APK一致，L40/P01保持；本轮不改场景/媒体，不重复无关场景或全量Flutter测试。
+
+Chrome394×853/DPR3.25最终GUI：臀中肌预览无条，点击展开全部两段文字，关闭回到预览。展开前后footer(x20,y785,w354,h56)、iframe(x0,y108,w394,h745)、phase15/time6.052980132450331/quality medium完全相同。console error/warn为0。[实景](screenshots/2026-10-11-L41/README.md)及[浏览器记录](../../output/drill-media-20261011/L41-browser-ui-check.json)。14语完整页面人工、原生文字交互仍需用户验收。
+
+23:50:59通过adb install -r保留数据安装，firstInstallTime2026-10-08 17:53:04保持；启动Status ok/Wait3016ms/LaunchState UNKNOWN(0)，不将其记作冷启动性能。[回执](../../output/drill-media-20261011/L41-device-install.json)。按用户要求不操作手机UI；iOS、原生读屏/手势与T01–T06保留待验收。未push/商店发布，根dist、个人数据与候选资源保留。
+
+---
+
+# 历史：L40高密度3D清晰度验证（2026-10-11）
 
 源基线51b1e02（L39已安装记录），检查点以 `feat(app): sharpen L40 high-density rendering` 定位。只改场景渲染密度、质量别名、标签纹理滤波与只读诊断；不修改动作人物、机位、材质、几何、Flutter布局或媒体。默认medium/均衡DPR最多3、high最多4、low/省电最多1。标签4×CanvasTexture不生成mipmaps、minFilter LinearFilter。画质改变才重分配buffer，首页/详情/站立切换保持同一密度。
 

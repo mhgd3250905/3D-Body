@@ -236,6 +236,43 @@ void main() {
 
           final action = find.byKey(const ValueKey('train-group'));
           expect(action, findsOneWidget);
+          final actionRect = tester.getRect(action);
+          final preview = find.byKey(const ValueKey('muscle-knowledge-toggle'));
+          final previewTap = tester.widget<GestureDetector>(preview).onTap;
+          if (previewTap != null) {
+            await tester.pumpAndSettle();
+            await tester.tap(preview);
+            await tester.pumpAndSettle();
+            final reader = find.byKey(
+              const ValueKey('muscle-knowledge-expanded'),
+            );
+            expect(
+              reader,
+              findsOneWidget,
+              reason: '$language expanded at $size',
+            );
+            final readerCard = tester.getRect(
+              find.byKey(const ValueKey('muscle-knowledge-expanded-card')),
+            );
+            _recordFailure(
+              failures,
+              readerCard.left >= 0 &&
+                  readerCard.right <= size.width &&
+                  readerCard.top >= 0,
+              '$language expanded reader must stay in the screen at $size',
+            );
+            expect(tester.getRect(action), actionRect);
+            expect(
+              find.ancestor(of: reader, matching: find.byType(Scrollbar)),
+              findsNothing,
+            );
+            await tester.tap(
+              find.byKey(const ValueKey('muscle-knowledge-close')),
+            );
+            await tester.pumpAndSettle();
+            expect(reader, findsNothing);
+          }
+
           final actionText = find.descendant(
             of: action,
             matching: find.byType(Text),

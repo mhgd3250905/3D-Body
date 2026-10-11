@@ -1,5 +1,6 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/catalog.dart';
+import 'package:flare/data/muscle_knowledge.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
@@ -348,5 +349,200 @@ void main() {
       assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
     },
+  );
+
+  for (final size in [const Size(320, 700), const Size(390, 844)]) {
+    testWidgets(
+      'knowledge preview expands, scrolls without a visible scrollbar, and closes at $size',
+      (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final sourceText = muscleKnowledge['deltoids']!;
+        final veryLongText = List.filled(24, sourceText).join(' ');
+        final expectedText = veryLongText.replaceFirstMapped(
+          RegExp(r'[。.!؟।]'),
+          (match) => '${match[0]}\n\n',
+        );
+        final longCatalog = catalog.localized({sourceText: veryLongText});
+        final (_, scene) = await _pausedMuscle(tester, longCatalog);
+
+        final preview = find.byKey(const ValueKey('muscle-knowledge-toggle'));
+        final collapsedText = find.byKey(const ValueKey('muscle-knowledge'));
+        final assist = find.byKey(const ValueKey('muscle-assist-cards'));
+        final footer = find.byKey(const ValueKey('train-group'));
+        final stage = find.byWidgetPredicate(
+          (widget) =>
+              widget is ColoredBox && widget.color == FlareColors.background,
+        );
+        expect(preview, findsOneWidget);
+        expect(collapsedText, findsOneWidget);
+        expect(assist, findsOneWidget);
+        expect(footer, findsOneWidget);
+        final collapsedValue = _textValue(tester, collapsedText);
+        expect(collapsedValue, expectedText);
+        final collapsedPosition = Scrollable.of(
+          tester.element(collapsedText),
+        ).position;
+        expect(collapsedPosition.maxScrollExtent, greaterThan(0));
+        _expectNoVisibleKnowledgeScrollbar(tester, collapsedText);
+
+        final beforePreview = tester.getRect(preview);
+        final beforeAssist = tester.getRect(assist);
+        final beforeFooter = tester.getRect(footer);
+        final beforeStage = tester.getRect(stage);
+        final headerBottom = tester
+            .getRect(find.byKey(const ValueKey('muscle-detail-title')))
+            .bottom;
+
+        await tester.tap(preview);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        final expanded = find.byKey(
+          const ValueKey('muscle-knowledge-expanded-card'),
+        );
+        final expandedText = find.byKey(
+          const ValueKey('muscle-knowledge-expanded'),
+        );
+        expect(expanded, findsOneWidget);
+        expect(expandedText, findsOneWidget);
+        final duringRect = tester.getRect(expanded);
+        expect(
+          duringRect.height,
+          greaterThan(beforePreview.height),
+          reason: 'The card must already be growing at the animation midpoint.',
+        );
+
+        await tester.pumpAndSettle();
+        final expandedRect = tester.getRect(expanded);
+        expect(expandedRect.top, lessThan(duringRect.top));
+        expect(expandedRect.bottom, closeTo(beforePreview.bottom, 1));
+        expect(expandedRect.top, greaterThanOrEqualTo(headerBottom));
+        expect(expandedRect.left, greaterThanOrEqualTo(0));
+        expect(expandedRect.right, lessThanOrEqualTo(size.width));
+        expect(expandedRect.height, greaterThan(duringRect.height));
+        expect(_textValue(tester, expandedText), expectedText);
+        _expectNoVisibleKnowledgeScrollbar(tester, expandedText);
+
+        final expandedPosition = Scrollable.of(
+          tester.element(expandedText),
+        ).position;
+        expect(expandedPosition.maxScrollExtent, greaterThan(0));
+        await tester.drag(
+          find.byKey(const ValueKey('muscle-knowledge-reader')),
+          const Offset(0, -260),
+        );
+        await tester.pumpAndSettle();
+        expect(expandedPosition.pixels, greaterThan(0));
+        _expectNoVisibleKnowledgeScrollbar(tester, expandedText);
+
+        expect(tester.getRect(assist), beforeAssist);
+        expect(tester.getRect(footer), beforeFooter);
+        expect(tester.getRect(stage), beforeStage);
+        expect(scene.time, 2.375);
+        expect(scene.selected, 'deltoids');
+        expect(scene.detail, 'deltoids');
+        expect(scene.playing, isFalse);
+
+        await tester.tap(find.byKey(const ValueKey('muscle-knowledge-close')));
+        await tester.pumpAndSettle();
+        expect(expanded, findsNothing);
+        expect(preview, findsOneWidget);
+        expect(
+          Scrollable.of(tester.element(collapsedText)).position.pixels,
+          0,
+          reason: 'Closing restores the preview to its top position.',
+        );
+        expect(tester.getRect(assist), beforeAssist);
+        expect(tester.getRect(footer), beforeFooter);
+        expect(tester.getRect(stage), beforeStage);
+
+        await tester.tap(preview);
+        await tester.pumpAndSettle();
+        expect(expanded, findsOneWidget);
+        await tester.tapAt(const Offset(2, 2));
+        await tester.pumpAndSettle();
+        expect(
+          expanded,
+          findsNothing,
+          reason: 'An outside tap should collapse the overlay.',
+        );
+
+        await tester.tap(preview);
+        await tester.pumpAndSettle();
+        expect(expanded, findsOneWidget);
+        final nextGroup = catalog.synergists(
+          catalog.phaseBySource(11)!,
+          'deltoids',
+          limit: 99,
+        )[2];
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'select',
+          'time': 2.375,
+          'groupId': nextGroup.id,
+        });
+        await tester.pumpAndSettle();
+        expect(expanded, findsNothing);
+        expect(
+          find.byKey(const ValueKey('muscle-knowledge-toggle')),
+          findsOneWidget,
+        );
+        expect(scene.time, 2.375);
+        expect(scene.selected, nextGroup.id);
+        expect(scene.detail, nextGroup.id);
+        expect(scene.playing, isFalse);
+        expectMuscleKnowledge(tester, nextGroup.id);
+        final naturalText = muscleKnowledge[nextGroup.id]!.replaceFirstMapped(
+          RegExp(r'[。.!؟।]'),
+          (match) => '${match[0]}\n\n',
+        );
+        await tester.tap(preview);
+        await tester.pumpAndSettle();
+        if (expanded.evaluate().isNotEmpty) {
+          expect(_textValue(tester, expandedText), naturalText);
+          final naturalPosition = Scrollable.of(
+            tester.element(expandedText),
+          ).position;
+          expect(
+            naturalPosition.maxScrollExtent,
+            closeTo(0, .5),
+            reason:
+                'A normal teaching note should fit fully in its reader card.',
+          );
+          await tester.tap(
+            find.byKey(const ValueKey('muscle-knowledge-close')),
+          );
+          await tester.pumpAndSettle();
+        }
+        expect(
+          tester.getRect(footer).bottom,
+          beforeFooter.bottom,
+          reason: 'The practice action stays anchored to the same bottom edge.',
+        );
+        expect(tester.getRect(stage), beforeStage);
+        assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+  }
+}
+
+String _textValue(WidgetTester tester, Finder finder) {
+  final text = tester.widget<Text>(finder);
+  return text.data ?? text.textSpan?.toPlainText() ?? '';
+}
+
+void _expectNoVisibleKnowledgeScrollbar(WidgetTester tester, Finder target) {
+  final bars = tester.widgetList<Scrollbar>(
+    find.ancestor(of: target, matching: find.byType(Scrollbar)),
+  );
+  expect(
+    bars.where((bar) => bar.thumbVisibility == true),
+    isEmpty,
+    reason: 'Knowledge scrolls without a persistent visible scrollbar.',
   );
 }
