@@ -1324,3 +1324,54 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 2026-10-11 最新发布状态：用户明确接受所列验收限制并批准最终声明和正式提审后，精确 S4 `1.0.0 (3)` 已于北京时间 12:26:29 提交；Apple 接口 HTTP 200，页面及服务端重读均为 `WAITING_FOR_REVIEW`。年龄、内容版权、非医疗设备和“不收集数据”隐私标签已保存/发布；原候选、免费/地区与手动发布方案保持，App 尚未公开发布。下文此前未执行的问卷/审核描述保留为历史检查点，当前以 [正式提审记录](ios-app-review-submission-2026-10-11.md) 为准。
 
 2026-10-11 真机进展：按用户明确要求，S4 同 Release 归档的本机开发签名 D1 已直接安装到 iPhone 16 Pro / iOS 26.5，版本 1.0.0 (3)。首启、安全确认、真实 3D、模型交换/旋转/同帧返回、三场景训练选择、三组左右各 20 秒的真实计时、暂停/后台暂停、保存、深色主题、关于/许可/主动复制备份及冷启动后记录保留已观察通过。训练是合成测试记录，不代表用户实际锻炼。程序非签名内容与商店 S4 一致；TestFlight 404 未恢复，商店 S4 不变。用户直接操作反馈离线冷启、双指缩放边界和轻微触感通过；完整隐私网络、旧机性能与部分生命周期/无障碍仍有未验或取证限制，正式声明/审核未执行。见 [直接安装记录](ios-direct-device-2026-10-11.md)。
+
+
+## 历史：iOS 本地记录 1ca5269
+
+# 当前验证与 source state
+
+截至 2026-10-11 本阶段记录：iOS 产品冻结为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，S4 `1.0.0 (3)` 已于北京时间 12:26:29 正式提审，提交与重读 HTTP 200、`WAITING_FOR_REVIEW`，未公开发布，仍为 MANUAL。版本/包/发布状态以 [version-ledger.md](version-ledger.md) 为准；下文 Android/Web、旧 iOS 构建和作者自报按各自时间及 source state 保留，不混作当前全量验收。
+
+| 当前主题 | 证据与 source state | 边界 |
+|---|---|---|
+| S4 软件与分发候选 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`；2026-10-10 analyze、10 项 flow_regressions、Release Archive/export、严格验包与 Apple 验证通过，详见 [iOS 验证记录](ios-verification-2026-10-10.md) | 2026-10-11 Preflight 核对 S4 到文档 HEAD `037527a00e343b73f190b93a2133cbd08fb472b8` 只有 13 份文档差异；产品/测试/配置差异 0，复用相应证据，未重新构建或重跑全套 |
+| 同归档 D1 真机 | S4 Release 归档另导出开发签名；2026-10-11 的实际镜像、生命周期和用户反馈，保存点 `51184b362a836c5dbd8b443c50f6e19229834d2b`，详见 [真机记录](ios-direct-device-2026-10-11.md) | 核心 3D、完整/部分计时记录、后台/冷启/锁屏恢复、主题/路径及用户离线/双指/触感反馈通过；不是同签名 IPA 或 TestFlight 分发成功 |
+| 最终声明与正式提交 | S4；2026-10-11 用户接受列明限制并授权，服务端 submittedDate=`2026-10-11T04:26:29.245Z`，保存点 `037527a00e343b73f190b93a2133cbd08fb472b8`，详见 [提审记录](ios-app-review-submission-2026-10-11.md) | 是带时间的外部观察，不替代本地 HEAD 测试或审核批准；此次 closeout 不刷新平台、取消或重复提交 |
+| 未覆盖验收 | 旧机 FPS/旧 iOS、VoiceOver、来电/内存压力和完整网络覆盖保留 | 用户同意留作后续不等于验证通过；HTTP 正对照未捕获，不声称实测零外传，待验收归 [路线台账](development-roadmap.md) |
+
+## 2026-10-11 iOS 版本与文档 closeout Preflight
+
+| 字段 | 已证明的事实 |
+|---|---|
+| baseline / ref / 依据 | `ad72f1cc481080072526be918e48748dbec20794`，ref `ad72f1c`；既有 iOS 执行台账记录的 PR #8 接手起点。`git rev-parse --verify <ref>^{commit}` 与 `git merge-base --is-ancestor <baseline> HEAD` 均成功 |
+| Preflight HEAD | `037527a00e343b73f190b93a2133cbd08fb472b8`，分支 `ios/main`；主目录仍 master `812d948b49616d8edce20fd7ec46d70129e0fa27`，不变更它的源码或文档 |
+| stage delta | `git log --oneline <baseline>..HEAD` 为 26 提交；`git diff --name-status <baseline>..HEAD` 为 41 路径（M26/A15）：14 文档、9 生产 Dart/本地化、9 测试/driver、4 iOS 启动配置/资产、5 构建工具/包配置 |
+| 收束 scope | 本阶段 iOS 版本、发布/验证/待验收记录与入口的确定性对齐；复用现有台账，不新增产品、升级依赖、改 Build 或同步 Android/Web；不推送、创建标签或改外部状态 |
+| 完整工作区 / 归属 | 两个已授权工作副本的 `git status --porcelain=v1 --untracked-files=all` 完整输出均为空，tracked/staged/unstaged/deleted/renamed/untracked 均 0；没有待归属改动。阶段二只修改已发现 finding 所对应的 7 份文档，均为本 Agent |
+| 来源发现 | 从根/App AGENTS 与根 README 入口沿明确指向一跳检查，未扫描全仓或读取凭据、日志、浏览器配置或构建产物 |
+| finding | 路线 T01/T02/T05 的设备与提审状态过时；版本表含旧 Build 2、草稿/未声明状态以及跨平台身份混用；App 运行说明仍写未签名归档阶段；根/App 入口缺 iOS 当前检查点，验证摘要未清楚划分当前/历史 |
+
+| 实际检查的 canonical 相对路径 | current / archive 判定与核对 |
+|---|---|
+| `AGENTS.md`、`app/AGENTS.md` | current 项目/路径约定；阶段事实入口需补 iOS 当前记录，原约束不改 |
+| `README.md`、`app/README.md` | current 使用入口；旧 PR、上传与调查段为 history，补正式提审入口并明确归属 |
+| `app/docs/version-ledger.md` | current 版本/安装包/发布唯一来源；C01–S3 与 Android/Web/P01 按 historical 交付保留，当前 S4/D1/提交状态对齐 |
+| `app/docs/development-roadmap.md` | current 实施与待验收唯一来源；末尾历史收束段保留，T01/T02/T05 更新实际证据与未验范围 |
+| `app/docs/verification.md` | current 验证/source state；旧 PR、v38、旧包与作者自报为 history，新增本阶段证据绑定与 closeout 检查 |
+| `app/docs/asset-sources.md` | current 素材许可/复现；v38/白膜为 history；iOS 启动图复用及发行者发布权确认与阶段 delta 一致，无 finding、未修改 |
+| `app/docs/motion-v41.md` | current 动作契约，v38 引用为 history；本阶段没有改变场景/模型/动作来源，无 finding、未修改 |
+
+Preflight 必要验证于 2026-10-11 在清洁 `037527a` 执行：`git diff --check <baseline>..HEAD` 通过；一次性 Python 检查上述入口/canonical 的 159 个本地 Markdown 路径无缺失；读取非敏感源配置确认 pubspec=`1.0.0+3`，iOS 15.0、iPhone device family=1、Bundle 版本取 Flutter 配置。`git diff --quiet 7ffa5e6 HEAD -- app/lib app/ios app/assets app/test app/integration_test app/test_driver app/tools app/scene app/analysis_options.yaml app/pubspec.yaml app/pubspec.lock` 返回 0，证明 S4 对应产品与测试范围未变。历史软件命令为 `flutter analyze --no-pub`、`flutter test --no-pub test/ui/flow_regressions_test.dart --reporter expanded`，结果各为无问题/10 项通过，绑定 S4 源；归档与分发验证只按既有带源的记录引用，未把原包或网页当作当前 HEAD 构建证明。
+
+### Alignment 结果与必要验证
+
+2026-10-11 阶段二修改范围为 `AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`、`app/docs/version-ledger.md`、`app/docs/development-roadmap.md`、本文件，共 7 份 Agent 文档。版本台账明确区分 iOS S4 1.0.0+3、同归档开发签名 D1、Android/Web 既有交付和 Play P01；保存点使用已存在的完整 SHA，不预填本轮提交自身 SHA。路线 T01/T02/T05 与当前提审/真机证据一致，未验项目与已批准范围分别保留；使用入口与 current/history 分界已对齐，确定 finding 清零。
+
+必要验证由本机 CLI 在 `037527a00e343b73f190b93a2133cbd08fb472b8` 加上述 7 份文档的明确工作树状态执行：`git diff --check` 通过；一次性 Python 检查 167 个本地 Markdown 路径均存在、S4/D1 的版本/字节/哈希与既有记录一致、4 个保存点 ref 可解析；Git 比较确认产品/测试/配置相对 S4 差异 0；旧 PR7 及后续历史验证正文、旧阶段收束边界、包和提交历史表原字节保留。完整 `git status --porcelain=v1 --untracked-files=all` 为 7 tracked/unstaged 文档，staged/deleted/renamed/untracked 均 0；主目录 master 的完整状态仍为空，HEAD 未意外变化。提交前再次复核相同范围，实际完整提交 SHA 以 `git rev-parse HEAD` 和 closeout 回执定位。
+
+没有重新运行 Flutter/3D 全量检查或构建，未读取日志、产物、签名或浏览器凭据。closeout 只形成本地文档保存，未获本轮新 push 授权，不自动 push/tag/release、relay/handoff 或结束 Cockpit session；平台检查点在本地提交成功后按条件只登记一次非终态进展。
+
+## 历史：iOS 构建、安装调查与提审检查点摘要
+
+以下保留各时点的原观察；其中“未安装”“等待回来”“未声明/提审”只适用于对应早期阶段，不能覆盖上方当前表。
+

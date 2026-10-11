@@ -508,7 +508,7 @@ Play P01 AAB仍为77,816,786字节，SHA-256 `9483f16054440cc7f76826f46f06befb3d
 
 隔离候选APK保留在 `E:/AII-3D/3D-Body-worktrees/pr-6-audit/output/releases/Flare-v41-PR6-candidate-20261009-arm64.apk`，同一包已同步到主目录L04及通用APK路径；字节/哈希均核对相等。隔离Web预览8858、直接场景8857是审核入口，主目录稳定App入口8820。末尾交付文档保存不改变已验证产品内容；文档提交完整SHA由Git定位。
 
-## 历史：L41 身份快照（2026-10-11）
+## 历史：L41 Android/Web 身份快照（2026-10-11）
 
 | 维度 | 当前值 | 判定依据与边界 |
 | --- | --- | --- |
@@ -635,7 +635,7 @@ L05沿用本机PR7审核已绑定source state的构建与签名证据，交付�
 
 ## 验收与后续记账规则
 
-T01 长期计时、T02 Android 真机/iOS 性能与手势、T03 内容/数据、T04 动作及图片限制、T05 商店审核，唯一待验收状态见 [实施路线](development-roadmap.md#待验收台账与下一轮顺序)。本轮 Web 计时修复有实际 dart2js 与浏览器证据，仍不代替长期前后台设备验收。旧 `verify-official-poses.mjs` 两边同有 23 项基线失败，当前 v41 定向检查通过；不写成所有历史检查均通过。
+T01 长期计时、T02 Android 真机及 iOS 剩余设备/性能项目、T03 内容/数据、T04 动作及图片限制、T05 商店审核，唯一待验收状态见 [实施路线](development-roadmap.md#待验收台账与下一轮顺序)。本轮 Web 计时修复有实际 dart2js 与浏览器证据，仍不代替长期前后台设备验收。旧 `verify-official-poses.mjs` 两边同有 23 项基线失败，当前 v41 定向检查通过；不写成所有历史检查均通过。
 
 以后记录一项版本成果时，同时填写日期、包版本/动作版本、完整源 SHA（或明确工作树状态）、必要时 tree、验证命令及适用范围、包路径/字节/哈希/实际签名、Git 保存与外部发布状态。通用输出路径会被下一次构建更新，历史包用具名副本和哈希定位。文档提交可复用前一次产品证据，但须证明有限 delta 不影响被验证内容；构建成功、提交、push、送审与正式验收分别记账。
 
@@ -737,3 +737,49 @@ T01 长期计时、T02 Android 真机/iOS 性能与手势、T03 内容/数据、
 2026-10-11 最新发布状态：用户明确接受所列验收限制并批准最终声明和正式提审后，精确 S4 `1.0.0 (3)` 已于北京时间 12:26:29 提交；Apple 接口 HTTP 200，页面及服务端重读均为 `WAITING_FOR_REVIEW`。年龄、内容版权、非医疗设备和“不收集数据”隐私标签已保存/发布；原候选、免费/地区与手动发布方案保持，App 尚未公开发布。下文此前未执行的问卷/审核描述保留为历史检查点，当前以 [正式提审记录](ios-app-review-submission-2026-10-11.md) 为准。
 
 2026-10-11 后续：用户改为直接安装测试，S4 同归档本机签名 D1 已装到 iPhone 16 Pro / iOS 26.5，版本仍为 1.0.0 (3)。D1 为 36,362,460 字节，SHA-256 `7b92562b6b16e8d161f725f11162d02a15fd94c5855ba31d5deb858cd2b46223`；它是开发签名安装版，商店 S4 IPA 及草稿绑定保持。严格验签、运行内容一致性和设备安装查询通过，首启、核心 3D 交互、真实三组训练、部分计次退出不虚报完成及冷启动后记录保留已通过；用户亲测离线冷启、双指缩放边界与轻微触感通过。完整网络覆盖、旧机 FPS 与部分生命周期/VoiceOver 仍有未验或取证限制；见 [直接安装记录](ios-direct-device-2026-10-11.md)。
+
+
+## 历史：iOS 本地记录 1ca5269
+
+更新于 2026-10-11。Android/Web 最新开发交付为 L28，保留 v41 动作，并包含启动预加载、真实动作剪影、高清小卡、柔边高亮、暂停重点卡片、银色肌群条目与青绿色图标。Android 包仍为 **1.0.0+1**，Play P01 AAB保持历史身份。iOS 已送审 S4 为 **1.0.0+3**（商店 1.0.0 / Build 3），其产品源与本地开发分支分别记录，不因功能对齐替换商店包。
+## iOS v1 当前身份（2026-10-11 提审后）
+
+历史观察（2026-10-11 当天早间 TestFlight 调查）：S4 身份与产品源保持，TestFlight 安装数据请求返回 HTTP 404，当次 Flare 未安装。浏览器恢复后，今日平台复查 S4 VALID、未过期、IN_BETA_TESTING，原内部组一名 ACCEPTED 测试员、自动分发关闭；下表“已邀请”保留上传配置时的历史观察。上传回执为 10 月 10 日 14:42:37，已在用户提供的支持邮件要求的 48 小时截止时间之后。原案例 349 字符精简稿已获批准，账号认证恢复后于北京时间 11:06:59 发送成功：HTTP 200、textCommitment=true，页面确认已发送；等待 Apple 处理结果；设备、时间和平台证据见 [安装诊断](testflight-install-diagnostic-2026-10-11.md)。该段只描述直接安装测试和正式提审之前的观察；当前真机、最终声明和提审结果见本节当前表，未验限制继续保留。
+
+| 字段 | 已核对结果 |
+|---|---|
+| 分支 / 基线 | `ios/main` / PR #8 `ad72f1cc481080072526be918e48748dbec20794`；用户授权后首次普通 push `cb6aabbcca4689ea5b66611db92943c8f6dbed49`，远端已核对；主目录 master 与原网页服务保留 |
+| Apple 当前产品源 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`；S4 清理关于页旧版本和过期授权提示，完整署名保留；原文件已上传并正式提审，最后平台重读 WAITING_FOR_REVIEW |
+| 最新本地产品源 | 同为 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，Build 3；后续仅变更验证/发布文档，商店 S4 IPA 未改变；D1 从同一 Release 归档另导出开发签名用于直接真机测试 |
+| 应用身份 | `dev.mhgd.flare`，营销版本 `1.0.0`；当前 S4 Build 3，S2 Build 1 保留历史；Flare 托马斯，最低 iOS 15.0，仅 iPhone，竖屏及左右横屏 |
+| C01 历史本机归档 | 源 `63e45e8`；215,767,270 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned.xcarchive` 与 `candidate-manifest.json` 保留 |
+| C02 历史本机归档 | 源 `3a85bd9`；215,767,406 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r2.xcarchive` 与 `candidate-manifest-r2.json` 保留 |
+| C03 未签名检查点 | 源 `83f0920`；`UNSIGNED_ARCHIVE_LOCAL_VALIDATED`；215,768,913 字节、305 个普通文件，arm64；本机 `~/ios-release-artifacts/flare-v1-20261009/candidate/Flare-1.0.0-build1-unsigned-r3.xcarchive` 保留 |
+| S1 历史分发候选 | 源 `83f0920`；本机静态验包通过，但 Apple 上传前验证因 `assets/data/import_content.py` 未签名报 90035，未上传；50,095,200 字节，SHA-256 `cd280f67d66858f4f15570a426a048ab1a77e88ce9db7e0218b369ae6e8c861c`，原 IPA 与清单保留 |
+| S2 历史 Apple 分发候选 | 源 `a4ef59f`，Apple Distribution；50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；本机 `candidate/Flare-1.0.0-build1-app-store-S2.ipa`，Apple 上传前验证退出 0；用户分别授权精确上传与内部测试，已处理为 VALID，作为历史构建保留在内部组 |
+| S3 历史本地候选 | 源 `b81026a`，`1.0.0 (2)`，Apple Distribution；50,089,766 字节，SHA-256 `e6d4a856302df2a30a5498ccfa0a0cd2bf08540c8f1f7376ce788fd04a0d09ba`；本机 `candidate/Flare-1.0.0-build2-app-store-S3.ipa`；10 项相关 UI 测试、analyze、签名与 Apple 验证通过，已被本地 S4 取代，未上传/分发 |
+| S4 当前 Apple 候选 | 源 `7ffa5e6`，`1.0.0 (3)`，Apple Distribution；50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`；本机 `candidate/Flare-1.0.0-build3-app-store-S4.ipa`；10 项 UI 测试、analyze、严格验签、Apple 验证和同源调试版关于页复查通过。用户精确授权后原文件上传，上传后哈希不变，已处理为 VALID / APP_STORE_ELIGIBLE；正式提交为 Build 3；同归档 D1 核心真机流程及用户离线/手势/触感反馈通过，剩余验收限制明确保留 |
+| 候选核查 | S2 严格深度验签、三个 arm64 执行文件、描述文件/实际证书/授权 Team、`get-task-allow=false` 及四份隐私清单通过；Flutter 资源 249 份，排除两个生成源码，245 份与 S1 哈希一致，资产清单与生成 MaterialIcons 字体变化。本机 `candidate-manifest-s2.json`、`s2-signing-checks.json` 与 `s2-asset-comparison.json` 留证 |
+| S3 补充核查 | 同样的签名、证书/描述文件绑定、三个 arm64 执行文件与隐私检查通过；四份隐私清单与 S2 字节一致，249 份 Flutter 资源中 248 份哈希相同，仅 MaterialIcons 改为构建生成子集，源码 28 种图标所需字形全部存在；本机 S3 manifest、signing/asset/icon/Apple validation 记录留证 |
+| 截图 | 四种 iPhone 模拟器、两主题、五页面，共 40 张；来自 `63e45e8` 就绪页面，后续加载与系统动效修复另以原生流程/录像核对，默认动效下的就绪页面素材继续复用；PNG 原件/无透明 JPEG及本机 `screenshot-manifest.json` 不入 Git |
+| Apple 状态 | [Flare 托马斯 App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 的 S4 `1.0.0 (3)` 于北京时间 2026-10-11 12:26:29 正式提交，提交与重读接口 HTTP 200，状态 `WAITING_FOR_REVIEW`。十张截图、无需登录、免费/原地区及 `MANUAL` 保留；未公开发布。原单账号内部组保留 S2/S4、自动分发关闭；当天早间账号为 ACCEPTED，TestFlight 实际安装 404 未恢复 |
+| 验收边界 | 原 96 项、83f0920 的 60 项、S2 的 6 项及 S3/S4 各 10 项检查按各自 source state 保留，不合并成当前全量通过。S4 analyze/签名/Apple 验证及同源模拟器关于页通过；D1 核心真机、完整三组/部分退出记录、冷启/锁屏恢复及用户离线/双指/触感反馈通过。旧机 FPS/旧 iOS、VoiceOver、来电/内存压力、完整网络覆盖未验，用户知情批准后留作后续；批准不等于通过 |
+| 公开隐私页 | 现有 [flare-privacy](https://flare-privacy.294851575.workers.dev/) 已按单独授权更新为 2026-10-10 文案；生产模块 3,060 字节、SHA-256 `efa675a77737fc1380426a3721de65567e5ad9d77128759b102c02697c4721f0`，公开 HTML 2,805 字节、SHA-256 `1ddfc8ca7bb23d70d92dcb2098aac6181cf58c1b10ba832bc3c8b0e2180c9306`，均与批准文件一致；联系段落及现有配置保留 |
+| 最终合规声明 | 用户批准 [复核方案](ios-review-decision-2026-10-11.md) 后，年龄问卷已保存：通常 9+，越南 12+、巴西 10 岁以上、韩国所有年龄；第三方内容必要权利、非受监管医疗设备已保存，“不收集数据”隐私标签已发布并重开确认。现有非交易商状态未改；ICP 仍无本 App 已保存号或适用性结论，不把提审成功当作全部地区许可完成 |
+## iOS 阶段版本保存与后续规则
+
+| 保存点 | 完整提交 | 用途 |
+|---|---|---|
+| PR #8 接手 baseline | `ad72f1cc481080072526be918e48748dbec20794` | 当前 iOS 阶段的已记录起点，非任意远端领先点 |
+| S4 产品冻结 | `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726` | `1.0.0+3`；当前商店 IPA 的产品源，后续文档变更不等于重新出包 |
+| D1 真机证据与提审限制保存 | `51184b362a836c5dbd8b443c50f6e19229834d2b` | 同归档开发签名测试与原分发签名分别记录；不宣称 TestFlight 已恢复 |
+| 正式提审记录保存 | `037527a00e343b73f190b93a2133cbd08fb472b8` | 已获授权的最终声明与 WAITING_FOR_REVIEW 观察；不是新的产品版本 |
+
+本轮 closeout 的实际文档提交由 Git 与回执定位，不预填自身 SHA、不创建空提交或 tag。新增产品构建时须递增 Build、固定完整产品源/Bundle ID/IPA 哈希，再按对应授权上传；纯文档对齐不改 Build。审核通过与公开发布分别记账，当前保持手动发布。当前工作副本为 `ios/main`，主目录 `master` 的 Android/Web 与 Play P01 不因这次文档收束自动同步或升级。
+
+## 2026-10-11 L28：采用青绿色运动服 Flare 图标 B
+| Android/Web 交付分支 | `master`，远端 `origin` 为 `mhgd3250905/3D-Body` | 12:52已正常push并远端核对L26/L28及收束文档至f89db3f；L28标签也已推送。本次回执提交仅文档，最终SHA以Git及push结果定位，详见Git推送记录 |
+| 当前本地产品检查点 | L28 `3f0fda327a5e5716b89ba297447612148b542199` / 标签 `app-l28-20261011`；父提交为L26 `632fdb673d50908083e9fb43440886f2e2ac5684` | 当前源/APK/Web为L28；后续closeout仅文档，不是新的商店发布版本 |
+| 历史PR7合并检查点 | `e42df21dbf4be273939ad9377d6f883ea9e75c95` | 与最终审核源b991aa3完整tree同为 `649b9f77189ec4830519825a1d730f54a638e088`；PR7阶段已验证产品源d1c3886之后仅文档/截图 |
+| 上一轮主分支交付保存点 | `96cd9b125c52aeaada7dab0872258e67d662030d` | PR6交付文档保存并push；本轮PR7真实目标。当前交付状态文档单独保存，不在提交内预填自身SHA |
+| Android 既有包版本 / 包名 | `1.0.0+1` / `dev.mhgd.flare` | 原主目录源配置及既有 Android/Play 交付；iOS 专用分支的 S4 Build 3 不改变此前包；`0.1.0+1` 仅属 Play 接入前历史版本 |
