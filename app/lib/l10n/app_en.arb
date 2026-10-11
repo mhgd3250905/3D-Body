@@ -1,0 +1,436 @@
+{
+  "@@locale": "en",
+  "appName": "Flare",
+  "tagline": "Understand the move. Train every step.",
+  "watch": "Motion",
+  "library": "Training",
+  "path": "Path",
+  "progress": "Log",
+  "settings": "Settings",
+  "motionBrand": "Flare · Coach",
+  "more": "More",
+  "timeline": "Motion timeline",
+  "phaseLabel": "Motion phase",
+  "viewLabel": "View",
+  "switchToMuscles": "Switch to the standing muscle model",
+  "switchToMotion": "Switch to the flare motion",
+  "fullLoop": "Full loop · 8 phases",
+  "practiceLoop": "Loop this phase",
+  "restoreLoop": "Restore full loop",
+  "play": "Play",
+  "pause": "Pause",
+  "resume": "Resume",
+  "resetView": "Reset view",
+  "front": "Front",
+  "back": "Back",
+  "goBack": "Back",
+  "side": "Side",
+  "pausedHint": "Select a muscle to learn more",
+  "playingHint": "Pause to select a muscle",
+  "loadingScene": "Preparing 3D motion…",
+  "sceneFailed": "3D view is temporarily unavailable. Reopen the motion page.",
+  "retry": "Retry",
+  "muscles": "Muscles in this phase",
+  "primary": "Primary role",
+  "secondary": "Supporting role",
+  "teachingNote": "Colored areas show teaching locations. They do not represent EMG activity, muscle force, or exact muscle boundaries.",
+  "deepNote": "Hatching marks the location of deeper muscles.",
+  "deepMotionNote": "A highlight marks the location of a deeper muscle.",
+  "bothSides": "Both sides",
+  "leftSide": "Left side",
+  "rightSide": "Right side",
+  "whyHere": "Role in this phase",
+  "relatedDrills": "Targeted exercises",
+  "sourceNote": "Model and teaching-location notes",
+  "returnToMotion": "Return to the same frame",
+  "addToday": "Add to today’s training",
+  "addedToday": "Added to today’s training",
+  "tierA": "A Bodyweight",
+  "tierB": "B Home equipment",
+  "tierC": "C Gym",
+  "all": "All",
+  "supportSection": "Shoulder and arm support",
+  "coreSection": "Core coordination",
+  "legsSection": "Hip and leg swing",
+  "searchDrills": "Search exercises, muscles, or English names",
+  "libraryCount": "51 exercises · 17 muscle groups",
+  "noResults": "No matching exercises. Try another search.",
+  "illustration": "Exercise demonstration",
+  "dose": "Sets and time",
+  "equipment": "Equipment",
+  "cues": "Form cues",
+  "mistake": "Common mistakes",
+  "drillWhy": "Why this exercise",
+  "safety": "Safety",
+  "startTimer": "Start training",
+  "today": "Today’s training",
+  "todayEmpty": "Add exercises from muscle details or the library to build today’s session",
+  "remove": "Remove from today’s training",
+  "clearMuscleFilter": "Clear muscle filter",
+  "timerReady": "Ready",
+  "countdown": "Get ready",
+  "work": "Training",
+  "rest": "Rest between sets",
+  "switchSide": "Switch sides",
+  "finished": "Training complete",
+  "abandoned": "Session ended",
+  "paused": "Paused",
+  "start": "Start",
+  "completeRep": "Complete 1 rep",
+  "completeSet": "Complete set",
+  "skipRest": "End rest",
+  "addRest": "+15 sec rest",
+  "painStop": "Stop if you feel discomfort",
+  "painMessage": "Discomfort recorded. Stop this exercise, rest, then decide whether to continue.",
+  "saved": "Saved on this device",
+  "saving": "Saving…",
+  "saveFailed": "Could not finish saving. This session is still available; try again.",
+  "storageReadFailed": "Local records are temporarily unavailable. Your original data has been kept.",
+  "done": "Done",
+  "exitTimer": "End this session",
+  "manualMode": "Follow the exercise instructions, then confirm each set manually",
+  "backgroundPause": "Training pauses when the app goes to the background. Tap Resume when you return.",
+  "setsLabel": "Set {current} of {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} reps",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} sec",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "Stage {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "Learning path draft · 18 lessons. Lesson content and self-assessment thresholds still need coach review; completion does not automatically mean you have mastered the move.",
+  "locked": "Unlock after completing the previous stage’s lessons and self-assessment",
+  "current": "Current stage",
+  "passed": "Complete",
+  "lessons": "Lessons",
+  "gate": "Stage self-assessment",
+  "selfReport": "Self-reported; not an AI assessment",
+  "confirmGate": "I completed this without pain",
+  "markLesson": "Mark lesson as practiced",
+  "lessonCompleted": "Practice recorded",
+  "watchPhases": "Watch related motion",
+  "suggestedDrills": "Exercises for this lesson",
+  "assessment": "Starting self-assessment",
+  "assessmentNote": "Choose based on your most recent actual performance. This only helps choose a starting point. If your wrist is uncomfortable, start at Stage 1. This is not an ability or medical assessment.",
+  "wristTest": "Wrist extension",
+  "compressionTest": "Straight-leg raise",
+  "supportTest": "L-sit",
+  "dipsTest": "Controlled dips",
+  "hipTest": "Straddle hip opening",
+  "dipsGrade1": "0–3 reps · Beginner",
+  "dipsGrade2": "4–7 reps · Basic",
+  "dipsGrade3": "8–12 reps · Good",
+  "dipsGrade4": "13+ reps · Excellent",
+  "grade1": "Not completed / discomfort",
+  "grade2": "Can complete basic exercises",
+  "grade3": "Steady completion; more practice needed",
+  "grade4": "Comfortable completion; ready to progress",
+  "gradeShort1": "Not yet",
+  "gradeShort2": "Can do it",
+  "gradeShort3": "Steady",
+  "gradeShort4": "Easy",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "Save self-assessed starting point",
+  "skipAssessment": "Start with the basics",
+  "assessmentSaved": "Self-assessment saved on this device",
+  "welcomeTitle": "Break one full circle into clear steps",
+  "welcomeBody": "Rotate a real 3D model, pause to select muscles, then open a matching exercise. Motion, illustrations, and records stay on this device and work offline.",
+  "welcomeStep1": "Watch · Slow motion and eight phases",
+  "welcomeStep2": "Understand · Muscle roles in each pose",
+  "welcomeStep3": "Train · Sets, timers, and local records",
+  "safetyBody": "Warm up your wrists and shoulders first. Train within your ability, and stop if you feel pain or dizziness. For your first full circle, choose a suitable space and have an experienced person nearby. This content teaches movement; it does not provide a diagnosis.",
+  "ackSafety": "I understand the safety guidance",
+  "enterApp": "Open 3D motion",
+  "history": "Records",
+  "historyEmpty": "Complete a timed session to see it here",
+  "sessionCount": "Sessions",
+  "activeMinutes": "Training minutes",
+  "lessonCount": "Lessons practiced",
+  "incomplete": "Incomplete",
+  "painFlag": "Discomfort recorded",
+  "aboutTitle": "About Flare",
+  "aboutBody": "Local development build 1.0.0. Watch a flare, learn the muscle roles in each phase, choose suitable exercises, and record your practice. Motion, media, and training records work offline.",
+  "privacyTitle": "Local data and privacy",
+  "privacyBody": "Settings, today’s training, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.",
+  "creditsTitle": "Model and media sources",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; clothing, materials, and animation modified. Human Base Meshes · Blender Studio and community contributors · CC0. Three.js · MIT. Colored mannequin areas are teaching panels and do not stand in for missing BodyParts3D anatomy meshes. Exercise and brand images were supplied by the user; license checks still need to be completed before release.",
+  "speedLabel": "Default playback speed",
+  "qualityLabel": "Image quality",
+  "balanced": "Balanced",
+  "battery": "Battery saver",
+  "high": "High",
+  "exportBackup": "Copy local backup",
+  "backupCopied": "Backup copied. Save it to a file of your choice.",
+  "contentDraftNote": "Exercises are teaching suggestions. Illustrations do not replace the instructions for each exercise.",
+  "close": "Close",
+  "pausedAt": "Paused at {time} sec",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "Primary",
+  "secondaryShort": "Supporting",
+  "together": "Work together",
+  "assistMuscles": "Supporting muscles",
+  "sceneNone": "No equipment",
+  "sceneHome": "At home",
+  "sceneGym": "Gym",
+  "sceneNoneHint": "Bodyweight, anywhere",
+  "sceneHomeHint": "Resistance bands, dumbbells, and other home equipment",
+  "sceneGymHint": "Machines and free weights",
+  "chooseScene": "Choose a training setting",
+  "trainGroup": "Train {name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "Deeper muscle · color marks its location",
+  "deepMusclesHint": "Deeper muscle · hatching marks its location",
+  "noDrillForTier": "No exercises for this muscle are available at this equipment level",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "Flare",
+  "welcomeLine": "Follow the motion and see which muscles work at each moment.",
+  "startApp": "Get started",
+  "welcomeFootPrefix": "By continuing, you confirm you have read",
+  "safetySheetEyebrow": "Before training",
+  "safetySheetTitle": "Three things to know",
+  "safetyRule1": "Warm up your wrists first",
+  "safetyRule1Note": "About 6 minutes; it is the first lesson in the learning path",
+  "safetyRule2": "Stop for sharp pain, numbness, or dizziness",
+  "safetyRule2Note": "Muscle effort is okay; pain is not",
+  "safetyRule3": "This teaches movement",
+  "safetyRule3Note": "It does not replace a coach, doctor, or rehabilitation care. Have someone nearby for your first full circle.",
+  "gotIt": "Got it",
+  "startWithAssessment": "Start with a self-assessment",
+  "libraryHint": "Find exercises by muscle group",
+  "moreProgressHint": "{count} days this week",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "Playback speed",
+  "phaseMoment": "{source} · primary muscles at this moment",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "Also involved · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "and {count} groups",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "All body areas",
+  "search": "Search",
+  "closeSearch": "Close search",
+  "clearSearch": "Clear search",
+  "spec": "Dose",
+  "moreCuesAndSafety": "More cues, common mistakes, and safety",
+  "addTodayShort": "Add today",
+  "setOfTotal": "Set {current} of {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} reps",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "sec",
+  "painStopShort": "Stop if you feel discomfort",
+  "pathTitle": "Learning path",
+  "continueLesson": "Continue · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "All done",
+  "confirmStageGates": "To confirm · stage requirements",
+  "stageGates": "Stage self-assessment · self-reported",
+  "weekDays": "Training days this week",
+  "streak": "Day streak",
+  "recent": "Recent",
+  "weekdayLabels": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  "todayLabel": "Today",
+  "completed": "Complete",
+  "playbackGroup": "Playback",
+  "otherGroup": "Other",
+  "aboutFlare": "About Flare",
+  "aboutHint": "Version, sources and licenses, local data",
+  "safetyHint": "Three things before training",
+  "teachingTitle": "Teaching notes",
+  "licenses": "Open-source licenses",
+  "minutesShort": "{count} min",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "Related motion phases",
+  "phasesShort": "Phases {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "reps",
+  "appearanceGroup": "Appearance",
+  "appearanceLabel": "Theme",
+  "themeSystem": "Follow system",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "sceneLoading": "Loading 3D motion",
+  "endSessionTitle": "End this session?",
+  "endSessionBody": "The completed portion will be saved as an incomplete record.",
+  "endSessionConfirm": "End and save",
+  "keepTraining": "Keep training",
+  "removedFromToday": "Removed from today’s training",
+  "undo": "Undo",
+  "addedTodayToast": "Added to today’s training",
+  "trainedOn": "Trained · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "Not trained · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "Watch exercise demo",
+  "hideDrillDemo": "Hide demo",
+  "demoReplay": "Replay",
+  "demoSeek": "Playback position",
+  "demoSpeed": "Demo speed",
+  "demoFailed": "Video is temporarily unavailable. Try again.",
+  "demoPaused": "Training paused; demo paused too",
+  "finishedLine": "All {sets} sets complete",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "Language",
+  "languageSystem": "Follow system",
+  "languageTitle": "App language",
+  "sceneAccessibleTitle": "Flare 3D motion",
+  "weekDayLabel": "{day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "Coordinated effort",
+  "muscleMap": "Muscle map",
+  "phaseMapAccessibility": "Front and back muscle maps synchronized with the motion phase",
+  "viewGroup": "View {group}",
+  "reviewFirstPhases": "Self-review phases 09–11: did rear support, weight shifts, and side support flow smoothly?",
+  "reviewFullLoop": "Self-review the full loop: did hand changes, leg openings, and rhythm flow smoothly?",
+  "wristFlexion": "Wrist flexion",
+  "wristExtension": "Wrist extension",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

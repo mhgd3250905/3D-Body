@@ -179,7 +179,7 @@
   "incomplete": "未完成",
   "painFlag": "记录了不适",
   "aboutTitle": "关于 Flare",
-  "aboutBody": "本地开发版 0.1.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。",
+  "aboutBody": "本地开发版 1.0.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。",
   "privacyTitle": "本地数据与隐私",
   "privacyBody": "设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。",
   "creditsTitle": "模型与素材来源",
@@ -403,6 +403,33 @@
     "placeholders": {
       "sets": {
         "type": "int"
+      }
+    }
+  },
+  "languageLabel": "语言",
+  "languageSystem": "跟随系统",
+  "languageTitle": "App 语言",
+  "sceneAccessibleTitle": "Flare 托马斯全旋 3D 动作",
+  "weekDayLabel": "星期{day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "同步发力",
+  "muscleMap": "肌群图",
+  "phaseMapAccessibility": "随动作阶段同步的肌群正面和背面定位图",
+  "viewGroup": "查看{group}",
+  "reviewFirstPhases": "自行回顾 09–11：后撑、移重与侧撑是否连贯",
+  "reviewFullLoop": "自行回顾整圈：换手、开腿与节奏是否连贯",
+  "wristFlexion": "腕屈",
+  "wristExtension": "腕伸",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
       }
     }
   }

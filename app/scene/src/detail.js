@@ -3,6 +3,7 @@ import { GROUPS } from './phase.js';
 import { resolveGroup, MUSCLE_BY_ID } from './legacy/muscle-map.js';
 import { CAMERA_PRESETS } from './player.js';
 import { createThumbnailRenderer, fitThumbnailCamera, thumbnailDensity } from './thumbnail.js';
+import { sceneStrings } from './localization.js';
 
 export function createDetailView(player, phaseMap, onModelChange, focusDirection = () => null) {
   let saved = null, selected = null, model = 'motion', views = {};
@@ -61,8 +62,11 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
   function showScene() {
     thumbnailKey = null;
     lockCamera(); phaseMap.refreshEnvironment(); player.setDisplayScene(model === 'muscles' ? phaseMap.scene : null);
-    mini.querySelector('span').textContent = model === 'motion' ? '肌群图' : '动作';
-    mini.setAttribute('aria-label', model === 'motion' ? '切换到全身肌群模型' : '切换到托马斯动作');
+    updateLocalization();
+  }
+  function updateLocalization() {
+    mini.querySelector('span').textContent = model === 'motion' ? sceneStrings.muscleMap ?? '肌群图' : sceneStrings.motion ?? '动作';
+    mini.setAttribute('aria-label', model === 'motion' ? sceneStrings.switchToMuscles ?? 'Muscles' : sceneStrings.switchToMotion ?? 'Motion');
   }
   function open(groupId, phase) {
     const entering = !saved, changed = selected !== groupId;
@@ -123,6 +127,6 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     return true;
   }
   function releaseGpu() { thumbnail.dispose(); thumbnailKey = null; thumbnailEnvironment = null; }
-  return { open, close, toggle, setModel, reset, refit, renderMini, releaseGpu, mini, getModel: () => model,
+  return { open, close, toggle, setModel, reset, refit, renderMini, releaseGpu, updateLocalization, mini, getModel: () => model,
     dispose() { close(); releaseGpu(); mini.remove(); } };
 }

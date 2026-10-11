@@ -1,4 +1,24 @@
-# L37肌群知识与双侧人台验证（2026-10-11）
+# L38离线国际化验证（2026-10-11）
+
+source base为master L37本地提交 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`；本阶段以 `feat(app): add L38 offline internationalization` 本地提交定位，未push或发布。14语言界面/目录/知识/课程、系统与手动语言、原数据迁移、3D字体/标签/读屏文字和RTL已接入。L37肌群固定标题/作用、独立知识滚动、协同卡/footer及双侧人台保持。
+
+在app目录运行 `flutter analyze --no-pub`，结果No issues found。`python tools/verify-localization.py` 核对14×270界面及14×591内容的键、非空、元数据、占位符及剂量数字顺序，failures为空；资源检查4字体联合cmap对全部翻译字符无缺字。该检查不证明母语表达、真实字体形塑或医疗准确性。
+
+`flutter test --no-pub --concurrency=1 test/data/catalog_localization_test.dart test/ui/internationalization_test.dart test/domain/learning_store_test.dart test/platform/scene_asset_router_test.dart test/ui/muscle_library_flow_test.dart test/platform/scene_asset_server_test.dart` 共33项通过：全资源/locale解析/旧设置与记录保留/51训练结构及多语言搜索、Arabic RTL及时间轴拖动、320×700与390×844英文布局、学习存储、字体白名单与媒体Range、肌群知识/卡片独立滚动与搜索返回、loopback服务。重复子集不累加。另跑分段按钮tap/drag/semantics焦点测试通过。新增Arabic 390×844肌群知识视口≥40px及知识滚动时协同卡/footer固定回归通过；翻译较长的小屏使用紧凑卡片，保证独立知识区可读，中文原布局保持。
+
+辅助执行历史 `polish_round2_test.dart` 时，旧训练详情测试仍要求hero y=0、滚动出现磨砂栏，与L32已采用的固定顶部标题设计冲突（当前y=70）；该项失败，源L37同一旧断言已存在，本轮未改训练详情布局。分段控件及相关国际化回归通过；不声称全量suite通过。
+
+scene `npm run build`、`npm run verify` 通过v33/v38/v41 CPU/源码契约，540帧/22骨/44轨、136组选择案例通过。该检查不等于GPU渲染/真机验收。当前场景入口 `index-akXJ7oGi.js` / `index-DLlJ_85v.css`。
+
+离线Web `flutter build web --no-web-resources-cdn --no-pub` 和 `flutter build apk --release --target-platform android-arm64 --no-pub` 构建成功，原Debug证书签名验证通过；包身份见版本台账。一次Android重构建因本机JVM原生内存不足中止，将Gradle最大堆降为2G、worker限2后重试成功；只调整构建资源，不影响运行时。包核对22项内容/字体/场景及未改媒体清单的源/Web/APK字节一致，4字体均在FontManifest声明，旧L37/P01哈希保持。
+
+Chrome实际GUI通过14语言设置选择/本地标题更新；英语及阿拉伯语刷新后偏好保留；Arabic 390训练搜索本地肌群得到对应1项，详情标题/剂量/说明本地化且返回按钮在右，内容两列保持。韩文、天城文、阿拉伯文和繁中/日文设置截图已核对。390阿语最终知识视口84px、协同卡54px与footer底832px在844px屏内；双行作用的最低40px独立回归通过。3D实际字体加载、标签语言及小屏证据见 [浏览器记录](../../output/drill-media-20261011/L38-browser-ui-check.json)。[5张最终实景](screenshots/2026-10-11-L38/README.md)随源码保存；不扩展为14语言全部页面人工验收。
+
+Android `supportsRtl` 已配置；iOS Info.plist声明14语言，plist解析通过，Windows未执行iOS构建。语言选择由App自己的本地设置管理，未接入Android/iOS系统“单独App语言”同步接口。训练原视频及媒体清单字节保持。翻译由GPT-6 Luna max完成并经英语交叉审阅，未经过母语者/医疗人员审核；手机已取走，L38未安装或真机测试，T01–T05及多语言原生字体/读屏待验收。用户Air-Flare、图标候选、根dist/原编辑器/个人数据及Play P01保留。
+
+---
+
+# 历史：L37肌群知识与双侧人台验证（2026-10-11）
 
 source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。首页Flare斜体字标、青绿细线/点与中文小副标保持44px header；详情标题/一句作用固定，17组原审核知识分两段放入独立ScrollBar滚动区，作用亮半粗、知识12.5常规。协同卡/footer固定，切肌群重置滚动，长标题36px FittedBox；320×700紧凑卡片/48px按钮修复54px溢出。直立人台全图/小图双侧当前群组，演员/首页同步图保留阶段侧别。
 
@@ -8,7 +28,7 @@ source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未�
 
 [真实GUI](../../output/drill-media-20261011/L37-browser-ui-check.json)390 phase15已核对人台双臂粉色、演员单侧蓝色，知识scroll0→20、固定区域与736px舞台保持；552 phase12肱三头肌scroll0→17，知识viewport/协同卡矩形、801px舞台与暂停时刻2.650467789970562严格不变。552深浅主题截图通过；320真实紧凑布局无溢出、按钮正常。标题/作用/footer固定与切肌群重置另由定向组件测试覆盖。console错误/警告均0，最终390人台截图为当前淡边框版本。
 
-L37未安装/提交/push/发布，手机此前只装L29原型。原生媒体/iOS/长期训练未验收，Play P01、旧包、根目录dist与个人文件保留；L36精简/L35搜索与L31媒体证据仍按各自范围使用。
+L37构建时未安装/提交/push/发布；其后已按用户要求保存本地提交8c8ea19，手机此前只装L29原型。原生媒体/iOS/长期训练未验收，Play P01、旧包、根目录dist与个人文件保留；L36精简/L35搜索与L31媒体证据仍按各自范围使用。
 
 ---
 
@@ -233,7 +253,7 @@ L19已用相同开发证书保留数据覆盖安装并冷启动，进程存在�
 
 按用户最新要求简化为彩色圆点和附近的单行名称卡。暂停主舞台读取当前阶段全部 primary 肌群（4～5项），不再只取3项教学示例；卡片底色与圆点使用同一原始肌群颜色，自动选择可读的深/浅文字。去掉气泡尾巴、远近缩放、变暗与虚化，视觉卡高30px、点击区44px。布局优先保留全部名称并就近安排，人物避让为软约束，卡片彼此、圆点和控件仍严格避让；小人参考图仍保留原3项教学示例。播放收起，暂停恢复。
 
-场景build/verify、ARM64 release构建及同开发证书签名通过。布局定向检查覆盖4～6点、320/390手机、横屏、边缘UI和16帧旋转，原模式回归通过。浏览器8阶段×4镜头共32视图均完整显示对应4～5个主力圆点和卡片，颜色一致、无缩放/虚化、播放收起/暂停恢复通过；真实点击卡片和圆点均上报triceps及原暂停time=0。报告`output/playwright/2026-10-11-primary-markers/result.json`。无场景错误事件，预览仅favicon 404；未截图/录屏，真机观感交用户验收。
+场景build/verify、ARM64 release构建及同开发证书签名通过。布局定向检查覆盖4～6点、320/390手机、横屏、边缘UI和16帧旋转，原模式回归通过。浏览器8阶段×4镜头共33视图均完整显示对应4～5个主力圆点和卡片，颜色一致、无缩放/虚化、播放收起/暂停恢复通过；真实点击卡片和圆点均上报triceps及原暂停time=0。报告`output/playwright/2026-10-11-primary-markers/result.json`。无场景错误事件，预览仅favicon 404；未截图/录屏，真机观感交用户验收。
 
 L17已保留数据覆盖安装并冷启动，进程存在，抽样日志未见Flutter/JS/着色器异常。场景`index-gFMzQHzA.js` / `index-1IjNUedj.css`，包内JS哈希与源构建一致，具名包与通用APK一致。离线Web仍L06、Play P01哈希保持；安装证据`output/releases/L17-primary-markers-delivery.json`，包身份见版本台账L17。
 

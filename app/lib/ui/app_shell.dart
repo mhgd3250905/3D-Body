@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/muscle_knowledge.dart';
+import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
 import 'content_pages.dart';
@@ -59,6 +60,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double _lastSavedTime = -1;
   String _quality = 'balanced';
   String? _sceneTheme;
+  String? _sceneLanguage;
   String? _stageKey;
   double _stageArea = 0, _sentInset = -1;
   bool _insetSent = false;
@@ -77,6 +79,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didUpdateWidget(covariant FlareShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.catalog, oldWidget.catalog)) {
+      if (_detail != null) _detail = catalog.groupById(_detail!.id);
+      if (_drill != null) _drill = catalog.drillById(_drill!.id);
+      if (_lesson != null) _lesson = catalog.lessonById(_lesson!.id);
+      if (_libraryGroup != null) {
+        _libraryGroup = catalog.groupById(_libraryGroup!.id);
+      }
+    }
   }
 
   void _storeChanged() {
@@ -117,6 +132,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _scene.setViewInset(_sentInset, animate: false);
       _scene.setSpeed(store.settings.speed);
       if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
+      _sceneLanguage = null;
       _scene.setTime(restoredTime);
       if (_detail case final group?) {
         _scene.setDetail(group.id);
@@ -361,6 +377,27 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _scene.setTheme(theme, duration: duration);
     }
     final s = context.strings;
+    if (_sceneLanguage != s.localeName) {
+      _sceneLanguage = s.localeName;
+      _scene.setLocalization({
+        'locale': s.localeName,
+        'rtl': Directionality.of(context) == TextDirection.rtl,
+        'groups': {for (final group in catalog.groups) group.id: group.label},
+        'viewLabels': {
+          for (final group in catalog.groups)
+            group.id: s.viewGroup(group.label),
+        },
+        'syncEffort': s.syncEffort,
+        'muscleMap': s.muscleMap,
+        'motion': s.watch,
+        'mapAccessibility': s.phaseMapAccessibility,
+        'sceneAccessibility': s.sceneAccessibleTitle,
+        'switchToMuscles': s.switchToMuscles,
+        'switchToMotion': s.switchToMotion,
+        'sceneFailed': s.sceneFailed,
+        'retry': s.retry,
+      });
+    }
     final drill = _drill;
     final lesson = _lesson;
     final canBack =
@@ -883,7 +920,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       flex: 7,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final compact = constraints.maxHeight < 270;
+          // Translated role sentences often take two lines. Reserve room for
+          // the independent knowledge viewport on phone-height panels.
+          final compact =
+              constraints.maxHeight < 270 ||
+              (s.localeName != 'zh' && constraints.maxHeight < 330);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -904,9 +945,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               Container(
                                 width: 4,
                                 height: compact ? 24 : 30,
-                                margin: const EdgeInsets.only(
+                                margin: const EdgeInsetsDirectional.only(
                                   top: 3,
-                                  right: 12,
+                                  end: 12,
                                 ),
                                 decoration: BoxDecoration(
                                   color: color,
@@ -918,7 +959,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                   height: compact ? 26 : 36,
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
-                                    alignment: Alignment.centerLeft,
+                                    alignment: AlignmentDirectional.centerStart,
                                     child: Text(
                                       detail.label,
                                       key: const ValueKey('muscle-panel-title'),
@@ -940,8 +981,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         Text(
                           muscle?.why ?? detail.role,
                           key: const ValueKey('muscle-role'),
-                          maxLines: compact ? 2 : null,
-                          overflow: compact ? TextOverflow.ellipsis : null,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: compact ? 12.5 : 14.5,
                             height: 1.35,
@@ -953,8 +994,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         Expanded(
                           child: _MuscleKnowledgeBlock(
                             key: ValueKey('knowledge-${detail.id}'),
-                            text: (muscleKnowledge[detail.id] ?? detail.role)
-                                .replaceFirst('。', '。\n\n'),
+                            text: catalog
+                                .translate(
+                                  muscleKnowledge[detail.id] ?? detail.role,
+                                )
+                                .replaceFirstMapped(
+                                  RegExp(r'[。.!؟।]'),
+                                  (m) => '${m[0]}\n\n',
+                                ),
                           ),
                         ),
                       ],
@@ -1446,11 +1493,24 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     ) => FlareSegmented<T>(segments: items, selected: selected, onChanged: on);
     Widget line(String label, Widget control) => Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 15))),
-          control,
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) => constraints.maxWidth < 440
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: const TextStyle(fontSize: 15)),
+                  const SizedBox(height: 8),
+                  SizedBox(width: constraints.maxWidth, child: control),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(
+                    child: Text(label, style: const TextStyle(fontSize: 15)),
+                  ),
+                  control,
+                ],
+              ),
       ),
     );
     return Column(
@@ -1464,6 +1524,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 SectionTitle(s.appearanceGroup),
                 RowGroup(
                   children: [
+                    Semantics(
+                      container: true,
+                      button: true,
+                      label:
+                          '${s.languageLabel} ${languageNames[store.settings.language] ?? s.languageSystem}',
+                      onTap: () => _chooseLanguage(context),
+                      excludeSemantics: true,
+                      child: FlareRow(
+                        key: const ValueKey('language-setting'),
+                        title: s.languageLabel,
+                        subtitle:
+                            languageNames[store.settings.language] ??
+                            s.languageSystem,
+                        onTap: () => _chooseLanguage(context),
+                      ),
+                    ),
                     line(
                       s.appearanceLabel,
                       segmented<String>(
@@ -1537,6 +1613,54 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       ],
     );
+  }
+
+  Future<void> _chooseLanguage(BuildContext context) async {
+    final s = context.strings;
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => SizedBox(
+        height: MediaQuery.sizeOf(context).height * .75,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                s.languageTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  for (final entry in {
+                    'system': s.languageSystem,
+                    ...languageNames,
+                  }.entries)
+                    ListTile(
+                      key: ValueKey('language-${entry.key}'),
+                      title: Text(entry.value),
+                      trailing: store.settings.language == entry.key
+                          ? const Icon(Icons.check_rounded)
+                          : null,
+                      selected: store.settings.language == entry.key,
+                      onTap: () => Navigator.of(context).pop(entry.key),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (selected != null && mounted) {
+      _result(store.updateSettings(language: selected));
+    }
   }
 
   Widget _aboutPage(BuildContext outer) => Builder(
@@ -1660,7 +1784,7 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
             key: const ValueKey('muscle-detail-content'),
             controller: _scroll,
             primary: false,
-            padding: const EdgeInsets.only(right: 8, bottom: 4),
+            padding: const EdgeInsetsDirectional.only(end: 8, bottom: 4),
             child: Text(
               widget.text,
               key: const ValueKey('muscle-knowledge'),

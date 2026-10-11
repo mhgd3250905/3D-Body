@@ -4,6 +4,7 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { computeHotspots } from './hotspots.js';
 import { createBillboardClearance } from './billboard-clearance.js';
+import { sceneFont } from './localization.js';
 
 // Cards live outside the muscle surface and remain camera-facing. Dots and
 // their fine guides remain visible through the actor; cards keep natural depth.
@@ -14,7 +15,12 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
   function texture(name, colour, dot = false) {
     const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
     const ratio = 4, height = dot ? 24 : 30;
-    ctx.font = '600 13px sans-serif';
+    ctx.font = `600 13px ${sceneFont}`;
+    // Long translations remain tappable; full names live in the detail/legend.
+    const letters = Array.from(name);
+    while (!dot && letters.length > 1 && ctx.measureText(name).width > 150) {
+      letters.pop(); name = letters.join('') + '…';
+    }
     const width = dot ? 24 : Math.ceil(ctx.measureText(name).width + 20);
     canvas.width = width * ratio; canvas.height = height * ratio; ctx.scale(ratio, ratio);
     ctx.fillStyle = colour;
@@ -27,7 +33,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const linear = rgb.map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
       const l = linear[0] * .2126 + linear[1] * .7152 + linear[2] * .0722;
       ctx.fillStyle = 1.05 / (l + .05) >= (l + .05) / .06 ? '#ffffff' : '#17191f';
-      ctx.font = '600 13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = `600 13px ${sceneFont}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(name, width / 2, height / 2 + .5);
     }
     const map = new THREE.CanvasTexture(canvas); map.colorSpace = THREE.SRGBColorSpace;

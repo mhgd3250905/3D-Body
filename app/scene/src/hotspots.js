@@ -1,5 +1,6 @@
 import { Vector3 } from 'three';
 import { phaseEmphasisItems } from './phase.js';
+import { groupLabel } from './localization.js';
 
 const mid = (a, b) => a.clone().lerp(b, 0.5), lerp = (a, b, t) => a.clone().lerp(b, t);
 const other = side => side === 'left' ? 'right' : 'left';
@@ -41,7 +42,7 @@ export function computeHotspots(player, items, previous = [], depthSampler = nul
     const sample = depthSampler?.sampleFacing(item.groupId, item.side, last);
     const candidate = sample ?? fallback;
     const projected = player.project(candidate.point);
-    output.push({ ...projected, groupId: item.groupId, label: item.label, name: shortNames[item.groupId] ?? item.label,
+    output.push({ ...projected, groupId: item.groupId, label: item.label, name: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label),
       colour: item.colour, side: candidate.side, world: candidate.point.toArray(),
       normal: sample?.normal.toArray() ?? [0, 0, 1], candidateKey: sample?.candidateKey,
       depth: sample?.depth ?? 0, far: sample?.far ?? 0, occluded: sample?.occluded ?? false, facing: sample?.facing ?? 1 });

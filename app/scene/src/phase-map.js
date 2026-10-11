@@ -4,6 +4,7 @@ import { GROUPS, phaseAt, phaseTicks, phaseEmphasisItems } from './phase.js';
 import { loadOfflineGlb } from './assets.js';
 import { applyFunctionalSurface, setFunctionalFocus } from './muscle-material.js';
 import { thumbnailDensity } from './thumbnail.js';
+import { sceneStrings, groupLabel } from './localization.js';
 
 // Two views of the supplied mature CC0 mannequin. This remains a static
 // teaching reference: phase colors follow Snow's clock, not its skeleton.
@@ -106,9 +107,9 @@ export async function createPhaseMap(player, onSelect) {
       legend.replaceChildren();
       for (const item of legendItems) {
         const button = document.createElement('button'); button.type = 'button';
-        button.dataset.groupId = item.groupId; button.setAttribute('aria-label', '查看' + item.label);
+        button.dataset.groupId = item.groupId; button.setAttribute('aria-label', sceneStrings.viewLabels?.[item.groupId] ?? '查看' + item.label);
         const dot = document.createElement('i'); dot.style.background = item.colour;
-        button.append(dot, shortNames[item.groupId] ?? item.label); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
+        button.append(dot, groupLabel(item.groupId, shortNames[item.groupId] ?? item.label)); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
       }
     }
     const r = view.getBoundingClientRect(); if (!(r.width > 0 && r.height > 0)) return false;
@@ -175,9 +176,14 @@ export async function createPhaseMap(player, onSelect) {
     return true;
   }
   function setHidden(value) { hidden = value; panel.hidden = value; player.dirty = true; }
+  function setLocalization() {
+    panel.querySelector('header span').textContent = sceneStrings.syncEffort ?? '同步发力';
+    panel.setAttribute('aria-label', sceneStrings.mapAccessibility ?? 'Muscles');
+    source = null; player.dirty = true;
+  }
   function releaseGpu() { target?.dispose(); target = null; renderKey = null; for (const mesh of meshes) mesh.geometry.dispose(); for (const material of materials) material.dispose(); }
-  return { render, setHidden, releaseGpu, scene, setDetail, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
-    getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: shortNames[item.groupId] ?? item.label })), referencePose: 'static CC0 mannequin',
+  return { render, setHidden, setLocalization, releaseGpu, scene, setDetail, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
+    getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
     dispose() { releaseGpu(); view.removeEventListener('click', select); panel.remove(); } };
 }

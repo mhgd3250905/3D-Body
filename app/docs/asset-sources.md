@@ -77,6 +77,18 @@ v33及后续v38清单、源文件保留为独立历史基线；当前来源为 `
 | `assets/brand/icon.png` | 当前为用户选定的青绿色运动服 Flare 图标 B 的1024不透明派生；制作、原图与导出清单见上方当前图标段落。此前为 `10_品牌与商店/app-icon/icon-master-1024.png` 的本地副本，原件和替换前资源保留 |
 | `assets/fonts/FlareSans.ttf` | Google Fonts官方Noto Sans SC原字体的本地副本，字节不修改，仅文件名/Flutter族别名变化；OFL文本保留于 `assets/licenses/NotoSansSC-OFL.txt`；不依赖远程字体 |
 
+## L38 国际化字体来源与许可
+
+L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面补入三款 Google Fonts 官方 Noto Sans 字体。字体随 App 本地打包；每款对应的 SIL Open Font License 文本保存在 `assets/licenses/` 并随安装包提供，不依赖 CDN 或运行时下载。文件来源、下载字节数与 SHA-256 也记录在 [L38 字体清单](../../output/drill-media-20261011/L38-font-sources.json)。
+
+| 本地文件 | Google Fonts 官方源文件 | 字节数 / SHA-256 | 许可文本 |
+| --- | --- | --- | --- |
+| `assets/fonts/NotoSansKR.ttf` | [NotoSansKR[wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/NotoSansKR%5Bwght%5D.ttf) | 10,414,588 / `194018e6b2b293a7964f037b25c0249ce1418bc9ab3c971060a03aa57861e252` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/OFL.txt)；本地副本 [NotoSansKR-OFL.txt](../assets/licenses/NotoSansKR-OFL.txt) |
+| `assets/fonts/NotoSansArabic.ttf` | [NotoSansArabic[wdth,wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/NotoSansArabic%5Bwdth%2Cwght%5D.ttf) | 844,676 / `63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/OFL.txt)；本地副本 [NotoSansArabic-OFL.txt](../assets/licenses/NotoSansArabic-OFL.txt) |
+| `assets/fonts/NotoSansDevanagari.ttf` | [NotoSansDevanagari[wdth,wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdevanagari/NotoSansDevanagari%5Bwdth%2Cwght%5D.ttf) | 641,944 / `14ec4af41f27482216d1c2229f417ff9b1425e1babb014e57d1d40d03229853e` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdevanagari/OFL.txt)；本地副本 [NotoSansDevanagari-OFL.txt](../assets/licenses/NotoSansDevanagari-OFL.txt) |
+
+哈希用于将仓库中的本地字体与该次实际下载内容核对。Flutter 和 3D 场景通过各自的本地字体回退显示相应文字；许可文本入口也已注册到 App 的许可证列表。
+
 内容导入可用 `assets/data/import_content.py` 在本地复现，需要 Python/Pillow；它只读源包，生成 App 数据和图像副本。3D 构建按 [scene/README.md](../scene/README.md) 执行。[原模型压缩记录](../scene/tools/model-optimization.json) 已记录源/输出哈希：正常着装 Snow 从7,508,016字节压缩至2,390,231字节，人台从1,338,688至863,833字节，采用meshopt与gzip；未减面、未量化、未合并网格。这两个原模型的3,572,742个属性值保持一致，三角形允许等价的循环顶点排序。白膜派生的制作与压缩范围另见下文，不能把其 Blender 局部改网格说成原网格完全不变。当前没有已验收的移动LOD。
 
 正背小图使用包内成熟CC0 Human Base Meshes人台，与主人物共用一个WebGL渲染上下文。每个视图独立渲染到高密度MSAA目标，转换为正确的显示色彩后存入2D呈现副本，按阶段/尺寸缓存；普通质量的小图至少2倍采样，低质量保持1倍。相同人台复用于详情的大画面或小卡片，没有复制模型或新建WebGL上下文。人台原肌群区域、命中数据、网格和法线保留，精细化只调整体表教学边界的宽度/明暗与抗锯齿；首页着装动作人物保留原材质，不显示肌群色区。当前详情在原衣物/皮肤上只显示本群组柔边代理，不加载历史米白模特。Snow、Three.js、meshoptimizer、fflate与Noto许可随包保存并在设置中可查看。fflate许可来自[作者仓库](https://github.com/101arrowz/fflate/blob/master/LICENSE)，meshoptimizer来自[对应版本](https://github.com/zeux/meshoptimizer/blob/v0.22/LICENSE.md)。

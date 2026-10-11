@@ -1,0 +1,436 @@
+{
+  "@@locale": "zh_Hant",
+  "appName": "Flare 托馬斯",
+  "tagline": "看懂動作，練好每一步",
+  "watch": "動作",
+  "library": "訓練",
+  "path": "路徑",
+  "progress": "記錄",
+  "settings": "設置",
+  "motionBrand": "Flare · 托馬斯助理",
+  "more": "更多",
+  "timeline": "動作時間軸",
+  "phaseLabel": "動作階段",
+  "viewLabel": "鏡頭",
+  "switchToMuscles": "切換到直立肌群人體",
+  "switchToMotion": "切換到托馬斯動作",
+  "fullLoop": "完整循環 · 8 個階段",
+  "practiceLoop": "循環當前階段",
+  "restoreLoop": "恢復整圈",
+  "play": "播放",
+  "pause": "暫停",
+  "resume": "繼續",
+  "resetView": "復位鏡頭",
+  "front": "正面",
+  "back": "背面",
+  "goBack": "返回",
+  "side": "側面",
+  "pausedHint": "點選肌群查看詳解",
+  "playingHint": "暫停后可點選肌群",
+  "loadingScene": "正在準備 3D 動作…",
+  "sceneFailed": "3D 暫時無法顯示，請重新打開動作頁",
+  "retry": "重試",
+  "muscles": "本階段肌群",
+  "primary": "主要作用",
+  "secondary": "協同作用",
+  "teachingNote": "色區是教學位置示意，不代表肌電、肌力或真實肌肉邊界。",
+  "deepNote": "深層肌群用斜線表示所在部位。",
+  "deepMotionNote": "深層肌群高亮表示所在部位。",
+  "bothSides": "雙側",
+  "leftSide": "左側",
+  "rightSide": "右側",
+  "whyHere": "在這一階段做什么",
+  "relatedDrills": "針對性訓練",
+  "sourceNote": "模型與教學位置說明",
+  "returnToMotion": "返回同一幀",
+  "addToday": "加入今日訓練",
+  "addedToday": "已加入今日訓練",
+  "tierA": "A 徒手",
+  "tierB": "B 居家器材",
+  "tierC": "C 健身房",
+  "all": "全部",
+  "supportSection": "肩臂支撐",
+  "coreSection": "核心協調",
+  "legsSection": "髖腿擺動",
+  "searchDrills": "搜索訓練、肌群或英文名稱",
+  "libraryCount": "51 個訓練 · 17 個肌群",
+  "noResults": "沒有匹配的訓練，試試其他關鍵詞",
+  "illustration": "動作示意圖",
+  "dose": "組次與時間",
+  "equipment": "器械",
+  "cues": "動作要點",
+  "mistake": "常見錯誤",
+  "drillWhy": "為什么練它",
+  "safety": "安全提示",
+  "startTimer": "開始訓練",
+  "today": "今日訓練",
+  "todayEmpty": "從肌群詳解或訓練庫加入，組成今天的練習",
+  "remove": "移出今日訓練",
+  "clearMuscleFilter": "清除肌群篩選",
+  "timerReady": "準備開始",
+  "countdown": "準備",
+  "work": "練習中",
+  "rest": "組間休息",
+  "switchSide": "換另一側",
+  "finished": "本次訓練完成",
+  "abandoned": "本次已結束",
+  "paused": "已暫停",
+  "start": "開始",
+  "completeRep": "完成 1 次",
+  "completeSet": "本組完成",
+  "skipRest": "結束休息",
+  "addRest": "+15 秒休息",
+  "painStop": "不適，停止練習",
+  "painMessage": "已記錄不適。停止當前練習，休息后再決定是否繼續。",
+  "saved": "已保存在本機",
+  "saving": "正在保存…",
+  "saveFailed": "保存未完成，記錄仍在本次會話中，請重試",
+  "storageReadFailed": "本地記錄暫時無法讀取，原數據已保留",
+  "done": "完成",
+  "exitTimer": "結束本次練習",
+  "manualMode": "按原訓練說明完成，再手動確認本組",
+  "backgroundPause": "切到后臺時練習會暫停；回來后點繼續",
+  "setsLabel": "第 {current} / {total} 組",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} 次",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} 秒",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "階段 {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "學習路徑草案 · 18 課。課程與自評門檻尚待教練審核，不自動判斷你已掌握動作。",
+  "locked": "完成前一階段課程與自評后開啟",
+  "current": "當前階段",
+  "passed": "已完成",
+  "lessons": "課程",
+  "gate": "階段自評",
+  "selfReport": "自行確認，不是 AI 測評",
+  "confirmGate": "我已在無痛情況下完成",
+  "markLesson": "標記本課已練習",
+  "lessonCompleted": "本課已記錄",
+  "watchPhases": "觀看相關動作",
+  "suggestedDrills": "本課練習",
+  "assessment": "入門自評",
+  "assessmentNote": "按最近一次實際表現選擇，只用于安排起點。手腕不適從階段 1 開始；結果不是能力或醫療評估。",
+  "wristTest": "手腕伸展",
+  "compressionTest": "直腿抬腿",
+  "supportTest": "L-sit",
+  "dipsTest": "受控臂屈伸次數",
+  "hipTest": "跨坐開胯",
+  "dipsGrade1": "0–3 次 · 入門",
+  "dipsGrade2": "4–7 次 · 基礎",
+  "dipsGrade3": "8–12 次 · 良好",
+  "dipsGrade4": "13 次以上 · 優秀",
+  "grade1": "尚未完成 / 有不適",
+  "grade2": "可以完成基礎練習",
+  "grade3": "穩定完成，仍需鞏固",
+  "grade4": "輕松完成，準備進階",
+  "gradeShort1": "未完成",
+  "gradeShort2": "能完成",
+  "gradeShort3": "較穩定",
+  "gradeShort4": "很輕松",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "保存自評起點",
+  "skipAssessment": "從基礎開始",
+  "assessmentSaved": "自評已保存在本機",
+  "welcomeTitle": "把一整圈，拆成看得懂的每一步",
+  "welcomeBody": "旋轉真實 3D，暫停選肌群，再進入對應練習。所有動作、圖示與紀錄都在本機，離線也能使用。",
+  "welcomeStep1": "看 · 慢放與八階段",
+  "welcomeStep2": "懂 · 同一姿態的肌群作用",
+  "welcomeStep3": "練 · 組次計時與本地記錄",
+  "safetyBody": "先熱身手腕和肩部。按自己的能力練習，出現疼痛或頭暈時停止。初次嘗試全旋時，請在適合的場地由有經驗的人陪同。內容用于動作學習，不作診斷。",
+  "ackSafety": "我已了解安全提醒",
+  "enterApp": "進入 3D 動作",
+  "history": "記錄",
+  "historyEmpty": "完成一次計時訓練，記錄會留在這里",
+  "sessionCount": "訓練次數",
+  "activeMinutes": "練習分鐘",
+  "lessonCount": "已練課程",
+  "incomplete": "未完成",
+  "painFlag": "記錄了不適",
+  "aboutTitle": "關于 Flare",
+  "aboutBody": "本地開發版 1.0.0。觀看托馬斯全旋，了解各階段的肌群作用，選擇適合自己的訓練并記錄練習。動作、素材和訓練記錄都可離線使用。",
+  "privacyTitle": "本地數據與隱私",
+  "privacyBody": "設置、今日訓練、自評與訓練記錄只保存在當前設備。模型與素材來自 App 安裝包；不向服務器上傳。瀏覽器預覽的數據屬于當前瀏覽器，遷移或重裝前請導出備份。",
+  "creditsTitle": "模型與素材來源",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0，服飾、材質與動畫已修改。Human Base Meshes · Blender Studio 與社區貢獻者 · CC0。Three.js · MIT。人臺色區是教學面板，不能冒充缺失的 BodyParts3D 解剖網格。訓練圖與品牌圖由用戶提供的素材包提供，發布前需補齊授權核對。",
+  "speedLabel": "默認播放速度",
+  "qualityLabel": "畫面質量",
+  "balanced": "均衡",
+  "battery": "省電",
+  "high": "高清",
+  "exportBackup": "復制本地備份",
+  "backupCopied": "備份已復制，請保存到自己的文件",
+  "contentDraftNote": "訓練為教學建議，圖示不替代逐條動作說明。",
+  "close": "關閉",
+  "pausedAt": "暫停于 {time} 秒",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "主力",
+  "secondaryShort": "協同",
+  "together": "一起發力",
+  "assistMuscles": "協助發力",
+  "sceneNone": "徒手",
+  "sceneHome": "居家",
+  "sceneGym": "健身房",
+  "sceneNoneHint": "徒手，隨時隨地",
+  "sceneHomeHint": "彈力帶、啞鈴等居家器材",
+  "sceneGymHint": "器械和自由重量",
+  "chooseScene": "選一個訓練場景",
+  "trainGroup": "練{name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "深層肌群 · 顏色示意所在部位",
+  "deepMusclesHint": "深層肌群 · 斜線示意所在部位",
+  "noDrillForTier": "這個肌群暫無該器械檔的訓練",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "托馬斯全旋",
+  "welcomeLine": "跟著動作，看懂每一刻哪里在發力。",
+  "startApp": "開始",
+  "welcomeFootPrefix": "繼續即表示已閱讀",
+  "safetySheetEyebrow": "練之前",
+  "safetySheetTitle": "三件事",
+  "safetyRule1": "每次先熱身手腕",
+  "safetyRule1Note": "約 6 分鐘，學習路徑第一課就是它",
+  "safetyRule2": "刺痛、麻木、頭暈就停",
+  "safetyRule2Note": "酸可以，痛不行",
+  "safetyRule3": "這是動作教學",
+  "safetyRule3Note": "不能替代教練、醫生或康復治療；初次全旋請有人陪同",
+  "gotIt": "我知道了",
+  "startWithAssessment": "先做入門自評",
+  "libraryHint": "按肌群找動作",
+  "moreProgressHint": "本周 {count} 天",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "播放速度",
+  "phaseMoment": "{source} · 這一刻的主力",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "其他參與 · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "等 {count} 組",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "全部部位",
+  "search": "搜索",
+  "closeSearch": "關閉搜索",
+  "clearSearch": "清空搜索",
+  "spec": "劑量",
+  "moreCuesAndSafety": "更多要點、常見錯誤與安全",
+  "addTodayShort": "加入今日",
+  "setOfTotal": "第 {current} 組 / 共 {total} 組",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} 次",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "秒",
+  "painStopShort": "不適，停止練習",
+  "pathTitle": "學習路徑",
+  "continueLesson": "繼續 · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "全部完成",
+  "confirmStageGates": "待確認 · 本階段過關條件",
+  "stageGates": "階段自評 · 自行確認",
+  "weekDays": "本周練習天數",
+  "streak": "連續天數",
+  "recent": "最近",
+  "weekdayLabels": "一,二,三,四,五,六,日",
+  "todayLabel": "今天",
+  "completed": "完成",
+  "playbackGroup": "播放",
+  "otherGroup": "其他",
+  "aboutFlare": "關于 Flare",
+  "aboutHint": "版本、來源與許可、本地數據",
+  "safetyHint": "練之前的三件事",
+  "teachingTitle": "教學說明",
+  "licenses": "開源許可",
+  "minutesShort": "{count} 分鐘",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "相關動作階段",
+  "phasesShort": "階段 {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "次",
+  "appearanceGroup": "外觀",
+  "appearanceLabel": "主題",
+  "themeSystem": "跟隨系統",
+  "themeDark": "深色",
+  "themeLight": "淺色",
+  "sceneLoading": "正在載入 3D 動作",
+  "endSessionTitle": "結束這次練習？",
+  "endSessionBody": "已完成的部分會存為一條未完成記錄。",
+  "endSessionConfirm": "結束并保存",
+  "keepTraining": "繼續練",
+  "removedFromToday": "已移出今日訓練",
+  "undo": "撤銷",
+  "addedTodayToast": "已加入今日訓練",
+  "trainedOn": "{day}，已訓練",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "{day}，未訓練",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "觀看動作示范",
+  "hideDrillDemo": "收起示范",
+  "demoReplay": "重播",
+  "demoSeek": "播放進度",
+  "demoSpeed": "示范速度",
+  "demoFailed": "視頻暫時無法播放，請重試",
+  "demoPaused": "訓練已暫停，示范也已暫停",
+  "finishedLine": "{sets} 組全部完成",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "語言",
+  "languageSystem": "跟隨系統",
+  "languageTitle": "App 語言",
+  "sceneAccessibleTitle": "Flare 托馬斯全旋 3D 動作",
+  "weekDayLabel": "星期{day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "同步發力",
+  "muscleMap": "肌群圖",
+  "phaseMapAccessibility": "隨動作階段同步的肌群正面和背面定位圖",
+  "viewGroup": "查看{group}",
+  "reviewFirstPhases": "自行回顧 09–11：後撐、移重與側撐是否連貫",
+  "reviewFullLoop": "自行回顧整圈：換手、開腿與節奏是否連貫",
+  "wristFlexion": "腕屈",
+  "wristExtension": "腕伸",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

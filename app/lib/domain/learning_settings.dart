@@ -7,9 +7,27 @@ class LearningSettings {
     this.haptics = true,
     this.weeklyGoal = 3,
     this.themeMode = 'system',
+    this.language = 'system',
   });
 
   static const themeModes = ['system', 'dark', 'light'];
+  static const languages = [
+    'system',
+    'zh',
+    'zh_Hant',
+    'en',
+    'es',
+    'pt',
+    'fr',
+    'de',
+    'it',
+    'ru',
+    'ja',
+    'ko',
+    'ar',
+    'hi',
+    'id',
+  ];
 
   final String tier;
   final double speed;
@@ -21,6 +39,9 @@ class LearningSettings {
   /// Appearance: follow the device, or force dark / light.
   final String themeMode;
 
+  /// Explicit preference, or the device language; older states follow system.
+  final String language;
+
   LearningSettings copyWith({
     String? tier,
     double? speed,
@@ -29,6 +50,7 @@ class LearningSettings {
     bool? haptics,
     int? weeklyGoal,
     String? themeMode,
+    String? language,
   }) => LearningSettings(
     tier: tier ?? this.tier,
     speed: speed ?? this.speed,
@@ -37,6 +59,7 @@ class LearningSettings {
     haptics: haptics ?? this.haptics,
     weeklyGoal: weeklyGoal ?? this.weeklyGoal,
     themeMode: themeMode ?? this.themeMode,
+    language: language ?? this.language,
   );
 
   bool get valid =>
@@ -44,7 +67,8 @@ class LearningSettings {
       [0.25, 0.5, 1.0].contains(speed) &&
       weeklyGoal >= 1 &&
       weeklyGoal <= 7 &&
-      themeModes.contains(themeMode);
+      themeModes.contains(themeMode) &&
+      languages.contains(language);
 
   Map<String, dynamic> toJson() => {
     'tier': tier,
@@ -54,6 +78,7 @@ class LearningSettings {
     'haptics': haptics,
     'weeklyGoal': weeklyGoal,
     'themeMode': themeMode,
+    'language': language,
   };
 
   factory LearningSettings.fromJson(Map<String, dynamic> json) =>
@@ -66,5 +91,8 @@ class LearningSettings {
         weeklyGoal: json['weeklyGoal'] as int,
         // Older local states predate appearance and follow the device.
         themeMode: json['themeMode'] as String? ?? 'system',
+        language: languages.contains(json['language'])
+            ? json['language'] as String
+            : 'system',
       );
 }

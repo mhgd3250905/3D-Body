@@ -1,0 +1,436 @@
+{
+  "@@locale": "hi",
+  "appName": "Flare थॉमस",
+  "tagline": "हर चरण को समझें और अभ्यास करें।",
+  "watch": "गतिविधि",
+  "library": "अभ्यास",
+  "path": "सीखने का मार्ग",
+  "progress": "रिकॉर्ड",
+  "settings": "सेटिंग",
+  "motionBrand": "Flare · थॉमस सहायक",
+  "more": "और",
+  "timeline": "गतिविधि समयरेखा",
+  "phaseLabel": "गतिविधि चरण",
+  "viewLabel": "दृश्य",
+  "switchToMuscles": "खड़े मांसपेशी मॉडल पर जाएँ",
+  "switchToMotion": "थॉमस की गतिविधि पर जाएँ",
+  "fullLoop": "पूरा चक्र · 8 चरण",
+  "practiceLoop": "इस चरण को दोहराएँ",
+  "restoreLoop": "पूरा चक्र बहाल करें",
+  "play": "चलाएँ",
+  "pause": "रोकें",
+  "resume": "जारी रखें",
+  "resetView": "दृश्य रीसेट करें",
+  "front": "सामने",
+  "back": "पीछे",
+  "goBack": "वापस",
+  "side": "बगल",
+  "pausedHint": "मांसपेशी चुनकर अधिक जानें",
+  "playingHint": "मांसपेशी चुनने के लिए रोकें",
+  "loadingScene": "3D गतिविधि तैयार हो रही है…",
+  "sceneFailed": "3D दृश्य अभी उपलब्ध नहीं है। गतिविधि पृष्ठ फिर खोलें।",
+  "retry": "फिर प्रयास करें",
+  "muscles": "इस चरण की मांसपेशियाँ",
+  "primary": "मुख्य भूमिका",
+  "secondary": "सहायक भूमिका",
+  "teachingNote": "रंगीन क्षेत्र सीखने के लिए स्थान दिखाते हैं। वे EMG गतिविधि, मांसपेशियों की ताकत या उनकी सटीक सीमाएँ नहीं दर्शाते।",
+  "deepNote": "धारीदार भाग गहरी मांसपेशियों का स्थान दिखाता है।",
+  "deepMotionNote": "हाइलाइट गहरी मांसपेशी का स्थान दिखाता है।",
+  "bothSides": "दोनों ओर",
+  "leftSide": "बाईं ओर",
+  "rightSide": "दाईं ओर",
+  "whyHere": "इस चरण में भूमिका",
+  "relatedDrills": "लक्षित अभ्यास",
+  "sourceNote": "मॉडल और सीखने के लिए दिखाए स्थानों के बारे में",
+  "returnToMotion": "उसी फ़्रेम पर लौटें",
+  "addToday": "आज के अभ्यास में जोड़ें",
+  "addedToday": "आज के अभ्यास में जोड़ा गया",
+  "tierA": "A शरीर के वजन से",
+  "tierB": "B घर के उपकरण",
+  "tierC": "C जिम",
+  "all": "सभी",
+  "supportSection": "कंधे और बाँह का सहारा",
+  "coreSection": "कोर समन्वय",
+  "legsSection": "कूल्हे और पैरों का झूलना",
+  "searchDrills": "अभ्यास, मांसपेशी या अंग्रेज़ी नाम खोजें",
+  "libraryCount": "51 अभ्यास · 17 मांसपेशी समूह",
+  "noResults": "मेल खाने वाले अभ्यास नहीं मिले। कोई और शब्द खोजें।",
+  "illustration": "अभ्यास का प्रदर्शन",
+  "dose": "सेट और समय",
+  "equipment": "उपकरण",
+  "cues": "तकनीक के संकेत",
+  "mistake": "आम गलतियाँ",
+  "drillWhy": "यह अभ्यास क्यों करें",
+  "safety": "सुरक्षा",
+  "startTimer": "अभ्यास शुरू करें",
+  "today": "आज का अभ्यास",
+  "todayEmpty": "आज का अभ्यास बनाने के लिए मांसपेशी विवरण या सूची से अभ्यास जोड़ें",
+  "remove": "आज के अभ्यास से हटाएँ",
+  "clearMuscleFilter": "मांसपेशी फ़िल्टर हटाएँ",
+  "timerReady": "तैयार",
+  "countdown": "तैयार हो जाएँ",
+  "work": "अभ्यास जारी",
+  "rest": "सेट के बीच आराम",
+  "switchSide": "दूसरी ओर जाएँ",
+  "finished": "अभ्यास पूरा",
+  "abandoned": "सत्र समाप्त",
+  "paused": "रुका हुआ",
+  "start": "शुरू करें",
+  "completeRep": "1 दोहराव पूरा करें",
+  "completeSet": "सेट पूरा करें",
+  "skipRest": "आराम समाप्त करें",
+  "addRest": "+15 सेकंड आराम",
+  "painStop": "असहज लगे तो रुकें",
+  "painMessage": "असहजता दर्ज की गई। यह अभ्यास रोकें और आराम करें, फिर तय करें कि जारी रखना है या नहीं।",
+  "saved": "इस डिवाइस पर सहेजा गया",
+  "saving": "सहेज रहे हैं…",
+  "saveFailed": "सहेजना पूरा नहीं हुआ। यह सत्र अभी उपलब्ध है; फिर प्रयास करें।",
+  "storageReadFailed": "स्थानीय रिकॉर्ड अभी पढ़े नहीं जा सकते। आपका मूल डेटा सुरक्षित है।",
+  "done": "हो गया",
+  "exitTimer": "यह सत्र समाप्त करें",
+  "manualMode": "अभ्यास के निर्देशों का पालन करें, फिर हर सेट को स्वयं पूरा चिह्नित करें",
+  "backgroundPause": "ऐप पृष्ठभूमि में जाने पर अभ्यास रुक जाता है। लौटकर जारी रखें पर टैप करें।",
+  "setsLabel": "सेट {current} / {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} दोहराव",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} सेकंड",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "चरण {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "सीखने के मार्ग का मसौदा · 18 पाठ। पाठ और स्व-मूल्यांकन के मानदंडों की प्रशिक्षक से समीक्षा बाकी है; पूरा करने का अर्थ यह नहीं कि आपने गतिविधि में स्वतः महारत हासिल कर ली।",
+  "locked": "पिछले चरण के पाठ और स्व-मूल्यांकन पूरे करने के बाद खुलेगा",
+  "current": "वर्तमान चरण",
+  "passed": "पूरा",
+  "lessons": "पाठ",
+  "gate": "चरण का स्व-मूल्यांकन",
+  "selfReport": "स्वयं बताया गया; AI मूल्यांकन नहीं",
+  "confirmGate": "मैंने बिना दर्द के पूरा किया",
+  "markLesson": "पाठ को अभ्यास किया हुआ चिह्नित करें",
+  "lessonCompleted": "अभ्यास दर्ज किया गया",
+  "watchPhases": "संबंधित गतिविधि देखें",
+  "suggestedDrills": "इस पाठ के अभ्यास",
+  "assessment": "शुरुआती स्व-मूल्यांकन",
+  "assessmentNote": "अपनी हाल की वास्तविक क्षमता के आधार पर चुनें। इसका उपयोग केवल शुरुआती स्तर चुनने के लिए है। कलाई में असहजता हो तो चरण 1 से शुरू करें। यह क्षमता या चिकित्सा का आकलन नहीं है।",
+  "wristTest": "कलाई का विस्तार",
+  "compressionTest": "सीधा पैर उठाना",
+  "supportTest": "L-sit",
+  "dipsTest": "नियंत्रित डिप्स",
+  "hipTest": "स्ट्रैडल में कूल्हे खोलना",
+  "dipsGrade1": "0–3 दोहराव · शुरुआती",
+  "dipsGrade2": "4–7 दोहराव · बुनियादी",
+  "dipsGrade3": "8–12 दोहराव · अच्छा",
+  "dipsGrade4": "13 या अधिक · उत्कृष्ट",
+  "grade1": "पूरा नहीं / असहजता",
+  "grade2": "बुनियादी अभ्यास कर सकते हैं",
+  "grade3": "स्थिर प्रदर्शन; अभी और अभ्यास चाहिए",
+  "grade4": "आसानी से करते हैं; आगे बढ़ने के लिए तैयार",
+  "gradeShort1": "अभी नहीं",
+  "gradeShort2": "कर सकते हैं",
+  "gradeShort3": "स्थिर",
+  "gradeShort4": "आसान",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "स्व-मूल्यांकन वाला शुरुआती स्तर सहेजें",
+  "skipAssessment": "बुनियादी स्तर से शुरू करें",
+  "assessmentSaved": "स्व-मूल्यांकन इस डिवाइस पर सहेजा गया",
+  "welcomeTitle": "एक पूरे चक्र को समझने योग्य चरणों में बाँटें",
+  "welcomeBody": "असली 3D मॉडल को घुमाएँ, रोककर मांसपेशी चुनें और उससे जुड़ा अभ्यास खोलें। गतिविधि, चित्र और रिकॉर्ड इसी डिवाइस पर रहते हैं और ऑफलाइन काम करते हैं।",
+  "welcomeStep1": "देखें · धीमी गति और आठ चरण",
+  "welcomeStep2": "समझें · हर मुद्रा में मांसपेशियों की भूमिका",
+  "welcomeStep3": "अभ्यास करें · सेट, टाइमर और स्थानीय रिकॉर्ड",
+  "safetyBody": "पहले कलाई और कंधों को गर्म करें। अपनी क्षमता के अनुसार अभ्यास करें और दर्द या चक्कर आने पर रुकें। पहली बार पूरा चक्र करते समय उपयुक्त जगह चुनें और किसी अनुभवी व्यक्ति को साथ रखें। यह सामग्री गतिविधि सिखाती है; निदान नहीं करती।",
+  "ackSafety": "मैंने सुरक्षा निर्देश समझ लिए हैं",
+  "enterApp": "3D गतिविधि खोलें",
+  "history": "रिकॉर्ड",
+  "historyEmpty": "समयबद्ध अभ्यास पूरा करें, उसका रिकॉर्ड यहाँ दिखेगा",
+  "sessionCount": "अभ्यास सत्र",
+  "activeMinutes": "अभ्यास के मिनट",
+  "lessonCount": "अभ्यास किए पाठ",
+  "incomplete": "अधूरा",
+  "painFlag": "असहजता दर्ज",
+  "aboutTitle": "Flare के बारे में",
+  "aboutBody": "स्थानीय विकास संस्करण 1.0.0। Thomas flare देखें, हर चरण में मांसपेशियों की भूमिका जानें, उपयुक्त अभ्यास चुनें और अभ्यास का रिकॉर्ड रखें। गतिविधि, मीडिया और अभ्यास रिकॉर्ड ऑफलाइन उपलब्ध हैं।",
+  "privacyTitle": "स्थानीय डेटा और गोपनीयता",
+  "privacyBody": "सेटिंग, आज का अभ्यास, स्व-मूल्यांकन और अभ्यास रिकॉर्ड केवल इसी डिवाइस पर सहेजे जाते हैं। मॉडल और मीडिया ऐप के साथ आते हैं; कुछ भी सर्वर पर अपलोड नहीं होता। ब्राउज़र पूर्वावलोकन का डेटा उसी ब्राउज़र का है। डिवाइस बदलने या फिर से इंस्टॉल करने से पहले बैकअप निर्यात करें।",
+  "creditsTitle": "मॉडल और मीडिया के स्रोत",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; कपड़े, सामग्री और एनिमेशन में बदलाव किया गया। Human Base Meshes · Blender Studio और समुदाय के योगदानकर्ता · CC0. Three.js · MIT. मॉडल के रंगीन क्षेत्र शिक्षण पैनल हैं; वे अनुपलब्ध BodyParts3D शरीर-रचना मेश का विकल्प नहीं हैं। अभ्यास और ब्रांड की छवियाँ उपयोगकर्ता ने दी हैं; रिलीज़ से पहले लाइसेंस की जाँच बाकी है।",
+  "speedLabel": "डिफ़ॉल्ट प्लेबैक गति",
+  "qualityLabel": "चित्र गुणवत्ता",
+  "balanced": "संतुलित",
+  "battery": "बैटरी बचाएँ",
+  "high": "उच्च",
+  "exportBackup": "स्थानीय बैकअप की प्रति बनाएँ",
+  "backupCopied": "बैकअप कॉपी किया गया। इसे अपनी पसंद की फ़ाइल में सहेजें।",
+  "contentDraftNote": "अभ्यास सीखने के सुझाव हैं। चित्र हर अभ्यास के निर्देशों का विकल्प नहीं हैं।",
+  "close": "बंद करें",
+  "pausedAt": "{time} सेकंड पर रुका",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "मुख्य",
+  "secondaryShort": "सहायक",
+  "together": "साथ मिलकर",
+  "assistMuscles": "सहायक मांसपेशियाँ",
+  "sceneNone": "बिना उपकरण",
+  "sceneHome": "घर पर",
+  "sceneGym": "जिम",
+  "sceneNoneHint": "शरीर के वजन से, कहीं भी",
+  "sceneHomeHint": "रेज़िस्टेंस बैंड, डम्बल और घर के अन्य उपकरण",
+  "sceneGymHint": "मशीन और फ्री वेट",
+  "chooseScene": "अभ्यास का परिवेश चुनें",
+  "trainGroup": "{name} का अभ्यास",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "गहरी मांसपेशी · रंग स्थान दिखाता है",
+  "deepMusclesHint": "गहरी मांसपेशी · धारियाँ स्थान दिखाती हैं",
+  "noDrillForTier": "इस उपकरण स्तर पर इस मांसपेशी के लिए अभ्यास उपलब्ध नहीं हैं",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "Thomas flare",
+  "welcomeLine": "गतिविधि देखें और जानें कि हर क्षण कौन-सी मांसपेशियाँ काम करती हैं।",
+  "startApp": "शुरू करें",
+  "welcomeFootPrefix": "आगे बढ़कर आप पुष्टि करते हैं कि आपने पढ़ लिया है",
+  "safetySheetEyebrow": "अभ्यास से पहले",
+  "safetySheetTitle": "तीन ज़रूरी बातें",
+  "safetyRule1": "पहले कलाई को गर्म करें",
+  "safetyRule1Note": "लगभग 6 मिनट; सीखने के मार्ग का पहला पाठ",
+  "safetyRule2": "तेज़ दर्द, सुन्नपन या चक्कर आने पर रुकें",
+  "safetyRule2Note": "मांसपेशियों में मेहनत ठीक है, दर्द नहीं",
+  "safetyRule3": "यह गतिविधि सिखाने वाली सामग्री है",
+  "safetyRule3Note": "यह प्रशिक्षक, डॉक्टर या पुनर्वास उपचार का विकल्प नहीं है। पहली बार पूरा चक्र करते समय किसी को साथ रखें।",
+  "gotIt": "समझ गया",
+  "startWithAssessment": "स्व-मूल्यांकन से शुरू करें",
+  "libraryHint": "मांसपेशी समूह के अनुसार अभ्यास खोजें",
+  "moreProgressHint": "इस सप्ताह {count} दिन",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "प्लेबैक गति",
+  "phaseMoment": "{source} · इस क्षण मुख्य मांसपेशियाँ",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "अन्य शामिल · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "और {count} समूह",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "सभी क्षेत्र",
+  "search": "खोजें",
+  "closeSearch": "खोज बंद करें",
+  "clearSearch": "खोज मिटाएँ",
+  "spec": "मात्रा",
+  "moreCuesAndSafety": "अधिक संकेत, आम गलतियाँ और सुरक्षा",
+  "addTodayShort": "आज जोड़ें",
+  "setOfTotal": "सेट {current} / {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} दोहराव",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "सेकंड",
+  "painStopShort": "असहज लगे तो रुकें",
+  "pathTitle": "सीखने का मार्ग",
+  "continueLesson": "जारी रखें · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "सब पूरा",
+  "confirmStageGates": "पुष्टि बाकी · चरण की शर्तें",
+  "stageGates": "चरण का स्व-मूल्यांकन · स्वयं बताया गया",
+  "weekDays": "इस सप्ताह अभ्यास के दिन",
+  "streak": "लगातार दिन",
+  "recent": "हाल के",
+  "weekdayLabels": "सोम,मंगल,बुध,गुरु,शुक्र,शनि,रवि",
+  "todayLabel": "आज",
+  "completed": "पूरा",
+  "playbackGroup": "प्लेबैक",
+  "otherGroup": "अन्य",
+  "aboutFlare": "Flare के बारे में",
+  "aboutHint": "संस्करण, स्रोत और लाइसेंस, स्थानीय डेटा",
+  "safetyHint": "अभ्यास से पहले की तीन बातें",
+  "teachingTitle": "शिक्षण संबंधी जानकारी",
+  "licenses": "ओपन-सोर्स लाइसेंस",
+  "minutesShort": "{count} मिनट",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "संबंधित गतिविधि चरण",
+  "phasesShort": "चरण {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "दोहराव",
+  "appearanceGroup": "दिखावट",
+  "appearanceLabel": "थीम",
+  "themeSystem": "सिस्टम के अनुसार",
+  "themeDark": "गहरा",
+  "themeLight": "हल्का",
+  "sceneLoading": "3D गतिविधि लोड हो रही है",
+  "endSessionTitle": "यह सत्र समाप्त करें?",
+  "endSessionBody": "पूरा किया गया भाग अधूरे रिकॉर्ड के रूप में सहेजा जाएगा।",
+  "endSessionConfirm": "समाप्त करें और सहेजें",
+  "keepTraining": "अभ्यास जारी रखें",
+  "removedFromToday": "आज के अभ्यास से हटाया गया",
+  "undo": "पूर्ववत करें",
+  "addedTodayToast": "आज के अभ्यास में जोड़ा गया",
+  "trainedOn": "अभ्यास किया · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "अभ्यास नहीं किया · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "अभ्यास का प्रदर्शन देखें",
+  "hideDrillDemo": "प्रदर्शन छिपाएँ",
+  "demoReplay": "फिर चलाएँ",
+  "demoSeek": "प्लेबैक स्थिति",
+  "demoSpeed": "प्रदर्शन की गति",
+  "demoFailed": "वीडियो अभी उपलब्ध नहीं है। फिर प्रयास करें।",
+  "demoPaused": "अभ्यास रुका है; प्रदर्शन भी रुका है",
+  "finishedLine": "सभी {sets} सेट पूरे",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "भाषा",
+  "languageSystem": "सिस्टम के अनुसार",
+  "languageTitle": "ऐप की भाषा",
+  "sceneAccessibleTitle": "Flare Thomas flare 3D गतिविधि",
+  "weekDayLabel": "सप्ताह का दिन {day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "मांसपेशियों का समन्वित प्रयास",
+  "muscleMap": "मांसपेशी मानचित्र",
+  "phaseMapAccessibility": "गतिविधि चरण के साथ समकालित सामने और पीछे के मांसपेशी मानचित्र",
+  "viewGroup": "{group} देखें",
+  "reviewFirstPhases": "चरण 09–11 की स्वयं समीक्षा करें: क्या पीछे का सहारा, भार बदलना और बगल का सहारा सहज रूप से जुड़े हैं?",
+  "reviewFullLoop": "पूरे चक्र की स्वयं समीक्षा करें: क्या हाथ बदलना, पैर खोलना और लय सहज रूप से जुड़े हैं?",
+  "wristFlexion": "कलाई मोड़ना",
+  "wristExtension": "कलाई का विस्तार",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

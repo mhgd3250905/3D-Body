@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
@@ -590,9 +591,7 @@ class _LibraryPageState extends State<LibraryPage> {
                         // Re-keyed per filter so a new result set eases in,
                         // staggered from the top.
                         return FadeSlideIn(
-                          key: ValueKey(
-                            '$tier|$_section|$_query|${drill.id}',
-                          ),
+                          key: ValueKey('$tier|$_section|$_query|${drill.id}'),
                           delay: FadeSlideIn.stagger(index),
                           child: DrillCard(
                             drill: drill,
@@ -1481,8 +1480,8 @@ class ProgressPage extends StatelessWidget {
                     for (var i = 0; i < 7; i++)
                       Semantics(
                         label: trained.contains(monday.add(Duration(days: i)))
-                            ? s.trainedOn('周${labels[i]}')
-                            : s.notTrainedOn('周${labels[i]}'),
+                            ? s.trainedOn(s.weekDayLabel(labels[i]))
+                            : s.notTrainedOn(s.weekDayLabel(labels[i])),
                         child: ExcludeSemantics(
                           child: Column(
                             children: [
@@ -1531,7 +1530,7 @@ class ProgressPage extends StatelessWidget {
                           FlareRow(
                             title: drill.name,
                             subtitle:
-                                '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel)} · ${s.setsLabel(session.completedSets, session.plannedSets)}',
+                                '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel, s.localeName)} · ${s.setsLabel(session.completedSets, session.plannedSets)}',
                             trailing: Text(
                               session.pain
                                   ? s.painFlag
@@ -1559,12 +1558,17 @@ class ProgressPage extends StatelessWidget {
     );
   }
 
-  String _dateLabel(DateTime date, DateTime today, String todayLabel) {
+  String _dateLabel(
+    DateTime date,
+    DateTime today,
+    String todayLabel,
+    String locale,
+  ) {
     final time =
         '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
     if (DateTime(date.year, date.month, date.day) == today) {
       return '$todayLabel $time';
     }
-    return '${date.month}/${date.day} $time';
+    return '${DateFormat.MMMd(locale).format(date)} $time';
   }
 }

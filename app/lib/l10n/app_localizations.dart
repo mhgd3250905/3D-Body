@@ -5,6 +5,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_de.dart';
+import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +104,22 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('zh')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('hi'),
+    Locale('id'),
+    Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('pt'),
+    Locale('ru'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+  ];
 
   /// No description provided for @appName.
   ///
@@ -985,7 +1012,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In zh, this message translates to:
-  /// **'本地开发版 0.1.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。'**
+  /// **'本地开发版 1.0.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。'**
   String get aboutBody;
 
   /// No description provided for @privacyTitle.
@@ -1635,6 +1662,84 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{sets} 组全部完成'**
   String finishedLine(int sets);
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'语言'**
+  String get languageLabel;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get languageSystem;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'App 语言'**
+  String get languageTitle;
+
+  /// No description provided for @sceneAccessibleTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'Flare 托马斯全旋 3D 动作'**
+  String get sceneAccessibleTitle;
+
+  /// No description provided for @weekDayLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'星期{day}'**
+  String weekDayLabel(String day);
+
+  /// No description provided for @syncEffort.
+  ///
+  /// In zh, this message translates to:
+  /// **'同步发力'**
+  String get syncEffort;
+
+  /// No description provided for @muscleMap.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群图'**
+  String get muscleMap;
+
+  /// No description provided for @phaseMapAccessibility.
+  ///
+  /// In zh, this message translates to:
+  /// **'随动作阶段同步的肌群正面和背面定位图'**
+  String get phaseMapAccessibility;
+
+  /// No description provided for @viewGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看{group}'**
+  String viewGroup(String group);
+
+  /// No description provided for @reviewFirstPhases.
+  ///
+  /// In zh, this message translates to:
+  /// **'自行回顾 09–11：后撑、移重与侧撑是否连贯'**
+  String get reviewFirstPhases;
+
+  /// No description provided for @reviewFullLoop.
+  ///
+  /// In zh, this message translates to:
+  /// **'自行回顾整圈：换手、开腿与节奏是否连贯'**
+  String get reviewFullLoop;
+
+  /// No description provided for @wristFlexion.
+  ///
+  /// In zh, this message translates to:
+  /// **'腕屈'**
+  String get wristFlexion;
+
+  /// No description provided for @wristExtension.
+  ///
+  /// In zh, this message translates to:
+  /// **'腕伸'**
+  String get wristExtension;
 }
 
 class _AppLocalizationsDelegate
@@ -1647,16 +1752,65 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'de',
+    'en',
+    'es',
+    'fr',
+    'hi',
+    'id',
+    'it',
+    'ja',
+    'ko',
+    'pt',
+    'ru',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'id':
+      return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'zh':
       return AppLocalizationsZh();
   }

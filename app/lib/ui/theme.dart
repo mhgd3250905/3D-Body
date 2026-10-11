@@ -220,6 +220,11 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
     colorScheme: scheme,
     brightness: brightness,
     fontFamily: 'FlareSans',
+    fontFamilyFallback: const [
+      'NotoSansKR',
+      'NotoSansArabic',
+      'NotoSansDevanagari',
+    ],
     scaffoldBackgroundColor: p.background,
     canvasColor: p.background,
     useMaterial3: true,
@@ -251,6 +256,11 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
         disabledForegroundColor: p.onDisabled,
         textStyle: const TextStyle(
           fontFamily: 'FlareSans',
+          fontFamilyFallback: [
+            'NotoSansKR',
+            'NotoSansArabic',
+            'NotoSansDevanagari',
+          ],
           fontSize: 16,
           fontWeight: FontWeight.w700,
           letterSpacing: .5,

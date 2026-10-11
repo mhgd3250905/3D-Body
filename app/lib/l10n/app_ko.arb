@@ -1,0 +1,436 @@
+{
+  "@@locale": "ko",
+  "appName": "Flare 토마스",
+  "tagline": "동작을 이해하고 한 단계씩 연습하세요",
+  "watch": "동작",
+  "library": "훈련",
+  "path": "학습 경로",
+  "progress": "기록",
+  "settings": "설정",
+  "motionBrand": "Flare · 토마스 도우미",
+  "more": "더 보기",
+  "timeline": "동작 타임라인",
+  "phaseLabel": "동작 단계",
+  "viewLabel": "시점",
+  "switchToMuscles": "서 있는 근육 모델 보기",
+  "switchToMotion": "움직이는 토마스 보기",
+  "fullLoop": "전체 동작 · 8단계",
+  "practiceLoop": "현재 단계 반복",
+  "restoreLoop": "전체 동작으로 복원",
+  "play": "재생",
+  "pause": "일시정지",
+  "resume": "계속하기",
+  "resetView": "시점 초기화",
+  "front": "정면",
+  "back": "후면",
+  "goBack": "뒤로",
+  "side": "측면",
+  "pausedHint": "근육을 선택해 자세히 보기",
+  "playingHint": "일시정지하면 근육을 선택할 수 있습니다",
+  "loadingScene": "3D 동작 준비 중…",
+  "sceneFailed": "3D 화면을 일시적으로 표시할 수 없습니다. 동작 화면을 다시 여세요.",
+  "retry": "다시 시도",
+  "muscles": "이 단계의 근육",
+  "primary": "주요 역할",
+  "secondary": "보조 역할",
+  "teachingNote": "색상 영역은 교육용 위치 표시입니다. 근전도 활동, 근력 또는 정확한 근육 경계를 나타내지 않습니다.",
+  "deepNote": "빗금은 심부 근육의 위치를 표시합니다.",
+  "deepMotionNote": "강조 표시는 심부 근육의 위치를 나타냅니다.",
+  "bothSides": "양쪽",
+  "leftSide": "왼쪽",
+  "rightSide": "오른쪽",
+  "whyHere": "이 단계에서의 역할",
+  "relatedDrills": "관련 운동",
+  "sourceNote": "모델 및 교육용 위치 안내",
+  "returnToMotion": "같은 프레임으로 돌아가기",
+  "addToday": "오늘의 훈련에 추가",
+  "addedToday": "오늘의 훈련에 추가됨",
+  "tierA": "A 맨몸",
+  "tierB": "B 홈트 기구",
+  "tierC": "C 헬스장",
+  "all": "전체",
+  "supportSection": "어깨와 팔 지지",
+  "coreSection": "코어 협응",
+  "legsSection": "엉덩이와 다리 스윙",
+  "searchDrills": "운동, 근육 또는 영문 이름 검색",
+  "libraryCount": "운동 51개 · 근육군 17개",
+  "noResults": "일치하는 운동이 없습니다. 다른 검색어를 입력해 보세요.",
+  "illustration": "운동 시범",
+  "dose": "세트와 시간",
+  "equipment": "기구",
+  "cues": "동작 팁",
+  "mistake": "자주 하는 실수",
+  "drillWhy": "이 운동을 하는 이유",
+  "safety": "안전 안내",
+  "startTimer": "훈련 시작",
+  "today": "오늘의 훈련",
+  "todayEmpty": "근육 상세 정보나 운동 목록에서 추가해 오늘의 훈련을 구성하세요",
+  "remove": "오늘의 훈련에서 삭제",
+  "clearMuscleFilter": "근육 필터 지우기",
+  "timerReady": "준비 완료",
+  "countdown": "준비하세요",
+  "work": "훈련 중",
+  "rest": "세트 간 휴식",
+  "switchSide": "반대쪽으로 전환",
+  "finished": "훈련 완료",
+  "abandoned": "세션 종료",
+  "paused": "일시정지됨",
+  "start": "시작",
+  "completeRep": "1회 완료",
+  "completeSet": "세트 완료",
+  "skipRest": "휴식 종료",
+  "addRest": "+15초 휴식",
+  "painStop": "불편하면 운동을 멈추세요",
+  "painMessage": "불편함이 기록되었습니다. 현재 운동을 멈추고 쉬었다가 계속할지 결정하세요.",
+  "saved": "이 기기에 저장됨",
+  "saving": "저장 중…",
+  "saveFailed": "저장을 완료하지 못했습니다. 현재 세션은 남아 있으니 다시 시도하세요.",
+  "storageReadFailed": "로컬 기록을 일시적으로 읽을 수 없습니다. 기존 데이터는 보존되었습니다.",
+  "done": "완료",
+  "exitTimer": "이 세션 종료",
+  "manualMode": "운동 안내에 따라 진행한 뒤 세트를 직접 완료 처리하세요",
+  "backgroundPause": "앱이 백그라운드로 이동하면 훈련이 일시정지됩니다. 돌아와서 계속하기를 누르세요.",
+  "setsLabel": "{current}/{total}세트",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count}회",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds}초",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "{stage}단계",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "학습 경로 초안 · 18개 레슨. 레슨과 자기평가 기준은 코치 검토 전입니다. 완료했다고 동작을 익혔다고 자동 판정하지 않습니다.",
+  "locked": "이전 단계의 레슨과 자기평가를 완료하면 열립니다",
+  "current": "현재 단계",
+  "passed": "완료",
+  "lessons": "레슨",
+  "gate": "단계 자기평가",
+  "selfReport": "본인 응답이며 AI 평가는 아닙니다",
+  "confirmGate": "통증 없이 완료했습니다",
+  "markLesson": "레슨을 연습 완료로 표시",
+  "lessonCompleted": "연습 기록됨",
+  "watchPhases": "관련 동작 보기",
+  "suggestedDrills": "이 레슨의 운동",
+  "assessment": "시작 전 자기평가",
+  "assessmentNote": "가장 최근 실제 수행 결과에 따라 선택하세요. 시작 지점을 정하기 위한 용도입니다. 손목이 불편하면 1단계부터 시작하세요. 능력이나 건강 상태를 평가하는 검사가 아닙니다.",
+  "wristTest": "손목 신전",
+  "compressionTest": "다리 펴고 들어 올리기",
+  "supportTest": "L-싯",
+  "dipsTest": "컨트롤 딥스 횟수",
+  "hipTest": "스트래들 고관절 열기",
+  "dipsGrade1": "0~3회 · 입문",
+  "dipsGrade2": "4~7회 · 기초",
+  "dipsGrade3": "8~12회 · 양호",
+  "dipsGrade4": "13회 이상 · 우수",
+  "grade1": "미완료 / 불편함 있음",
+  "grade2": "기본 운동 수행 가능",
+  "grade3": "안정적으로 수행하지만 더 연습이 필요함",
+  "grade4": "편하게 수행하며 다음 단계로 진행할 준비가 됨",
+  "gradeShort1": "아직",
+  "gradeShort2": "가능",
+  "gradeShort3": "안정적",
+  "gradeShort4": "수월함",
+  "dipsShort1": "0~3",
+  "dipsShort2": "4~7",
+  "dipsShort3": "8~12",
+  "dipsShort4": "13+",
+  "saveAssessment": "자기평가 시작 단계 저장",
+  "skipAssessment": "기초부터 시작",
+  "assessmentSaved": "자기평가가 이 기기에 저장됨",
+  "welcomeTitle": "한 바퀴 동작을 이해하기 쉬운 단계로 나누세요",
+  "welcomeBody": "실제 3D 모델을 돌려 보고, 일시정지해 근육을 선택한 뒤 관련 운동을 확인하세요. 동작, 그림, 기록은 이 기기에 저장되며 오프라인에서도 사용할 수 있습니다.",
+  "welcomeStep1": "보기 · 슬로 모션과 8단계",
+  "welcomeStep2": "이해하기 · 각 자세에서 근육의 역할",
+  "welcomeStep3": "훈련하기 · 세트, 타이머, 로컬 기록",
+  "safetyBody": "먼저 손목과 어깨를 준비운동하세요. 자신의 능력에 맞춰 훈련하고 통증이나 어지럼증이 생기면 멈추세요. 처음 한 바퀴를 시도할 때는 적절한 장소를 고르고 경험자의 도움을 받으세요. 이 콘텐츠는 동작 학습용이며 진단을 제공하지 않습니다.",
+  "ackSafety": "안전 안내를 확인했습니다",
+  "enterApp": "3D 동작 열기",
+  "history": "기록",
+  "historyEmpty": "시간 측정 훈련을 완료하면 여기에 표시됩니다",
+  "sessionCount": "훈련 횟수",
+  "activeMinutes": "훈련 시간(분)",
+  "lessonCount": "연습한 레슨",
+  "incomplete": "미완료",
+  "painFlag": "불편함 기록됨",
+  "aboutTitle": "Flare 소개",
+  "aboutBody": "로컬 개발 버전 1.0.0. 토마스 플레어 동작을 보고 단계별 근육의 역할을 이해하고, 알맞은 운동을 선택해 연습을 기록하세요. 동작, 미디어, 훈련 기록은 오프라인에서 사용할 수 있습니다.",
+  "privacyTitle": "로컬 데이터 및 개인정보",
+  "privacyBody": "설정, 오늘의 훈련, 자기평가, 훈련 기록은 이 기기에만 저장됩니다. 모델과 미디어는 앱에 포함되어 있으며 서버로 업로드되지 않습니다. 브라우저 미리보기 데이터는 해당 브라우저에 저장됩니다. 기기를 옮기거나 앱을 다시 설치하기 전에 백업을 내보내세요.",
+  "creditsTitle": "모델 및 미디어 출처",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; 의상, 재질, 애니메이션 수정. Human Base Meshes · Blender Studio 및 커뮤니티 기여자 · CC0. Three.js · MIT. 인체 모형의 색상 영역은 교육용 패널이며 누락된 BodyParts3D 해부 메시를 대신하지 않습니다. 운동과 브랜드 이미지는 사용자가 제공했으며 출시 전에 라이선스를 확인해야 합니다.",
+  "speedLabel": "기본 재생 속도",
+  "qualityLabel": "화질",
+  "balanced": "균형",
+  "battery": "배터리 절약",
+  "high": "높음",
+  "exportBackup": "로컬 백업 복사",
+  "backupCopied": "백업을 복사했습니다. 원하는 파일에 저장하세요.",
+  "contentDraftNote": "운동은 교육용 제안입니다. 그림은 각 운동의 설명을 대신하지 않습니다.",
+  "close": "닫기",
+  "pausedAt": "{time}초에서 일시정지",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "주요",
+  "secondaryShort": "보조",
+  "together": "함께 작용",
+  "assistMuscles": "보조 근육",
+  "sceneNone": "기구 없이",
+  "sceneHome": "집에서",
+  "sceneGym": "헬스장",
+  "sceneNoneHint": "맨몸 운동, 어디서나",
+  "sceneHomeHint": "저항 밴드, 덤벨 등 홈트 기구",
+  "sceneGymHint": "머신과 프리웨이트",
+  "chooseScene": "훈련 환경 선택",
+  "trainGroup": "{name} 운동",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "심부 근육 · 색상은 위치를 표시합니다",
+  "deepMusclesHint": "심부 근육 · 빗금은 위치를 표시합니다",
+  "noDrillForTier": "이 기구 수준에서는 해당 근육 운동을 찾을 수 없습니다",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "토마스 플레어",
+  "welcomeLine": "동작을 따라가며 순간마다 어떤 근육이 쓰이는지 확인하세요.",
+  "startApp": "시작하기",
+  "welcomeFootPrefix": "계속하면 다음 내용을 읽었음을 확인하게 됩니다",
+  "safetySheetEyebrow": "훈련 전",
+  "safetySheetTitle": "세 가지 안내",
+  "safetyRule1": "먼저 손목을 준비운동하세요",
+  "safetyRule1Note": "약 6분이며 학습 경로의 첫 레슨입니다",
+  "safetyRule2": "찌르는 통증, 저림, 어지럼증이 있으면 멈추세요",
+  "safetyRule2Note": "근육의 힘듦은 괜찮지만 통증은 안 됩니다",
+  "safetyRule3": "이 콘텐츠는 동작을 가르칩니다",
+  "safetyRule3Note": "코치, 의사 또는 재활 치료를 대신하지 않습니다. 처음 한 바퀴를 할 때는 누군가 곁에 있도록 하세요.",
+  "gotIt": "확인",
+  "startWithAssessment": "자기평가부터 시작",
+  "libraryHint": "근육군별 운동 찾기",
+  "moreProgressHint": "이번 주 {count}일",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "재생 속도",
+  "phaseMoment": "{source} · 이 순간의 주요 근육",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "함께 쓰이는 근육 · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "외 {count}개 그룹",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "모든 부위",
+  "search": "검색",
+  "closeSearch": "검색 닫기",
+  "clearSearch": "검색 지우기",
+  "spec": "운동량",
+  "moreCuesAndSafety": "추가 팁, 자주 하는 실수, 안전 안내",
+  "addTodayShort": "오늘 추가",
+  "setOfTotal": "{current}/{total}세트",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count}회",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "초",
+  "painStopShort": "불편하면 운동을 멈추세요",
+  "pathTitle": "학습 경로",
+  "continueLesson": "계속 · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "모두 완료",
+  "confirmStageGates": "확인 필요 · 단계 조건",
+  "stageGates": "단계 자기평가 · 본인 응답",
+  "weekDays": "이번 주 훈련 일수",
+  "streak": "연속 일수",
+  "recent": "최근",
+  "weekdayLabels": "월,화,수,목,금,토,일",
+  "todayLabel": "오늘",
+  "completed": "완료",
+  "playbackGroup": "재생",
+  "otherGroup": "기타",
+  "aboutFlare": "Flare 소개",
+  "aboutHint": "버전, 출처와 라이선스, 로컬 데이터",
+  "safetyHint": "훈련 전 알아둘 세 가지",
+  "teachingTitle": "교육 안내",
+  "licenses": "오픈소스 라이선스",
+  "minutesShort": "{count}분",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "관련 동작 단계",
+  "phasesShort": "단계 {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "회",
+  "appearanceGroup": "화면",
+  "appearanceLabel": "테마",
+  "themeSystem": "시스템 설정 따르기",
+  "themeDark": "어두운 테마",
+  "themeLight": "밝은 테마",
+  "sceneLoading": "3D 동작 불러오는 중",
+  "endSessionTitle": "이 세션을 종료할까요?",
+  "endSessionBody": "완료한 부분은 미완료 기록으로 저장됩니다.",
+  "endSessionConfirm": "종료 후 저장",
+  "keepTraining": "훈련 계속하기",
+  "removedFromToday": "오늘의 훈련에서 삭제됨",
+  "undo": "실행 취소",
+  "addedTodayToast": "오늘의 훈련에 추가됨",
+  "trainedOn": "훈련함 · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "훈련하지 않음 · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "운동 시범 보기",
+  "hideDrillDemo": "시범 숨기기",
+  "demoReplay": "다시 재생",
+  "demoSeek": "재생 위치",
+  "demoSpeed": "시범 속도",
+  "demoFailed": "동영상을 일시적으로 재생할 수 없습니다. 다시 시도하세요.",
+  "demoPaused": "훈련이 일시정지되어 시범도 멈췄습니다",
+  "finishedLine": "{sets}세트를 모두 완료했습니다",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "언어",
+  "languageSystem": "시스템 설정 따르기",
+  "languageTitle": "앱 언어",
+  "sceneAccessibleTitle": "Flare 토마스 플레어 3D 동작",
+  "weekDayLabel": "{day}요일",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "근육 협응",
+  "muscleMap": "근육 지도",
+  "phaseMapAccessibility": "동작 단계에 맞춰 동기화되는 근육 정면 및 후면 위치 지도",
+  "viewGroup": "{group} 보기",
+  "reviewFirstPhases": "09~11단계를 스스로 돌아보세요: 후방 지지, 체중 이동, 측면 지지가 자연스럽게 이어지나요?",
+  "reviewFullLoop": "전체 동작을 스스로 돌아보세요: 손 바꾸기, 다리 벌리기, 리듬이 자연스럽게 이어지나요?",
+  "wristFlexion": "손목 굴곡",
+  "wristExtension": "손목 신전",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

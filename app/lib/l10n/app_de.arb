@@ -1,0 +1,436 @@
+{
+  "@@locale": "de",
+  "appName": "Flare Thomas",
+  "tagline": "Verstehe die Bewegung. Trainiere jeden Schritt.",
+  "watch": "Bewegung",
+  "library": "Training",
+  "path": "Lernpfad",
+  "progress": "Verlauf",
+  "settings": "Einstellungen",
+  "motionBrand": "Flare · Thomas-Assistent",
+  "more": "Mehr",
+  "timeline": "Bewegungsablauf",
+  "phaseLabel": "Bewegungsphase",
+  "viewLabel": "Ansicht",
+  "switchToMuscles": "Stehendes Muskelmodell anzeigen",
+  "switchToMotion": "Thomas in Bewegung anzeigen",
+  "fullLoop": "Vollständiger Ablauf · 8 Phasen",
+  "practiceLoop": "Diese Phase wiederholen",
+  "restoreLoop": "Vollständigen Ablauf wiederherstellen",
+  "play": "Abspielen",
+  "pause": "Pausieren",
+  "resume": "Fortsetzen",
+  "resetView": "Ansicht zurücksetzen",
+  "front": "Vorne",
+  "back": "Hinten",
+  "goBack": "Zurück",
+  "side": "Seite",
+  "pausedHint": "Muskel auswählen, um mehr zu erfahren",
+  "playingHint": "Pausieren, um einen Muskel auszuwählen",
+  "loadingScene": "3D-Bewegung wird vorbereitet…",
+  "sceneFailed": "Die 3D-Ansicht ist vorübergehend nicht verfügbar. Öffne die Bewegungsseite erneut.",
+  "retry": "Erneut versuchen",
+  "muscles": "Muskeln in dieser Phase",
+  "primary": "Hauptfunktion",
+  "secondary": "Unterstützende Funktion",
+  "teachingNote": "Farbige Bereiche zeigen didaktische Positionen. Sie stellen weder EMG-Aktivität noch Muskelkraft oder exakte Muskelgrenzen dar.",
+  "deepNote": "Schraffuren markieren die Position tiefer Muskeln.",
+  "deepMotionNote": "Die Hervorhebung markiert die Position eines tiefer liegenden Muskels.",
+  "bothSides": "Beide Seiten",
+  "leftSide": "Linke Seite",
+  "rightSide": "Rechte Seite",
+  "whyHere": "Funktion in dieser Phase",
+  "relatedDrills": "Gezielte Übungen",
+  "sourceNote": "Hinweise zu Modell und didaktischen Positionen",
+  "returnToMotion": "Zum selben Zeitpunkt zurückkehren",
+  "addToday": "Zum heutigen Training hinzufügen",
+  "addedToday": "Zum heutigen Training hinzugefügt",
+  "tierA": "A Eigengewicht",
+  "tierB": "B Heimtrainingsgeräte",
+  "tierC": "C Fitnessstudio",
+  "all": "Alle",
+  "supportSection": "Schulter- und Armstütz",
+  "coreSection": "Rumpfkoordination",
+  "legsSection": "Hüft- und Beinschwung",
+  "searchDrills": "Übungen, Muskeln oder englische Namen suchen",
+  "libraryCount": "51 Übungen · 17 Muskelgruppen",
+  "noResults": "Keine passenden Übungen gefunden. Suche nach etwas anderem.",
+  "illustration": "Übungsdemonstration",
+  "dose": "Sätze und Zeit",
+  "equipment": "Ausrüstung",
+  "cues": "Technikhinweise",
+  "mistake": "Häufige Fehler",
+  "drillWhy": "Warum diese Übung?",
+  "safety": "Sicherheit",
+  "startTimer": "Training starten",
+  "today": "Heutiges Training",
+  "todayEmpty": "Füge über die Muskeldetails oder die Bibliothek Übungen für das heutige Training hinzu",
+  "remove": "Aus dem heutigen Training entfernen",
+  "clearMuscleFilter": "Muskelfilter löschen",
+  "timerReady": "Bereit",
+  "countdown": "Mach dich bereit",
+  "work": "Training",
+  "rest": "Pause zwischen den Sätzen",
+  "switchSide": "Seite wechseln",
+  "finished": "Training abgeschlossen",
+  "abandoned": "Training beendet",
+  "paused": "Pausiert",
+  "start": "Starten",
+  "completeRep": "1 Wiederholung abschließen",
+  "completeSet": "Satz abschließen",
+  "skipRest": "Pause beenden",
+  "addRest": "+15 Sek. Pause",
+  "painStop": "Bei Beschwerden Training beenden",
+  "painMessage": "Beschwerden erfasst. Beende diese Übung, erhole dich und entscheide danach, ob du fortfahren möchtest.",
+  "saved": "Auf diesem Gerät gespeichert",
+  "saving": "Wird gespeichert…",
+  "saveFailed": "Speichern nicht abgeschlossen. Diese Einheit ist noch verfügbar. Versuche es erneut.",
+  "storageReadFailed": "Lokale Einträge sind vorübergehend nicht verfügbar. Deine ursprünglichen Daten bleiben erhalten.",
+  "done": "Fertig",
+  "exitTimer": "Diese Einheit beenden",
+  "manualMode": "Folge der Übungsanleitung und bestätige jeden Satz manuell",
+  "backgroundPause": "Das Training pausiert, wenn die App im Hintergrund ist. Tippe nach deiner Rückkehr auf Fortsetzen.",
+  "setsLabel": "Satz {current} von {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} Wiederholungen",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} Sek.",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "Stufe {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "Entwurf des Lernpfads · 18 Lektionen. Lektionen und Selbsteinschätzungskriterien müssen noch von einem Trainer geprüft werden. Der Abschluss bedeutet nicht automatisch, dass du die Bewegung beherrschst.",
+  "locked": "Wird nach den Lektionen und der Selbsteinschätzung der vorherigen Stufe freigeschaltet",
+  "current": "Aktuelle Stufe",
+  "passed": "Abgeschlossen",
+  "lessons": "Lektionen",
+  "gate": "Selbsteinschätzung der Stufe",
+  "selfReport": "Selbstauskunft; keine KI-Bewertung",
+  "confirmGate": "Ich habe die Übung schmerzfrei abgeschlossen",
+  "markLesson": "Lektion als geübt markieren",
+  "lessonCompleted": "Übung erfasst",
+  "watchPhases": "Zugehörige Bewegung ansehen",
+  "suggestedDrills": "Übungen zu dieser Lektion",
+  "assessment": "Einstiegs-Selbsteinschätzung",
+  "assessmentNote": "Wähle anhand deiner letzten tatsächlichen Leistung. Das dient nur zur Wahl eines Startpunkts. Bei Beschwerden am Handgelenk beginne mit Stufe 1. Dies ist keine Leistungs- oder medizinische Beurteilung.",
+  "wristTest": "Handgelenkstreckung",
+  "compressionTest": "Gestrecktes Beinheben",
+  "supportTest": "L-Sitz",
+  "dipsTest": "Kontrollierte Dips",
+  "hipTest": "Hüftöffnung im Grätschsitz",
+  "dipsGrade1": "0–3 Wiederholungen · Einstieg",
+  "dipsGrade2": "4–7 Wiederholungen · Grundstufe",
+  "dipsGrade3": "8–12 Wiederholungen · Gut",
+  "dipsGrade4": "13 oder mehr · Sehr gut",
+  "grade1": "Nicht abgeschlossen / Beschwerden",
+  "grade2": "Grundübungen sind möglich",
+  "grade3": "Stabile Ausführung; weiter üben",
+  "grade4": "Leicht ausgeführt; bereit für den nächsten Schritt",
+  "gradeShort1": "Noch nicht",
+  "gradeShort2": "Möglich",
+  "gradeShort3": "Stabil",
+  "gradeShort4": "Leicht",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "Selbsteingeschätzten Startpunkt speichern",
+  "skipAssessment": "Mit den Grundlagen beginnen",
+  "assessmentSaved": "Selbsteinschätzung auf diesem Gerät gespeichert",
+  "welcomeTitle": "Teile eine ganze Drehung in klare Schritte",
+  "welcomeBody": "Drehe ein echtes 3D-Modell, pausiere zur Auswahl von Muskeln und öffne eine passende Übung. Bewegungen, Abbildungen und Einträge bleiben auf diesem Gerät und funktionieren offline.",
+  "welcomeStep1": "Ansehen · Zeitlupe und acht Phasen",
+  "welcomeStep2": "Verstehen · Muskelrollen in jeder Haltung",
+  "welcomeStep3": "Trainieren · Sätze, Timer und lokale Einträge",
+  "safetyBody": "Wärme zuerst Handgelenke und Schultern auf. Trainiere innerhalb deiner Fähigkeiten und pausiere bei Schmerzen oder Schwindel. Wähle für deine erste vollständige Drehung einen geeigneten Ort und bitte eine erfahrene Person, dich zu begleiten. Diese Inhalte erklären Bewegungen und stellen keine Diagnose.",
+  "ackSafety": "Ich habe die Sicherheitshinweise verstanden",
+  "enterApp": "3D-Bewegung öffnen",
+  "history": "Verlauf",
+  "historyEmpty": "Schließe eine zeitgesteuerte Trainingseinheit ab, damit sie hier erscheint",
+  "sessionCount": "Trainingseinheiten",
+  "activeMinutes": "Trainingsminuten",
+  "lessonCount": "Geübte Lektionen",
+  "incomplete": "Unvollständig",
+  "painFlag": "Beschwerden erfasst",
+  "aboutTitle": "Über Flare",
+  "aboutBody": "Lokale Entwicklungsversion 1.0.0. Sieh dir einen Thomas-Flare an, lerne die Muskelrollen in den einzelnen Phasen kennen, wähle passende Übungen und erfasse dein Training. Bewegung, Medien und Trainingseinträge sind offline verfügbar.",
+  "privacyTitle": "Lokale Daten und Datenschutz",
+  "privacyBody": "Einstellungen, heutiges Training, Selbsteinschätzungen und Trainingseinträge werden nur auf diesem Gerät gespeichert. Modelle und Medien sind Teil der App; es werden keine Daten an einen Server übertragen. Daten in der Browser-Vorschau gehören zu diesem Browser. Exportiere vor einem Gerätewechsel oder einer Neuinstallation eine Sicherung.",
+  "creditsTitle": "Quellen für Modelle und Medien",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; Kleidung, Materialien und Animation geändert. Human Base Meshes · Blender Studio und Community-Beitragende · CC0. Three.js · MIT. Farbige Bereiche am Modell sind didaktische Felder und ersetzen keine fehlenden BodyParts3D-Anatomiemeshes. Übungs- und Markenbilder stammen vom Nutzer; die Lizenzen müssen vor einer Veröffentlichung noch geprüft werden.",
+  "speedLabel": "Standard-Wiedergabegeschwindigkeit",
+  "qualityLabel": "Bildqualität",
+  "balanced": "Ausgewogen",
+  "battery": "Energiesparen",
+  "high": "Hoch",
+  "exportBackup": "Lokale Sicherung kopieren",
+  "backupCopied": "Sicherung kopiert. Speichere sie in einer Datei deiner Wahl.",
+  "contentDraftNote": "Übungen sind didaktische Vorschläge. Abbildungen ersetzen nicht die jeweilige Übungsanleitung.",
+  "close": "Schließen",
+  "pausedAt": "Pausiert bei {time} Sek.",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "Hauptmuskel",
+  "secondaryShort": "Unterstützend",
+  "together": "Gemeinsam aktiv",
+  "assistMuscles": "Unterstützende Muskeln",
+  "sceneNone": "Ohne Geräte",
+  "sceneHome": "Zu Hause",
+  "sceneGym": "Fitnessstudio",
+  "sceneNoneHint": "Eigengewicht, überall",
+  "sceneHomeHint": "Widerstandsbänder, Kurzhanteln und weitere Heimtrainingsgeräte",
+  "sceneGymHint": "Maschinen und freie Gewichte",
+  "chooseScene": "Wähle eine Trainingsumgebung",
+  "trainGroup": "{name} trainieren",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "Tiefer Muskel · Farbe markiert seine Position",
+  "deepMusclesHint": "Tiefer Muskel · Schraffur markiert seine Position",
+  "noDrillForTier": "Für diesen Muskel sind auf dieser Ausstattungsstufe keine Übungen verfügbar",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "Thomas-Flare",
+  "welcomeLine": "Verfolge die Bewegung und sieh, welche Muskeln in jedem Moment arbeiten.",
+  "startApp": "Los geht’s",
+  "welcomeFootPrefix": "Wenn du fortfährst, bestätigst du, dass du Folgendes gelesen hast:",
+  "safetySheetEyebrow": "Vor dem Training",
+  "safetySheetTitle": "Drei wichtige Hinweise",
+  "safetyRule1": "Wärme zuerst deine Handgelenke auf",
+  "safetyRule1Note": "Etwa 6 Minuten; die erste Lektion im Lernpfad",
+  "safetyRule2": "Bei stechendem Schmerz, Taubheit oder Schwindel aufhören",
+  "safetyRule2Note": "Muskelanstrengung ist in Ordnung; Schmerzen nicht",
+  "safetyRule3": "Hier werden Bewegungen vermittelt",
+  "safetyRule3Note": "Dies ersetzt weder Trainer noch Arzt oder Rehabilitation. Lass dich bei deiner ersten vollständigen Drehung begleiten.",
+  "gotIt": "Verstanden",
+  "startWithAssessment": "Mit einer Selbsteinschätzung beginnen",
+  "libraryHint": "Übungen nach Muskelgruppe finden",
+  "moreProgressHint": "{count} Tage diese Woche",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "Wiedergabegeschwindigkeit",
+  "phaseMoment": "{source} · Hauptmuskeln in diesem Moment",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "Ebenfalls beteiligt · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "und {count} Gruppen",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "Alle Bereiche",
+  "search": "Suchen",
+  "closeSearch": "Suche schließen",
+  "clearSearch": "Suche löschen",
+  "spec": "Dosierung",
+  "moreCuesAndSafety": "Weitere Hinweise, häufige Fehler und Sicherheit",
+  "addTodayShort": "Heute hinzufügen",
+  "setOfTotal": "Satz {current} von {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} Wiederholungen",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "Sek.",
+  "painStopShort": "Bei Beschwerden Training beenden",
+  "pathTitle": "Lernpfad",
+  "continueLesson": "Weiter · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "Alles abgeschlossen",
+  "confirmStageGates": "Noch zu bestätigen · Stufenanforderungen",
+  "stageGates": "Selbsteinschätzung der Stufe · Selbstauskunft",
+  "weekDays": "Trainingstage diese Woche",
+  "streak": "Tage in Folge",
+  "recent": "Zuletzt",
+  "weekdayLabels": "Mo,Di,Mi,Do,Fr,Sa,So",
+  "todayLabel": "Heute",
+  "completed": "Abgeschlossen",
+  "playbackGroup": "Wiedergabe",
+  "otherGroup": "Sonstiges",
+  "aboutFlare": "Über Flare",
+  "aboutHint": "Version, Quellen und Lizenzen, lokale Daten",
+  "safetyHint": "Drei Hinweise vor dem Training",
+  "teachingTitle": "Didaktische Hinweise",
+  "licenses": "Open-Source-Lizenzen",
+  "minutesShort": "{count} Min.",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "Zugehörige Bewegungsphasen",
+  "phasesShort": "Phasen {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "Wiederholungen",
+  "appearanceGroup": "Darstellung",
+  "appearanceLabel": "Design",
+  "themeSystem": "Systemeinstellung",
+  "themeDark": "Dunkel",
+  "themeLight": "Hell",
+  "sceneLoading": "3D-Bewegung wird geladen",
+  "endSessionTitle": "Diese Einheit beenden?",
+  "endSessionBody": "Der abgeschlossene Teil wird als unvollständiger Eintrag gespeichert.",
+  "endSessionConfirm": "Beenden und speichern",
+  "keepTraining": "Weiter trainieren",
+  "removedFromToday": "Aus dem heutigen Training entfernt",
+  "undo": "Rückgängig",
+  "addedTodayToast": "Zum heutigen Training hinzugefügt",
+  "trainedOn": "Trainiert · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "Nicht trainiert · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "Übungsdemo ansehen",
+  "hideDrillDemo": "Demo ausblenden",
+  "demoReplay": "Erneut abspielen",
+  "demoSeek": "Wiedergabeposition",
+  "demoSpeed": "Demogeschwindigkeit",
+  "demoFailed": "Das Video ist vorübergehend nicht verfügbar. Versuche es erneut.",
+  "demoPaused": "Training pausiert; Demo ebenfalls pausiert",
+  "finishedLine": "Alle {sets} Sätze abgeschlossen",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "Sprache",
+  "languageSystem": "Systemeinstellung",
+  "languageTitle": "App-Sprache",
+  "sceneAccessibleTitle": "3D-Bewegung: Thomas-Flare von Flare",
+  "weekDayLabel": "Wochentag {day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "Koordinierter Krafteinsatz",
+  "muscleMap": "Muskelkarte",
+  "phaseMapAccessibility": "Mit der Bewegungsphase synchronisierte Muskelkarten von vorn und hinten",
+  "viewGroup": "{group} ansehen",
+  "reviewFirstPhases": "Phasen 09–11 selbst durchgehen: Sind hinterer Stütz, Gewichtsverlagerung und Seitstütz flüssig?",
+  "reviewFullLoop": "Den ganzen Ablauf selbst durchgehen: Sind Handwechsel, Beinöffnung und Rhythmus flüssig?",
+  "wristFlexion": "Handgelenkbeugung",
+  "wristExtension": "Handgelenkstreckung",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -24,6 +24,8 @@ void main() {
         'assets/drill_media/cover.jpeg',
         'assets/drill_media/cover.jpg',
         'assets/drill_media/source.blend',
+        'assets/fonts/NotoSansArabic.ttf',
+        'assets/fonts/private.txt',
       ],
       load: (key) async {
         loaded.add(key);
@@ -31,6 +33,23 @@ void main() {
       },
     );
   });
+
+  test(
+    'scene fonts stay manifest-bound and retain offline font MIME',
+    () async {
+      final font = await router.route('/fonts/NotoSansArabic.ttf');
+      expect(font.statusCode, 200);
+      expect(font.contentType, 'font/ttf');
+      expect(loaded, ['assets/fonts/NotoSansArabic.ttf']);
+      expect((await router.route('/fonts/Unknown.ttf')).statusCode, 404);
+      expect((await router.route('/fonts/private.txt')).statusCode, 404);
+      expect(
+        (await router.route('/fonts/%2e%2e/keys/debug.keystore')).statusCode,
+        400,
+      );
+      expect(loaded.length, 1);
+    },
+  );
 
   test('raw and encoded traversal never reach the asset loader', () async {
     for (final target in [

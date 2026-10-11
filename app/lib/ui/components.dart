@@ -623,9 +623,13 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
     widget.onChanged(value);
   }
 
-  int _indexAt(double dx, double width) => (dx / width * widget.segments.length)
-      .floor()
-      .clamp(0, widget.segments.length - 1);
+  int _indexAt(double dx, double width) {
+    final x = Directionality.of(context) == TextDirection.rtl ? width - dx : dx;
+    return (x / width * widget.segments.length).floor().clamp(
+      0,
+      widget.segments.length - 1,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -654,6 +658,11 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                       duration: FlareMotion.of(context, FlareMotion.quick),
                       style: TextStyle(
                         fontFamily: 'FlareSans',
+                        fontFamilyFallback: const [
+                          'NotoSansKR',
+                          'NotoSansArabic',
+                          'NotoSansDevanagari',
+                        ],
                         fontSize: 13,
                         height: 1.2,
                         letterSpacing: .2,
@@ -664,11 +673,14 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                             ? FontWeight.w600
                             : FontWeight.w500,
                       ),
-                      child: Text(
-                        widget.segments[i].$2,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.center,
+                        child: Text(
+                          widget.segments[i].$2,
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
                       ),
                     ),
                   ),
@@ -710,7 +722,7 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
             children: [
               Positioned.fill(
                 child: AnimatedAlign(
-                  alignment: Alignment(
+                  alignment: AlignmentDirectional(
                     count == 1 ? 0 : -1 + 2 * shown / (count - 1),
                     0,
                   ),

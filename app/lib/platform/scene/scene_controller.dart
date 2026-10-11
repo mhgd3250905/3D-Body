@@ -167,6 +167,10 @@ class SceneController extends ChangeNotifier {
   void setQuality(String quality) =>
       command({'type': 'quality', 'value': quality});
 
+  /// Presentation strings only; the scene clock, selection and camera persist.
+  void setLocalization(Map<String, Object?> value) =>
+      command({'type': 'localization', ...value});
+
   /// Request a first frame after the preceding settings have reached the view.
   /// IDs are unique across controllers, so a retired view cannot unveil a new one.
   void requestPresentation() {

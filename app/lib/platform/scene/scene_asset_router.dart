@@ -28,7 +28,9 @@ class SceneAssetRouter {
             if (key.startsWith(assetPrefix))
               key.substring(assetPrefix.length): key
             else if (key.startsWith(mediaAssetPrefix))
-              'drill_media/${key.substring(mediaAssetPrefix.length)}': key,
+              'drill_media/${key.substring(mediaAssetPrefix.length)}': key
+            else if (key.startsWith('assets/fonts/'))
+              'fonts/${key.substring('assets/fonts/'.length)}': key,
       };
 
   static const assetPrefix = 'assets/scene/';
@@ -110,6 +112,9 @@ class SceneAssetRouter {
     if (key.startsWith(assetPrefix)) {
       return _mimeFor(key.substring(assetPrefix.length));
     }
+    if (key.startsWith('assets/fonts/') && key.endsWith('.ttf')) {
+      return 'font/ttf';
+    }
     if (!key.startsWith(mediaAssetPrefix)) return null;
     return switch (key.split('.').last.toLowerCase()) {
       'mp4' => 'video/mp4',
@@ -159,6 +164,7 @@ class SceneAssetRouter {
         'png' => 'image/png',
         'webp' => 'image/webp',
         'svg' => 'image/svg+xml',
+        'ttf' => 'font/ttf',
         _ => null,
       };
 

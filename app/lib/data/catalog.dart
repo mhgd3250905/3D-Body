@@ -71,6 +71,133 @@ class Catalog {
   final Map<int, CourseStage> _stages;
   final Map<String, Lesson> _lessons;
   final Map<String, CourseGate> _gates;
+  Map<String, String> _translations = const {};
+  Catalog? _original;
+
+  String translate(String source) => _translations[source] ?? source;
+
+  /// Translate presentation only, after parsing original doses and references.
+  /// Language changes must never change saved IDs, targets or progress rules.
+  Catalog localized(Map<String, String> translations) {
+    String t(String value) => translations[value] ?? value;
+    PhaseMuscle item(PhaseMuscle value) => PhaseMuscle(
+      id: value.id,
+      side: value.side,
+      why: value.why == null ? null : t(value.why!),
+    );
+    final result = Catalog._(
+      sections: sections
+          .map(
+            (v) =>
+                MuscleSection(id: v.id, label: t(v.label), short: t(v.short)),
+          )
+          .toList(),
+      groups: groups
+          .map(
+            (v) => MuscleGroup(
+              groupId: v.id,
+              section: v.section,
+              colour: v.colour,
+              label: t(v.label),
+              view: v.view,
+              role: t(v.role),
+              deep: v.deep,
+              panels: v.panels,
+              note: v.note == null ? null : t(v.note!),
+            ),
+          )
+          .toList(),
+      phases: phases
+          .map(
+            (v) => Phase(
+              source: v.source,
+              id: v.id,
+              name: t(v.name),
+              detail: t(v.detail),
+              caption: t(v.caption),
+              primary: v.primary.map(item).toList(),
+              secondary: v.secondary.map(item).toList(),
+            ),
+          )
+          .toList(),
+      drills: drills
+          .map(
+            (v) => Drill(
+              id: v.id,
+              groupId: v.groupId,
+              tier: v.tier,
+              tierLabel: t(v.tierLabel),
+              name: t(v.name),
+              nameEn: v.nameEn,
+              equipment: t(v.equipment),
+              prescription: t(v.prescription),
+              cues: v.cues.map(t).toList(),
+              mistake: t(v.mistake),
+              why: t(v.why),
+              difficulty: v.difficulty,
+              imageAsset: v.imageAsset,
+              thumbnailAsset: v.thumbnailAsset,
+              dose: v.dose.copyWith(
+                blockLabels: v.dose.blockLabels.map(t).toList(),
+              ),
+              safety: v.safety == null ? null : t(v.safety!),
+              illustrationNote: v.illustrationNote == null
+                  ? null
+                  : t(v.illustrationNote!),
+            ),
+          )
+          .toList(),
+      stages: stages
+          .map(
+            (v) => CourseStage(
+              n: v.n,
+              id: v.id,
+              title: t(v.title),
+              weeksMin: v.weeksMin,
+              weeksMax: v.weeksMax,
+              sourcePro: v.sourcePro,
+              lessons: v.lessons
+                  .map(
+                    (l) => Lesson(
+                      id: l.id,
+                      stage: l.stage,
+                      n: l.n,
+                      title: t(l.title),
+                      minutes: l.minutes,
+                      phases: l.phases,
+                      drills: l.drills,
+                    ),
+                  )
+                  .toList(),
+              gates: v.gates
+                  .map(
+                    (g) => CourseGate(
+                      id: g.id,
+                      text: t(g.text),
+                      kind: g.kind,
+                      unit: g.unit,
+                      sourceText: t(g.sourceText),
+                      sourceKind: g.sourceKind,
+                      sourceTarget: g.sourceTarget,
+                      phases: g.phases,
+                      target: g.target,
+                    ),
+                  )
+                  .toList(),
+            ),
+          )
+          .toList(),
+      phaseKeys: phaseKeys,
+      tiers: tiers.map((key, value) => MapEntry(key, t(value))),
+      note: t(note),
+      drillNote: t(drillNote),
+      curriculumNote: t(curriculumNote),
+      period: period,
+    );
+    result._translations = Map.unmodifiable(translations);
+    result._original = _original ?? this;
+    return result;
+  }
 
   MuscleGroup? groupById(String id) => _groups[id];
   Phase? phaseBySource(int source) => _phases[source];
@@ -92,7 +219,7 @@ class Catalog {
     String? groupId,
     String? section,
   }) {
-    final terms = query
+    final terms = _searchText(query)
         .trim()
         .toLowerCase()
         .split(RegExp(r'\s+'))
@@ -103,12 +230,41 @@ class Catalog {
         if (groupId != null && drill.groupId != groupId) return false;
         final group = _groups[drill.groupId]!;
         if (section != null && group.section != section) return false;
-        final haystack =
-            '${drill.name} ${drill.nameEn} ${drill.equipment} ${group.label} ${drill.tierLabel}'
-                .toLowerCase();
+        final haystack = _searchText(
+          '${drill.name} ${drill.nameEn} ${drill.equipment} ${group.label} ${drill.tierLabel} ${_original?.drillById(drill.id)?.name ?? ''} ${_original?.groupById(drill.groupId)?.label ?? ''}',
+        );
         return terms.every(haystack.contains);
       }),
     );
+  }
+
+  static String _searchText(String value) {
+    var result = value.toLowerCase();
+    const accents = {
+      'a': 'àáâãäåāăą',
+      'c': 'çćč',
+      'd': 'ďđ',
+      'e': 'èéêëēėęě',
+      'i': 'ìíîïī',
+      'l': 'ł',
+      'n': 'ñńň',
+      'o': 'òóôõöøō',
+      'r': 'ř',
+      's': 'śš',
+      't': 'ť',
+      'u': 'ùúûüūů',
+      'y': 'ýÿ',
+      'z': 'źżž',
+      'е': 'ё',
+      'ا': 'أإآٱ',
+      'ي': 'ى',
+    };
+    for (final entry in accents.entries) {
+      result = result.replaceAll(RegExp('[${entry.value}]'), entry.key);
+    }
+    return result
+        .replaceAll('ß', 'ss')
+        .replaceAll(RegExp(r'[\u064b-\u065f\u0670]'), '');
   }
 
   double phaseTime(int source) =>

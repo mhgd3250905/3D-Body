@@ -1,0 +1,436 @@
+{
+  "@@locale": "fr",
+  "appName": "Flare Thomas",
+  "tagline": "Comprenez le mouvement. Entraînez chaque étape.",
+  "watch": "Mouvement",
+  "library": "Entraînement",
+  "path": "Parcours",
+  "progress": "Suivi",
+  "settings": "Réglages",
+  "motionBrand": "Flare · Assistant de Thomas",
+  "more": "Plus",
+  "timeline": "Chronologie du mouvement",
+  "phaseLabel": "Phase du mouvement",
+  "viewLabel": "Vue",
+  "switchToMuscles": "Afficher le modèle musculaire debout",
+  "switchToMotion": "Afficher Thomas en mouvement",
+  "fullLoop": "Cycle complet · 8 phases",
+  "practiceLoop": "Répéter cette phase",
+  "restoreLoop": "Rétablir le cycle complet",
+  "play": "Lire",
+  "pause": "Mettre en pause",
+  "resume": "Reprendre",
+  "resetView": "Réinitialiser la vue",
+  "front": "Avant",
+  "back": "Arrière",
+  "goBack": "Retour",
+  "side": "Côté",
+  "pausedHint": "Sélectionnez un muscle pour en savoir plus",
+  "playingHint": "Mettez en pause pour sélectionner un muscle",
+  "loadingScene": "Préparation du mouvement 3D…",
+  "sceneFailed": "La vue 3D est temporairement indisponible. Rouvrez la page du mouvement.",
+  "retry": "Réessayer",
+  "muscles": "Muscles de cette phase",
+  "primary": "Rôle principal",
+  "secondary": "Rôle de soutien",
+  "teachingNote": "Les zones colorées indiquent des emplacements pédagogiques. Elles ne représentent ni l’activité EMG, ni la force musculaire, ni les limites exactes des muscles.",
+  "deepNote": "Les hachures indiquent l’emplacement des muscles profonds.",
+  "deepMotionNote": "La mise en évidence indique l’emplacement d’un muscle profond.",
+  "bothSides": "Les deux côtés",
+  "leftSide": "Côté gauche",
+  "rightSide": "Côté droit",
+  "whyHere": "Rôle dans cette phase",
+  "relatedDrills": "Exercices ciblés",
+  "sourceNote": "Notes sur le modèle et les emplacements pédagogiques",
+  "returnToMotion": "Revenir à la même image",
+  "addToday": "Ajouter à l’entraînement du jour",
+  "addedToday": "Ajouté à l’entraînement du jour",
+  "tierA": "A Poids du corps",
+  "tierB": "B Matériel à domicile",
+  "tierC": "C Salle de sport",
+  "all": "Tout",
+  "supportSection": "Appui des épaules et des bras",
+  "coreSection": "Coordination du tronc",
+  "legsSection": "Balancement des hanches et des jambes",
+  "searchDrills": "Rechercher des exercices, des muscles ou des noms anglais",
+  "libraryCount": "51 exercices · 17 groupes musculaires",
+  "noResults": "Aucun exercice correspondant. Essayez une autre recherche.",
+  "illustration": "Démonstration de l’exercice",
+  "dose": "Séries et durée",
+  "equipment": "Matériel",
+  "cues": "Conseils de mouvement",
+  "mistake": "Erreurs fréquentes",
+  "drillWhy": "Pourquoi faire cet exercice",
+  "safety": "Sécurité",
+  "startTimer": "Commencer l’entraînement",
+  "today": "Entraînement du jour",
+  "todayEmpty": "Ajoutez des exercices depuis les détails d’un muscle ou la bibliothèque pour préparer la séance du jour",
+  "remove": "Retirer de l’entraînement du jour",
+  "clearMuscleFilter": "Effacer le filtre musculaire",
+  "timerReady": "Prêt",
+  "countdown": "Préparez-vous",
+  "work": "Entraînement",
+  "rest": "Repos entre les séries",
+  "switchSide": "Changer de côté",
+  "finished": "Entraînement terminé",
+  "abandoned": "Séance terminée",
+  "paused": "En pause",
+  "start": "Commencer",
+  "completeRep": "Effectuer 1 répétition",
+  "completeSet": "Terminer la série",
+  "skipRest": "Terminer le repos",
+  "addRest": "+15 s de repos",
+  "painStop": "Arrêtez en cas de gêne",
+  "painMessage": "Gêne enregistrée. Arrêtez cet exercice, reposez-vous, puis décidez si vous souhaitez continuer.",
+  "saved": "Enregistré sur cet appareil",
+  "saving": "Enregistrement…",
+  "saveFailed": "L’enregistrement n’a pas abouti. Cette séance est toujours disponible ; réessayez.",
+  "storageReadFailed": "Les données locales sont temporairement indisponibles. Les données d’origine ont été conservées.",
+  "done": "Terminé",
+  "exitTimer": "Terminer cette séance",
+  "manualMode": "Suivez les consignes de l’exercice, puis confirmez chaque série manuellement",
+  "backgroundPause": "L’entraînement se met en pause lorsque l’app passe en arrière-plan. Touchez Reprendre à votre retour.",
+  "setsLabel": "Série {current} sur {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} répétitions",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} s",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "Étape {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "Ébauche du parcours d’apprentissage · 18 leçons. Un entraîneur doit encore vérifier les leçons et les seuils d’autoévaluation ; leur achèvement ne signifie pas automatiquement que vous maîtrisez le mouvement.",
+  "locked": "Se débloque après les leçons et l’autoévaluation de l’étape précédente",
+  "current": "Étape actuelle",
+  "passed": "Terminé",
+  "lessons": "Leçons",
+  "gate": "Autoévaluation de l’étape",
+  "selfReport": "Déclaratif ; ce n’est pas une évaluation par IA",
+  "confirmGate": "J’ai terminé sans douleur",
+  "markLesson": "Marquer la leçon comme pratiquée",
+  "lessonCompleted": "Entraînement enregistré",
+  "watchPhases": "Voir le mouvement associé",
+  "suggestedDrills": "Exercices de cette leçon",
+  "assessment": "Autoévaluation de départ",
+  "assessmentNote": "Choisissez selon votre performance réelle la plus récente. Cela sert uniquement à choisir un point de départ. En cas de gêne au poignet, commencez à l’étape 1. Ce n’est pas une évaluation de vos capacités ni un avis médical.",
+  "wristTest": "Extension du poignet",
+  "compressionTest": "Relevé de jambe tendue",
+  "supportTest": "L-sit",
+  "dipsTest": "Dips contrôlés",
+  "hipTest": "Ouverture des hanches en écart",
+  "dipsGrade1": "0–3 répétitions · Débutant",
+  "dipsGrade2": "4–7 répétitions · De base",
+  "dipsGrade3": "8–12 répétitions · Bien",
+  "dipsGrade4": "13 répétitions ou plus · Excellent",
+  "grade1": "Non effectué / gêne",
+  "grade2": "Peut faire les exercices de base",
+  "grade3": "Exécution stable ; à consolider",
+  "grade4": "Exécution facile ; prêt à progresser",
+  "gradeShort1": "Pas encore",
+  "gradeShort2": "Possible",
+  "gradeShort3": "Stable",
+  "gradeShort4": "Facile",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "Enregistrer le point de départ autodéclaré",
+  "skipAssessment": "Commencer par les bases",
+  "assessmentSaved": "Autoévaluation enregistrée sur cet appareil",
+  "welcomeTitle": "Découpez un tour complet en étapes claires",
+  "welcomeBody": "Faites pivoter un vrai modèle 3D, mettez-le en pause pour sélectionner des muscles, puis ouvrez un exercice adapté. Les mouvements, illustrations et données restent sur cet appareil et fonctionnent hors ligne.",
+  "welcomeStep1": "Observer · Ralenti et huit phases",
+  "welcomeStep2": "Comprendre · Rôle des muscles dans chaque posture",
+  "welcomeStep3": "S’entraîner · Séries, minuteurs et données locales",
+  "safetyBody": "Échauffez d’abord les poignets et les épaules. Entraînez-vous selon vos capacités et arrêtez en cas de douleur ou de vertige. Pour votre premier tour complet, choisissez un lieu adapté et faites-vous accompagner par une personne expérimentée. Ce contenu explique des mouvements ; il ne fournit pas de diagnostic.",
+  "ackSafety": "J’ai compris les consignes de sécurité",
+  "enterApp": "Ouvrir le mouvement 3D",
+  "history": "Historique",
+  "historyEmpty": "Effectuez une séance chronométrée pour la retrouver ici",
+  "sessionCount": "Séances",
+  "activeMinutes": "Minutes d’entraînement",
+  "lessonCount": "Leçons pratiquées",
+  "incomplete": "Incomplet",
+  "painFlag": "Gêne signalée",
+  "aboutTitle": "À propos de Flare",
+  "aboutBody": "Version locale de développement 1.0.0. Observez un Thomas flare, découvrez le rôle des muscles à chaque phase, choisissez des exercices adaptés et consignez votre entraînement. Les mouvements, médias et données fonctionnent hors ligne.",
+  "privacyTitle": "Données locales et confidentialité",
+  "privacyBody": "Les réglages, l’entraînement du jour, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.",
+  "creditsTitle": "Sources des modèles et des médias",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0 ; vêtements, matériaux et animation modifiés. Human Base Meshes · Blender Studio et contributeurs de la communauté · CC0. Three.js · MIT. Les zones colorées du mannequin sont des panneaux pédagogiques et ne remplacent pas les maillages anatomiques BodyParts3D manquants. Les images d’exercices et de marque ont été fournies par l’utilisateur ; les licences doivent encore être vérifiées avant publication.",
+  "speedLabel": "Vitesse de lecture par défaut",
+  "qualityLabel": "Qualité d’image",
+  "balanced": "Équilibrée",
+  "battery": "Économie de batterie",
+  "high": "Élevée",
+  "exportBackup": "Copier la sauvegarde locale",
+  "backupCopied": "Sauvegarde copiée. Enregistrez-la dans le fichier de votre choix.",
+  "contentDraftNote": "Les exercices sont des suggestions pédagogiques. Les illustrations ne remplacent pas les consignes propres à chaque exercice.",
+  "close": "Fermer",
+  "pausedAt": "En pause à {time} s",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "Principal",
+  "secondaryShort": "Soutien",
+  "together": "Ensemble",
+  "assistMuscles": "Muscles de soutien",
+  "sceneNone": "Sans matériel",
+  "sceneHome": "À domicile",
+  "sceneGym": "Salle de sport",
+  "sceneNoneHint": "Au poids du corps, partout",
+  "sceneHomeHint": "Élastiques, haltères et autre matériel à domicile",
+  "sceneGymHint": "Machines et poids libres",
+  "chooseScene": "Choisissez un cadre d’entraînement",
+  "trainGroup": "Entraîner {name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "Muscle profond · la couleur indique son emplacement",
+  "deepMusclesHint": "Muscle profond · les hachures indiquent son emplacement",
+  "noDrillForTier": "Aucun exercice pour ce muscle avec ce niveau de matériel",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "Thomas flare",
+  "welcomeLine": "Suivez le mouvement et découvrez les muscles sollicités à chaque instant.",
+  "startApp": "Commencer",
+  "welcomeFootPrefix": "En continuant, vous confirmez avoir lu",
+  "safetySheetEyebrow": "Avant l’entraînement",
+  "safetySheetTitle": "Trois points à retenir",
+  "safetyRule1": "Échauffez d’abord vos poignets",
+  "safetyRule1Note": "Environ 6 minutes ; c’est la première leçon du parcours",
+  "safetyRule2": "Arrêtez en cas de douleur vive, d’engourdissement ou de vertige",
+  "safetyRule2Note": "L’effort musculaire est normal ; la douleur ne l’est pas",
+  "safetyRule3": "Ce contenu enseigne des mouvements",
+  "safetyRule3Note": "Il ne remplace ni un entraîneur, ni un médecin, ni des soins de rééducation. Faites-vous accompagner pour votre premier tour complet.",
+  "gotIt": "Compris",
+  "startWithAssessment": "Commencer par une autoévaluation",
+  "libraryHint": "Trouver des exercices par groupe musculaire",
+  "moreProgressHint": "{count} jours cette semaine",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "Vitesse de lecture",
+  "phaseMoment": "{source} · principaux muscles à cet instant",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "Autres muscles sollicités · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "et {count} groupes",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "Toutes les zones",
+  "search": "Rechercher",
+  "closeSearch": "Fermer la recherche",
+  "clearSearch": "Effacer la recherche",
+  "spec": "Dose",
+  "moreCuesAndSafety": "Plus de conseils, d’erreurs fréquentes et de consignes de sécurité",
+  "addTodayShort": "Ajouter aujourd’hui",
+  "setOfTotal": "Série {current} sur {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} répétitions",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "s",
+  "painStopShort": "Arrêtez en cas de gêne",
+  "pathTitle": "Parcours d’apprentissage",
+  "continueLesson": "Continuer · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "Tout est terminé",
+  "confirmStageGates": "À confirmer · conditions de l’étape",
+  "stageGates": "Autoévaluation de l’étape · déclarative",
+  "weekDays": "Jours d’entraînement cette semaine",
+  "streak": "Jours consécutifs",
+  "recent": "Récent",
+  "weekdayLabels": "lun,mar,mer,jeu,ven,sam,dim",
+  "todayLabel": "Aujourd’hui",
+  "completed": "Terminé",
+  "playbackGroup": "Lecture",
+  "otherGroup": "Autres",
+  "aboutFlare": "À propos de Flare",
+  "aboutHint": "Version, sources et licences, données locales",
+  "safetyHint": "Trois points avant l’entraînement",
+  "teachingTitle": "Notes pédagogiques",
+  "licenses": "Licences open source",
+  "minutesShort": "{count} min",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "Phases de mouvement associées",
+  "phasesShort": "Phases {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "répétitions",
+  "appearanceGroup": "Apparence",
+  "appearanceLabel": "Thème",
+  "themeSystem": "Suivre le système",
+  "themeDark": "Sombre",
+  "themeLight": "Clair",
+  "sceneLoading": "Chargement du mouvement 3D",
+  "endSessionTitle": "Terminer cette séance ?",
+  "endSessionBody": "La partie effectuée sera enregistrée comme une séance incomplète.",
+  "endSessionConfirm": "Terminer et enregistrer",
+  "keepTraining": "Continuer l’entraînement",
+  "removedFromToday": "Retiré de l’entraînement du jour",
+  "undo": "Annuler",
+  "addedTodayToast": "Ajouté à l’entraînement du jour",
+  "trainedOn": "Entraînement effectué · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "Pas d’entraînement · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "Voir la démonstration de l’exercice",
+  "hideDrillDemo": "Masquer la démonstration",
+  "demoReplay": "Rejouer",
+  "demoSeek": "Position de lecture",
+  "demoSpeed": "Vitesse de la démonstration",
+  "demoFailed": "La vidéo est temporairement indisponible. Réessayez.",
+  "demoPaused": "Entraînement en pause ; démonstration également en pause",
+  "finishedLine": "Les {sets} séries sont terminées",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "Langue",
+  "languageSystem": "Suivre le système",
+  "languageTitle": "Langue de l’app",
+  "sceneAccessibleTitle": "Mouvement 3D Thomas flare de Flare",
+  "weekDayLabel": "Jour {day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "Effort coordonné",
+  "muscleMap": "Carte musculaire",
+  "phaseMapAccessibility": "Cartes musculaires de face et de dos synchronisées avec la phase du mouvement",
+  "viewGroup": "Voir {group}",
+  "reviewFirstPhases": "Revoir soi-même les phases 09–11 : l’appui arrière, les transferts de poids et l’appui latéral sont-ils fluides ?",
+  "reviewFullLoop": "Revoir soi-même le cycle complet : les changements de main, l’ouverture des jambes et le rythme sont-ils fluides ?",
+  "wristFlexion": "Flexion du poignet",
+  "wristExtension": "Extension du poignet",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

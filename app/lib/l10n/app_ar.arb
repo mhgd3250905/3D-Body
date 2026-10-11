@@ -1,0 +1,436 @@
+{
+  "@@locale": "ar",
+  "appName": "Flare توماس",
+  "tagline": "افهم الحركة وتدرّب على كل خطوة.",
+  "watch": "الحركة",
+  "library": "التدريب",
+  "path": "المسار",
+  "progress": "السجل",
+  "settings": "الإعدادات",
+  "motionBrand": "Flare · مساعد توماس",
+  "more": "المزيد",
+  "timeline": "مخطط الحركة الزمني",
+  "phaseLabel": "مرحلة الحركة",
+  "viewLabel": "المنظور",
+  "switchToMuscles": "عرض نموذج العضلات واقفًا",
+  "switchToMotion": "عرض حركة توماس",
+  "fullLoop": "الحركة كاملة · 8 مراحل",
+  "practiceLoop": "تكرار هذه المرحلة",
+  "restoreLoop": "استعادة الحركة كاملة",
+  "play": "تشغيل",
+  "pause": "إيقاف مؤقت",
+  "resume": "متابعة",
+  "resetView": "إعادة ضبط المنظور",
+  "front": "الأمام",
+  "back": "الخلف",
+  "goBack": "رجوع",
+  "side": "الجانب",
+  "pausedHint": "اختر عضلة لمعرفة المزيد",
+  "playingHint": "أوقف الحركة مؤقتًا لاختيار عضلة",
+  "loadingScene": "جارٍ تجهيز الحركة ثلاثية الأبعاد…",
+  "sceneFailed": "العرض ثلاثي الأبعاد غير متاح مؤقتًا. أعد فتح صفحة الحركة.",
+  "retry": "إعادة المحاولة",
+  "muscles": "عضلات هذه المرحلة",
+  "primary": "الدور الأساسي",
+  "secondary": "الدور المساند",
+  "teachingNote": "توضح المناطق الملونة مواقع تعليمية. ولا تمثل نشاط تخطيط كهربية العضل أو قوة العضلة أو حدودها الدقيقة.",
+  "deepNote": "يشير التظليل المخطط إلى موضع العضلات العميقة.",
+  "deepMotionNote": "يشير التمييز إلى موضع عضلة عميقة.",
+  "bothSides": "الجانبان",
+  "leftSide": "الجانب الأيسر",
+  "rightSide": "الجانب الأيمن",
+  "whyHere": "الدور في هذه المرحلة",
+  "relatedDrills": "تمارين مستهدفة",
+  "sourceNote": "ملاحظات عن النموذج والمواقع التعليمية",
+  "returnToMotion": "العودة إلى الإطار نفسه",
+  "addToday": "أضف إلى تدريب اليوم",
+  "addedToday": "أُضيف إلى تدريب اليوم",
+  "tierA": "A وزن الجسم",
+  "tierB": "B معدات منزلية",
+  "tierC": "C النادي الرياضي",
+  "all": "الكل",
+  "supportSection": "دعم الكتفين والذراعين",
+  "coreSection": "تنسيق عضلات الجذع",
+  "legsSection": "تأرجح الوركين والساقين",
+  "searchDrills": "ابحث عن تمارين أو عضلات أو أسماء بالإنجليزية",
+  "libraryCount": "51 تمرينًا · 17 مجموعة عضلية",
+  "noResults": "لا توجد تمارين مطابقة. جرّب بحثًا آخر.",
+  "illustration": "عرض توضيحي للتمرين",
+  "dose": "المجموعات والوقت",
+  "equipment": "المعدات",
+  "cues": "إرشادات الحركة",
+  "mistake": "أخطاء شائعة",
+  "drillWhy": "لماذا تمارس هذا التمرين؟",
+  "safety": "السلامة",
+  "startTimer": "ابدأ التدريب",
+  "today": "تدريب اليوم",
+  "todayEmpty": "أضف تمارين من تفاصيل العضلات أو المكتبة لإعداد تدريب اليوم",
+  "remove": "إزالة من تدريب اليوم",
+  "clearMuscleFilter": "مسح تصفية العضلات",
+  "timerReady": "جاهز",
+  "countdown": "استعد",
+  "work": "قيد التدريب",
+  "rest": "الراحة بين المجموعات",
+  "switchSide": "بدّل إلى الجانب الآخر",
+  "finished": "اكتمل التدريب",
+  "abandoned": "انتهت الجلسة",
+  "paused": "متوقف مؤقتًا",
+  "start": "ابدأ",
+  "completeRep": "أكمل تكرارًا واحدًا",
+  "completeSet": "أكمل المجموعة",
+  "skipRest": "إنهاء الراحة",
+  "addRest": "+15 ثانية راحة",
+  "painStop": "توقف عند الشعور بعدم الارتياح",
+  "painMessage": "سُجّل الشعور بعدم الارتياح. أوقف هذا التمرين واسترح، ثم قرر إن كنت ستتابع.",
+  "saved": "حُفظ على هذا الجهاز",
+  "saving": "جارٍ الحفظ…",
+  "saveFailed": "لم يكتمل الحفظ. ما زالت هذه الجلسة متاحة؛ حاول مجددًا.",
+  "storageReadFailed": "السجلات المحلية غير متاحة مؤقتًا. تم الاحتفاظ ببياناتك الأصلية.",
+  "done": "تم",
+  "exitTimer": "إنهاء هذه الجلسة",
+  "manualMode": "اتبع تعليمات التمرين ثم أكّد إكمال كل مجموعة يدويًا",
+  "backgroundPause": "يتوقف التدريب مؤقتًا عند انتقال التطبيق إلى الخلفية. اضغط متابعة عند العودة.",
+  "setsLabel": "المجموعة {current} من {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} تكرارًا",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} ث",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "المرحلة {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "مسودة مسار التعلّم · 18 درسًا. لا تزال الدروس وحدود التقييم الذاتي بحاجة إلى مراجعة مدرّب؛ وإكمالها لا يعني تلقائيًا إتقان الحركة.",
+  "locked": "يُفتح بعد إكمال دروس المرحلة السابقة وتقييمها الذاتي",
+  "current": "المرحلة الحالية",
+  "passed": "مكتمل",
+  "lessons": "الدروس",
+  "gate": "تقييم المرحلة الذاتي",
+  "selfReport": "تقييم ذاتي، وليس تقييمًا بالذكاء الاصطناعي",
+  "confirmGate": "أكملت ذلك دون ألم",
+  "markLesson": "وضع علامة على الدرس بأنه تم التدرب عليه",
+  "lessonCompleted": "تم تسجيل التدريب",
+  "watchPhases": "مشاهدة الحركة المرتبطة",
+  "suggestedDrills": "تمارين هذا الدرس",
+  "assessment": "تقييم ذاتي أولي",
+  "assessmentNote": "اختر وفقًا لآخر أداء فعلي لك. الغرض فقط تحديد نقطة بداية. إذا شعرت بانزعاج في المعصم فابدأ من المرحلة 1. هذا ليس تقييمًا للقدرات أو تقييمًا طبيًا.",
+  "wristTest": "بسط المعصم",
+  "compressionTest": "رفع الساق مستقيمة",
+  "supportTest": "الجلوس على شكل L",
+  "dipsTest": "تمارين المتوازي بتحكم",
+  "hipTest": "فتح الوركين بوضعية التفتيح",
+  "dipsGrade1": "0–3 تكرارات · مبتدئ",
+  "dipsGrade2": "4–7 تكرارات · أساسي",
+  "dipsGrade3": "8–12 تكرارًا · جيد",
+  "dipsGrade4": "13 تكرارًا فأكثر · ممتاز",
+  "grade1": "لم يكتمل / شعور بانزعاج",
+  "grade2": "يمكنه إكمال التمارين الأساسية",
+  "grade3": "أداء ثابت ويحتاج إلى مزيد من التدريب",
+  "grade4": "أداء مريح وجاهز للتقدم",
+  "gradeShort1": "ليس بعد",
+  "gradeShort2": "يمكنه ذلك",
+  "gradeShort3": "ثابت",
+  "gradeShort4": "بسهولة",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "حفظ نقطة البداية وفق التقييم الذاتي",
+  "skipAssessment": "ابدأ بالأساسيات",
+  "assessmentSaved": "حُفظ التقييم الذاتي على هذا الجهاز",
+  "welcomeTitle": "قسّم دورة كاملة إلى خطوات واضحة",
+  "welcomeBody": "أدر نموذجًا حقيقيًا ثلاثي الأبعاد، وأوقفه لاختيار العضلات، ثم افتح تمرينًا مناسبًا. تبقى الحركة والرسوم والسجلات على هذا الجهاز وتعمل دون اتصال.",
+  "welcomeStep1": "شاهد · حركة بطيئة وثماني مراحل",
+  "welcomeStep2": "افهم · دور العضلات في كل وضعية",
+  "welcomeStep3": "تدرّب · مجموعات ومؤقتات وسجلات محلية",
+  "safetyBody": "أحمِ معصميك وكتفيك أولًا. تدرّب وفق قدراتك وتوقف إذا شعرت بألم أو دوار. عند تجربة الدورة الكاملة لأول مرة، اختر مكانًا مناسبًا واطلب من شخص ذي خبرة أن يبقى معك. هذا المحتوى لتعلّم الحركة ولا يقدم تشخيصًا.",
+  "ackSafety": "أفهم إرشادات السلامة",
+  "enterApp": "فتح الحركة ثلاثية الأبعاد",
+  "history": "السجل",
+  "historyEmpty": "أكمل جلسة تدريب مؤقتة لتظهر هنا",
+  "sessionCount": "الجلسات",
+  "activeMinutes": "دقائق التدريب",
+  "lessonCount": "الدروس التي تدربت عليها",
+  "incomplete": "غير مكتمل",
+  "painFlag": "تم تسجيل انزعاج",
+  "aboutTitle": "عن Flare",
+  "aboutBody": "إصدار تطوير محلي 1.0.0. شاهد حركة توماس فلير، وتعرّف على دور العضلات في كل مرحلة، واختر تمارين مناسبة وسجّل تدريبك. تعمل الحركة والوسائط وسجلات التدريب دون اتصال.",
+  "privacyTitle": "البيانات المحلية والخصوصية",
+  "privacyBody": "تُحفظ الإعدادات وتدريب اليوم والتقييمات الذاتية وسجلات التدريب على هذا الجهاز فقط. تأتي النماذج والوسائط مع التطبيق ولا يُرفع شيء إلى خادم. بيانات معاينة المتصفح خاصة بذلك المتصفح. صدّر نسخة احتياطية قبل نقل البيانات أو إعادة التثبيت.",
+  "creditsTitle": "مصادر النماذج والوسائط",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0؛ تم تعديل الملابس والمواد والرسوم المتحركة. Human Base Meshes · Blender Studio والمساهمون من المجتمع · CC0. Three.js · MIT. المناطق الملونة على النموذج لوحات تعليمية ولا تحل محل الشبكات التشريحية المفقودة من BodyParts3D. قدّم المستخدم صور التمارين والعلامة؛ ويجب استكمال التحقق من التراخيص قبل الإصدار.",
+  "speedLabel": "سرعة التشغيل الافتراضية",
+  "qualityLabel": "جودة الصورة",
+  "balanced": "متوازنة",
+  "battery": "توفير البطارية",
+  "high": "عالية",
+  "exportBackup": "نسخ احتياطي محلي",
+  "backupCopied": "تم نسخ النسخة الاحتياطية. احفظها في ملف من اختيارك.",
+  "contentDraftNote": "التمارين اقتراحات تعليمية. ولا تحل الرسوم محل تعليمات كل تمرين.",
+  "close": "إغلاق",
+  "pausedAt": "متوقف عند {time} ث",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "أساسي",
+  "secondaryShort": "مساند",
+  "together": "عمل مشترك",
+  "assistMuscles": "العضلات المساندة",
+  "sceneNone": "دون معدات",
+  "sceneHome": "في المنزل",
+  "sceneGym": "في النادي",
+  "sceneNoneHint": "بوزن الجسم، في أي مكان",
+  "sceneHomeHint": "أشرطة مقاومة وأثقال يدوية ومعدات منزلية أخرى",
+  "sceneGymHint": "أجهزة وأوزان حرة",
+  "chooseScene": "اختر بيئة التدريب",
+  "trainGroup": "درّب {name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "عضلة عميقة · يشير اللون إلى موقعها",
+  "deepMusclesHint": "عضلة عميقة · يشير التخطيط إلى موقعها",
+  "noDrillForTier": "لا تتوفر تمارين لهذه العضلة مع مستوى المعدات هذا",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "حركة توماس فلير",
+  "welcomeLine": "تابع الحركة واكتشف العضلات التي تعمل في كل لحظة.",
+  "startApp": "ابدأ",
+  "welcomeFootPrefix": "بالمتابعة، تؤكد أنك قرأت",
+  "safetySheetEyebrow": "قبل التدريب",
+  "safetySheetTitle": "ثلاثة أمور مهمة",
+  "safetyRule1": "أحمِ معصميك أولًا",
+  "safetyRule1Note": "نحو 6 دقائق؛ وهو الدرس الأول في مسار التعلّم",
+  "safetyRule2": "توقف عند الألم الحاد أو الخدر أو الدوار",
+  "safetyRule2Note": "إجهاد العضلات مقبول، أما الألم فلا",
+  "safetyRule3": "هذا محتوى لتعلّم الحركة",
+  "safetyRule3Note": "لا يحل محل المدرّب أو الطبيب أو العلاج التأهيلي. اطلب من شخص أن يرافقك عند تجربة الدورة كاملة لأول مرة.",
+  "gotIt": "فهمت",
+  "startWithAssessment": "ابدأ بتقييم ذاتي",
+  "libraryHint": "اعثر على تمارين حسب مجموعة العضلات",
+  "moreProgressHint": "{count} أيام هذا الأسبوع",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "سرعة التشغيل",
+  "phaseMoment": "{source} · العضلات الأساسية في هذه اللحظة",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "عضلات أخرى مشاركة · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "و{count} مجموعات",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "كل المناطق",
+  "search": "بحث",
+  "closeSearch": "إغلاق البحث",
+  "clearSearch": "مسح البحث",
+  "spec": "الجرعة التدريبية",
+  "moreCuesAndSafety": "مزيد من الإرشادات والأخطاء الشائعة والسلامة",
+  "addTodayShort": "أضف اليوم",
+  "setOfTotal": "المجموعة {current} من {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} تكرارًا",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "ث",
+  "painStopShort": "توقف عند الشعور بعدم الارتياح",
+  "pathTitle": "مسار التعلّم",
+  "continueLesson": "متابعة · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "اكتمل الكل",
+  "confirmStageGates": "بانتظار التأكيد · متطلبات المرحلة",
+  "stageGates": "تقييم المرحلة الذاتي · إقرار شخصي",
+  "weekDays": "أيام التدريب هذا الأسبوع",
+  "streak": "أيام متتالية",
+  "recent": "الأحدث",
+  "weekdayLabels": "اثن,ثلا,أرب,خمي,جمع,سبت,أحد",
+  "todayLabel": "اليوم",
+  "completed": "مكتمل",
+  "playbackGroup": "التشغيل",
+  "otherGroup": "أخرى",
+  "aboutFlare": "عن Flare",
+  "aboutHint": "الإصدار والمصادر والتراخيص والبيانات المحلية",
+  "safetyHint": "ثلاثة أمور قبل التدريب",
+  "teachingTitle": "ملاحظات تعليمية",
+  "licenses": "تراخيص مفتوحة المصدر",
+  "minutesShort": "{count} د",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "مراحل الحركة المرتبطة",
+  "phasesShort": "المراحل {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "تكرار",
+  "appearanceGroup": "المظهر",
+  "appearanceLabel": "السمة",
+  "themeSystem": "اتباع إعداد النظام",
+  "themeDark": "داكن",
+  "themeLight": "فاتح",
+  "sceneLoading": "جارٍ تحميل الحركة ثلاثية الأبعاد",
+  "endSessionTitle": "هل تريد إنهاء هذه الجلسة؟",
+  "endSessionBody": "سيُحفظ الجزء المكتمل كسجل غير مكتمل.",
+  "endSessionConfirm": "إنهاء وحفظ",
+  "keepTraining": "متابعة التدريب",
+  "removedFromToday": "أُزيل من تدريب اليوم",
+  "undo": "تراجع",
+  "addedTodayToast": "أُضيف إلى تدريب اليوم",
+  "trainedOn": "تم التدريب · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "لم يتم التدريب · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "مشاهدة عرض التمرين",
+  "hideDrillDemo": "إخفاء العرض",
+  "demoReplay": "إعادة التشغيل",
+  "demoSeek": "موضع التشغيل",
+  "demoSpeed": "سرعة العرض",
+  "demoFailed": "الفيديو غير متاح مؤقتًا. حاول مجددًا.",
+  "demoPaused": "توقف التدريب والعرض مؤقتًا",
+  "finishedLine": "اكتملت المجموعات كلها: {sets}",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "اللغة",
+  "languageSystem": "اتباع إعداد النظام",
+  "languageTitle": "لغة التطبيق",
+  "sceneAccessibleTitle": "حركة توماس فلير ثلاثية الأبعاد من Flare",
+  "weekDayLabel": "يوم {day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "تنسيق عمل العضلات",
+  "muscleMap": "خريطة العضلات",
+  "phaseMapAccessibility": "خريطتا العضلات الأمامية والخلفية المتزامنتان مع مرحلة الحركة",
+  "viewGroup": "عرض {group}",
+  "reviewFirstPhases": "راجع بنفسك المراحل 09–11: هل يتصل الارتكاز الخلفي ونقل الوزن والارتكاز الجانبي بسلاسة؟",
+  "reviewFullLoop": "راجع الدورة كاملة بنفسك: هل يتصل تبديل اليدين وفتح الساقين والإيقاع بسلاسة؟",
+  "wristFlexion": "ثني المعصم",
+  "wristExtension": "بسط المعصم",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

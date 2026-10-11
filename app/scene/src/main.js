@@ -9,6 +9,7 @@ import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 import { createPhaseMap } from './phase-map.js';
 import { applyTheme, themeSettling } from './theme.js';
 import { createPresentationGate } from './presentation.js';
+import { sceneStrings, setSceneStrings } from './localization.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
@@ -60,7 +61,7 @@ function showError(code, recoverable = false) {
   callouts?.clear(); hotspots = [];
   presented = false; presentation.cancel(); clearTimeout(statusTimer);
   errorCode = code; status.classList.remove('leaving'); status.hidden = false; status.dataset.error = 'true';
-  statusText.textContent = recoverable ? '三维画面暂时中断，正在等待图形恢复。也可重新载入。' : '三维动作暂时无法载入，请重新载入。';
+  statusText.textContent = sceneStrings.sceneFailed ?? (recoverable ? '三维画面暂时中断，正在等待图形恢复。也可重新载入。' : '三维动作暂时无法载入，请重新载入。');
   retry.hidden = false; post({ type: 'error', code, errorCode: code }); emitState(true);
 }
 function dismissStatus() {
@@ -133,6 +134,23 @@ function command(value) {
   }
   if (!ready) { pending.push(input); if (pending.length > 32) pending.shift(); return; }
   switch (input.type) {
+    case 'localization': {
+      for (const [id, label] of Object.entries(input.groups ?? {})) {
+        if (GROUPS[id] && typeof label === 'string') GROUPS[id].label = label;
+      }
+      setSceneStrings(input).then(() => {
+        callouts?.clear();
+        if (player) { player.dirty = true; player.start(); }
+      }).catch(() => post({ type: 'localization_font_error', code: 'font_load_failed' }));
+      stage.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
+      player.renderer.domElement.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
+      hotspotLayer.setAttribute('aria-label', input.mapAccessibility ?? 'Muscles');
+      document.title = input.sceneAccessibility ?? 'Flare';
+      retry.textContent = input.retry ?? 'Retry';
+      if (errorCode) statusText.textContent = input.sceneFailed ?? 'Unable to load';
+      phaseMap?.setLocalization(); detailView?.updateLocalization(); callouts?.clear();
+      break;
+    }
     case 'present':
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
       presentation.request(input.requestId); return;
