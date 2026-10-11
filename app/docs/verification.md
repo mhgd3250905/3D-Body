@@ -1,3 +1,55 @@
+# L38–L43文档收束验证（2026-10-12）
+
+## Preflight与scope
+
+baseline为L37 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`（已记录的用户保存点，L38由此开始）；以 `git rev-parse --verify <sha>^{commit}` 核对有效，`git merge-base --is-ancestor <baseline> HEAD` 成功。HEAD `6afb6fdea8fb35099d24364c6b252f3f052d93eb`，分支master；repo root经 `git rev-parse --show-toplevel` 确认为 `E:/AII-3D/3D-Body`。`git log --oneline <baseline>..HEAD` 与 `git diff --name-status <baseline>..HEAD` 为7提交/142路径记录（M40/A100/D1/R1）。
+
+scope为L38–L43的当前文档/配置说明/版本/发布与安装观察对齐，不修改产品代码、翻译/模型/媒体字节、版本号、构建包、根dist/编辑器、原导出或个人数据，不跨仓库。源码、生成翻译/场景及配置delta由以下canonical明确映射，历史设计不作为当前要求。
+
+| 实际检查来源 | current/archive判定与核对主题 |
+| --- | --- |
+| `README.md`、`AGENTS.md`、`app/README.md`、`app/AGENTS.md` | current入口/工作约定；旧L41/L36、重复版本段落已对齐L43 |
+| `app/docs/version-ledger.md` | current版本/安装/发布唯一台账；L38–L42分段与L43原交付观察保留实际时间及范围 |
+| `app/docs/verification.md` | current验证/source state；旧版本章节为archive/history，本次16项不与旧次数相加 |
+| `app/docs/development-roadmap.md` | current M0–M7/T01–T06；9:8/11:7为被L43覆盖的历史，用户自行设备验收仍待完成 |
+| `app/docs/motion-v41.md` | current烘焙/同帧/原着装合约；动作未改，v38保留历史 |
+| `app/docs/localization.md`、`compact-labels.md` | current 14语/270界面/591内容/17短名/RTL/稳定ID；L38/L39旧测试仅历史 |
+| `app/docs/asset-sources.md` | current许可/字体来源；3字体大小/哈希与tracked源/OFL相符；output字体清单注明本机留档 |
+| `app/docs/privacy-local.md` | current本地数据；补settings.language/system/旧记录迁移与训练视频封面 |
+| `app/docs/drill-media-2026-10-11.md` | current媒体交付入口；L30–L37/当时未安装未提交为archive，不代替当前L43 |
+| `app/scene/README.md` | current 3D接口入口；旧v38/裸肤study/旧比例与密度正文划为archive，补当前v41/L43/localization/viewport |
+
+发现顺序为适用根/App AGENTS→README入口→明确声明的一跳来源。只按本阶段主题检查，未递归扫描其他项目或历史文档；未读取secrets/profile/日志/构建产物。语言/字体/配置只读核对由GPT-6 Luna max协作完成，root整合裁决。
+
+## 完整状态与归属
+
+`git status --porcelain=v1 --untracked-files=all` 完整初检与复查输出一致，未截断：tracked/staged/unstaged/deleted/renamed均0，untracked21。阶段前已明确归属用户且保留：
+
+- `Air-Flare/air-flare-demo.mp4`。
+- `app/assets/brand/icon-flare-angle2-a.png`、`icon-flare-angle2-c.png`、`icon-flare-angle2.imagegen.json`。
+- `app/assets/brand/icon-flare-draw-a.png`、`icon-flare-draw-b.png`、`icon-flare-draw-c.png`、`icon-flare-draw-d.png`、`icon-flare-draws.imagegen.json`。
+- `app/assets/brand/icon-flare-model-v3.png`/`.imagegen.json`、`icon-flare-model-v4-cute.png`/`.imagegen.json`。
+- `app/assets/brand/icon-flare-v2.png`/`.imagegen.json`、`icon-flare-v5-animation.png`/`.imagegen.json`、`icon-flare-v6-user-pose.png`/`.imagegen.json`、`icon-flare-v7-pose-corrected.png`/`.imagegen.json`。
+
+以上按路径/类别核对，不读取内容，不清理或暂存。统计1视频/12PNG/8元数据。Alignment新增变更仅本Agent已确定的文档修正；明确路径暂存、非空本地提交，未reset/stash/checkout/clean/tag/push。
+
+## 验证与source state
+
+2026-10-12 01:20（北京时间），在app目录执行：
+
+```powershell
+flutter analyze --no-pub
+flutter test --no-pub --concurrency=1 test/ui/compact_localization_test.dart test/ui/internationalization_test.dart test/ui/muscle_library_flow_test.dart test/data/catalog_localization_test.dart
+```
+
+分析No issues found；16项通过（compact1、internationalization3、muscle flow7、catalog5）。包含真实字体14语两尺寸、RTL/搜索/旧设置迁移、51训练ID/剂量和多语检索、L42连续排版与阅读位置、L43两模型半屏/固定舞台/同帧返回。source state为完整HEAD `6afb6fdea8fb35099d24364c6b252f3f052d93eb`、tracked工作树无差异；之后仅修改上述文档，产品/测试/配置源无变化，证据适用于文档收束检查点。不是全量suite或母语/医学审核。
+
+L43的Web/ARM64构建、中文394浏览器、签名/资产核对与00:30:46安装观察沿用下方原记录及本会话实际工具结果。`0606a58..6afb6fd` 产品差异仅app_shell.dart半屏补丁，与构建时工作树一致；其后没有产品变化。`e084268..6afb6fd` 场景源码/生成物delta为空，L40场景证据保留原范围。本次不重新读取构建产物/本机日志，不把文件存在当作当前构建或设备验收；不重复构建、安装或浏览器手势。iOS/生产发布/原生验收在scope外；无需改根dist，未执行全量Flutter或场景构建。
+
+Alignment后用Python按12份明确路径检查本地Markdown引用，334处链接均存在；断言当前App说明无L41/L36、路线下一步无安装L38、场景当前v41与密度1/3/4且旧v38段落已归档。`git diff --name-only`仅这12份Markdown，产品/测试/配置差异为空；`git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check`通过，随后完整状态与暂存检查再次核对。收束仅修正文档，当前交付仍L43，具名APK/Play P01/原数据保留；下一步按development-roadmap的T01/T02/T06由用户验收，禁止默认触碰素材/原编辑器/个人动画或发布。保存点由版本台账和 `docs: close out L38-L43 app delivery records` 提交定位。
+
+---
+
 # L43上下半屏验证（2026-10-12）
 
 源基线0606a58，检查点以 `feat(app): balance L43 muscle detail halves` 定位。只调整详情上下Expanded为1:1及送scene的bottomInset为可用舞台高度50%；顶部栏、共享WebView/清晰度、scene资源和媒体保持。动作/站立共用分区，默认相机自动按上半区取景，站立自由旋转/缩放、动作旋转禁缩放/平移及同帧返回保持。L42文字字号/宽度/内边距/阅读位置连续性与无图标保持。

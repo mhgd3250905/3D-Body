@@ -47,4 +47,4 @@ python tools/verify-localization.py
 
 ## 平台边界
 
-Android声明 `supportsRtl`；iOS Info.plist声明14种语言，plist已解析核对，但本机Windows未构建iOS。语言偏好由App持久化管理，未接入Android/iOS系统单独App语言同步接口。L38历史33项及L39当前12项定向回归/14语两宽度与限定浏览器核对见[verification.md](verification.md)，原生设备/读屏与母语审阅仍待验收。
+Android声明 `supportsRtl`；iOS Info.plist声明14种语言，plist已解析核对，但本机Windows未构建iOS。语言偏好由App持久化管理，未接入Android/iOS系统单独App语言同步接口。L38的33项、L39的12项为各阶段历史回归；L43与本次收束的定向回归、14语两宽度及限定浏览器证据见[verification.md](verification.md)，原生设备/读屏与母语审阅仍待验收。

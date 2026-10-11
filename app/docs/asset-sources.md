@@ -79,7 +79,7 @@ v33及后续v38清单、源文件保留为独立历史基线；当前来源为 `
 
 ## L38 国际化字体来源与许可
 
-L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面补入三款 Google Fonts 官方 Noto Sans 字体。字体随 App 本地打包；每款对应的 SIL Open Font License 文本保存在 `assets/licenses/` 并随安装包提供，不依赖 CDN 或运行时下载。文件来源、下载字节数与 SHA-256 也记录在 [L38 字体清单](../../output/drill-media-20261011/L38-font-sources.json)。
+L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面补入三款 Google Fonts 官方 Noto Sans 字体。字体随 App 本地打包；每款对应的 SIL Open Font License 文本保存在 `assets/licenses/` 并随安装包提供，不依赖 CDN 或运行时下载。文件来源、下载字节数与 SHA-256 完整记录在下表；[L38 字体清单](../../output/drill-media-20261011/L38-font-sources.json)是本机留档，不随Git提交，干净检出应按下表及仓库内字体/OFL副本核对。
 
 | 本地文件 | Google Fonts 官方源文件 | 字节数 / SHA-256 | 许可文本 |
 | --- | --- | --- | --- |
