@@ -12,7 +12,7 @@ CT = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-
 files = []
 for r, _, fs in os.walk(D):
     for f in sorted(fs):
-        p = os.path.join(r, f); url = '/' + os.path.relpath(p, D)
+        p = os.path.join(r, f); url = '/' + os.path.relpath(p, D).replace(os.sep, '/')
         files.append((url, p))
 parts = {}; imports = []; table = []
 for i, (url, p) in enumerate(files):

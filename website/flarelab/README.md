@@ -38,9 +38,12 @@ website/flarelab/
 
 ```bash
 npm ci                                   # 仓库根目录，提供 three 与 esbuild
-FONTS_DIR=/path/to/fonts python3 website/flarelab/build.py   # 需 NotoSansSC[wght].ttf、Anton-Regular.ttf、JetBrainsMono[wght].ttf + fonttools
+python website/flarelab/build.py            # 默认复用 src/fonts/ 内已入库的当前字体子集，Windows/Linux 均可
+FONTS_DIR=/path/to/fonts python3 website/flarelab/build.py   # 可选重新子集化：原始三种字体 + fonttools、brotli
 CLOUDFLARE_API_TOKEN=xxx python3 website/flarelab/deploy.py  # 需 Workers Scripts:Edit
 ```
+
+默认构建不需要下载字体、创建软链接或全局 esbuild；根目录锁定的 Vite 依赖提供 esbuild。`src/fonts/` 的四个字体输入与原线上版本一致，许可全文在 `src/fonts/licenses/`。调整显示文字时应通过 `FONTS_DIR` 重新生成所需字形，并更新这里的字体输入。
 
 - 免费版 Worker 上限约 3MB（gzip），当前 65 个文件、原始 2.29MB、gzip ≈ 1.56MB。
 - 不用 Pages / Workers Assets：现有 token 没有 Pages 权限，且 assets 上传流程在 Hark 环境中会被注入的 token 覆盖。
