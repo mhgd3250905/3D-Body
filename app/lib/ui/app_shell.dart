@@ -1195,17 +1195,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        Flexible(
-                          child: Text(
-                            '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: FlareColors.dim,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 75,
+                            maxHeight: 22,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: FlareColors.dim,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
                             ),
                           ),
                         ),

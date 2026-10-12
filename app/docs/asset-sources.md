@@ -1,5 +1,7 @@
 # 资产来源与复现
 
+2026-10-12 整合保留 iOS S4 的来源说明：2026-10-10 用户在 iOS 发布流程确认训练图与品牌图具备发布权，该记录来自 `ios/main` 历史文档。本轮不新增法律核验，也不改变模型、软件及当前51项训练视频各自的来源与许可证；关于页继续保留 Snow / Human Base Meshes / Three.js 署名。
+
 当前默认动作采用PR #3固定提交 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 的v41网格/运行时，独立清单为 `scene/tools/v41-source-manifest.json`，复现见 [v41同步](motion-v41.md)。当前穿衣详情代理高亮，不加载历史白膜；下方旧制作包、v38和白膜记录保留历史，不覆盖当前合约。
 
 App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为v41与穿衣详情，不加载历史白膜派生。

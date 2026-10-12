@@ -171,8 +171,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('train-group')));
     await tester.pumpAndSettle();
     expect(find.byType(LibraryPage), findsOneWidget);
-    final drill = tester.widget<DrillCard>(find.byType(DrillCard).first).drill;
-    await tester.tap(find.text(drill.name));
+    final selectedDrill = tester
+        .widget<DrillCard>(find.byType(DrillCard).first)
+        .drill;
+    await tester.tap(find.text(selectedDrill.name));
     await tester.pumpAndSettle();
     await screenshot(tester, '04-drill-$screenshotTheme');
     final addToday = find.byTooltip('加入今日训练');

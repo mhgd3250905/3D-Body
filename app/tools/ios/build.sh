@@ -26,7 +26,9 @@ case "${1:-}" in
     export_options="${EXPORT_OPTIONS_PLIST:-tools/ios/ExportOptions.plist}"
     [[ -f "$export_options" ]] || { echo "EXPORT_OPTIONS_PLIST 指定的文件不存在"; exit 1; }
     grep -q "__TEAM_ID__" "$export_options" && { echo "请用 EXPORT_OPTIONS_PLIST 指定填写完成的本机导出配置；不要提交签名信息"; exit 1; }
-    "$flutter_bin" build ipa --release --target=lib/main.dart --export-options-plist="$export_options"
+    build_number="${IOS_BUILD_NUMBER:?请指定大于已上传 Build 3 的 iOS 构建号，例如 IOS_BUILD_NUMBER=4；不修改公共版本}"
+    [[ "$build_number" =~ ^[0-9]+$ && "$build_number" -gt 3 ]] || { echo "IOS_BUILD_NUMBER 必须为大于已上传 Build 3 的整数"; exit 1; }
+    "$flutter_bin" build ipa --release --target=lib/main.dart --build-number="$build_number" --export-options-plist="$export_options"
     ls -la build/ios/ipa/ ;;
   *) sed -n '2,9p' "$0"; exit 1 ;;
 esac
