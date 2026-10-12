@@ -34,6 +34,9 @@ const mutations = [
   (s) => s.web.speed = '0.5',
   (s) => s.today.ids = ['constructor'],
   (s) => s.gateReports = { constructor: true },
+  (s) => s.sessions[0].startedAt = '1',
+  (s) => s.sessions[0].drillId = ['deltoids-A'],
+  (s) => s.today.ids = [['deltoids-A']],
 ];
 for (const mutate of mutations) {
   const bad = structuredClone(good); mutate(bad);

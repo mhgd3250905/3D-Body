@@ -165,7 +165,8 @@ export function validState(j) {
   try {
     const record = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
     const integer = (v, min = 0) => Number.isSafeInteger(v) && v >= min;
-    const date = (v) => typeof v === 'string' && Number.isFinite(Date.parse(v));
+    const date = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(v) && Number.isFinite(Date.parse(v));
+    const knownId = (map, id) => typeof id === 'string' && Object.hasOwn(map, id);
     const unique = (v) => new Set(v).size === v.length;
     if (!record(j)) return false;
     if (j.version !== 1 || typeof j.safetyAccepted !== 'boolean') return false;
@@ -176,14 +177,14 @@ export function validState(j) {
     if (!Number.isFinite(j.lastTime) || j.lastTime < 0 || j.lastTime > 9) return false;
     if (!record(j.today) || typeof j.today.date !== 'string' ||
         (j.today.date !== '' && (!/^\d{4}-\d{2}-\d{2}$/.test(j.today.date) || stamp(j.today.date + 'T12:00:00') !== j.today.date))) return false;
-    if (!Array.isArray(j.sessions) || j.sessions.some((x) => !record(x) || typeof x.id !== 'string' || !x.id || !Object.hasOwn(drillById, x.drillId) ||
+    if (!Array.isArray(j.sessions) || j.sessions.some((x) => !record(x) || typeof x.id !== 'string' || !x.id || !knownId(drillById, x.drillId) ||
         !date(x.startedAt) || !date(x.endedAt) || Date.parse(x.endedAt) < Date.parse(x.startedAt) ||
         !integer(x.activeSeconds) || x.activeSeconds > Math.floor((Date.parse(x.endedAt) - Date.parse(x.startedAt)) / 1000) + 1 ||
         !integer(x.plannedSets, 1) || !integer(x.completedSets) || x.completedSets > x.plannedSets ||
         typeof x.pain !== 'boolean' || typeof x.completed !== 'boolean' || (x.completed && x.completedSets !== x.plannedSets)) ||
         !unique(j.sessions.map((x) => x.id))) return false;
-    if (!Array.isArray(j.today.ids) || j.today.ids.some((id) => !Object.hasOwn(drillById, id)) || !unique(j.today.ids)) return false;
-    if (!Array.isArray(j.completedLessonIds) || j.completedLessonIds.some((id) => !Object.hasOwn(lessonById, id))) return false;
+    if (!Array.isArray(j.today.ids) || j.today.ids.some((id) => !knownId(drillById, id)) || !unique(j.today.ids)) return false;
+    if (!Array.isArray(j.completedLessonIds) || j.completedLessonIds.some((id) => !knownId(lessonById, id))) return false;
     if (!record(j.gateReports) || Object.entries(j.gateReports).some(([id, value]) => !Object.hasOwn(gateById, id) || typeof value !== 'boolean')) return false;
     if (!record(j.assessmentGrades)) return false;
     const grades = Object.keys(j.assessmentGrades);
