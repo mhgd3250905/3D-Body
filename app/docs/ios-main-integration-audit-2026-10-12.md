@@ -1,5 +1,7 @@
 # iOS 源码与 L43 主线整合审核（2026-10-12）
 
+完成状态：本文件下文保留试合并/补修过程的实际验证范围。最终来源 `8196ce6d3179053827fad56b91469b3088fce242` 已经PR #107合入master `685f3ec41e16f6869124de35fbaa2b5c0eeddbec`；PR #8在GitHub已标为MERGED。后续主线没有改变这里验证的App源码树，50项累计定向范围仍按下文边界复用；没有新Mac/iPhone/Apple验收。当前版本与待办以 [版本台账](version-ledger.md#2026-10-12-主线整合源码检查点)、[实施路线](development-roadmap.md#主线整合后待安排事项2026-10-12) 为准。
+
 用户授权将 `ios/main` 与最新 master 整合、解决冲突并提交 PR。工作副本为 `E:\AII-3D\3D-Body-worktrees\ios-main-integration`，分支 `codex/ios-main-integration`；原主目录、原 PR8 审核副本和用户改动未修改。源为 `6997bb53836e0a2ab06aa7cb0a97f4779f037c18`，首轮主线为 `1f87cc6180532857c1b53dba4c9898915a9aa49a`，随后无冲突纳入 `80298ceccf58c958e557e1b45c44ddaf1ae2c6b6`。整合保存点分别为 `b85769d`、`8e6284e`；最终修复保存点由 Git 定位，不预填自身 SHA。
 
 ## 冲突与取舍

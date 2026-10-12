@@ -2,7 +2,29 @@
 
 更新于2026-10-12，当前本地交付为 **L43 上下半屏**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
-## 2026-10-12 L38–L43 文档收束
+## 2026-10-12 主线整合源码检查点
+
+本轮将已审核制作源、两个网站和iOS工程整合到 `master`。以下是源码保存点，手机仍安装原L43；主线已含后续iOS恢复/布局补修，不把相同 `1.0.0+1` 写成手机已经更新，也不创建L44。Play P01和Apple S4 Build 3保留原包身份，未重新安装、上传或发布。
+
+| 来源 / 范围 | 合入master的保存点 |
+| --- | --- |
+| feature/drill-anim 原制作工具 | `7666e82ac88ab74a37c7f40e5f72ad3d7bd46cbf`；Windows补修 `8a75ff30a9b2d6b8fcb684746555eab90aa4832a` |
+| #94 官网 / #95 独立网页站 | `c522438e1507524047595cf2c5ef422fc12e9c50` / `e3385c69a7c44b53eb3f2748ad95da045f058499` |
+| #96 办公椅 / #97–#104 八项办公室动作 | `80298ceccf58c958e557e1b45c44ddaf1ae2c6b6` / 最后一项 `6b704f34fd3bc51784ea52d4e1669f3742bfbe71` |
+| ios/main 经 #107 整合 | `685f3ec41e16f6869124de35fbaa2b5c0eeddbec`；最终来源 `8196ce6d3179053827fad56b91469b3088fce242` |
+| #105 八项久坐强化 | `b6b56efdb40938cef4bdff7d8d16291b8e40a495`；最终来源 `8fb8a6bff8d27b0f77c221d8f9f36af028e56b1f` |
+| #108 五项最终修订归档 | `0f0698cd9498b02f0d9d160a3266de05b6b23dbe`；来源 `f0d53e9260c9b374cf86861c8309a115acb670df` |
+| 整合收据 / sk新预览链接记录 | `7ffaa1e51d303963a5c858c815f0016c898d3f4c` / `51cd3d229acf5442e95b3bb491a36adeee3421fc` |
+
+每个PR的固定来源、执行前目标及合并SHA见 [整合审核](../../docs/integration-pr-audit-2026-10-12.md)。PR #8 的 `ad72f1cc481080072526be918e48748dbec20794` 已被ios来源包含，GitHub在#107合并时将其标为MERGED；不再列为独立待合任务。上述完成项普通push，未删除design/backup等历史分支。
+
+当前制作源75项（59原参数＋8办公室＋8久坐）；#108的五项是独立历史修订归档，不计入默认75项。App正式选版51项及v41保持，#106的12项仍Draft、未纳入主线。#108保留原QA和警告，不把归档核验写成当前引擎的新全量渲染。
+
+媒体归档：原正式60项及历史素材已有[工具整合备份](https://drive.google.com/drive/folders/16ErhrmGbJMner-h0g9Tv7XNWJYoC1tXR)与[v1.0.0备份](https://drive.google.com/drive/folders/1nRi_L9WrysQzOt-zT9rZTlTO3Xx6uI4w)；鸟狗/游泳两项修复成片另在[新归档](https://drive.google.com/drive/folders/1fVkqMCuHn5AyurG1UrmOBbo-Vupf9L21)，ZIP回读SHA一致。mhgd来源机器的原8项成片仍待上传；[sk目录](https://drive.google.com/drive/folders/11HIEesP7B7sQ-67ED1OlQRdVhOJJLiuQ)已读到总览＋12GIF，只核对清单，未把预览当作成片验收。
+
+本次文档收束基线为已记录的L43整合起点 `3a8955d14157a0ee8406cf640e00f40d68b4ae9f`，Preflight HEAD `51cd3d229acf5442e95b3bb491a36adeee3421fc`。收束提交以 `docs: close out master integration ledger and verification` 定位，不预填自身SHA；只对齐文档，不变更版本号、产品代码、资产、原包或#106姿态。验证及source state见 [本次收束验证](verification.md#主线整合文档收束2026-10-12)，剩余事项见 [实施路线](development-roadmap.md#主线整合后待安排事项2026-10-12)。
+
+## 历史：2026-10-12 L38–L43 文档收束
 
 当前功能/安装包仍为L43，本次只整理文档，不创建L44、不改包版本或产品代码。基线为用户要求先保存的L37 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`；Preflight HEAD `6afb6fdea8fb35099d24364c6b252f3f052d93eb`（master），基线是祖先。阶段差异7提交/142路径记录（M40/A100/D1/R1），对应国际化/短名、渲染清晰度、知识展开和半屏详情；原L37视频/搜索/银色条目及个人资产保留。
 
@@ -309,7 +331,7 @@ T01 长期计时、T02 Android 真机/iOS 性能与手势、T03 内容/数据、
 
 ---
 
-## iOS v1 候选（本机，2026-10-10）
+## 历史：iOS v1 候选（Mac，2026-10-10）
 
 以下保留独立iOS分支的Mac产物及Apple状态历史。本轮2026-10-12已与L43和master80298ce整合，公共版本仍1.0.0+1，没有替换或重新上传S4包；代码取舍/验证及原生待验见 [整合审核](ios-main-integration-audit-2026-10-12.md)。本节中的本地候选指当时Mac产物，不是本轮Windows工作副本的构建。
 

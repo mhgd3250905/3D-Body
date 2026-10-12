@@ -4,6 +4,8 @@
 
 同日已将官网、网页使用站、办公室拉伸、久坐强化、iOS 工程及五项历史修订归档整合到 `master`；托马斯专项 PR #106 的12项低清动图等待用户确认。合并收据、实际验证与未完成事项见 [整合审核记录](docs/integration-pr-audit-2026-10-12.md)。本轮源码整合没有改变手机已安装的 L43 交付身份。
 
+本轮整合的源码检查点、安装版本与云盘归档状态统一见 [版本台账](app/docs/version-ledger.md#2026-10-12-主线整合源码检查点)；验证及证据绑定见 [验证记录](app/docs/verification.md#主线整合文档收束2026-10-12)，后续待安排事项见 [实施路线](app/docs/development-roadmap.md#主线整合后待安排事项2026-10-12)。源码已同步不表示手机已安装新代码。
+
 当前本地交付为 **L43**（1.0.0+1，动作v41）。支持14语离线内容与准确短名；均衡/高清/省电渲染密度上限分别3/4/1。肌群详情顶部栏下模型与介绍上下各半，站立人台及缩略图高亮当前肌群双侧，动作人物保持阶段侧别；知识卡片展开/收起字号、换行及阅读位置连续，无右侧图标或可见滚动条。手机已保留数据安装L43，用户自行验收。
 
 当前版本身份、检查点及历史见[版本台账](app/docs/version-ledger.md)，证据见[验证记录](app/docs/verification.md)，待验收见[实施路线](app/docs/development-roadmap.md)。L38–L43的7个提交已逐项列入台账，L37及更早检查点、原编辑器、原导出与个人数据保留。用户的Air-Flare和20项图标候选保留且不纳入本次保存。
@@ -167,6 +169,7 @@ node app/tools/verify-v41.mjs
 | 当前代码检查点、版本/安装包及发布观察 | [app/docs/version-ledger.md](app/docs/version-ledger.md) |
 | 当前M0–M7进度与待验收项 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |
 | 当前验证及证据source state | [app/docs/verification.md](app/docs/verification.md) |
+| 本轮网站、制作工具、iOS及PR整合收据 | [docs/integration-pr-audit-2026-10-12.md](docs/integration-pr-audit-2026-10-12.md)；版本身份、验证及待办分别归入上面三份台账 |
 | 2026-10-07网页历史保存与阶段1恢复 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[当时核查证据](docs/evidence/2026-10-07/README.md) |
 | 外部开发、验证与 PR 提交 | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
@@ -183,4 +186,4 @@ node app/tools/verify-v41.mjs
 
 可编辑 Blender 场景在 `assets/coach/flare-coach.blend`，原始 Snow 场景在 `assets/blender-studio-source/`，此前渲染在 `output/blender/coach-preview.png`。Git 保存当前代码、运行资产、文档与 `托马斯/` 的原始 JSON 导出和阶段动画快照；生成的 `dist/`、`output/`、下载素材、Blender 场景、缓存和 `托马斯/备份/` 留在本地且被忽略，不包含在 Git 提交中。原始素材和备份没有删除或重建。
 
-卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。静态参考来源：**Human Base Meshes v1.4.1，Blender Studio 与社区贡献者**，CC0。当前网页人台 `mannequin-reference` 从既有Realistic male体表派生，去掉短裤并局部平顺裆部；有短裤的 `fitness-reference` 及原始资产保留。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。App/网页预览未远程部署；Play送审阶段已部署隐私政策Worker，见版本台账的发布观察。
+卡通人物：**Snow Rig © Blender Foundation | studio.blender.org**，CC BY 4.0，本项目已修改服饰、材质、表情与网页骨架。静态参考来源：**Human Base Meshes v1.4.1，Blender Studio 与社区贡献者**，CC0。当前网页人台 `mannequin-reference` 从既有Realistic male体表派生，去掉短裤并局部平顺裆部；有短裤的 `fitness-reference` 及原始资产保留。BodyParts3D 数据：**BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International.** human-atlas 应用代码为 MIT；Three.js 与 Lucide 的许可分别保留在 `licenses/`。根目录原编辑器和本地Flutter预览未在本轮远程部署；新增官网和独立网页站的既有线上地址由各自README保留，本轮没有重新部署。Play送审阶段的隐私政策Worker及安装/发布观察见版本台账。

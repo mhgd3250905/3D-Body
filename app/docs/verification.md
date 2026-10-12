@@ -1,3 +1,53 @@
+# 主线整合文档收束（2026-10-12）
+
+## Preflight：来源、范围与完整状态
+
+用户明确要求版本整理、台账/文档对齐并保存、commit、普通push，之后再安排#106。仓库边界经 `git rev-parse --show-toplevel` 确认是 `E:/AII-3D/3D-Body`。收束scope为本轮网站/制作源/iOS/媒体归档整合的当前文档、版本与发布记录；不改产品代码、配置、包版本、模型/媒体字节，不制作新安装包，不优化/渲染/合并#106，不删除历史分支，不跨仓库。
+
+baseline采用初次工具整合记录明确的L43本地起点 `3a8955d14157a0ee8406cf640e00f40d68b4ae9f`（SHA本身为可核对引用）。`git rev-parse --verify <baseline>^{commit}` 与 `git merge-base --is-ancestor <baseline> HEAD` 成功。Preflight HEAD为master `51cd3d229acf5442e95b3bb491a36adeee3421fc`；普通push之前该SHA已与origin/master和GitHub master一致。
+
+`git log --first-parent <baseline>..HEAD` 为22次主线提交；`git rev-list --count <baseline>..HEAD` 为385个可达提交，包含并入分支的原历史，不描述为本轮新编写385次。`git diff --name-status <baseline>..HEAD` 完整有限delta为430条路径记录，A403/M27，无D/R；类别为根README1、app46、docs9、tools204、webapp20、website150。`src/`、`public/`、`app/scene/`、`app/assets/data/`、`app/assets/scene/`、`app/assets/drill_media/`、`app/assets/l10n/` 差异为空；App源码/工程补修与已安装APK身份分别记录。
+
+发现顺序是根/App适用AGENTS与根README入口，再沿与本阶段相关的明确来源一跳检查；没有扫描全仓或其他项目。实际检查如下：
+
+| 路径 | current / archive判定、主题与核对结果 |
+| --- | --- |
+| `AGENTS.md`、`app/AGENTS.md`、`README.md`、`app/README.md` | current入口与合约；L43已安装、零预算/v41/14语/51视频及用户素材保留，源码整合没有新安装身份 |
+| `app/docs/version-ledger.md` | current版本/源码检查点/安装/发布台账；补录本轮合并与文档保存点；L38–L43旧收束及2026-10-10 Mac S4段落标明历史 |
+| `app/docs/verification.md` | current验证/source state；本节是本轮证据，后续L38–L43及S4章节保留各自旧源和时间，不与本轮次数相加 |
+| `app/docs/development-roadmap.md` | current实施/待验收台账；补#106待安排、原8成片待上传、iOS原生/横屏和历史分支保留；T01–T06不自动销项 |
+| `app/docs/motion-v41.md` | current动作/重放/同帧/来源合约；相关runtime与资产delta为空，无finding，不修改 |
+| `docs/integration-pr-audit-2026-10-12.md` | current本轮来源、PR合并收据和审核范围；#94–#105/#107/#108已合，#8已覆盖，#106 Draft；与三份台账划分职责 |
+| `docs/drill-anim-integration-2026-10-12.md` | archive/history：截至1f87cc6的首次纳入；59源与#8待处理是当时事实，补范围提示，历史备份/验证不删除 |
+| `tools/drill-anim/README.md` | current工具入口；更新75默认制作源＝59原＋8办公室＋8久坐，五项归档独立，#106不计入，App51选版不替换 |
+| `website/flarelab/README.md`、`webapp/README.md` | current组件说明，实际只核对本阶段相关段落；官网/独立网页站为不同入口，网页站静态训练卡/中文深色功能差异明确，本轮未重新部署 |
+| `app/docs/ios-main-integration-audit-2026-10-12.md` | current本轮iOS审核入口，内含过程/历史证据；补最终来源8196ce6和#107合并状态，保留累计50项范围与原生未验限制 |
+
+完整 `git status --porcelain=v1 --untracked-files=all` 初检与只读复查一致，未截断：tracked/staged/unstaged/deleted/renamed均0、untracked21。全部为阶段前明确记录的用户资源，只按路径/类别核对归属，不读内容：`Air-Flare/air-flare-demo.mp4` 1项；`app/assets/brand/` 12PNG/8imagegen元数据。具体21路径与下方L38–L43完整状态清单一致；保留、不暂存。阶段二新增内容全部属于本Agent确定的8份Markdown对齐，不清理或覆盖用户资源。
+
+## 验证命令、时间与source state
+
+| 命令 / 来源 | source state与结果、复用边界 |
+| --- | --- |
+| `node tools/drill-anim/verify.mjs` | 2026-10-12 17:20北京时间，本次Preflight HEAD `51cd3d229acf5442e95b3bb491a36adeee3421fc`、tracked改动0执行；75项/原59哈希/办公室8/久坐8/App51 ID通过 |
+| `node tools/drill-anim/revisions/hark-4080-v1/verify.mjs` | 同时间和HEAD执行；64文件/5动作核验通过，`full_rerender:false`、原QA保留，不能写成新版全渲染通过 |
+| 根目录 `npm ci`、`npm run build`、`node tools/drill-anim/verify.mjs` | 本会话#108合并后已在 `0f0698cd9498b02f0d9d160a3266de05b6b23dbe` 执行并通过，原有大chunk提示保留；该SHA到Preflight HEAD只改README和整合审核Markdown，因此源码/依赖/构建输入不变，可复用，不重复构建 |
+| App `flutter analyze --no-pub` 与定向Flutter范围 | 来源为本会话iOS试合并/补修回执及iOS审核中的完整命令，累计50项独立范围，不是一次全量suite；最后受影响复测 `flutter test --no-pub --concurrency=1 test/ui/scene_process_recovery_test.dart` 4项通过，补修保存点 `878c3ebaecdfd9d5f2aac56a1c18a295417e0d84`。最终来源8196ce6及该补修SHA到Preflight HEAD的 `app/` delta均为空，旧证据仅按已覆盖范围复用；完整命令保留 `--exclude-tags landscape` 限定 |
+
+文档对齐后 `git diff --check` 通过，新增20处本地文件链接/锚点无缺失，改动路径严格为上表中确定修正的8份Markdown，非Markdown差异为空；`app/pubspec.yaml`仍为1.0.0+1，完整状态复查仍保留原21项用户资源。必要检查与文档改动成比例，不重复全量Flutter、媒体渲染、Mac或设备流程。构建产物和历史日志不作为当前源码的额外证明，也没有读取秘密、凭据或浏览器profile。
+
+## Alignment结果与边界
+
+确定finding均已对齐：台账缺少本轮源码保存点；工具入口仍只列59；早期#8待处理与当前合并状态未区分；验证入口未集中说明75/归档与iOS证据绑定；待办漏列原8媒体归档和#106等待安排；根“网页未部署”未区分原编辑器与新增网站。当前来源分别记录身份、证据与待办，整合审核只保存PR收据；历史章节和旧包不删除。
+
+剩余产品工作是明确的待办，不是文档对齐失败：#106动作方向及优化待用户新安排；mhgd原8成片待上传；iOS Mac/Xcode/签名/iPhone/Apple新包与844×390/2倍字号40px溢出待处理；设计/备份分支保留。sk新目录已读取总览JPG＋12GIF清单、名称无缺项，本轮没有下载或完成云盘媒体的画面审核。源数量、解码或QA布尔均不扩大为教练/医学/真机验收。
+
+保存点通过Git提交 `docs: close out master integration ledger and verification` 定位，不预填自身SHA。用户已明确授权普通push；提交后核对本地HEAD、origin/master和远程master，原21项用户未跟踪资源继续保留。Cockpit仅可在本地收束成功后登记一次非终态检查点，不结束会话或自动接力。
+
+---
+
+以下保留此前L38–L43文档收束及各版本验证历史，不能代替本轮源码整合或新安装验收。
+
 # L38–L43文档收束验证（2026-10-12）
 
 ## Preflight与scope
