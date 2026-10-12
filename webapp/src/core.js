@@ -163,12 +163,35 @@ const fresh = () => ({ version: 1, safetyAccepted: false, settings: { tier: 'A',
 
 export function validState(j) {
   try {
+    const record = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+    const integer = (v, min = 0) => Number.isSafeInteger(v) && v >= min;
+    const date = (v) => typeof v === 'string' && Number.isFinite(Date.parse(v));
+    const unique = (v) => new Set(v).size === v.length;
+    if (!record(j)) return false;
     if (j.version !== 1 || typeof j.safetyAccepted !== 'boolean') return false;
-    const s = j.settings; if (!['A', 'B', 'C'].includes(s.tier) || ![0.25, 0.5, 1].includes(s.speed) || !(s.weeklyGoal >= 1 && s.weeklyGoal <= 7)) return false;
-    if (!Array.isArray(j.sessions) || j.sessions.some((x) => !drillById[x.drillId] || !(x.plannedSets > 0))) return false;
-    if (!Array.isArray(j.today.ids) || j.today.ids.some((id) => !drillById[id])) return false;
-    if (j.completedLessonIds.some((id) => !lessonById[id])) return false;
-    if (Object.keys(j.gateReports).some((id) => !gateById[id])) return false;
+    const s = j.settings;
+    if (!record(s) || !['A', 'B', 'C'].includes(s.tier) || ![0.25, 0.5, 1].includes(s.speed) ||
+        !integer(s.weeklyGoal, 1) || s.weeklyGoal > 7 || ['cues', 'sound', 'haptics'].some((k) => typeof s[k] !== 'boolean') ||
+        !['system', 'dark', 'light'].includes(s.themeMode ?? 'system')) return false;
+    if (!Number.isFinite(j.lastTime) || j.lastTime < 0 || j.lastTime > 9) return false;
+    if (!record(j.today) || typeof j.today.date !== 'string' ||
+        (j.today.date !== '' && (!/^\d{4}-\d{2}-\d{2}$/.test(j.today.date) || stamp(j.today.date + 'T12:00:00') !== j.today.date))) return false;
+    if (!Array.isArray(j.sessions) || j.sessions.some((x) => !record(x) || typeof x.id !== 'string' || !x.id || !Object.hasOwn(drillById, x.drillId) ||
+        !date(x.startedAt) || !date(x.endedAt) || Date.parse(x.endedAt) < Date.parse(x.startedAt) ||
+        !integer(x.activeSeconds) || x.activeSeconds > Math.floor((Date.parse(x.endedAt) - Date.parse(x.startedAt)) / 1000) + 1 ||
+        !integer(x.plannedSets, 1) || !integer(x.completedSets) || x.completedSets > x.plannedSets ||
+        typeof x.pain !== 'boolean' || typeof x.completed !== 'boolean' || (x.completed && x.completedSets !== x.plannedSets)) ||
+        !unique(j.sessions.map((x) => x.id))) return false;
+    if (!Array.isArray(j.today.ids) || j.today.ids.some((id) => !Object.hasOwn(drillById, id)) || !unique(j.today.ids)) return false;
+    if (!Array.isArray(j.completedLessonIds) || j.completedLessonIds.some((id) => !Object.hasOwn(lessonById, id))) return false;
+    if (!record(j.gateReports) || Object.entries(j.gateReports).some(([id, value]) => !Object.hasOwn(gateById, id) || typeof value !== 'boolean')) return false;
+    if (!record(j.assessmentGrades)) return false;
+    const grades = Object.keys(j.assessmentGrades);
+    if (grades.length && (grades.length !== ASSESS_IDS.length || grades.some((id) => !ASSESS_IDS.includes(id) ||
+        !integer(j.assessmentGrades[id], 1) || j.assessmentGrades[id] > 4))) return false;
+    if (j.startStage !== placement(j.assessmentGrades)) return false;
+    if (j.web !== undefined && (!record(j.web) || !['battery', 'balanced', 'high'].includes(j.web.quality) ||
+        ![0.25, 0.5, 0.75, 1].includes(j.web.speed) || typeof j.web.xray !== 'boolean')) return false;
     return true;
   } catch (e) { return false; }
 }
