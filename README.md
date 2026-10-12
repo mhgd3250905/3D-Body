@@ -1,5 +1,7 @@
 # Flare Anatomy Studio
 
+2026-10-12 已按用户授权纳入训练动作制作分支 `feature/drill-anim`，工具位于 [tools/drill-anim](tools/drill-anim/README.md)。当前 App 交付仍为 L43，51 项正式视频保持；59 个分支参数与 60 个冻结正式成片的版本区别、Windows 运行、云盘备份和验证见 [训练动作工具整合记录](docs/drill-anim-integration-2026-10-12.md)。
+
 当前本地交付为 **L43**（1.0.0+1，动作v41）。支持14语离线内容与准确短名；均衡/高清/省电渲染密度上限分别3/4/1。肌群详情顶部栏下模型与介绍上下各半，站立人台及缩略图高亮当前肌群双侧，动作人物保持阶段侧别；知识卡片展开/收起字号、换行及阅读位置连续，无右侧图标或可见滚动条。手机已保留数据安装L43，用户自行验收。
 
 当前版本身份、检查点及历史见[版本台账](app/docs/version-ledger.md)，证据见[验证记录](app/docs/verification.md)，待验收见[实施路线](app/docs/development-roadmap.md)。L38–L43的7个提交已逐项列入台账，L37及更早检查点、原编辑器、原导出与个人数据保留。用户的Air-Flare和20项图标候选保留且不纳入本次保存。
