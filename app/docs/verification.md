@@ -22,6 +22,8 @@
 
 证据保存在 `output/stage-closeout-20261013/`，媒体原证据在 `output/playwright/thomas-app-model-v3-20261012/`。`output/stage-closeout-20261013/final-doc-check.py` 验证新增本地文件/锚点、人体版本字段、源码固定哈希与有限delta；`git diff --check`及暂存检查必须通过后才能提交，实际提交由 `chore: close out accepted training human baseline` 定位，推送结果只在版本台账维护。
 
+文档最终检查新增46处本地文件/锚点全部存在，17路径仅为15份Markdown、人体验收元数据JSON及制作源校验脚本。`git diff --check`与暂存检查通过后提交05fa9d2；普通push及远端SHA核对结果见版本台账。实际预览生成源也追加10-13验收标记并重新生成页面，11动作/12变体/四栏/JavaScript与媒体路径自检通过；原builder/index另存历史副本，所有媒体字节保持，未重新编码。当前外观已通过的记录和原通用QA警告同时显示。
+
 ## 限制、保留与下一步
 
 没有未决文档冲突或本轮必需检查失败。App/Dart、App场景、媒体51原文件、包版本和iOS工程本轮delta为空，因此Flutter分析/测试、App/场景重构建和设备安装不适用；官网/独立网页站/归档源也未变，不重复其构建与全解码。HD全片和旧动作批量重渲不属于版本整理，没有执行；原预览的通用QA警告不改成通过。Mac/Xcode/iPhone、40px横屏字号缺口、长期计时和原8成片归档继续列为待办，不借此次人体验收销项。Play/Apple/网站未重新上传或部署，未新增包编号/标签或删除历史分支。

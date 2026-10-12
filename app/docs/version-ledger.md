@@ -18,7 +18,7 @@
 
 当前原库75份＋独立托马斯12份＝87份spec；第1项停止，2–12加5左侧镜像为12个已验收预览。六项新profile预览700px/5fps共260帧，其他六变体复用原320帧；原视频/参数及全部历史输出保留。高清全片、App正式选版和旧动作重渲另按安排，当前51项媒体未替换。
 
-版本整理提交以 `chore: close out accepted training human baseline` 定位，不预填自身SHA。本次用户明确授权保存提交和普通push；当前普通push的实际SHA以本节后续回执及Git远端核对为准，不以本地快进代替已推送事实。证据/命令与跳过边界见[本次验证](verification.md#人体标准与托马斯版本整理验证2026-10-13)，下一步见[待安排台账](development-roadmap.md)。原21项用户未跟踪素材、旧GLB/导出/备份、网站现状与原包保留，不删除分支或发布新包。
+版本整理检查点为 `05fa9d22039abdfb35d5669917e749766bb27a3f`（`chore: close out accepted training human baseline`）。用户明确授权的普通 `git push origin master` 已成功，主线从6fbf7a7推进至该SHA；2026-10-13T00:18:41+08:00独立核对本地HEAD、origin/master及ls-remote的master完全相同，回执保存于 `output/stage-closeout-20261013/push-receipt.json`。其后仅补本台账实际回执，以 `docs: record training baseline push receipt` 定位，不改变人体/动作源；最终tip以Git master与远端一致性核对为准。证据/命令与跳过边界见[本次验证](verification.md#人体标准与托马斯版本整理验证2026-10-13)，下一步见[待安排台账](development-roadmap.md)。原21项用户未跟踪素材、旧GLB/导出/备份、网站现状与原包保留，不删除分支或发布新包。
 
 ## 2026-10-12 主线整合源码检查点
 
