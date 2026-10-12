@@ -433,50 +433,53 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                                     child: child,
                                   ),
                               child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // Each new count rolls up into place.
-                                    AnimatedSwitcher(
-                                      duration: FlareMotion.of(
-                                        context,
-                                        FlareMotion.collapse,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Each new count rolls up into place.
+                                      AnimatedSwitcher(
+                                        duration: FlareMotion.of(
+                                          context,
+                                          FlareMotion.collapse,
+                                        ),
+                                        switchInCurve: FlareMotion.settle,
+                                        switchOutCurve: FlareMotion.exit,
+                                        transitionBuilder: (child, animation) {
+                                          final incoming =
+                                              child.key == ValueKey(value);
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: SlideTransition(
+                                              position: Tween(
+                                                begin: Offset(
+                                                  0,
+                                                  incoming ? .32 : -.32,
+                                                ),
+                                                end: Offset.zero,
+                                              ).animate(animation),
+                                              child: child,
+                                            ),
+                                          );
+                                        },
+                                        child: _CountText(
+                                          value,
+                                          key: ValueKey(value),
+                                          celebrate:
+                                              snap.phase == TimerPhase.finished,
+                                        ),
                                       ),
-                                      switchInCurve: FlareMotion.settle,
-                                      switchOutCurve: FlareMotion.exit,
-                                      transitionBuilder: (child, animation) {
-                                        final incoming =
-                                            child.key == ValueKey(value);
-                                        return FadeTransition(
-                                          opacity: animation,
-                                          child: SlideTransition(
-                                            position: Tween(
-                                              begin: Offset(
-                                                0,
-                                                incoming ? .32 : -.32,
-                                              ),
-                                              end: Offset.zero,
-                                            ).animate(animation),
-                                            child: child,
-                                          ),
-                                        );
-                                      },
-                                      child: _CountText(
-                                        value,
-                                        key: ValueKey(value),
-                                        celebrate:
-                                            snap.phase == TimerPhase.finished,
+                                      SizedBox(height: 4),
+                                      Text(
+                                        unit,
+                                        style: TextStyle(
+                                          color: FlareColors.dim,
+                                          fontSize: 13,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      unit,
-                                      style: TextStyle(
-                                        color: FlareColors.dim,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -584,7 +587,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                 children: [
                   // The pause button slides in and out instead of making the
                   // primary button jump in width.
-                  AnimatedSize(
+                  FlareSizeTransition(
                     duration: FlareMotion.of(context, FlareMotion.fade),
                     curve: FlareMotion.settle,
                     child: canPause

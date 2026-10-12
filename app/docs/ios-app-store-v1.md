@@ -1,0 +1,98 @@
+# iOS v1 商店提交材料
+
+Apple 当前候选为 S4 `1.0.0 (3)`，精确授权后已上传、处理为 VALID，绑定商店草稿并加入原内部组“Flare iOS v1”；仍只有指定的一名账号、自动分发关闭，旧 S2 构建保留。文案、分类、网址、10 张截图、审核信息、手动发布、免费/全部地区供应和关闭 Mac/Vision Pro 商店供应的既有草稿配置保留。S4 清理关于页旧版本及过期授权提示，软件/签名和同源 Debug Simulator 关于页复查通过。公开隐私政策修订已按单独授权部署并核对精确模块与 HTML 哈希。用户要求等其回来连接 iPhone 后继续真机验证；最终合规、正式审核及公开发布尚未执行。`ios/main` 基于 PR #8，Android、网页、v41 动作与原素材保留。
+
+## 应用信息草稿
+
+| 字段 | 候选值 |
+|---|---|
+| 名称 | Flare 托马斯 |
+| 副标题 | 离线3D动作学习与肌群训练 |
+| 主语言 | 简体中文（zh-Hans） |
+| 平台 | iOS；iPhone；最低 iOS 15.0 |
+| Bundle ID | dev.mhgd.flare；用户授权后已注册，并在 Developer 门户/Apple App 中核对 |
+| SKU | flare-ios-v1；已创建并核对，主要语言为简体中文 |
+| 版本 / 构建号 | 商店草稿及最新内部测试：S4 1.0.0 / 3；S2 Build 1 作为历史内测构建保留 |
+| 主要分类 | 健康健美 |
+| 次要分类 | 教育 |
+| 关键词 | 托马斯,全旋,Flare,街舞,体能,肌群,动作分解,离线训练,训练计时 |
+| 隐私政策 | https://flare-privacy.294851575.workers.dev/；已用指定 Playwright 配置读取 |
+| 技术支持候选 | https://flare-privacy.294851575.workers.dev/；现有页面含应用信息和联系方法。https://github.com/mhgd3250905/3D-Body/issues 亦已打开，可作为项目反馈入口 |
+| 价格与发布方式 | 已按用户授权保存免费、全部 175 个地区供应及审核通过后手动发布；平台“所有地区”选项同时供应将来新增地区 |
+
+### 描述
+
+用 3D 动作理解托马斯全旋的每个阶段，再安排适合自己的练习。
+
+Flare 将一个动作循环分成 8 个阶段。你可以播放、暂停、调整速度或拖动进度，查看当前姿态和参与肌群；进入详情后，可旋转人物，并在动作人物与直立肌群人台之间交换视图。
+
+- 3D 动作与肌群说明：帮助理解支撑、摆腿和身体控制，颜色表示教学位置与功能关联。
+- 训练库：按徒手、居家和健身房场景选择练习，查看要点、常见错误与安全提醒。
+- 跟练计时：准备、工作、休息与完成；切到后台后暂停，回到前台可手动继续。
+- 学习路径与本地记录：记录自己的训练和自评，逐步安排练习。
+- 离线使用：模型、训练图和内容随安装包提供，无需账号；设置和记录保存在本机。
+- 深浅主题：支持深色、浅色与跟随系统。
+
+动作与肌群色区是教学示意，自评和练习记录不会自动证明技能达标。内容不能替代教练现场指导或医疗建议；出现疼痛、不适或疲劳时应停止练习。
+
+### 首版更新说明
+
+首个 iOS 版本：离线 3D 托马斯动作、肌群详情、训练库与计时、学习路径、本地记录及深浅主题。
+
+## 给 App Review 的说明（已保存草稿）
+
+本应用无需注册或登录，没有广告、内购或订阅。首次启动点击“开始”，阅读安全说明并点击“我知道了”即可使用全部功能。
+
+首页展示安装包内的 3D 动作。暂停后点击“点选肌群查看详解”，选择肌群进入详情；点左下方的小人台卡片可交换动作人物与肌群人台，返回后仍保持同一暂停帧。详情底部可选择徒手、居家或健身房训练；训练内容、计时、记录和学习路径由 Flutter 原生界面提供。
+
+3D 渲染使用 WKWebView。`127.0.0.1` 是设备内临时端口的本地资产服务，仅加载安装包内的模型与脚本，不访问外部站点或上传用户数据。应用不申请相机、麦克风、位置或 HealthKit 权限。
+
+Apple 开发者账号、Team、签名材料与审核联系信息只保留在本机或 App Store Connect，不写入 Git。本文没有填写个人联系信息。
+
+## 隐私与年龄分级核对
+
+- 当前源码没有账号、分析、广告或远程数据上传；本地设置与训练记录通过 `shared_preferences` 保存。S4 的四份隐私清单与 S3/S2 字节一致，均可解析、不追踪、不收集数据；App 的 UserDefaults 理由 CA92.1、插件的 1C8F.1，以及 Flutter 的 FileTimestamp/SystemBootTime 理由已复核。最终 App Privacy 还要结合实际最终候选的真机网络证据，详见 [验包核查](ios-verification-2026-10-10.md)。
+- 年龄分级按实际健身教学内容填写 Apple 问卷，“健康或健身主题”拟选“是”；最终评级由 Apple 计算，不预设 4+，不选择 Made for Kids。完整字段提案、内容版权、医疗设备及地区复核见 [合规问卷草稿](ios-compliance-v1-draft.md)，尚未保存最终声明。
+- 2026-10-10 用户明确确认深浅训练图与品牌图具备 App Store 发布权；这是发行者确认，并非独立法律核验。原始来源记录及 Snow、Human Base Meshes、Three.js 等署名和许可入口继续保留，最终 Content Rights 问卷另行确认。
+- 公开隐私页已按单独授权更新为 2026-10-10 文案；本地保存、剪贴板备份及 iOS“卸载 App”保留数据的[修订记录](privacy-policy-ios-v1-draft.md)与线上一致。现有 Worker 生产模块 3,060 字节及公开 HTML 均精确匹配批准版本，最终 App Privacy 仍待真机核验。
+
+## 截图与候选包
+
+已取得四种 iPhone 模拟器 × 深浅主题 × 五页面的 40 张真实原生截图，包含实际 WKWebView 3D。保留 PNG 原件和无透明 JPEG；未缩放或合成，不使用关闭 3D 的组件测试截图作为商店素材。本机为 `~/ios-release-artifacts/flare-v1-20261009/screenshots/`，`screenshot-manifest.json` 记录逐张尺寸与哈希，不入 Git。截图来自初始产品 `63e45e8` 的就绪页面；后续加载与系统减弱动效修复另以原生流程/录像核对，默认动效下的就绪页面素材继续复用，没有重拍全部截图。
+
+按 [Apple 当前截图规格](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) 准备中尺寸灵动岛 iPhone 的 1206×2622 截图；另提供 Pro Max 的 1320×2868 截图。格式为无透明通道的 JPEG；最终以提交界面的要求复核。
+
+用户授权后已在当前中尺寸灵动岛 iPhone 槽位保存 10 张 `screenshots/pro/` 的 1206×2622 原图，浅色五页面后接深色五页面。重新加载页面为 `10/10`，服务器截图集 `APP_IPHONE_61` 中十张均为 `COMPLETE`、无错误，文件名顺序、大小和原始文件校验和一致。本机 `app-store-screenshot-server-evidence.json` 记录核对结果，`app-store-draft-saved-20261010.json` 记录已保存字段。图片没有缩放或合成，40 张 PNG/JPEG 与原始 manifest 保留。名称 9 / 30、副标题 13 / 30、关键词 36 / 100 字符，按 [Apple 产品页说明](https://developer.apple.com/app-store/product-page/) 预检；描述、关键词、副标题、两项分类、支持/隐私网址和版本均经重新加载或重开编辑框核对。
+
+历史 Apple 候选 S2 源为 `a4ef59fdf8e6d6c9dd005aba55debbb80ab667a9`，身份 `dev.mhgd.flare / 1.0.0 (1)`；本机 `candidate/Flare-1.0.0-build1-app-store-S2.ipa` 为 50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`。签名、证书、三个 arm64 文件、四份隐私清单及 Apple 验证通过。S1 曾因 `assets/data/import_content.py` 未签名被 Apple 以 90035 拒绝，未上传；S2 排除该文件与 `stages-source.ts`，源码保留在仓库。旧 S1/C01–C03 与证据继续保留。
+
+历史本地候选 S3 源为 `b81026afad35e808cf0acb30714874f06b5b44dd`，身份 `dev.mhgd.flare / 1.0.0 (2)`；`candidate/Flare-1.0.0-build2-app-store-S3.ipa` 为 **50,089,766 字节**，SHA-256 **`e6d4a856302df2a30a5498ccfa0a0cd2bf08540c8f1f7376ce788fd04a0d09ba`**。关于页删除旧“本地开发版 0.1.0”前缀，Build 递增；10 项相关 UI 测试、analyze、签名与 Apple 上传前验证通过。249 份 Flutter 资源中 248 份与 S2 一致，唯一区别为构建生成的 MaterialIcons 子集字体；源码引用的 28 种图标所需字形均存在。模型、训练图、场景、数据及四份隐私清单不变。S3 尚未上传或分发；后续过期素材授权提示补修产生 S4，旧 S3 不再作为推荐上传候选。
+
+当前 Apple 候选 S4 源 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，`dev.mhgd.flare / 1.0.0 (3)`，50,089,798 字节，SHA-256 `8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f`。在 S3 基础上清理过期授权提示、保留全部署名；10 项相关 UI 测试、analyze、签名及 Apple 验证通过，249 份运行资源与四份隐私清单和 S3 完全一致。Build 3 调试版已升级到自建模拟器并保留偏好，同源调试版关于页文字、署名和图标已完成原生复查；用户明确授权本文件后已上传，Apple 处理为 VALID；商店草稿重新加载仍绑定 Build 3，原单账号内部组更新完成、自动分发关闭。
+
+创建 App 时 Apple 提示访问设置保存失败，但确认 App 已创建、所有团队用户可访问，与所选“完全访问权限”一致。当前 [Flare 托马斯 Apple App](https://appstoreconnect.apple.com/apps/6821186142/distribution/info) 为商店版本 `1.0.0`、准备提交，已绑定 S4 Build 3；原内部组保留 S2/S4、仅指定的一名现有团队账号、自动分发关闭。S4 构建“正在测试”、账号“已邀请”，60 字测试说明已保存；构建通知允许，尚未确认通知邮件实际送达、邀请接受或安装。真机、最终合规、外部测试、正式审核与公开发布继续分别验证或确认。
+
+## 提审表单预检与已授权草稿保存（2026-10-10）
+
+最初只读预检发现的字段缺口，随后经用户明确授权保存。审核说明、版权与四项联系人重新加载后比对一致；价格、地区及 Mac/Vision Pro 开关另以 Apple 服务端响应核对。年龄、内容版权及 App Privacy 的最终问卷尚未保存，正式提审未执行。
+
+| 项目 | 当前平台事实 | 后续门禁 |
+|---|---|---|
+| 商店版本的构建 | 已绑定 S4 `1.0.0 (3)`，重新加载核对一致；S4 已进入原单账号内部组 | 用户回来连接 iPhone 后验证精确 TestFlight Build 3 |
+| 审核登录 | 已取消登录要求；292 字审核说明已保存 | 按最终实机流程复核说明 |
+| 版权 / 审核联系 | 已按授权沿用本账号已发布 App 的版权与四项联系人，重新加载比对一致 | 个人信息只在 Apple 页面和本机私密文件处理 |
+| 发布方式 | 已保存 [审核通过后手动发布](https://developer.apple.com/help/app-store-connect/manage-your-apps-availability/select-an-app-store-version-release-option) | 审核通过后仍由用户单独批准公开发布 |
+| 价格 / 地区 | 已保存免费；175 个地区价格均为 0、供应均开启、预购关闭；将来新增地区供应开启 | 按实际发布时的平台与地区规则复核 |
+| Mac / Vision Pro 商店供应 | 两个供应开关均为 false，服务端已核对 | 首版 iPhone 范围；未进行 Mac/Vision Pro 设备验收 |
+| 年龄分级 | 问卷尚未保存 | 包含健身教学主题，无诊断/治疗功能；按 [Apple 问卷](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/) 回答并由 Apple 计算评级，不预填最终年龄数字 |
+| 内容版权 | 第三方内容声明尚未填写；用户已确认训练图和品牌图发布权 | App 含已列出来源的模型/软件，按实际内容填写并单独确认最终声明 |
+| App Privacy | 隐私网址已保存；公开政策修订已部署并核对，Apple 数据收集问卷尚未最终保存 / 发布 | 使用精确 S4 的真机流量证据并由发行者确认最终声明；本地处理或五条模拟器资源请求不能替代完整网络验收 |
+| 受监管医疗设备 | 当前未声明；本机拟选“否” | 健康健美分类与美/英/EU/EEA 供应触发必填要求；按 [Apple 说明](https://developer.apple.com/help/app-store-connect/manage-app-information/declare-regulated-medical-device-status)及发行者实际用途复核后另行授权保存 |
+| EU DSA | 当前 App 页面显示已有非交易商状态 | 由发行者按实际经营事实复核，本轮未修改账户或 App 声明 |
+| 中国大陆 App 备案 | 页面显示 ICP 说明及“设置”入口，未见已保存号 | 适用性和本 App 的有效资料仍待核对；已保存 175 地区供应不代表地区许可均已完成 |
+
+本机 `app-store-final-preflight-s2-20261010.json` 保留最初观察，并关联 `app-store-remaining-draft-s2-20261010.json` 的已授权保存结果。后者记录 174 个自动价格与 1 个基准价格均为零、175 个供应地区及两项平台开关；不含个人联系人。内部测试里的 Mac/Vision Pro 测试选项仍沿用平台默认，与此处公开商店供应开关不同；相应设备功能未验收。
+
+先完成无需真机的验证，再由用户连接 iPhone。构建、上传处理、TestFlight 可安装和正式 App Review 是不同状态，逐项登记在 [iOS 执行台账](ios-plan-2026-10-09.md) 与 [版本台账](version-ledger.md) 中。账号、签名和联系信息不写入 Git。
+
+参考：[Flutter iOS 发布流程](https://docs.flutter.dev/deployment/ios)、[Apple 年龄分级问卷](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/)。

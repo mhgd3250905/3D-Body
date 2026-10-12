@@ -11,6 +11,7 @@ import 'l10n/languages.dart';
 import 'platform/scene/scene_controller.dart';
 import 'ui/app_shell.dart';
 import 'ui/components.dart';
+import 'ui/motion.dart';
 import 'ui/startup_splash.dart';
 import 'ui/theme.dart';
 import 'ui/theme_fade.dart';
@@ -142,7 +143,9 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                   ? Brightness.light
                   : Brightness.dark,
             ),
-        child: ThemeCrossFade(brightness: brightness, child: child!),
+        child: FlareMotionPreferences(
+          child: ThemeCrossFade(brightness: brightness, child: child!),
+        ),
       );
     },
     locale: _language == 'system' ? null : localeForLanguage(_language),

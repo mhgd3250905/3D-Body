@@ -48,6 +48,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool _configuring = false;
   bool _didPresentScene = false;
   int _sceneGeneration = 0;
+  DateTime? _lastAutoRestart;
+  late bool _appActive;
+  bool? _recoveryWasPlaying;
+  String? _recoveryDetailModel;
   bool _settings = false;
   bool _assessment = false;
   bool _timing = false;
@@ -75,6 +79,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    // Async bootstrap may mount this shell after the app already entered
+    // the background, before this observer could receive that transition.
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    _appActive = lifecycle == null || lifecycle == AppLifecycleState.resumed;
     _scene = widget.sceneController ?? SceneController();
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
@@ -110,8 +118,32 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
+  void _restartScene() {
+    _recoveryWasPlaying = _appActive && _scene.playing;
+    _recoveryDetailModel = _scene.detailModel;
+    _scene.pause();
+    setState(() {
+      _configured = false;
+      _sceneGeneration++;
+    });
+  }
+
   void _sceneChanged() {
     if (!mounted || _configuring) return;
+    if (_scene.errorCode == SceneController.processTerminated) {
+      final now = DateTime.now();
+      final last = _lastAutoRestart;
+      if (last == null || now.difference(last) > const Duration(minutes: 1)) {
+        _lastAutoRestart = now;
+        scheduleMicrotask(() {
+          if (mounted &&
+              _scene.errorCode == SceneController.processTerminated) {
+            _restartScene();
+          }
+        });
+        return;
+      }
+    }
     if (!_scene.ready) {
       // Recreated views and recovered WebGL contexts both need fresh settings.
       // Their provisional clock must not replace the user's saved position.
@@ -122,7 +154,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
     if (_scene.ready && !_configured) {
       final restoredTime = store.lastTime;
-      final restoredModel = _scene.detailModel;
+      final restoredModel = _recoveryDetailModel ?? _scene.detailModel;
       _configuring = true;
       _configured = true;
       // A replacement WebView has no viewport state, even when its size is
@@ -137,12 +169,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       if (_detail case final group?) {
         _scene.setDetail(group.id);
         _scene.setDetailModel(restoredModel);
-      } else if (store.safetyAccepted && _watchVisible) {
+      } else if (_appActive &&
+          (_recoveryWasPlaying ?? true) &&
+          store.safetyAccepted &&
+          _watchVisible) {
         _scene.play();
       }
+      _recoveryWasPlaying = null;
+      _recoveryDetailModel = null;
       // A recovered WebGL context may still belong to a hidden, prewarmed
       // view. Let it produce its replacement frame before hiding it again.
-      _scene.setVisible(true);
+      _scene.setVisible(_appActive);
       if (widget.enableScene) _scene.requestPresentation();
       _configuring = false;
       _refreshView();
@@ -191,7 +228,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool get _preparingScene => widget.enableScene && !_scene.presented;
 
   void _syncSceneVisibility() {
-    _scene.setVisible(_watchVisible || _preparingScene);
+    _scene.setVisible(_appActive && (_watchVisible || _preparingScene));
     if (!_watchVisible) {
       _scene.pause();
       if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
@@ -334,6 +371,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appActive = state == AppLifecycleState.resumed;
     if (state != AppLifecycleState.resumed) {
       _scene.pause();
       // An embedded Web scene owns document visibility. Host focus/lifecycle
@@ -784,13 +822,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             key: const ValueKey('scene-error'),
                             message: s.sceneFailed,
                             retry: s.retry,
-                            onRetry: () {
-                              _scene.pause();
-                              setState(() {
-                                _configured = false;
-                                _sceneGeneration++;
-                              });
-                            },
+                            onRetry: _restartScene,
                           ),
                   ),
                   Column(
@@ -967,7 +999,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             children: [
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, compact ? 6 : 10, 24, 0),
+                  padding: EdgeInsets.fromLTRB(24, compact ? 2 : 10, 24, 0),
                   child: FadeSlideIn(
                     key: ValueKey('detail-${detail.id}'),
                     delay: FadeSlideIn.stagger(2, step: 40),
@@ -1015,7 +1047,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ],
                           ),
                         ),
-                        SizedBox(height: compact ? 4 : 6),
+                        SizedBox(height: compact ? 2 : 6),
                         Text(
                           muscle?.why ?? detail.role,
                           key: const ValueKey('muscle-role'),
@@ -1028,7 +1060,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             color: FlareColors.text.withValues(alpha: .88),
                           ),
                         ),
-                        SizedBox(height: compact ? 4 : 8),
+                        SizedBox(height: compact ? 2 : 8),
                         Expanded(
                           child: _MuscleKnowledgeBlock(
                             key: ValueKey('knowledge-${detail.id}'),
@@ -1051,9 +1083,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 Padding(
                   padding: EdgeInsets.fromLTRB(
                     24,
-                    compact ? 6 : 8,
+                    compact ? 4 : 8,
                     24,
-                    compact ? 6 : 8,
+                    compact ? 4 : 8,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1167,12 +1199,23 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        Text(
-                          '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: FlareColors.dim,
-                            fontFeatures: const [FontFeature.tabularFigures()],
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 75,
+                            maxHeight: 22,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: FlareColors.dim,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -1431,7 +1474,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 12),
                 // The sheet grows smoothly when the rest of the group opens.
-                child: AnimatedSize(
+                child: FlareSizeTransition(
                   duration: FlareMotion.of(context, FlareMotion.expand),
                   curve: FlareMotion.settle,
                   alignment: Alignment.topCenter,

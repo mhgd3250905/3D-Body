@@ -462,8 +462,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutTitle => '关于 Flare';
 
   @override
-  String get aboutBody =>
-      '本地开发版 1.0.0。观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。';
+  String get aboutBody => '观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。';
 
   @override
   String get privacyTitle => '本地数据与隐私';
@@ -477,7 +476,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get creditsBody =>
-      'Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由用户提供的素材包提供，发布前需补齐授权核对。';
+      'Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由应用发行者提供。';
 
   @override
   String get speedLabel => '默认速度';

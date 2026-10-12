@@ -105,6 +105,38 @@ void main() {
     expect(tester.getTopLeft(find.text('two')).dx, lessThan(400));
   });
 
+  testWidgets('reduced navigation settles once after the parent build', (
+    tester,
+  ) async {
+    var page = 'one';
+    var settled = 0;
+    late StateSetter update;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, setState) {
+            update = setState;
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: FlareStage(
+                pageKey: page,
+                depth: 1,
+                onSettled: () => update(() => settled++),
+                child: Text(page),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    update(() => page = 'two');
+    await tester.pump();
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    expect(settled, 1);
+    expect(find.text('two'), findsOneWidget);
+  });
+
   testWidgets('edge swipe carries the page and goes back past halfway', (
     tester,
   ) async {

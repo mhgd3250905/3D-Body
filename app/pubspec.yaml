@@ -22,13 +22,22 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_lints: ^6.0.0
 
 flutter:
   generate: true
   uses-material-design: true
   assets:
-    - assets/data/
+    # Package data explicitly; retain import/source tools only in the repository.
+    - assets/data/phase-muscles.json
+    - assets/data/phase-muscles.schema.json
+    - assets/data/course-stages.json
+    - assets/data/drills.json
+    - assets/data/drills.schema.json
+    - assets/data/source-manifest.json
+    - assets/data/drill-media-manifest.json
     - assets/l10n/
     - assets/drills/
     - assets/drills/light/

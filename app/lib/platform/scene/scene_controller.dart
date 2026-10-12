@@ -29,6 +29,11 @@ class SceneController extends ChangeNotifier {
   String? _selected;
   String? _detail;
   String _detailModel = 'motion';
+
+  /// The platform reclaimed the WebView's content process (iOS memory
+  /// pressure). The host may restart the scene without asking the user.
+  static const processTerminated = 'scene-process-terminated';
+
   String? _errorCode;
   int _selectionGeneration = 0;
 
@@ -149,9 +154,9 @@ class SceneController extends ChangeNotifier {
 
   static const _detailModels = {'motion', 'muscles'};
 
-  void _resetDetailModel() {
+  void _resetDetailModel({bool discardQueuedCommand = true}) {
     _detailModel = 'motion';
-    _pending.remove('detail_model');
+    if (discardQueuedCommand) _pending.remove('detail_model');
   }
 
   void setLoop(double? start, double? end) =>
@@ -322,7 +327,10 @@ class SceneController extends ChangeNotifier {
       _detail = detail is bool ? (detail ? _selected : null) : _groupId(detail);
     }
     if (_detail == null || _playing) {
-      _resetDetailModel();
+      // The scene may acknowledge its initial/previous state while a newer
+      // native command is still in flight. Only an explicit host action such
+      // as play, seek or closing detail can cancel a queued model choice.
+      _resetDetailModel(discardQueuedCommand: false);
     } else if (_detailModels.contains(event['detailModel'])) {
       _detailModel = event['detailModel'] as String;
     }

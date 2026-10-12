@@ -1,5 +1,7 @@
 # Flutter 实施路线与待验收台账
 
+2026-10-12 iOS 源码整合：在 L43 主线保留 v41、14语与51项视频后接入 `ios/main` 的工程、减弱动效与场景恢复。此前 S4 Mac/模拟器/Apple 上传事实见 [iOS 历史验证](ios-verification-2026-10-10.md)，不代表本次整合已在 Mac/iPhone 运行。T02 追加明确缺口：iPhone13 横屏 844×390、2倍字号，L43 基线详情底部溢出44px，整合后40px；保留上下各半及完整卡片，本轮不扩展横屏布局修改。原生编译、签名、WKWebView 实际恢复与真机仍待验证；[本轮审核](ios-main-integration-audit-2026-10-12.md)记录定向检查。
+
 2026-10-12当前本地交付为 **L43上下半屏**。L43 肌群详情在顶部栏下采用上下1:1分区：动作人物与站立肌群图的默认展示区域占可用高度一半，下半区为标题、一句作用、详细介绍、协同卡与固定练习按钮。模型随可见区域重新取景，站立放大/旋转和动作旋转保持；共享WebView画布与同帧返回保持。L42文字连续展开/无图标保持，空间足够时直接显示全文。L43已保留数据安装手机，用户自行验收。 保留14语离线内容/51视频/清晰度，版本1.0.0+1、动作v41。
 
 L37 已先保存为本地 master 提交 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`（`feat(app): save L37 action media and muscle detail checkpoint`）。L38 在该基线上实现，历史L38检查点以 `feat(app): add L38 offline internationalization` 提交定位；未推送或发布。用户的 Air-Flare 和20项图标候选文件未纳入检查点，原文件保留。 版本仍1.0.0+1、动作v41，Play P01、根dist与个人数据保持。语言维护见 [localization.md](localization.md)，包身份见 [version-ledger.md](version-ledger.md)，验证/限制见 [verification.md](verification.md)。

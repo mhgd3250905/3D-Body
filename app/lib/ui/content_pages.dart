@@ -1084,7 +1084,7 @@ class _PathPageState extends State<PathPage> {
                                   ),
                                 ),
                                 // The stage opens and closes as one smooth fold.
-                                AnimatedSize(
+                                FlareSizeTransition(
                                   duration: FlareMotion.of(
                                     context,
                                     FlareMotion.expand,
