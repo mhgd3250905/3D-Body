@@ -35,3 +35,9 @@ flutter test --no-pub --concurrency=1 test/ui/compact_localization_test.dart tes
 短横屏缺口保留真实失败断言，未skip：iPhone13 844×390、2倍字号，L43基线副本 `ios-layout-baseline`（`1f87cc6`）详情溢出44px；整合后同条件仍40px。证据为 `output/ios-audit/baseline-landscape.log` 和 `integration-landscape.log`。以 `flutter test --no-pub --plain-name 'iPhone13 landscape dark text 2.0 core pages fit' test/ui/ios_layout_test.dart`可复现。默认build.sh check的全量测试会报告该已知缺口，本轮仅声明上述比例验证通过，不声明全量测试通过。用户认可的上下半与完整卡片不为使旧测试变绿而改变，后续T02单独处理。
 
 Mac/Xcode编译、签名、实际WKWebView/系统进程回收、iPhone触摸/性能、横屏和Apple重新验包仍待验证；2026-10-10的S4报告保留其实际旧源身份，不迁移为本次成功证据。根目录 npm ci/build/verify 及合并后主目录交付由本次主 Agent 负责执行和登记。
+
+## 独立复核后的首次后台挂载补修
+
+独立审查补充了异步bootstrap已在后台才首次挂载FlareShell的边界：此时观察器没有接收到此前的paused事件，固定初值true会误判前台。现从 `WidgetsBinding.instance.lifecycleState` 初始化可播放状态；只有resumed或尚未知状态null视为活跃。
+
+新增“首次在paused状态挂载→ready”回归，断言没有play命令、visibility=false、同2.375秒。暂停的测试Binding不会安排普通帧，因此测试显式强制挂载帧，在恢复前完成上述断言。`flutter test --no-pub --concurrency=1 test/ui/scene_process_recovery_test.dart` 的原3项加新增1项全部通过；仅复测这一受影响范围，未重复全部49项。累计验证范围增加为50项，这次检查仍不等于实际iOS生命周期/进程回收验收。

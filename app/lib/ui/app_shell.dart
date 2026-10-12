@@ -49,7 +49,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool _didPresentScene = false;
   int _sceneGeneration = 0;
   DateTime? _lastAutoRestart;
-  bool _appActive = true;
+  late bool _appActive;
   bool? _recoveryWasPlaying;
   String? _recoveryDetailModel;
   bool _settings = false;
@@ -79,6 +79,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    // Async bootstrap may mount this shell after the app already entered
+    // the background, before this observer could receive that transition.
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    _appActive = lifecycle == null || lifecycle == AppLifecycleState.resumed;
     _scene = widget.sceneController ?? SceneController();
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);

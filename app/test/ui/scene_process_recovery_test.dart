@@ -17,7 +17,12 @@ class _Storage implements LocalStateStorage {
 }
 
 void main() {
-  for (final mode in ['background', 'foreground paused', 'detail muscles']) {
+  for (final mode in [
+    'background',
+    'foreground paused',
+    'detail muscles',
+    'initial background',
+  ]) {
     testWidgets('WebContent recovery preserves $mode and paused frame', (
       tester,
     ) async {
@@ -34,6 +39,17 @@ void main() {
       final scene = SceneController(commandSink: commands.add);
       addTearDown(store.dispose);
       addTearDown(scene.dispose);
+      if (mode == 'initial background') {
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        addTearDown(
+          () => tester.binding.handleAppLifecycleStateChanged(
+            AppLifecycleState.resumed,
+          ),
+        );
+        // A paused binding does not schedule normal frames. Force the one
+        // frame that mounts an asynchronously completed bootstrap subtree.
+        tester.binding.scheduleForcedFrame();
+      }
       await tester.pumpWidget(
         MaterialApp(
           theme: flareTheme(),
@@ -49,7 +65,23 @@ void main() {
         ),
       );
       scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+      if (mode == 'initial background') tester.binding.scheduleForcedFrame();
       await tester.pumpAndSettle();
+      if (mode == 'initial background') {
+        expect(scene.playing, isFalse);
+        expect(commands.where((c) => c['type'] == 'play'), isEmpty);
+        expect(
+          commands.lastWhere((c) => c['type'] == 'visibility')['visible'],
+          isFalse,
+        );
+        expect(scene.time, closeTo(2.375, .001));
+        expect(tester.takeException(), isNull);
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
+        await tester.pumpWidget(const SizedBox.shrink());
+        return;
+      }
       expect(scene.playing, isTrue);
       scene.setTime(2.375);
       if (mode == 'detail muscles') {
