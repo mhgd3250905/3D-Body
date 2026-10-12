@@ -1,14 +1,19 @@
-import {chromium} from 'playwright';
+import {fileURLToPath, pathToFileURL} from 'node:url';
+import {dirname, resolve} from 'node:path';
+const {chromium} = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright');
 import {execFileSync} from 'child_process';
 const cache=new Map();
 async function viaCurl(route){const url=route.request().url().split('#')[0];
- if(!cache.has(url)){const hdr=execFileSync('curl',['-s','-D','-','-o','/tmp/cbody','-A','Mozilla/5.0 QA',url]).toString();const body=require_fs.readFileSync('/tmp/cbody');
+ if(!cache.has(url)){const bodyPath=resolve(outDir,'curl-body.bin');const hdr=execFileSync('curl',['-s','-D','-','-o',bodyPath,'-A','Mozilla/5.0 QA',url]).toString();const body=require_fs.readFileSync(bodyPath);
   const lines=hdr.trim().split(/\r?\n/);const status=+lines[0].split(' ')[1];const headers={};for(const l of lines.slice(1)){const i=l.indexOf(':');if(i>0)headers[l.slice(0,i).toLowerCase()]=l.slice(i+1).trim();}
   delete headers['content-encoding'];delete headers['content-length'];delete headers['transfer-encoding'];cache.set(url,{status,headers,body});}
  const r=cache.get(url);await route.fulfill({status:r.status,headers:r.headers,body:r.body});}
 import * as require_fs from 'fs';
 const BASE=process.env.BASE||'http://127.0.0.1:8851/';
-const O='/workspace/work/flarelab-webapp/shots/'+(process.env.TAG||'local')+'-';
+const outDir=resolve(dirname(fileURLToPath(import.meta.url)),'../output/webapp-qa');
+require_fs.mkdirSync(outDir,{recursive:true});
+const tag=process.env.TAG||'local';if(!/^[a-zA-Z0-9_-]+$/.test(tag))throw new Error('Invalid QA TAG');
+const O=resolve(outDir,tag+'-');
 const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const errs=[];
 async function mk(w,h,opts={}){const p=await b.newPage({viewport:{width:w,height:h},deviceScaleFactor:1,...opts});if(BASE.startsWith('https'))await p.route(BASE+'**',viaCurl);p.on('pageerror',e=>errs.push(w+' PAGEERR '+e.message));p.on('console',m=>{if(m.type()==='error')errs.push(w+' '+m.text())});return p;}
@@ -39,7 +44,7 @@ await p.waitForTimeout(1200);
 const mb=await p.locator('#bigStage').boundingBox();
 await p.mouse.click(mb.x+mb.width*0.5,mb.y+mb.height*0.42);await p.waitForTimeout(800);
 console.log('mannequin pick:',await p.evaluate(()=>__app.ui.mGroup));
-if(!await p.evaluate(()=>__app.ui.mGroup)) await p.click('[data-mg=deltoids]');
+if(!await p.evaluate(()=>__app.ui.mGroup)) await p.click('#glist [data-mg=deltoids]');
 await p.waitForTimeout(1200);
 await p.screenshot({path:O+'1440-muscles.jpg',quality:85});
 await p.goto(BASE+'#/library');await p.waitForTimeout(1200);
@@ -73,7 +78,7 @@ await p.goto(BASE);await p.evaluate(()=>{__store.acceptSafety()});await p.reload
 await p.waitForFunction(()=>document.documentElement.dataset.ready==='true',null,{timeout:90000});await p.waitForTimeout(2500);
 await p.screenshot({path:O+'1920-watch.jpg',quality:85});
 await p.goto(BASE+'#/library');await p.waitForTimeout(1200);await p.screenshot({path:O+'1920-library.jpg',quality:85});
-await p.goto(BASE+'#/muscles');await p.waitForFunction(()=>document.querySelector('#mbig').classList.contains('ready'),null,{timeout:90000});await p.click('[data-mg=obliques]');await p.waitForTimeout(1500);await p.screenshot({path:O+'1920-muscles.jpg',quality:85});
+await p.goto(BASE+'#/muscles');await p.waitForFunction(()=>document.querySelector('#mbig').classList.contains('ready'),null,{timeout:90000});await p.click('#glist [data-mg=obliques]');await p.waitForTimeout(1500);await p.screenshot({path:O+'1920-muscles.jpg',quality:85});
 await p.close();}
 if(which.includes('mob')){
 const p=await mk(390,844,{deviceScaleFactor:2,hasTouch:true,isMobile:true});

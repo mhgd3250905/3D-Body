@@ -2,7 +2,7 @@
 
 线上：**https://flare-app.uuugk.win/**（备用 https://flarelab-app.294851575.workers.dev/）· 官网 https://flare.uuugk.win/（未改动）
 
-这是 Flutter App（`app/`，dev.mhgd.flare）的网页端：功能与 App 一致，但按桌面网页重新布局（1280–1920 宽为主，平板/手机自动降级）。
+这是与 Flutter App（`app/`，dev.mhgd.flare）共用动作、训练与课程数据的独立网页实现，按桌面网页布局（1280–1920 宽为主，平板/手机自动适配）。当前网页训练卡使用静态示意图，未接入 L43 的 51 项视频点播、14 语离线内容、浅色主题与振动反馈；本次整合不改变 L43 App 的既有实现。原线上地址保留，仓库构建/浏览器验证不等于重新发布或全设备验收。
 
 ## 功能（与 App 对应）
 
@@ -41,15 +41,19 @@ webapp/
 
 ```bash
 npm ci                     # 仓库根目录（three 0.170 + esbuild，或在 webapp/node_modules 软链）
-pip install fonttools brotli pillow requests
-FONTS_DIR=/path/to/fonts python3 webapp/build.py   # NotoSansSC[wght].ttf、Anton-Regular.ttf、JetBrainsMono[wght].ttf
+pip install pillow         # 默认构建仅需 Pillow，字体输入已入库
+python webapp/build.py      # Windows/Linux；根目录锁定依赖提供 esbuild
+node webapp/test-core.mjs   # 导入校验及拒绝损坏备份后原数据保留
+FONTS_DIR=/path/to/fonts python3 webapp/build.py   # 可选重新子集化（需 fonttools、brotli 和原字体）
 CLOUDFLARE_API_TOKEN=xxx python3 webapp/deploy.py  # Worker `flarelab-app` + 自定义域名 flare-app.uuugk.win
 ```
+
+`src/fonts/` 是离线构建输入，许可全文在其 `licenses/` 中。中文 400/700 子集从本仓库已有 `app/assets/fonts/FlareSans.ttf`（Noto Sans SC）生成；Anton 和 JetBrains Mono 子集沿用官网相同的已提交文件。默认构建无需下载字体或建立软链接；更新页面/数据中显示文字时需重新生成中文子集。损坏备份会在修改当前内存及持久化记录之前整体拒绝，不产生部分导入。
 
 - 单个模块化 Worker，资源作为二进制模块内嵌（无 Pages / Workers Assets）。当前 61 个文件，原始 3.04MB，gzip ≈ 2.2MB（免费版上限约 3MB）。
 - 全部自托管：字体按全站用字子集化（Noto Sans SC 400/700 各 ~115KB），无 CDN / Google Fonts。
 - deploy.py 只允许 `flare-*.uuugk.win` 主机名，不会碰主域名或官网 Worker。
-- QA：`BASE=https://flare-app.uuugk.win/ node qa.mjs`（Playwright + swiftshader，1440×900 / 1920×1080 / 390×844）。
+- QA：`BASE=http://127.0.0.1:8855/ node webapp/qa.mjs`（Playwright + swiftshader，1440×900 / 1920×1080 / 390×844；先独立启动 webapp/dist 的静态服务器）。使用宿主已有 Playwright 时可把 `PLAYWRIGHT_MODULE` 设为其 `index.mjs` 绝对路径，截图写入本仓库忽略的 `output/webapp-qa/`。上述环境变量在 PowerShell 通过 `$env:变量名='值'` 设置。
 
 ## 已知不足
 
