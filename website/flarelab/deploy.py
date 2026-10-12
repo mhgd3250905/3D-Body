@@ -31,7 +31,7 @@ const h={"content-type":e[1],"cache-control":e[2],"access-control-allow-origin":
 if(req.method==="HEAD")return new Response(null,{headers:h});
 return new Response(e[0],{headers:h});}};
 '''
-open(os.path.join(HERE, 'worker.js'), 'w').write(worker)
+open(os.path.join(HERE, 'worker.js'), 'w', encoding='utf-8').write(worker)
 raw = sum(len(v[1]) for v in parts.values())
 gz = sum(len(gzip.compress(v[1], 6)) for v in parts.values()) + len(gzip.compress(worker.encode()))
 print('files', len(files), 'raw', raw, 'gzip est', gz)
