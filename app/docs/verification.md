@@ -1,4 +1,38 @@
+# 人体标准与托马斯版本整理验证（2026-10-13）
+
+## 事实、基线与范围
+
+用户观看第三轮预览后明确认可肩颈，要求后续新动作及旧动作优化以修复人体为标准，并授权文档/台账版本整理、保存提交和普通push。执行目录保持 `E:/AII-3D/3D-Body` / master。Preflight HEAD、origin/master与独立ls-remote均为 `6fbf7a7050322ce2d138ed97a8745a06fac2b8cd`；tracked/staged为0，原21项未跟踪用户文件与既有清单完全一致，未读取或暂存其内容。
+
+隔离分支4ef5556以6fb为祖先，master到该head为5提交、28路径（A23/M5），已通过 `git merge --ff-only codex/thomas-reference-optimization` 保存至主目录，历史不改写。包括原12spec接入、四个优化保存点、显式肩部求解选项和完整人体配置；没有新增姿态调整。14项原PR合并SHA逐条检查第一父目标、第二父来源和祖先关系均一致。`gh pr view 106 --repo mhgd3250905/3D-Body --json state,isDraft,headRefOid,baseRefName,url`仍返回OPEN/DRAFT/原3d204源/master目标；本地优化快进不是GitHub PR合并。
+
+实际记录范围：根/App README和AGENTS、CONTRIBUTING、制作工具入口/约定、人体清单/说明、第三轮记录、原整合审核、版本台账、待办及本文件。将“等待肩颈验收/尚未优化”修正为10-13已验收，原PR收据和此前各轮失败/警告保持历史原意。75项原库与额外12份专项分开（总87）；停止项1不计作通过，当前为2–12＋左侧镜像12个预览。制作源校验新增固定12项/3helper SHA及13份人体源SHA检查，原59/办公室8/久坐8和App51约束全部保留。
+
+## 本轮命令与证据绑定
+
+| 命令 / 证据 | source state、结果及边界 |
+| --- | --- |
+| `node tools/drill-anim/verify.mjs` | 主目录4ef5556加本轮校验补丁；87源/75原库/12专项（1停止）、原59哈希/办公室8/久坐8/App51、13人体源和3helper SHA及脚本/JSON检查通过。人体清单只追加用户验收元数据，运行时13份源与已验收4ef相同 |
+| `node tools/verify-web-motion-v41.mjs --source E:/AII-3D/3D-Body-worktrees/motion-v41-source` | 主目录181采样与原PR3/v41运行源对照通过，默认轨迹差0、关节源差0、时钟差0；手动编辑/个人旧动画迁移与草稿保留通过。该检查保留自身暂停重放容差记录，不宣称每项误差都为0 |
+| `npm run build` | 主目录真实dist构建通过，1629模块，原有大chunk提示；编辑器运行依赖继续离线，本次未覆盖任何个人localStorage |
+| `node tools/verify-web-app-v41.mjs` | 主目录540帧/22骨与App默认v41对照通过，最大骨位置误差0.000533mm、时钟往返误差0；只涵盖默认打包循环，不扩展到个人动画或原生性能 |
+| `E:/AII-3D/3D-Pose/hark-4080-venv/Scripts/python.exe tools/drill-anim/test_portability.py` | 7项通过，含实际Node导入、路径和清理边界；临时输出只在既有E盘工具配置内 |
+| `node output/stage-closeout-20261013/main-model-smoke.mjs` | 使用主目录实际boot和8849预览，两姿态浏览器检查通过：6启用training-human-v2，切2恢复legacy-v7；pageerror 0。PNG及实际指标在同目录，不重渲已验收成片 |
+| 10-12完整渲染与独立模型审核 | 六项新700px/5fps完整260帧＋复用320帧、12代表姿态、四栏播放/慢放/逐帧/手机桌面与Range读取；来源13SHA和专项规格与主目录一致，按[第三轮完整证据](../../docs/thomas-app-model-v3-2026-10-12.md)复用，不写成本轮重新渲染580帧。用户10-13验收补充视觉结果 |
+
+证据保存在 `output/stage-closeout-20261013/`，媒体原证据在 `output/playwright/thomas-app-model-v3-20261012/`。`output/stage-closeout-20261013/final-doc-check.py` 验证新增本地文件/锚点、人体版本字段、源码固定哈希与有限delta；`git diff --check`及暂存检查必须通过后才能提交，实际提交由 `chore: close out accepted training human baseline` 定位，推送结果只在版本台账维护。
+
+## 限制、保留与下一步
+
+没有未决文档冲突或本轮必需检查失败。App/Dart、App场景、媒体51原文件、包版本和iOS工程本轮delta为空，因此Flutter分析/测试、App/场景重构建和设备安装不适用；官网/独立网页站/归档源也未变，不重复其构建与全解码。HD全片和旧动作批量重渲不属于版本整理，没有执行；原预览的通用QA警告不改成通过。Mac/Xcode/iPhone、40px横屏字号缺口、长期计时和原8成片归档继续列为待办，不借此次人体验收销项。Play/Apple/网站未重新上传或部署，未新增包编号/标签或删除历史分支。
+
+原21项用户文件、GLB/个人导出/草稿/备份、旧预览及L43/P01/S4包保持。下一次先读[版本台账](version-ledger.md)、[实施路线](development-roadmap.md)、[人体标准](../../docs/training-human-v2.md)及工具AGENTS；训练新动作及后续旧动作优化显式采用training-human-v2，并新增对应版本和输出。已有51视频不自动覆盖，E:/AII-3D/3D-Wrist禁止触碰。Cockpit仅登记非终态进度，不自动结束或接力。
+
+---
+
 # 主线整合文档收束（2026-10-12）
+
+本节是截至6fbf7a7的历史收束范围。其“#106待优化/未下载/不合入”是当时事实，当前以顶部10-13验收和保存记录为准；原验证命令及限制保留。
 
 ## Preflight：来源、范围与完整状态
 

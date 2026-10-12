@@ -1,10 +1,12 @@
 # Flare Anatomy Studio
 
+2026-10-13用户已验收托马斯第三轮预览及肩颈优化。[training-human-v2](docs/training-human-v2.md)是后续新训练动作、旧动作优化及安排重渲的统一人体标准；旧成片保持原选版。本轮源码、验收和保存身份见[版本台账](app/docs/version-ledger.md#2026-10-13-人体标准与托马斯版本整理)。手机仍为L43/v41/51视频。
+
 2026-10-12 已按用户授权纳入训练动作制作分支 `feature/drill-anim`，工具位于 [tools/drill-anim](tools/drill-anim/README.md)。当前 App 交付仍为 L43，51 项正式视频保持；59 个分支参数与 60 个冻结正式成片的版本区别、Windows 运行、云盘备份和验证见 [训练动作工具整合记录](docs/drill-anim-integration-2026-10-12.md)。
 
-同日已将官网、网页使用站、办公室拉伸、久坐强化、iOS 工程及五项历史修订归档整合到 `master`；托马斯专项 PR #106 的12项低清动图等待用户确认。合并收据、实际验证与未完成事项见 [整合审核记录](docs/integration-pr-audit-2026-10-12.md)。本轮源码整合没有改变手机已安装的 L43 交付身份。
+同日已将官网、网页使用站、办公室拉伸、久坐强化、iOS 工程及五项历史修订归档整合到 `master`；10-13再将已验收的托马斯专项本地优化与人体标准保存到主线。制作源为75项原库＋12份专项规格（第1项停止，2–12及左侧镜像为12个已验收预览），App仍选用原51视频。GitHub PR #106仍为原源Draft，本地优化保存不冒称该PR已合并。合并收据、实际验证与未完成事项见 [整合审核记录](docs/integration-pr-audit-2026-10-12.md)。本轮源码整合没有改变手机已安装的 L43 交付身份。
 
-本轮整合的源码检查点、安装版本与云盘归档状态统一见 [版本台账](app/docs/version-ledger.md#2026-10-12-主线整合源码检查点)；验证及证据绑定见 [验证记录](app/docs/verification.md#主线整合文档收束2026-10-12)，后续待安排事项见 [实施路线](app/docs/development-roadmap.md#主线整合后待安排事项2026-10-12)。源码已同步不表示手机已安装新代码。
+当前整合的源码检查点、安装版本与云盘归档状态统一见 [版本台账](app/docs/version-ledger.md#2026-10-13-人体标准与托马斯版本整理)；验证及证据绑定见 [验证记录](app/docs/verification.md#人体标准与托马斯版本整理验证2026-10-13)，后续待安排事项见 [实施路线](app/docs/development-roadmap.md#主线整合后待安排事项2026-10-12)。源码已同步不表示手机已安装新代码。
 
 当前本地交付为 **L43**（1.0.0+1，动作v41）。支持14语离线内容与准确短名；均衡/高清/省电渲染密度上限分别3/4/1。肌群详情顶部栏下模型与介绍上下各半，站立人台及缩略图高亮当前肌群双侧，动作人物保持阶段侧别；知识卡片展开/收起字号、换行及阅读位置连续，无右侧图标或可见滚动条。手机已保留数据安装L43，用户自行验收。
 
@@ -172,6 +174,7 @@ node app/tools/verify-v41.mjs
 | 本轮网站、制作工具、iOS及PR整合收据 | [docs/integration-pr-audit-2026-10-12.md](docs/integration-pr-audit-2026-10-12.md)；版本身份、验证及待办分别归入上面三份台账 |
 | 2026-10-07网页历史保存与阶段1恢复 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[当时核查证据](docs/evidence/2026-10-07/README.md) |
 | 外部开发、验证与 PR 提交 | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| 新训练动作与旧动作优化的人体标准 | [人体标准](docs/training-human-v2.md)、[固定版本清单](tools/drill-anim/models/training-human-v2.json)、[验收与检查](docs/thomas-app-model-v3-2026-10-12.md) |
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
 | 默认静态健身人物、解剖结构来源、覆盖范围与加载 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
 | 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |
