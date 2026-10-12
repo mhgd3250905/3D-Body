@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>托马斯训练助手 · FlareLab — 看清、读懂、练成托马斯全旋</title>
+<meta name="description" content="托马斯训练助手（FlareLab · Thomas Flare Trainer）：3D 动作拆解、逐阶段肌群同步、三档针对训练与 AI 姿态检测，把托马斯全旋变成一条看得见、量得出的学习阶梯。内测招募中。">
+<meta name="theme-color" content="#08080a">
+<meta property="og:title" content="托马斯训练助手 · FlareLab">
+<meta property="og:description" content="See it. Understand it. Land your flare. 内测招募中 / Beta open.">
+<meta property="og:image" content="/img/og.jpg">
+<link rel="icon" href="/img/icon.png">
+<link rel="apple-touch-icon" href="/img/icon.png">
+<link rel="preload" href="/coach.glb" as="fetch" crossorigin>
+<link rel="preload" href="/fonts/nsc-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"FL Display";src:url(/fonts/anton.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"FL Sans";src:url(/fonts/nsc-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"FL Sans";src:url(/fonts/nsc-900.woff2) format("woff2");font-weight:900;font-display:swap}
+@font-face{font-family:"FL Mono";src:url(/fonts/mono.woff2) format("woff2");font-weight:400 700;font-display:swap}
+:root{
+  --bg:#08080a;--bg2:#101013;--bg3:#17171b;--ink:#f3f1ec;--mute:#8b8a90;--dim:#55545a;--ember:#ff6a3d;--ember-d:rgba(255,106,61,.16);
+  --hair:rgba(255,255,255,.09);--hair2:rgba(255,255,255,.18);
+  --disp:"FL Display","Anton","Impact","Arial Narrow","FL Sans",sans-serif;
+  --sans:"FL Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"FL Mono",ui-monospace,"SFMono-Regular",Menlo,"FL Sans","PingFang SC","Microsoft YaHei",monospace;
+  --pad:clamp(20px,4vw,64px);
+  --stage-a:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;background:var(--bg)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--ember);color:#000}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.em{color:var(--ember)}
+.en{font-family:var(--disp);letter-spacing:.02em;text-transform:uppercase}
+
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .9s cubic-bezier(.7,0,.2,1),visibility .9s}
+.is-loaded #loader{opacity:0;visibility:hidden}
+#loader .lmark{display:flex;align-items:center;gap:12px;color:var(--mute)}
+#loader .lmark i{width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 18px var(--ember);animation:pulse 1.2s infinite}
+#loader-pct{font-family:var(--disp);font-size:clamp(88px,16vw,220px);line-height:.85;letter-spacing:-.01em;color:var(--ink)}
+#loader .lbar{width:min(360px,70vw);height:1px;background:var(--hair2);overflow:hidden}
+#loader-bar{height:100%;background:var(--ember);transform-origin:0 50%;transform:scaleX(0)}
+#loader .lcap{color:var(--mute);font-size:13px;text-align:center}
+@keyframes pulse{50%{opacity:.35}}
+
+/* ---------- stage ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity .3s}
+#poster{position:fixed;inset:0;z-index:0;display:none;align-items:center;justify-content:flex-end;padding-right:6vw;opacity:var(--stage-a);
+  background:radial-gradient(60% 60% at 70% 62%,rgba(255,106,61,.12),transparent 70%),var(--bg)}
+#poster img{width:min(56vw,760px);border-radius:24px;opacity:.95;mask-image:radial-gradient(closest-side,#000 70%,transparent)}
+.no-gl #gl{display:none}
+.no-gl #poster{display:flex}
+#annot{position:fixed;inset:0;z-index:2;width:100vw;height:100vh;pointer-events:none;opacity:0}
+#annot path{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.1}
+#annot path.e{stroke:var(--ember);stroke-width:1.4}
+#annot text{font-family:var(--mono);font-size:12px;fill:#fff;letter-spacing:.06em;paint-order:stroke;stroke:rgba(8,8,10,.85);stroke-width:4px}
+#annot text.e{fill:var(--ember)}
+.grain{position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55));opacity:var(--stage-a)}
+
+main{position:relative;z-index:4}
+
+/* ---------- nav ---------- */
+#nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px var(--pad);transition:background .4s,backdrop-filter .4s,padding .4s}
+#nav.scrolled{padding-top:12px;padding-bottom:12px;background:linear-gradient(rgba(8,8,10,.82),rgba(8,8,10,0))}
+#nav.solid{background:rgba(8,8,10,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:34px;height:34px;border-radius:9px}
+.brand b{font-family:var(--disp);font-weight:400;font-size:20px;letter-spacing:.06em;display:block;line-height:1}
+.brand span{font-size:11px;color:var(--mute);display:block;letter-spacing:.08em;margin-top:3px}
+.navlinks{display:flex;gap:28px;align-items:center}
+.navlinks a.l{font-size:13px;color:var(--mute);transition:color .2s}
+.navlinks a.l:hover{color:var(--ink)}
+.navlinks a.l small{font-family:var(--mono);font-size:9px;color:var(--dim);margin-left:4px;letter-spacing:.1em}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;background:var(--ember);color:#130703;font-weight:900;font-size:14px;transition:transform .25s,box-shadow .25s;white-space:nowrap}
+.pill:hover{transform:translateY(-2px);box-shadow:0 10px 40px -8px rgba(255,106,61,.7)}
+.pill .en{font-size:13px;font-weight:400;opacity:.75}
+.ghost{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1px solid var(--hair2);font-size:14px;color:var(--ink);transition:border-color .25s,background .25s}
+.ghost:hover{border-color:var(--ink);background:rgba(255,255,255,.04)}
+
+/* ---------- hero ---------- */
+#hero{position:relative;height:100vh;min-height:640px;touch-action:pan-y;cursor:grab}
+.dragging #hero,.dragging [data-drag]{cursor:grabbing}
+.hero-word{position:absolute;left:0;right:0;top:9vh;text-align:center;font-family:var(--disp);font-size:31vw;line-height:.8;letter-spacing:-.01em;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.11);pointer-events:none;user-select:none;white-space:nowrap}
+.hero-word span{-webkit-text-stroke:1px rgba(255,106,61,.38)}
+.hero-copy{position:absolute;left:var(--pad);bottom:clamp(40px,9vh,110px);max-width:min(720px,52vw)}
+.kicker{display:flex;align-items:center;gap:12px;color:var(--mute);margin-bottom:22px}
+.kicker i{width:22px;height:1px;background:var(--ember)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);display:inline-block;animation:pulse 1.6s infinite}
+h1{font-weight:900;font-size:clamp(46px,6.6vw,118px);line-height:1.02;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--ember);display:block}
+.hero-en{font-family:var(--disp);font-size:clamp(18px,1.9vw,30px);letter-spacing:.04em;text-transform:uppercase;margin-top:18px;color:var(--ink)}
+.hero-p{margin-top:16px;color:var(--mute);font-size:15px;max-width:480px}
+.hero-p span{display:block;font-size:13px;color:var(--dim);margin-top:4px}
+.hero-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.hero-side{position:absolute;right:var(--pad);bottom:clamp(40px,9vh,110px);text-align:right;color:var(--mute)}
+.hero-side .live{display:flex;gap:10px;align-items:center;justify-content:flex-end;color:var(--ink)}
+#hero-live{font-family:var(--sans);font-size:15px;color:var(--ink);margin-top:10px;letter-spacing:0;text-transform:none;font-weight:900}
+.hero-side .hint{margin-top:16px;display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.hint svg{width:34px;height:14px}
+.scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--dim)}
+.scrollcue i{width:1px;height:42px;background:linear-gradient(var(--ember),transparent);animation:cue 2s infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---------- pinned ---------- */
+.pin{position:relative}
+.sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+#phases{height:900vh}
+#muscle{height:420vh}
+#rules{height:360vh}
+.sec-k{display:flex;gap:14px;align-items:center;color:var(--mute)}
+.sec-k b{color:var(--ember);font-weight:400}
+.scrim-l{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.5) 32%,transparent 58%);pointer-events:none}
+.scrim-r{position:absolute;inset:0;background:linear-gradient(270deg,rgba(8,8,10,.9) 0%,rgba(8,8,10,.55) 34%,transparent 60%);pointer-events:none}
+
+/* phases */
+.ph-wrap{position:absolute;left:var(--pad);top:0;bottom:0;width:min(46vw,680px);display:flex;flex-direction:column;justify-content:center;padding-top:40px}
+#ph-text{position:relative}
+#ph-num{font-family:var(--disp);font-size:clamp(130px,23vh,260px);line-height:.82;color:transparent;-webkit-text-stroke:1.5px var(--ember);display:block;margin:26px 0 8px}
+#ph-num-of{font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.2em;vertical-align:top}
+#ph-zh{font-weight:900;font-size:clamp(44px,5.6vw,96px);line-height:1.05;letter-spacing:-.02em}
+#ph-en{font-family:var(--disp);font-size:clamp(20px,2vw,32px);text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-top:6px}
+#ph-detail{display:inline-block;margin-top:20px;padding:6px 12px;border:1px solid var(--ember);color:var(--ember);border-radius:999px;font-size:13px}
+#ph-cap{margin-top:18px;max-width:470px;color:#bdbcc2;font-size:15px;line-height:1.75}
+#ph-text.swap #ph-num,#ph-text.swap #ph-zh,#ph-text.swap #ph-en,#ph-text.swap #ph-detail,#ph-text.swap #ph-cap{animation:swapin .7s cubic-bezier(.2,.8,.2,1) both}
+#ph-text.swap #ph-zh{animation-delay:.04s}#ph-text.swap #ph-en{animation-delay:.08s}#ph-text.swap #ph-detail{animation-delay:.12s}#ph-text.swap #ph-cap{animation-delay:.16s}
+@keyframes swapin{from{opacity:0;transform:translateY(26px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+#ph-rail{position:absolute;left:var(--pad);right:var(--pad);bottom:34px;display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+#ph-rail .track{position:absolute;left:0;right:0;top:0;height:1px;background:var(--hair2)}
+#ph-fill{position:absolute;left:0;right:0;top:0;height:1px;background:var(--ember);transform-origin:0 50%;transform:scaleX(0)}
+.tick{padding-top:14px;color:var(--dim);font-size:12px;transition:color .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tick b{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.14em;display:block;margin-bottom:2px}
+.tick.on{color:var(--ink)}
+.tick.on b{color:var(--ember)}
+.ph-side{position:absolute;right:var(--pad);top:110px;text-align:right;color:var(--mute)}
+.ph-side .big{font-family:var(--disp);font-size:58px;line-height:1;color:var(--ink)}
+
+/* muscle */
+.mu-wrap{position:absolute;right:var(--pad);top:0;bottom:0;width:min(44vw,600px);display:flex;flex-direction:column;justify-content:center;padding-top:50px}
+h2{font-weight:900;font-size:clamp(38px,4.4vw,78px);line-height:1.06;letter-spacing:-.02em;margin-top:20px}
+.h2en{font-family:var(--disp);font-size:clamp(17px,1.5vw,24px);text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-top:10px}
+.readout{margin-top:26px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+#mus-phase{font-weight:900;font-size:22px}
+#mus-phase-en{font-family:var(--disp);text-transform:uppercase;color:var(--mute);letter-spacing:.04em}
+#mus-support{margin-left:auto;color:var(--ember);font-size:13px}
+#legend{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+#legend h4{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--hair)}
+#legend h4 b{color:var(--ink);font-family:var(--sans);font-weight:900;font-size:14px;letter-spacing:0;margin-right:6px}
+#legend li{list-style:none;font-size:13px;color:var(--dim);padding:4px 0 4px 16px;position:relative;transition:color .35s;line-height:1.35}
+#legend li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:7px;border-radius:50%;border:1px solid var(--dim);transition:all .35s}
+#legend li.s{color:#c8c6cc}
+#legend li.s::before{border-color:var(--ember);background:rgba(255,106,61,.3)}
+#legend li.p{color:var(--ink);font-weight:900}
+#legend li.p::before{border-color:var(--ember);background:var(--ember);box-shadow:0 0 12px var(--ember)}
+.mu-note{margin-top:20px;color:var(--mute);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mu-left{position:absolute;left:var(--pad);bottom:34px;color:var(--mute)}
+.mu-left .big{font-family:var(--disp);font-size:clamp(70px,9vw,150px);line-height:.85;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.2)}
+
+/* rules */
+.ru-wrap{position:absolute;left:var(--pad);top:0;bottom:0;width:min(44vw,600px);display:flex;flex-direction:column;justify-content:center;padding-top:50px}
+.rules{margin-top:26px;border-top:1px solid var(--hair)}
+.rule{display:grid;grid-template-columns:1fr auto;gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.rule .t{font-weight:900;font-size:19px}
+.rule .t small{font-family:var(--disp);font-weight:400;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);font-size:14px;margin-left:10px}
+.rule .v{font-family:var(--disp);font-size:30px;color:var(--ember);line-height:1;text-align:right;min-width:110px}
+.rule .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase}
+.rule .s2{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:right;letter-spacing:.08em}
+.rhythm{grid-column:1/-1;position:relative;height:18px;margin-top:8px;display:grid;grid-template-columns:.651fr 1.268fr 1.134fr .984fr .834fr 1.034fr 1.118fr 1.218fr .617fr;gap:3px}
+.rhythm i{background:rgba(255,255,255,.1);height:4px;margin-top:7px;border-radius:2px}
+#rhythm-head{position:absolute;top:0;width:2px;height:18px;background:var(--ember);box-shadow:0 0 10px var(--ember);left:0}
+.sparkcard{margin-top:22px;display:flex;gap:20px;align-items:center}
+#spark{width:300px;height:70px;overflow:visible;flex:none}
+#spark-path{fill:none;stroke:var(--ink);stroke-width:1.2}
+#spark-th{stroke:var(--ember);stroke-dasharray:3 4;stroke-width:1}
+#spark-dot{fill:var(--ember)}
+.sparkcard p{font-size:12px;color:var(--mute);line-height:1.6}
+.sparkcard p b{font-family:var(--disp);font-weight:400;font-size:24px;color:var(--ink);display:block}
+.ru-right{position:absolute;right:var(--pad);top:110px;text-align:right;color:var(--mute)}
+#live-phase{font-weight:900;color:var(--ink);font-size:16px;margin-top:8px;letter-spacing:0;text-transform:none;font-family:var(--sans)}
+
+/* ---------- flow sections ---------- */
+.sec{position:relative;padding:clamp(100px,16vh,180px) var(--pad);background:var(--bg)}
+.sec.first{background:linear-gradient(rgba(8,8,10,0),var(--bg) 22vh)}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:clamp(50px,8vh,90px)}
+.sec-head p{color:var(--mute);max-width:440px;justify-self:end;font-size:15px}
+.sec-head p span{display:block;color:var(--dim);font-size:13px;margin-top:6px}
+[data-reveal]{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+[data-reveal].in{opacity:1;transform:none}
+[data-reveal][data-d="1"]{transition-delay:.08s}[data-reveal][data-d="2"]{transition-delay:.16s}[data-reveal][data-d="3"]{transition-delay:.24s}[data-reveal][data-d="4"]{transition-delay:.32s}
+
+/* loop */
+#loop h2{white-space:nowrap;font-size:clamp(30px,4vw,72px)}
+.loop{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--hair2)}
+.step{position:relative;padding:28px 22px 30px 0;border-right:1px solid var(--hair)}
+.step:last-child{border-right:0}
+.step+.step{padding-left:22px}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.16em}
+.step .ch{white-space:nowrap;font-weight:900;font-size:clamp(72px,8.6vw,150px);line-height:1;margin:14px 0 6px;letter-spacing:-.04em;transition:color .4s,-webkit-text-stroke-color .4s}
+.step:nth-child(odd) .ch{color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.55)}
+.step:last-child .ch{font-size:calc(clamp(72px,8.6vw,150px) * .6);line-height:calc(1em / .6)}
+.step:hover .ch{color:var(--ember);-webkit-text-stroke-color:var(--ember)}
+.step .ten{font-family:var(--disp);font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.step h3{font-weight:900;font-size:18px;margin-top:14px}
+.step h3 span{display:block;font-weight:400;font-size:13px;color:var(--mute)}
+.step p{font-size:13.5px;color:#a9a8ae;margin-top:10px;line-height:1.65}
+.step .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--hair2);color:#cfcdd2}
+.chip.em{border-color:var(--ember);color:var(--ember)}
+.arrow{position:absolute;right:-9px;top:34px;width:17px;height:17px;border-radius:50%;background:var(--bg);border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;color:var(--ember);font-size:10px;z-index:2}
+
+/* screens */
+.screens{position:relative;height:clamp(560px,80vh,820px);perspective:1600px}
+.phone{position:absolute;top:50%;left:50%;width:clamp(200px,17vw,270px);aspect-ratio:540/1170;border-radius:clamp(30px,2.6vw,42px);padding:9px;background:linear-gradient(145deg,#2a2a30,#0d0d10 40%,#1b1b20);box-shadow:0 60px 120px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08) inset,0 30px 80px -40px rgba(255,106,61,.35);
+  transform:translate(-50%,-50%) translateX(calc(var(--x) * 1px)) translateY(calc(var(--y) * 1px + (var(--p,0.5) - .5) * var(--py) * 1px)) rotateY(calc(var(--ry) * 1deg)) rotateZ(calc(var(--rz) * 1deg));transition:transform .2s linear}
+.phone img{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:clamp(22px,2.1vw,34px)}
+.phone figcaption{position:absolute;left:0;right:0;bottom:-46px;text-align:center;font-size:13px;color:var(--mute)}
+.phone figcaption b{color:var(--ink);font-weight:900;margin-right:6px}
+.screens .glow{position:absolute;left:50%;top:55%;width:70vw;height:40vw;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,106,61,.16),transparent);pointer-events:none}
+.disclaim{text-align:center;color:var(--dim);font-size:12px;margin-top:70px}
+
+/* drills */
+.marquee{overflow:hidden;margin:0 calc(var(--pad) * -1);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mrow{display:flex;gap:16px;width:max-content;animation:mq 90s linear infinite}
+.mrow.rev{animation-direction:reverse;animation-duration:110s;margin-top:16px}
+.marquee:hover .mrow{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.dcard{width:clamp(180px,16vw,240px);flex:none}
+.dcard img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:1px solid var(--hair)}
+.dcard p{font-size:13px;margin-top:10px;font-weight:900;line-height:1.3}
+.dcard p span{display:block;font-weight:400;font-size:11px;color:var(--mute);margin-top:3px}
+.dcard p i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ember);margin-right:6px}
+.tiers{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair2)}
+.num{padding:30px 20px 10px 0;border-right:1px solid var(--hair)}
+.num+.num{padding-left:24px}
+.num:last-child{border-right:0}
+.num .v{font-family:var(--disp);font-size:clamp(90px,11vw,200px);line-height:.9;letter-spacing:-.01em}
+.num .v sup{font-size:.4em;color:var(--ember);vertical-align:top;margin-left:4px}
+.num h3{font-weight:900;font-size:17px;margin-top:14px}
+.num p{color:var(--mute);font-size:13px}
+.nums-note{color:var(--mute);font-size:13px;margin-top:30px}
+
+/* who */
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--bg2);border:1px solid var(--hair);border-radius:22px;padding:30px 28px 32px;transition:border-color .3s,transform .3s}
+.card:hover{border-color:rgba(255,106,61,.5);transform:translateY(-4px)}
+.card .i{font-family:var(--mono);font-size:11px;color:var(--ember);letter-spacing:.16em}
+.card h3{font-weight:900;font-size:22px;margin-top:40px;line-height:1.3}
+.card h3 span{display:block;font-family:var(--disp);font-weight:400;font-size:16px;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-top:4px}
+.card ul{margin-top:18px;list-style:none}
+.card li{font-size:14px;color:#c9c7cc;padding:9px 0;border-top:1px solid var(--hair)}
+.card li span{display:block;font-size:12px;color:var(--dim)}
+
+/* faq */
+.faq{border-top:1px solid var(--hair2);max-width:1100px}
+.faq details{border-bottom:1px solid var(--hair)}
+.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:60px 1fr auto;align-items:center;padding:26px 0;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .q{font-weight:900;font-size:clamp(20px,2vw,28px)}
+.faq summary .q span{font-family:var(--disp);font-weight:400;font-size:.62em;text-transform:uppercase;color:var(--mute);margin-left:14px;letter-spacing:.03em}
+.faq summary .pl{width:36px;height:36px;border-radius:50%;border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;transition:transform .35s,background .35s,border-color .35s}
+.faq summary .pl::before{content:"+";font-size:20px;line-height:1;color:var(--ember)}
+.faq details[open] .pl{transform:rotate(45deg);border-color:var(--ember)}
+.faq .a{padding:0 0 28px 70px;color:#c9c7cc;font-size:16px}
+.faq .a span{display:block;color:var(--mute);font-size:14px}
+
+/* join */
+#join{position:relative;padding:clamp(120px,20vh,220px) var(--pad) 60px;overflow:hidden;background:radial-gradient(70% 60% at 50% 100%,rgba(255,106,61,.18),transparent 70%),var(--bg)}
+.join-big{font-weight:900;font-size:clamp(76px,15vw,270px);line-height:.95;letter-spacing:-.04em}
+.join-big .en{display:block;font-weight:400;font-size:.36em;line-height:1;letter-spacing:.01em;color:transparent;-webkit-text-stroke:1.2px var(--ember);margin-top:.32em}
+.join-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;margin-top:60px;align-items:end}
+.join-grid p{color:var(--mute);font-size:15px}
+.join-grid p span{display:block;color:var(--dim);font-size:13px}
+.mails{display:flex;flex-direction:column;gap:12px}
+.mail{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;border-radius:18px;border:1px solid var(--hair2);background:rgba(255,255,255,.02);transition:all .3s}
+.mail:hover{border-color:var(--ember);background:rgba(255,106,61,.08)}
+.mail b{font-size:clamp(17px,1.6vw,22px);font-weight:900;word-break:break-all}
+.mail span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);display:block;margin-bottom:4px}
+.mail .go{width:44px;height:44px;flex:none;border-radius:50%;background:var(--ember);color:#130703;display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .3s}
+.mail:hover .go{transform:rotate(-45deg)}
+.platforms{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+footer{position:relative;z-index:4;padding:40px var(--pad) 46px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:12px;background:var(--bg)}
+footer .brand b{font-size:16px}
+
+/* ---------- fallback ---------- */
+.no-gl #phases{height:500vh}.no-gl #muscle{height:300vh}.no-gl #rules{height:auto}
+.no-gl #rules .sticky{position:relative;height:auto;padding:120px 0}
+.no-gl #rules .ru-wrap{position:relative;width:auto;padding:0 var(--pad);right:auto;left:0}
+.no-gl .ru-right,.no-gl .sparkcard,.no-gl .hero-side .hint,.no-gl .rhythm #rhythm-head{display:none}
+.no-gl .rule .v.live{font-size:0}.no-gl .rule .v.live::after{content:"✓";font-size:26px}
+
+.no-gl .scrim-r,.no-gl .scrim-l{background:rgba(8,8,10,.8)}
+.no-gl .hero-side .live{display:none}
+/* ---------- mobile ---------- */
+@media (max-width:820px){
+  .navlinks a.l{display:none}
+  .pill{padding:9px 15px;font-size:13px}.pill .en{display:none}
+  .brand span{display:none}
+  #hero{min-height:600px}
+  .hero-word{top:13vh;font-size:34vw}
+  .hero-copy{left:var(--pad);right:var(--pad);max-width:none;bottom:34px}
+  .kicker{margin-bottom:14px}
+  h1{font-size:clamp(40px,11.5vw,60px)}
+  .hero-en{font-size:17px;margin-top:10px}
+  .hero-p{font-size:14px;margin-top:10px}.hero-p span{display:none}
+  .hero-cta{margin-top:18px}.hero-cta .ghost{display:none}
+  .hero-side{top:84px;bottom:auto;right:var(--pad)}
+  .hero-side .hint{display:none}
+  .scrollcue{display:none}
+  .hero-scrim{position:absolute;inset:auto 0 0 0;height:62%;background:linear-gradient(transparent,rgba(8,8,10,.92) 55%);pointer-events:none}
+  .scrim-l,.scrim-r{background:linear-gradient(rgba(8,8,10,.92),rgba(8,8,10,.4) 34%,transparent 50%,rgba(8,8,10,.55) 72%,rgba(8,8,10,.95))}
+  .ph-wrap{left:var(--pad);right:var(--pad);width:auto;top:72px;bottom:auto;padding-top:0;display:block}
+  #ph-num{font-size:84px;margin:10px 0 2px;-webkit-text-stroke-width:1px}
+  #ph-zh{font-size:38px}
+  #ph-en{font-size:17px}
+  #ph-detail{position:absolute;right:0;top:44px;margin:0}
+  #ph-cap{position:absolute;left:0;right:0;top:calc(100svh - 300px);font-size:13.5px;max-width:none;line-height:1.65}
+  #ph-rail{bottom:22px;gap:4px}
+  .tick{font-size:0}.tick b{font-size:9px;letter-spacing:.06em}
+  .tick.on{font-size:0}
+  .ph-side{display:none}
+  .scrub-hint{display:none}
+  .mu-wrap{left:var(--pad);right:var(--pad);width:auto;top:70px;bottom:18px;padding-top:0;justify-content:space-between}
+  .mu-wrap h2{font-size:32px;margin-top:10px}.mu-wrap .h2en{font-size:14px}
+  .readout{margin-top:auto;padding:10px 0;gap:10px}
+  #mus-phase{font-size:17px}#mus-phase-en{display:none}
+  #legend{gap:10px;margin-top:10px}
+  #legend h4{font-size:9px;margin-bottom:4px;padding-bottom:4px}#legend h4 b{font-size:12px;display:block}
+  #legend li{font-size:11px;padding:2px 0 2px 11px}
+  #legend li::before{width:5px;height:5px;top:8px}
+  #legend li:not(.p):not(.s){display:none}
+  .mu-note{display:none}
+  .mu-left{display:none}
+  .ru-wrap{left:var(--pad);right:var(--pad);width:auto;top:70px;bottom:16px;padding-top:0;justify-content:space-between}
+  .ru-wrap h2{font-size:32px;margin-top:10px}.ru-wrap .h2en{font-size:14px}
+  .rules{margin-top:auto}
+  .rule{padding:8px 0}
+  .rule .t{font-size:15px}.rule .t small{display:none}
+  .rule .v{font-size:22px;min-width:80px}
+  .rule .s,.rule .s2{font-size:9px}
+  .sparkcard{display:none}
+  .ru-right{display:none}
+  #annot text{font-size:10px}
+  .sec-head{grid-template-columns:1fr;gap:16px}
+  .sec-head p{justify-self:start}
+  .loop{grid-template-columns:1fr;border-top:0}
+  .step,.step+.step{padding:26px 0;border-right:0;border-top:1px solid var(--hair);display:grid;grid-template-columns:96px 1fr;column-gap:16px}
+  .step .n{grid-column:1/-1}
+  .step .ch{font-size:72px;margin:6px 0 0;grid-row:span 4}
+  .step:last-child .ch{font-size:44px;line-height:1.6}
+  #loop h2{font-size:27px}
+  .step .ten{font-size:16px;margin-top:10px}
+  .arrow{display:none}
+  .screens{height:auto;display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--pad) * -1);padding:10px var(--pad) 70px;perspective:none}
+  .phone{position:relative;top:auto;left:auto;transform:none!important;flex:none;width:62vw;scroll-snap-align:center}
+  .screens .glow{display:none}
+  .disclaim{margin-top:10px}
+  .nums{grid-template-columns:1fr 1fr}
+  .num,.num+.num{padding:24px 12px 20px 0;border-right:0;border-bottom:1px solid var(--hair)}
+  .num:nth-child(even){padding-left:16px;border-left:1px solid var(--hair)}
+  .num .v{font-size:84px}
+  .who{grid-template-columns:1fr}
+  .card h3{margin-top:24px}
+  .faq summary{grid-template-columns:36px 1fr auto}
+  .faq summary .q span{display:block;margin:4px 0 0}
+  .faq .a{padding-left:46px}
+  .join-grid{grid-template-columns:1fr;gap:30px;margin-top:40px}
+  .mail{padding:18px}
+  #poster{justify-content:center;padding:0;align-items:flex-start;padding-top:18vh}
+  #poster img{width:92vw}
+}
+@media (prefers-reduced-motion:reduce){.mrow{animation-duration:400s}.grain{animation:none}}
+</style>
+</head>
+<body>
+<div id="loader" aria-hidden="true">
+  <div class="lmark mono"><i></i>FlareLab · 托马斯训练助手</div>
+  <div id="loader-pct">000</div>
+  <div class="lbar"><div id="loader-bar"></div></div>
+  <div class="lcap">正在加载 3D 教练 · Loading the 3D coach</div>
+</div>
+
+<canvas id="gl" aria-label="3D 托马斯全旋演示 / Live 3D flare demo"></canvas>
+<div id="poster"><img src="/img/flare-loop.webp" alt="托马斯全旋 3D 循环 / 3D flare loop"></div>
+<div class="vignette"></div>
+<svg id="annot" aria-hidden="true">
+  <path id="a-kl"/><text id="t-kl"></text>
+  <path id="a-kr"/><text id="t-kr"></text>
+  <path id="a-el" class="e"/><text id="t-el" class="e"></text>
+  <path id="a-hip"/><text id="t-hip"></text>
+</svg>
+<div class="grain"></div>
+
+<nav id="nav">
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b><span>托马斯训练助手</span></div></a>
+  <div class="navlinks">
+    <a class="l" href="#phases">动作<small>PHASES</small></a>
+    <a class="l" href="#muscle">肌群<small>MUSCLES</small></a>
+    <a class="l" href="#rules">规则<small>RULES</small></a>
+    <a class="l" href="#loop">闭环<small>LOOP</small></a>
+    <a class="l" href="#faq">问答<small>FAQ</small></a>
+    <a class="pill" href="#join">报名内测 <span class="en">Join beta</span></a>
+  </div>
+</nav>
+
+<main>
+<section id="hero" data-drag>
+  <div class="hero-word" aria-hidden="true">FL<span>A</span>RE</div>
+  <div class="hero-scrim"></div>
+  <div class="hero-copy">
+    <div class="kicker mono"><span class="dot"></span>开发中 · 招募内测 <i></i> Beta open</div>
+    <h1>看清 · 读懂 ·<em>练成托马斯全旋</em></h1>
+    <div class="hero-en">See it. Understand it. Land your flare.</div>
+    <p class="hero-p">把“刷 50 个视频、自己瞎练”，变成一条看得见、量得出、一步步解锁的学习阶梯。<span>Turn endless video-watching into a clear, measurable, step-by-step path.</span></p>
+    <div class="hero-cta">
+      <a class="pill" href="#join">报名内测 <span class="en">Join the beta</span></a>
+      <a class="ghost" href="#phases">看 8 个阶段 <span class="en" style="opacity:.6">Explore ↓</span></a>
+    </div>
+  </div>
+  <div class="hero-side mono">
+    <div class="live"><span class="dot"></span>Live 3D · 0.5×</div>
+    <div id="hero-live">01/08 · 后侧支撑</div>
+    <div class="hint"><svg viewBox="0 0 34 14" fill="none" stroke="currentColor"><path d="M1 7h32M5 3L1 7l4 4M29 3l4 4-4 4"/></svg>拖动旋转 · Drag to rotate</div>
+  </div>
+  <div class="scrollcue mono">Scroll<i></i></div>
+</section>
+
+<section id="phases" class="pin">
+  <div class="sticky">
+    <div class="scrim-l"></div>
+    <div class="ph-wrap">
+      <div class="sec-k mono"><b>01</b> 八个阶段 · 8 Phases <span class="scrub-hint" style="color:var(--dim)">— 滚动拆解 Scroll to scrub</span></div>
+      <div id="ph-text">
+        <span id="ph-num">01</span>
+        <div id="ph-zh">后侧支撑</div>
+        <div id="ph-en">Rear support</div>
+        <span id="ph-detail">长腿过前方</span>
+        <p id="ph-cap"></p>
+      </div>
+    </div>
+    <div class="ph-side mono">一圈 One loop<div class="big">9.0<span style="font-size:.4em;color:var(--mute)">s</span></div>0.25 – 1× 慢放</div>
+    <div id="ph-rail">
+      <div class="track"></div><div id="ph-fill"></div>
+      <div class="tick on"><b>01</b>后侧支撑</div><div class="tick"><b>02</b>第一侧移重</div><div class="tick"><b>03</b>第一侧支撑</div><div class="tick"><b>04</b>第一侧换腿</div><div class="tick"><b>05</b>前侧支撑</div><div class="tick"><b>06</b>第二侧移重</div><div class="tick"><b>07</b>第二侧支撑</div><div class="tick"><b>08</b>第二侧换腿</div>
+    </div>
+  </div>
+</section>
+
+<section id="muscle" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-r"></div>
+    <div class="mu-left mono"><div class="big">17</div>块肌群 · 逐阶段同步<br>Muscle groups, synced per phase</div>
+    <div class="mu-wrap">
+      <div>
+        <div class="sec-k mono"><b>02</b> 发力同步 · Muscle sync</div>
+        <h2>每一瞬间，<br>谁在发力。</h2>
+        <div class="h2en">See which muscles carry every moment.</div>
+      </div>
+      <div>
+        <div class="readout"><span id="mus-phase">02 · 第一侧移重</span><span id="mus-phase-en">First transfer</span><span id="mus-support">右手支撑</span></div>
+        <div id="legend"><div><h4><b>支撑</b>Support</h4><ul><li data-g="deltoids">三角肌</li><li data-g="rotator-cuff">肩袖肌群</li><li data-g="triceps">肱三头肌</li><li data-g="forearms">前臂 · 腕屈伸肌</li><li data-g="serratus">前锯肌</li><li data-g="scapular">斜方肌中下部 · 菱形肌</li><li data-g="chest">胸大肌</li><li data-g="lats">背阔肌</li></ul></div><div><h4><b>核心</b>Core</h4><ul><li data-g="abs">腹直肌（含深层腹横肌）</li><li data-g="obliques">腹斜肌</li><li data-g="erectors">竖脊肌</li><li data-g="hip-flexors">髋屈肌</li></ul></div><div><h4><b>腿部</b>Legs</h4><ul><li data-g="glute-max">臀大肌</li><li data-g="hip-abductors">臀中肌 · 髋外展</li><li data-g="adductors">内收肌群</li><li data-g="quadriceps">股四头肌</li><li data-g="hamstrings">腘绳肌</li></ul></div></div>
+        <div class="mu-note"><span>● 主要发力 Primary &nbsp; ◐ 协同 Secondary</span><span>左右侧由支撑手自动识别 · Sides follow the support hand</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rules" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-l"></div>
+    <div class="ru-wrap">
+      <div>
+        <div class="sec-k mono"><b>03</b> 硬性标准 · Hard rules</div>
+        <h2>干净的动作，<br>真实的规则。</h2>
+        <div class="h2en">Clean motion, real rules — the same ones the AI check uses.</div>
+      </div>
+      <div>
+        <div class="rules">
+          <div class="rule"><div class="t">直腿<small>Straight legs</small></div><div class="v live" id="live-knee">178°</div><div class="s">膝角 Knee ≥ 176°</div><div class="s2">实时 · Live</div></div>
+          <div class="rule"><div class="t">折髋<small>Hip fold</small></div><div class="v live" id="live-hip">50°</div><div class="s">屈髋 Hip fold ≥ 50° · 本圈峰值 Peak <span id="hip-peak" class="em">—</span></div><div class="s2">实时 · Live</div></div>
+          <div class="rule"><div class="t">支撑臂伸直<small>Straight support arm</small></div><div class="v live" id="live-elbow">179°</div><div class="s">支撑肘 Support elbow</div><div class="s2">实时 · Live</div></div>
+          <div class="rule"><div class="t">节奏均匀<small>Even rhythm</small></div><div class="v">✓</div><div class="s">匀速时钟 · 首尾无缝 Seamless loop</div><div class="s2">8 段 · 8 segments</div>
+            <div class="rhythm"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span id="rhythm-head"></span></div></div>
+        </div>
+        <div class="sparkcard">
+          <svg id="spark" viewBox="0 0 300 70"><line id="spark-th" x1="0" x2="300" y1="30" y2="30"/><path id="spark-path"/><circle id="spark-dot" r="3.5" cx="0" cy="0"/></svg>
+          <p>整圈最小膝角<br>Min knee, full loop<b id="spark-min">—</b>虚线 = 176° 下限</p>
+        </div>
+      </div>
+    </div>
+    <div class="ru-right mono">正在分析 Analysing<div id="live-phase">—</div><div style="margin-top:14px">勾脚 Flexed feet ✓<br>换手时髋部水平 Level hips ✓</div></div>
+  </div>
+</section>
+
+<section id="loop" class="sec first">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>04</b> 学习闭环 · The learning loop</div>
+      <h2>看 → 懂 → 练 → 测 → 解锁</h2>
+      <div class="h2en">Watch → Understand → Train → Check → Unlock</div>
+    </div>
+    <p data-reveal data-d="1">五步闭环，把“看会了”变成“练成了”。每一步都基于同一套 3D 动作和同一套规则。<span>Five steps that turn “I get it” into “I landed it” — all built on one motion and one set of rules.</span></p>
+  </div>
+  <div class="loop">
+    <div class="step" data-reveal><span class="arrow">→</span><div class="n">01</div><div class="ch">看</div><div class="ten">Watch</div><h3>全屏 3D 托马斯循环<span>Full-screen 3D flare loop</span></h3><p>8 个阶段任意循环，0.25–1× 慢放，自由旋转视角。</p><div class="chips"><span class="chip">8 阶段</span><span class="chip">0.25–1×</span></div></div>
+    <div class="step" data-reveal data-d="1"><span class="arrow">→</span><div class="n">02</div><div class="ch">懂</div><div class="ten">Understand</div><h3>暂停，点一块肌肉<span>Pause and tap a muscle</span></h3><p>看它在这一瞬间做什么，附 3 个关键要领和常见错误。</p><div class="chips"><span class="chip">关键要领</span><span class="chip">常见错误</span></div></div>
+    <div class="step" data-reveal data-d="2"><span class="arrow">→</span><div class="n">03</div><div class="ch">练</div><div class="ten">Train</div><h3>针对这块肌肉的训练<span>Targeted drills</span></h3><p>A 徒手 · B 居家器械 · C 健身房，三档难度，带计时器或计数器。</p><div class="chips"><span class="chip">A 徒手</span><span class="chip">B 器械</span><span class="chip">C 健身房</span></div></div>
+    <div class="step" data-reveal data-d="3"><span class="arrow">→</span><div class="n">04</div><div class="ch">测</div><div class="ten">Check</div><h3>立起手机，AI 打分<span>Prop up your phone, get scored</span></h3><p>端侧 AI 姿态识别，用同一套规则为你的关键姿势打分。</p><div class="chips"><span class="chip em">v1.1 推出 · Coming in v1.1</span></div></div>
+    <div class="step" data-reveal data-d="4"><div class="n">05</div><div class="ch">解锁</div><div class="ten">Unlock</div><h3>六阶段学习路径<span>A 6-stage path</span></h3><p>每个阶段设有检测关卡，过关才解锁下一步。</p><div class="chips"><span class="chip">6 阶段</span><span class="chip">检测关卡</span></div></div>
+  </div>
+</section>
+
+<section id="screens" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>05</b> 产品界面 · The app</div>
+      <h2>四个界面，<br>一条路径。</h2>
+      <div class="h2en">Four screens, one path.</div>
+    </div>
+    <p data-reveal data-d="1">iOS 与 Android 双平台。核心动画与训练可离线使用。<span>On iOS and Android. Core animation and drills work offline.</span></p>
+  </div>
+  <div class="screens" data-par>
+    <div class="glow"></div>
+    <figure class="phone" style="--x:-420;--y:40;--py:140;--ry:24;--rz:-4"><img loading="lazy" src="/img/ph-01-watch.webp" alt="看清每一帧"><figcaption><b>看清每一帧</b>Watch</figcaption></figure>
+    <figure class="phone" style="--x:-140;--y:-20;--py:-90;--ry:10;--rz:-1.5"><img loading="lazy" src="/img/ph-03-understand.webp" alt="读懂发力"><figcaption><b>读懂发力</b>Understand</figcaption></figure>
+    <figure class="phone" style="--x:140;--y:20;--py:110;--ry:-10;--rz:1.5"><img loading="lazy" src="/img/ph-04-train.webp" alt="针对训练"><figcaption><b>针对训练</b>Train</figcaption></figure>
+    <figure class="phone" style="--x:420;--y:-30;--py:-130;--ry:-24;--rz:4"><img loading="lazy" src="/img/ph-05-path.webp" alt="学习路径"><figcaption><b>学习路径</b>Path</figcaption></figure>
+  </div>
+  <p class="disclaim">界面为设计稿，以正式版为准 · Screens are design previews.</p>
+</section>
+
+<section id="drills" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>06</b> 训练库 · Drill library</div>
+      <h2>51 个训练，<br>对准每一块肌群。</h2>
+      <div class="h2en">51 illustrated drills, 3 tiers, one per muscle group.</div>
+    </div>
+    <div data-reveal data-d="1" style="justify-self:end;max-width:440px">
+      <p style="justify-self:auto">每块发力肌群配 A / B / C 三档训练，含组数、要领、常见错误与安全提示。<span>Every working muscle gets three tiers of drills with sets, cues, mistakes and safety notes.</span></p>
+      <div class="tiers"><span class="chip em">A 徒手 Bodyweight</span><span class="chip">B 居家器械 Home</span><span class="chip">C 健身房 Gym</span></div>
+    </div>
+  </div>
+  <div class="marquee" data-reveal>
+    <div class="mrow"><div class="dcard"><img loading="lazy" src="/img/d-deltoids-A.webp" alt="直臂侧平板支撑"><p><i>A</i>直臂侧平板支撑<span>Straight-Arm Side Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-C.webp" alt="地雷杆半跪单臂推举"><p><i>C</i>地雷杆半跪单臂推举<span>Half-Kneeling Landmine Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-B.webp" alt="弹力带肘贴体侧外旋"><p><i>B</i>弹力带肘贴体侧外旋<span>Band External Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-A.webp" alt="窄距俯卧撑（锁肘停顿）"><p><i>A</i>窄距俯卧撑（锁肘停顿）<span>Close-Grip Push-Up with Lockout</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-C.webp" alt="双杠臂屈伸"><p><i>C</i>双杠臂屈伸<span>Parallel Bar Dips</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-B.webp" alt="哑铃腕屈 + 腕伸"><p><i>B</i>哑铃腕屈 + 腕伸<span>Dumbbell Wrist Curl &amp; Reverse Curl</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-A.webp" alt="俯撑肩胛前伸"><p><i>A</i>俯撑肩胛前伸<span>Push-Up Plus</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-C.webp" alt="吊环俯卧撑加前伸"><p><i>C</i>吊环俯卧撑加前伸<span>Ring Push-Up Plus</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-B.webp" alt="单杠肩胛引体"><p><i>B</i>单杠肩胛引体<span>Scapular Pull-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-A.webp" alt="俯卧撑转侧撑"><p><i>A</i>俯卧撑转侧撑<span>Push-Up to Side Plank Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-C.webp" alt="绳索单臂站姿推胸"><p><i>C</i>绳索单臂站姿推胸<span>Single-Arm Standing Cable Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-B.webp" alt="弹力带直臂下拉"><p><i>B</i>弹力带直臂下拉<span>Band Straight-Arm Pulldown</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-A.webp" alt="空心体支撑"><p><i>A</i>空心体支撑<span>Hollow Body Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-C.webp" alt="双杠直臂支撑举腿"><p><i>C</i>双杠直臂支撑举腿<span>Dip-Bar Support Leg Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-B.webp" alt="弹力带抗旋转推"><p><i>B</i>弹力带抗旋转推<span>Band Pallof Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-A.webp" alt="反向平板（后撑抬髋）"><p><i>A</i>反向平板（后撑抬髋）<span>Reverse Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-C.webp" alt="45° 罗马椅背伸"><p><i>C</i>45° 罗马椅背伸<span>45° Hyperextension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-B.webp" alt="弹力带站姿高抬膝"><p><i>B</i>弹力带站姿高抬膝<span>Banded Standing Knee Drive</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-A.webp" alt="单腿臀桥"><p><i>A</i>单腿臀桥<span>Single-Leg Glute Bridge</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-C.webp" alt="反向背伸机"><p><i>C</i>反向背伸机<span>Reverse Hyperextension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-B.webp" alt="仰卧弹力带 V 字开腿"><p><i>B</i>仰卧弹力带 V 字开腿<span>Banded Supine Straddle Opens</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-A.webp" alt="哥萨克蹲"><p><i>A</i>哥萨克蹲<span>Cossack Squat</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-C.webp" alt="绳索站姿髋内收"><p><i>C</i>绳索站姿髋内收<span>Cable Standing Hip Adduction</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-B.webp" alt="弹力带终末伸膝"><p><i>B</i>弹力带终末伸膝<span>Banded Terminal Knee Extension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-A.webp" alt="徒手单腿罗马尼亚硬拉"><p><i>A</i>徒手单腿罗马尼亚硬拉<span>Bodyweight Single-Leg RDL</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-C.webp" alt="GHD 北欧离心"><p><i>C</i>GHD 北欧离心<span>GHD Nordic Eccentric</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-A.webp" alt="直臂侧平板支撑"><p><i>A</i>直臂侧平板支撑<span>Straight-Arm Side Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-C.webp" alt="地雷杆半跪单臂推举"><p><i>C</i>地雷杆半跪单臂推举<span>Half-Kneeling Landmine Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-B.webp" alt="弹力带肘贴体侧外旋"><p><i>B</i>弹力带肘贴体侧外旋<span>Band External Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-A.webp" alt="窄距俯卧撑（锁肘停顿）"><p><i>A</i>窄距俯卧撑（锁肘停顿）<span>Close-Grip Push-Up with Lockout</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-C.webp" alt="双杠臂屈伸"><p><i>C</i>双杠臂屈伸<span>Parallel Bar Dips</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-B.webp" alt="哑铃腕屈 + 腕伸"><p><i>B</i>哑铃腕屈 + 腕伸<span>Dumbbell Wrist Curl &amp; Reverse Curl</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-A.webp" alt="俯撑肩胛前伸"><p><i>A</i>俯撑肩胛前伸<span>Push-Up Plus</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-C.webp" alt="吊环俯卧撑加前伸"><p><i>C</i>吊环俯卧撑加前伸<span>Ring Push-Up Plus</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-B.webp" alt="单杠肩胛引体"><p><i>B</i>单杠肩胛引体<span>Scapular Pull-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-A.webp" alt="俯卧撑转侧撑"><p><i>A</i>俯卧撑转侧撑<span>Push-Up to Side Plank Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-C.webp" alt="绳索单臂站姿推胸"><p><i>C</i>绳索单臂站姿推胸<span>Single-Arm Standing Cable Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-B.webp" alt="弹力带直臂下拉"><p><i>B</i>弹力带直臂下拉<span>Band Straight-Arm Pulldown</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-A.webp" alt="空心体支撑"><p><i>A</i>空心体支撑<span>Hollow Body Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-C.webp" alt="双杠直臂支撑举腿"><p><i>C</i>双杠直臂支撑举腿<span>Dip-Bar Support Leg Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-B.webp" alt="弹力带抗旋转推"><p><i>B</i>弹力带抗旋转推<span>Band Pallof Press</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-A.webp" alt="反向平板（后撑抬髋）"><p><i>A</i>反向平板（后撑抬髋）<span>Reverse Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-C.webp" alt="45° 罗马椅背伸"><p><i>C</i>45° 罗马椅背伸<span>45° Hyperextension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-B.webp" alt="弹力带站姿高抬膝"><p><i>B</i>弹力带站姿高抬膝<span>Banded Standing Knee Drive</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-A.webp" alt="单腿臀桥"><p><i>A</i>单腿臀桥<span>Single-Leg Glute Bridge</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-C.webp" alt="反向背伸机"><p><i>C</i>反向背伸机<span>Reverse Hyperextension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-B.webp" alt="仰卧弹力带 V 字开腿"><p><i>B</i>仰卧弹力带 V 字开腿<span>Banded Supine Straddle Opens</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-A.webp" alt="哥萨克蹲"><p><i>A</i>哥萨克蹲<span>Cossack Squat</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-C.webp" alt="绳索站姿髋内收"><p><i>C</i>绳索站姿髋内收<span>Cable Standing Hip Adduction</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-B.webp" alt="弹力带终末伸膝"><p><i>B</i>弹力带终末伸膝<span>Banded Terminal Knee Extension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-A.webp" alt="徒手单腿罗马尼亚硬拉"><p><i>A</i>徒手单腿罗马尼亚硬拉<span>Bodyweight Single-Leg RDL</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-C.webp" alt="GHD 北欧离心"><p><i>C</i>GHD 北欧离心<span>GHD Nordic Eccentric</span></p></div></div>
+    <div class="mrow rev"><div class="dcard"><img loading="lazy" src="/img/d-deltoids-B.webp" alt="哑铃土耳其起立"><p><i>B</i>哑铃土耳其起立<span>Dumbbell Turkish Get-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-A.webp" alt="俯撑交替触肩"><p><i>A</i>俯撑交替触肩<span>Plank Shoulder Taps</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-C.webp" alt="绳索 90/90 外旋"><p><i>C</i>绳索 90/90 外旋<span>Cable 90/90 External Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-B.webp" alt="平行杆直臂支撑"><p><i>B</i>平行杆直臂支撑<span>Parallette Support Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-A.webp" alt="跪姿多方向腕部摇摆"><p><i>A</i>跪姿多方向腕部摇摆<span>Quadruped Wrist Rocks</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-C.webp" alt="壶铃倒握行走"><p><i>C</i>壶铃倒握行走<span>Bottoms-Up Kettlebell Carry</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-B.webp" alt="泡沫轴墙面上滑"><p><i>B</i>泡沫轴墙面上滑<span>Foam Roller Wall Slide</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-A.webp" alt="俯卧 Y-T-W 举"><p><i>A</i>俯卧 Y-T-W 举<span>Prone Y-T-W Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-C.webp" alt="吊环直臂支撑"><p><i>C</i>吊环直臂支撑<span>Ring Support Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-B.webp" alt="平行杆深幅俯卧撑"><p><i>B</i>平行杆深幅俯卧撑<span>Parallette Deficit Push-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-A.webp" alt="坐姿撑地抬臀"><p><i>A</i>坐姿撑地抬臀<span>Floor Support Lift (Seated Dip Shrug)</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-C.webp" alt="双杠支撑耸肩下压"><p><i>C</i>双杠支撑耸肩下压<span>Dip-Bar Scapular Depression</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-B.webp" alt="平行杆团身 L 撑"><p><i>B</i>平行杆团身 L 撑<span>Parallette Tuck L-Sit</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-A.webp" alt="熊爬穿腿"><p><i>A</i>熊爬穿腿<span>Kick-Through (Beast Flow)</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-C.webp" alt="绳索高位伐木"><p><i>C</i>绳索高位伐木<span>Cable High-to-Low Woodchop</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-B.webp" alt="瑞士球背伸"><p><i>B</i>瑞士球背伸<span>Stability Ball Back Extension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-A.webp" alt="坐姿直腿抬腿（压缩）"><p><i>A</i>坐姿直腿抬腿（压缩）<span>Seated Pike Leg Lifts</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-C.webp" alt="绳索站姿直腿前抬"><p><i>C</i>绳索站姿直腿前抬<span>Cable Straight-Leg Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-B.webp" alt="弹力带四足直腿后踢"><p><i>B</i>弹力带四足直腿后踢<span>Banded Straight-Leg Kickback</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-A.webp" alt="侧平板抬腿"><p><i>A</i>侧平板抬腿<span>Side Plank Hip Abduction</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-C.webp" alt="器械髋外展"><p><i>C</i>器械髋外展<span>Hip Abduction Machine</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-B.webp" alt="屈膝哥本哈根侧撑"><p><i>B</i>屈膝哥本哈根侧撑<span>Short-Lever Copenhagen Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-A.webp" alt="跪姿反向北欧"><p><i>A</i>跪姿反向北欧<span>Reverse Nordic</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-C.webp" alt="器械腿屈伸（顶端锁直）"><p><i>C</i>器械腿屈伸（顶端锁直）<span>Leg Extension with Lockout Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-B.webp" alt="滑盘腿弯举"><p><i>B</i>滑盘腿弯举<span>Slider Hamstring Curl</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-B.webp" alt="哑铃土耳其起立"><p><i>B</i>哑铃土耳其起立<span>Dumbbell Turkish Get-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-A.webp" alt="俯撑交替触肩"><p><i>A</i>俯撑交替触肩<span>Plank Shoulder Taps</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-C.webp" alt="绳索 90/90 外旋"><p><i>C</i>绳索 90/90 外旋<span>Cable 90/90 External Rotation</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-B.webp" alt="平行杆直臂支撑"><p><i>B</i>平行杆直臂支撑<span>Parallette Support Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-A.webp" alt="跪姿多方向腕部摇摆"><p><i>A</i>跪姿多方向腕部摇摆<span>Quadruped Wrist Rocks</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-C.webp" alt="壶铃倒握行走"><p><i>C</i>壶铃倒握行走<span>Bottoms-Up Kettlebell Carry</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-B.webp" alt="泡沫轴墙面上滑"><p><i>B</i>泡沫轴墙面上滑<span>Foam Roller Wall Slide</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-A.webp" alt="俯卧 Y-T-W 举"><p><i>A</i>俯卧 Y-T-W 举<span>Prone Y-T-W Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-C.webp" alt="吊环直臂支撑"><p><i>C</i>吊环直臂支撑<span>Ring Support Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-B.webp" alt="平行杆深幅俯卧撑"><p><i>B</i>平行杆深幅俯卧撑<span>Parallette Deficit Push-Up</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-A.webp" alt="坐姿撑地抬臀"><p><i>A</i>坐姿撑地抬臀<span>Floor Support Lift (Seated Dip Shrug)</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-C.webp" alt="双杠支撑耸肩下压"><p><i>C</i>双杠支撑耸肩下压<span>Dip-Bar Scapular Depression</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-B.webp" alt="平行杆团身 L 撑"><p><i>B</i>平行杆团身 L 撑<span>Parallette Tuck L-Sit</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-A.webp" alt="熊爬穿腿"><p><i>A</i>熊爬穿腿<span>Kick-Through (Beast Flow)</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-C.webp" alt="绳索高位伐木"><p><i>C</i>绳索高位伐木<span>Cable High-to-Low Woodchop</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-B.webp" alt="瑞士球背伸"><p><i>B</i>瑞士球背伸<span>Stability Ball Back Extension</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-A.webp" alt="坐姿直腿抬腿（压缩）"><p><i>A</i>坐姿直腿抬腿（压缩）<span>Seated Pike Leg Lifts</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-C.webp" alt="绳索站姿直腿前抬"><p><i>C</i>绳索站姿直腿前抬<span>Cable Straight-Leg Raise</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-B.webp" alt="弹力带四足直腿后踢"><p><i>B</i>弹力带四足直腿后踢<span>Banded Straight-Leg Kickback</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-A.webp" alt="侧平板抬腿"><p><i>A</i>侧平板抬腿<span>Side Plank Hip Abduction</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-C.webp" alt="器械髋外展"><p><i>C</i>器械髋外展<span>Hip Abduction Machine</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-B.webp" alt="屈膝哥本哈根侧撑"><p><i>B</i>屈膝哥本哈根侧撑<span>Short-Lever Copenhagen Plank</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-A.webp" alt="跪姿反向北欧"><p><i>A</i>跪姿反向北欧<span>Reverse Nordic</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-C.webp" alt="器械腿屈伸（顶端锁直）"><p><i>C</i>器械腿屈伸（顶端锁直）<span>Leg Extension with Lockout Hold</span></p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-B.webp" alt="滑盘腿弯举"><p><i>B</i>滑盘腿弯举<span>Slider Hamstring Curl</span></p></div></div>
+  </div>
+</section>
+
+<section id="numbers" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>07</b> 打磨 · The numbers</div>
+      <h2>每个数字背后，<br>都是打磨。</h2>
+    </div>
+  </div>
+  <div class="nums">
+    <div class="num" data-reveal><div class="v" data-count="8">8</div><h3>3D 循环阶段</h3><p>Phases in the 3D loop</p></div>
+    <div class="num" data-reveal data-d="1"><div class="v" data-count="17">17</div><h3>逐阶段同步的肌群</h3><p>Muscle groups, synced per phase</p></div>
+    <div class="num" data-reveal data-d="2"><div class="v" data-count="51">51</div><h3>带图训练 · 三档</h3><p>Illustrated drills, 3 tiers</p></div>
+    <div class="num" data-reveal data-d="3"><div class="v"><span data-count="40">40</span><sup>+</sup></div><h3>动作迭代版本</h3><p>Versions of motion refinement</p></div>
+  </div>
+  <p class="nums-note" data-reveal>肌群分三类：支撑 / 核心 / 腿部，左右侧根据支撑手自动识别。 · Three roles: support / core / legs.</p>
+</section>
+
+<section id="who" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>08</b> 为谁而做 · Who it's for</div>
+      <h2>为卡在托马斯上的你。</h2>
+      <div class="h2en">Built for anyone stuck on the flare.</div>
+    </div>
+  </div>
+  <div class="who">
+    <div class="card" data-reveal><div class="i">01</div><h3>入门到中级 b-boy / b-girl<span>Beginner to intermediate breakers</span></h3><ul><li>看清身体每一瞬间在做什么<span>See what the body does at each instant</span></li><li>知道该练哪些肌肉<span>Know which muscles to train</span></li><li>知道自己差在哪里<span>Know what you're missing</span></li></ul></div>
+    <div class="card" data-reveal data-d="1"><div class="i">02</div><h3>街头健身 / 体操爱好者<span>Street-workout &amp; gymnastics</span></h3><ul><li>技术拆解<span>Technique breakdown</span></li><li>循序渐进的学习路径<span>A progressive path</span></li></ul></div>
+    <div class="card" data-reveal data-d="2"><div class="i">03</div><h3>教练 / 街舞工作室<span>Coaches &amp; dance studios</span></h3><ul><li>可视化教学工具（后续版本）<span>A visual teaching tool (later versions)</span></li></ul></div>
+  </div>
+</section>
+
+<section id="faq" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>09</b> 常见问题 · FAQ</div>
+      <h2>常见问题</h2>
+    </div>
+  </div>
+  <div class="faq">
+    <details data-reveal open><summary><span class="mono">Q1</span><span class="q">收费吗？<span>Is it paid?</span></span><span class="pl"></span></summary><div class="a">内测免费。<span>The beta is free.</span></div></details>
+    <details data-reveal><summary><span class="mono">Q2</span><span class="q">支持哪些平台？<span>Which platforms?</span></span><span class="pl"></span></summary><div class="a">iOS 和 Android。iOS 通过 TestFlight，Android 通过 Google Play 内部测试。<span>iOS via TestFlight · Android via Google Play internal testing.</span></div></details>
+    <details data-reveal><summary><span class="mono">Q3</span><span class="q">需要联网吗？<span>Does it need internet?</span></span><span class="pl"></span></summary><div class="a">核心动画与训练可离线使用。<span>Core animation and drills work offline.</span></div></details>
+  </div>
+</section>
+
+<section id="join">
+  <div class="sec-k mono" data-reveal><b>10</b> 报名内测 · Join the beta</div>
+  <div class="join-big" data-reveal>报名内测<span class="en">Join the beta</span></div>
+  <div class="join-grid">
+    <div data-reveal>
+      <p>发邮件至任一地址，主题写“托马斯训练助手 内测报名”。内测免费，名额招募中。<span>Email either address with the subject “托马斯训练助手 内测报名”. The beta is free and open now.</span></p>
+      <div class="platforms"><span class="chip">iOS · TestFlight</span><span class="chip">Android · Google Play 内部测试</span></div>
+    </div>
+    <div class="mails" data-reveal data-d="1">
+      <a class="mail" href="mailto:mhgd3250905@gmail.com?subject=%E6%89%98%E9%A9%AC%E6%96%AF%E8%AE%AD%E7%BB%83%E5%8A%A9%E6%89%8B%20%E5%86%85%E6%B5%8B%E6%8A%A5%E5%90%8D"><div><span>Gmail</span><b>mhgd3250905@gmail.com</b></div><i class="go">→</i></a>
+      <a class="mail" href="mailto:294851575@qq.com?subject=%E6%89%98%E9%A9%AC%E6%96%AF%E8%AE%AD%E7%BB%83%E5%8A%A9%E6%89%8B%20%E5%86%85%E6%B5%8B%E6%8A%A5%E5%90%8D"><div><span>QQ 邮箱</span><b>294851575@qq.com</b></div><i class="go">→</i></a>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b></div></a>
+  <div>© 2026 托马斯训练助手 · FlareLab · Developer Bboy Ug1yk</div>
+  <div class="mono" style="font-size:10px">Thomas Flare Trainer</div>
+</footer>
+<script src="/app.js" defer></script>
+</body>
+</html>
