@@ -4,6 +4,54 @@
 
 App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为v41与穿衣详情，不加载历史白膜派生。
 
+## 当前 App 图标：青绿色运动服 Flare 人物（2026-10-11，用户选定 B）
+
+用户明确选择新角度 B 的青绿色运动服人物。图标制作以当前 v41 人物的实际渲染起步，最终以用户提供的新角度截图 `output/imagegen/flare-logo-20261011/user-pose-angle-2.png` 为姿态与镜头基准，经内置 imagegen 二次处理角色面孔、青绿色运动服、光影及橙色旋转轨迹。它是用于品牌图标的 AI 图像处理派生；交互场景中的人物、原服装、网格、v41 动画、启动剪影与 L26 银色肌群条目保持。
+
+选定原图 [icon-flare-angle2-b.png](../assets/brand/icon-flare-angle2-b.png) 为1254×1254，SHA-256 `3728021f0dcc87c8f6d20e39d7aa74d1055afd960802e6dda16824c78bd280ad`；当前品牌母版 [icon.png](../assets/brand/icon.png) 为1024×1024不透明 PNG，SHA-256 `4efb4ce324c70e63cfc0612450b5a16b403b94033723b15e367702ee9e834d8d`。选定B的[完整提示词与来源记录](../assets/brand/icon-flare-angle2-b.imagegen.json)随L28进入Git；A/B/C完整抽卡记录 `app/assets/brand/icon-flare-angle2.imagegen.json`、未选候选图及此前设计保留在本机。
+
+[export-brand-icons.mjs](../tools/export-brand-icons.mjs) 将选定原图导出为34张 Android、iOS、Flutter Web 及品牌/商店图标；[icon-manifest.json](../assets/brand/icon-manifest.json) 保存尺寸、构图占比、字节与逐图 SHA-256。Android adaptive 前景与 Web maskable 采用留边构图，普通图标与 iOS 使用对应平台尺寸，品牌母版保持完整方图。此前 `icon.png` 来自原品牌包 `10_品牌与商店/app-icon/icon-master-1024.png`，原件与替换前的平台图标保留在 `output/imagegen/flare-logo-20261011/adopted-teal/before/`。
+
+原人物署名 **Snow Rig © Blender Foundation | studio.blender.org** 与 CC BY 4.0 来源保留于 [Snow-ATTRIBUTION.md](../assets/licenses/Snow-ATTRIBUTION.md)。本段记录用户选定的设计与资源同步；构建、安装与设备验证以版本台账和验证记录为准。
+
+## 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
+
+用户反馈L25米白质感仍不足，授权尝试金属。L26的17张透明512×512 WebP共592,628字节，采用钛银色金属人台和保留原色的珐琅教学选区；模型、原分区、左右与逐组镜头沿用L24/L25，仅更改离线截图的材质、反射和光照，运行时人台保持。L26安装后用户先反馈不满意并要求试作黄色橡胶，随后看手机银色截图明确确认“这个银色可以 就这个了”；当前选用L26银色肌群图文条目外观。该确认仅覆盖此处肌群图片与条目，不扩大为全App或其他T02验收。
+
+截图使用物理材质与本地工作室环境反射，基础色 `#b8bdc5`、金属度0.88、粗糙度0.28；细微拉丝以0.025幅度改变表面粗糙度，按像素覆盖抑制不可分辨纹理，不修改原网格或法线。肌群区域使用原色、金属度0.10和粗糙度0.44，保持颜色清晰；透明背景、1024渲染后缩小为512的流程保持。
+
+当前摄影清单采用L26的 `muscle-photography-v3-titanium`，保存尺寸、材质/光照、镜头、输出字节与SHA-256及工具源哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。复现使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L26原始1024图、联系表和报告保留在同一目录。L24/L25素材报告和具名交付包保留作历史。
+
+人台继续来自Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，来源见 [解剖资产说明](../../docs/anatomy-assets.md)。反光、选区色和深层斜线只用于展示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径和L24图文组件保持。
+
+## 历史试作：肌群条目黄色橡胶摄影（2026-10-11，L27，未安装）
+
+用户曾要求试作黄色橡胶，截图专用人台采用暖金黄色哑光橡胶，原色肌群区域保留。L27试作的17张透明512×512 WebP共464,032字节，沿用原CC0人台、网格、功能分区、左右与逐组镜头；只调整离线摄影材质、微纹理和柔光，运行时人台及图文组件保持。
+
+摄影基础色 `#c99418`、粗糙度0.90、金属度0、清漆0；细小随机颗粒以0.015幅度改变粗糙度，并按像素覆盖抑制不可分辨纹理。原色教学区域粗糙度0.68，不改肌群颜色；柔和工作室光保持橡胶的漫反射和轮廓阴影。仍先渲染1024透明图，再缩小成512 WebP，不修改原网格或法线。
+
+L27试作摄影清单为 `muscle-photography-v4-yellow-rubber`，保存实际尺寸、字节、镜头、材质/光照与源/输出SHA-256。拍摄时使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；原始1024图、联系表和报告保留在仓库 `output/playwright/2026-10-11-muscle-thumbnails-rubber/`，此前灰色、米白和金属报告与具名包保留。当前摄影工具恢复银色参数，黄色试作参数以该目录的 `render-report.json` 为准。
+
+来源继续为Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，见 [解剖资产说明](../../docs/anatomy-assets.md)。黄色材质是展示风格；肌群色区和深层斜线表示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径保持 `assets/muscles/{groupId}.webp`。
+
+L27只生成图片并触发APK/Web构建，未安装到手机。用户之后查看手机银色截图，明确确认“这个银色可以 就这个了”；当前采用L26银色条目摄影，黄色仅保留试作记录。
+
+## 历史：肌群条目米白哑光摄影（2026-10-11，L25，摄影外观由L26调整）
+
+按用户要求将截图专用人台调整为暖米白哑光特写。L25的17张透明512×512 WebP共420,314字节，仍读取同一个CC0人台、沿用L24逐组镜头、原肌群分区与颜色；只调整摄影材质和柔光，不改变运行时人台。材质基础色 `#d8d0be`、粗糙度0.88、金属度0，柔和主光和补光保留人体轮廓；截图专用shader保留米白色，正式场景的灰阶转换保持。
+
+L25摄影清单当时为 `muscle-photography-v2-ivory`，记录实际尺寸、透明背景、镜头、输出字节与SHA-256，以及材质/光照和源文件哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-ivory/render-report.json`。复现仍用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 与 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L25原始1024图、联系表和报告保留在同一目录，L24输出目录保留作历史。
+
+来源继续为Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0。米白材质仅改善展示，肌群着色和深层斜线继续表示体表功能位置，不代表内部真实肌肉几何或与Snow精确配准；来源与限制见 [解剖资产说明](../../docs/anatomy-assets.md)。图文入口沿用L24组件，图片路径保持 `assets/muscles/{groupId}.webp`。
+
+## 历史：肌群条目模型摄影（2026-10-11，L24，摄影外观由L25调整）
+
+`assets/muscles/{groupId}.webp` 为17张实际模型渲染图，透明背景、512×512，共404,596字节。读取当前打包的 `scene/public/anatomy/mannequin-reference.meshopt.glb.gz`，逐个肌群使用原功能分区和原色高亮，分别选择能看清肩臂、躯干或髋腿的正面/背面三分之四取景。Three.js r170先以1024×1024离线渲染，再缩小为512×512 WebP；没有生成或替换人体网格。
+
+[摄影清单](../assets/muscles/manifest.json)保存模型与输出SHA-256、17个ID、镜头位置、取景范围、原分区、深层标记及工具源哈希。复现入口为 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs)，拍摄场景为 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js) 与同目录HTML；原始1024图、联系表和渲染报告保留在仓库 `output/playwright/2026-10-11-muscle-thumbnails/`。这些制作工具不进入App场景运行时。
+
+人台来自Blender Studio与社区贡献者的 Human Base Meshes v1.4.1 / `GEO-body_male_realistic`，采用既有项目派生，许可CC0-1.0；来源见 [解剖资产说明](../../docs/anatomy-assets.md)。图片表示体表功能位置，深层肌群沿用斜线代理，不是独立内部肌肉几何、肌电或与Snow的精确解剖配准。透明图由Flutter缩略图组件配合主题和肌群淡色底展示，主力、其他参与及协同肌群入口共用同一图片；原训练图继续保留。
+
 ## 不可变基线
 
 | 文件/范围 | 实测记录 |
@@ -26,9 +74,20 @@ v33及后续v38清单、源文件保留为独立历史基线；当前来源为 `
 | `assets/data/drills.json`、Schema | `07_训练库/` 原内容，51训练；原字段不改，App 按来源清单找到本地 WebP |
 | `assets/data/course-stages.json` | `09_实施计划/code/src/features/path/stages.ts` 派生；原 TS 另保留为 `stages-source.ts`，课程与阈值标注草稿；运行时免费且采用人工自评 |
 | `assets/drills/*.webp` | `07_训练库/img/` 的51张 PNG，每张本地转码为1024/512两尺寸、quality82；原图保留，图像源/输出哈希见 `assets/data/source-manifest.json` |
-| `assets/brand/icon.png` | `10_品牌与商店/app-icon/icon-master-1024.png` 的本地副本 |
-| `ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png` | iOS v1 复用上述品牌图的原字节，替换 Flutter 透明模板；没有重新生成素材，原品牌来源与发布权核对事项继续适用 |
+| `assets/brand/icon.png` | 当前为用户选定的青绿色运动服 Flare 图标 B 的1024不透明派生；制作、原图与导出清单见上方当前图标段落。此前为 `10_品牌与商店/app-icon/icon-master-1024.png` 的本地副本，原件和替换前资源保留 |
 | `assets/fonts/FlareSans.ttf` | Google Fonts官方Noto Sans SC原字体的本地副本，字节不修改，仅文件名/Flutter族别名变化；OFL文本保留于 `assets/licenses/NotoSansSC-OFL.txt`；不依赖远程字体 |
+
+## L38 国际化字体来源与许可
+
+L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面补入三款 Google Fonts 官方 Noto Sans 字体。字体随 App 本地打包；每款对应的 SIL Open Font License 文本保存在 `assets/licenses/` 并随安装包提供，不依赖 CDN 或运行时下载。文件来源、下载字节数与 SHA-256 完整记录在下表；[L38 字体清单](../../output/drill-media-20261011/L38-font-sources.json)是本机留档，不随Git提交，干净检出应按下表及仓库内字体/OFL副本核对。
+
+| 本地文件 | Google Fonts 官方源文件 | 字节数 / SHA-256 | 许可文本 |
+| --- | --- | --- | --- |
+| `assets/fonts/NotoSansKR.ttf` | [NotoSansKR[wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/NotoSansKR%5Bwght%5D.ttf) | 10,414,588 / `194018e6b2b293a7964f037b25c0249ce1418bc9ab3c971060a03aa57861e252` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosanskr/OFL.txt)；本地副本 [NotoSansKR-OFL.txt](../assets/licenses/NotoSansKR-OFL.txt) |
+| `assets/fonts/NotoSansArabic.ttf` | [NotoSansArabic[wdth,wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/NotoSansArabic%5Bwdth%2Cwght%5D.ttf) | 844,676 / `63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/OFL.txt)；本地副本 [NotoSansArabic-OFL.txt](../assets/licenses/NotoSansArabic-OFL.txt) |
+| `assets/fonts/NotoSansDevanagari.ttf` | [NotoSansDevanagari[wdth,wght].ttf](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdevanagari/NotoSansDevanagari%5Bwdth%2Cwght%5D.ttf) | 641,944 / `14ec4af41f27482216d1c2229f417ff9b1425e1babb014e57d1d40d03229853e` | [OFL.txt](https://raw.githubusercontent.com/google/fonts/main/ofl/notosansdevanagari/OFL.txt)；本地副本 [NotoSansDevanagari-OFL.txt](../assets/licenses/NotoSansDevanagari-OFL.txt) |
+
+哈希用于将仓库中的本地字体与该次实际下载内容核对。Flutter 和 3D 场景通过各自的本地字体回退显示相应文字；许可文本入口也已注册到 App 的许可证列表。
 
 内容导入可用 `assets/data/import_content.py` 在本地复现，需要 Python/Pillow；它只读源包，生成 App 数据和图像副本。3D 构建按 [scene/README.md](../scene/README.md) 执行。[原模型压缩记录](../scene/tools/model-optimization.json) 已记录源/输出哈希：正常着装 Snow 从7,508,016字节压缩至2,390,231字节，人台从1,338,688至863,833字节，采用meshopt与gzip；未减面、未量化、未合并网格。这两个原模型的3,572,742个属性值保持一致，三角形允许等价的循环顶点排序。白膜派生的制作与压缩范围另见下文，不能把其 Blender 局部改网格说成原网格完全不变。当前没有已验收的移动LOD。
 
@@ -64,10 +123,28 @@ Snow Rig © Blender Foundation | studio.blender.org，CC BY 4.0，已修改。�
 
 当前 App 的肌群面板是体表功能位置示意，没有载入真实 BodyParts3D 图集。不得把 shader 色区称作精确内部解剖；源缺少腹直肌、腹横肌、背阔肌等独立结构时，不能借其他肌肉冒充。Snow、人台和真实解剖不宣称精确配准。
 
-原深色图与图标在用户提供的包中记为 `generate_image` 生成；原包导入阶段仅离线转码/缩略。浅图作者的生成来源另列下节，本轮审核/整合未调用生成服务。原包未附完整商业使用条款文本；2026-10-10 用户在 iOS 发布流程中明确确认深浅训练图与品牌图“已确认具备发布权”。此处记录发行者确认，未进行独立法律核验，不改写模型和软件的原有许可要求。`forearms-A`、`adductors-B`、`quadriceps-A` 的原姿势瑕疵保留，训练图以文字要点为准；包中设计稿与v1.1 AI截图不当作当前App实景。
+原深色图与图标在用户提供的包中记为 `generate_image` 生成；原包导入阶段仅离线转码/缩略。浅图作者的生成来源另列下节，本轮审核/整合未调用生成服务。原包缺完整商业使用条款记录，公开发布前仍需补齐。`forearms-A`、`adductors-B`、`quadriceps-A` 的原姿势瑕疵保留，训练图以文字要点为准；包中设计稿与v1.1 AI截图不当作当前App实景。
 
 ## 浅色训练图（2026-10-09）
 
 PR #4已合并，源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`，合并 `bb94d849099d6a2985aa72c00373ce17d81a9993`。`assets/drills/light/*.webp` 为51套/102文件，1024/512尺寸、quality82，共1,188,470字节。作者说明以深色图为参考，用Hark `generate_image` 编辑为暖白背景、去除橙色轮廓光；本轮只审核复用，未调用生成服务。
 
 `drillArt()`随主题在训练库、今日训练和详情选图，深色原图保留。102图解码/尺寸/ID/缩略对应及51对审阅通过；hamstrings-A高亮稍延伸臀部、obliques-C器械浅银色两项差异仍在，不声称逐像素保持原图。文件哈希与检查见 [资源记录](screenshots/2026-10-09-pr4/resource-check.json)，实际验证统一归入 [verification.md](verification.md)。
+
+## 动作视频与静态帧（2026-10-11）
+
+L31封面时刻追溯：源[organize-final-media.py](../../../3D-Pose/hark-4080-work/organize-final-media.py)用FFmpeg `-ss 1`制作原48张封面；[publish-local.py](../../../3D-Pose/hark-4080-revisions/publish-local.py)取30fps的 `c/0060.png`制作三张local封面，即2秒。媒体清单据此保存 `poster_time_seconds`，播放器从该姿态准备并等待实际首帧才揭开Flutter封面；未修改原海报或视频，也不把原视频第0帧记成黑屏。六代表抽帧对比与浏览器51项首帧检查共同核对时刻，实际记录见[验证](verification.md)。
+
+按用户授权，从 `E:\AII-3D\3D-Pose` 的已认可 **v1.0.0** 冻结动作库接入 App 的全部51个训练动作，A/B/C各17个，按原动作ID一一对应。来源入口为该项目的 [交接地图](../../../3D-Pose/交接/README.md) 和 [素材索引](../../../3D-Pose/交接/素材索引.json)，实际读取索引的 `frozen_path`，固定在 `版本归档/v1.0.0/`，不按工作副本修改时间或文件名最高版本推测正式选择。9个拉伸素材本次未导入。
+
+51个原MP4共 **42,955,778字节**，51张原JPEG海报共 **679,938字节**，总计43,635,716字节。资产为 `assets/drill_media/{id}.mp4` 与 `{id}.jpg`，复制后字节不修改、不转码、不重新渲染。视频均为H.264、1080×1080、30fps，每项时长和帧数以 [动作媒体清单](../assets/data/drill-media-manifest.json) 为准；清单的 `actions` 按ID索引，保存动作版本、冻结来源路径、原来源链接、视频/海报大小与SHA-256、原notes、可取得的QA和已知限制。复现入口 [import-drill-media.py](../tools/import-drill-media.py) 读取 App `assets/data/drills.json` 的51个ID与源索引，逐项预检后复制；相同哈希的已有媒体复用，不同哈希拒绝覆盖，目录中的其他文件保留。
+
+导入已核对所有视频和海报的源/目标SHA-256、视频头的格式/尺寸/帧数/时长、JPEG格式，并以FFmpeg串行CPU完整解码51段原视频，全部通过；重复运行导入时102个已有文件全部复用。此处验证范围是媒体完整性和准确选版，不是对源动作姿势、接触或所有QA重新审核。来源记录仍保留：`adductors-B` 为正式屈膝哥本哈根支撑保持版，未采用失败的动态草稿；`hip-abductors-B` 的原引擎pass=true同时保留240帧solver警告；`deltoids-B` 支撑肘皮肤与垫面仍约有10.31mm间隙，不改写为完美接触。
+
+本次51项中采用三项正式本地修订：`deltoids-B`、`hip-abductors-B`、`rotator-cuff-B` 均为 **v3-local**，直接按源索引固定 `_本地修订` 的冻结MP4/海报。`deltoids-B` 在 App 名称与视频范围对齐为“哑铃半程土耳其起立（至高桥）”，不是完整站立起身。其余48项保持索引所选原成片，不用integration旧参数或未通过草稿替换正式媒体。
+
+训练库、今日训练、详情及计时/计次训练入口采用同一动作的原海报作为静态帧，点击可播放原视频，再次点击可暂停，同一时刻最多播放一个动作。深浅主题共用原海报与原视频，不重新着色；海报是冻结动作库随片提供的JPEG，未由 App 重新截帧。此前深色 `assets/drills/*.webp` 与浅色 `assets/drills/light/*.webp` 保留为历史资源，本次训练UI不再引用它们。上节浅色图的主题选图行为因此是历史状态，不代表本次视频/静态帧接入后的训练UI。
+
+这51段是离线预录视频，不是可旋转的训练GLB。源60动作的三维参数仍为自定义时间线/姿态/IK模块，尚未输出逐训练动作的标准GLB AnimationClip；已有可播放的v41 GLB仍只属于托马斯循环。视频里的灰色无五官训练人台、描边、灯光、道具和目标肌群高亮属于源成片表现，本次接入没有改变 App 交互3D人物、原Snow面孔/服装或v41动作。肌群颜色表示训练目标，不表示实测激活百分比。
+
+许可及派生说明随包保存于 [Drill-media-ATTRIBUTION.md](../assets/licenses/Drill-media-ATTRIBUTION.md)：Snow Rig © Blender Foundation / Blender Studio，CC BY 4.0；训练头部参考来自源项目记录的Human Base Meshes，CC0。人物、紧凑变形骨架、灰色人台头、训练材质、高亮与道具等修改沿用源成片并保留来源说明。此次内部跨项目复用经用户授权；源checkout没有统一项目LICENSE，不将上游MIT扩大解释为全部本地引擎或媒体的许可。已有 [Snow署名](../assets/licenses/Snow-ATTRIBUTION.md) 与 [解剖来源说明](../assets/licenses/Anatomy-ATTRIBUTION.md) 继续保留。

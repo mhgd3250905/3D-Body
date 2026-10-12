@@ -3,12 +3,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createBakedMotion } from './baked-motion.js';
 import { loadOfflineGlb } from './assets.js';
+import { renderQuality } from './render-quality.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
   side: new THREE.Vector3(1, 0.2, 0), back: new THREE.Vector3(0, 0.15, -1),
 };
-const QUALITY = { low: { ratio: 1, shadows: false }, medium: { ratio: 1.5, shadows: true }, high: { ratio: 2, shadows: true } };
 
 export class FlarePlayer {
   constructor(container, callbacks = {}) {
@@ -122,6 +122,7 @@ export class FlarePlayer {
     if (this.dirty) { this.render(); this.dirty = false; this.callbacks.onRender?.(); }
   }
   render() {
+    this.callbacks.onBeforeRender?.();
     const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
     if (inset > 0 && inset < height) {
       // Nothing is drawn under the host's chrome: clear all, draw above it.
@@ -162,7 +163,7 @@ export class FlarePlayer {
     else { this.playing = false; this.stop(); this.callbacks.onTime?.(this.time); }
   }
   setQuality(value) {
-    this.quality = value in QUALITY ? value : 'medium'; const quality = QUALITY[this.quality];
+    const quality = renderQuality(value); this.quality = quality.name;
     this.updatePixelRatio();
     this.renderer.shadowMap.enabled = quality.shadows; this.keyLight.castShadow = quality.shadows;
     this.shadowCatcher.visible = quality.shadows;
@@ -172,7 +173,7 @@ export class FlarePlayer {
   updatePixelRatio() {
     // The quality setting owns resolution. Changing detail mode must not
     // reallocate the canvas buffer midway through a camera transition.
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, QUALITY[this.quality].ratio));
+    this.renderer.setPixelRatio(renderQuality(this.quality, window.devicePixelRatio).pixelRatio);
   }
   resize() {
     const width = this.container.clientWidth, height = this.container.clientHeight;

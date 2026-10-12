@@ -7,7 +7,7 @@
   "path": "路径",
   "progress": "记录",
   "settings": "设置",
-  "motionBrand": "FLARE · 托马斯全旋",
+  "motionBrand": "Flare · 托马斯助手",
   "more": "更多",
   "timeline": "动作时间轴",
   "phaseLabel": "动作阶段",
@@ -25,8 +25,8 @@
   "back": "背面",
   "goBack": "返回",
   "side": "侧面",
-  "pausedHint": "点选肌群查看详解",
-  "playingHint": "暂停后可点选肌群",
+  "pausedHint": "点选肌群",
+  "playingHint": "暂停后查看",
   "loadingScene": "正在准备 3D 动作…",
   "sceneFailed": "3D 暂时无法显示，请重新打开动作页",
   "retry": "重试",
@@ -52,7 +52,7 @@
   "supportSection": "肩臂支撑",
   "coreSection": "核心协调",
   "legsSection": "髋腿摆动",
-  "searchDrills": "搜索训练或英文名称",
+  "searchDrills": "搜索训练或肌群",
   "libraryCount": "51 个训练 · 17 个肌群",
   "noResults": "没有匹配的训练，试试其他关键词",
   "illustration": "动作示意图",
@@ -66,6 +66,7 @@
   "today": "今日训练",
   "todayEmpty": "从肌群详解或训练库加入，组成今天的练习",
   "remove": "移出今日训练",
+  "clearMuscleFilter": "清除肌群筛选",
   "timerReady": "准备开始",
   "countdown": "准备",
   "work": "练习中",
@@ -183,7 +184,7 @@
   "privacyBody": "设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。",
   "creditsTitle": "模型与素材来源",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由应用发行者提供。",
-  "speedLabel": "默认播放速度",
+  "speedLabel": "默认速度",
   "qualityLabel": "画面质量",
   "balanced": "均衡",
   "battery": "省电",
@@ -214,6 +215,7 @@
   "primaryShort": "主力",
   "secondaryShort": "协同",
   "together": "一起发力",
+  "assistMuscles": "协助发力",
   "sceneNone": "无器械",
   "sceneHome": "居家",
   "sceneGym": "健身房",
@@ -292,6 +294,7 @@
   "allSections": "全部部位",
   "search": "搜索",
   "closeSearch": "关闭搜索",
+  "clearSearch": "清空搜索",
   "spec": "剂量",
   "moreCuesAndSafety": "更多要点、常见错误与安全",
   "addTodayShort": "加入今日",
@@ -388,11 +391,45 @@
       }
     }
   },
+  "drillDemo": "观看动作示范",
+  "hideDrillDemo": "收起示范",
+  "demoReplay": "重播",
+  "demoSeek": "播放进度",
+  "demoSpeed": "示范速度",
+  "demoFailed": "视频暂时无法播放，请重试",
+  "demoPaused": "训练已暂停，示范也已暂停",
   "finishedLine": "{sets} 组全部完成",
   "@finishedLine": {
     "placeholders": {
       "sets": {
         "type": "int"
+      }
+    }
+  },
+  "languageLabel": "语言",
+  "languageSystem": "跟随系统",
+  "languageTitle": "App 语言",
+  "sceneAccessibleTitle": "Flare 托马斯全旋 3D 动作",
+  "weekDayLabel": "星期{day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "肌群图",
+  "muscleMap": "肌群图",
+  "phaseMapAccessibility": "随动作阶段同步的肌群正面和背面定位图",
+  "viewGroup": "查看{group}",
+  "reviewFirstPhases": "自行回顾 09–11：后撑、移重与侧撑是否连贯",
+  "reviewFullLoop": "自行回顾整圈：换手、开腿与节奏是否连贯",
+  "wristFlexion": "腕屈",
+  "wristExtension": "腕伸",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
       }
     }
   }

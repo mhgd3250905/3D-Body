@@ -1,14 +1,500 @@
-# iOS v1 本地验证（2026-10-10）
+# L38–L43文档收束验证（2026-10-12）
 
-专用分支 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，S4 `1.0.0 (3)`；关于页旧开发版本及过期授权提示已清理，署名和许可保留。10 项相关 UI 测试、analyze、归档/导出、严格验签、证书/描述文件及 Apple 验证通过；249 份运行资源与四份隐私清单和 S3 一致，28 种源码图标的字形齐全。同源 Debug Simulator Build 3 关于页原生复查通过，偏好保留；它不等于签名 IPA 或真机执行。精确 S4 IPA 获授权后已上传，上传后哈希不变，Apple 处理为 VALID / APP_STORE_ELIGIBLE；商店草稿重新加载为 Build 3，原单账号内部组的 S4 为 IN_BETA_TESTING、自动分发关闭，S2 历史构建保留。初始截图、系统减弱动效与 S2/S3 历史证据分别保留，未重跑整套原生流程。
+## Preflight与scope
 
-iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒训练完成、实际后台 94.3 秒暂停及冷重启记录保留；同一调试进程持续 24 分 18 秒。加载层保存点 `3a85bd9` 在 Pro 模拟器两次实际 WebContent 中断恢复/重试通过（1422ms，33 次状态确认）；平台恢复代码随后未改变。最终产品另通过系统 Reduce Motion 开启时的真实首启/主题/详情/计时/原生存储验证，Flutter 与 WKWebView 均读取到该偏好，加载图标静止。该场景加载窗口记录 5 个资源、外部来源为零，不是完整抓包或飞行模式验收。最终未签名 arm64 Archive C03 绑定 `83f0920`，215,768,913 字节；本机 `candidate/candidate-manifest-r3.json` 记录身份与校验。
+baseline为L37 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`（已记录的用户保存点，L38由此开始）；以 `git rev-parse --verify <sha>^{commit}` 核对有效，`git merge-base --is-ancestor <baseline> HEAD` 成功。HEAD `6afb6fdea8fb35099d24364c6b252f3f052d93eb`，分支master；repo root经 `git rev-parse --show-toplevel` 确认为 `E:/AII-3D/3D-Body`。`git log --oneline <baseline>..HEAD` 与 `git diff --name-status <baseline>..HEAD` 为7提交/142路径记录（M40/A100/D1/R1）。
 
-用户授权注册、签名与普通推送后，Apple 门户和 App Store Connect 的 `dev.mhgd.flare` 已核对。随后用户批准精确 S1 上传与商店草稿保存；S1 被 Apple 上传前验证以生成脚本未签名（90035）拒绝，未上传。修复后 S2 为 `dev.mhgd.flare / 1.0.0 (1)`，50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；严格验签、描述文件/证书、三个 arm64 执行文件和四份隐私清单通过，Apple 验证退出 0。商店版本、中文文案、分类、支持/隐私网址和 10 张截图已保存，服务器截图状态全部 COMPLETE、顺序/校验和一致；用户另行批准 S2 精确文件后已通过 `altool --upload-package` 上传，退出 0；按回执查询 Apple Build 1 为 VALID。随后按单独授权创建“Flare iOS v1”内部组，关闭自动分发，仅添加指定的一名现有团队账号及 S2 构建；重新加载后构建“正在测试”、账号“已邀请”，60 字测试说明与本地草稿一致。本机 `testflight-internal-s2-20261010.json`、`candidate/candidate-manifest-s2.json` 及 `app-store-draft-saved-20261010.json` 留证。
+scope为L38–L43的当前文档/配置说明/版本/发布与安装观察对齐，不修改产品代码、翻译/模型/媒体字节、版本号、构建包、根dist/编辑器、原导出或个人数据，不跨仓库。源码、生成翻译/场景及配置delta由以下canonical明确映射，历史设计不作为当前要求。
 
-新增授权的 S2 商店绑定、无需登录、审核说明、复用版权与联系人、手动发布、免费/全部 175 个地区供应以及关闭 Mac/Vision Pro 商店供应已保存；服务端确认 175 个地区价格均为零、供应全开、预购关闭，两项平台供应标志均为 false。用户已确认训练图与品牌图发布权。公开隐私页的本地存储、备份和 iOS 删除措辞已按单独授权[完成修订](privacy-policy-ios-v1-draft.md)：现有 Worker 的生产模块与批准的 3,060 字节补丁一致，公开 HTTP 200 的 HTML 哈希与完整预览一致，既有联系段落及配置保留。
+| 实际检查来源 | current/archive判定与核对主题 |
+| --- | --- |
+| `README.md`、`AGENTS.md`、`app/README.md`、`app/AGENTS.md` | current入口/工作约定；旧L41/L36、重复版本段落已对齐L43 |
+| `app/docs/version-ledger.md` | current版本/安装/发布唯一台账；L38–L42分段与L43原交付观察保留实际时间及范围 |
+| `app/docs/verification.md` | current验证/source state；旧版本章节为archive/history，本次16项不与旧次数相加 |
+| `app/docs/development-roadmap.md` | current M0–M7/T01–T06；9:8/11:7为被L43覆盖的历史，用户自行设备验收仍待完成 |
+| `app/docs/motion-v41.md` | current烘焙/同帧/原着装合约；动作未改，v38保留历史 |
+| `app/docs/localization.md`、`compact-labels.md` | current 14语/270界面/591内容/17短名/RTL/稳定ID；L38/L39旧测试仅历史 |
+| `app/docs/asset-sources.md` | current许可/字体来源；3字体大小/哈希与tracked源/OFL相符；output字体清单注明本机留档 |
+| `app/docs/privacy-local.md` | current本地数据；补settings.language/system/旧记录迁移与训练视频封面 |
+| `app/docs/drill-media-2026-10-11.md` | current媒体交付入口；L30–L37/当时未安装未提交为archive，不代替当前L43 |
+| `app/scene/README.md` | current 3D接口入口；旧v38/裸肤study/旧比例与密度正文划为archive，补当前v41/L43/localization/viewport |
 
-这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认；用户要求等其回来连接 iPhone 后继续，真机手势/性能/触感、飞行模式、旧 iOS、最终合规及 App Review 仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，商店保存事实与最终门禁见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
+发现顺序为适用根/App AGENTS→README入口→明确声明的一跳来源。只按本阶段主题检查，未递归扫描其他项目或历史文档；未读取secrets/profile/日志/构建产物。语言/字体/配置只读核对由GPT-6 Luna max协作完成，root整合裁决。
+
+## 完整状态与归属
+
+`git status --porcelain=v1 --untracked-files=all` 完整初检与复查输出一致，未截断：tracked/staged/unstaged/deleted/renamed均0，untracked21。阶段前已明确归属用户且保留：
+
+- `Air-Flare/air-flare-demo.mp4`。
+- `app/assets/brand/icon-flare-angle2-a.png`、`icon-flare-angle2-c.png`、`icon-flare-angle2.imagegen.json`。
+- `app/assets/brand/icon-flare-draw-a.png`、`icon-flare-draw-b.png`、`icon-flare-draw-c.png`、`icon-flare-draw-d.png`、`icon-flare-draws.imagegen.json`。
+- `app/assets/brand/icon-flare-model-v3.png`/`.imagegen.json`、`icon-flare-model-v4-cute.png`/`.imagegen.json`。
+- `app/assets/brand/icon-flare-v2.png`/`.imagegen.json`、`icon-flare-v5-animation.png`/`.imagegen.json`、`icon-flare-v6-user-pose.png`/`.imagegen.json`、`icon-flare-v7-pose-corrected.png`/`.imagegen.json`。
+
+以上按路径/类别核对，不读取内容，不清理或暂存。统计1视频/12PNG/8元数据。Alignment新增变更仅本Agent已确定的文档修正；明确路径暂存、非空本地提交，未reset/stash/checkout/clean/tag/push。
+
+## 验证与source state
+
+2026-10-12 01:20（北京时间），在app目录执行：
+
+```powershell
+flutter analyze --no-pub
+flutter test --no-pub --concurrency=1 test/ui/compact_localization_test.dart test/ui/internationalization_test.dart test/ui/muscle_library_flow_test.dart test/data/catalog_localization_test.dart
+```
+
+分析No issues found；16项通过（compact1、internationalization3、muscle flow7、catalog5）。包含真实字体14语两尺寸、RTL/搜索/旧设置迁移、51训练ID/剂量和多语检索、L42连续排版与阅读位置、L43两模型半屏/固定舞台/同帧返回。source state为完整HEAD `6afb6fdea8fb35099d24364c6b252f3f052d93eb`、tracked工作树无差异；之后仅修改上述文档，产品/测试/配置源无变化，证据适用于文档收束检查点。不是全量suite或母语/医学审核。
+
+L43的Web/ARM64构建、中文394浏览器、签名/资产核对与00:30:46安装观察沿用下方原记录及本会话实际工具结果。`0606a58..6afb6fd` 产品差异仅app_shell.dart半屏补丁，与构建时工作树一致；其后没有产品变化。`e084268..6afb6fd` 场景源码/生成物delta为空，L40场景证据保留原范围。本次不重新读取构建产物/本机日志，不把文件存在当作当前构建或设备验收；不重复构建、安装或浏览器手势。iOS/生产发布/原生验收在scope外；无需改根dist，未执行全量Flutter或场景构建。
+
+Alignment后用Python按12份明确路径检查本地Markdown引用，334处链接均存在；断言当前App说明无L41/L36、路线下一步无安装L38、场景当前v41与密度1/3/4且旧v38段落已归档。`git diff --name-only`仅这12份Markdown，产品/测试/配置差异为空；`git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check`通过，随后完整状态与暂存检查再次核对。收束仅修正文档，当前交付仍L43，具名APK/Play P01/原数据保留；下一步按development-roadmap的T01/T02/T06由用户验收，禁止默认触碰素材/原编辑器/个人动画或发布。保存点由版本台账和 `docs: close out L38-L43 app delivery records` 提交定位。
+
+---
+
+# L43上下半屏验证（2026-10-12）
+
+源基线0606a58，检查点以 `feat(app): balance L43 muscle detail halves` 定位。只调整详情上下Expanded为1:1及送scene的bottomInset为可用舞台高度50%；顶部栏、共享WebView/清晰度、scene资源和媒体保持。动作/站立共用分区，默认相机自动按上半区取景，站立自由旋转/缩放、动作旋转禁缩放/平移及同帧返回保持。L42文字字号/宽度/内边距/阅读位置连续性与无图标保持。
+
+全项目analyze无问题，11项定向回归通过：compact_localization_test 1项（14语×两尺寸×实际字体）；internationalization_test 3项；muscle_library_flow_test 7项。新增320×700/390×844检查上下区域各占stage高度50%且相邻、motion/muscles交换的分区/舞台/selectionGeneration/time/paused保持、两模型知识展开不改分区、返回时间与舞台保持。空间够时既有知识回归检查全文直接可见，确有溢出才拖动；24倍长文的连续展开/关闭检查保留。测试由GPT-6 Luna max更新、root整合，不重复全量suite。
+
+Web/ARM64 release成功，原Debug签名和aapt2包名/版本通过。[4资产源/Web/APK](../../output/drill-media-20261012/L43-package-check.json)一致；L42/P01哈希保持，本轮不改scene或训练资产。
+
+Chrome394×853/DPR3.25中文实景，两模型camera.viewInset及target均372.5px，iframe高745px，区域严格1:1；站立默认头/两脚完整，双侧腹斜肌保持。缩放相机距离缩短、拖动相机方向变化，切回动作恢复原机位/暂停时刻；返回首页time6.052980132450331保持，首页insetTarget恢复102。各模式buffer1182×2235/密度3保持，footer(x20,y785,w354,h56)不变；console error/warn=0。[实景](screenshots/2026-10-12-L43/README.md)及[记录](../../output/drill-media-20261012/L43-browser-ui-check.json)。浏览器手势不代替原生双指/性能验收。
+
+00:30:46保留数据安装，firstInstallTime2026-10-08 17:53:04保持；启动Status ok/UNKNOWN(0)/Wait3014ms，不声称冷启动性能。[回执](../../output/drill-media-20261012/L43-device-install.json)。用户自行验收，未手机UI操作；iOS/原生手势/设备矩阵及T01–T06待验收，未push/发布。原dist/编辑器/个人数据与候选素材保留。
+
+---
+
+# 历史：L42连续展开验证（2026-10-12）
+
+源基线5df32a3（L41），本地检查点以 `feat(app): refine L42 continuous knowledge expansion` 定位。共享卡片/文本样式：14px/1.55、相同宽度/10px横向与4px纵向padding/边框/圆角/背景，去掉右侧图标。预览字形在阅读层显示时隐藏；矩形和阴影动画，收起在实际末帧交还文字滚动位置，340ms/240ms仍尊重reduce motion。文字/上方外部点击收起；极长内容无条拖动，底部固定区域和场景不变。
+
+全项目analyze无问题，3测试文件合计9项通过：compact_localization_test 1项（14语言×320/390两尺寸×实际打包字体，有溢出时展开有界和按钮固定）；internationalization_test 3项；muscle_library_flow_test 5项。后者检查320/390展开100ms、收起100ms和结束的Text/RenderParagraph样式、TextScaler、段落宽高与相对padding一致；无Icon；预览scroll offset传入reader、继续阅读后关闭传回、重开/外部关闭保留位置。原超长全文/自然全文0滚动/换组销毁/固定控件与暂停帧检查保持。测试由GPT-6 Luna max更新、root整合；同子集复跑不累加。
+
+离线Web/ARM64 release成功，原Debug签名通过。[4资产源/Web/APK核对](../../output/drill-media-20261012/L42-package-check.json)一致，L41和P01哈希保持；场景与训练媒体未变，不重复全量Flutter/场景测试。
+
+Chrome394×853/DPR3.25中文实景：卡片宽346px保持，预览49.72px与展开120px，文字换行一致，右侧无图标。点击文字和上方外部关闭有效；footer(x20,y785,w354,h56)、iframe(x0,y108,w394,h745)、phase15/time6.052980132450331/quality medium在展开/关闭后完全相同，console error/warn=0。[截图](screenshots/2026-10-12-L42/README.md)及[记录](../../output/drill-media-20261012/L42-browser-ui-check.json)。实景范围为中文394，14语覆盖为组件回归。
+
+00:17:33通过adb install -r保留数据安装手机；firstInstallTime保持2026-10-08 17:53:04，启动Status ok/UNKNOWN(0)/Wait3014ms，不能视为冷启动性能。[安装回执](../../output/drill-media-20261012/L42-device-install.json)。用户自行验收，未操作手机UI；原生视觉/手势/读屏、iOS与T01–T06待验收。未push/发布，根dist/个人数据/候选资源保持。
+
+---
+
+# 历史：L41知识展开阅读验证（2026-10-11）
+
+基线e084268（L40），以 `feat(app): add L41 expandable muscle knowledge` 检查点定位。详细说明预览不显示Scrollbar/桌面自动滚动条；溢出点击OverlayPortal在原底边向上展开，340ms/收起240ms并尊重reduce motion。使用14px/1.6全文、已有14语more/close语义，内容长度计算含边框/舍入余量；长于屏幕时展开卡独立无条滚动。读完点全文、关闭图标或上方外部收起；协同卡/footer与3D舞台不参与位移，换肌群销毁旧层。
+
+全项目flutter analyze --no-pub无问题。3个测试文件共9项通过：compact_localization_test（1项包含14语言×两尺寸×真实4字体/短名及有溢出全文展开有界与固定按钮）、internationalization_test（3项RTL/知识及训练布局）、muscle_library_flow_test（5项原3项与新增320/390展开）。新增测试覆盖中间动画、底边对齐/顶部有界、24倍超长fixture全文及滚动、自然源文案reader maxScrollExtent=0、关闭按钮/外部关闭/换肌群销毁、舞台/卡片/footer/时间不变。换肌群允许原compact逻辑切换按钮48/56高度，仅底边固定。定向测试由GPT-6 Luna max与root整合；同子集复跑不累加。
+
+离线Web/ARM64 release构建成功，原Debug签名验证通过。[包核对](../../output/drill-media-20261011/L41-package-check.json)4资产源/Web/APK一致，L40/P01保持；本轮不改场景/媒体，不重复无关场景或全量Flutter测试。
+
+Chrome394×853/DPR3.25最终GUI：臀中肌预览无条，点击展开全部两段文字，关闭回到预览。展开前后footer(x20,y785,w354,h56)、iframe(x0,y108,w394,h745)、phase15/time6.052980132450331/quality medium完全相同。console error/warn为0。[实景](screenshots/2026-10-11-L41/README.md)及[浏览器记录](../../output/drill-media-20261011/L41-browser-ui-check.json)。14语完整页面人工、原生文字交互仍需用户验收。
+
+23:50:59通过adb install -r保留数据安装，firstInstallTime2026-10-08 17:53:04保持；启动Status ok/Wait3016ms/LaunchState UNKNOWN(0)，不将其记作冷启动性能。[回执](../../output/drill-media-20261011/L41-device-install.json)。按用户要求不操作手机UI；iOS、原生读屏/手势与T01–T06保留待验收。未push/商店发布，根dist、个人数据与候选资源保留。
+
+---
+
+# 历史：L40高密度3D清晰度验证（2026-10-11）
+
+源基线51b1e02（L39已安装记录），检查点以 `feat(app): sharpen L40 high-density rendering` 定位。只改场景渲染密度、质量别名、标签纹理滤波与只读诊断；不修改动作人物、机位、材质、几何、Flutter布局或媒体。默认medium/均衡DPR最多3、high最多4、low/省电最多1。标签4×CanvasTexture不生成mipmaps、minFilter LinearFilter。画质改变才重分配buffer，首页/详情/站立切换保持同一密度。
+
+`node tools/verify-render-quality.mjs` 通过宿主别名、3.25设备默认/高清、省电、非高密度、极端/非法值；已纳入npm run verify。scene build和v33/v38/v41契约通过136选择案例，12缩略图机位/density/输出转换/材质身份/失败恢复/资源所有权通过。只改JS场景，不重复无关Flutter全量测试。
+
+离线Web与ARM64 release构建成功，原Debug证书验证通过。[包核对](../../output/drill-media-20261011/L40-package-check.json)4项场景/媒体清单源/Web/APK一致，L39及Play P01旧哈希保持。入口index-C6GykFmW.js / index-D1CmUuBK.css，包身份见版本台账。
+
+真实Chrome为394×853、DPR3.25（对应所连1280×2772、520dpi手机）。拥有的浏览器临时路由旧L39 bundle作对照，未改稳定服务/用户标签页。相同phase15、time6.052980132450331及camera，旧591×1117/1.5密度，新1182×2235/3；两维翻倍、总像素约4倍。三个13px完整标签均4倍纹理、mipmaps=false；图像边缘与字体对照见[实景](screenshots/2026-10-11-L40/README.md)。实际UI切换省电/高清/均衡分别确认1/3.25/3密度，buffer394×745/1280×2421/1182×2235，等待bridge异步应用后读取。
+
+三个视图：主页动作与详情动作均完整身体；站立默认头/双脚完整、双侧当前区域保持。滚轮、鼠标拖动旋转及CDP两个触点模拟放大有效，相机距离缩短、方向变化，buffer1182×2235/密度3/暂停时刻保持；切回动作恢复原相机与帧。浏览器记录见[L40-render](../../output/drill-media-20261011/L40-browser-render-check.json)和[three-model](../../output/drill-media-20261011/L40-three-model-check.json)。console error/warn均0。默认完整身体与主动放大看局部是不同验证范围。
+
+23:22:18保留数据覆盖安装成功，firstInstallTime仍2026-10-08 17:53:04；启动指令Status ok/COLD428ms。用户自行验收，未操作手机UI，浏览器手势不代替原生双指/拖动或视觉验收。[安装回执](../../output/drill-media-20261011/L40-device-install.json)。更多像素会增加GPU成本，原生FPS/温度/电量、T01–T06/iOS仍待验收，未push/发布。用户候选资源、根dist和个人数据保持。
+
+---
+
+# 历史：L39多语言紧凑标签验证（2026-10-11）
+
+源基线为master `2648cb8d260777805d1cf70cb56c411af5c8b654`，本地检查点以 `feat(app): refine L39 compact localized labels` 定位。14×17准确短名已接入Flutter及3D；完整名称、训练结构与原数据保持。短屏提示避让，阶段名允许两行；首页transport为72px并同步场景inset，详情短屏9:8分区与正常11:7保持同一iframe舞台。简介测量换行后采用紧凑布局以保护知识区，文字块独立滚动。
+
+`flutter analyze --no-pub` 无问题。`flutter test --no-pub --concurrency=1 test/ui/compact_localization_test.dart test/ui/internationalization_test.dart test/ui/muscle_library_flow_test.dart test/data/catalog_localization_test.dart` 12项通过。紧凑布局测试加载4个实际离线字体，在14语言×320×700/390×844检查17标签150px内无省略、8阶段名两行可见、提示两行及界内、最宽肌群CTA/完整语义、标题和知识视口至少40px。数据回归检查全部训练14语短名/全名均可搜索，ID、剂量保持；知识/协同卡独立滚动与固定footer通过。同范围复跑不累加。
+
+资源结构14×270 ARB、14×591内容和14×17短名键/非空/唯一/占位符/数字序列检查通过；4字体联合cmap覆盖238短名。[资源记录](../../output/drill-media-20261011/L39-resource-check.json)。scene build/verify的v33/v38/v41历史契约136案例通过，本轮短名不改变22骨/44轨/540帧。场景入口 `index-rojuNpVy.js` / `index-D1CmUuBK.css`。
+
+离线Web和ARM64 release构建成功，原Debug证书验证通过。[包核对](../../output/drill-media-20261011/L39-package-check.json)36资源源/Web/APK完全一致，旧L38/P01哈希保持。具名APK字节/哈希见版本台账。
+
+真实Chrome GUI：英语390的phase11标签/图例完整显示Gluteus medius，13px；详情CTA为Train Gluteus medius，知识视口70.22px，滚动前后footer、iframe及暂停时刻固定，跳训练搜索框视觉预填短名且得到对应居家1项。俄语与阿语320标签/图例完整、13px，提示与同步卡避让；阿语RTL保持。[最终截图](screenshots/2026-10-11-L39/README.md)与[报告](../../output/drill-media-20261011/L39-browser-ui-check.json)区分软件28组合回归和限定实景，不声称14语言全部页面人工验收。
+
+构建时L39未安装；用户随后连接手机，23:04:32通过adb install -r保留数据更新成功，firstInstallTime保持2026-10-08 17:53:04。启动指令Status ok、COLD 350ms；不操作手机UI，用户自行验收。安装与启动不扩大为功能验收，[安装回执](../../output/drill-media-20261011/L39-device-install.json)。iOS构建、原生14语/读屏、母语审核、长期计时和T01–T06继续待验收；未全量suite/push/商店发布。原视频、根dist/编辑器、个人数据与用户候选素材保留。
+
+---
+
+# 历史：L38离线国际化验证（2026-10-11）
+
+source base为master L37本地提交 `8c8ea19d89c5a64a7b226e5239379cd974107c8c`；本阶段以 `feat(app): add L38 offline internationalization` 本地提交定位，未push或发布。14语言界面/目录/知识/课程、系统与手动语言、原数据迁移、3D字体/标签/读屏文字和RTL已接入。L37肌群固定标题/作用、独立知识滚动、协同卡/footer及双侧人台保持。
+
+在app目录运行 `flutter analyze --no-pub`，结果No issues found。`python tools/verify-localization.py` 核对14×270界面及14×591内容的键、非空、元数据、占位符及剂量数字顺序，failures为空；资源检查4字体联合cmap对全部翻译字符无缺字。该检查不证明母语表达、真实字体形塑或医疗准确性。
+
+`flutter test --no-pub --concurrency=1 test/data/catalog_localization_test.dart test/ui/internationalization_test.dart test/domain/learning_store_test.dart test/platform/scene_asset_router_test.dart test/ui/muscle_library_flow_test.dart test/platform/scene_asset_server_test.dart` 共33项通过：全资源/locale解析/旧设置与记录保留/51训练结构及多语言搜索、Arabic RTL及时间轴拖动、320×700与390×844英文布局、学习存储、字体白名单与媒体Range、肌群知识/卡片独立滚动与搜索返回、loopback服务。重复子集不累加。另跑分段按钮tap/drag/semantics焦点测试通过。新增Arabic 390×844肌群知识视口≥40px及知识滚动时协同卡/footer固定回归通过；翻译较长的小屏使用紧凑卡片，保证独立知识区可读，中文原布局保持。
+
+辅助执行历史 `polish_round2_test.dart` 时，旧训练详情测试仍要求hero y=0、滚动出现磨砂栏，与L32已采用的固定顶部标题设计冲突（当前y=70）；该项失败，源L37同一旧断言已存在，本轮未改训练详情布局。分段控件及相关国际化回归通过；不声称全量suite通过。
+
+scene `npm run build`、`npm run verify` 通过v33/v38/v41 CPU/源码契约，540帧/22骨/44轨、136组选择案例通过。该检查不等于GPU渲染/真机验收。当前场景入口 `index-akXJ7oGi.js` / `index-DLlJ_85v.css`。
+
+离线Web `flutter build web --no-web-resources-cdn --no-pub` 和 `flutter build apk --release --target-platform android-arm64 --no-pub` 构建成功，原Debug证书签名验证通过；包身份见版本台账。一次Android重构建因本机JVM原生内存不足中止，将Gradle最大堆降为2G、worker限2后重试成功；只调整构建资源，不影响运行时。包核对22项内容/字体/场景及未改媒体清单的源/Web/APK字节一致，4字体均在FontManifest声明，旧L37/P01哈希保持。
+
+Chrome实际GUI通过14语言设置选择/本地标题更新；英语及阿拉伯语刷新后偏好保留；Arabic 390训练搜索本地肌群得到对应1项，详情标题/剂量/说明本地化且返回按钮在右，内容两列保持。韩文、天城文、阿拉伯文和繁中/日文设置截图已核对。390阿语最终知识视口84px、协同卡54px与footer底832px在844px屏内；双行作用的最低40px独立回归通过。3D实际字体加载、标签语言及小屏证据见 [浏览器记录](../../output/drill-media-20261011/L38-browser-ui-check.json)。[5张最终实景](screenshots/2026-10-11-L38/README.md)随源码保存；不扩展为14语言全部页面人工验收。
+
+Android `supportsRtl` 已配置；iOS Info.plist声明14语言，plist解析通过，Windows未执行iOS构建。语言选择由App自己的本地设置管理，未接入Android/iOS系统“单独App语言”同步接口。训练原视频及媒体清单字节保持。翻译由GPT-6 Luna max完成并经英语交叉审阅，未经过母语者/医疗人员审核；后续手机已连接并保留数据覆盖安装L38，安装与冷启动指令通过；用户随后明确自行验收，已停止真机交互。语言、视频、肌群详情及T01–T06/原生读屏仍待用户验收，不将安装成功扩大为功能验收。安装回执见 [device-install](../../output/drill-media-20261011/L38-device-install.json)。用户Air-Flare、图标候选、根dist/原编辑器/个人数据及Play P01保留。
+
+---
+
+# 历史：L37肌群知识与双侧人台验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。首页Flare斜体字标、青绿细线/点与中文小副标保持44px header；详情标题/一句作用固定，17组原审核知识分两段放入独立ScrollBar滚动区，作用亮半粗、知识12.5常规。协同卡/footer固定，切肌群重置滚动，长标题36px FittedBox；320×700紧凑卡片/48px按钮修复54px溢出。直立人台全图/小图双侧当前群组，演员/首页同步图保留阶段侧别。
+
+分析无问题，13项定向测试通过（原12项与320短屏修复1项，390/552复跑属同范围、不相加）。552组件测试所选阶段/作用行数可容纳知识，不要求无意义滚动；下述552真实浏览器phase12具有不同作用行数，已实际滚动，两者不混同。scene构建与v33/v38/v41验证136案例通过。离线Web/ARM64 release最终构建与原Debug签名通过，[包核对](../../output/drill-media-20261011/L37-package-check.json)场景index/JS/CSS及未改媒体清单4项源/Web/APK一致，通用/具名APK相同、旧L36/P01哈希保持，身份见 [版本台账](version-ledger.md)。当前场景入口 `index-BuYy9_Wa.js` / `index-DLlJ_85v.css`。
+
+[限定CPU检查](../../output/drill-media-20261011/L37-bilateral-check.json)直接执行phase-map选择函数与真实MM模块：phase14左/phase10右肱三头肌在人台detail均选择both、focusSide0，演员state仍+1/−1，首页priority子集保留阶段侧别；full/mini共用phaseMap.scene。不含顶点/GPU/shader模拟，不当作视觉通过。
+
+[真实GUI](../../output/drill-media-20261011/L37-browser-ui-check.json)390 phase15已核对人台双臂粉色、演员单侧蓝色，知识scroll0→20、固定区域与736px舞台保持；552 phase12肱三头肌scroll0→17，知识viewport/协同卡矩形、801px舞台与暂停时刻2.650467789970562严格不变。552深浅主题截图通过；320真实紧凑布局无溢出、按钮正常。标题/作用/footer固定与切肌群重置另由定向组件测试覆盖。console错误/警告均0，最终390人台截图为当前淡边框版本。
+
+L37构建时未安装/提交/push/发布；其后已按用户要求保存本地提交8c8ea19，手机此前只装L29原型。原生媒体/iOS/长期训练未验收，Play P01、旧包、根目录dist与个人文件保留；L36精简/L35搜索与L31媒体证据仍按各自范围使用。
+
+---
+
+# 历史：L36界面精简与常驻搜索验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。包含L35常驻搜索全部行为，详情去阶段/暂停小字、拖动旋转提示与协助发力小标题；header高度、舞台、底部卡片/footer保持。首页单行“Flare · 托马斯助手”、headingHeight44，phase-map宽180/视图高124（短高128/96）；front/back视觉文字移除，可访问标签保留两面含义。
+
+全项目分析无问题，flow10、library4、muscle3共17项定向测试通过。scene `npm run build`与`npm run verify`的v33/v38/v41检查通过，输出 `index-C1A1p886.js` / `index-DLlJ_85v.css`。离线Web与ARM64 release构建、原Debug证书签名和aapt2 `dev.mhgd.flare` / `1.0.0+1`通过；具名/通用APK相同，身份见 [版本台账](version-ledger.md)，旧L35/L34包保留。原媒体未改，历史资产证据沿用自身范围。
+
+[真实移动Chrome](../../output/drill-media-20261011/L36-browser-ui-check.json)通过：390首页标题正确、phaseCard180×182、view高124、两面视觉文字0、舞台736；髋屈肌详情阶段/暂停/协助标题与旋转提示元素均无，全身截图已核对。三角肌预填后改肩袖肌群得到rotator-cuff-A，训练详情返回保留编辑词，切居家得到rotator-cuff-B；552清空后支撑/B多项两列，滚动使首卡y240→196而搜索框矩形20/70/520/62严格不变。console错误/警告均0；独立CLI浏览器已关闭，用户IAB保留。
+
+[包核对](../../output/drill-media-20261011/L36-package-check.json)通过：场景index/JS/CSS及未改媒体清单4项源/Web/APK一致，新具名/通用包相同，旧L35/L34哈希保持。此核对只覆盖包身份与上述资产一致性。L36未安装/提交/push/发布，原生媒体/前后台/快速切换、iOS与长期训练待验收；Play P01、根目录dist、个人文件与计划存储保留。
+
+---
+
+# 历史：L35常驻搜索与肌群名称预填验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。搜索框固定在训练标题下方常驻，移除顶栏搜索/关闭开关与独立肌群chip。详情练习入口预填group.label，按query+section+tier检索，无隐藏groupId；编辑词/框内clear立即更新，切tier保留词，训练详情返回保留已编辑词，普通更多入口空query。有词时隐藏无关Today展示，不改store.todayIds。L34卡片/footer对齐、首页/模型保持。
+
+全项目分析无问题，flow10、library4、muscle3共17项定向测试通过。离线Flutter Web与ARM64 release开发APK构建、原Debug证书签名及aapt2包身份通过；版本仍1.0.0+1，包字节/哈希见 [版本台账](version-ledger.md)，旧L34具名包原哈希保留。当时未改scene/原媒体，不重复相应验证。独立浏览器验收尚未完成即继续L36，当前搜索浏览器结论见L36记录。
+
+L35未安装/提交/push/发布，手机此前仅安装L29原型；原生媒体/前后台/快速切换、iOS与长期训练未验收。Play P01、根目录dist、个人文件与本地训练计划保留。
+
+---
+
+# 历史：L34协助发力下对齐验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。本轮只调整app_shell布局：协助发力标题与完整横滑卡片移出上方标题/一句作用的Expanded纵向滚动区，作为固定底部block放在练习按钮上方，间距22px；支撑/主力/左右小字保持去除。标题作用在上，剩余空间留中间；精准训练、暂停时刻/模型与首页舞台保持。
+
+全项目分析无问题，`muscle_library_flow_test.dart`3项定向回归通过：卡区在footer上方12–28px且不属于标题纵向scroll，横滑前后卡片/footer坐标保持。历史L33独立30项证据保留自身范围，不与本次3项重复相加。离线Flutter Web与ARM64 release开发APK构建通过，原Debug证书及aapt2 `dev.mhgd.flare`、versionCode 1/versionName 1.0.0核对通过；[L34包身份](../../output/drill-media-20261011/L34-package-check.json)中具名/通用相同，旧L33包保留原哈希，完整身份见 [版本台账](version-ledger.md)。
+
+[真实浏览器](../../output/drill-media-20261011/L34-browser-ui-check.json)通过：三角肌390宽卡片y=680–748、footer770–826，552宽卡片745–813、footer835–891，gap均22px；横滑400px前后两者矩形不变，上方元信息缺席。阶段12暂停3.3秒，390/552舞台736/801px保持，console错误0。无新的场景/原媒体变动，不扩大场景或资产审计；L33媒体证据仅用于原字节未改部分。L34未安装/提交/push/发布，手机此前只装L29原型；原生媒体、iOS与长期计时未验收，Play P01、根目录dist及个人文件保留。
+
+---
+
+# 历史：L33肌群详情与精准训练验证（2026-10-11）
+
+source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。肌群详情下半区使用色条标题、阶段why一句作用、全量协同肌群160px银色卡横滑及固定底部练习按钮；核心/主力/双侧小字和长知识/深层说明从该面板移除。按钮直接进入exact-group训练列表，显示“清除肌群筛选”可访问标签；场景/部位/搜索按AND筛选，场景保留group，清标签保留section，全部或冲突section清group并同步Shell，训练详情返回不复活已清除group。返回肌群保留selected/time/model。
+
+全项目 `flutter analyze --no-pub`无问题。flow10项与timer/motion/library filters/muscle widgets/新增3项对应的20项共独立30项通过；此前flow10+新增3是其中子集，不重复相加。离线Flutter Web与ARM64 release开发APK已构建、原开发证书验证通过，版本仍1.0.0+1，具名/通用包身份只在 [版本台账](version-ledger.md) 维护。本轮未修改场景/原媒体，不重复scene验证；L31/L32的相关素材与原行为证据保留。
+
+Chrome实际 [L33浏览器核对](../../output/drill-media-20261011/L33-browser-ui-check.json)通过：390×844髋屈肌A/B/C各1项正确，清标签后保留核心C档4项，过滤卡片播放/暂停与训练详情返回保持过滤；返回原8.4秒、群组及736px舞台，固定按钮底边826px。552×909舞台801px、按钮底边891px；协同卡横滑400px前后footer矩形严格相同，两尺寸console错误0。[L33源/Web/APK核对](../../output/drill-media-20261011/L33-delivery-check.json)全通过，aapt2实际确认dev.mhgd.flare、versionCode 1/versionName 1.0.0，原Debug证书验证通过。手机此前只安装L29原型，L33未安装；原生51项媒体/前后台/快速切换、长期计时及iOS未验收。旧L32/L31/L30、Play P01、根目录dist和个人文件保留，未提交、push或发布。
+
+---
+
+# 历史：L32联合筛选与子页标题验证（2026-10-11）
+
+当前source state为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。训练第一行全部部位/支撑/核心/腿部、第二行无器械/居家/健身房，部位与A/B/C按AND筛选并叠加搜索；切换一维保留另一维，今日训练独立。共享PageHeader与训练详情固定顶部标题、肌群详情/计时实际标题均居中，左右44px留位；路径/课程/测评/记录/设置/关于与系统许可页同步，首页样式及3D舞台尺寸保持。
+
+`flutter analyze --no-pub`无问题。既有flow/timer/motion20项与新增联合筛选/标题4项共24项通过；此前两文件15项是同一子集，不重复相加。共享及训练详情标题允许两行，肌群/计时固定顶栏单行省略；等宽两侧留位避免偏移，肌群标题框按原两行文字缩放高度保留stage尺寸；计时顶栏保持48px，组/侧/子动作副标题保留。L31手机两列、实际首帧/封面姿态与51项媒体保持；本轮没有scene/媒体资产改动，因此不重复场景构建/验证，历史L30/L31证据仍按其范围使用。
+
+离线Flutter Web与ARM64 release开发APK构建/签名完成，版本1.0.0+1，包身份见 [版本台账](version-ledger.md)。390×844实际浏览器已确认标题中心x=195、顶部y=15.5，部位按钮y=66、场景y=114；核心+居家→无器械切换保持部位并更新训练结果。[子页浏览器核对](../../output/drill-media-20261011/L32-browser-ui-check.json)通过训练、设置、关于、记录、路径、自评、课程、训练详情、计时与肌群标题居中；半程土耳其长标题两行完整显示，肌群进出iframe高度同为736px，console错误/警告为0。552宽度标题中心x=276。[最终源/Web/APK核对](../../output/drill-media-20261011/L32-delivery-check.json)通过，102项媒体与播放器/清单、v41/图标/银色图保持，旧L31具名包哈希保持。L32未安装真机，原生51项媒体/前后台/快速切换、长期训练与iOS待验收；旧L31/L30、Play P01、根目录dist及个人文件保留，未提交、push或发布。
+
+---
+
+# 历史：L31卡片首帧与手机两列验证（2026-10-11）
+
+当前source state仍为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。L31修复点播时撤封面过早、封面与0秒动作姿态不一致及手机列数；视频/封面原字节不改，L30原互斥、详情/计时与循环不计次行为保留。包身份见 [版本台账](version-ledger.md)，交付与素材限制见 [训练视频交付](drill-media-2026-10-11.md)。
+
+手机短边<600或列表宽≤700固定两列（横屏同限），桌面自适应；媒体网格取消Pressable缩放。上层封面保留到播放器实际呈现首帧，再120ms淡出，减少动态时即时。48项封面对应1秒，`deltoids-B`、`hip-abductors-B`、`rotator-cuff-B`三项对应2秒；媒体清单/runtime/URL以 `poster_time_seconds`传入，metadata先seek、等待seeked才ready，不提前播放0秒。首帧事件使用requestVideoFrameCallback，旧WebView回退playing后双requestAnimationFrame与current-data检查；暂停/隐藏/销毁取消尚未完成的首帧监听和播放队列，恢复不自动播放。
+
+`flutter analyze --no-pub`无问题；数据、controller、UI flow、timer pause四个受影响测试文件25项通过，其中controller8项。JS实际代码的VM时序检查通过：[L31播放器时序记录](../../output/drill-media-20261011/L31-player-sequence-check.json)绑定代码SHA，1/2秒流程均为seek→ready→对应时刻play→first-frame，含取消/迟到、恢复、无首帧误报及旧WebView回退。真实浏览器 [51项媒体检查](../../output/drill-media-20261011/L31-browser-media-check.json)51/51通过初始封面seek、实际首帧及暂停；这不认证源姿态或代替原生验收。
+
+离线Flutter Web与ARM64 release开发APK构建/签名完成，版本仍1.0.0+1，具名/通用包身份归入台账。[布局与封面检查](../../output/drill-media-20261011/L31-browser-layout-and-cover.json)通过390×844、552×909与844×390横屏两列；人为延迟player/MP4加载时真实Flutter封面仍保持，截图人工确认，实际首帧后播放。单播放器互斥、暂停后hasFrame=true且当前帧稳定，console error/warn均0。[L31最终交付核对](../../output/drill-media-20261011/L31-delivery-check.json)通过：102项视频/封面原资产保持，3个player文件和清单在源/Web/APK一致，旧L30具名包保留原哈希。L31未安装真机，51项Android原生播放、前后台/快速切换、长期训练与iOS待验收；未提交、push或发布。旧L28、Play P01、根目录dist与个人数据保留。
+
+---
+
+# 历史：L30训练动作卡片验证（2026-10-11）
+
+当前source state为master HEAD `96e1db00a6f1544d11ee12cc3502974034aace93`加未提交工作树。本轮交付为51项离线训练视频与静态帧卡片，版本仍1.0.0+1；包身份、字节、哈希与开发签名只在 [版本台账](version-ledger.md) 维护。详细接入、素材限制见 [训练视频交付](drill-media-2026-10-11.md)、[媒体清单](../assets/data/drill-media-manifest.json) 与 [署名](../assets/licenses/Drill-media-ATTRIBUTION.md)。未提交、未push或发布，L28及更早证据保留在下方历史章节。
+
+`flutter analyze --no-pub` 无问题，受影响范围的 `flutter test --no-pub` 定向36项通过。51项视频逐文件SHA与来源一致，51项完整ffmpeg解码通过；此检查只证明媒体完整性，不重新认证源动作姿态或消除原QA限制。所有训练展示已使用视频静态帧；`deltoids-B`文案改为半程土耳其起立至高桥，原ID、剂量、历史记录引用保持。
+
+浏览器逐视频检查51/51通过：播放、暂停、禁用、恢复后不自动播放及无视频时间轴/控制底栏，见 [逐视频记录](../../output/drill-media-20261011/browser-media-check.json)。[App流程记录](../../output/drill-media-20261011/browser-flow-check.json)通过列表互斥与再点暂停、详情手动播放、进入计时释放旧媒体、计时页播放不误暂停训练、训练暂停停视频、视频循环不自动计次及人工计次记录。计时/计次页默认显示可收起示范，训练时钟仍由DrillTimer拥有。
+
+曾在训练页隐藏iframe时因stage尺寸为0触发 `RangeError: A positive viewport is required`。`scene/src/main.js`现于refreshHotspots检测宽/高≤0并清空callouts返回；不改动画或取景算法。`node tools/verify-billboard-clearance.mjs`、`npm run build` 与 `npm run verify`（在app/scene）通过，v41仍540帧、22骨、44轨道及136选择案例。生成场景为 `index-Z1C3-Jvt.js` / `index-1IjNUedj.css`。
+
+`flutter build web --no-pub --no-web-resources-cdn` 与 `flutter build apk --release --no-pub --target-platform android-arm64`通过。Native loopback与App Web预览均支持MP4/JPEG、GET/HEAD和单Range的206/416，保留路径边界；独立8998端口的九组请求通过，临时服务已结束，见 [预览服务检查](../../output/drill-media-20261011/preview-server-check.json)。[最终交付核对](../../output/drill-media-20261011/final-delivery-check.json)全通过：具名/通用L30 APK一致，51项视频与封面在源/APK/Web逐项一致，旧L28与Play P01保留原哈希。
+
+最终L30离线Web在390×844实际浏览器烟雾通过：示范画面完整、185.67px；列表互斥、换分类释放媒体，详情/列表/计时切换无视频控制底栏。计时实际自然从3秒准备进入15秒工作再进入休息，视频播放不中断训练，训练暂停停示范并释放；深浅主题点播均通过，返回首页仅保留原scene；隐藏scene后console error/warn均0，见[最终烟雾记录](../../output/drill-media-20261011/browser-final-smoke.json)。此短流程不替代T01长期或原生前后台验收。
+
+手机此前仅保留数据安装L29旧控件原型，冷启动Status ok、849ms；没有完成51项原生视频验收。手机现已被取走，L30尚未安装。Android原生全部播放/切换/前后台、长期训练、性能/温度/内存及iOS仍待验证；软件与浏览器结果不扩大为设备或商店验收。Play P01、旧L28、根目录dist和个人数据保留。
+
+---
+
+# 历史：L28文档收束与推送预检（2026-10-11）
+
+用户显式调用cockpit-closeout，要求台账管理、文档对齐、保存提交及push。Preflight全程只读通过后才编辑。范围是L28图标来源、版本/安装身份、当前入口、待验收及Git发布记录；不修改运行代码、模型、生产资源、包、签名或个人数据。当前产品保存点是下方L28，后续收束提交完整SHA由Git定位。
+
+| Preflight字段 | 实际结果与source state |
+| --- | --- |
+| baseline / 依据 | L26 `632fdb673d50908083e9fb43440886f2e2ac5684`，ref `632fdb6`；上轮已明确保存点，也是L28直接父提交；`git rev-parse --verify`及`git merge-base --is-ancestor`通过 |
+| HEAD / stage delta | `3f0fda327a5e5716b89ba297447612148b542199`；相同基线下1提交/49路径，M43/A6；34生产图标、1背景XML、2选定原图/提示词、1导出清单、1工具、9入口/来源/许可/台账文档、1真机裁图 |
+| 仓库及授权 | `git rev-parse --show-toplevel`为E:/AII-3D/3D-Body；当前master。用户授权正常push；12:48远端master为812d948，祖先核对通过，远端无L28标签 |
+| canonical发现 | 从根/App AGENTS及README明确入口一跳发现asset-sources、version-ledger、verification、development-roadmap、motion-v41。当前段落分别管理来源/图标、版本/包/发布、证据、M0–M7与T01–T05、动作合约；各自历史段落及旧v38/PR记录为archive，不能代替当前L28 |
+| 完整状态与归属 | `git status --porcelain=v1 --untracked-files=all`完整21项，无截断；tracked/staged/unstaged/deleted/renamed均0。用户视频Air-Flare/air-flare-demo.mp4为阶段前用户素材1项；app/assets/brand下PNG12与JSON8为本Agent的未选图标/抽卡历史20项，全部保留不提交、不读用户视频内容 |
+| 必要核对 | 12:48在上述完整HEAD运行一次性Node文档检查：9个入口/canonical文件169个本地Markdown链接均存在；逐图Get-FileHash与icon-manifest一致共34项，选定原图SHA一致，全部生产输出已入Git；git diff --check通过 |
+| 旧证据适用性 | L26到HEAD的app/lib、app/scene、app/test、app/test_web、app/assets/scene、app/assets/muscles、加载/首页图、pubspec与根src/public/tools有限路径差异为0。L26的软件/动作证据可用于未改部分，L28图标构建/51项交付及12:19真机观察对应提交前同一生产资源工作树；34源哈希与HEAD一致，提交前只有新增追溯文件/裁图及文档。真机观察只证明对应已安装包，不冒充全设备验收 |
+| 确定alignment findings | 路线仍写L28未提交；台账缺L26/L28完整SHA，Web身份写L26；历史标签/通用包/PR7说明沿用当前措辞；本次push授权、观察及完整Preflight尚未独立记账 |
+
+本次实际检查的current路径为 `AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`、`app/docs/asset-sources.md`、`app/docs/version-ledger.md`、`app/docs/verification.md`、`app/docs/development-roadmap.md`、`app/docs/motion-v41.md`。补充核对既有Snow署名、pubspec资产白名单、Android图标引用/背景、iOS Contents及Web manifest/index：均与选定图标清单对应；未改Snow署名或生产配置。动作/人物主题映射motion-v41，平台图标/来源映射asset-sources，Git/包映射version-ledger，观察与source state映射verification，验收边界映射roadmap；没有扩大到旧编辑器或其他项目。
+
+原图与34导出的逐图SHA、上轮构建命令和设备观察在下方L28段保留。34项哈希及有限产品delta证明已有证据继续适用于本次仅文档修改；本轮不读build产物/凭据/设备日志，不重建或重装。Alignment仅修正上述确定问题，提交前后再核对同一21项保留文件、有限文档delta、本地链接及空白。远端实际结果只在成功push后记录；Git上传不等于Play发布，T01–T05保持原状态。
+
+Alignment已修正所有确定finding，保存为 `f89db3fa3fa227071b0dfccafa2d6778a65a4413`。保存前一次性Node检查实际通过：170个本地链接；此前verification正文归一换行后与3f0fda3逐字相同；delta严格限定version-ledger、verification、development-roadmap三份文档；完整状态为本Agent文档3项加原21项保留文件，git diff与暂存diff的空白检查均通过。提交后有限排除这三份文档的 `git diff --quiet 3f0fda3 HEAD` 为0，HEAD核对为f89db3f，原产品证据继续适用。
+
+12:52正常atomic push退出0，L26/L28、f89db3f收束文档及原L28标签同时推送成功；独立ls-remote核对master及标签解引用SHA与本地相同，完整结果只在version-ledger维护。提交后完整状态恢复为同一21项未跟踪文件。本段和台账中的实际回执是后续仅文档补记；保存前按相同链接/空白/有限delta和完整状态规则复检，不重复产品构建或设备验证，也不把Git推送算作商店发布。
+
+---
+
+# 历史：L28青绿色运动服图标交付（2026-10-11）
+
+用户选择新角度B。选定原图经尺寸导出及平台裁切留边，34项PNG尺寸/不透明要求/哈希通过；Android 5密度普通与adaptive前景的10项编译后像素，与源PNG逐项一致。圆形/iOS圆角/Android adaptive/Web maskable预览为 `output/imagegen/flare-logo-20261011/adopted-teal/crop-preview.png`。原图、全提示词、来源及SHA在 `assets/brand/icon-flare-angle2-b.imagegen.json` 与 `icon-manifest.json`，复现为 `node app/tools/export-brand-icons.mjs --sharp-root <existing sharp package>`。
+
+用户确认后建立本地L28版本检查点 `app-l28-20261011`。本次版本整理仅补充选定素材来源、[桌面图标实景裁图](screenshots/2026-10-11/L28-home-icon.png)及Git身份文档；生产图标与既有L28构建内容相同，APK源文件与具名副本SHA仍为 `c836a597ce7297dd09fb3c3e967595b6f26f31fbbde22b426651e5e37927624b`，Play P01哈希保持。保存前核对导出清单34项文件SHA及源图SHA、检查Git暂存范围和 `git diff --check`，不重复构建或扩大验收。
+
+`flutter build web --no-pub --no-web-resources-cdn --no-wasm-dry-run` 成功；`flutter build apk --release --no-pub --target-platform android-arm64` 成功，进程环境继续采用既有低内存Gradle参数。首次构建后补入本轮图标署名文本，重建Web/APK，再用既有开发证书签名；图标母版与署名在源/APK/Web逐字节一致。`apksigner verify --print-certs` 通过，开发证书SHA仍为 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。包字节/哈希及当前身份只在 [版本台账](version-ledger.md) 维护。
+
+交付核对共51项通过；与替换前L26 APK比较的41项场景、17银色图、加载与首页图片保持逐字节相同。实际HTTP读取Web7项图标/署名资产，与构建文件一致，favicon引用正确；430×932浏览器启动截图已保存，pageerror为0。检查报告为 `output/releases/L28-teal-logo-delivery.json` 与 `output/imagegen/flare-logo-20261011/adopted-teal/web-check.json`。
+
+`adb install -r --no-streaming` 于12:07:18（北京时间）成功，未卸载或清除数据；初次 `am start -W` 返回Status ok，进程18394，按PID抽样的AndroidRuntime/chromium错误日志为空。初次设备PIN锁屏，未输入或绕过凭据。用户随后解锁，12:19补验系统应用信息与桌面：青绿B图标已生效，人物、两鞋及橙色轨迹完整未裁切。桌面XML中Flare节点bounds为 `[339,570][640,896]`；force-stop后点击该节点中心冷启动，App进入原3D首页与同步人台，进程18954，按PID错误日志为空。实景证据为 `output/imagegen/flare-logo-20261011/adopted-teal/device-unlocked-appinfo.png`、`device-home-icon.png` 与 `device-launch.png`，记录 `output/releases/L28-teal-logo-device-check.json`。iOS仅完成12个被引用PNG的资源同步及尺寸/alpha检查，Windows未构建iOS。此次只改图标与署名，不运行Dart/场景全量测试；模型/功能既有证据继续按对应source state使用，不扩大为T01/T02完整验收。Play P01 AAB哈希保持。
+
+---
+
+# 历史：L26版本整理与接力检查点（2026-10-11）
+
+范围冻结为PR7交付基线 `812d948b49616d8edce20fd7ec46d70129e0fa27` 之后的App界面迭代：L06–L26加载/启动预热与剪影、高清全身小卡、柔边高亮、重点肌群一致性、3D卡片/圆点/细线及17银色图文条目。代码、生产资源、复现工具、已有定向测试及当前入口文档纳入本地检查点；不纳入 `Air-Flare/` 用户素材、个人数据、原导出、根编辑器、`build/`、`dist/`、`output/` 或签名材料。未改版号、标签、Play包或远端。完整checkpoint SHA由Git和本轮临时交接回执定位，不在提交中预填自身SHA。
+
+本次重新检查：8个受影响Dart文件 `flutter analyze --no-pub` 无问题；`flutter test --no-pub` 执行scene_controller、startup_splash、startup_prewarm、scene_reveal、muscle_widgets和flow_regressions六文件，30项通过。`app/scene` 的 `npm run build` / `npm run verify` 通过；重建场景仍为 `index-DBRgBX7q.js` / `index-1IjNUedj.css`。`verify-billboard-clearance.mjs`、`verify-presentation.mjs`、`verify-thumbnail.mjs`、`verify-motion-focus.mjs`、`verify-hotspot-depth.mjs` 五项定向检查通过。v41证据重新生成仅三个末位浮点变化，不改变结论或生产包。
+
+本次资产核对69项通过，具名/通用L26 APK、17张银色图片、摄影源哈希及场景HTML/JS/CSS在源目录、APK与离线Web一致，Play P01保持；报告 `output/releases/20261011-closeout-artifacts.json`。加载剪影的两张WebP已打包，`flare-loading.json` 是源目录制作元数据，按现有pubspec不打入运行包；授权和原GLB哈希齐全。入口文档103个本地链接存在。
+
+初次暂存检查识别到制作JSON的CRLF和生成包内第三方GLSL字符串尾空格。为保留已验收包的字节，`app/.gitattributes` 仅对这两类产物设置CR识别/生成字符串尾空检查范围，普通源码空白检查保持；另对清单绑定的两个摄影shader源保留原字节，避免跨平台换行改变SHA。四份摄影源的暂存字节与当前文件、原L26清单一致，复查 `git diff --check` 与暂存检查均通过。没有为了空白检查修改模型、图片或生成包。
+
+本次未重复构建Flutter APK/Web：当前L26已完成构建、安装、恢复银色及逐文件身份核对，本次只对齐文档并保存已经验证的产品；既有GPU截图/实际点击、旋转与拖动证据继续适用。未运行根编辑器全量历史检查，因为根源码未改变；没有另跑Flutter全量测试，按受影响范围执行六文件。T01长期计时、T02完整角度/设备性能/iOS、T03–T05内容和发布仍未完整验收。`callout-layout.js`、`sample()`/`sampleFixed()`及对应旧检查保留历史，当前3D卡片使用 `sampleFacing` 和 `billboard-clearance`；旧布局检查不替代当前路径的证据。
+
+---
+
+# 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
+
+L26按用户授权尝试钛银色金属人台与原色珐琅教学选区，仅改变截图专用物理材质、环境反射与细微拉丝，运行时人台和图文组件保持。17张透明512×512图片共592,628字节，素材清单为 `muscle-photography-v3-titanium`；拍摄记录保留在 `output/playwright/2026-10-11-muscle-thumbnails-metallic/`。
+
+离线Web及ARM64 release APK构建成功。具名APK `Flare-v41-metal-muscle-image-items-20261011-arm64.apk` 为45,615,269字节，SHA-256 `b1c83d7ccadcabbbaa60bf7fa1b145176ce72abdc161f83b31e40dae54a0ca98`，已用原开发证书保留数据覆盖安装并冷启动到所连手机，进程17949存在、抽样日志错误0。APK内17张图逐项SHA-256与 `metallic/render-report.json` 相同，共592,628字节；运行与复核证据为 `output/releases/L26-runtime-check.json`。
+
+用户先反馈金属质感不满意并要求试作黄色橡胶，随后查看手机银色截图，明确确认“这个银色可以 就这个了”。最终采用L26银色肌群图文条目；该确认只覆盖银色肌群图片与条目外观，不扩展为全App或其他T02验收。源图片和清单从原L26 APK恢复，通用APK与具名包相同，手机保持L26。离线Web重新构建回银色，17张图片逐项SHA-256与所选版本一致，Play P01保持；最终记录为 `output/releases/L26-silver-selection.json`。
+
+截图工具也精确恢复为L26：摄影JS逐字节匹配原清单源哈希，三张代表肌群重拍的WebP及1024PNG与原银色图逐字节相同；证据为 `output/playwright/2026-10-11-muscle-thumbnails-metallic/final-confirmation/verification.json`。复验后未改源模型、运行时材质或卡片逻辑。
+
+---
+
+# 历史试作：黄色橡胶肌群摄影（2026-10-11，L27，未安装）
+
+L27生成17张透明512×512黄色橡胶图片，共464,032字节，试作清单为 `muscle-photography-v4-yellow-rubber`；联系表与拍摄记录保留在 `output/playwright/2026-10-11-muscle-thumbnails-rubber/`。试作APK/Web构建完成，但未安装手机，不记为真机验收。用户最终确认L26银色后停止采用黄色；L25米白和L27黄色试作资料保留。
+
+---
+
+# 历史：肌群缩略图米白哑光材质（2026-10-11，L25，用户要求再调整质感）
+
+按用户当时要求，仅将截图专用人台改为暖米白哑光，并调整柔光；运行时人台、原网格、功能分区、颜色、镜头和图文组件保持。17张透明512×512 WebP共420,314字节，当时清单为 `muscle-photography-v2-ivory`，历史副本在 `output/playwright/2026-10-11-muscle-thumbnails-ivory/render-report.json`；摄影来源见 [资产说明](asset-sources.md)。
+
+17张图片的尺寸、RGBA透明、抗锯齿边缘及全部SHA-256复验通过；原GLB、分区、原色与相机和L24一致，1024渲染轮廓的alpha逐像素相同。实际米白联系表已查看，证据为 `output/playwright/2026-10-11-muscle-thumbnails-ivory/verification.json`、`render-report.json` 和 `muscle-contact-sheet.png`。本轮仅更新静态摄影资产，复用L24已通过的3项组件检查及原手机完整流程检查，不将素材检查当作真机观感验收。
+
+L25离线Web及ARM64 release APK已构建成功，使用原开发证书保留数据覆盖安装并冷启动到所连手机，进程17477存在、抽样日志错误0。APK内17张图逐项哈希与源文件相同，共420,314字节；具名包与通用APK一致。交付和运行证据为 `output/releases/L25-ivory-muscle-image-items-delivery.json`、`L25-runtime-check.json`。场景继续使用L23的 `index-DBRgBX7q.js` / `index-1IjNUedj.css`。
+
+用户体验后反馈米白质感仍不足，并授权尝试金属材质；L25的视觉方案由L26摄影替换，不记为视觉验收通过。最终包身份以版本台账为准。
+
+---
+
+# 历史：肌群条目模型摄影与图文入口（2026-10-11，L24，摄影外观由L25调整）
+
+按用户要求，指定肌群的点击条目采用实际人台渲染缩略图：本阶段主力、展开后的其他参与肌群及详情协同肌群使用统一图文组件，聚合展开入口显示最多3张小图。17张透明512×512 WebP共404,596字节，按肌群分别取景并保持原功能分区颜色；来源、镜头、哈希与复现工具见 [资产说明](asset-sources.md) 和 `assets/muscles/manifest.json`。图片是体表教学位置示意，不代表精确内部解剖。
+
+新组件3项widget检查通过：肌群条目/紧凑卡保持对应点击动作、320px宽与2倍系统文字不溢出、深浅主题共用图片且名称不重复朗读。既有 `phone safety → phase muscle → drill → local pain record → same paused frame` 流程1项通过，保留训练、疼痛记录和返回原暂停帧。受影响的两个Dart文件静态分析通过，离线Flutter Web和ARM64 release APK构建成功。
+
+离线Web已更新到L24，场景继续使用L23的 `index-DBRgBX7q.js` / `index-1IjNUedj.css`，没有因静态缩略图重做动作或卡片空间逻辑。实际浏览器已查看第10阶段主力列表、展开后的次要肌群及详情协同卡片截图，点击臀中肌条目及三角肌协同卡均进入对应详情并保留1.2秒暂停帧；浏览器错误0。截图在 `output/playwright/2026-10-11-muscle-items/`。
+
+L24已用原开发证书保留数据覆盖安装并冷启动到所连手机，进程16708存在、启动抽样日志无Flutter/JS/着色器异常。APK内17张图逐项哈希与源文件相同，共404,596字节；场景JS也核对相同，具名包与通用APK一致。交付和运行检查见 `output/releases/L24-muscle-image-items-delivery.json`、`L24-runtime-check.json`，Play P01哈希保持。真机布局、清晰度与观感待用户验收；当前包身份以版本台账为准。
+
+---
+
+# 历史：卡片地面与可见区域保护（2026-10-11，L23，场景修复保留在L24）
+
+用户确认平滑表现改善，但发现一个角度只剩橙色引导线。检查发现卡片没有最低世界高度保护，可能被写深度的阴影地面挡住；目标布局有效也不保证平滑中间帧仍在可见区域。L23检查卡片完整最低角点，至少高于地面0.03m，并将目标和实际动画矩形约束到宿主可见舞台内。保留投影深度、以完整canvas尺寸换算NDC，再回推世界位置；修正后更新引导线。L22双侧选择、同侧卡片、身体避让和连续位置过渡保持。
+
+场景build/verify、ARM64 release与签名通过。32视图96卡的目标身体/UI/屏幕避让、96/96圆点命中、同侧/单侧约束与6次双侧切换回归通过。实际鼠标水平、垂直连续拖动54帧、162张卡均保持3项、opacity=1、完整卡片在可见范围及最低角点不穿地面；报告`output/playwright/2026-10-11-guided-cards/visible-clearance-result.json`和`drag-visible-result.json`。这些检查不代替用户对所示角度的手机验收。
+
+L23已保留数据覆盖安装并冷启动，进程存在、启动抽样日志无Flutter/JS/着色器异常。场景`index-DBRgBX7q.js` / `index-1IjNUedj.css`，包内JS哈希与源构建一致，具名包/通用APK相同；离线Web仍L06，Play未重建。包身份见版本台账L23。
+
+---
+
+# 历史：平滑换侧、双侧选择与身体避让（2026-10-11，L22，可见区域由L23补修）
+
+本轮按用户连续反馈更新：圆点始终可见、可点，同色3D卡片移到身体外围，1.25px细引导线带轻白描边，从卡片边缘外连接到圆点边缘。双侧肌群通过`sampleFacing`优先选择当前可见/较近侧并保留侧别滞后；单侧约束保持。卡片按发力点相对画面身体中心的左右位置放在对应侧，12px死区避免反复换侧。19局部身体凸包用于检查完整卡片矩形，与手、鞋、头和躯体留8px空隙，屏幕/UI/相邻卡优先避让；候选包含窄边缘处的上下空位。按最新用户要求允许随镜头更新位置，覆盖L19严格固定世界偏移的要求。
+
+用户发现拖动时淡入闪切，L22取消透明度切换，改为连续世界位置插值，65ms响应时间常数，停止拖动后继续收敛到目标；首次/seek/新姿态直接定位。引导线跟实际位置，布局互避使用目标位置，避免卡片互相追逐。圆点始终不透明，卡片仍正对镜头并保留真实深度测试，过渡中允许身体自然遮挡。
+
+场景build/verify、ARM64 release及相同开发签名通过。`verify-billboard-clearance.mjs`手脚/局部凸包/SAT/边界/UI/卡片间距检查通过；实际模型双侧三角肌left→right→left及6次单侧约束检查通过。浏览器32视图共96张卡的目标矩形均满足身体/UI/屏幕/卡片间隙，圆点96/96命中对应肌群，卡片均在发力点对应侧，观察到6次实际身体侧别切换；播放收起/暂停恢复通过。70帧旋转检查中卡片opacity始终1，55个连续中间位置样本、最大单帧世界位移0.0771m，停止后收敛完成；实际点击左侧三角肌卡上报deltoids及原time=2。报告`output/playwright/2026-10-11-guided-cards/smooth-clearance-result.json`、`smooth-result.json`、`smooth-click.json`；GPU截图已查看，无场景错误事件。目标布局通过不等于任意缩放或全部过渡帧绝不覆盖身体，真机观感交用户验收。
+
+L20远距细线包、L21动态同侧初版及L22平滑补修包均保留具名APK。L22已保留数据覆盖安装并冷启动，运行进程存在、抽样日志无Flutter/JS/着色器异常。场景`index-_IXUxXK9.js` / `index-1IjNUedj.css`，包内JS哈希核对通过、具名包与通用APK一致；Play P01哈希保持，离线Web仍L06。当前包身份见版本台账L22。
+
+---
+
+# 历史：肌群附近的真实3D卡片（2026-10-11，L19，位置/遮挡规则由L20–L22调整）
+
+按用户要求将DOM卡片改为场景内Sprite：固定在真实肌群表面采样点附近，沿外法线偏移，正面始终朝镜头。旋转不改位置、不换身体侧、不做屏幕避让；动作姿态变化则跟随同一表面三角形。卡片和圆点参与人物深度测试，手臂/身体可遮挡全部或部分像素；卡片遮挡处的点击会交给前景人物。保留最多3项肌群及人体图一致性、同色底和单行名称，世界尺寸固定，由透视自然影响屏幕大小。进入详情或播放时收起，按帧绘制前更新，避免一帧滞后。
+
+`verify-hotspot-fixed.mjs`通过144次旋转位置/法线不变、8次姿态跟随，旋转额外蒙皮读取0；原depth、presentation、detail-transition检查通过。场景build/verify和ARM64 release通过。浏览器32视图均保持卡片世界位置/candidateKey不变及优先肌群一致，75个卡片中心命中本卡、16个被人物挡住，另5个中心命中更近卡片；播放/详情隐藏、暂停恢复通过。实际点击腹斜肌上报obliques及原time=2。GPU截图已查看，臀中肌卡片被前景腿局部遮挡。报告`output/playwright/2026-10-11-world-cards/result.json`、截图`world-cards.png`；无场景错误事件，真机观感由用户验收。
+
+L19已用相同开发证书保留数据覆盖安装并冷启动，进程存在、抽样日志无Flutter/JS/着色器异常。场景`index-DAy3D6oK.js` / `index-1IjNUedj.css`，包内JS与源构建哈希一致，具名包与通用包一致。离线Web仍L06，Play未重建；包身份见版本台账L19。
+
+---
+
+# 历史：优先肌群与人体图统一（2026-10-11，L18，卡片空间表现由L19替代）
+
+按用户最新反馈，将暂停托马斯圆点/卡片与左下人体图统一使用`phaseEmphasisItems`。沿用人体图的支撑、核心、腿部各取一个优先肌群、优先primary的规则，最多3项；当前8阶段均为3项。保留L17圆点和同色单行卡片样式，不再展开全部主力肌群。
+
+场景build/verify、ARM64 release构建及同开发证书签名通过。浏览器8阶段×4镜头32组合中，动作圆点、名称卡与人体图图例的肌群ID和颜色均一致，数量均为3；播放收起/暂停恢复通过，无场景错误事件。报告`output/playwright/2026-10-11-priority-markers/result.json`；不重复未改布局/点击逻辑的全量检查。L18已保留数据覆盖安装并冷启动，进程存在，抽样日志未见Flutter/JS/着色器异常。场景`index-CZ8cC2PA.js` / `index-1IjNUedj.css`，包内JS哈希核对通过。具名包、通用包一致，真机观感交用户验收；离线Web仍L06，Play包未重建。身份见版本台账L18。
+
+---
+
+# 历史：全部主力肌群圆点与同色卡片（2026-10-11，L17，数量由L18精简）
+
+按用户最新要求简化为彩色圆点和附近的单行名称卡。暂停主舞台读取当前阶段全部 primary 肌群（4～5项），不再只取3项教学示例；卡片底色与圆点使用同一原始肌群颜色，自动选择可读的深/浅文字。去掉气泡尾巴、远近缩放、变暗与虚化，视觉卡高30px、点击区44px。布局优先保留全部名称并就近安排，人物避让为软约束，卡片彼此、圆点和控件仍严格避让；小人参考图仍保留原3项教学示例。播放收起，暂停恢复。
+
+场景build/verify、ARM64 release构建及同开发证书签名通过。布局定向检查覆盖4～6点、320/390手机、横屏、边缘UI和16帧旋转，原模式回归通过。浏览器8阶段×4镜头共33视图均完整显示对应4～5个主力圆点和卡片，颜色一致、无缩放/虚化、播放收起/暂停恢复通过；真实点击卡片和圆点均上报triceps及原暂停time=0。报告`output/playwright/2026-10-11-primary-markers/result.json`。无场景错误事件，预览仅favicon 404；未截图/录屏，真机观感交用户验收。
+
+L17已保留数据覆盖安装并冷启动，进程存在，抽样日志未见Flutter/JS/着色器异常。场景`index-gFMzQHzA.js` / `index-1IjNUedj.css`，包内JS哈希与源构建一致，具名包与通用APK一致。离线Web仍L06、Play P01哈希保持；安装证据`output/releases/L17-primary-markers-delivery.json`，包身份见版本台账L17。
+
+---
+
+# 历史：近身气泡与轻微景深（2026-10-11，L16，视觉方案由L17替代）
+
+按用户要求移除长连线，卡片采用7px短尖角，优先左尾、必要时换到安全一侧并朝向对应肌群；气泡显示时收起原身体圆点，无近处安全位置则保留小圆点入口。布局限制尾尖与肌群的距离不超过80px，并避开人物、底部控件、其他卡片和短尾。连续小幅转动沿用安全位置；必须跨身体换边时在新位置淡入140ms，不从人物上方滑过。保留L15近亮远暗/近大远小，远半段加入最高0.55px轻微虚化、160ms过渡，44px点击区不缩小。
+
+人物避让改为19个局部包络并集，按完整三角形的主导骨分组、包含各顶点全部骨影响，不把肢体之间一概封成全身凸包。`verify-body-hulls.mjs`通过真实v41的3个姿态、633,180个顶点与996,618个完整三角形覆盖检查；9投影视角释放旧单凸包误占区域21.2%–51.8%。局部包络600点按姿态缓存，旋转不重读稠密网格，动作/材质/几何及缓存失效检查通过。`verify-callout-layout.mjs`通过短尾/近距/空隙/换边/退让、16帧微动及12帧旋转用例，原默认模式检查保留通过。
+
+场景build/verify、ARM64 release、同开发证书签名与包内JS哈希通过。最小浏览器检查覆盖8阶段×4镜头32视图、70张实际气泡，尾尖距均≤80px（均值56.02px），轻微虚化上限0.55px；真实拖动旋转没有误选，气泡真实点击保持原暂停帧，深浅主题/短尾/点击区检查通过。报告`output/playwright/2026-10-11-bubble-cards/browser-smoke-report.json`；未截图/录屏，预览仅favicon 404，无场景错误事件。这些技术检查不代替用户的真机观感验收。
+
+L16已保留数据覆盖安装并冷启动，进程存在、启动抽样日志未见Flutter/JS/着色器异常。场景`index-Dwm4FTPC.js` / `index-CQU6bP00.css`，具名包与通用APK相同，本地Web仍L06，Play P01哈希保持；身份见版本台账L16。
+
+---
+
+# 历史：卡片按距离连续变色和缩放（2026-10-11，L15，连线由L16气泡替代）
+
+用户认为L14的遮挡符号不直观，改为距离越远卡片越小、底色越暗，越近越大、越亮。移除旋转/详情图标、虚线和空心点的视觉状态；连续距离统一控制底色、缩放、阴影及引线强度，遮挡不再额外压暗或缩小。卡片保持不透明、无模糊、单行名称，基准36px高/13px文字，最多缩小至84%；透明点击区保持44px。大小、颜色和阴影使用160ms过渡，包括表面采样换点时从当前显示值平滑接续。深浅主题各自使用近亮远暗的底色范围，人物避让和原表面定位保持。
+
+场景`npm run build`/`npm run verify`、ARM64 release及签名通过。最小浏览器检查覆盖深浅主题×4阶段×正背镜头共16视图，32组远近比较均符合越远越小越暗；3张卡的实际渲染值均经过连续中间状态，44px点击区、无字幕/图标、无文字模糊和实际点击同帧选择通过。报告`output/playwright/2026-10-11-distance-cards/browser-smoke-report.json`，未截图/录屏；预览仅favicon 404，无场景错误事件。L15已保留数据覆盖安装并冷启动，进程存在、启动抽样日志未见Flutter/JS/着色器异常；手机观感交用户验收。
+
+场景`index-DX6eU9j0.js` / `index-BujHBhzo.css`已核对打包JS哈希，具名包与通用APK相同。本地Web仍L06，Play P01哈希保持；包身份见版本台账L15。
+
+---
+
+# 历史：单行肌群卡片与远近提示（2026-10-11，L14，视觉映射由L15调整）
+
+按用户反馈去掉左右侧/教学作用小字，卡片仅保留肌群名称、小色点和图标。视觉卡高34px，透明点击区仍44px；只缩放内部卡片，原人物轮廓/控件避让继续使用稳定边界。肌群相对人物中心的镜头深度控制轻微大小、透明度和阴影差异，文字不加模糊。当前视角确实背向或被身体遮挡时，才使用虚线、空心锚点与旋转图标；转到可见位置后恢复实线与普通详情图标。两种状态均可点进详情。
+
+锚点从原v41人物的教学分区表面三角形采样，避免内部关节或内层衣物被误判为遮挡；由不参与显示的3,144顶点/5,987三角形代理判断其他身体部位遮挡。姿态变化才更新代理，暂停旋转复用缓存，不改原网格、材质、骨骼或动画。远近与遮挡分别计算，不因肌群属于深层就一律提示被遮住；这些仍是教学位置提示，不代表精确解剖配准。
+
+`verify-hotspot-depth.mjs`通过34组左右覆盖、192姿态/视角、4例原始全网格射线交叉检查，以及镜头距离不改变身体相对远近、旋转不重新蒙皮的检查。`npm run build`、`npm run verify`及`verify-callout-layout.mjs`通过。最小浏览器检查覆盖8阶段×正背2镜头，共16视图48张卡，24可见/24遮挡及14次随镜头切换的遮挡变化；单行尺寸、实虚线、旋转图标、主题、播放收起和暂停恢复通过，遮挡卡真实点击仍上报原暂停帧。报告为本机`output/playwright/2026-10-11-depth-labels/browser-smoke-report.json`，未截图/录屏；预览仅favicon.ico 404，无场景错误事件。
+
+ARM64 release、相同开发证书签名、包内场景哈希核对通过；L14已保留数据覆盖安装并冷启动到所连Android，运行进程存在，启动后抽样日志未见Flutter/JS/着色器异常。场景`index-mDhXT4sr.js` / `index-DmFQePfJ.css`，具名包与通用包相同；本地Web仍L06，Play P01哈希保持。真机观感与性能交用户验收，包身份见版本台账L14。
+
+---
+
+# 历史：暂停肌群标签与空间避让（2026-10-11，L13，卡片表现由L14调整）
+
+暂停圆点升级为较小身体锚点、细引线与朝向镜头的文字卡片，列出肌群名、左右侧及教学作用；点卡片沿用原`select`桥接打开详情。标签按首页肌群图相同的支撑/核心/腿部三项重点选择，播放、详情、隐藏或图形错误时收起。位置采用真实3D锚点投影，字形保持屏幕朝向，近似等距左右侧与布局均保留滞后，减少镜头微移时换边；首次出现仅淡入，减少动态效果时关闭动效。
+
+避让范围由原模型骨影响包围盒投影凸包计算，包含衣物、头发、手指和鞋；标签与人物、彼此、实际肌群小卡和宿主底部按钮保持间隔，引线同样避开UI。没有合适空位时省略文字卡，保留可见小锚点；被UI遮住或超出视口的锚点一并隐藏，不强行覆盖动作。布局在实际场景/肌群卡渲染后更新，不新增持续动画循环或GPU读回。
+
+`verify-callout-layout.mjs`通过窄屏、高举腿、双手支撑、横屏、满屏退让、引线跨UI及80帧微移稳定性检查。真实v41检查8阶段×4镜头×3尺寸共96场景，2,533,632次网格投影均在160个影响包围点凸包内（越界0px），读取不改姿态；可见标签引线跨UI为0。390×650及430×740共64场景均3卡，320×480中5场景3卡、20场景2卡、7场景1卡。证据在本机`output/callouts-20261011/body-envelope-report.json`。
+
+`npm run build`及`npm run verify`通过，包含当前v41的540帧/136组选择。Playwright最小浏览器检查通过真实标签点击、同帧选择、详情返回后再点、播放/暂停与隐藏恢复、转镜头时锚点跟随/文字正立及深浅主题；报告`output/playwright/2026-10-11-callouts/browser-smoke-report.json`，未截图或录屏。ARM64 release与签名通过，L13保留数据覆盖安装并冷启动到所连Android；真机观感由用户验收。场景`index-BgD6BfTg.js` / `index-D3WpewDc.css`；本地Web仍L06，Play包未更新，包身份见版本台账L13。
+
+---
+
+# 动作人物高亮边缘（2026-10-11，L12，修复保留在L13）
+
+用户反馈短裤上的黄色肌群高亮凹凸、边缘粗糙。原实现先按顶点标记选区，再沿邻接网格平均五次；短裤局部边长相差约23倍，轮廓和柔边宽度受三角形布局影响。现在动作人物在片元阶段按连续参考坐标计算选区，统一柔边并按像素覆盖抗锯齿；同组选区取并集，不保留内部接缝。参考区域、左右选择、裆部/手部保护、原衣物材质和动作保持；CPU权重仅用于推荐机位，不再作为显示遮罩。
+
+`verify-motion-focus.mjs`通过：8,193个连续边界采样中843个不同柔边值，最大相邻差0.001781；组内并集、左右/空选区、26个区域的78个内部点及原材质保留通过。`verify-v41.mjs`的136组肌群/阶段、136个机位、裆/手泄漏0通过；`verify-thumbnail.mjs`的12组全身构图与代理材质/色彩链检查通过。真实WebGL 2技术校验加载原Snow，7组选择绘制、6个程序编译/链接通过，错误0；436个CPU/GPU遮罩样本（含168个柔边样本）最大差0.001995。报告在本机`output/motion-focus-20261011/gpu-report.json`；这是桌面着色检查，不代表手机性能或界面验收。
+
+场景与ARM64 release构建、APK签名校验通过。L12已用相同开发证书保留数据覆盖安装并冷启动到所连Android真机，观感直接交用户验收。场景使用`index-m0zK3hKO.js` / `index-BzaUuKbO.css`，包含L06–L11全部修复；本地Web仍L06，Play包未更新。包字节/哈希见版本台账L12。
+
+---
+
+# 启动预加载与真实动作剪影（2026-10-11，L11，修复保留在L12）
+
+用户要求把模型准备合并到splash，并用现有Flare人物的真实动作剪影替换图标动画。启动页现在覆盖整个App，实际同一个WebView在下方加载并完成人物与肌群图首帧；收到匹配的`presented`后，内容淡出120ms、背景揭开220ms，进入首页。没有固定最短等待，也不等待剪影播完。首次引导仍需明确确认，模型预热后暂停、进入时复用；普通页面返回不会重播全屏启动页。重试、图形恢复及首次主题背景一并衔接，恢复配置时显式恢复绘制可见性。
+
+剪影由当前未压缩v41 GLB经Three.js r170/AnimationMixer直接离线拍摄，斜前方−30°、俯视28°，固定全身机位；循环起点平移到单手展开姿态，未修改动作、原模型或材质。透明纯白WebP在Flutter中按主题染为橙色：384×384、216帧、24fps、9秒循环，824,972字节；静态首帧3,924字节，用于减少动态效果及错误状态。全部帧解码、透明边界/无裁切检查通过，已检查实际素材联系表。来源、哈希及复现命令见`assets/brand/flare-loading.json`，脚本在`tools/render-flare-loading.mjs`及`tools/encode-flare-loading.py`，Snow署名随包保留。
+
+`flutter analyze --no-pub`通过；启动遮挡/撤销/重试、同view预热与图形恢复、既有详情/页面流程共18项定向组件检查通过。本轮同时更新L10小卡尺寸的旧断言，并修正首次进入被误当作页面转场的问题。ARM64 release构建及签名校验通过，L11已保留数据覆盖安装并冷启动到所连Android真机。按用户要求直接交界面验收，未运行App UI自动化或额外录屏；素材拍摄不是App观感验收。L06–L10修复继续包含；本地Web仍L06，Play P01 AAB哈希不变，包身份见版本台账L11。
+
+---
+
+# 详情小卡片清晰度与全身构图（2026-10-11，L10，修复保留在L11）
+
+用户对比首页和详情截图，反馈详情肌群小卡模糊且脚部缺失。详情此前直接按主舞台medium的1.5倍像素密度绘制，首页则有独立2–3倍MSAA缩略图；同时详情按整张108px卡片构图，底部22px标题覆盖了脚部。
+
+详情现在复用首页的密度策略，在同一WebGL上下文中生成独立高清缓存；卡片加高到136px，标题与约74×102px图像区分开，镜头按完整包围盒8角投影留边。交换后的动作小卡也采用相同方式，原材质的色彩输出、选区和共享资源保持；缓存随选区、姿态、方向、尺寸/质量及环境失效，入场缩放不触发逐帧GPU读回。Flutter点击范围同步更新。
+
+`verify-thumbnail.mjs`的12组全身构图及材质/色彩注入/异常恢复检查、既有`verify-detail-transitions.mjs`和`verify-presentation.mjs`通过；场景及ARM64 release构建、APK签名校验通过。L10已保留数据覆盖安装并启动，按用户要求直接交真机界面验收；这些软件检查不代替清晰度和观感验收。包身份见版本台账L10，Web产物仍为L06，Play包未更新。
+
+---
+
+# 加载首帧与底部闪动修复（2026-10-11，L09，修复保留在L10）
+
+用户在L08反馈加载提示消失后先出现空舞台/空小卡片，底部背景也会闪动。原`ready`只表示资源及桥接可用，Flutter却立即揭开遮挡，后续才异步发送主题、底部留白和播放位置；加载遮挡使用纯色，与全屏渐变不一致。
+
+现在配置结束后单独请求`present`，场景确认人物及小卡片实际绘制、镜头/主题稳定，再经过两个浏览器帧返回匹配请求编号的`presented`与最终状态。中间状态不再使底栏跳回默认时间/阶段，空小卡片在绘制完成前不露出。加载标志先淡出120ms，背景保持不透明，再用220ms揭幕；遮挡按正式全屏渐变的相同坐标绘制。旧回执、重连、图形恢复和暂停时的重绘均已处理，复用视图保留呈现状态。
+
+`flutter analyze --no-pub`无问题，控制器/揭幕时序/既有流程共22项定向测试通过；`verify-presentation.mjs`、`verify-detail-transitions.mjs`、场景build/verify及ARM64 release构建通过。L09使用相同开发证书保留数据覆盖安装，冷启动成功；APK包含本次场景JS/CSS，抽样进程日志未发现Flutter、JS或Shader启动错误。按用户要求直接交真机界面验收，未额外录屏或执行浏览器UI验收。具名包见版本台账L09；Web产物暂仍为L06，Play包未更新。
+
+---
+
+# 首页重点肌群表现（2026-10-11，L08，表现保留在L09）
+
+用户反馈同步发力小人看起来全身都在用力。原因是图例只列支撑/核心/腿部各1项，小人却给阶段内全部主辅肌群着色。首页现在使用与图例相同的3项教学重点，其他部位改为中性灰、降低分区线对比；重点区域通过中心亮、边缘略暗的局部明暗变化提示收紧。变化跟随原动作时刻，暂停时冻结，减少动态效果时保持固定；不是测量的肌肉力量或肌电数值。
+
+每个阶段缓存两组图，再用Canvas 2D混合，没有引入每帧GPU像素读回。进入详情关闭首页表现开关，保留原选区、左右、深层斜线及动作人物材质。Node语法检查、三种材质ShaderLib组装/参数注入、场景build/verify、ARM64 release构建及APK签名校验通过。L08已保留数据覆盖安装并启动到所连手机；依用户要求直接交界面验收，未额外做截图或自动UI回归。Web产物暂仍为L06。
+
+---
+
+# 历史：加载页到人物的切换修复（2026-10-11，L07，后续由L09补修）
+
+用户已确认 L06 不再出现双图标，但加载提示淡出时人物仍提前透出。当前 L07 在整个场景上增加不透明主题背景，加载完成时同步移除遮挡和提示，取消两者交叉淡出。`dart format`、`git diff --check`、ARM64 release 构建及 APK 签名校验通过，已保留数据覆盖安装并冷启动到所连真机。按用户要求，本次直接交给用户做界面验收，不额外录屏或运行浏览器/界面回归；尚不宣称观感已验收。APK 身份见版本台账 L07；本地 Web 暂仍为下述 L06。
+
+---
+
+# 真机启动加载重叠修复（2026-10-11，L06）
+
+基于 `812d948b49616d8edce20fd7ec46d70129e0fa27` 的当前工作区修复，尚未提交。用户反馈冷启动时两个橙色加载图标和两行提示叠加：Flutter 的 `SceneLoading` 与内嵌场景的 HTML loader 同时显示，位置与动画时钟不同。场景现在在首屏通过已有 `FlareHost` / iframe 判断由宿主显示状态，禁用内层加载/错误 UI 与隐藏动画循环；Flutter 继续负责加载、错误和重试。独立打开场景仍保留原提示。
+
+- `app/scene` 的 `npm run build`、`npm run verify` 通过；Flutter ARM64 release APK、离线 Web 构建通过。Dart 仅更新注释，没有扩大运行全量测试。
+- 真实 Chromium 定向验证 3/3 通过：阻塞模型加载时，独立页面保留 loader；iframe 与模拟原生 bridge 从状态节点插入起即隐藏内层提示，额外 loader 动画请求为 0。强制加载失败仍向宿主发出错误，独立页仍显示重试；无未捕获 JS 错误。证据在 `output/playwright/2026-10-11-loading/verification-summary.json`。
+- 已连接 Xiaomi `2602BRT18C` / Android 16，使用相同开发证书覆盖安装 L06，保留 App 数据。录制一次实际冷启动，加载阶段仅一个图标和一行「正在载入 3D 动作」，随后正常显示并播放人物；启动后 App 位于前台，采集的 AndroidRuntime / Flutter 错误日志为空。录屏及帧图在 `output/device-run/2026-10-11/loading-fix-cold-start.mp4`、`loading-fix-single.png`、`loading-fix-ready.png`。
+- 生成场景 HTML、Web 打包 HTML、APK 内 HTML 的 SHA-256 均为 `c34440ec260827bd670d690258a5086f7bbb966669176453290b55cad74aa7f1`。当前包见版本台账 L06；原 PR7 具名包保留，Play P01 AAB 哈希未变。
+
+这次验证仅覆盖所连真机启动和加载显示；T01 长期计时、完整 T02 性能/手势与 iOS 验收继续待办。
 
 ---
 
@@ -116,7 +602,7 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 | 签名与版本 | 构建时工作树即 `92e459f` 提交内容（pubspec `1.0.0+1`、gradle读取key.properties）；validateSigningRelease通过。Play Console显示版本1(1.0.0)、目标SDK 36、API 24+，优化后新安装33.9MB |
 | 静态分析 | `flutter analyze --no-pub` 无问题（closeout时复验，见下） |
 | Play接入 | 应用 `dev.mhgd.flare` 创建；11/11设置清单完成（隐私政策Worker、内容分级全年龄/PEGI 3、数据安全零收集、受众13+、类别健康与健身、无广告、广告ID"否"、健康声明"活动和健身"、登录/政府/金融声明）；商品详情zh-CN含7张475×844(9:16)截图、512图标、1024×500置顶大图 |
-| 送审状态 | 封闭测试Alpha轨道：AAB+178国家+测试者邮箱列表"Flare Closed Testers"（含指定测试账号（邮箱仅在平台与本机私密记录））；发布概览15项更改已送审，页面显示"正在审核中"（Google称通常7天内）。预检曾阻塞于"广告ID声明不完整"，如实补报"否"后通过 |
+| 送审状态 | 封闭测试Alpha轨道：AAB+178国家+测试者邮箱列表"Flare Closed Testers"（含mhgd3250905@gmail.com）；发布概览15项更改已送审，页面显示"正在审核中"（Google称通常7天内）。预检曾阻塞于"广告ID声明不完整"，如实补报"否"后通过 |
 
 Play页面状态是送审时外部观察，不替代审核结论。真机安装/性能仍为T02、长期前台计时仍为T01；生产发布被平台锁定为"≥12名测试者连续14天后申请正式版权限"，测试加入链接 `https://play.google.com/apps/testing/dev.mhgd.flare`。隐私政策 `https://flare-privacy.294851575.workers.dev` 部署于Cloudflare Workers（源码在根项目 `output/store/flare-privacy-worker/`，本机资源）；商店素材在 `output/store/`。本轮closeout必要验证：3份修改文档本地链接/事实字段检查、`git diff --check`、`flutter analyze --no-pub`；未重跑产品测试与3D验证（产品代码有限delta仅build.gradle.kts/pubspec，且analyze通过）。
 
@@ -362,8 +848,20 @@ Android软件渲染模拟器能够安装此前调试包并显示欢迎页。进�
 - 加载动画分帧以 @napi-rs/canvas 离屏渲染核对（沙箱无 Chromium）
 - 台账：docs/device-feedback-2026-10-09.md
 
-## iOS 准备（2026-10-09，Hark，无 Mac）
 
-- 内容：iOS 15.0 / 仅 iPhone、深色启动屏、单尺寸图标、Info.plist（zh-Hans、出口合规）、PrivacyInfo.xcprivacy、WKWebView 舞台设置、WebContent 进程回收自动恢复、`integration_test/ios_smoke_test.dart`、`tools/ios/` 脚本。规划和验收见 [ios-plan-2026-10-09.md](ios-plan-2026-10-09.md)。
-- 沙箱验证：`dart analyze lib test test_screens integration_test` 无问题；`flutter test --no-pub` 73/73；plist 可以解析；pbxproj 括号配平。
-- 未验证：Xcode 编译、签名、模拟器和真机运行、冒烟测试，全部按 ios-plan 的 I01–I12 在 Mac 上验收，不把本节记作 iOS 通过。
+## 保留的 iOS 独立分支验证历史（未替代 L43 验证）
+
+# iOS v1 本地验证（2026-10-10）
+
+专用分支 `ios/main` 基于 PR #8，当前产品源 `7ffa5e6c1d06ef78ee7ff537a3b18b3389793726`，S4 `1.0.0 (3)`；关于页旧开发版本及过期授权提示已清理，署名和许可保留。10 项相关 UI 测试、analyze、归档/导出、严格验签、证书/描述文件及 Apple 验证通过；249 份运行资源与四份隐私清单和 S3 一致，28 种源码图标的字形齐全。同源 Debug Simulator Build 3 关于页原生复查通过，偏好保留；它不等于签名 IPA 或真机执行。精确 S4 IPA 获授权后已上传，上传后哈希不变，Apple 处理为 VALID / APP_STORE_ELIGIBLE；商店草稿重新加载为 Build 3，原单账号内部组的 S4 为 IN_BETA_TESTING、自动分发关闭，S2 历史构建保留。初始截图、系统减弱动效与 S2/S3 历史证据分别保留，未重跑整套原生流程。
+
+iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒训练完成、实际后台 94.3 秒暂停及冷重启记录保留；同一调试进程持续 24 分 18 秒。加载层保存点 `3a85bd9` 在 Pro 模拟器两次实际 WebContent 中断恢复/重试通过（1422ms，33 次状态确认）；平台恢复代码随后未改变。最终产品另通过系统 Reduce Motion 开启时的真实首启/主题/详情/计时/原生存储验证，Flutter 与 WKWebView 均读取到该偏好，加载图标静止。该场景加载窗口记录 5 个资源、外部来源为零，不是完整抓包或飞行模式验收。最终未签名 arm64 Archive C03 绑定 `83f0920`，215,768,913 字节；本机 `candidate/candidate-manifest-r3.json` 记录身份与校验。
+
+用户授权注册、签名与普通推送后，Apple 门户和 App Store Connect 的 `dev.mhgd.flare` 已核对。随后用户批准精确 S1 上传与商店草稿保存；S1 被 Apple 上传前验证以生成脚本未签名（90035）拒绝，未上传。修复后 S2 为 `dev.mhgd.flare / 1.0.0 (1)`，50,642,770 字节，SHA-256 `87d58c73f058ab6ef5f4fd4030af4b602bea65c93971c69db9978774cd40129f`；严格验签、描述文件/证书、三个 arm64 执行文件和四份隐私清单通过，Apple 验证退出 0。商店版本、中文文案、分类、支持/隐私网址和 10 张截图已保存，服务器截图状态全部 COMPLETE、顺序/校验和一致；用户另行批准 S2 精确文件后已通过 `altool --upload-package` 上传，退出 0；按回执查询 Apple Build 1 为 VALID。随后按单独授权创建“Flare iOS v1”内部组，关闭自动分发，仅添加指定的一名现有团队账号及 S2 构建；重新加载后构建“正在测试”、账号“已邀请”，60 字测试说明与本地草稿一致。本机 `testflight-internal-s2-20261010.json`、`candidate/candidate-manifest-s2.json` 及 `app-store-draft-saved-20261010.json` 留证。
+
+新增授权的 S2 商店绑定、无需登录、审核说明、复用版权与联系人、手动发布、免费/全部 175 个地区供应以及关闭 Mac/Vision Pro 商店供应已保存；服务端确认 175 个地区价格均为零、供应全开、预购关闭，两项平台供应标志均为 false。用户已确认训练图与品牌图发布权。公开隐私页的本地存储、备份和 iOS 删除措辞已按单独授权[完成修订](privacy-policy-ios-v1-draft.md)：现有 Worker 的生产模块与批准的 3,060 字节补丁一致，公开 HTTP 200 的 HTML 哈希与完整预览一致，既有联系段落及配置保留。
+
+这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认；用户要求等其回来连接 iPhone 后继续，真机手势/性能/触感、飞行模式、旧 iOS、最终合规及 App Review 仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，商店保存事实与最终门禁见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
+
+---
+

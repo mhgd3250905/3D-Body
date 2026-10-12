@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
+import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -61,17 +62,21 @@ class PrimaryAction extends StatelessWidget {
     required this.onPressed,
     this.arrow = false,
     this.icon,
+    this.height = 56,
+    this.semanticsLabel,
   });
   final String label;
   final VoidCallback? onPressed;
   final bool arrow;
   final IconData? icon;
+  final double height;
+  final String? semanticsLabel;
   @override
   Widget build(BuildContext context) => Pressable(
     scale: .975,
     child: SizedBox(
       width: double.infinity,
-      height: 56,
+      height: height,
       child: FilledButton(
         onPressed: onPressed,
         child: Row(
@@ -83,7 +88,10 @@ class PrimaryAction extends StatelessWidget {
               const SizedBox(width: 8),
             ],
             Flexible(
-              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(label, semanticsLabel: semanticsLabel, maxLines: 1),
+              ),
             ),
             if (arrow) ...[
               const SizedBox(width: 8),
@@ -338,13 +346,9 @@ class DrillTile extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    drillArt(drill.thumbnailAsset),
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    frameBuilder: (context, child, frame, sync) =>
-                        fadeInFrame(context, child, frame, sync),
+                  child: SizedBox.square(
+                    dimension: 64,
+                    child: DrillMediaCard(drillId: drill.id),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -403,6 +407,8 @@ class DrillCard extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) => Pressable(
+    // Playback is an in-place toggle; do not resize its live platform surface.
+    scale: 1,
     child: Material(
       color: FlareColors.surface,
       borderRadius: BorderRadius.circular(20),
@@ -415,12 +421,7 @@ class DrillCard extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: FlareColors.raised,
-                child: Image.asset(
-                  drillArt(drill.thumbnailAsset),
-                  fit: BoxFit.cover,
-                  frameBuilder: (context, child, frame, sync) =>
-                      fadeInFrame(context, child, frame, sync),
-                ),
+                child: DrillMediaCard(drillId: drill.id),
               ),
             ),
             Padding(
@@ -627,9 +628,13 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
     widget.onChanged(value);
   }
 
-  int _indexAt(double dx, double width) => (dx / width * widget.segments.length)
-      .floor()
-      .clamp(0, widget.segments.length - 1);
+  int _indexAt(double dx, double width) {
+    final x = Directionality.of(context) == TextDirection.rtl ? width - dx : dx;
+    return (x / width * widget.segments.length).floor().clamp(
+      0,
+      widget.segments.length - 1,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -658,6 +663,11 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                       duration: FlareMotion.of(context, FlareMotion.quick),
                       style: TextStyle(
                         fontFamily: 'FlareSans',
+                        fontFamilyFallback: const [
+                          'NotoSansKR',
+                          'NotoSansArabic',
+                          'NotoSansDevanagari',
+                        ],
                         fontSize: 13,
                         height: 1.2,
                         letterSpacing: .2,
@@ -668,11 +678,14 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                             ? FontWeight.w600
                             : FontWeight.w500,
                       ),
-                      child: Text(
-                        widget.segments[i].$2,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.center,
+                        child: Text(
+                          widget.segments[i].$2,
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
                       ),
                     ),
                   ),
@@ -714,7 +727,7 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
             children: [
               Positioned.fill(
                 child: AnimatedAlign(
-                  alignment: Alignment(
+                  alignment: AlignmentDirectional(
                     count == 1 ? 0 : -1 + 2 * shown / (count - 1),
                     0,
                   ),

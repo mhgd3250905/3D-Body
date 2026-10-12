@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import 'scene_controller.dart';
+import '../../l10n/app_localizations.dart';
 
 class ScenePlatformView extends StatefulWidget {
   const ScenePlatformView({super.key, required this.controller});
@@ -34,7 +35,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     final frame = element as web.HTMLIFrameElement;
     _frame = frame;
     frame
-      ..title = '托马斯全旋 3D 动作'
+      ..title = AppLocalizations.of(context).sceneAccessibleTitle
       ..src = Uri.base.resolve('assets/assets/scene/index.html').toString();
     frame.setAttribute('allow', 'fullscreen');
     frame.setAttribute('scrolling', 'no');
@@ -71,10 +72,17 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _frame?.title = AppLocalizations.of(context).sceneAccessibleTitle;
+  }
+
+  @override
   void didUpdateWidget(covariant ScenePlatformView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller == widget.controller) return;
     final wasReady = oldWidget.controller.ready;
+    final wasPresented = oldWidget.controller.presented;
     oldWidget.controller.detachCommandSink(_sink);
     widget.controller.attachCommandSink(_sink);
     if (wasReady) {
@@ -91,6 +99,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
         'detail': oldWidget.controller.detail,
       });
     }
+    if (wasPresented) widget.controller.retainPresentedView();
   }
 
   @override

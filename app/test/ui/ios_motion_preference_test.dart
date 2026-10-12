@@ -1,10 +1,8 @@
-import 'package:flare/main.dart';
-import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/loader_mark.dart';
+import 'package:flare/ui/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 FlareLoaderPainter _painter(WidgetTester tester) =>
     tester
@@ -19,13 +17,10 @@ FlareLoaderPainter _painter(WidgetTester tester) =>
         as FlareLoaderPainter;
 
 Future<void> _openLoader(WidgetTester tester) async {
-  await tester.pumpWidget(const FlareBootstrap());
-  await tester.pumpAndSettle();
-  final welcome = tester.element(find.byType(WelcomePage));
-  Navigator.of(welcome).push<void>(
-    MaterialPageRoute<void>(
-      builder: (context) =>
-          const Scaffold(body: Center(child: FlareLoaderMark())),
+  await tester.pumpWidget(
+    MaterialApp(
+      builder: (context, child) => FlareMotionPreferences(child: child!),
+      home: const Scaffold(body: Center(child: FlareLoaderMark())),
     ),
   );
   await tester.pump();
@@ -35,7 +30,6 @@ Future<void> _openLoader(WidgetTester tester) async {
 void main() {
   setUp(() {
     rootBundle.clear();
-    SharedPreferences.setMockInitialValues({});
   });
 
   testWidgets('iOS reduceMotion alone stops the app loading mark', (

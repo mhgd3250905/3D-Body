@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GROUPS } from './phase.js';
 import { resolveGroup, MUSCLE_BY_ID } from './legacy/muscle-map.js';
 import { CAMERA_PRESETS } from './player.js';
-import { mixColor, themeSettling } from './theme.js';
+import { createThumbnailRenderer, fitThumbnailCamera, thumbnailDensity } from './thumbnail.js';
+import { sceneStrings } from './localization.js';
 
 export function createDetailView(player, phaseMap, onModelChange, focusDirection = () => null) {
   let saved = null, selected = null, model = 'motion', views = {};
@@ -12,6 +13,9 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
   // The DOM button remains a fallback for a direct scene preview.
   if (window.parent !== window || window.FlareHost) { mini.tabIndex = -1; mini.setAttribute('aria-hidden', 'true'); }
   mini.innerHTML = '<span>肌群图</span>'; player.container.append(mini);
+  const miniImage = document.createElement('canvas'); miniImage.setAttribute('aria-hidden', 'true'); mini.append(miniImage);
+  const thumbnail = createThumbnailRenderer(player.renderer, miniImage);
+  let thumbnailKey = null, thumbnailEnvironment = null;
   // A model swap can arrive before the detail camera finishes gliding. Save
   // its destination so returning to the locked athlete view cannot strand
   // it at a partly framed angle. Idle/orbit views still save their exact view.
@@ -56,9 +60,13 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     canvas.classList.remove('model-swap'); void canvas.offsetWidth; canvas.classList.add('model-swap');
   }
   function showScene() {
+    thumbnailKey = null;
     lockCamera(); phaseMap.refreshEnvironment(); player.setDisplayScene(model === 'muscles' ? phaseMap.scene : null);
-    mini.querySelector('span').textContent = model === 'motion' ? '肌群图' : '动作';
-    mini.setAttribute('aria-label', model === 'motion' ? '切换到全身肌群模型' : '切换到托马斯动作');
+    updateLocalization();
+  }
+  function updateLocalization() {
+    mini.querySelector('span').textContent = model === 'motion' ? sceneStrings.muscleMap ?? '肌群图' : sceneStrings.motion ?? '动作';
+    mini.setAttribute('aria-label', model === 'motion' ? sceneStrings.switchToMuscles ?? 'Muscles' : sceneStrings.switchToMotion ?? 'Motion');
   }
   function open(groupId, phase) {
     const entering = !saved, changed = selected !== groupId;
@@ -101,28 +109,24 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     if (setModel(model === 'motion' ? 'muscles' : 'motion', phase)) onModelChange?.(model);
   }
   function renderMini() {
-    if (!selected || mini.hidden) return;
-    const rect = mini.getBoundingClientRect(), stage = player.container.getBoundingClientRect();
-    if (!(rect.width > 0 && rect.height > 0)) return;
-    const width = rect.width, height = rect.height, x = rect.left - stage.left, y = stage.height - (rect.bottom - stage.top);
+    if (!selected || mini.hidden) return false;
+    // Layout dimensions exclude the entrance animation's scale. A moving
+    // card reuses its sharp bitmap instead of doing GPU readbacks each frame.
+    const width = miniImage.clientWidth, height = miniImage.clientHeight;
+    if (!(width > 0 && height > 0)) return false;
     const alternate = model === 'motion' ? 'muscles' : 'motion';
-    const b = player.getMetrics().bounds;
-    const box = alternate === 'muscles' ? phaseMap.getFullBounds() : new THREE.Box3(new THREE.Vector3().fromArray(b.min), new THREE.Vector3().fromArray(b.max));
-    const center = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
     const direction = alternate === 'muscles' ? muscleDirection(selected) : (views.motion ? views.motion.position.clone().sub(views.motion.target) : motionDirection());
-    miniCamera.aspect = width / height; miniCamera.updateProjectionMatrix();
-    const vertical = Math.tan(THREE.MathUtils.degToRad(16)), distance = Math.max(size.y / 2 / vertical, size.x / 2 / (vertical * miniCamera.aspect)) + size.z;
-    miniCamera.position.copy(center).addScaledVector(direction.normalize(), distance * 1.12); miniCamera.lookAt(center);
+    const density = thumbnailDensity(player.quality);
+    const key = [alternate, selected, player.time, width, height, density, player.quality, player.renderer.toneMappingExposure, ...direction.toArray()].join(':');
+    if (key === thumbnailKey && thumbnailEnvironment === player.scene.environment) return true;
+    const box = alternate === 'muscles' ? phaseMap.getFullBounds() : fullMotionBounds();
+    fitThumbnailCamera(miniCamera, box, direction, width, height);
     phaseMap.refreshEnvironment();
-    const renderer = player.renderer, previous = { viewport: renderer.getViewport(new THREE.Vector4()), scissor: renderer.getScissor(new THREE.Vector4()),
-      scissorTest: renderer.getScissorTest(), color: renderer.getClearColor(new THREE.Color()), alpha: renderer.getClearAlpha() };
-    try {
-      renderer.setScissorTest(true); renderer.setScissor(x, y, width, height); renderer.setViewport(x, y, width, height);
-      renderer.setClearColor(mixColor(0x171922, 0xeceae5), 1); if (themeSettling()) player.dirty = true; renderer.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera);
-    } finally {
-      renderer.setViewport(previous.viewport); renderer.setScissor(previous.scissor); renderer.setScissorTest(previous.scissorTest); renderer.setClearColor(previous.color, previous.alpha);
-    }
+    phaseMap.withThumbnailDensity(density, () => thumbnail.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera, width, height, density, alternate === 'muscles'));
+    thumbnailKey = key; thumbnailEnvironment = player.scene.environment;
+    return true;
   }
-  return { open, close, toggle, setModel, reset, refit, renderMini, mini, getModel: () => model,
-    dispose() { close(); mini.remove(); } };
+  function releaseGpu() { thumbnail.dispose(); thumbnailKey = null; thumbnailEnvironment = null; }
+  return { open, close, toggle, setModel, reset, refit, renderMini, releaseGpu, updateLocalization, mini, getModel: () => model,
+    dispose() { close(); releaseGpu(); mini.remove(); } };
 }

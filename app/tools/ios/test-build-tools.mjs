@@ -45,8 +45,8 @@ if [[ "$1" == "--version" ]]; then echo 'Flutter 3.47.6 • channel stable'; fi
 if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi`);
   executable('uname', "echo Darwin");
   executable('sw_vers', "echo 26.6");
-  executable('xcodebuild', "echo 'Xcode 26.6'");
-  executable('xcrun', "echo 'iOS 26.5 (available)'");
+  executable('xcodebuild', 'echo "Xcode ${IOS_FIXTURE_XCODE:-26.6}"');
+  executable('xcrun', 'if [[ "$1" == "--sdk" ]]; then echo "${IOS_FIXTURE_SDK:-26.5}"; else echo "iOS 26.5 (available)"; fi');
   executable('plutil', 'exit 0');
 
   assert.equal(run('bash', ['app/tools/ios/build.sh', 'check']).status, 0);
@@ -56,6 +56,9 @@ if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi
   assert.equal(run('bash', ['app/tools/ios/build.sh', 'unknown']).status, 1);
   preserved();
   assert.equal(run('bash', ['app/tools/ios/doctor.sh']).status, 0);
+  preserved();
+  assert.equal(run('bash', ['app/tools/ios/doctor.sh'], { IOS_FIXTURE_XCODE: '16.4' }).status, 1);
+  assert.equal(run('bash', ['app/tools/ios/doctor.sh'], { IOS_FIXTURE_SDK: '18.5' }).status, 1);
   preserved();
   assert.equal(run('bash', ['app/tools/ios/doctor.sh'], { IOS_TOOL_FAIL: '1' }).status, 1);
   preserved();

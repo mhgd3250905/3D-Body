@@ -1,29 +1,16 @@
 # Flutter offline Flare scene
 
-This Vite bundle renders the supplied v38 baked Snow animation without loading
-the BodyParts3D atlas or any CDN. `npm ci && npm run build` writes only the
-generated files under `../assets/scene/`. Flutter web loads
-`assets/assets/scene/index.html`; native hosts load the same bundle with a local
-origin. Every runtime model URL is relative to `index.html`.
+当前运行时为v41烘焙Snow与AnimationMixer；源码入口、固定来源、22骨/44轨/540帧和0–9序列域映射以[motion-v41.md](../docs/motion-v41.md)为准。`src/legacy`、v33/v38、裸肤study派生与旧优化记录保留历史，不能作为当前展示或验证结果。
 
-The 12 modules in `src/legacy` are byte-for-byte copies from
-`08_源代码/3D-Body-design-muscle-sync/src`. Their JSON dependencies are in
-`src/public/coach` to preserve the original import paths. The bundled official
-sequence remains the package's immutable v33 baseline, with source steps
-09–16 then 09. It is not the current playback source. The current animation
-uses `source/coach/flare-coach-v38-animated.glb` from the new package and its
-losslessly encoded `public/coach/flare-coach-v38-animated.meshopt.glb.gz`.
-`tools/v38-source-manifest.json` records this separate source and derived assets.
-The old web app's local pose library is neither read nor modified. The current
-contract and package hashes are documented in [motion-v38.md](../docs/motion-v38.md).
+`npm ci` 后执行 `npm run build`，Vite只写入 `../assets/scene/`。Flutter Web使用同源iframe，Android/iOS使用loopback来源读取同一包；模型/字体/翻译均离线，无CDN。运行资产与许可证见[asset-sources.md](../docs/asset-sources.md)，构建及实景证据见[verification.md](../docs/verification.md)。
 
-The single clip `flare_v38_loop` contains 540 keys over 8.991662025 seconds,
-22 deform/helper bones and 44 position/quaternion tracks. AnimationMixer plays
-this completed animation. Do not rerun IK, reinstall spine helpers or integrate
-the old paced clock: their effect is already baked into the clip. The Flutter
-bridge keeps canonical sequence time 0–9; `src/v38-clock.json` maps that time
-to/from the clip's wall time. `src/v38-phases.json` preserves the supplied
-phase/support/muscle timeline. Playback speed multiplies the wall clock once.
+## 当前L43展示
+
+首页和动作详情保持原服装、面孔与v41动作，详情只高亮当前群组，脸/头发/手/鞋不着色。动作详情可旋转，禁缩放/平移；站立人台可旋转/缩放，当前群组两侧同时高亮。86×136小卡交换模型且保留各自机位、同一选择与暂停时刻。
+
+宿主保持同一WebView/画布，发送 `viewport.bottom` 遮挡量；详情在顶部栏下上下各50%，相机按上半区完整取景，下半区由Flutter显示介绍/协同卡/footer。首页inset仍按transport计算。默认均衡密度上限3、高清4、省电1，均不超过设备DPR；切模型不重建画布。标签4倍纹理关闭mipmap二次模糊。首页同步图通常宽180/模型高124，短舞台宽128/高96；不显示正面/背面视觉文字，可访问含义保留。
+
+14语短名/读屏和本地字体由 `localization` 命令更新，保持动画时间且不镜像3D人物；功能色区是教学位置提示，不是肌电或解剖精确配准。知识卡片的连续展开由Flutter负责，不改变scene尺寸。当前检查点/安装包见[version-ledger.md](../docs/version-ledger.md)。
 
 ## Flutter bridge
 
@@ -41,14 +28,16 @@ channel receives JSON strings. Web: parent iframe sends
 | `reset` | none | Restore camera; preserve time, selection, loop and playback |
 | `camera` | `view`: front, back, side, standard | Change camera without changing time |
 | `select` | `groupId` or null | Pause and select the functional teaching group |
-| `detail` | `groupId` or null | Same paused pose, close camera; null restores main camera and preserves selection |
+| `detail` | `groupId` or null | Same paused full-body pose; null restores main camera and preserves selection |
 | `detail_model` | `value`: motion, muscles | Swap the active detail model; retain the same group and paused time |
-| `quality` | `value`: low, medium, high | Home pixel ratio caps 1/1.5/2; medium/high detail uses at least 2; low disables shadow |
+| `quality` | `value`: low, medium, high; battery/balanced aliases | Shared pixel ratio caps 1/3/4, capped by device DPR; low disables shadows |
 | `visibility` | `visible` boolean | Hidden pauses and stops GPU rendering |
+| `viewport` | `bottom` px, `animate` boolean | Host bottom chrome; detail uses half the available stage height, without resizing the canvas |
+| `localization` | `groups`, `shortGroups`, `locale`, `rtl`, localized strings | Update labels/accessibility and choose local font by locale; keep model orientation and time |
 
 `ready` includes `period`, `time`, `phase` (integer source step 9–16) and phase
 ticks. `state` includes `time`, `period`, `playing`, `speed`, `phase`, `selected`
-(nullable group ID), `detail`, `detailModel` (motion or muscles), `loop`, `quality`, `ready`, and `errorCode`.
+(nullable group ID), `detail`, `detailModel` (motion or muscles), `loop`, `quality`, `ready`, `presented`, and `errorCode`.
 Commands emit state immediately; animation state is throttled to 10 Hz.
 Hotspot/mesh taps emit `select` with `groupId` and `time`; the host opens its
 detail UI and sends the `detail` command. `error` includes `code` and
@@ -57,6 +46,10 @@ detail UI and sends the `detail` command. `error` includes `code` and
 Muscle IDs: `deltoids`, `rotator-cuff`, `triceps`, `forearms`, `serratus`,
 `scapular`, `chest`, `lats`, `abs`, `obliques`, `erectors`, `hip-flexors`,
 `glute-max`, `hip-abductors`, `adductors`, `quadriceps`, `hamstrings`.
+
+## 历史：v38/v33显示、study派生和原包优化
+
+以下保留当时的原始设计与复现说明，已由上方v41/L43展示契约覆盖；其中“current”仅指记录当时。不要据此切换默认模型、恢复旧比例/标签或声称当前验证通过。
 
 While playing the athlete has its original materials and no labels, circles or
 arrows on the actor. The lower-left panel shows the supplied CC0 static mannequin
@@ -146,7 +139,7 @@ owner of navigation/native visibility, and Web document visibility belongs to
 the player. Colors are approximate functional
 teaching panels, not anatomical geometry or muscle activation measurements.
 
-## Relative core teaching-map calibration
+### 历史：Relative core teaching-map calibration
 
 `tools/calibrate-muscle-map.mjs` measures trustworthy core cross sections by
 intersecting the original body triangles with planes. `src/core-calibration.json`
@@ -172,7 +165,7 @@ npm run calibrate:muscles
 npm run verify:muscles
 ```
 
-## Warm ivory matte study derivative
+### 历史：Warm ivory matte study derivative
 
 The user restored the study display for specific muscle detail on 2026-10-09.
 Its bare body, featureless head and warm ivory matte material reuse the retained
@@ -232,7 +225,7 @@ from the deliberate Blender sculpting, head remeshing and decimation: the
 study derivative is not claimed to retain the original Snow head topology.
 No model, plugin or paid generation service was purchased.
 
-## Verification and provenance
+### 历史：Verification and provenance
 
 Run `npm run verify` for current source/asset hashes, animation and clock
 mapping, study binding/display invariants and offline bundle checks. Source

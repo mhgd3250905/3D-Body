@@ -5,6 +5,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_de.dart';
+import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +104,22 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('zh')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('hi'),
+    Locale('id'),
+    Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('pt'),
+    Locale('ru'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+  ];
 
   /// No description provided for @appName.
   ///
@@ -139,7 +166,7 @@ abstract class AppLocalizations {
   /// No description provided for @motionBrand.
   ///
   /// In zh, this message translates to:
-  /// **'FLARE · 托马斯全旋'**
+  /// **'Flare · 托马斯助手'**
   String get motionBrand;
 
   /// No description provided for @more.
@@ -247,13 +274,13 @@ abstract class AppLocalizations {
   /// No description provided for @pausedHint.
   ///
   /// In zh, this message translates to:
-  /// **'点选肌群查看详解'**
+  /// **'点选肌群'**
   String get pausedHint;
 
   /// No description provided for @playingHint.
   ///
   /// In zh, this message translates to:
-  /// **'暂停后可点选肌群'**
+  /// **'暂停后查看'**
   String get playingHint;
 
   /// No description provided for @loadingScene.
@@ -409,7 +436,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchDrills.
   ///
   /// In zh, this message translates to:
-  /// **'搜索训练或英文名称'**
+  /// **'搜索训练或肌群'**
   String get searchDrills;
 
   /// No description provided for @libraryCount.
@@ -489,6 +516,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'移出今日训练'**
   String get remove;
+
+  /// No description provided for @clearMuscleFilter.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除肌群筛选'**
+  String get clearMuscleFilter;
 
   /// No description provided for @timerReady.
   ///
@@ -1009,7 +1042,7 @@ abstract class AppLocalizations {
   /// No description provided for @speedLabel.
   ///
   /// In zh, this message translates to:
-  /// **'默认播放速度'**
+  /// **'默认速度'**
   String get speedLabel;
 
   /// No description provided for @qualityLabel.
@@ -1089,6 +1122,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'一起发力'**
   String get together;
+
+  /// No description provided for @assistMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'协助发力'**
+  String get assistMuscles;
 
   /// No description provided for @sceneNone.
   ///
@@ -1305,6 +1344,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'关闭搜索'**
   String get closeSearch;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空搜索'**
+  String get clearSearch;
 
   /// No description provided for @spec.
   ///
@@ -1570,11 +1615,131 @@ abstract class AppLocalizations {
   /// **'{day}，未训练'**
   String notTrainedOn(String day);
 
+  /// No description provided for @drillDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'观看动作示范'**
+  String get drillDemo;
+
+  /// No description provided for @hideDrillDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'收起示范'**
+  String get hideDrillDemo;
+
+  /// No description provided for @demoReplay.
+  ///
+  /// In zh, this message translates to:
+  /// **'重播'**
+  String get demoReplay;
+
+  /// No description provided for @demoSeek.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放进度'**
+  String get demoSeek;
+
+  /// No description provided for @demoSpeed.
+  ///
+  /// In zh, this message translates to:
+  /// **'示范速度'**
+  String get demoSpeed;
+
+  /// No description provided for @demoFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'视频暂时无法播放，请重试'**
+  String get demoFailed;
+
+  /// No description provided for @demoPaused.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练已暂停，示范也已暂停'**
+  String get demoPaused;
+
   /// No description provided for @finishedLine.
   ///
   /// In zh, this message translates to:
   /// **'{sets} 组全部完成'**
   String finishedLine(int sets);
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'语言'**
+  String get languageLabel;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get languageSystem;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'App 语言'**
+  String get languageTitle;
+
+  /// No description provided for @sceneAccessibleTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'Flare 托马斯全旋 3D 动作'**
+  String get sceneAccessibleTitle;
+
+  /// No description provided for @weekDayLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'星期{day}'**
+  String weekDayLabel(String day);
+
+  /// No description provided for @syncEffort.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群图'**
+  String get syncEffort;
+
+  /// No description provided for @muscleMap.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群图'**
+  String get muscleMap;
+
+  /// No description provided for @phaseMapAccessibility.
+  ///
+  /// In zh, this message translates to:
+  /// **'随动作阶段同步的肌群正面和背面定位图'**
+  String get phaseMapAccessibility;
+
+  /// No description provided for @viewGroup.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看{group}'**
+  String viewGroup(String group);
+
+  /// No description provided for @reviewFirstPhases.
+  ///
+  /// In zh, this message translates to:
+  /// **'自行回顾 09–11：后撑、移重与侧撑是否连贯'**
+  String get reviewFirstPhases;
+
+  /// No description provided for @reviewFullLoop.
+  ///
+  /// In zh, this message translates to:
+  /// **'自行回顾整圈：换手、开腿与节奏是否连贯'**
+  String get reviewFullLoop;
+
+  /// No description provided for @wristFlexion.
+  ///
+  /// In zh, this message translates to:
+  /// **'腕屈'**
+  String get wristFlexion;
+
+  /// No description provided for @wristExtension.
+  ///
+  /// In zh, this message translates to:
+  /// **'腕伸'**
+  String get wristExtension;
 }
 
 class _AppLocalizationsDelegate
@@ -1587,16 +1752,65 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'de',
+    'en',
+    'es',
+    'fr',
+    'hi',
+    'id',
+    'it',
+    'ja',
+    'ko',
+    'pt',
+    'ru',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'id':
+      return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'zh':
       return AppLocalizationsZh();
   }

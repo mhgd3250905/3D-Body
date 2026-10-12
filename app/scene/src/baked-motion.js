@@ -37,14 +37,28 @@ export function createBakedMotion(gltf, rig, clock = null) {
     if (object.isSkinnedMesh) { object.frustumCulled = false; meshes.push(object); }
   });
   if (bones.size !== 22) throw new Error('baked_rig_mismatch');
-  const point = new THREE.Vector3();
+  const point = new THREE.Vector3(), boneIds = new Map([...bones.keys()].map((name, index) => [name, index]));
+  const localBoxes = new Map();
   for (const mesh of meshes) {
     mesh.skeleton.update();
     const { skinIndex, skinWeight, position } = mesh.geometry.attributes;
+    const membership = triangleBoneGroups(mesh, boneIds);
     for (let i = 0; i < position.count; i++) {
       mesh.getVertexPosition(i, point).applyMatrix4(mesh.matrixWorld);
       for (let k = 0; k < 4; k++) if (skinWeight.getComponent(i, k) > 1e-7)
         boxes.get(mesh.skeleton.bones[skinIndex.getComponent(i, k)].name).expandByPoint(point);
+      let mask = membership[i];
+      while (mask) {
+        const bit = mask & -mask, group = 31 - Math.clz32(bit); mask ^= bit;
+        if (!localBoxes.has(group)) localBoxes.set(group, new Map());
+        const influences = localBoxes.get(group);
+        for (let k = 0; k < 4; k++) {
+          if (skinWeight.getComponent(i, k) <= 0) continue;
+          const name = mesh.skeleton.bones[skinIndex.getComponent(i, k)].name;
+          if (!influences.has(name)) influences.set(name, new THREE.Box3());
+          influences.get(name).expandByPoint(point);
+        }
+      }
     }
   }
   const landmarks = Object.fromEntries(Object.entries(rig.landmarks).map(([name, value]) => [name, { point: new THREE.Vector3(...value),
@@ -76,19 +90,49 @@ export function createBakedMotion(gltf, rig, clock = null) {
   }
   const mixer = new THREE.AnimationMixer(model), action = mixer.clipAction(clip);
   action.setLoop(THREE.LoopOnce, 1); action.clampWhenFinished = true; action.play();
-  let time = 0, bounds = null;
+  let time = 0, bounds = null, envelope = null, bodyHulls = null;
+  // Each skinned vertex is a weighted combination of points inside these
+  // bone influence boxes. Their projected convex hull conservatively covers
+  // the complete clothed actor, including fingers, hair and shoes. Callouts
+  // can avoid it without skinning 211k vertices on every camera orbit.
+  const envelopeSources = [...boxes].flatMap(([name, box]) => box.isEmpty() ? [] :
+    [box.min.x, box.max.x].flatMap(x => [box.min.y, box.max.y].flatMap(y =>
+      [box.min.z, box.max.z].map(z => ({ name, point: new THREE.Vector3(x, y, z) })))));
+  // Assign complete triangles to a dominant-bone region. For each region,
+  // include a separate box for *every* bone influencing any of its vertices.
+  // A skinned vertex is a non-negative weighted combination of transformed
+  // box points, so it lies in this region's convex hull; its complete triangle
+  // does too. A union of ordinary per-bone boxes would miss those blended
+  // faces. Local hulls keep the gaps between spread limbs available to labels.
+  const localSources = [...localBoxes.values()].map(influences => [...influences].flatMap(([name, box]) =>
+    [box.min.x, box.max.x].flatMap(x => [box.min.y, box.max.y].flatMap(y =>
+      [box.min.z, box.max.z].map(z => ({ name, point: new THREE.Vector3(x, y, z) }))))));
+  function getBodyEnvelope() {
+    if (!envelope) {
+      const deltas = new Map([...bones].map(([name, bone]) => [name, bone.matrixWorld.clone().multiply(rest.get(name).inverse)]));
+      envelope = envelopeSources.map(({ name, point }) => point.clone().applyMatrix4(deltas.get(name)));
+    }
+    return envelope;
+  }
+  function getBodyHulls() {
+    if (!bodyHulls) {
+      const deltas = new Map([...bones].map(([name, bone]) => [name, bone.matrixWorld.clone().multiply(rest.get(name).inverse)]));
+      bodyHulls = localSources.map(sources => sources.map(({ name, point }) => point.clone().applyMatrix4(deltas.get(name))));
+    }
+    return bodyHulls;
+  }
   function reset() {
     // Deactivate PropertyMixer bindings before installing a bind pose. Merely
     // editing bones leaves cached track values unchanged, so seeking back to
     // exactly the same frame would otherwise fail to write the animated pose.
     action.stop();
     for (const [name, bone] of bones) { const source = rest.get(name); bone.position.copy(source.position); bone.quaternion.copy(source.quaternion); bone.scale.copy(source.scale); }
-    time = 0; bounds = null; model.updateMatrixWorld(true); for (const mesh of meshes) mesh.skeleton.update();
+    time = 0; bounds = null; envelope = null; bodyHulls = null; model.updateMatrixWorld(true); for (const mesh of meshes) mesh.skeleton.update();
   }
   function update(value) {
     time = THREE.MathUtils.clamp(value, 0, clock.period);
     action.enabled = true; action.paused = false; action.play(); mixer.setTime(clock.toWall(time));
-    model.updateMatrixWorld(true); for (const mesh of meshes) mesh.skeleton.update(); bounds = null;
+    model.updateMatrixWorld(true); for (const mesh of meshes) mesh.skeleton.update(); bounds = null; envelope = null; bodyHulls = null;
   }
   function getMetrics() {
     const deltas = new Map([...bones].map(([name, bone]) => [name, bone.matrixWorld.clone().multiply(rest.get(name).inverse)]));
@@ -101,5 +145,30 @@ export function createBakedMotion(gltf, rig, clock = null) {
       motionRevision: revision, playback: 'AnimationMixer', clip: clip.name, wallTime: clock.toWall(time), clipDuration: clip.duration,
       skinning: { bones: bones.size, batches: meshes.length, authoredWeights: true } };
   }
-  return { reset, update, getMetrics, clock, dispose() { mixer.stopAllAction(); mixer.uncacheRoot(model); } };
+  return { reset, update, getMetrics, getBodyEnvelope, getBodyHulls, clock, dispose() { mixer.stopAllAction(); mixer.uncacheRoot(model); } };
+}
+
+function triangleBoneGroups(mesh, boneIds) {
+  const { skinIndex, skinWeight, position } = mesh.geometry.attributes, index = mesh.geometry.index;
+  const ids = mesh.skeleton.bones.map(bone => boneIds.get(bone.name));
+  const membership = new Uint32Array(position.count), dominant = new Uint8Array(position.count);
+  const scores = new Float64Array(boneIds.size);
+  for (let i = 0; i < position.count; i++) {
+    let weight = -1;
+    for (let k = 0; k < 4; k++) if (skinWeight.getComponent(i, k) > weight) {
+      weight = skinWeight.getComponent(i, k); dominant[i] = ids[skinIndex.getComponent(i, k)];
+    }
+  }
+  const count = index?.count ?? position.count;
+  for (let t = 0; t + 2 < count; t += 3) {
+    const a = index ? index.getX(t) : t, b = index ? index.getX(t + 1) : t + 1, c = index ? index.getX(t + 2) : t + 2;
+    let group = dominant[a];
+    if (group !== dominant[b] || group !== dominant[c]) {
+      scores.fill(0);
+      for (const vertex of [a, b, c]) for (let k = 0; k < 4; k++) scores[ids[skinIndex.getComponent(vertex, k)]] += skinWeight.getComponent(vertex, k);
+      for (let i = 0; i < scores.length; i++) if (scores[i] > scores[group]) group = i;
+    }
+    const bit = 1 << group; membership[a] |= bit; membership[b] |= bit; membership[c] |= bit;
+  }
+  return membership;
 }

@@ -10,6 +10,7 @@ window.parent = window;
 globalThis.document = {
   createElement: () => ({
     setAttribute() {},
+    append() {},
     querySelector: () => ({}),
     remove() {},
   }),

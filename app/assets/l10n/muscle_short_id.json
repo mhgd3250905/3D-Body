@@ -1,0 +1,19 @@
+{
+  "deltoids": "Deltoid",
+  "rotator-cuff": "Rotator cuff",
+  "triceps": "Trisep",
+  "forearms": "Lengan bawah",
+  "serratus": "Serratus anterior",
+  "scapular": "Trapezius & rhomboids",
+  "chest": "Otot dada",
+  "lats": "Latissimus dorsi",
+  "abs": "Otot perut",
+  "obliques": "Otot oblik",
+  "erectors": "Erector spinae",
+  "hip-flexors": "Fleksor pinggul",
+  "glute-max": "Gluteus maximus",
+  "hip-abductors": "Gluteus medius",
+  "adductors": "Adduktor",
+  "quadriceps": "Kuadrisep",
+  "hamstrings": "Hamstring"
+}

@@ -13,7 +13,9 @@ echo "Flare iOS doctor  ($(pwd))"
 
 if xcodebuild -version >/dev/null 2>&1; then
   xv=$(xcodebuild -version | head -1 | awk '{print $2}')
-  [[ ${xv%%.*} -ge 16 ]] && pass "Xcode $xv" || fail "Xcode $xv（需要 ≥ 16，App Store 上传要求最新正式版 SDK）"
+  [[ ${xv%%.*} -ge 26 ]] && pass "Xcode $xv" || fail "Xcode $xv（App Store / TestFlight 上传需要 Xcode ≥ 26）"
+  sdk=$(xcrun --sdk iphoneos --show-sdk-version 2>/dev/null)
+  [[ ${sdk%%.*} =~ ^[0-9]+$ && ${sdk%%.*} -ge 26 ]] && pass "iOS SDK $sdk" || fail "iOS SDK ${sdk:-未知}（App Store / TestFlight 上传需要 SDK ≥ 26；最低设备系统仍是 iOS 15）"
 else fail "未找到 Xcode（App Store 安装后运行 sudo xcode-select -s /Applications/Xcode.app）"; fi
 
 want=3.47.6

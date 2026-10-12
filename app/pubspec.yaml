@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.0+3
+version: 1.0.0+1
 
 environment:
   sdk: ^3.12.2
@@ -13,12 +13,12 @@ dependencies:
     sdk: flutter
   shared_preferences: 2.5.6
   webview_flutter: 4.14.1
-  # iOS-only stage settings (bounce, link preview, inspector); same version
-  # webview_flutter resolves transitively.
+  webview_flutter_android: 4.14.1
   webview_flutter_wkwebview: 3.26.2
   web: 1.1.1
   cupertino_icons: 1.0.8
 
+  intl: 0.20.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -37,8 +37,12 @@ flutter:
     - assets/data/drills.json
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
+    - assets/data/drill-media-manifest.json
+    - assets/l10n/
     - assets/drills/
     - assets/drills/light/
+    - assets/drill_media/
+    - assets/muscles/
     - assets/scene/
     - assets/scene/assets/
     - assets/scene/coach/
@@ -47,7 +51,18 @@ flutter:
     - assets/licenses/
     - assets/brand/icon.png
     - assets/brand/hero-thomas.webp
+    - assets/brand/flare-loading.webp
+    - assets/brand/flare-loading-still.webp
   fonts:
     - family: FlareSans
       fonts:
         - asset: assets/fonts/FlareSans.ttf
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR.ttf
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic.ttf
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari.ttf

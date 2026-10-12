@@ -2,9 +2,13 @@
 
 仓库公开于 [mhgd3250905/3D-Body](https://github.com/mhgd3250905/3D-Body)。外部开发者请 Fork，在自己的分支完成修改，再向本仓库的 **`master`** 提交 PR。一个 PR 聚焦一个明确问题，便于审阅和验证。
 
-先读 [README](README.md)、[项目约定](AGENTS.md) 和 [当前交接](docs/handoff-2026-10-07.md)，明确当前展示方案、已确认的动画与尚待用户反馈的部分。
+先读 [README](README.md)、[项目约定](AGENTS.md) 和 [版本台账](app/docs/version-ledger.md)，核对当前交付及本地检查点；实际验证见 [verification.md](app/docs/verification.md)，实施和待验收项见 [development-roadmap.md](app/docs/development-roadmap.md)。
 
-继续当前 Flutter App 请先读 [2026-10-08 开发版交接](app/docs/handoff-2026-10-08.md)、[实施路线台账](app/docs/development-roadmap.md) 与 [实际页面截图](app/docs/screenshots/2026-10-08/README.md)。双击 `start-flutter.cmd` 使用8820预览；以下8810命令用于保留的原网页。托马斯动作人物始终穿衣、不显示白膜或肌群高亮，详细肌群位置通过独立直立人台查看。
+继续Flutter App读 [App说明](app/README.md)、[App约定](app/AGENTS.md)、[v41合约](app/docs/motion-v41.md) 与 [资产来源](app/docs/asset-sources.md)。10-11当前为L26，启动预加载/真实剪影/首帧衔接、高清全身小卡、穿衣详情柔边高亮、最多3重点及圆点细线的选侧/避让/平滑/边界保护已接入。17张银色模型图用于肌群条目，用户已认可该项外观；长期计时、全设备与其余3D仍按T01/T02待验收。
+
+双击 `start-flutter.cmd` 使用8820离线L26预览；以下8810命令用于保留的根目录原网页编辑器。托马斯动作人物保留原服装和面孔，指定肌群详情显示当前群组柔边代理高亮，独立直立人台保留分区与选区；现行行为以v41合约和当前验证为准。Play P01保持，当前本地APK/Web与同版本号的旧AAB不能混同。
+
+[2026-10-07网页交接](docs/handoff-2026-10-07.md)、[2026-10-08 App交接](app/docs/handoff-2026-10-08.md) 和 [当时截图](app/docs/screenshots/2026-10-08/README.md) 保留历史，不作为当前动作、外观或交付依据。
 
 ## 本地运行
 
@@ -18,7 +22,7 @@ npm start
 
 打开 `http://127.0.0.1:8810/`。开发预览可用 `npm run dev`；若已有服务占用 8810，请指定其他端口。生成的 `dist`、`node_modules` 与本地输出不提交。
 
-新浏览器没有原用户的本地存储。要观察已确认的完整动画，在“动画编辑”中导入 [阶段1可用动画](托马斯/阶段1-可用动画-2026-10-06.json)。如浏览器已有自己的修改，先导出完整备份再导入。详细恢复步骤和文件哈希见交接文档。
+新浏览器没有原用户的本地存储，默认使用内置v41。需要恢复阶段1历史个人动画时，可在“动画编辑”中导入 [阶段1可用动画](托马斯/阶段1-可用动画-2026-10-06.json)；已有个人修改须先导出完整备份。历史恢复步骤与哈希见10-07交接，当前默认动作来源见v41合约。
 
 ## 开发边界
 
@@ -30,7 +34,7 @@ npm start
 
 ## 验证与 PR 内容
 
-检查与改动范围一致，不默认执行全部历史测试。前端修改后构建，并在浏览器确认受影响的模型、布局或交互；视觉修改附实际页面截图。涉及当前人物资产或动画时，可运行：
+检查与改动范围一致，不默认执行全部历史测试。前端修改后构建，并在浏览器确认受影响的模型、布局或交互；视觉修改附实际页面截图。当前Flutter/场景的受影响检查按 [App约定](app/AGENTS.md) 和 [验证记录](app/docs/verification.md) 执行。以下为根目录旧网页的针对性检查入口，适用范围先核对编辑文档：
 
 ```powershell
 node tools/verify-movement-reference.mjs

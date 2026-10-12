@@ -1,0 +1,436 @@
+{
+  "@@locale": "id",
+  "appName": "Flare Thomas",
+  "tagline": "Pahami gerakan. Latih setiap tahap.",
+  "watch": "Gerakan",
+  "library": "Latihan",
+  "path": "Jalur",
+  "progress": "Catatan",
+  "settings": "Pengaturan",
+  "motionBrand": "Flare · Asisten Thomas",
+  "more": "Lainnya",
+  "timeline": "Linimasa gerakan",
+  "phaseLabel": "Tahap gerakan",
+  "viewLabel": "Tampilan",
+  "switchToMuscles": "Lihat model otot berdiri",
+  "switchToMotion": "Lihat Thomas bergerak",
+  "fullLoop": "Siklus penuh · 8 tahap",
+  "practiceLoop": "Ulangi tahap ini",
+  "restoreLoop": "Pulihkan siklus penuh",
+  "play": "Putar",
+  "pause": "Jeda",
+  "resume": "Lanjutkan",
+  "resetView": "Atur ulang tampilan",
+  "front": "Depan",
+  "back": "Belakang",
+  "goBack": "Kembali",
+  "side": "Samping",
+  "pausedHint": "Jelajahi otot",
+  "playingHint": "Jeda lalu pilih",
+  "loadingScene": "Menyiapkan gerakan 3D…",
+  "sceneFailed": "Tampilan 3D sedang tidak tersedia. Buka kembali halaman gerakan.",
+  "retry": "Coba lagi",
+  "muscles": "Otot pada tahap ini",
+  "primary": "Peran utama",
+  "secondary": "Peran pendukung",
+  "teachingNote": "Area berwarna menunjukkan lokasi untuk pembelajaran. Warna ini tidak menunjukkan aktivitas EMG, kekuatan otot, atau batas otot yang tepat.",
+  "deepNote": "Arsir menunjukkan lokasi otot dalam.",
+  "deepMotionNote": "Sorotan menunjukkan lokasi otot dalam.",
+  "bothSides": "Kedua sisi",
+  "leftSide": "Sisi kiri",
+  "rightSide": "Sisi kanan",
+  "whyHere": "Peran pada tahap ini",
+  "relatedDrills": "Latihan terarah",
+  "sourceNote": "Catatan model dan lokasi pembelajaran",
+  "returnToMotion": "Kembali ke bingkai yang sama",
+  "addToday": "Tambahkan ke latihan hari ini",
+  "addedToday": "Ditambahkan ke latihan hari ini",
+  "tierA": "A Berat badan",
+  "tierB": "B Alat di rumah",
+  "tierC": "C Gym",
+  "all": "Semua",
+  "supportSection": "Tumpuan bahu dan lengan",
+  "coreSection": "Koordinasi otot inti",
+  "legsSection": "Ayunan pinggul dan kaki",
+  "searchDrills": "Cari latihan atau otot",
+  "libraryCount": "51 latihan · 17 kelompok otot",
+  "noResults": "Tidak ada latihan yang cocok. Coba kata kunci lain.",
+  "illustration": "Contoh gerakan",
+  "dose": "Set dan waktu",
+  "equipment": "Peralatan",
+  "cues": "Panduan gerakan",
+  "mistake": "Kesalahan umum",
+  "drillWhy": "Alasan latihan ini",
+  "safety": "Keamanan",
+  "startTimer": "Mulai latihan",
+  "today": "Latihan hari ini",
+  "todayEmpty": "Tambahkan latihan dari detail otot atau pustaka untuk menyusun sesi hari ini",
+  "remove": "Hapus dari latihan hari ini",
+  "clearMuscleFilter": "Hapus filter otot",
+  "timerReady": "Siap",
+  "countdown": "Bersiap",
+  "work": "Sedang berlatih",
+  "rest": "Istirahat antarset",
+  "switchSide": "Ganti sisi",
+  "finished": "Latihan selesai",
+  "abandoned": "Sesi berakhir",
+  "paused": "Dijeda",
+  "start": "Mulai",
+  "completeRep": "Selesaikan 1 repetisi",
+  "completeSet": "Selesaikan set",
+  "skipRest": "Akhiri istirahat",
+  "addRest": "+15 detik istirahat",
+  "painStop": "Berhenti jika terasa tidak nyaman",
+  "painMessage": "Rasa tidak nyaman dicatat. Hentikan latihan ini, istirahat, lalu putuskan apakah akan melanjutkan.",
+  "saved": "Tersimpan di perangkat ini",
+  "saving": "Menyimpan…",
+  "saveFailed": "Penyimpanan belum selesai. Sesi ini masih tersedia; coba lagi.",
+  "storageReadFailed": "Catatan lokal sedang tidak tersedia. Data asli tetap tersimpan.",
+  "done": "Selesai",
+  "exitTimer": "Akhiri sesi ini",
+  "manualMode": "Ikuti petunjuk latihan, lalu tandai setiap set selesai secara manual",
+  "backgroundPause": "Latihan dijeda saat aplikasi berjalan di latar belakang. Ketuk Lanjutkan saat kembali.",
+  "setsLabel": "Set {current} dari {total}",
+  "@setsLabel": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "countLabel": "{count} repetisi",
+  "@countLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsLabel": "{seconds} dtk",
+  "@secondsLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stageLabel": "Tahap {stage}",
+  "@stageLabel": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "courseDraft": "Draf jalur belajar · 18 pelajaran. Pelajaran dan ambang penilaian mandiri masih perlu ditinjau pelatih; menyelesaikannya tidak otomatis berarti Anda telah menguasai gerakan.",
+  "locked": "Terbuka setelah pelajaran dan penilaian mandiri tahap sebelumnya selesai",
+  "current": "Tahap saat ini",
+  "passed": "Selesai",
+  "lessons": "Pelajaran",
+  "gate": "Penilaian mandiri tahap",
+  "selfReport": "Dilaporkan sendiri; bukan penilaian AI",
+  "confirmGate": "Saya menyelesaikannya tanpa rasa sakit",
+  "markLesson": "Tandai pelajaran sudah dilatih",
+  "lessonCompleted": "Latihan dicatat",
+  "watchPhases": "Lihat gerakan terkait",
+  "suggestedDrills": "Latihan untuk pelajaran ini",
+  "assessment": "Penilaian mandiri awal",
+  "assessmentNote": "Pilih berdasarkan kemampuan nyata Anda yang terakhir. Ini hanya untuk menentukan titik awal. Jika pergelangan tangan terasa tidak nyaman, mulai dari tahap 1. Ini bukan penilaian kemampuan atau medis.",
+  "wristTest": "Ekstensi pergelangan tangan",
+  "compressionTest": "Angkat kaki lurus",
+  "supportTest": "L-sit",
+  "dipsTest": "Dip terkontrol",
+  "hipTest": "Buka pinggul dalam posisi straddle",
+  "dipsGrade1": "0–3 repetisi · Pemula",
+  "dipsGrade2": "4–7 repetisi · Dasar",
+  "dipsGrade3": "8–12 repetisi · Baik",
+  "dipsGrade4": "13 atau lebih · Sangat baik",
+  "grade1": "Belum selesai / terasa tidak nyaman",
+  "grade2": "Dapat melakukan latihan dasar",
+  "grade3": "Stabil, tetapi masih perlu berlatih",
+  "grade4": "Terasa mudah; siap melanjutkan",
+  "gradeShort1": "Belum",
+  "gradeShort2": "Bisa",
+  "gradeShort3": "Stabil",
+  "gradeShort4": "Mudah",
+  "dipsShort1": "0–3",
+  "dipsShort2": "4–7",
+  "dipsShort3": "8–12",
+  "dipsShort4": "13+",
+  "saveAssessment": "Simpan titik awal penilaian mandiri",
+  "skipAssessment": "Mulai dari dasar",
+  "assessmentSaved": "Penilaian mandiri tersimpan di perangkat ini",
+  "welcomeTitle": "Pecah satu putaran penuh menjadi langkah-langkah yang jelas",
+  "welcomeBody": "Putar model 3D nyata, jeda untuk memilih otot, lalu buka latihan yang sesuai. Gerakan, ilustrasi, dan catatan tersimpan di perangkat ini dan dapat digunakan offline.",
+  "welcomeStep1": "Amati · Gerak lambat dan delapan tahap",
+  "welcomeStep2": "Pahami · Peran otot pada setiap posisi",
+  "welcomeStep3": "Berlatih · Set, timer, dan catatan lokal",
+  "safetyBody": "Lakukan pemanasan pada pergelangan tangan dan bahu terlebih dahulu. Berlatihlah sesuai kemampuan dan berhenti jika merasa sakit atau pusing. Untuk putaran penuh pertama, pilih tempat yang sesuai dan minta seseorang berpengalaman menemani. Konten ini mengajarkan gerakan, bukan memberikan diagnosis.",
+  "ackSafety": "Saya memahami panduan keamanan",
+  "enterApp": "Buka gerakan 3D",
+  "history": "Catatan",
+  "historyEmpty": "Selesaikan sesi latihan bertimer agar catatannya muncul di sini",
+  "sessionCount": "Sesi latihan",
+  "activeMinutes": "Menit latihan",
+  "lessonCount": "Pelajaran yang dilatih",
+  "incomplete": "Belum selesai",
+  "painFlag": "Rasa tidak nyaman dicatat",
+  "aboutTitle": "Tentang Flare",
+  "aboutBody": "Versi pengembangan lokal 1.0.0. Tonton Thomas flare, pelajari peran otot pada setiap tahap, pilih latihan yang sesuai, dan catat latihan Anda. Gerakan, media, dan catatan latihan dapat digunakan offline.",
+  "privacyTitle": "Data lokal dan privasi",
+  "privacyBody": "Pengaturan, latihan hari ini, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.",
+  "creditsTitle": "Sumber model dan media",
+  "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; pakaian, material, dan animasi telah diubah. Human Base Meshes · Blender Studio dan kontributor komunitas · CC0. Three.js · MIT. Area berwarna pada manekin adalah panel pembelajaran dan bukan pengganti mesh anatomi BodyParts3D yang tidak tersedia. Gambar latihan dan merek diberikan oleh pengguna; lisensinya masih perlu diperiksa sebelum dirilis.",
+  "speedLabel": "Kecepatan bawaan",
+  "qualityLabel": "Kualitas gambar",
+  "balanced": "Seimbang",
+  "battery": "Hemat baterai",
+  "high": "Tinggi",
+  "exportBackup": "Salin cadangan lokal",
+  "backupCopied": "Cadangan telah disalin. Simpan ke berkas pilihan Anda.",
+  "contentDraftNote": "Latihan merupakan saran pembelajaran. Ilustrasi tidak menggantikan petunjuk tiap latihan.",
+  "close": "Tutup",
+  "pausedAt": "Dijeda pada {time} dtk",
+  "@pausedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phaseHeading": "{source} · {name}",
+  "@phaseHeading": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "primaryShort": "Utama",
+  "secondaryShort": "Pendukung",
+  "together": "Bekerja bersama",
+  "assistMuscles": "Otot pendukung",
+  "sceneNone": "Tanpa alat",
+  "sceneHome": "Di rumah",
+  "sceneGym": "Gym",
+  "sceneNoneHint": "Berat badan saja, di mana saja",
+  "sceneHomeHint": "Resistance band, dumbel, dan alat rumah lainnya",
+  "sceneGymHint": "Mesin dan beban bebas",
+  "chooseScene": "Pilih suasana latihan",
+  "trainGroup": "Latih {name}",
+  "@trainGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moreCount": "+{count}",
+  "@moreCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deepMotionHint": "Otot dalam · warna menunjukkan lokasinya",
+  "deepMusclesHint": "Otot dalam · arsiran menunjukkan lokasinya",
+  "noDrillForTier": "Tidak ada latihan untuk otot ini pada tingkat peralatan ini",
+  "brandEyebrow": "FLARE",
+  "welcomeHeadline": "Thomas flare",
+  "welcomeLine": "Ikuti gerakannya dan lihat otot yang bekerja pada setiap momen.",
+  "startApp": "Mulai",
+  "welcomeFootPrefix": "Dengan melanjutkan, Anda mengonfirmasi telah membaca",
+  "safetySheetEyebrow": "Sebelum berlatih",
+  "safetySheetTitle": "Tiga hal penting",
+  "safetyRule1": "Lakukan pemanasan pergelangan tangan terlebih dahulu",
+  "safetyRule1Note": "Sekitar 6 menit; ini pelajaran pertama di jalur belajar",
+  "safetyRule2": "Berhenti jika terasa nyeri tajam, mati rasa, atau pusing",
+  "safetyRule2Note": "Otot terasa bekerja itu wajar; rasa sakit tidak",
+  "safetyRule3": "Ini adalah materi pembelajaran gerakan",
+  "safetyRule3Note": "Materi ini tidak menggantikan pelatih, dokter, atau rehabilitasi. Minta seseorang menemani saat mencoba putaran penuh pertama.",
+  "gotIt": "Mengerti",
+  "startWithAssessment": "Mulai dengan penilaian mandiri",
+  "libraryHint": "Cari latihan berdasarkan kelompok otot",
+  "moreProgressHint": "{count} hari minggu ini",
+  "@moreProgressHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackSpeed": "Kecepatan pemutaran",
+  "phaseMoment": "{source} · otot utama pada momen ini",
+  "@phaseMoment": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "othersInvolved": "Otot lain yang terlibat · {names}",
+  "@othersInvolved": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "groupCount": "dan {count} kelompok",
+  "@groupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allSections": "Semua bagian",
+  "search": "Cari",
+  "closeSearch": "Tutup pencarian",
+  "clearSearch": "Hapus pencarian",
+  "spec": "Dosis",
+  "moreCuesAndSafety": "Panduan tambahan, kesalahan umum, dan keamanan",
+  "addTodayShort": "Tambah hari ini",
+  "setOfTotal": "Set {current} dari {total}",
+  "@setOfTotal": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ofReps": "/ {count} repetisi",
+  "@ofReps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsUnit": "dtk",
+  "painStopShort": "Berhenti jika terasa tidak nyaman",
+  "pathTitle": "Jalur belajar",
+  "continueLesson": "Lanjut · {title}",
+  "@continueLesson": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "allDone": "Semua selesai",
+  "confirmStageGates": "Perlu dikonfirmasi · syarat tahap",
+  "stageGates": "Penilaian mandiri tahap · dilaporkan sendiri",
+  "weekDays": "Hari latihan minggu ini",
+  "streak": "Hari berturut-turut",
+  "recent": "Terbaru",
+  "weekdayLabels": "Sen,Sel,Rab,Kam,Jum,Sab,Min",
+  "todayLabel": "Hari ini",
+  "completed": "Selesai",
+  "playbackGroup": "Pemutaran",
+  "otherGroup": "Lainnya",
+  "aboutFlare": "Tentang Flare",
+  "aboutHint": "Versi, sumber dan lisensi, data lokal",
+  "safetyHint": "Tiga hal sebelum berlatih",
+  "teachingTitle": "Catatan pembelajaran",
+  "licenses": "Lisensi sumber terbuka",
+  "minutesShort": "{count} mnt",
+  "@minutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonPhases": "Tahap gerakan terkait",
+  "phasesShort": "Tahap {list}",
+  "@phasesShort": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "countUnit": "repetisi",
+  "appearanceGroup": "Tampilan",
+  "appearanceLabel": "Tema",
+  "themeSystem": "Ikuti sistem",
+  "themeDark": "Gelap",
+  "themeLight": "Terang",
+  "sceneLoading": "Memuat gerakan 3D",
+  "endSessionTitle": "Akhiri sesi ini?",
+  "endSessionBody": "Bagian yang selesai akan disimpan sebagai catatan yang belum tuntas.",
+  "endSessionConfirm": "Akhiri dan simpan",
+  "keepTraining": "Lanjut berlatih",
+  "removedFromToday": "Dihapus dari latihan hari ini",
+  "undo": "Urungkan",
+  "addedTodayToast": "Ditambahkan ke latihan hari ini",
+  "trainedOn": "Berlatih · {day}",
+  "@trainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "notTrainedOn": "Tidak berlatih · {day}",
+  "@notTrainedOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "drillDemo": "Tonton contoh latihan",
+  "hideDrillDemo": "Sembunyikan contoh",
+  "demoReplay": "Putar ulang",
+  "demoSeek": "Posisi pemutaran",
+  "demoSpeed": "Kecepatan contoh",
+  "demoFailed": "Video sedang tidak tersedia. Coba lagi.",
+  "demoPaused": "Latihan dijeda; contoh juga dijeda",
+  "finishedLine": "Semua {sets} set selesai",
+  "@finishedLine": {
+    "placeholders": {
+      "sets": {
+        "type": "int"
+      }
+    }
+  },
+  "languageLabel": "Bahasa",
+  "languageSystem": "Ikuti sistem",
+  "languageTitle": "Bahasa aplikasi",
+  "sceneAccessibleTitle": "Gerakan 3D Thomas flare dari Flare",
+  "weekDayLabel": "Hari {day}",
+  "@weekDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEffort": "Peta otot",
+  "muscleMap": "Peta otot",
+  "phaseMapAccessibility": "Peta otot tampak depan dan belakang yang disinkronkan dengan tahap gerakan",
+  "viewGroup": "Lihat {group}",
+  "reviewFirstPhases": "Tinjau sendiri tahap 09–11: apakah tumpuan belakang, perpindahan berat, dan tumpuan samping tersambung dengan lancar?",
+  "reviewFullLoop": "Tinjau sendiri seluruh siklus: apakah pergantian tangan, pembukaan kaki, dan ritme tersambung dengan lancar?",
+  "wristFlexion": "Fleksi pergelangan tangan",
+  "wristExtension": "Ekstensi pergelangan tangan",
+  "@viewGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  }
+}

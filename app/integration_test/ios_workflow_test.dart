@@ -8,6 +8,7 @@ import 'package:flare/main.dart' as app;
 import 'package:flare/platform/scene/scene_view_native.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/components.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -169,7 +170,9 @@ void main() {
     await screenshot(tester, '03-muscle-detail-$screenshotTheme');
     await tester.tap(find.byKey(const ValueKey('train-group')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('scene-A')));
+    expect(find.byType(LibraryPage), findsOneWidget);
+    final drill = tester.widget<DrillCard>(find.byType(DrillCard).first).drill;
+    await tester.tap(find.text(drill.name));
     await tester.pumpAndSettle();
     await screenshot(tester, '04-drill-$screenshotTheme');
     final addToday = find.byTooltip('加入今日训练');

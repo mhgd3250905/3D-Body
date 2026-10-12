@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-11",
+  "status": "selected-and-installed-L28",
+  "tool": "built-in image_gen.imagegen",
+  "poseReference": "output/imagegen/flare-logo-20261011/user-pose-angle-2.png",
+  "styleReference": "icon-flare-v5-animation.png",
+  "referenceStorage": "Original references and unused design candidates retained locally; selected final artwork is versioned in Git.",
+  "attribution": "User-supplied project-model pose derived logo; Snow Rig © Blender Foundation | studio.blender.org, CC BY 4.0; AI character, wardrobe and image treatment.",
+  "variant": {
+    "label": "新角度 B",
+    "asset": "icon-flare-angle2-b.png",
+    "detail": "New wardrobe allowed: deep teal short-sleeve athletic shirt with restrained orange trim, charcoal shorts, simple ivory sneakers with orange heel details. Cute slightly tousled brown hair, warmer playful facial expression. Same exact Image 1 pose.",
+    "prompt": "Use case: pose-guided animated-character app logo.\nInput IMAGE 1 is the AUTHORITATIVE NEW POSE AND CAMERA. IMAGE 2 is only the CHARACTER/STYLE reference, NOT pose.\nMake a fresh finished square FLARE app icon with the charming original Pixar-style animated male coach from Image 2, following EXACTLY the different pose shown in Image 1.\nCritical new pose: slightly elevated front/three-quarter camera, head on left raised toward viewer, horizontal diagonal torso, hips center-right, one straight weight-bearing arm descends to grounded palm bottom-left; upper leg extends diagonally up-right (not perfectly vertical), lower leg straight toward down-right with white sole toward camera. FREE ARM IS BENT BESIDE THE UPPER TORSO: elbow at chest/shoulder height, forearm pointing slightly right, free hand HOVERING NEAR THE RIBS / ABOVE THE WAIST, palm downward, clearly separated from raised leg. There is a BIG EMPTY GAP between free hand and upper leg. The free arm must NOT reach up to the leg and must NOT touch the shin; ignore Image 2's raised arm entirely. Closely trace Image 1's limb directions, full-body foreshortening and ankle rotations. Keep shoulder-to-hand weight-bearing support coherent. Exactly two arms, two legs, natural hands and complete sneakers with recognizable toes/heels. Do not distort shoes into cups or cylinders.\nCharacter style from Image 2: lovely animated feature-film young-adult male, rounded expressive cute face with large warm brown eyes, relaxed cheerful smile, sculpted wavy brown hair, athletic but gently stylized proportions, polished smooth 3D shading. No real actor or existing film character. Pose should visibly be Flare, not vertical handstand or cartwheel.\nSingle clean square app logo on opaque charcoal background, subtle contact shadow under palm and suspended body, clean warm studio rim lighting; one orange elliptical rotational sweep behind the athlete, thin enough not to compete, passing behind hips and separated from facial/hand silhouette. Full head, feet and hand inside central 75% square, comfortable dark margins suitable for circular crop. No typography, labels, red boxes, decorative tile, frames, mockups or watermark.\nNew wardrobe allowed: deep teal short-sleeve athletic shirt with restrained orange trim, charcoal shorts, simple ivory sneakers with orange heel details. Cute slightly tousled brown hair, warmer playful facial expression. Same exact Image 1 pose."
+  },
+  "sourceSha256": "3728021f0dcc87c8f6d20e39d7aa74d1055afd960802e6dda16824c78bd280ad",
+  "exportManifest": "icon-manifest.json"
+}

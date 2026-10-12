@@ -193,6 +193,22 @@ enum _Kind { push, pop, modalIn, modalOut, fade }
 ///
 /// Both pages stay mounted for the duration, keyed by their page key, so the
 /// incoming page keeps its state once the transition ends.
+/// Media on an outgoing page stops before the page transition completes.
+class FlarePageActivity extends InheritedWidget {
+  const FlarePageActivity({
+    super.key,
+    required this.active,
+    required super.child,
+  });
+  final bool active;
+  static bool of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<FlarePageActivity>()?.active ??
+      true;
+  @override
+  bool updateShouldNotify(FlarePageActivity oldWidget) =>
+      active != oldWidget.active;
+}
+
 class FlareStage extends StatefulWidget {
   const FlareStage({
     super.key,
@@ -410,7 +426,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         ignoring: empty || !incoming,
         child: AnimatedBuilder(
           animation: _motion,
-          child: RepaintBoundary(child: child),
+          child: RepaintBoundary(
+            child: FlarePageActivity(active: incoming, child: child),
+          ),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
             final t = FlareMotion.settle.transform(v);

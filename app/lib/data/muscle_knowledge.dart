@@ -1,5 +1,5 @@
-/// Short background for each muscle group, shown in small type under the
-/// group's title on the detail page: its function and a phase observation.
+/// Background for each muscle group. The L37 detail panel keeps its short
+/// phase role above an independently scrolling area for this introduction.
 ///
 /// Teaching notes, not measurements: no EMG figures, no percentages.
 /// Reviewed copy lives here so it can be edited without touching the

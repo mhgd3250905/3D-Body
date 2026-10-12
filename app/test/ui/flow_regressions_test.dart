@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/muscle_knowledge.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
@@ -12,7 +13,6 @@ import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/theme_fade.dart';
 import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,12 +63,29 @@ void assertNoFlutterError(WidgetTester tester) {
   );
 }
 
+void expectMuscleKnowledge(WidgetTester tester, String groupId) {
+  final finder = find.byKey(const ValueKey('muscle-knowledge'));
+  expect(finder, findsOneWidget);
+  final text = tester.widget<Text>(finder);
+  final actual = text.data ?? text.textSpan?.toPlainText() ?? '';
+  expect(
+    actual.replaceAll(RegExp(r'\s+'), ''),
+    muscleKnowledge[groupId]!.replaceAll(RegExp(r'\s+'), ''),
+    reason:
+        'The detail must show the existing reviewed copy without new wording',
+  );
+  expect(actual, contains('\n\n'));
+}
+
 // Composite Material buttons expose the same semantics through a parent
 // annotation and their child container; target the outer advertised control.
 Finder labeledControl(String label) =>
     find.bySemanticsLabel(RegExp('^${RegExp.escape(label)}')).first;
 
 void assertLeanHome(WidgetTester tester) {
+  expect(find.text('Flare · 托马斯助手'), findsOneWidget);
+  expect(find.text('FLARE · 托马斯全旋'), findsNothing);
+  expect(find.text('完整循环 · 8 个阶段'), findsNothing);
   expect(find.byType(NavigationBar), findsNothing);
   expect(find.byType(Slider), findsNothing);
   expect(find.byType(ActionChip), findsNothing);
@@ -123,6 +140,8 @@ void main() {
     );
     scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
     await tester.pumpAndSettle();
+    expect(find.text('Flare · 托马斯助手'), findsOneWidget);
+    expect(tester.getSize(find.byKey(const ValueKey('home'))).height, 44);
     final stage = find.byWidgetPredicate(
       (widget) =>
           widget is ColoredBox && widget.color == FlareColors.background,
@@ -139,6 +158,8 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(tester.getSize(stage), homeSize);
+    expect(tester.getSize(find.byKey(const ValueKey('triceps'))).height, 44);
+    expect(find.textContaining('暂停于'), findsNothing);
     expect(scene.time, 2.375);
     commands.clear();
     await tester.binding.handlePopRoute();
@@ -213,6 +234,21 @@ void main() {
     expect(scene.detailModel, 'muscles');
     expect(scene.playing, isFalse);
     expect(scene.time, 2.375);
+    // WebGL recovery keeps the native view, so no retry button recreates the
+    // shell. A new readiness event must still restore its complete framing.
+    scene.reportError('graphics_context_lost');
+    await tester.pumpAndSettle();
+    commands.clear();
+    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
+    await tester.pumpAndSettle();
+    expect(commands.first, {
+      'type': 'viewport',
+      'bottom': inset,
+      'animate': false,
+    });
+    expect(commands.any((command) => command['type'] == 'seek'), isTrue);
+    expect(scene.time, 2.375);
+    expect(scene.detailModel, 'muscles');
     assertNoFlutterError(tester);
   });
 
@@ -303,7 +339,9 @@ void main() {
         expect(find.textContaining('其他参与'), findsOneWidget);
         await tester.tap(find.text('三角肌').last);
         await tester.pumpAndSettle();
-        expect(find.text('暂停于 2.0 秒'), findsOneWidget);
+        expect(find.text('暂停于 2.0 秒'), findsNothing);
+        expect(find.text('11 · 第一侧支撑'), findsNothing);
+        expect(find.text('协助发力'), findsNothing);
         expect(find.text('正面'), findsNothing);
         expect(find.text('背面'), findsNothing);
         expect(find.byType(DrillTile), findsNothing);
@@ -390,30 +428,50 @@ void main() {
         expect(find.widgetWithText(FilledButton, '练三角肌'), findsOneWidget);
         await tester.tap(find.byKey(const ValueKey('train-group')));
         await tester.pumpAndSettle();
-        // Training first asks for a scene: no equipment, home, or gym.
-        expect(find.text('选一个训练场景'), findsOneWidget);
-        expect(find.byKey(const ValueKey('scene-A')), findsOneWidget);
-        expect(find.byKey(const ValueKey('scene-B')), findsOneWidget);
-        expect(find.byKey(const ValueKey('scene-C')), findsOneWidget);
-        // System back cancels the choice without navigating away from the
-        // paused detail; reopening must release the one-sheet guard.
+        // The muscle opens a library searched by its label; no scene sheet
+        // or direct jump into a drill is needed.
+        expect(find.byType(LibraryPage), findsOneWidget);
+        expect(find.text('选一个训练场景'), findsNothing);
+        for (final tier in ['A', 'B', 'C']) {
+          expect(find.byKey(ValueKey('scene-$tier')), findsNothing);
+        }
+        expect(find.byType(DrillDetailPage), findsNothing);
+        expect(
+          tester.widget<LibraryPage>(find.byType(LibraryPage)).initialGroup?.id,
+          'deltoids',
+        );
+        expect(find.byType(TextField), findsOneWidget);
+        expect(
+          tester
+              .widget<EditableText>(find.byType(EditableText))
+              .controller
+              .text,
+          '三角肌',
+        );
+        expect(
+          tester.widgetList<DrillCard>(find.byType(DrillCard)),
+          hasLength(1),
+        );
+        // System back returns to the paused muscle, retaining the model and
+        // exact frame rather than treating the library as a detail exit.
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
-        expect(find.text('选一个训练场景'), findsNothing);
+        expect(find.byType(LibraryPage), findsNothing);
         expect(find.byType(DrillDetailPage), findsNothing);
+        expect(scene.detail, 'deltoids');
+        expect(scene.selected, 'deltoids');
         expect(scene.time, 2.0);
         expect(scene.detailModel, 'muscles');
 
+        await tester.tap(find.byKey(const ValueKey('train-group')));
+        await tester.pumpAndSettle();
         for (final (tier, label) in [('B', '居家'), ('C', '健身房')]) {
-          await tester.tap(find.byKey(const ValueKey('train-group')));
+          await tester.tap(find.text(label));
           await tester.pumpAndSettle();
-          final option = tester.getSemantics(labeledControl(label));
-          expect(
-            option.getSemanticsData().hasAction(SemanticsAction.tap),
-            isTrue,
-          );
-          // Activate the advertised accessibility node, not the InkWell.
-          option.owner!.performAction(option.id, SemanticsAction.tap);
+          final card = tester.widget<DrillCard>(find.byType(DrillCard));
+          expect(card.drill.id, 'deltoids-$tier');
+          expect(store.settings.tier, tier);
+          await tester.tap(find.text(card.drill.name));
           await tester.pumpAndSettle();
           expect(
             tester
@@ -427,13 +485,25 @@ void main() {
           await tester.tap(find.byTooltip('返回'));
           await tester.pumpAndSettle();
           expect(find.byType(DrillDetailPage), findsNothing);
+          expect(find.byType(LibraryPage), findsOneWidget);
+          expect(
+            tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
+            'deltoids-$tier',
+          );
           expect(scene.detail, 'deltoids');
+          expect(scene.selected, 'deltoids');
+          expect(scene.time, 2.0);
+          expect(scene.detailModel, 'muscles');
           expect(scene.playing, isFalse);
           assertNoFlutterError(tester);
         }
-        await tester.tap(find.byKey(const ValueKey('train-group')));
+        await tester.tap(find.text('无器械'));
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('scene-A')));
+        expect(
+          tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
+          'deltoids-A',
+        );
+        await tester.tap(find.text(catalog.drillById('deltoids-A')!.name));
         await tester.pumpAndSettle();
         final detail = tester.widget<DrillDetailPage>(
           find.byType(DrillDetailPage),
@@ -472,6 +542,18 @@ void main() {
         await tester.tap(find.byTooltip('返回'));
         await tester.pumpAndSettle();
         expect(find.byType(DrillDetailPage), findsNothing);
+        expect(find.byType(LibraryPage), findsOneWidget);
+        expect(
+          tester.widget<LibraryPage>(find.byType(LibraryPage)).initialGroup?.id,
+          'deltoids',
+        );
+        expect(
+          tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
+          'deltoids-A',
+        );
+        await tester.tap(find.byTooltip('返回'));
+        await tester.pumpAndSettle();
+        expect(find.byType(LibraryPage), findsNothing);
         expect(scene.selected, 'deltoids');
         expect(scene.detail, 'deltoids');
         expect(scene.detailModel, 'muscles');
@@ -545,7 +627,7 @@ void main() {
   );
 
   testWidgets(
-    'thumbnail model state updates deep location note without adding model buttons',
+    'thumbnail model state retains phase role and reviewed knowledge without metadata',
     (tester) async {
       await phoneSize(tester);
       final store = LearningStore(
@@ -590,11 +672,16 @@ void main() {
         expect(find.text('肌群模型'), findsNothing);
         expect(
           tester.getSize(find.byKey(const ValueKey('detail-card'))),
-          const Size(86, 108),
+          const Size(86, 136),
         );
         expect(scene.detailModel, 'motion');
-        expect(find.text('深层肌群 · 颜色示意所在部位'), findsOneWidget);
+        expect(find.text('深层肌群 · 颜色示意所在部位'), findsNothing);
         expect(find.text('深层肌群 · 斜线示意所在部位'), findsNothing);
+        expectMuscleKnowledge(tester, 'rotator-cuff');
+        expect(
+          find.text(catalog.phaseBySource(11)!.muscle('rotator-cuff')!.why!),
+          findsOneWidget,
+        );
         assertNoFlutterError(tester);
       }
       final generation = scene.selectionGeneration;
@@ -614,8 +701,13 @@ void main() {
       expect(scene.selected, 'rotator-cuff');
       expect(scene.time, 2.0);
       expect(scene.selectionGeneration, generation);
-      expect(find.text('深层肌群 · 斜线示意所在部位'), findsOneWidget);
+      expect(find.text('深层肌群 · 斜线示意所在部位'), findsNothing);
       expect(find.text('深层肌群 · 颜色示意所在部位'), findsNothing);
+      expectMuscleKnowledge(tester, 'rotator-cuff');
+      expect(
+        find.text(catalog.phaseBySource(11)!.muscle('rotator-cuff')!.why!),
+        findsOneWidget,
+      );
       expect(find.byKey(const ValueKey('detail-model')), findsNothing);
       expect(find.byKey(const ValueKey('train-group')), findsOneWidget);
       assertNoFlutterError(tester);

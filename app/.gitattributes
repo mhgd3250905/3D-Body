@@ -6,3 +6,12 @@ scene/source/** -text
 assets/scene/** -text
 assets/licenses/** -text
 assets/data/stages-source.ts -text
+
+# The silver photography manifest also binds these authored shader bytes.
+scene/src/muscle-material.js -text
+scene/tools/muscle-thumbnails.js -text
+
+# Keep installed asset bytes intact: authoring metadata uses Windows CRLF,
+# and the generated Three.js bundle retains spaces inside vendor GLSL strings.
+assets/brand/flare-loading.json whitespace=cr-at-eol
+assets/scene/assets/*.js whitespace=-blank-at-eol
