@@ -19,6 +19,8 @@
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
 
 第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
+2026-10-13 L44真机更新：按用户要求，`0e6185f` 的 **1.0.1（6）Release开发签名版**已从Build5保留数据更新到iPhone16 Pro / iOS26.5；设备重读及原偏好完整对比通过，包内102媒体/领口模型与已验证源码一致。手机尚锁屏，启动及用户验看待续；[安装记录](app/docs/ios-build6-device-2026-10-13.md)。下方rebase阶段“真机仍为Build5”保留历史范围；S4与Build5标签/IPA保持，未操作Apple发布。
+
 2026-10-13 第二次iOS对齐：`ios/main`已rebase至主线`441dfa6`（L44），本地开发 **1.0.1（6）** 带入可保存的卡通教练/训练人台、领口修复及51项新版视频。154项相关测试、4项真实WKWebView原生集成、分析与Simulator构建通过；[本轮记录](app/docs/ios-l44-rebase-2026-10-13.md)。用户真机仍为已验收Build5，原标签/IPA保持；下方主线Android L44与Build5/S4为各自身份，未push或操作Apple发布。
 
 2026-10-17，用户确认“很好 验证通过”，并说明本次初步测试结束，授权保存提交及台账对齐。**当前保存版本为 L52 / 1.0.9+11 / v42-R17，本次初步用户测试通过；后续App改动以L52另建批次。** 跳过按顺序前进，末项后结束本轮，完成与跳过分列；12项相关测试、静态分析及Web/真机四次连续跳过检查通过。完整原生交互、长期QA、iOS及设备矩阵仍待验收。R17动作、L50认可记录、旧包/媒体与个人数据保留。见[L52记录](app/docs/l52-plan-skip-2026-10-17.md)；下方L51及更早内容为历史阶段。
