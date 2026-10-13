@@ -2,6 +2,14 @@
 
 更新于2026-10-13，当前本地交付为 **L43 上下半屏**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
+## 2026-10-13 统一人体素材生产（94项成片完成）
+
+便携素材包已实际保存于 `output/training-human-v2-library-portable-20261013`：94母版＋94手机视频＋94封面及参数/证据，共1911文件。1910条SHA独立回读一致，1784条相对资源链接有效；包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`。手机版合计29,463,976字节，母版78,818,853字节。完整PNG与制作现场仍另存生产目录，未作为App资源或Git媒体上传。最终390×844浏览器实际播放与包回读证据见验证记录。
+
+用户明确要求本会话把所有既有演示另存重渲素材；94个冻结版本已全部成片，共23,454帧／781.8秒，组成60正式＋8办公室＋8久坐＋12托马斯（含左侧）＋5实际早期示范＋1正式Flare v41。第1项停止、Air-Flare用户原片及静态图标不纳入。母版1080²、手机版720²、封面540²，30fps H.264/yuv420p。制作流程83ready/11review_required；最终独立审计56ready/38review_required、failed/pending均0，成片完成不代表全部QA通过。具体来源、断点与验证范围见[统一素材库](../../docs/training-media-library-2026-10-13.md)。
+
+人体清单当前制作入口补丁为2.0.1，修复旧sideplank-v7入口未启用profile；外观仍为已验收2.0.0。生产目录 `output/training-human-v2-library-final-20261013` 的 `audit-final/manifest.json` 和 `directory-manifest.json` 保存最终审计及当时完整目录快照，早期audit保留；94项独立整循环关节对照通过，骨矩阵逐帧最大差0来自producer记录。所选188个视频完整解码，审计另解码原2项构图的4个留存视频，共192个。托马斯2/10恒定构图派生位于 `output/training-human-v2-library-framing-20261013`，原动作/运镜/QA与成片保留，派生不另计动作。新增身体提示仅quadriceps-A的6/240帧4.02mm接触估计，超过4mm标准最多0.02mm，保持待核对。便携目录采用 `output/training-human-v2-library-portable-20261013`，实际包/回读身份另按打包清单登记，不预填包SHA或本轮Git推送。本任务不是新App包，L43/v41/原51视频与个人数据保持。
+
 ## 2026-10-13 人体标准与托马斯版本整理
 
 用户已观看第三轮预览并验收肩颈优化，指定 `training-human-v2` / `2.0.0` 为后续新训练动作、旧动作优化及安排重渲的统一人体标准。完整身份固定为原Snow派生GLB、灰色头、服装/骨架、肩颈权重与加载/求解管线的13份源SHA，见[人体标准](../../docs/training-human-v2.md)和[清单](../../tools/drill-anim/models/training-human-v2.json)。这不是新的App包编号，不创建L44，手机仍为L43 / 1.0.0+1 / v41 / 51视频。
@@ -16,7 +24,7 @@
 | `e4201a6` | 第二轮直指/高亮/前方往返运镜/适度宽腿；肩颈被后续取代 |
 | `4ef5556` | 第三轮肩颈修复与training-human-v2人体基准；10-13用户已验收 |
 
-当前原库75份＋独立托马斯12份＝87份spec；第1项停止，2–12加5左侧镜像为12个已验收预览。六项新profile预览700px/5fps共260帧，其他六变体复用原320帧；原视频/参数及全部历史输出保留。高清全片、App正式选版和旧动作重渲另按安排，当前51项媒体未替换。
+本节版本整理阶段原库75份＋独立托马斯12份＝87份spec；第1项停止，2–12加5左侧镜像为12个已验收预览。六项新profile预览700px/5fps共260帧，其他六变体复用原320帧；原视频/参数及全部历史输出保留。该整理阶段未制作高清全片；随后明确授权的94项重渲结果见上节。App正式选版/媒体替换仍另行安排，当前51项媒体未替换。
 
 版本整理检查点为 `05fa9d22039abdfb35d5669917e749766bb27a3f`（`chore: close out accepted training human baseline`）。用户明确授权的普通 `git push origin master` 已成功，主线从6fbf7a7推进至该SHA；2026-10-13T00:18:41+08:00独立核对本地HEAD、origin/master及ls-remote的master完全相同，回执保存于 `output/stage-closeout-20261013/push-receipt.json`。其后仅补本台账实际回执，以 `docs: record training baseline push receipt` 定位，不改变人体/动作源；最终tip以Git master与远端一致性核对为准。证据/命令与跳过边界见[本次验证](verification.md#人体标准与托马斯版本整理验证2026-10-13)，下一步见[待安排台账](development-roadmap.md)。原21项用户未跟踪素材、旧GLB/导出/备份、网站现状与原包保留，不删除分支或发布新包。
 
@@ -377,4 +385,3 @@ T01 长期计时、T02 Android 真机/iOS 性能与手势、T03 内容/数据、
 | 合规复核草稿 | [26 个年龄字段及版权/隐私/医疗设备提案](ios-compliance-v1-draft.md)已在本机准备；四类实际对话框只读核对后关闭，未保存或发布。补入健康健美分类所需的受监管医疗设备声明；现有 App 页面为非交易商状态，ICP 未见已保存号，最终声明和适用地区许可仍待复核 |
 
 详细命令和设备证据见 [iOS 验证](ios-verification-2026-10-10.md)，逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，可审阅的描述、隐私与截图说明见 [商店材料](ios-app-store-v1.md)。注册、签名、App 创建、普通 push、精确 S2 上传/内部测试及新增商店字段保存分别来自用户明确授权；S1 验证失败后未上传。S4 精确上传/草稿绑定/原单账号内测更新及现有公开隐私页更新已分别获得授权并完成；外部测试、最终合规、正式提审与公开发布继续按对应授权推进。文档保存点由 `git log` 定位，不预填自身 SHA。以下保留 Android/Web 交付台账。
-

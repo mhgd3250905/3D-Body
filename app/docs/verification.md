@@ -1,3 +1,23 @@
+# 统一人体素材生产验证（2026-10-13，94项成片完成）
+
+便携包实际生成于 `output/training-human-v2-library-portable-20261013`，共1911文件；独立回读1910条SHA256全部一致，1784个包内相对资源链接存在，无未完成标记。包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`，SHA列表自身为 `4f9dc078939c21fac8a77bd76bfb504f99af34cae401542a7c3f2579901d3ba6`。证据见 `output/rerender-planning-20261013/final-portable-verification.json`；此后不修改包内文件。
+
+最终便携画廊 `http://127.0.0.1:8873/index.html` 在390×844视口实际播放托马斯2/10、椅子臀推和Flare正式循环，四项均720×720、readyState4、paused=false、error=null，时长24/10/8/9秒，文档宽390无横向溢出。包内相对视频与母版/封面链接正常，临时视口和搜索已恢复。实证见 `output/playwright/training-human-v2-library-final-ui-20261013/ui-check.json` 与 `phone-playback.png`；这仍是浏览器尺寸检查，不代表App已换片或真机安装。
+
+生产目录 `output/training-human-v2-library-final-20261013`，94/94项已成片，共23,454帧／781.8秒，组成60正式＋8办公室＋8久坐＋12托马斯＋5早期示范＋1Flare。人体入口2.0.1保持2.0.0外观，原模型来源13份SHA与制作代码由每个worker核对。producer最终83ready/11review_required；最终独立审计56ready/38review_required、failed/pending均0，检查范围不同，不能混用或称94项QA全通过。来源清单及边界见[统一素材库](../../docs/training-media-library-2026-10-13.md)。
+
+最终证据在 `audit-final/manifest.json` 与 `audit-final/directory-manifest.json`，早期audit不覆盖。94项旧/新关节逐帧独立整循环比对全部通过，全部骨矩阵逐帧最大差0为producer保存的制作记录，独立审计不重渲骨架。所选188个1080/720 H.264视频完整CPU解码通过，原2项构图的4个视频同时留证和解码，实际共192个；封面、尺寸/帧数/时长及所引用输入/QA/指标/媒体哈希记录在审计中。目录清单是生成时完整快照，raw/合成PNG清点字节，不宣称逐一重新计算PNG哈希。
+
+身体QA独立归因是1项新增、9项继承、84项无身体标记。38项review还包含求解警告等原限制；原泛用QA和review均保留。新增项quadriceps-A完整240帧左手新体表接触估计234帧3.96mm、6帧4.02mm，原6个对应值3.19mm，超过默认4mm最多0.02mm。独立逐帧关节/接触质心差0、无穿模和新求解警告；K6片区径向估计不等于精确三角面距离，保持失败QA、不放宽阈值、不修改冻结姿态。最坏帧/原始数值及来源见 `output/rerender-planning-20261013/quadriceps-contact-triage.md` 和JSON。
+
+托马斯2/10构图派生单独保存于 `output/training-human-v2-library-framing-20261013`；原2160主/高亮raw全身完整，只按整周期轮廓作一个恒定二维变换，不重新求解或改变运镜路径。720＋300编码帧加2静帧共1022次检查，边缘触碰0，1080画布最低边距58/59px；两组主/手机版完整解码通过，原raw/媒体/QA保留。最终audit选择派生媒体并保留原producer审计，不将构图通过升级为身体QA通过。证据为派生 `delivery-manifest.json`、各项 `source-evidence.json` 与 `framing-proof.json`。
+
+已完成制作前必要检查：`node tools/drill-anim/verify.mjs`通过（原59SHA保留、75默认源＋12专项、13人体源、App51约束）；`npm run build`成功（仅保留既有包体积提示）。冻结生产代码独立审计、断点/缺失副本/哈希与帧索引负例见 `output/rerender-planning-20261013/batch-review.md` 和 `batch-library-audit-notes.md`。分段合成抽查10帧与原合成逐字节一致；真实侧撑完整240帧加静帧的15,183个关节坐标对照最大差0，骨矩阵每帧制作对照最大差0。两种H.264视频独立完整解码通过；手机样片头、手、鞋完整。
+
+素材画廊于390×844逻辑视口实际打开播放720视频：readyState=4、videoWidth/Height=720、duration=8、paused=false、error=null，文档宽375≤视口390。点击时加载媒体、依原封面时间取姿态后播放；初版播放器仅等待canplay但preload=none未主动加载的问题已修正，原H.264成品没有改动。临时视口已恢复，批量制作代码保持冻结。该网页检查不冒称App已经替换视频或手机安装验证。
+
+Flare适配器270帧原GLB骨架与原/新人体手脚实际对照最大差0，原相机全周期投影保留约80%占比、不裁切；原阶段文件SHA实读验证。它复用烘焙世界矩阵，不执行IK，无法恢复原求解器当时的警告，不能把空警告冒称原求解已全通过。历史5示范按原运行时播放，不用相似动作替代。生产对所有新、旧人体保存完整指标及QA，独立审计分别核验关节记录与制作骨矩阵证据；继承警告和新问题分别记录。素材生成不构成App替换、手机安装或用户新动作验收。
+
 # 人体标准与托马斯版本整理验证（2026-10-13）
 
 ## 事实、基线与范围
@@ -26,7 +46,7 @@
 
 ## 限制、保留与下一步
 
-没有未决文档冲突或本轮必需检查失败。App/Dart、App场景、媒体51原文件、包版本和iOS工程本轮delta为空，因此Flutter分析/测试、App/场景重构建和设备安装不适用；官网/独立网页站/归档源也未变，不重复其构建与全解码。HD全片和旧动作批量重渲不属于版本整理，没有执行；原预览的通用QA警告不改成通过。Mac/Xcode/iPhone、40px横屏字号缺口、长期计时和原8成片归档继续列为待办，不借此次人体验收销项。Play/Apple/网站未重新上传或部署，未新增包编号/标签或删除历史分支。
+本节版本整理阶段没有未决文档冲突或必需检查失败。App/Dart、App场景、媒体51原文件、包版本和iOS工程该阶段delta为空，因此Flutter分析/测试、App/场景重构建和设备安装不适用；官网/独立网页站/归档源也未变，不重复其构建与全解码。HD全片和旧动作批量重渲不属于该整理阶段，当时没有执行；随后用户明确授权的94项素材生产见本文件首节，不把新结果回填为先前已执行。原预览的通用QA警告不改成通过。Mac/Xcode/iPhone、40px横屏字号缺口、长期计时和原8成片归档继续列为待办，不借人体验收或素材成片销项。Play/Apple/网站未重新上传或部署，未新增包编号/标签或删除历史分支。
 
 原21项用户文件、GLB/个人导出/草稿/备份、旧预览及L43/P01/S4包保持。下一次先读[版本台账](version-ledger.md)、[实施路线](development-roadmap.md)、[人体标准](../../docs/training-human-v2.md)及工具AGENTS；训练新动作及后续旧动作优化显式采用training-human-v2，并新增对应版本和输出。已有51视频不自动覆盖，E:/AII-3D/3D-Wrist禁止触碰。Cockpit仅登记非终态进度，不自动结束或接力。
 
@@ -954,4 +974,3 @@ iPhone 13 生产入口人工验证了 30 次详情往返、3 组左右各 20 秒
 这些是本机软件/模拟器、静态验包及 Apple 平台状态证据；锁屏返回因 Simulator 持续黑屏未完成，邀请接受与真实 TestFlight 安装尚未确认；用户要求等其回来连接 iPhone 后继续，真机手势/性能/触感、飞行模式、旧 iOS、最终合规及 App Review 仍待验证或授权。具体命令、缺陷回归、设备、截图与候选身份见 [iOS 验证记录](ios-verification-2026-10-10.md)，任务逐项结果见 [iOS 执行台账](ios-plan-2026-10-09.md)，商店保存事实与最终门禁见 [商店材料](ios-app-store-v1.md)。原网页和 Play 包保留；以下为原 Android/Web 交付及历史验证。
 
 ---
-
