@@ -6,6 +6,34 @@
 
 下方94项素材生产、L43与其他历史验证保持原对象和范围，不把过去的“不更新App”当作本轮新授权的限制。
 
+<a id="l44-证据绑定与文档收口2026-10-13"></a>
+
+## L44 证据绑定与文档收口（2026-10-13）
+
+本次是用户显式要求的cockpit-closeout，原阶段基线 `4e7aaed3e1996758e39ea6e12fc1a571d6f5ab18` 已验证为收口前HEAD `441dfa681c4bbf14c9ac3037d48bca086e93b558` 的祖先。只读Preflight先完整列出阶段6提交/178路径和工作区21项用户文件，逐项归属清楚后才修改。没有读取凭据、原始日志、浏览器profile、构建产物或用户未跟踪素材内容，也没有检查其他仓库。
+
+产品验证绑定到保存于 `63d22d755d6b82568be5b2589a9c3bef1cdc771e` 的L44候选产品树。实际 `git diff --name-status 63d22d755d6b82568be5b2589a9c3bef1cdc771e..441dfa681c4bbf14c9ac3037d48bca086e93b558` 只有pr109-l44-upgrade、verification、version-ledger三篇文档（8新增/2删除）；当前产品源码、模型、媒体、测试与候选相同。本次收口也只改已核对文档，因此以下原阶段验证在其原范围内有效，不能写成当前HEAD重新测试/构建。
+
+以下时间均为2026-10-13北京时间。JSON回执多数未内嵌执行时间、命令或commit；“来源时间”取既有文件最后写入时间，只作为回执来源。实际命令/结果来自本会话可信工具输出，并以保存的产品树和有限delta补足绑定。证据目录B为 `output/playwright/pr109-upgrade-20261013/`。
+
+| 检查与实际命令 | 原结果、来源与适用范围 |
+| --- | --- |
+| `flutter analyze --no-pub`（候选app目录） | 本会话实际执行exit0、No issues；L44保存前源码，未在本次文档收口重跑 |
+| `flutter test test/ui/scene_process_recovery_test.dart test/domain/learning_store_test.dart test/data/drill_media_test.dart` | 本会话18项通过；随后最终 `flutter test --no-pub test/ui/scene_process_recovery_test.dart` 5项通过，涵盖质量重发与同帧恢复；对应63d产品树 |
+| `npm run build`、`npm run verify`（候选app/scene） | 实际exit0；既有verify只覆盖原v41基线，新人体另见下两行，不借旧证据认证新表面 |
+| `node tools/flare-body-swap/verify-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --url http://127.0.0.1:8892 --report E:/AII-3D/3D-Body/output/playwright/pr109-upgrade-20261013/collar/collarfix-verification.json`（候选根目录） | 215断言通过，270帧关节/骨矩阵差0、shader/返回材质保持；B/collar/collarfix-verification.json来源22:20:42 |
+| `node output/playwright/pr109-upgrade-20261013/browser/browser-audit.mjs`（主目录） | 394×853 / DPR3.25场景8891，270帧差0、17详情/交换/同帧返回通过、错误0；B/browser/browser-audit.json来源22:21:58，实际读取候选场景 |
+| `python app/tools/import-training-human-v2-media.py --source E:/AII-3D/3D-Body/output/training-human-v2-library-footfix-20261013 --report-dir E:/AII-3D/3D-Body/output/playwright/pr109-upgrade-20261013/media`（候选根目录） | exit0，51匹配/0未匹配；51视频+51封面完整解码、格式/时长/哈希/103备份核对通过；B/media/media-upgrade-report.json来源22:18:54。ffmpeg/ffprobe为当时PATH工具，未在本次重新导入 |
+| `node output/playwright/pr109-upgrade-20261013/browser/media-playback-check.mjs`（主目录） | 实际Chrome51项首帧/推进/暂停保持pass、错误0；B/browser/media-playback-check.json来源22:42:11；不是51项Android完整验收 |
+| `node tools/flare-body-swap/derive-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --out E:/AII-3D/3D-Body/output/playwright/pr109-upgrade-20261013/collar/reproduction/flare-collarfix.glb --report E:/AII-3D/3D-Body/output/playwright/pr109-upgrade-20261013/collar/reproduction/derivation.json`（候选根目录，APP_URL=8869） | 独立另存复现，source/gzip SHA均与L44交付相同；来源22:42:54；本次未再次写派生 |
+| `flutter build web --no-web-resources-cdn --no-wasm-dry-run`、`flutter build apk --release --target-platform android-arm64`（候选app） | 本会话均实际成功；B/apk-check.json来源22:23:42保存指定包75,827,258字节/SHA8771c823…420ef、102媒体与模型打包哈希。包回执是指定文件内容观察，不冒称收口HEAD重新构建 |
+| `adb -s QSG6Q8IFDMDELVGQ install -r E:/AII-3D/3D-Body/output/releases/Flare-L44-PR109-20261013-arm64.apk` | 原安装观察22:24:07成功、版本1.0.1/code2，数据保持；原冷启动424ms和8.5秒同帧切换、限定视频互斥/暂停证据保留，未在本次再操作手机 |
+| `python output/playwright/pr109-upgrade-20261013/verify-main-sync.py`（主目录） | 原回执B/main-sync-check.json显式绑定完整441dfa6 HEAD/origin，443Web无差、产品源差为空、21用户项无变化，来源22:48:47；这是同步观察，不是新的测试/构建 |
+
+本次Preflight实际执行 `git rev-parse --show-toplevel`、基线verify/ancestor、stage log/diff、`git status --porcelain=v1 --untracked-files=all`、`gh pr view 109 --repo mhgd3250905/3D-Body --json state,headRefOid,mergeCommit,mergedAt`、`git ls-remote origin refs/heads/master`：仓库E:/AII-3D/3D-Body，master跟踪origin/master，本地/远端441dfa6一致，PR109 MERGED且固定合并head63d22d7。完整状态只有21项阶段前用户文件（1MP4/12PNG/8元数据JSON），tracked/staged/unstaged/deleted/renamed均0；逐条保留且不读取内容。
+
+已实际核对的canonical来源与current/history判定见台账收口段；确定的finding为入口/制作文档的L43历史边界未清楚标注、通用人物表述和路线中的旧媒体状态、验证缺少明确source绑定。对应修正仅限文档。保存的Preflight为 `output/stage-closeout-l44-20261013/preflight.json`；本次实际 `node output/stage-closeout-l44-20261013/check-closeout.mjs` exit0：12篇修改文档、53条本地链接/锚点、版本/QA及21用户路径完整归属通过，产品/frozen路径无改动、remaining finding为0。回执时间23:32:08，保存于同目录alignment-check.json；`git diff --check`通过。随后仅补入本句实际结果数字，不增加链接或改变产品范围，提交前再核对diff和完整状态。不默认运行全量测试或重建dist/App，原QA与设备/发布待办继续保留。
+
 ---
 
 # 统一人体素材生产验证（2026-10-13，94项成片完成）

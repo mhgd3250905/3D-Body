@@ -18,6 +18,26 @@
 
 本轮未把28项素材提示、51项全原生视频、长期性能/计时、iOS或用户最终观感验收标为完成。APK code2之后，原code1包不能通过普通 `adb install -r` 直接降级；切回原形象使用App设置，不卸载数据。
 
+### L44 阶段保存与文档收口
+
+用户在确认本轮更新后，明确要求使用cockpit-closeout记录版本并提交、普通push。本次收口基线为审核开始时实际master `4e7aaed3e1996758e39ea6e12fc1a571d6f5ab18`，Preflight HEAD为 `441dfa681c4bbf14c9ac3037d48bca086e93b558`；基线已验证存在且为HEAD祖先。阶段delta共6提交、178路径（A22/M155/R1）：入口文档4、App文档8、版本1、视频/封面102、署名1、场景bundle4、Flutter与多语源码37、场景源/模型5、回归2、导入工具1、媒体清单1、人体派生工具12。
+
+| 检查点 | 完整Git身份及作用 |
+| --- | --- |
+| PR人体导出 | `1e701efc9c24d5862289e878f2666211d5a7dfaf`，原可选训练人体 |
+| PR裆部平滑 | `9387d0003959f9ec6aa17120943f5bccea6dc702`，初次固定审核head |
+| 初次真机试用 | `c553de2d3c3eaa3b9eeabaeaab91f805297b3764`，历史编译入口与验证工具补修 |
+| L44实现 | `63d22d755d6b82568be5b2589a9c3bef1cdc771e`，保存的形象偏好、领口派生、51项媒体与完整来源 |
+| PR109合并 | `f338b46a066419d99516a076a712a9ebc7107e99`，北京时间22:45:58按固定head合并 |
+| 主目录交付回执 | `441dfa681c4bbf14c9ac3037d48bca086e93b558`，22:48:14保存并普通push；产品源与L44实现一致 |
+| 本次文档保存 | 以本节所在后续Git提交及实际push回执定位自身SHA，不在同一提交内预填 |
+
+收口scope为PR109/L44的行为、人物与媒体选版、包/安装身份、证据和版本记录；本次仅修正文档。原冻结模型清单和13源、94包/规格、App产品代码/模型/媒体及版本号、个人数据、旧编辑器、P01/S4保持。完整工作区初检为tracked/staged/unstaged/deleted/renamed均0，untracked21：Air-Flare原片1、用户图标PNG12、图标元数据JSON8，全部逐条保留、不读取内容、不暂存。已有检查回执的用户SHA证明只代表当时观察，本次不冒称重新读取这些用户素材。
+
+已核对的current来源为根/App的README与AGENTS、version-ledger、verification、development-roadmap、pr109-l44-upgrade、asset-sources、motion-v41、drill-media，以及docs下training-human-v2、training-media-library、friendly-coach和固定模型JSON。L43与原素材“不替换App”段落标为archive/history；模型JSON的App接受当日元数据保持历史身份，当前App版本只以本台账为准。修改明确的旧外观/媒体/路线表述，补齐命令、来源时间和source state；复用适用性与本次文档检查见 [verification](verification.md#l44-证据绑定与文档收口2026-10-13)。
+
+保存后仍为L44 / 1.0.1+2，不新增tag、APK/IPA、重渲、商店上传或网站部署，不结束Cockpit会话。下一步按用户安排验看新版效果，再核对28项素材QA、完整原生媒体、长期计时/设备和iOS；源码保存不自动完成这些验收。
+
 ## 2026-10-13 素材制作阶段收口
 
 用户已明确认可瑞士球背伸鞋向修正版，并要求版本整理、保存提交及普通push；这条视觉认可限定于该修正版，不扩大为94项全部身体QA或App设备验收。阶段基线为`b842aa49d85b52332700a1210b9227c6ceaa5dcb`，收口前实现为`a636b705432414dc3bf329372167e8116370dcd0`，两者之间35路径A25/M10。当前checkout为主目录master，本轮文档收口另形成后续Git保存点，其SHA以提交历史和远端实读为准，不在同一提交里填写自身SHA。
