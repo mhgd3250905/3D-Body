@@ -1,5 +1,11 @@
 # 资产来源与复现
 
+## L44 当前人物与训练媒体（2026-10-13）
+
+原卡通教练和原PR训练人台资产继续保留。App保存的训练人台选项加载Snow同源的collarfix-20261013派生，修正旧导出着色并恢复training-human-v2已有的肩颈内收；22骨/44轨v41与材质来源保持，无新模型许可或收费资产。source/gzip输入输出SHA及验证见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。独立解剖人台及Snow/Human Base Meshes/Three.js署名保留。
+
+51项正式训练视频与封面现选自已保存的training-human-v2-library-footfix-20261013，含瑞士球背伸鞋向修正。原媒体另存且Git基线保留，manifest同时记录旧媒体、新来源和原QA；选中素材23ready/28review，不冒称所有姿态通过。当前署名见assets/licenses/Drill-media-ATTRIBUTION.md，下方旧阶段来源保持历史。
+
 2026-10-12 整合保留 iOS S4 的来源说明：2026-10-10 用户在 iOS 发布流程确认训练图与品牌图具备发布权，该记录来自 `ios/main` 历史文档。本轮不新增法律核验，也不改变模型、软件及当前51项训练视频各自的来源与许可证；关于页继续保留 Snow / Human Base Meshes / Three.js 署名。
 
 当前默认动作采用PR #3固定提交 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 的v41网格/运行时，独立清单为 `scene/tools/v41-source-manifest.json`，复现见 [v41同步](motion-v41.md)。当前穿衣详情代理高亮，不加载历史白膜；下方旧制作包、v38和白膜记录保留历史，不覆盖当前合约。

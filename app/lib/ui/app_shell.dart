@@ -52,6 +52,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   late bool _appActive;
   bool? _recoveryWasPlaying;
   String? _recoveryDetailModel;
+  double? _recoveryTime;
+  late String _actorBody;
   bool _settings = false;
   bool _assessment = false;
   bool _timing = false;
@@ -84,6 +86,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final lifecycle = WidgetsBinding.instance.lifecycleState;
     _appActive = lifecycle == null || lifecycle == AppLifecycleState.resumed;
     _scene = widget.sceneController ?? SceneController();
+    _actorBody = store.settings.actorBody;
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
     WidgetsBinding.instance.addObserver(this);
@@ -103,6 +106,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _storeChanged() {
+    if (_actorBody != store.settings.actorBody) {
+      _actorBody = store.settings.actorBody;
+      _restartScene();
+      return;
+    }
     _refreshView();
   }
 
@@ -119,6 +127,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _restartScene() {
+    _recoveryTime = _scene.time;
     _recoveryWasPlaying = _appActive && _scene.playing;
     _recoveryDetailModel = _scene.detailModel;
     _scene.pause();
@@ -153,7 +162,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       return;
     }
     if (_scene.ready && !_configured) {
-      final restoredTime = store.lastTime;
+      final restoredTime = _recoveryTime ?? store.lastTime;
       final restoredModel = _recoveryDetailModel ?? _scene.detailModel;
       _configuring = true;
       _configured = true;
@@ -163,6 +172,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _insetSent = true;
       _scene.setViewInset(_sentInset, animate: false);
       _scene.setSpeed(store.settings.speed);
+      _scene.setQuality(_quality);
       if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
       _sceneLanguage = null;
       _scene.setTime(restoredTime);
@@ -177,6 +187,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       }
       _recoveryWasPlaying = null;
       _recoveryDetailModel = null;
+      _recoveryTime = null;
       // A recovered WebGL context may still belong to a hidden, prewarmed
       // view. Let it produce its replacement frame before hiding it again.
       _scene.setVisible(_appActive);
@@ -803,8 +814,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           key: ValueKey((
                             _sceneGeneration,
                             widget.sceneRevision,
+                            _actorBody,
                           )),
                           controller: _scene,
+                          body: _actorBody,
                         )
                       : ColoredBox(color: FlareColors.background),
                   SceneRevealLayer(
@@ -1634,6 +1647,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         store.settings.themeMode,
                         (value) =>
                             _result(store.updateSettings(themeMode: value)),
+                      ),
+                    ),
+                    line(
+                      s.actorBodyLabel,
+                      segmented<String>(
+                        [
+                          ('original', s.actorBodyOriginal),
+                          ('training', s.actorBodyTraining),
+                        ],
+                        store.settings.actorBody,
+                        (value) =>
+                            _result(store.updateSettings(actorBody: value)),
                       ),
                     ),
                   ],

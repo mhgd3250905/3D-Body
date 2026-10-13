@@ -9,6 +9,15 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'Personagem do Thomas';
+
+  @override
+  String get actorBodyOriginal => 'Treinador';
+
+  @override
+  String get actorBodyTraining => 'Manequim';
+
+  @override
   String get appName => 'Flare Thomas';
 
   @override

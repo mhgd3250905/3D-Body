@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import 'scene_asset_router.dart';
+import 'scene_variant.dart';
 
 /// A same-origin module/GLB server reachable only on this device's loopback.
 class SceneAssetServer {
@@ -22,7 +23,9 @@ class SceneAssetServer {
     port: _server.port,
   );
 
-  Uri get sceneUri => origin.resolve('/index.html');
+  Uri get sceneUri => configuredSceneUri(origin.resolve('/index.html'));
+
+  Uri sceneUriFor(String body) => configuredSceneUri(sceneUri, body: body);
 
   static Future<SceneAssetServer> start({SceneAssetRouter? router}) async {
     if (router == null) {

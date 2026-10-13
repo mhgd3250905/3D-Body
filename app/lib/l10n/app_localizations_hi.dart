@@ -9,6 +9,15 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'थॉमस पात्र';
+
+  @override
+  String get actorBodyOriginal => 'कार्टून कोच';
+
+  @override
+  String get actorBodyTraining => 'प्रशिक्षण मॉडल';
+
+  @override
   String get appName => 'Flare थॉमस';
 
   @override

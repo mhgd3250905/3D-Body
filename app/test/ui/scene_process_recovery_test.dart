@@ -22,6 +22,7 @@ void main() {
     'foreground paused',
     'detail muscles',
     'initial background',
+    'body switch',
   ]) {
     testWidgets('WebContent recovery preserves $mode and paused frame', (
       tester,
@@ -97,7 +98,11 @@ void main() {
       if (mode == 'background') {
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
       }
-      scene.reportError(SceneController.processTerminated);
+      if (mode == 'body switch') {
+        await store.updateSettings(actorBody: 'training');
+      } else {
+        scene.reportError(SceneController.processTerminated);
+      }
       await tester.pump();
       commands.clear();
       scene.receiveEvent({
@@ -111,6 +116,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(scene.playing, isFalse);
       expect(commands.where((c) => c['type'] == 'play'), isEmpty);
+      expect(
+        commands.lastWhere((c) => c['type'] == 'quality')['value'],
+        'balanced',
+      );
       expect(
         commands.lastWhere((c) => c['type'] == 'visibility')['visible'],
         mode != 'background',

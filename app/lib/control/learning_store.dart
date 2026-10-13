@@ -288,11 +288,13 @@ class LearningStore extends ChangeNotifier {
     int? weeklyGoal,
     String? themeMode,
     String? language,
+    String? actorBody,
   }) {
     _ensureInitialized();
     final next = _settings.copyWith(
       themeMode: themeMode,
       language: language,
+      actorBody: actorBody,
       tier: tier,
       speed: speed,
       cues: cues,

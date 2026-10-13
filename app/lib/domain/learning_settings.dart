@@ -8,9 +8,11 @@ class LearningSettings {
     this.weeklyGoal = 3,
     this.themeMode = 'system',
     this.language = 'system',
+    this.actorBody = 'original',
   });
 
   static const themeModes = ['system', 'dark', 'light'];
+  static const actorBodies = ['original', 'training'];
   static const languages = [
     'system',
     'zh',
@@ -42,6 +44,9 @@ class LearningSettings {
   /// Explicit preference, or the device language; older states follow system.
   final String language;
 
+  /// The Thomas athlete; independent from the reference mannequin and videos.
+  final String actorBody;
+
   LearningSettings copyWith({
     String? tier,
     double? speed,
@@ -51,6 +56,7 @@ class LearningSettings {
     int? weeklyGoal,
     String? themeMode,
     String? language,
+    String? actorBody,
   }) => LearningSettings(
     tier: tier ?? this.tier,
     speed: speed ?? this.speed,
@@ -60,6 +66,7 @@ class LearningSettings {
     weeklyGoal: weeklyGoal ?? this.weeklyGoal,
     themeMode: themeMode ?? this.themeMode,
     language: language ?? this.language,
+    actorBody: actorBody ?? this.actorBody,
   );
 
   bool get valid =>
@@ -68,7 +75,8 @@ class LearningSettings {
       weeklyGoal >= 1 &&
       weeklyGoal <= 7 &&
       themeModes.contains(themeMode) &&
-      languages.contains(language);
+      languages.contains(language) &&
+      actorBodies.contains(actorBody);
 
   Map<String, dynamic> toJson() => {
     'tier': tier,
@@ -79,6 +87,7 @@ class LearningSettings {
     'weeklyGoal': weeklyGoal,
     'themeMode': themeMode,
     'language': language,
+    'actorBody': actorBody,
   };
 
   factory LearningSettings.fromJson(Map<String, dynamic> json) =>
@@ -94,5 +103,8 @@ class LearningSettings {
         language: languages.contains(json['language'])
             ? json['language'] as String
             : 'system',
+        actorBody: actorBodies.contains(json['actorBody'])
+            ? json['actorBody'] as String
+            : 'original',
       );
 }

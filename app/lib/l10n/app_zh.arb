@@ -1,5 +1,8 @@
 {
   "@@locale": "zh",
+  "actorBodyLabel": "托马斯形象",
+  "actorBodyOriginal": "卡通教练",
+  "actorBodyTraining": "训练人台",
   "appName": "Flare 托马斯",
   "tagline": "看懂动作，练好每一步",
   "watch": "动作",

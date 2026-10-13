@@ -1,0 +1,91 @@
+# 托马斯动画换人体实验（2026-10-13，本地分支，未发布）
+
+用户希望用健身动作模块已验收的训练人体 `training-human-v2`（无脸灰色人台头、肩颈蒙皮修复）替换托马斯动画里的 Snow 有脸教练。本目录是这次尝试的可复现工具与结论。默认App外观不变，只有加 `?body=training` 才换人体。
+
+## 结论
+
+- 两套人体共用同一副 22 骨骼、同一份 Snow 派生网格，所以不需要重定向骨骼或改比例。v41 动作原样复用：直接播放已批准的 `flare_v41_loop` 烘焙片段（44 轨），不重跑 IK、不重新烘焙。
+- `app/scene/source/coach/flare-coach-v41-training-human-animated.glb`：训练人体加上 v41 片段，可直接放入App。`verify-glb.mjs` 已核对：骨骼名、层级、静止 TRS 与原 v41 GLB 一致；44 轨的关键帧时间和数值逐项相同（差值 0）；眼睛、眉毛、头发、牙齿、舌头都已移除。
+- App 场景加 `?body=training` 后载入 `public/coach/flare-coach-v41-training-human-animated.glb.gz`。浏览器实测：载入无报错；同一时间点新旧人体的关节点差值为 0 mm；网格从 22 个减为 9 个，顶点从 211,060 减为 143,650。
+
+## 工具
+
+| 文件 | 作用 |
+| --- | --- |
+| `render.mjs` | `--mode new`：用 drill-anim 的流程（toon 着色、无脸头、肩颈修复、v41 适配器）逐帧渲染，并输出每帧指标。`--mode old`：在网页舞台上把同一片段的骨骼世界矩阵套到原教练身上，用于同帧对比。 |
+| `export-glb.mjs` | 导出 App 可用的 GLB。toon 着色器不能直接带进 App，所以把它的逐顶点服装权重按 drill 主题色烘成 COLOR_0，材质用哑光 MeshStandardMaterial；骨骼按原 GLB 的 T 姿态静止 TRS 导出。 |
+| `verify-glb.mjs` | 新旧 GLB 的骨骼与动画一致性检查。需在 `app/scene` 下运行，以便用到它的 node_modules。 |
+| `shoot-app.mjs` | 在手机视口 390×844 下给真实 App 场景截图，新旧人体在同一 seek 时间各截一张，并比较关节差值。 |
+| `rules.py` | 根据 `render.mjs --mode new` 输出的每帧指标，检查托马斯规则。 |
+
+```bash
+# 需先启动根目录 Vite（drill-anim config.json 的 app_url），App 场景另起 Vite（app/scene）
+node tools/flare-body-swap/render.mjs --mode new --out OUT --size 1080 --from 0 --to 270
+python3 tools/drill-anim/lib/comp.py OUT OUT/spec.json OUT/theme.json OUT/c   # 合成为 drill 画风
+node tools/flare-body-swap/export-glb.mjs output/body-swap-rebuild/training-human-collarfix.glb
+(cd app/scene && node ../../tools/flare-body-swap/verify-glb.mjs)
+node tools/flare-body-swap/shoot-app.mjs http://127.0.0.1:8852/ OUT_APP 0,1.2,2.4,4.2,6.3,8.1
+python3 tools/flare-body-swap/rules.py OUT/met-0-269.json rules-check.json
+```
+
+## 规则检查（v41 全周期 270 帧，训练人体）
+
+- 腿伸直：膝角最小 176.2°。
+- 不穿模：drill 引擎胶囊自碰撞检查 0 帧重叠，最差间隙 49.1 mm。两腿骨轴最近 159 mm，手臂与腿最近 189 mm。手部网格穿插检测最小 2.2 mm。
+- 手掌贴地：真正撑地的帧共 277 个手帧，掌心离地 5.7–11.7 mm，手腕 31–37 mm。阶段表里另有 57 个手帧标为“双手支撑”，实际是 v39 的快速离地或落地途中，这是阶段表本身粒度较粗，与换人体无关。
+- 髋带腿、节奏、支撑点：骨骼数据与 v41 完全相同，所以沿用 v41 已有的结论。
+- 主画面干净：换人体没有加任何箭头、圆环或轨迹线。
+
+## 裆部平滑（2026-10-13 第二轮，用户反馈“张开腿时裆部显得敏感”）
+
+- 只改网格 `Coach_Training_Shorts`（两腿之间唯一的表面；`Coach_Body` 在短裤下本来就是挖空的）。骨骼、静止 TRS、44 轨动画、拓扑、UV、服装颜色都不变；`verify-glb.mjs` 仍是 0 差值。导出的 GLB 与上一版逐属性对比：只有短裤的 POSITION/NORMAL/JOINTS_0/WEIGHTS_0 变化，其余 8 个网格完全相同。
+- `crotch-smooth.js`（页面脚本，`render.mjs`、`closeup.mjs`、`export-glb.mjs` 默认都会套用，加 `--no-crotch-smooth` 可还原旧人体）：
+  1. 蒙皮权重：原来裆部中缝 95% 跟骨盆、2 cm 外就有约 55% 跟大腿，劈腿时内侧被挤出褶皱、中缝成棱。在裆部椭球区域（半径 15×11.5×19 cm）内沿焊接后的网格做 110 次权重扩散，骨盆到大腿的过渡变宽变平滑。区域只涉及 pelvis / spineLower / leftThigh / rightThigh。
+  2. 几何（绑定空间，复位姿态即绑定姿态）：前片中部压回到与两侧胯部同一深度，只保留 6 mm 的自然弧度（最大内收 12.6 mm，内层门襟同步内收，层间距保持）；再做 24 轮带遮罩的 Taubin 平滑去掉裆部的雕刻褶皱；区域内法线重算。
+- `closeup.mjs`：裆部特写（视频机位、骨盆正前方、两腿之间偏前 30°、两腿之间正对）。`compare-sheet.py` 拼成改前/改后对比图。
+- `rules.py` 新增裆部曲面指标：区域内 4693 个三角形逐帧 CPU 蒙皮，统计翻折（法线反向）和挤扁（面积 < 静止时 35%）的三角形数。
+
+| 270 帧全周期 | 改前 | 改后 |
+| --- | --- | --- |
+| 膝角最小 | 176.2° | 176.2° |
+| 胶囊自碰撞重叠帧 / 最差间隙 | 0 / 49.1 mm | 0 / 49.1 mm |
+| 手部网格穿插最小 | 2.2 mm | 2.2 mm |
+| 撑地掌心高度 | 5.7 mm 起 | 5.7 mm 起（相同） |
+| 裆部翻折三角形（全周期合计） | 37,562 | 28,433（−24%） |
+| 裆部挤扁三角形（全周期合计 / 单帧最大） | 29,100 / 171 | 28,328 / 227 |
+
+挤扁的单帧最大值变高：权重扩散后，压缩分摊到更多但更平缓的三角形上，看起来更顺，没有新的折痕。
+
+```bash
+node tools/flare-body-swap/closeup.mjs [--before] --out OUT --frames 76,136,190,196 --angles 0 --gaps 30,0 --dist 0.75 --size 560
+python3 tools/flare-body-swap/compare-sheet.py OUT crotch-closeup-compare.png
+```
+
+## 已知差距
+
+- App 里的服装颜色是烘焙后的顶点色，配 App 自己的光照。drill 视频特有的 ember 描边、暗色背景和 toon 明暗属于离线合成，App 里没有。
+- 原PR阶段仅检查首页播放、seek和标签。L44补修已软件核对17肌群详情/交换/同帧返回与真实领口shader，限定真机切换及播放也已抽查；完整人工姿态/设备验收仍待完成，见app/docs/pr109-l44-upgrade-2026-10-13.md。
+- 裆部平滑只做在 Flare 这份 GLB 和渲染工具上；drill-anim 的 `training-human-v2` 原始资产本身没有改（它是运行时套用的配置，改它会影响所有已验收的健身动作视频）。
+- 根目录的 `verify:motion`、`verify:asset`、`verify:sequence` 在未改动的 master 上就已失败（历史快照或输出文件缺失），与本实验无关。`app/tools/verify-v41.mjs` 和 `tools/drill-anim/verify.mjs` 都通过。
+
+## App领口修复派生（2026-10-13）
+
+用户发现App候选的颈底黑领与已验收视频不同。严格检查13项固定源和实际二进制证明：原PR的肩颈蒙皮已经等同于 `training-human-v2`，但导出器重新执行了已被该profile禁用的旧领口paint，把 `Mesh001` 的3399个顶点染成衣服色。同时，视频用于皮肤与真实上衣交界的post-skinning内收没有进入GLB。
+
+本轮保留原PR的 `flare-coach-v41-training-human-animated.glb` 和gzip，另存 `flare-coach-v41-training-human-collarfix-20261013.glb` 与gzip。只有 `Mesh001` 的 `COLOR_0` 改成已验收皮肤色；从13项哈希匹配的制作源读取现有 `aSink`，以 `_SINK` 添加到 `Coach_Body`（159个非零顶点）和 `Mesh001`（466个非零顶点），最大4mm。App材质在skinning后按原video公式执行内收，详情高亮代理继续调用此hook。POSITION、NORMAL、索引、权重、骨架、动画及原PR材质单双面属性均不变；未修改94项冻结素材或 `training-human-v2` 固定源。App保存的人体选择通过 `?body=training` 加载这个领口派生。
+
+`derive-collarfix.mjs` 可以从保留的原PR二进制与冻结制作源重建派生；输出已存在时停止，防止覆盖。`export-glb.mjs` 也已同步为原生皮肤色，并携带 `_SINK`，后续完整重导必须指定新输出路径。
+
+```powershell
+# 保留的原PR与派生分别验证；ESM依赖从app/scene明确解析，不依赖cwd。
+node tools/flare-body-swap/verify-glb.mjs
+node tools/flare-body-swap/verify-glb.mjs --model flare-coach-v41-training-human-collarfix-20261013
+# 根Vite服务提供固定制作源；App scene Vite服务用于270帧与真实shader检查。
+$env:APP_URL = 'http://127.0.0.1:8869'
+node tools/flare-body-swap/derive-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --out output/collarfix-reproduced.glb --report output/collarfix-reproduced.json
+node tools/flare-body-swap/verify-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --url http://127.0.0.1:8892 --report output/collarfix-verification.json
+```
+
+独立验证通过215项断言：只有上述允许属性发生变化；270帧关节与22骨骼矩阵差值均为0；44轨关键帧与插值完全相同；gzip与source完全相同；App首页和真实详情shader无编译错误，详情代理保留sink，脸与灰头材质不变，退出恢复原材质。源及证据报告见 `output/playwright/pr109-upgrade-20261013/collar/`。这些是软件验证，不代替用户随后真机外观验收。
+
+派生source SHA-256：`06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593`；gzip SHA-256：`ea5f75f9510970ef4131a11655255d79e26d267ad19d6a4e4b62b481a4945f20`。原PR source SHA-256仍为 `fec949c64ff97cdfc0c8582c81c76e098a04fd275ec0a765391f9bf9595b6d44`。

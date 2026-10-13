@@ -9,6 +9,15 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'トーマスのモデル';
+
+  @override
+  String get actorBodyOriginal => 'キャラクター';
+
+  @override
+  String get actorBodyTraining => 'トレーニングモデル';
+
+  @override
   String get appName => 'Flare トーマス';
 
   @override

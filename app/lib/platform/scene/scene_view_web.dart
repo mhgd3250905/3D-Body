@@ -4,12 +4,18 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import 'scene_controller.dart';
+import 'scene_variant.dart';
 import '../../l10n/app_localizations.dart';
 
 class ScenePlatformView extends StatefulWidget {
-  const ScenePlatformView({super.key, required this.controller});
+  const ScenePlatformView({
+    super.key,
+    required this.controller,
+    this.body = 'original',
+  });
 
   final SceneController controller;
+  final String body;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();
@@ -36,7 +42,10 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     _frame = frame;
     frame
       ..title = AppLocalizations.of(context).sceneAccessibleTitle
-      ..src = Uri.base.resolve('assets/assets/scene/index.html').toString();
+      ..src = configuredSceneUri(
+        Uri.base.resolve('assets/assets/scene/index.html'),
+        body: widget.body,
+      ).toString();
     frame.setAttribute('allow', 'fullscreen');
     frame.setAttribute('scrolling', 'no');
     frame.style

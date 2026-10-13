@@ -1,5 +1,8 @@
 {
   "@@locale": "fr",
+  "actorBodyLabel": "Personnage de Thomas",
+  "actorBodyOriginal": "Coach",
+  "actorBodyTraining": "Mannequin",
   "appName": "Flare Thomas",
   "tagline": "Comprenez le mouvement. Entraînez chaque étape.",
   "watch": "Mouvement",

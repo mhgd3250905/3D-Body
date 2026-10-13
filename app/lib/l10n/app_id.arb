@@ -1,5 +1,8 @@
 {
   "@@locale": "id",
+  "actorBodyLabel": "Karakter Thomas",
+  "actorBodyOriginal": "Pelatih kartun",
+  "actorBodyTraining": "Manekin latihan",
   "appName": "Flare Thomas",
   "tagline": "Pahami gerakan. Latih setiap tahap.",
   "watch": "Gerakan",

@@ -1,5 +1,8 @@
 {
   "@@locale": "ko",
+  "actorBodyLabel": "토마스 캐릭터",
+  "actorBodyOriginal": "카툰 코치",
+  "actorBodyTraining": "훈련 마네킹",
   "appName": "Flare 토마스",
   "tagline": "동작을 이해하고 한 단계씩 연습하세요",
   "watch": "동작",

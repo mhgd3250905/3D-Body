@@ -343,10 +343,14 @@ void main() {
       storage.value = jsonEncode(saved);
       final restored = LearningStore(catalog: catalog, storage: storage);
       await restored.initialize();
-      await restored.updateSettings(tier: 'C');
+      await restored.updateSettings(tier: 'C', actorBody: 'training');
       final updated = jsonDecode(storage.value!) as Map;
       expect(updated['customBackupNote'], 'retain me');
       expect((updated['settings'] as Map)['futureCameraChoice'], 'back');
+      expect((updated['settings'] as Map)['actorBody'], 'training');
+      final reloaded = LearningStore(catalog: catalog, storage: storage);
+      await reloaded.initialize();
+      expect(reloaded.settings.actorBody, 'training');
     },
   );
 
@@ -360,8 +364,17 @@ void main() {
       'weeklyGoal': 3,
     });
     expect(legacy.themeMode, 'system');
+    expect(legacy.actorBody, 'original');
     expect(legacy.valid, isTrue);
     expect(legacy.copyWith(themeMode: 'sepia').valid, isFalse);
     expect(legacy.copyWith(themeMode: 'light').toJson()['themeMode'], 'light');
+    expect(legacy.copyWith(actorBody: 'other').valid, isFalse);
+    expect(
+      LearningSettings.fromJson({
+        ...legacy.toJson(),
+        'actorBody': 'other',
+      }).actorBody,
+      'original',
+    );
   });
 }

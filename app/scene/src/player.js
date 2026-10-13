@@ -85,13 +85,19 @@ export class FlarePlayer {
   async load() {
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
     const [gltf, rig] = await Promise.all([
-      loadOfflineGlb('./coach/flare-coach-v41-animated.meshopt.glb.gz'),
+      // The App's saved body selection supplies ?body=training for the faceless
+      // collar-fixed training human. The original actor remains the other choice;
+      // both use the identical 22-bone rig and v41 clip.
+      loadOfflineGlb(new URLSearchParams(location.search).get('body') === 'training'
+        ? './coach/flare-coach-v41-training-human-collarfix-20261013.glb.gz'
+        : './coach/flare-coach-v41-animated.meshopt.glb.gz'),
       fetch(new URL('./coach/coach-v41-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
     ]);
     if (this.disposed) { disposeTree(gltf.scene); return; }
     this.coach = gltf.scene;
+    applyTrainingClothSink(this.coach);
     // The actor already contains the baked waist helpers. Playback uses the
     // supplied tracks without a second IK pass; historical study assets remain
     // available on disk and are not loaded or attached to the current actor.
@@ -315,6 +321,28 @@ export class FlarePlayer {
     this.motion?.dispose();
     disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
   }
+}
+
+// Match the accepted video shader's post-skinning cloth sink. Keep POSITION,
+// skin weights and the baked rig intact; detail focus proxies call this same
+// compile hook before adding their own fragment tint.
+export function applyTrainingClothSink(model) {
+  model.traverse(mesh => {
+    const sink = mesh.geometry?.getAttribute('_sink');
+    if (!mesh.isSkinnedMesh || !sink) return;
+    mesh.geometry.setAttribute('trainingClothSink', sink);
+    for (const material of [].concat(mesh.material)) {
+      const compile = material.onBeforeCompile, key = material.customProgramCacheKey();
+      material.onBeforeCompile = function (shader, renderer) {
+        compile.call(this, shader, renderer);
+        shader.vertexShader = 'attribute float trainingClothSink;\n' + shader.vertexShader.replace(
+          '#include <skinning_vertex>',
+          '#include <skinning_vertex>\ntransformed -= normalize(objectNormal) * trainingClothSink;');
+      };
+      material.customProgramCacheKey = () => key + '|training-cloth-sink-v1';
+      material.needsUpdate = true;
+    }
+  });
 }
 
 function litFloor() {
