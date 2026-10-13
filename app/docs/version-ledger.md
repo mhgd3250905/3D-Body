@@ -6,9 +6,11 @@
 
 便携素材包已实际保存于 `output/training-human-v2-library-portable-20261013`：94母版＋94手机视频＋94封面及参数/证据，共1911文件。1910条SHA独立回读一致，1784条相对资源链接有效；包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`。手机版合计29,463,976字节，母版78,818,853字节。完整PNG与制作现场仍另存生产目录，未作为App资源或Git媒体上传。最终390×844浏览器实际播放与包回读证据见验证记录。
 
+本轮制作代码、94项固定来源、人体入口补丁与文档共30路径保存为 `1bd9a3748b436e7c602e5e3600fcbe66aded4a64`，基线为 `b842aa49d85b52332700a1210b9227c6ceaa5dcb`。已普通push至origin/master，随后实际读取远端refs/heads/master与该提交一致；没有强推或新的App发布。视频和完整制作现场保存在上述E盘目录，不随此代码提交上传。此条是该保存点的后续回执，回执自身Git身份见提交历史。
+
 用户明确要求本会话把所有既有演示另存重渲素材；94个冻结版本已全部成片，共23,454帧／781.8秒，组成60正式＋8办公室＋8久坐＋12托马斯（含左侧）＋5实际早期示范＋1正式Flare v41。第1项停止、Air-Flare用户原片及静态图标不纳入。母版1080²、手机版720²、封面540²，30fps H.264/yuv420p。制作流程83ready/11review_required；最终独立审计56ready/38review_required、failed/pending均0，成片完成不代表全部QA通过。具体来源、断点与验证范围见[统一素材库](../../docs/training-media-library-2026-10-13.md)。
 
-人体清单当前制作入口补丁为2.0.1，修复旧sideplank-v7入口未启用profile；外观仍为已验收2.0.0。生产目录 `output/training-human-v2-library-final-20261013` 的 `audit-final/manifest.json` 和 `directory-manifest.json` 保存最终审计及当时完整目录快照，早期audit保留；94项独立整循环关节对照通过，骨矩阵逐帧最大差0来自producer记录。所选188个视频完整解码，审计另解码原2项构图的4个留存视频，共192个。托马斯2/10恒定构图派生位于 `output/training-human-v2-library-framing-20261013`，原动作/运镜/QA与成片保留，派生不另计动作。新增身体提示仅quadriceps-A的6/240帧4.02mm接触估计，超过4mm标准最多0.02mm，保持待核对。便携目录采用 `output/training-human-v2-library-portable-20261013`，实际包/回读身份另按打包清单登记，不预填包SHA或本轮Git推送。本任务不是新App包，L43/v41/原51视频与个人数据保持。
+人体清单当前制作入口补丁为2.0.1，修复旧sideplank-v7入口未启用profile；外观仍为已验收2.0.0。生产目录 `output/training-human-v2-library-final-20261013` 的 `audit-final/manifest.json` 和 `directory-manifest.json` 保存最终审计及当时完整目录快照，早期audit保留；94项独立整循环关节对照通过，骨矩阵逐帧最大差0来自producer记录。所选188个视频完整解码，审计另解码原2项构图的4个留存视频，共192个。托马斯2/10恒定构图派生位于 `output/training-human-v2-library-framing-20261013`，原动作/运镜/QA与成片保留，派生不另计动作。新增身体提示仅quadriceps-A的6/240帧4.02mm接触估计，超过4mm标准最多0.02mm，保持待核对。便携包与回读身份、代码保存回执见上文。本任务不是新App包，L43/v41/原51视频与个人数据保持。
 
 ## 2026-10-13 人体标准与托马斯版本整理
 
