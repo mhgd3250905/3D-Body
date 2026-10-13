@@ -2,7 +2,9 @@
 
 ## 2026-10-13 L44 形象切换与媒体升级
 
-本轮按用户追加要求补修PR #109并升级本地App。领口来源、修订与完整证据见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。源码候选在E盘隔离副本完成，Git保存/合并回执另按后续真实提交记录；当前安装与构建身份如下。下方素材收口、L43及初次PR109试用记录均保留历史阶段范围。
+本轮按用户追加要求补修PR #109并升级本地App。补修保存为 `63d22d755d6b82568be5b2589a9c3bef1cdc771e`，普通push到原来源分支；GitHub于北京时间22:45:58按该固定head合并为 `f338b46a066419d99516a076a712a9ebc7107e99`。主目录master从 `4e7aaed3e1996758e39ea6e12fc1a571d6f5ab18` 安全fast-forward至合并提交，未reset/clean或删除来源分支。领口来源、修订与完整证据见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。下方素材收口、L43及初次PR109试用记录均保留历史阶段范围。
+
+主目录 `app/build/web` 的443文件与已验证候选逐项SHA一致；两个通用APK输出均为下表L44哈希，旧Web/通用APK完整保留在 `output/playwright/pr109-upgrade-20261013/build-before/`。原21项用户未跟踪文件前后SHA全部一致，主目录产品源码与验证候选无差异；合并后HEAD/origin/master/GitHub实际ref一致。同步回读见 `output/playwright/pr109-upgrade-20261013/main-sync-check.json`。此后回执文档提交的自身SHA由Git实际历史定位，不在提交内预填。
 
 | 身份 | 当前事实 |
 | --- | --- |
