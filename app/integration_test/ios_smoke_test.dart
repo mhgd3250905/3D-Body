@@ -112,7 +112,7 @@ void main() {
       what: 'seek acknowledged by the real scene',
     );
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
-    await tester.tap(find.text('点选肌群查看详解'));
+    await tester.tap(find.text('点选肌群'));
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
     final group = catalog.groups.firstWhere(
       (g) => find.text(g.label).evaluate().isNotEmpty,

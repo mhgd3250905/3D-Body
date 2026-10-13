@@ -152,7 +152,7 @@ void main() {
     scene.setTime(2.375);
     await tester.pump(const Duration(milliseconds: 500));
     await screenshot(tester, '01-home-$screenshotTheme');
-    await tester.tap(find.text('点选肌群查看详解'));
+    await tester.tap(find.text('点选肌群'));
     await tester.pumpAndSettle();
     final group = shell.catalog.groups.firstWhere(
       (group) => find.text(group.label).evaluate().isNotEmpty,

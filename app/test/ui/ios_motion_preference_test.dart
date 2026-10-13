@@ -21,7 +21,13 @@ Future<void> _openLoader(WidgetTester tester, {bool silhouette = false}) async {
   await tester.pumpWidget(
     MaterialApp(
       builder: (context, child) => FlareMotionPreferences(child: child!),
-      home: Scaffold(body: Center(child: silhouette ? const FlareLoadingSilhouette() : const FlareLoaderMark())),
+      home: Scaffold(
+        body: Center(
+          child: silhouette
+              ? const FlareLoadingSilhouette()
+              : const FlareLoaderMark(),
+        ),
+      ),
     ),
   );
   await tester.pump();

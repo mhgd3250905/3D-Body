@@ -1382,6 +1382,30 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               ),
             ],
           );
+          if (constraints.maxHeight >= 200) return panel;
+          // A half-height landscape panel cannot fit enlarged text, related
+          // cards and the action together. Keep the action reachable while
+          // allowing the complete explanation and cards to scroll above it.
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  key: const ValueKey('compact-detail-scroll'),
+                  child: SizedBox(
+                    height: 320,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: panel.children.sublist(
+                        0,
+                        panel.children.length - 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              panel.children.last,
+            ],
+          );
         },
       ),
     );

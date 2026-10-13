@@ -299,6 +299,8 @@ Preflight完整status为tracked/staged/unstaged/deleted/renamed均0、untracked2
 
 # 统一人体素材生产验证（2026-10-13，94项成片完成）
 
+2026-10-13 本机 iOS 已在既有 worktree 将 `ios/main` rebase 至主线 `4e7aaed`，本地开发 **1.0.0+5** 对齐L43的14语/51视频，并补修横屏大字号详情滚动与暂时失焦后的模型可见性。130项相关回归、20组布局、3项原生集成、静态分析及Simulator构建通过。未push、未更新真机或Apple候选，S4 Build3保持；细节与限制见[iOS本轮对齐](ios-l43-rebase-2026-10-13.md)。以下主线手机L43与10-11本地/S4段落保留其历史身份，不代表本轮iOS安装或平台刷新。
+
 ## 素材阶段收口检查（2026-10-13）
 
 本次实际命令`node tools/drill-anim/verify.mjs`与`npm run build`均exit0：原59规格SHA保留、App51约束、75默认源/12专项及13人体源检查通过；dist构建完成，仅保留既有大于500KB的包体积提示。日志另存`output/stage-closeout-media-20261013/source-verify.log`和`build.log`。`node output/stage-closeout-media-20261013/check-docs.mjs`实际核对9份修改文档的17条新增本地链接/阶段锚点通过，`git diff --check`通过；收口仅修改文档，不新增安装、渲染或发布。

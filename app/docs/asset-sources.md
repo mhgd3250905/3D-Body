@@ -34,6 +34,8 @@
 
 该历史批次的51项训练视频与封面选自已保存的training-human-v2-library-footfix-20261013，含瑞士球背伸鞋向修正。原媒体另存且Git基线保留，当时manifest记录旧媒体、新来源和原QA；选中素材23ready/28review，不冒称所有姿态通过。历史署名见assets/licenses/Drill-media-ATTRIBUTION.md，下方旧阶段来源保持历史。
 
+2026-10-13 本机 iOS 已在既有 worktree 将 `ios/main` rebase 至主线 `4e7aaed`，本地开发 **1.0.0+5** 对齐L43的14语/51视频，并补修横屏大字号详情滚动与暂时失焦后的模型可见性。130项相关回归、20组布局、3项原生集成、静态分析及Simulator构建通过。未push、未更新真机或Apple候选，S4 Build3保持；细节与限制见[iOS本轮对齐](ios-l43-rebase-2026-10-13.md)。以下主线手机L43与10-11本地/S4段落保留其历史身份，不代表本轮iOS安装或平台刷新。
+
 2026-10-12 整合保留 iOS S4 的来源说明：2026-10-10 用户在 iOS 发布流程确认训练图与品牌图具备发布权，该记录来自 `ios/main` 历史文档。本轮不新增法律核验，也不改变模型、软件及当前51项训练视频各自的来源与许可证；关于页继续保留 Snow / Human Base Meshes / Three.js 署名。
 
 历史v41默认动作采用PR #3固定提交 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 的v41网格/运行时，独立清单为 `scene/tools/v41-source-manifest.json`，复现见 [v41同步](motion-v41.md)。当前穿衣详情代理高亮，不加载历史白膜；下方旧制作包、v38和白膜记录保留历史，不覆盖当前合约。

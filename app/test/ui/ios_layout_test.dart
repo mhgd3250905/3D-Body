@@ -109,6 +109,26 @@ void main() {
             });
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull, reason: 'muscle detail');
+            if (name.contains('landscape')) {
+              expect(
+                find.byKey(const ValueKey('compact-detail-scroll')),
+                findsOneWidget,
+              );
+              await tester.ensureVisible(
+                find.byKey(const ValueKey('muscle-knowledge')),
+              );
+              await tester.pumpAndSettle();
+              await tester.ensureVisible(
+                find.byKey(const ValueKey('detail-card')),
+              );
+              await tester.pumpAndSettle();
+              expect(scene.time, 2.375);
+              expect(
+                tester.takeException(),
+                isNull,
+                reason: 'scrollable detail and related card',
+              );
+            }
             final train = find.byKey(const ValueKey('train-group'));
             expect(train, findsOneWidget);
             expect(
