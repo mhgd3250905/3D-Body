@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createBakedMotion } from './baked-motion.js';
 import { loadOfflineGlb } from './assets.js';
 import { renderQuality } from './render-quality.js';
+import { applyCharacter, characterAsset } from './characters.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -38,7 +39,7 @@ export class FlarePlayer {
     this.glide = null;
     this.scene.add(new THREE.HemisphereLight(0xf6f2ea, 0x3c3a3e, 2));
     this.keyLight = new THREE.DirectionalLight(0xffead2, 3.7); this.keyLight.position.set(-2.5, 4, 4); this.scene.add(this.keyLight);
-    const rim = new THREE.DirectionalLight(0xf0f2ff, 2.2); rim.position.set(2, 2, -3); this.scene.add(rim);
+    const rim = new THREE.DirectionalLight(0xf0f2ff, 2.2); rim.position.set(2, 2, -3); this.scene.add(rim); this.rimLight = rim;
     const fill = new THREE.DirectionalLight(0xe2e2ea, 0.8); fill.position.set(4, 0.7, 2); this.scene.add(fill);
     this.createEnvironment(); this.scene.environmentIntensity = 0.32;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -88,15 +89,16 @@ export class FlarePlayer {
       // The App's saved body selection supplies ?body=training for the faceless
       // collar-fixed training human. The original actor remains the other choice;
       // both use the identical 22-bone rig and v41 clip.
-      loadOfflineGlb(new URLSearchParams(location.search).get('body') === 'training'
-        ? './coach/flare-coach-v41-training-human-collarfix-20261013.glb.gz'
-        : './coach/flare-coach-v41-animated.meshopt.glb.gz'),
+      // ?character= picks one of the dressed characters on the same bodies.
+      loadOfflineGlb(characterAsset(this.callbacks.character ?? { base: new URLSearchParams(location.search).get('body') === 'training' ? 'training' : 'coach' })),
       fetch(new URL('./coach/coach-v41-rig.json', document.baseURI)).then(response => {
         if (!response.ok) throw new Error('rig_load_failed'); return response.json();
       }),
     ]);
     if (this.disposed) { disposeTree(gltf.scene); return; }
     this.coach = gltf.scene;
+    applyCharacter(this.coach, this.callbacks.character);
+    if (this.callbacks.character?.rim) this.rimLight.color.set(this.callbacks.character.rim);
     applyTrainingClothSink(this.coach);
     // The actor already contains the baked waist helpers. Playback uses the
     // supplied tracks without a second IK pass; historical study assets remain

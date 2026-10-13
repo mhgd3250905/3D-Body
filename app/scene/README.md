@@ -12,6 +12,10 @@
 
 14语短名/读屏和本地字体由 `localization` 命令更新，保持动画时间且不镜像3D人物；功能色区是教学位置提示，不是肌电或解剖精确配准。知识卡片的连续展开由Flutter负责，不改变scene尺寸。当前检查点/安装包见[version-ledger.md](../docs/version-ledger.md)。
 
+## 动效装饰与三个角色（2026-10-14，分支 flare/fx-and-characters）
+
+播放时脚尖拖出两条细的渐变光带（余烬橙→玫红→青），带少量随轨迹飘散的光点，手掌撑地时地面泛起一圈柔光涟漪。全部由v41烘焙片段预计算，任意速度、seek和分段循环都与动作同帧；暂停、选中肌群、详情时淡出，不改变人物、材质或动作。`?character=shadow|chrome|street` 选择三个角色（夜影/银翼/街头），只换材质并加刚性头饰，骨骼/蒙皮/44轨不变；不带参数时保持原 `?body=` 行为。详见 [docs/fx-and-characters-2026-10-14.md](../../docs/fx-and-characters-2026-10-14.md)。
+
 ## Flutter bridge
 
 Native: `window.flareBridge.command(mapOrJsonString)`. The `FlareHost` JavaScript
@@ -31,13 +35,14 @@ channel receives JSON strings. Web: parent iframe sends
 | `detail` | `groupId` or null | Same paused full-body pose; null restores main camera and preserves selection |
 | `detail_model` | `value`: motion, muscles | Swap the active detail model; retain the same group and paused time |
 | `quality` | `value`: low, medium, high; battery/balanced aliases | Shared pixel ratio caps 1/3/4, capped by device DPR; low disables shadows |
+| `fx` | `value` boolean | Motion decoration (toe ribbons, motes, hand-plant ripples) on/off; on by default, `?fx=0` starts off |
 | `visibility` | `visible` boolean | Hidden pauses and stops GPU rendering |
 | `viewport` | `bottom` px, `animate` boolean | Host bottom chrome; detail uses half the available stage height, without resizing the canvas |
 | `localization` | `groups`, `shortGroups`, `locale`, `rtl`, localized strings | Update labels/accessibility and choose local font by locale; keep model orientation and time |
 
 `ready` includes `period`, `time`, `phase` (integer source step 9–16) and phase
 ticks. `state` includes `time`, `period`, `playing`, `speed`, `phase`, `selected`
-(nullable group ID), `detail`, `detailModel` (motion or muscles), `loop`, `quality`, `ready`, `presented`, and `errorCode`.
+(nullable group ID), `detail`, `detailModel` (motion or muscles), `loop`, `quality`, `fx`, `character`, `ready`, `presented`, and `errorCode`.
 Commands emit state immediately; animation state is throttled to 10 Hz.
 Hotspot/mesh taps emit `select` with `groupId` and `time`; the host opens its
 detail UI and sends the `detail` command. `error` includes `code` and
