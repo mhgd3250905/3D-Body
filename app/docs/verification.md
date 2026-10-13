@@ -1,5 +1,7 @@
 # 统一人体素材生产验证（2026-10-13，94项成片完成）
 
+用户后续反馈的瑞士球背伸鞋向修订单独保存：240周期帧+2秒静帧共241次非脚骨矩阵与除Toe外关节差均0；3个真实接触求解金样与目标重放差0。每帧17867鞋顶点落地、墙面间隙和鞋尖方向核对通过；双脚漂移0、QA通过、warning/触边0。新1080/720均独立完整CPU解码240帧/8秒；更新版94项包1929条SHA回读与1776相对链接通过。390×844实际播放新手机版readyState4、无错误，原包与App媒体保留。来源、特殊重放配方及证据见[鞋向修正](../../docs/erectors-B-footfix-2026-10-13.md)。
+
 便携包实际生成于 `output/training-human-v2-library-portable-20261013`，共1911文件；独立回读1910条SHA256全部一致，1784个包内相对资源链接存在，无未完成标记。包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`，SHA列表自身为 `4f9dc078939c21fac8a77bd76bfb504f99af34cae401542a7c3f2579901d3ba6`。证据见 `output/rerender-planning-20261013/final-portable-verification.json`；此后不修改包内文件。
 
 最终便携画廊 `http://127.0.0.1:8873/index.html` 在390×844视口实际播放托马斯2/10、椅子臀推和Flare正式循环，四项均720×720、readyState4、paused=false、error=null，时长24/10/8/9秒，文档宽390无横向溢出。包内相对视频与母版/封面链接正常，临时视口和搜索已恢复。实证见 `output/playwright/training-human-v2-library-final-ui-20261013/ui-check.json` 与 `phone-playback.png`；这仍是浏览器尺寸检查，不代表App已换片或真机安装。

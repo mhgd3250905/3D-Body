@@ -1,5 +1,7 @@
 # Flare 版本管理台账
 
+2026-10-13素材追加瑞士球背伸鞋向修正版，完整94项当前选用包为`output/training-human-v2-library-footfix-20261013`（1930文件，包清单SHA`0c2555721a738ca7e3e120f18dd7c7bbf95ca2321873822f30c5f9e72a98fd43`）。只选用该项新母版/手机版/封面，旧版与其它93项媒体及检查证据保留；人体标准、App L43/v41/51视频保持。制作/保真/鞋墙接触/完整解码与手机尺寸实播见[修正记录](../../docs/erectors-B-footfix-2026-10-13.md)。
+
 更新于2026-10-13，当前本地交付为 **L43 上下半屏**，版本仍为 `1.0.0+1`，默认动作仍为v41。Play P01 AAB保留，不能按相同版本号判断内容相同。当前软件验证及限制见 [verification.md](verification.md)，实施/待验收见 [development-roadmap.md](development-roadmap.md)。路径相对于根项目 `E:\AII-3D\3D-Body`。
 
 ## 2026-10-13 统一人体素材生产（94项成片完成）
