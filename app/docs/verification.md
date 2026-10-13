@@ -1,10 +1,18 @@
 # 统一人体素材生产验证（2026-10-13，94项成片完成）
 
+## 素材阶段收口检查（2026-10-13）
+
+本次实际命令`node tools/drill-anim/verify.mjs`与`npm run build`均exit0：原59规格SHA保留、App51约束、75默认源/12专项及13人体源检查通过；dist构建完成，仅保留既有大于500KB的包体积提示。日志另存`output/stage-closeout-media-20261013/source-verify.log`和`build.log`。`node output/stage-closeout-media-20261013/check-docs.mjs`实际核对9份修改文档的17条新增本地链接/阶段锚点通过，`git diff --check`通过；收口仅修改文档，不新增安装、渲染或发布。
+
+范围为基线b842aa4至a636b70的素材生产与选版记录，当前选版footfix-20261013。用户已认可瑞士球背伸鞋修，本次文档收口不改制作代码、模型、轨迹或包内文件。阶段完整性检查`node output/stage-closeout-media-20261013/verify-closeout.mjs`实际通过：13人体源身份、94项/23,454帧、56ready/38review/0failed/0pending、当前包1929条SHA、1776相对链接、鞋修原身体保持及全鞋顶点落地/墙距/方向证明、原手机尺寸实播收据均吻合。新证据另存`output/stage-closeout-media-20261013/integrity-check.json`，不覆盖历史验证收据。
+
+原38项数值/求解提示是已保存素材的review状态，作为本轮选版事实保留，不将其改写为全身体QA通过。本次必需验证是版本、来源、文档与媒体完整性对齐；不重新求解动作、重渲94项或重新认定设备验收。全量解码已由原审计及鞋修独立解码给出，当前媒体SHA相同，不重复解码；Flutter analyze/test、App构建/安装和全量旧编辑器测试不适用，因为没有改App/场景运行源码或平台。既有T02等设备缺口保留独立台账。
+
 用户后续反馈的瑞士球背伸鞋向修订单独保存：240周期帧+2秒静帧共241次非脚骨矩阵与除Toe外关节差均0；3个真实接触求解金样与目标重放差0。每帧17867鞋顶点落地、墙面间隙和鞋尖方向核对通过；双脚漂移0、QA通过、warning/触边0。新1080/720均独立完整CPU解码240帧/8秒；更新版94项包1929条SHA回读与1776相对链接通过。390×844实际播放新手机版readyState4、无错误，原包与App媒体保留。来源、特殊重放配方及证据见[鞋向修正](../../docs/erectors-B-footfix-2026-10-13.md)。
 
-便携包实际生成于 `output/training-human-v2-library-portable-20261013`，共1911文件；独立回读1910条SHA256全部一致，1784个包内相对资源链接存在，无未完成标记。包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`，SHA列表自身为 `4f9dc078939c21fac8a77bd76bfb504f99af34cae401542a7c3f2579901d3ba6`。证据见 `output/rerender-planning-20261013/final-portable-verification.json`；此后不修改包内文件。
+鞋修前首次便携包历史目录为 `output/training-human-v2-library-portable-20261013`，共1911文件；当时独立回读1910条SHA256全部一致，1784个包内相对资源链接存在，无未完成标记。包清单SHA256为 `64693fb473d7eeb461fa99199fa4547e22ca85d9f9831b8ce3988fb4f0135ddd`，SHA列表自身为 `4f9dc078939c21fac8a77bd76bfb504f99af34cae401542a7c3f2579901d3ba6`。证据见 `output/rerender-planning-20261013/final-portable-verification.json`；原包保留不修改，当前选用footfix包见鞋修记录。
 
-最终便携画廊 `http://127.0.0.1:8873/index.html` 在390×844视口实际播放托马斯2/10、椅子臀推和Flare正式循环，四项均720×720、readyState4、paused=false、error=null，时长24/10/8/9秒，文档宽390无横向溢出。包内相对视频与母版/封面链接正常，临时视口和搜索已恢复。实证见 `output/playwright/training-human-v2-library-final-ui-20261013/ui-check.json` 与 `phone-playback.png`；这仍是浏览器尺寸检查，不代表App已换片或真机安装。
+鞋修前历史画廊 `http://127.0.0.1:8873/index.html` 在390×844视口实际播放托马斯2/10、椅子臀推和Flare正式循环，四项均720×720、readyState4、paused=false、error=null，时长24/10/8/9秒，文档宽390无横向溢出。包内相对视频与母版/封面链接正常，临时视口和搜索已恢复。实证见 `output/playwright/training-human-v2-library-final-ui-20261013/ui-check.json` 与 `phone-playback.png`；当前画廊8874另有鞋修实播证据，这些均为浏览器尺寸检查，不代表App已换片或真机安装。
 
 生产目录 `output/training-human-v2-library-final-20261013`，94/94项已成片，共23,454帧／781.8秒，组成60正式＋8办公室＋8久坐＋12托马斯＋5早期示范＋1Flare。人体入口2.0.1保持2.0.0外观，原模型来源13份SHA与制作代码由每个worker核对。producer最终83ready/11review_required；最终独立审计56ready/38review_required、failed/pending均0，检查范围不同，不能混用或称94项QA全通过。来源清单及边界见[统一素材库](../../docs/training-media-library-2026-10-13.md)。
 

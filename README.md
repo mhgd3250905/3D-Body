@@ -1,6 +1,6 @@
 # Flare Anatomy Studio
 
-2026-10-13素材验看追加[瑞士球背伸鞋向修正](docs/erectors-B-footfix-2026-10-13.md)：双鞋转向、墙面随鞋跟后移，原身体/脚踝/球/时序保持。当前94项选用图库为`output/training-human-v2-library-footfix-20261013`，原完整素材包保留，其它93项沿用原媒体；App选版不变。
+2026-10-13素材验看追加[瑞士球背伸鞋向修正](docs/erectors-B-footfix-2026-10-13.md)，用户已明确认可：双鞋转向、墙面随鞋跟后移，原身体/脚踝/球/时序保持。当前94项选用图库为`output/training-human-v2-library-footfix-20261013`，原完整素材包保留，其它93项沿用原媒体；App选版不变。本轮基线、版本身份、收口处置和保留范围见[素材阶段台账](app/docs/version-ledger.md#2026-10-13-素材制作阶段收口)。
 
 2026-10-13用户已验收托马斯第三轮预览及肩颈优化。[training-human-v2](docs/training-human-v2.md)是后续新训练动作、旧动作优化及安排重渲的统一人体标准；旧成片保持原选版。本轮源码、验收和保存身份见[版本台账](app/docs/version-ledger.md#2026-10-13-人体标准与托马斯版本整理)。手机仍为L43/v41/51视频。
 

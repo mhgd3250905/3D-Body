@@ -9,7 +9,7 @@
 | 项目 | 当前状态 / 后续条件 |
 | --- | --- |
 | 托马斯专项预览/源码 | 2–12及左侧镜像12预览、第三轮肩颈已于10-13验收；本地优化4ef5556已保存主线，第1项停止，GitHub原#106仍Draft。12专项高清全片已纳入完成的94项素材；2/10另存全周期恒定构图派生，原动作/运镜/QA与媒体保留。正式App选版/媒体替换另行安排 |
-| 训练人体标准/统一素材 | [training-human-v2](../../docs/training-human-v2.md)为已认可标准，入口补丁2.0.1保持2.0.0外观。[94项新版素材](../../docs/training-media-library-2026-10-13.md)已全部成片，producer83ready/11review、独立audit56ready/38review、failed/pending均0。quadriceps-A新增6/240帧4.02mm接触估计提示，原阈值/姿态保持，其他继承QA和警告保留。便携目录/回读按实际打包清单登记；App L43/原51视频未替换，动作与设备验收继续独立安排 |
+| 训练人体标准/统一素材 | [training-human-v2](../../docs/training-human-v2.md)为已认可标准，入口补丁2.0.1保持2.0.0外观。[94项新版素材](../../docs/training-media-library-2026-10-13.md)已全部成片，原producer83ready/11review、独立audit56ready/38review、failed/pending均0。当前选版为`output/training-human-v2-library-footfix-20261013`，瑞士球背伸鞋修已获用户认可，其它93项媒体保持；1930文件/1929条SHA/1776相对链接回读通过。quadriceps-A新增6/240帧4.02mm接触估计提示，原阈值/姿态与其它继承QA/警告保留。下一步按用户具体安排逐项选版、核对38提示及App/设备验收，App L43/原51视频保持 |
 | mhgd原8项成片 | 源码已整合；来源机器的原MP4/GIF/QA待上传云盘用于原版归档。鸟狗/游泳新修复两项已有独立回读核验的云盘包，不能算原8项全部备份 |
 | iOS整合原生验收 | 50项累计定向范围、分析及14语检查通过；Mac/Xcode编译、签名、WKWebView实际恢复、iPhone和Apple新包验证待做；下一IPA需明确使用大于3的Build号 |
 | T02横屏大字号 | 844×390、2倍字号详情仍40px溢出，原L43为44px；保留失败断言，未宣称全量测试通过 |
