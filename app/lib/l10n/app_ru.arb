@@ -1,5 +1,8 @@
 {
   "@@locale": "ru",
+  "actorBodyLabel": "Персонаж Томаса",
+  "actorBodyOriginal": "Тренер",
+  "actorBodyTraining": "Манекен",
   "appName": "Flare Томас",
   "tagline": "Поймите движение. Тренируйте каждый этап.",
   "watch": "Движение",

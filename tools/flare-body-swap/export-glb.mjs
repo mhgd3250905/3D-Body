@@ -6,7 +6,8 @@
 // node tools/flare-body-swap/export-glb.mjs <out.glb> [--no-crotch-smooth]
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
 const HERE=path.dirname(fileURLToPath(import.meta.url)),REPO=path.resolve(HERE,'../..'),DA=path.join(REPO,'tools/drill-anim');
-const out=path.resolve(process.argv.slice(2).find(a=>!a.startsWith('--'))||'flare-coach-v41-training-human-animated.glb');
+const out=path.resolve(process.argv.slice(2).find(a=>!a.startsWith('--'))||'flare-coach-v41-training-human-collarfix-20261013.glb');
+if(fs.existsSync(out))throw new Error('Export output already exists; preserve it and choose a new filename.');
 const spec=JSON.parse(fs.readFileSync(path.join(DA,'batches/training-human-v2-20261013/specs/flare-v41-loop.json'),'utf8'));
 const {config,loadTheme}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);const C=config();
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path;
@@ -44,13 +45,18 @@ const res=await p.evaluate(async ([s,th])=>{
       const rx=vr?vr[i*4]:0,ry=vr?vr[i*4+1]:9,rz=vr?vr[i*4+2]:0;
       if(isBody&&vr){const arm=vt[i*4+3]>0.5;const L=rx>0;const [Hp,Ha]=L?HL:HR;
         const cut=(0.17-ry>0)||(arm&&((rx-Hp.x)*Ha.x+(ry-Hp.y)*Ha.y+(rz-Hp.z)*Ha.z-0.001>0));if(cut)W=[1,0,0,0];}
-      if(isSkin&&vr){const hx=rx,hz=rz-0.006,rr=Math.hypot(hx,hz),fz=Math.max(0,hz/Math.max(rr,1e-4));
-        const fy=ry-(1.452-0.030*fz*fz-0.006*Math.max(0,-hz/Math.max(rr,1e-4)));const f=Math.max(Math.min(fy,0.5*(0.125-rr)),ry-1.47);W=f>0?[1,0,0,0]:[0,1,0,0];}
+      // training-human-v2 removes the redundant painted collar on native skin.
+      // Its compile hook forces W4=skin; do not recreate the disabled legacy formula.
+      if(isSkin)W=[1,0,0,0];
       const cv=new T.Color(0,0,0);for(let k=0;k<4;k++)if(W[k]>0)cv.add(BASE[k].clone().multiplyScalar(W[k]));
       if(isHead&&vt){const cav=Math.max(-vt[i*4+1],0);cv.multiplyScalar(1-cav);}
       c.set([cv.r,cv.g,cv.b],i*3);}
-    // keep only standard attributes (toon helpers would export as custom _ATTRIBUTES)
-    for(const k of Object.keys(g.attributes))if(!['position','normal','uv','skinIndex','skinWeight'].includes(k))g.deleteAttribute(k);
+    // The video sinks native skin beneath the tee after skinning. Preserve that
+    // scalar as _SINK for the App hook instead of baking it into POSITION.
+    const sink=g.attributes.aSink;
+    if(sink&&Array.from({length:n},(_,i)=>sink.getX(i)).some(x=>x>0))
+      g.setAttribute('_sink',new T.BufferAttribute(Float32Array.from({length:n},(_,i)=>sink.getX(i)),1));
+    for(const k of Object.keys(g.attributes))if(!['position','normal','uv','skinIndex','skinWeight','_sink'].includes(k))g.deleteAttribute(k);
     g.setAttribute('color',new T.BufferAttribute(c,3));
     o.material=new T.MeshStandardMaterial({vertexColors:true,roughness:0.78,metalness:0,name:isHead?'TrainingHuman_Head':'TrainingHuman_'+o.name});
     report.push({mesh:o.name,verts:n,garmentTexture:!!vt});

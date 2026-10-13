@@ -1,6 +1,5 @@
-/// Build-time selection for the PR109 trial; ordinary builds keep the coach.
-Uri configuredSceneUri(Uri uri) {
-  const body = String.fromEnvironment('FLARE_BODY', defaultValue: 'original');
+/// The saved athlete choice is shared by the native view and web iframe.
+Uri configuredSceneUri(Uri uri, {String body = 'original'}) {
   if (body != 'training') return uri;
   return uri.replace(queryParameters: {...uri.queryParameters, 'body': body});
 }

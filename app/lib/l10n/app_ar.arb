@@ -1,5 +1,8 @@
 {
   "@@locale": "ar",
+  "actorBodyLabel": "شخصية توماس",
+  "actorBodyOriginal": "مدرب كرتوني",
+  "actorBodyTraining": "مجسم تدريب",
   "appName": "Flare توماس",
   "tagline": "افهم الحركة وتدرّب على كل خطوة.",
   "watch": "الحركة",

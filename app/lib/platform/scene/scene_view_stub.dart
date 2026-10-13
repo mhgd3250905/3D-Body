@@ -3,9 +3,14 @@ import 'package:flutter/widgets.dart';
 import 'scene_controller.dart';
 
 class ScenePlatformView extends StatefulWidget {
-  const ScenePlatformView({super.key, required this.controller});
+  const ScenePlatformView({
+    super.key,
+    required this.controller,
+    this.body = 'original',
+  });
 
   final SceneController controller;
+  final String body;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();

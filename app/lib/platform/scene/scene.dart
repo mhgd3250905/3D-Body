@@ -14,11 +14,16 @@ export 'scene_controller.dart';
 /// owns document visibility. A second observer here would stop iframe drags
 /// on focus loss, or restart an offstage scene when the app resumes.
 class SceneView extends StatelessWidget {
-  const SceneView({super.key, required this.controller});
+  const SceneView({
+    super.key,
+    required this.controller,
+    this.body = 'original',
+  });
 
   final SceneController controller;
+  final String body;
 
   @override
   Widget build(BuildContext context) =>
-      platform.ScenePlatformView(controller: controller);
+      platform.ScenePlatformView(controller: controller, body: body);
 }

@@ -121,6 +121,24 @@ abstract class AppLocalizations {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
+  /// No description provided for @actorBodyLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯形象'**
+  String get actorBodyLabel;
+
+  /// No description provided for @actorBodyOriginal.
+  ///
+  /// In zh, this message translates to:
+  /// **'卡通教练'**
+  String get actorBodyOriginal;
+
+  /// No description provided for @actorBodyTraining.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练人台'**
+  String get actorBodyTraining;
+
   /// No description provided for @appName.
   ///
   /// In zh, this message translates to:

@@ -1,5 +1,8 @@
 {
   "@@locale": "ja",
+  "actorBodyLabel": "トーマスのモデル",
+  "actorBodyOriginal": "キャラクター",
+  "actorBodyTraining": "トレーニングモデル",
   "appName": "Flare トーマス",
   "tagline": "動きを理解し、一歩ずつ練習",
   "watch": "動作",

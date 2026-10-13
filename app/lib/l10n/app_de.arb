@@ -1,5 +1,8 @@
 {
   "@@locale": "de",
+  "actorBodyLabel": "Thomas-Figur",
+  "actorBodyOriginal": "Comic-Trainer",
+  "actorBodyTraining": "Trainingsfigur",
   "appName": "Flare Thomas",
   "tagline": "Verstehe die Bewegung. Trainiere jeden Schritt.",
   "watch": "Bewegung",

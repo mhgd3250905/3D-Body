@@ -1,5 +1,8 @@
 {
   "@@locale": "en",
+  "actorBodyLabel": "Thomas character",
+  "actorBodyOriginal": "Cartoon coach",
+  "actorBodyTraining": "Training mannequin",
   "appName": "Flare",
   "tagline": "Understand the move. Train every step.",
   "watch": "Motion",

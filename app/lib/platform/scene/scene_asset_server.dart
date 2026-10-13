@@ -25,6 +25,8 @@ class SceneAssetServer {
 
   Uri get sceneUri => configuredSceneUri(origin.resolve('/index.html'));
 
+  Uri sceneUriFor(String body) => configuredSceneUri(sceneUri, body: body);
+
   static Future<SceneAssetServer> start({SceneAssetRouter? router}) async {
     if (router == null) {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);

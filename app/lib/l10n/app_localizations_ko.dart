@@ -9,6 +9,15 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get actorBodyLabel => '토마스 캐릭터';
+
+  @override
+  String get actorBodyOriginal => '카툰 코치';
+
+  @override
+  String get actorBodyTraining => '훈련 마네킹';
+
+  @override
   String get appName => 'Flare 토마스';
 
   @override

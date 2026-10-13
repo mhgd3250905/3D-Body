@@ -9,6 +9,15 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'Персонаж Томаса';
+
+  @override
+  String get actorBodyOriginal => 'Тренер';
+
+  @override
+  String get actorBodyTraining => 'Манекен';
+
+  @override
   String get appName => 'Flare Томас';
 
   @override

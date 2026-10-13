@@ -9,6 +9,15 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'شخصية توماس';
+
+  @override
+  String get actorBodyOriginal => 'مدرب كرتوني';
+
+  @override
+  String get actorBodyTraining => 'مجسم تدريب';
+
+  @override
   String get appName => 'Flare توماس';
 
   @override

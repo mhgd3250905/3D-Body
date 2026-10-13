@@ -12,9 +12,14 @@ import 'scene_asset_server.dart';
 import 'scene_controller.dart';
 
 class ScenePlatformView extends StatefulWidget {
-  const ScenePlatformView({super.key, required this.controller});
+  const ScenePlatformView({
+    super.key,
+    required this.controller,
+    this.body = 'original',
+  });
 
   final SceneController controller;
+  final String body;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();
@@ -106,7 +111,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
       );
       if (!_active(generation)) return;
       setState(() => _webView = webView);
-      await webView.loadRequest(server.sceneUri);
+      await webView.loadRequest(server.sceneUriFor(widget.body));
     } catch (_) {
       if (_active(generation)) {
         widget.controller.reportError('scene-start-failed');

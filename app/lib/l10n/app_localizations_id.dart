@@ -9,6 +9,15 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get actorBodyLabel => 'Karakter Thomas';
+
+  @override
+  String get actorBodyOriginal => 'Pelatih kartun';
+
+  @override
+  String get actorBodyTraining => 'Manekin latihan';
+
+  @override
   String get appName => 'Flare Thomas';
 
   @override

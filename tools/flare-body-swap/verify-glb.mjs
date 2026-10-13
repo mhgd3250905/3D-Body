@@ -11,10 +11,11 @@ const {NodeIO}=await import(pathToFileURL(sceneRequire.resolve('@gltf-transform/
 const {ALL_EXTENSIONS}=await import(pathToFileURL(sceneRequire.resolve('@gltf-transform/extensions')).href);
 const io=new NodeIO().registerExtensions(ALL_EXTENSIONS);
 const load=f=>io.read(path.join(REPO,f));
-const A=await load('app/scene/source/coach/flare-coach-v41-animated.glb'),B=await load('app/scene/source/coach/flare-coach-v41-training-human-animated.glb');
+const args=process.argv.slice(2),model=args.includes('--model')?args[args.indexOf('--model')+1]:'flare-coach-v41-training-human-animated';
+const A=await load('app/scene/source/coach/flare-coach-v41-animated.glb'),B=await load(`app/scene/source/coach/${model}.glb`);
 const checks=[];const ok=(name,pass,detail='')=>{checks.push({name,pass,detail});};
-const sourceBytes=fs.readFileSync(path.join(REPO,'app/scene/source/coach/flare-coach-v41-training-human-animated.glb'));
-const servedBytes=gunzipSync(fs.readFileSync(path.join(REPO,'app/scene/public/coach/flare-coach-v41-training-human-animated.glb.gz')));
+const sourceBytes=fs.readFileSync(path.join(REPO,`app/scene/source/coach/${model}.glb`));
+const servedBytes=gunzipSync(fs.readFileSync(path.join(REPO,`app/scene/public/coach/${model}.glb.gz`)));
 ok('served gzip matches source GLB',sourceBytes.equals(servedBytes),`${sourceBytes.length}/${servedBytes.length} bytes`);
 const bones=doc=>{const s=new Set();for(const sk of doc.getRoot().listSkins())for(const j of sk.listJoints())s.add(j);return [...s];};
 const ba=bones(A),bb=bones(B),na=ba.map(n=>n.getName()).sort(),nb=bb.map(n=>n.getName()).sort();

@@ -1,5 +1,8 @@
 {
   "@@locale": "it",
+  "actorBodyLabel": "Personaggio Thomas",
+  "actorBodyOriginal": "Allenatore",
+  "actorBodyTraining": "Manichino",
   "appName": "Flare Thomas",
   "tagline": "Comprendi il movimento. Allenati passo dopo passo.",
   "watch": "Movimento",

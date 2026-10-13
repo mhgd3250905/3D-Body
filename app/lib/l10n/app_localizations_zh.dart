@@ -9,6 +9,15 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get actorBodyLabel => '托马斯形象';
+
+  @override
+  String get actorBodyOriginal => '卡通教练';
+
+  @override
+  String get actorBodyTraining => '训练人台';
+
+  @override
   String get appName => 'Flare 托马斯';
 
   @override
@@ -869,6 +878,15 @@ class AppLocalizationsZh extends AppLocalizations {
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
+
+  @override
+  String get actorBodyLabel => '托馬斯形象';
+
+  @override
+  String get actorBodyOriginal => '卡通教練';
+
+  @override
+  String get actorBodyTraining => '訓練人台';
 
   @override
   String get appName => 'Flare 托馬斯';
