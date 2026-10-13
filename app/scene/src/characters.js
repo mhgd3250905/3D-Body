@@ -6,7 +6,7 @@ import * as THREE from 'three';
 // as sleeves or tights where a character wears them. No geometry, weights or
 // tracks are altered, so every motion check of the base body still holds.
 //
-// Select with ?character=shadow | chrome | street. Without it the existing
+// Select with ?character=shadow | chrome | street | robot. Without it the existing
 // ?body=training / original coach choice is untouched.
 
 const BASES = {
@@ -65,6 +65,25 @@ export const CHARACTERS = {
     rim: 0xffd86b,
     accessories: [{ type: 'beanie', color: 0x1c1d22, cuff: 0x1c1d22, stripe: 0xe0393e }],
   },
+
+  robot: {
+    id: 'robot', name: '机甲', english: 'Robot', base: 'training', fx: 'cyan',
+    note: '浅灰陶瓷装甲板、银色金属头手配枪灰金属四肢，腕口青色光环，深色面罩带一道青色扫描光，鞋底发光。',
+    zones: {
+      skin: { color: 0xb9bfc8, roughness: 0.26, metalness: 0.85, env: 2.2 },
+      arm: { color: 0x3a3f47, roughness: 0.32, metalness: 1, env: 2.2 },
+      leg: { color: 0x3a3f47, roughness: 0.32, metalness: 1, env: 2.2 },
+      tee: { color: 0xe3e6ea, roughness: 0.3, clearcoat: 0.9 },
+      cuff: { color: 0x2a2e35, roughness: 0.3, metalness: 1, env: 2 },
+      shorts: { color: 0xdadde2, roughness: 0.3, clearcoat: 0.9 },
+      shoe: { color: 0x2c3038, roughness: 0.3, metalness: 1, env: 2 },
+      sole: { color: 0x1b6f80, roughness: 0.4, emissive: 0x2fd8f0, glow: 0.8 },
+      detail: { color: 0xeef0f3, roughness: 0.3, clearcoat: 0.6 },
+    },
+    seam: { color: 0x5ff2ff, glow: 2.2 },
+    rim: 0x8feaff,
+    accessories: [{ type: 'visor', color: 0x0d1016, line: 0x5ff2ff }],
+  },
 };
 
 const DEFAULTS = {
@@ -98,13 +117,14 @@ function material(base, spec) {
     envMapIntensity: spec.env ?? 1, side: base?.side ?? THREE.FrontSide,
   });
   if (physical) { m.clearcoat = spec.clearcoat ?? 0; m.clearcoatRoughness = 0.25; if (spec.sheen) { m.sheen = spec.sheen; m.sheenRoughness = 0.5; m.sheenColor = new THREE.Color(0xffffff); } }
+  if (spec.emissive) { m.emissive = new THREE.Color(spec.emissive); m.emissiveIntensity = spec.glow ?? 1; }
   m.name = `character:${spec.color.toString(16)}`;
   return m;
 }
 
 // Body surface: classify each vertex by its dominant bone, then cut sleeves at
 // the wrist with a plane distance interpolated per pixel (crisp, no stair-step).
-function dressBody(mesh, zones) {
+function dressBody(mesh, zones, seam = null) {
   const { skinIndex, skinWeight, position } = mesh.geometry.attributes, bones = mesh.skeleton.bones;
   const n = position.count, zone = new Float32Array(n * 3), wrist = new Float32Array(n);
   const p = new THREE.Vector3();
@@ -133,6 +153,7 @@ function dressBody(mesh, zones) {
   const skinColor = m.color.clone(), skinRough = m.roughness, skinMetal = m.metalness;
   const u = {
     uZoneColor: { value: [skinColor, new THREE.Color((arm ?? {}).color ?? skinColor), new THREE.Color((leg ?? {}).color ?? skinColor)] },
+    uSeam: { value: new THREE.Color(seam?.color ?? 0x000000).multiplyScalar(seam ? (seam.glow ?? 1) : 0) },
     uZoneRM: { value: [new THREE.Vector2(skinRough, skinMetal), new THREE.Vector2(arm?.roughness ?? skinRough, arm?.metalness ?? skinMetal),
       new THREE.Vector2(leg?.roughness ?? skinRough, leg?.metalness ?? skinMetal)] },
   };
@@ -141,16 +162,18 @@ function dressBody(mesh, zones) {
     Object.assign(shader.uniforms, u);
     shader.vertexShader = 'attribute vec3 characterZone; attribute float characterWrist; varying vec3 vCharZone; varying float vCharWrist;\n'
       + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvCharZone = characterZone; vCharWrist = characterWrist;');
-    shader.fragmentShader = 'uniform vec3 uZoneColor[3]; uniform vec2 uZoneRM[3]; varying vec3 vCharZone; varying float vCharWrist;\n'
+    shader.fragmentShader = 'uniform vec3 uZoneColor[3]; uniform vec3 uSeam; uniform vec2 uZoneRM[3]; varying vec3 vCharZone; varying float vCharWrist;\n'
       + 'vec3 charW(){ float aa = max(fwidth(vCharWrist), 1e-5); float hand = smoothstep(-aa, aa, vCharWrist);\n'
       + '  vec3 w = clamp(vCharZone, 0.0, 1.0); float s = w.x + w.y + w.z + 1e-4; w /= s;\n'
       + '  return mix(vec3(w.z, w.x, w.y), vec3(1.0, 0.0, 0.0), hand); }\n'
       + shader.fragmentShader
         .replace('#include <map_fragment>', '#include <map_fragment>\n vec3 cw = charW(); diffuseColor.rgb *= uZoneColor[0]*cw.x + uZoneColor[1]*cw.y + uZoneColor[2]*cw.z;')
         .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = dot(cw, vec3(uZoneRM[0].x, uZoneRM[1].x, uZoneRM[2].x));')
-        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = dot(cw, vec3(uZoneRM[0].y, uZoneRM[1].y, uZoneRM[2].y));');
+        .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = dot(cw, vec3(uZoneRM[0].y, uZoneRM[1].y, uZoneRM[2].y));')
+        // Optional glowing seam ring just above the wrist cut (robot).
+        .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n if (vCharWrist > -0.5) { float d = abs(vCharWrist + 0.012); float aw = max(fwidth(vCharWrist), 1e-5); totalEmissiveRadiance += uSeam * (1.0 - smoothstep(0.003, 0.003 + aw, d)); }');
   };
-  m.customProgramCacheKey = () => 'flare-character-body-v1';
+  m.customProgramCacheKey = () => 'flare-character-body-v2';
   if (arm?.env || skin?.env) m.envMapIntensity = Math.max(arm?.env ?? 1, skin?.env ?? 1);
   mesh.material = m;
 }
@@ -163,7 +186,7 @@ export function applyCharacter(model, character) {
     if (!mesh.isSkinnedMesh) return;
     const name = mesh.name, zone = zoneOf(name);
     const isSkin = /Mesh001$|Head/.test(name) && !/Mesh004/.test(name);
-    if (zone === 'body') { dressBody(mesh, zones); return; }
+    if (zone === 'body') { dressBody(mesh, zones, character.seam); return; }
     if (zone && zones[zone]) { mesh.material = material(mesh.material, zones[zone]); return; }
     if (isSkin && zones.skin) mesh.material = material(mesh.material, zones.skin);
   });
@@ -274,6 +297,24 @@ function addAccessory(model, spec) {
       const stripeRows = [0, 1].map(k => ({ y: a => lift(a) + 0.012 + 0.009 * k, r: contour(points, cx, cz, y0 + 0.006, 0.012), margin: 0.0205 }));
       group.add(new THREE.Mesh(wrapGeometry(stripeRows, cx, cz), new THREE.MeshStandardMaterial({ color: spec.stripe, roughness: 0.8, side: THREE.DoubleSide })));
     }
+  } else if (spec.type === 'visor') {
+    // A wraparound dark glass visor across the eyes (front arc only), with a thin glowing scan line.
+    const y = top - (spec.drop ?? 0.105), h = spec.height ?? 0.04, span = spec.span ?? 1.35;
+    const front = spec.front ?? 0; // bind pose faces +z (nose bump sits at angle 0)
+    const arc = (rows, mat) => {
+      const g = wrapGeometry(rows, cx, cz), pos = g.attributes.position, keep = [];
+      const idx = g.index.array;
+      for (let t = 0; t < idx.length; t += 3) {
+        let ok = true;
+        for (let k = 0; k < 3; k++) { const v = idx[t + k]; const a = Math.atan2(pos.getX(v) - cx, pos.getZ(v) - cz) - front; if (Math.abs(Math.atan2(Math.sin(a), Math.cos(a))) > span) ok = false; }
+        if (ok) keep.push(idx[t], idx[t + 1], idx[t + 2]);
+      }
+      g.setIndex(keep); return new THREE.Mesh(g, mat);
+    };
+    group.add(arc(rowsBetween(y - h / 2, y + h / 2, 5, t => 0.007 + 0.004 * Math.sin(t * Math.PI), 0.012),
+      new THREE.MeshPhysicalMaterial({ color: spec.color, roughness: 0.08, metalness: 0.4, clearcoat: 1, clearcoatRoughness: 0.05, side: THREE.DoubleSide })));
+    group.add(arc(rowsBetween(y - 0.0025, y + 0.0025, 2, 0.0135, 0.012),
+      new THREE.MeshStandardMaterial({ color: spec.line, emissive: spec.line, emissiveIntensity: 2.4, roughness: 0.4, side: THREE.DoubleSide })));
   }
   // Bind-pose world -> head-bone local.
   group.applyMatrix4(head.matrixWorld.clone().invert());
