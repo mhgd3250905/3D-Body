@@ -3,15 +3,19 @@
 // App-ready GLB: a drop-in candidate for app/scene's flare-coach-v41-animated GLB.
 // The drill toon shader is not portable, so its per-vertex garment weights are baked into
 // COLOR_0 with the drill theme colours on a matte MeshStandardMaterial.
-// node tools/flare-body-swap/export-glb.mjs <out.glb>
+// node tools/flare-body-swap/export-glb.mjs <out.glb> [--no-crotch-smooth]
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
 const HERE=path.dirname(fileURLToPath(import.meta.url)),REPO=path.resolve(HERE,'../..'),DA=path.join(REPO,'tools/drill-anim');
-const out=path.resolve(process.argv[2]||'flare-coach-v41-training-human-animated.glb');
+const out=path.resolve(process.argv.slice(2).find(a=>!a.startsWith('--'))||'flare-coach-v41-training-human-animated.glb');
 const spec=JSON.parse(fs.readFileSync(path.join(DA,'batches/training-human-v2-20261013/specs/flare-v41-loop.json'),'utf8'));
 const {config,loadTheme}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);const C=config();
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path;
 const {boot}=await import(pathToFileURL(path.join(DA,'lib/boot.mjs')).href);
 const theme=loadTheme();const {b,p}=await boot({size:512,pr:1,theme,bakeHands:[]});
+// crotch-smooth mannequin pelvis (2026-10-13): shorts crotch weights diffused + front panel flattened + folds smoothed.
+// Mesh-only; bones, rest TRS and the v41 clip are untouched. --no-crotch-smooth exports the previous body.
+let crotchReport=null;
+if(!process.argv.includes('--no-crotch-smooth')){await p.addScriptTag({content:fs.readFileSync(path.join(HERE,'crotch-smooth.js'),'utf8')});crotchReport=await p.evaluate(()=>__applyCrotchSmooth());}
 const res=await p.evaluate(async ([s,th])=>{
   const src=await (await fetch('/src/viewer.js')).text(),ver=src.match(/three\.js\?v=(\w+)/)[1];
   const T=await import('/node_modules/.vite/deps/three.js?v='+ver);
@@ -65,5 +69,5 @@ const res=await p.evaluate(async ([s,th])=>{
   return {b64:btoa(bin),report,bones,tracks:clip.tracks.length,dropped:drop.map(o=>o.name)};
 },[spec,theme]);
 fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,Buffer.from(res.b64,'base64'));
-delete res.b64;console.log(JSON.stringify(res,null,1));console.log('wrote',out,fs.statSync(out).size);
+delete res.b64;res.crotchSmooth=crotchReport&&{...crotchReport,params:undefined};console.log(JSON.stringify(res,null,1));console.log('wrote',out,fs.statSync(out).size);
 await b.close();

@@ -4,7 +4,7 @@
 //   --mode new : the accepted drill-anim training human (training-human-v2: Snow-derived mesh,
 //                grey faceless mannequin head, shoulder/collar skin fix, drill toon theme)
 //   --mode old : the current web coach (Snow with face) in the web app's own stage/lighting
-// node tools/flare-body-swap/render.mjs --mode new|old --out <dir> [--size 720] [--pr 1]
+// node tools/flare-body-swap/render.mjs --mode new|old --out <dir> [--size 720] [--pr 1] [--no-crotch-smooth]
 //      [--frames 0,27,66] | [--from 0 --to 270]
 // Needs the root Vite dev server (APP_URL) and tools/drill-anim/config.json (Playwright paths).
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
@@ -31,14 +31,12 @@ const {config}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path+(process.env.LD_LIBRARY_PATH?':'+process.env.LD_LIBRARY_PATH:'');
 let b,p;
 if(mode==='new'){
-  const {boot}=await import(pathToFileURL(path.join(DA,'lib/boot.mjs')).href);const {loadTheme}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);
+  const {loadTheme}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);
   const theme=loadTheme();fs.writeFileSync(path.join(out,'theme.json'),JSON.stringify(theme));fs.writeFileSync(path.join(out,'spec.json'),JSON.stringify(spec));
-  ({b,p}=await boot({size:SZ,pr:PR,theme,bakeHands:[]}));log('boot');
-  // The adapter imports three's GLTFLoader by its raw node_modules path; on a Vite server whose
-  // node_modules is a symlink farm that raw file keeps a bare 'three' import, so use the pre-bundled one.
-  await p.evaluate(async()=>{window.__gltfURL=(await (await fetch('/src/viewer.js')).text()).match(/\/node_modules\/\.vite\/deps\/three_addons_loaders_GLTFLoader__js\.js\?v=\w+/)[0];});
-  await p.addScriptTag({content:fs.readFileSync(path.join(DA,'page/flare-v41-demo-adapter.js'),'utf8').replace("import('/node_modules/three/examples/jsm/loaders/GLTFLoader.js')","import(window.__gltfURL)")});
-  log('install',JSON.stringify(await p.evaluate(s=>__installFlareV41Demo(s),spec)).slice(0,200));
+  // stage.mjs: drill page + v41 adapter + crotch-smooth mannequin pelvis (default on since 2026-10-13; --no-crotch-smooth for the previous body)
+  const {bootFlare}=await import('./stage.mjs');const crotch=!A.includes('--no-crotch-smooth');
+  let info,crotchReport;({b,p,info,crotchReport}=await bootFlare({size:SZ,pr:PR,spec,crotch}));log('boot+install',JSON.stringify(info).slice(0,160));
+  log('crotch-smooth',crotch?JSON.stringify(crotchReport).slice(0,300):'off');
   await p.evaluate(([s,SZ])=>{__setHighlight(s.highlight);__toonUni.uSinkK.value=1;__drill.setupCamera(s,SZ);},[spec,SZ]);
   for(let k=0;k<3;k++){await p.evaluate(([s,SZ])=>{__drill.frame(s,0,0,null,{size:SZ,full:false});return 1;},[spec,SZ]);await p.waitForTimeout(300);}
   const met=[];
@@ -47,8 +45,8 @@ if(mode==='new'){
     const nm=f<0?'still':String(f).padStart(4,'0');
     fs.writeFileSync(`${out}/m-${nm}.png`,Buffer.from(r.main.split(',')[1],'base64'));fs.writeFileSync(`${out}/g-${nm}.png`,Buffer.from(r.glow.split(',')[1],'base64'));
     const rule=await p.evaluate(METRICS);
-    const profile=await p.evaluate(()=>window.__trainingCollarReport?.profileId);
-    met.push({f,t,...r.M,rule,profile});if(f%30===0)log('frame',f);}
+    const profile=await p.evaluate(()=>window.__trainingCollarReport?.profileId);const crotchFold=await p.evaluate(()=>__crotchFoldMetric());
+    met.push({f,t,...r.M,rule,profile,crotchFold,crotchSmooth:crotch});if(f%30===0)log('frame',f);}
   fs.writeFileSync(`${out}/met-${frames[0]}-${frames[frames.length-1]}.json`,JSON.stringify(met));
 }else{
   if(C.playwright_browsers_path)process.env.PLAYWRIGHT_BROWSERS_PATH=C.playwright_browsers_path;

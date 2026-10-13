@@ -34,4 +34,10 @@ S=dict(frames=len(rows),profile=sorted(set(x['profile'] for x in rows)),
   handClipMmMin=round(min(x['handClipMm'] for x in rows),1),
   floorHandFrames=sum(len(x['floorPalmY']) for x in rows),floorPalmYmm=[round(min(fp),1),round(max(fp),1)],floorWristYmm=[round(min(fw),1),round(max(fw),1)],
   minYmm=round(min(x['minYmm'] for x in rows),1))
+cf=[r['crotchFold'] for r in m if r.get('crotchFold')]
+if cf:  # crotch-region surface quality of the shorts (crotch-smooth QA): folded = triangles turned inside out, pinched = area < 35% of rest
+    S['crotchSmooth']=sorted(set(r.get('crotchSmooth') for r in m))
+    S['crotchFoldedTrisMax']=max(c['folded'] for c in cf);S['crotchFoldedTrisSum']=sum(c['folded'] for c in cf)
+    S['crotchPinchedTrisMax']=max(c['pinched'] for c in cf);S['crotchPinchedTrisSum']=sum(c['pinched'] for c in cf)
+    S['crotchMinAreaRatio']=min(c['minAreaRatio'] for c in cf);S['crotchRegionTris']=cf[0]['tris']
 json.dump(dict(summary=S,frames=rows),open(sys.argv[2],'w'),indent=1);print(json.dumps(S,indent=1))
