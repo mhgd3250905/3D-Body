@@ -15,7 +15,7 @@
 | 验包 | `codesign --verify --deep --strict`通过，arm64、版本/Build/Bundle匹配、4份隐私清单可解析，设备包含及profile有效期检查通过 |
 | 安装 | `devicectl device install app`成功；`device info apps`重读Build5 |
 | 数据保留 | 安装前私密复制旧偏好；安装后启动前逐项比较完整plist相同；未写入/删除用户记录 |
-| 启动 | 首次命令被系统以`Locked / FBSOpenApplicationErrorDomain=7`拒绝，手机尚未解锁；不是App崩溃。已请用户解锁，启动画面/新功能真机验看待续 |
+| 启动 | 首次命令被系统以`Locked / FBSOpenApplicationErrorDomain=7`拒绝，手机尚未解锁；不是App崩溃。用户解锁后再次启动成功，系统重读确认该进程仍运行；启动后旧训练/学习记录和原设置逐项相同，仅新增language设置及正常更新动作位置。实际画面/完整新功能真机验看未代用户宣称通过 |
 
 本机产物与受限证据目录：`/Users/shengkai/ios-release-artifacts/flare-build5-20261013`。归档为`Flare-Build5.xcarchive`，IPA在`export/flare.ipa`；签名配置、设备标识、原偏好和完整安装/启动日志仅保存在该私密目录，不写Git或聊天。
 
@@ -23,6 +23,6 @@
 
 1. 只读预检确认工作区干净、源提交、Build5、同Bundle ID、USB连接且Developer Mode启用；上轮130项回归、20组布局、3项Simulator原生集成与静态分析证据见[对齐记录](ios-l43-rebase-2026-10-13.md)，本轮产品源码未变，未重复全量测试。
 2. `flutter build ios --release --no-codesign --no-pub --target=lib/main.dart`成功；`xcodebuild archive`和`-exportArchive`用已有本机缓存签名成功。未传`-allowProvisioningUpdates`，未注册/下载证书或profile，未修改Apple门户。
-3. 验包通过后直接覆盖安装同Bundle ID，未卸载；设备安装查询和私密偏好比较通过。启动遇系统锁屏，需用户解锁后继续确认。
+3. 验包通过后直接覆盖安装同Bundle ID，未卸载；设备安装查询和私密偏好比较通过。首次启动遇系统锁屏；用户确认解锁后再次启动成功，后续进程存活及原记录/设置保留检查通过。新版本只新增language设置，动作位置随播放正常更新。
 
 本轮只授权连接设备更新。没有push、上传App Store Connect、TestFlight分发、取消/重提审核或公开发布；原商店S4 `1.0.0 (3)`及其文件保持，未刷新平台审核状态。Build5包含14语及原51正式视频，94项新人体素材未自动选入。长期计时、旧机性能、全14语及完整真机矩阵仍待验收，安装成功不代表这些项目已通过。
