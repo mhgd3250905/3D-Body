@@ -6,7 +6,7 @@ import * as THREE from 'three';
 // as sleeves or tights where a character wears them. No geometry, weights or
 // tracks are altered, so every motion check of the base body still holds.
 //
-// Select with ?character=shadow | chrome | street | robot. Without it the existing
+// Select with ?character=shadow | chrome | street | robot | cyber. Without it the existing
 // ?body=training / original coach choice is untouched.
 
 const BASES = {
@@ -83,6 +83,24 @@ export const CHARACTERS = {
     seam: { color: 0x5ff2ff, glow: 2.2 },
     rim: 0x8feaff,
     accessories: [{ type: 'visor', color: 0x0d1016, line: 0x5ff2ff }],
+  },
+  cyber: {
+    id: 'cyber', name: '赛博银', english: 'Cyber Chrome', base: 'training', fx: 'neon',
+    note: '镜面银合金四肢与头手，碳黑装甲上衣短裤，品红霓虹腕环与鞋底，面罩一道品红扫描光，头顶一片青色霓虹鳍冠。',
+    zones: {
+      skin: { color: 0xdfe3ea, roughness: 0.12, metalness: 1, env: 3 },
+      arm: { color: 0xc9ced6, roughness: 0.16, metalness: 1, env: 3 },
+      leg: { color: 0xc9ced6, roughness: 0.16, metalness: 1, env: 3 },
+      tee: { color: 0x16171c, roughness: 0.35, clearcoat: 1 },
+      cuff: { color: 0xff2bd6, roughness: 0.4, emissive: 0xff2bd6, glow: 0.9 },
+      shorts: { color: 0x121318, roughness: 0.35, clearcoat: 1 },
+      shoe: { color: 0x1a1b20, roughness: 0.25, metalness: 1, env: 2 },
+      sole: { color: 0x4a0a40, roughness: 0.4, emissive: 0xff2bd6, glow: 0.6 },
+      detail: { color: 0x22f0ff, roughness: 0.3, emissive: 0x22f0ff, glow: 0.8 },
+    },
+    seam: { color: 0xff2bd6, glow: 2.4 },
+    rim: 0xff6be8,
+    accessories: [{ type: 'visor', color: 0x07080c, line: 0xff2bd6, height: 0.046, span: 1.45 }, { type: 'crest', color: 0x1a1c22, line: 0x22f0ff }],
   },
 };
 
@@ -315,6 +333,32 @@ function addAccessory(model, spec) {
       new THREE.MeshPhysicalMaterial({ color: spec.color, roughness: 0.08, metalness: 0.4, clearcoat: 1, clearcoatRoughness: 0.05, side: THREE.DoubleSide })));
     group.add(arc(rowsBetween(y - 0.0025, y + 0.0025, 2, 0.0135, 0.012),
       new THREE.MeshStandardMaterial({ color: spec.line, emissive: spec.line, emissiveIntensity: 2.4, roughness: 0.4, side: THREE.DoubleSide })));
+  }
+  if (spec.type === 'crest') {
+    // A thin fin along the skull's centre line, front-high-mid to back, with a neon top edge.
+    const slice = points.filter(q => Math.abs(q.x - cx) < 0.012);
+    const zs = slice.map(q => q.z), z0 = Math.min(...zs), z1 = Math.max(...zs), N = 28;
+    const tops = [];
+    for (let k = 0; k <= N; k++) {
+      const z = z0 + (z1 - z0) * k / N, near = slice.filter(q => Math.abs(q.z - z) < (z1 - z0) / N);
+      tops.push(near.length ? Math.max(...near.map(q => q.y)) : null);
+    }
+    const from = z0 + (z1 - z0) * 0.25, to = z0 + (z1 - z0) * 0.92; // skip face and nape
+    const fin = [], edge = [], idx = [], eIdx = [];
+    let n = 0;
+    for (let k = 0; k <= N; k++) {
+      const z = z0 + (z1 - z0) * k / N; if (z < from || z > to || tops[k] == null || tops[k] < top - 0.09) continue;
+      const t = (z - from) / (to - from), hgt = 0.008 + 0.036 * Math.sin(Math.PI * Math.min(1, t * 1.15)) ** 0.8;
+      const base = tops[k] - 0.004, tip = tops[k] + hgt;
+      fin.push(cx, base, z, cx, tip, z); edge.push(cx, tip - 0.0035, z, cx, tip + 0.0012, z);
+      if (n) { const a = (n - 1) * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); eIdx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+      n++;
+    }
+    const ribbon = (pos, ix) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(ix); g.computeVertexNormals(); return g; };
+    if (n > 3) {
+      group.add(new THREE.Mesh(ribbon(fin, idx), new THREE.MeshStandardMaterial({ color: spec.color, roughness: 0.2, metalness: 1, side: THREE.DoubleSide })));
+      group.add(new THREE.Mesh(ribbon(edge, eIdx), new THREE.MeshStandardMaterial({ color: spec.line, emissive: spec.line, emissiveIntensity: 2.4, roughness: 0.4, side: THREE.DoubleSide })));
+    }
   }
   // Bind-pose world -> head-bone local.
   group.applyMatrix4(head.matrixWorld.clone().invert());

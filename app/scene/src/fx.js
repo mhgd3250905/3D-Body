@@ -47,6 +47,7 @@ export const FX_PALETTES = {
   ember: { head: 0xff7a3d, mid: 0xff4f8b, tail: 0x45d6ff, ripple: 0xff8a52 },
   cyan: { head: 0x5ff2ff, mid: 0x7b8cff, tail: 0xc86bff, ripple: 0x6ff0ff },
   silver: { head: 0xffffff, mid: 0xa9c8ff, tail: 0xffb38a, ripple: 0xdfe8ff },
+  neon: { head: 0xff2bd6, mid: 0x7a5cff, tail: 0x22f0ff, ripple: 0xff4fe0 },
   street: { head: 0xffd23f, mid: 0xff5a5f, tail: 0x9b6bff, ripple: 0xffd86b },
 };
 
