@@ -6,7 +6,11 @@
 
 APK：output/releases/Flare-L45-PR110-20261014-arm64.apk，75,901,782字节，SHA256 e490ee68b4573be5a95029e89da191e0c54e6b7b6eb9747c352964d42df9221a；包名dev.mhgd.flare，min24/target36，沿用开发签名。Android code4也为后续iOS留出大于原S4 build3的版本号；本次不创建IPA或发布商店。
 
-28受影响Flutter测试、分析、场景校验、最终七角色浏览器切换/冷启动与减少动态详情淡出通过；124项APK资产SHA通过。初审和补修对象、保存点由本节所在Git提交定位，最终合并/主目录同步回执另记。旧Web/APK需在主目录同步前另存。完整证据及未验证项见[L45记录](pr110-l45-characters-2026-10-14.md)。
+28受影响Flutter测试、分析、场景校验、最终七角色浏览器切换/冷启动与减少动态详情淡出通过；124项APK资产SHA通过。完整证据及未验证项见[L45记录](pr110-l45-characters-2026-10-14.md)。
+
+补修为 `5f31d18a643c6b141cf0f832e155aa5b766d2d02`，普通push到原来源分支；GitHub于北京时间10:49:52按固定head合并为 `2d46065544c8bb4b4055f7b9b36874352344a2d6`，合并前目标/base为 `f731881fe84c58189f9d6736286f0124a216a2df`。主目录master已安全fast-forward，产品源与验证候选无差异；当时HEAD/origin/master/远端实读均为2d46065。后续本回执仅文档保存，其自身SHA由Git记录定位，不改写原同步检查的head。
+
+主目录443个Web文件与候选逐项SHA一致，两处通用APK输出与具名L45包一致；原Web/通用APK完整另存 `output/playwright/pr110-l45-20261014/build-before/`。21项用户未跟踪文件同步前后哈希保持，根dist原编辑器未重建。回执 `output/playwright/pr110-l45-20261014/main-sync-check.json` 绑定同步时的2d46065与候选5f31d18；此前L44包和所有冻结素材保留。L45尚未真机安装，Play/Apple或网站未发布。
 
 旧草稿#106已按用户指令关闭（北京时间10:31:03），本地优化4ef5556、94库专项素材和原分支保持；不将关闭冒称合并。下方L44及更早条目均为历史身份。
 
