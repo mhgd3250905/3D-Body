@@ -18,6 +18,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get actorBodyTraining => 'トレーニングモデル';
 
   @override
+  String get actorBodyShadow => '夜影';
+
+  @override
+  String get actorBodyChrome => '銀翼';
+
+  @override
+  String get actorBodyStreet => 'ストリート';
+
+  @override
+  String get actorBodyRobot => 'メカ';
+
+  @override
+  String get actorBodyCyber => 'サイバーシルバー';
+
+  @override
   String get appName => 'Flare トーマス';
 
   @override

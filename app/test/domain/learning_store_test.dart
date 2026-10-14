@@ -354,6 +354,57 @@ void main() {
     },
   );
 
+  test('all athlete choices persist and restore with personal state', () async {
+    for (final body in [
+      'original',
+      'training',
+      'shadow',
+      'chrome',
+      'street',
+      'robot',
+      'cyber',
+    ]) {
+      final storage = MemoryStorage();
+      final store = LearningStore(catalog: catalog, storage: storage);
+      await store.initialize();
+      await store.setLastTime(2.15);
+      await store.addToToday('deltoids-A');
+      expect(await store.updateSettings(actorBody: body), isTrue);
+      final restored = LearningStore(catalog: catalog, storage: storage);
+      await restored.initialize();
+      expect(restored.settings.actorBody, body);
+      expect(restored.settings.valid, isTrue);
+      expect(restored.lastTime, 2.15);
+      expect(restored.todayIds, ['deltoids-A']);
+      final saved = jsonDecode(storage.value!) as Map;
+      expect((saved['settings'] as Map)['actorBody'], body);
+    }
+  });
+
+  test(
+    'unknown saved athlete falls back without losing personal state',
+    () async {
+      final storage = MemoryStorage();
+      final initial = LearningStore(catalog: catalog, storage: storage);
+      await initial.initialize();
+      await initial.setLastTime(2.15);
+      await initial.addToToday('deltoids-A');
+      final saved = jsonDecode(storage.value!) as Map<String, dynamic>;
+      (saved['settings'] as Map)['actorBody'] = 'future-character';
+      storage.value = jsonEncode(saved);
+      final restored = LearningStore(catalog: catalog, storage: storage);
+      await restored.initialize();
+      expect(restored.corruptState, isFalse);
+      expect(restored.settings.actorBody, 'original');
+      expect(restored.lastTime, 2.15);
+      expect(restored.todayIds, ['deltoids-A']);
+      expect(
+        () => restored.updateSettings(actorBody: 'future-character'),
+        throwsArgumentError,
+      );
+    },
+  );
+
   test('settings saved before appearance existed follow the device', () {
     final legacy = LearningSettings.fromJson({
       'tier': 'B',

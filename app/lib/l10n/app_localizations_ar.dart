@@ -18,6 +18,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actorBodyTraining => 'مجسم تدريب';
 
   @override
+  String get actorBodyShadow => 'ظل الليل';
+
+  @override
+  String get actorBodyChrome => 'جناح فضي';
+
+  @override
+  String get actorBodyStreet => 'ستايل الشارع';
+
+  @override
+  String get actorBodyRobot => 'ميكا';
+
+  @override
+  String get actorBodyCyber => 'فضة سايبر';
+
+  @override
   String get appName => 'Flare توماس';
 
   @override

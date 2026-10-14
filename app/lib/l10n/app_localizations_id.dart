@@ -18,6 +18,21 @@ class AppLocalizationsId extends AppLocalizations {
   String get actorBodyTraining => 'Manekin latihan';
 
   @override
+  String get actorBodyShadow => 'Bayangan';
+
+  @override
+  String get actorBodyChrome => 'Sayap Perak';
+
+  @override
+  String get actorBodyStreet => 'Street';
+
+  @override
+  String get actorBodyRobot => 'Mecha';
+
+  @override
+  String get actorBodyCyber => 'Perak Siber';
+
+  @override
   String get appName => 'Flare Thomas';
 
   @override

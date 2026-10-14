@@ -139,6 +139,36 @@ abstract class AppLocalizations {
   /// **'训练人台'**
   String get actorBodyTraining;
 
+  /// No description provided for @actorBodyShadow.
+  ///
+  /// In zh, this message translates to:
+  /// **'夜影'**
+  String get actorBodyShadow;
+
+  /// No description provided for @actorBodyChrome.
+  ///
+  /// In zh, this message translates to:
+  /// **'银翼'**
+  String get actorBodyChrome;
+
+  /// No description provided for @actorBodyStreet.
+  ///
+  /// In zh, this message translates to:
+  /// **'街头'**
+  String get actorBodyStreet;
+
+  /// No description provided for @actorBodyRobot.
+  ///
+  /// In zh, this message translates to:
+  /// **'机甲'**
+  String get actorBodyRobot;
+
+  /// No description provided for @actorBodyCyber.
+  ///
+  /// In zh, this message translates to:
+  /// **'赛博银'**
+  String get actorBodyCyber;
+
   /// No description provided for @appName.
   ///
   /// In zh, this message translates to:

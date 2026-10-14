@@ -127,7 +127,11 @@ export class FlarePlayer {
     }
     this.stepGlide(now);
     this.controls.update();
-    if (this.dirty) { this.render(); this.dirty = false; this.callbacks.onRender?.(); }
+    if (this.dirty) {
+      // Render hooks may request another frame while an effect settles.
+      // Consume this frame's request before running those hooks.
+      this.dirty = false; this.render(); this.callbacks.onRender?.();
+    }
   }
   render() {
     this.callbacks.onBeforeRender?.();

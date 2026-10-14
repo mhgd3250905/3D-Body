@@ -11,6 +11,7 @@ import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
+import 'actor_body_selector.dart';
 import 'content_pages.dart';
 import 'flare_silhouette.dart';
 import 'motion_controls.dart';
@@ -1649,16 +1650,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             _result(store.updateSettings(themeMode: value)),
                       ),
                     ),
-                    line(
-                      s.actorBodyLabel,
-                      segmented<String>(
-                        [
-                          ('original', s.actorBodyOriginal),
-                          ('training', s.actorBodyTraining),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            s.actorBodyLabel,
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                          const SizedBox(height: 8),
+                          ActorBodySelector(
+                            value: store.settings.actorBody,
+                            onChanged: (value) =>
+                                _result(store.updateSettings(actorBody: value)),
+                          ),
                         ],
-                        store.settings.actorBody,
-                        (value) =>
-                            _result(store.updateSettings(actorBody: value)),
                       ),
                     ),
                   ],
