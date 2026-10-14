@@ -8,7 +8,7 @@
 
 首页和动作详情使用设置选择的七种形象，身体与v41动作保持；新风格只更改材质并增加头饰。详情只高亮当前群组，脸/头发/手/鞋不着色。动作详情可旋转，禁缩放/平移；站立人台可旋转/缩放，当前群组两侧同时高亮。86×136小卡交换模型且保留各自机位、同一选择与暂停时刻。
 
-宿主保持同一WebView/画布，发送 `viewport.bottom` 遮挡量；详情在顶部栏下上下各50%，相机按上半区完整取景，下半区由Flutter显示介绍/协同卡/footer。首页inset仍按transport计算。默认均衡密度上限3、高清4、省电1，均不超过设备DPR；切模型不重建画布。标签4倍纹理关闭mipmap二次模糊。首页同步图通常宽180/模型高124，短舞台宽128/高96；不显示正面/背面视觉文字，可访问含义保留。
+详情与首页间及详情大小模型交换保持同一WebView/画布，宿主发送 `viewport.bottom` 遮挡量；详情在顶部栏下上下各50%，相机按上半区完整取景，下半区由Flutter显示介绍/协同卡/footer。首页inset仍按transport计算。默认均衡密度上限3、高清4、省电1，均不超过设备DPR；详情模型交换不重建画布。设置更换角色则重建场景并恢复当前暂停帧、配置及详情状态。标签4倍纹理关闭mipmap二次模糊。首页同步图通常宽180/模型高124，短舞台宽128/高96；不显示正面/背面视觉文字，可访问含义保留。
 
 14语短名/读屏和本地字体由 `localization` 命令更新，保持动画时间且不镜像3D人物；功能色区是教学位置提示，不是肌电或解剖精确配准。知识卡片的连续展开由Flutter负责，不改变scene尺寸。当前检查点/安装包见[version-ledger.md](../docs/version-ledger.md)。
 
@@ -54,7 +54,7 @@ Muscle IDs: `deltoids`, `rotator-cuff`, `triceps`, `forearms`, `serratus`,
 
 ## 历史：v38/v33显示、study派生和原包优化
 
-以下保留当时的原始设计与复现说明，已由上方v41/L43展示契约覆盖；其中“current”仅指记录当时。不要据此切换默认模型、恢复旧比例/标签或声称当前验证通过。
+以下保留当时的原始设计与复现说明，已由上方v41/L45展示契约覆盖；其中“current”仅指记录当时。不要据此切换默认模型、恢复旧比例/标签或声称当前验证通过。
 
 While playing the athlete has its original materials and no labels, circles or
 arrows on the actor. The lower-left panel shows the supplied CC0 static mannequin
@@ -169,6 +169,8 @@ without creating independent muscle meshes or claiming exact anatomical registra
 npm run calibrate:muscles
 npm run verify:muscles
 ```
+
+<a id="warm-ivory-matte-study-derivative"></a>
 
 ### 历史：Warm ivory matte study derivative
 

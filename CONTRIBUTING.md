@@ -4,7 +4,7 @@
 
 先读 [README](README.md)、[项目约定](AGENTS.md) 和 [版本台账](app/docs/version-ledger.md)，核对当前交付及本地检查点；实际验证见 [verification.md](app/docs/verification.md)，实施和待验收项见 [development-roadmap.md](app/docs/development-roadmap.md)。
 
-继续Flutter App读 [App说明](app/README.md)、[App约定](app/AGENTS.md)、[v41合约](app/docs/motion-v41.md) 与 [资产来源](app/docs/asset-sources.md)。当前手机交付为L43，14语、51视频、上下半屏详情及连续知识展开已接入；启动预加载/真实剪影/首帧衔接、高清全身小卡、穿衣详情柔边高亮、最多3重点及圆点细线的选侧/避让/平滑/边界保护已接入。17张银色模型图用于肌群条目，用户已认可该项外观；长期计时、全设备与其余3D仍按T01/T02待验收。
+继续Flutter App读 [App说明](app/README.md)、[App约定](app/AGENTS.md)、[v41合约](app/docs/motion-v41.md) 与 [资产来源](app/docs/asset-sources.md)。当前源码与本地构建为L45 / 1.0.2+4，App设置提供七种可保存形象及播放特效；手机最后已知安装为L44，L45尚未安装。14语、51视频、上下半屏详情及连续知识展开保持；启动预加载/真实剪影/首帧衔接、高清全身小卡、穿衣详情柔边高亮、最多3重点及圆点细线的选侧/避让/平滑/边界保护保持。17张银色模型图用于肌群条目，用户已认可该项外观；真机七形象观感、长期计时、全设备与其余3D仍按T01/T02待验收。
 
 双击 `start-flutter.cmd` 使用8820离线App预览，具体构建身份见版本台账；以下8810命令用于保留的根目录原网页编辑器。托马斯动作人物保留原服装和面孔，指定肌群详情显示当前群组柔边代理高亮，独立直立人台保留分区与选区；现行行为以v41合约和当前验证为准。Play P01保持，当前本地APK/Web与同版本号的旧AAB不能混同。
 

@@ -10,6 +10,43 @@
 
 下方L44验证保留原时间、对象与范围。
 
+<a id="l45-证据绑定与文档收口2026-10-14"></a>
+
+## L45 证据绑定与文档收口（2026-10-14）
+
+本次由用户显式调用cockpit-closeout并授权保存、提交、普通push。只读Preflight基线为原L44主线检查点 `f731881fe84c58189f9d6736286f0124a216a2df`，不是任意最近提交；确认它是收口前HEAD `18e7254ed68d57dc4640aa22849947456eded7bb` 的祖先。阶段为6提交/56路径：新增8、修改47、重命名1，包含PR110原三提交、补修5f31d18、合并2d46065及交付回执18e7254。收束scope仅为该阶段行为/来源/版本/构建与安装/PR状态/验证台账；产品源、配置和资产不再修改。
+
+Preflight完整status为tracked/staged/unstaged/deleted/renamed均0、untracked21：Air-Flare原视频1、用户图标PNG12、JSON8，与本轮开始前记录一致，全部保留不暂存。只用路径、类型、数量核对归属，不读用户素材、凭据、原始日志、浏览器profile或构建字节，不扫描兄弟仓库。阶段二新增修改均为本Agent明确修正的文档。
+
+从根/App AGENTS和README的一跳声明识别如下来源；类别由入口职责确定，历史内容不冒充当前canonical。
+
+| 实际核对路径 | 类别与判定 | 核对主题及本次处置 |
+| --- | --- | --- |
+| README.md、AGENTS.md、app/README.md、app/AGENTS.md | current入口/约定，内含历史阶段 | 当前七形象、L45预览/包与手机L44安装分开；明确播放FX/暂停教学层，保留原历史身份 |
+| CONTRIBUTING.md | current协作入口，根README直接指定 | 修正旧“当前手机L43”；当前构建L45，已知安装L44、未发布 |
+| app/docs/version-ledger.md | current版本/包/安装/PR保存身份 | 固定head/base、补修/合并/回执、code4与APK身份；补本次基线/scope/保存规则 |
+| app/docs/verification.md、app/docs/pr110-l45-characters-2026-10-14.md | current验证事实及专题证据 | 命令、source state、复用范围与待验收，原L44真机证据保留其原对象 |
+| app/docs/development-roadmap.md | current实施/待验收 | #106已关闭，M0/M1/M7及包入口为L45，安装/设备/QA不销项 |
+| app/docs/asset-sources.md、app/docs/drill-media-2026-10-11.md | current来源/51选版；L44是仍沿用的来源基线 | 新角色为材质/刚性头饰派生，旧51媒体QA保持；四个跨项目历史引用不访问 |
+| app/docs/motion-v41.md、app/scene/README.md | current动作及场景接口 | 七角色共用22骨/44轨；详情交换保留画布，设置角色更换重建并恢复同帧 |
+| docs/fx-and-characters-2026-10-14.md | current阶段技术记录，原作者渲染段为archive/history | 五角色表、当前App设置、性能未验收；原三角色软件渲染不扩为L45验收 |
+| docs/integration-pr-audit-2026-10-12.md | archive/history，本页明确截至6fbf7a7/10-12 | 原#106 Draft及10-13本地优化是原日期事实；当前Closed以L45台账为准，旧合并收据不改写 |
+
+受影响源码事实另核对pubspec、actorBodies、URI配置、角色选择与FX tick。产品验证源为 `5f31d18a643c6b141cf0f832e155aa5b766d2d02`；到18e7254只有motion-v41、L45专题、verification、version-ledger四篇文档（15新增/3删除），产品源码/测试/模型/媒体均相同。本次也只改文档，原构建与浏览器证据可按原范围复用，不写成收口HEAD重新构建。
+
+| 验证/观察与命令 | 实际执行来源/时间与source state | 结果及本次适用性 |
+| --- | --- | --- |
+| flutter test --no-pub test/ui/actor_choice_test.dart test/ui/scene_process_recovery_test.dart test/ui/internationalization_test.dart test/domain/learning_store_test.dart test/platform/scene_variant_test.dart --reporter compact | 2026-10-14本会话Preflight，主目录18e7254完整产品状态；控制台9秒+28 All tests passed | 28项通过，已覆盖最终字体修复；不累加先前4项为32项，未跑全量测试 |
+| flutter analyze --no-pub | 原L45实现阶段本会话，最终字体修复后的工作树，其产品源随后保存为5f31d18 | No issues；后续仅文档，保持适用，不冒称本次重新分析 |
+| npm run build；npm run verify；node tools/verify-fx-scheduling.mjs（cwd app/scene） | 原L45实现阶段本会话，修复后的JS源保存为5f31d18；后续字体修复不改变JS | 构建及历史/v41/质量/FX检查通过；真实GLB调度回归覆盖最终JS，不代表新增头饰全姿态或设备QA |
+| flutter build web --no-web-resources-cdn --no-pub；flutter build apk --release --target-platform android-arm64 --no-pub | 原L45实现阶段最终字体修复后、本会话5f31d18产品树 | Web/APK通过；原包e490ee68哈希和签名记录沿用，本次不读包、不重新生成 |
+| 完整App浏览器选择7角色、保存/2.375秒同帧、赛博银冷启动；减少动态详情FX检查 | 原L45实现阶段最终候选，5f31d18产品树；同会话实际工具返回及L45专题记录 | 7项一致、错误0、FX level0；软件/Intel OpenGL证据，不当作手机或全部语言验收 |
+| verify-apk.py、aapt badging、apksigner verify --print-certs | 原L45实现阶段同会话，5f31d18产品树的具名APK | 22场景+51视频+51封面124哈希一致，1.0.2/code4、原开发证书；本次不重新读取构建字节 |
+| main-sync-check.json（原同步事实） | 合并后2d46065/候选5f31d18，原2026-10-14同步时记录 | 443 Web文件、两处APK及21用户文件SHA保持；只复用当时观察，不改写JSON为18e7254或本次保存点 |
+| gh pr view 110 / 106 --json 指定状态字段 | 本次Preflight实际只读GitHub返回 | #110 MERGED/head5f31d18/merge2d46065，#106 CLOSED/head3d204、closedAt02:31:03Z；关闭不冒称合并 |
+
+本次必要文档检查为有限14来源的431个本地链接/35个锚点、预期当前事实、产品源与5f31d18无差异、git diff --check及完整status，失败0；独立只读复核确认当前过期finding清零。旧warm-ivory锚点已保留兼容；四个基线已存在的3D-Pose历史引用只记录不访问、不宣称验证目标。详细Preflight与对齐结果保存在 `output/stage-closeout-l45-20261014/`。收口提交以 `docs: close out L45 character delivery and verification` 定位，不在同一提交预填自身SHA；正常push，不创建tag、新包或结束Cockpit会话。
+
 ## L44 形象切换与媒体升级验证（2026-10-13）
 
 历史本轮交付为L44 / 1.0.1+2，详细固定审核对象、领口来源、哈希及实际命令结果见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。215项领口派生断言、270帧对照与17肌群详情/交换/返回通过；Flutter分析、偏好迁移/恢复/服务/国际化/媒体定向回归通过；102媒体完整解码，离线Web及ARM64 APK构建/逐项打包哈希通过。真机保留数据安装、两形象同帧切换、冷启动保存和限定视频点播/暂停/互斥通过。新版媒体完整性不等于28项源QA提示销项，真机抽查不代表51项原生或长期设备验收。

@@ -48,7 +48,7 @@ Android已保留数据安装L44，形象切换、同帧返回、冷启动保存�
 
 历史：2026-10-09 已按用户认可的 PR #2 整合全页面精简与深浅主题：详情动作人物保留原服装和面孔，用当前群组柔边代理高亮，固定全身机位；直立人台可旋转，卡片交换与同帧返回保持。当前使用 v41 烘焙动画，后续动作优化同步网页与 App。最初v38的米白无衣详情外观、截图和派生资产保留为历史。
 
-Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记录；本地Three.js AnimationMixer播放v41烘焙GLB，模型和素材离线打包。首页与详情使用所选的卡通教练或领口修复训练人台，详情仅当前群组柔边代理高亮；独立直立人台保留精细分区线与当前选区，卡片交换和同帧返回保持。两种人物不宣称精确解剖配准。动作合约见 [v41同步说明](app/docs/motion-v41.md)，版本/安装包/发布观察见 [版本管理台账](app/docs/version-ledger.md)，实施及待验收项见 [实施路线](app/docs/development-roadmap.md)，实际证据见 [App验证记录](app/docs/verification.md)。
+Flutter工程在 [app/](app/README.md)，负责页面、训练计时与本地记录；本地Three.js AnimationMixer播放v41烘焙GLB，模型和素材离线打包。首页与详情使用设置保存的七种形象；五种新风格是原卡通教练或领口修复训练人台的材质与头饰派生，身体与v41动作保持。详情仅当前群组柔边代理高亮；独立直立人台保留精细分区线与当前选区，卡片交换和同帧返回保持，不宣称人物与解剖精确配准。动作合约见 [v41同步说明](app/docs/motion-v41.md)，版本/安装包/发布观察见 [版本管理台账](app/docs/version-ledger.md)，实施及待验收项见 [实施路线](app/docs/development-roadmap.md)，实际证据见 [App验证记录](app/docs/verification.md)。
 
 当前接手先读 [App使用说明](app/README.md)、[版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)、[实施路线](app/docs/development-roadmap.md)、[资产来源](app/docs/asset-sources.md) 与 [v41同步说明](app/docs/motion-v41.md)。[v38接入说明](app/docs/motion-v38.md)、[2026-10-08 App交接](app/docs/handoff-2026-10-08.md) 与 [对应截图索引](app/docs/screenshots/2026-10-08/README.md) 保留历史，不能代替当前交付或验收事实。
 

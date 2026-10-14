@@ -4,7 +4,7 @@
 
 夜影/银翼/机甲/赛博银使用既有Snow同源collarfix训练人台；街头使用原卡通教练。新增为材质/服装着色与程序生成刚性头饰，身体网格/权重/22骨/44轨和原授权保持，无外部人体、收费资产或生成服务。App另保留原卡通教练/训练人台共七选项；独立解剖参考和51媒体均保持原来源。保存、验证和设备边界见[L45记录](pr110-l45-characters-2026-10-14.md)。
 
-## L44 当前人物与训练媒体（2026-10-13）
+## L44 人物与训练媒体来源基线（2026-10-13，L45沿用）
 
 原卡通教练和原PR训练人台资产继续保留。App保存的训练人台选项加载Snow同源的collarfix-20261013派生，修正旧导出着色并恢复training-human-v2已有的肩颈内收；22骨/44轨v41与材质来源保持，无新模型许可或收费资产。source/gzip输入输出SHA及验证见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。独立解剖人台及Snow/Human Base Meshes/Three.js署名保留。
 
@@ -144,6 +144,8 @@ PR #4已合并，源 `3b25f13075dcf4aa0bec918cdbf2947c5a8bb8a3`，合并 `bb94d8
 `drillArt()`随主题在训练库、今日训练和详情选图，深色原图保留。102图解码/尺寸/ID/缩略对应及51对审阅通过；hamstrings-A高亮稍延伸臀部、obliques-C器械浅银色两项差异仍在，不声称逐像素保持原图。文件哈希与检查见 [资源记录](screenshots/2026-10-09-pr4/resource-check.json)，实际验证统一归入 [verification.md](verification.md)。
 
 ## 动作视频与静态帧（2026-10-11）
+
+本节是L31导入时的历史来源追溯。下方四个3D-Pose跨项目链接保留原引用，本次L45文档收束不访问其目标；当前51项选版以本页顶部L44来源基线、媒体交付记录和版本台账为准。
 
 L31封面时刻追溯：源[organize-final-media.py](../../../3D-Pose/hark-4080-work/organize-final-media.py)用FFmpeg `-ss 1`制作原48张封面；[publish-local.py](../../../3D-Pose/hark-4080-revisions/publish-local.py)取30fps的 `c/0060.png`制作三张local封面，即2秒。媒体清单据此保存 `poster_time_seconds`，播放器从该姿态准备并等待实际首帧才揭开Flutter封面；未修改原海报或视频，也不把原视频第0帧记成黑屏。六代表抽帧对比与浏览器51项首帧检查共同核对时刻，实际记录见[验证](verification.md)。
 
