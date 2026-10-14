@@ -174,7 +174,23 @@ function walk(directory) { for (const entry of fs.readdirSync(directory, { withF
   const file = path.join(directory, entry.name); if (entry.isDirectory()) walk(file); else allBuiltFiles.push(file);
 } }
 walk(built); const bundledBytes = allBuiltFiles.reduce((sum, file) => sum + fs.statSync(file).size, 0);
-assert.ok(bundledBytes < 14 * 1024 * 1024, 'Offline scene exceeds historical-plus-v38 payload budget');
+// L44 retained the original PR training body and its accepted collar-fixed
+// derivative alongside the older scene. Account for these exact assets while
+// keeping the historical scene's payload budget unchanged.
+const retainedTrainingBodies = [
+  ['coach/flare-coach-v41-training-human-animated.glb.gz', '7b3ef10903adecddcca55c0bb93a3ed921622dc9de629581d55db6fc6d5ef691'],
+  ['coach/flare-coach-v41-training-human-collarfix-20261013.glb.gz', 'ea5f75f9510970ef4131a11655255d79e26d267ad19d6a4e4b62b481a4945f20'],
+];
+let retainedTrainingBytes = 0;
+for (const [relative, sha256] of retainedTrainingBodies) {
+  const source = path.join(sceneRoot, 'public', relative), emitted = path.join(built, relative);
+  assert.equal(hash(source), sha256, 'Accepted training body changed: ' + relative);
+  assert.equal(hash(emitted), sha256, 'Bundled training body differs: ' + relative);
+  const bytes = fs.statSync(emitted).size;
+  assert.ok(bytes < 3 * 1024 * 1024, 'Compressed training body exceeds 3 MiB');
+  retainedTrainingBytes += bytes;
+}
+assert.ok(bundledBytes - retainedTrainingBytes < 14 * 1024 * 1024, 'Offline scene exceeds historical payload plus fixed L44 training bodies');
 assert.equal(hash(path.join(built, 'coach/flare-coach.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach.meshopt.glb.gz')));
 assert.equal(hash(path.join(built, 'anatomy/mannequin-reference.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/anatomy/mannequin-reference.meshopt.glb.gz')));
 assert.equal(hash(path.join(built, 'coach/flare-coach-study-body.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach-study-body.meshopt.glb.gz')));

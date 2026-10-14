@@ -18,6 +18,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get actorBodyTraining => '훈련 마네킹';
 
   @override
+  String get actorBodyShadow => '밤 그림자';
+
+  @override
+  String get actorBodyChrome => '은빛 날개';
+
+  @override
+  String get actorBodyStreet => '스트리트';
+
+  @override
+  String get actorBodyRobot => '메카';
+
+  @override
+  String get actorBodyCyber => '사이버 실버';
+
+  @override
   String get appName => 'Flare 토마스';
 
   @override

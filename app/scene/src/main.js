@@ -10,12 +10,15 @@ import { createPhaseMap } from './phase-map.js';
 import { applyTheme, themeSettling } from './theme.js';
 import { createPresentationGate } from './presentation.js';
 import { sceneStrings, setSceneStrings } from './localization.js';
+import { createFlareFx } from './fx.js';
+import { characterFromLocation } from './characters.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
-let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts;
+let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false;
+const character = characterFromLocation(location.search);
 const hosted = document.documentElement.dataset.hosted === 'true';
 let presented = false, statusTimer = null;
 const presentation = createPresentationGate({
@@ -48,7 +51,7 @@ function state() {
     speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
     detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
-    quality: player?.quality ?? 'medium', ready, presented, errorCode };
+    quality: player?.quality ?? 'medium', fx: fx?.enabled ?? false, character: character.id, ready, presented, errorCode };
 }
 function emitState(force = false) {
   // Intermediate viewport/theme/seek acknowledgements must not flash the
@@ -77,7 +80,7 @@ function dismissStatus() {
   }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 340);
 }
 function refreshHotspots(rendered = false) {
-  if (!ready || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+  if (!ready || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     hotspots = []; callouts?.clear(); return;
   }
@@ -194,6 +197,7 @@ function command(value) {
       if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
       detailView.setModel(input.value, phaseAt(player.time)); break;
     case 'quality': player.setQuality(input.value); break;
+    case 'fx': if (typeof input.value !== 'boolean') return; fx?.setEnabled(input.value); break;
     case 'visibility': player.setVisible(input.visible); break;
     default: return;
   }
@@ -212,9 +216,9 @@ retry.addEventListener('click', () => window.location.reload());
 
 async function boot() {
   try {
-    player = new FlarePlayer(stage, {
+    player = new FlarePlayer(stage, { character,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
-      onBeforeRender: () => refreshHotspots(true),
+      onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true); },
       onRender: () => {
         const complete = detailed ? detailView?.renderMini() : phaseMap?.render();
         presentation.rendered(complete === true);
@@ -234,6 +238,7 @@ async function boot() {
     player.setViewInset(viewInset, false);
     await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
     player.resetView();
+    fx = createFlareFx(player, { palette: character.fx, enabled: new URLSearchParams(location.search).get('fx') !== '0' });
     const skinned = buildMmRest(player.motion, player.coach);
     callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, { hosted, depthSampler: createHotspotDepth(player, skinned) });
     hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
@@ -255,11 +260,19 @@ async function boot() {
       triangles: stats.triangles + (mesh.geometry.index?.count ?? mesh.geometry.attributes.position.count) / 3 }), { meshes: 0, vertices: 0, triangles: 0 });
     // Diagnostics return data copies, not scene objects. The playback bridge is
     // also used by reproducible parity and browser checks.
+    // Close-up inspection camera for offline checks (not used by the host).
+    window.__flareDebugCam = (joint, distance, view) => {
+      const point = new player.camera.position.constructor(...player.getMetrics().joints[joint]);
+      const dir = new player.camera.position.constructor(...view).normalize();
+      player.autoFrame = false; player.setCameraView(point.clone().addScaledVector(dir, distance), point);
+    };
     window.__flareScene = Object.freeze({
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
       hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
       hitTestCallout: (x, y) => callouts?.pick(x, y) ?? null,
-      getPhaseMap: () => phaseMap?.getState(),
+      getPhaseMap: () => phaseMap?.getState(), getFx: () => fx?.getState() ?? null,
+      wallToTime: wall => player.motion.clock.toSequence(wall), wallDuration: () => player.motion.clock.duration,
+      previewFx: (time, hold = true) => { previewing = hold; command({ type: 'seek', time }); fx?.setHold(hold); player.dirty = true; },
       getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
@@ -284,7 +297,7 @@ async function boot() {
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;
   ready = false; pending = []; window.removeEventListener('message', receive);
-  callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
+  fx?.dispose(); callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
 }
 window.addEventListener('pagehide', event => { if (event.persisted) player?.setVisible(false); else dispose(); });
 window.addEventListener('pageshow', event => { if (event.persisted) player?.setVisible(true); });

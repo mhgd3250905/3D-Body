@@ -18,6 +18,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get actorBodyTraining => 'Манекен';
 
   @override
+  String get actorBodyShadow => 'Тень';
+
+  @override
+  String get actorBodyChrome => 'Серебряное крыло';
+
+  @override
+  String get actorBodyStreet => 'Уличный';
+
+  @override
+  String get actorBodyRobot => 'Меха';
+
+  @override
+  String get actorBodyCyber => 'Киберсеребро';
+
+  @override
   String get appName => 'Flare Томас';
 
   @override

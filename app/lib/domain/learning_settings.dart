@@ -12,7 +12,15 @@ class LearningSettings {
   });
 
   static const themeModes = ['system', 'dark', 'light'];
-  static const actorBodies = ['original', 'training'];
+  static const actorBodies = [
+    'original',
+    'training',
+    'shadow',
+    'chrome',
+    'street',
+    'robot',
+    'cyber',
+  ];
   static const languages = [
     'system',
     'zh',

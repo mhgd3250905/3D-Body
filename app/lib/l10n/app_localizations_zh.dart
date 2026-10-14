@@ -18,6 +18,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get actorBodyTraining => '训练人台';
 
   @override
+  String get actorBodyShadow => '夜影';
+
+  @override
+  String get actorBodyChrome => '银翼';
+
+  @override
+  String get actorBodyStreet => '街头';
+
+  @override
+  String get actorBodyRobot => '机甲';
+
+  @override
+  String get actorBodyCyber => '赛博银';
+
+  @override
   String get appName => 'Flare 托马斯';
 
   @override
@@ -887,6 +902,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get actorBodyTraining => '訓練人台';
+
+  @override
+  String get actorBodyShadow => '夜影';
+
+  @override
+  String get actorBodyChrome => '銀翼';
+
+  @override
+  String get actorBodyStreet => '街頭';
+
+  @override
+  String get actorBodyRobot => '機甲';
+
+  @override
+  String get actorBodyCyber => '賽博銀';
 
   @override
   String get appName => 'Flare 托馬斯';

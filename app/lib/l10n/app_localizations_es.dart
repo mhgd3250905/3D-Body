@@ -18,6 +18,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get actorBodyTraining => 'Maniquí';
 
   @override
+  String get actorBodyShadow => 'Sombra';
+
+  @override
+  String get actorBodyChrome => 'Ala plateada';
+
+  @override
+  String get actorBodyStreet => 'Urbano';
+
+  @override
+  String get actorBodyRobot => 'Mecha';
+
+  @override
+  String get actorBodyCyber => 'Plata cibernética';
+
+  @override
   String get appName => 'Flare Tomás';
 
   @override

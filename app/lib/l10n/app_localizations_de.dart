@@ -18,6 +18,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actorBodyTraining => 'Trainingsfigur';
 
   @override
+  String get actorBodyShadow => 'Schatten';
+
+  @override
+  String get actorBodyChrome => 'Silberflügel';
+
+  @override
+  String get actorBodyStreet => 'Street';
+
+  @override
+  String get actorBodyRobot => 'Mecha';
+
+  @override
+  String get actorBodyCyber => 'Cyber-Silber';
+
+  @override
   String get appName => 'Flare Thomas';
 
   @override

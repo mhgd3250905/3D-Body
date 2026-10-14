@@ -18,6 +18,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get actorBodyTraining => 'प्रशिक्षण मॉडल';
 
   @override
+  String get actorBodyShadow => 'रात की छाया';
+
+  @override
+  String get actorBodyChrome => 'रजत पंख';
+
+  @override
+  String get actorBodyStreet => 'स्ट्रीट';
+
+  @override
+  String get actorBodyRobot => 'मेका';
+
+  @override
+  String get actorBodyCyber => 'साइबर सिल्वर';
+
+  @override
   String get appName => 'Flare थॉमस';
 
   @override
