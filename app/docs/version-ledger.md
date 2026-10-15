@@ -105,7 +105,7 @@
 
 清理分支 `chore/move-drill-anim-to-pose-hub` 基于 `66067a6`：340个已迁文件移除，原工具README改迁移指针，保留工具以 `POSE_HUB_DIR` 读取外部checkout，文档链接固定迁移commit。51视频/封面及运行资产保持，App版本号不变；#121已关闭并指向Pose-Hub#1。验证前后无新增失败，详见[本次实测](../../docs/pose-hub-migration-2026-10-17.md#本次清理实测)。本地保存与远端推送分开记录；推送及新PR创建待用户同意。
 
-2026-10-15 TestFlight恢复验证：新App Store候选 **1.0.1（7）** 已验包并单次上传，Delivery `cecd0bce-6ecf-4369-9c21-8f290c92132a`，Apple已VALID / IN_BETA_TESTING；新包已关联原“Flare iOS v1”内部组、原1名ACCEPTED测试员，实际手机安装因镜像连接待续，未正式提审/公开发布。固定source/IPA哈希和阶段状态见[本轮记录](testflight-recovery-2026-10-15.md)。
+2026-10-15 TestFlight恢复验证：新App Store候选 **1.0.1（7）** 已验包并单次上传，Delivery `cecd0bce-6ecf-4369-9c21-8f290c92132a`，Apple已VALID / IN_BETA_TESTING；新包已关联原“Flare iOS v1”内部组、原1名ACCEPTED测试员，用户已改为本人远程测试，实际手机安装/启动结果待反馈，未正式提审/公开发布。固定source/IPA哈希和阶段状态见[本轮记录](testflight-recovery-2026-10-15.md)。
 
 2026-10-13 L44真机更新：按用户要求，`0e6185f` 的 **1.0.1（6）Release开发签名版**已从Build5保留数据更新到iPhone16 Pro / iOS26.5；设备重读及原偏好完整对比通过，包内102媒体/领口模型与已验证源码一致。手机尚锁屏，启动及用户验看待续；[安装记录](ios-build6-device-2026-10-13.md)。下方rebase阶段“真机仍为Build5”保留历史范围；S4与Build5标签/IPA保持，未操作Apple发布。
 
