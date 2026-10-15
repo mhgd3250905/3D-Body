@@ -1,12 +1,14 @@
 # Flutter offline Flare scene
 
-当前运行时为v41烘焙Snow与AnimationMixer；源码入口、固定来源、22骨/44轨/540帧和0–9序列域映射以[motion-v41.md](../docs/motion-v41.md)为准。`src/legacy`、v33/v38、裸肤study派生与旧优化记录保留历史，不能作为当前展示或验证结果。
+当前为 **L46 / v42-R12**：App七形象与网页默认展示采用用户已认可的22骨/44轨/541帧R12，AnimationMixer播放1.35秒循环，0–9教学时间由独立时钟双向映射，默认0.5倍一圈2.7秒。详情/交换返回同帧、精确教学阶段、短段轨迹特效与同源启动剪影保持。当前合约和复现见[motion-v42.md](../docs/motion-v42.md)，构建/设备事实见[L46记录](../docs/l46-motion-v42-2026-10-15.md)。下方v41及L45内容作为历史来源保留；原资产/源码镜像不可重写。
+
+历史运行时为v41烘焙Snow与AnimationMixer；其固定来源、22骨/44轨/540帧和旧序列域映射保留于[motion-v41.md](../docs/motion-v41.md)。`src/legacy`、v33/v38、裸肤study派生与旧优化记录保留历史，不能作为当前展示或验证结果。
 
 `npm ci` 后执行 `npm run build`，Vite只写入 `../assets/scene/`。Flutter Web使用同源iframe，Android/iOS使用loopback来源读取同一包；模型/字体/翻译均离线，无CDN。运行资产与许可证见[asset-sources.md](../docs/asset-sources.md)，构建及实景证据见[verification.md](../docs/verification.md)。
 
-## 当前动作舞台（L45，延续L43布局）
+## 当前动作舞台（L46，延续L43布局）
 
-首页和动作详情使用设置选择的七种形象，身体与v41动作保持；新风格只更改材质并增加头饰。详情只高亮当前群组，脸/头发/手/鞋不着色。动作详情可旋转，禁缩放/平移；站立人台可旋转/缩放，当前群组两侧同时高亮。86×136小卡交换模型且保留各自机位、同一选择与暂停时刻。
+首页和动作详情使用设置选择的七种形象，既有身体保持并统一播放R12；新风格只更改材质并增加头饰。详情只高亮当前群组，脸/头发/手/鞋不着色。动作详情可旋转，禁缩放/平移；站立人台可旋转/缩放，当前群组两侧同时高亮。86×136小卡交换模型且保留各自机位、同一选择与暂停时刻。
 
 详情与首页间及详情大小模型交换保持同一WebView/画布，宿主发送 `viewport.bottom` 遮挡量；详情在顶部栏下上下各50%，相机按上半区完整取景，下半区由Flutter显示介绍/协同卡/footer。首页inset仍按transport计算。默认均衡密度上限3、高清4、省电1，均不超过设备DPR；详情模型交换不重建画布。设置更换角色则重建场景并恢复当前暂停帧、配置及详情状态。标签4倍纹理关闭mipmap二次模糊。首页同步图通常宽180/模型高124，短舞台宽128/高96；不显示正面/背面视觉文字，可访问含义保留。
 
@@ -14,7 +16,7 @@
 
 ## 动效装饰与五个角色（2026-10-14，分支 flare/fx-and-characters）
 
-播放时脚尖拖出两条细的渐变光带（余烬橙→玫红→青），带少量随轨迹飘散的光点，手掌撑地时地面泛起一圈柔光涟漪。全部由v41烘焙片段预计算，任意速度、seek和分段循环都与动作同帧；暂停、选中肌群、详情时淡出，不改变人物、材质或动作。`?character=shadow|chrome|street|robot|cyber` 选择五个角色（夜影/银翼/街头/机甲/赛博银），只换材质并加刚性头饰，骨骼/蒙皮/44轨不变；不带参数时保持原 `?body=` 行为。详见 [docs/fx-and-characters-2026-10-14.md](../../docs/fx-and-characters-2026-10-14.md)。
+播放时脚尖拖出两条细的渐变光带（余烬橙→玫红→青），带少量随轨迹飘散的光点，手掌撑地时地面泛起一圈柔光涟漪。L45原实现由v41烘焙片段预计算；L46已改为从R12重采样并按循环比例缩短时间窗，任意速度、seek和分段循环都与动作同帧；暂停、选中肌群、详情时淡出，不改变人物、材质或动作。`?character=shadow|chrome|street|robot|cyber` 选择五个角色（夜影/银翼/街头/机甲/赛博银），只换材质并加刚性头饰，骨骼/蒙皮/44轨不变；不带参数时保持原 `?body=` 行为。详见 [docs/fx-and-characters-2026-10-14.md](../../docs/fx-and-characters-2026-10-14.md)。
 
 ## Flutter bridge
 
@@ -54,7 +56,7 @@ Muscle IDs: `deltoids`, `rotator-cuff`, `triceps`, `forearms`, `serratus`,
 
 ## 历史：v38/v33显示、study派生和原包优化
 
-以下保留当时的原始设计与复现说明，已由上方v41/L45展示契约覆盖；其中“current”仅指记录当时。不要据此切换默认模型、恢复旧比例/标签或声称当前验证通过。
+以下保留当时的原始设计与复现说明，已由上方v42-R12/L46展示契约覆盖；其中“current”仅指记录当时。不要据此切换默认模型、恢复旧比例/标签或声称当前验证通过。
 
 While playing the athlete has its original materials and no labels, circles or
 arrows on the actor. The lower-left panel shows the supplied CC0 static mannequin

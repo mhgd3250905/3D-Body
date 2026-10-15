@@ -14,7 +14,10 @@ from PIL import Image, ImageDraw, ImageChops
 ROOT = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", default=str(ROOT / "output/flare-loading-20261011/three"))
+parser.add_argument("--name", default="flare-loading", help="Asset basename; use a new name for a new motion version.")
 args = parser.parse_args()
+if not args.name or any(c not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for c in args.name):
+    parser.error("--name must contain only lowercase letters, digits, '-' and '_'.")
 source = Path(args.input).resolve()
 source.relative_to(ROOT)
 metadata = json.loads((source / "render-metadata.json").read_text(encoding="utf-8"))
@@ -33,11 +36,12 @@ for index in range(count):
     frames.append(frame)
     bounds.append(bbox)
 
-durations = [round((i + 1) * 1000 / metadata["nominalFps"]) - round(i * 1000 / metadata["nominalFps"]) for i in range(count)]
+frame_milliseconds = metadata["imageDurationSeconds"] * 1000 / count
+durations = [round((i + 1) * frame_milliseconds) - round(i * frame_milliseconds) for i in range(count)]
 assets = ROOT / "app/assets/brand"
 assets.mkdir(exist_ok=True)
-animated = assets / "flare-loading.webp"
-still = assets / "flare-loading-still.webp"
+animated = assets / f"{args.name}.webp"
+still = assets / f"{args.name}-still.webp"
 frames[0].save(animated, format="WEBP", save_all=True, append_images=frames[1:], duration=durations, loop=0,
                lossless=True, method=6, minimize_size=True)
 frames[0].save(still, format="WEBP", lossless=True, method=6)
@@ -60,13 +64,14 @@ with Image.open(animated) as decoded:
 cell, caption = 192, 26
 sheet = Image.new("RGB", (cell * 4, (cell + caption) * 3), (30, 31, 35))
 draw = ImageDraw.Draw(sheet)
-for position, index in enumerate(range(0, count, count // 12)):
+sample_count = min(12, count)
+for position, index in enumerate(round(i * count / sample_count) for i in range(sample_count)):
     thumb = frames[index].resize((cell, cell), Image.Resampling.LANCZOS)
     orange = Image.new("RGBA", thumb.size, (255, 96, 47, 255))
     orange.putalpha(thumb.getchannel("A"))
     x, y = (position % 4) * cell, (position // 4) * (cell + caption)
     sheet.paste(orange, (x, y), orange)
-    draw.text((x + 8, y + cell + 3), f"{index / metadata['nominalFps']:.2f}s", fill=(240, 240, 240))
+    draw.text((x + 8, y + cell + 3), f"{index * frame_milliseconds / 1000:.2f}s", fill=(240, 240, 240))
 sheet.save(source / "silhouette-contact.png")
 
 def describe(file):
@@ -81,9 +86,9 @@ metadata.update({
     "verification": f"All {count} frames decoded; alpha bit-identical to downsampled captures; every frame has transparent margins on all sides.",
     "animated": describe(animated), "reducedMotionStill": describe(still),
     "reproduce": [
-        "node app/tools/render-flare-loading.mjs --playwright-root <existing Playwright package directory> --browser <existing Chromium executable>",
-        "python app/tools/encode-flare-loading.py"
+        f"node app/tools/render-flare-loading.mjs --source {metadata['source']} --animation {metadata['animation']}" + (f" --duration {metadata['sourceDurationSeconds']}" if metadata["imageDurationSeconds"] == metadata["sourceDurationSeconds"] else "") + f" --output {source.relative_to(ROOT).as_posix()} --playwright-root <existing Playwright package directory> --browser <existing Chromium executable>",
+        f"python app/tools/encode-flare-loading.py --input {source.relative_to(ROOT).as_posix()} --name {args.name}"
     ],
 })
-(assets / "flare-loading.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+(assets / f"{args.name}.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(metadata, ensure_ascii=True, indent=2))

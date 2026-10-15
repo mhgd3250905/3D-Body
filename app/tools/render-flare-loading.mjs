@@ -20,10 +20,16 @@ const fps = Number(value('--fps', 24));
 const azimuth = Number(value('--azimuth', -30));
 const elevation = Number(value('--elevation', 28));
 const startPhase = Number(value('--start-phase', .25));
-const source = path.join(root, 'app/scene/source/coach/flare-coach-v41-animated.glb');
-const duration = JSON.parse(fs.readFileSync(path.join(root, 'app/scene/src/v41-clock.json'), 'utf8')).frameTimes.at(-1);
+const source = path.resolve(value('--source', path.join(root, 'app/scene/source/coach/flare-coach-v41-animated.glb')));
+if (!source.startsWith(root + path.sep)) throw new Error('Source must remain inside the project.');
+const animation = value('--animation', 'flare_v41_loop');
+const duration = Number(value('--duration', JSON.parse(fs.readFileSync(path.join(root, 'app/scene/src/v41-clock.json'), 'utf8')).frameTimes.at(-1)));
+if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(fps) || fps <= 0) throw new Error('Duration and fps must be positive.');
 const count = Math.round(duration * fps);
-const config = { size, fps, azimuth, elevation, startPhase, duration, count };
+// Explicit new-version duration keeps the encoded loop synchronized; the legacy
+// default retains its original rounded-frame playback time for reproduction.
+const imageDuration = args.includes('--duration') ? duration : count / fps;
+const config = { size, fps, azimuth, elevation, startPhase, duration, count, animation };
 
 const html = `<!doctype html><meta charset="utf-8"><script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
 <script type="module">
@@ -38,8 +44,9 @@ window.loadingCapture = (async () => {
  const white = new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});
  model.traverse(mesh => { if(mesh.isMesh && mesh.visible) { meshes.push(mesh); mesh.material = white; mesh.frustumCulled = false; } });
  const mixer = new THREE.AnimationMixer(model);
- const clip = gltf.animations.find(clip=>clip.name==='flare_v41_loop');
- if(!clip) throw new Error('Expected v41 animation was not found.');
+ const clip = gltf.animations.find(clip=>clip.name===config.animation);
+ if(!clip) throw new Error('Expected animation was not found: '+config.animation);
+ if(Math.abs(clip.duration-config.duration)>.001) throw new Error('Requested duration differs from source clip duration.');
  mixer.clipAction(clip).play();
  const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
  renderer.setPixelRatio(2);
@@ -138,7 +145,7 @@ try {
       camera=await render(index,azimuth,directory);
       if(index%24===0)console.log('Captured '+index+'/'+count);
     }
-    const metadata={source:path.relative(root,source).replaceAll('\\','/'),sourceSha256:crypto.createHash('sha256').update(fs.readFileSync(source)).digest('hex'),animation:'flare_v41_loop',sourceDurationSeconds:duration,startPhase,renderedFrameCount:count,nominalFps:fps,imageDurationSeconds:count/fps,width:size,height:size,captureWidth:size*2,captureHeight:size*2,color:'white silhouette; transparent background; runtime tint',renderer:info,camera,attribution:'Snow Rig © Blender Foundation | studio.blender.org, CC BY 4.0; existing project v41 animation',sourceLicense:'https://creativecommons.org/licenses/by/4.0/',changes:'Offline silhouette capture only, using the original AnimationMixer clip with a cyclic start offset. Source GLB, rig and animation unchanged.'};
+    const metadata={source:path.relative(root,source).replaceAll('\\','/'),sourceSha256:crypto.createHash('sha256').update(fs.readFileSync(source)).digest('hex'),animation,sourceDurationSeconds:duration,startPhase,renderedFrameCount:count,nominalFps:fps,imageDurationSeconds:imageDuration,width:size,height:size,captureWidth:size*2,captureHeight:size*2,color:'white silhouette; transparent background; runtime tint',renderer:info,camera,attribution:'Snow Rig © Blender Foundation | studio.blender.org, CC BY 4.0; existing project animation',sourceLicense:'https://creativecommons.org/licenses/by/4.0/',changes:'Offline silhouette capture only, using the original AnimationMixer clip with a cyclic start offset. Source GLB, rig and animation unchanged.'};
     fs.writeFileSync(path.join(output,'render-metadata.json'),JSON.stringify(metadata,null,2)+'\n');
   }
   await page.evaluate(()=>window.capture.dispose());

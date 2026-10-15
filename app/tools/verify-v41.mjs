@@ -6,7 +6,7 @@ import { installSpineHelpers } from '../scene/source/v41-runtime/src/spine-helpe
 import { createBakedClock, createBakedMotion } from '../scene/src/baked-motion.js';
 import { buildMmRest, createSurfaceSelection } from '../scene/src/mapped-mesh.js';
 import { isCoveredActorPart, isOriginalActorHeadPart } from '../scene/src/study-body.js';
-import { GROUPS, phaseAt, phaseTicks } from '../scene/src/phase.js';
+import { GROUPS, phaseAtV41 as phaseAt, phaseTicksV41 as phaseTicks } from '../scene/src/phase.js';
 import { resolveGroup, MUSCLE_BY_ID } from '../scene/src/legacy/muscle-map.js';
 import { createCoachMotion as createRootMotion } from '../../src/coach-motion.js';
 import { BodyViewer as RootViewer } from '../../src/viewer.js';

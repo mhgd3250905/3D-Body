@@ -1,0 +1,34 @@
+{
+  "installed": true,
+  "version": "L46",
+  "versionName": "1.0.3",
+  "versionCode": 5,
+  "motion": "v42-r12",
+  "model": "2602BRT18C",
+  "android": "16",
+  "previous": "L44 / 1.0.1+2",
+  "method": "adb install -r",
+  "result": "Success",
+  "sourceApkSha256": "708eb5207183217c8d179f9b4c2fbb40451f60f3629ef4efab40e5c1963d0f37",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "firstInstallTimeBefore": "2026-10-08 17:53:04",
+  "firstInstallTimeAfter": "2026-10-08 17:53:04",
+  "lastUpdateTime": "2026-10-15 21:34:18",
+  "coldStart": {
+    "status": "ok",
+    "activity": "dev.mhgd.flare/.MainActivity",
+    "launchState": "COLD",
+    "totalTimeMs": 428,
+    "scope": "Activity start time, not complete 3D readiness or frame rate"
+  },
+  "homeScreenshot": "output/l46-device-20261015/home-first.png",
+  "observed": "Native home displays R12 bent free-arm recovery; existing theme and initial safety acceptance retained.",
+  "sampledAppLogFindings": [],
+  "oldApkBackup": "output/l46-device-20261015/installed-before.apk",
+  "dataPreservation": "Replacement install; original firstInstallTime retained. No uninstall or clear. Private storage is not accessible to adb shell, so personal record contents were not independently extracted or compared.",
+  "limitations": [
+    "Device disconnected after successful install/start/package/screenshot capture; installed APK remote hash was not separately read back.",
+    "User is inspecting phone; native detail roundtrip, all-seven-character QA, long timing/performance/thermal and iOS are not newly certified."
+  ],
+  "recordedAt": "2026-10-15T13:36:41.458Z"
+}

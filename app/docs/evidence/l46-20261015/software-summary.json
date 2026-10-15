@@ -1,0 +1,250 @@
+{
+  "recordType": "historical-build-verification-before-device-install",
+  "version": "L46",
+  "packageVersion": "1.0.3+5",
+  "motion": "v42-r12",
+  "baseCommit": "887d6e3d4ca8ccb478b3c15b71e69fda8c3a71fb",
+  "product": [
+    {
+      "file": "app/assets/licenses/Snow-ATTRIBUTION.md",
+      "bytes": 4982,
+      "sha256": "b353fe6e70648ed24d3f8ecc8eace7271d1d4ef211fec869b78e50a9568e1da2"
+    },
+    {
+      "file": "app/assets/scene/index.html",
+      "bytes": 7362,
+      "sha256": "f3bdd4ba1b24d64b81d6ed38a1db860c9aee0942fa05873c6371d3372628d22a"
+    },
+    {
+      "file": "app/lib/ui/app_shell.dart",
+      "bytes": 87174,
+      "sha256": "1eb943a6e27c92132eeb28f2319149a29f9420b07d9b7184ae8877e47f63ad4d"
+    },
+    {
+      "file": "app/lib/ui/flare_silhouette.dart",
+      "bytes": 1546,
+      "sha256": "a64af0f40b8097fa5c944678eb0a00d57a07696e4b43295885feb1a1f611176e"
+    },
+    {
+      "file": "app/pubspec.yaml",
+      "bytes": 1903,
+      "sha256": "f29dfc448ee7c74d02ecdcd4e1c07a59d7931a240156610ec37ef4efa2ac1406"
+    },
+    {
+      "file": "app/scene/package.json",
+      "bytes": 1098,
+      "sha256": "77bbc6e368f7562e996e3e1eac0c8bc5b1627af580a015a02a30ffaaf16ae4cc"
+    },
+    {
+      "file": "app/scene/src/baked-motion.js",
+      "bytes": 11659,
+      "sha256": "030a0e7f06a42a89e53ba5b2ff9ca7491c3eb0c241e9196de1c36529a72e523d"
+    },
+    {
+      "file": "app/scene/src/characters.js",
+      "bytes": 21970,
+      "sha256": "bf5ada7a4128373678cf2fd9331d04efa061d990add8ff1bdb5ff0b07d19ed23"
+    },
+    {
+      "file": "app/scene/src/fx.js",
+      "bytes": 17259,
+      "sha256": "b158a88ebfeefc8e80e4ec58df297e83cff3761be604a4de4e12c44e61ba2f24"
+    },
+    {
+      "file": "app/scene/src/phase.js",
+      "bytes": 3381,
+      "sha256": "e991c228bdd7c2aac10f5b5d8cf4a0dcd6cb4d881b9af64e819f53085e9fb405"
+    },
+    {
+      "file": "app/scene/src/player.js",
+      "bytes": 23404,
+      "sha256": "289d5ab00126214dc4ee87eddd7943ec4446a31f03565b5173d3cd1cf436e16f"
+    },
+    {
+      "file": "app/scene/tools/verify-framing.mjs",
+      "bytes": 4062,
+      "sha256": "ef3cc727263f91c6889525b9a7c6edc9881790b0e20eadce96f3b028e17b4e7b"
+    },
+    {
+      "file": "app/tools/encode-flare-loading.py",
+      "bytes": 5114,
+      "sha256": "08cf26e2ddd8d049edeaddabd7aa731f50accb797a1090c7556b5c805efce13a"
+    },
+    {
+      "file": "app/tools/render-flare-loading.mjs",
+      "bytes": 10203,
+      "sha256": "7609d61f9d5a9b0a9d48ce1f7cf8adb62ba5d6ed7e3a8dc2c8db1a8da60fe2ee"
+    },
+    {
+      "file": "app/tools/verify-scene.mjs",
+      "bytes": 17324,
+      "sha256": "681bd35646832e842618c4f7421deb795f6c2b5405e5b55a783a7b92ad4e7393"
+    },
+    {
+      "file": "app/tools/verify-v41.mjs",
+      "bytes": 17360,
+      "sha256": "212c950be5edd26dae2a25b350338ef253be63b57bd1004424825c9b07e91f88"
+    },
+    {
+      "file": "index.html",
+      "bytes": 16358,
+      "sha256": "4cd84118ade8edb81029f8b72b6fc5657baf849798d2e025a1d6ce5d9e4734f6"
+    },
+    {
+      "file": "src/main.js",
+      "bytes": 47480,
+      "sha256": "819e63be66871f35328c71ab1c868ced3a1c227e3892083ab8e7e1de7c43c4ad"
+    },
+    {
+      "file": "src/viewer.js",
+      "bytes": 37586,
+      "sha256": "8d3725aa1bbf53c7ffd406c222bce3257f8dffa720fc0e7a712a1b8830159a73"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r12-still.webp",
+      "bytes": 4012,
+      "sha256": "2f9c209abcce29e93db06311f01977633ad26d9280fe939bf3e25d995e3694b4"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r12.json",
+      "bytes": 2650,
+      "sha256": "73d3cdf2428e3d529c09a6ff8813fc5e1f1841b3c1e4afdad948cae1c1a2d8b2"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r12.webp",
+      "bytes": 121544,
+      "sha256": "d58208091d9067eb97debb7c427444ad30db779d195302d6b91934c9b7baa5c6"
+    },
+    {
+      "file": "app/assets/scene/assets/index-DYz55Gns.js",
+      "bytes": 1608158,
+      "sha256": "9105e5839ffbe0cab857f03f82ed016dce5bd83f1f752813a7d28bf0bb087ba5"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r12-animated.meshopt.glb.gz",
+      "bytes": 2796418,
+      "sha256": "64035eccbf233f029c2529b2a1bb0ea71298f220586281b57aa76d716c57c2aa"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r12-training-human.meshopt.glb.gz",
+      "bytes": 2170221,
+      "sha256": "98a940484696efae7a7db604549cb293f3457e75183a760bb6c430a849cec474"
+    },
+    {
+      "file": "app/scene/public/coach/flare-coach-v42-r12-animated.meshopt.glb.gz",
+      "bytes": 2796418,
+      "sha256": "64035eccbf233f029c2529b2a1bb0ea71298f220586281b57aa76d716c57c2aa"
+    },
+    {
+      "file": "app/scene/public/coach/flare-coach-v42-r12-training-human.meshopt.glb.gz",
+      "bytes": 2170221,
+      "sha256": "98a940484696efae7a7db604549cb293f3457e75183a760bb6c430a849cec474"
+    },
+    {
+      "file": "app/scene/source/coach/flare-coach-v42-r12-animated.glb",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d"
+    },
+    {
+      "file": "app/scene/source/coach/flare-coach-v42-r12-training-human.glb",
+      "bytes": 7996440,
+      "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8"
+    },
+    {
+      "file": "app/scene/src/v42-clock.json",
+      "bytes": 16399,
+      "sha256": "bf803bcf17131da1e056df3aa035c37b1ad09dd0111e1a2e24757a1e480b19f9"
+    },
+    {
+      "file": "app/scene/src/v42-phases.json",
+      "bytes": 250990,
+      "sha256": "61cc9282a2a4d3cfe05a78d9bbb6d84da039fb085378ad3d27d059fb12ac03fa"
+    },
+    {
+      "file": "app/scene/tools/integrate-v42-r12.mjs",
+      "bytes": 6610,
+      "sha256": "6ff664c3637376c6af16867dfa5e54a4d99078b2464bc2534d732c3621aeace5"
+    },
+    {
+      "file": "app/scene/tools/v42-r12-source-manifest.json",
+      "bytes": 2586,
+      "sha256": "efee6291ca6608f5680c25dfe00c145901b38b0ac7c6f491a9c60efb0fcaef6e"
+    },
+    {
+      "file": "app/scene/tools/verify-v42-assets.mjs",
+      "bytes": 5089,
+      "sha256": "6a34d8d1d4784f4b938db6cea5c9eb67edafedef947bfac8bc569bb916f1773a"
+    },
+    {
+      "file": "app/scene/tools/verify-v42-framing.mjs",
+      "bytes": 3682,
+      "sha256": "6a6a1b3a91c9ee8e1485d7b1c34b3c64aeba8321ddfaba5a9c798ef1aa540f75"
+    },
+    {
+      "file": "app/scene/tools/verify-v42-integration.mjs",
+      "bytes": 10502,
+      "sha256": "f7b9b286f84e1683b7bc7f0d9d70d6275e3380f2d053a0262ef303bce2c14b47"
+    },
+    {
+      "file": "public/coach/flare-coach-v42-r12-animated.glb",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d"
+    },
+    {
+      "file": "public/coach/flare-v42-clock.json",
+      "bytes": 16399,
+      "sha256": "bf803bcf17131da1e056df3aa035c37b1ad09dd0111e1a2e24757a1e480b19f9"
+    },
+    {
+      "file": "src/v42-default.js",
+      "bytes": 5390,
+      "sha256": "3235f4a928f7e147f0a9b59f5e3b41b0d7db532c494914a88c1c6ec9df4017e7"
+    },
+    {
+      "file": "src/v42-playback.css",
+      "bytes": 201,
+      "sha256": "b2f16e515a04a809df9b198a6726b7e4dab52784673c56d335c36cc74fc7dc37"
+    },
+    {
+      "file": "src/v42-playback.js",
+      "bytes": 4534,
+      "sha256": "c0cb8aac52bb57fe1dd27e7c08f8172fff24c47db43e9a56bd33299c9cf78b61"
+    },
+    {
+      "file": "tools/verify-web-v42.mjs",
+      "bytes": 16764,
+      "sha256": "9a5c02254226da4a7095029948ddd5acc7ce492b0179a21c4d7c6231424286ee"
+    }
+  ],
+  "checks": {
+    "sceneBuildAndVerify": true,
+    "losslessAssetParity": true,
+    "sevenCharacterFraming": true,
+    "flutterTargetedTests": 33,
+    "flutterAnalyze": "No issues found",
+    "offlineFlutterWebBuild": true,
+    "androidArm64Build": true,
+    "webDistChecks": 46,
+    "webDistRuntimeErrors": 0,
+    "fullAppBrowserPassed": true,
+    "fullAppSavedCharacters": 7,
+    "fullAppErrors": [],
+    "fullAppFailedRequests": [],
+    "webBundledAssetChecks": 131,
+    "apkAssetChecks": 132,
+    "independentReview": "No remaining blocking findings after nonlinear web subrange fix"
+  },
+  "apk": {
+    "file": "output/releases/Flare-L46-v42-R12-20261015-arm64.apk",
+    "bytes": 81076815,
+    "sha256": "708eb5207183217c8d179f9b4c2fbb40451f60f3629ef4efab40e5c1963d0f37",
+    "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+    "installed": false
+  },
+  "limitations": [
+    "No Android device connected; installed historical identity remains L44.",
+    "One scene load failure occurred during parallel software-GPU testing; final serial full App regression passed. Native graph recovery/long performance is not certified.",
+    "51 source QA remains 23ready/28review; no new iOS build or store/site publication."
+  ],
+  "recordedAt": "2026-10-15T12:35:32.272Z"
+}

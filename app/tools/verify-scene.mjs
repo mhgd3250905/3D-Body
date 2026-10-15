@@ -190,7 +190,19 @@ for (const [relative, sha256] of retainedTrainingBodies) {
   assert.ok(bytes < 3 * 1024 * 1024, 'Compressed training body exceeds 3 MiB');
   retainedTrainingBytes += bytes;
 }
-assert.ok(bundledBytes - retainedTrainingBytes < 14 * 1024 * 1024, 'Offline scene exceeds historical payload plus fixed L44 training bodies');
+// R12 is a separate current motion payload. Keep the frozen legacy budget;
+// verify every current asset against the new provenance manifest as well.
+const currentMotion = JSON.parse(fs.readFileSync(path.join(sceneRoot, 'tools/v42-r12-source-manifest.json'), 'utf8'));
+let currentMotionBytes = 0;
+for (const item of currentMotion.assets.filter(item => item.destination.startsWith('app/scene/public/'))) {
+  const relative = item.destination.slice('app/scene/public/'.length);
+  const source = path.join(sceneRoot, 'public', relative), emitted = path.join(built, relative);
+  assert.equal(hash(source), item.sha256, 'R12 source payload changed: ' + relative);
+  assert.equal(hash(emitted), item.sha256, 'R12 emitted payload differs: ' + relative);
+  assert.ok(item.bytes < 3 * 1024 * 1024, 'R12 body exceeds 3 MiB');
+  currentMotionBytes += item.bytes;
+}
+assert.ok(bundledBytes - retainedTrainingBytes - currentMotionBytes < 14 * 1024 * 1024, 'Offline scene exceeds historical payload plus retained L44 and current R12 bodies');
 assert.equal(hash(path.join(built, 'coach/flare-coach.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach.meshopt.glb.gz')));
 assert.equal(hash(path.join(built, 'anatomy/mannequin-reference.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/anatomy/mannequin-reference.meshopt.glb.gz')));
 assert.equal(hash(path.join(built, 'coach/flare-coach-study-body.meshopt.glb.gz')), hash(path.join(sceneRoot, 'public/coach/flare-coach-study-body.meshopt.glb.gz')));
@@ -208,4 +220,4 @@ console.log(JSON.stringify({ status: 'passed', scope: 'historical-v33-source-and
   losslessAttributeValues, triangleCyclicRotations, compressedCoachBytes: optimization.runtimeBytes, compressedMiniatureBytes: optimization.miniature.runtimeBytes,
   historicalStudyBodyVertices: studyBody.geometry.attributes.position.count, historicalStudyBodyTriangles: studyBody.geometry.index.count / 3,
   historicalStudyHeadVertices: studyHead.geometry.attributes.position.count, historicalStudyHeadTriangles: studyHead.geometry.index.count / 3,
-  bundledFiles: allBuiltFiles.length, bundledBytes }, null, 2));
+  bundledFiles: allBuiltFiles.length, bundledBytes, currentMotionBytes }, null, 2));
