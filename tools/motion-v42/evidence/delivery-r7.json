@@ -1,0 +1,652 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "bccd764",
+  "authorship": "Astra implementation and independent motion review; parent integration and browser verification.",
+  "scope": "Local coordinated R1 arm refinement; wrist slightly toward head, bounded elbow/shoulder change. Visual acceptance pending.",
+  "appIdentity": "L45 / v41 preserved",
+  "parameters": {
+    "revision": "v42-candidate-7-r1-arm-refinement",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "recoveryDesign": {
+    "parameters": {
+      "headwardMetres": 0.055,
+      "inwardMetres": 0.025,
+      "poleTuckDegrees": 42,
+      "closeDegrees": 12,
+      "polish": {
+        "left": [
+          -12,
+          -9,
+          15
+        ],
+        "right": [
+          9,
+          -13,
+          -12
+        ]
+      }
+    },
+    "scope": "R1 local wrist retraction toward actual head, limited same-halfspace elbow steering and residual shoulder closing. Original transfer timing retained."
+  },
+  "sources": [
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "d4c4327ebd20ae97b83e3c3322363971cb5c8f354552608e7b8027c9a15c8783"
+    },
+    {
+      "path": "tools/motion-v42/r1-arm-refinement.mjs",
+      "sha256": "6e10f8e4d36a51a49d37d62ed3697acc2beb20f6b1de891b9b682bccbc5064d3"
+    }
+  ],
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r7-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "c6333b257742e505b0573a348d6879e2fb7f26c2c4d49891b9964a0023c8216f",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r7-20261015/flare-training-v42-candidate.glb",
+      "sha256": "6843ca2b2bf747fc443aa5674311046c2a0410988e211cec453e04b5da25cf17",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    }
+  ],
+  "checks": {
+    "coach": {
+      "geometry": "measured-structural-checks-clear",
+      "inherited04AssetSha256": "4f5381fd6bea4560759a198370c0f7e495d06f2bc06d31f0b9f1962a71a7bca5",
+      "recoveryFlags": [],
+      "fixedBody": {
+        "maxNonArmMatrixComponentChange": 0,
+        "maxNonArmBoneOriginChangeMetres": 0
+      },
+      "inherited04Arms": {
+        "left": {
+          "maxElbowChangeMm": 116.01438089929965,
+          "maxWristChangeMm": 106.7357821219404,
+          "referencePeaks": {
+            "elbowSpeed": {
+              "value": 5.7262320783689535,
+              "phase": 0.21851851851851853
+            },
+            "elbowStep": {
+              "value": 0.014321646229952694,
+              "phase": 0.21851851851851853
+            },
+            "elbowSecondDifference": {
+              "value": 792.507784755922,
+              "phase": 0.4981481481481482
+            },
+            "upperStepDegrees": {
+              "value": 2.4801327710303736,
+              "phase": 0.21666666666666667
+            },
+            "forearmStepDegrees": {
+              "value": 2.396467974298372,
+              "phase": 0.21666666666666667
+            }
+          },
+          "candidatePeaks": {
+            "elbowSpeed": {
+              "value": 5.593744770678929,
+              "phase": 0.22592592592592592
+            },
+            "elbowStep": {
+              "value": 0.013989408685519204,
+              "phase": 0.22592592592592592
+            },
+            "elbowSecondDifference": {
+              "value": 792.507784755922,
+              "phase": 0.4981481481481482
+            },
+            "upperStepDegrees": {
+              "value": 2.9115710780874524,
+              "phase": 0.29444444444444445
+            },
+            "forearmStepDegrees": {
+              "value": 5.06075020938733,
+              "phase": 0.29074074074074074
+            }
+          },
+          "oppositeBendSamples": 0,
+          "contactWristChange": 0,
+          "contactPalmChange": 0,
+          "contactClassificationChanges": 0
+        },
+        "right": {
+          "maxElbowChangeMm": 114.5737949710058,
+          "maxWristChangeMm": 108.7912380608033,
+          "referencePeaks": {
+            "elbowSpeed": {
+              "value": 4.85792366322479,
+              "phase": 0.9148148148148149
+            },
+            "elbowStep": {
+              "value": 0.012444259116022767,
+              "phase": 0.5092592592592593
+            },
+            "elbowSecondDifference": {
+              "value": 692.4371911614695,
+              "phase": 0.5092592592592593
+            },
+            "upperStepDegrees": {
+              "value": 2.1177394428151817,
+              "phase": 0.9185185185185185
+            },
+            "forearmStepDegrees": {
+              "value": 2.702250912777864,
+              "phase": 0.7166666666666667
+            }
+          },
+          "candidatePeaks": {
+            "elbowSpeed": {
+              "value": 5.150870398780701,
+              "phase": 0.6722222222222223
+            },
+            "elbowStep": {
+              "value": 0.013045864825136528,
+              "phase": 0.5092592592592593
+            },
+            "elbowSecondDifference": {
+              "value": 898.0566980901978,
+              "phase": 0.5092592592592593
+            },
+            "upperStepDegrees": {
+              "value": 3.138755996130059,
+              "phase": 0.7148148148148148
+            },
+            "forearmStepDegrees": {
+              "value": 5.704383356527174,
+              "phase": 0.7185185185185186
+            }
+          },
+          "oppositeBendSamples": 0,
+          "contactWristChange": 0,
+          "contactPalmChange": 0,
+          "contactClassificationChanges": 0
+        }
+      }
+    },
+    "training": {
+      "geometry": "measured-structural-checks-clear",
+      "inherited04AssetSha256": "d25411bb71d68db146dbe21797e6dbeeb16bf8997e674d046334f3d363eae62c",
+      "recoveryFlags": [],
+      "fixedBody": {
+        "maxNonArmMatrixComponentChange": 0,
+        "maxNonArmBoneOriginChangeMetres": 0
+      },
+      "inherited04Arms": {
+        "left": {
+          "maxElbowChangeMm": 116.01438089929965,
+          "maxWristChangeMm": 106.7357821219404,
+          "referencePeaks": {
+            "elbowSpeed": {
+              "value": 5.7262320783689535,
+              "phase": 0.21851851851851853
+            },
+            "elbowStep": {
+              "value": 0.014321646229952694,
+              "phase": 0.21851851851851853
+            },
+            "elbowSecondDifference": {
+              "value": 792.507784755922,
+              "phase": 0.4981481481481482
+            },
+            "upperStepDegrees": {
+              "value": 2.4801327710303736,
+              "phase": 0.21666666666666667
+            },
+            "forearmStepDegrees": {
+              "value": 2.396467974298372,
+              "phase": 0.21666666666666667
+            }
+          },
+          "candidatePeaks": {
+            "elbowSpeed": {
+              "value": 5.593744770678929,
+              "phase": 0.22592592592592592
+            },
+            "elbowStep": {
+              "value": 0.013989408685519204,
+              "phase": 0.22592592592592592
+            },
+            "elbowSecondDifference": {
+              "value": 792.507784755922,
+              "phase": 0.4981481481481482
+            },
+            "upperStepDegrees": {
+              "value": 2.9115710780874524,
+              "phase": 0.29444444444444445
+            },
+            "forearmStepDegrees": {
+              "value": 5.06075020938733,
+              "phase": 0.29074074074074074
+            }
+          },
+          "oppositeBendSamples": 0,
+          "contactWristChange": 0,
+          "contactPalmChange": 0,
+          "contactClassificationChanges": 0
+        },
+        "right": {
+          "maxElbowChangeMm": 114.5737949710058,
+          "maxWristChangeMm": 108.7912380608033,
+          "referencePeaks": {
+            "elbowSpeed": {
+              "value": 4.85792366322479,
+              "phase": 0.9148148148148149
+            },
+            "elbowStep": {
+              "value": 0.012444259116022767,
+              "phase": 0.5092592592592593
+            },
+            "elbowSecondDifference": {
+              "value": 692.4371911614695,
+              "phase": 0.5092592592592593
+            },
+            "upperStepDegrees": {
+              "value": 2.1177394428151817,
+              "phase": 0.9185185185185185
+            },
+            "forearmStepDegrees": {
+              "value": 2.702250912777864,
+              "phase": 0.7166666666666667
+            }
+          },
+          "candidatePeaks": {
+            "elbowSpeed": {
+              "value": 5.150870398780701,
+              "phase": 0.6722222222222223
+            },
+            "elbowStep": {
+              "value": 0.013045864825136528,
+              "phase": 0.5092592592592593
+            },
+            "elbowSecondDifference": {
+              "value": 898.0566980901978,
+              "phase": 0.5092592592592593
+            },
+            "upperStepDegrees": {
+              "value": 3.138755996130059,
+              "phase": 0.7148148148148148
+            },
+            "forearmStepDegrees": {
+              "value": 5.704383356527174,
+              "phase": 0.7185185185185186
+            }
+          },
+          "oppositeBendSamples": 0,
+          "contactWristChange": 0,
+          "contactPalmChange": 0,
+          "contactClassificationChanges": 0
+        }
+      }
+    }
+  },
+  "localPolish": {
+    "assets": {
+      "R1": {
+        "file": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+        "sha256": "31204090aab70a2c7e92db3055fd02a83ebc6af671f82a9f8e24943506b3e3ae",
+        "duration": 1.350000023841858
+      },
+      "locked04": {
+        "file": "output/flare-v42-r7-20261015/iterations/04-locked/flare-training-v42-candidate.glb",
+        "sha256": "d25411bb71d68db146dbe21797e6dbeeb16bf8997e674d046334f3d363eae62c",
+        "duration": 1.350000023841858
+      },
+      "polished": {
+        "file": "output/flare-v42-r7-20261015/flare-training-v42-candidate.glb",
+        "sha256": "6843ca2b2bf747fc443aa5674311046c2a0410988e211cec453e04b5da25cf17",
+        "duration": 1.350000023841858
+      }
+    },
+    "changes": {
+      "nonArmMaxMatrixDifference": 0,
+      "sides": {
+        "left": {
+          "shoulderMaxPositionDifference": 0,
+          "maximumElbowDifferenceMm": 61.11152279379127,
+          "maximumWristDifferenceMm": 16.96697350824017,
+          "maxMatrixDifferenceOutsideAuthorizedWindow": 2.8579916211413092e-12,
+          "firstChangedPhase": 0.27037037037037037,
+          "lastChangedPhase": 0.3388888888888889,
+          "changedSamples": 38,
+          "checkpoints": {
+            "0.2": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.25": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.65": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.75": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            }
+          }
+        },
+        "right": {
+          "shoulderMaxPositionDifference": 0,
+          "maximumElbowDifferenceMm": 50.23761633731594,
+          "maximumWristDifferenceMm": 12.296405904346058,
+          "maxMatrixDifferenceOutsideAuthorizedWindow": 0,
+          "firstChangedPhase": 0.6814814814814815,
+          "lastChangedPhase": 0.7388888888888889,
+          "changedSamples": 32,
+          "checkpoints": {
+            "0.2": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.25": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.65": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            },
+            "0.75": {
+              "elbowDifferenceMm": 0,
+              "wristDifferenceMm": 0
+            }
+          }
+        }
+      }
+    },
+    "peaks": {
+      "R1": {
+        "left": {
+          "forearmVectorStepDegrees": {
+            "value": 2.3609247215127853,
+            "phase": 0.29259259259259257
+          },
+          "forearmBoneStepDegrees": {
+            "value": 3.4942510474789072,
+            "phase": 0.29259259259259257
+          },
+          "handBoneStepDegrees": {
+            "value": 2.1690993166610304,
+            "phase": 0.24074074074074073
+          },
+          "wristSpeed": {
+            "value": 6.557152441301781,
+            "phase": 0.24074074074074073
+          },
+          "wristSecondDifference": {
+            "value": 128.69766921584218,
+            "phase": 0.2574074074074074
+          },
+          "elbowSpeed": {
+            "value": 5.011092268632978,
+            "phase": 0.24074074074074073
+          }
+        },
+        "right": {
+          "forearmVectorStepDegrees": {
+            "value": 2.7022509127784033,
+            "phase": 0.7166666666666667
+          },
+          "forearmBoneStepDegrees": {
+            "value": 3.8292616673808473,
+            "phase": 0.7166666666666667
+          },
+          "handBoneStepDegrees": {
+            "value": 2.3370062320427003,
+            "phase": 0.7685185185185185
+          },
+          "wristSpeed": {
+            "value": 5.889605387567224,
+            "phase": 0.6888888888888889
+          },
+          "wristSecondDifference": {
+            "value": 95.29655857524158,
+            "phase": 0.75
+          },
+          "elbowSpeed": {
+            "value": 4.751045226794325,
+            "phase": 0.6703703703703704
+          }
+        }
+      },
+      "locked04": {
+        "left": {
+          "forearmVectorStepDegrees": {
+            "value": 5.06075020938733,
+            "phase": 0.29074074074074074
+          },
+          "forearmBoneStepDegrees": {
+            "value": 5.279568939023763,
+            "phase": 0.29074074074074074
+          },
+          "handBoneStepDegrees": {
+            "value": 3.6879046385144427,
+            "phase": 0.29074074074074074
+          },
+          "wristSpeed": {
+            "value": 6.079649554088957,
+            "phase": 0.24074074074074073
+          },
+          "wristSecondDifference": {
+            "value": 353.3319129271436,
+            "phase": 0.26666666666666666
+          },
+          "elbowSpeed": {
+            "value": 5.282992496313417,
+            "phase": 0.24074074074074073
+          }
+        },
+        "right": {
+          "forearmVectorStepDegrees": {
+            "value": 5.70438335652711,
+            "phase": 0.7185185185185186
+          },
+          "forearmBoneStepDegrees": {
+            "value": 5.944497568736398,
+            "phase": 0.7185185185185186
+          },
+          "handBoneStepDegrees": {
+            "value": 4.058805468436037,
+            "phase": 0.7185185185185186
+          },
+          "wristSpeed": {
+            "value": 5.584254199357062,
+            "phase": 0.7166666666666667
+          },
+          "wristSecondDifference": {
+            "value": 409.50758468536134,
+            "phase": 0.7425925925925926
+          },
+          "elbowSpeed": {
+            "value": 5.1508703987807,
+            "phase": 0.6722222222222223
+          }
+        }
+      },
+      "polished": {
+        "left": {
+          "forearmVectorStepDegrees": {
+            "value": 3.3867132668827438,
+            "phase": 0.2851851851851852
+          },
+          "forearmBoneStepDegrees": {
+            "value": 4.29794171559328,
+            "phase": 0.29074074074074074
+          },
+          "handBoneStepDegrees": {
+            "value": 3.20395127523446,
+            "phase": 0.24074074074074073
+          },
+          "wristSpeed": {
+            "value": 6.079649554088957,
+            "phase": 0.24074074074074073
+          },
+          "wristSecondDifference": {
+            "value": 353.3319129271436,
+            "phase": 0.26666666666666666
+          },
+          "elbowSpeed": {
+            "value": 5.282992496313417,
+            "phase": 0.24074074074074073
+          }
+        },
+        "right": {
+          "forearmVectorStepDegrees": {
+            "value": 4.081404067676312,
+            "phase": 0.7037037037037037
+          },
+          "forearmBoneStepDegrees": {
+            "value": 4.868613858040129,
+            "phase": 0.7185185185185186
+          },
+          "handBoneStepDegrees": {
+            "value": 3.380405812736767,
+            "phase": 0.6981481481481482
+          },
+          "wristSpeed": {
+            "value": 5.419709443027669,
+            "phase": 0.7333333333333333
+          },
+          "wristSecondDifference": {
+            "value": 409.50758468536134,
+            "phase": 0.7425925925925926
+          },
+          "elbowSpeed": {
+            "value": 5.1508703987807,
+            "phase": 0.6722222222222223
+          }
+        }
+      }
+    }
+  },
+  "evidence": [
+    {
+      "path": "output/flare-v42-r7-20261015/independent-audit/FINAL-REVIEW.md",
+      "sha256": "6c271478ac57b1644f03d29768337221ee61dd80b3cd05978477f1458c868e0a"
+    },
+    {
+      "path": "output/flare-v42-r7-20261015/independent-audit/forearm-proximity-summary.json",
+      "sha256": "94c273d1d0b4611db05c55aa4fe8af81bdb1ea448ac914d21576fab149c8cd47"
+    },
+    {
+      "path": "output/flare-v42-r7-20261015/independent-audit/left-polish-review.json",
+      "sha256": "a5a646047bbe57888d251add008afe210ed2e9d9b0a1966054865f8afdd2c0b0"
+    },
+    {
+      "path": "output/flare-v42-r7-20261015/independent-audit/polish-forearm-proximity-summary.json",
+      "sha256": "f320097ececcb6b0500b728aab52c024aee796d3dad779bc63d1c3347082de10"
+    }
+  ],
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "assetHashes": {
+      "training": "6843ca2b2bf747fc443aa5674311046c2a0410988e211cec453e04b5da25cf17",
+      "coach": "c6333b257742e505b0573a348d6879e2fb7f26c2c4d49891b9964a0023c8216f"
+    },
+    "evidence": "output/playwright/flare-v42-r7-20261015"
+  },
+  "priorFilesPreserved": 31,
+  "historicalAssetsPreserved": [
+    {
+      "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "a86a1ee4b59f3a762dcd0f4c43e409d640ebb1b960a3c03b1c8d82513348159a"
+    },
+    {
+      "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+      "sha256": "31204090aab70a2c7e92db3055fd02a83ebc6af671f82a9f8e24943506b3e3ae"
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806"
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+      "sha256": "0b49984357d17abcba65430fa166e0a75b05c8dc7304917da84a856097ffc2f1"
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "f7aa8de3cc00f3aa6484642363d7871006552c5de3e775b584f667e3d662db2f"
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+      "sha256": "a8d412b93c158de5219abed4c7ea9fd1b5e90eadfebe4c8b1f4eebc00a6d0937"
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "a6e3678a230e2c3bac2f592eaa90ad90f2967c91659a107c1052484f34561ea4"
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-training-v42-candidate.glb",
+      "sha256": "b1f5cae580708057af3712cd724001b93cc999d0ef8336abcb95e6d6fff7d1cd"
+    },
+    {
+      "path": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "e53326a426a0d80439fa9b4e2dc84c6f8c455e0314f5248518635be46d64086c"
+    },
+    {
+      "path": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+      "sha256": "a0a1e5ff30579e693bda8322180612a0ea3fb4e93fa9eda8a00058e25f38ce98"
+    },
+    {
+      "path": "output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "11f0fcea1ad466f668bbc14b8178c7b99960a85b00980757eb056f19162b1281"
+    },
+    {
+      "path": "output/flare-v42-r6-20261015/flare-training-v42-candidate.glb",
+      "sha256": "1bd05aa02c6087673abe751119ad0b50ce9c6032276de05e52ceaa7f9afc107e"
+    }
+  ],
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r7-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist retained"
+  },
+  "limitation": "Discrete authored-motion checks only; residual pose and timing observations in FINAL-REVIEW.md. No claim of complete human realism, continuous collision clearance, or user acceptance."
+}

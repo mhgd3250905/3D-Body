@@ -1,0 +1,77 @@
+{
+  "format": "flare-lateral-transition-check-v1",
+  "passed": false,
+  "method": {
+    "sampling": "Actual GLB AnimationMixer interpolation; 241 samples per window, phase step 0.00025. These are not additional authored keyframes.",
+    "shoulderAxis": "Wrist relative to same-side shoulder, projected onto opposite-shoulder to same-side-shoulder unit vector.",
+    "torsoAxis": "Same shoulder-relative wrist transformed by inverse torso world quaternion; right -x / left +x outward for this rig.",
+    "maximumReturn": "Largest later outward coordinate minus any earlier minimum within the window; not cumulative positive travel.",
+    "thresholds": "Regression tolerances for accepted R12, not human biomechanics or realism criteria.",
+    "limitations": "Only lateral wrist return in the stated windows; not full-vector jitter, collision, dynamics or visual acceptance."
+  },
+  "candidate": {
+    "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r11-20261015\\flare-training-v42-candidate.glb",
+    "sha256": "16a896dc5e880c6c59c0bf1185f6a35ca3fc0db337a5fa0d56ce6ba3ce16c044",
+    "clip": "flare_v42_candidate_loop",
+    "durationSeconds": 1.350000023841858,
+    "sampleCount": 482,
+    "sides": {
+      "right": {
+        "window": [
+          0.82,
+          0.88
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 4.19944232620545,
+          "fromPhase": 0.84825,
+          "toPhase": 0.861,
+          "limitMm": 0.01,
+          "passed": false
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 6.715353195038603,
+          "fromPhase": 0.848,
+          "toPhase": 0.86125,
+          "limitMm": 0.4,
+          "passed": false
+        }
+      },
+      "left": {
+        "window": [
+          0.36,
+          0.42
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "side": "right",
+      "axis": "shoulder",
+      "measuredMm": 4.19944232620545,
+      "limitMm": 0.01
+    },
+    {
+      "side": "right",
+      "axis": "torso",
+      "measuredMm": 6.715353195038603,
+      "limitMm": 0.4
+    }
+  ]
+}

@@ -1,0 +1,551 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "bccd764",
+  "selectedInternalCandidate": "09",
+  "authorship": "Astra implementation, actual-human-reference viewing and independent review; parent integration, browser and full geometry checks.",
+  "scope": "Coordinated bent-arm transport and prepared descent; normal shoulder skin restored after rejected internal06 axial-roll attempt. User visual acceptance pending.",
+  "appIdentity": "L45 / v41 preserved",
+  "parameters": {
+    "revision": "v42-candidate-8-coordinated-transfer",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "recoveryDesign": {
+    "parameters": {
+      "windows": {
+        "left": {
+          "start": 0.06,
+          "full": 0.16,
+          "aligned": 0.4,
+          "release": 0.43,
+          "end": 0.495,
+          "reference": 0.28
+        },
+        "right": {
+          "start": 0.505,
+          "full": 0.61,
+          "aligned": 0.88,
+          "release": 0.9,
+          "end": 0.975,
+          "reference": 0.74
+        }
+      },
+      "transportElbowDegrees": [
+        104,
+        108
+      ],
+      "shoulderMotion": "minimal whole-arm swing from original R1 bone orientation"
+    },
+    "scope": "R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. Palm preparation overlaps transport; source body and contact timing retained."
+  },
+  "sources": [
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "b4b37c3e008f4e0a9b8a4dadd9008e334d904a86855c6ca0e709e7cd9b38b34c"
+    },
+    {
+      "path": "tools/motion-v42/coordinated-transfer.mjs",
+      "sha256": "9a458c38340299dfd31b05da17657b4765ec2ec8892c81fa31ea1fdf7dcc34db"
+    }
+  ],
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r8-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "f7fd4d63cb656c53582d271828a5f46bdb56137ee0d1b3836099a2c20e83c2a7",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r8-20261015/flare-training-v42-candidate.glb",
+      "sha256": "e8c82aac77f9cd523fb637f7406cd4da90c5b36c52fefc93d8e76419df8e36dd",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    }
+  ],
+  "checks": {
+    "coach": {
+      "geometryVerdict": "measured-structural-checks-clear",
+      "sampling": {
+        "intervals": 540,
+        "rowsIncludingRepeatedEnd": 541,
+        "dt": 0.0025000000441515887,
+        "fullBodyEveryFrames": 3,
+        "fullBodySampleCount": 181,
+        "verticesPerFullBodySample": 211060,
+        "surfaceVerticesPerFrame": {
+          "left": {
+            "hand": 8154,
+            "shoe": 15876,
+            "palm": 21
+          },
+          "right": {
+            "hand": 8120,
+            "shoe": 15909,
+            "palm": 21
+          }
+        }
+      },
+      "flags": []
+    },
+    "training": {
+      "geometryVerdict": "measured-structural-checks-clear",
+      "sampling": {
+        "intervals": 540,
+        "rowsIncludingRepeatedEnd": 541,
+        "dt": 0.0025000000441515887,
+        "fullBodyEveryFrames": 3,
+        "fullBodySampleCount": 181,
+        "verticesPerFullBodySample": 143650,
+        "surfaceVerticesPerFrame": {
+          "left": {
+            "hand": 8154,
+            "shoe": 15876,
+            "palm": 21
+          },
+          "right": {
+            "hand": 8120,
+            "shoe": 15909,
+            "palm": 21
+          }
+        }
+      },
+      "flags": []
+    }
+  },
+  "organization": {
+    "method": "Actual baked GLB samples. Near-contact envelope is hand minY <= 25 mm (floor -14 mm). Report complete airborne runs, apex, and 70/50/30% descending-clearance windows; these are sensitivity views, NOT automatically valid anatomical transport labels. Read full timeline and render to determine whether bend acquisition and terminal extension match intended motion. Quaternion residual includes axial twist; directional residual separates centerline bend. No human-motion pass threshold inferred.",
+    "candidate": {
+      "left": {
+        "segments": [
+          {
+            "flight": [
+              0.011111111111111112,
+              0.4925925925925926
+            ],
+            "apex": {
+              "phase": 0.2722222222222222,
+              "height": 1.1330385147950195
+            },
+            "transport": {
+              "phase": [
+                0.14074074074074075,
+                0.4
+              ],
+              "elbowDegrees": {
+                "min": 104.00000495989384,
+                "max": 107.99996702278288,
+                "range": 3.9999620628890398
+              },
+              "relativeForearmTravelDegrees": 54.78242376178203,
+              "relativeForearmExcursionDegrees": 30.746346833661107,
+              "relativeForearmDirectionExcursionDegrees": 4.976657567580175,
+              "shoulderTravelDegrees": 249.7220675798436,
+              "forearmWorldTravelDegrees": 286.86348250183653,
+              "handWorldTravelDegrees": 160.9387354666273,
+              "handToLandingAtStartDegrees": 52.19056469172544,
+              "handLocalYToLandingAtStartDegrees": 51.424440836891144,
+              "horizontalWristPathMm": 1034.940444700562,
+              "verticalWristDropMm": -70.89628571515367
+            },
+            "descent": {
+              "phase": [
+                0.4,
+                0.49444444444444446
+              ],
+              "elbowDegrees": {
+                "min": 103.99999618637949,
+                "max": 178.3817104151967,
+                "range": 74.3817142288172
+              },
+              "relativeForearmTravelDegrees": 162.49263511790744,
+              "relativeForearmExcursionDegrees": 89.08643038149285,
+              "relativeForearmDirectionExcursionDegrees": 85.76964298219468,
+              "shoulderTravelDegrees": 76.86147148248556,
+              "forearmWorldTravelDegrees": 112.42786182928504,
+              "handWorldTravelDegrees": 5.664276210334448,
+              "handToLandingAtStartDegrees": 2.064336255301647,
+              "handLocalYToLandingAtStartDegrees": 2.0271860729260274,
+              "horizontalWristPathMm": 146.94523881310585,
+              "verticalWristDropMm": 445.9854894185773
+            }
+          }
+        ]
+      },
+      "right": {
+        "segments": [
+          {
+            "flight": [
+              0.5074074074074074,
+              0.9777777777777777
+            ],
+            "apex": {
+              "phase": 0.7388888888888889,
+              "height": 1.135223056531667
+            },
+            "transport": {
+              "phase": [
+                0.5907407407407408,
+                0.8814814814814815
+              ],
+              "elbowDegrees": {
+                "min": 103.99999663844534,
+                "max": 107.99993464053637,
+                "range": 3.999938002091028
+              },
+              "relativeForearmTravelDegrees": 57.834788838116886,
+              "relativeForearmExcursionDegrees": 33.49155541426714,
+              "relativeForearmDirectionExcursionDegrees": 6.133304330525005,
+              "shoulderTravelDegrees": 251.5052720913932,
+              "forearmWorldTravelDegrees": 282.3798768444017,
+              "handWorldTravelDegrees": 183.9321781800387,
+              "handToLandingAtStartDegrees": 24.216921315191104,
+              "handLocalYToLandingAtStartDegrees": 23.88789050931011,
+              "horizontalWristPathMm": 1056.2748126866804,
+              "verticalWristDropMm": -23.115405229381825
+            },
+            "descent": {
+              "phase": [
+                0.8814814814814815,
+                0.9796296296296296
+              ],
+              "elbowDegrees": {
+                "min": 103.99999341185512,
+                "max": 178.34892369782773,
+                "range": 74.34893028597261
+              },
+              "relativeForearmTravelDegrees": 126.20585369379447,
+              "relativeForearmExcursionDegrees": 77.01637657973758,
+              "relativeForearmDirectionExcursionDegrees": 75.74664211747788,
+              "shoulderTravelDegrees": 96.1674639875437,
+              "forearmWorldTravelDegrees": 87.22521343503514,
+              "handWorldTravelDegrees": 5.4217169384151545,
+              "handToLandingAtStartDegrees": 3.2215882205884236,
+              "handLocalYToLandingAtStartDegrees": 3.1959975822651847,
+              "horizontalWristPathMm": 238.52224512908856,
+              "verticalWristDropMm": 414.21733606265013
+            }
+          }
+        ]
+      }
+    },
+    "reference": {
+      "left": {
+        "segments": [
+          {
+            "flight": [
+              0.011111111111111112,
+              0.4925925925925926
+            ],
+            "apex": {
+              "phase": 0.2722222222222222,
+              "height": 1.1276401906280438
+            },
+            "transport": {
+              "phase": [
+                0.14074074074074075,
+                0.4
+              ],
+              "elbowDegrees": {
+                "min": 104.21428921274729,
+                "max": 123.37591119425277,
+                "range": 19.161621981505476
+              },
+              "relativeForearmTravelDegrees": 213.46540142549546,
+              "relativeForearmExcursionDegrees": 125.56575555647862,
+              "relativeForearmDirectionExcursionDegrees": 125.23975098621571,
+              "shoulderTravelDegrees": 258.2994546406959,
+              "forearmWorldTravelDegrees": 289.6941901433511,
+              "handWorldTravelDegrees": 207.6595041128876,
+              "handToLandingAtStartDegrees": 56.54161756237924,
+              "handLocalYToLandingAtStartDegrees": 49.00618347586492,
+              "horizontalWristPathMm": 1065.837904004225,
+              "verticalWristDropMm": -60.044936388693074
+            },
+            "descent": {
+              "phase": [
+                0.4,
+                0.49444444444444446
+              ],
+              "elbowDegrees": {
+                "min": 123.37591119425277,
+                "max": 178.3817104151967,
+                "range": 55.00579922094393
+              },
+              "relativeForearmTravelDegrees": 61.44174012321378,
+              "relativeForearmExcursionDegrees": 56.43457830760331,
+              "relativeForearmDirectionExcursionDegrees": 55.0523209646151,
+              "shoulderTravelDegrees": 65.97021054413504,
+              "forearmWorldTravelDegrees": 46.47617140727693,
+              "handWorldTravelDegrees": 52.05884009694443,
+              "handToLandingAtStartDegrees": 51.18928454247857,
+              "handLocalYToLandingAtStartDegrees": 48.948727360319054,
+              "horizontalWristPathMm": 165.4893436009675,
+              "verticalWristDropMm": 413.041113344782
+            }
+          }
+        ]
+      },
+      "right": {
+        "segments": [
+          {
+            "flight": [
+              0.5074074074074074,
+              0.9777777777777777
+            ],
+            "apex": {
+              "phase": 0.7388888888888889,
+              "height": 1.126957434341889
+            },
+            "transport": {
+              "phase": [
+                0.5907407407407408,
+                0.8814814814814815
+              ],
+              "elbowDegrees": {
+                "min": 104.21431714807481,
+                "max": 124.8590308671338,
+                "range": 20.644713719058984
+              },
+              "relativeForearmTravelDegrees": 221.55125715510263,
+              "relativeForearmExcursionDegrees": 127.08203418540678,
+              "relativeForearmDirectionExcursionDegrees": 126.48750123151194,
+              "shoulderTravelDegrees": 259.8818927439173,
+              "forearmWorldTravelDegrees": 290.66441659676644,
+              "handWorldTravelDegrees": 230.9024953382439,
+              "handToLandingAtStartDegrees": 48.24141692941373,
+              "handLocalYToLandingAtStartDegrees": 45.272387798758615,
+              "horizontalWristPathMm": 1097.500039945913,
+              "verticalWristDropMm": -35.05739308950962
+            },
+            "descent": {
+              "phase": [
+                0.8814814814814815,
+                0.9796296296296296
+              ],
+              "elbowDegrees": {
+                "min": 120.21591755821628,
+                "max": 178.34892369782773,
+                "range": 58.13300613961145
+              },
+              "relativeForearmTravelDegrees": 71.05805789246243,
+              "relativeForearmExcursionDegrees": 58.23329556733881,
+              "relativeForearmDirectionExcursionDegrees": 58.2315216777523,
+              "shoulderTravelDegrees": 80.16161097160753,
+              "forearmWorldTravelDegrees": 44.75460878364445,
+              "handWorldTravelDegrees": 42.59023933301454,
+              "handToLandingAtStartDegrees": 42.42152437259288,
+              "handLocalYToLandingAtStartDegrees": 35.40964192047549,
+              "horizontalWristPathMm": 262.05563121381323,
+              "verticalWristDropMm": 387.88280055178456
+            }
+          }
+        ]
+      }
+    }
+  },
+  "preservation": {
+    "checkedAt": "2026-10-15T09:59:44.147Z",
+    "priorFilesPreserved": 31,
+    "historicalAssetsPreserved": [
+      {
+        "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "a86a1ee4b59f3a762dcd0f4c43e409d640ebb1b960a3c03b1c8d82513348159a"
+      },
+      {
+        "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+        "sha256": "31204090aab70a2c7e92db3055fd02a83ebc6af671f82a9f8e24943506b3e3ae"
+      },
+      {
+        "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806"
+      },
+      {
+        "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+        "sha256": "0b49984357d17abcba65430fa166e0a75b05c8dc7304917da84a856097ffc2f1"
+      },
+      {
+        "path": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "f7aa8de3cc00f3aa6484642363d7871006552c5de3e775b584f667e3d662db2f"
+      },
+      {
+        "path": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+        "sha256": "a8d412b93c158de5219abed4c7ea9fd1b5e90eadfebe4c8b1f4eebc00a6d0937"
+      },
+      {
+        "path": "output/flare-v42-r4-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "a6e3678a230e2c3bac2f592eaa90ad90f2967c91659a107c1052484f34561ea4"
+      },
+      {
+        "path": "output/flare-v42-r4-20261015/flare-training-v42-candidate.glb",
+        "sha256": "b1f5cae580708057af3712cd724001b93cc999d0ef8336abcb95e6d6fff7d1cd"
+      },
+      {
+        "path": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "e53326a426a0d80439fa9b4e2dc84c6f8c455e0314f5248518635be46d64086c"
+      },
+      {
+        "path": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+        "sha256": "a0a1e5ff30579e693bda8322180612a0ea3fb4e93fa9eda8a00058e25f38ce98"
+      },
+      {
+        "path": "output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "11f0fcea1ad466f668bbc14b8178c7b99960a85b00980757eb056f19162b1281"
+      },
+      {
+        "path": "output/flare-v42-r6-20261015/flare-training-v42-candidate.glb",
+        "sha256": "1bd05aa02c6087673abe751119ad0b50ce9c6032276de05e52ceaa7f9afc107e"
+      },
+      {
+        "path": "output/flare-v42-r7-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "c6333b257742e505b0573a348d6879e2fb7f26c2c4d49891b9964a0023c8216f"
+      },
+      {
+        "path": "output/flare-v42-r7-20261015/flare-training-v42-candidate.glb",
+        "sha256": "6843ca2b2bf747fc443aa5674311046c2a0410988e211cec453e04b5da25cf17"
+      }
+    ]
+  },
+  "oldLocalPoleWarnings": {
+    "flags": [
+      {
+        "side": "left",
+        "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+        "samples": 19
+      },
+      {
+        "side": "right",
+        "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+        "samples": 50
+      }
+    ],
+    "disposition": "Retained. Historical minimal wrist-axis halfspace is not a veto for the newly coordinated elbow route; anatomy, actual skin and surface checks reviewed independently."
+  },
+  "surfaces": {
+    "wholeTransferSamples": 46,
+    "focusedSamples": 18,
+    "overlap": "The focus set overlaps the whole-transfer set; do not sum as unique poses.",
+    "limitations": "Actual two R8 GLBs; selected phases recorded below. Head/trunk/leg triangle membership from skin weights, all corners included. Positive AABB gaps prove selected surface separation. For overlaps, direct non-coplanar edge-triangle intersections are counted. Distances are sampled hand vertices to target triangles; not a whole-body collision certificate. Mesh overlap with clothing layers is reported, not interpreted as anatomy."
+  },
+  "evidence": [
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/FINAL-REVIEW-09.md",
+      "sha256": "8366e3a47d6ceec4f3182123bcb4e724fe000e9e9fdfae9c716bc983e7a8d273"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/REVIEW-06-REJECTED.md",
+      "sha256": "1c1c2dd7c46740fa89a8cc50406241aedc4f5ab046667884b52cf9502050e1bc"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/candidate09-training/compact-recovery-summary.json",
+      "sha256": "7aa4d5685e6694d7a88fd6b98acc26645cc1e5d5287b953a2ece78c4fe6d6f4e"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/candidate09-training/organization.json",
+      "sha256": "472aa24ca210967210ec8eb450eac1542be0b97507907dc0df24afba24bcbda3"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/candidate09-proximity.json",
+      "sha256": "d5de792d4215c67730e615795e4909528356f8b5d7bed428e51f8e6883ddff41"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/independent-audit/candidate09-proximity-focus.json",
+      "sha256": "1e838f4e1e150134ab15d0350507c9d790742e8cb25a002fc767fb2b873b4551"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/reference/reference-review.md",
+      "sha256": "85cee75e0461e8273ddb41233a3b009e7961193c97ab7dbfa5882ccebbd012f6"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/reference/candidate09-visual-review.md",
+      "sha256": "7ef2d8d22bd39b0f09f012c9536548eca776ae2662dc7a4574ee886f4babe624"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/motion-design-09.md",
+      "sha256": "cf632dfc0bf90e7a2040f798368f0aa18b5127c2fe0b10451296a79fb3e54702"
+    },
+    {
+      "path": "output/flare-v42-r8-20261015/build.log",
+      "sha256": "9143d203a696620fc0d757d25a2ada76dd2afae7e974f55a35518f108b44da18"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/loaded-final.txt",
+      "sha256": "cb400a1de8df625505bebc6a236f696793e39bdfecc100b2c63dc7af5d2607bc"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/check-output.txt",
+      "sha256": "4d42f7b579408ae633e3400140031e5e2d42dca8c3048b216663415916429380"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/sequence-output.txt",
+      "sha256": "9e1733364cd3996eb9a9cd3a09ad9bd344bd25ea8174de094f216b1fb7875ad7"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/focus-standard-0.3.png",
+      "sha256": "013b72db802eba3cf01d93b0bac5db5f780364b222713075aeb05d7b013dc917"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/focus-back-0.75.png",
+      "sha256": "3213967f05843637e4a1f9d05dd057cb9e7b07d21e49a0bdd742fbdcdce59daf"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/final-coach-standard.png",
+      "sha256": "a848c589ac9d971f36242db9b11402593cfc9cbdedeaa0a15fe331229ac16431"
+    },
+    {
+      "path": "output/playwright/flare-v42-r8-20261015/final-coach-back.png",
+      "sha256": "d1cb47c5b2efbdea69a2e6dc525f8603c7668a517fa684d236383c0be7077596"
+    }
+  ],
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "assetHashes": {
+      "training": "e8c82aac77f9cd523fb637f7406cd4da90c5b36c52fefc93d8e76419df8e36dd",
+      "coach": "f7fd4d63cb656c53582d271828a5f46bdb56137ee0d1b3836099a2c20e83c2a7"
+    },
+    "evidence": "output/playwright/flare-v42-r8-20261015"
+  },
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r8-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist retained; not an App release build."
+  },
+  "limitation": "Discrete authored-motion, skin and selected surface checks. Reference footage supports qualitative coordination, not exact 3-D angles, forces, or perfect realism."
+}

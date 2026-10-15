@@ -1,0 +1,498 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "bccd764",
+  "scope": "R1 base, replace airborne wrist/elbow/hand transfer route with body-side recovery and elliptical landing approach; visual acceptance pending",
+  "appIdentity": "L45 / v41 preserved",
+  "parameters": {
+    "revision": "v42-candidate-5-compact-recovery",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "recoveryParameters": {
+    "contactHeight": 0.011,
+    "sideOffset": 0.14,
+    "downOffset": 0.22,
+    "frontOffset": 0.14,
+    "enterUntil": 0.22,
+    "leaveFrom": 0.95,
+    "sweepFrom": 0.08,
+    "sweepUntil": 0.56,
+    "prepareFrom": 0.48,
+    "prepareUntil": 0.76,
+    "landingHover": 0.085,
+    "hoverDownFrom": 0.68,
+    "trunkRadiusX": 0.33,
+    "trunkRadiusZ": 0.27,
+    "approachReachRatio": 0.96,
+    "poleTuckDegrees": 20
+  },
+  "implementationSha256": "ddf76c0a7ead422ee613a155b5032a87bc49434d2aa02993b0d4409061af1e55",
+  "compactHelperSha256": "086034de33f13240d51c1df90ef56c963a65dd2ffeef195aee66068864ccc6b6",
+  "compactAuditSha256": "853e7742bcc39b898cda79c0d0a2ba5660bd2143c890fdf35fe36d3eb628dffe",
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "e53326a426a0d80439fa9b4e2dc84c6f8c455e0314f5248518635be46d64086c",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+      "sha256": "a0a1e5ff30579e693bda8322180612a0ea3fb4e93fa9eda8a00058e25f38ce98",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    }
+  ],
+  "geometry": {
+    "coach": {
+      "verdict": "measured-structural-checks-clear",
+      "flags": []
+    },
+    "training": {
+      "verdict": "measured-structural-checks-clear",
+      "flags": []
+    }
+  },
+  "compactAudit": {
+    "flags": {
+      "coach": [],
+      "training": []
+    },
+    "sampling": {
+      "poses": 541,
+      "meshUniquePhases": 60
+    },
+    "fixedBody": {
+      "maxNonArmMatrixComponentChange": 0,
+      "maxNonArmBoneOriginChangeMetres": 0
+    },
+    "seamMaxMatrixComponentDifference": 0,
+    "nonFiniteMatrices": 0,
+    "sides": {
+      "left": {
+        "bodyXPeak": {
+          "R1": {
+            "phase": 0.2462962962962963,
+            "value": 0.529126022432107
+          },
+          "R5": {
+            "phase": 0.11481481481481481,
+            "value": 0.34554315564063964
+          }
+        },
+        "worldYPeak": {
+          "R1": {
+            "phase": 0.27037037037037037,
+            "value": 1.1456253526007119
+          },
+          "R5": {
+            "phase": 0.2462962962962963,
+            "value": 1.0008766648680243
+          }
+        },
+        "meanRadialReductionMm": 107.08693896631249,
+        "worldPathLength": {
+          "R1": 2.9443471722179195,
+          "R5": 2.3332127162074934
+        },
+        "bodyPathLength": {
+          "R1": 1.6080059404471745,
+          "R5": 1.7836517049135783
+        },
+        "middle70PercentKinematics": {
+          "R1": {
+            "speedMetresPerSecond": {
+              "min": 3.2903860469221806,
+              "max": 7.488207628820645,
+              "mean": 5.100817081370626,
+              "median": 5.179513423019587,
+              "p95": 7.298843743638362
+            },
+            "centeredSecondDifferenceMetresPerSecondSquared": {
+              "min": 10.045424584578026,
+              "max": 377.08157120329867,
+              "mean": 75.95373975982956,
+              "median": 67.47835878546606,
+              "p95": 131.0373315875794
+            },
+            "maximumSpeedPhase": 0.22037037037037038,
+            "maximumSecondDifferencePhase": 0.4
+          },
+          "R5": {
+            "speedMetresPerSecond": {
+              "min": 0.8347809925624152,
+              "max": 8.871221236802072,
+              "mean": 3.4243167582048275,
+              "median": 2.8883319075541087,
+              "p95": 8.413793805137589
+            },
+            "centeredSecondDifferenceMetresPerSecondSquared": {
+              "min": 10.001123633108657,
+              "max": 278.7996271080047,
+              "mean": 81.27107253616983,
+              "median": 45.02518558414373,
+              "p95": 213.59436237590907
+            },
+            "maximumSpeedPhase": 0.29074074074074074,
+            "maximumSecondDifferencePhase": 0.31296296296296294
+          }
+        },
+        "arrivalHorizontal": {
+          "R1": [
+            {
+              "thresholdMetres": 0.1,
+              "phase": 0.42592592592592593,
+              "leadToContactSeconds": 0.09750000172191196
+            },
+            {
+              "thresholdMetres": 0.05,
+              "phase": 0.4462962962962963,
+              "leadToContactSeconds": 0.07000000123624449
+            },
+            {
+              "thresholdMetres": 0.02,
+              "phase": 0.4703703703703704,
+              "leadToContactSeconds": 0.03750000066227383
+            }
+          ],
+          "R5": [
+            {
+              "thresholdMetres": 0.1,
+              "phase": 0.3851851851851852,
+              "leadToContactSeconds": 0.1525000026932469
+            },
+            {
+              "thresholdMetres": 0.05,
+              "phase": 0.42962962962962964,
+              "leadToContactSeconds": 0.09250000163360879
+            },
+            {
+              "thresholdMetres": 0.02,
+              "phase": 0.46296296296296297,
+              "leadToContactSeconds": 0.04750000083888019
+            }
+          ]
+        },
+        "arrival3d": {
+          "R1": [
+            {
+              "thresholdMetres": 0.15,
+              "phase": 0.4648148148148148,
+              "leadToContactSeconds": 0.045000000794728594
+            },
+            {
+              "thresholdMetres": 0.08,
+              "phase": 0.47962962962962963,
+              "leadToContactSeconds": 0.025000000441515888
+            },
+            {
+              "thresholdMetres": 0.03,
+              "phase": 0.49074074074074076,
+              "leadToContactSeconds": 0.010000000176606355
+            }
+          ],
+          "R5": [
+            {
+              "thresholdMetres": 0.15,
+              "phase": 0.46111111111111114,
+              "leadToContactSeconds": 0.050000000883031775
+            },
+            {
+              "thresholdMetres": 0.08,
+              "phase": 0.48148148148148145,
+              "leadToContactSeconds": 0.022500000397364297
+            },
+            {
+              "thresholdMetres": 0.03,
+              "phase": 0.49074074074074076,
+              "leadToContactSeconds": 0.010000000176606355
+            }
+          ]
+        },
+        "last40PercentBacktrack": {
+          "horizontal": {
+            "maximumIncreaseAbovePriorMinimumMetres": 0,
+            "witness": null
+          },
+          "threeDimensional": {
+            "maximumIncreaseAbovePriorMinimumMetres": 0,
+            "witness": null
+          }
+        },
+        "contactClassificationChangedSamples": 0,
+        "maxContactPalmChangeMm": 1.2029666404181801e-10,
+        "maxBoneLengthDifferenceMm": 0.00006461590779105464,
+        "minTransportedBendDot": 0.9397456783731407,
+        "oppositeBendSamples": 0,
+        "minTemporalBendDot": 0.9963900257544965
+      },
+      "right": {
+        "bodyXPeak": {
+          "R1": {
+            "phase": 0.7666666666666667,
+            "value": 0.5387811919173495
+          },
+          "R5": {
+            "phase": 0.7388888888888889,
+            "value": 0.34285053015063865
+          }
+        },
+        "worldYPeak": {
+          "R1": {
+            "phase": 0.7407407407407407,
+            "value": 1.1453392487136274
+          },
+          "R5": {
+            "phase": 0.6981481481481482,
+            "value": 0.9545287486266228
+          }
+        },
+        "meanRadialReductionMm": 89.99764320931827,
+        "worldPathLength": {
+          "R1": 2.9364213532692864,
+          "R5": 2.256455098480333
+        },
+        "bodyPathLength": {
+          "R1": 1.6739029007205721,
+          "R5": 1.5917329797802826
+        },
+        "middle70PercentKinematics": {
+          "R1": {
+            "speedMetresPerSecond": {
+              "min": 3.83917932081196,
+              "max": 5.889605387567224,
+              "mean": 4.931272801652933,
+              "median": 4.957587883591469,
+              "p95": 5.853288194757367
+            },
+            "centeredSecondDifferenceMetresPerSecondSquared": {
+              "min": 10.202266760953842,
+              "max": 113.99595009944937,
+              "mean": 64.8485229666972,
+              "median": 67.02881609765697,
+              "p95": 101.26970270556374
+            },
+            "maximumSpeedPhase": 0.6888888888888889,
+            "maximumSecondDifferencePhase": 0.85
+          },
+          "R5": {
+            "speedMetresPerSecond": {
+              "min": 1.5421794377879299,
+              "max": 6.33221476631191,
+              "mean": 3.3539397641771136,
+              "median": 3.1783210265620485,
+              "p95": 6.181757602565162
+            },
+            "centeredSecondDifferenceMetresPerSecondSquared": {
+              "min": 4.85996158314842,
+              "max": 130.96621930878737,
+              "mean": 57.1501107660503,
+              "median": 52.903578391951164,
+              "p95": 98.94064428905021
+            },
+            "maximumSpeedPhase": 0.575925925925926,
+            "maximumSecondDifferencePhase": 0.8351851851851851
+          }
+        },
+        "arrivalHorizontal": {
+          "R1": [
+            {
+              "thresholdMetres": 0.1,
+              "phase": 0.9388888888888889,
+              "leadToContactSeconds": 0.0675000011920929
+            },
+            {
+              "thresholdMetres": 0.05,
+              "phase": 0.9592592592592593,
+              "leadToContactSeconds": 0.04000000070642542
+            },
+            {
+              "thresholdMetres": 0.02,
+              "phase": 0.975925925925926,
+              "leadToContactSeconds": 0.017500000309061122
+            }
+          ],
+          "R5": [
+            {
+              "thresholdMetres": 0.1,
+              "phase": 0.7962962962962963,
+              "leadToContactSeconds": 0.26000000459176525
+            },
+            {
+              "thresholdMetres": 0.05,
+              "phase": 0.8703703703703703,
+              "leadToContactSeconds": 0.16000000282570168
+            },
+            {
+              "thresholdMetres": 0.02,
+              "phase": 0.912962962962963,
+              "leadToContactSeconds": 0.10250000181021514
+            }
+          ]
+        },
+        "arrival3d": {
+          "R1": [
+            {
+              "thresholdMetres": 0.15,
+              "phase": 0.9388888888888889,
+              "leadToContactSeconds": 0.0675000011920929
+            },
+            {
+              "thresholdMetres": 0.08,
+              "phase": 0.9555555555555556,
+              "leadToContactSeconds": 0.045000000794728594
+            },
+            {
+              "thresholdMetres": 0.03,
+              "phase": 0.975925925925926,
+              "leadToContactSeconds": 0.017500000309061122
+            }
+          ],
+          "R5": [
+            {
+              "thresholdMetres": 0.15,
+              "phase": 0.924074074074074,
+              "leadToContactSeconds": 0.0875000015453056
+            },
+            {
+              "thresholdMetres": 0.08,
+              "phase": 0.9574074074074074,
+              "leadToContactSeconds": 0.042500000750577006
+            },
+            {
+              "thresholdMetres": 0.03,
+              "phase": 0.9777777777777777,
+              "leadToContactSeconds": 0.015000000264909533
+            }
+          ]
+        },
+        "last40PercentBacktrack": {
+          "horizontal": {
+            "maximumIncreaseAbovePriorMinimumMetres": 0.00820037518243036,
+            "witness": {
+              "fromPhase": 0.9611111111111111,
+              "toPhase": 0.9740740740740741,
+              "fromDistanceMetres": 0.00506935760130778,
+              "toDistanceMetres": 0.01326973278373814
+            }
+          },
+          "threeDimensional": {
+            "maximumIncreaseAbovePriorMinimumMetres": 0,
+            "witness": null
+          }
+        },
+        "contactClassificationChangedSamples": 0,
+        "maxContactPalmChangeMm": 1.7844590486890966e-8,
+        "maxBoneLengthDifferenceMm": 0.00009560791466856067,
+        "minTransportedBendDot": 0.9396926506098355,
+        "oppositeBendSamples": 0,
+        "minTemporalBendDot": 0.9988165012663541
+      }
+    }
+  },
+  "targetedSurfaceCheck": {
+    "scope": "Two actual baked GLBs: 16 selected phases and 11 dense left-turn phases per body. Zero detected selected hand/head/trunk/leg triangle intersections across 54 targeted poses. Independent audit also checks 60 unique mesh phases per body. Discrete surface checks, not continuous whole-body collision or dynamics proof.",
+    "report": "output/flare-v42-r5-20261015/agent-design/REPORT.md",
+    "independentReport": "output/flare-v42-r5-20261015/agent-audit/final-compact-summary.json"
+  },
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "trailVisibility": {
+      "on": [
+        1,
+        1
+      ],
+      "off": [
+        0,
+        0
+      ]
+    },
+    "evidence": "output/playwright/flare-v42-r5-20261015",
+    "visualReview": "Three views x eight stages and 28 dense approach screenshots; no visible delivery-blocking reverse elbow or sudden late throw. User acceptance pending."
+  },
+  "historicalAssets": [
+    {
+      "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    }
+  ],
+  "priorFilesPreserved": 31,
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r5-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist preserved"
+  },
+  "limitations": [
+    "Geometric preservation and sampled triangle checks are clear; this is not automatic visual acceptance.",
+    "Whole-path compactness improved; horizontal positioning is earlier. The 8cm 3D threshold is reached 2.5ms later on each side, so no blanket claim of earlier complete arrival.",
+    "Remaining small right late horizontal backtrack is reported; 3D distance to landing keeps decreasing.",
+    "Sampling cannot prove continuous-time nonintersection. Thresholds are comparison definitions, not human biomechanics standards."
+  ],
+  "saveBoundary": "Local research candidate only; no App replacement, installation, remote push, PR or merge."
+}

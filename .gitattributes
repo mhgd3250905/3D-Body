@@ -15,3 +15,6 @@ app/assets/scene/index.html text eol=lf
 
 # Immutable v41 oracle hashes cover the original checkout bytes, including CRLF.
 app/scene/source/v41-runtime/** -text
+
+# Frozen motion review evidence is identified by byte hashes.
+tools/motion-v42/releases/r12-evidence/** -text

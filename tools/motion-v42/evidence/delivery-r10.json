@@ -1,0 +1,662 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "5facabf",
+  "selectedInternalCandidate": "01",
+  "status": "Saved visual candidate; user acceptance pending; no App replacement or push.",
+  "authorship": "Astra implementation, independent actual-GLB numeric and playback-sampled visual review; parent integration, browser and full geometry checks.",
+  "scope": "Complete near-straight elbow before contact at left phase 0.472 and corresponding right phase 0.95; coordinate late upper-arm swing and smooth both elbow transitions.",
+  "appIdentity": "L45 / v41 preserved",
+  "parameters": {
+    "revision": "v42-candidate-10-complete-reach",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "recoveryDesign": {
+    "parameters": {
+      "windows": {
+        "left": {
+          "start": 0.06,
+          "full": 0.16,
+          "aligned": 0.4,
+          "release": 0.43,
+          "end": 0.495,
+          "reference": 0.28
+        },
+        "right": {
+          "start": 0.505,
+          "full": 0.61,
+          "aligned": 0.88,
+          "release": 0.9,
+          "end": 0.975,
+          "reference": 0.74
+        }
+      },
+      "transportElbowDegrees": [
+        104,
+        108
+      ],
+      "shoulderMotion": "minimal whole-arm swing from original R1 bone orientation"
+    },
+    "reachPreparation": {
+      "windows": {
+        "left": {
+          "start": 0.39,
+          "straight": 0.472,
+          "end": 0.505,
+          "alignStart": 0.42,
+          "smoothStart": 0.42,
+          "smoothEnd": 0.46
+        },
+        "right": {
+          "start": 0.843,
+          "straight": 0.95,
+          "end": 0.995,
+          "alignStart": 0.89,
+          "smoothStart": 0.88,
+          "smoothEnd": 0.92
+        }
+      },
+      "straightDegrees": 177,
+      "scope": "Coordinated two-bone early extension and landing-directed lowering; minimal anatomical swings without axial roll"
+    },
+    "scope": "R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. R10 then completes extension before contact using coordinated two-bone minimal swings and lowers the long arm toward its original landing point; source body and contact timing retained."
+  },
+  "sources": [
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "5dbf09a705eea8991f78f5ac1a043cd2bb467af381eddc7d1102c61282386840"
+    },
+    {
+      "path": "tools/motion-v42/coordinated-transfer.mjs",
+      "sha256": "9a458c38340299dfd31b05da17657b4765ec2ec8892c81fa31ea1fdf7dcc34db"
+    },
+    {
+      "path": "tools/motion-v42/reach-preparation.mjs",
+      "sha256": "f0a05c6db413d8a5aa2010aa37926f913e2a47193c20c2f45526cdbf7db6f538"
+    }
+  ],
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r10-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "073be222a464ab351801da9dcae2c2929dd44d1d8618a0f46d70dc1ecede65b9",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005815303440194248
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r10-20261015/flare-training-v42-candidate.glb",
+      "sha256": "4106425e2849f737fd08a5677e0f21b53b2469e0cc9c31c14fa429c54bc12c4b",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005815303440194248
+    }
+  ],
+  "checks": {
+    "coach": {
+      "geometryVerdict": "measured-structural-checks-clear",
+      "sampling": {
+        "intervals": 540,
+        "rowsIncludingRepeatedEnd": 541,
+        "dt": 0.0025000000441515887,
+        "fullBodyEveryFrames": 3,
+        "fullBodySampleCount": 181,
+        "verticesPerFullBodySample": 211060,
+        "surfaceVerticesPerFrame": {
+          "left": {
+            "hand": 8154,
+            "shoe": 15876,
+            "palm": 21
+          },
+          "right": {
+            "hand": 8120,
+            "shoe": 15909,
+            "palm": 21
+          }
+        }
+      },
+      "flags": []
+    },
+    "training": {
+      "geometryVerdict": "measured-structural-checks-clear",
+      "sampling": {
+        "intervals": 540,
+        "rowsIncludingRepeatedEnd": 541,
+        "dt": 0.0025000000441515887,
+        "fullBodyEveryFrames": 3,
+        "fullBodySampleCount": 181,
+        "verticesPerFullBodySample": 143650,
+        "surfaceVerticesPerFrame": {
+          "left": {
+            "hand": 8154,
+            "shoe": 15876,
+            "palm": 21
+          },
+          "right": {
+            "hand": 8120,
+            "shoe": 15909,
+            "palm": 21
+          }
+        }
+      },
+      "flags": []
+    }
+  },
+  "exactTargets": [
+    {
+      "side": "left",
+      "phase": 0.472,
+      "elbowAngle": 176.9998600455413,
+      "wrist": [
+        0.21500567333353462,
+        0.1242944513513299,
+        -0.000002397138976328866
+      ]
+    },
+    {
+      "side": "right",
+      "phase": 0.95,
+      "elbowAngle": 177.0000152022459,
+      "wrist": [
+        -0.21500000367354977,
+        0.10195076589279164,
+        0.10000000152747204
+      ]
+    }
+  ],
+  "kinematics": {
+    "preservation": {
+      "pelvis": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "torso": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "neck": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "head": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "leftScapula": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "leftThigh": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "leftPatella": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "leftShin": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "leftFoot": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "rightScapula": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "rightThigh": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "rightPatella": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "rightShin": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "rightFoot": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "spineLower": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      },
+      "spineUpper": {
+        "positionMaxMm": 0,
+        "quaternionComponentMax": 0
+      }
+    },
+    "sides": {
+      "left": {
+        "nearestTarget": {
+          "shoulder": [
+            0.15307717985232042,
+            0.603799114030487,
+            -0.021993050921710743
+          ],
+          "elbow": [
+            0.19191993489291195,
+            0.35016784790992245,
+            -0.012062022985791364
+          ],
+          "wrist": [
+            0.2150000035762787,
+            0.12361313948323448,
+            5.204202596095963e-18
+          ],
+          "upperLength": 0.2567804589312202,
+          "lowerLength": 0.2280465256899133,
+          "elbowAngleDegrees": 176.99998721442185,
+          "hand": {
+            "minY": null
+          }
+        },
+        "threshold175": 0.45925925925925926,
+        "holdMinAngle": 176.99998721442185,
+        "holdMaxAngle": 177.86259187243374,
+        "holdHorizontalWristPathMm": 2.1031745384485022e-13,
+        "holdMaxHorizontalLandingOffsetMm": 2.8239183187860273e-14,
+        "maxShoulderShiftMm": 0.00006188916979795486,
+        "maxElbowShiftMm": 124.39712464468955,
+        "maxUpperLengthError": 7.046020122913887e-8,
+        "maxLowerLengthError": 5.4074435706930046e-8
+      },
+      "right": {
+        "nearestTarget": {
+          "shoulder": [
+            -0.20839115605330233,
+            0.5847315277298195,
+            0.14213901899411108
+          ],
+          "elbow": [
+            -0.21816672222245068,
+            0.32917747761249194,
+            0.11905616656270492
+          ],
+          "wrist": [
+            -0.21500000367354977,
+            0.10195076589279164,
+            0.10000000152747204
+          ],
+          "upperLength": 0.25678055281050205,
+          "lowerLength": 0.228046363819215,
+          "elbowAngleDegrees": 177.0000152022459,
+          "hand": {
+            "minY": null
+          }
+        },
+        "threshold175": 0.9333333333333333,
+        "holdMinAngle": 177.0000152022459,
+        "holdMaxAngle": 177.86389407855899,
+        "holdHorizontalWristPathMm": 1.0419785379370881e-7,
+        "holdMaxHorizontalLandingOffsetMm": 1.0419751758730052e-7,
+        "maxShoulderShiftMm": 0.00006321955042592202,
+        "maxElbowShiftMm": 141.02896308933083,
+        "maxUpperLengthError": 8.600898743216234e-8,
+        "maxLowerLengthError": 4.651375873354624e-8
+      }
+    },
+    "scope": "R10 allows upper-arm rotation and elbow route change. Preserve all other bone world transforms; actual baked GLB 541 samples."
+  },
+  "contact": {
+    "scope": "Reuses root actual skinned-geometry samples; baseline R9, candidate R10. Existing near-contact booleans from skin-height threshold, not force/contact-lock. No rerender.",
+    "training": {
+      "baseline": "29a17475009cc43e02e6f522bc0566b5bb552e5fdf6434f09bd16872da1bb1e1",
+      "candidate": "4106425e2849f737fd08a5677e0f21b53b2469e0cc9c31c14fa429c54bc12c4b",
+      "sides": {
+        "left": {
+          "changes": [],
+          "landingBefore": 0.4981481481481482,
+          "landingAfter": 0.4981481481481482,
+          "maxHandSurfaceHeightChangeWithinBaselineContactMm": 0.0308042730464142,
+          "maxForearmRotationWithinBaselineContactDegrees": 0.03197137728004466
+        },
+        "right": {
+          "changes": [],
+          "landingBefore": 0.9888888888888889,
+          "landingAfter": 0.9888888888888889,
+          "maxHandSurfaceHeightChangeWithinBaselineContactMm": 0.04097077498604884,
+          "maxForearmRotationWithinBaselineContactDegrees": 0.28040646851534534
+        }
+      }
+    },
+    "coach": {
+      "baseline": "dee606d60335fb33277a51ff94a7365c3e8e90963d648c53a08203bd454f3d08",
+      "candidate": "073be222a464ab351801da9dcae2c2929dd44d1d8618a0f46d70dc1ecede65b9",
+      "sides": {
+        "left": {
+          "changes": [],
+          "landingBefore": 0.4981481481481482,
+          "landingAfter": 0.4981481481481482,
+          "maxHandSurfaceHeightChangeWithinBaselineContactMm": 0.0308042730464142,
+          "maxForearmRotationWithinBaselineContactDegrees": 0.03197137728004466
+        },
+        "right": {
+          "changes": [],
+          "landingBefore": 0.9888888888888889,
+          "landingAfter": 0.9888888888888889,
+          "maxHandSurfaceHeightChangeWithinBaselineContactMm": 0.04097077498604884,
+          "maxForearmRotationWithinBaselineContactDegrees": 0.28040646851534534
+        }
+      }
+    }
+  },
+  "jitter": {
+    "method": "Compare adjacent displacement/rotation vectors and 4-step centered high-pass. Reversal candidates require both steps above 0.1 mm or 0.05 degrees. These are kinematic localization, not automatic visible-jitter verdicts. Scalar extrema under 0.01 degrees discarded.",
+    "flaggedVectors": [
+      {
+        "side": "right",
+        "metric": "Forearm-position",
+        "phase": 0.9925925925925926,
+        "before": 0.5796119307007559,
+        "after": 0.2556990352383036,
+        "cosine": -0.14794009497211213,
+        "acceleration": 106755.2850083271
+      },
+      {
+        "side": "right",
+        "metric": "Hand-position",
+        "phase": 0.9925925925925926,
+        "before": 0.5463385801236404,
+        "after": 0.1210865757953726,
+        "cosine": -1,
+        "acceleration": 106788.02117515344
+      }
+    ],
+    "disposition": "Target transition windows have no flagged vector reversals. A right elbow/wrist position change near phase 0.99259 remains, corresponding to about 0.12 mm inherited settling rebound. Higher broad elbow-speed peaks are retained; no universal zero-jitter claim."
+  },
+  "surfaces": {
+    "samples": 50,
+    "scope": "Actual two R10 candidate01 GLBs; selected phases recorded below. Head/trunk/leg triangle membership from skin weights, all corners included. Positive AABB gaps prove selected surface separation. For overlaps, direct non-coplanar edge-triangle intersections are counted. Distances are sampled hand vertices to target triangles; not a whole-body collision certificate. Mesh overlap with clothing layers is reported, not interpreted as anatomy."
+  },
+  "preservation": {
+    "checkedAt": "2026-10-15T10:50:56.367Z",
+    "priorFilesPreserved": 31,
+    "historicalAssetsPreserved": [
+      {
+        "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "a86a1ee4b59f3a762dcd0f4c43e409d640ebb1b960a3c03b1c8d82513348159a"
+      },
+      {
+        "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+        "sha256": "31204090aab70a2c7e92db3055fd02a83ebc6af671f82a9f8e24943506b3e3ae"
+      },
+      {
+        "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806"
+      },
+      {
+        "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+        "sha256": "0b49984357d17abcba65430fa166e0a75b05c8dc7304917da84a856097ffc2f1"
+      },
+      {
+        "path": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "f7aa8de3cc00f3aa6484642363d7871006552c5de3e775b584f667e3d662db2f"
+      },
+      {
+        "path": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+        "sha256": "a8d412b93c158de5219abed4c7ea9fd1b5e90eadfebe4c8b1f4eebc00a6d0937"
+      },
+      {
+        "path": "output/flare-v42-r4-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "a6e3678a230e2c3bac2f592eaa90ad90f2967c91659a107c1052484f34561ea4"
+      },
+      {
+        "path": "output/flare-v42-r4-20261015/flare-training-v42-candidate.glb",
+        "sha256": "b1f5cae580708057af3712cd724001b93cc999d0ef8336abcb95e6d6fff7d1cd"
+      },
+      {
+        "path": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "e53326a426a0d80439fa9b4e2dc84c6f8c455e0314f5248518635be46d64086c"
+      },
+      {
+        "path": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+        "sha256": "a0a1e5ff30579e693bda8322180612a0ea3fb4e93fa9eda8a00058e25f38ce98"
+      },
+      {
+        "path": "output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "11f0fcea1ad466f668bbc14b8178c7b99960a85b00980757eb056f19162b1281"
+      },
+      {
+        "path": "output/flare-v42-r6-20261015/flare-training-v42-candidate.glb",
+        "sha256": "1bd05aa02c6087673abe751119ad0b50ce9c6032276de05e52ceaa7f9afc107e"
+      },
+      {
+        "path": "output/flare-v42-r7-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "c6333b257742e505b0573a348d6879e2fb7f26c2c4d49891b9964a0023c8216f"
+      },
+      {
+        "path": "output/flare-v42-r7-20261015/flare-training-v42-candidate.glb",
+        "sha256": "6843ca2b2bf747fc443aa5674311046c2a0410988e211cec453e04b5da25cf17"
+      },
+      {
+        "path": "output/flare-v42-r8-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "f7fd4d63cb656c53582d271828a5f46bdb56137ee0d1b3836099a2c20e83c2a7"
+      },
+      {
+        "path": "output/flare-v42-r8-20261015/flare-training-v42-candidate.glb",
+        "sha256": "e8c82aac77f9cd523fb637f7406cd4da90c5b36c52fefc93d8e76419df8e36dd"
+      },
+      {
+        "path": "output/flare-v42-r9-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "dee606d60335fb33277a51ff94a7365c3e8e90963d648c53a08203bd454f3d08"
+      },
+      {
+        "path": "output/flare-v42-r9-20261015/flare-training-v42-candidate.glb",
+        "sha256": "29a17475009cc43e02e6f522bc0566b5bb552e5fdf6434f09bd16872da1bb1e1"
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "path": "output/flare-v42-r10-20261015/bake-manifest.json",
+      "sha256": "243c4c1807232f7c69235f088aa173050538bff0728675829811ee0b3d28e680"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/FINAL-REVIEW-01.md",
+      "sha256": "12af474a819b808aecdb8d216d6f75a4101ba2a9d67275514d0768eafdbfe380"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-quick/identity.json",
+      "sha256": "39b3d3feba2a0ce54ebe0b62fdd0f1b9765b4b5a62680226f98226ea00a4e7fc"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-quick/comparison.json",
+      "sha256": "c38cce8744aae27766e74f77e825120fc298dbafc272e8c770b6b807a783c4c3"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-quick/exact-targets.json",
+      "sha256": "f7260de877dd82b827504899b727787e7d04b1c1631baf2b3bc76fefd6d4243e"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-quick/jitter.json",
+      "sha256": "b074da6ed0f388b6fba4601466c7099b21b76bc2cb51a854817ee8d36b07506a"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-quick/reference-jitter.json",
+      "sha256": "adf654ba3f8361a196f69b1131561d8a336279b5318495cc1646a05ebb93594a"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-contact-classification.json",
+      "sha256": "dc395898f8fa613f9eec506c4d94eeba6dacc329247d75d30bf321d6054e6ad3"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-elbow-window.json",
+      "sha256": "545224e6fb6b31b4eaee5cc2864f73630fafef248ecfdfb36b4a55763b0f2b91"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/independent-audit/candidate01-proximity.json",
+      "sha256": "5f018f0c8e112e10a798ee5953ef2a1ddc781ab5fe2dafa6523c526add0f6787"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/reference/candidate01-visual-review.md",
+      "sha256": "c65ec630b07223001d2f842ec4041f6c2808c6052e864eff45a5e1198eae605c"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/motion-implementation-01.md",
+      "sha256": "a87eb1d0de2d99669742fa1af704bbd88e55a410e3ae755e56cb38c219ea10ce"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/build.log",
+      "sha256": "a7b13ce2fceb5b12b23d158e1af0c26d5af4c29fbe6c5a3b774d2bf2a3a097e3"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/geometry-coach/audit.json",
+      "sha256": "e81623bc9ba0f1704775d9520fd35d4a007085c75c69d27195c49bb29400675d"
+    },
+    {
+      "path": "output/flare-v42-r10-20261015/geometry-training/audit.json",
+      "sha256": "7a42aa920aa89a2d5f46cdf2d98aad470b944106945e501053cae2504fedd27a"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/loaded-final.txt",
+      "sha256": "8df7532657683da3535194a87781d296b9164e169679545b3100a9464a1e08b1"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/check-output.txt",
+      "sha256": "02d18a4129b2cae97d4285056e0990950da94408be844ce35856fe35d164e159"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/extension-output.txt",
+      "sha256": "002bfae281a3d21f073c2b2cebad9d3edfee1660a82486ae5a5284407d5c87fa"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/extension-standard-0.472.png",
+      "sha256": "76d805582a5e1dd6eb9f6eeaaeb99b03d1b5a1e05e3f23f274948e10f5d5da9c"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/extension-standard-0.95.png",
+      "sha256": "7fbef5ced88f3f4d43805e90c49624c0c7b7d4681f582a163145611d10677709"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/final-coach-standard.png",
+      "sha256": "a6ed9cf90bab554587f56b5c9dd0310d52d8c69e852c63b68e547776e12e488d"
+    },
+    {
+      "path": "output/playwright/flare-v42-r10-20261015/final-coach-back.png",
+      "sha256": "a42a85906d933a22850a5da39d6f53a03ae70431e2a0f4ad7152ec4ef17b2d4e"
+    }
+  ],
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "assetHashes": {
+      "training": "4106425e2849f737fd08a5677e0f21b53b2469e0cc9c31c14fa429c54bc12c4b",
+      "coach": "073be222a464ab351801da9dcae2c2929dd44d1d8618a0f46d70dc1ecede65b9"
+    },
+    "anchors": {
+      "left": {
+        "ready": true,
+        "playing": false,
+        "phase": 0.472,
+        "duration": 2.7,
+        "body": "training",
+        "comparison": "previous",
+        "frames": 878,
+        "cameras": [
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ],
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ]
+        ],
+        "current": [
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 0.6372000112533569,
+            "source": "output/flare-v42-r9-20261015/flare-training-v42-candidate.glb"
+          },
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 0.6372000112533569,
+            "source": "output/flare-v42-r10-20261015/flare-training-v42-candidate.glb"
+          }
+        ]
+      },
+      "right": {
+        "ready": true,
+        "playing": false,
+        "phase": 0.95,
+        "duration": 2.7,
+        "body": "training",
+        "comparison": "previous",
+        "frames": 881,
+        "cameras": [
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ],
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ]
+        ],
+        "current": [
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 1.282500022649765,
+            "source": "output/flare-v42-r9-20261015/flare-training-v42-candidate.glb"
+          },
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 1.282500022649765,
+            "source": "output/flare-v42-r10-20261015/flare-training-v42-candidate.glb"
+          }
+        ]
+      }
+    },
+    "evidence": "output/playwright/flare-v42-r10-20261015"
+  },
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r10-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist retained; not an App release build."
+  },
+  "limitation": "Late upper-arm swing relative to R8 reaches about 28/32 degrees; this is a coordinated arm edit rather than forearm-only. Contact classification is preserved, not every arm component. Discrete geometry and playback samples do not certify dynamics, perfect realism, continuous collision freedom or complete user acceptance."
+}

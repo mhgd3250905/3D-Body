@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "id": "flare-v42-r12",
+  "gitTag": "motion-v42-r12",
+  "date": "2026-10-15",
+  "status": "accepted-independent-motion-version",
+  "acceptance": {
+    "quote": "很好这一版本的动作我觉得至少已经没有明显问题了",
+    "scope": "User visual acceptance of R12; not App integration, device QA or full physical validation.",
+    "date": "2026-10-15"
+  },
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCommit": "15cb4598e7d19a70c7c58d527728897861bf3f83",
+  "motionSourceCommit": "fc91c7f4cf95b77db4f0d79c74ad865bedcc6f96",
+  "deliveryCommit": "Resolve annotated gitTag; the final delivery also contains non-motion tooling/documentation.",
+  "originalOutput": "output/flare-v42-r12-20261015",
+  "duration": 1.35,
+  "frames": 541,
+  "tracks": 44,
+  "bones": 22,
+  "assets": [
+    {
+      "kind": "coach",
+      "file": "flare-coach-v42-candidate.glb",
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d",
+      "bytes": 8301976,
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff"
+    },
+    {
+      "kind": "training",
+      "file": "flare-training-v42-candidate.glb",
+      "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+      "bytes": 7996440,
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593"
+    }
+  ],
+  "motionParameters": {
+    "revision": "v42-candidate-12-inward-transition",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "motionDependencies": [
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "a162eb25c5c1e4b88dac27d7597feb4c88a1beddac0fa051a0ddfc7f51156677"
+    },
+    {
+      "path": "src/coach-motion.js",
+      "sha256": "4d27fae99d00d9aeb67469f5cbc935528e32ff612ade58edd586b98e6f6fcfc8"
+    },
+    {
+      "path": "src/flare-sequence.js",
+      "sha256": "ff1d0fce1701fb89901b79b3084c4523987435027f9abb42b68f5e95b21afbe7"
+    },
+    {
+      "path": "src/foot-curves.js",
+      "sha256": "e7485ce61f0b7611340bc100ec9ebe5f72122d1f8a4252f669a77ca664baf340"
+    },
+    {
+      "path": "src/segment-guides.js",
+      "sha256": "abdc8084beeb78ad3aba630f23b7910adf99d5f3153fc6d9bd6ba72d3ddff65a"
+    },
+    {
+      "path": "src/limb-arc.js",
+      "sha256": "8f671c4b0319b50db1f7044c709ba8a34441d07554e8791f04d1ea6af100980c"
+    },
+    {
+      "path": "src/spine-helpers.js",
+      "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a"
+    },
+    {
+      "path": "src/official-poses.js",
+      "sha256": "c19711fc85aa767df5615d78cb1171d8f3f5cb69e10b6cdecb0c9cc6c9eb92a2"
+    },
+    {
+      "path": "public/coach/flare-sequence.json",
+      "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+    },
+    {
+      "path": "public/coach/flare-sequence-before-web-v41.json",
+      "sha256": "743b028afef5cb7a854a0445c24a1456ef0dc0b8171a8a85df29241be57cf787"
+    },
+    {
+      "path": "src/periodic-flare.js",
+      "sha256": "7956291740aef906d8f6c7b364e00712be7bf390057875a591724bff17c9221a"
+    },
+    {
+      "path": "src/segment-guide-motion.js",
+      "sha256": "e84319c8e35e0e9d0be2e91a51d4757753cb4e5955f0a8d4656ada0b67fc1213"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/coach-motion.js",
+      "sha256": "66ab706932a4f2937e890e14af2061c1c995b149c08a2f79ea9b38d5e617637c"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/flare-sequence.js",
+      "sha256": "70af6dc13e4f41a6f405f66f4cf19c5574211a8dcd72b3a075785625b7dfd37c"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/foot-curves.js",
+      "sha256": "2900b131bfc192a7c2f6e66608e9a0dd78d5aa0f04c258ba488297443ffa63f5"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/segment-guides.js",
+      "sha256": "2b2c7b8f41cdf2943ea123f25abb2edf61bf11c1d46ab3acdd56bfd29884e8ce"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/limb-arc.js",
+      "sha256": "ac20bb20357c1cb2f7ace3b9b250e1b9de5933b1b92d72984189afef71a2a8dc"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/spine-helpers.js",
+      "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/official-poses.js",
+      "sha256": "38c22d1b2282fc6a7f3df246dae296160b3dc525e9703d86b343f405bd08b34b"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/public/coach/flare-sequence.json",
+      "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/public/coach/flare-sequence-before-9-16.json",
+      "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/periodic-flare.js",
+      "sha256": "0608de1c78709c28de98d36f41d4e53a40a5767736b5f4e8378462540f8ef338"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/segment-guide-motion.js",
+      "sha256": "7d85ff8edcc076a79623a70446c1efed07e0988536f2fbb7f9a97fef551fea17"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/src/transition-edits.js",
+      "sha256": "e1eb8dace42e789e22b2faf8dd673cfaad00201585aa8d6f1b9b820d3a7f70a9"
+    },
+    {
+      "path": "app/scene/src/v41-clock.json",
+      "sha256": "c9a7c55c276273349d6b67bb70252067da8db235daf499b5de5d56a99bcf620c"
+    },
+    {
+      "path": "tools/motion-v42/coordinated-transfer.mjs",
+      "sha256": "9a458c38340299dfd31b05da17657b4765ec2ec8892c81fa31ea1fdf7dcc34db"
+    },
+    {
+      "path": "tools/motion-v42/reach-preparation.mjs",
+      "sha256": "0834113bdacec7d4c82e623aaa5c6875584d9e0d6d5bfb0cc5e0bf8304129320"
+    }
+  ],
+  "historicalReceipt": "tools/motion-v42/evidence/delivery-r12.json",
+  "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+  "evidence": [
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/numeric-review.md",
+      "sha256": "03ab0e1542b468cfe45b7bf43385520cce80cceb76573fe913e54fee250f02e8",
+      "bytes": 2791,
+      "originalPath": "output/flare-v42-r12-20261015/independent-audit/FINAL-REVIEW-01.md",
+      "originalSha256": "03ab0e1542b468cfe45b7bf43385520cce80cceb76573fe913e54fee250f02e8",
+      "copyTransform": "Review text retained; line endings normalized to LF for a stable portable evidence copy."
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/visual-review.md",
+      "sha256": "7086fb8f8b1cee9dfbfb2ca30cf752c73a57ca57f5cfe410f2edd0fdda6d853a",
+      "bytes": 4142,
+      "originalPath": "output/flare-v42-r12-20261015/reference/candidate01-visual-review.md",
+      "originalSha256": "7951d03fc3829f0007c492e8ab4a2961036d3c948cc83b52b90a9c6fbf91cb02",
+      "copyTransform": "Review text retained; line endings normalized to LF for a stable portable evidence copy."
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/geometry-coach.json",
+      "sha256": "38a952ef2e8137cfa4f710246caf1ec4eba1f4ab1dba619f0e4fa92aaba64241",
+      "bytes": 42949,
+      "originalPath": "output/flare-v42-r12-20261015/geometry-coach/audit.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/geometry-training.json",
+      "sha256": "3533a25d08d78c573254d02e2a9bfdcf5802e9f0738fb91e905058e409167d00",
+      "bytes": 42955,
+      "originalPath": "output/flare-v42-r12-20261015/geometry-training/audit.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/protected-comparison.json",
+      "sha256": "cdee939d4fb097a51cdaf615e9e57fbfc234c264b66285a51098a6431417c76e",
+      "bytes": 7177,
+      "originalPath": "output/flare-v42-r12-20261015/independent-audit/candidate01-comparison.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/sampled-surfaces.json",
+      "sha256": "4ab3a5894c7807ade394f9414e190ed7656359bfdf8907df1674df3e459055ad",
+      "bytes": 18339,
+      "originalPath": "output/flare-v42-r12-20261015/independent-audit/candidate01-proximity.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/bake-manifest.json",
+      "sha256": "46398b93470406da82e7f17764baa515655c3ef96f69b44cca0155a94ca89d97",
+      "bytes": 8284,
+      "originalPath": "output/flare-v42-r12-20261015/bake-manifest.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/review-preview.png",
+      "sha256": "33488754915fa24ef1e7bb0ebb72fc274f9b7a4c1421e5d2df52bd31b1f445b2",
+      "bytes": 107783,
+      "originalPath": "output/playwright/flare-v42-r12-20261015/final-desktop.png"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/right-transition.png",
+      "sha256": "85e331dfad9e83e299e535defd80a62b7ea492fe402ca7c16793506b0c30db9c",
+      "bytes": 36037,
+      "originalPath": "output/playwright/flare-v42-r12-20261015/extension-standard-0.856.png"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/lateral-r12-vs-r11.json",
+      "sha256": "39f343374c36e15ba7798bdb10c827c3d737f56a2315e3007fadea09326cdd19",
+      "bytes": 3509,
+      "originalPath": "output/flare-v42-pr-20261015/lateral-r12-vs-r11.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/lateral-r11-negative-control.json",
+      "sha256": "8045b6fa27a743b878bf956db7e90972e5a5bd036a122c229adc3bbe8af1c647",
+      "bytes": 2455,
+      "originalPath": "output/flare-v42-pr-20261015/lateral-r11-negative-control.json"
+    },
+    {
+      "path": "tools/motion-v42/releases/r12-evidence/reproduction.json",
+      "sha256": "579794d7a3235b779c818392b4e45abfb95b445d1d4dc7a101e59fa9b5d3f778",
+      "bytes": 6415
+    }
+  ],
+  "reproduction": {
+    "runtime": "Node.js 24.15.0 / npm 11.8.0",
+    "instructions": "tools/motion-v42/README.md",
+    "binaryStorage": "Generated in ignored output from tracked source assets; not silently dependent on local R1/R11 outputs.",
+    "identityCheck": "node tools/motion-v42/verify-release.mjs --dir output/<new-batch>"
+  },
+  "scope": {
+    "app": "L45 / 1.0.2+4 / v41 retained",
+    "webDefault": "v41 retained",
+    "media51": "unchanged",
+    "gitHistory": "R1 through R12 retained",
+    "pending": "Default App/web integration, phase/muscle mapping, seven-character reuse, preservation of personal edits, device validation."
+  },
+  "limitations": [
+    "Right torso-axis outward residual about 0.357 mm remains.",
+    "Inherited final-settling wrist return about 0.121 mm remains.",
+    "Sampled geometry and playback do not certify continuous full-body collision freedom or physical realism."
+  ]
+}

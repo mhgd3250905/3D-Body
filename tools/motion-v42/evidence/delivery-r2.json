@@ -1,0 +1,887 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "previousCommit": "bccd764",
+  "status": "Second-round local visual candidate; original App remains L45/v41",
+  "feedback": "Arm bending felt deliberate; reduce flexion and outward steering",
+  "manifest": {
+    "version": "v42-candidate-2-soft-recovery",
+    "branch": "codex/flare-motion-natural-v42",
+    "date": "2026-10-15",
+    "status": "Authored motion candidate for visual review; not motion capture and not an App release.",
+    "duration": 1.35,
+    "frames": 541,
+    "tracks": 44,
+    "bones": 22,
+    "parameters": {
+      "revision": "v42-candidate-2-soft-recovery",
+      "cycleSeconds": 1.35,
+      "sampleCount": 540,
+      "torsoTwistDegrees": 9,
+      "torsoFlexDegrees": 4,
+      "torsoSideDegrees": 2.5,
+      "headYawDegrees": 7,
+      "headPitchDegrees": 4,
+      "headCounterRollDegrees": 5,
+      "armRecovery": 0.035,
+      "armPoleBlend": 0.18,
+      "releaseHeight": 0.035,
+      "fullRecoveryHeight": 0.2,
+      "rhythmAmount": 0.012
+    },
+    "implementationSha256": "d7f67650f7a110e915a0e379ae8bd02893f50bad4d8acb367b7aaa89c71d98f4",
+    "dependencies": [
+      {
+        "path": "tools/motion-v42/natural-motion.mjs",
+        "sha256": "d7f67650f7a110e915a0e379ae8bd02893f50bad4d8acb367b7aaa89c71d98f4"
+      },
+      {
+        "path": "src/coach-motion.js",
+        "sha256": "4d27fae99d00d9aeb67469f5cbc935528e32ff612ade58edd586b98e6f6fcfc8"
+      },
+      {
+        "path": "src/flare-sequence.js",
+        "sha256": "ff1d0fce1701fb89901b79b3084c4523987435027f9abb42b68f5e95b21afbe7"
+      },
+      {
+        "path": "src/foot-curves.js",
+        "sha256": "e7485ce61f0b7611340bc100ec9ebe5f72122d1f8a4252f669a77ca664baf340"
+      },
+      {
+        "path": "src/segment-guides.js",
+        "sha256": "abdc8084beeb78ad3aba630f23b7910adf99d5f3153fc6d9bd6ba72d3ddff65a"
+      },
+      {
+        "path": "src/limb-arc.js",
+        "sha256": "8f671c4b0319b50db1f7044c709ba8a34441d07554e8791f04d1ea6af100980c"
+      },
+      {
+        "path": "src/spine-helpers.js",
+        "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a"
+      },
+      {
+        "path": "src/official-poses.js",
+        "sha256": "c19711fc85aa767df5615d78cb1171d8f3f5cb69e10b6cdecb0c9cc6c9eb92a2"
+      },
+      {
+        "path": "public/coach/flare-sequence.json",
+        "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+      },
+      {
+        "path": "public/coach/flare-sequence-before-web-v41.json",
+        "sha256": "743b028afef5cb7a854a0445c24a1456ef0dc0b8171a8a85df29241be57cf787"
+      },
+      {
+        "path": "src/periodic-flare.js",
+        "sha256": "7956291740aef906d8f6c7b364e00712be7bf390057875a591724bff17c9221a"
+      },
+      {
+        "path": "src/segment-guide-motion.js",
+        "sha256": "e84319c8e35e0e9d0be2e91a51d4757753cb4e5955f0a8d4656ada0b67fc1213"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/coach-motion.js",
+        "sha256": "66ab706932a4f2937e890e14af2061c1c995b149c08a2f79ea9b38d5e617637c"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/flare-sequence.js",
+        "sha256": "70af6dc13e4f41a6f405f66f4cf19c5574211a8dcd72b3a075785625b7dfd37c"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/foot-curves.js",
+        "sha256": "2900b131bfc192a7c2f6e66608e9a0dd78d5aa0f04c258ba488297443ffa63f5"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/segment-guides.js",
+        "sha256": "2b2c7b8f41cdf2943ea123f25abb2edf61bf11c1d46ab3acdd56bfd29884e8ce"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/limb-arc.js",
+        "sha256": "ac20bb20357c1cb2f7ace3b9b250e1b9de5933b1b92d72984189afef71a2a8dc"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/spine-helpers.js",
+        "sha256": "e49d296bdc5b80ffc986118cdbc5ae177ca9f8bcacd35e1237b77aa325d7eb7a"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/official-poses.js",
+        "sha256": "38c22d1b2282fc6a7f3df246dae296160b3dc525e9703d86b343f405bd08b34b"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/public/coach/flare-sequence.json",
+        "sha256": "a8657eaa85bc971cab9fe5e119fada9192c07efbc80b4c32560cad0fb7f38184"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/public/coach/flare-sequence-before-9-16.json",
+        "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/periodic-flare.js",
+        "sha256": "0608de1c78709c28de98d36f41d4e53a40a5767736b5f4e8378462540f8ef338"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/segment-guide-motion.js",
+        "sha256": "7d85ff8edcc076a79623a70446c1efed07e0988536f2fbb7f9a97fef551fea17"
+      },
+      {
+        "path": "app/scene/source/v41-runtime/src/transition-edits.js",
+        "sha256": "e1eb8dace42e789e22b2faf8dd673cfaad00201585aa8d6f1b9b820d3a7f70a9"
+      },
+      {
+        "path": "app/scene/src/v41-clock.json",
+        "sha256": "c9a7c55c276273349d6b67bb70252067da8db235daf499b5de5d56a99bcf620c"
+      }
+    ],
+    "seamPositionMm": 0,
+    "seamAngleDeg": 0,
+    "assets": [
+      {
+        "kind": "coach",
+        "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+        "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+        "output": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+        "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806",
+        "bytes": 8301976,
+        "geometryAndSkinAttributesPreserved": true,
+        "materialsPreserved": true,
+        "bakedBoneErrorMm": 0.0005018094802528933
+      },
+      {
+        "kind": "training",
+        "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+        "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+        "output": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+        "sha256": "0b49984357d17abcba65430fa166e0a75b05c8dc7304917da84a856097ffc2f1",
+        "bytes": 7996440,
+        "geometryAndSkinAttributesPreserved": true,
+        "materialsPreserved": true,
+        "bakedBoneErrorMm": 0.0005018094802528933
+      }
+    ],
+    "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+    "geometry": "Only animation replaced in copies of the two accepted bodies. Original meshes, weights, materials and source assets retained."
+  },
+  "coachAuditVerdict": "measured-structural-checks-clear",
+  "trainingAuditVerdict": "measured-structural-checks-clear",
+  "candidateMeasurements": {
+    "asset": {
+      "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r2-20261015\\flare-coach-v42-candidate.glb",
+      "bytes": 8301976,
+      "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806",
+      "clip": "flare_v42_candidate_loop",
+      "duration": 1.350000023841858,
+      "tracks": 44,
+      "bones": 22
+    },
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 3,
+      "fullBodySampleCount": 181,
+      "verticesPerFullBodySample": 211060,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "integrity": {
+      "nonFiniteMatrices": 0,
+      "maxBoneWorldScaleDeviationFromRest": 1.8030560294016103E-07
+    },
+    "seam": {
+      "maxWorldMatrixComponentDifference": 0,
+      "maxBoneWorldPositionDifferenceMetres": 0,
+      "maxBoneWorldRotationDifferenceDegrees": 2.4148365394514667E-06,
+      "jointPositionMaxMetres": 0
+    },
+    "maxBoneSpanRangeMetres": 2.1090194962658515E-07,
+    "anglesDegrees": {
+      "chestVsPelvis": {
+        "min": 0,
+        "max": 9.36129400463887
+      },
+      "headVsChest": {
+        "min": 1.6086542510114712,
+        "max": 8.600895479986507
+      },
+      "neckVsChest": {
+        "min": 0.6756354545951012,
+        "max": 3.6123763610154986
+      },
+      "headVsNeck": {
+        "min": 0.9330179109632178,
+        "max": 4.9885191189743985
+      },
+      "legAperture": {
+        "min": 72.94562653575298,
+        "max": 102.76555488422376
+      },
+      "leftElbow": {
+        "min": 149.53827524491481,
+        "max": 178.38173307394325
+      },
+      "leftKnee": {
+        "min": 176.20073955027564,
+        "max": 179.93844907431605
+      },
+      "rightElbow": {
+        "min": 149.53808142602193,
+        "max": 178.37198373686226
+      },
+      "rightKnee": {
+        "min": 176.20109997795421,
+        "max": 179.9383445130058
+      }
+    },
+    "elbowByGeometricContactDegrees": {
+      "left": {
+        "palmNearContact": {
+          "min": 177.58578893981064,
+          "max": 178.35397796082077,
+          "median": 178.04912822594227,
+          "p95": 178.19410556547635
+        },
+        "handClearlyAirborne": {
+          "min": 149.53827524491481,
+          "max": 178.36438837628228,
+          "median": 159.2373295219314,
+          "p95": 178.0438822850108
+        }
+      },
+      "right": {
+        "palmNearContact": {
+          "min": 177.59450435862945,
+          "max": 178.37198373686226,
+          "median": 177.86413917934883,
+          "p95": 178.19407931257714
+        },
+        "handClearlyAirborne": {
+          "min": 149.53808142602193,
+          "max": 178.3683417522411,
+          "median": 159.52921960504514,
+          "p95": 178.00936070999552
+        }
+      }
+    },
+    "minimumShoeClearanceAboveRenderedStageMetres": 0.03031402338872287,
+    "minimumHandWorldYMetres": 0.005997282026595163,
+    "maxNearContactPalmHorizontalExcursionMetres": {
+      "left": 0.0016770851373145673,
+      "right": 0.0009563372899039211
+    },
+    "noHandNearContactSampleCount": 0,
+    "fullBodySampled": {
+      "min": 0.006051962098952535,
+      "max": 0.006535635623107161,
+      "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+      "samplesBelowRenderedStage": 0
+    }
+  },
+  "comparisonToFirstRound": {
+    "scope": "Same existing audit script, same541 poses and181 full-body samples; r2 against v41, metric difference against frozen r1. No source/script edits.",
+    "derivativeDefinition": "The derivatives objects quote perNormalizedCycle maxima, not actual-seconds values, despite reusing the source metric category names. Ratios are dimensionless. These are numerical kinematic comparisons, not human force/dynamics thresholds.",
+    "bodies": {
+      "coach": {
+        "sha256": "9e13ffd453d411856b6fae27407191595d79725f5103e5cfb6ce54355f763806",
+        "manifestShaMatches": true,
+        "verdict": "measured-structural-checks-clear",
+        "flags": [],
+        "coreJointMaxAbsoluteChangeMetres": 0,
+        "elbowByGeometricContactDegrees": {
+          "r1": {
+            "left": {
+              "palmNearContact": {
+                "min": 177.58578893981064,
+                "max": 178.35397796082077,
+                "median": 178.04912822594227,
+                "p95": 178.19410556547635
+              },
+              "handClearlyAirborne": {
+                "min": 104.21427180549645,
+                "max": 174.01496465156268,
+                "median": 116.92509878967833,
+                "p95": 166.80497214703925
+              }
+            },
+            "right": {
+              "palmNearContact": {
+                "min": 177.59450435862945,
+                "max": 178.37198373686226,
+                "median": 177.86413917934883,
+                "p95": 178.19407931257714
+              },
+              "handClearlyAirborne": {
+                "min": 104.21429891303767,
+                "max": 173.43310692267437,
+                "median": 116.92506562195493,
+                "p95": 161.6871978968566
+              }
+            }
+          },
+          "r2": {
+            "left": {
+              "palmNearContact": {
+                "min": 177.58578893981064,
+                "max": 178.35397796082077,
+                "median": 178.04912822594227,
+                "p95": 178.19410556547635
+              },
+              "handClearlyAirborne": {
+                "min": 149.53827524491481,
+                "max": 178.36438837628228,
+                "median": 159.2373295219314,
+                "p95": 178.0438822850108
+              }
+            },
+            "right": {
+              "palmNearContact": {
+                "min": 177.59450435862945,
+                "max": 178.37198373686226,
+                "median": 177.86413917934883,
+                "p95": 178.19407931257714
+              },
+              "handClearlyAirborne": {
+                "min": 149.53808142602193,
+                "max": 178.3683417522411,
+                "median": 159.52921960504514,
+                "p95": 178.00936070999552
+              }
+            }
+          }
+        },
+        "measures": {
+          "maxBoneSpanRangeMetres": {
+            "r1": 2.1090194962658515E-07,
+            "r2": 2.1090194962658515E-07,
+            "delta": 0
+          },
+          "minimumShoeClearanceAboveRenderedStageMetres": {
+            "r1": 0.03031402338872287,
+            "r2": 0.03031402338872287,
+            "delta": 0
+          },
+          "minimumHandWorldYMetres": {
+            "r1": 0.005997282026595163,
+            "r2": 0.005997282026595163,
+            "delta": 0
+          },
+          "noHandNearContactSampleCount": {
+            "r1": 0,
+            "r2": 0,
+            "delta": 0
+          }
+        },
+        "seam": {
+          "r1": {
+            "maxWorldMatrixComponentDifference": 0,
+            "maxBoneWorldPositionDifferenceMetres": 0,
+            "maxBoneWorldRotationDifferenceDegrees": 2.4148365394514667E-06,
+            "jointPositionMaxMetres": 0
+          },
+          "r2": {
+            "maxWorldMatrixComponentDifference": 0,
+            "maxBoneWorldPositionDifferenceMetres": 0,
+            "maxBoneWorldRotationDifferenceDegrees": 2.4148365394514667E-06,
+            "jointPositionMaxMetres": 0
+          }
+        },
+        "nearContactPalmHorizontalExcursionMetres": {
+          "r1": {
+            "left": 0.0016770851373145673,
+            "right": 0.0009563372899039211
+          },
+          "r2": {
+            "left": 0.0016770851373145673,
+            "right": 0.0009563372899039211
+          }
+        },
+        "derivatives": {
+          "linearSpeedMetresPerSecond": {
+            "pelvis": {
+              "r1": 4.513262628395393,
+              "r2": 4.513262628395393,
+              "ratio": 1
+            },
+            "leftWrist": {
+              "r1": 10.1090808470525,
+              "r2": 11.954284653560345,
+              "ratio": 1.1825293352012167
+            },
+            "rightWrist": {
+              "r1": 7.950966490479445,
+              "r2": 9.016486904947522,
+              "ratio": 1.1340114331690292
+            },
+            "leftAnkle": {
+              "r1": 12.255902087370135,
+              "r2": 12.255902087370135,
+              "ratio": 1
+            },
+            "rightAnkle": {
+              "r1": 12.176105690728171,
+              "r2": 12.176105690728171,
+              "ratio": 1
+            },
+            "head": {
+              "r1": 4.353741742781103,
+              "r2": 4.353741742781103,
+              "ratio": 1
+            }
+          },
+          "centeredSecondDifferenceMetresPerSecondSquared": {
+            "pelvis": {
+              "r1": 243.0149562421572,
+              "r2": 243.0149562421572,
+              "ratio": 1
+            },
+            "leftWrist": {
+              "r1": 1423.3718956145522,
+              "r2": 1423.3718956145522,
+              "ratio": 1
+            },
+            "rightWrist": {
+              "r1": 1036.502927671968,
+              "r2": 1036.502921668451,
+              "ratio": 0.9999999942079112
+            },
+            "leftAnkle": {
+              "r1": 355.98872780843,
+              "r2": 355.98872780843,
+              "ratio": 1
+            },
+            "rightAnkle": {
+              "r1": 295.1286574791599,
+              "r2": 295.1286574791599,
+              "ratio": 1
+            },
+            "head": {
+              "r1": 230.53238760800983,
+              "r2": 230.53238760800983,
+              "ratio": 1
+            }
+          }
+        },
+        "fullBodyGround": {
+          "r1": {
+            "min": 0.006051962098952535,
+            "max": 0.006535635623107161,
+            "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+            "samplesBelowRenderedStage": 0
+          },
+          "r2": {
+            "min": 0.006051962098952535,
+            "max": 0.006535635623107161,
+            "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+            "samplesBelowRenderedStage": 0
+          }
+        }
+      },
+      "training": {
+        "sha256": "0b49984357d17abcba65430fa166e0a75b05c8dc7304917da84a856097ffc2f1",
+        "manifestShaMatches": true,
+        "verdict": "measured-structural-checks-clear",
+        "flags": [],
+        "coreJointMaxAbsoluteChangeMetres": 0,
+        "elbowByGeometricContactDegrees": {
+          "r1": {
+            "left": {
+              "palmNearContact": {
+                "min": 177.58578893981064,
+                "max": 178.35397796082077,
+                "median": 178.04912822594227,
+                "p95": 178.19410556547635
+              },
+              "handClearlyAirborne": {
+                "min": 104.21427180549645,
+                "max": 174.01496465156268,
+                "median": 116.92509878967833,
+                "p95": 166.80497214703925
+              }
+            },
+            "right": {
+              "palmNearContact": {
+                "min": 177.59450435862945,
+                "max": 178.37198373686226,
+                "median": 177.86413917934883,
+                "p95": 178.19407931257714
+              },
+              "handClearlyAirborne": {
+                "min": 104.21429891303767,
+                "max": 173.43310692267437,
+                "median": 116.92506562195493,
+                "p95": 161.6871978968566
+              }
+            }
+          },
+          "r2": {
+            "left": {
+              "palmNearContact": {
+                "min": 177.58578893981064,
+                "max": 178.35397796082077,
+                "median": 178.04912822594227,
+                "p95": 178.19410556547635
+              },
+              "handClearlyAirborne": {
+                "min": 149.53827524491481,
+                "max": 178.36438837628228,
+                "median": 159.2373295219314,
+                "p95": 178.0438822850108
+              }
+            },
+            "right": {
+              "palmNearContact": {
+                "min": 177.59450435862945,
+                "max": 178.37198373686226,
+                "median": 177.86413917934883,
+                "p95": 178.19407931257714
+              },
+              "handClearlyAirborne": {
+                "min": 149.53808142602193,
+                "max": 178.3683417522411,
+                "median": 159.52921960504514,
+                "p95": 178.00936070999552
+              }
+            }
+          }
+        },
+        "measures": {
+          "maxBoneSpanRangeMetres": {
+            "r1": 2.1090194962658515E-07,
+            "r2": 2.1090194962658515E-07,
+            "delta": 0
+          },
+          "minimumShoeClearanceAboveRenderedStageMetres": {
+            "r1": 0.03031402338872287,
+            "r2": 0.03031402338872287,
+            "delta": 0
+          },
+          "minimumHandWorldYMetres": {
+            "r1": 0.005997282026595163,
+            "r2": 0.005997282026595163,
+            "delta": 0
+          },
+          "noHandNearContactSampleCount": {
+            "r1": 0,
+            "r2": 0,
+            "delta": 0
+          }
+        },
+        "seam": {
+          "r1": {
+            "maxWorldMatrixComponentDifference": 0,
+            "maxBoneWorldPositionDifferenceMetres": 0,
+            "maxBoneWorldRotationDifferenceDegrees": 2.4148365394514667E-06,
+            "jointPositionMaxMetres": 0
+          },
+          "r2": {
+            "maxWorldMatrixComponentDifference": 0,
+            "maxBoneWorldPositionDifferenceMetres": 0,
+            "maxBoneWorldRotationDifferenceDegrees": 2.4148365394514667E-06,
+            "jointPositionMaxMetres": 0
+          }
+        },
+        "nearContactPalmHorizontalExcursionMetres": {
+          "r1": {
+            "left": 0.0016770851373145673,
+            "right": 0.0009563372899039211
+          },
+          "r2": {
+            "left": 0.0016770851373145673,
+            "right": 0.0009563372899039211
+          }
+        },
+        "derivatives": {
+          "linearSpeedMetresPerSecond": {
+            "pelvis": {
+              "r1": 4.513262628395393,
+              "r2": 4.513262628395393,
+              "ratio": 1
+            },
+            "leftWrist": {
+              "r1": 10.1090808470525,
+              "r2": 11.954284653560345,
+              "ratio": 1.1825293352012167
+            },
+            "rightWrist": {
+              "r1": 7.950966490479445,
+              "r2": 9.016486904947522,
+              "ratio": 1.1340114331690292
+            },
+            "leftAnkle": {
+              "r1": 12.255902087370135,
+              "r2": 12.255902087370135,
+              "ratio": 1
+            },
+            "rightAnkle": {
+              "r1": 12.176105690728171,
+              "r2": 12.176105690728171,
+              "ratio": 1
+            },
+            "head": {
+              "r1": 4.353741742781103,
+              "r2": 4.353741742781103,
+              "ratio": 1
+            }
+          },
+          "centeredSecondDifferenceMetresPerSecondSquared": {
+            "pelvis": {
+              "r1": 243.0149562421572,
+              "r2": 243.0149562421572,
+              "ratio": 1
+            },
+            "leftWrist": {
+              "r1": 1423.3718956145522,
+              "r2": 1423.3718956145522,
+              "ratio": 1
+            },
+            "rightWrist": {
+              "r1": 1036.502927671968,
+              "r2": 1036.502921668451,
+              "ratio": 0.9999999942079112
+            },
+            "leftAnkle": {
+              "r1": 355.98872780843,
+              "r2": 355.98872780843,
+              "ratio": 1
+            },
+            "rightAnkle": {
+              "r1": 295.1286574791599,
+              "r2": 295.1286574791599,
+              "ratio": 1
+            },
+            "head": {
+              "r1": 230.53238760800983,
+              "r2": 230.53238760800983,
+              "ratio": 1
+            }
+          }
+        },
+        "fullBodyGround": {
+          "r1": {
+            "min": 0.006051962098952535,
+            "max": 0.006535635623107161,
+            "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+            "samplesBelowRenderedStage": 0
+          },
+          "r2": {
+            "min": 0.006051962098952535,
+            "max": 0.006535635623107161,
+            "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+            "samplesBelowRenderedStage": 0
+          }
+        }
+      }
+    }
+  },
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "comparisonSwitches": [
+      {
+        "ready": true,
+        "playing": false,
+        "phase": 0.125,
+        "duration": 2.7,
+        "body": "training",
+        "comparison": "v41",
+        "frames": 5,
+        "cameras": [
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ],
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ]
+        ],
+        "current": [
+          {
+            "clip": "flare_v41_loop",
+            "time": 1.0160920466890568,
+            "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb"
+          },
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 0.16875000298023224,
+            "source": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb"
+          }
+        ]
+      },
+      {
+        "ready": true,
+        "playing": false,
+        "phase": 0.125,
+        "duration": 2.7,
+        "body": "training",
+        "comparison": "previous",
+        "frames": 7,
+        "cameras": [
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ],
+          [
+            2.7389999999999994,
+            2.0865,
+            3.403
+          ]
+        ],
+        "current": [
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 0.16875000298023224,
+            "source": "output/flare-v42-20261015/flare-training-v42-candidate.glb"
+          },
+          {
+            "clip": "flare_v42_candidate_loop",
+            "time": 0.16875000298023224,
+            "source": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb"
+          }
+        ]
+      }
+    ],
+    "playbackStart": {
+      "ready": true,
+      "playing": false,
+      "phase": 0.25,
+      "duration": 2.7,
+      "body": "training",
+      "comparison": "previous",
+      "frames": 29,
+      "cameras": [
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ],
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ]
+      ],
+      "current": [
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 0.3375000059604645,
+          "source": "output/flare-v42-20261015/flare-training-v42-candidate.glb"
+        },
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 0.3375000059604645,
+          "source": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb"
+        }
+      ]
+    },
+    "playbackEnd": {
+      "ready": true,
+      "playing": false,
+      "phase": 0.8317407407407412,
+      "duration": 2.7,
+      "body": "training",
+      "comparison": "previous",
+      "frames": 255,
+      "cameras": [
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ],
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ]
+      ],
+      "current": [
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 1.1228500198302451,
+          "source": "output/flare-v42-20261015/flare-training-v42-candidate.glb"
+        },
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 1.1228500198302451,
+          "source": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb"
+        }
+      ]
+    },
+    "faster": {
+      "ready": true,
+      "playing": false,
+      "phase": 0.1185555555555536,
+      "duration": 1.35,
+      "body": "training",
+      "comparison": "previous",
+      "frames": 502,
+      "cameras": [
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ],
+        [
+          2.7389999999999994,
+          2.0865,
+          3.403
+        ]
+      ],
+      "current": [
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 0.16005000282658208,
+          "source": "output/flare-v42-20261015/flare-training-v42-candidate.glb"
+        },
+        {
+          "clip": "flare_v42_candidate_loop",
+          "time": 0.16005000282658208,
+          "source": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb"
+        }
+      ]
+    }
+  },
+  "previousAssetsPreserved": [
+    {
+      "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    }
+  ],
+  "preExistingFilesUnchanged": 31,
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r2-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; isolated output keeps original dist"
+  }
+}
