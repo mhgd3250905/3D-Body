@@ -18,6 +18,12 @@
 
 播放时脚尖拖出两条细的渐变光带（余烬橙→玫红→青），带少量随轨迹飘散的光点，手掌撑地时地面泛起一圈柔光涟漪。L45原实现由v41烘焙片段预计算；L46已改为从R12重采样并按循环比例缩短时间窗，任意速度、seek和分段循环都与动作同帧；暂停、选中肌群、详情时淡出，不改变人物、材质或动作。`?character=shadow|chrome|street|robot|cyber` 选择五个角色（夜影/银翼/街头/机甲/赛博银），只换材质并加刚性头饰，骨骼/蒙皮/44轨不变；不带参数时保持原 `?body=` 行为。详见 [docs/fx-and-characters-2026-10-14.md](../../docs/fx-and-characters-2026-10-14.md)。
 
+## 自适应分辨率与性能面板（2026-10-15，分支 perf/home-adaptive-dpr）
+
+画面在动（播放、拖动旋转含惯性、详情相机滑动）时绘制密度降到 `min(画质密度, 运动上限)`：省电1、均衡1.5、高清2；全部静止约250ms后补一帧原画质密度，静止截图与旧版一致。运动中每30帧统计一次帧间隔p95，>25ms降一档（步长0.25，最低1），<18ms回升一档，两次切档至少间隔1s，缓冲只在切档时重分配。只有相机在动时（姿态、灯光、舞台未变）沿用上一张阴影贴图，不重画阴影pass。`?adaptive=0` 恢复固定密度和逐帧阴影。`?perf=1` 在左上角显示 FPS、p50/p95帧间隔、draw calls、三角面、当前/满档 pixelRatio、canvas像素与阴影pass/复用计数，默认关闭；`window.__flareScene.getPerf()` 返回同一组计数。纯逻辑测试 `node tools/verify-adaptive-resolution.mjs` 已并入 `npm run verify`。
+
+性能面板口径：FPS统计最近1秒主舞台实际绘制次数；p50/p95保留最近240个连续渲染tick的历史间隔，暂停或后台后仍可能显示旧样本。calls/triangles只取主舞台颜色pass；canvas与累计颜色/阴影像素是绘制规模计数，不含缩略图等全部工作，也不是GPU耗时、能耗或真机帧率提升证据。前台单帧卡顿达到或超过250ms时按250ms纳入降档样本；恢复可见后的首帧不用于运动性能判断。
+
 ## Flutter bridge
 
 Native: `window.flareBridge.command(mapOrJsonString)`. The `FlareHost` JavaScript

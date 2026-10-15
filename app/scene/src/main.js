@@ -12,12 +12,13 @@ import { createPresentationGate } from './presentation.js';
 import { sceneStrings, setSceneStrings } from './localization.js';
 import { createFlareFx } from './fx.js';
 import { characterFromLocation } from './characters.js';
+import { createPerfHud, perfEnabled, perfSnapshot } from './perf-hud.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
-let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false;
+let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
 const character = characterFromLocation(location.search);
 const hosted = document.documentElement.dataset.hosted === 'true';
 let presented = false, statusTimer = null;
@@ -236,6 +237,7 @@ async function boot() {
       },
     });
     player.setViewInset(viewInset, false);
+    if (perfEnabled(location.search)) perfHud = createPerfHud(player);
     await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
     player.resetView();
     fx = createFlareFx(player, { palette: character.fx, enabled: new URLSearchParams(location.search).get('fx') !== '0' });
@@ -285,6 +287,7 @@ async function boot() {
         projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
+      getPerf: () => perfSnapshot(player),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },
     });
@@ -297,7 +300,7 @@ async function boot() {
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;
   ready = false; pending = []; window.removeEventListener('message', receive);
-  fx?.dispose(); callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
+  perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
 }
 window.addEventListener('pagehide', event => { if (event.persisted) player?.setVisible(false); else dispose(); });
 window.addEventListener('pageshow', event => { if (event.persisted) player?.setVisible(true); });

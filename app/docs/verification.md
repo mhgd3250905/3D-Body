@@ -1,5 +1,9 @@
 # App 验证记录
 
+## PR116 原分支自适应分辨率验证（2026-10-15，L45/v41历史基准，待真机）
+
+`npm run verify` 通过（含新增 `tools/verify-adaptive-resolution.mjs`），`npm run build` 只更换JS包。沙箱 Chromium/SwiftShader、360×640@2x，只比较相对量：主页t=2.2静止、详情动作、详情肌肉三张截图与master构建SSIM均为1.00000（master自对比同为1.00000）；拖动过程每帧颜色像素921,600→518,400（−43.75%），阴影pass 63→0（相机-only帧复用阴影贴图），颜色+阴影像素×pass −73%；播放中颜色−43.75%、含阴影−20.5%。拖动中低清帧与master对比SSIM 0.988（门槛0.97）。`?adaptive=0` 实测为旧路径（固定2.0、无缓冲重分配、逐帧阴影）。SwiftShader约600ms/帧，绝对FPS和降档触发不可代表手机；未构建Flutter/APK、未真机验证。
+
 ## L46 真机安装与首轮显示（2026-10-15 21:34）
 
 同签名原APK已备份，`adb install -r` 返回Success；系统回读name1.0.3/code5，原首次安装时间不变。冷启动Activity返回ok，原生首页实截图显示R12，样本进程日志未见FATAL/Flutter异常；证据 `output/l46-device-20261015/installation.json` 和 `home-first.png`。用户随后反馈“我测试初步OK”，记为有限动作展示初验；设备随后离线，未宣称完成原生详情/七形象全量/长期性能或私有个人记录逐项验证。本条覆盖下方构建阶段尚未安装的当时状态，当前已知手机安装L46。

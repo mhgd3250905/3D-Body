@@ -10,6 +10,7 @@ import { phaseAt, phaseTicks, phaseAtV41, phaseTicksV41, phaseAtV38, phaseTicksV
 import { buildMmRest, createSurfaceSelection } from '../src/mapped-mesh.js';
 import { createDetailView } from '../src/detail.js';
 import { FlarePlayer, applyTrainingClothSink } from '../src/player.js';
+import { createAdaptiveResolution } from '../src/adaptive-resolution.js';
 import { createFlareFx } from '../src/fx.js';
 
 // Real emitted rigs exercise the App boundary, rather than a second IK runtime.
@@ -93,7 +94,11 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
   const player = Object.create(FlarePlayer.prototype);
   Object.assign(player, { coach: model, motion, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(32, 1, 0.02, 40),
     container: { clientWidth: 390, clientHeight: 844, append() {} },
-    renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390, height: 844 }, setSize() {}, render() {} },
+    renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390, width: 390, height: 844 },
+      shadowMap: { enabled: false }, info: { render: { calls: 0, triangles: 0 } }, setSize() {}, render() {} },
+    adaptive: createAdaptiveResolution(), keyLight: { castShadow: false },
+    perf: { renders: 0, colorPixels: 0, shadowPasses: 0, shadowPixels: 0, skippedShadows: 0,
+      calls: 0, triangles: 0, intervals: [], renderTimes: [], lastRenderTick: -1, ticks: 0, resizes: 0 },
     controls: { target: new THREE.Vector3(0, 0.5, 0), enableDamping: false, update() {} }, callbacks: {},
     time: frozen.time, period: 9, speed: 1, playing: false, loopRange: null, running: false, autoFrame: true,
     viewInset: 0, viewInsetTarget: 0, baseFov: 32, framingMode: 'main' });
