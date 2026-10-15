@@ -22,6 +22,10 @@ const DEFAULTS = Object.freeze({
   trunkRadiusZ: 0.27,
   approachReachRatio: 0.96,
   poleTuckDegrees: 20,
+  headwardFoldLift: 0.08,
+  headwardFoldRetraction: 0.055,
+  headwardFoldElbowOut: 0.55,
+  headwardFoldElbowBack: -0.15,
 });
 
 /** A stateless, body-side hand transfer authored over the retained R1 motion.
@@ -160,11 +164,50 @@ export function createCompactRecovery({ rigData, baselineSamples, parameters = {
       }
       const hand = oldHand.clone().slerp(transport.clone().multiply(oldHand), influence);
       hand.slerp(Q(window.landing.handQuaternion), influence * prepare);
+      // Fold slightly toward the head along the chest's long axis. Keep the
+      // accepted side-transfer route and its endpoint contacts; a short wrist
+      // adjustment makes elbow adduction possible without changing bone length.
+      const fold = smooth((u - 0.08) / 0.14) * (1 - smooth((u - 0.80) / 0.15));
+      let foldDisplacement = 0, foldBendDot = 1;
+      if (fold > 0) {
+        const bodyUp = new THREE.Vector3(0, 1, 0).applyQuaternion(upper);
+        const original = wrist.clone(), ray = wrist.clone().sub(shoulder), distance = ray.length();
+        const axis = ray.clone().normalize(), headPosition = ray.dot(bodyUp);
+        const lift = settings.headwardFoldLift * (0.3125 + 0.6875 * smooth((-0.02 - headPosition) / 0.12));
+        const retraction = settings.headwardFoldRetraction * smooth((distance - 0.32) / 0.10);
+        wrist.addScaledVector(bodyUp, lift * fold).addScaledVector(axis, -retraction * fold);
+        // Do not deepen the already compact R5 elbow flexion in short reaches.
+        const nextRay = wrist.clone().sub(shoulder), nextDistance = nextRay.length();
+        const minimum = Math.min(distance, 0.255), width = 0.01;
+        const h = Math.max(width - Math.abs(nextDistance - minimum), 0) / width;
+        const radius = Math.max(nextDistance, minimum) + h * h * width * 0.25;
+        wrist.copy(shoulder).addScaledVector(nextRay, radius / nextDistance);
+        const foldedAxis = wrist.clone().sub(shoulder).normalize();
+        const foldTransport = new THREE.Quaternion().setFromUnitVectors(axis, foldedAxis);
+        bend.applyQuaternion(foldTransport).normalize();
+        referenceBend.applyQuaternion(foldTransport).normalize();
+        hand.premultiply(foldTransport);
+        const ribPole = new THREE.Vector3(sign * settings.headwardFoldElbowOut, -1,
+          settings.headwardFoldElbowBack).applyQuaternion(upper);
+        ribPole.addScaledVector(foldedAxis, -ribPole.dot(foldedAxis));
+        const before = bend.clone();
+        // During recovery, use a stable rib-side plane in the moving body
+        // frame, rather than amplifying R5's rapidly changing transported pole.
+        // The lateral component keeps the default projection away from zero.
+        // At release/landing the original plane returns with the same C1 gate.
+        if (ribPole.lengthSq() > 1e-8) {
+          ribPole.normalize();
+          const signedAngle = Math.atan2(new THREE.Vector3().crossVectors(bend, ribPole).dot(foldedAxis), bend.dot(ribPole));
+          bend.applyAxisAngle(foldedAxis, signedAngle * fold).normalize();
+        }
+        foldBendDot = before.dot(bend);
+        foldDisplacement = wrist.distanceTo(original);
+      }
       limb.wrist = wrist.toArray();
       limb.elbowPole = shoulder.clone().addScaledVector(bend, 0.5).toArray();
       limb.handQuaternion = hand.normalize().toArray();
       latest[side] = { u, stage: prepare > 0.99 ? 'ready-to-land' : prepare > 0 ? 'reach-landing' : sweep > 0.99 ? 'beside-body' : 'side-transfer',
-        influence, sweep, prepare, tuckDegrees: THREE.MathUtils.radToDeg(tuckAngle),
+        influence, sweep, prepare, fold, foldDisplacement, foldBendDot, tuckDegrees: THREE.MathUtils.radToDeg(tuckAngle),
         wristDisplacement: wrist.distanceTo(oldWrist), sourceWrist: oldWrist.toArray(), routeWrist: wrist.toArray(),
         localWristFromShoulder: wrist.clone().sub(shoulder).applyQuaternion(upper.clone().invert()).toArray(),
         transportedBendDot: bend.dot(referenceBend) };

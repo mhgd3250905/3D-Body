@@ -1,0 +1,595 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "54d7905",
+  "scope": "R5 with headward forearm recovery and coordinated elbow lowering; original torso, legs, shoulders and support retained. User confirmed headward direction, final visual acceptance pending.",
+  "appIdentity": "L45 / v41 preserved",
+  "parameters": {
+    "revision": "v42-candidate-6-forward-fold",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "recoveryParameters": {
+    "contactHeight": 0.011,
+    "sideOffset": 0.14,
+    "downOffset": 0.22,
+    "frontOffset": 0.14,
+    "enterUntil": 0.22,
+    "leaveFrom": 0.95,
+    "sweepFrom": 0.08,
+    "sweepUntil": 0.56,
+    "prepareFrom": 0.48,
+    "prepareUntil": 0.76,
+    "landingHover": 0.085,
+    "hoverDownFrom": 0.68,
+    "trunkRadiusX": 0.33,
+    "trunkRadiusZ": 0.27,
+    "approachReachRatio": 0.96,
+    "poleTuckDegrees": 20,
+    "headwardFoldLift": 0.08,
+    "headwardFoldRetraction": 0.055,
+    "headwardFoldElbowOut": 0.55,
+    "headwardFoldElbowBack": -0.15
+  },
+  "dependencies": [
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "a54107df51047e8fe580b6b18419d506b26748abb72470ddf9e40eca3e2607f6"
+    },
+    {
+      "path": "tools/motion-v42/compact-recovery.mjs",
+      "sha256": "24fb41691575ac809c628b42f15b879f439044c159b48a05807d520f39373afc"
+    }
+  ],
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "11f0fcea1ad466f668bbc14b8178c7b99960a85b00980757eb056f19162b1281",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r6-20261015/flare-training-v42-candidate.glb",
+      "sha256": "1bd05aa02c6087673abe751119ad0b50ce9c6032276de05e52ceaa7f9afc107e",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    }
+  ],
+  "geometry": {
+    "coach": {
+      "verdict": "measured-structural-checks-clear",
+      "flags": []
+    },
+    "training": {
+      "verdict": "measured-structural-checks-clear",
+      "flags": []
+    }
+  },
+  "forwardFoldAudit": {
+    "format": "r6-headward-fold-independent-audit-summary-v2",
+    "status": "sampled-continuity-and-geometry-clear-with-explicit-design-direction-warning",
+    "sourceHelperSha256": "24fb41691575ac809c628b42f15b879f439044c159b48a05807d520f39373afc",
+    "assets": {
+      "r5": {
+        "coach": {
+          "path": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+          "sha256": "e53326a426a0d80439fa9b4e2dc84c6f8c455e0314f5248518635be46d64086c",
+          "duration": 1.350000023841858
+        },
+        "training": {
+          "path": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+          "sha256": "a0a1e5ff30579e693bda8322180612a0ea3fb4e93fa9eda8a00058e25f38ce98",
+          "duration": 1.350000023841858
+        }
+      },
+      "r6": {
+        "coach": {
+          "path": "output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb",
+          "sha256": "11f0fcea1ad466f668bbc14b8178c7b99960a85b00980757eb056f19162b1281",
+          "duration": 1.350000023841858
+        },
+        "training": {
+          "path": "output/flare-v42-r6-20261015/flare-training-v42-candidate.glb",
+          "sha256": "1bd05aa02c6087673abe751119ad0b50ce9c6032276de05e52ceaa7f9afc107e",
+          "duration": 1.350000023841858
+        }
+      }
+    },
+    "clipSeconds": 1.350000023841858,
+    "sampling": {
+      "poseIntervals": 540,
+      "poseSamplesIncludingEndpoint": 541,
+      "dtSeconds": 0.0025000000441515887,
+      "meshUniquePhasesPerBody": 60,
+      "meshPhaseStep": 0.016666666666666666,
+      "exactDirectionPhases": 12
+    },
+    "definitions": {
+      "lowerHeadwardMm": "(actual wrist-elbow) dot chest body-up +Y, millimetres; positive means toward head. Up is torso world quaternion times inverse torso rest quaternion, applied to rest +Y.",
+      "upperArmBodyDownDegrees": "3D angle of shoulder→elbow and torso-transported rest -Y.",
+      "upperArmShoulderHipDegrees": "3D angle of shoulder→elbow and same-side shoulder→hip.",
+      "actualHeadward": "Additional actual shoulder-center→head origin projection is independent of assumed torso +Y. Neck axis is short (~40–46mm) and differs; left .25 neck projection remains -18.4mm while head projection is +50.2mm.",
+      "contact": "Existing fixed palmar-patch minimum worldY<=11mm is near-ground classification, not a force-bearing contact claim. Actual hand minimumY>56mm and bend radius>5mm gate bend direction comparisons.",
+      "bend": "Elbow offset projected perpendicular to shoulder-wrist axis; minimal axis transport aligns same-phase or adjacent-frame bend vectors. Negative relative-to-R5/R1 cosine is a changed halfspace, distinct from a per-frame discontinuity."
+    },
+    "directionSamples": [
+      {
+        "phase": 0.1,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -47.74,
+          "upperArmBodyDownDegrees": 56.814,
+          "upperArmShoulderHipDegrees": 71.345
+        },
+        "R6": {
+          "lowerHeadwardMm": 63.248,
+          "upperArmBodyDownDegrees": 37.628,
+          "upperArmShoulderHipDegrees": 52.201
+        }
+      },
+      {
+        "phase": 0.125,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -85.379,
+          "upperArmBodyDownDegrees": 58.378,
+          "upperArmShoulderHipDegrees": 71.742
+        },
+        "R6": {
+          "lowerHeadwardMm": 59.432,
+          "upperArmBodyDownDegrees": 30.451,
+          "upperArmShoulderHipDegrees": 42.828
+        }
+      },
+      {
+        "phase": 0.15,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -97.565,
+          "upperArmBodyDownDegrees": 61.523,
+          "upperArmShoulderHipDegrees": 73.199
+        },
+        "R6": {
+          "lowerHeadwardMm": 53.213,
+          "upperArmBodyDownDegrees": 29.022,
+          "upperArmShoulderHipDegrees": 38.277
+        }
+      },
+      {
+        "phase": 0.2,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -116.236,
+          "upperArmBodyDownDegrees": 66.166,
+          "upperArmShoulderHipDegrees": 72.169
+        },
+        "R6": {
+          "lowerHeadwardMm": 88.776,
+          "upperArmBodyDownDegrees": 9.822,
+          "upperArmShoulderHipDegrees": 15.431
+        }
+      },
+      {
+        "phase": 0.25,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -140.627,
+          "upperArmBodyDownDegrees": 71.961,
+          "upperArmShoulderHipDegrees": 74.53
+        },
+        "R6": {
+          "lowerHeadwardMm": 88.222,
+          "upperArmBodyDownDegrees": 22.68,
+          "upperArmShoulderHipDegrees": 32.938
+        }
+      },
+      {
+        "phase": 0.3,
+        "side": "left",
+        "R5": {
+          "lowerHeadwardMm": -131.736,
+          "upperArmBodyDownDegrees": 62.781,
+          "upperArmShoulderHipDegrees": 66.437
+        },
+        "R6": {
+          "lowerHeadwardMm": 85.268,
+          "upperArmBodyDownDegrees": 30.452,
+          "upperArmShoulderHipDegrees": 37.457
+        }
+      },
+      {
+        "phase": 0.6,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": -131.842,
+          "upperArmBodyDownDegrees": 70.459,
+          "upperArmShoulderHipDegrees": 82.446
+        },
+        "R6": {
+          "lowerHeadwardMm": 49.567,
+          "upperArmBodyDownDegrees": 35.38,
+          "upperArmShoulderHipDegrees": 44.896
+        }
+      },
+      {
+        "phase": 0.625,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": -155.624,
+          "upperArmBodyDownDegrees": 75.48,
+          "upperArmShoulderHipDegrees": 86.979
+        },
+        "R6": {
+          "lowerHeadwardMm": 84.85,
+          "upperArmBodyDownDegrees": 16.949,
+          "upperArmShoulderHipDegrees": 23.832
+        }
+      },
+      {
+        "phase": 0.65,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": -180.384,
+          "upperArmBodyDownDegrees": 81.125,
+          "upperArmShoulderHipDegrees": 92.244
+        },
+        "R6": {
+          "lowerHeadwardMm": 88.106,
+          "upperArmBodyDownDegrees": 4.216,
+          "upperArmShoulderHipDegrees": 8.697
+        }
+      },
+      {
+        "phase": 0.7,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": -181.857,
+          "upperArmBodyDownDegrees": 81.457,
+          "upperArmShoulderHipDegrees": 93.976
+        },
+        "R6": {
+          "lowerHeadwardMm": 53.968,
+          "upperArmBodyDownDegrees": 30.295,
+          "upperArmShoulderHipDegrees": 40.648
+        }
+      },
+      {
+        "phase": 0.75,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": -14.57,
+          "upperArmBodyDownDegrees": 36.753,
+          "upperArmShoulderHipDegrees": 48.675
+        },
+        "R6": {
+          "lowerHeadwardMm": 74.241,
+          "upperArmBodyDownDegrees": 29.957,
+          "upperArmShoulderHipDegrees": 42.18
+        }
+      },
+      {
+        "phase": 0.8,
+        "side": "right",
+        "R5": {
+          "lowerHeadwardMm": 25.17,
+          "upperArmBodyDownDegrees": 33.222,
+          "upperArmShoulderHipDegrees": 40.707
+        },
+        "R6": {
+          "lowerHeadwardMm": 113.502,
+          "upperArmBodyDownDegrees": 32.707,
+          "upperArmShoulderHipDegrees": 38.774
+        }
+      }
+    ],
+    "actualHeadwardCheck": [
+      {
+        "phase": 0.25,
+        "side": "left",
+        "r5AlongShoulderCenterToHeadMm": -122.707,
+        "r6AlongShoulderCenterToHeadMm": 50.196
+      },
+      {
+        "phase": 0.65,
+        "side": "right",
+        "r5AlongShoulderCenterToHeadMm": -198.519,
+        "r6AlongShoulderCenterToHeadMm": 68.108
+      },
+      {
+        "phase": 0.75,
+        "side": "right",
+        "r5AlongShoulderCenterToHeadMm": 25.487,
+        "r6AlongShoulderCenterToHeadMm": 109.853
+      }
+    ],
+    "preservation": {
+      "nonArmMatrixMaximumDifferenceFromR1": 0,
+      "nonArmBoneOriginMaximumDifferenceFromR5Metres": 0,
+      "nonArmQuaternionComponentMaximumDifferenceFromR5": 0,
+      "shoulderOriginMaximumDifferenceFromR5Metres": 0,
+      "twoBodiesAllBonePositionsMaximumDifferenceMetres": 0,
+      "nearGroundSamplesComparedWithR5": {
+        "left": {
+          "count": 274,
+          "maxElbowMm": 0,
+          "maxWristMm": 0,
+          "maxPalmMm": 0,
+          "changedNearGroundClassifications": 0
+        },
+        "right": {
+          "count": 278,
+          "maxElbowMm": 0,
+          "maxWristMm": 0,
+          "maxPalmMm": 0,
+          "changedNearGroundClassifications": 0
+        }
+      }
+    },
+    "continuity": {
+      "left": {
+        "r5ElbowPeakMps": 8.476918,
+        "r6ElbowPeakMps": 8.863717,
+        "r6ElbowPeakPhase": 0.07037,
+        "peakChangePercent": 4.563,
+        "r5MaximumElbowStepMm": 21.225689,
+        "r6MaximumElbowStepMm": 22.342749,
+        "r5WristPeakMps": 8.871221,
+        "r6WristPeakMps": 8.095963,
+        "r6ConsecutiveTransportedBendCosMin": 0.9967128452018713,
+        "oppositeConsecutiveSampleCount": 0,
+        "loopOneStepWristVelocityDifferenceMps": 0.6525511760755969
+      },
+      "right": {
+        "r5ElbowPeakMps": 6.946293,
+        "r6ElbowPeakMps": 7.512906,
+        "r6ElbowPeakPhase": 0.575926,
+        "peakChangePercent": 8.157,
+        "r5MaximumElbowStepMm": 17.376444,
+        "r6MaximumElbowStepMm": 18.80421,
+        "r5WristPeakMps": 6.572388,
+        "r6WristPeakMps": 6.969249,
+        "r6ConsecutiveTransportedBendCosMin": 0.9965124667678282,
+        "oppositeConsecutiveSampleCount": 0,
+        "loopOneStepWristVelocityDifferenceMps": 6.2063352735103575e-15
+      }
+    },
+    "designDirectionWarning": {
+      "interpretation": "R6 deliberately folds toward the head and moves the elbow closer to the ribs. It smoothly crosses the old R1/R5 bend halfspace in substantial intervals and is not a minor preservation-only edit. No adjacent-frame negative bend cosine or initial-R6 spike remains. Root reviewed the final views and chose to retain this explicit design change for user review; this audit does not claim anatomical realism from these metrics.",
+      "sides": {
+        "left": {
+          "r5RelativeMinimumCosine": -0.9995921076638421,
+          "minimumPhase": 0.26851851851851855,
+          "r5RelativeNegativeSamples": 61,
+          "r5RelativePhaseRanges": [
+            {
+              "firstPhase": 0.1814814814814815,
+              "lastPhase": 0.29259259259259257,
+              "samples": 61
+            }
+          ],
+          "r1RelativeMinimumCosine": -0.9994738189209322,
+          "r1RelativeNegativeSamples": 67,
+          "maxElbowDisplacementFromR5Mm": 361.5292913092911
+        },
+        "right": {
+          "r5RelativeMinimumCosine": -0.9998925803139732,
+          "minimumPhase": 0.6666666666666666,
+          "r5RelativeNegativeSamples": 50,
+          "r5RelativePhaseRanges": [
+            {
+              "firstPhase": 0.6148148148148148,
+              "lastPhase": 0.7055555555555556,
+              "samples": 50
+            }
+          ],
+          "r1RelativeMinimumCosine": -0.9999651666154747,
+          "r1RelativeNegativeSamples": 59,
+          "maxElbowDisplacementFromR5Mm": 370.62948248098115
+        }
+      }
+    },
+    "geometry": {
+      "coach": {
+        "uniquePhases": 60,
+        "intersections": {
+          "left": {
+            "head": 0,
+            "trunk": 0,
+            "legs": 0
+          },
+          "right": {
+            "head": 0,
+            "trunk": 0,
+            "legs": 0
+          }
+        },
+        "minimumSelectedSurfaceDistanceMm": {
+          "head": 155.10102759973682,
+          "trunk": 91.89806289826063,
+          "legs": 135.24560505726163
+        },
+        "minimumPalmWorldYmm": 5.997282026595164,
+        "minimumShoeWorldYmm": 16.31402338872287,
+        "renderedStageWorldYmm": -14,
+        "maximumArmBoneLengthDifferenceFromR1Mm": 0.00008918663388368664,
+        "nonFiniteMatrices": 0,
+        "loopSeamMaxMatrixComponentDifference": 0,
+        "reportFlags": [
+          {
+            "side": "left",
+            "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+            "samples": 67
+          },
+          {
+            "side": "right",
+            "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+            "samples": 59
+          }
+        ]
+      },
+      "training": {
+        "uniquePhases": 60,
+        "intersections": {
+          "left": {
+            "head": 0,
+            "trunk": 0,
+            "legs": 0
+          },
+          "right": {
+            "head": 0,
+            "trunk": 0,
+            "legs": 0
+          }
+        },
+        "minimumSelectedSurfaceDistanceMm": {
+          "head": 155.1010277263726,
+          "trunk": 91.89806289826063,
+          "legs": 135.24560505726163
+        },
+        "minimumPalmWorldYmm": 5.997282026595164,
+        "minimumShoeWorldYmm": 16.31402338872287,
+        "renderedStageWorldYmm": -14,
+        "maximumArmBoneLengthDifferenceFromR1Mm": 0.00008918663388368664,
+        "nonFiniteMatrices": 0,
+        "loopSeamMaxMatrixComponentDifference": 0,
+        "reportFlags": [
+          {
+            "side": "left",
+            "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+            "samples": 67
+          },
+          {
+            "side": "right",
+            "issue": "bend-halfspace-differs-from-R1-after-minimal-arm-axis-alignment",
+            "samples": 59
+          }
+        ]
+      }
+    },
+    "regressionsAndLimits": [
+      "Initial R6 elbow spikes 38.60/16.91 m/s are absent; revised peaks are 8.864/7.513 versus R5 8.477/6.946 m/s (4.6%/8.2% higher). These are comparative kinematics, not human-performance thresholds.",
+      "R1/R5-relative halfspace warnings remain intentionally visible in raw reports and this summary. A smooth change is not proof of natural anatomy; user multi-view acceptance remains necessary.",
+      "Exact first/last matrices match, but the inherited left loop one-step wrist-velocity difference remains 0.65255m/s. This is not a claim of mathematical C1 continuity.",
+      "60 discrete phases per model cannot establish continuous-time nonintersection. Tested external hand/head/trunk/leg triangles, not every whole-body or forearm surface; BVH boxes only prune, narrow-phase triangles decide. No closed-solid containment, contact-force or dynamic-balance claim.",
+      "The 12 torso-axis direction phases include interpolated .125/.625. Actual head-axis projections at .25/.65/.75 are independently positive. No real-athlete distance/angle standards are invented."
+    ],
+    "evidence": {
+      "coach": "final-coach/compact-recovery-summary.json",
+      "training": "final-training/compact-recovery-summary.json",
+      "direction": "direction-keyframes-final.json",
+      "elbowContinuity": "quick-elbow-continuity-v2.json",
+      "relativeBend": "r5-r6-bend-comparison-final.json",
+      "headAxis": "actual-headward-landmark-check.json",
+      "rejectedInitial": "initial-forward-fold-summary.json"
+    }
+  },
+  "auditEvidence": [
+    {
+      "path": "output/flare-v42-r6-20261015/agent-audit/forward-fold-summary.json",
+      "sha256": "704800445ac39ad7263b438361cb83bc4a2167b97bcb5dd45fab98c5f212a8bb"
+    },
+    {
+      "path": "output/flare-v42-r6-20261015/agent-design/REPORT.md",
+      "sha256": "d5b41156c28adc902544b5260a40da29780acd9f0b085493b6c0f8b81b012797"
+    }
+  ],
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    },
+    "trailOn": [
+      1,
+      1
+    ],
+    "trailOff": [
+      0,
+      0
+    ],
+    "evidence": "output/playwright/flare-v42-r6-20261015"
+  },
+  "historicalAssets": [
+    {
+      "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r4-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r5-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    }
+  ],
+  "priorFilesPreserved": 31,
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r6-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist retained"
+  },
+  "limitation": "Authored motion; discrete geometry and continuity comparison only, no continuous whole-body collision certificate, forces, or human realism percentage.",
+  "saveBoundary": "Local research candidate; current App and personal data retained."
+}

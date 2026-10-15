@@ -4,8 +4,9 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r5-20261015/';
-const previousOutput = 'output/flare-v42-20261015/';
+const output = 'output/flare-v42-r6-20261015/';
+const previousOutput = 'output/flare-v42-r5-20261015/';
+const firstOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
 const state = { ready: false, playing: false, phase: .125, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
@@ -93,8 +94,8 @@ function seek(phase) {
   slider.value = phase * 100; pct.textContent = (phase * 100).toFixed(1) + '%';
 }
 try {
-  await Promise.all(panels.flatMap((panel, i) => (i === 0 ? (clock.previousAvailable ? ['previous','v41'] : ['v41']) : ['current']).flatMap(version => ['training', 'coach'].map(async kind => {
-    const source = version === 'v41' ? `app/scene/source/coach/${kind === 'training' ? 'flare-coach-v41-training-human-collarfix-20261013.glb' : 'flare-coach-v41-animated.glb'}` : `${version === 'previous' ? previousOutput : output}flare-${kind}-v42-candidate.glb`;
+  await Promise.all(panels.flatMap((panel, i) => (i === 0 ? (clock.previousAvailable ? ['previous','r1','v41'] : ['v41']) : ['current']).flatMap(version => ['training', 'coach'].map(async kind => {
+    const source = version === 'v41' ? `app/scene/source/coach/${kind === 'training' ? 'flare-coach-v41-training-human-collarfix-20261013.glb' : 'flare-coach-v41-animated.glb'}` : `${version === 'previous' ? previousOutput : version === 'r1' ? firstOutput : output}flare-${kind}-v42-candidate.glb`;
     const gltf = await loader.loadAsync(asset(source));
     gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
     const clip = gltf.animations[0], mixer = new THREE.AnimationMixer(gltf.scene), action = mixer.clipAction(clip);
@@ -124,8 +125,8 @@ document.getElementById('body').onchange = e => { state.body = e.target.value; s
 document.getElementById('trails').onchange = e => { trailsVisible = e.target.checked; seek(state.phase); };
 document.getElementById('comparison').onchange = e => {
   state.comparison = e.target.value;
-  document.getElementById('leftTitle').textContent = state.comparison === 'previous' ? '上一版 v42' : 'v41 原版';
-  document.getElementById('leftTag').textContent = state.comparison === 'previous' ? '保留旧版 · 同阶段对照' : '原动作 · 对齐阶段';
+  document.getElementById('leftTitle').textContent = {previous:'上一版 R5',r1:'首版 v42',v41:'v41 原版'}[state.comparison];
+  document.getElementById('leftTag').textContent = state.comparison === 'v41' ? '原动作 · 对齐阶段' : '保留旧版 · 同阶段对照';
   seek(state.phase);
 };
 let last = performance.now();

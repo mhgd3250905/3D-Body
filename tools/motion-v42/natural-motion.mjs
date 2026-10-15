@@ -15,7 +15,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-5-compact-recovery',
+  revision: 'v42-candidate-6-forward-fold',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,

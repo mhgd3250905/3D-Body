@@ -12,8 +12,8 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const args = { reference: path.join(root, 'output/flare-v42-20261015/flare-coach-v42-candidate.glb'),
-  candidate: path.join(root, 'output/flare-v42-r5-20261015/flare-coach-v42-candidate.glb'),
-  out: path.join(root, 'output/flare-v42-r5-20261015/agent-audit/coach'), intervals: 540, collisionEvery: 3 };
+  candidate: path.join(root, 'output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb'),
+  out: path.join(root, 'output/flare-v42-r6-20261015/agent-audit/coach'), intervals: 540, collisionEvery: 3 };
 const options = { '--reference': 'reference', '--candidate': 'candidate', '--out': 'out', '--intervals': 'intervals', '--collision-every': 'collisionEvery' };
 for (let i = 2; i < process.argv.length; i++) {
   const key = options[process.argv[i]], value = process.argv[++i];
