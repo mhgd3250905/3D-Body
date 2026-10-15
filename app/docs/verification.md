@@ -107,6 +107,59 @@ SmartFit 结构对齐、独立提问组件、实际新 UI 回归、浅深来源�
 动作生产已迁至 Pose-Hub `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`；后续仅消费其发布版本，现有51媒体及 L52 / 1.0.9+11 / v42-R17 保存身份保持。本次清理不新增素材、设备或历史QA验收；迁移来源、保留范围及发布后接入计划见[迁移记录](../../docs/pose-hub-migration-2026-10-17.md)。下方历史验证、旧源码路径和绿幕补充继续保留原时点事实，清理检查以本次实际执行结果为准。
 
 本次实测：根网页及 `app/scene` 构建、场景全套 `npm run verify` 均在清理前后通过；1363个受保护非Markdown文件（含51MP4/51JPG）哈希一致。Flutter 全套前后均165通过/12失败，失败名称逐项一致：3条flow、1条polish、8条已有iOS横屏布局失败；不同于交接预估的4失败。清理后静态分析无问题，5项迁移路径测试通过，根网页和App scene浏览器显示正常（独立场景仅favicon 404）。[实际范围与限制](../../docs/pose-hub-migration-2026-10-17.md#本次清理实测)及[失败清单](../../docs/evidence/pose-hub-migration-20261017/verification-summary.json)保留；未重新渲染或做真机验收。
+
+<a id="ios-20261015-closeout"></a>
+
+# iOS TestFlight恢复与阶段收束（2026-10-15）
+
+当前结论：**1.0.1（7）** TestFlight上传、原内部组分发及本人实际安装/使用反馈通过；正式审核按用户最终决定保留 **1.0.0（3）** 原排队，Build7提审准备停止。本次仅文档对齐，不重新构建或重跑全量测试，不撤回审核、清缓存或公开发布。版本身份归[台账](version-ledger.md#2026-10-15-ios阶段收束)，待验项归[路线](development-roadmap.md#2026-10-15-ios阶段收束与后续边界)。
+
+## Preflight：基线、范围、来源与归属
+
+| 字段 | 只读核对结果 |
+| --- | --- |
+| baseline / ref / 选择依据 | `9e7125b559c4a8f0de3f93f8f1e19ccf882997f3`；ref为该完整SHA，来自本阶段已冻结Build7产品源。`git rev-parse --verify <baseline>^{commit}`成功，`git merge-base --is-ancestor <baseline> HEAD`返回0 |
+| Preflight HEAD | `7269db6d61170f9449c220d6059144932aa9da3d` / `ios/main`，工作副本`/Users/shengkai/.codex/worktrees/pr8-audit/3D-Flare`；主目录master仍`812d948b49616d8edce20fd7ec46d70129e0fa27` |
+| stage delta | `git log --oneline <baseline>..HEAD`为5提交；`git diff --name-status <baseline>..HEAD`为A2/M1，共3份文档：testflight-recovery-2026-10-15、ios-build7-review-2026-10-15与version-ledger。无业务、配置、资产或测试变更 |
+| 收束 scope | TestFlight新候选、上传/内部分发/本人验收、保留Build3正式审核的最终决策及相应入口、版本、验证和后续记录；不改生产代码、版本、资产或其它平台，不push/tag或执行发布操作 |
+| 完整工作区 / 改动归属 | 两个已授权工作副本各执行完整`git status --porcelain=v1 --untracked-files=all`，输出均为空；tracked/staged/unstaged/deleted/renamed/untracked均0。既有5阶段提交由本Agent完成并有本会话回执，无未归属改动；阶段二仅9份Agent文档修改 |
+| 发现方式 | 从根/App AGENTS与根README的明确事实源声明追踪一跳，读取相关current章节；按stage delta直接核对两份本轮记录。未扫描全仓或读取凭据、浏览器profile、日志、构建产物 |
+| findings | 版本台账与准备稿仍等待撤回/清缓存确认；当前验证/待办及四份入口未记录Build7本人验收和用户保留Build3的最终决定。历史正文保留，不把10-11 S4的404外推至Build7 |
+
+| 实际检查路径 | 类别 / current或archive判定及结果 |
+| --- | --- |
+| `AGENTS.md`、`app/AGENTS.md` | current项目/路径约定；需补本轮最终决定，原工作与许可约束保留 |
+| `README.md`、`app/README.md` | current使用及文档入口；需补Build3审核/Build7验收分界，下方原日期段为历史范围 |
+| `app/docs/version-ledger.md` | current版本/包/发布事实源，核对顶部本轮记录、10-11 S4身份及阶段保存规则；旧候选和旧安装观察按原日期保留 |
+| `app/docs/verification.md` | current验证/source state事实源，核对顶部L44、10-11 iOS证据绑定与历史分界；本节补本轮证据，不累加不同source的测试数 |
+| `app/docs/development-roadmap.md` | current实施/待验收事实源；核对现有T01–T06及iOS历史范围，需补本轮已完成/停止/仍待验项目 |
+| `app/docs/testflight-recovery-2026-10-15.md` | current本轮候选和操作证据；本人报告与Agent独立观察区分有效，需补最终不换审决定 |
+| `app/docs/ios-build7-review-2026-10-15.md` | 原提审准备草稿，用户最终决定后归archive/history；声明为未执行方案，不作为继续写入ASC的依据 |
+| `app/docs/ios-l44-rebase-2026-10-13.md` | 入口直接指向的历史构建/测试证据；仅复用同生产源的既有结果，不作为10-15新执行的集成测试 |
+
+## 验证证据与source state
+
+| 命令 / 观察来源 | 日期、结果与绑定 |
+| --- | --- |
+| `flutter analyze --no-pub` | 2026-10-15既有执行，无问题；source=`9e7125b559c4a8f0de3f93f8f1e19ccf882997f3`，见本轮恢复记录 |
+| `flutter test --no-pub --concurrency=1 test/domain test/data test/platform test/ui --reporter expanded` | 2026-10-15既有执行，154项通过；同上source。不是本次closeout重跑，也不是全设备验收 |
+| `git diff --name-status 0e6185f..HEAD`及限定生产/测试/配置的`git diff --quiet` | 2026-10-15 Preflight执行；`0e6185fdeb0020b54a4c73892051277944080373`至Preflight HEAD只有11份文档变化；限定`app/lib app/ios app/assets app/test app/integration_test app/test_driver app/tools app/scene app/analysis_options.yaml app/pubspec.yaml app/pubspec.lock`返回0，证明既有同生产源检查适用。10-13四项原生集成仍仅记10-13结果 |
+| 原候选归档、`verify_ipa.sh --ipa <Build7固定IPA> --bundle-id dev.mhgd.flare --version 1.0.1 --build 7`、`altool --validate-app` / `--upload-package` | 10-15已完成的产物/上传证据，校验与唯一上传退出0，source及IPA哈希绑定恢复记录；仅按固定产物证据引用，不当作当前文档HEAD新构建证明；closeout未读取产物或凭据 |
+| 本人TestFlight反馈 | 10-15在明确Build7测试上下文反馈“我已经安装并测试使用一切正常了”；仅本人报告，无Agent独立安装观察、设备型号/iOS或版本重读，不销项完整矩阵 |
+| 指定Playwright MCP只读页面/API | **2026-10-15 09:56:56北京时间**（`2026-10-15T01:56:56.903Z`）版本、提交与Build接口HTTP200：S4为1.0.0 / WAITING_FOR_REVIEW / MANUAL；版本页构建表为3 / 1.0.0；原提交时间保持。Build7为1.0.1 / VALID / APP_STORE_ELIGIBLE / IN_BETA_TESTING、expired=false。仅外部观察，不证明本地HEAD构建或审核获批 |
+| `flutter drive --no-pub -d <本轮专用Simulator> --driver=test_driver/ios_screenshots.dart --target=integration_test/ios_workflow_test.dart --dart-define=FLARE_CAPTURE_SCREENSHOTS=true --dart-define=FLARE_SCREENSHOT_THEME=light` | 10-15提审准备阶段在同生产源执行，设置私密`FLARE_IOS_EVIDENCE_DIR`；因磁盘不足导致Xcode构建失败，未执行测试或生成新截图。不是Build7上传或本人安装失败，本次不重试 |
+| `git diff --check <baseline>..HEAD`及一次性Python Preflight断言 | 10-15在清洁Preflight HEAD执行通过：baseline祖先、精确3文档delta、来源路径存在、完整状态为空、生产/测试/配置与0e6185f一致。命令结果绑定该HEAD，不读取未知/敏感文件 |
+
+## Alignment及必要验证边界
+
+阶段二只修改9份已发现finding对应的文档：根/App AGENTS与README、version-ledger、verification、development-roadmap、恢复记录、Build7准备稿。当前记录明确保留Build3审核与手动发布，Build7本人验收通过且维持内部测试；准备稿标历史，清缓存/补图/替换提审不再待确认执行。生产源、候选及历史记录不改。
+
+本次必要验证针对`7269db6d61170f9449c220d6059144932aa9da3d`加上述9份明确文档改动的工作树：检查本地Markdown链接与新增锚点、版本/source/哈希及本人反馈一致、历史正文保留、差异仅在允许文档，运行`git diff --check`并重读完整工作区状态。提交后核对实际完整HEAD及干净状态；最终提交SHA从Git历史/closeout回执定位，不在提交内预填自身SHA。无新构建、全量测试、缓存清理、Apple写入、push、tag、自动化、relay或handoff。Cockpit仅在本地完成后按条件登记一次非终态检查点，不以此技能结束session。
+
+下方L44、旧iOS及其它平台证据保留原日期、source与未验边界；不代表本轮新增验证。
+
+# L44 形象切换与媒体升级验证（2026-10-13）
+
 2026-10-13 L44真机更新：按用户要求，`0e6185f` 的 **1.0.1（6）Release开发签名版**已从Build5保留数据更新到iPhone16 Pro / iOS26.5；设备重读及原偏好完整对比通过，包内102媒体/领口模型与已验证源码一致。手机尚锁屏，启动及用户验看待续；[安装记录](ios-build6-device-2026-10-13.md)。下方rebase阶段“真机仍为Build5”保留历史范围；S4与Build5标签/IPA保持，未操作Apple发布。
 
 2026-10-13 第二次iOS对齐：`ios/main`已rebase至主线`441dfa6`（L44），本地开发 **1.0.1（6）** 带入可保存的卡通教练/训练人台、领口修复及51项新版视频。154项相关测试、4项真实WKWebView原生集成、分析与Simulator构建通过；[本轮记录](ios-l44-rebase-2026-10-13.md)。用户真机仍为已验收Build5，原标签/IPA保持；下方主线Android L44与Build5/S4为各自身份，未push或操作Apple发布。
