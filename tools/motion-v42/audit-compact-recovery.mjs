@@ -1,5 +1,5 @@
 // Independent baked-GLB audit of the complete free-hand transfer route.
-// Read-only assets. Outputs are confined to --out (default R5 agent-audit).
+// Read-only assets. Outputs are confined to --out.
 // node tools/motion-v42/audit-compact-recovery.mjs --candidate path --reference path --out directory
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,8 +12,8 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const args = { reference: path.join(root, 'output/flare-v42-20261015/flare-coach-v42-candidate.glb'),
-  candidate: path.join(root, 'output/flare-v42-r6-20261015/flare-coach-v42-candidate.glb'),
-  out: path.join(root, 'output/flare-v42-r6-20261015/agent-audit/coach'), intervals: 540, collisionEvery: 3 };
+  candidate: path.join(root, 'output/flare-v42-r7-20261015/flare-coach-v42-candidate.glb'),
+  out: path.join(root, 'output/flare-v42-r7-20261015/agent-audit/coach'), intervals: 540, collisionEvery: 3 };
 const options = { '--reference': 'reference', '--candidate': 'candidate', '--out': 'out', '--intervals': 'intervals', '--collision-every': 'collisionEvery' };
 for (let i = 2; i < process.argv.length; i++) {
   const key = options[process.argv[i]], value = process.argv[++i];

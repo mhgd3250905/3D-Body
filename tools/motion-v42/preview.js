@@ -4,12 +4,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r6-20261015/';
-const previousOutput = 'output/flare-v42-r5-20261015/';
+const output = 'output/flare-v42-r7-20261015/';
+const previousOutput = 'output/flare-v42-r6-20261015/';
 const firstOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
-const state = { ready: false, playing: false, phase: .125, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
+const state = { ready: false, playing: false, phase: .125, duration: 2.7, body: 'training', comparison: 'r1', frames: 0 };
 const panels = [];
 const loader = new GLTFLoader();
 let trailsVisible = false;
@@ -125,7 +125,7 @@ document.getElementById('body').onchange = e => { state.body = e.target.value; s
 document.getElementById('trails').onchange = e => { trailsVisible = e.target.checked; seek(state.phase); };
 document.getElementById('comparison').onchange = e => {
   state.comparison = e.target.value;
-  document.getElementById('leftTitle').textContent = {previous:'上一版 R5',r1:'首版 v42',v41:'v41 原版'}[state.comparison];
+  document.getElementById('leftTitle').textContent = {previous:'上一版 R6',r1:'首版 R1',v41:'v41 原版'}[state.comparison];
   document.getElementById('leftTag').textContent = state.comparison === 'v41' ? '原动作 · 对齐阶段' : '保留旧版 · 同阶段对照';
   seek(state.phase);
 };
