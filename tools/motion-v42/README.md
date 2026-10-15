@@ -1,25 +1,21 @@
-# Flare v42 动作候选 · 首版基础上的肩部收合
+# Flare v42 动作候选 · 贴身换手
 
-这是一份独立的动作优化研究版。当前 App 的 L45/v41、网页默认动作、个人编辑数据和训练视频继续使用原资产。
+第五轮以用户较认可的首版 `bccd764` 为底，重做游离手臂的回收、前后转移和接撑路线。手进入肋侧通道，绕过躯干后送向下一落点；保留首版身体、腿路、支撑点及接触时间。原App仍为L45/v41，个人编辑数据和训练视频保持。
 
-当前第四轮按用户新判断回到首版 v42：原先游离大臂相对躯干张得过开，改动肩部展开角度，保留其屈肘幅度和回手时机。肩点固定，大臂、前臂与手一起向同侧肩→髋的方向旋转最多10°，接触附近归零。首版身体和支撑保持。前两次孤立调整手肘的候选保留历史；第二轮出现反向弯曲，第三轮未被用户采用。不是动作捕捉或动力学模拟。
-
-在仓库根目录运行（已有根目录与 `app/scene` 的依赖即可，不联网加载模型）：
+在仓库根目录运行，使用已有根目录与 `app/scene` 依赖，所有网页资源来自本地：
 
 ```powershell
 node tools/motion-v42/bake.mjs
 node tools/motion-v42/audit-candidate.mjs
-node tools/motion-v42/audit-candidate.mjs output/flare-v42-r4-20261015/flare-training-v42-candidate.glb --baseline output/flare-v42-20261015/flare-training-v42-candidate.glb --out output/flare-v42-r4-20261015/training-audit
-node tools/motion-v42/audit-shoulder-recovery.mjs
+node tools/motion-v42/audit-candidate.mjs output/flare-v42-r5-20261015/flare-training-v42-candidate.glb --baseline output/flare-v42-20261015/flare-training-v42-candidate.glb --out output/flare-v42-r5-20261015/geometry-final-training
+node tools/motion-v42/audit-compact-recovery.mjs
 python -m http.server 8875 --bind 127.0.0.1
 ```
 
-若 8875 已有本项目服务，直接复用。浏览器打开 `http://127.0.0.1:8875/output/flare-v42-r4-20261015/index.html`。
+8875若已有本项目服务，直接复用。打开 `http://127.0.0.1:8875/output/flare-v42-r5-20261015/index.html`。默认左侧首版、右侧贴身换手，支持v41对照、两种人物、同步旋转、阶段拖动、慢放和可开关的手腕轨迹线。没有首版输出时左侧自动回退v41。候选clip为人工设计的1.35秒一圈，预览默认放慢到2.7秒；时长不是真人视频测量值。
 
-预览默认左边是保留的首版 v42，右边微调肩部收合，也可将左侧切回 v41。两边使用对应的动作阶段、相同人物、相同相机与周期时长。若本地没有首版输出，则自动使用 v41 对照。候选 clip 为人工设计的 1.35 秒一圈，预览默认放慢到 2.7 秒；该时长不是从真人视频精确测得。
+`bake.mjs` 只向 `output/flare-v42-r5-20261015` 写入两种人物的候选GLB、预览、制作清单和路线采样。它在既有人物副本中替换动画，读回核对网格、蒙皮、材质、骨变换与输入哈希。原资产与各轮历史目录保留。`natural-motion.mjs` 和 `compact-recovery.mjs` 是离线制作代码，没有安装到现有App或编辑器。
 
-`bake.mjs` 只向 `output/flare-v42-r4-20261015` 写入两种人物的候选 GLB、预览和制作清单，首版与各轮历史目录均保留。它在既有两种已验收人物的副本中替换动画，读回检查几何、蒙皮属性、材质与骨变换，并保留输入文件哈希。`natural-motion.mjs` 不安装到现有 App 或编辑器。
+`audit-candidate.mjs` 检查成品GLB的循环、骨长、掌鞋离地及181姿态蒙皮。`audit-compact-recovery.mjs` 比较R1和当前成品的躯干局部腕路、弯曲侧、身体/支撑保持、持续接近落点的时刻及路线速度，并检查选定相位手与头/躯干/腿的三角面。它们不证明真人技术、连续全身无碰撞或动力学正确。完整命令参数与采样边界见脚本和输出JSON。
 
-`audit-candidate.mjs` 直接采样成品 GLB 的实际骨矩阵与蒙皮顶点，比较循环、骨长、掌鞋离地、胸髋/头颈/肘角与速度变化；接触按几何判定，不把 `handLocked` 当成真实受力。通过这些检查不等于真人技术、全时刻碰撞或设备验收。
-
-`audit-elbow-direction.mjs` 保留第三轮仅肘微调的检查。第四轮使用新增 `audit-shoulder-recovery.mjs`，比较肩部夹角，并逆肩旋转后检查整臂一致性、弯向和接触；仅检查无符号肘角不足以发现反向弯曲。当前记录见 [肩部收合](../../docs/flare-v42-r4-2026-10-15.md)，历史见 [首版记录](../../docs/flare-v42-candidate-2026-10-15.md)。人物源于 Blender Foundation Snow，保留项目原 CC BY 4.0 署名与许可。
+当前记录见 [R5贴身换手](../../docs/flare-v42-r5-2026-10-15.md)，可保存的身份摘要见 [第五轮收据](evidence/delivery-r5.json)。`audit-elbow-direction.mjs` 与 `audit-shoulder-recovery.mjs` 保留对应历史候选的核对用途。人物源于Blender Foundation Snow，保留项目原CC BY 4.0署名与许可。

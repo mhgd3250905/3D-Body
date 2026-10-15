@@ -4,13 +4,14 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r4-20261015/';
+const output = 'output/flare-v42-r5-20261015/';
 const previousOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
 const state = { ready: false, playing: false, phase: .125, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
 const panels = [];
 const loader = new GLTFLoader();
+let trailsVisible = false;
 let syncing = false;
 for (const id of ['old', 'new']) {
   const element = document.getElementById(id), scene = new THREE.Scene();
@@ -82,6 +83,7 @@ function seek(phase) {
     const p = panels[i];
     for (const [kind, entry] of Object.entries(p.entries)) {
       entry.model.visible = kind === (i === 0 ? state.comparison + '-' + state.body : state.body);
+      if (entry.trails) entry.trails.visible = entry.model.visible && trailsVisible;
       if (!entry.model.visible) continue;
       entry.action.enabled = true; entry.action.paused = false;
       entry.mixer.setTime(i === 0 && state.comparison === 'v41' ? oldTime : phase * entry.clip.duration);
@@ -97,7 +99,18 @@ try {
     gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
     const clip = gltf.animations[0], mixer = new THREE.AnimationMixer(gltf.scene), action = mixer.clipAction(clip);
     action.setLoop(THREE.LoopOnce, 1); action.clampWhenFinished = true; action.play();
-    panel.entries[i === 0 ? version + '-' + kind : kind] = { model: gltf.scene, mixer, clip, action, source }; panel.scene.add(gltf.scene);
+    const trails = new THREE.Group();
+    const paths = { left: [], right: [] };
+    for (let k = 0; k <= 180; k++) {
+      action.enabled = true; action.paused = false; mixer.setTime(k / 180 * clip.duration); gltf.scene.updateMatrixWorld(true);
+      for (const side of ['left', 'right']) paths[side].push(gltf.scene.getObjectByName(side + 'Hand').getWorldPosition(new THREE.Vector3()));
+    }
+    for (const side of ['left', 'right']) {
+      const geometry = new THREE.BufferGeometry().setFromPoints(paths[side]);
+      trails.add(new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: side === 'left' ? '#15998d' : '#b97a36', transparent: true, opacity: .8 })));
+    }
+    panel.scene.add(trails);
+    panel.entries[i === 0 ? version + '-' + kind : kind] = { model: gltf.scene, mixer, clip, action, source, trails }; panel.scene.add(gltf.scene);
   }))));
   state.ready = true; play.disabled = false; status.textContent = '已加载 · 两边同步阶段与视角'; seek(state.phase);
 } catch (error) { status.textContent = '加载失败：' + error.message; console.error(error); }
@@ -108,6 +121,7 @@ slider.oninput = () => { setPlaying(false); seek(Number(slider.value) / 100); };
 document.getElementById('duration').onchange = e => state.duration = Number(e.target.value);
 document.getElementById('view').onchange = e => setView(e.target.value);
 document.getElementById('body').onchange = e => { state.body = e.target.value; seek(state.phase); };
+document.getElementById('trails').onchange = e => { trailsVisible = e.target.checked; seek(state.phase); };
 document.getElementById('comparison').onchange = e => {
   state.comparison = e.target.value;
   document.getElementById('leftTitle').textContent = state.comparison === 'previous' ? '上一版 v42' : 'v41 原版';

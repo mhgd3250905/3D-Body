@@ -10,7 +10,7 @@ import { loadGlb, readJson, names, sha256, verifyMirror } from '../../app/scene/
 import { createNaturalFlareMotion } from './natural-motion.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const output = path.join(root, 'output/flare-v42-r4-20261015');
+const output = path.join(root, 'output/flare-v42-r5-20261015');
 fs.mkdirSync(output, { recursive: true });
 verifyMirror();
 const count = 540, duration = 1.35;
@@ -21,7 +21,7 @@ const motion = createNaturalFlareMotion({ model, baselineModel, rigData });
 const bones = names.map(name => model.getObjectByName(name));
 assert.ok(bones.every(Boolean));
 const position = new THREE.Vector3(), quaternion = new THREE.Quaternion(), scale = new THREE.Vector3();
-const frames = [];
+const frames = [], recoverySamples = [];
 for (let i = 0; i <= count; i++) {
   motion.updatePhase(i / count);
   model.updateMatrixWorld(true);
@@ -32,6 +32,8 @@ for (let i = 0; i <= count; i++) {
     return [...position.toArray(), ...quaternion.normalize().toArray()];
   });
   const metrics = motion.getMetrics();
+  recoverySamples.push({ phase: i / count, compactRecovery: metrics.design?.compactRecovery ?? null,
+    joints: Object.fromEntries(['pelvis','torso','leftShoulder','leftElbow','leftWrist','leftPalm','rightShoulder','rightElbow','rightWrist','rightPalm'].map(key => [key, metrics.joints[key]])) });
   frames.push({ phase: i / count, time: i / count * duration, local,
     baselineTime: i === count ? 9 : motion.sourceSequenceTime() });
 }
@@ -114,6 +116,7 @@ for (const [kind, source] of [
 const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-20261015/flare-${kind}-v42-candidate.glb`)));
 const clock = { duration, previousAvailable, phases: frames.map(f => f.phase), baselineSequenceTimes: frames.map(f => f.baselineTime) };
 fs.writeFileSync(path.join(output, 'comparison-clock.json'), JSON.stringify(clock));
+fs.writeFileSync(path.join(output, 'recovery-samples.json'), JSON.stringify(recoverySamples));
 const dependencies = new Map();
 function recordDependency(filename) {
   const relative = path.relative(root, filename).replaceAll('\\', '/');
@@ -129,6 +132,7 @@ recordDependency(fileURLToPath(new URL('./natural-motion.mjs', import.meta.url))
 const manifest = { version: motion.parameters.revision, branch: 'codex/flare-motion-natural-v42', date: '2026-10-15',
   status: 'Authored motion candidate for visual review; not motion capture and not an App release.',
   duration, frames: frames.length, tracks: tracks.length, bones: names.length, parameters: motion.parameters,
+  recoveryDesign: motion.describeRecovery?.(),
   implementationSha256: sha256(fs.readFileSync(new URL('./natural-motion.mjs', import.meta.url))),
   dependencies: [...dependencies.values()],
   seamPositionMm, seamAngleDeg, assets, license: 'Snow Rig / Blender Foundation CC BY 4.0; original attribution retained',
