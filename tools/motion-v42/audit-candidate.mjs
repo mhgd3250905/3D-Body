@@ -20,15 +20,21 @@ const defaults = {
 const args = { ...defaults };
 const options = new Map([['--candidate', 'candidate'], ['--baseline', 'baseline'], ['--out', 'out'],
   ['--intervals', 'intervals'], ['--body-every', 'bodyEvery'], ['--contact-y', 'contactY'], ['--near', 'near']]);
-let positional = false;
+let positional = false, explicitBaseline = false;
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i];
   if (options.has(arg)) {
     const key = options.get(arg), value = process.argv[++i];
+    if (key === 'baseline') explicitBaseline = true;
     if (value === undefined) throw new Error(`Missing value for ${arg}`);
     args[key] = typeof defaults[key] === 'number' ? Number(value) : path.resolve(value);
   } else if (!arg.startsWith('-') && !positional) { args.candidate = path.resolve(arg); positional = true; }
   else throw new Error(`Unknown argument: ${arg}`);
+}
+const baselineFallback = !explicitBaseline && !fs.existsSync(args.baseline);
+if (baselineFallback) {
+  args.baseline = path.join(root, 'app/scene/source/coach/flare-coach-v41-animated.glb');
+  console.warn(`R11 baseline is unavailable; using tracked v41 coach baseline: ${args.baseline}`);
 }
 if (!Number.isInteger(args.intervals) || args.intervals < 24 || args.intervals > 3600) throw new Error('--intervals must be an integer 24..3600');
 if (!Number.isInteger(args.bodyEvery) || args.bodyEvery < 1) throw new Error('--body-every must be a positive integer');
@@ -266,6 +272,7 @@ comparison.numbers.durationRatio = c.asset.duration / b.asset.duration;
 for (const key of Object.keys(b.anglesDegrees)) comparison.numbers[key] = { baseline: b.anglesDegrees[key], candidate: c.anglesDegrees[key] };
 const report = {
   format: 'flare-motion-candidate-audit-v1', generatedAt: new Date().toISOString(),
+  baselineSelection: { explicit: explicitBaseline, fallbackToV41: baselineFallback, path: args.baseline },
   verdict: comparison.flags.some(f => ['structural', 'geometry'].includes(f.type)) ? 'structural-or-geometric-regression-needs-review' : comparison.flags.length ? 'kinematic-review-needed' : 'measured-structural-checks-clear',
   definitions: {
     boneSpan: 'Euclidean distance between named actual bone world origins, tracked independently of skin and rig landmarks. Compared against its loaded rest and baseline variation.',
@@ -296,10 +303,11 @@ const compactAsset = asset => ({
   fullBodySampled: asset.ground.fullBodySampled,
 });
 fs.writeFileSync(path.join(args.out, 'compact-summary.json'), JSON.stringify({ format: report.format,
-  generatedAt: report.generatedAt, verdict: report.verdict, baseline: compactAsset(b), candidate: compactAsset(c),
+  generatedAt: report.generatedAt, verdict: report.verdict, baselineSelection: report.baselineSelection, baseline: compactAsset(b), candidate: compactAsset(c),
   flags: comparison.flags, definitions: report.definitions, limitations: report.limitations,
   details: 'audit.json', samples: ['baseline-samples.json', 'candidate-samples.json'],
 }, null, 2) + '\n');
 for (const [name, data] of [['baseline-samples.json', baseline.rows], ['candidate-samples.json', candidate.rows]]) fs.writeFileSync(path.join(args.out, name), JSON.stringify(data) + '\n');
 console.log(JSON.stringify({ verdict: report.verdict, report: path.join(args.out, 'audit.json'), candidateSha256: c.asset.sha256,
+  baselineSelection: report.baselineSelection,
   angles: comparison.numbers, flags: comparison.flags }, null, 2));

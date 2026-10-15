@@ -1,0 +1,210 @@
+{
+  "date": "2026-10-15",
+  "method": "Export 156 staged/tracked production and dependency files with git checkout-index to a new directory; no historical output or node_modules copied. Not a full-repository fresh clone.",
+  "runtime": {
+    "node": "v24.15.0",
+    "npm": "11.8.0"
+  },
+  "install": {
+    "root": "npm ci --no-audit --no-fund: exit 0, 16 packages",
+    "scene": "npm --prefix app/scene ci --no-audit --no-fund: exit 0, 21 packages"
+  },
+  "sourceFiles": [
+    {
+      "path": "tools/motion-v42/bake.mjs",
+      "sha256": "ae2de349cf3e6aed3f84afad352e1d939181bd0eb9e4aa184c0811437ab2c87e"
+    },
+    {
+      "path": "tools/motion-v42/preview.js",
+      "sha256": "a09458da610cf43fd3cb8b342feffe29a894584ad3757fb0d87094ec9396df32"
+    },
+    {
+      "path": "tools/motion-v42/index.html",
+      "sha256": "5664b639c121f4b1fddbc36f3bff43d16c775b0047f11fc117f4355df9946e74"
+    },
+    {
+      "path": "tools/motion-v42/audit-candidate.mjs",
+      "sha256": "23d629b939e3f1d65026ce68a1d165746979639f3c44c97cfa06ff7aa579be37"
+    },
+    {
+      "path": "tools/motion-v42/verify-release.mjs",
+      "sha256": "c24d95ad9d94b6f2e37a5828648e719c99499df0dc9d4f88b5628f7161679005"
+    },
+    {
+      "path": "tools/motion-v42/verify-lateral-transition.mjs",
+      "sha256": "76745d168e2064221202d6e5243a516a4d19599e7f923e82fa778a106c23c497"
+    },
+    {
+      "path": "tools/motion-v42/natural-motion.mjs",
+      "sha256": "a162eb25c5c1e4b88dac27d7597feb4c88a1beddac0fa051a0ddfc7f51156677"
+    },
+    {
+      "path": "tools/motion-v42/coordinated-transfer.mjs",
+      "sha256": "20d8f8c766226f0b49e1f4b5d0e0ac7e156122c2f24e0cf1fbc1ba2d07a8b4bf"
+    },
+    {
+      "path": "tools/motion-v42/reach-preparation.mjs",
+      "sha256": "cc787b3ce3ce6e1a8a9173e5a3a1312494b8d177689866e4244154ccb4691e2e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "5c2e6747f2aee5143fe6ed5c02da4d3edf9f8be45d4354c244dbcacd653a4f92"
+    },
+    {
+      "path": "app/scene/package-lock.json",
+      "sha256": "088cfe8bb056bd0b998bf436985c1fb8c18328595bb72dd90efb40b267eec510"
+    }
+  ],
+  "bake": "node tools/motion-v42/bake.mjs --out output/flare-v42-r12-review: exit 0",
+  "assets": [
+    {
+      "kind": "coach",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d",
+      "matches": true
+    },
+    {
+      "kind": "training",
+      "bytes": 7996440,
+      "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+      "matches": true
+    }
+  ],
+  "lateral": {
+    "passed": true,
+    "sides": {
+      "right": {
+        "window": [
+          0.82,
+          0.88
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.82,
+          "toPhase": 0.82,
+          "limitMm": 0.01,
+          "passed": true
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0.3573615964933552,
+          "fromPhase": 0.85,
+          "toPhase": 0.85375,
+          "limitMm": 0.4,
+          "passed": true
+        }
+      },
+      "left": {
+        "window": [
+          0.36,
+          0.42
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true
+        }
+      }
+    }
+  },
+  "geometry": {
+    "verdict": "measured-structural-checks-clear",
+    "flags": [],
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 3,
+      "fullBodySampleCount": 181,
+      "verticesPerFullBodySample": 211060,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "baselineFallbackToV41": true
+  },
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "options": [
+      {
+        "value": "previous",
+        "disabled": true
+      },
+      {
+        "value": "r1",
+        "disabled": true
+      },
+      {
+        "value": "v41",
+        "disabled": false
+      }
+    ],
+    "hashes": {
+      "training": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+      "coach": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d"
+    },
+    "playbackAdvanced": true,
+    "historicalGlbRequests": 0
+  },
+  "unchangedMotion": {
+    "commit": "fc91c7f4cf95b77db4f0d79c74ad865bedcc6f96",
+    "assetBytesIdentical": true
+  },
+  "preservation": {
+    "priorFilesPreserved": 31,
+    "historicalGlbsPreserved": 24,
+    "documentationInsertions": [
+      {
+        "path": "README.md",
+        "beforeSha256": "c73a65839b72f1d1bdeebef989dbbb75c4c2cbe5cb2b14bbc58856ca39cb4fee",
+        "preexistingContentPreserved": true
+      },
+      {
+        "path": "AGENTS.md",
+        "beforeSha256": "f1614f45345b3e061b3c1510110b05ac0e521cff1ef624b5dc5c42357d845f12",
+        "preexistingContentPreserved": true
+      },
+      {
+        "path": "app/docs/version-ledger.md",
+        "beforeSha256": "60d950a5c4414b3f90b8b554dd88e70fa619c014f55f187c1932afe9797dfd69",
+        "preexistingContentPreserved": true
+      },
+      {
+        "path": "app/docs/verification.md",
+        "beforeSha256": "bdc0c1316dc75dab70af94935a100525f9e5ad5699739aa13576352744bb7135",
+        "preexistingContentPreserved": true
+      },
+      {
+        "path": "app/docs/development-roadmap.md",
+        "beforeSha256": "8529539d4b2f8855354b9766a4a261f5a217ffdb77eebafb7396456406f40331",
+        "preexistingContentPreserved": true
+      }
+    ],
+    "note": "README/version-ledger/verification staged from HEAD plus only the recorded R12 block; other pending greenscreen content remains unstaged."
+  },
+  "evidence": {
+    "localDirectory": "output/flare-v42-pr-20261015",
+    "screenshot": "output/playwright/flare-v42-pr-20261015/clean-preview.png"
+  },
+  "limitation": "Reproduction checks the authoring/preview tool, not App deployment or device behavior. Original production-website build was already verified at R12; no production source changed during this packaging."
+}

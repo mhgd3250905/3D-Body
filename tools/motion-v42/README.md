@@ -1,20 +1,43 @@
-# Flare R12 · 右前臂局部回外修正
+# Flare v42 / R12 · 已认可动作版本
 
-本轮修正用户指出的84.8%附近右小臂短促回外，仅让右臂83%～88%的向落点对准稍早配合伸肘。R11较长的屈伸过渡、47.2%/95%近直标准和总周期保持。左侧按自身换手时序检查，没有同类外摆，保持原路线。Astra实现和独立审查；具体结果与边界见 [R12记录](../../docs/flare-v42-r12-2026-10-15.md)。App保持L45/v41。
+2026-10-15用户认可R12当前没有明显动作问题。当前制作链、12轮历史、版本标签与边界见[动作版本记录](../../docs/flare-v42-release-2026-10-15.md)，固定身份见[冻结清单](releases/v42-r12.json)。App仍L45/v41，独立动作尚未接入默认播放。
 
-在仓库根目录使用已有依赖运行：
+## 新拉取分支后复现
+
+在项目根目录运行。已用Node.js 24.15.0 / npm 11.8.0验证；根目录和`app/scene`均有锁文件，需要各装一次依赖。安装需要下载包，此后制作/预览使用本地资源，没有CDN。
 
 ```powershell
-node tools/motion-v42/bake.mjs
-node tools/motion-v42/audit-candidate.mjs
-node tools/motion-v42/audit-candidate.mjs output/flare-v42-r12-20261015/flare-training-v42-candidate.glb --baseline output/flare-v42-r11-20261015/flare-training-v42-candidate.glb --out output/flare-v42-r12-20261015/geometry-training
+npm ci
+npm --prefix app/scene ci
+node tools/motion-v42/bake.mjs --out output/flare-v42-r12-review
+node tools/motion-v42/verify-release.mjs --dir output/flare-v42-r12-review
+node tools/motion-v42/verify-lateral-transition.mjs output/flare-v42-r12-review/flare-training-v42-candidate.glb
 python -m http.server 8875 --bind 127.0.0.1
 ```
 
-8875若已服务本项目，直接复用。打开 `http://127.0.0.1:8875/output/flare-v42-r12-20261015/index.html`。默认左R11、右R12，停在84.8%；可回到82%播放，或将滑块调至36%～42%检查另一侧。可切首版R1、v41和两种人体，支持同阶段旋转、慢放、连贯播放与手腕路线。1.35秒一圈为设计节奏，默认2.7秒慢放。
+8875若已服务本项目，直接复用。打开`http://127.0.0.1:8875/output/flare-v42-r12-review/index.html`。默认停在84.8%，可从82%播放，36%～42%为另一侧对应阶段。支持两人体、同阶段旋转、四档节奏与手腕路线；1.35秒是设计周期，默认2.7秒慢放。
 
-`bake.mjs`写入R12独立输出目录；重做前先将需要保留的R12成品另存。`coordinated-transfer.mjs`保留R8制作逻辑，后续接撑调整另行后处理。原R1–R11输出、当前App和编辑器保持。
+`--out`仅允许项目`output/`的直接子目录。已有GLB或制作清单的批次会拒绝覆盖，重复复现须换新批次名。省略参数时使用原R12目录，在当前作者工作区会因成品已存在而拒绝覆盖。原R1–R12成品不重写。
 
-结构审计核对循环、骨长、接地及实际掌鞋蒙皮；独立审查对两侧对应阶段检查身体局部外摆，并核对保护区、肘角和掌朝向。右肩轴回外已消除，躯干轴仍有约0.357mm残余，详见记录。数值连续不等于观感自然，需结合实际播放采样。有限表面采样和截图不能证明连续全身无碰撞、完整人体动力学或观感已验收。最终文件身份见 [R12收据](evidence/delivery-r12.json)。历史代码、文档和收据保留。
+R11、R1历史参考分别检查；缺失项禁用且不请求，仍可与已跟踪的v41比较。只有本机存在对应历史GLB时才能选它；历史收据中的output路径不表示这些大文件已加入Git。原验收对照保留在`output/flare-v42-r12-20261015/`。
 
-人物源于Blender Foundation Snow，保留CC BY 4.0署名与许可，页面不依赖CDN。
+## 实际GLB审计
+
+以下完整结构命令明确以v41为基线，不依赖历史output；报告保存到刚创建的新批次。包括循环、骨长、接地及实际掌鞋蒙皮，不等于完整动力学证明。
+
+```powershell
+node tools/motion-v42/audit-candidate.mjs output/flare-v42-r12-review/flare-coach-v42-candidate.glb --baseline app/scene/source/coach/flare-coach-v41-animated.glb --out output/flare-v42-r12-review/geometry-coach
+node tools/motion-v42/audit-candidate.mjs output/flare-v42-r12-review/flare-training-v42-candidate.glb --baseline app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb --out output/flare-v42-r12-review/geometry-training
+```
+
+无参数审计默认原R12教练；若无R11教练，则明确回退已跟踪v41教练。自行指定其他体型时应配套指定`--baseline`，日志和报告记录实际路径。显式指定但不存在的基线会报错。已有报告应保留，使用新的`--out`保存复核结果。
+
+侧向检查以实际GLB对右82%～88%和左36%～42%各采241点，检查两个身体局部外侧轴；可加`--baseline output/flare-v42-r11-20261015/flare-training-v42-candidate.glb`对照。R12右躯干轴残余约0.357mm已披露，阈值是版本回归界限，不是人体运动标准。
+
+## 保存与限制
+
+版本验证器只读比较两个GLB的字节数及SHA；新批次已确认与`fc91c7f`认可版完全相同。Git内附[r12-evidence](releases/r12-evidence/)关键审查、结构报告和截图；[原R12收据](evidence/delivery-r12.json)保留首次交付时的历史状态。
+
+原网页兼容构建可用`npm run build -- --outDir output/<新的检查目录>/dist`，该dist不是R12预览的独立打包。离线预览须保留仓库、安装好的本地依赖及生成批次，通过本地HTTP服务加载。
+
+历史`audit-compact-recovery`、`audit-elbow-direction`、`audit-shoulder-recovery`及早期helper仅用于旧实验，不应作为当前默认流程裸跑。有限表面采样和截图不证明连续全身无碰撞或全设备表现。人物来自Blender Foundation Snow，原CC BY 4.0署名与许可保持。

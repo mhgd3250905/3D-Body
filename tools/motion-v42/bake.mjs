@@ -10,7 +10,22 @@ import { loadGlb, readJson, names, sha256, verifyMirror } from '../../app/scene/
 import { createNaturalFlareMotion } from './natural-motion.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const output = path.join(root, 'output/flare-v42-r12-20261015');
+let outputArgument = 'output/flare-v42-r12-20261015';
+if (process.argv.length > 2) {
+  if (process.argv.length !== 4 || process.argv[2] !== '--out') throw new Error('Usage: node tools/motion-v42/bake.mjs [--out output/<new-batch>]');
+  outputArgument = process.argv[3];
+}
+const outputRoot = path.join(root, 'output');
+const output = path.resolve(root, outputArgument);
+if (path.dirname(output) !== outputRoot || !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(path.basename(output))) {
+  throw new Error('--out must name a direct child directory of this project\'s output directory');
+}
+if (fs.existsSync(output) && (fs.lstatSync(output).isSymbolicLink() || !fs.statSync(output).isDirectory())) {
+  throw new Error('Output must be a regular directory, not a symbolic link or file');
+}
+if (fs.existsSync(output) && fs.readdirSync(output).some(name => /\.glb$/i.test(name) || name === 'bake-manifest.json')) {
+  throw new Error(`Refusing to overwrite an existing baked batch: ${output}. Choose a new --out directory.`);
+}
 fs.mkdirSync(output, { recursive: true });
 verifyMirror();
 const count = 540, duration = 1.35;
@@ -114,7 +129,8 @@ for (const [kind, source] of [
     geometryAndSkinAttributesPreserved: true, materialsPreserved: true, bakedBoneErrorMm });
 }
 const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-r11-20261015/flare-${kind}-v42-candidate.glb`)));
-const clock = { duration, previousAvailable, phases: frames.map(f => f.phase), baselineSequenceTimes: frames.map(f => f.baselineTime) };
+const firstAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-20261015/flare-${kind}-v42-candidate.glb`)));
+const clock = { duration, previousAvailable, firstAvailable, phases: frames.map(f => f.phase), baselineSequenceTimes: frames.map(f => f.baselineTime) };
 fs.writeFileSync(path.join(output, 'comparison-clock.json'), JSON.stringify(clock));
 fs.writeFileSync(path.join(output, 'recovery-samples.json'), JSON.stringify(recoverySamples));
 const dependencies = new Map();

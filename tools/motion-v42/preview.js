@@ -4,7 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r12-20261015/';
+// The baker can place this page in any direct output/<batch> directory.
+const output = new URL('.', import.meta.url).href;
 const previousOutput = 'output/flare-v42-r11-20261015/';
 const firstOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
@@ -63,6 +64,11 @@ const [clock, baselineClock] = await Promise.all([
   fetch(asset(output + 'comparison-clock.json')).then(r => r.json()),
   fetch(asset('app/scene/src/v41-clock.json')).then(r => r.json()),
 ]);
+const comparisons = ['v41'];
+if (clock.previousAvailable) comparisons.unshift('previous');
+if (clock.firstAvailable) comparisons.splice(comparisons.length - 1, 0, 'r1');
+const comparisonSelect = document.getElementById('comparison');
+for (const option of comparisonSelect.options) option.disabled = !comparisons.includes(option.value);
 if (!clock.previousAvailable) {
   state.comparison = 'v41';
   const select = document.getElementById('comparison'); select.value = 'v41';
@@ -94,7 +100,7 @@ function seek(phase) {
   slider.value = phase * 100; pct.textContent = (phase * 100).toFixed(1) + '%';
 }
 try {
-  await Promise.all(panels.flatMap((panel, i) => (i === 0 ? (clock.previousAvailable ? ['previous','r1','v41'] : ['v41']) : ['current']).flatMap(version => ['training', 'coach'].map(async kind => {
+  await Promise.all(panels.flatMap((panel, i) => (i === 0 ? comparisons : ['current']).flatMap(version => ['training', 'coach'].map(async kind => {
     const source = version === 'v41' ? `app/scene/source/coach/${kind === 'training' ? 'flare-coach-v41-training-human-collarfix-20261013.glb' : 'flare-coach-v41-animated.glb'}` : `${version === 'previous' ? previousOutput : version === 'r1' ? firstOutput : output}flare-${kind}-v42-candidate.glb`;
     const gltf = await loader.loadAsync(asset(source));
     gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
@@ -126,6 +132,7 @@ document.getElementById('view').onchange = e => setView(e.target.value);
 document.getElementById('body').onchange = e => { state.body = e.target.value; seek(state.phase); };
 document.getElementById('trails').onchange = e => { trailsVisible = e.target.checked; seek(state.phase); };
 document.getElementById('comparison').onchange = e => {
+  if (!comparisons.includes(e.target.value)) { e.target.value = state.comparison; return; }
   state.comparison = e.target.value;
   document.getElementById('leftTitle').textContent = {previous:'上一版 R11',r1:'首版 R1',v41:'v41 原版'}[state.comparison];
   document.getElementById('leftTag').textContent = state.comparison === 'v41' ? '原动作 · 对齐阶段' : '保留旧版 · 同阶段对照';

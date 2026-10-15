@@ -1,0 +1,274 @@
+{
+  "baseline": "R11",
+  "candidate": "R12",
+  "bones": {
+    "pelvis": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "torso": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "neck": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "head": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftScapula": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "leftUpperArm": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftForearm": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftHand": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftThigh": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftPatella": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "leftShin": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "leftFoot": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "rightScapula": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "rightUpperArm": {
+      "full": {
+        "maxPositionMm": 0.000014901112510568026,
+        "maxQuaternionComponent": 0.018775818512776876,
+        "maxRotationDeg": 2.5819839639347806
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 1.8992807326867478e-11,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "rightForearm": {
+      "full": {
+        "maxPositionMm": 11.570608074508776,
+        "maxQuaternionComponent": 0.019918722476041786,
+        "maxRotationDeg": 2.5810779596192694
+      },
+      "protected": {
+        "maxPositionMm": 1.1652678821860718e-8,
+        "maxQuaternionComponent": 1.9755821978328925e-11,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "rightHand": {
+      "full": {
+        "maxPositionMm": 19.142120391546385,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 1.991355198562738e-8,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "rightThigh": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "rightPatella": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "rightShin": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000024148365394514667
+      }
+    },
+    "rightFoot": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "spineLower": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    },
+    "spineUpper": {
+      "full": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      },
+      "protected": {
+        "maxPositionMm": 0,
+        "maxQuaternionComponent": 0,
+        "maxRotationDeg": 0.0000029575586669421963
+      }
+    }
+  },
+  "angleMaxDifference": {
+    "left": 0,
+    "right": 0.000017733958827648166
+  }
+}

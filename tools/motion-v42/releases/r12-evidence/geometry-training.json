@@ -1,0 +1,1366 @@
+{
+  "format": "flare-motion-candidate-audit-v1",
+  "generatedAt": "2026-10-15T11:16:32.694Z",
+  "verdict": "measured-structural-checks-clear",
+  "definitions": {
+    "boneSpan": "Euclidean distance between named actual bone world origins, tracked independently of skin and rig landmarks. Compared against its loaded rest and baseline variation.",
+    "rotation": "Unsigned 3D angle between normalized q_current_world * inverse(q_rest_world) rotations. Not isolated axial twist. Quaternion normalization precedes every angle comparison.",
+    "jointAngles": "Rig landmark points transported by actual bone world/rest-inverse matrices. Knee hip-knee-ankle; elbow shoulder-elbow-wrist; 180 degrees means straight. Leg aperture compares the two hip-to-ankle vectors in 3D.",
+    "surfaces": "Actual deformed vertices via SkinnedMesh.getVertexPosition and mesh.matrixWorld, all frames for selected hands/shoes. Hand vertices have >0.7 Hand weight; shoe meshes match Coach_Sneakers/Soles/Shoe_Details with >0.7 Foot weight.",
+    "palmPatch": "Fixed palmar-side vertex patch: source Snow finger/normal axes, central 15%-55% of hand length, within4mm of the deepest palmar surface. Its true skinned minY/centroid are measured, not a wrist proxy.",
+    "contact": "Near-contact is purely height <= authored contactY + tolerance. No handLocked, phase label, force or COM criterion is used. Airborne elbow subset requires lowest hand skin >contactY+5cm.",
+    "drift": "Horizontal excursion of one fixed skinned palm patch centroid within each cyclic near-contact run; palm rocking/pivoting can also move it. Not by itself proof of sliding.",
+    "derivatives": "Centered finite differences of uniform normalized-phase samples. Actual-second and per-cycle numbers are both provided. Second differences are visual continuity indicators, not human dynamics/forces.",
+    "flagThresholds": "Engineering comparison tolerances (loop0.01mm/0.01deg, extra length variation1mm, floor penetration1mm, height change5mm, extra patch excursion1cm, normalized second-difference peak +50%). These are not real-breaker biomechanical standards."
+  },
+  "limitations": [
+    "No mass model, ground reaction forces, exact human anatomy or numeric realism percentage.",
+    "Whole-body mesh sampled at the documented cadence; this is not an exhaustive continuous-time collision proof.",
+    "Different timing maps may move events between normalized phases; summary event ranges, not pointwise pose identity, should be compared.",
+    "Animation source and prior files are read only; only this output folder is written."
+  ],
+  "baseline": {
+    "label": "baseline-v41",
+    "asset": {
+      "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r11-20261015\\flare-training-v42-candidate.glb",
+      "bytes": 7996440,
+      "sha256": "16a896dc5e880c6c59c0bf1185f6a35ca3fc0db337a5fa0d56ce6ba3ce16c044",
+      "clip": "flare_v42_candidate_loop",
+      "duration": 1.350000023841858,
+      "tracks": 44,
+      "bones": 22
+    },
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 3,
+      "fullBodySampleCount": 181,
+      "verticesPerFullBodySample": 143650,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "integrity": {
+      "nonFiniteMatrices": 0,
+      "maxBoneWorldScaleDeviationFromRest": 1.8271904634246288e-7
+    },
+    "seam": {
+      "maxWorldMatrixComponentDifference": 0,
+      "maxBoneWorldPositionDifferenceMetres": 0,
+      "maxBoneWorldRotationDifferenceDegrees": 0.0000024148365394514667,
+      "jointPositionMaxMetres": 0,
+      "derivativeByJoint": {
+        "pelvis": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.21887403029036673,
+          "perCycleDifference": 0.2954799461103586
+        },
+        "leftWrist": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.6525511721887997,
+          "perCycleDifference": 0.8809440980129118
+        },
+        "rightWrist": {
+          "oneStepVelocityDifferenceMetresPerSecond": 1.1102230050179127e-14,
+          "perCycleDifference": 1.4988010832439613e-14
+        },
+        "leftAnkle": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.24026336418153485,
+          "perCycleDifference": 0.32435554737339706
+        },
+        "rightAnkle": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.2638663099477413,
+          "perCycleDifference": 0.3562195247205138
+        },
+        "head": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.280674409857603,
+          "perCycleDifference": 0.37891045999956346
+        }
+      }
+    },
+    "boneSpans": {
+      "leftUpperArm": {
+        "rest": 0.2567805277427527,
+        "min": 0.25678045233437735,
+        "max": 0.25678057414700634,
+        "withinCycleRangeMetres": 1.2181262898369738e-7,
+        "maxAbsoluteDeviationFromRestMetres": 7.54083753218282e-8
+      },
+      "leftForearm": {
+        "rest": 0.22804647986566878,
+        "min": 0.22804650559792472,
+        "max": 0.22804657014807145,
+        "withinCycleRangeMetres": 6.455014672779313e-8,
+        "maxAbsoluteDeviationFromRestMetres": 9.028240266495402e-8
+      },
+      "leftThigh": {
+        "rest": 0.35291979606076285,
+        "min": 0.3529197742474631,
+        "max": 0.3529198980064561,
+        "withinCycleRangeMetres": 1.23758992998102e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.0194569327603986e-7
+      },
+      "leftShin": {
+        "rest": 0.40980589451172744,
+        "min": 0.40980578595921985,
+        "max": 0.40980595884528775,
+        "withinCycleRangeMetres": 1.728860679062194e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.0855250759389534e-7
+      },
+      "rightUpperArm": {
+        "rest": 0.256780485669131,
+        "min": 0.25678048377231155,
+        "max": 0.25678060005315584,
+        "withinCycleRangeMetres": 1.1628084428672025e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.1438402486296795e-7
+      },
+      "rightForearm": {
+        "rest": 0.228046435748962,
+        "min": 0.22804632090249263,
+        "max": 0.22804641077664192,
+        "withinCycleRangeMetres": 8.987414928940396e-8,
+        "maxAbsoluteDeviationFromRestMetres": 1.1484646936232856e-7
+      },
+      "rightThigh": {
+        "rest": 0.352919796121638,
+        "min": 0.3529197877167339,
+        "max": 0.35291991196120376,
+        "withinCycleRangeMetres": 1.2424446987902016e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.1583956577299048e-7
+      },
+      "rightShin": {
+        "rest": 0.4098058950988249,
+        "min": 0.4098057660223859,
+        "max": 0.4098059769243355,
+        "withinCycleRangeMetres": 2.1090194962658515e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.2907643903714572e-7
+      }
+    },
+    "anglesDegrees": {
+      "chestVsPelvis": {
+        "min": 0,
+        "max": 9.36129400463887
+      },
+      "headVsChest": {
+        "min": 1.6086542510114712,
+        "max": 8.600895479986507
+      },
+      "neckVsChest": {
+        "min": 0.6756354545951012,
+        "max": 3.6123763610154986
+      },
+      "headVsNeck": {
+        "min": 0.9330179109632178,
+        "max": 4.9885191189743985
+      },
+      "legAperture": {
+        "min": 72.94562653575298,
+        "max": 102.76555488422376
+      },
+      "leftElbow": {
+        "min": 104.0000170139963,
+        "max": 178.35397796082077
+      },
+      "leftKnee": {
+        "min": 176.20073955027564,
+        "max": 179.93844907431605
+      },
+      "rightElbow": {
+        "min": 104.00006040258279,
+        "max": 178.36128719981238
+      },
+      "rightKnee": {
+        "min": 176.20109997795421,
+        "max": 179.9383445130058
+      }
+    },
+    "elbowByGeometricContactDegrees": {
+      "left": {
+        "palmNearContact": {
+          "min": 177.58578893981064,
+          "max": 178.35397796082077,
+          "median": 178.04912822594227,
+          "p95": 178.19410556547635
+        },
+        "handClearlyAirborne": {
+          "min": 104.0000170139963,
+          "max": 177.1942526299113,
+          "median": 107.8534810890734,
+          "p95": 175.09221894139395
+        }
+      },
+      "right": {
+        "palmNearContact": {
+          "min": 177.59450435862945,
+          "max": 178.31631116715758,
+          "median": 177.8638808080857,
+          "p95": 178.1940779252427
+        },
+        "handClearlyAirborne": {
+          "min": 104.00006040258279,
+          "max": 177.08663934734668,
+          "median": 107.89413011710019,
+          "p95": 176.3000256921
+        }
+      }
+    },
+    "ground": {
+      "renderedStageY": -0.014,
+      "contactLayerY": 0.006,
+      "nearContactTolerance": 0.005,
+      "selectedRegions": {
+        "left": {
+          "handMinY": {
+            "min": 0.006051633574480353,
+            "max": 1.1330385147950195,
+            "minimumClearanceAboveRenderedStage": 0.02005163357448035,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "palmMinY": {
+            "min": 0.006051633574480353,
+            "max": 1.151526382892725,
+            "minimumClearanceAboveRenderedStage": 0.02005163357448035,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "shoeMinY": {
+            "min": 0.043657647452635895,
+            "max": 1.4111731934048524,
+            "minimumClearanceAboveRenderedStage": 0.05765764745263589,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          }
+        },
+        "right": {
+          "handMinY": {
+            "min": 0.005995587056865981,
+            "max": 1.1352230565316668,
+            "minimumClearanceAboveRenderedStage": 0.01999558705686598,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "palmMinY": {
+            "min": 0.005995587056865981,
+            "max": 1.1565768251508177,
+            "minimumClearanceAboveRenderedStage": 0.01999558705686598,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "shoeMinY": {
+            "min": 0.01631402338872287,
+            "max": 1.411126330843858,
+            "minimumClearanceAboveRenderedStage": 0.03031402338872287,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          }
+        }
+      },
+      "fullBodySampled": {
+        "min": 0.006051962098952535,
+        "max": 0.006535635623107161,
+        "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+        "samplesBelowRenderedStage": 0
+      }
+    },
+    "geometricContact": {
+      "left": [
+        {
+          "firstFrame": 269,
+          "lastFrame": 2,
+          "wraps": true,
+          "sampleCount": 274,
+          "approximateDurationSeconds": 0.6850000120975352,
+          "startPhase": 0.4981481481481482,
+          "endPhase": 0.003703703703703704,
+          "palmPatchHorizontalExcursionFromFirstMetres": 0.001543521152642902,
+          "palmPatch3dExcursionFromFirstMetres": 0.0029409288391797693,
+          "handMinY": {
+            "min": 0.006051633574480353,
+            "max": 0.009059601355136337
+          },
+          "palmMinY": {
+            "min": 0.006051633574480353,
+            "max": 0.009059601355136337
+          },
+          "elbowDegrees": {
+            "min": 177.58578893981064,
+            "max": 178.35397796082077
+          }
+        }
+      ],
+      "right": [
+        {
+          "firstFrame": 534,
+          "lastFrame": 271,
+          "wraps": true,
+          "sampleCount": 278,
+          "approximateDurationSeconds": 0.6950000122741417,
+          "startPhase": 0.9888888888888889,
+          "endPhase": 0.5018518518518519,
+          "palmPatchHorizontalExcursionFromFirstMetres": 0.0008890788555177925,
+          "palmPatch3dExcursionFromFirstMetres": 0.0029858703263362374,
+          "handMinY": {
+            "min": 0.005995587056865981,
+            "max": 0.009455703179996833
+          },
+          "palmMinY": {
+            "min": 0.005995587056865981,
+            "max": 0.009455703179996833
+          },
+          "elbowDegrees": {
+            "min": 177.59450435862945,
+            "max": 178.31631116715758
+          }
+        }
+      ],
+      "bothPalmsNear": [
+        {
+          "firstFrame": 269,
+          "lastFrame": 271,
+          "wraps": false,
+          "sampleCount": 3,
+          "approximateDurationSeconds": 0.007500000132454766,
+          "startPhase": 0.4981481481481482,
+          "endPhase": 0.5018518518518519
+        },
+        {
+          "firstFrame": 534,
+          "lastFrame": 2,
+          "wraps": true,
+          "sampleCount": 9,
+          "approximateDurationSeconds": 0.022500000397364297,
+          "startPhase": 0.9888888888888889,
+          "endPhase": 0.003703703703703704
+        }
+      ],
+      "neitherHandNear": []
+    },
+    "linearSpeedMetresPerSecond": {
+      "pelvis": {
+        "atActualClipDuration": {
+          "min": 0.5259990532471382,
+          "max": 3.3431574434728204,
+          "median": 1.5900838391719039,
+          "p95": 3.090214584677179
+        },
+        "perNormalizedCycle": {
+          "min": 0.7100987344244313,
+          "max": 4.513262628395393,
+          "median": 2.146613220792623,
+          "p95": 4.171789762990649
+        },
+        "maxFrame": 409,
+        "maxPhase": 0.7574074074074074
+      },
+      "leftWrist": {
+        "atActualClipDuration": {
+          "min": 0.000011916135081798566,
+          "max": 7.522523178759906,
+          "median": 0.333897805772027,
+          "p95": 6.242331251478177
+        },
+        "perNormalizedCycle": {
+          "min": 0.000016086782644530864,
+          "max": 10.155406470676802,
+          "median": 0.45076204575298046,
+          "p95": 8.427147338324314
+        },
+        "maxFrame": 119,
+        "maxPhase": 0.22037037037037038
+      },
+      "rightWrist": {
+        "atActualClipDuration": {
+          "min": 0,
+          "max": 7.670333723624432,
+          "median": 0.007041512918619824,
+          "p95": 5.847462852975581
+        },
+        "perNormalizedCycle": {
+          "min": 0,
+          "max": 10.354950709767989,
+          "median": 0.009506042608019512,
+          "p95": 7.894074990931413
+        },
+        "maxFrame": 474,
+        "maxPhase": 0.8777777777777778
+      },
+      "leftAnkle": {
+        "atActualClipDuration": {
+          "min": 0.3555218595225337,
+          "max": 9.078445830313422,
+          "median": 6.047241064034923,
+          "p95": 8.491423034541311
+        },
+        "perNormalizedCycle": {
+          "min": 0.47995451883172213,
+          "max": 12.255902087370135,
+          "median": 8.163775580624607,
+          "p95": 11.463421299082071
+        },
+        "maxFrame": 403,
+        "maxPhase": 0.7462962962962963
+      },
+      "rightAnkle": {
+        "atActualClipDuration": {
+          "min": 0.29623742323783003,
+          "max": 9.019337389400304,
+          "median": 5.690446470034801,
+          "p95": 8.191897061580036
+        },
+        "perNormalizedCycle": {
+          "min": 0.3999205284339211,
+          "max": 12.176105690728171,
+          "median": 7.682102870217798,
+          "p95": 11.059061228443095
+        },
+        "maxFrame": 141,
+        "maxPhase": 0.2611111111111111
+      },
+      "head": {
+        "atActualClipDuration": {
+          "min": 0.15793164493748327,
+          "max": 3.2249938265861173,
+          "median": 2.047530597579127,
+          "p95": 2.9760425285040544
+        },
+        "perNormalizedCycle": {
+          "min": 0.21320772443098626,
+          "max": 4.353741742781103,
+          "median": 2.7641663555487552,
+          "p95": 4.0176574844348565
+        },
+        "maxFrame": 154,
+        "maxPhase": 0.2851851851851852
+      }
+    },
+    "centeredSecondDifferenceMetresPerSecondSquared": {
+      "pelvis": {
+        "atActualClipDuration": {
+          "min": 2.000898550246361,
+          "max": 133.34153506642542,
+          "median": 13.147084819885398,
+          "p95": 45.41098784059397
+        },
+        "perNormalizedCycle": {
+          "min": 3.6466377366278695,
+          "max": 243.0149562421572,
+          "median": 23.960562930558652,
+          "p95": 82.7615282627248
+        },
+        "maxFrame": 270,
+        "maxPhase": 0.5
+      },
+      "leftWrist": {
+        "atActualClipDuration": {
+          "min": 2.1934486007994544e-8,
+          "max": 786.5810239416113,
+          "median": 6.1071764146328755,
+          "p95": 135.36974157110055
+        },
+        "perNormalizedCycle": {
+          "min": 3.997560216155909e-8,
+          "max": 1433.54396676818,
+          "median": 11.130329408805787,
+          "p95": 246.71136272748942
+        },
+        "maxFrame": 269,
+        "maxPhase": 0.4981481481481482
+      },
+      "rightWrist": {
+        "atActualClipDuration": {
+          "min": 0,
+          "max": 568.7258680109564,
+          "median": 0.9560531531422638,
+          "p95": 144.4395644662821
+        },
+        "perNormalizedCycle": {
+          "min": 0,
+          "max": 1036.502931060568,
+          "median": 1.7424069331458016,
+          "p95": 263.24111553780966
+        },
+        "maxFrame": 273,
+        "maxPhase": 0.5055555555555555
+      },
+      "leftAnkle": {
+        "atActualClipDuration": {
+          "min": 24.985672071481275,
+          "max": 195.3298849023078,
+          "median": 52.93144371441797,
+          "p95": 108.13586080863482
+        },
+        "perNormalizedCycle": {
+          "min": 45.53638895867771,
+          "max": 355.98872780843,
+          "median": 96.46755957688347,
+          "p95": 197.07761328476855
+        },
+        "maxFrame": 269,
+        "maxPhase": 0.4981481481481482
+      },
+      "rightAnkle": {
+        "atActualClipDuration": {
+          "min": 28.726634234841917,
+          "max": 161.93615750608555,
+          "median": 51.59403935261039,
+          "p95": 97.65649709922278
+        },
+        "perNormalizedCycle": {
+          "min": 52.354292742219506,
+          "max": 295.1286574791599,
+          "median": 94.0301400413964,
+          "p95": 177.97897224977686
+        },
+        "maxFrame": 271,
+        "maxPhase": 0.5018518518518519
+      },
+      "head": {
+        "atActualClipDuration": {
+          "min": 5.14361177702502,
+          "max": 126.49238928137893,
+          "median": 18.912093391958432,
+          "p95": 42.96517577039303
+        },
+        "perNormalizedCycle": {
+          "min": 9.374232794737907,
+          "max": 230.53238760800983,
+          "median": 34.46729142427275,
+          "p95": 78.30403560733929
+        },
+        "maxFrame": 270,
+        "maxPhase": 0.5
+      }
+    },
+    "boneAngularSpeedDegreesPerSecond": {
+      "pelvis": {
+        "min": 222.5175494455018,
+        "max": 547.0360533302912,
+        "median": 394.3422812824432,
+        "p95": 519.430163152929
+      },
+      "torso": {
+        "min": 256.282074441703,
+        "max": 585.2558782626514,
+        "median": 389.18667424870205,
+        "p95": 506.88209591437794
+      },
+      "neck": {
+        "min": 265.889490573076,
+        "max": 603.3710063949443,
+        "median": 381.71536805467053,
+        "p95": 520.0056209923486
+      },
+      "head": {
+        "min": 280.3615421555473,
+        "max": 628.4414932804864,
+        "median": 373.6841742940047,
+        "p95": 540.2074143561264
+      },
+      "leftUpperArm": {
+        "min": 104.1401951375136,
+        "max": 1085.557318483572,
+        "median": 377.477228742554,
+        "p95": 919.289768144107
+      },
+      "leftForearm": {
+        "min": 104.26591982256105,
+        "max": 1123.0345426121241,
+        "median": 364.40881981247037,
+        "p95": 1035.8877707250142
+      },
+      "leftHand": {
+        "min": 0,
+        "max": 720.6187063921094,
+        "median": 16.92526649852177,
+        "p95": 609.8555630474607
+      },
+      "leftThigh": {
+        "min": 340.1488114545256,
+        "max": 810.8772834326645,
+        "median": 464.4899800837926,
+        "p95": 753.814225331597
+      },
+      "leftShin": {
+        "min": 331.59509381395094,
+        "max": 735.1965638664252,
+        "median": 457.8152262665594,
+        "p95": 716.6704090922278
+      },
+      "leftFoot": {
+        "min": 215.0514989723981,
+        "max": 828.4813180354419,
+        "median": 457.5525760382789,
+        "p95": 782.5279685585301
+      },
+      "rightUpperArm": {
+        "min": 52.58662203898984,
+        "max": 1121.5834691557602,
+        "median": 416.89240209632743,
+        "p95": 938.3574639237357
+      },
+      "rightForearm": {
+        "min": 46.78449012322224,
+        "max": 1157.6955367167109,
+        "median": 402.6356371733458,
+        "p95": 1016.2098690418574
+      },
+      "rightHand": {
+        "min": 0,
+        "max": 790.004526225734,
+        "median": 16.67612813566307,
+        "p95": 680.9713032487008
+      },
+      "rightThigh": {
+        "min": 320.42517697576767,
+        "max": 837.0663712398184,
+        "median": 469.9417871638475,
+        "p95": 770.1804870784514
+      },
+      "rightShin": {
+        "min": 311.1225005355258,
+        "max": 762.4136332619963,
+        "median": 470.87804266994067,
+        "p95": 730.9083956504902
+      },
+      "rightFoot": {
+        "min": 198.05532032244162,
+        "max": 860.494587188837,
+        "median": 437.7295588940418,
+        "p95": 784.083266907614
+      }
+    }
+  },
+  "candidate": {
+    "label": "candidate",
+    "asset": {
+      "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r12-20261015\\flare-training-v42-candidate.glb",
+      "bytes": 7996440,
+      "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+      "clip": "flare_v42_candidate_loop",
+      "duration": 1.350000023841858,
+      "tracks": 44,
+      "bones": 22
+    },
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 3,
+      "fullBodySampleCount": 181,
+      "verticesPerFullBodySample": 143650,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "integrity": {
+      "nonFiniteMatrices": 0,
+      "maxBoneWorldScaleDeviationFromRest": 1.8271904634246288e-7
+    },
+    "seam": {
+      "maxWorldMatrixComponentDifference": 0,
+      "maxBoneWorldPositionDifferenceMetres": 0,
+      "maxBoneWorldRotationDifferenceDegrees": 0.0000024148365394514667,
+      "jointPositionMaxMetres": 0,
+      "derivativeByJoint": {
+        "pelvis": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.21887403029036673,
+          "perCycleDifference": 0.2954799461103586
+        },
+        "leftWrist": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.6525511721887997,
+          "perCycleDifference": 0.8809440980129118
+        },
+        "rightWrist": {
+          "oneStepVelocityDifferenceMetresPerSecond": 1.1102230050179127e-14,
+          "perCycleDifference": 1.4988010832439613e-14
+        },
+        "leftAnkle": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.24026336418153485,
+          "perCycleDifference": 0.32435554737339706
+        },
+        "rightAnkle": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.2638663099477413,
+          "perCycleDifference": 0.3562195247205138
+        },
+        "head": {
+          "oneStepVelocityDifferenceMetresPerSecond": 0.280674409857603,
+          "perCycleDifference": 0.37891045999956346
+        }
+      }
+    },
+    "boneSpans": {
+      "leftUpperArm": {
+        "rest": 0.2567805277427527,
+        "min": 0.25678045233437735,
+        "max": 0.25678057414700634,
+        "withinCycleRangeMetres": 1.2181262898369738e-7,
+        "maxAbsoluteDeviationFromRestMetres": 7.54083753218282e-8
+      },
+      "leftForearm": {
+        "rest": 0.22804647986566878,
+        "min": 0.22804650559792472,
+        "max": 0.22804657014807145,
+        "withinCycleRangeMetres": 6.455014672779313e-8,
+        "maxAbsoluteDeviationFromRestMetres": 9.028240266495402e-8
+      },
+      "leftThigh": {
+        "rest": 0.35291979606076285,
+        "min": 0.3529197742474631,
+        "max": 0.3529198980064561,
+        "withinCycleRangeMetres": 1.23758992998102e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.0194569327603986e-7
+      },
+      "leftShin": {
+        "rest": 0.40980589451172744,
+        "min": 0.40980578595921985,
+        "max": 0.40980595884528775,
+        "withinCycleRangeMetres": 1.728860679062194e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.0855250759389534e-7
+      },
+      "rightUpperArm": {
+        "rest": 0.256780485669131,
+        "min": 0.25678048377231155,
+        "max": 0.25678060005315584,
+        "withinCycleRangeMetres": 1.1628084428672025e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.1438402486296795e-7
+      },
+      "rightForearm": {
+        "rest": 0.228046435748962,
+        "min": 0.22804632090249263,
+        "max": 0.22804640009850194,
+        "withinCycleRangeMetres": 7.919600930605952e-8,
+        "maxAbsoluteDeviationFromRestMetres": 1.1484646936232856e-7
+      },
+      "rightThigh": {
+        "rest": 0.352919796121638,
+        "min": 0.3529197877167339,
+        "max": 0.35291991196120376,
+        "withinCycleRangeMetres": 1.2424446987902016e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.1583956577299048e-7
+      },
+      "rightShin": {
+        "rest": 0.4098058950988249,
+        "min": 0.4098057660223859,
+        "max": 0.4098059769243355,
+        "withinCycleRangeMetres": 2.1090194962658515e-7,
+        "maxAbsoluteDeviationFromRestMetres": 1.2907643903714572e-7
+      }
+    },
+    "anglesDegrees": {
+      "chestVsPelvis": {
+        "min": 0,
+        "max": 9.36129400463887
+      },
+      "headVsChest": {
+        "min": 1.6086542510114712,
+        "max": 8.600895479986507
+      },
+      "neckVsChest": {
+        "min": 0.6756354545951012,
+        "max": 3.6123763610154986
+      },
+      "headVsNeck": {
+        "min": 0.9330179109632178,
+        "max": 4.9885191189743985
+      },
+      "legAperture": {
+        "min": 72.94562653575298,
+        "max": 102.76555488422376
+      },
+      "leftElbow": {
+        "min": 104.0000170139963,
+        "max": 178.35397796082077
+      },
+      "leftKnee": {
+        "min": 176.20073955027564,
+        "max": 179.93844907431605
+      },
+      "rightElbow": {
+        "min": 104.00006040258279,
+        "max": 178.36128719981238
+      },
+      "rightKnee": {
+        "min": 176.20109997795421,
+        "max": 179.9383445130058
+      }
+    },
+    "elbowByGeometricContactDegrees": {
+      "left": {
+        "palmNearContact": {
+          "min": 177.58578893981064,
+          "max": 178.35397796082077,
+          "median": 178.04912822594227,
+          "p95": 178.19410556547635
+        },
+        "handClearlyAirborne": {
+          "min": 104.0000170139963,
+          "max": 177.1942526299113,
+          "median": 107.8534810890734,
+          "p95": 175.09221894139395
+        }
+      },
+      "right": {
+        "palmNearContact": {
+          "min": 177.59450435862945,
+          "max": 178.31631116715758,
+          "median": 177.8638808080857,
+          "p95": 178.1940779252427
+        },
+        "handClearlyAirborne": {
+          "min": 104.00006040258279,
+          "max": 177.08663934734668,
+          "median": 107.89413011710019,
+          "p95": 176.3000256921
+        }
+      }
+    },
+    "ground": {
+      "renderedStageY": -0.014,
+      "contactLayerY": 0.006,
+      "nearContactTolerance": 0.005,
+      "selectedRegions": {
+        "left": {
+          "handMinY": {
+            "min": 0.006051633574480353,
+            "max": 1.1330385147950195,
+            "minimumClearanceAboveRenderedStage": 0.02005163357448035,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "palmMinY": {
+            "min": 0.006051633574480353,
+            "max": 1.151526382892725,
+            "minimumClearanceAboveRenderedStage": 0.02005163357448035,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "shoeMinY": {
+            "min": 0.043657647452635895,
+            "max": 1.4111731934048524,
+            "minimumClearanceAboveRenderedStage": 0.05765764745263589,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          }
+        },
+        "right": {
+          "handMinY": {
+            "min": 0.005995587056865981,
+            "max": 1.1352230565316668,
+            "minimumClearanceAboveRenderedStage": 0.01999558705686598,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "palmMinY": {
+            "min": 0.005995587056865981,
+            "max": 1.1565768251508177,
+            "minimumClearanceAboveRenderedStage": 0.01999558705686598,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          },
+          "shoeMinY": {
+            "min": 0.01631402338872287,
+            "max": 1.411126330843858,
+            "minimumClearanceAboveRenderedStage": 0.03031402338872287,
+            "framesBelowWorldZero": 0,
+            "framesBelowRenderedStage": 0
+          }
+        }
+      },
+      "fullBodySampled": {
+        "min": 0.006051962098952535,
+        "max": 0.006535635623107161,
+        "minimumClearanceAboveRenderedStage": 0.020051962098952533,
+        "samplesBelowRenderedStage": 0
+      }
+    },
+    "geometricContact": {
+      "left": [
+        {
+          "firstFrame": 269,
+          "lastFrame": 2,
+          "wraps": true,
+          "sampleCount": 274,
+          "approximateDurationSeconds": 0.6850000120975352,
+          "startPhase": 0.4981481481481482,
+          "endPhase": 0.003703703703703704,
+          "palmPatchHorizontalExcursionFromFirstMetres": 0.001543521152642902,
+          "palmPatch3dExcursionFromFirstMetres": 0.0029409288391797693,
+          "handMinY": {
+            "min": 0.006051633574480353,
+            "max": 0.009059601355136337
+          },
+          "palmMinY": {
+            "min": 0.006051633574480353,
+            "max": 0.009059601355136337
+          },
+          "elbowDegrees": {
+            "min": 177.58578893981064,
+            "max": 178.35397796082077
+          }
+        }
+      ],
+      "right": [
+        {
+          "firstFrame": 534,
+          "lastFrame": 271,
+          "wraps": true,
+          "sampleCount": 278,
+          "approximateDurationSeconds": 0.6950000122741417,
+          "startPhase": 0.9888888888888889,
+          "endPhase": 0.5018518518518519,
+          "palmPatchHorizontalExcursionFromFirstMetres": 0.0008890788555177925,
+          "palmPatch3dExcursionFromFirstMetres": 0.0029858703263362374,
+          "handMinY": {
+            "min": 0.005995587056865981,
+            "max": 0.009455703179996833
+          },
+          "palmMinY": {
+            "min": 0.005995587056865981,
+            "max": 0.009455703179996833
+          },
+          "elbowDegrees": {
+            "min": 177.59450435862945,
+            "max": 178.31631116715758
+          }
+        }
+      ],
+      "bothPalmsNear": [
+        {
+          "firstFrame": 269,
+          "lastFrame": 271,
+          "wraps": false,
+          "sampleCount": 3,
+          "approximateDurationSeconds": 0.007500000132454766,
+          "startPhase": 0.4981481481481482,
+          "endPhase": 0.5018518518518519
+        },
+        {
+          "firstFrame": 534,
+          "lastFrame": 2,
+          "wraps": true,
+          "sampleCount": 9,
+          "approximateDurationSeconds": 0.022500000397364297,
+          "startPhase": 0.9888888888888889,
+          "endPhase": 0.003703703703703704
+        }
+      ],
+      "neitherHandNear": []
+    },
+    "linearSpeedMetresPerSecond": {
+      "pelvis": {
+        "atActualClipDuration": {
+          "min": 0.5259990532471382,
+          "max": 3.3431574434728204,
+          "median": 1.5900838391719039,
+          "p95": 3.090214584677179
+        },
+        "perNormalizedCycle": {
+          "min": 0.7100987344244313,
+          "max": 4.513262628395393,
+          "median": 2.146613220792623,
+          "p95": 4.171789762990649
+        },
+        "maxFrame": 409,
+        "maxPhase": 0.7574074074074074
+      },
+      "leftWrist": {
+        "atActualClipDuration": {
+          "min": 0.000011916135081798566,
+          "max": 7.522523178759906,
+          "median": 0.333897805772027,
+          "p95": 6.242331251478177
+        },
+        "perNormalizedCycle": {
+          "min": 0.000016086782644530864,
+          "max": 10.155406470676802,
+          "median": 0.45076204575298046,
+          "p95": 8.427147338324314
+        },
+        "maxFrame": 119,
+        "maxPhase": 0.22037037037037038
+      },
+      "rightWrist": {
+        "atActualClipDuration": {
+          "min": 0,
+          "max": 7.557174287571447,
+          "median": 0.007041512918619824,
+          "p95": 5.797041444383529
+        },
+        "perNormalizedCycle": {
+          "min": 0,
+          "max": 10.202185468398529,
+          "median": 0.009506042608019512,
+          "p95": 7.826006088130002
+        },
+        "maxFrame": 475,
+        "maxPhase": 0.8796296296296297
+      },
+      "leftAnkle": {
+        "atActualClipDuration": {
+          "min": 0.3555218595225337,
+          "max": 9.078445830313422,
+          "median": 6.047241064034923,
+          "p95": 8.491423034541311
+        },
+        "perNormalizedCycle": {
+          "min": 0.47995451883172213,
+          "max": 12.255902087370135,
+          "median": 8.163775580624607,
+          "p95": 11.463421299082071
+        },
+        "maxFrame": 403,
+        "maxPhase": 0.7462962962962963
+      },
+      "rightAnkle": {
+        "atActualClipDuration": {
+          "min": 0.29623742323783003,
+          "max": 9.019337389400304,
+          "median": 5.690446470034801,
+          "p95": 8.191897061580036
+        },
+        "perNormalizedCycle": {
+          "min": 0.3999205284339211,
+          "max": 12.176105690728171,
+          "median": 7.682102870217798,
+          "p95": 11.059061228443095
+        },
+        "maxFrame": 141,
+        "maxPhase": 0.2611111111111111
+      },
+      "head": {
+        "atActualClipDuration": {
+          "min": 0.15793164493748327,
+          "max": 3.2249938265861173,
+          "median": 2.047530597579127,
+          "p95": 2.9760425285040544
+        },
+        "perNormalizedCycle": {
+          "min": 0.21320772443098626,
+          "max": 4.353741742781103,
+          "median": 2.7641663555487552,
+          "p95": 4.0176574844348565
+        },
+        "maxFrame": 154,
+        "maxPhase": 0.2851851851851852
+      }
+    },
+    "centeredSecondDifferenceMetresPerSecondSquared": {
+      "pelvis": {
+        "atActualClipDuration": {
+          "min": 2.000898550246361,
+          "max": 133.34153506642542,
+          "median": 13.147084819885398,
+          "p95": 45.41098784059397
+        },
+        "perNormalizedCycle": {
+          "min": 3.6466377366278695,
+          "max": 243.0149562421572,
+          "median": 23.960562930558652,
+          "p95": 82.7615282627248
+        },
+        "maxFrame": 270,
+        "maxPhase": 0.5
+      },
+      "leftWrist": {
+        "atActualClipDuration": {
+          "min": 2.1934486007994544e-8,
+          "max": 786.5810239416113,
+          "median": 6.1071764146328755,
+          "p95": 135.36974157110055
+        },
+        "perNormalizedCycle": {
+          "min": 3.997560216155909e-8,
+          "max": 1433.54396676818,
+          "median": 11.130329408805787,
+          "p95": 246.71136272748942
+        },
+        "maxFrame": 269,
+        "maxPhase": 0.4981481481481482
+      },
+      "rightWrist": {
+        "atActualClipDuration": {
+          "min": 0,
+          "max": 568.7258680109564,
+          "median": 0.9560531531422638,
+          "p95": 141.67811806102702
+        },
+        "perNormalizedCycle": {
+          "min": 0,
+          "max": 1036.502931060568,
+          "median": 1.7424069331458016,
+          "p95": 258.20837928646966
+        },
+        "maxFrame": 273,
+        "maxPhase": 0.5055555555555555
+      },
+      "leftAnkle": {
+        "atActualClipDuration": {
+          "min": 24.985672071481275,
+          "max": 195.3298849023078,
+          "median": 52.93144371441797,
+          "p95": 108.13586080863482
+        },
+        "perNormalizedCycle": {
+          "min": 45.53638895867771,
+          "max": 355.98872780843,
+          "median": 96.46755957688347,
+          "p95": 197.07761328476855
+        },
+        "maxFrame": 269,
+        "maxPhase": 0.4981481481481482
+      },
+      "rightAnkle": {
+        "atActualClipDuration": {
+          "min": 28.726634234841917,
+          "max": 161.93615750608555,
+          "median": 51.59403935261039,
+          "p95": 97.65649709922278
+        },
+        "perNormalizedCycle": {
+          "min": 52.354292742219506,
+          "max": 295.1286574791599,
+          "median": 94.0301400413964,
+          "p95": 177.97897224977686
+        },
+        "maxFrame": 271,
+        "maxPhase": 0.5018518518518519
+      },
+      "head": {
+        "atActualClipDuration": {
+          "min": 5.14361177702502,
+          "max": 126.49238928137893,
+          "median": 18.912093391958432,
+          "p95": 42.96517577039303
+        },
+        "perNormalizedCycle": {
+          "min": 9.374232794737907,
+          "max": 230.53238760800983,
+          "median": 34.46729142427275,
+          "p95": 78.30403560733929
+        },
+        "maxFrame": 270,
+        "maxPhase": 0.5
+      }
+    },
+    "boneAngularSpeedDegreesPerSecond": {
+      "pelvis": {
+        "min": 222.5175494455018,
+        "max": 547.0360533302912,
+        "median": 394.3422812824432,
+        "p95": 519.430163152929
+      },
+      "torso": {
+        "min": 256.282074441703,
+        "max": 585.2558782626514,
+        "median": 389.18667424870205,
+        "p95": 506.88209591437794
+      },
+      "neck": {
+        "min": 265.889490573076,
+        "max": 603.3710063949443,
+        "median": 381.71536805467053,
+        "p95": 520.0056209923486
+      },
+      "head": {
+        "min": 280.3615421555473,
+        "max": 628.4414932804864,
+        "median": 373.6841742940047,
+        "p95": 540.2074143561264
+      },
+      "leftUpperArm": {
+        "min": 104.1401951375136,
+        "max": 1085.557318483572,
+        "median": 377.477228742554,
+        "p95": 919.289768144107
+      },
+      "leftForearm": {
+        "min": 104.26591982256105,
+        "max": 1123.0345426121241,
+        "median": 364.40881981247037,
+        "p95": 1035.8877707250142
+      },
+      "leftHand": {
+        "min": 0,
+        "max": 720.6187063921094,
+        "median": 16.92526649852177,
+        "p95": 609.8555630474607
+      },
+      "leftThigh": {
+        "min": 340.1488114545256,
+        "max": 810.8772834326645,
+        "median": 464.4899800837926,
+        "p95": 753.814225331597
+      },
+      "leftShin": {
+        "min": 331.59509381395094,
+        "max": 735.1965638664252,
+        "median": 457.8152262665594,
+        "p95": 716.6704090922278
+      },
+      "leftFoot": {
+        "min": 215.0514989723981,
+        "max": 828.4813180354419,
+        "median": 457.5525760382789,
+        "p95": 782.5279685585301
+      },
+      "rightUpperArm": {
+        "min": 52.58662203898984,
+        "max": 1114.1526421040219,
+        "median": 416.89240209632743,
+        "p95": 937.7612166439745
+      },
+      "rightForearm": {
+        "min": 42.11052578676215,
+        "max": 1157.6955367167109,
+        "median": 402.57292081236585,
+        "p95": 1016.2098690418574
+      },
+      "rightHand": {
+        "min": 0,
+        "max": 790.004526225734,
+        "median": 16.67612813566307,
+        "p95": 680.9713032487008
+      },
+      "rightThigh": {
+        "min": 320.42517697576767,
+        "max": 837.0663712398184,
+        "median": 469.9417871638475,
+        "p95": 770.1804870784514
+      },
+      "rightShin": {
+        "min": 311.1225005355258,
+        "max": 762.4136332619963,
+        "median": 470.87804266994067,
+        "p95": 730.9083956504902
+      },
+      "rightFoot": {
+        "min": 198.05532032244162,
+        "max": 860.494587188837,
+        "median": 437.7295588940418,
+        "p95": 784.083266907614
+      }
+    }
+  },
+  "comparison": {
+    "flags": [],
+    "numbers": {
+      "leftUpperArmLengthRangeChangeMetres": 0,
+      "leftForearmLengthRangeChangeMetres": 0,
+      "leftThighLengthRangeChangeMetres": 0,
+      "leftShinLengthRangeChangeMetres": 0,
+      "rightUpperArmLengthRangeChangeMetres": 0,
+      "rightForearmLengthRangeChangeMetres": -1.0678139983344437e-8,
+      "rightThighLengthRangeChangeMetres": 0,
+      "rightShinLengthRangeChangeMetres": 0,
+      "durationRatio": 1,
+      "chestVsPelvis": {
+        "baseline": {
+          "min": 0,
+          "max": 9.36129400463887
+        },
+        "candidate": {
+          "min": 0,
+          "max": 9.36129400463887
+        }
+      },
+      "headVsChest": {
+        "baseline": {
+          "min": 1.6086542510114712,
+          "max": 8.600895479986507
+        },
+        "candidate": {
+          "min": 1.6086542510114712,
+          "max": 8.600895479986507
+        }
+      },
+      "neckVsChest": {
+        "baseline": {
+          "min": 0.6756354545951012,
+          "max": 3.6123763610154986
+        },
+        "candidate": {
+          "min": 0.6756354545951012,
+          "max": 3.6123763610154986
+        }
+      },
+      "headVsNeck": {
+        "baseline": {
+          "min": 0.9330179109632178,
+          "max": 4.9885191189743985
+        },
+        "candidate": {
+          "min": 0.9330179109632178,
+          "max": 4.9885191189743985
+        }
+      },
+      "legAperture": {
+        "baseline": {
+          "min": 72.94562653575298,
+          "max": 102.76555488422376
+        },
+        "candidate": {
+          "min": 72.94562653575298,
+          "max": 102.76555488422376
+        }
+      },
+      "leftElbow": {
+        "baseline": {
+          "min": 104.0000170139963,
+          "max": 178.35397796082077
+        },
+        "candidate": {
+          "min": 104.0000170139963,
+          "max": 178.35397796082077
+        }
+      },
+      "leftKnee": {
+        "baseline": {
+          "min": 176.20073955027564,
+          "max": 179.93844907431605
+        },
+        "candidate": {
+          "min": 176.20073955027564,
+          "max": 179.93844907431605
+        }
+      },
+      "rightElbow": {
+        "baseline": {
+          "min": 104.00006040258279,
+          "max": 178.36128719981238
+        },
+        "candidate": {
+          "min": 104.00006040258279,
+          "max": 178.36128719981238
+        }
+      },
+      "rightKnee": {
+        "baseline": {
+          "min": 176.20109997795421,
+          "max": 179.9383445130058
+        },
+        "candidate": {
+          "min": 176.20109997795421,
+          "max": 179.9383445130058
+        }
+      }
+    }
+  }
+}

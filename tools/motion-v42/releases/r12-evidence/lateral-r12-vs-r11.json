@@ -1,0 +1,111 @@
+{
+  "format": "flare-lateral-transition-check-v1",
+  "passed": true,
+  "method": {
+    "sampling": "Actual GLB AnimationMixer interpolation; 241 samples per window, phase step 0.00025. These are not additional authored keyframes.",
+    "shoulderAxis": "Wrist relative to same-side shoulder, projected onto opposite-shoulder to same-side-shoulder unit vector.",
+    "torsoAxis": "Same shoulder-relative wrist transformed by inverse torso world quaternion; right -x / left +x outward for this rig.",
+    "maximumReturn": "Largest later outward coordinate minus any earlier minimum within the window; not cumulative positive travel.",
+    "thresholds": "Regression tolerances for accepted R12, not human biomechanics or realism criteria.",
+    "limitations": "Only lateral wrist return in the stated windows; not full-vector jitter, collision, dynamics or visual acceptance."
+  },
+  "candidate": {
+    "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r12-20261015\\flare-training-v42-candidate.glb",
+    "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+    "clip": "flare_v42_candidate_loop",
+    "durationSeconds": 1.350000023841858,
+    "sampleCount": 482,
+    "sides": {
+      "right": {
+        "window": [
+          0.82,
+          0.88
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.82,
+          "toPhase": 0.82,
+          "limitMm": 0.01,
+          "passed": true,
+          "baselineMaximumOutwardReturnMm": 4.19944232620545
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0.3573615964933552,
+          "fromPhase": 0.85,
+          "toPhase": 0.85375,
+          "limitMm": 0.4,
+          "passed": true,
+          "baselineMaximumOutwardReturnMm": 6.715353195038603
+        }
+      },
+      "left": {
+        "window": [
+          0.36,
+          0.42
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true,
+          "baselineMaximumOutwardReturnMm": 0
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36,
+          "limitMm": 0.01,
+          "passed": true,
+          "baselineMaximumOutwardReturnMm": 0
+        }
+      }
+    }
+  },
+  "baseline": {
+    "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r11-20261015\\flare-training-v42-candidate.glb",
+    "sha256": "16a896dc5e880c6c59c0bf1185f6a35ca3fc0db337a5fa0d56ce6ba3ce16c044",
+    "clip": "flare_v42_candidate_loop",
+    "durationSeconds": 1.350000023841858,
+    "sampleCount": 482,
+    "sides": {
+      "right": {
+        "window": [
+          0.82,
+          0.88
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 4.19944232620545,
+          "fromPhase": 0.84825,
+          "toPhase": 0.861
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 6.715353195038603,
+          "fromPhase": 0.848,
+          "toPhase": 0.86125
+        }
+      },
+      "left": {
+        "window": [
+          0.36,
+          0.42
+        ],
+        "sampleCount": 241,
+        "shoulder": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36
+        },
+        "torso": {
+          "maximumOutwardReturnMm": 0,
+          "fromPhase": 0.36,
+          "toPhase": 0.36
+        }
+      }
+    }
+  },
+  "failures": []
+}

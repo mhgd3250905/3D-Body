@@ -1,0 +1,561 @@
+{
+  "assets": {
+    "coach": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d",
+    "training": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8"
+  },
+  "scope": "Actual two R12 candidate01 GLBs; selected phases recorded below. Head/trunk/leg triangle membership from skin weights, all corners included. Positive AABB gaps prove selected surface separation. For overlaps, direct non-coplanar edge-triangle intersections are counted. Distances are sampled hand vertices to target triangles; not a whole-body collision certificate. Mesh overlap with clothing layers is reported, not interpreted as anatomy.",
+  "results": [
+    {
+      "kind": "coach",
+      "phase": 0.83,
+      "side": "right",
+      "handMinY": 0.6699001443152637,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.05057720806966415,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.181878937980918,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.33550287292013287,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.835,
+      "side": "right",
+      "handMinY": 0.6410968025815649,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.057498151124019195,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.18912150549159498,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.353657596422154,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.84,
+      "side": "right",
+      "handMinY": 0.6142026750459102,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.06412876606560035,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.1952190752129765,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.3711635132564993,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.845,
+      "side": "right",
+      "handMinY": 0.5902623871019161,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.07053947806861954,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.20050854891848202,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.388081799260057,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.848,
+      "side": "right",
+      "handMinY": 0.5770714899336558,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.07470037278313185,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.20331651059856343,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.3978739754441239,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.85,
+      "side": "right",
+      "handMinY": 0.5691107369925432,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.07764343308502998,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.2048743928839686,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4039156487601915,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.855,
+      "side": "right",
+      "handMinY": 0.5499745101987881,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08450188701449893,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.208087423365441,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.41831635891844005,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.86,
+      "side": "right",
+      "handMinY": 0.528916195539246,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08790057486741146,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.21179434634720068,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4332316957275597,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.865,
+      "side": "right",
+      "handMinY": 0.5065325175555155,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08829922825997645,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.2162868462328767,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.44926044443865903,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.87,
+      "side": "right",
+      "handMinY": 0.48172098063012325,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08598334970450691,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.22093711118371584,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4659907999484128,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.875,
+      "side": "right",
+      "handMinY": 0.4462763101555578,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08170492752387186,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.2220215168037206,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.47982356926739367,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "coach",
+      "phase": 0.88,
+      "side": "right",
+      "handMinY": 0.4017409809741756,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.07581678560957866,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.21068998887375368,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.488755349377474,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.83,
+      "side": "right",
+      "handMinY": 0.6699001443152637,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.05057720620306465,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.09812101897202677,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.33550287292013287,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.835,
+      "side": "right",
+      "handMinY": 0.6410968025815649,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.05807785058121054,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10095359411483845,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.353657596422154,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.84,
+      "side": "right",
+      "handMinY": 0.6142026750459102,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.06625199963954045,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.102354208461571,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.3711635132564993,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.845,
+      "side": "right",
+      "handMinY": 0.5902623871019161,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.07529043225962737,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10260440532420573,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.388081799260057,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.848,
+      "side": "right",
+      "handMinY": 0.5770714899336558,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.08107035920931682,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10250747206148414,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.3978739754441239,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.85,
+      "side": "right",
+      "handMinY": 0.5691107369925432,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.0850718658005342,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10223414575975426,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4039156487601915,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.855,
+      "side": "right",
+      "handMinY": 0.5499745101987881,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.09542948376301398,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.1009497014630808,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.41831635891844005,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.86,
+      "side": "right",
+      "handMinY": 0.528916195539246,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.10255940236745513,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10041097868780341,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4332316957275597,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.865,
+      "side": "right",
+      "handMinY": 0.5065325175555155,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.10642956760706125,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10095089552921455,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.44926044443865903,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.87,
+      "side": "right",
+      "handMinY": 0.48172098063012325,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.1075335719944375,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.10195493070508654,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.4659907999484128,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.875,
+      "side": "right",
+      "handMinY": 0.4462763101555578,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.10741306108409848,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.09968622004031216,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.47982356926739367,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    },
+    {
+      "kind": "training",
+      "phase": 0.88,
+      "side": "right",
+      "handMinY": 0.4017409809741756,
+      "targets": {
+        "head": {
+          "aabbSeparation": 0.10564103140417574,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "trunk": {
+          "aabbSeparation": 0.09188670353702927,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        },
+        "legs": {
+          "aabbSeparation": 0.488755349377474,
+          "triangleIntersections": 0,
+          "checkedBy": "Separated world AABBs containing all selected triangles"
+        }
+      }
+    }
+  ]
+}
