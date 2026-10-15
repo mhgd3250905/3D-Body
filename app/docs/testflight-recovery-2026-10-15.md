@@ -1,6 +1,6 @@
 # Flare TestFlight 新构建与安装恢复验证（2026-10-15）
 
-按用户交接，仅推进Flare新构建上传、原内部测试分发及消费者实际下载安装；未授权正式App Review或公开发布。当前已完成构建、验包和单次上传，Apple处理为 **PROCESSING**；内部组关联与手机安装尚待后续验证，不能据此写成本App安装已恢复。
+按用户交接，仅推进Flare新构建上传、原内部测试分发及消费者实际下载安装；未授权正式App Review或公开发布。当前已完成构建、验包、单次上传和原内部组分发，Apple为 **VALID / IN_BETA_TESTING**；实际手机安装尚待后续验证，不能据此写成本App安装已恢复。
 
 ## 项目与固定候选
 
@@ -15,8 +15,8 @@
 | 架构 / 隐私 / 资产 | Runner/App/Flutter均arm64；4份隐私清单可解析；51视频和51封面逐项哈希与验证过的源一致 |
 | 验证 | 10-15 analyze无问题、154项相关测试通过；4项真实WKWebView集成保持10-13同生产源结果；严格IPA验包及Apple在线校验退出0 |
 | 上传 | 仅一次 `altool --upload-package` 调用，退出0；平台上传时间北京时间 **2026-10-15 08:04:06** |
-| Delivery | `cecd0bce-6ecf-4369-9c21-8f290c92132a`，平台App内1.0.1(7)上传记录与回执一致；当前PROCESSING，无处理错误/警告 |
-| 原内部组 | “Flare iOS v1”，内部组、非自动分发，1名已ACCEPTED测试员；未删除/重邀或创建外部组 |
+| Delivery | `cecd0bce-6ecf-4369-9c21-8f290c92132a`，平台App内1.0.1(7)上传记录与回执一致；已COMPLETE，构建VALID、expired=false、usesNonExemptEncryption=false；处理无错误/警告 |
+| 原内部组 | “Flare iOS v1”，内部组、非自动分发，1名已ACCEPTED测试员；精确Build7已关联并回读IN_BETA_TESTING，未删除/重邀或创建外部组 |
 | 手机更新前 | iPhone16 Pro / iOS26.5，已安装开发签名1.0.1(6)，原偏好已私密备份；TestFlight显示Flare旧1.0.0(3)待安装，不将按钮存在当作安装通过 |
 
 ## 检查与操作记录
@@ -30,6 +30,8 @@
 
 私密产物、回执、偏好、签名和UI截图位于 `/Users/shengkai/ios-release-artifacts/flare-testflight-recovery-20261015`；候选manifest绑定source/version/build/hash。真实账号、设备标识、API凭据、用户记录不进Git。Wrist的安装通过仅作交接背景，不外推为Flare已恢复。
 
-## 尚待推进
+## 内部分发回读与手机待验
 
-等Apple处理完成后，为精确Build7保存测试说明并关联既有内部组，回读状态；随后在实际手机TestFlight显示1.0.1(7)并完成下载/安装→打开→首次测试说明/首页，最后区分Agent观察和本人报告保存结果。发生新失败时保留错误，不无差别增号重传。长期设备/完整功能矩阵与既有28项素材QA提示保持原待办。
+Apple于10-15处理完成；在精确1.0.1(7)页面保存简体中文测试说明（233字符，含明确Build7身份），选择原“Flare iOS v1”内部组并点击添加一次。页面显示群组(1)/内部/测试员1；服务端回读Build7为VALID、expired=false、usesNonExemptEncryption=false、IN_BETA_TESTING，betaBuildLocalizations与准备文本逐字相同。未填写新的合规答案，既有构建自身的非豁免加密标志为false。外部状态仍READY_FOR_BETA_SUBMISSION，未提交外部Beta或正式审核。
+
+镜像再次尝试仍未找到手机，已请求本人将手机放近Mac、解锁后锁屏并确认Wi-Fi/蓝牙。尚未执行新包消费者安装，不能写“Flare本次TestFlight安装恢复”。下一步在实际手机TestFlight确认1.0.1(7)并完成下载/安装→打开→首次测试说明/首页，最后区分Agent观察和本人报告保存结果。发生新失败时保留错误，不无差别增号重传。长期设备/完整功能矩阵与既有28项素材QA提示保持原待办。
