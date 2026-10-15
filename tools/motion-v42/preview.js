@@ -4,11 +4,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r3-20261015/';
+const output = 'output/flare-v42-r4-20261015/';
 const previousOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
-const state = { ready: false, playing: false, phase: .25, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
+const state = { ready: false, playing: false, phase: .125, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
 const panels = [];
 const loader = new GLTFLoader();
 let syncing = false;

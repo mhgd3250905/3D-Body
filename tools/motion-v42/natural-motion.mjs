@@ -14,7 +14,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-3-elbow-only',
+  revision: 'v42-candidate-4-shoulder-close',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,
@@ -25,8 +25,9 @@ export const NATURAL_FLARE_DEFAULTS = Object.freeze({
   headCounterRollDegrees: 5,
   armRecovery: 0.21,
   armPoleBlend: 0.72,
-  elbowLoweringDegrees: 8,
-  elbowLoweringMaxMm: 15,
+  shoulderCloseDegrees: 10,
+  shoulderOpenStartDegrees: 65,
+  shoulderOpenFullDegrees: 95,
   releaseHeight: 0.035,
   fullRecoveryHeight: 0.20,
   rhythmAmount: 0.012,
@@ -70,8 +71,8 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   if (settings.sampleCount < 64 || settings.sampleCount > 2400 || !Number.isInteger(settings.sampleCount)) throw new Error('v42 sampleCount must be an integer from 64 to 2400.');
   if (settings.rhythmAmount < 0 || settings.rhythmAmount >= 1 / (4 * Math.PI)) throw new Error('v42 rhythmAmount must keep phase strictly increasing.');
   if (settings.armRecovery < 0 || settings.armRecovery > 0.35) throw new Error('v42 armRecovery must be between 0 and 0.35.');
-  if (settings.elbowLoweringDegrees < 0 || settings.elbowLoweringDegrees > 15) throw new Error('Elbow-only lowering must stay between 0 and 15 degrees.');
-  if (settings.elbowLoweringMaxMm < 0 || settings.elbowLoweringMaxMm > 20) throw new Error('Elbow-only movement must stay between 0 and 20 mm.');
+  if (settings.shoulderCloseDegrees < 0 || settings.shoulderCloseDegrees > 15) throw new Error('Shoulder closing must stay between 0 and 15 degrees.');
+  if (settings.shoulderOpenFullDegrees <= settings.shoulderOpenStartDegrees) throw new Error('Shoulder opening gate must have a positive range.');
   if (settings.fullRecoveryHeight <= settings.releaseHeight) throw new Error('v42 fullRecoveryHeight must exceed releaseHeight.');
 
   model.updateMatrixWorld(true);
@@ -140,6 +141,39 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     for (const skeleton of skeletons) skeleton.update();
   }
 
+  function closeAirborneShoulders(flight) {
+    const metrics = target.getMetrics(), transforms = {};
+    for (const side of SIDES) {
+      if (flight[side] <= 0) continue;
+      const shoulder = V(metrics.joints[side + 'Shoulder']);
+      const upper = V(metrics.joints[side + 'Elbow']).sub(shoulder).normalize();
+      const down = V(metrics.joints[side + 'Hip']).sub(shoulder).normalize();
+      const angle = upper.angleTo(down), degrees = THREE.MathUtils.radToDeg(angle);
+      const gate = smooth((degrees - settings.shoulderOpenStartDegrees) / (settings.shoulderOpenFullDegrees - settings.shoulderOpenStartDegrees));
+      const closing = Math.min(angle, radians(settings.shoulderCloseDegrees) * gate * flight[side]);
+      if (closing < 1e-10) continue;
+      const rotation = new THREE.Quaternion().slerp(new THREE.Quaternion().setFromUnitVectors(upper, down), closing / angle);
+      const transform = new THREE.Matrix4().makeTranslation(...shoulder.toArray())
+        .multiply(new THREE.Matrix4().makeRotationFromQuaternion(rotation))
+        .multiply(new THREE.Matrix4().makeTranslation(...shoulder.clone().negate().toArray()));
+      // All three original deform bones are parallel under the armature. Apply
+      // one rigid shoulder rotation to preserve their relative roll, elbow
+      // flexion and the accepted bend side, rather than choosing a new IK pole.
+      for (const name of ['UpperArm', 'Forearm', 'Hand']) {
+        const bone = bones.get(side + name);
+        if (bone.parent.isBone) throw new Error('Shoulder adjustment expects the original parallel deform rig.');
+        const local = bone.parent.matrixWorld.clone().invert().multiply(transform).multiply(bone.matrixWorld);
+        local.decompose(bone.position, bone.quaternion, bone.scale); bone.updateMatrix();
+      }
+      transforms[side] = { shoulder: shoulder.toArray(), quaternion: rotation.toArray(),
+        beforeDegrees: degrees, closingDegrees: THREE.MathUtils.radToDeg(closing),
+        originalPalm: metrics.joints[side + 'Palm'] };
+    }
+    model.updateMatrixWorld(true);
+    for (const skeleton of skeletons) skeleton.update();
+    return transforms;
+  }
+
   function updatePhase(value = 0) {
     if (!Number.isFinite(value)) throw new Error('v42 phase must be finite.');
     currentPhase = wrap(value);
@@ -157,7 +191,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     pose.torsoQuaternion = torso.toArray();
     const upper = body.clone().multiply(torso), previousUpper = body.clone().multiply(previousTorso);
     const rotationDelta = upper.clone().multiply(previousUpper.clone().invert());
-    const shoulderOffsets = {}, recovery = {}, flight = {}, requestedAnchors = {}, elbowAdjustment = {};
+    const shoulderOffsets = {}, recovery = {}, flight = {}, requestedAnchors = {};
     for (const side of SIDES) {
       const sign = side === 'left' ? 1 : -1, limb = pose.limbs[side];
       const oldShoulder = V(source.joints[side + 'Shoulder']);
@@ -193,42 +227,15 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
       const naturalPole = shoulder.clone().addScaledVector(outward, 0.55);
       const oldPole = V(limb.elbowPole).add(shoulder.clone().sub(oldShoulder));
       limb.elbowPole = oldPole.lerp(naturalPole, free * settings.armPoleBlend).toArray();
-      // Keep the accepted R1 shoulder, wrist, elbow angle and recovery timing.
-      // Move only its bend direction a little toward world down around the
-      // shoulder-wrist axis. A tangent step stays in the original hemisphere
-      // (dot > 0), avoids atan2 branch changes, and vanishes near contact.
-      const axis = wrist.clone().sub(shoulder).normalize();
-      const pole = V(limb.elbowPole).sub(shoulder);
-      const along = pole.dot(axis), bend = pole.clone().addScaledVector(axis, -along);
-      const radius = bend.length();
-      if (radius > 1e-8 && free > 0) {
-        const direction = bend.clone().divideScalar(radius);
-        const down = new THREE.Vector3(0, -1, 0);
-        down.addScaledVector(axis, -down.dot(axis));
-        const tangent = down.clone().addScaledVector(direction, -down.dot(direction));
-        const upperLength = landmarks[side + 'Shoulder'].distanceTo(landmarks[side + 'Elbow']);
-        const lowerLength = landmarks[side + 'Elbow'].distanceTo(landmarks[side + 'Wrist']);
-        const distance = shoulder.distanceTo(wrist);
-        const center = (upperLength ** 2 - lowerLength ** 2 + distance ** 2) / (2 * distance);
-        const elbowRadius = Math.sqrt(Math.max(0, upperLength ** 2 - center ** 2));
-        const requestedAngle = radians(settings.elbowLoweringDegrees);
-        const chordAngle = 2 * Math.asin(Math.min(1, settings.elbowLoweringMaxMm / 1000 / Math.max(2 * elbowRadius, 1e-8)));
-        // Smoothly stay below both the angular and displacement limits.
-        const limit = requestedAngle * chordAngle / Math.max(Math.hypot(requestedAngle, chordAngle), 1e-8);
-        const adjusted = direction.clone().addScaledVector(tangent, Math.tan(limit) * free).normalize();
-        if (adjusted.y < direction.y) {
-          limb.elbowPole = shoulder.clone().addScaledVector(axis, along).addScaledVector(adjusted, radius).toArray();
-          elbowAdjustment[side] = THREE.MathUtils.radToDeg(direction.angleTo(adjusted));
-        }
-      }
       const handDelta = new THREE.Quaternion().slerp(rotationDelta, free * 0.65);
       limb.handQuaternion = handDelta.multiply(Q(limb.handQuaternion)).normalize().toArray();
     }
     target.applyPose(pose, { playback: false, alignClavicles: false, shoulderOffsets });
     addHeadFollow(upper, theta);
+    const shoulderAdjustments = closeAirborneShoulders(flight);
     // Keep the separate old actor on the matching pose for phase comparisons.
     base.update(clockAtPhase(sourcePhase));
-    last = { recovery, flight, requestedAnchors, requestedPose: pose, elbowAdjustment };
+    last = { recovery, flight, requestedAnchors, requestedPose: pose, shoulderAdjustments };
     return model;
   }
 
@@ -243,6 +250,12 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
       if (matrices.has(bone)) metrics.joints[name] = landmark.clone().applyMatrix4(matrices.get(bone)).toArray();
     }
     metrics.joints.shoulderCenter = [...metrics.joints.torso];
+    for (const [side, correction] of Object.entries(last?.shoulderAdjustments ?? {})) {
+      const pivot = V(correction.shoulder), rotation = Q(correction.quaternion);
+      metrics.joints[side + 'Palm'] = V(correction.originalPalm).sub(pivot).applyQuaternion(rotation).add(pivot).toArray();
+      metrics.segmentLengths[side + 'UpperArm'] = V(metrics.joints[side + 'Shoulder']).distanceTo(V(metrics.joints[side + 'Elbow']));
+      metrics.segmentLengths[side + 'Forearm'] = V(metrics.joints[side + 'Elbow']).distanceTo(V(metrics.joints[side + 'Wrist']));
+    }
     const deltaQuaternion = name => new THREE.Quaternion().setFromRotationMatrix(matrices.get(name)).normalize();
     const chest = deltaQuaternion('torso'), hip = deltaQuaternion('pelvis'), head = deltaQuaternion('head');
     return { ...metrics, version: settings.revision, phase: currentPhase, sourcePhase,
@@ -255,6 +268,15 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   }
 
   updatePhase(0);
-  return { group: model, baseline: base, updatePhase, getMetrics, capturePose: target.capturePose,
+  function capturePose() {
+    const pose = target.capturePose();
+    for (const [side, correction] of Object.entries(last?.shoulderAdjustments ?? {})) {
+      const pivot = V(correction.shoulder), rotation = Q(correction.quaternion), limb = pose.limbs[side];
+      for (const key of ['wrist', 'elbowPole']) limb[key] = V(limb[key]).sub(pivot).applyQuaternion(rotation).add(pivot).toArray();
+      limb.handQuaternion = rotation.clone().multiply(Q(limb.handQuaternion)).normalize().toArray();
+    }
+    return pose;
+  }
+  return { group: model, baseline: base, updatePhase, getMetrics, capturePose,
     parameters: Object.freeze({ ...settings }), sourceSequenceTime: () => clockAtPhase(sourcePhase) };
 }
