@@ -1,0 +1,531 @@
+{
+  "checks": [
+    {
+      "name": "R12 baked clip and non-linear 1.35s clock remain current",
+      "pass": true,
+      "detail": {
+        "revision": "v42",
+        "duration": 1.35
+      }
+    },
+    {
+      "name": "Settled balanced DPR returns device density",
+      "pass": true,
+      "detail": {
+        "fps": 0,
+        "p50": 1758.8999999999999,
+        "p95": 1758.8999999999999,
+        "calls": 36,
+        "triangles": 332258,
+        "pixelRatio": 2,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          720,
+          1280
+        ],
+        "canvasPixels": 921600,
+        "adaptive": true,
+        "rung": 0,
+        "moving": false,
+        "renders": 3,
+        "colorPixels": 2361600,
+        "shadowPasses": 3,
+        "shadowPixels": 3145728,
+        "skippedShadows": 0,
+        "resizes": 3,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Diagnostic HUD is opt-in and live",
+      "pass": true,
+      "detail": {
+        "fps": 0,
+        "p50": 1758.8999999999999,
+        "p95": 1758.8999999999999,
+        "calls": 36,
+        "triangles": 332258,
+        "pixelRatio": 2,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          720,
+          1280
+        ],
+        "canvasPixels": 921600,
+        "adaptive": true,
+        "rung": 0,
+        "moving": false,
+        "renders": 3,
+        "colorPixels": 2361600,
+        "shadowPasses": 3,
+        "shadowPixels": 3145728,
+        "skippedShadows": 0,
+        "resizes": 3,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Playback lowers moving density and records real draws",
+      "pass": true,
+      "detail": {
+        "fps": 0,
+        "p50": 17,
+        "p95": 1758.8999999999999,
+        "calls": 24,
+        "triangles": 332210,
+        "pixelRatio": 1.5,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          540,
+          960
+        ],
+        "canvasPixels": 518400,
+        "adaptive": true,
+        "rung": 0,
+        "moving": true,
+        "renders": 7,
+        "colorPixels": 4435200,
+        "shadowPasses": 7,
+        "shadowPixels": 7340032,
+        "skippedShadows": 0,
+        "resizes": 4,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Pause restores full resolution",
+      "pass": true,
+      "detail": {
+        "fps": 0,
+        "p50": 350.7999999999993,
+        "p95": 1758.8999999999999,
+        "calls": 36,
+        "triangles": 332258,
+        "pixelRatio": 2,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          720,
+          1280
+        ],
+        "canvasPixels": 921600,
+        "adaptive": true,
+        "rung": 0,
+        "moving": false,
+        "renders": 10,
+        "colorPixels": 6393600,
+        "shadowPasses": 10,
+        "shadowPixels": 10485760,
+        "skippedShadows": 0,
+        "resizes": 5,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Orbit reuses valid shadows without changing pose",
+      "pass": true,
+      "detail": {
+        "beforeDrag": {
+          "fps": 0,
+          "p50": 350.7999999999993,
+          "p95": 1758.8999999999999,
+          "calls": 36,
+          "triangles": 332258,
+          "pixelRatio": 2,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            720,
+            1280
+          ],
+          "canvasPixels": 921600,
+          "adaptive": true,
+          "rung": 0,
+          "moving": false,
+          "renders": 11,
+          "colorPixels": 7315200,
+          "shadowPasses": 11,
+          "shadowPixels": 11534336,
+          "skippedShadows": 0,
+          "resizes": 5,
+          "quality": "medium"
+        },
+        "afterDrag": {
+          "fps": 2,
+          "p50": 283.6999999999989,
+          "p95": 677,
+          "calls": 36,
+          "triangles": 332258,
+          "pixelRatio": 1.25,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            450,
+            800
+          ],
+          "canvasPixels": 360000,
+          "adaptive": true,
+          "rung": 1,
+          "moving": true,
+          "renders": 64,
+          "colorPixels": 32832000,
+          "shadowPasses": 14,
+          "shadowPixels": 14680064,
+          "skippedShadows": 50,
+          "resizes": 13,
+          "quality": "medium"
+        }
+      }
+    },
+    {
+      "name": "Stopped camera returns sharp full density",
+      "pass": true,
+      "detail": {
+        "fps": 3,
+        "p50": 283.89999999999964,
+        "p95": 677,
+        "calls": 36,
+        "triangles": 332258,
+        "pixelRatio": 2,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          720,
+          1280
+        ],
+        "canvasPixels": 921600,
+        "adaptive": true,
+        "rung": 1,
+        "moving": false,
+        "renders": 73,
+        "colorPixels": 40564800,
+        "shadowPasses": 23,
+        "shadowPixels": 24117248,
+        "skippedShadows": 50,
+        "resizes": 16,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Detail transition preserves R12 time and full resolution",
+      "pass": true,
+      "detail": {
+        "type": "state",
+        "time": 2.2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "medium",
+        "fx": false,
+        "character": "coach",
+        "ready": true,
+        "presented": true,
+        "errorCode": null
+      }
+    },
+    {
+      "name": "Detail muscle swap preserves frame",
+      "pass": true,
+      "detail": {
+        "type": "state",
+        "time": 2.2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "muscles",
+        "quality": "medium",
+        "fx": false,
+        "character": "coach",
+        "ready": true,
+        "presented": true,
+        "errorCode": null
+      }
+    },
+    {
+      "name": "Detail return preserves same paused frame",
+      "pass": true,
+      "detail": {
+        "type": "state",
+        "time": 2.2,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": false,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "medium",
+        "fx": false,
+        "character": "coach",
+        "ready": true,
+        "presented": true,
+        "errorCode": null
+      }
+    },
+    {
+      "name": "Quality low moving cap and pause restore",
+      "pass": true,
+      "detail": {
+        "moving": {
+          "fps": 1,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 23,
+          "triangles": 332208,
+          "pixelRatio": 1,
+          "fullPixelRatio": 1,
+          "devicePixelRatio": 2,
+          "canvas": [
+            360,
+            640
+          ],
+          "canvasPixels": 230400,
+          "adaptive": true,
+          "rung": 0,
+          "moving": true,
+          "renders": 91,
+          "colorPixels": 51840000,
+          "shadowPasses": 37,
+          "shadowPixels": 38797312,
+          "skippedShadows": 50,
+          "resizes": 23,
+          "quality": "low"
+        },
+        "still": {
+          "fps": 0,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 35,
+          "triangles": 332256,
+          "pixelRatio": 1,
+          "fullPixelRatio": 1,
+          "devicePixelRatio": 2,
+          "canvas": [
+            360,
+            640
+          ],
+          "canvasPixels": 230400,
+          "adaptive": true,
+          "rung": 0,
+          "moving": false,
+          "renders": 93,
+          "colorPixels": 52300800,
+          "shadowPasses": 37,
+          "shadowPixels": 38797312,
+          "skippedShadows": 50,
+          "resizes": 23,
+          "quality": "low"
+        }
+      }
+    },
+    {
+      "name": "Quality medium moving cap and pause restore",
+      "pass": true,
+      "detail": {
+        "moving": {
+          "fps": 1,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 24,
+          "triangles": 332210,
+          "pixelRatio": 1.5,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            540,
+            960
+          ],
+          "canvasPixels": 518400,
+          "adaptive": true,
+          "rung": 0,
+          "moving": true,
+          "renders": 94,
+          "colorPixels": 52819200,
+          "shadowPasses": 38,
+          "shadowPixels": 39845888,
+          "skippedShadows": 50,
+          "resizes": 25,
+          "quality": "medium"
+        },
+        "still": {
+          "fps": 0,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 36,
+          "triangles": 332258,
+          "pixelRatio": 2,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            720,
+            1280
+          ],
+          "canvasPixels": 921600,
+          "adaptive": true,
+          "rung": 0,
+          "moving": false,
+          "renders": 97,
+          "colorPixels": 54777600,
+          "shadowPasses": 41,
+          "shadowPixels": 42991616,
+          "skippedShadows": 50,
+          "resizes": 26,
+          "quality": "medium"
+        }
+      }
+    },
+    {
+      "name": "Quality high moving cap and pause restore",
+      "pass": true,
+      "detail": {
+        "moving": {
+          "fps": 1,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 24,
+          "triangles": 332210,
+          "pixelRatio": 2,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            720,
+            1280
+          ],
+          "canvasPixels": 921600,
+          "adaptive": true,
+          "rung": 0,
+          "moving": true,
+          "renders": 98,
+          "colorPixels": 55699200,
+          "shadowPasses": 42,
+          "shadowPixels": 44040192,
+          "skippedShadows": 50,
+          "resizes": 26,
+          "quality": "high"
+        },
+        "still": {
+          "fps": 0,
+          "p50": 288.5,
+          "p95": 1117.5,
+          "calls": 36,
+          "triangles": 332258,
+          "pixelRatio": 2,
+          "fullPixelRatio": 2,
+          "devicePixelRatio": 2,
+          "canvas": [
+            720,
+            1280
+          ],
+          "canvasPixels": 921600,
+          "adaptive": true,
+          "rung": 0,
+          "moving": false,
+          "renders": 100,
+          "colorPixels": 57542400,
+          "shadowPasses": 44,
+          "shadowPixels": 46137344,
+          "skippedShadows": 50,
+          "resizes": 26,
+          "quality": "high"
+        }
+      }
+    },
+    {
+      "name": "Hidden scene stops draws",
+      "pass": true,
+      "detail": {
+        "type": "state",
+        "time": 2.9698349035979845,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 12,
+        "selected": null,
+        "detail": false,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "high",
+        "fx": false,
+        "character": "coach",
+        "ready": true,
+        "presented": true,
+        "errorCode": null
+      }
+    },
+    {
+      "name": "adaptive=0 keeps fixed density",
+      "pass": true,
+      "detail": {
+        "fps": 1,
+        "p50": 0,
+        "p95": 0,
+        "calls": 24,
+        "triangles": 332210,
+        "pixelRatio": 2,
+        "fullPixelRatio": 2,
+        "devicePixelRatio": 2,
+        "canvas": [
+          720,
+          1280
+        ],
+        "canvasPixels": 921600,
+        "adaptive": false,
+        "rung": 0,
+        "moving": false,
+        "renders": 2,
+        "colorPixels": 1843200,
+        "shadowPasses": 2,
+        "shadowPixels": 2097152,
+        "skippedShadows": 0,
+        "resizes": 1,
+        "quality": "medium"
+      }
+    },
+    {
+      "name": "Reduced-motion detail stays sharp at same frame without glide",
+      "pass": true,
+      "detail": {
+        "type": "state",
+        "time": 2.375,
+        "period": 9,
+        "playing": false,
+        "speed": 0.5,
+        "phase": 11,
+        "selected": "abs",
+        "detail": true,
+        "loop": null,
+        "detailModel": "motion",
+        "quality": "medium",
+        "fx": false,
+        "character": "coach",
+        "ready": true,
+        "presented": true,
+        "errorCode": null
+      }
+    },
+    {
+      "name": "HUD absent by default",
+      "pass": true
+    },
+    {
+      "name": "No page errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "limitation": "Desktop Chromium SwiftShader, no native FPS/temperature or device acceptance claim."
+}

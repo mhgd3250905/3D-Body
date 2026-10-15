@@ -1,0 +1,17 @@
+{
+  "reviewer": "audit_drill111_112",
+  "pr111Head": "576fb8b8b3893cb944cfad7c33eb8cc4eee55d20",
+  "pr112Head": "e32dc51d1605714f4b39578e3d644dc36d0cfbc1",
+  "sourceWrites": false,
+  "specs": 30,
+  "descriptorSamples": 7230,
+  "helperFrames": 240,
+  "oldSpecsPreserved": 87,
+  "mergeOpinion": "Eligible as independent source additions after explicit per-PR hash whitelist update and separate later-theme fixed-source conflict resolution; no media or App QA acceptance implied.",
+  "findings": [
+    {"priority":"P2","file":"tools/drill-anim/verify.mjs","line":83,"message":"New h-* specs unregistered in fixed-source whitelist. Add exact canonical hashes with PR ownership; do not skip integrity checks."},
+    {"priority":"P3","file":"tools/drill-anim/drill.py","line":181,"message":"Optional --pr accepts zero/negative/nonfinite; no default-call regression. Recommend finite-positive validation before any rendering work."}
+  ],
+  "evidence": ["audit111-112-pure.json", "audit111-cli.json", "audit111-112.md"],
+  "limitations": ["No browser/IK/rendered-media/visual/device checks", "Complete chain original verify fails first on later theme change from commit52a2b3c", "No claim of new App drills or full QA"]
+}

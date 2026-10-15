@@ -1,0 +1,87 @@
+{
+  "status": "passed",
+  "commit": "5d01bb3ff59fc1c24530da7772a309fe65a4bbdd",
+  "sourcePrHead": "ed046fbba3d9342ce6debf031652740b9699b229",
+  "targetReviewed": "da353b109dced5d5b7cb944b0d925aa994afb1db",
+  "targetAfterTrainingMerge": "8050004dacc183ee0c1cb23c7d299daef85a66c6",
+  "browserChecks": 18,
+  "browserPassed": true,
+  "pageErrors": [],
+  "productionFix": "Keep >=250ms foreground stalls as capped samples so severe sustained jank can lower DPR.",
+  "compatibility": "Merged L46 R12; npm verify includes all v42 tests; updated v42 renderer fixture for new fields. Master training merge has no app/src/public changes.",
+  "checks": [
+    "Build scene succeeded index-CTFzChFx.js",
+    "Historical scene/v38/v41 and v42 asset checks passed",
+    "R12 7 character + 541 phase frames + detail/fx regression passed",
+    "Render quality and adaptive controller including 250/600ms stalls passed",
+    "Browser home/playback/orbit shadow cache/pause/detail swap/same frame/3 qualities/visibility/adaptive=0/HUD/reduced motion passed"
+  ],
+  "visualComparison": [
+    {
+      "scene": "home",
+      "size": [
+        720,
+        1280
+      ],
+      "maskedHudRectangle": [
+        0,
+        0,
+        400,
+        192
+      ],
+      "outsideHudPixelExact": false,
+      "meanAbsoluteRgb": [
+        9.657118055555555e-05,
+        0.00010525173611111111,
+        0.00010525173611111111
+      ],
+      "maxError": 7
+    },
+    {
+      "scene": "detail-motion",
+      "size": [
+        720,
+        1280
+      ],
+      "maskedHudRectangle": [
+        0,
+        0,
+        400,
+        192
+      ],
+      "outsideHudPixelExact": false,
+      "meanAbsoluteRgb": [
+        5.5338541666666664e-05,
+        3.689236111111111e-05,
+        2.8211805555555554e-05
+      ],
+      "maxError": 14
+    },
+    {
+      "scene": "detail-muscles",
+      "size": [
+        720,
+        1280
+      ],
+      "maskedHudRectangle": [
+        0,
+        0,
+        400,
+        192
+      ],
+      "outsideHudPixelExact": false,
+      "meanAbsoluteRgb": [
+        0.000341796875,
+        0.00022786458333333334,
+        0.0001931423611111111
+      ],
+      "maxError": 36
+    }
+  ],
+  "limitations": [
+    "No APK/native install or performance acceptance; phone remains L46 old fixed-density build.",
+    "p50/p95 = 240 continuous-render ticks history; fps trailing 1s; main-color draw calls only.",
+    "Visual comparison masks intentionally enabled HUD at top-left; outside HUD mean RGB absolute error <=0.000342 on 0-255 scale, not pixel-exact.",
+    "Software-GPU early fixed wait/inertia sampling failures retained; reduced-motion condition-wait rerun passed."
+  ]
+}

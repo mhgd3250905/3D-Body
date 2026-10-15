@@ -1,0 +1,52 @@
+{
+  "reviewer": "audit_drill113_115",
+  "heads": {
+    "113": "52a2b3c9c83124e0368a17abacd595ab2939358e",
+    "115": "ccc9c2bd71bf61df8daa726c17fd991197bc542f"
+  },
+  "base113": "e32dc51d1605714f4b39578e3d644dc36d0cfbc1",
+  "sourceMutated": false,
+  "findings": [
+    {
+      "priority": "P1",
+      "pr": 113,
+      "file": "tools/drill-anim/theme.json",
+      "line": 12,
+      "title": "Default highlight silently changes fixed training-human-v2 appearance and fails source validation",
+      "evidence": "node tools/drill-anim/verify.mjs exits 1 at sourceSha256 check: theme actual1c07aae5b749f044e51a91c48e72df47922ef8c49ac8a0d7c88ed6f16879046f != frozen9880592142016b460c364a68df29d0f61ee802b49427aa13c4146db03bd69074. loadTheme merges missing fields, so partial old-shade/no-bloom override described in PR113 still inherits new bloom.",
+      "recommendedFix": "Restore original default theme, keep glow-B as explicit independent theme preset and document --theme for new-batch reproduction; do not rewrite frozen model hashes."
+    }
+  ],
+  "checks": {
+    "newSpecs": 21,
+    "tracks": 247,
+    "specImportsAndSyntax": "pass",
+    "finiteDataAndJSONSerialization": "pass",
+    "timeRangeAndSortAndZeroStart": "pass",
+    "idProfileFpsDurationAndReferences": "pass",
+    "chairBackedGeometryIdenticalVariants": 4,
+    "chairBacklessVariantsExpected": 2,
+    "compositorAst": "pass",
+    "compositorLegacySyntheticPNGAndEdgeParity": "pass",
+    "compositorGlowBChangesImage": "pass",
+    "diffCheck": "pass",
+    "repositoryVerify": "blocked by original PR113 theme change and new specs missing reviewed hash inventory; parent integrating fix"
+  },
+  "boundaries": [
+    "No App/runtime/media files changed by these two PRs; new sources are production specs only.",
+    "No action movies rendered, no GPU/browser run, and no original media/source files overwritten.",
+    "PR113/115 producer-render and all-QA-PASS claims are PR text; the immutable PRs provide no complete rendered frames/movie/QA archive, so this review does not independently certify visual quality, biomechanical correctness or all-frame QA.",
+    "All new specs use modelProfile training-human-v2 and alignClavicles false.",
+    "PR115 known model limitations remain: rigid neck, limited bridge height, bottom-hand slide; producer allows some straight-arm reach warnings.",
+    "Optional bloom compatibility checked on a 64px synthetic pair, not all existing movies."
+  ],
+  "recommendation": "Default-theme blocker resolved in isolated fix working tree. No additional blocking defects found in PR113/115; parent must finish aggregate 51-spec whitelist/source validation and pin final commit before merge. Retain source-only/visual-QA limitations.",
+  "remediationReview": {
+    "workingTree": "E:/AII-3D/3D-Body-worktrees/pr-drill-fixes-20261015",
+    "defaultThemeRestored": true,
+    "glowBExplicitPresetEquivalentToPR113ExceptNameAndDir": true,
+    "loadDefaultHasNoBloom": true,
+    "texturePathRisk": false,
+    "evidence": "audit113-115-fixcheck.json"
+  }
+}

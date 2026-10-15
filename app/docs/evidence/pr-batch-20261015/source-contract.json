@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "command": "node tools/drill-anim/verify.mjs",
+  "verifiedCodeRevision": "3ef206740c5c4e45f021d34505fe75db4cc14ce3",
+  "specs": 138,
+  "reviewedHomeSpecs": 51,
+  "appDrills": 51,
+  "modelSources": 13,
+  "originalSpecHashesPreserved": true,
+  "scope": "Source integrity only; no rendered or native acceptance."
+}

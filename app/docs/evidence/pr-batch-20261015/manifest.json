@@ -1,0 +1,55 @@
+{
+  "files": [
+    {
+      "file": "drill-audit-111-112.json",
+      "bytes": 1214,
+      "sha256": "6b1b44340e8a98fa7f1d8e0596ed8d4aa37ea5bd9ec2821884c1a7b53f3d6e66"
+    },
+    {
+      "file": "drill-audit-113-115.json",
+      "bytes": 3095,
+      "sha256": "e3c8590c3c3b1e38bb5fc42ff90b973bda0fec5d32a9aa35e7fa191507623f2e"
+    },
+    {
+      "file": "drill-theme-fixcheck.json",
+      "bytes": 219,
+      "sha256": "c12af83f9106f7a4337d5a179fb9e3655a2f218a004939c5205597c85f119e15"
+    },
+    {
+      "file": "merges.json",
+      "bytes": 2464,
+      "sha256": "821f4e0dbdd3ca31d32c998117bb718ea40872641d8c4578b0184170f7a31824"
+    },
+    {
+      "file": "perf-browser.json",
+      "bytes": 12791,
+      "sha256": "65815e22921a3006e042601e13a2ab6b24b0497e3d3514d21b5a24942cb3919b"
+    },
+    {
+      "file": "perf-detail.png",
+      "bytes": 99168,
+      "sha256": "d303b364f7dab08735ad1925ad8fb53eefa303f3fc0fbaa01e8c515350188789"
+    },
+    {
+      "file": "perf-home.png",
+      "bytes": 176520,
+      "sha256": "eb70fa1f63d0f4323fb59f14186a71075e9e722b31375a5b95d186797ff641ee"
+    },
+    {
+      "file": "perf-loop.json",
+      "bytes": 759,
+      "sha256": "138e7345475404ac09ba271f579ab6da518f36d291ac2e81d53c701c83a0984a"
+    },
+    {
+      "file": "perf-summary.json",
+      "bytes": 2739,
+      "sha256": "3191592a054de83cb1fb47d3ab5315e47d41de7b7044f2184743d6d060ec48c1"
+    },
+    {
+      "file": "source-contract.json",
+      "bytes": 341,
+      "sha256": "d6bd7cfa51451093e22d76a797373cead1d4d7cd3de4ff22a66a3650839ede50"
+    }
+  ],
+  "retention": "Selected evidence tracked here. Full output, scripts and early failed software-GPU sampling receipts stay local; fresh clones do not include ignored output."
+}

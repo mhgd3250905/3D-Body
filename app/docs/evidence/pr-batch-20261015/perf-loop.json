@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "scope": "Current real tick/render methods run with mocked controls/renderer; no GPU/browser/source edits",
+  "checks": [
+    "first playback lowers density and advances original clock",
+    "pause keeps rAF and restores full density after settle",
+    "no redundant still render",
+    "orbit-only frame marked reusable",
+    "scene invalidation prohibits stale-pose reuse",
+    "shadow reuse toggles flags and restores autoUpdate",
+    "freshness invalidation forces shadow update",
+    "low-quality no-shadow avoids phantom counters",
+    "render exception restores autoUpdate"
+  ],
+  "counters": "FPS is one-second render count; p50/p95 are historical last240 consecutive rendered tick intervals, retained during idle/visibility stop."
+}
