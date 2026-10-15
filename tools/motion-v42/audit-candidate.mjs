@@ -12,9 +12,9 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const defaults = {
-  candidate: path.join(root, 'output/flare-v42-r8-20261015/flare-coach-v42-candidate.glb'),
-  baseline: path.join(root, 'output/flare-v42-20261015/flare-coach-v42-candidate.glb'),
-  out: path.join(root, 'output/flare-v42-r8-20261015/geometry-coach'),
+  candidate: path.join(root, 'output/flare-v42-r9-20261015/flare-coach-v42-candidate.glb'),
+  baseline: path.join(root, 'output/flare-v42-r8-20261015/flare-coach-v42-candidate.glb'),
+  out: path.join(root, 'output/flare-v42-r9-20261015/geometry-coach'),
   intervals: 540, bodyEvery: 3, contactY: 0.006, near: 0.005,
 };
 const args = { ...defaults };

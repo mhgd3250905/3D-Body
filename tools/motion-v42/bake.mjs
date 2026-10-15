@@ -10,7 +10,7 @@ import { loadGlb, readJson, names, sha256, verifyMirror } from '../../app/scene/
 import { createNaturalFlareMotion } from './natural-motion.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const output = path.join(root, 'output/flare-v42-r8-20261015');
+const output = path.join(root, 'output/flare-v42-r9-20261015');
 fs.mkdirSync(output, { recursive: true });
 verifyMirror();
 const count = 540, duration = 1.35;
@@ -32,7 +32,7 @@ for (let i = 0; i <= count; i++) {
     return [...position.toArray(), ...quaternion.normalize().toArray()];
   });
   const metrics = motion.getMetrics();
-  recoverySamples.push({ phase: i / count, armRefinement: metrics.design?.armRefinement ?? null,
+  recoverySamples.push({ phase: i / count, armRefinement: metrics.design?.armRefinement ?? null, reachPreparation: metrics.design?.reachPreparation ?? null,
     joints: Object.fromEntries(['pelvis','torso','leftShoulder','leftElbow','leftWrist','leftPalm','rightShoulder','rightElbow','rightWrist','rightPalm'].map(key => [key, metrics.joints[key]])) });
   frames.push({ phase: i / count, time: i / count * duration, local,
     baselineTime: i === count ? 9 : motion.sourceSequenceTime() });
@@ -113,7 +113,7 @@ for (const [kind, source] of [
     output: path.relative(root, target).replaceAll('\\', '/'), sha256: sha256(bytes), bytes: bytes.length,
     geometryAndSkinAttributesPreserved: true, materialsPreserved: true, bakedBoneErrorMm });
 }
-const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-r7-20261015/flare-${kind}-v42-candidate.glb`)));
+const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-r8-20261015/flare-${kind}-v42-candidate.glb`)));
 const clock = { duration, previousAvailable, phases: frames.map(f => f.phase), baselineSequenceTimes: frames.map(f => f.baselineTime) };
 fs.writeFileSync(path.join(output, 'comparison-clock.json'), JSON.stringify(clock));
 fs.writeFileSync(path.join(output, 'recovery-samples.json'), JSON.stringify(recoverySamples));
