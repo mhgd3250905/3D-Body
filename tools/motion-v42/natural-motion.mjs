@@ -4,7 +4,7 @@ import { createCoachMotion as createV41Motion } from '../../app/scene/source/v41
 import { OFFICIAL_FLARE_SEQUENCE } from '../../app/scene/source/v41-runtime/src/official-poses.js';
 import { createTransitionEdits, transitionOptions } from '../../app/scene/source/v41-runtime/src/transition-edits.js';
 import clockData from '../../app/scene/src/v41-clock.json' with { type: 'json' };
-import { createR1ArmRefinement } from './r1-arm-refinement.mjs';
+import { createCoordinatedTransfer } from './coordinated-transfer.mjs';
 
 const TAU = 2 * Math.PI;
 const SIDES = ['left', 'right'];
@@ -15,7 +15,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-7-r1-arm-refinement',
+  revision: 'v42-candidate-8-coordinated-transfer',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,
@@ -80,7 +80,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   const sequence = structuredClone(OFFICIAL_FLARE_SEQUENCE);
   base.setSequence(sequence.steps, { period: sequence.period, ...transitionOptions(createTransitionEdits(sequence)) });
   const target = createCoachMotion({ model, rigData });
-  const refinement = createR1ArmRefinement({ model, bones, parameters: parameters.armRefinement ?? {} });
+  const refinement = createCoordinatedTransfer({ model, bones });
   model.traverse(object => { if (object.isSkinnedMesh) skeletons.add(object.skeleton); });
   const samples = [];
   for (let i = 0; i < settings.sampleCount; i++) {
@@ -195,7 +195,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
       limb.handQuaternion = handDelta.multiply(Q(limb.handQuaternion)).normalize().toArray();
     }
     target.applyPose(pose, { playback: false, alignClavicles: false, shoulderOffsets });
-    const armRefinement = refinement.apply({ joints: target.getMetrics().joints, flight, recovery,phase:currentPhase });
+    const armRefinement = refinement.apply({ joints: target.getMetrics().joints, flight, recovery,phase:currentPhase,upper });
     addHeadFollow(upper, theta);
     // Keep the separate old actor on the matching pose for phase comparisons.
     base.update(clockAtPhase(sourcePhase));
@@ -216,7 +216,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     metrics.joints.shoulderCenter = [...metrics.joints.torso];
     for (const [side, adjustment] of Object.entries(last?.armRefinement ?? {})) {
       metrics.joints[side+'Palm'] = V(adjustment.originalPalm)
-        .applyMatrix4(new THREE.Matrix4().fromArray(adjustment.forearmTransform)).toArray();
+        .applyMatrix4(new THREE.Matrix4().fromArray(adjustment.handTransform ?? adjustment.forearmTransform)).toArray();
       metrics.segmentLengths[side+'UpperArm'] = V(metrics.joints[side+'Shoulder']).distanceTo(V(metrics.joints[side+'Elbow']));
       metrics.segmentLengths[side+'Forearm'] = V(metrics.joints[side+'Elbow']).distanceTo(V(metrics.joints[side+'Wrist']));
     }
@@ -231,11 +231,12 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     };
   }
 
+  refinement.prepare(phase => { updatePhase(phase); return { joints: target.getMetrics().joints, upper: bones.get('torso').getWorldQuaternion(new THREE.Quaternion()) }; });
   updatePhase(0);
   function capturePose() {
     const pose=target.capturePose(),metrics=getMetrics();
     for(const [side,adjustment] of Object.entries(last?.armRefinement ?? {})) {
-      const limb=pose.limbs[side],matrix=new THREE.Matrix4().fromArray(adjustment.forearmTransform);
+      const limb=pose.limbs[side],matrix=new THREE.Matrix4().fromArray(adjustment.handTransform ?? adjustment.forearmTransform);
       limb.wrist=[...metrics.joints[side+'Wrist']];
       limb.elbowPole=[...metrics.joints[side+'Elbow']];
       limb.handQuaternion=new THREE.Quaternion().setFromRotationMatrix(matrix).multiply(Q(limb.handQuaternion)).normalize().toArray();
@@ -244,6 +245,6 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   }
   return { group: model, baseline: base, updatePhase, getMetrics, capturePose,
     parameters: Object.freeze({ ...settings }), describeRecovery: () => ({ parameters: refinement.parameters,
-      scope: 'R1 local wrist retraction toward actual head, limited same-halfspace elbow steering and residual shoulder closing. Original transfer timing retained.' }),
+      scope: 'R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. Palm preparation overlaps transport; source body and contact timing retained.' }),
     sourceSequenceTime: () => clockAtPhase(sourcePhase) };
 }
