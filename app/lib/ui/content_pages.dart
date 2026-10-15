@@ -879,7 +879,11 @@ class ProgressPage extends StatelessWidget {
                 else
                   RowGroup(
                     children: [
-                      for (final session in store.sessions.reversed.take(30))
+                      for (final session
+                          in (store.sessions.toList()..sort(
+                                (a, b) => b.endedAt.compareTo(a.endedAt),
+                              ))
+                              .take(30))
                         if (catalog.drillById(session.drillId)
                             case final Drill drill)
                           FlareRow(

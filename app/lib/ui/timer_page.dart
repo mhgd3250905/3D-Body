@@ -17,10 +17,14 @@ class TrainingTimerPage extends StatefulWidget {
     required this.store,
     required this.onClose,
     this.now,
+    this.planLabel,
   });
   final Drill drill;
   final LearningStore store;
   final VoidCallback onClose;
+
+  /// Position inside a running plan ("第 2 / 4 个"), shown before the set.
+  final String? planLabel;
 
   /// Optional monotonic clock for deterministic timer interaction tests.
   @visibleForTesting
@@ -361,6 +365,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                                 ),
                                 Text(
                                   [
+                                    ?widget.planLabel,
                                     s.setOfTotal(snap.set, snap.sets),
                                     if (snap.blockLabel.isNotEmpty)
                                       snap.blockLabel,

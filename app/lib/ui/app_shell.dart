@@ -642,7 +642,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         'timer:${drill.id}',
         9,
         true,
-        TrainingTimerPage(drill: drill, store: store, onClose: _timerClosed),
+        TrainingTimerPage(
+          drill: drill,
+          store: store,
+          onClose: _timerClosed,
+          planLabel: switch (_run) {
+            final run? when run.index < run.drills.length => s.planOf(
+              run.index + 1,
+              run.drills.length,
+            ),
+            _ => null,
+          },
+        ),
       );
     }
     if (_editing case final edit?) {
@@ -1761,10 +1772,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             _result(store.updateSettings(themeMode: value)),
                       ),
                     ),
+                    // Full width, so the label lines up with 语言 and 主题
+                    // instead of centring with the chip block.
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                      padding: const EdgeInsets.fromLTRB(16, 10, 12, 12),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
                             s.actorBodyLabel,
