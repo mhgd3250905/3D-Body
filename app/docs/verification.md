@@ -1,5 +1,9 @@
 # App 验证记录
 
+## 首页自适应分辨率（2026-10-15，分支 perf/home-adaptive-dpr，待真机）
+
+`npm run verify` 通过（含新增 `tools/verify-adaptive-resolution.mjs`），`npm run build` 只更换JS包。沙箱 Chromium/SwiftShader、360×640@2x，只比较相对量：主页t=2.2静止、详情动作、详情肌肉三张截图与master构建SSIM均为1.00000（master自对比同为1.00000）；拖动过程每帧颜色像素921,600→518,400（−43.75%），阴影pass 63→0（相机-only帧复用阴影贴图），颜色+阴影像素×pass −73%；播放中颜色−43.75%、含阴影−20.5%。拖动中低清帧与master对比SSIM 0.988（门槛0.97）。`?adaptive=0` 实测为旧路径（固定2.0、无缓冲重分配、逐帧阴影）。SwiftShader约600ms/帧，绝对FPS和降档触发不可代表手机；未构建Flutter/APK、未真机验证。
+
 ## Flare v42 / R12 动作认可与分支交付（2026-10-15）
 
 用户已认可R12当前无明显动作问题。数值与播放检查绑定`fc91c7f`生成的两个GLB SHA，见[冻结清单](../../tools/motion-v42/releases/v42-r12.json)和[动作版本记录](../../docs/flare-v42-release-2026-10-15.md)。两人体结构检查通过，双侧对应换手、肘角/掌姿保持及24局部表面姿态已检查；右躯干轴仍有约0.357mm回外和继承的末端微回弹，原报告保留。
