@@ -19,7 +19,7 @@ const transform = (from, to, q) => new T.Matrix4().makeTranslation(...to.toArray
   .multiply(new T.Matrix4().makeRotationFromQuaternion(q))
   .multiply(new T.Matrix4().makeTranslation(...from.clone().negate().toArray()));
 
-// R11: distribute the middle transition, complete the extension before contact, then lower the long arm as a
+// R12: retain the distributed the middle transition, complete the extension before contact, then lower the long arm as a
 // coordinated chain. All rotations are shortest swings of actual R8 bones;
 // shoulder origins, segment lengths and the source support timing are retained.
 export function createReachPreparation({ model, bones }) {
@@ -32,7 +32,7 @@ export function createReachPreparation({ model, bones }) {
     bone.updateMatrix(); model.updateMatrixWorld(true);
   };
   return {
-    parameters: { windows, straightDegrees:177, transitionProfile:'integrated-quintic-velocity-ramp-20-percent', scope:'Coordinated two-bone early extension and landing-directed lowering; minimal anatomical swings without axial roll' },
+    parameters: { windows, straightDegrees:177, transitionProfile:'integrated-quintic-velocity-ramp-20-percent', rightEarlyAlignment:{start:.83,fadeStart:.86,end:.88,fraction:.22}, scope:'Coordinated two-bone early extension and landing-directed lowering; minimal anatomical swings without axial roll' },
     prepare(evaluate) {
       for (const side of ['left','right']) {
         evaluate(windows[side].start);
@@ -76,7 +76,14 @@ export function createReachPreparation({ model, bones }) {
         const reach=Math.sqrt(l1*l1+l2*l2-2*l1*l2*Math.cos(after));
         const horizontal=new T.Vector3(ref.wrist.x-shoulder.x,0,ref.wrist.z-shoulder.z);
         const landing=horizontal.clone().setY(-Math.sqrt(Math.max(.000001,reach*reach-horizontal.lengthSq()))).normalize();
-        const alignment=distributed((phase-win.alignStart)/(win.straight-win.alignStart));
+        let alignment=distributed((phase-win.alignStart)/(win.straight-win.alignStart));
+        // R12: the right elbow was opening before its landing alignment began,
+        // causing a millimetric outward wrist reversal near .848. Borrow only a
+        // small part of the earlier alignment, then return exactly by .88.
+        if(side==='right' && phase>.83 && phase<.88){
+          const early=distributed((phase-.83)/(.95-.83));
+          alignment+=.22*(early-alignment)*(1-smooth((phase-.86)/.02));
+        }
         const raySwing=new T.Quaternion().setFromUnitVectors(ray,landing);
         const direction=ray.clone().applyQuaternion(new T.Quaternion().slerp(raySwing,alignment));
         // One continuous landing alignment acts on the complete extended chain.

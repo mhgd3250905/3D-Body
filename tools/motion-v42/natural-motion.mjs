@@ -16,7 +16,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-11-distributed-reach',
+  revision: 'v42-candidate-12-inward-transition',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,
@@ -260,6 +260,6 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   }
   return { group: model, baseline: base, updatePhase, getMetrics, capturePose,
     parameters: Object.freeze({ ...settings }), describeRecovery: () => ({ parameters: refinement.parameters, reachPreparation: reachPreparation.parameters,
-      scope: 'R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. R11 distributes extension and landing alignment over a longer effective middle transition, then completes extension before contact using coordinated two-bone minimal swings and lowers the long arm toward its original landing point; source body and contact timing retained.' }),
+      scope: 'R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. R12 locally coordinates right early alignment to remove a small outward wrist reversal while retaining the R11 distributed extension and landing alignment over a longer effective middle transition, then completes extension before contact using coordinated two-bone minimal swings and lowers the long arm toward its original landing point; source body and contact timing retained.' }),
     sourceSequenceTime: () => clockAtPhase(sourcePhase) };
 }
