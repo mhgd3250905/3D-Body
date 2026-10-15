@@ -53,6 +53,10 @@ export const FX_PALETTES = {
 
 export function createFlareFx(player, { palette = 'ember', enabled = true } = {}) {
   const motion = player.motion, coach = player.coach, clock = motion.clock;
+  // Keep the accepted short trail (roughly one tenth of a turn) when the
+  // R12 clip completes a turn in 1.35s instead of v41's roughly nine seconds.
+  const windowScale = motion.getMetrics().motionRevision === 'v42' ? clock.duration / 8.991662288 : 1;
+  const trailSeconds = TRAIL_SECONDS * windowScale, rippleSeconds = RIPPLE_SECONDS * windowScale;
   const root = new THREE.Group(); root.name = 'FlareFx'; root.renderOrder = 2;
   player.scene.add(root);
 
@@ -208,7 +212,7 @@ export function createFlareFx(player, { palette = 'ember', enabled = true } = {}
 
     const wall = clock.toWall(player.time);
     const loopStart = player.loopRange ? clock.toWall(player.loopRange[0]) : -Infinity;
-    const span = Math.min(TRAIL_SECONDS, Math.max(0, wall - loopStart));
+    const span = Math.min(trailSeconds, Math.max(0, wall - loopStart));
     ribbonMaterial.uniforms.uOpacity.value = 1.0 * level;
     const camera = player.camera;
     for (const ribbon of ribbons) {
@@ -246,13 +250,13 @@ export function createFlareFx(player, { palette = 'ember', enabled = true } = {}
       position.needsUpdate = true; ageAttr.needsUpdate = true;
     }
 
-    // Ripples: the most recent plants within RIPPLE_SECONDS of clip wall time.
+    // Ripples: recent hand plants inside the motion's clip-time window.
     let used = 0;
     for (const plant of plants) {
       let age = wall - plant.wall; if (age < 0) age += clock.duration;
-      if (age > RIPPLE_SECONDS || (player.loopRange && wall - age < loopStart) || used >= ripples.length) continue;
+      if (age > rippleSeconds || (player.loopRange && wall - age < loopStart) || used >= ripples.length) continue;
       const mesh = ripples[used++]; mesh.visible = true; mesh.position.x = plant.x; mesh.position.z = plant.z;
-      mesh.material.uniforms.uProgress.value = age / RIPPLE_SECONDS; mesh.material.uniforms.uOpacity.value = 0.75 * level;
+      mesh.material.uniforms.uProgress.value = age / rippleSeconds; mesh.material.uniforms.uOpacity.value = 0.75 * level;
     }
     for (let i = used; i < ripples.length; i++) ripples[i].visible = false;
   }

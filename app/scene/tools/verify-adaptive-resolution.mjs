@@ -46,4 +46,13 @@ a.configure(1, 'low'); assert.equal(a.rung, 0);
 const off = createAdaptiveResolution({ enabled: false });
 off.configure(3, 'medium');
 for (let i = 0; i < 50; i++) assert.deepEqual(off.update(i * 16, true, 16), { ratio: 3, changed: false, settled: false });
-console.log('Adaptive resolution passed: moving caps, settle restore, jank step-down with hysteresis, recovery, ?adaptive=0.');
+
+// Foreground stalls at/above the sampling cap still cause degradation.
+for (const interval of [250, 600]) {
+  const slow = createAdaptiveResolution(); slow.configure(3, 'medium');
+  for (let i = 0; i <= 61; i++) slow.update(i * interval, true, interval);
+  assert.equal(slow.ratio, 1, `${interval}ms stalls must reach the floor`);
+  assert.equal(slow.update(62 * interval, false, interval).ratio, 3, 'pause still restores full density');
+}
+
+console.log('Adaptive resolution passed: moving caps, settle restore, hysteresis, recovery, severe stalls, ?adaptive=0.');

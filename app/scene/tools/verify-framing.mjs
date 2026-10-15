@@ -14,10 +14,11 @@ async function load(name) {
   const bytes = gunzipSync(fs.readFileSync(new URL('../public/coach/' + name, import.meta.url)));
   return new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 }
-const revision = process.argv.includes('--v38') ? 'v38' : 'v41';
-const gltf = await load(`flare-coach-${revision}-animated.meshopt.glb.gz`);
+const revision = process.argv.includes('--v38') ? 'v38' : process.argv.includes('--v41') ? 'v41' : 'v42-r12';
+const body = process.argv.includes('--training') ? 'training-human' : 'animated';
+const gltf = await load(`flare-coach-${revision}-${revision === 'v42-r12' ? body : 'animated'}.meshopt.glb.gz`);
 const model = gltf.scene;
-const rigFile = revision === 'v41' ? 'coach-v41-rig.json' : 'coach-rig.json';
+const rigFile = revision === 'v38' ? 'coach-rig.json' : 'coach-v41-rig.json';
 const rigData = JSON.parse(fs.readFileSync(new URL('../public/coach/' + rigFile, import.meta.url), 'utf8'));
 const motion = createBakedMotion(gltf, rigData), meshes = [], box = new THREE.Box3();
 model.traverse(mesh => { if (mesh.isSkinnedMesh && mesh.visible) meshes.push(mesh); });

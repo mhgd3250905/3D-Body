@@ -1,0 +1,54 @@
+{
+  "version": "l46-evidence-v1",
+  "date": "2026-10-15",
+  "files": [
+    {
+      "file": "software-summary.json",
+      "bytes": 8696,
+      "sha256": "0d81aca363626da2fe3677b0e65449ac459bc4ff0b2533a4511afbf3403988b7",
+      "source": "output/v42-app-l46-20261015/verification.json"
+    },
+    {
+      "file": "app-browser.json",
+      "bytes": 4667,
+      "sha256": "8e7223c826bac3ddfe10dc9f5348a172be8fe3b782a009ede0059e42fd8a1ff7",
+      "source": "output/playwright/l46-v42-20261015/app-verification.json"
+    },
+    {
+      "file": "web-browser.json",
+      "bytes": 8926,
+      "sha256": "baba5ba52a8318c2dceb1c3e3230c1d0afe62a91d09ee10271e678740a4190c1",
+      "source": "output/web-v42-integration/verification.json"
+    },
+    {
+      "file": "device-install.json",
+      "bytes": 1651,
+      "sha256": "845c96638efa4436f092c3ed6a9985df39cf217accea32282fc2fe5015a9f4ca",
+      "source": "output/l46-device-20261015/installation.json (device serial omitted)"
+    },
+    {
+      "file": "acceptance.json",
+      "bytes": 247,
+      "sha256": "4a9f0421471ad6fd7085af2c4047520a70bbba372ef0440872f36da173434569"
+    },
+    {
+      "file": "native-home.png",
+      "bytes": 1082039,
+      "sha256": "a049817b59f8c3e2a799a4cc20f5a67680a7c2694ab52f5304a68f1b1b2b463c",
+      "source": "output/l46-device-20261015/home-first.png"
+    },
+    {
+      "file": "app-detail.png",
+      "bytes": 125923,
+      "sha256": "b875ead1aa581a5a230927e070726b02a40321c17ffcead07bc1c13237617b52",
+      "source": "output/playwright/l46-v42-20261015/cyber-detail.png"
+    },
+    {
+      "file": "web-mobile.png",
+      "bytes": 177386,
+      "sha256": "a7c04fb4d0e82b0aab51329cfb5a305b024f3b84be37b80b4cd081507e205ae4",
+      "source": "output/web-v42-integration/mobile.png"
+    }
+  ],
+  "retention": "These selected evidence files are tracked. Full historical output, build backups, installed-before APK and final APK stay local and are not claimed to exist in a fresh clone. Source reconstruction uses app/docs/motion-v42.md."
+}

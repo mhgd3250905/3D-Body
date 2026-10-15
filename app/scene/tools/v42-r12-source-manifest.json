@@ -1,0 +1,61 @@
+{
+  "version": "v42-r12",
+  "motionSourceCommit": "fc91c7f4cf95b77db4f0d79c74ad865bedcc6f96",
+  "tag": "motion-v42-r12",
+  "duration": 1.35,
+  "frames": 541,
+  "bones": 22,
+  "tracks": 44,
+  "clip": "flare_v42_candidate_loop",
+  "clock": "Host sequence 0–9 maps through the accepted R12 authored phase clock to the 1.35-second clip. Playback speed is applied once.",
+  "phaseSemantics": "Source teaching/support groups remapped through R12 sourceSequenceTime, not uniform sequence or old v41 frame indices. Functional associations, not EMG measurements.",
+  "encoding": "Lossless meshopt + gzip relative to accepted R12; no quantization, simplification, animation resampling or retargeting.",
+  "acceptance": {
+    "quote": "很好这一版本的动作我觉得至少已经没有明显问题了",
+    "scope": "User visual acceptance of R12; not App integration, device QA or full physical validation.",
+    "date": "2026-10-15"
+  },
+  "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+  "assets": [
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r12-animated.glb",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r12-animated.meshopt.glb.gz",
+      "bytes": 2796418,
+      "sha256": "64035eccbf233f029c2529b2a1bb0ea71298f220586281b57aa76d716c57c2aa"
+    },
+    {
+      "destination": "public/coach/flare-coach-v42-r12-animated.glb",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d"
+    },
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r12-training-human.glb",
+      "bytes": 7996440,
+      "sha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r12-training-human.meshopt.glb.gz",
+      "bytes": 2170221,
+      "sha256": "98a940484696efae7a7db604549cb293f3457e75183a760bb6c430a849cec474"
+    },
+    {
+      "destination": "app/scene/src/v42-clock.json",
+      "bytes": 16399,
+      "sha256": "bf803bcf17131da1e056df3aa035c37b1ad09dd0111e1a2e24757a1e480b19f9"
+    },
+    {
+      "destination": "public/coach/flare-v42-clock.json",
+      "bytes": 16399,
+      "sha256": "bf803bcf17131da1e056df3aa035c37b1ad09dd0111e1a2e24757a1e480b19f9"
+    },
+    {
+      "destination": "app/scene/src/v42-phases.json",
+      "bytes": 250990,
+      "sha256": "61cc9282a2a4d3cfe05a78d9bbb6d84da039fb085378ad3d27d059fb12ac03fa"
+    }
+  ]
+}

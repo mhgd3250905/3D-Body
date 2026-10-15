@@ -1,10 +1,28 @@
 # App 验证记录
 
-## 首页自适应分辨率（2026-10-15，分支 perf/home-adaptive-dpr，待真机）
+## PR116 原分支自适应分辨率验证（2026-10-15，L45/v41历史基准，待真机）
 
 `npm run verify` 通过（含新增 `tools/verify-adaptive-resolution.mjs`），`npm run build` 只更换JS包。沙箱 Chromium/SwiftShader、360×640@2x，只比较相对量：主页t=2.2静止、详情动作、详情肌肉三张截图与master构建SSIM均为1.00000（master自对比同为1.00000）；拖动过程每帧颜色像素921,600→518,400（−43.75%），阴影pass 63→0（相机-only帧复用阴影贴图），颜色+阴影像素×pass −73%；播放中颜色−43.75%、含阴影−20.5%。拖动中低清帧与master对比SSIM 0.988（门槛0.97）。`?adaptive=0` 实测为旧路径（固定2.0、无缓冲重分配、逐帧阴影）。SwiftShader约600ms/帧，绝对FPS和降档触发不可代表手机；未构建Flutter/APK、未真机验证。
 
-## Flare v42 / R12 动作认可与分支交付（2026-10-15）
+## L46 真机安装与首轮显示（2026-10-15 21:34）
+
+同签名原APK已备份，`adb install -r` 返回Success；系统回读name1.0.3/code5，原首次安装时间不变。冷启动Activity返回ok，原生首页实截图显示R12，样本进程日志未见FATAL/Flutter异常；证据 `output/l46-device-20261015/installation.json` 和 `home-first.png`。用户随后反馈“我测试初步OK”，记为有限动作展示初验；设备随后离线，未宣称完成原生详情/七形象全量/长期性能或私有个人记录逐项验证。本条覆盖下方构建阶段尚未安装的当时状态，当前已知手机安装L46。
+
+## L46 / v42-R12 展示接入（2026-10-15）
+
+已纳入Git的精选证据见[证据清单](evidence/l46-20261015/manifest.json)、[软件构建摘要](evidence/l46-20261015/software-summary.json)、[App浏览器核对](evidence/l46-20261015/app-browser.json)、[网页核对](evidence/l46-20261015/web-browser.json)、[真机安装回执](evidence/l46-20261015/device-install.json)及[用户初验记录](evidence/l46-20261015/acceptance.json)。[真机首页](evidence/l46-20261015/native-home.png)、[浏览器详情](evidence/l46-20261015/app-detail.png)和[网页手机布局](evidence/l46-20261015/web-mobile.png)各保留原观察范围。完整output、构建备份、安装前旧APK和具名L46 APK留本机，不承诺fresh clone中存在；新环境按[motion-v42](motion-v42.md)重建。 软件摘要绑定原构建时产品代码/资产SHA，本次仅对齐文档并新增便携证据，没有重跑或累加已通过的软件测试。
+
+验证源为 PR #114 合并点 `887d6e3` 上的本轮 L46 工作区，动作身份仍绑定 `fc91c7f` 和 R12 两份冻结 GLB SHA；没有改写原动作制作源。两人体源与运行压缩版的网格属性、三角形、材质、蒙皮、逆绑定及44轨时间/值核对一致；两端时钟文件一致。检查入口为 `app/scene/tools/verify-v42-assets.mjs`。
+
+`verify-v42-integration.mjs` 通过7形象×181姿态、541阶段帧、24精确阶段边界、4速度及子段循环、同帧详情/交换/返回、材质恢复与减弱动态FX淡出；时钟往返最大误差 `3.55e-15`。`verify-v42-framing.mjs` 通过7形象×两舞台高度×181姿态并含刚性头饰；v41/v38回归保持。场景 build/verify、Flutter定向30项加启动3项、analyze、离线Web及ARM64 APK构建通过。
+
+网页最终 `node tools/verify-web-v42.mjs --dist` 46项通过、运行错误0；包括181同时间×22骨App/Web矩阵误差0、全身构图、个人旧选择原字节保留、独立备份失败保护、采用及撤销、原编辑器、K/路线隔离和辅助预览。独立审查发现的非线性子段循环跨边界余量问题已补修，片段域取模及真实浏览器animate回归通过。证据为 `output/web-v42-integration/verification.json` 及桌面/手机截图。
+
+APK132项打包资产与当前源逐一SHA一致；191项旧素材、39项冻结动作依赖/证据、27项原用户独立文件逐项SHA保持。构建时3份原有脏文档仅增加L46段落，其原正文已独立回读保持；本次保存另对齐当前/历史措辞，原绿幕段保持；回执 `output/v42-app-l46-20261015/apk-and-preservation.json`、`doc-preservation.json`。完整App最终串行浏览器核对七形象设置保存/同帧、赛博银冷启动、实际详情和小卡交换/返回同帧及播放暂停通过，错误/失败请求0；证据 `output/playwright/l46-v42-20261015/app-verification.json`。并行软件GPU检查曾一次泛化场景加载失败，保留失败截图，串行复查通过；不冒称定位或修复了原生图形问题，范围见[L46记录](l46-motion-v42-2026-10-15.md)。
+
+构建阶段无Android连接、L46未安装属于当时事实，现由上方真机安装和用户有限初验记录覆盖。软件及有限初验不替代长期温度/性能/计时、iOS或全设备验收。51视频23ready/28待核对、原商店包及历史L44证据保持。旧验证JSON保留原时间/哈希与installed:false；本次文档对齐不改写旧构建证据，当前安装以独立installation.json为准。
+
+## 历史阶段：Flare v42 / R12 独立动作认可与分支交付（2026-10-15）
 
 用户已认可R12当前无明显动作问题。数值与播放检查绑定`fc91c7f`生成的两个GLB SHA，见[冻结清单](../../tools/motion-v42/releases/v42-r12.json)和[动作版本记录](../../docs/flare-v42-release-2026-10-15.md)。两人体结构检查通过，双侧对应换手、肘角/掌姿保持及24局部表面姿态已检查；右躯干轴仍有约0.357mm回外和继承的末端微回弹，原报告保留。
 

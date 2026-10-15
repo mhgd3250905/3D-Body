@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import clockData from './v41-clock.json' with { type: 'json' };
+import clockData from './v42-clock.json' with { type: 'json' };
+import v41ClockData from './v41-clock.json' with { type: 'json' };
 import historicalClockData from './v38-clock.json' with { type: 'json' };
 
 // The host retains its authored 0–9 sequence domain. Only this boundary maps
@@ -22,11 +23,12 @@ export function createBakedClock(data = clockData) {
 }
 
 export function createBakedMotion(gltf, rig, clock = null) {
-  const model = gltf.scene, clip = gltf.animations.find(value => value.name === 'flare_v41_loop')
+  const model = gltf.scene, clip = gltf.animations.find(value => value.name === 'flare_v42_candidate_loop')
+    ?? gltf.animations.find(value => value.name === 'flare_v41_loop')
     ?? gltf.animations.find(value => value.name === 'flare_v38_loop');
   if (!clip || clip.tracks.length !== 44) throw new Error('baked_clip_missing');
-  const revision = clip.name === 'flare_v41_loop' ? 'v41' : 'v38';
-  clock ??= createBakedClock(revision === 'v41' ? clockData : historicalClockData);
+  const revision = clip.name === 'flare_v42_candidate_loop' ? 'v42' : clip.name === 'flare_v41_loop' ? 'v41' : 'v38';
+  clock ??= createBakedClock(revision === 'v42' ? clockData : revision === 'v41' ? v41ClockData : historicalClockData);
   model.updateMatrixWorld(true);
   const bones = new Map(), rest = new Map(), meshes = [], boxes = new Map();
   model.traverse(object => {

@@ -64,7 +64,9 @@ export function createAdaptiveResolution({ enabled = true, ...overrides } = {}) 
       if (!enabled) { const changed = current !== full; current = full; return { ratio: current, changed, settled: false }; }
       if (moving) {
         // The first frame after a still period has a meaningless interval.
-        if (wasMoving && interval > 0 && interval < options.maxInterval) samples.push(interval);
+        // Keep severe foreground stalls as slow samples instead of discarding
+        // every frame on the devices that need downshifting most.
+        if (wasMoving && Number.isFinite(interval) && interval > 0) samples.push(Math.min(interval, options.maxInterval));
         lastMotion = now; wasMoving = true;
         if (samples.length >= options.window) {
           const p95 = percentile(samples, 0.95); samples = [];

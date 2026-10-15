@@ -1,0 +1,388 @@
+{
+  "checks": [
+    {
+      "name": "Shared clock round trips the entire 0–9 timeline",
+      "pass": true,
+      "detail": 1.7763568394002505e-15
+    },
+    {
+      "name": "Half-speed accepted clip completes in 2.7 wall seconds",
+      "pass": true
+    },
+    {
+      "name": "Nonlinear subrange crossing preserves clip-time remainder exactly",
+      "pass": true,
+      "detail": 1.1581316100303405
+    },
+    {
+      "name": "Subrange and full-circle clock crossings match App at four speeds including multiple wraps",
+      "pass": true,
+      "detail": 3.552713678800501e-15
+    },
+    {
+      "name": "Fresh default is v42 without changing storage",
+      "pass": true
+    },
+    {
+      "name": "Existing personal selection is kept byte-for-byte",
+      "pass": true
+    },
+    {
+      "name": "Adoption keeps exact independent snapshot and undo",
+      "pass": true
+    },
+    {
+      "name": "Rejected independent backup cannot replace formal animation",
+      "pass": true
+    },
+    {
+      "name": "v41 K library is isolated from R12 playback selection",
+      "pass": true
+    },
+    {
+      "name": "New K/route edits leave baked playback instead of being ignored",
+      "pass": true
+    },
+    {
+      "name": "Real viewer animation tick uses clip-domain subrange wrapping",
+      "pass": true,
+      "detail": 1.1581316100303405
+    },
+    {
+      "name": "Real viewer animation tick crosses the whole-circle seam using shared clock",
+      "pass": true,
+      "detail": 0.17918626199601992
+    },
+    {
+      "name": "v41 retains previous sequence-domain range and whole-circle playback",
+      "pass": true
+    },
+    {
+      "name": "periodic retains previous sequence-domain range and whole-circle playback",
+      "pass": true
+    },
+    {
+      "name": "Web adapter matches packaged App GLB at 181 identical timeline times / 22 bones",
+      "pass": true,
+      "detail": 0
+    },
+    {
+      "name": "R12 trajectory sampling preserves the paused frame",
+      "pass": true
+    },
+    {
+      "name": "Auxiliary pose preview shows original rig instead of leaving R12 over it",
+      "pass": true
+    },
+    {
+      "name": "Returning from auxiliary preview restores R12",
+      "pass": true
+    },
+    {
+      "name": "Choosing v41 immediately hides R12 and shows original rig",
+      "pass": true
+    },
+    {
+      "name": "Original editor rig stays available independently",
+      "pass": true
+    },
+    {
+      "name": "Fresh browser displays R12 baked clip",
+      "pass": true
+    },
+    {
+      "name": "Built browser R12 tick preserves precise subrange overshoot",
+      "pass": true,
+      "detail": {
+        "time": 1.1581316100303405,
+        "clipTime": 0.23484038813914618
+      }
+    },
+    {
+      "name": "Built browser R12 tick preserves whole-circle overshoot",
+      "pass": true,
+      "detail": {
+        "time": 0.17918626199601992,
+        "clipTime": 0.038983961685880475
+      }
+    },
+    {
+      "name": "Time 0 uses shared exact clock",
+      "pass": true,
+      "detail": 0
+    },
+    {
+      "name": "Time 0 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.21039040864492572,
+          -0.4830715337817611
+        ],
+        "max": [
+          0.30725738436154265,
+          0.1821915830419654
+        ],
+        "bounds": [
+          [
+            -0.6610753338944346,
+            0.006116673632661329,
+            -0.8527201094309149
+          ],
+          [
+            0.580404688839424,
+            0.89829640250804,
+            0.48854980769273976
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 1.8 uses shared exact clock",
+      "pass": true,
+      "detail": 0.3430820427702021
+    },
+    {
+      "name": "Time 1.8 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.3346712408491454,
+          -0.5483029515075686
+        ],
+        "max": [
+          0.4812233224351516,
+          0.5155489249619651
+        ],
+        "bounds": [
+          [
+            -0.6209228214933871,
+            0.006213399085271687,
+            -0.1039795430975646
+          ],
+          [
+            0.9862299658439794,
+            1.5210693187644968,
+            0.5520353411083284
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 3.5 uses shared exact clock",
+      "pass": true,
+      "detail": 0.6052802173744873
+    },
+    {
+      "name": "Time 3.5 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.4519353626651965,
+          -0.4784752632159383
+        ],
+        "max": [
+          0.25864931095584415,
+          0.17746374725722336
+        ],
+        "bounds": [
+          [
+            -0.6275800802564966,
+            0.006437021000564869,
+            -0.4365826480394006
+          ],
+          [
+            0.5709373530969495,
+            1.2496192741577123,
+            1.1117493168492731
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 4.5 uses shared exact clock",
+      "pass": true,
+      "detail": 0.752964895048836
+    },
+    {
+      "name": "Time 4.5 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.3950602868071383,
+          -0.5184696562523291
+        ],
+        "max": [
+          0.28829780174756525,
+          0.22396192299241435
+        ],
+        "bounds": [
+          [
+            -0.558394384674934,
+            0.0064248997371714744,
+            -0.4716786648287181
+          ],
+          [
+            0.6428902530161753,
+            1.2525987460952779,
+            1.0465854136626513
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 6.8 uses shared exact clock",
+      "pass": true,
+      "detail": 1.1140124986666113
+    },
+    {
+      "name": "Time 6.8 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.3860572402773698,
+          -0.48320223393551964
+        ],
+        "max": [
+          0.20739141381578652,
+          0.4637903281132396
+        ],
+        "bounds": [
+          [
+            -0.8830104993250592,
+            0.00609606607005575,
+            -0.5485676489117041
+          ],
+          [
+            0.44553994597241264,
+            1.3751329702854664,
+            0.5261790091067368
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 8.6 uses shared exact clock",
+      "pass": true,
+      "detail": 1.308536680532665
+    },
+    {
+      "name": "Time 8.6 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.30532675476811993,
+          -0.4832289755180116
+        ],
+        "max": [
+          0.2073908277190978,
+          0.19841279427071357
+        ],
+        "bounds": [
+          [
+            -0.8503312849074817,
+            0.006051741613406325,
+            -0.978658561561081
+          ],
+          [
+            0.43843110560636667,
+            0.9177444848208365,
+            0.4949675985503165
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Time 9 uses shared exact clock",
+      "pass": true,
+      "detail": 1.35
+    },
+    {
+      "name": "Time 9 fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.21039040864492572,
+          -0.48307153402846614
+        ],
+        "max": [
+          0.3072573307205943,
+          0.18219159379440725
+        ],
+        "bounds": [
+          [
+            -0.6610754580112057,
+            0.006116673632661329,
+            -0.8527201944854047
+          ],
+          [
+            0.5804045595839635,
+            0.8982964131083704,
+            0.488549808979688
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Anatomy return preserves exact R12 frame",
+      "pass": true
+    },
+    {
+      "name": "390px layout has no page overflow",
+      "pass": true
+    },
+    {
+      "name": "390px R12 body fits viewport",
+      "pass": true,
+      "detail": {
+        "min": [
+          -0.5051938418982143,
+          -0.06364606648644822
+        ],
+        "max": [
+          0.4598483633007021,
+          0.575327175579081
+        ],
+        "bounds": [
+          [
+            -0.6094206834538232,
+            0.006374931869270517,
+            -0.1829959556215633
+          ],
+          [
+            0.5382780144486685,
+            1.451882432620044,
+            1.0220776958055533
+          ]
+        ]
+      }
+    },
+    {
+      "name": "Existing formal animation does not auto-upgrade",
+      "pass": true
+    },
+    {
+      "name": "Explicit adoption selects baked R12 and stores independent backup",
+      "pass": true
+    },
+    {
+      "name": "Original pose editor remains available",
+      "pass": true
+    },
+    {
+      "name": "Undo restores previous personal formal sequence",
+      "pass": true
+    },
+    {
+      "name": "Restored personal sequence uses original runtime",
+      "pass": true
+    },
+    {
+      "name": "No browser runtime errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "failure": null
+}
