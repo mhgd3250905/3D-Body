@@ -10,7 +10,7 @@ import { loadGlb, readJson, names, sha256, verifyMirror } from '../../app/scene/
 import { createNaturalFlareMotion } from './natural-motion.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const output = path.join(root, 'output/flare-v42-r10-20261015');
+const output = path.join(root, 'output/flare-v42-r11-20261015');
 fs.mkdirSync(output, { recursive: true });
 verifyMirror();
 const count = 540, duration = 1.35;
@@ -113,7 +113,7 @@ for (const [kind, source] of [
     output: path.relative(root, target).replaceAll('\\', '/'), sha256: sha256(bytes), bytes: bytes.length,
     geometryAndSkinAttributesPreserved: true, materialsPreserved: true, bakedBoneErrorMm });
 }
-const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-r9-20261015/flare-${kind}-v42-candidate.glb`)));
+const previousAvailable = ['coach','training'].every(kind => fs.existsSync(path.join(root, `output/flare-v42-r10-20261015/flare-${kind}-v42-candidate.glb`)));
 const clock = { duration, previousAvailable, phases: frames.map(f => f.phase), baselineSequenceTimes: frames.map(f => f.baselineTime) };
 fs.writeFileSync(path.join(output, 'comparison-clock.json'), JSON.stringify(clock));
 fs.writeFileSync(path.join(output, 'recovery-samples.json'), JSON.stringify(recoverySamples));

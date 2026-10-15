@@ -1,15 +1,25 @@
 import * as T from 'three';
 const V = a => new T.Vector3().fromArray(a);
 const smooth = x => { x = T.MathUtils.clamp(x, 0, 1); return x*x*x*(10+x*(-15+6*x)); };
+// Integrated quintic velocity ramps with a broad constant-speed middle.
+// Unlike a full-span smoothstep, this does not compress most motion at midspan.
+const distributed = x => {
+  x=T.MathUtils.clamp(x,0,1);
+  const ramp=.2;
+  if(x>1-ramp) return 1-distributed(1-x);
+  if(x>=ramp) return (x-ramp/2)/(1-ramp);
+  const t=x/ramp;
+  return ramp*(t**6-3*t**5+2.5*t**4)/(1-ramp);
+};
 const windows = {
-  left: { start: .39, straight: .472, end: .505, alignStart:.42, smoothStart:.42, smoothEnd:.46 },
-  right: { start: .843, straight: .95, end: .995, alignStart:.89, smoothStart:.88, smoothEnd:.92 },
+  left: { start: .38, straight: .472, end: .505, alignStart:.395, smoothStart:.42, smoothEnd:.46 },
+  right: { start: .83, straight: .95, end: .995, alignStart:.86, smoothStart:.88, smoothEnd:.92 },
 };
 const transform = (from, to, q) => new T.Matrix4().makeTranslation(...to.toArray())
   .multiply(new T.Matrix4().makeRotationFromQuaternion(q))
   .multiply(new T.Matrix4().makeTranslation(...from.clone().negate().toArray()));
 
-// R10: complete the extension before contact, then lower the long arm as a
+// R11: distribute the middle transition, complete the extension before contact, then lower the long arm as a
 // coordinated chain. All rotations are shortest swings of actual R8 bones;
 // shoulder origins, segment lengths and the source support timing are retained.
 export function createReachPreparation({ model, bones }) {
@@ -22,7 +32,7 @@ export function createReachPreparation({ model, bones }) {
     bone.updateMatrix(); model.updateMatrixWorld(true);
   };
   return {
-    parameters: { windows, straightDegrees:177, scope:'Coordinated two-bone early extension and landing-directed lowering; minimal anatomical swings without axial roll' },
+    parameters: { windows, straightDegrees:177, transitionProfile:'integrated-quintic-velocity-ramp-20-percent', scope:'Coordinated two-bone early extension and landing-directed lowering; minimal anatomical swings without axial roll' },
     prepare(evaluate) {
       for (const side of ['left','right']) {
         evaluate(windows[side].start);
@@ -48,7 +58,7 @@ export function createReachPreparation({ model, bones }) {
         const shoulder=V(joints[side+'Shoulder']), elbow=V(joints[side+'Elbow']), wrist=V(joints[side+'Wrist']);
         const upper=elbow.clone().sub(shoulder), forearm=wrist.clone().sub(elbow);
         const l1=upper.length(),l2=forearm.length(), before=upper.clone().negate().angleTo(forearm);
-        const opening=smooth((phase-win.start)/(win.straight-win.start));
+        const opening=distributed((phase-win.start)/(win.straight-win.start));
         const joining=smooth((phase-win.straight)/(win.end-win.straight));
         const straight=T.MathUtils.degToRad(177);
         const after=phase<=win.straight?T.MathUtils.lerp(before,straight,opening):T.MathUtils.lerp(straight,reference[side].endAngle,joining);
@@ -66,7 +76,7 @@ export function createReachPreparation({ model, bones }) {
         const reach=Math.sqrt(l1*l1+l2*l2-2*l1*l2*Math.cos(after));
         const horizontal=new T.Vector3(ref.wrist.x-shoulder.x,0,ref.wrist.z-shoulder.z);
         const landing=horizontal.clone().setY(-Math.sqrt(Math.max(.000001,reach*reach-horizontal.lengthSq()))).normalize();
-        const alignment=smooth((phase-win.alignStart)/(win.straight-win.alignStart));
+        const alignment=distributed((phase-win.alignStart)/(win.straight-win.alignStart));
         const raySwing=new T.Quaternion().setFromUnitVectors(ray,landing);
         const direction=ray.clone().applyQuaternion(new T.Quaternion().slerp(raySwing,alignment));
         // One continuous landing alignment acts on the complete extended chain.

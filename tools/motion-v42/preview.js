@@ -4,12 +4,12 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r10-20261015/';
-const previousOutput = 'output/flare-v42-r9-20261015/';
+const output = 'output/flare-v42-r11-20261015/';
+const previousOutput = 'output/flare-v42-r10-20261015/';
 const firstOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
-const state = { ready: false, playing: false, phase: .472, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
+const state = { ready: false, playing: false, phase: .43, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
 const panels = [];
 const loader = new GLTFLoader();
 let trailsVisible = false;
@@ -118,8 +118,8 @@ try {
 function setPlaying(value) { state.playing = value; play.textContent = value ? '暂停对照' : '播放对照'; }
 play.onclick = () => setPlaying(!state.playing);
 document.getElementById('reset').onclick = () => { setPlaying(false); seek(0); };
-document.getElementById('leftReach').onclick = () => { setPlaying(false); seek(.472); };
-document.getElementById('rightReach').onclick = () => { setPlaying(false); seek(.95); };
+document.getElementById('leftReach').onclick = () => { setPlaying(false); seek(.43); };
+document.getElementById('rightReach').onclick = () => { setPlaying(false); seek(.90); };
 slider.oninput = () => { setPlaying(false); seek(Number(slider.value) / 100); };
 document.getElementById('duration').onchange = e => state.duration = Number(e.target.value);
 document.getElementById('view').onchange = e => setView(e.target.value);
@@ -127,7 +127,7 @@ document.getElementById('body').onchange = e => { state.body = e.target.value; s
 document.getElementById('trails').onchange = e => { trailsVisible = e.target.checked; seek(state.phase); };
 document.getElementById('comparison').onchange = e => {
   state.comparison = e.target.value;
-  document.getElementById('leftTitle').textContent = {previous:'上一版 R9',r1:'首版 R1',v41:'v41 原版'}[state.comparison];
+  document.getElementById('leftTitle').textContent = {previous:'上一版 R10',r1:'首版 R1',v41:'v41 原版'}[state.comparison];
   document.getElementById('leftTag').textContent = state.comparison === 'v41' ? '原动作 · 对齐阶段' : '保留旧版 · 同阶段对照';
   seek(state.phase);
 };
