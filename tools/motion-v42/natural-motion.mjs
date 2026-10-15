@@ -14,7 +14,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-1',
+  revision: 'v42-candidate-2-soft-recovery',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,
@@ -23,8 +23,8 @@ export const NATURAL_FLARE_DEFAULTS = Object.freeze({
   headYawDegrees: 7,
   headPitchDegrees: 4,
   headCounterRollDegrees: 5,
-  armRecovery: 0.21,
-  armPoleBlend: 0.72,
+  armRecovery: 0.035,
+  armPoleBlend: 0.18,
   releaseHeight: 0.035,
   fullRecoveryHeight: 0.20,
   rhythmAmount: 0.012,
@@ -85,6 +85,33 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     base.update(clockAtPhase(i / settings.sampleCount));
     const metrics = base.getMetrics();
     samples.push({ pose: base.capturePose(), joints: metrics.joints });
+  }
+
+  // Follow each hand's own release/landing window instead of imposing the same
+  // whole-cycle flexion beat on both arms. Crossings interpolate the sampled
+  // palm height, and wrapping windows remain continuous at the loop boundary.
+  const recoveryWindows = Object.fromEntries(SIDES.map(side => {
+    const heights = samples.map(s => s.joints[side + 'Palm'][1]);
+    const n = heights.length, windows = [];
+    for (let i = 0; i < n; i++) {
+      const next = (i + 1) % n;
+      if (heights[i] > settings.releaseHeight || heights[next] <= settings.releaseHeight) continue;
+      const start = (i + (settings.releaseHeight - heights[i]) / (heights[next] - heights[i])) / n;
+      let j = i + 1;
+      while (j < i + n && heights[(j + 1) % n] > settings.releaseHeight) j++;
+      const a = heights[j % n], b = heights[(j + 1) % n];
+      const end = (j + (settings.releaseHeight - a) / (b - a)) / n;
+      windows.push({ start: wrap(start), span: end - start });
+    }
+    if (!windows.length) throw new Error(`No supported release/landing window for ${side} hand.`);
+    return [side, windows];
+  }));
+  function recoveryAt(side, phase) {
+    for (const window of recoveryWindows[side]) {
+      const u = wrap(phase - window.start) / window.span;
+      if (u < 1) return Math.sin(Math.PI * u) ** 2;
+    }
+    return 0;
   }
 
   function sample(phase) {
@@ -160,10 +187,10 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
       const oldPalm = V(source.joints[side + 'Palm']);
       const free = smooth((oldPalm.y - settings.releaseHeight) / (settings.fullRecoveryHeight - settings.releaseHeight));
       flight[side] = free;
-      // Recovery is an arc, not a held elbow angle: draw in during the side
-      // pass, then extend progressively toward the next support. The height
-      // envelope still ensures exactly zero edit around palm contact.
-      const recoveryAmount = free * (0.4 + 0.6 * Math.sin(theta) ** 2);
+      // A shallow, uninterrupted release-to-landing arc softens the elbow;
+      // 3.5% peak reach reduction avoids an explicit folded-arm pose. The
+      // height envelope still gives exactly zero edit near palm contact.
+      const recoveryAmount = free * recoveryAt(side, sourcePhase);
       recovery[side] = recoveryAmount;
       const originalUpper = upperOffset(landmarks[side + 'Shoulder'], body, previousTorso).add(pelvis);
       const newUpper = upperOffset(landmarks[side + 'Shoulder'], body, torso).add(pelvis);
@@ -188,7 +215,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
       const outward = new THREE.Vector3(sign, -0.25, -0.65).normalize().applyQuaternion(upper);
       const naturalPole = shoulder.clone().addScaledVector(outward, 0.55);
       const oldPole = V(limb.elbowPole).add(shoulder.clone().sub(oldShoulder));
-      limb.elbowPole = oldPole.lerp(naturalPole, free * settings.armPoleBlend).toArray();
+      limb.elbowPole = oldPole.lerp(naturalPole, recoveryAmount * settings.armPoleBlend).toArray();
       const handDelta = new THREE.Quaternion().slerp(rotationDelta, free * 0.65);
       limb.handQuaternion = handDelta.multiply(Q(limb.handQuaternion)).normalize().toArray();
     }

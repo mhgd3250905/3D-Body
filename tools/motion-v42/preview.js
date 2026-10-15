@@ -4,10 +4,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-20261015/';
+const output = 'output/flare-v42-r2-20261015/';
+const previousOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');
-const state = { ready: false, playing: false, phase: .25, duration: 2.7, body: 'training', frames: 0 };
+const state = { ready: false, playing: false, phase: .25, duration: 2.7, body: 'training', comparison: 'previous', frames: 0 };
 const panels = [];
 const loader = new GLTFLoader();
 let syncing = false;
@@ -60,6 +61,13 @@ const [clock, baselineClock] = await Promise.all([
   fetch(asset(output + 'comparison-clock.json')).then(r => r.json()),
   fetch(asset('app/scene/src/v41-clock.json')).then(r => r.json()),
 ]);
+if (!clock.previousAvailable) {
+  state.comparison = 'v41';
+  const select = document.getElementById('comparison'); select.value = 'v41';
+  select.querySelector('[value="previous"]').disabled = true;
+  document.getElementById('leftTitle').textContent = 'v41 原版';
+  document.getElementById('leftTag').textContent = '原动作 · 对齐阶段';
+}
 const sample = (xs, ys, x) => {
   let low = 0, high = xs.length - 1;
   while (high - low > 1) { const mid = (low + high) >> 1; if (xs[mid] > x) high = mid; else low = mid; }
@@ -73,24 +81,24 @@ function seek(phase) {
   for (let i = 0; i < panels.length; i++) {
     const p = panels[i];
     for (const [kind, entry] of Object.entries(p.entries)) {
-      entry.model.visible = kind === state.body;
+      entry.model.visible = kind === (i === 0 ? state.comparison + '-' + state.body : state.body);
       if (!entry.model.visible) continue;
       entry.action.enabled = true; entry.action.paused = false;
-      entry.mixer.setTime(i === 0 ? oldTime : phase * entry.clip.duration);
+      entry.mixer.setTime(i === 0 && state.comparison === 'v41' ? oldTime : phase * entry.clip.duration);
       entry.model.updateMatrixWorld(true);
     }
   }
   slider.value = phase * 100; pct.textContent = (phase * 100).toFixed(1) + '%';
 }
 try {
-  await Promise.all(panels.flatMap((panel, i) => ['training', 'coach'].map(async kind => {
-    const source = i === 0 ? `app/scene/source/coach/${kind === 'training' ? 'flare-coach-v41-training-human-collarfix-20261013.glb' : 'flare-coach-v41-animated.glb'}` : `${output}flare-${kind}-v42-candidate.glb`;
+  await Promise.all(panels.flatMap((panel, i) => (i === 0 ? (clock.previousAvailable ? ['previous','v41'] : ['v41']) : ['current']).flatMap(version => ['training', 'coach'].map(async kind => {
+    const source = version === 'v41' ? `app/scene/source/coach/${kind === 'training' ? 'flare-coach-v41-training-human-collarfix-20261013.glb' : 'flare-coach-v41-animated.glb'}` : `${version === 'previous' ? previousOutput : output}flare-${kind}-v42-candidate.glb`;
     const gltf = await loader.loadAsync(asset(source));
     gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; } });
     const clip = gltf.animations[0], mixer = new THREE.AnimationMixer(gltf.scene), action = mixer.clipAction(clip);
     action.setLoop(THREE.LoopOnce, 1); action.clampWhenFinished = true; action.play();
-    panel.entries[kind] = { model: gltf.scene, mixer, clip, action }; panel.scene.add(gltf.scene);
-  })));
+    panel.entries[i === 0 ? version + '-' + kind : kind] = { model: gltf.scene, mixer, clip, action, source }; panel.scene.add(gltf.scene);
+  }))));
   state.ready = true; play.disabled = false; status.textContent = '已加载 · 两边同步阶段与视角'; seek(state.phase);
 } catch (error) { status.textContent = '加载失败：' + error.message; console.error(error); }
 function setPlaying(value) { state.playing = value; play.textContent = value ? '暂停对照' : '播放对照'; }
@@ -100,6 +108,12 @@ slider.oninput = () => { setPlaying(false); seek(Number(slider.value) / 100); };
 document.getElementById('duration').onchange = e => state.duration = Number(e.target.value);
 document.getElementById('view').onchange = e => setView(e.target.value);
 document.getElementById('body').onchange = e => { state.body = e.target.value; seek(state.phase); };
+document.getElementById('comparison').onchange = e => {
+  state.comparison = e.target.value;
+  document.getElementById('leftTitle').textContent = state.comparison === 'previous' ? '上一版 v42' : 'v41 原版';
+  document.getElementById('leftTag').textContent = state.comparison === 'previous' ? '保留旧版 · 同阶段对照' : '原动作 · 对齐阶段';
+  seek(state.phase);
+};
 let last = performance.now();
 function render(now) {
   const dt = Math.min((now - last) / 1000, .08); last = now;
@@ -110,4 +124,5 @@ function render(now) {
 requestAnimationFrame(render);
 window.__v42 = { state, seek: phase => { setPlaying(false); seek(phase); }, setView, setPlaying, panels,
   snapshot: () => ({ ...state, cameras: panels.map(p => p.camera.position.toArray()),
-    current: panels.map(p => ({ clip: p.entries[state.body]?.clip.name, time: p.entries[state.body]?.action.time })) }) };
+    current: panels.map((p,i) => { const entry = p.entries[i === 0 ? state.comparison + '-' + state.body : state.body];
+      return { clip: entry?.clip.name, time: entry?.action.time, source: entry?.source }; }) }) };
