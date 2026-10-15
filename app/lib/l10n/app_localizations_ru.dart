@@ -916,4 +916,160 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get wristExtension => 'Разгибание запястья';
+
+  @override
+  String get plans => 'Планы';
+
+  @override
+  String get plansHint => 'Готовые комплексы и ваши';
+
+  @override
+  String get plansReady => 'Готовые комплексы';
+
+  @override
+  String get plansMine => 'Мои планы';
+
+  @override
+  String get planNew => 'Новый план';
+
+  @override
+  String get planNewHint =>
+      'Соберите любимые упражнения и запускайте одним касанием';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count упражн. · около $minutes мин';
+  }
+
+  @override
+  String get planStart => 'Начать';
+
+  @override
+  String get planSaveAsMine => 'Сохранить как мой план';
+
+  @override
+  String get planSaved => 'Сохранено в «Мои планы»';
+
+  @override
+  String get planEdit => 'Изменить';
+
+  @override
+  String get planDelete => 'Удалить план';
+
+  @override
+  String get planDeleted => 'План удалён';
+
+  @override
+  String get planNameHint => 'Название плана';
+
+  @override
+  String get planDefaultName => 'Моя тренировка';
+
+  @override
+  String get planAddDrills => 'Добавить упражнения';
+
+  @override
+  String get planEmptyDrills => 'Упражнений пока нет. Добавьте несколько';
+
+  @override
+  String get planSave => 'Сохранить';
+
+  @override
+  String get planAddTo => 'Добавить в план';
+
+  @override
+  String planAddedTo(String name) {
+    return 'Добавлено в «$name»';
+  }
+
+  @override
+  String get planNewWith => 'Новый план с этим упражнением';
+
+  @override
+  String get planNext => 'Далее';
+
+  @override
+  String planStartDrill(String name) {
+    return 'Начать: $name';
+  }
+
+  @override
+  String get planSkip => 'Пропустить';
+
+  @override
+  String get planFinish => 'Завершить тренировку';
+
+  @override
+  String get planAllDone => 'Комплекс выполнен';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return 'Выполнено $done из $total';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index из $total';
+  }
+
+  @override
+  String get pickerTitle => 'Выбор упражнений';
+
+  @override
+  String pickerSelected(int count) {
+    return 'Выбрано: $count';
+  }
+
+  @override
+  String get planReorderHint => 'Перетащите за ручку, чтобы изменить порядок';
+
+  @override
+  String get planRemoveDrill => 'Убрать из плана';
+
+  @override
+  String get presetWarmup => 'Разминка';
+
+  @override
+  String get presetWarmupLine =>
+      'Разбудите запястья и лопатки перед каждой тренировкой';
+
+  @override
+  String get presetSupport => 'Опора на руки';
+
+  @override
+  String get presetSupportLine => 'Держите пол, оставайтесь стабильны';
+
+  @override
+  String get presetCore => 'Складка корпуса';
+
+  @override
+  String get presetCoreLine => 'Поднимите таз, подтяните ноги';
+
+  @override
+  String get presetLegs => 'Круги ногами';
+
+  @override
+  String get presetLegsLine => 'Раскройте ноги и вращайте широко';
+
+  @override
+  String get presetSide => 'Боковая опора';
+
+  @override
+  String get presetSideLine =>
+      'Устойчивая боковая планка, плечо не проседает при смене';
+
+  @override
+  String get presetFlare => 'Вся цепь флэра';
+
+  @override
+  String get presetFlareLine =>
+      'Все основные группы мышц флэра за один комплекс';
+
+  @override
+  String get planUpNext => 'Далее';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count упражн.';
+  }
 }

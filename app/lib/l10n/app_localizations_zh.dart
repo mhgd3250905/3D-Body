@@ -888,6 +888,158 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get wristExtension => '腕伸';
+
+  @override
+  String get plans => '计划';
+
+  @override
+  String get plansHint => '成套训练与我的计划';
+
+  @override
+  String get plansReady => '成套训练';
+
+  @override
+  String get plansMine => '我的计划';
+
+  @override
+  String get planNew => '新建计划';
+
+  @override
+  String get planNewHint => '把常练的动作组合起来，下次一键开始';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count 个动作 · 约 $minutes 分钟';
+  }
+
+  @override
+  String get planStart => '开始训练';
+
+  @override
+  String get planSaveAsMine => '存为我的计划';
+
+  @override
+  String get planSaved => '已存到我的计划';
+
+  @override
+  String get planEdit => '编辑';
+
+  @override
+  String get planDelete => '删除计划';
+
+  @override
+  String get planDeleted => '已删除计划';
+
+  @override
+  String get planNameHint => '计划名称';
+
+  @override
+  String get planDefaultName => '我的训练';
+
+  @override
+  String get planAddDrills => '添加动作';
+
+  @override
+  String get planEmptyDrills => '还没有动作，先添加几个';
+
+  @override
+  String get planSave => '保存';
+
+  @override
+  String get planAddTo => '加入计划';
+
+  @override
+  String planAddedTo(String name) {
+    return '已加入「$name」';
+  }
+
+  @override
+  String get planNewWith => '新建计划并加入';
+
+  @override
+  String get planNext => '下一个';
+
+  @override
+  String planStartDrill(String name) {
+    return '开始：$name';
+  }
+
+  @override
+  String get planSkip => '跳过';
+
+  @override
+  String get planFinish => '结束训练';
+
+  @override
+  String get planAllDone => '这一套练完了';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '完成 $done / $total 个动作';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '第 $index / $total 个';
+  }
+
+  @override
+  String get pickerTitle => '选择动作';
+
+  @override
+  String pickerSelected(int count) {
+    return '已选 $count 个';
+  }
+
+  @override
+  String get planReorderHint => '拖动右侧把手调整顺序';
+
+  @override
+  String get planRemoveDrill => '移出计划';
+
+  @override
+  String get presetWarmup => '热身激活';
+
+  @override
+  String get presetWarmupLine => '手腕和肩胛先醒过来，每次练前做';
+
+  @override
+  String get presetSupport => '肩臂支撑';
+
+  @override
+  String get presetSupportLine => '撑得住、撑得稳';
+
+  @override
+  String get presetCore => '核心折叠';
+
+  @override
+  String get presetCoreLine => '髋抬得起，腿收得进';
+
+  @override
+  String get presetLegs => '腿部绕环';
+
+  @override
+  String get presetLegsLine => '腿打得开、甩得圆';
+
+  @override
+  String get presetSide => '侧撑换手';
+
+  @override
+  String get presetSideLine => '侧撑稳，换手不塌肩';
+
+  @override
+  String get presetFlare => '托马斯全链';
+
+  @override
+  String get presetFlareLine => '一次练到托马斯的主力肌群';
+
+  @override
+  String get planUpNext => '接下来';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count 个动作';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1775,4 +1927,156 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get wristExtension => '腕伸';
+
+  @override
+  String get plans => '計畫';
+
+  @override
+  String get plansHint => '成套訓練與我的計畫';
+
+  @override
+  String get plansReady => '成套訓練';
+
+  @override
+  String get plansMine => '我的計畫';
+
+  @override
+  String get planNew => '新增計畫';
+
+  @override
+  String get planNewHint => '把常練的動作組合起來，下次一鍵開始';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count 個動作 · 約 $minutes 分鐘';
+  }
+
+  @override
+  String get planStart => '開始訓練';
+
+  @override
+  String get planSaveAsMine => '存為我的計畫';
+
+  @override
+  String get planSaved => '已存到我的計畫';
+
+  @override
+  String get planEdit => '編輯';
+
+  @override
+  String get planDelete => '刪除計畫';
+
+  @override
+  String get planDeleted => '已刪除計畫';
+
+  @override
+  String get planNameHint => '計畫名稱';
+
+  @override
+  String get planDefaultName => '我的訓練';
+
+  @override
+  String get planAddDrills => '新增動作';
+
+  @override
+  String get planEmptyDrills => '還沒有動作，先新增幾個';
+
+  @override
+  String get planSave => '儲存';
+
+  @override
+  String get planAddTo => '加入計畫';
+
+  @override
+  String planAddedTo(String name) {
+    return '已加入「$name」';
+  }
+
+  @override
+  String get planNewWith => '新增計畫並加入';
+
+  @override
+  String get planNext => '下一個';
+
+  @override
+  String planStartDrill(String name) {
+    return '開始：$name';
+  }
+
+  @override
+  String get planSkip => '略過';
+
+  @override
+  String get planFinish => '結束訓練';
+
+  @override
+  String get planAllDone => '這一套練完了';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '完成 $done / $total 個動作';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '第 $index / $total 個';
+  }
+
+  @override
+  String get pickerTitle => '選擇動作';
+
+  @override
+  String pickerSelected(int count) {
+    return '已選 $count 個';
+  }
+
+  @override
+  String get planReorderHint => '拖動右側把手調整順序';
+
+  @override
+  String get planRemoveDrill => '移出計畫';
+
+  @override
+  String get presetWarmup => '熱身啟動';
+
+  @override
+  String get presetWarmupLine => '手腕和肩胛先醒過來，每次練前做';
+
+  @override
+  String get presetSupport => '肩臂支撐';
+
+  @override
+  String get presetSupportLine => '撐得住、撐得穩';
+
+  @override
+  String get presetCore => '核心摺疊';
+
+  @override
+  String get presetCoreLine => '髖抬得起，腿收得進';
+
+  @override
+  String get presetLegs => '腿部繞環';
+
+  @override
+  String get presetLegsLine => '腿打得開、甩得圓';
+
+  @override
+  String get presetSide => '側撐換手';
+
+  @override
+  String get presetSideLine => '側撐穩，換手不塌肩';
+
+  @override
+  String get presetFlare => '托馬斯全鏈';
+
+  @override
+  String get presetFlareLine => '一次練到托馬斯的主力肌群';
+
+  @override
+  String get planUpNext => '接下來';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count 個動作';
+  }
 }

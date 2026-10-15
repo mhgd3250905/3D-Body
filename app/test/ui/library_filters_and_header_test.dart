@@ -117,7 +117,6 @@ void main() {
         );
         await store.initialize();
         await store.updateSettings(tier: 'A');
-        await store.addToToday('chest-A');
         addTearDown(store.dispose);
         await tester.pumpWidget(
           testApp(
@@ -129,7 +128,6 @@ void main() {
                   store: store,
                   onBack: () {},
                   onDrill: (_) {},
-                  onRemove: (_) {},
                 ),
               ),
             ),
@@ -151,7 +149,8 @@ void main() {
           tester.getRect(find.byType(TextField)).top,
           greaterThanOrEqualTo(tester.getRect(find.byType(PageHeader)).bottom),
         );
-        expect(find.text('今日训练'), findsOneWidget);
+        // Saved sets live under Plans; the library is search and filters only.
+        expect(find.text('今日训练'), findsNothing);
         expect(
           tester.getRect(find.text('核心')).top,
           lessThan(tester.getRect(find.text('居家')).top),
@@ -202,7 +201,6 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('今日训练'), findsNothing);
         expect(find.byType(DrillTile), findsNothing);
-        expect(store.todayIds, ['chest-A']);
         _expectResults(
           tester,
           catalog,
@@ -245,7 +243,6 @@ void main() {
         );
         expect(find.text('今日训练'), findsNothing);
         expect(find.byType(DrillTile), findsNothing);
-        expect(store.todayIds, ['chest-A']);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       },

@@ -1788,6 +1788,282 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'腕伸'**
   String get wristExtension;
+
+  /// No description provided for @plans.
+  ///
+  /// In zh, this message translates to:
+  /// **'计划'**
+  String get plans;
+
+  /// No description provided for @plansHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'成套训练与我的计划'**
+  String get plansHint;
+
+  /// No description provided for @plansReady.
+  ///
+  /// In zh, this message translates to:
+  /// **'成套训练'**
+  String get plansReady;
+
+  /// No description provided for @plansMine.
+  ///
+  /// In zh, this message translates to:
+  /// **'我的计划'**
+  String get plansMine;
+
+  /// No description provided for @planNew.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建计划'**
+  String get planNew;
+
+  /// No description provided for @planNewHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'把常练的动作组合起来，下次一键开始'**
+  String get planNewHint;
+
+  /// No description provided for @planMeta.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个动作 · 约 {minutes} 分钟'**
+  String planMeta(int count, int minutes);
+
+  /// No description provided for @planStart.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始训练'**
+  String get planStart;
+
+  /// No description provided for @planSaveAsMine.
+  ///
+  /// In zh, this message translates to:
+  /// **'存为我的计划'**
+  String get planSaveAsMine;
+
+  /// No description provided for @planSaved.
+  ///
+  /// In zh, this message translates to:
+  /// **'已存到我的计划'**
+  String get planSaved;
+
+  /// No description provided for @planEdit.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑'**
+  String get planEdit;
+
+  /// No description provided for @planDelete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除计划'**
+  String get planDelete;
+
+  /// No description provided for @planDeleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已删除计划'**
+  String get planDeleted;
+
+  /// No description provided for @planNameHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'计划名称'**
+  String get planNameHint;
+
+  /// No description provided for @planDefaultName.
+  ///
+  /// In zh, this message translates to:
+  /// **'我的训练'**
+  String get planDefaultName;
+
+  /// No description provided for @planAddDrills.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加动作'**
+  String get planAddDrills;
+
+  /// No description provided for @planEmptyDrills.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有动作，先添加几个'**
+  String get planEmptyDrills;
+
+  /// No description provided for @planSave.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get planSave;
+
+  /// No description provided for @planAddTo.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入计划'**
+  String get planAddTo;
+
+  /// No description provided for @planAddedTo.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加入「{name}」'**
+  String planAddedTo(String name);
+
+  /// No description provided for @planNewWith.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建计划并加入'**
+  String get planNewWith;
+
+  /// No description provided for @planNext.
+  ///
+  /// In zh, this message translates to:
+  /// **'下一个'**
+  String get planNext;
+
+  /// No description provided for @planStartDrill.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始：{name}'**
+  String planStartDrill(String name);
+
+  /// No description provided for @planSkip.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过'**
+  String get planSkip;
+
+  /// No description provided for @planFinish.
+  ///
+  /// In zh, this message translates to:
+  /// **'结束训练'**
+  String get planFinish;
+
+  /// No description provided for @planAllDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'这一套练完了'**
+  String get planAllDone;
+
+  /// No description provided for @planAllDoneLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成 {done} / {total} 个动作'**
+  String planAllDoneLine(int done, int total);
+
+  /// No description provided for @planOf.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {index} / {total} 个'**
+  String planOf(int index, int total);
+
+  /// No description provided for @pickerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择动作'**
+  String get pickerTitle;
+
+  /// No description provided for @pickerSelected.
+  ///
+  /// In zh, this message translates to:
+  /// **'已选 {count} 个'**
+  String pickerSelected(int count);
+
+  /// No description provided for @planReorderHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'拖动右侧把手调整顺序'**
+  String get planReorderHint;
+
+  /// No description provided for @planRemoveDrill.
+  ///
+  /// In zh, this message translates to:
+  /// **'移出计划'**
+  String get planRemoveDrill;
+
+  /// No description provided for @presetWarmup.
+  ///
+  /// In zh, this message translates to:
+  /// **'热身激活'**
+  String get presetWarmup;
+
+  /// No description provided for @presetWarmupLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'手腕和肩胛先醒过来，每次练前做'**
+  String get presetWarmupLine;
+
+  /// No description provided for @presetSupport.
+  ///
+  /// In zh, this message translates to:
+  /// **'肩臂支撑'**
+  String get presetSupport;
+
+  /// No description provided for @presetSupportLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'撑得住、撑得稳'**
+  String get presetSupportLine;
+
+  /// No description provided for @presetCore.
+  ///
+  /// In zh, this message translates to:
+  /// **'核心折叠'**
+  String get presetCore;
+
+  /// No description provided for @presetCoreLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'髋抬得起，腿收得进'**
+  String get presetCoreLine;
+
+  /// No description provided for @presetLegs.
+  ///
+  /// In zh, this message translates to:
+  /// **'腿部绕环'**
+  String get presetLegs;
+
+  /// No description provided for @presetLegsLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'腿打得开、甩得圆'**
+  String get presetLegsLine;
+
+  /// No description provided for @presetSide.
+  ///
+  /// In zh, this message translates to:
+  /// **'侧撑换手'**
+  String get presetSide;
+
+  /// No description provided for @presetSideLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'侧撑稳，换手不塌肩'**
+  String get presetSideLine;
+
+  /// No description provided for @presetFlare.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯全链'**
+  String get presetFlare;
+
+  /// No description provided for @presetFlareLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'一次练到托马斯的主力肌群'**
+  String get presetFlareLine;
+
+  /// No description provided for @planUpNext.
+  ///
+  /// In zh, this message translates to:
+  /// **'接下来'**
+  String get planUpNext;
+
+  /// No description provided for @planDrillCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个动作'**
+  String planDrillCount(int count);
 }
 
 class _AppLocalizationsDelegate

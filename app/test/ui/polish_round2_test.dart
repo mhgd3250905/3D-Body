@@ -2,6 +2,7 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,8 +108,7 @@ void main() {
           group: catalog.groupById(drill.groupId),
           onBack: () {},
           onStart: () {},
-          onAdd: () {},
-          added: false,
+          onAddToPlan: () {},
         ),
       ),
     );
@@ -139,27 +139,47 @@ void main() {
       addTearDown(store.dispose);
       final drill = catalog.drills.first;
       final pages = <Widget>[
-        AssessmentPage(
-          initialGrades: const {},
-          onSave: (_) async {},
-          onSkip: () async {},
-          onBack: () {},
-        ),
         DrillDetailPage(
           drill: drill,
           group: catalog.groupById(drill.groupId),
           onBack: () {},
           onStart: () {},
-          onAdd: () {},
-          added: true,
+          onAddToPlan: () {},
         ),
-        PathPage(
+        PlansPage(
           catalog: catalog,
           store: store,
-          onLesson: (_) {},
-          onGate: (_, _) {},
-          onAssessment: () {},
+          onPreset: (_) {},
+          onRoutine: (_) {},
+          onNewRoutine: () {},
           onBack: () {},
+        ),
+        PlanDetailPage(
+          title: '托马斯全链',
+          line: '一次练到托马斯的主力肌群',
+          drills: PresetPlan.all.last.drills(catalog, 'A'),
+          store: store,
+          onBack: () {},
+          onStart: () {},
+          onDrill: (_) {},
+          onSaveAsMine: () {},
+        ),
+        RoutineEditorPage(
+          catalog: catalog,
+          store: store,
+          seedDrillIds: const ['abs-A', 'deltoids-A'],
+          onBack: () {},
+          onSaved: (_) {},
+        ),
+        PlanRunPage(
+          title: '托马斯全链',
+          drills: PresetPlan.all.last.drills(catalog, 'A'),
+          done: const {0},
+          index: 1,
+          onStart: () {},
+          onSelect: (_) {},
+          onSkip: () {},
+          onFinish: () {},
         ),
         ProgressPage(
           catalog: catalog,
@@ -171,7 +191,6 @@ void main() {
           catalog: catalog,
           store: store,
           onDrill: (_) {},
-          onRemove: (_) {},
           onBack: () {},
         ),
       ];

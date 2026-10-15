@@ -7,10 +7,12 @@ import '../data/catalog.dart';
 import '../data/local_state_storage.dart';
 import '../domain/learning_settings.dart';
 import '../domain/training_session.dart';
+import '../domain/training_plan.dart';
 
 export '../data/local_state_storage.dart';
 export '../domain/learning_settings.dart';
 export '../domain/training_session.dart';
+export '../domain/training_plan.dart';
 
 /// App progress is a local, user-confirmed learning record. It never infers
 /// proficiency, diagnoses pain, or converts an illustration into an assessment.
@@ -38,6 +40,7 @@ class LearningStore extends ChangeNotifier {
   double _lastTime = 0;
   String _todayDate = '';
   List<String> _todayIds = [];
+  List<TrainingRoutine> _routines = [];
   List<TrainingSession> _sessions = [];
   Set<String> _completedLessonIds = {};
   Map<String, bool> _gateReports = {};
@@ -56,6 +59,9 @@ class LearningStore extends ChangeNotifier {
   List<String> get todayIds =>
       List.unmodifiable(_todayDate == _today ? _todayIds : <String>[]);
   List<TrainingSession> get sessions => List.unmodifiable(_sessions);
+  List<TrainingRoutine> get routines => List.unmodifiable(_routines);
+  TrainingRoutine? routineById(String id) =>
+      _routines.where((routine) => routine.id == id).firstOrNull;
   Set<String> get completedLessonIds => Set.unmodifiable(_completedLessonIds);
   Map<String, bool> get gateReports => Map.unmodifiable(_gateReports);
   Map<String, int> get assessmentGrades => Map.unmodifiable(_assessmentGrades);
@@ -192,6 +198,21 @@ class LearningStore extends ChangeNotifier {
     final gates = Map<String, bool>.from(json['gateReports'] as Map);
     final grades = Map<String, int>.from(json['assessmentGrades'] as Map);
     final startStage = json['startStage'] as int;
+    // Saved sets arrived after version 1; older states simply have none.
+    // A set whose drills left the catalog keeps the drills that remain.
+    final routines = <TrainingRoutine>[
+      for (final value in (json['routines'] as List? ?? const []))
+        TrainingRoutine.fromJson(Map<String, dynamic>.from(value as Map)),
+    ];
+    final keptRoutines = [
+      for (final routine in routines)
+        routine.copyWith(
+          drillIds: [
+            for (final id in routine.drillIds)
+              if (catalog.drillById(id) != null) id,
+          ],
+        ),
+    ].where((routine) => routine.valid).toList();
     final parsedDate = DateTime.tryParse('${todayDate}T12:00:00');
     if (!settings.valid ||
         !lastTime.isFinite ||
@@ -223,6 +244,7 @@ class LearningStore extends ChangeNotifier {
     _gateReports = gates;
     _assessmentGrades = grades;
     _startStage = startStage;
+    _routines = keptRoutines;
     _preservedRoot = json;
   }
 
@@ -241,6 +263,7 @@ class LearningStore extends ChangeNotifier {
     'gateReports': _gateReports,
     'assessmentGrades': _assessmentGrades,
     'startStage': _startStage,
+    'routines': _routines.map((routine) => routine.toJson()).toList(),
   };
 
   void _ensureInitialized() {
@@ -340,6 +363,67 @@ class LearningStore extends ChangeNotifier {
     _ensureInitialized();
     _ensureToday();
     _todayIds.remove(drillId);
+    return _persist();
+  }
+
+  /// Saves a new set and returns it, or null when nothing valid was given.
+  Future<TrainingRoutine?> createRoutine(
+    String name,
+    List<String> drillIds,
+  ) async {
+    _ensureInitialized();
+    final routine = TrainingRoutine(
+      id: 'r${_now().microsecondsSinceEpoch}',
+      name: name.trim(),
+      drillIds: drillIds.where((id) => catalog.drillById(id) != null).toList(),
+    );
+    if (!routine.valid) throw ArgumentError('Invalid training routine');
+    _routines = [..._routines, routine];
+    await _persist();
+    return routine;
+  }
+
+  Future<bool> updateRoutine(
+    String id, {
+    String? name,
+    List<String>? drillIds,
+  }) {
+    _ensureInitialized();
+    final index = _routines.indexWhere((routine) => routine.id == id);
+    if (index < 0) throw ArgumentError.value(id, 'id');
+    final next = _routines[index].copyWith(
+      name: name?.trim(),
+      drillIds: drillIds
+          ?.where((drillId) => catalog.drillById(drillId) != null)
+          .toList(),
+    );
+    if (!next.valid) throw ArgumentError('Invalid training routine');
+    _routines = [..._routines]..[index] = next;
+    return _persist();
+  }
+
+  /// Adds one drill to the end of a set; already present is a no-op.
+  Future<bool> addToRoutine(String id, String drillId) {
+    final routine = routineById(id);
+    if (routine == null) throw ArgumentError.value(id, 'id');
+    if (routine.drillIds.contains(drillId)) return Future.value(true);
+    return updateRoutine(id, drillIds: [...routine.drillIds, drillId]);
+  }
+
+  Future<bool> deleteRoutine(String id) {
+    _ensureInitialized();
+    _routines = _routines.where((routine) => routine.id != id).toList();
+    return _persist();
+  }
+
+  /// Puts a deleted set back where it was (undo).
+  Future<bool> restoreRoutine(TrainingRoutine routine, int index) {
+    _ensureInitialized();
+    if (!routine.valid || routineById(routine.id) != null) {
+      return Future.value(false);
+    }
+    _routines = [..._routines]
+      ..insert(index.clamp(0, _routines.length), routine);
     return _persist();
   }
 

@@ -918,4 +918,160 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get wristExtension => 'Ekstensi pergelangan tangan';
+
+  @override
+  String get plans => 'Rencana';
+
+  @override
+  String get plansHint => 'Set siap pakai dan milikmu';
+
+  @override
+  String get plansReady => 'Set siap pakai';
+
+  @override
+  String get plansMine => 'Rencanaku';
+
+  @override
+  String get planNew => 'Rencana baru';
+
+  @override
+  String get planNewHint =>
+      'Gabungkan latihan yang sering kamu ulang dan mulai dengan satu ketuk';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count latihan · sekitar $minutes mnt';
+  }
+
+  @override
+  String get planStart => 'Mulai';
+
+  @override
+  String get planSaveAsMine => 'Simpan sebagai rencanaku';
+
+  @override
+  String get planSaved => 'Tersimpan di Rencanaku';
+
+  @override
+  String get planEdit => 'Edit';
+
+  @override
+  String get planDelete => 'Hapus rencana';
+
+  @override
+  String get planDeleted => 'Rencana dihapus';
+
+  @override
+  String get planNameHint => 'Nama rencana';
+
+  @override
+  String get planDefaultName => 'Sesiku';
+
+  @override
+  String get planAddDrills => 'Tambah latihan';
+
+  @override
+  String get planEmptyDrills => 'Belum ada latihan. Tambahkan beberapa';
+
+  @override
+  String get planSave => 'Simpan';
+
+  @override
+  String get planAddTo => 'Tambah ke rencana';
+
+  @override
+  String planAddedTo(String name) {
+    return 'Ditambahkan ke “$name”';
+  }
+
+  @override
+  String get planNewWith => 'Rencana baru dengan latihan ini';
+
+  @override
+  String get planNext => 'Berikutnya';
+
+  @override
+  String planStartDrill(String name) {
+    return 'Mulai: $name';
+  }
+
+  @override
+  String get planSkip => 'Lewati';
+
+  @override
+  String get planFinish => 'Akhiri sesi';
+
+  @override
+  String get planAllDone => 'Set selesai';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$done dari $total latihan selesai';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index dari $total';
+  }
+
+  @override
+  String get pickerTitle => 'Pilih latihan';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count dipilih';
+  }
+
+  @override
+  String get planReorderHint => 'Seret pegangan untuk mengurutkan';
+
+  @override
+  String get planRemoveDrill => 'Hapus dari rencana';
+
+  @override
+  String get presetWarmup => 'Pemanasan';
+
+  @override
+  String get presetWarmupLine =>
+      'Bangunkan pergelangan dan tulang belikat sebelum setiap sesi';
+
+  @override
+  String get presetSupport => 'Topangan lengan';
+
+  @override
+  String get presetSupportLine => 'Tahan lantai, tetap stabil';
+
+  @override
+  String get presetCore => 'Kompresi inti';
+
+  @override
+  String get presetCoreLine => 'Angkat pinggul, lipat kaki ke dalam';
+
+  @override
+  String get presetLegs => 'Putaran kaki';
+
+  @override
+  String get presetLegsLine => 'Buka kaki, putar lebar';
+
+  @override
+  String get presetSide => 'Topangan samping';
+
+  @override
+  String get presetSideLine =>
+      'Plank samping stabil, bahu tak turun saat berganti';
+
+  @override
+  String get presetFlare => 'Rantai flare lengkap';
+
+  @override
+  String get presetFlareLine =>
+      'Semua kelompok otot utama flare dalam satu set';
+
+  @override
+  String get planUpNext => 'Selanjutnya';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count latihan';
+  }
 }

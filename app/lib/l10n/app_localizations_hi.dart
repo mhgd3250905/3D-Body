@@ -912,4 +912,158 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get wristExtension => 'कलाई का विस्तार';
+
+  @override
+  String get plans => 'प्लान';
+
+  @override
+  String get plansHint => 'तैयार सेट और आपके अपने';
+
+  @override
+  String get plansReady => 'तैयार सेट';
+
+  @override
+  String get plansMine => 'मेरे प्लान';
+
+  @override
+  String get planNew => 'नया प्लान';
+
+  @override
+  String get planNewHint =>
+      'बार-बार किए जाने वाले अभ्यास जोड़ें और एक टैप में शुरू करें';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count अभ्यास · लगभग $minutes मिनट';
+  }
+
+  @override
+  String get planStart => 'शुरू करें';
+
+  @override
+  String get planSaveAsMine => 'मेरे प्लान में सहेजें';
+
+  @override
+  String get planSaved => 'मेरे प्लान में सहेजा गया';
+
+  @override
+  String get planEdit => 'संपादित करें';
+
+  @override
+  String get planDelete => 'प्लान हटाएँ';
+
+  @override
+  String get planDeleted => 'प्लान हटाया गया';
+
+  @override
+  String get planNameHint => 'प्लान का नाम';
+
+  @override
+  String get planDefaultName => 'मेरा सत्र';
+
+  @override
+  String get planAddDrills => 'अभ्यास जोड़ें';
+
+  @override
+  String get planEmptyDrills => 'अभी कोई अभ्यास नहीं। कुछ जोड़ें';
+
+  @override
+  String get planSave => 'सहेजें';
+
+  @override
+  String get planAddTo => 'प्लान में जोड़ें';
+
+  @override
+  String planAddedTo(String name) {
+    return '“$name” में जोड़ा गया';
+  }
+
+  @override
+  String get planNewWith => 'इस अभ्यास के साथ नया प्लान';
+
+  @override
+  String get planNext => 'अगला';
+
+  @override
+  String planStartDrill(String name) {
+    return 'शुरू: $name';
+  }
+
+  @override
+  String get planSkip => 'छोड़ें';
+
+  @override
+  String get planFinish => 'सत्र समाप्त करें';
+
+  @override
+  String get planAllDone => 'सेट पूरा हुआ';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$total में से $done अभ्यास पूरे';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$total में $index';
+  }
+
+  @override
+  String get pickerTitle => 'अभ्यास चुनें';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count चुने गए';
+  }
+
+  @override
+  String get planReorderHint => 'क्रम बदलने के लिए हैंडल खींचें';
+
+  @override
+  String get planRemoveDrill => 'प्लान से हटाएँ';
+
+  @override
+  String get presetWarmup => 'वार्म-अप';
+
+  @override
+  String get presetWarmupLine =>
+      'हर सत्र से पहले कलाई और कंधे की हड्डियाँ जगाएँ';
+
+  @override
+  String get presetSupport => 'हाथों का सहारा';
+
+  @override
+  String get presetSupportLine => 'ज़मीन थामें, स्थिर रहें';
+
+  @override
+  String get presetCore => 'कोर कम्प्रेशन';
+
+  @override
+  String get presetCoreLine => 'कूल्हे उठाएँ, पैर अंदर मोड़ें';
+
+  @override
+  String get presetLegs => 'पैरों के घेरे';
+
+  @override
+  String get presetLegsLine => 'पैर खोलें, बड़े घेरे घुमाएँ';
+
+  @override
+  String get presetSide => 'साइड सपोर्ट';
+
+  @override
+  String get presetSideLine => 'स्थिर साइड प्लैंक, बदलते समय कंधा न झुके';
+
+  @override
+  String get presetFlare => 'पूरी फ्लेयर चेन';
+
+  @override
+  String get presetFlareLine => 'फ्लेयर के सभी मुख्य मांसपेशी समूह एक सेट में';
+
+  @override
+  String get planUpNext => 'आगे';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count अभ्यास';
+  }
 }
