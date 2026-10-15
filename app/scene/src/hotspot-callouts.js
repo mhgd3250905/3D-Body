@@ -163,7 +163,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       if (!moving) record.card.position.copy(position);
       // Continue the tail of a camera-driven movement while paused. Re-target
       // from the current position; do not restart a tween or fade its name.
-      if (moving && moveFrame == null) moveFrame = requestAnimationFrame(() => { moveFrame = null; player.dirty = true; player.start(); });
+      if (moving && moveFrame == null) moveFrame = requestAnimationFrame(() => {
+        // Labels are not shadow casters: redraw without invalidating the pose.
+        moveFrame = null; if (player.requestRedraw) player.requestRedraw(); else player.dirty = true; player.start();
+      });
       // Plan the other labels against settled slots, not this frame's moving
       // cards, to avoid a cycle of labels chasing each other's animation.
       placed.push(cardRect(position, record.card.scale));

@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createBakedMotion } from './baked-motion.js';
 import { loadOfflineGlb } from './assets.js';
 import { renderQuality } from './render-quality.js';
+import { createAdaptiveResolution, adaptiveEnabled } from './adaptive-resolution.js';
 import { applyCharacter, characterAsset } from './characters.js';
 
 export const CAMERA_PRESETS = {
@@ -21,9 +22,16 @@ export class FlarePlayer {
     // a camera move, never a WebView resize.
     this.viewInset = 0; this.viewInsetTarget = 0;
     this.time = 0; this.period = 9; this.playing = false; this.speed = 0.5; this.loopRange = null;
-    this.visible = true; this.disposed = false; this.contextLost = false; this.dirty = true;
+    this.visible = true; this.disposed = false; this.contextLost = false; this.sceneDirty = false; this.dirty = true;
     this.framingMode = 'main';
     this.loopBounds = new THREE.Box3(); this.stageProps = [];
+    // Moving frames draw at a lower density; still frames at the quality's
+    // full density. ?adaptive=0 keeps the fixed-density renderer.
+    this.adaptive = createAdaptiveResolution({ enabled: adaptiveEnabled(location.search) });
+    this.cameraMoved = false; this.shadowFresh = false;
+    // Relative cost counters for ?perf=1 and offline checks (no GPU readback).
+    this.perf = { renders: 0, colorPixels: 0, shadowPasses: 0, shadowPixels: 0, skippedShadows: 0,
+      calls: 0, triangles: 0, intervals: [], renderTimes: [], lastRenderTick: -1, ticks: 0, resizes: 0 };
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
     this.renderer.setClearColor(0x101116, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -32,7 +40,9 @@ export class FlarePlayer {
     container.prepend(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.13, enablePan: false, minDistance: 0.45, maxDistance: 7, minPolarAngle: 0.12, maxPolarAngle: Math.PI * 0.9 });
-    this.onControlsChange = () => { this.dirty = true; };
+    // An orbit-only change bypasses the `dirty` setter, so the next frame
+    // knows the pose, lights and stage did not change.
+    this.onControlsChange = () => { this.redraw = true; this.cameraMoved = true; };
     this.controls.addEventListener('change', this.onControlsChange);
     this.autoFrame = true;
     this.controls.addEventListener('start', () => { this.autoFrame = false; this.glide = null; });
@@ -56,7 +66,7 @@ export class FlarePlayer {
       else if (this.visible) { this.dirty = true; this.start(); }
     };
     this.onContextLost = event => {
-      event.preventDefault(); this.contextLost = true; this.playing = false; this.stop();
+      event.preventDefault(); this.contextLost = true; this.playing = false; this.stop(); this.shadowFresh = false;
       // Three.js keeps disposal listeners on CPU resources. Release their old
       // GL bindings while loss is active; the arrays/materials remain reusable
       // and the restored renderer uploads them to its fresh resource cache.
@@ -75,6 +85,12 @@ export class FlarePlayer {
     this.renderer.domElement.addEventListener('webglcontextlost', this.onContextLost);
     this.renderer.domElement.addEventListener('webglcontextrestored', this.onContextRestored);
   }
+
+  // Every request outside the orbit handler may change the scene itself.
+  get dirty() { return this.redraw; }
+  set dirty(value) { this.redraw = !!value; if (value) this.sceneDirty = true; }
+  /** Redraw for overlay-only motion (labels): pose, lights and stage unchanged. */
+  requestRedraw() { this.redraw = true; }
 
   createEnvironment() {
     this.environment?.dispose();
@@ -96,7 +112,7 @@ export class FlarePlayer {
       }),
     ]);
     if (this.disposed) { disposeTree(gltf.scene); return; }
-    this.coach = gltf.scene;
+    this.coach = gltf.scene; this.shadowFresh = false;
     applyCharacter(this.coach, this.callbacks.character);
     if (this.callbacks.character?.rim) this.rimLight.color.set(this.callbacks.character.rim);
     applyTrainingClothSink(this.coach);
@@ -120,28 +136,56 @@ export class FlarePlayer {
   }
   stop() { this.running = false; this.renderer.setAnimationLoop(null); }
   tick(now) {
-    const delta = Math.min(Math.max((now - this.last) / 1000, 0), 0.06); this.last = now;
-    if (this.motion && this.playing) {
+    const interval = Math.max(0, now - this.last);
+    const delta = Math.min(interval / 1000, 0.06); this.last = now;
+    const animated = !!(this.motion && this.playing);
+    if (animated) {
       this.time = this.motion.clock.advance(this.time, delta, this.speed, this.loopRange);
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
     this.stepGlide(now);
     this.controls.update();
+    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved;
+    // A frame requested only by the orbit keeps the pose and the shadow map.
+    this.cameraOnly = this.cameraMoved && !this.sceneDirty;
+    this.cameraMoved = false;
+    const density = this.adaptive.update(now, moving, interval);
+    if (density.changed) { this.applyPixelRatio(density.ratio); this.dirty = true; }
+    this.perf.ticks++;
     if (this.dirty) {
       // Render hooks may request another frame while an effect settles.
       // Consume this frame's request before running those hooks.
-      this.dirty = false; this.render(); this.callbacks.onRender?.();
+      this.redraw = false; this.sceneDirty = false; this.render(); this.callbacks.onRender?.();
+      const perf = this.perf;
+      if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
+      perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
     }
   }
   render() {
     this.callbacks.onBeforeRender?.();
     const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
-    if (inset > 0 && inset < height) {
-      // Nothing is drawn under the host's chrome: clear all, draw above it.
-      r.setScissorTest(false); r.clear();
-      r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
-      r.render(this.displayScene ?? this.scene, this.camera); r.setScissorTest(false);
-    } else r.render(this.displayScene ?? this.scene, this.camera);
+    // The key light's shadow depends on the pose, not on the camera. While
+    // only the orbit moves, the previous shadow map stays valid.
+    const shadows = r.shadowMap.enabled && this.keyLight.castShadow;
+    const reuseShadow = this.adaptive.enabled && this.cameraOnly && shadows && this.shadowFresh && !!this.keyLight.shadow.map;
+    if (reuseShadow) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
+    try {
+      if (inset > 0 && inset < height) {
+        // Nothing is drawn under the host's chrome: clear all, draw above it.
+        r.setScissorTest(false); r.clear();
+        r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
+        r.render(this.displayScene ?? this.scene, this.camera); r.setScissorTest(false);
+      } else r.render(this.displayScene ?? this.scene, this.camera);
+    } finally { r.shadowMap.autoUpdate = true; }
+    this.cameraOnly = false;
+    const perf = this.perf, canvas = r.domElement;
+    perf.renders++; perf.colorPixels += canvas.width * canvas.height;
+    perf.calls = r.info.render.calls; perf.triangles = r.info.render.triangles;
+    if (reuseShadow) perf.skippedShadows++;
+    else if (shadows && (!this.displayScene || this.displayScene === this.scene)) {
+      const size = this.keyLight.shadow.mapSize; perf.shadowPasses++; perf.shadowPixels += size.x * size.y;
+      this.shadowFresh = !!this.keyLight.shadow.map;
+    }
   }
   /** Bottom px of the stage hidden under host chrome. A running glide carries
    * the change; otherwise it eases on its own (reduced motion: at once). */
@@ -175,7 +219,7 @@ export class FlarePlayer {
     else { this.playing = false; this.stop(); this.callbacks.onTime?.(this.time); }
   }
   setQuality(value) {
-    const quality = renderQuality(value); this.quality = quality.name;
+    const quality = renderQuality(value); this.quality = quality.name; this.shadowFresh = false;
     this.updatePixelRatio();
     this.renderer.shadowMap.enabled = quality.shadows; this.keyLight.castShadow = quality.shadows;
     this.shadowCatcher.visible = quality.shadows;
@@ -185,7 +229,15 @@ export class FlarePlayer {
   updatePixelRatio() {
     // The quality setting owns resolution. Changing detail mode must not
     // reallocate the canvas buffer midway through a camera transition.
-    this.renderer.setPixelRatio(renderQuality(this.quality, window.devicePixelRatio).pixelRatio);
+    // Adaptive density only lowers moving frames below this full density.
+    const full = renderQuality(this.quality, window.devicePixelRatio).pixelRatio;
+    this.fullPixelRatio = full;
+    this.applyPixelRatio(this.adaptive.configure(full, this.quality));
+  }
+  applyPixelRatio(ratio) {
+    // setPixelRatio reallocates the drawing buffer; only call it on a change.
+    if (this.renderer.getPixelRatio() === ratio) return;
+    this.renderer.setPixelRatio(ratio); this.perf.resizes++;
   }
   resize() {
     const width = this.container.clientWidth, height = this.container.clientHeight;
@@ -350,6 +402,8 @@ export function applyTrainingClothSink(model) {
     }
   });
 }
+
+function pushRing(list, value, max) { list.push(value); if (list.length > max) list.shift(); }
 
 function litFloor() {
   const canvas = document.createElement('canvas'); canvas.width = canvas.height = 256; const context = canvas.getContext('2d');
