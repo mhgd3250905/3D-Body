@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const root = new URL('../../', import.meta.url);
 const asset = name => new URL(name, root).href;
-const output = 'output/flare-v42-r2-20261015/';
+const output = 'output/flare-v42-r3-20261015/';
 const previousOutput = 'output/flare-v42-20261015/';
 const status = document.querySelector('#status'), play = document.querySelector('#play');
 const slider = document.querySelector('#phase'), pct = document.querySelector('#pct');

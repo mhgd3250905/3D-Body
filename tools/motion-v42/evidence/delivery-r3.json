@@ -1,0 +1,159 @@
+{
+  "date": "2026-10-15",
+  "branch": "codex/flare-motion-natural-v42",
+  "baseCandidateCommit": "bccd764",
+  "rejectedCandidateCommit": "c6585c5",
+  "scope": "Restore R1; only lower airborne elbow within its original bending halfspace",
+  "parameters": {
+    "revision": "v42-candidate-3-elbow-only",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "torsoTwistDegrees": 9,
+    "torsoFlexDegrees": 4,
+    "torsoSideDegrees": 2.5,
+    "headYawDegrees": 7,
+    "headPitchDegrees": 4,
+    "headCounterRollDegrees": 5,
+    "armRecovery": 0.21,
+    "armPoleBlend": 0.72,
+    "elbowLoweringDegrees": 8,
+    "elbowLoweringMaxMm": 15,
+    "releaseHeight": 0.035,
+    "fullRecoveryHeight": 0.2,
+    "rhythmAmount": 0.012
+  },
+  "implementationSha256": "569ce41989f297071a215c46ea21cfebeb38788e4944f7b26db418d61b6c828c",
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "app/scene/source/coach/flare-coach-v41-animated.glb",
+      "sourceSha256": "1cb8b14812641749626b63068007aa90ae047019b95c410d681fbb3d6724f3ff",
+      "output": "output/flare-v42-r3-20261015/flare-coach-v42-candidate.glb",
+      "sha256": "f7aa8de3cc00f3aa6484642363d7871006552c5de3e775b584f667e3d662db2f",
+      "bytes": 8301976,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    },
+    {
+      "kind": "training",
+      "source": "app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb",
+      "sourceSha256": "06c10ed0c060556f110995987bbcf124f3ad2a105d1ddd4d4ba1ef3ce405c593",
+      "output": "output/flare-v42-r3-20261015/flare-training-v42-candidate.glb",
+      "sha256": "a8d412b93c158de5219abed4c7ea9fd1b5e90eadfebe4c8b1f4eebc00a6d0937",
+      "bytes": 7996440,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005018094802528933
+    }
+  ],
+  "directionVerdicts": [
+    "same-halfspace-and-pole-only-preservation-clear",
+    "same-halfspace-and-pole-only-preservation-clear"
+  ],
+  "directionCorePreservation": {
+    "maxNonElbowLandmarkDisplacementMetres": 1.4340342158070668E-09,
+    "worstLandmark": "leftShoulder",
+    "worstFrame": 150,
+    "maxNonForearmBoneOriginDisplacementMetres": 0,
+    "worstBone": null
+  },
+  "directionSides": {
+    "left": {
+      "axisAlignedDot": {
+        "min": 0.9990114805318644,
+        "max": 0.9999999979449049
+      },
+      "axisAlignedOppositeSamples": 0,
+      "signedRotationDegrees": {
+        "min": -2.547804063032952,
+        "max": 0.14230103057051008
+      },
+      "maxElbowDisplacementMetres": 0.006500899538856239,
+      "elbowWorldYChangeMetres": {
+        "min": -0.003553509672807653,
+        "max": 0
+      },
+      "maxAbsElbowAngleChangeDegrees": 3.669741150247319E-05,
+      "maxShoulderDisplacementMetres": 0,
+      "maxWristDisplacementMetres": 0,
+      "maxAbsShoulderWristDistanceChangeMetres": 0,
+      "maxContactElbowDisplacementMetres": 0,
+      "maxContactPalmCentroidDisplacementMetres": 0
+    },
+    "right": {
+      "axisAlignedDot": {
+        "min": 0.9990984687688703,
+        "max": 0.9999999985406262
+      },
+      "axisAlignedOppositeSamples": 0,
+      "signedRotationDegrees": {
+        "min": 0.0030954295057974905,
+        "max": 2.4331038799791758
+      },
+      "maxElbowDisplacementMetres": 0.0062573816266813355,
+      "elbowWorldYChangeMetres": {
+        "min": -0.0032830238203753748,
+        "max": 0
+      },
+      "maxAbsElbowAngleChangeDegrees": 4.251485094641794E-05,
+      "maxShoulderDisplacementMetres": 0,
+      "maxWristDisplacementMetres": 0,
+      "maxAbsShoulderWristDistanceChangeMetres": 0,
+      "maxContactElbowDisplacementMetres": 0,
+      "maxContactPalmCentroidDisplacementMetres": 0
+    }
+  },
+  "geometryVerdicts": [
+    "measured-structural-checks-clear",
+    "measured-structural-checks-clear"
+  ],
+  "geometryFlags": [
+    [],
+    []
+  ],
+  "browser": {
+    "errors": [],
+    "failed": [],
+    "external": [],
+    "mobile": {
+      "width": 390,
+      "scrollWidth": 390,
+      "canvases": [
+        {
+          "width": 362,
+          "height": 360
+        },
+        {
+          "width": 362,
+          "height": 360
+        }
+      ]
+    }
+  },
+  "historicalAssetsPreserved": [
+    {
+      "path": "output/flare-v42-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-coach-v42-candidate.glb",
+      "unchanged": true
+    },
+    {
+      "path": "output/flare-v42-r2-20261015/flare-training-v42-candidate.glb",
+      "unchanged": true
+    }
+  ],
+  "priorFilesPreserved": 31,
+  "build": {
+    "command": "npm run build -- --outDir output/flare-v42-r3-20261015/dist",
+    "exitCode": 0,
+    "warning": "Existing large chunks; original dist preserved"
+  },
+  "limitations": "Discrete geometry and directional checks; user visual acceptance remains pending"
+}

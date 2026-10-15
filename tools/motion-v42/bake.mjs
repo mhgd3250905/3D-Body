@@ -10,7 +10,7 @@ import { loadGlb, readJson, names, sha256, verifyMirror } from '../../app/scene/
 import { createNaturalFlareMotion } from './natural-motion.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const output = path.join(root, 'output/flare-v42-r2-20261015');
+const output = path.join(root, 'output/flare-v42-r3-20261015');
 fs.mkdirSync(output, { recursive: true });
 verifyMirror();
 const count = 540, duration = 1.35;
