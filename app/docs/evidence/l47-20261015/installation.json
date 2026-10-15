@@ -1,0 +1,28 @@
+{
+  "installed": true,
+  "version": "L47",
+  "versionName": "1.0.4",
+  "versionCode": 6,
+  "previous": "L46 / 1.0.3+5",
+  "model": "2602BRT18C",
+  "android": "16",
+  "method": "adb install -r",
+  "result": "Success",
+  "apk": "output/releases/Flare-L47-adaptive-v42-R12-20261015-arm64.apk",
+  "sourceApkSha256": "f1f01c622ff4ae7d1b09c7487650432f7690a826b51de1dd37f585725bfce313",
+  "installedApkRemoteSha256": "f1f01c622ff4ae7d1b09c7487650432f7690a826b51de1dd37f585725bfce313",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "firstInstallTimeBefore": "2026-10-08 17:53:04",
+  "firstInstallTimeAfter": "2026-10-08 17:53:04",
+  "lastUpdateTime": "2026-10-15 23:16:58",
+  "coldStart": "Starting: Intent { cmp=dev.mhgd.flare/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: dev.mhgd.flare/.MainActivity\r\nTotalTime: 426\r\nWaitTime: 429\r\nComplete",
+  "foregroundActivity": [
+    "topResumedActivity=ActivityRecord{253802965 u0 dev.mhgd.flare/.MainActivity t8173}"
+  ],
+  "homeScreenshot": "output/l47-performance-20261015/native-home.png",
+  "dataPreservation": "Replacement install; firstInstallTime unchanged. No uninstall or clear. Private personal records not extracted or compared.",
+  "limitations": [
+    "Cold-start activity timing is not full 3D readiness or native FPS/thermal/energy proof.",
+    "User visual acceptance of L47, all-seven-character/native detail/long-run/device matrix remains separate."
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "offlineWebBuild": "pass",
+  "webSourceFilesMatched": 408,
+  "apkSourceFilesMatched": 408,
+  "all436SourceAssetsPreserved": true,
+  "all27OriginalIndependentUserFilesPreserved": true,
+  "sampledCurrentAppProcessFatalOrSceneErrorPatterns": [],
+  "logScope": "Current app PID only; not full device, long-run or complete native QA.",
+  "screenshotObservation": "Native Flare home renders R12 coach, scene effects, existing dark theme and learning controls; no debug HUD.",
+  "runtimePerformanceAcceptance": "Not measured; user testing remains pending."
+}

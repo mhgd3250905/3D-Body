@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "file": "installation.json",
+      "bytes": 1507,
+      "sha256": "93c1f4654114c5bfcb80e6bd286159aaa0762275fcfb9a933517a01211b1eff2"
+    },
+    {
+      "file": "native-home.png",
+      "bytes": 1061546,
+      "sha256": "9e704bff11b64d268a17ca44b88fd93d0631b1ffd6f929158b2ab788129fc0b6"
+    },
+    {
+      "file": "package.json",
+      "bytes": 64559,
+      "sha256": "7b180cb188fab882220a8eced58e1ca449b78cfc391d250dcbe9d5cdb1cd9193"
+    },
+    {
+      "file": "user-feedback.json",
+      "bytes": 630,
+      "sha256": "41ea0284f5e6e2630fab4f55d872038319ff0caac78d666e290671a8ad787452"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 565,
+      "sha256": "b7ca3d2aa0b20a0944aa5ca28875ac9f3262ed23fd680112e6c4e67eae7b12a6"
+    }
+  ],
+  "retention": "Installation-time receipts are retained unchanged; subsequent direct user feedback is recorded separately. Selected evidence is intended for version preservation. Full logs, device identifier and APKs remain in ignored local output, not a fresh clone."
+}

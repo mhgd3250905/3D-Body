@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-15",
+  "source": "Direct user message after the L47 installation",
+  "quote": "我已经测试使用了 APP这边你帮我把台账还有文档整理都更新好，然后做一个版本保存。",
+  "status": "User has tested and used L47 and requested version preservation",
+  "scope": "Limited reported use. No numerical FPS, temperature, energy, long-run, all-character or complete device/media QA acceptance was provided.",
+  "chronology": "installation.json and verification.json retain the earlier installation-time observations; references there to pending user testing describe that earlier stage."
+}
