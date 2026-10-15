@@ -16,7 +16,7 @@ const smooth = value => { const x = THREE.MathUtils.clamp(value, 0, 1); return x
 const radians = THREE.MathUtils.degToRad;
 
 export const NATURAL_FLARE_DEFAULTS = Object.freeze({
-  revision: 'v42-candidate-9-early-reach',
+  revision: 'v42-candidate-10-complete-reach',
   cycleSeconds: 1.35,
   sampleCount: 540,
   torsoTwistDegrees: 9,
@@ -252,6 +252,7 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
     for (const [side, adjustment] of Object.entries(last?.reachPreparation ?? {})) {
       const limb = pose.limbs[side];
       limb.wrist = [...metrics.joints[side+'Wrist']];
+      limb.elbowPole = [...metrics.joints[side+'Elbow']];
       limb.handQuaternion = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().fromArray(adjustment.handTransform))
         .multiply(Q(limb.handQuaternion)).normalize().toArray();
     }
@@ -259,6 +260,6 @@ export function createNaturalFlareMotion({ model, baselineModel, rigData, parame
   }
   return { group: model, baseline: base, updatePhase, getMetrics, capturePose,
     parameters: Object.freeze({ ...settings }), describeRecovery: () => ({ parameters: refinement.parameters, reachPreparation: reachPreparation.parameters,
-      scope: 'R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. R9 then extends the forearm earlier on the unchanged R8 upper-arm/elbow path and smooths late palm convergence; source body and contact timing retained.' }),
+      scope: 'R1 anatomical upper-arm basis carries a softly bent complete arm; minimal whole-arm swing retains the wrist ray while allowing the elbow route to change. R10 then completes extension before contact using coordinated two-bone minimal swings and lowers the long arm toward its original landing point; source body and contact timing retained.' }),
     sourceSequenceTime: () => clockAtPhase(sourcePhase) };
 }
