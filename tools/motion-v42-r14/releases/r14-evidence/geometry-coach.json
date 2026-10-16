@@ -1,0 +1,279 @@
+{
+  "format": "flare-motion-candidate-audit-v1",
+  "generatedAt": "2026-10-16T14:41:16.153Z",
+  "verdict": "measured-structural-checks-clear",
+  "baselineSelection": {
+    "explicit": true,
+    "fallbackToV41": false,
+    "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r12-20261015\\flare-coach-v42-candidate.glb"
+  },
+  "baseline": {
+    "asset": {
+      "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r12-20261015\\flare-coach-v42-candidate.glb",
+      "bytes": 8301976,
+      "sha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d",
+      "clip": "flare_v42_candidate_loop",
+      "duration": 1.350000023841858,
+      "tracks": 44,
+      "bones": 22
+    },
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 30,
+      "fullBodySampleCount": 19,
+      "verticesPerFullBodySample": 211060,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "integrity": {
+      "nonFiniteMatrices": 0,
+      "maxBoneWorldScaleDeviationFromRest": 1.8271904634246288e-7
+    },
+    "seam": {
+      "maxWorldMatrixComponentDifference": 0,
+      "maxBoneWorldPositionDifferenceMetres": 0,
+      "maxBoneWorldRotationDifferenceDegrees": 0.0000024148365394514667,
+      "jointPositionMaxMetres": 0
+    },
+    "maxBoneSpanRangeMetres": 2.1090194962658515e-7,
+    "anglesDegrees": {
+      "chestVsPelvis": {
+        "min": 0,
+        "max": 9.36129400463887
+      },
+      "headVsChest": {
+        "min": 1.6086542510114712,
+        "max": 8.600895479986507
+      },
+      "neckVsChest": {
+        "min": 0.6756354545951012,
+        "max": 3.6123763610154986
+      },
+      "headVsNeck": {
+        "min": 0.9330179109632178,
+        "max": 4.9885191189743985
+      },
+      "legAperture": {
+        "min": 72.94562653575298,
+        "max": 102.76555488422376
+      },
+      "leftElbow": {
+        "min": 104.0000170139963,
+        "max": 178.35397796082077
+      },
+      "leftKnee": {
+        "min": 176.20073955027564,
+        "max": 179.93844907431605
+      },
+      "rightElbow": {
+        "min": 104.00006040258279,
+        "max": 178.36128719981238
+      },
+      "rightKnee": {
+        "min": 176.20109997795421,
+        "max": 179.9383445130058
+      }
+    },
+    "elbowByGeometricContactDegrees": {
+      "left": {
+        "palmNearContact": {
+          "min": 177.58578893981064,
+          "max": 178.35397796082077,
+          "median": 178.04912822594227,
+          "p95": 178.19410556547635
+        },
+        "handClearlyAirborne": {
+          "min": 104.0000170139963,
+          "max": 177.1942526299113,
+          "median": 107.8534810890734,
+          "p95": 175.09221894139395
+        }
+      },
+      "right": {
+        "palmNearContact": {
+          "min": 177.59450435862945,
+          "max": 178.31631116715758,
+          "median": 177.8638808080857,
+          "p95": 178.1940779252427
+        },
+        "handClearlyAirborne": {
+          "min": 104.00006040258279,
+          "max": 177.08663934734668,
+          "median": 107.89413011710019,
+          "p95": 176.3000256921
+        }
+      }
+    },
+    "minimumShoeClearanceAboveRenderedStageMetres": 0.03031402338872287,
+    "minimumHandWorldYMetres": 0.005995587056865981,
+    "maxNearContactPalmHorizontalExcursionMetres": {
+      "left": 0.001543521152642902,
+      "right": 0.0008890788555177925
+    },
+    "noHandNearContactSampleCount": 0,
+    "fullBodySampled": {
+      "min": 0.0060878749673689,
+      "max": 0.006496114642072615,
+      "minimumClearanceAboveRenderedStage": 0.0200878749673689,
+      "samplesBelowRenderedStage": 0
+    }
+  },
+  "candidate": {
+    "asset": {
+      "path": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r14-20261016\\flare-coach-v42-candidate.glb",
+      "bytes": 8301976,
+      "sha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d",
+      "clip": "flare_v42_candidate_loop",
+      "duration": 1.350000023841858,
+      "tracks": 44,
+      "bones": 22
+    },
+    "sampling": {
+      "intervals": 540,
+      "rowsIncludingRepeatedEnd": 541,
+      "dt": 0.0025000000441515887,
+      "fullBodyEveryFrames": 30,
+      "fullBodySampleCount": 19,
+      "verticesPerFullBodySample": 211060,
+      "surfaceVerticesPerFrame": {
+        "left": {
+          "hand": 8154,
+          "shoe": 15876,
+          "palm": 21
+        },
+        "right": {
+          "hand": 8120,
+          "shoe": 15909,
+          "palm": 21
+        }
+      }
+    },
+    "integrity": {
+      "nonFiniteMatrices": 0,
+      "maxBoneWorldScaleDeviationFromRest": 1.8271904644591532e-7
+    },
+    "seam": {
+      "maxWorldMatrixComponentDifference": 0,
+      "maxBoneWorldPositionDifferenceMetres": 0,
+      "maxBoneWorldRotationDifferenceDegrees": 0.0000024148365394514667,
+      "jointPositionMaxMetres": 0
+    },
+    "maxBoneSpanRangeMetres": 2.1090194962658515e-7,
+    "anglesDegrees": {
+      "chestVsPelvis": {
+        "min": 0,
+        "max": 9.36129400463887
+      },
+      "headVsChest": {
+        "min": 1.6086542510114712,
+        "max": 8.600895479986507
+      },
+      "neckVsChest": {
+        "min": 0.6756354545951012,
+        "max": 3.6123763610154986
+      },
+      "headVsNeck": {
+        "min": 0.9330179109632178,
+        "max": 4.9885191189743985
+      },
+      "legAperture": {
+        "min": 72.94562653575298,
+        "max": 102.76555488422376
+      },
+      "leftElbow": {
+        "min": 104.00002747040892,
+        "max": 178.35397796082077
+      },
+      "leftKnee": {
+        "min": 176.20073955027564,
+        "max": 179.93844907431605
+      },
+      "rightElbow": {
+        "min": 104.00005251857111,
+        "max": 178.36128719980016
+      },
+      "rightKnee": {
+        "min": 176.20109997795421,
+        "max": 179.9383445130058
+      }
+    },
+    "elbowByGeometricContactDegrees": {
+      "left": {
+        "palmNearContact": {
+          "min": 177.58578893981064,
+          "max": 178.35397796082077,
+          "median": 178.04912822594227,
+          "p95": 178.19410556547635
+        },
+        "handClearlyAirborne": {
+          "min": 104.00002747040892,
+          "max": 177.1942526299113,
+          "median": 107.85345288035599,
+          "p95": 175.09221859376373
+        }
+      },
+      "right": {
+        "palmNearContact": {
+          "min": 177.59450435862945,
+          "max": 178.31631116715758,
+          "median": 177.8638808080857,
+          "p95": 178.1940779252427
+        },
+        "handClearlyAirborne": {
+          "min": 104.00005251857111,
+          "max": 177.08663934734668,
+          "median": 107.89412047695264,
+          "p95": 176.30002938808303
+        }
+      }
+    },
+    "minimumShoeClearanceAboveRenderedStageMetres": 0.03031402338872287,
+    "minimumHandWorldYMetres": 0.005995587056865981,
+    "maxNearContactPalmHorizontalExcursionMetres": {
+      "left": 0.001543521152642902,
+      "right": 0.0008890788555177925
+    },
+    "noHandNearContactSampleCount": 0,
+    "fullBodySampled": {
+      "min": 0.0060878749673689,
+      "max": 0.006496114642072615,
+      "minimumClearanceAboveRenderedStage": 0.0200878749673689,
+      "samplesBelowRenderedStage": 0
+    }
+  },
+  "flags": [],
+  "definitions": {
+    "boneSpan": "Euclidean distance between named actual bone world origins, tracked independently of skin and rig landmarks. Compared against its loaded rest and baseline variation.",
+    "rotation": "Unsigned 3D angle between normalized q_current_world * inverse(q_rest_world) rotations. Not isolated axial twist. Quaternion normalization precedes every angle comparison.",
+    "jointAngles": "Rig landmark points transported by actual bone world/rest-inverse matrices. Knee hip-knee-ankle; elbow shoulder-elbow-wrist; 180 degrees means straight. Leg aperture compares the two hip-to-ankle vectors in 3D.",
+    "surfaces": "Actual deformed vertices via SkinnedMesh.getVertexPosition and mesh.matrixWorld, all frames for selected hands/shoes. Hand vertices have >0.7 Hand weight; shoe meshes match Coach_Sneakers/Soles/Shoe_Details with >0.7 Foot weight.",
+    "palmPatch": "Fixed palmar-side vertex patch: source Snow finger/normal axes, central 15%-55% of hand length, within4mm of the deepest palmar surface. Its true skinned minY/centroid are measured, not a wrist proxy.",
+    "contact": "Near-contact is purely height <= authored contactY + tolerance. No handLocked, phase label, force or COM criterion is used. Airborne elbow subset requires lowest hand skin >contactY+5cm.",
+    "drift": "Horizontal excursion of one fixed skinned palm patch centroid within each cyclic near-contact run; palm rocking/pivoting can also move it. Not by itself proof of sliding.",
+    "derivatives": "Centered finite differences of uniform normalized-phase samples. Actual-second and per-cycle numbers are both provided. Second differences are visual continuity indicators, not human dynamics/forces.",
+    "flagThresholds": "Engineering comparison tolerances (loop0.01mm/0.01deg, extra length variation1mm, floor penetration1mm, height change5mm, extra patch excursion1cm, normalized second-difference peak +50%). These are not real-breaker biomechanical standards."
+  },
+  "limitations": [
+    "No mass model, ground reaction forces, exact human anatomy or numeric realism percentage.",
+    "Whole-body mesh sampled at the documented cadence; this is not an exhaustive continuous-time collision proof.",
+    "Different timing maps may move events between normalized phases; summary event ranges, not pointwise pose identity, should be compared.",
+    "Animation source and prior files are read only; only this output folder is written."
+  ],
+  "details": "audit.json",
+  "samples": [
+    "baseline-samples.json",
+    "candidate-samples.json"
+  ]
+}

@@ -1,0 +1,4038 @@
+{
+  "samples": 1081,
+  "thresholdMetres": 0.07,
+  "models": [
+    {
+      "version": "r12-20261015",
+      "minima": {
+        "leftHand-leftThigh": {
+          "distance": 0.28749813630448223,
+          "phase": 0.2824074074074074
+        },
+        "leftHand-leftShin": {
+          "distance": 0.2741210296974937,
+          "phase": 0.27870370370370373
+        },
+        "leftHand-rightThigh": {
+          "distance": 0.5287085707971265,
+          "phase": 0.3824074074074074
+        },
+        "leftHand-rightShin": {
+          "distance": 0.8488965689883435,
+          "phase": 0.22314814814814815
+        },
+        "rightHand-leftThigh": {
+          "distance": 0.5476529261402706,
+          "phase": 0.6194444444444445
+        },
+        "rightHand-leftShin": {
+          "distance": 0.8733229970490662,
+          "phase": 0.7453703703703703
+        },
+        "rightHand-rightThigh": {
+          "distance": 0.287905456323519,
+          "phase": 0.725
+        },
+        "rightHand-rightShin": {
+          "distance": 0.2752021562335405,
+          "phase": 0.7287037037037037
+        }
+      },
+      "focus": [
+        {
+          "phase": 0.6,
+          "distances": {
+            "leftHand-leftThigh": 0.5921500603628638,
+            "leftHand-leftShin": 0.7158745962379649,
+            "leftHand-rightThigh": 0.7290365301746363,
+            "leftHand-rightShin": 1.0623944493636532,
+            "rightHand-leftThigh": 0.5486888356353299,
+            "rightHand-leftShin": 0.8900979865218169,
+            "rightHand-rightThigh": 0.5193903611313102,
+            "rightHand-rightShin": 0.7804567154876403
+          }
+        },
+        {
+          "phase": 0.600925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.5920411959191729,
+            "leftHand-leftShin": 0.7144807695952257,
+            "leftHand-rightThigh": 0.7294138267421453,
+            "leftHand-rightShin": 1.0623335666442577,
+            "rightHand-leftThigh": 0.5486041032407267,
+            "rightHand-leftShin": 0.8901565239683382,
+            "rightHand-rightThigh": 0.5192113955102806,
+            "rightHand-rightShin": 0.7795725795146634
+          }
+        },
+        {
+          "phase": 0.6018518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.5919499438435939,
+            "leftHand-leftShin": 0.7131108291041005,
+            "leftHand-rightThigh": 0.7298021654115465,
+            "leftHand-rightShin": 1.0622801166717792,
+            "rightHand-leftThigh": 0.5485491282653383,
+            "rightHand-leftShin": 0.8902645438233803,
+            "rightHand-rightThigh": 0.5190482291753595,
+            "rightHand-rightShin": 0.7786944327932686
+          }
+        },
+        {
+          "phase": 0.6027777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.591872442407356,
+            "leftHand-leftShin": 0.7118166407233782,
+            "leftHand-rightThigh": 0.7301822536256537,
+            "leftHand-rightShin": 1.0622432703794238,
+            "rightHand-leftThigh": 0.5484668580617922,
+            "rightHand-leftShin": 0.8903425910400175,
+            "rightHand-rightThigh": 0.5188449088496605,
+            "rightHand-rightShin": 0.7777352678432186
+          }
+        },
+        {
+          "phase": 0.6037037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.5918122323910626,
+            "leftHand-leftShin": 0.7105475031527941,
+            "leftHand-rightThigh": 0.7305729371598879,
+            "leftHand-rightShin": 1.0622135222167244,
+            "rightHand-leftThigh": 0.5484146076724804,
+            "rightHand-leftShin": 0.89047081790432,
+            "rightHand-rightThigh": 0.5186578903415173,
+            "rightHand-rightShin": 0.7767824801372787
+          }
+        },
+        {
+          "phase": 0.6046296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.5917673115778281,
+            "leftHand-leftShin": 0.7093628234475006,
+            "leftHand-rightThigh": 0.7309560718274335,
+            "leftHand-rightShin": 1.0622060774766426,
+            "rightHand-leftThigh": 0.5483332472064364,
+            "rightHand-leftShin": 0.8905654285003348,
+            "rightHand-rightThigh": 0.5184274304769249,
+            "rightHand-rightShin": 0.7757425141207032
+          }
+        },
+        {
+          "phase": 0.6055555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.591739229713949,
+            "leftHand-leftShin": 0.7082042300694369,
+            "leftHand-rightThigh": 0.7313492916769725,
+            "leftHand-rightShin": 1.0622054154114167,
+            "rightHand-leftThigh": 0.5482821501259829,
+            "rightHand-leftShin": 0.8907107834933682,
+            "rightHand-rightThigh": 0.5182138132712903,
+            "rightHand-rightShin": 0.7747093494107101
+          }
+        },
+        {
+          "phase": 0.6064814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.5917261475940248,
+            "leftHand-leftShin": 0.7071365177850102,
+            "leftHand-rightThigh": 0.7317341147628016,
+            "leftHand-rightShin": 1.0622306722154322,
+            "rightHand-leftThigh": 0.548200410388343,
+            "rightHand-leftShin": 0.8908187750018602,
+            "rightHand-rightThigh": 0.5179532769741039,
+            "rightHand-rightShin": 0.7735818731408428
+          }
+        },
+        {
+          "phase": 0.6074074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.5917293323049906,
+            "leftHand-leftShin": 0.7060957837704958,
+            "leftHand-rightThigh": 0.732128458838596,
+            "leftHand-rightShin": 1.062262419804896,
+            "rightHand-leftThigh": 0.5481491970492853,
+            "rightHand-leftShin": 0.8909779688613647,
+            "rightHand-rightThigh": 0.5177101886324562,
+            "rightHand-rightShin": 0.7724616720772727
+          }
+        },
+        {
+          "phase": 0.6083333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.5917403106269333,
+            "leftHand-leftShin": 0.7051445689305382,
+            "leftHand-rightThigh": 0.7325069751873284,
+            "leftHand-rightShin": 1.0623161173594526,
+            "rightHand-leftThigh": 0.5480664805796776,
+            "rightHand-leftShin": 0.8910963856049299,
+            "rightHand-rightThigh": 0.5174167520759612,
+            "rightHand-rightShin": 0.7712392329692934
+          }
+        },
+        {
+          "phase": 0.6092592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.591766884269241,
+            "leftHand-leftShin": 0.7042210531673005,
+            "leftHand-rightThigh": 0.7328944086481486,
+            "leftHand-rightShin": 1.0623760397897237,
+            "rightHand-leftThigh": 0.5480145991300533,
+            "rightHand-leftShin": 0.8912663554915533,
+            "rightHand-rightThigh": 0.5171414577224621,
+            "rightHand-rightShin": 0.770024607998152
+          }
+        },
+        {
+          "phase": 0.6101851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.5918235005986292,
+            "leftHand-leftShin": 0.7034189587305255,
+            "leftHand-rightThigh": 0.7332860443839839,
+            "leftHand-rightShin": 1.0624832748280786,
+            "rightHand-leftThigh": 0.5479488320301487,
+            "rightHand-leftShin": 0.8914146906698317,
+            "rightHand-rightThigh": 0.5168354744577002,
+            "rightHand-rightShin": 0.7687340186109464
+          }
+        },
+        {
+          "phase": 0.6111111111111112,
+          "distances": {
+            "leftHand-leftThigh": 0.5918947434967275,
+            "leftHand-leftShin": 0.702644997799599,
+            "leftHand-rightThigh": 0.7336858214481207,
+            "leftHand-rightShin": 1.062596412080587,
+            "rightHand-leftThigh": 0.5479133554470877,
+            "rightHand-leftShin": 0.8916139375910042,
+            "rightHand-rightThigh": 0.5165477521183924,
+            "rightHand-rightShin": 0.7674515525216687
+          }
+        },
+        {
+          "phase": 0.612037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.592042114392291,
+            "leftHand-leftShin": 0.7020670580578662,
+            "leftHand-rightThigh": 0.7341297492319845,
+            "leftHand-rightShin": 1.0627995576761298,
+            "rightHand-leftThigh": 0.5478604810718124,
+            "rightHand-leftShin": 0.8917904981813601,
+            "rightHand-rightThigh": 0.5162035490329713,
+            "rightHand-rightShin": 0.766027309737971
+          }
+        },
+        {
+          "phase": 0.6129629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.5922027573963456,
+            "leftHand-leftShin": 0.7015180877034998,
+            "leftHand-rightThigh": 0.7345806717802592,
+            "leftHand-rightShin": 1.0630080985526762,
+            "rightHand-leftThigh": 0.5478385056200731,
+            "rightHand-leftShin": 0.8920184792300604,
+            "rightHand-rightThigh": 0.5158786152779085,
+            "rightHand-rightShin": 0.764611829575787
+          }
+        },
+        {
+          "phase": 0.6138888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.5924105383148016,
+            "leftHand-leftShin": 0.7011041107087945,
+            "leftHand-rightThigh": 0.7350565539009057,
+            "leftHand-rightShin": 1.063281869300576,
+            "rightHand-leftThigh": 0.5477883935600645,
+            "rightHand-leftShin": 0.8922112521320433,
+            "rightHand-rightThigh": 0.5154699403128069,
+            "rightHand-rightShin": 0.7629928905569362
+          }
+        },
+        {
+          "phase": 0.6148148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.5926309447518027,
+            "leftHand-leftShin": 0.7007204862103937,
+            "leftHand-rightThigh": 0.7355387949986191,
+            "leftHand-rightShin": 1.0635609530550134,
+            "rightHand-leftThigh": 0.5477710815589714,
+            "rightHand-leftShin": 0.8924573140303831,
+            "rightHand-rightThigh": 0.5150825413997522,
+            "rightHand-rightShin": 0.7613836927967756
+          }
+        },
+        {
+          "phase": 0.6157407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.5928687875019042,
+            "leftHand-leftShin": 0.7004137553319886,
+            "leftHand-rightThigh": 0.7360240453978268,
+            "leftHand-rightShin": 1.0638784484385975,
+            "rightHand-leftThigh": 0.5477259714399149,
+            "rightHand-leftShin": 0.8926628253758384,
+            "rightHand-rightThigh": 0.5146137331759251,
+            "rightHand-rightShin": 0.7595726766777019
+          }
+        },
+        {
+          "phase": 0.6166666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.5931190551086998,
+            "leftHand-leftShin": 0.7001386997968402,
+            "leftHand-rightThigh": 0.7365153945210987,
+            "leftHand-rightShin": 1.064201478187969,
+            "rightHand-leftThigh": 0.5477156338766856,
+            "rightHand-leftShin": 0.8929233916074716,
+            "rightHand-rightThigh": 0.5141683083614946,
+            "rightHand-rightShin": 0.7577723462089184
+          }
+        },
+        {
+          "phase": 0.6175925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.5933875547580929,
+            "leftHand-leftShin": 0.6999405870951196,
+            "leftHand-rightThigh": 0.7370104293243969,
+            "leftHand-rightShin": 1.0645614934921617,
+            "rightHand-leftThigh": 0.5476787220532018,
+            "rightHand-leftShin": 0.8931378750141745,
+            "rightHand-rightThigh": 0.5136468520542845,
+            "rightHand-rightShin": 0.7557787700381996
+          }
+        },
+        {
+          "phase": 0.6185185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.5936681952994051,
+            "leftHand-leftShin": 0.6997751915577627,
+            "leftHand-rightThigh": 0.7375112757995771,
+            "leftHand-rightShin": 1.064927249374851,
+            "rightHand-leftThigh": 0.5476785366676223,
+            "rightHand-leftShin": 0.8934089318070407,
+            "rightHand-rightThigh": 0.5131509209648735,
+            "rightHand-rightShin": 0.7537967860265505
+          }
+        },
+        {
+          "phase": 0.6194444444444445,
+          "distances": {
+            "leftHand-leftThigh": 0.5939653148064815,
+            "leftHand-leftShin": 0.6996798783326916,
+            "leftHand-rightThigh": 0.7380149303181474,
+            "leftHand-rightShin": 1.0653263256490402,
+            "rightHand-leftThigh": 0.5476529261402706,
+            "rightHand-leftShin": 0.8936290045726917,
+            "rightHand-rightThigh": 0.5125836254262703,
+            "rightHand-rightShin": 0.7516282245192337
+          }
+        },
+        {
+          "phase": 0.6203703703703703,
+          "distances": {
+            "leftHand-leftThigh": 0.5942742776192833,
+            "leftHand-leftShin": 0.6996181111811909,
+            "leftHand-rightThigh": 0.7385241280022435,
+            "leftHand-rightShin": 1.0657313589597763,
+            "rightHand-leftThigh": 0.5476659978447169,
+            "rightHand-leftShin": 0.893907021310491,
+            "rightHand-rightThigh": 0.5120440358210965,
+            "rightHand-rightShin": 0.7494721317607593
+          }
+        },
+        {
+          "phase": 0.6212962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.5945982705714671,
+            "leftHand-leftShin": 0.6996201683991806,
+            "leftHand-rightThigh": 0.7390355919863518,
+            "leftHand-rightShin": 1.066166316415271,
+            "rightHand-leftThigh": 0.5476545906892671,
+            "rightHand-leftShin": 0.8941295465563079,
+            "rightHand-rightThigh": 0.5114374750534393,
+            "rightHand-rightShin": 0.7471356169898047
+          }
+        },
+        {
+          "phase": 0.6222222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.5949338024287886,
+            "leftHand-leftShin": 0.6996564070370489,
+            "leftHand-rightThigh": 0.7395523493555255,
+            "leftHand-rightShin": 1.0666074509118117,
+            "rightHand-leftThigh": 0.5476838146658517,
+            "rightHand-leftShin": 0.8944112607175444,
+            "rightHand-rightThigh": 0.5108608273836291,
+            "rightHand-rightShin": 0.7448124199774543
+          }
+        },
+        {
+          "phase": 0.6231481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.5952833084288742,
+            "leftHand-leftShin": 0.6997506294409327,
+            "leftHand-rightThigh": 0.7400713055185922,
+            "leftHand-rightShin": 1.0670755666842062,
+            "rightHand-leftThigh": 0.5476893837245327,
+            "rightHand-leftShin": 0.8946334719668199,
+            "rightHand-rightThigh": 0.5102210328695409,
+            "rightHand-rightShin": 0.7423135980647111
+          }
+        },
+        {
+          "phase": 0.6240740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.5956440536614949,
+            "leftHand-leftShin": 0.6998795178518608,
+            "leftHand-rightThigh": 0.7405953266591033,
+            "leftHand-rightShin": 1.0675500815700414,
+            "rightHand-leftThigh": 0.547737549245467,
+            "rightHand-leftShin": 0.8949160569019243,
+            "rightHand-rightThigh": 0.5096133983022327,
+            "rightHand-rightShin": 0.7398289295054847
+          }
+        },
+        {
+          "phase": 0.625,
+          "distances": {
+            "leftHand-leftThigh": 0.5960178905224462,
+            "leftHand-leftShin": 0.7000607315482786,
+            "leftHand-rightThigh": 0.7411216749169635,
+            "leftHand-rightShin": 1.0680487623499981,
+            "rightHand-leftThigh": 0.5477626759347302,
+            "rightHand-leftShin": 0.8951353254387766,
+            "rightHand-rightThigh": 0.5089461255827008,
+            "rightHand-rightShin": 0.7371729856485232
+          }
+        },
+        {
+          "phase": 0.6259259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.596402673279906,
+            "leftHand-leftShin": 0.7002769631470163,
+            "leftHand-rightThigh": 0.7416528791411586,
+            "leftHand-rightShin": 1.06855406160513,
+            "rightHand-leftThigh": 0.5478323741204154,
+            "rightHand-leftShin": 0.8954161150265988,
+            "rightHand-rightThigh": 0.5083132917685179,
+            "rightHand-rightShin": 0.7345320277734178
+          }
+        },
+        {
+          "phase": 0.6268518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.596799948215973,
+            "leftHand-leftShin": 0.7005406426665494,
+            "leftHand-rightThigh": 0.7421866973864297,
+            "leftHand-rightShin": 1.0690810493052731,
+            "rightHand-leftThigh": 0.5478795005720738,
+            "rightHand-leftShin": 0.8956301105588556,
+            "rightHand-rightThigh": 0.5076237948442185,
+            "rightHand-rightShin": 0.7317230195300717
+          }
+        },
+        {
+          "phase": 0.6277777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.5972078879132472,
+            "leftHand-leftShin": 0.700839590490589,
+            "leftHand-rightThigh": 0.7427251819753439,
+            "leftHand-rightShin": 1.069614873422863,
+            "rightHand-leftThigh": 0.54797319418186,
+            "rightHand-leftShin": 0.8959067648710249,
+            "rightHand-rightThigh": 0.506971054879509,
+            "rightHand-rightShin": 0.728929824889506
+          }
+        },
+        {
+          "phase": 0.6287037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.5976279248423385,
+            "leftHand-leftShin": 0.7011815185176059,
+            "leftHand-rightThigh": 0.7432668557193142,
+            "leftHand-rightShin": 1.0701681909398115,
+            "rightHand-leftThigh": 0.5480445875795353,
+            "rightHand-leftShin": 0.8961133428463006,
+            "rightHand-rightThigh": 0.5062641361429489,
+            "rightHand-rightShin": 0.7259706688316536
+          }
+        },
+        {
+          "phase": 0.6296296296296297,
+          "distances": {
+            "leftHand-leftThigh": 0.5980583622561501,
+            "leftHand-leftShin": 0.7015588935815175,
+            "leftHand-rightThigh": 0.7438130254706689,
+            "leftHand-rightShin": 1.0707285617468305,
+            "rightHand-leftThigh": 0.5481645864040513,
+            "rightHand-leftShin": 0.8963837570073149,
+            "rightHand-rightThigh": 0.5055963485766101,
+            "rightHand-rightShin": 0.7230281729244143
+          }
+        },
+        {
+          "phase": 0.6305555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.5985005941368662,
+            "leftHand-leftShin": 0.7019750271036024,
+            "leftHand-rightThigh": 0.744362862544716,
+            "leftHand-rightShin": 1.07130627787063,
+            "rightHand-leftThigh": 0.5482623518984431,
+            "rightHand-leftShin": 0.8965809681652596,
+            "rightHand-rightThigh": 0.5048766527083778,
+            "rightHand-rightShin": 0.719921822907483
+          }
+        },
+        {
+          "phase": 0.6314814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.5989529755232108,
+            "leftHand-leftShin": 0.7024267178930081,
+            "leftHand-rightThigh": 0.744917041085756,
+            "leftHand-rightShin": 1.071891259974104,
+            "rightHand-leftThigh": 0.548410785720128,
+            "rightHand-leftShin": 0.8968432259601908,
+            "rightHand-rightThigh": 0.504198506841814,
+            "rightHand-rightShin": 0.7168329982657705
+          }
+        },
+        {
+          "phase": 0.6324074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.5994170626664671,
+            "leftHand-leftShin": 0.7029139557517643,
+            "leftHand-rightThigh": 0.745475612312692,
+            "leftHand-rightShin": 1.0724917931369942,
+            "rightHand-leftThigh": 0.5485369130298186,
+            "rightHand-leftShin": 0.8970291907200867,
+            "rightHand-rightThigh": 0.5034701322883446,
+            "rightHand-rightShin": 0.7135808662377701
+          }
+        },
+        {
+          "phase": 0.6333333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.5998910684046657,
+            "leftHand-leftShin": 0.7034368267509237,
+            "leftHand-rightThigh": 0.746038387543987,
+            "leftHand-rightShin": 1.0730998054976242,
+            "rightHand-leftThigh": 0.5487158333132044,
+            "rightHand-leftShin": 0.8972814923103355,
+            "rightHand-rightThigh": 0.5027858016060366,
+            "rightHand-rightShin": 0.7103471629760569
+          }
+        },
+        {
+          "phase": 0.6342592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6003764669544793,
+            "leftHand-leftShin": 0.7039915204624727,
+            "leftHand-rightThigh": 0.7466059478859227,
+            "leftHand-rightShin": 1.073721365956395,
+            "rightHand-leftThigh": 0.5488723071793029,
+            "rightHand-leftShin": 0.89745460683903,
+            "rightHand-rightThigh": 0.5020527782117868,
+            "rightHand-rightShin": 0.7069505522822396
+          }
+        },
+        {
+          "phase": 0.6351851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6008715707629657,
+            "leftHand-leftShin": 0.704581896621866,
+            "leftHand-rightThigh": 0.7471775891428329,
+            "leftHand-rightShin": 1.0743506179413829,
+            "rightHand-leftThigh": 0.5490837563328088,
+            "rightHand-leftShin": 0.8976954412903293,
+            "rightHand-rightThigh": 0.5013663678383333,
+            "rightHand-rightShin": 0.7035733192075229
+          }
+        },
+        {
+          "phase": 0.6361111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6013769603837915,
+            "leftHand-leftShin": 0.7052005365387415,
+            "leftHand-rightThigh": 0.747753430499268,
+            "leftHand-rightShin": 1.0749903316171414,
+            "rightHand-leftThigh": 0.5492728179488947,
+            "rightHand-leftShin": 0.8978545513098475,
+            "rightHand-rightThigh": 0.5006328493103177,
+            "rightHand-rightShin": 0.7000337188475138
+          }
+        },
+        {
+          "phase": 0.6370370370370371,
+          "distances": {
+            "leftHand-leftThigh": 0.6018918545587076,
+            "leftHand-leftShin": 0.7058548721244644,
+            "leftHand-rightThigh": 0.7483332403891726,
+            "leftHand-rightShin": 1.0756379436433068,
+            "rightHand-leftThigh": 0.5495190854068562,
+            "rightHand-leftShin": 0.8980828342979895,
+            "rightHand-rightThigh": 0.4999485863479057,
+            "rightHand-rightShin": 0.6965144980331399
+          }
+        },
+        {
+          "phase": 0.637962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.602416307186375,
+            "leftHand-leftShin": 0.706534659361504,
+            "leftHand-rightThigh": 0.7489171192418907,
+            "leftHand-rightShin": 1.0762935848807247,
+            "rightHand-leftThigh": 0.5497429230210432,
+            "rightHand-leftShin": 0.8982268466123097,
+            "rightHand-rightThigh": 0.49921822687319584,
+            "rightHand-rightShin": 0.6928314673714046
+          }
+        },
+        {
+          "phase": 0.6388888888888888,
+          "distances": {
+            "leftHand-leftThigh": 0.6029500859722259,
+            "leftHand-leftShin": 0.7072501644546129,
+            "leftHand-rightThigh": 0.7495048680908233,
+            "leftHand-rightShin": 1.0769573345799164,
+            "rightHand-leftThigh": 0.5500263048473741,
+            "rightHand-leftShin": 0.8984416322712075,
+            "rightHand-rightThigh": 0.4985398911461312,
+            "rightHand-rightShin": 0.6891698993633665
+          }
+        },
+        {
+          "phase": 0.6398148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6034929188462624,
+            "leftHand-leftShin": 0.7079879277875772,
+            "leftHand-rightThigh": 0.7500966163191345,
+            "leftHand-rightShin": 1.077626817800911,
+            "rightHand-leftThigh": 0.5502868102083687,
+            "rightHand-leftShin": 0.8985695243428785,
+            "rightHand-rightThigh": 0.4978167218117251,
+            "rightHand-rightShin": 0.6853451984433381
+          }
+        },
+        {
+          "phase": 0.6407407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.604044910330025,
+            "leftHand-leftShin": 0.7087614080075382,
+            "leftHand-rightThigh": 0.7506921446579641,
+            "leftHand-rightShin": 1.0783046151257318,
+            "rightHand-leftThigh": 0.5506092284168363,
+            "rightHand-leftShin": 0.8987698693966386,
+            "rightHand-rightThigh": 0.4971484048769774,
+            "rightHand-rightShin": 0.6815431074933918
+          }
+        },
+        {
+          "phase": 0.6416666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6046054685212353,
+            "leftHand-leftShin": 0.7095548898648331,
+            "leftHand-rightThigh": 0.7512916608961295,
+            "leftHand-rightShin": 1.0789859414412413,
+            "rightHand-leftThigh": 0.5509081416596211,
+            "rightHand-leftShin": 0.8988805592458599,
+            "rightHand-rightThigh": 0.49643624631885575,
+            "rightHand-rightShin": 0.6775782259980951
+          }
+        },
+        {
+          "phase": 0.6425925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6051750299531438,
+            "leftHand-leftShin": 0.7103840725330869,
+            "leftHand-rightThigh": 0.7518948759430534,
+            "leftHand-rightShin": 1.0796757843862754,
+            "rightHand-leftThigh": 0.5512713735212839,
+            "rightHand-leftShin": 0.8990654615123824,
+            "rightHand-rightThigh": 0.49578183437965434,
+            "rightHand-rightShin": 0.6736371759992941
+          }
+        },
+        {
+          "phase": 0.6435185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6057529841894046,
+            "leftHand-leftShin": 0.7112312607221362,
+            "leftHand-rightThigh": 0.7525023027144597,
+            "leftHand-rightShin": 1.0803672934539847,
+            "rightHand-leftThigh": 0.5516104590378859,
+            "rightHand-leftShin": 0.8991580680647129,
+            "rightHand-rightThigh": 0.49508417379450553,
+            "rightHand-rightShin": 0.669532107283397
+          }
+        },
+        {
+          "phase": 0.6444444444444445,
+          "distances": {
+            "leftHand-leftThigh": 0.6063398049403551,
+            "leftHand-leftShin": 0.7121141522042785,
+            "leftHand-rightThigh": 0.7531133577368838,
+            "leftHand-rightShin": 1.0810675256243882,
+            "rightHand-leftThigh": 0.5520163547250267,
+            "rightHand-leftShin": 0.8993267945020821,
+            "rightHand-rightThigh": 0.49444726605460715,
+            "rightHand-rightShin": 0.6654521956964622
+          }
+        },
+        {
+          "phase": 0.6453703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6069344613981964,
+            "leftHand-leftShin": 0.7130124480001123,
+            "leftHand-rightThigh": 0.7537284417185403,
+            "leftHand-rightShin": 1.0817671743676645,
+            "rightHand-leftThigh": 0.5523970446676856,
+            "rightHand-leftShin": 0.8994005529679261,
+            "rightHand-rightThigh": 0.4937680900076213,
+            "rightHand-rightShin": 0.6612101142628215
+          }
+        },
+        {
+          "phase": 0.6462962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.607537853432053,
+            "leftHand-leftShin": 0.7139464237741201,
+            "leftHand-rightThigh": 0.7543470884265496,
+            "leftHand-rightShin": 1.0824757451684301,
+            "rightHand-leftThigh": 0.5528470206189471,
+            "rightHand-leftShin": 0.8995523842561262,
+            "rightHand-rightThigh": 0.49315269202670575,
+            "rightHand-rightShin": 0.6569945928190468
+          }
+        },
+        {
+          "phase": 0.6472222222222223,
+          "distances": {
+            "leftHand-leftThigh": 0.6081488534107773,
+            "leftHand-leftShin": 0.7148941886636309,
+            "leftHand-rightThigh": 0.7549698698180197,
+            "leftHand-rightShin": 1.0831818864251912,
+            "rightHand-leftThigh": 0.5532707497123165,
+            "rightHand-leftShin": 0.8996065121736236,
+            "rightHand-rightThigh": 0.49249552017027065,
+            "rightHand-rightShin": 0.6526168567879086
+          }
+        },
+        {
+          "phase": 0.6481481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.6087684719779597,
+            "leftHand-leftShin": 0.7158776192934201,
+            "leftHand-rightThigh": 0.755596156397708,
+            "leftHand-rightShin": 1.083897149323887,
+            "rightHand-leftThigh": 0.5537662876149582,
+            "rightHand-leftShin": 0.8997407776611356,
+            "rightHand-rightThigh": 0.49190522804970954,
+            "rightHand-rightShin": 0.6482671959073913
+          }
+        },
+        {
+          "phase": 0.649074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6093955533233943,
+            "leftHand-leftShin": 0.7168732469107448,
+            "leftHand-rightThigh": 0.7562267630083594,
+            "leftHand-rightShin": 1.0846082132563735,
+            "rightHand-leftThigh": 0.5542343446826828,
+            "rightHand-leftShin": 0.899774650914139,
+            "rightHand-rightThigh": 0.4912734654222247,
+            "rightHand-rightShin": 0.6437551570265205
+          }
+        },
+        {
+          "phase": 0.65,
+          "distances": {
+            "leftHand-leftThigh": 0.6100311506984878,
+            "leftHand-leftShin": 0.7179045429633771,
+            "leftHand-rightThigh": 0.7568608251770372,
+            "leftHand-rightShin": 1.0853286006183624,
+            "rightHand-leftThigh": 0.5547767828358643,
+            "rightHand-leftShin": 0.8998908529241495,
+            "rightHand-rightThigh": 0.4907117621777624,
+            "rightHand-rightShin": 0.6392728355055701
+          }
+        },
+        {
+          "phase": 0.6509259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.6106736871465802,
+            "leftHand-leftShin": 0.7189457758659776,
+            "leftHand-rightThigh": 0.7574989776513894,
+            "leftHand-rightShin": 1.086042610737234,
+            "rightHand-leftThigh": 0.5552900605880828,
+            "rightHand-leftShin": 0.8999039105791076,
+            "rightHand-rightThigh": 0.49010920750001247,
+            "rightHand-rightShin": 0.6346312105282386
+          }
+        },
+        {
+          "phase": 0.6518518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.6113246404425966,
+            "leftHand-leftShin": 0.720022655655717,
+            "leftHand-rightThigh": 0.7581405392331152,
+            "leftHand-rightShin": 1.0867661366811059,
+            "rightHand-leftThigh": 0.5558802364801371,
+            "rightHand-leftShin": 0.9000015083930034,
+            "rightHand-rightThigh": 0.489579869566686,
+            "rightHand-rightShin": 0.630021045819189
+          }
+        },
+        {
+          "phase": 0.6527777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.6119824844506611,
+            "leftHand-leftShin": 0.7211083881170742,
+            "leftHand-rightThigh": 0.7587863983022962,
+            "leftHand-rightShin": 1.087481763649579,
+            "rightHand-leftThigh": 0.556439713062746,
+            "rightHand-leftShin": 0.8999932659054362,
+            "rightHand-rightThigh": 0.48900971687525135,
+            "rightHand-rightShin": 0.6252517580520132
+          }
+        },
+        {
+          "phase": 0.6537037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6126486610981686,
+            "leftHand-leftShin": 0.722229770889328,
+            "leftHand-rightThigh": 0.7594356276535421,
+            "leftHand-rightShin": 1.0882071020254744,
+            "rightHand-leftThigh": 0.5570786511398284,
+            "rightHand-leftShin": 0.9000719050227789,
+            "rightHand-rightThigh": 0.48851601105886017,
+            "rightHand-rightShin": 0.6205158283444839
+          }
+        },
+        {
+          "phase": 0.6546296296296297,
+          "distances": {
+            "leftHand-leftThigh": 0.6133215859753472,
+            "leftHand-leftShin": 0.7233585675029058,
+            "leftHand-rightThigh": 0.760089224048451,
+            "leftHand-rightShin": 1.088922797578356,
+            "rightHand-leftThigh": 0.5576850368223815,
+            "rightHand-leftShin": 0.9000418843687351,
+            "rightHand-rightThigh": 0.4879814570275931,
+            "rightHand-rightShin": 0.6156219940198921
+          }
+        },
+        {
+          "phase": 0.6555555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6140027708649041,
+            "leftHand-leftShin": 0.7245230337897949,
+            "leftHand-rightThigh": 0.7607461580195628,
+            "leftHand-rightShin": 1.0896484001283855,
+            "rightHand-leftThigh": 0.5583734592679238,
+            "rightHand-leftShin": 0.9001011897327281,
+            "rightHand-rightThigh": 0.487526618328157,
+            "rightHand-rightShin": 0.6107635764502557
+          }
+        },
+        {
+          "phase": 0.6564814814814814,
+          "distances": {
+            "leftHand-leftThigh": 0.6146902150602254,
+            "leftHand-leftShin": 0.7256930435865541,
+            "leftHand-rightThigh": 0.7614072595909674,
+            "leftHand-rightShin": 1.0903624145520856,
+            "rightHand-leftThigh": 0.5590270328397798,
+            "rightHand-leftShin": 0.9000491562455716,
+            "rightHand-rightThigh": 0.4870311063961362,
+            "rightHand-rightShin": 0.6057518282982595
+          }
+        },
+        {
+          "phase": 0.6574074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6153858489762186,
+            "leftHand-leftShin": 0.7268987202005999,
+            "leftHand-rightThigh": 0.7620716682958606,
+            "leftHand-rightShin": 1.0910865202064686,
+            "rightHand-leftThigh": 0.559765127223898,
+            "rightHand-leftShin": 0.9000888881475033,
+            "rightHand-rightThigh": 0.4866181531115313,
+            "rightHand-rightShin": 0.6007776888955328
+          }
+        },
+        {
+          "phase": 0.6583333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.616087789628891,
+            "leftHand-leftShin": 0.7281090361949705,
+            "leftHand-rightThigh": 0.7627404284458277,
+            "leftHand-rightShin": 1.0917976734008819,
+            "rightHand-leftThigh": 0.5604663131806691,
+            "rightHand-leftShin": 0.9000145216279357,
+            "rightHand-rightThigh": 0.48608789019762383,
+            "rightHand-rightShin": 0.5956512391389617
+          }
+        },
+        {
+          "phase": 0.6592592592592592,
+          "distances": {
+            "leftHand-leftThigh": 0.6167978646372404,
+            "leftHand-leftShin": 0.729355049850609,
+            "leftHand-rightThigh": 0.7634124724362292,
+            "leftHand-rightShin": 1.0925191056164392,
+            "rightHand-leftThigh": 0.5612545378960918,
+            "rightHand-leftShin": 0.900034492847466,
+            "rightHand-rightThigh": 0.48551035252994995,
+            "rightHand-rightShin": 0.5905647989738015
+          }
+        },
+        {
+          "phase": 0.6601851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6175141094485596,
+            "leftHand-leftShin": 0.7306044646062493,
+            "leftHand-rightThigh": 0.7640889814102333,
+            "leftHand-rightShin": 1.0932261253723716,
+            "rightHand-leftThigh": 0.5620034764326045,
+            "rightHand-leftShin": 0.8999376434244485,
+            "rightHand-rightThigh": 0.48475167749071035,
+            "rightHand-rightShin": 0.585328900899621
+          }
+        },
+        {
+          "phase": 0.6611111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.618238443617913,
+            "leftHand-leftShin": 0.7318896252237336,
+            "leftHand-rightThigh": 0.7647687562397039,
+            "leftHand-rightShin": 1.0939436095013104,
+            "rightHand-leftThigh": 0.5628419544720592,
+            "rightHand-leftShin": 0.8999377887879721,
+            "rightHand-rightThigh": 0.4839454202437181,
+            "rightHand-rightShin": 0.5801356218416325
+          }
+        },
+        {
+          "phase": 0.6620370370370371,
+          "distances": {
+            "leftHand-leftThigh": 0.6189684896926505,
+            "leftHand-leftShin": 0.7331765050143942,
+            "leftHand-rightThigh": 0.7654527051315001,
+            "leftHand-rightShin": 1.0946448406224096,
+            "rightHand-leftThigh": 0.5636381335760066,
+            "rightHand-leftShin": 0.8998183646242113,
+            "rightHand-rightThigh": 0.48295101037041,
+            "rightHand-rightShin": 0.5747991290841368
+          }
+        },
+        {
+          "phase": 0.662962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6197065823714628,
+            "leftHand-leftShin": 0.7344991597906765,
+            "leftHand-rightThigh": 0.7661399038085339,
+            "leftHand-rightShin": 1.0953567064782894,
+            "rightHand-leftThigh": 0.5645262304627948,
+            "rightHand-leftShin": 0.899798562956371,
+            "rightHand-rightThigh": 0.48190914134410795,
+            "rightHand-rightShin": 0.5695080458434189
+          }
+        },
+        {
+          "phase": 0.6638888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6204504606951281,
+            "leftHand-leftShin": 0.7358227570291819,
+            "leftHand-rightThigh": 0.7668315224665582,
+            "leftHand-rightShin": 1.0960511506843789,
+            "rightHand-leftThigh": 0.5653695301869845,
+            "rightHand-leftShin": 0.8996564894122471,
+            "rightHand-rightThigh": 0.4806723089649196,
+            "rightHand-rightShin": 0.5640763351476099
+          }
+        },
+        {
+          "phase": 0.6648148148148149,
+          "distances": {
+            "leftHand-leftThigh": 0.6212023573749111,
+            "leftHand-leftShin": 0.737182196249059,
+            "leftHand-rightThigh": 0.7675263816146344,
+            "leftHand-rightShin": 1.0967564004716015,
+            "rightHand-leftThigh": 0.5663071425853242,
+            "rightHand-leftShin": 0.8996167907994014,
+            "rightHand-rightThigh": 0.4793885351024992,
+            "rightHand-rightShin": 0.5586930970765474
+          }
+        },
+        {
+          "phase": 0.6657407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.6219599282209033,
+            "leftHand-leftShin": 0.7385412921848822,
+            "leftHand-rightThigh": 0.7682256827177085,
+            "leftHand-rightShin": 1.0974429736829707,
+            "rightHand-leftThigh": 0.5671969398960379,
+            "rightHand-leftShin": 0.8994521398891576,
+            "rightHand-rightThigh": 0.47790422720985315,
+            "rightHand-rightShin": 0.5531741370768563
+          }
+        },
+        {
+          "phase": 0.6666666666666666,
+          "distances": {
+            "leftHand-leftThigh": 0.6227254988334574,
+            "leftHand-leftShin": 0.7399363149323285,
+            "leftHand-rightThigh": 0.7689282198536597,
+            "leftHand-rightShin": 1.0981405158023019,
+            "rightHand-leftThigh": 0.5681833967854613,
+            "rightHand-leftShin": 0.8993926780680168,
+            "rightHand-rightThigh": 0.47637396772840024,
+            "rightHand-rightShin": 0.5477069839773656
+          }
+        },
+        {
+          "phase": 0.6675925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6234962582842789,
+            "leftHand-leftShin": 0.7413294721104178,
+            "leftHand-rightThigh": 0.7696348986556,
+            "leftHand-rightShin": 1.0988178361762935,
+            "rightHand-leftThigh": 0.5691185821574989,
+            "rightHand-leftShin": 0.8992056231058412,
+            "rightHand-rightThigh": 0.47463961020954526,
+            "rightHand-rightShin": 0.5421121128884617
+          }
+        },
+        {
+          "phase": 0.6685185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6242750018129944,
+            "leftHand-leftShin": 0.7427586270874674,
+            "leftHand-rightThigh": 0.7703448110456163,
+            "leftHand-rightShin": 1.0995062697167919,
+            "rightHand-leftThigh": 0.5701526342259325,
+            "rightHand-leftShin": 0.8991265248177714,
+            "rightHand-rightThigh": 0.4728608425642222,
+            "rightHand-rightShin": 0.5365726283669767
+          }
+        },
+        {
+          "phase": 0.6694444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6250590822966449,
+            "leftHand-leftShin": 0.744185362527098,
+            "leftHand-rightThigh": 0.771059124799927,
+            "leftHand-rightShin": 1.100173597904514,
+            "rightHand-leftThigh": 0.571132449434483,
+            "rightHand-leftShin": 0.898917072938105,
+            "rightHand-rightThigh": 0.47087432644374605,
+            "rightHand-rightShin": 0.5309097605042221
+          }
+        },
+        {
+          "phase": 0.6703703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6258511464651528,
+            "leftHand-leftShin": 0.745648209763562,
+            "leftHand-rightThigh": 0.7717766768133741,
+            "leftHand-rightShin": 1.1008521793748078,
+            "rightHand-leftThigh": 0.5722133480170466,
+            "rightHand-leftShin": 0.898818463957698,
+            "rightHand-rightThigh": 0.4688454742871854,
+            "rightHand-rightShin": 0.5253062163412471
+          }
+        },
+        {
+          "phase": 0.6712962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6266482725851424,
+            "leftHand-leftShin": 0.7471070152587362,
+            "leftHand-rightThigh": 0.772498512659481,
+            "leftHand-rightShin": 1.101508560295891,
+            "rightHand-leftThigh": 0.5732364902528699,
+            "rightHand-leftShin": 0.8985870135258657,
+            "rightHand-rightThigh": 0.4666075434060761,
+            "rightHand-rightShin": 0.5195871370274617
+          }
+        },
+        {
+          "phase": 0.6722222222222223,
+          "distances": {
+            "leftHand-leftThigh": 0.6274533894350277,
+            "leftHand-leftShin": 0.7486020579641017,
+            "leftHand-rightThigh": 0.7732235951694694,
+            "leftHand-rightShin": 1.1021763189607623,
+            "rightHand-leftThigh": 0.5743628436629419,
+            "rightHand-leftShin": 0.8984693142578686,
+            "rightHand-rightThigh": 0.46432997754161787,
+            "rightHand-rightShin": 0.5139316573773497
+          }
+        },
+        {
+          "phase": 0.6731481481481482,
+          "distances": {
+            "leftHand-leftThigh": 0.6282631949883363,
+            "leftHand-leftShin": 0.7500916712588859,
+            "leftHand-rightThigh": 0.7739527093151675,
+            "leftHand-rightShin": 1.1028207154798297,
+            "rightHand-leftThigh": 0.5754276124285221,
+            "rightHand-leftShin": 0.8982162252723532,
+            "rightHand-rightThigh": 0.46184397915522163,
+            "rightHand-rightShin": 0.5081701118423173
+          }
+        },
+        {
+          "phase": 0.674074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6290810036527315,
+            "leftHand-leftShin": 0.7516176432723609,
+            "leftHand-rightThigh": 0.7746850817392873,
+            "leftHand-rightShin": 1.1034765895469114,
+            "rightHand-leftThigh": 0.5765975801119582,
+            "rightHand-leftShin": 0.8980797433306652,
+            "rightHand-rightThigh": 0.4593217138421187,
+            "rightHand-rightShin": 0.5024767668655186
+          }
+        },
+        {
+          "phase": 0.675,
+          "distances": {
+            "leftHand-leftThigh": 0.6299036674275601,
+            "leftHand-leftShin": 0.7531377690456488,
+            "leftHand-rightThigh": 0.7754217475490247,
+            "leftHand-rightShin": 1.1041085881605448,
+            "rightHand-leftThigh": 0.5777028028363727,
+            "rightHand-leftShin": 0.8978051270951068,
+            "rightHand-rightThigh": 0.4565914112651974,
+            "rightHand-rightShin": 0.49668339915491444
+          }
+        },
+        {
+          "phase": 0.6759259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.6307343633987944,
+            "leftHand-leftShin": 0.754694424592369,
+            "leftHand-rightThigh": 0.7761616908732415,
+            "leftHand-rightShin": 1.104752155235883,
+            "rightHand-leftThigh": 0.5789152303790321,
+            "rightHand-leftShin": 0.8976500965700771,
+            "rightHand-rightThigh": 0.4538288765561119,
+            "rightHand-rightShin": 0.4909632911355853
+          }
+        },
+        {
+          "phase": 0.6768518518518518,
+          "distances": {
+            "leftHand-leftThigh": 0.6315694567134257,
+            "leftHand-leftShin": 0.7562433866565397,
+            "leftHand-rightThigh": 0.7769056047153197,
+            "leftHand-rightShin": 1.105370917838467,
+            "rightHand-leftThigh": 0.5800589091415894,
+            "rightHand-leftShin": 0.8973546062429621,
+            "rightHand-rightThigh": 0.4508622441875111,
+            "rightHand-rightShin": 0.48515403244453514
+          }
+        },
+        {
+          "phase": 0.6777777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.6324126170096205,
+            "leftHand-leftShin": 0.7578290504384293,
+            "leftHand-rightThigh": 0.7776528185313234,
+            "leftHand-rightShin": 1.1060013122738965,
+            "rightHand-leftThigh": 0.5813116597399578,
+            "rightHand-leftShin": 0.8971816353823927,
+            "rightHand-rightThigh": 0.4478681701788785,
+            "rightHand-rightShin": 0.47942348068719465
+          }
+        },
+        {
+          "phase": 0.6787037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.633259808631652,
+            "leftHand-leftShin": 0.7594055089718442,
+            "leftHand-rightThigh": 0.7784037608224144,
+            "leftHand-rightShin": 1.106606191372634,
+            "rightHand-leftThigh": 0.5824916671603055,
+            "rightHand-leftShin": 0.8968658383120452,
+            "rightHand-rightThigh": 0.44467557327067336,
+            "rightHand-rightShin": 0.4736148723073315
+          }
+        },
+        {
+          "phase": 0.6796296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6341151092020423,
+            "leftHand-leftShin": 0.7610188451959718,
+            "leftHand-rightThigh": 0.779158029521318,
+            "leftHand-rightShin": 1.1072227376897223,
+            "rightHand-leftThigh": 0.5837824851377893,
+            "rightHand-leftShin": 0.8966754479569699,
+            "rightHand-rightThigh": 0.4414610990843054,
+            "rightHand-rightShin": 0.4678908275619336
+          }
+        },
+        {
+          "phase": 0.6805555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6349745697821522,
+            "leftHand-leftShin": 0.7626224001950551,
+            "leftHand-rightThigh": 0.7799162389565659,
+            "leftHand-rightShin": 1.107813526884157,
+            "rightHand-leftThigh": 0.5849973795147609,
+            "rightHand-leftShin": 0.8963396622355122,
+            "rightHand-rightThigh": 0.4380530659010567,
+            "rightHand-rightShin": 0.46209631569073917
+          }
+        },
+        {
+          "phase": 0.6814814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6358421997130951,
+            "leftHand-leftShin": 0.7642630647190389,
+            "leftHand-rightThigh": 0.7806778097312503,
+            "leftHand-rightShin": 1.1084160048431946,
+            "rightHand-leftThigh": 0.5863248520822826,
+            "rightHand-leftShin": 0.8961322979121042,
+            "rightHand-rightThigh": 0.4346294946197283,
+            "rightHand-rightShin": 0.45639277801151756
+          }
+        },
+        {
+          "phase": 0.6824074074074075,
+          "distances": {
+            "leftHand-leftThigh": 0.636713424915099,
+            "leftHand-leftShin": 0.7658919099992606,
+            "leftHand-rightThigh": 0.7814428647388117,
+            "leftHand-rightShin": 1.108992131284206,
+            "rightHand-leftThigh": 0.587572253386649,
+            "rightHand-leftShin": 0.8957774463286962,
+            "rightHand-rightThigh": 0.43102167603993286,
+            "rightHand-rightShin": 0.4506315775384824
+          }
+        },
+        {
+          "phase": 0.6833333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.6375928854499587,
+            "leftHand-leftShin": 0.7675580931582064,
+            "leftHand-rightThigh": 0.7822113194856589,
+            "leftHand-rightShin": 1.1095799343560537,
+            "rightHand-leftThigh": 0.5889338426461005,
+            "rightHand-leftShin": 0.89555394620968,
+            "rightHand-rightThigh": 0.42740547954521857,
+            "rightHand-rightShin": 0.4449681871377634
+          }
+        },
+        {
+          "phase": 0.6842592592592592,
+          "distances": {
+            "leftHand-leftThigh": 0.6384755373771445,
+            "leftHand-leftShin": 0.7692108977470964,
+            "leftHand-rightThigh": 0.7829830020499723,
+            "leftHand-rightShin": 1.1101409816154537,
+            "rightHand-leftThigh": 0.5902114049785352,
+            "rightHand-leftShin": 0.8951806642277402,
+            "rightHand-rightThigh": 0.42361515839024017,
+            "rightHand-rightShin": 0.4392588743882065
+          }
+        },
+        {
+          "phase": 0.6851851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6393665007112502,
+            "leftHand-leftShin": 0.7709012817881847,
+            "leftHand-rightThigh": 0.7837581280781353,
+            "leftHand-rightShin": 1.1107136643526117,
+            "rightHand-leftThigh": 0.591604660040295,
+            "rightHand-leftShin": 0.8949416256150257,
+            "rightHand-rightThigh": 0.4198244358475284,
+            "rightHand-rightShin": 0.4336546764187845
+          }
+        },
+        {
+          "phase": 0.6861111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6402606387219115,
+            "leftHand-leftShin": 0.7725771966915381,
+            "leftHand-rightThigh": 0.7845364735919815,
+            "leftHand-rightShin": 1.1112596211179364,
+            "rightHand-leftThigh": 0.5929105905753139,
+            "rightHand-leftShin": 0.8945505176487369,
+            "rightHand-rightThigh": 0.4158692674656893,
+            "rightHand-rightShin": 0.42801375494753663
+          }
+        },
+        {
+          "phase": 0.687037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6411631829208485,
+            "leftHand-leftShin": 0.7742909842684808,
+            "leftHand-rightThigh": 0.7853183153241651,
+            "leftHand-rightShin": 1.1118171545637785,
+            "rightHand-leftThigh": 0.5943337322717792,
+            "rightHand-leftShin": 0.8942966436857072,
+            "rightHand-rightThigh": 0.41192250057239893,
+            "rightHand-rightShin": 0.4224858372575113
+          }
+        },
+        {
+          "phase": 0.687962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6420681900935993,
+            "leftHand-leftShin": 0.7759879886927453,
+            "leftHand-rightThigh": 0.7861028519551079,
+            "leftHand-rightShin": 1.112347725347442,
+            "rightHand-leftThigh": 0.5956654305378156,
+            "rightHand-leftShin": 0.8938887294991873,
+            "rightHand-rightThigh": 0.40782509367447206,
+            "rightHand-rightShin": 0.41693455725659445
+          }
+        },
+        {
+          "phase": 0.6888888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6429817058312924,
+            "leftHand-leftShin": 0.7777231577348911,
+            "leftHand-rightThigh": 0.7868909421538073,
+            "leftHand-rightShin": 1.112889780655267,
+            "rightHand-leftThigh": 0.5971157061043301,
+            "rightHand-leftShin": 0.8936209376448826,
+            "rightHand-rightThigh": 0.40374570583767966,
+            "rightHand-rightShin": 0.41150459426452585
+          }
+        },
+        {
+          "phase": 0.6898148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6438972928320811,
+            "leftHand-leftShin": 0.7794400266147721,
+            "leftHand-rightThigh": 0.7876813770789743,
+            "leftHand-rightShin": 1.1134048386517652,
+            "rightHand-leftThigh": 0.5984708636235349,
+            "rightHand-leftShin": 0.8931968272405514,
+            "rightHand-rightThigh": 0.39952909559532035,
+            "rightHand-rightShin": 0.40606232604583625
+          }
+        },
+        {
+          "phase": 0.6907407407407408,
+          "distances": {
+            "leftHand-leftThigh": 0.6448215056814418,
+            "leftHand-leftShin": 0.7811953791024406,
+            "leftHand-rightThigh": 0.7884754306677213,
+            "leftHand-rightShin": 1.1139312654496922,
+            "rightHand-leftThigh": 0.5999459068272115,
+            "rightHand-leftShin": 0.8929157209394585,
+            "rightHand-rightThigh": 0.3953409205648812,
+            "rightHand-rightShin": 0.4007501790822159
+          }
+        },
+        {
+          "phase": 0.6916666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6457474790865864,
+            "leftHand-leftShin": 0.7829306689899465,
+            "leftHand-rightThigh": 0.7892716102262279,
+            "leftHand-rightShin": 1.114430957560738,
+            "rightHand-leftThigh": 0.6013225852527422,
+            "rightHand-leftShin": 0.8924763046733312,
+            "rightHand-rightThigh": 0.391029309968877,
+            "rightHand-rightShin": 0.3954358651201764
+          }
+        },
+        {
+          "phase": 0.6925925925925925,
+          "distances": {
+            "leftHand-leftThigh": 0.646682214271278,
+            "leftHand-leftShin": 0.7847048036220303,
+            "leftHand-rightThigh": 0.7900714831023568,
+            "leftHand-rightShin": 1.1149418845053298,
+            "rightHand-leftThigh": 0.6028204471595986,
+            "rightHand-leftShin": 0.8921828244506728,
+            "rightHand-rightThigh": 0.38675735496662833,
+            "rightHand-rightShin": 0.39026100186348034
+          }
+        },
+        {
+          "phase": 0.6935185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6476178126537886,
+            "leftHand-leftShin": 0.7864560916954461,
+            "leftHand-rightThigh": 0.7908727081458613,
+            "leftHand-rightShin": 1.1154261385868582,
+            "rightHand-leftThigh": 0.6042159985647246,
+            "rightHand-leftShin": 0.8917292815229272,
+            "rightHand-rightThigh": 0.3823790569897853,
+            "rightHand-rightShin": 0.3850968378795018
+          }
+        },
+        {
+          "phase": 0.6944444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6485623189875429,
+            "leftHand-leftShin": 0.7882465857828352,
+            "leftHand-rightThigh": 0.7916777073763823,
+            "leftHand-rightShin": 1.1159214644493687,
+            "rightHand-leftThigh": 0.6057338885520656,
+            "rightHand-leftShin": 0.8914244881804899,
+            "rightHand-rightThigh": 0.378052366209123,
+            "rightHand-rightShin": 0.3800817831889231
+          }
+        },
+        {
+          "phase": 0.6953703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6495072605990118,
+            "leftHand-leftShin": 0.7900125156866148,
+            "leftHand-rightThigh": 0.7924837519569878,
+            "leftHand-rightShin": 1.1163905587062741,
+            "rightHand-leftThigh": 0.6071463575150907,
+            "rightHand-leftShin": 0.8909574890688182,
+            "rightHand-rightThigh": 0.37363455116262073,
+            "rightHand-rightShin": 0.37508680954764073
+          }
+        },
+        {
+          "phase": 0.6962962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6504612780147488,
+            "leftHand-leftShin": 0.791818058595506,
+            "leftHand-rightThigh": 0.7932936629311406,
+            "leftHand-rightShin": 1.1168705476978877,
+            "rightHand-leftThigh": 0.6086823274968824,
+            "rightHand-leftShin": 0.8906421025291757,
+            "rightHand-rightThigh": 0.369281040374961,
+            "rightHand-rightShin": 0.3702510442342629
+          }
+        },
+        {
+          "phase": 0.6972222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.6514150424250148,
+            "leftHand-leftShin": 0.7935964094866853,
+            "leftHand-rightThigh": 0.7941039453862798,
+            "leftHand-rightShin": 1.1173246597696327,
+            "rightHand-leftThigh": 0.6101097188478517,
+            "rightHand-leftShin": 0.8901627836763724,
+            "rightHand-rightThigh": 0.3648531526030385,
+            "rightHand-rightShin": 0.3654454390672956
+          }
+        },
+        {
+          "phase": 0.6981481481481482,
+          "distances": {
+            "leftHand-leftThigh": 0.6523780700155967,
+            "leftHand-leftShin": 0.79541481169816,
+            "leftHand-rightThigh": 0.7949181971243438,
+            "leftHand-rightShin": 1.1177894728178168,
+            "rightHand-leftThigh": 0.6116617380728597,
+            "rightHand-leftShin": 0.8898379339176734,
+            "rightHand-rightThigh": 0.3605029515118178,
+            "rightHand-rightShin": 0.36080946013174614
+          }
+        },
+        {
+          "phase": 0.6990740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.6533397698850519,
+            "leftHand-leftShin": 0.7972027646567641,
+            "leftHand-rightThigh": 0.795731903639125,
+            "leftHand-rightShin": 1.1182287090988943,
+            "rightHand-leftThigh": 0.6131017910376727,
+            "rightHand-leftShin": 0.8893477774625244,
+            "rightHand-rightThigh": 0.3560966783118838,
+            "rightHand-rightShin": 0.356214359677022
+          }
+        },
+        {
+          "phase": 0.7,
+          "distances": {
+            "leftHand-leftThigh": 0.654310935438614,
+            "leftHand-leftShin": 0.799031214720893,
+            "leftHand-rightThigh": 0.7965496914782292,
+            "leftHand-rightShin": 1.1186784323802696,
+            "rightHand-leftThigh": 0.6146674909441324,
+            "rightHand-leftShin": 0.8890148416259253,
+            "rightHand-rightThigh": 0.3517820233900067,
+            "rightHand-rightShin": 0.351799406665724
+          }
+        },
+        {
+          "phase": 0.700925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6552801746453251,
+            "leftHand-leftShin": 0.8008267341575384,
+            "leftHand-rightThigh": 0.797366379878449,
+            "leftHand-rightShin": 1.1191032390879339,
+            "rightHand-leftThigh": 0.6161186228762944,
+            "rightHand-leftShin": 0.8885147372738137,
+            "rightHand-rightThigh": 0.34743279674208627,
+            "rightHand-rightShin": 0.34743279674208627
+          }
+        },
+        {
+          "phase": 0.7018518518518518,
+          "distances": {
+            "leftHand-leftThigh": 0.6562591108781475,
+            "leftHand-leftShin": 0.802663255606636,
+            "leftHand-rightThigh": 0.7981872770620001,
+            "leftHand-rightShin": 1.1195383126905631,
+            "rightHand-leftThigh": 0.6176964766709512,
+            "rightHand-leftShin": 0.8881746931663389,
+            "rightHand-rightThigh": 0.34325707443958187,
+            "rightHand-rightShin": 0.34325707443958187
+          }
+        },
+        {
+          "phase": 0.7027777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.657234895823936,
+            "leftHand-leftShin": 0.8044631373769664,
+            "leftHand-rightThigh": 0.799006006568265,
+            "leftHand-rightShin": 1.1199490436889294,
+            "rightHand-leftThigh": 0.6191567988385264,
+            "rightHand-leftShin": 0.8876661898575934,
+            "rightHand-rightThigh": 0.33913890850337874,
+            "rightHand-rightShin": 0.33913890850337874
+          }
+        },
+        {
+          "phase": 0.7037037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6582206304834483,
+            "leftHand-leftShin": 0.8063045440862192,
+            "leftHand-rightThigh": 0.7998290850481846,
+            "leftHand-rightShin": 1.120369806034394,
+            "rightHand-leftThigh": 0.6207448506769138,
+            "rightHand-leftShin": 0.8873205097673204,
+            "rightHand-rightThigh": 0.33522226516209147,
+            "rightHand-rightShin": 0.33522226516209147
+          }
+        },
+        {
+          "phase": 0.7046296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6592020709431797,
+            "leftHand-leftShin": 0.8081059076939306,
+            "leftHand-rightThigh": 0.8006488951514477,
+            "leftHand-rightShin": 1.1207669861294898,
+            "rightHand-leftThigh": 0.6222125589916302,
+            "rightHand-leftShin": 0.8868046021042312,
+            "rightHand-rightThigh": 0.3313706113520366,
+            "rightHand-rightShin": 0.33133752829963625
+          }
+        },
+        {
+          "phase": 0.7055555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6601937413252151,
+            "leftHand-leftShin": 0.8099493544582286,
+            "leftHand-rightThigh": 0.80147321026379,
+            "leftHand-rightShin": 1.1211739522085176,
+            "rightHand-leftThigh": 0.6238089917223715,
+            "rightHand-leftShin": 0.8864542576815865,
+            "rightHand-rightThigh": 0.3277309038734051,
+            "rightHand-rightShin": 0.3275974547785014
+          }
+        },
+        {
+          "phase": 0.7064814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6611799632309335,
+            "leftHand-leftShin": 0.8117488416426133,
+            "leftHand-rightThigh": 0.8022931925840417,
+            "leftHand-rightShin": 1.1215581418595526,
+            "rightHand-leftThigh": 0.6252829628317371,
+            "rightHand-leftShin": 0.8859325615970268,
+            "rightHand-rightThigh": 0.32416239709535394,
+            "rightHand-rightShin": 0.3238677326061803
+          }
+        },
+        {
+          "phase": 0.7074074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6621767290525483,
+            "leftHand-leftShin": 0.8135910214402831,
+            "leftHand-rightThigh": 0.8031178552627651,
+            "leftHand-rightShin": 1.12195186598049,
+            "rightHand-leftThigh": 0.6268866941222594,
+            "rightHand-leftShin": 0.8855792107156255,
+            "rightHand-rightThigh": 0.3208159545448211,
+            "rightHand-rightShin": 0.32029626321731736
+          }
+        },
+        {
+          "phase": 0.7083333333333334,
+          "distances": {
+            "leftHand-leftThigh": 0.6631662995346294,
+            "leftHand-leftShin": 0.8153843413141122,
+            "leftHand-rightThigh": 0.8039365837724336,
+            "leftHand-rightShin": 1.1223236547521542,
+            "rightHand-leftThigh": 0.6283651546176058,
+            "rightHand-leftShin": 0.8850532905421002,
+            "rightHand-rightThigh": 0.31754726780226866,
+            "rightHand-rightShin": 0.31675060287295803
+          }
+        },
+        {
+          "phase": 0.7092592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6641667563514791,
+            "leftHand-leftShin": 0.8172209811524141,
+            "leftHand-rightThigh": 0.804760185610819,
+            "leftHand-rightShin": 1.1227047135348653,
+            "rightHand-leftThigh": 0.6299743472951336,
+            "rightHand-leftShin": 0.8846983900152653,
+            "rightHand-rightThigh": 0.3145100485494773,
+            "rightHand-rightShin": 0.31337666496014843
+          }
+        },
+        {
+          "phase": 0.7101851851851851,
+          "distances": {
+            "leftHand-leftThigh": 0.6651587060246892,
+            "leftHand-leftShin": 0.8190046237217925,
+            "leftHand-rightThigh": 0.8055765362964806,
+            "leftHand-rightShin": 1.123064777165291,
+            "rightHand-leftThigh": 0.6314565840711758,
+            "rightHand-leftShin": 0.8841695676152858,
+            "rightHand-rightThigh": 0.3115540879757941,
+            "rightHand-rightShin": 0.31004153166255716
+          }
+        },
+        {
+          "phase": 0.7111111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6661619298398095,
+            "leftHand-leftShin": 0.8208322848980298,
+            "leftHand-rightThigh": 0.8063979793279701,
+            "leftHand-rightShin": 1.1234338450204397,
+            "rightHand-leftThigh": 0.6330706319574548,
+            "rightHand-leftShin": 0.8838145392620058,
+            "rightHand-rightThigh": 0.3088383547437901,
+            "rightHand-rightShin": 0.30689144574144717
+          }
+        },
+        {
+          "phase": 0.712037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6671545587431794,
+            "leftHand-leftShin": 0.8226009557597818,
+            "leftHand-rightThigh": 0.8072102685280252,
+            "leftHand-rightShin": 1.1237827497256219,
+            "rightHand-leftThigh": 0.6345554784608854,
+            "rightHand-leftShin": 0.883284902522912,
+            "rightHand-rightThigh": 0.3062076840973333,
+            "rightHand-rightShin": 0.30379432557888597
+          }
+        },
+        {
+          "phase": 0.7129629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.6681588873058195,
+            "leftHand-leftShin": 0.8244143715862638,
+            "leftHand-rightThigh": 0.8080278926935129,
+            "leftHand-rightShin": 1.1241403825961298,
+            "rightHand-leftThigh": 0.6361731851031712,
+            "rightHand-leftShin": 0.8829317485769176,
+            "rightHand-rightThigh": 0.30382487135265757,
+            "rightHand-rightShin": 0.30089497052639674
+          }
+        },
+        {
+          "phase": 0.7138888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6691506315782868,
+            "leftHand-leftShin": 0.826163020470194,
+            "leftHand-rightThigh": 0.8088343502241493,
+            "leftHand-rightShin": 1.124478517775983,
+            "rightHand-leftThigh": 0.637659991390084,
+            "rightHand-leftShin": 0.8824031793932015,
+            "rightHand-rightThigh": 0.3015284082494488,
+            "rightHand-rightShin": 0.2980606602428064
+          }
+        },
+        {
+          "phase": 0.7148148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6701545489674333,
+            "leftHand-leftShin": 0.8279571921895355,
+            "leftHand-rightThigh": 0.8096464145765457,
+            "leftHand-rightShin": 1.1248251009689096,
+            "rightHand-leftThigh": 0.6392807546154922,
+            "rightHand-leftShin": 0.8820537808593373,
+            "rightHand-rightThigh": 0.29948621693517585,
+            "rightHand-rightShin": 0.2954360163015527
+          }
+        },
+        {
+          "phase": 0.7157407407407408,
+          "distances": {
+            "leftHand-leftThigh": 0.6711437084673487,
+            "leftHand-leftShin": 0.8296801644595588,
+            "leftHand-rightThigh": 0.8104452351490722,
+            "leftHand-rightShin": 1.1251531954170422,
+            "rightHand-leftThigh": 0.6407692821371987,
+            "rightHand-leftShin": 0.8815283930782026,
+            "rightHand-rightThigh": 0.2975306525401019,
+            "rightHand-rightShin": 0.29288771081522375
+          }
+        },
+        {
+          "phase": 0.7166666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6721455730916441,
+            "leftHand-leftShin": 0.8314495074026136,
+            "leftHand-rightThigh": 0.8112499699961742,
+            "leftHand-rightShin": 1.1254894537526416,
+            "rightHand-leftThigh": 0.6423929622497565,
+            "rightHand-leftShin": 0.8811849189090978,
+            "rightHand-rightThigh": 0.295834449426107,
+            "rightHand-rightShin": 0.29055989860471093
+          }
+        },
+        {
+          "phase": 0.7175925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.673129735428474,
+            "leftHand-leftShin": 0.8331398890129742,
+            "leftHand-rightThigh": 0.8120386483520529,
+            "leftHand-rightShin": 1.125808011897059,
+            "rightHand-leftThigh": 0.6438825458515172,
+            "rightHand-leftShin": 0.8806650240310405,
+            "rightHand-rightThigh": 0.29422459543658674,
+            "rightHand-rightShin": 0.2883195703254469
+          }
+        },
+        {
+          "phase": 0.7185185185185186,
+          "distances": {
+            "leftHand-leftThigh": 0.6741271899221054,
+            "leftHand-leftShin": 0.8348775233731852,
+            "leftHand-rightThigh": 0.8128335843773459,
+            "leftHand-rightShin": 1.126134438473585,
+            "rightHand-leftThigh": 0.6455084650935914,
+            "rightHand-leftShin": 0.8803296709223524,
+            "rightHand-rightThigh": 0.2928774553166476,
+            "rightHand-rightShin": 0.28630893212494124
+          }
+        },
+        {
+          "phase": 0.7194444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6751040319619388,
+            "leftHand-leftShin": 0.8365279057826176,
+            "leftHand-rightThigh": 0.8136095356609313,
+            "leftHand-rightShin": 1.126443942421579,
+            "rightHand-leftThigh": 0.6469991639064571,
+            "rightHand-leftShin": 0.8798178574344588,
+            "rightHand-rightThigh": 0.2916144495419081,
+            "rightHand-rightShin": 0.2843945882137508
+          }
+        },
+        {
+          "phase": 0.7203703703703703,
+          "distances": {
+            "leftHand-leftThigh": 0.6760948224820837,
+            "leftHand-leftShin": 0.8382264839816062,
+            "leftHand-rightThigh": 0.8143921316393816,
+            "leftHand-rightShin": 1.12676101058103,
+            "rightHand-leftThigh": 0.6486274544032982,
+            "rightHand-leftShin": 0.8794932004701483,
+            "rightHand-rightThigh": 0.2906158286328347,
+            "rightHand-rightShin": 0.2827173110028551
+          }
+        },
+        {
+          "phase": 0.7212962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6770611613194419,
+            "leftHand-leftShin": 0.839827729676706,
+            "leftHand-rightThigh": 0.8151520572244159,
+            "leftHand-rightShin": 1.1270617791713697,
+            "rightHand-leftThigh": 0.6501188027343198,
+            "rightHand-leftShin": 0.8789926257154966,
+            "rightHand-rightThigh": 0.2896981803249189,
+            "rightHand-rightShin": 0.281144194939316
+          }
+        },
+        {
+          "phase": 0.7222222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.6780421696358865,
+            "leftHand-leftShin": 0.8414781331235237,
+            "leftHand-rightThigh": 0.8159190584966683,
+            "leftHand-rightShin": 1.1273697918182748,
+            "rightHand-leftThigh": 0.6517489440716545,
+            "rightHand-leftShin": 0.8786816140985907,
+            "rightHand-rightThigh": 0.28904454937971014,
+            "rightHand-rightShin": 0.279813139107859
+          }
+        },
+        {
+          "phase": 0.7231481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.6789945648132036,
+            "leftHand-leftShin": 0.8430202072021298,
+            "leftHand-rightThigh": 0.8166593324988461,
+            "leftHand-rightShin": 1.12766190584348,
+            "rightHand-leftThigh": 0.6532409684582369,
+            "rightHand-leftShin": 0.8781958066401832,
+            "rightHand-rightThigh": 0.2884670975090251,
+            "rightHand-rightShin": 0.2785916825429428
+          }
+        },
+        {
+          "phase": 0.7240740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.6799624247566429,
+            "leftHand-leftShin": 0.8446124257850544,
+            "leftHand-rightThigh": 0.8174071639369067,
+            "leftHand-rightShin": 1.1279609280793055,
+            "rightHand-leftThigh": 0.6548729516442764,
+            "rightHand-leftShin": 0.8779017645840135,
+            "rightHand-rightThigh": 0.28815127895688564,
+            "rightHand-rightShin": 0.27761466166406945
+          }
+        },
+        {
+          "phase": 0.725,
+          "distances": {
+            "leftHand-leftThigh": 0.680896738634499,
+            "leftHand-leftShin": 0.8460836867173999,
+            "leftHand-rightThigh": 0.8181234872100422,
+            "leftHand-rightShin": 1.1282441266731367,
+            "rightHand-leftThigh": 0.6563654691335536,
+            "rightHand-leftShin": 0.8774349155938226,
+            "rightHand-rightThigh": 0.287905456323519,
+            "rightHand-rightShin": 0.2767505310303058
+          }
+        },
+        {
+          "phase": 0.725925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6818473835837072,
+            "leftHand-leftShin": 0.847606067017775,
+            "leftHand-rightThigh": 0.8188479012072578,
+            "leftHand-rightShin": 1.1285338768804543,
+            "rightHand-leftThigh": 0.6579989747850861,
+            "rightHand-leftShin": 0.8771616695789395,
+            "rightHand-rightThigh": 0.28791673149765956,
+            "rightHand-rightShin": 0.2761302451755625
+          }
+        },
+        {
+          "phase": 0.7268518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.6827590222071337,
+            "leftHand-leftShin": 0.8489946106315857,
+            "leftHand-rightThigh": 0.8195355193878358,
+            "leftHand-rightShin": 1.1288074661733563,
+            "rightHand-leftThigh": 0.6594917866179135,
+            "rightHand-leftShin": 0.876717592706751,
+            "rightHand-rightThigh": 0.2879904029034548,
+            "rightHand-rightShin": 0.2756234717210189
+          }
+        },
+        {
+          "phase": 0.7277777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.6836879257622802,
+            "leftHand-leftShin": 0.8504352040337271,
+            "leftHand-rightThigh": 0.8202318136559608,
+            "leftHand-rightShin": 1.1290872265227458,
+            "rightHand-leftThigh": 0.6611264045583675,
+            "rightHand-leftShin": 0.8764684571784499,
+            "rightHand-rightThigh": 0.2883144896445092,
+            "rightHand-rightShin": 0.2753568103819294
+          }
+        },
+        {
+          "phase": 0.7287037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6845716841174996,
+            "leftHand-leftShin": 0.8517273501653972,
+            "leftHand-rightThigh": 0.8208853956819223,
+            "leftHand-rightShin": 1.1293503666201263,
+            "rightHand-leftThigh": 0.6626193437061748,
+            "rightHand-leftShin": 0.876051868251728,
+            "rightHand-rightThigh": 0.28869267618448713,
+            "rightHand-rightShin": 0.2752021562335405
+          }
+        },
+        {
+          "phase": 0.7296296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6854737083972153,
+            "leftHand-leftShin": 0.8530724076901921,
+            "leftHand-rightThigh": 0.8215482936044824,
+            "leftHand-rightShin": 1.1296192697749463,
+            "rightHand-leftThigh": 0.6642546347359147,
+            "rightHand-leftShin": 0.8758309576637091,
+            "rightHand-rightThigh": 0.2893125359262742,
+            "rightHand-rightShin": 0.2752807184006887
+          }
+        },
+        {
+          "phase": 0.7305555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.6863235322451274,
+            "leftHand-leftShin": 0.8542526228200658,
+            "leftHand-rightThigh": 0.8221617092082439,
+            "leftHand-rightShin": 1.1298705203901105,
+            "rightHand-leftThigh": 0.6657472106974436,
+            "rightHand-leftShin": 0.8754473571011001,
+            "rightHand-rightThigh": 0.2899770481105886,
+            "rightHand-rightShin": 0.27546723511880306
+          }
+        },
+        {
+          "phase": 0.7314814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6871926704583362,
+            "leftHand-leftShin": 0.8554864689268793,
+            "leftHand-rightThigh": 0.822785127192762,
+            "leftHand-rightShin": 1.1301270936792,
+            "rightHand-leftThigh": 0.6673822332563909,
+            "rightHand-leftShin": 0.8752593033972024,
+            "rightHand-rightThigh": 0.2908724050546539,
+            "rightHand-rightShin": 0.2758768639446365
+          }
+        },
+        {
+          "phase": 0.7324074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6880021082897649,
+            "leftHand-leftShin": 0.856538246787851,
+            "leftHand-rightThigh": 0.8233519360443956,
+            "leftHand-rightShin": 1.1303643075678853,
+            "rightHand-leftThigh": 0.6688739604401226,
+            "rightHand-leftShin": 0.8749148054880354,
+            "rightHand-rightThigh": 0.29180204943100885,
+            "rightHand-rightShin": 0.2763877956968123
+          }
+        },
+        {
+          "phase": 0.7333333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.6888319433253205,
+            "leftHand-leftShin": 0.8576441945274182,
+            "leftHand-rightThigh": 0.823929475494299,
+            "leftHand-rightShin": 1.1306063730065132,
+            "rightHand-leftThigh": 0.6705077023239328,
+            "rightHand-leftShin": 0.8747647385363304,
+            "rightHand-rightThigh": 0.2929498574256029,
+            "rightHand-rightShin": 0.27710882824953603
+          }
+        },
+        {
+          "phase": 0.7342592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6895943142163697,
+            "leftHand-leftShin": 0.8585476976680958,
+            "leftHand-rightThigh": 0.8244430284256691,
+            "leftHand-rightShin": 1.1308266517229995,
+            "rightHand-leftThigh": 0.6719962911585636,
+            "rightHand-leftShin": 0.8744685536565898,
+            "rightHand-rightThigh": 0.29411910266719316,
+            "rightHand-rightShin": 0.2779207518633422
+          }
+        },
+        {
+          "phase": 0.7351851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6903781309091405,
+            "leftHand-leftShin": 0.8595055576453741,
+            "leftHand-rightThigh": 0.824968043403794,
+            "leftHand-rightShin": 1.1310512683278495,
+            "rightHand-leftThigh": 0.6736255445497654,
+            "rightHand-leftShin": 0.8743641549040392,
+            "rightHand-rightThigh": 0.2954916879935096,
+            "rightHand-rightShin": 0.2789267120705149
+          }
+        },
+        {
+          "phase": 0.7361111111111112,
+          "distances": {
+            "leftHand-leftThigh": 0.6910804616294931,
+            "leftHand-leftShin": 0.8602618302491304,
+            "leftHand-rightThigh": 0.825416638212141,
+            "leftHand-rightShin": 1.1312466854509267,
+            "rightHand-leftThigh": 0.6751315397505672,
+            "rightHand-leftShin": 0.8741089019212409,
+            "rightHand-rightThigh": 0.2968990598765151,
+            "rightHand-rightShin": 0.2800340870506762
+          }
+        },
+        {
+          "phase": 0.737037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6918056959479227,
+            "leftHand-leftShin": 0.8610735035464606,
+            "leftHand-rightThigh": 0.8258777210798174,
+            "leftHand-rightShin": 1.131446094038751,
+            "rightHand-leftThigh": 0.6767786905659932,
+            "rightHand-leftShin": 0.8740452752389686,
+            "rightHand-rightThigh": 0.29849931643223127,
+            "rightHand-rightShin": 0.28132341587150655
+          }
+        },
+        {
+          "phase": 0.7379629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.6924364731664031,
+            "leftHand-leftShin": 0.8617081532986077,
+            "leftHand-rightThigh": 0.8262519035218857,
+            "leftHand-rightShin": 1.131608616530401,
+            "rightHand-leftThigh": 0.6783419368567679,
+            "rightHand-leftShin": 0.8738146294593084,
+            "rightHand-rightThigh": 0.30017732221549376,
+            "rightHand-rightShin": 0.28275264610701906
+          }
+        },
+        {
+          "phase": 0.7388888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6930923783205674,
+            "leftHand-leftShin": 0.8624011378167128,
+            "leftHand-rightThigh": 0.8266401445940947,
+            "leftHand-rightShin": 1.1317751273937813,
+            "rightHand-leftThigh": 0.680051035540505,
+            "rightHand-leftShin": 0.8737814973589619,
+            "rightHand-rightThigh": 0.30204719465324226,
+            "rightHand-rightShin": 0.28436129749640127
+          }
+        },
+        {
+          "phase": 0.7398148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.693658739936078,
+            "leftHand-leftShin": 0.8629226052316349,
+            "leftHand-rightThigh": 0.8269464746108153,
+            "leftHand-rightShin": 1.1319091665968541,
+            "rightHand-leftThigh": 0.6816748914240817,
+            "rightHand-leftShin": 0.8735800345506604,
+            "rightHand-rightThigh": 0.30399466658222074,
+            "rightHand-rightShin": 0.28611142108538856
+          }
+        }
+      ],
+      "underThreshold": []
+    },
+    {
+      "version": "r14-20261016",
+      "minima": {
+        "leftHand-leftThigh": {
+          "distance": 0.24790756945889966,
+          "phase": 0.3194444444444444
+        },
+        "leftHand-leftShin": {
+          "distance": 0.24790756945889966,
+          "phase": 0.3194444444444444
+        },
+        "leftHand-rightThigh": {
+          "distance": 0.39648881808417963,
+          "phase": 0.37962962962962965
+        },
+        "leftHand-rightShin": {
+          "distance": 0.7401033920644082,
+          "phase": 0.3712962962962963
+        },
+        "rightHand-leftThigh": {
+          "distance": 0.29766484155255324,
+          "phase": 0.6324074074074074
+        },
+        "rightHand-leftShin": {
+          "distance": 0.624297405076581,
+          "phase": 0.6425925925925926
+        },
+        "rightHand-rightThigh": {
+          "distance": 0.19043114184201607,
+          "phase": 0.6555555555555556
+        },
+        "rightHand-rightShin": {
+          "distance": 0.22120927510307614,
+          "phase": 0.6712962962962963
+        }
+      },
+      "focus": [
+        {
+          "phase": 0.6,
+          "distances": {
+            "leftHand-leftThigh": 0.5921500603628638,
+            "leftHand-leftShin": 0.7158745962379649,
+            "leftHand-rightThigh": 0.7290365301746363,
+            "leftHand-rightShin": 1.0623944493636532,
+            "rightHand-leftThigh": 0.3855158611619209,
+            "rightHand-leftShin": 0.7338234024482886,
+            "rightHand-rightThigh": 0.34754945590763064,
+            "rightHand-rightShin": 0.6293873046325019
+          }
+        },
+        {
+          "phase": 0.600925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.5920411959191729,
+            "leftHand-leftShin": 0.7144807695952257,
+            "leftHand-rightThigh": 0.7294138267421453,
+            "leftHand-rightShin": 1.0623335666442577,
+            "rightHand-leftThigh": 0.38164603147269693,
+            "rightHand-leftShin": 0.7300237831610946,
+            "rightHand-rightThigh": 0.34336166365609516,
+            "rightHand-rightShin": 0.6251360696310457
+          }
+        },
+        {
+          "phase": 0.6018518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.5919499438435939,
+            "leftHand-leftShin": 0.7131108291041005,
+            "leftHand-rightThigh": 0.7298021654115465,
+            "leftHand-rightShin": 1.0622801166717792,
+            "rightHand-leftThigh": 0.3778214610352506,
+            "rightHand-leftShin": 0.7262774107533164,
+            "rightHand-rightThigh": 0.3391882687016475,
+            "rightHand-rightShin": 0.6208860979987573
+          }
+        },
+        {
+          "phase": 0.6027777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.591872442407356,
+            "leftHand-leftShin": 0.7118166407233782,
+            "leftHand-rightThigh": 0.7301822536256537,
+            "leftHand-rightShin": 1.0622432703794238,
+            "rightHand-leftThigh": 0.3739571949140485,
+            "rightHand-leftShin": 0.7224655209154274,
+            "rightHand-rightThigh": 0.33495706507456174,
+            "rightHand-rightShin": 0.6165561664756999
+          }
+        },
+        {
+          "phase": 0.6037037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.5918122323910626,
+            "leftHand-leftShin": 0.7105475031527941,
+            "leftHand-rightThigh": 0.7305729371598879,
+            "leftHand-rightShin": 1.0622135222167244,
+            "rightHand-leftThigh": 0.37014103200206416,
+            "rightHand-leftShin": 0.7187088064317608,
+            "rightHand-rightThigh": 0.3307415707856138,
+            "rightHand-rightShin": 0.6122280276663896
+          }
+        },
+        {
+          "phase": 0.6046296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.5917673115778281,
+            "leftHand-leftShin": 0.7093628234475006,
+            "leftHand-rightThigh": 0.7309560718274335,
+            "leftHand-rightShin": 1.0622060774766426,
+            "rightHand-leftThigh": 0.3663117506799976,
+            "rightHand-leftShin": 0.7149098439919778,
+            "rightHand-rightThigh": 0.32649075059213917,
+            "rightHand-rightShin": 0.607835510751087
+          }
+        },
+        {
+          "phase": 0.6055555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.591739229713949,
+            "leftHand-leftShin": 0.7082042300694369,
+            "leftHand-rightThigh": 0.7313492916769725,
+            "leftHand-rightShin": 1.0622054154114167,
+            "rightHand-leftThigh": 0.36253350761997066,
+            "rightHand-leftShin": 0.7111678937597037,
+            "rightHand-rightThigh": 0.3222570996214605,
+            "rightHand-rightShin": 0.603445416805593
+          }
+        },
+        {
+          "phase": 0.6064814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.5917261475940248,
+            "leftHand-leftShin": 0.7071365177850102,
+            "leftHand-rightThigh": 0.7317341147628016,
+            "leftHand-rightShin": 1.0622306722154322,
+            "rightHand-leftThigh": 0.3587711486478806,
+            "rightHand-leftShin": 0.7074091491171679,
+            "rightHand-rightThigh": 0.3180116456999729,
+            "rightHand-rightShin": 0.599005706426119
+          }
+        },
+        {
+          "phase": 0.6074074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.5917293323049906,
+            "leftHand-leftShin": 0.7060957837704958,
+            "leftHand-rightThigh": 0.732128458838596,
+            "leftHand-rightShin": 1.062262419804896,
+            "rightHand-leftThigh": 0.355062871184745,
+            "rightHand-leftShin": 0.7037091642008038,
+            "rightHand-rightThigh": 0.31378499874616106,
+            "rightHand-rightShin": 0.5945691357741104
+          }
+        },
+        {
+          "phase": 0.6083333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.5917403106269333,
+            "leftHand-leftShin": 0.7051445689305382,
+            "leftHand-rightThigh": 0.7325069751873284,
+            "leftHand-rightShin": 1.0623161173594526,
+            "rightHand-leftThigh": 0.3513996447372141,
+            "rightHand-leftShin": 0.7000178020233913,
+            "rightHand-rightThigh": 0.3095684198634029,
+            "rightHand-rightShin": 0.5900941474911272
+          }
+        },
+        {
+          "phase": 0.6092592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.591766884269241,
+            "leftHand-leftShin": 0.7042210531673005,
+            "leftHand-rightThigh": 0.7328944086481486,
+            "leftHand-rightShin": 1.0623760397897237,
+            "rightHand-leftThigh": 0.3477936905385686,
+            "rightHand-leftShin": 0.6963868581377366,
+            "rightHand-rightThigh": 0.3053725165060113,
+            "rightHand-rightShin": 0.5856230892778338
+          }
+        },
+        {
+          "phase": 0.6101851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.5918235005986292,
+            "leftHand-leftShin": 0.7034189587305255,
+            "leftHand-rightThigh": 0.7332860443839839,
+            "leftHand-rightShin": 1.0624832748280786,
+            "rightHand-leftThigh": 0.3442870539388781,
+            "rightHand-leftShin": 0.6928230041045257,
+            "rightHand-rightThigh": 0.30123974739502385,
+            "rightHand-rightShin": 0.5811669187084879
+          }
+        },
+        {
+          "phase": 0.6111111111111112,
+          "distances": {
+            "leftHand-leftThigh": 0.5918947434967275,
+            "leftHand-leftShin": 0.702644997799599,
+            "leftHand-rightThigh": 0.7336858214481207,
+            "leftHand-rightShin": 1.062596412080587,
+            "rightHand-leftThigh": 0.3408391757169248,
+            "rightHand-leftShin": 0.689319784683992,
+            "rightHand-rightThigh": 0.2971285712646625,
+            "rightHand-rightShin": 0.5767152142529386
+          }
+        },
+        {
+          "phase": 0.612037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.592042114392291,
+            "leftHand-leftShin": 0.7020670580578662,
+            "leftHand-rightThigh": 0.7341297492319845,
+            "leftHand-rightShin": 1.0627995576761298,
+            "rightHand-leftThigh": 0.3376170097990585,
+            "rightHand-leftShin": 0.6860072371205261,
+            "rightHand-rightThigh": 0.2931627999719153,
+            "rightHand-rightShin": 0.5722895640116977
+          }
+        },
+        {
+          "phase": 0.6129629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.5922027573963456,
+            "leftHand-leftShin": 0.7015180877034998,
+            "leftHand-rightThigh": 0.7345806717802592,
+            "leftHand-rightShin": 1.0630080985526762,
+            "rightHand-leftThigh": 0.3344562263682406,
+            "rightHand-leftShin": 0.6827565463190802,
+            "rightHand-rightThigh": 0.28922033038635026,
+            "rightHand-rightShin": 0.567868428308162
+          }
+        },
+        {
+          "phase": 0.6138888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.5924105383148016,
+            "leftHand-leftShin": 0.7011041107087945,
+            "leftHand-rightThigh": 0.7350565539009057,
+            "leftHand-rightShin": 1.063281869300576,
+            "rightHand-leftThigh": 0.33146958453073594,
+            "rightHand-leftShin": 0.6796326790994878,
+            "rightHand-rightThigh": 0.28532772311203597,
+            "rightHand-rightShin": 0.5633402001990201
+          }
+        },
+        {
+          "phase": 0.6148148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.5926309447518027,
+            "leftHand-leftShin": 0.7007204862103937,
+            "leftHand-rightThigh": 0.7355387949986191,
+            "leftHand-rightShin": 1.0635609530550134,
+            "rightHand-leftThigh": 0.32855036231419005,
+            "rightHand-leftShin": 0.676574126565433,
+            "rightHand-rightThigh": 0.28146208762811986,
+            "rightHand-rightShin": 0.5588166856534045
+          }
+        },
+        {
+          "phase": 0.6157407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.5928687875019042,
+            "leftHand-leftShin": 0.7004137553319886,
+            "leftHand-rightThigh": 0.7360240453978268,
+            "leftHand-rightShin": 1.0638784484385975,
+            "rightHand-leftThigh": 0.3257441634497705,
+            "rightHand-leftShin": 0.673569720491509,
+            "rightHand-rightThigh": 0.2775748076965523,
+            "rightHand-rightShin": 0.5541188164571624
+          }
+        },
+        {
+          "phase": 0.6166666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.5931190551086998,
+            "leftHand-leftShin": 0.7001386997968402,
+            "leftHand-rightThigh": 0.7365153945210987,
+            "leftHand-rightShin": 1.064201478187969,
+            "rightHand-leftThigh": 0.3230129087511979,
+            "rightHand-leftShin": 0.6706345500856056,
+            "rightHand-rightThigh": 0.27371926017004694,
+            "rightHand-rightShin": 0.5494260423887194
+          }
+        },
+        {
+          "phase": 0.6175925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.5933875547580929,
+            "leftHand-leftShin": 0.6999405870951196,
+            "leftHand-rightThigh": 0.7370104293243969,
+            "leftHand-rightShin": 1.0645614934921617,
+            "rightHand-leftThigh": 0.32041567849974145,
+            "rightHand-leftShin": 0.6677647493453038,
+            "rightHand-rightThigh": 0.2698618821113832,
+            "rightHand-rightShin": 0.5445714077573085
+          }
+        },
+        {
+          "phase": 0.6185185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.5936681952994051,
+            "leftHand-leftShin": 0.6997751915577627,
+            "leftHand-rightThigh": 0.7375112757995771,
+            "leftHand-rightShin": 1.064927249374851,
+            "rightHand-leftThigh": 0.31790116226812754,
+            "rightHand-leftShin": 0.6649679048568756,
+            "rightHand-rightThigh": 0.2660419013189067,
+            "rightHand-rightShin": 0.5397222392127792
+          }
+        },
+        {
+          "phase": 0.6194444444444445,
+          "distances": {
+            "leftHand-leftThigh": 0.5939653148064815,
+            "leftHand-leftShin": 0.6996798783326916,
+            "leftHand-rightThigh": 0.7380149303181474,
+            "leftHand-rightShin": 1.0653263256490402,
+            "rightHand-leftThigh": 0.31553329812475667,
+            "rightHand-leftShin": 0.6622387804084426,
+            "rightHand-rightThigh": 0.262230671730186,
+            "rightHand-rightShin": 0.5347129896328702
+          }
+        },
+        {
+          "phase": 0.6203703703703703,
+          "distances": {
+            "leftHand-leftThigh": 0.5942742776192833,
+            "leftHand-leftShin": 0.6996181111811909,
+            "leftHand-rightThigh": 0.7385241280022435,
+            "leftHand-rightShin": 1.0657313589597763,
+            "rightHand-leftThigh": 0.31325630769391155,
+            "rightHand-leftShin": 0.659586329804228,
+            "rightHand-rightThigh": 0.25846362274976414,
+            "rightHand-rightShin": 0.5297095964524478
+          }
+        },
+        {
+          "phase": 0.6212962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.5945982705714671,
+            "leftHand-leftShin": 0.6996201683991806,
+            "leftHand-rightThigh": 0.7390355919863518,
+            "leftHand-rightShin": 1.066166316415271,
+            "rightHand-leftThigh": 0.3111393491592289,
+            "rightHand-leftShin": 0.657004524290672,
+            "rightHand-rightThigh": 0.25471757413341967,
+            "rightHand-rightShin": 0.5245471807139949
+          }
+        },
+        {
+          "phase": 0.6222222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.5949338024287886,
+            "leftHand-leftShin": 0.6996564070370489,
+            "leftHand-rightThigh": 0.7395523493555255,
+            "leftHand-rightShin": 1.0666074509118117,
+            "rightHand-leftThigh": 0.3091217509647305,
+            "rightHand-leftShin": 0.6545031506353786,
+            "rightHand-rightThigh": 0.25102379018348375,
+            "rightHand-rightShin": 0.5193910448861283
+          }
+        },
+        {
+          "phase": 0.6231481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.5952833084288742,
+            "leftHand-leftShin": 0.6997506294409327,
+            "leftHand-rightThigh": 0.7400713055185922,
+            "leftHand-rightShin": 1.0670755666842062,
+            "rightHand-leftThigh": 0.30727794814494985,
+            "rightHand-leftShin": 0.6520754622789321,
+            "rightHand-rightThigh": 0.24736425080048666,
+            "rightHand-rightShin": 0.5140748622118729
+          }
+        },
+        {
+          "phase": 0.6240740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.5956440536614949,
+            "leftHand-leftShin": 0.6998795178518608,
+            "leftHand-rightThigh": 0.7405953266591033,
+            "leftHand-rightShin": 1.0675500815700414,
+            "rightHand-leftThigh": 0.30554228956817603,
+            "rightHand-leftShin": 0.6497321042692107,
+            "rightHand-rightThigh": 0.24376659610452633,
+            "rightHand-rightShin": 0.5087654393275532
+          }
+        },
+        {
+          "phase": 0.625,
+          "distances": {
+            "leftHand-leftThigh": 0.5960178905224462,
+            "leftHand-leftShin": 0.7000607315482786,
+            "leftHand-rightThigh": 0.7411216749169635,
+            "leftHand-rightShin": 1.0680487623499981,
+            "rightHand-leftThigh": 0.30399556368670716,
+            "rightHand-leftShin": 0.6474667540995097,
+            "rightHand-rightThigh": 0.24021941365605712,
+            "rightHand-rightShin": 0.5032948463524756
+          }
+        },
+        {
+          "phase": 0.6259259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.596402673279906,
+            "leftHand-leftShin": 0.7002769631470163,
+            "leftHand-rightThigh": 0.7416528791411586,
+            "leftHand-rightShin": 1.06855406160513,
+            "rightHand-leftThigh": 0.30256592770789403,
+            "rightHand-leftShin": 0.6452898172851439,
+            "rightHand-rightThigh": 0.23674548513963953,
+            "rightHand-rightShin": 0.4978315805419437
+          }
+        },
+        {
+          "phase": 0.6268518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.596799948215973,
+            "leftHand-leftShin": 0.7005406426665494,
+            "leftHand-rightThigh": 0.7421866973864297,
+            "leftHand-rightShin": 1.0690810493052731,
+            "rightHand-leftThigh": 0.3013412081631029,
+            "rightHand-leftShin": 0.6431959968903544,
+            "rightHand-rightThigh": 0.23334088788946886,
+            "rightHand-rightShin": 0.49220508949964564
+          }
+        },
+        {
+          "phase": 0.6277777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.5972078879132472,
+            "leftHand-leftShin": 0.700839590490589,
+            "leftHand-rightThigh": 0.7427251819753439,
+            "leftHand-rightShin": 1.069614873422863,
+            "rightHand-leftThigh": 0.30024256386918574,
+            "rightHand-leftShin": 0.6411949170085668,
+            "rightHand-rightThigh": 0.23002290033703657,
+            "rightHand-rightShin": 0.4865866022026699
+          }
+        },
+        {
+          "phase": 0.6287037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.5976279248423385,
+            "leftHand-leftShin": 0.7011815185176059,
+            "leftHand-rightThigh": 0.7432668557193142,
+            "leftHand-rightShin": 1.0701681909398115,
+            "rightHand-leftThigh": 0.29936588482113025,
+            "rightHand-leftShin": 0.6392831506314158,
+            "rightHand-rightThigh": 0.22679633566214574,
+            "rightHand-rightShin": 0.4808018120309154
+          }
+        },
+        {
+          "phase": 0.6296296296296297,
+          "distances": {
+            "leftHand-leftThigh": 0.5980583622561501,
+            "leftHand-leftShin": 0.7015588935815175,
+            "leftHand-rightThigh": 0.7438130254706689,
+            "leftHand-rightShin": 1.0707285617468305,
+            "rightHand-leftThigh": 0.29862415609751297,
+            "rightHand-leftShin": 0.6374687717441656,
+            "rightHand-rightThigh": 0.22367194520127182,
+            "rightHand-rightShin": 0.475025867401312
+          }
+        },
+        {
+          "phase": 0.6305555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.5985005941368662,
+            "leftHand-leftShin": 0.7019750271036024,
+            "leftHand-rightThigh": 0.744362862544716,
+            "leftHand-rightShin": 1.07130627787063,
+            "rightHand-leftThigh": 0.29812252529765604,
+            "rightHand-leftShin": 0.6357518053715346,
+            "rightHand-rightThigh": 0.22066601620572077,
+            "rightHand-rightShin": 0.46908217360711046
+          }
+        },
+        {
+          "phase": 0.6314814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.5989529755232108,
+            "leftHand-leftShin": 0.7024267178930081,
+            "leftHand-rightThigh": 0.744917041085756,
+            "leftHand-rightShin": 1.071891259974104,
+            "rightHand-leftThigh": 0.2977643170390458,
+            "rightHand-leftShin": 0.6341371868190673,
+            "rightHand-rightThigh": 0.21778010728369968,
+            "rightHand-rightShin": 0.46314838235295863
+          }
+        },
+        {
+          "phase": 0.6324074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.5994170626664671,
+            "leftHand-leftShin": 0.7029139557517643,
+            "leftHand-rightThigh": 0.745475612312692,
+            "leftHand-rightShin": 1.0724917931369942,
+            "rightHand-leftThigh": 0.29766484155255324,
+            "rightHand-leftShin": 0.6326287447709076,
+            "rightHand-rightThigh": 0.21504323822995217,
+            "rightHand-rightShin": 0.45704410351612684
+          }
+        },
+        {
+          "phase": 0.6333333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.5998910684046657,
+            "leftHand-leftShin": 0.7034368267509237,
+            "leftHand-rightThigh": 0.746038387543987,
+            "leftHand-rightShin": 1.0730998054976242,
+            "rightHand-leftThigh": 0.2977166894841562,
+            "rightHand-leftShin": 0.6312279923889325,
+            "rightHand-rightThigh": 0.21244656260152792,
+            "rightHand-rightShin": 0.4509510764366404
+          }
+        },
+        {
+          "phase": 0.6342592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6003764669544793,
+            "leftHand-leftShin": 0.7039915204624727,
+            "leftHand-rightThigh": 0.7466059478859227,
+            "leftHand-rightShin": 1.073721365956395,
+            "rightHand-leftThigh": 0.2980465371055079,
+            "rightHand-leftShin": 0.6299442815710127,
+            "rightHand-rightThigh": 0.21003475862767257,
+            "rightHand-rightShin": 0.44468650520772296
+          }
+        },
+        {
+          "phase": 0.6351851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6008715707629657,
+            "leftHand-leftShin": 0.704581896621866,
+            "leftHand-rightThigh": 0.7471775891428329,
+            "leftHand-rightShin": 1.0743506179413829,
+            "rightHand-leftThigh": 0.2985347325454767,
+            "rightHand-leftShin": 0.6287739954329081,
+            "rightHand-rightThigh": 0.20778539372671595,
+            "rightHand-rightShin": 0.43843492011925767
+          }
+        },
+        {
+          "phase": 0.6361111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6013769603837915,
+            "leftHand-leftShin": 0.7052005365387415,
+            "leftHand-rightThigh": 0.747753430499268,
+            "leftHand-rightShin": 1.0749903316171414,
+            "rightHand-leftThigh": 0.2993203804020481,
+            "rightHand-leftShin": 0.6277336961673852,
+            "rightHand-rightThigh": 0.20576202708065863,
+            "rightHand-rightShin": 0.4320135238067192
+          }
+        },
+        {
+          "phase": 0.6370370370370371,
+          "distances": {
+            "leftHand-leftThigh": 0.6018918545587076,
+            "leftHand-leftShin": 0.7058548721244644,
+            "leftHand-rightThigh": 0.7483332403891726,
+            "leftHand-rightShin": 1.0756379436433068,
+            "rightHand-leftThigh": 0.300270174431943,
+            "rightHand-leftShin": 0.6268128763700083,
+            "rightHand-rightThigh": 0.2039247970998166,
+            "rightHand-rightShin": 0.4256073492805322
+          }
+        },
+        {
+          "phase": 0.637962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.602416307186375,
+            "leftHand-leftShin": 0.706534659361504,
+            "leftHand-rightThigh": 0.7489171192418907,
+            "leftHand-rightShin": 1.0762935848807247,
+            "rightHand-leftThigh": 0.3015363401698075,
+            "rightHand-leftShin": 0.6260355363456173,
+            "rightHand-rightThigh": 0.2023572279465272,
+            "rightHand-rightShin": 0.41903187592812446
+          }
+        },
+        {
+          "phase": 0.6388888888888888,
+          "distances": {
+            "leftHand-leftThigh": 0.6029500859722259,
+            "leftHand-leftShin": 0.7072501644546129,
+            "leftHand-rightThigh": 0.7495048680908233,
+            "leftHand-rightShin": 1.0769573345799164,
+            "rightHand-leftThigh": 0.3029711350440878,
+            "rightHand-leftShin": 0.6253841452264636,
+            "rightHand-rightThigh": 0.20100017599288136,
+            "rightHand-rightShin": 0.4124745337777544
+          }
+        },
+        {
+          "phase": 0.6398148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6034929188462624,
+            "leftHand-leftShin": 0.7079879277875772,
+            "leftHand-rightThigh": 0.7500966163191345,
+            "leftHand-rightShin": 1.077626817800911,
+            "rightHand-leftThigh": 0.30473847337846466,
+            "rightHand-leftShin": 0.6248912755864646,
+            "rightHand-rightThigh": 0.19995940512101917,
+            "rightHand-rightShin": 0.4057553217822623
+          }
+        },
+        {
+          "phase": 0.6407407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.604044910330025,
+            "leftHand-leftShin": 0.7087614080075382,
+            "leftHand-rightThigh": 0.7506921446579641,
+            "leftHand-rightShin": 1.0783046151257318,
+            "rightHand-leftThigh": 0.30667716843800596,
+            "rightHand-leftShin": 0.6245310505250821,
+            "rightHand-rightThigh": 0.19902819958139117,
+            "rightHand-rightShin": 0.39905800446476797
+          }
+        },
+        {
+          "phase": 0.6416666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6046054685212353,
+            "leftHand-leftShin": 0.7095548898648331,
+            "leftHand-rightThigh": 0.7512916608961295,
+            "leftHand-rightShin": 1.0789859414412413,
+            "rightHand-leftThigh": 0.308961914210159,
+            "rightHand-leftShin": 0.6243444889260269,
+            "rightHand-rightThigh": 0.1981810135560058,
+            "rightHand-rightShin": 0.39220924719030026
+          }
+        },
+        {
+          "phase": 0.6425925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6051750299531438,
+            "leftHand-leftShin": 0.7103840725330869,
+            "leftHand-rightThigh": 0.7518948759430534,
+            "leftHand-rightShin": 1.0796757843862754,
+            "rightHand-leftThigh": 0.3114188712840748,
+            "rightHand-leftShin": 0.624297405076581,
+            "rightHand-rightThigh": 0.19730932965059034,
+            "rightHand-rightShin": 0.3853872539946325
+          }
+        },
+        {
+          "phase": 0.6435185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6057529841894046,
+            "leftHand-leftShin": 0.7112312607221362,
+            "leftHand-rightThigh": 0.7525023027144597,
+            "leftHand-rightShin": 1.0803672934539847,
+            "rightHand-leftThigh": 0.31423297568679476,
+            "rightHand-leftShin": 0.6244393575371678,
+            "rightHand-rightThigh": 0.1965276464501302,
+            "rightHand-rightShin": 0.37842571950294845
+          }
+        },
+        {
+          "phase": 0.6444444444444445,
+          "distances": {
+            "leftHand-leftThigh": 0.6063398049403551,
+            "leftHand-leftShin": 0.7121141522042785,
+            "leftHand-rightThigh": 0.7531133577368838,
+            "leftHand-rightShin": 1.0810675256243882,
+            "rightHand-leftThigh": 0.31721835950318844,
+            "rightHand-leftShin": 0.6247277792894245,
+            "rightHand-rightThigh": 0.19572221229395687,
+            "rightHand-rightShin": 0.37149727131891336
+          }
+        },
+        {
+          "phase": 0.6453703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6069344613981964,
+            "leftHand-leftShin": 0.7130124480001123,
+            "leftHand-rightThigh": 0.7537284417185403,
+            "leftHand-rightShin": 1.0817671743676645,
+            "rightHand-leftThigh": 0.3205659508319215,
+            "rightHand-leftShin": 0.6252203389040177,
+            "rightHand-rightThigh": 0.19501506601443325,
+            "rightHand-rightShin": 0.36445132476696157
+          }
+        },
+        {
+          "phase": 0.6462962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.607537853432053,
+            "leftHand-leftShin": 0.7139464237741201,
+            "leftHand-rightThigh": 0.7543470884265496,
+            "leftHand-rightShin": 1.0824757451684301,
+            "rightHand-leftThigh": 0.3240819030395377,
+            "rightHand-leftShin": 0.625866189851928,
+            "rightHand-rightThigh": 0.19428593826691815,
+            "rightHand-rightShin": 0.35744659620734986
+          }
+        },
+        {
+          "phase": 0.6472222222222223,
+          "distances": {
+            "leftHand-leftThigh": 0.6081488534107773,
+            "leftHand-leftShin": 0.7148941886636309,
+            "leftHand-rightThigh": 0.7549698698180197,
+            "leftHand-rightShin": 1.0831818864251912,
+            "rightHand-leftThigh": 0.32796156210879074,
+            "rightHand-leftShin": 0.6267298694902342,
+            "rightHand-rightThigh": 0.19366463761097719,
+            "rightHand-rightShin": 0.3503489494031651
+          }
+        },
+        {
+          "phase": 0.6481481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.6087684719779597,
+            "leftHand-leftShin": 0.7158776192934201,
+            "leftHand-rightThigh": 0.755596156397708,
+            "leftHand-rightShin": 1.083897149323887,
+            "rightHand-leftThigh": 0.3320050044380034,
+            "rightHand-leftShin": 0.6277534708218593,
+            "rightHand-rightThigh": 0.19302432139931336,
+            "rightHand-rightShin": 0.3433029827365504
+          }
+        },
+        {
+          "phase": 0.649074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6093955533233943,
+            "leftHand-leftShin": 0.7168732469107448,
+            "leftHand-rightThigh": 0.7562267630083594,
+            "leftHand-rightShin": 1.0846082132563735,
+            "rightHand-leftThigh": 0.3364088240245986,
+            "rightHand-leftShin": 0.6290071753654285,
+            "rightHand-rightThigh": 0.19250321119619337,
+            "rightHand-rightShin": 0.33619493227777
+          }
+        },
+        {
+          "phase": 0.65,
+          "distances": {
+            "leftHand-leftThigh": 0.6100311506984878,
+            "leftHand-leftShin": 0.7179045429633771,
+            "leftHand-rightThigh": 0.7568608251770372,
+            "leftHand-rightShin": 1.0853286006183624,
+            "rightHand-leftThigh": 0.34097045121278896,
+            "rightHand-leftShin": 0.6304271165056239,
+            "rightHand-rightThigh": 0.19196744143969488,
+            "rightHand-rightShin": 0.32915196199681074
+          }
+        },
+        {
+          "phase": 0.6509259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.6106736871465802,
+            "leftHand-leftShin": 0.7189457758659776,
+            "leftHand-rightThigh": 0.7574989776513894,
+            "leftHand-rightShin": 1.086042610737234,
+            "rightHand-leftThigh": 0.3458804625764606,
+            "rightHand-leftShin": 0.6320859360650551,
+            "rightHand-rightThigh": 0.19156453042586685,
+            "rightHand-rightShin": 0.32209003917095635
+          }
+        },
+        {
+          "phase": 0.6518518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.6113246404425966,
+            "leftHand-leftShin": 0.720022655655717,
+            "leftHand-rightThigh": 0.7581405392331152,
+            "leftHand-rightShin": 1.0867661366811059,
+            "rightHand-leftThigh": 0.3509410088455347,
+            "rightHand-leftShin": 0.633916611564136,
+            "rightHand-rightThigh": 0.19115288971525285,
+            "rightHand-rightShin": 0.31511012485217654
+          }
+        },
+        {
+          "phase": 0.6527777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.6119824844506611,
+            "leftHand-leftShin": 0.7211083881170742,
+            "leftHand-rightThigh": 0.7587863983022962,
+            "leftHand-rightShin": 1.087481763649579,
+            "rightHand-leftThigh": 0.3563351382478355,
+            "rightHand-leftShin": 0.6359922006086626,
+            "rightHand-rightThigh": 0.1908890370354047,
+            "rightHand-rightShin": 0.3081575317156469
+          }
+        },
+        {
+          "phase": 0.6537037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6126486610981686,
+            "leftHand-leftShin": 0.722229770889328,
+            "leftHand-rightThigh": 0.7594356276535421,
+            "leftHand-rightShin": 1.0882071020254744,
+            "rightHand-leftThigh": 0.36187181717710404,
+            "rightHand-leftShin": 0.6382446421513763,
+            "rightHand-rightThigh": 0.19062405767146423,
+            "rightHand-rightShin": 0.30130822913197924
+          }
+        },
+        {
+          "phase": 0.6546296296296297,
+          "distances": {
+            "leftHand-leftThigh": 0.6133215859753472,
+            "leftHand-leftShin": 0.7233585675029058,
+            "leftHand-rightThigh": 0.760089224048451,
+            "leftHand-rightShin": 1.088922797578356,
+            "rightHand-leftThigh": 0.3677206161343729,
+            "rightHand-leftShin": 0.640743674278733,
+            "rightHand-rightThigh": 0.19052350112382413,
+            "rightHand-rightShin": 0.29454238763244805
+          }
+        },
+        {
+          "phase": 0.6555555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6140027708649041,
+            "leftHand-leftShin": 0.7245230337897949,
+            "leftHand-rightThigh": 0.7607461580195628,
+            "leftHand-rightShin": 1.0896484001283855,
+            "rightHand-leftThigh": 0.3737035590010169,
+            "rightHand-leftShin": 0.6434237440863151,
+            "rightHand-rightThigh": 0.19043114184201607,
+            "rightHand-rightShin": 0.2879061836457609
+          }
+        },
+        {
+          "phase": 0.6564814814814814,
+          "distances": {
+            "leftHand-leftThigh": 0.6146902150602254,
+            "leftHand-leftShin": 0.7256930435865541,
+            "leftHand-rightThigh": 0.7614072595909674,
+            "leftHand-rightShin": 1.0903624145520856,
+            "rightHand-leftThigh": 0.37996792096722787,
+            "rightHand-leftShin": 0.6463455936676988,
+            "rightHand-rightThigh": 0.1905209966623925,
+            "rightHand-rightShin": 0.28142204175443664
+          }
+        },
+        {
+          "phase": 0.6574074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6153858489762186,
+            "leftHand-leftShin": 0.7268987202005999,
+            "leftHand-rightThigh": 0.7620716682958606,
+            "leftHand-rightShin": 1.0910865202064686,
+            "rightHand-leftThigh": 0.38635778954851047,
+            "rightHand-leftShin": 0.6494515313379292,
+            "rightHand-rightThigh": 0.1906299932809784,
+            "rightHand-rightShin": 0.27509933391198566
+          }
+        },
+        {
+          "phase": 0.6583333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.616087789628891,
+            "leftHand-leftShin": 0.7281090361949705,
+            "leftHand-rightThigh": 0.7627404284458277,
+            "leftHand-rightShin": 1.0917976734008819,
+            "rightHand-leftThigh": 0.3929974742589955,
+            "rightHand-leftShin": 0.6527907189889534,
+            "rightHand-rightThigh": 0.19093918493688014,
+            "rightHand-rightShin": 0.2689996240648971
+          }
+        },
+        {
+          "phase": 0.6592592592592592,
+          "distances": {
+            "leftHand-leftThigh": 0.6167978646372404,
+            "leftHand-leftShin": 0.729355049850609,
+            "leftHand-rightThigh": 0.7634124724362292,
+            "leftHand-rightShin": 1.0925191056164392,
+            "rightHand-leftThigh": 0.3997543148017342,
+            "rightHand-leftShin": 0.6563161307760544,
+            "rightHand-rightThigh": 0.1912798881714535,
+            "rightHand-rightShin": 0.26309898549936783
+          }
+        },
+        {
+          "phase": 0.6601851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6175141094485596,
+            "leftHand-leftShin": 0.7306044646062493,
+            "leftHand-rightThigh": 0.7640889814102333,
+            "leftHand-rightShin": 1.0932261253723716,
+            "rightHand-leftThigh": 0.4067231059387124,
+            "rightHand-leftShin": 0.6600599470826958,
+            "rightHand-rightThigh": 0.19183836947622188,
+            "rightHand-rightShin": 0.25750015227575307
+          }
+        },
+        {
+          "phase": 0.6611111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.618238443617913,
+            "leftHand-leftShin": 0.7318896252237336,
+            "leftHand-rightThigh": 0.7647687562397039,
+            "leftHand-rightShin": 1.0939436095013104,
+            "rightHand-leftThigh": 0.4138011536434647,
+            "rightHand-leftShin": 0.6639910935908885,
+            "rightHand-rightThigh": 0.19244179165122324,
+            "rightHand-rightShin": 0.25214330180547456
+          }
+        },
+        {
+          "phase": 0.6620370370370371,
+          "distances": {
+            "leftHand-leftThigh": 0.6189684896926505,
+            "leftHand-leftShin": 0.7331765050143942,
+            "leftHand-rightThigh": 0.7654527051315001,
+            "leftHand-rightShin": 1.0946448406224096,
+            "rightHand-leftThigh": 0.42104507340523695,
+            "rightHand-leftShin": 0.6681173955133766,
+            "rightHand-rightThigh": 0.19327852918858643,
+            "rightHand-rightShin": 0.24717263639952308
+          }
+        },
+        {
+          "phase": 0.662962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6197065823714628,
+            "leftHand-leftShin": 0.7344991597906765,
+            "leftHand-rightThigh": 0.7661399038085339,
+            "leftHand-rightShin": 1.0953567064782894,
+            "rightHand-leftThigh": 0.4283908643943146,
+            "rightHand-leftShin": 0.6724309121780293,
+            "rightHand-rightThigh": 0.1941741123311683,
+            "rightHand-rightShin": 0.24249025527118862
+          }
+        },
+        {
+          "phase": 0.6638888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6204504606951281,
+            "leftHand-leftShin": 0.7358227570291819,
+            "leftHand-rightThigh": 0.7668315224665582,
+            "leftHand-rightShin": 1.0960511506843789,
+            "rightHand-leftThigh": 0.43585890594924415,
+            "rightHand-leftShin": 0.6769136843888225,
+            "rightHand-rightThigh": 0.19531588587745105,
+            "rightHand-rightShin": 0.23827186586789345
+          }
+        },
+        {
+          "phase": 0.6648148148148149,
+          "distances": {
+            "leftHand-leftThigh": 0.6212023573749111,
+            "leftHand-leftShin": 0.737182196249059,
+            "leftHand-rightThigh": 0.7675263816146344,
+            "leftHand-rightShin": 1.0967564004716015,
+            "rightHand-leftThigh": 0.4434222420466568,
+            "rightHand-leftShin": 0.6815827117330991,
+            "rightHand-rightThigh": 0.19653035797656615,
+            "rightHand-rightShin": 0.2343889528109428
+          }
+        },
+        {
+          "phase": 0.6657407407407407,
+          "distances": {
+            "leftHand-leftThigh": 0.6219599282209033,
+            "leftHand-leftShin": 0.7385412921848822,
+            "leftHand-rightThigh": 0.7682256827177085,
+            "leftHand-rightShin": 1.0974429736829707,
+            "rightHand-leftThigh": 0.45105973823006346,
+            "rightHand-leftShin": 0.6863887850797287,
+            "rightHand-rightThigh": 0.19799958798358516,
+            "rightHand-rightShin": 0.23104129753252403
+          }
+        },
+        {
+          "phase": 0.6666666666666666,
+          "distances": {
+            "leftHand-leftThigh": 0.6227254988334574,
+            "leftHand-leftShin": 0.7399363149323285,
+            "leftHand-rightThigh": 0.7689282198536597,
+            "leftHand-rightShin": 1.0981405158023019,
+            "rightHand-leftThigh": 0.45878673826444555,
+            "rightHand-leftShin": 0.6913792942903758,
+            "rightHand-rightThigh": 0.19955464152617564,
+            "rightHand-rightShin": 0.22807282740220755
+          }
+        },
+        {
+          "phase": 0.6675925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6234962582842789,
+            "leftHand-leftShin": 0.7413294721104178,
+            "leftHand-rightThigh": 0.7696348986556,
+            "leftHand-rightShin": 1.0988178361762935,
+            "rightHand-leftThigh": 0.46653531502220086,
+            "rightHand-leftShin": 0.6964676061579561,
+            "rightHand-rightThigh": 0.2013666819145439,
+            "rightHand-rightShin": 0.22569589366169018
+          }
+        },
+        {
+          "phase": 0.6685185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6242750018129944,
+            "leftHand-leftShin": 0.7427586270874674,
+            "leftHand-rightThigh": 0.7703448110456163,
+            "leftHand-rightShin": 1.0995062697167919,
+            "rightHand-leftThigh": 0.4743683094791473,
+            "rightHand-leftShin": 0.7017376257382261,
+            "rightHand-rightThigh": 0.2032762137685429,
+            "rightHand-rightShin": 0.22373293175757658
+          }
+        },
+        {
+          "phase": 0.6694444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6250590822966449,
+            "leftHand-leftShin": 0.744185362527098,
+            "leftHand-rightThigh": 0.771059124799927,
+            "leftHand-rightShin": 1.100173597904514,
+            "rightHand-leftThigh": 0.48217662426309277,
+            "rightHand-leftShin": 0.7070667468344312,
+            "rightHand-rightThigh": 0.205439884419593,
+            "rightHand-rightShin": 0.22239237735927675
+          }
+        },
+        {
+          "phase": 0.6703703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6258511464651528,
+            "leftHand-leftShin": 0.745648209763562,
+            "leftHand-rightThigh": 0.7717766768133741,
+            "leftHand-rightShin": 1.1008521793748078,
+            "rightHand-leftThigh": 0.4900650808486717,
+            "rightHand-leftShin": 0.7125743876644695,
+            "rightHand-rightThigh": 0.2077109266095261,
+            "rightHand-rightShin": 0.22148758128475976
+          }
+        },
+        {
+          "phase": 0.6712962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6266482725851424,
+            "leftHand-leftShin": 0.7471070152587362,
+            "leftHand-rightThigh": 0.772498512659481,
+            "leftHand-rightShin": 1.101508560295891,
+            "rightHand-leftThigh": 0.4978799637750934,
+            "rightHand-leftShin": 0.7180979853484044,
+            "rightHand-rightThigh": 0.21022574548752307,
+            "rightHand-rightShin": 0.22120927510307614
+          }
+        },
+        {
+          "phase": 0.6722222222222223,
+          "distances": {
+            "leftHand-leftThigh": 0.6274533894350277,
+            "leftHand-leftShin": 0.7486020579641017,
+            "leftHand-rightThigh": 0.7732235951694694,
+            "leftHand-rightShin": 1.1021763189607623,
+            "rightHand-leftThigh": 0.5057713610960933,
+            "rightHand-leftShin": 0.723796423444996,
+            "rightHand-rightThigh": 0.21285559809414797,
+            "rightHand-rightShin": 0.22137203680967754
+          }
+        },
+        {
+          "phase": 0.6731481481481482,
+          "distances": {
+            "leftHand-leftThigh": 0.6282631949883363,
+            "leftHand-leftShin": 0.7500916712588859,
+            "leftHand-rightThigh": 0.7739527093151675,
+            "leftHand-rightShin": 1.1028207154798297,
+            "rightHand-leftThigh": 0.5135414327705156,
+            "rightHand-leftShin": 0.7294653536672155,
+            "rightHand-rightThigh": 0.21571143950727636,
+            "rightHand-rightShin": 0.22213495948697515
+          }
+        },
+        {
+          "phase": 0.674074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6290810036527315,
+            "leftHand-leftShin": 0.7516176432723609,
+            "leftHand-rightThigh": 0.7746850817392873,
+            "leftHand-rightShin": 1.1034765895469114,
+            "rightHand-leftThigh": 0.5213849139935732,
+            "rightHand-leftShin": 0.7353050163917759,
+            "rightHand-rightThigh": 0.2186875879210383,
+            "rightHand-rightShin": 0.22332728832873316
+          }
+        },
+        {
+          "phase": 0.675,
+          "distances": {
+            "leftHand-leftThigh": 0.6299036674275601,
+            "leftHand-leftShin": 0.7531377690456488,
+            "leftHand-rightThigh": 0.7754217475490247,
+            "leftHand-rightShin": 1.1041085881605448,
+            "rightHand-leftThigh": 0.5290685609624409,
+            "rightHand-leftShin": 0.741074167666067,
+            "rightHand-rightThigh": 0.22186783206265842,
+            "rightHand-rightShin": 0.22506701385220174
+          }
+        },
+        {
+          "phase": 0.6759259259259259,
+          "distances": {
+            "leftHand-leftThigh": 0.6307343633987944,
+            "leftHand-leftShin": 0.754694424592369,
+            "leftHand-rightThigh": 0.7761616908732415,
+            "leftHand-rightShin": 1.104752155235883,
+            "rightHand-leftThigh": 0.5368230609458294,
+            "rightHand-leftShin": 0.7470099089357762,
+            "rightHand-rightThigh": 0.22517152113554056,
+            "rightHand-rightShin": 0.22721060308970573
+          }
+        },
+        {
+          "phase": 0.6768518518518518,
+          "distances": {
+            "leftHand-leftThigh": 0.6315694567134257,
+            "leftHand-leftShin": 0.7562433866565397,
+            "leftHand-rightThigh": 0.7769056047153197,
+            "leftHand-rightShin": 1.105370917838467,
+            "rightHand-leftThigh": 0.5443775623295644,
+            "rightHand-leftShin": 0.7528318322445556,
+            "rightHand-rightThigh": 0.22865016075533812,
+            "rightHand-rightShin": 0.22982737068643555
+          }
+        },
+        {
+          "phase": 0.6777777777777778,
+          "distances": {
+            "leftHand-leftThigh": 0.6324126170096205,
+            "leftHand-leftShin": 0.7578290504384293,
+            "leftHand-rightThigh": 0.7776528185313234,
+            "leftHand-rightShin": 1.1060013122738965,
+            "rightHand-leftThigh": 0.5520006951432921,
+            "rightHand-leftShin": 0.7588160237674817,
+            "rightHand-rightThigh": 0.2322532865639201,
+            "rightHand-rightShin": 0.23281230578153628
+          }
+        },
+        {
+          "phase": 0.6787037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.633259808631652,
+            "leftHand-leftShin": 0.7594055089718442,
+            "leftHand-rightThigh": 0.7784037608224144,
+            "leftHand-rightShin": 1.106606191372634,
+            "rightHand-leftThigh": 0.559388985659169,
+            "rightHand-leftShin": 0.7646457033981088,
+            "rightHand-rightThigh": 0.2359980813428138,
+            "rightHand-rightShin": 0.23618275626755125
+          }
+        },
+        {
+          "phase": 0.6796296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6341151092020423,
+            "leftHand-leftShin": 0.7610188451959718,
+            "leftHand-rightThigh": 0.779158029521318,
+            "leftHand-rightShin": 1.1072227376897223,
+            "rightHand-leftThigh": 0.5668439489252497,
+            "rightHand-leftShin": 0.7706332624721774,
+            "rightHand-rightThigh": 0.23986663666495991,
+            "rightHand-rightShin": 0.23988055476975084
+          }
+        },
+        {
+          "phase": 0.6805555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6349745697821522,
+            "leftHand-leftShin": 0.7626224001950551,
+            "leftHand-rightThigh": 0.7799162389565659,
+            "leftHand-rightShin": 1.107813526884157,
+            "rightHand-leftThigh": 0.5740397664635594,
+            "rightHand-leftShin": 0.7764332707814516,
+            "rightHand-rightThigh": 0.24387408815088008,
+            "rightHand-rightShin": 0.24387408815088008
+          }
+        },
+        {
+          "phase": 0.6814814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6358421997130951,
+            "leftHand-leftShin": 0.7642630647190389,
+            "leftHand-rightThigh": 0.7806778097312503,
+            "leftHand-rightShin": 1.1084160048431946,
+            "rightHand-leftThigh": 0.5813005869750233,
+            "rightHand-leftShin": 0.782387004447056,
+            "rightHand-rightThigh": 0.2481538261374723,
+            "rightHand-rightShin": 0.2481538261374723
+          }
+        },
+        {
+          "phase": 0.6824074074074075,
+          "distances": {
+            "leftHand-leftThigh": 0.636713424915099,
+            "leftHand-leftShin": 0.7658919099992606,
+            "leftHand-rightThigh": 0.7814428647388117,
+            "leftHand-rightShin": 1.108992131284206,
+            "rightHand-leftThigh": 0.5882766982123678,
+            "rightHand-leftShin": 0.7881192715600662,
+            "rightHand-rightThigh": 0.2526377786011412,
+            "rightHand-rightShin": 0.2526308147369678
+          }
+        },
+        {
+          "phase": 0.6833333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.6375928854499587,
+            "leftHand-leftShin": 0.7675580931582064,
+            "leftHand-rightThigh": 0.7822113194856589,
+            "leftHand-rightShin": 1.1095799343560537,
+            "rightHand-leftThigh": 0.5953162512472161,
+            "rightHand-leftShin": 0.7940011215367297,
+            "rightHand-rightThigh": 0.25736898533352925,
+            "rightHand-rightShin": 0.2572652016534644
+          }
+        },
+        {
+          "phase": 0.6842592592592592,
+          "distances": {
+            "leftHand-leftThigh": 0.6384755373771445,
+            "leftHand-leftShin": 0.7692108977470964,
+            "leftHand-rightThigh": 0.7829830020499723,
+            "leftHand-rightShin": 1.1101409816154537,
+            "rightHand-leftThigh": 0.60205231661533,
+            "rightHand-leftShin": 0.799632903420682,
+            "rightHand-rightThigh": 0.2622196553709306,
+            "rightHand-rightShin": 0.26192561680231896
+          }
+        },
+        {
+          "phase": 0.6851851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6393665007112502,
+            "leftHand-leftShin": 0.7709012817881847,
+            "leftHand-rightThigh": 0.7837581280781353,
+            "leftHand-rightShin": 1.1107136643526117,
+            "rightHand-leftThigh": 0.6088503657371575,
+            "rightHand-leftShin": 0.805410254792021,
+            "rightHand-rightThigh": 0.26728279543804195,
+            "rightHand-rightShin": 0.2667094118257632
+          }
+        },
+        {
+          "phase": 0.6861111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6402606387219115,
+            "leftHand-leftShin": 0.7725771966915381,
+            "leftHand-rightThigh": 0.7845364735919815,
+            "leftHand-rightShin": 1.1112596211179364,
+            "rightHand-leftThigh": 0.6153347609488414,
+            "rightHand-leftShin": 0.8109167685481553,
+            "rightHand-rightThigh": 0.2723923766254671,
+            "rightHand-rightShin": 0.2714809784886508
+          }
+        },
+        {
+          "phase": 0.687037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6411631829208485,
+            "leftHand-leftShin": 0.7742909842684808,
+            "leftHand-rightThigh": 0.7853183153241651,
+            "leftHand-rightShin": 1.1118171545637785,
+            "rightHand-leftThigh": 0.6218798225570416,
+            "rightHand-leftShin": 0.8165651486049053,
+            "rightHand-rightThigh": 0.27768474186896186,
+            "rightHand-rightShin": 0.2763681448016214
+          }
+        },
+        {
+          "phase": 0.687962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6420681900935993,
+            "leftHand-leftShin": 0.7759879886927453,
+            "leftHand-rightThigh": 0.7861028519551079,
+            "leftHand-rightShin": 1.112347725347442,
+            "rightHand-leftThigh": 0.628100105678291,
+            "rightHand-leftShin": 0.8219216803124593,
+            "rightHand-rightThigh": 0.2829563820011939,
+            "rightHand-rightShin": 0.2812038760482968
+          }
+        },
+        {
+          "phase": 0.6888888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6429817058312924,
+            "leftHand-leftShin": 0.7777231577348911,
+            "leftHand-rightThigh": 0.7868909421538073,
+            "leftHand-rightShin": 1.112889780655267,
+            "rightHand-leftThigh": 0.634379764807347,
+            "rightHand-leftShin": 0.8274164807446858,
+            "rightHand-rightThigh": 0.2883858904781942,
+            "rightHand-rightShin": 0.28614786074494225
+          }
+        },
+        {
+          "phase": 0.6898148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6438972928320811,
+            "leftHand-leftShin": 0.7794400266147721,
+            "leftHand-rightThigh": 0.7876813770789743,
+            "leftHand-rightShin": 1.1134048386517652,
+            "rightHand-leftThigh": 0.6403303080372073,
+            "rightHand-leftShin": 0.8326046752469547,
+            "rightHand-rightThigh": 0.29373971727299064,
+            "rightHand-rightShin": 0.29100673391573556
+          }
+        },
+        {
+          "phase": 0.6907407407407408,
+          "distances": {
+            "leftHand-leftThigh": 0.6448215056814418,
+            "leftHand-leftShin": 0.7811953791024406,
+            "leftHand-rightThigh": 0.7884754306677213,
+            "leftHand-rightShin": 1.1139312654496922,
+            "rightHand-leftThigh": 0.6463390115814225,
+            "rightHand-leftShin": 0.8379277777232049,
+            "rightHand-rightThigh": 0.29923102780692956,
+            "rightHand-rightShin": 0.29596718049047915
+          }
+        },
+        {
+          "phase": 0.6916666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6457474790865864,
+            "leftHand-leftShin": 0.7829306689899465,
+            "leftHand-rightThigh": 0.7892716102262279,
+            "leftHand-rightShin": 1.114430957560738,
+            "rightHand-leftThigh": 0.6520188394413142,
+            "rightHand-leftShin": 0.842934702122121,
+            "rightHand-rightThigh": 0.30460250289117563,
+            "rightHand-rightShin": 0.30081382608471224
+          }
+        },
+        {
+          "phase": 0.6925925925925925,
+          "distances": {
+            "leftHand-leftThigh": 0.646682214271278,
+            "leftHand-leftShin": 0.7847048036220303,
+            "leftHand-rightThigh": 0.7900714831023568,
+            "leftHand-rightShin": 1.1149418845053298,
+            "rightHand-leftThigh": 0.6577557066237857,
+            "rightHand-leftShin": 0.8480734639722877,
+            "rightHand-rightThigh": 0.3100950479399167,
+            "rightHand-rightShin": 0.3057561118467479
+          }
+        },
+        {
+          "phase": 0.6935185185185185,
+          "distances": {
+            "leftHand-leftThigh": 0.6476178126537886,
+            "leftHand-leftShin": 0.7864560916954461,
+            "leftHand-rightThigh": 0.7908727081458613,
+            "leftHand-rightShin": 1.1154261385868582,
+            "rightHand-leftThigh": 0.6631631136029804,
+            "rightHand-leftShin": 0.8528865397133754,
+            "rightHand-rightThigh": 0.31542877074695835,
+            "rightHand-rightShin": 0.31055671876917695
+          }
+        },
+        {
+          "phase": 0.6944444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6485623189875429,
+            "leftHand-leftShin": 0.7882465857828352,
+            "leftHand-rightThigh": 0.7916777073763823,
+            "leftHand-rightShin": 1.1159214644493687,
+            "rightHand-leftThigh": 0.6686264706210168,
+            "rightHand-leftShin": 0.857828519457494,
+            "rightHand-rightThigh": 0.32087033628163203,
+            "rightHand-rightShin": 0.31544766392710544
+          }
+        },
+        {
+          "phase": 0.6953703703703704,
+          "distances": {
+            "leftHand-leftThigh": 0.6495072605990118,
+            "leftHand-leftShin": 0.7900125156866148,
+            "leftHand-rightThigh": 0.7924837519569878,
+            "leftHand-rightShin": 1.1163905587062741,
+            "rightHand-leftThigh": 0.6737660090398166,
+            "rightHand-leftShin": 0.8624414628576416,
+            "rightHand-rightThigh": 0.3261253126707374,
+            "rightHand-rightShin": 0.3201761747786892
+          }
+        },
+        {
+          "phase": 0.6962962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6504612780147488,
+            "leftHand-leftShin": 0.791818058595506,
+            "leftHand-rightThigh": 0.7932936629311406,
+            "leftHand-rightShin": 1.1168705476978877,
+            "rightHand-leftThigh": 0.6789605216930896,
+            "rightHand-leftShin": 0.8671806797445348,
+            "rightHand-rightThigh": 0.33147765271786855,
+            "rightHand-rightShin": 0.324990442744263
+          }
+        },
+        {
+          "phase": 0.6972222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.6514150424250148,
+            "leftHand-leftShin": 0.7935964094866853,
+            "leftHand-rightThigh": 0.7941039453862798,
+            "leftHand-rightShin": 1.1173246597696327,
+            "rightHand-leftThigh": 0.6838372770777298,
+            "rightHand-leftShin": 0.8715890088177115,
+            "rightHand-rightThigh": 0.33662087829984927,
+            "rightHand-rightShin": 0.3296240224055193
+          }
+        },
+        {
+          "phase": 0.6981481481481482,
+          "distances": {
+            "leftHand-leftThigh": 0.6523780700155967,
+            "leftHand-leftShin": 0.79541481169816,
+            "leftHand-rightThigh": 0.7949181971243438,
+            "leftHand-rightShin": 1.1177894728178168,
+            "rightHand-leftThigh": 0.6887681292166613,
+            "rightHand-leftShin": 0.8761212232086092,
+            "rightHand-rightThigh": 0.3418531605859369,
+            "rightHand-rightShin": 0.33433940194283696
+          }
+        },
+        {
+          "phase": 0.6990740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.6533397698850519,
+            "leftHand-leftShin": 0.7972027646567641,
+            "leftHand-rightThigh": 0.795731903639125,
+            "leftHand-rightShin": 1.1182287090988943,
+            "rightHand-leftThigh": 0.6933869993362295,
+            "rightHand-leftShin": 0.8803212952074227,
+            "rightHand-rightThigh": 0.3468570740001675,
+            "rightHand-rightShin": 0.3388572043329607
+          }
+        },
+        {
+          "phase": 0.7,
+          "distances": {
+            "leftHand-leftThigh": 0.654310935438614,
+            "leftHand-leftShin": 0.799031214720893,
+            "leftHand-rightThigh": 0.7965496914782292,
+            "leftHand-rightShin": 1.1186784323802696,
+            "rightHand-leftThigh": 0.6980591606589437,
+            "rightHand-leftShin": 0.8846430240374639,
+            "rightHand-rightThigh": 0.35194342196265643,
+            "rightHand-rightShin": 0.3434533662723865
+          }
+        },
+        {
+          "phase": 0.700925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6552801746453251,
+            "leftHand-leftShin": 0.8008267341575384,
+            "leftHand-rightThigh": 0.797366379878449,
+            "leftHand-rightShin": 1.1191032390879339,
+            "rightHand-leftThigh": 0.7024294460703241,
+            "rightHand-leftShin": 0.8886359351590394,
+            "rightHand-rightThigh": 0.3567908196473616,
+            "rightHand-rightShin": 0.34784177006159966
+          }
+        },
+        {
+          "phase": 0.7018518518518518,
+          "distances": {
+            "leftHand-leftThigh": 0.6562591108781475,
+            "leftHand-leftShin": 0.802663255606636,
+            "leftHand-rightThigh": 0.7981872770620001,
+            "leftHand-rightShin": 1.1195383126905631,
+            "rightHand-leftThigh": 0.706852373647984,
+            "rightHand-leftShin": 0.8927485944813824,
+            "rightHand-rightThigh": 0.36171547446925517,
+            "rightHand-rightShin": 0.35230564439190765
+          }
+        },
+        {
+          "phase": 0.7027777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.657234895823936,
+            "leftHand-leftShin": 0.8044631373769664,
+            "leftHand-rightThigh": 0.799006006568265,
+            "leftHand-rightShin": 1.1199490436889294,
+            "rightHand-leftThigh": 0.7109813332334551,
+            "rightHand-leftShin": 0.8965344580840665,
+            "rightHand-rightThigh": 0.36639123655378947,
+            "rightHand-rightShin": 0.35655143139150275
+          }
+        },
+        {
+          "phase": 0.7037037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6582206304834483,
+            "leftHand-leftShin": 0.8063045440862192,
+            "leftHand-rightThigh": 0.7998290850481846,
+            "leftHand-rightShin": 1.120369806034394,
+            "rightHand-leftThigh": 0.7151623912098407,
+            "rightHand-leftShin": 0.9004383401597319,
+            "rightHand-rightThigh": 0.3711401455633075,
+            "rightHand-rightShin": 0.36087019922969327
+          }
+        },
+        {
+          "phase": 0.7046296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6592020709431797,
+            "leftHand-leftShin": 0.8081059076939306,
+            "leftHand-rightThigh": 0.8006488951514477,
+            "leftHand-rightShin": 1.1207669861294898,
+            "rightHand-leftThigh": 0.7190587062910593,
+            "rightHand-leftShin": 0.9040189586381714,
+            "rightHand-rightThigh": 0.37563423821040637,
+            "rightHand-rightShin": 0.36496375717202956
+          }
+        },
+        {
+          "phase": 0.7055555555555556,
+          "distances": {
+            "leftHand-leftThigh": 0.6601937413252151,
+            "leftHand-leftShin": 0.8099493544582286,
+            "leftHand-rightThigh": 0.80147321026379,
+            "leftHand-rightShin": 1.1211739522085176,
+            "rightHand-leftThigh": 0.7230067121182367,
+            "rightHand-leftShin": 0.9077160904584922,
+            "rightHand-rightThigh": 0.3801982441993038,
+            "rightHand-rightShin": 0.36912817807081494
+          }
+        },
+        {
+          "phase": 0.7064814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6611799632309335,
+            "leftHand-leftShin": 0.8117488416426133,
+            "leftHand-rightThigh": 0.8022931925840417,
+            "leftHand-rightShin": 1.1215581418595526,
+            "rightHand-leftThigh": 0.7266798499900047,
+            "rightHand-leftShin": 0.9110951136238976,
+            "rightHand-rightThigh": 0.38450493004892883,
+            "rightHand-rightShin": 0.3730631347081525
+          }
+        },
+        {
+          "phase": 0.7074074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6621767290525483,
+            "leftHand-leftShin": 0.8135910214402831,
+            "leftHand-rightThigh": 0.8031178552627651,
+            "leftHand-rightShin": 1.12195186598049,
+            "rightHand-leftThigh": 0.7304044340922995,
+            "rightHand-leftShin": 0.9145894027641389,
+            "rightHand-rightThigh": 0.3888790160005937,
+            "rightHand-rightShin": 0.37706717240678245
+          }
+        },
+        {
+          "phase": 0.7083333333333334,
+          "distances": {
+            "leftHand-leftThigh": 0.6631662995346294,
+            "leftHand-leftShin": 0.8153843413141122,
+            "leftHand-rightThigh": 0.8039365837724336,
+            "leftHand-rightShin": 1.1223236547521542,
+            "rightHand-leftThigh": 0.7338621937013388,
+            "rightHand-leftShin": 0.9177692455267324,
+            "rightHand-rightThigh": 0.3929928416029917,
+            "rightHand-rightShin": 0.3808369999573554
+          }
+        },
+        {
+          "phase": 0.7092592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6641667563514791,
+            "leftHand-leftShin": 0.8172209811524141,
+            "leftHand-rightThigh": 0.804760185610819,
+            "leftHand-rightShin": 1.1227047135348653,
+            "rightHand-leftThigh": 0.7373712767214678,
+            "rightHand-leftShin": 0.9210632550360249,
+            "rightHand-rightThigh": 0.39717207581383684,
+            "rightHand-rightShin": 0.3846743519069977
+          }
+        },
+        {
+          "phase": 0.7101851851851851,
+          "distances": {
+            "leftHand-leftThigh": 0.6651587060246892,
+            "leftHand-leftShin": 0.8190046237217925,
+            "leftHand-rightThigh": 0.8055765362964806,
+            "leftHand-rightShin": 1.123064777165291,
+            "rightHand-leftThigh": 0.7406234018694019,
+            "rightHand-leftShin": 0.9240485575868733,
+            "rightHand-rightThigh": 0.4010924527068787,
+            "rightHand-rightShin": 0.38827678117961606
+          }
+        },
+        {
+          "phase": 0.7111111111111111,
+          "distances": {
+            "leftHand-leftThigh": 0.6661619298398095,
+            "leftHand-leftShin": 0.8208322848980298,
+            "leftHand-rightThigh": 0.8063979793279701,
+            "leftHand-rightShin": 1.1234338450204397,
+            "rightHand-leftThigh": 0.7439269259398313,
+            "rightHand-leftShin": 0.9271472175449442,
+            "rightHand-rightThigh": 0.4050767437005147,
+            "rightHand-rightShin": 0.3919454455724236
+          }
+        },
+        {
+          "phase": 0.712037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6671545587431794,
+            "leftHand-leftShin": 0.8226009557597818,
+            "leftHand-rightThigh": 0.8072102685280252,
+            "leftHand-rightShin": 1.1237827497256219,
+            "rightHand-leftThigh": 0.7469808859453541,
+            "rightHand-leftShin": 0.9299411906247107,
+            "rightHand-rightThigh": 0.40880173740576997,
+            "rightHand-rightShin": 0.3953768908079125
+          }
+        },
+        {
+          "phase": 0.7129629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.6681588873058195,
+            "leftHand-leftShin": 0.8244143715862638,
+            "leftHand-rightThigh": 0.8080278926935129,
+            "leftHand-rightShin": 1.1241403825961298,
+            "rightHand-leftThigh": 0.7500864635692721,
+            "rightHand-leftShin": 0.9328478619517843,
+            "rightHand-rightThigh": 0.41258948928936306,
+            "rightHand-rightShin": 0.3988734353983845
+          }
+        },
+        {
+          "phase": 0.7138888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6691506315782868,
+            "leftHand-leftShin": 0.826163020470194,
+            "leftHand-rightThigh": 0.8088343502241493,
+            "leftHand-rightShin": 1.124478517775983,
+            "rightHand-leftThigh": 0.7529502514636898,
+            "rightHand-leftShin": 0.9354543463497155,
+            "rightHand-rightThigh": 0.41611917825432393,
+            "rightHand-rightShin": 0.4021321736855352
+          }
+        },
+        {
+          "phase": 0.7148148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.6701545489674333,
+            "leftHand-leftShin": 0.8279571921895355,
+            "leftHand-rightThigh": 0.8096464145765457,
+            "leftHand-rightShin": 1.1248251009689096,
+            "rightHand-leftThigh": 0.7558660553149552,
+            "rightHand-leftShin": 0.9381730767025577,
+            "rightHand-rightThigh": 0.4197107804626738,
+            "rightHand-rightShin": 0.40545503588874054
+          }
+        },
+        {
+          "phase": 0.7157407407407408,
+          "distances": {
+            "leftHand-leftThigh": 0.6711437084673487,
+            "leftHand-leftShin": 0.8296801644595588,
+            "leftHand-rightThigh": 0.8104452351490722,
+            "leftHand-rightShin": 1.1251531954170422,
+            "rightHand-leftThigh": 0.7585474990998294,
+            "rightHand-leftShin": 0.9405962019412518,
+            "rightHand-rightThigh": 0.42304707621644205,
+            "rightHand-rightShin": 0.4085411133562716
+          }
+        },
+        {
+          "phase": 0.7166666666666667,
+          "distances": {
+            "leftHand-leftThigh": 0.6721455730916441,
+            "leftHand-leftShin": 0.8314495074026136,
+            "leftHand-rightThigh": 0.8112499699961742,
+            "leftHand-rightShin": 1.1254894537526416,
+            "rightHand-leftThigh": 0.7612815634590445,
+            "rightHand-leftShin": 0.9431313578417141,
+            "rightHand-rightThigh": 0.42644471056770933,
+            "rightHand-rightShin": 0.41169047713476437
+          }
+        },
+        {
+          "phase": 0.7175925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.673129735428474,
+            "leftHand-leftShin": 0.8331398890129742,
+            "leftHand-rightThigh": 0.8120386483520529,
+            "leftHand-rightShin": 1.125808011897059,
+            "rightHand-leftThigh": 0.7637865192925332,
+            "rightHand-leftShin": 0.9453733220281972,
+            "rightHand-rightThigh": 0.4295880594330639,
+            "rightHand-rightShin": 0.4146026503916429
+          }
+        },
+        {
+          "phase": 0.7185185185185186,
+          "distances": {
+            "leftHand-leftThigh": 0.6741271899221054,
+            "leftHand-leftShin": 0.8348775233731852,
+            "leftHand-rightThigh": 0.8128335843773459,
+            "leftHand-rightShin": 1.126134438473585,
+            "rightHand-leftThigh": 0.7663448721319882,
+            "rightHand-leftShin": 0.9477272353351178,
+            "rightHand-rightThigh": 0.43279234936622646,
+            "rightHand-rightShin": 0.4175773282812287
+          }
+        },
+        {
+          "phase": 0.7194444444444444,
+          "distances": {
+            "leftHand-leftThigh": 0.6751040319619388,
+            "leftHand-leftShin": 0.8365279057826176,
+            "leftHand-rightThigh": 0.8136095356609313,
+            "leftHand-rightShin": 1.126443942421579,
+            "rightHand-leftThigh": 0.7686795355273718,
+            "rightHand-leftShin": 0.9497910605417927,
+            "rightHand-rightThigh": 0.4357451015323507,
+            "rightHand-rightShin": 0.42031628778644076
+          }
+        },
+        {
+          "phase": 0.7203703703703703,
+          "distances": {
+            "leftHand-leftThigh": 0.6760948224820837,
+            "leftHand-leftShin": 0.8382264839816062,
+            "leftHand-rightThigh": 0.8143921316393816,
+            "leftHand-rightShin": 1.12676101058103,
+            "rightHand-leftThigh": 0.771068573860385,
+            "rightHand-leftShin": 0.9519669340869515,
+            "rightHand-rightThigh": 0.4387585571412146,
+            "rightHand-rightShin": 0.42311701938432034
+          }
+        },
+        {
+          "phase": 0.7212962962962963,
+          "distances": {
+            "leftHand-leftThigh": 0.6770611613194419,
+            "leftHand-leftShin": 0.839827729676706,
+            "leftHand-rightThigh": 0.8151520572244159,
+            "leftHand-rightShin": 1.1270617791713697,
+            "rightHand-leftThigh": 0.7732374454095635,
+            "rightHand-leftShin": 0.9538542529793709,
+            "rightHand-rightThigh": 0.44152144216510303,
+            "rightHand-rightShin": 0.42568210062124157
+          }
+        },
+        {
+          "phase": 0.7222222222222222,
+          "distances": {
+            "leftHand-leftThigh": 0.6780421696358865,
+            "leftHand-leftShin": 0.8414781331235237,
+            "leftHand-rightThigh": 0.8159190584966683,
+            "leftHand-rightShin": 1.1273697918182748,
+            "rightHand-leftThigh": 0.7754618350149516,
+            "rightHand-leftShin": 0.9558537897501208,
+            "rightHand-rightThigh": 0.44434487194452454,
+            "rightHand-rightShin": 0.4283081910155169
+          }
+        },
+        {
+          "phase": 0.7231481481481481,
+          "distances": {
+            "leftHand-leftThigh": 0.6789945648132036,
+            "leftHand-leftShin": 0.8430202072021298,
+            "leftHand-rightThigh": 0.8166593324988461,
+            "leftHand-rightShin": 1.12766190584348,
+            "rightHand-leftThigh": 0.7774689809455201,
+            "rightHand-leftShin": 0.9575659971356377,
+            "rightHand-rightThigh": 0.4469191209125365,
+            "rightHand-rightShin": 0.43069945109839913
+          }
+        },
+        {
+          "phase": 0.7240740740740741,
+          "distances": {
+            "leftHand-leftThigh": 0.6799624247566429,
+            "leftHand-leftShin": 0.8446124257850544,
+            "leftHand-rightThigh": 0.8174071639369067,
+            "leftHand-rightShin": 1.1279609280793055,
+            "rightHand-leftThigh": 0.7795329700537493,
+            "rightHand-leftShin": 0.9593906685653611,
+            "rightHand-rightThigh": 0.4495538130833579,
+            "rightHand-rightShin": 0.43315090828970415
+          }
+        },
+        {
+          "phase": 0.725,
+          "distances": {
+            "leftHand-leftThigh": 0.680896738634499,
+            "leftHand-leftShin": 0.8460836867173999,
+            "leftHand-rightThigh": 0.8181234872100422,
+            "leftHand-rightShin": 1.1282441266731367,
+            "rightHand-leftThigh": 0.7813815609118848,
+            "rightHand-leftShin": 0.9609286841624909,
+            "rightHand-rightThigh": 0.4519400006784389,
+            "rightHand-rightShin": 0.43536797580610515
+          }
+        },
+        {
+          "phase": 0.725925925925926,
+          "distances": {
+            "leftHand-leftThigh": 0.6818473835837072,
+            "leftHand-leftShin": 0.847606067017775,
+            "leftHand-rightThigh": 0.8188479012072578,
+            "leftHand-rightShin": 1.1285338768804543,
+            "rightHand-leftThigh": 0.7832884666595031,
+            "rightHand-leftShin": 0.9625793933841372,
+            "rightHand-rightThigh": 0.45438651409817915,
+            "rightHand-rightShin": 0.4376443059243201
+          }
+        },
+        {
+          "phase": 0.7268518518518519,
+          "distances": {
+            "leftHand-leftThigh": 0.6827590222071337,
+            "leftHand-leftShin": 0.8489946106315857,
+            "leftHand-rightThigh": 0.8195355193878358,
+            "leftHand-rightShin": 1.1288074661733563,
+            "rightHand-leftThigh": 0.7849810620851951,
+            "rightHand-leftShin": 0.963942928703804,
+            "rightHand-rightThigh": 0.4565851690344633,
+            "rightHand-rightShin": 0.4396869266587609
+          }
+        },
+        {
+          "phase": 0.7277777777777777,
+          "distances": {
+            "leftHand-leftThigh": 0.6836879257622802,
+            "leftHand-leftShin": 0.8504352040337271,
+            "leftHand-rightThigh": 0.8202318136559608,
+            "leftHand-rightShin": 1.1290872265227458,
+            "rightHand-leftThigh": 0.7867335657447312,
+            "rightHand-leftShin": 0.9654193062329096,
+            "rightHand-rightThigh": 0.4588439588094039,
+            "rightHand-rightShin": 0.44178769806766105
+          }
+        },
+        {
+          "phase": 0.7287037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6845716841174996,
+            "leftHand-leftShin": 0.8517273501653972,
+            "leftHand-rightThigh": 0.8208853956819223,
+            "leftHand-rightShin": 1.1293503666201263,
+            "rightHand-leftThigh": 0.7882724429842546,
+            "rightHand-leftShin": 0.966608668516745,
+            "rightHand-rightThigh": 0.46085630050345183,
+            "rightHand-rightShin": 0.44365649559310083
+          }
+        },
+        {
+          "phase": 0.7296296296296296,
+          "distances": {
+            "leftHand-leftThigh": 0.6854737083972153,
+            "leftHand-leftShin": 0.8530724076901921,
+            "leftHand-rightThigh": 0.8215482936044824,
+            "leftHand-rightShin": 1.1296192697749463,
+            "rightHand-leftThigh": 0.7898729176265172,
+            "rightHand-leftShin": 0.9679108791568497,
+            "rightHand-rightThigh": 0.46292844686152596,
+            "rightHand-rightShin": 0.44558209027436196
+          }
+        },
+        {
+          "phase": 0.7305555555555555,
+          "distances": {
+            "leftHand-leftThigh": 0.6863235322451274,
+            "leftHand-leftShin": 0.8542526228200658,
+            "leftHand-rightThigh": 0.8221617092082439,
+            "leftHand-rightShin": 1.1298705203901105,
+            "rightHand-leftThigh": 0.7912596184912185,
+            "rightHand-leftShin": 0.9689261900388085,
+            "rightHand-rightThigh": 0.46475521789914886,
+            "rightHand-rightShin": 0.44727751756224066
+          }
+        },
+        {
+          "phase": 0.7314814814814815,
+          "distances": {
+            "leftHand-leftThigh": 0.6871926704583362,
+            "leftHand-leftShin": 0.8554864689268793,
+            "leftHand-rightThigh": 0.822785127192762,
+            "leftHand-rightShin": 1.1301270936792,
+            "rightHand-leftThigh": 0.7927096158441946,
+            "rightHand-leftShin": 0.9700540541962595,
+            "rightHand-rightThigh": 0.4666412154384337,
+            "rightHand-rightShin": 0.4490280480973541
+          }
+        },
+        {
+          "phase": 0.7324074074074074,
+          "distances": {
+            "leftHand-leftThigh": 0.6880021082897649,
+            "leftHand-leftShin": 0.856538246787851,
+            "leftHand-rightThigh": 0.8233519360443956,
+            "leftHand-rightShin": 1.1303643075678853,
+            "rightHand-leftThigh": 0.7939459057246946,
+            "rightHand-leftShin": 0.9708964826496794,
+            "rightHand-rightThigh": 0.4682839908613474,
+            "rightHand-rightShin": 0.45055164202091325
+          }
+        },
+        {
+          "phase": 0.7333333333333333,
+          "distances": {
+            "leftHand-leftThigh": 0.6888319433253205,
+            "leftHand-leftShin": 0.8576441945274182,
+            "leftHand-rightThigh": 0.823929475494299,
+            "leftHand-rightShin": 1.1306063730065132,
+            "rightHand-leftThigh": 0.7952471486384549,
+            "rightHand-leftShin": 0.97185079411536,
+            "rightHand-rightThigh": 0.46998510249137543,
+            "rightHand-rightShin": 0.45212825672585116
+          }
+        },
+        {
+          "phase": 0.7342592592592593,
+          "distances": {
+            "leftHand-leftThigh": 0.6895943142163697,
+            "leftHand-leftShin": 0.8585476976680958,
+            "leftHand-rightThigh": 0.8244430284256691,
+            "leftHand-rightShin": 1.1308266517229995,
+            "rightHand-leftThigh": 0.7963359215103204,
+            "rightHand-leftShin": 0.9725266357440449,
+            "rightHand-rightThigh": 0.4714459902449878,
+            "rightHand-rightShin": 0.45348201714956565
+          }
+        },
+        {
+          "phase": 0.7351851851851852,
+          "distances": {
+            "leftHand-leftThigh": 0.6903781309091405,
+            "leftHand-leftShin": 0.8595055576453741,
+            "leftHand-rightThigh": 0.824968043403794,
+            "leftHand-rightShin": 1.1310512683278495,
+            "rightHand-leftThigh": 0.7974910329742475,
+            "rightHand-leftShin": 0.9733129725581235,
+            "rightHand-rightThigh": 0.47296374575911837,
+            "rightHand-rightShin": 0.4548860822117294
+          }
+        },
+        {
+          "phase": 0.7361111111111112,
+          "distances": {
+            "leftHand-leftThigh": 0.6910804616294931,
+            "leftHand-leftShin": 0.8602618302491304,
+            "leftHand-rightThigh": 0.825416638212141,
+            "leftHand-rightShin": 1.1312466854509267,
+            "rightHand-leftThigh": 0.7984146481630701,
+            "rightHand-leftShin": 0.9737773626673534,
+            "rightHand-rightThigh": 0.4742366848718131,
+            "rightHand-rightShin": 0.45606982135292445
+          }
+        },
+        {
+          "phase": 0.737037037037037,
+          "distances": {
+            "leftHand-leftThigh": 0.6918056959479227,
+            "leftHand-leftShin": 0.8610735035464606,
+            "leftHand-rightThigh": 0.8258777210798174,
+            "leftHand-rightShin": 1.131446094038751,
+            "rightHand-leftThigh": 0.7994072007909439,
+            "rightHand-leftShin": 0.9743524844732702,
+            "rightHand-rightThigh": 0.47556688252124885,
+            "rightHand-rightShin": 0.4573031160619501
+          }
+        },
+        {
+          "phase": 0.7379629629629629,
+          "distances": {
+            "leftHand-leftThigh": 0.6924364731664031,
+            "leftHand-leftShin": 0.8617081532986077,
+            "leftHand-rightThigh": 0.8262519035218857,
+            "leftHand-rightShin": 1.131608616530401,
+            "rightHand-leftThigh": 0.8001341082267327,
+            "rightHand-leftShin": 0.9745252646609188,
+            "rightHand-rightThigh": 0.47664604421894735,
+            "rightHand-rightShin": 0.45832268190382675
+          }
+        },
+        {
+          "phase": 0.7388888888888889,
+          "distances": {
+            "leftHand-leftThigh": 0.6930923783205674,
+            "leftHand-leftShin": 0.8624011378167128,
+            "leftHand-rightThigh": 0.8266401445940947,
+            "leftHand-rightShin": 1.1317751273937813,
+            "rightHand-leftThigh": 0.8009353556466499,
+            "rightHand-leftShin": 0.974812868050582,
+            "rightHand-rightThigh": 0.47778708126227887,
+            "rightHand-rightShin": 0.4593954164420705
+          }
+        },
+        {
+          "phase": 0.7398148148148148,
+          "distances": {
+            "leftHand-leftThigh": 0.693658739936078,
+            "leftHand-leftShin": 0.8629226052316349,
+            "leftHand-rightThigh": 0.8269464746108153,
+            "leftHand-rightShin": 1.1319091665968541,
+            "rightHand-leftThigh": 0.8014782444441134,
+            "rightHand-leftShin": 0.9747063105690728,
+            "rightHand-rightThigh": 0.47869525599490953,
+            "rightHand-rightShin": 0.46027501805978005
+          }
+        }
+      ],
+      "underThreshold": []
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-16",
+  "newBatch": "output/flare-v42-r14-release-verify-20261016",
+  "passed": true,
+  "scope": "Rebake with existing installed dependencies; not clean environment install",
+  "assets": [
+    {
+      "kind": "coach",
+      "sha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d",
+      "bytes": 8301976,
+      "matches": true
+    },
+    {
+      "kind": "training",
+      "sha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68",
+      "bytes": 7996440,
+      "matches": true
+    }
+  ]
+}
