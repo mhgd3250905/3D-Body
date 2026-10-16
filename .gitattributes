@@ -22,3 +22,6 @@ tools/motion-v42/releases/r12-evidence/** -text
 # Frozen independent R13/R14 authoring and accepted review evidence.
 tools/motion-v42-r13/** -text
 tools/motion-v42-r14/** -text
+
+# Frozen R15 authoring, preview and accepted review evidence use byte hashes.
+tools/motion-v42-r15/** -text

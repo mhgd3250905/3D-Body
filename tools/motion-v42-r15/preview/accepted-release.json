@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "flare-v42-r15",
+  "status": "accepted-independent-motion-version",
+  "date": "2026-10-17",
+  "acceptance": {
+    "quote": "算了不用了现在已经很好了 R15这次模型优化 做好版本管理",
+    "scope": "User accepted the current R15 independent motion/model preview. This is not App integration or full biomechanical/device QA.",
+    "cancelled_followup": "The additional leg comparison was cancelled; it is not recorded as completed or passed."
+  },
+  "app_delivery_unchanged": "L47 / 1.0.4+6 / v42-R12",
+  "source_batch": "flare-v42-r15-20261017",
+  "source_directory": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r15-20261017",
+  "assets": [
+    {
+      "kind": "training",
+      "source": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r15-20261017\\flare-training-v42-candidate.glb",
+      "file": "assets/r15-training.glb",
+      "sha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+      "bytes": 8337208,
+      "duration_seconds": 1.350000023841858,
+      "tracks": 44,
+      "animation": "flare_v42_candidate_loop"
+    },
+    {
+      "kind": "coach",
+      "source": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r15-20261017\\flare-coach-v42-candidate.glb",
+      "file": "assets/r15-coach.glb",
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c",
+      "bytes": 8642744,
+      "duration_seconds": 1.350000023841858,
+      "tracks": 44,
+      "animation": "flare_v42_candidate_loop"
+    }
+  ],
+  "display_acceptance_rule": "Both loaded GLB byte hashes and the current candidate receipt must match this accepted pair. Later differing candidates remain pending review.",
+  "historical_candidate_record": "candidate-manifest.json",
+  "historical_candidate_record_sha256": "60a92fd4b2894432cea76c7b444765821e15fafc0801c413b8d822bf8317d061"
+}

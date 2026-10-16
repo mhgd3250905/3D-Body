@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "id": "flare-v42-r15",
+  "gitTag": "motion-v42-r15",
+  "date": "2026-10-17",
+  "status": "accepted-independent-motion-version",
+  "acceptance": {
+    "quote": "算了不用了现在已经很好了 R15这次模型优化 做好版本管理",
+    "scope": "User accepted the current R15 independent motion/model preview. This is not App integration or full biomechanical/device QA.",
+    "cancelled_followup": "The additional leg comparison was cancelled; it is not recorded as completed or passed."
+  },
+  "baseCommit": "f4c97da3434f819026ad40298ee4717e2c096144",
+  "sourceVersionRef": "motion-v42-r15",
+  "originalOutput": "output/flare-v42-r15-20261017",
+  "appDeliveryUnchanged": "L47 / 1.0.4+6 / v42-R12",
+  "duration": 1.35,
+  "frames": 541,
+  "tracks": 44,
+  "bones": 22,
+  "assets": [
+    {
+      "kind": "coach",
+      "file": "flare-coach-v42-candidate.glb",
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c",
+      "bytes": 8642744,
+      "source": "output/flare-v42-r14-20261016/flare-coach-v42-candidate.glb",
+      "sourceSha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d"
+    },
+    {
+      "kind": "training",
+      "file": "flare-training-v42-candidate.glb",
+      "sha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+      "bytes": 8337208,
+      "source": "output/flare-v42-r14-20261016/flare-training-v42-candidate.glb",
+      "sourceSha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68"
+    }
+  ],
+  "motionParameters": {
+    "revision": "v42-r15-reference-support-study",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "sideTorsoElevationDegrees": 18,
+    "maximumAdditionalTiltDegrees": 14,
+    "contactOverlapPhase": 0.005,
+    "armVelocityRampFraction": 0.01,
+    "contactTimingBlendPhase": 0.04,
+    "maximumElbowOpenDegrees": 177,
+    "maximumContactTranslationMetres": 0.03,
+    "sideWindows": {
+      "left": [
+        0.08,
+        0.21,
+        0.31,
+        0.425
+      ],
+      "right": [
+        0.58,
+        0.71,
+        0.81,
+        0.925
+      ]
+    },
+    "shoeDesiredMinY": 0.012,
+    "shoeMaximumCorrectionDegrees": 15
+  },
+  "requiredInputs": [
+    {
+      "path": "output/flare-v42-r14-20261016/flare-coach-v42-candidate.glb",
+      "bytes": 8301976,
+      "sha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/flare-training-v42-candidate.glb",
+      "bytes": 7996440,
+      "sha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/recovery-samples.json",
+      "bytes": 1415287,
+      "sha256": "56e8175b80f430129759f3d68d2d366c2490f517b9d0c88f5d47c0470e64860e"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/comparison-clock.json",
+      "bytes": 20149,
+      "sha256": "550dc35d5e2685f752e03f75a1cdb590614dd3fd9b68a63b64ea3dbeca42bf70"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/bake-manifest.json",
+      "bytes": 9315,
+      "sha256": "5bb82d50567873f488451bc019bee42686f99917ec9a751fdad368a47fb2a7f0"
+    },
+    {
+      "path": "app/scene/source/coach/flare-coach-v41-base.glb",
+      "bytes": 7508016,
+      "sha256": "c14683e4ffa8ebbb3e6712af8e04ee3276059398cec03b1192d5b67c179b858f"
+    },
+    {
+      "path": "app/scene/source/coach/coach-v41-rig.json",
+      "bytes": 4240,
+      "sha256": "b8566c2206181d1ea26568c42af927dd2414130709f1715c25a42fc2c4cdad1a"
+    },
+    {
+      "path": "app/scene/tools/bake-v41-node.mjs",
+      "bytes": 14151,
+      "sha256": "09cdeb548be2230fac2f56ea98e7519f7ceda4cd65d0cbf500da53fe7927c369"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/source-manifest.json",
+      "bytes": 4566,
+      "sha256": "cd5f8f4a95e200755d55de71d2362211812bd69f73ec255256234d0d67a5e898"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 35441,
+      "sha256": "5c2e6747f2aee5143fe6ed5c02da4d3edf9f8be45d4354c244dbcacd653a4f92"
+    },
+    {
+      "path": "app/scene/package-lock.json",
+      "bytes": 37503,
+      "sha256": "088cfe8bb056bd0b998bf436985c1fb8c18328595bb72dd90efb40b267eec510"
+    }
+  ],
+  "frozenFiles": [
+    {
+      "path": "tools/motion-v42-r15/archive-release.py",
+      "bytes": 15011,
+      "sha256": "3258c7b7728406aaa653f78d9ce4641aadf1ccb4997f285ae9ce9123a9035d1c"
+    },
+    {
+      "path": "tools/motion-v42-r15/bake.mjs",
+      "bytes": 13245,
+      "sha256": "3dbcc5f6dcd28c7ac5f06643a8b95064ef4a99b71eb2c2e84e3f26c636e2d25c"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/accepted-release.json",
+      "bytes": 1874,
+      "sha256": "1938448675686111f37bf6a9f492f62ac338f4c1de3c3e051483f6737102e78f"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/index.html",
+      "bytes": 4551,
+      "sha256": "e3c6363ee015fbed03104a8ef8d816a3769710236b75566d8ac69941db7defca"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/publish-candidate.ps1",
+      "bytes": 523,
+      "sha256": "a900ee6d8d9770f1aab64cdd38bc73e69a0adcc4bd58fe4df3cc489dadae6ab7"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/publish-candidate.py",
+      "bytes": 6239,
+      "sha256": "42af0d21c7e10320f37eb81a5d97caf939d77abf9c07bcff47799bf2d87a01a8"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/style.css",
+      "bytes": 4393,
+      "sha256": "f2ce565d74130e9138bd1cd44a8e44ae6b12ea1bee00e9874138186604e8a6d4"
+    },
+    {
+      "path": "tools/motion-v42-r15/preview/viewer.js",
+      "bytes": 11903,
+      "sha256": "0e4350556255a0101a0f74f3bdaa2e38d74083980abfc9112586c2c755678094"
+    },
+    {
+      "path": "tools/motion-v42-r15/README.md",
+      "bytes": 3891,
+      "sha256": "66d8f4304fb702482178fa67b2f9cca4f1cc154f07a34379f342910ea16fdb0e"
+    },
+    {
+      "path": "tools/motion-v42-r15/reference-motion.mjs",
+      "bytes": 16580,
+      "sha256": "727fa97d881e0752ec2731b01c716bdd767448a6b9a7057323ef9d9e93590987"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/accepted-preview-25.png",
+      "bytes": 82729,
+      "sha256": "fa39266655e5f500ad7b3cb5f77bd2a859fe2bd1121dda9dfbf3d91252aeb367"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/bake-manifest.json",
+      "bytes": 3949,
+      "sha256": "79ff574cf0fd142dc371a19e50956e0db25f28374977b4014e2d52420f4f1066"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/continuity-review.json",
+      "bytes": 1856,
+      "sha256": "0384d60a0da660b1e921b49e3a38671219f33a9d5728f4270da4904d3b31dc7f"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/independent-actual-glb.json",
+      "bytes": 204250,
+      "sha256": "724e6bc0e8307656f24d4ccad3dd1131d5fc4416f3cd3d22b273574b684262ef"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/preview-coach-75.png",
+      "bytes": 70492,
+      "sha256": "0f590e773fb1b4ec9d749f59a9450d01457f05be1faa0af58ed3d810e0f04da0"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/preview-front-25.png",
+      "bytes": 75414,
+      "sha256": "2076b77a9e92deae209d5a9f3e38139755e7c2c1c4d7e31efcf25387a031b18d"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/verification-binding.json",
+      "bytes": 906,
+      "sha256": "60dd39dca9a9bfc89d227a5644201373119e60e8ca91a2d7452465d7561ccb9d"
+    },
+    {
+      "path": "tools/motion-v42-r15/releases/r15-evidence/visual-review.json",
+      "bytes": 1026,
+      "sha256": "b2f2735cf4ffbb60ccdd2e69bbb33fa5d1ee8d111622c4b763d6a0d10864a150"
+    },
+    {
+      "path": "tools/motion-v42-r15/verify-candidate.mjs",
+      "bytes": 30544,
+      "sha256": "3b593cade114e622fd0fa80e9af4b52b2500fc076a23d715ee41b992efdcd2f3"
+    },
+    {
+      "path": "tools/motion-v42-r15/verify-release.mjs",
+      "bytes": 1384,
+      "sha256": "1b1a07fbba5f71a5beafc16cb6fa1f81de64b5b0ee1d1134638370380f905c20"
+    }
+  ],
+  "verification": {
+    "actualGlbSamplesPerBody": 1081,
+    "sourceVerdict": "MEASURED_CHECKS_CLEAR",
+    "finalEqualsVerifiedTrial04": true,
+    "randomAccessPositionMm": 0,
+    "randomAccessAngleDegrees": 0,
+    "seamPositionMm": 0
+  },
+  "scope": "Current independent motion preview accepted. App and historical versions unchanged. Additional leg comparison cancelled, not completed. Full dynamics, continuous whole-body collision and device QA not established.",
+  "archive": {
+    "file": "output/releases/Flare-v42-R15-accepted-20261017.zip",
+    "receipt": "output/releases/Flare-v42-R15-accepted-20261017.receipt.json",
+    "location": "local E drive",
+    "requires": "Matching Git tag checkout and installed local dependencies for baking; standalone HTTP preview included"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "status": "awaiting-user-review",
+  "method": "Final re-bake equals independently verified trial04 byte-for-byte; no redundant full geometry re-run.",
+  "assets": [
+    {
+      "kind": "training",
+      "file": "flare-training-v42-candidate.glb",
+      "sha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+      "verifiedTrial": "output/flare-v42-r15-trial04-20261017"
+    },
+    {
+      "kind": "coach",
+      "file": "flare-coach-v42-candidate.glb",
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c",
+      "verifiedTrial": "output/flare-v42-r15-trial04-20261017"
+    }
+  ],
+  "sourceReport": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r15-trial04-20261017\\review\\independent-actual-glb-2026-10-16T17-23-41-098Z.json",
+  "reportSha256": "724e6bc0e8307656f24d4ccad3dd1131d5fc4416f3cd3d22b273574b684262ef",
+  "result": "MEASURED_CHECKS_CLEAR"
+}

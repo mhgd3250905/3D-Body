@@ -1,0 +1,31 @@
+{
+  "status": "awaiting-user-review",
+  "url": "http://127.0.0.1:8877/r15-preview/",
+  "assets": [
+    {
+      "kind": "coach",
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c"
+    },
+    {
+      "kind": "training",
+      "sha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3"
+    }
+  ],
+  "observed": [
+    "Actual candidate and R14 GLBs loaded in the browser",
+    "Training body: front at 25%, 29.4%, handover 49.8%",
+    "Coach body: standard view at 75%",
+    "Same-phase controls, body and view selection, slow play/pause controls responded"
+  ],
+  "screenshots": [
+    {
+      "file": "r15-front-25.png",
+      "sha256": "2076b77a9e92deae209d5a9f3e38139755e7c2c1c4d7e31efcf25387a031b18d"
+    },
+    {
+      "file": "r15-coach-75.png",
+      "sha256": "0f590e773fb1b4ec9d749f59a9450d01457f05be1faa0af58ed3d810e0f04da0"
+    }
+  ],
+  "limits": "Selected poses and playback controls checked; full continuous body collision and user acceptance are not established."
+}

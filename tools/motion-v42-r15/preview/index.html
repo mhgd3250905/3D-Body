@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R15 · 胸髋倾斜与换手衔接</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/"}}</script>
+<body><main>
+<header><span class="eyebrow" id="releaseEyebrow">Flare 独立动作 · 2026.10.17</span><h1><span id="releaseTitle">R15 · 胸髋倾斜与换手衔接</span> <em id="releaseBadge">核对版本中</em></h1><p>本版重点微调胸髋倾斜与换手配合，保留 1.35 秒基础节奏。两侧同速同相位，拖动任一模型同步旋转。</p></header>
+<section class="controlbar">
+  <button id="play" disabled>播放对照</button>
+  <label for="body">人体</label><select id="body"><option value="training">训练人台</option><option value="coach">卡通教练</option></select>
+  <label for="duration">播放速度</label><select id="duration"><option value="1.35">源速度 · 1.35 秒/圈</option><option value="2.7">慢放 · 2.7 秒/圈</option><option value="6">慢放 · 6 秒/圈</option><option value="1.1333333333333333">蓝衣参考节奏 · 1.133 秒/圈</option></select>
+  <label for="view">视角</label><select id="view"><option value="standard">推荐</option><option value="front" selected>正面</option><option value="side">侧面</option><option value="back">背面</option></select>
+</section>
+<section class="panels">
+  <article class="panel"><div class="panel-title"><h2>R14 · 已认可基线</h2><span>冻结原版</span></div><div id="baselineStage" class="stage" role="img" aria-label="R14 原版三维模型，可拖动同步旋转"></div><p id="baselineStatus">正在读取本地 R14…</p></article>
+  <article class="panel"><div class="panel-title"><h2 id="candidateTitle">R15 · 核对版本中</h2><span class="candidate-tag" id="candidateTag">读取资产</span></div><div id="candidateStage" class="stage" role="img" aria-label="R15 三维模型，可拖动同步旋转"><div class="pending" id="candidatePending">正在读取 R15 资产</div></div><p id="candidateStatus">读取资产并核对本次认可版本的哈希。</p></article>
+</section>
+<section class="timeline">
+  <div class="phase-heading"><label for="phase">同步相位</label><output id="phaseLabel">29.4%</output></div>
+  <input id="phase" type="range" min="0" max="100" step="0.1" value="29.4">
+  <div class="controlbar phases"><span>关注阶段</span><button data-phase="0">0% · 后侧双撑</button><button data-phase="25">25% · 侧撑过渡</button><button data-phase="50">50% · 前侧展开</button><button data-phase="75">75% · 另一侧撑</button><button data-phase="29.4">29.4% · 侧撑重点</button><button id="reloadCandidate">重新读取 R15 资产</button></div>
+  <p id="status" role="status">初始暂停。正在核对已认可 R15；App 仍为 L47 / v42-R12。</p>
+</section>
+<details id="reference"><summary>蓝衣真人参考 · 第 50–84 帧，约 1.133 秒/圈</summary><div class="reference-body"><div class="reference-video"><video id="referenceVideo" src="./assets/blue-reference.mp4" muted playsinline preload="metadata" aria-label="蓝衣真人参考视频"></video></div><div class="reference-info"><p>真人第 50–84 帧近似对应模型 0–100% 相位，阶段由人工对齐；相机未标定。展开后画面随主对照进度与播放速度同步。</p><p><label><input id="mirrorReference" type="checkbox" checked> 镜像参考视频（对齐旋转方向）</label></p><p id="mirrorStatus" class="mirror-state">已镜像参考画面 · 原文件未改动</p><p id="referenceFrame">参考帧 60 / 130</p><p>真人运动方向与模型相反，镜像只帮助观察同侧支撑关系。原视频不改写；其弯膝不作为本次试调目标。</p><a href="../blue-r14-analysis/" target="_blank" rel="noopener">打开完整真人对照页</a></div></div></details>
+<footer><p>R14 设计时长为 1.35 秒/圈。播放速度仅改变查看节奏；选择蓝衣参考节奏不代表动作时序已与真人精确配准。本页不使用估计三维骨架。</p><p>本次认可保存为 R15 独立动作版本，App 仍为 L47 / 1.0.4+6 / v42-R12。两侧均播放实际 GLB 动画。<a href="./accepted-release.json">R15 认可记录</a> · <a href="./manifest.json">基线与页面记录</a> · <a href="./candidate-manifest.json">历史候选资产记录</a></p></footer>
+</main><script type="module" src="./viewer.js"></script></body></html>

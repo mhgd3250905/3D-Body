@@ -1,0 +1,26 @@
+{
+  "basis": "Actual GLB samples, 1081 per asset. Both coach and training assets have identical sampled motion metrics. This supplements the coarse automatic review thresholds; it is not a visual/user acceptance.",
+  "trial03_report": "output/flare-v42-r15-trial03-20261017/review/independent-actual-glb-2026-10-16T17-20-17-016Z.json",
+  "trial04_report": "independent-actual-glb-2026-10-16T17-23-41-098Z.json",
+  "right_elbow_seam_one_sided_velocity_difference_m_per_s": {
+    "r14": 0.03850375394572147,
+    "trial03": 5.5153794621827394,
+    "trial04": 0.04361807313502122
+  },
+  "right_elbow_handoff_adjacent_step_m": {
+    "r14": 0.006816796381457729,
+    "trial03": 0.014498656887212056,
+    "trial04": 0.007441359492761193
+  },
+  "left_elbow_handoff_adjacent_step_m": {
+    "r14": 0.008491191730164745,
+    "trial04": 0.008647173864031478
+  },
+  "pelvis_handoff_adjacent_step_m": {
+    "r14": 0.0028463012275614812,
+    "trial04": 0.002842757798438321
+  },
+  "conclusion": "The trial03 right-elbow seam/rapid-flexion concern is substantially reduced in trial04 and is now near R14 numerically. No new rigid attachment, span-length, loop-position/rotation or selected-skin stage-penetration blocker was found. Proceed to visual review; do not call this biomechanical or continuous-collision acceptance.",
+  "target_tradeoff": "Geometric both-palms-near windows are now about0.0075s and0.025s per1.35s loop, close to R14. The longer trial01 double-near windows were not retained. Near-plane geometry is not load/contact-force evidence.",
+  "body_shift_interpretation": "The actual pelvis world-position difference from R14 peaks at0.188348m and torso at0.152683m. These include the intended wrist-pivot tilt and cannot be compared directly with the author's isolated contactTranslation maximum. Torso-local shoulder offsets remain within0.00323mm."
+}
