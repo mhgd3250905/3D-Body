@@ -45,3 +45,6 @@ app.*.map.json
 /android/app/release
 /android/key.properties
 /android/build/
+
+# HipLab visual-check screenshots (test_screens/hip_shots_test.dart)
+/test/_shots/
