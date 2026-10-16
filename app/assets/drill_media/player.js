@@ -122,5 +122,6 @@ window.addEventListener('pagehide', stop);
 window.__drillMediaSnapshot = () => ({id,active,disposed,hasFrame,mediaReady,posterTime,playing:!video.paused,
   time:video.currentTime,duration:video.duration,readyState:video.readyState,
   error:video.error?.code || null});
-if (!/^[a-z]+(?:-[a-z]+)*-[ABC]$/.test(id || '')) emit('error');
+// FlareLab drills are <group>-<A|B|C>; HipLab's own renders are hip-<id>.
+if (!/^(?:[a-z]+(?:-[a-z]+)*-[ABC]|hip-[a-z0-9]+(?:-[a-z0-9]+)*)$/.test(id || '')) emit('error');
 else { video.poster=`${id}.jpg`; video.src=`${id}.mp4`; }

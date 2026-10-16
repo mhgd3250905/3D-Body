@@ -1,11 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="Flare 托马斯"
+        android:label="${appLabel}"
         android:name="${applicationName}"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="${appIcon}">
         <activity
             android:name=".MainActivity"
             android:exported="true"

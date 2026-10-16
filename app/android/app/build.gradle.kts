@@ -13,6 +13,20 @@ val keystoreProperties = Properties().apply {
     }
 }
 
+// HipLab (开胯训练助手) shares this Android project. It is selected by the
+// Flutter target, so FlareLab's commands stay exactly as before:
+//   flutter build apk                          -> dev.mhgd.flare, "Flare 托马斯"
+//   flutter build apk -t lib/main_hip.dart     -> com.ugk.hiplab, "开胯训练助手"
+// `--dart-define=APP_VARIANT=hip` selects it as well (for tooling that
+// cannot pass -t). Both Flutter values arrive as Gradle project properties.
+val flutterTarget = (project.findProperty("target") as String?) ?: ""
+val flutterDartDefines = ((project.findProperty("dart-defines") as String?) ?: "")
+    .split(",")
+    .filter { it.isNotBlank() }
+    .map { String(java.util.Base64.getDecoder().decode(it)) }
+val isHipLab = flutterTarget.replace('\\', '/').endsWith("lib/main_hip.dart") ||
+    flutterDartDefines.contains("APP_VARIANT=hip")
+
 android {
     namespace = "dev.mhgd.flare"
     compileSdk = flutter.compileSdkVersion
@@ -25,13 +39,15 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "dev.mhgd.flare"
+        applicationId = if (isHipLab) "com.ugk.hiplab" else "dev.mhgd.flare"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appLabel"] = if (isHipLab) "开胯训练助手" else "Flare 托马斯"
+        manifestPlaceholders["appIcon"] = if (isHipLab) "@mipmap/ic_launcher_hip" else "@mipmap/ic_launcher"
     }
 
     if (keystorePropertiesFile.exists()) {
