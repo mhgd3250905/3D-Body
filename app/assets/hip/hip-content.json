@@ -1339,7 +1339,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "膝"
    ],
@@ -1349,9 +1349,11 @@
    "id": "n-seated-ir-drop",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-seated-ir-drop.jpg",
+    "poster_time_seconds": 2.2,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-seated-ir-drop.mp4"
    },
    "methods": [
     "flexibility"
@@ -1457,7 +1459,7 @@
   },
   {
    "alternative": "o-seated-ham",
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "膝",
     "腰"
@@ -1468,9 +1470,11 @@
    "id": "n-half-split",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-half-split.jpg",
+    "poster_time_seconds": 3.0,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-half-split.mp4"
    },
    "methods": [
     "flexibility"
@@ -1517,7 +1521,7 @@
   },
   {
    "alternative": "h-adductor-rock",
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "膝",
     "内收肌根"
@@ -1528,9 +1532,11 @@
    "id": "n-slider-lateral",
    "level": "advanced",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-slider-lateral.jpg",
+    "poster_time_seconds": 2.0,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-slider-lateral.mp4"
    },
    "methods": [
     "flexibility",
@@ -1547,7 +1553,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "腰"
    ],
@@ -1558,9 +1564,11 @@
    "id": "n-wide-fold",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-wide-fold.jpg",
+    "poster_time_seconds": 3.0,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-wide-fold.mp4"
    },
    "methods": [
     "flexibility"
@@ -1576,7 +1584,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "内收肌根",
     "腰"
@@ -1588,9 +1596,11 @@
    "id": "n-straddle-fold",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-straddle-fold.jpg",
+    "poster_time_seconds": 3.0,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-straddle-fold.mp4"
    },
    "methods": [
     "flexibility"
@@ -1634,7 +1644,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [],
    "directions": [
     "flexion",
@@ -1645,9 +1655,11 @@
    "id": "n-pelvis-circle",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-pelvis-circle.jpg",
+    "poster_time_seconds": 1.1,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-pelvis-circle.mp4"
    },
    "methods": [
     "relax"
@@ -1663,7 +1675,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [],
    "directions": [
     "adduction"
@@ -1671,9 +1683,11 @@
    "id": "n-seated-squeeze",
    "level": "beginner",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-seated-squeeze.jpg",
+    "poster_time_seconds": 2.0,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-seated-squeeze.mp4"
    },
    "methods": [
     "strength"
@@ -1689,7 +1703,7 @@
   },
   {
    "alternative": null,
-   "animation_note": "无（需新做）",
+   "animation_note": "有（B 风格成片，第 1 阶段快速渲染）",
    "cautions": [
     "膝"
    ],
@@ -1700,9 +1714,11 @@
    "id": "n-squat-shift",
    "level": "advanced",
    "media": {
-    "poster": null,
-    "status": "pending",
-    "video": null
+    "duration_seconds": 8.0,
+    "poster": "assets/drill_media/hip-n-squat-shift.jpg",
+    "poster_time_seconds": 2.2,
+    "status": "video",
+    "video": "assets/drill_media/hip-n-squat-shift.mp4"
    },
    "methods": [
     "control"
