@@ -507,7 +507,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Settings, today’s training, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
+      'Settings, your plans, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
 
   @override
   String get creditsTitle => 'Model and media sources';
@@ -634,8 +634,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyRule1 => 'Warm up your wrists first';
 
   @override
-  String get safetyRule1Note =>
-      'About 6 minutes; it is the first lesson in the learning path';
+  String get safetyRule1Note => 'The Warm-up plan walks you through it';
 
   @override
   String get safetyRule2 => 'Stop for sharp pain, numbness, or dizziness';
@@ -1067,4 +1066,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count drills';
   }
+
+  @override
+  String get settingsHint => 'Appearance, playback, quality';
 }

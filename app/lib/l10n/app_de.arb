@@ -189,7 +189,7 @@
   "aboutTitle": "Über Flare",
   "aboutBody": "Lokale Entwicklungsversion 1.0.0. Sieh dir einen Thomas-Flare an, lerne die Muskelrollen in den einzelnen Phasen kennen, wähle passende Übungen und erfasse dein Training. Bewegung, Medien und Trainingseinträge sind offline verfügbar.",
   "privacyTitle": "Lokale Daten und Datenschutz",
-  "privacyBody": "Einstellungen, heutiges Training, Selbsteinschätzungen und Trainingseinträge werden nur auf diesem Gerät gespeichert. Modelle und Medien sind Teil der App; es werden keine Daten an einen Server übertragen. Daten in der Browser-Vorschau gehören zu diesem Browser. Exportiere vor einem Gerätewechsel oder einer Neuinstallation eine Sicherung.",
+  "privacyBody": "Einstellungen, deine Pläne, Selbsteinschätzungen und Trainingseinträge werden nur auf diesem Gerät gespeichert. Modelle und Medien sind Teil der App; es werden keine Daten an einen Server übertragen. Daten in der Browser-Vorschau gehören zu diesem Browser. Exportiere vor einem Gerätewechsel oder einer Neuinstallation eine Sicherung.",
   "creditsTitle": "Quellen für Modelle und Medien",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; Kleidung, Materialien und Animation geändert. Human Base Meshes · Blender Studio und Community-Beitragende · CC0. Three.js · MIT. Farbige Bereiche am Modell sind didaktische Felder und ersetzen keine fehlenden BodyParts3D-Anatomiemeshes. Übungs- und Markenbilder stammen vom Nutzer; die Lizenzen müssen vor einer Veröffentlichung noch geprüft werden.",
   "speedLabel": "Standardtempo",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Vor dem Training",
   "safetySheetTitle": "Drei wichtige Hinweise",
   "safetyRule1": "Wärme zuerst deine Handgelenke auf",
-  "safetyRule1Note": "Etwa 6 Minuten; die erste Lektion im Lernpfad",
+  "safetyRule1Note": "Der Plan „Aufwärmen“ führt dich durch",
   "safetyRule2": "Bei stechendem Schmerz, Taubheit oder Schwindel aufhören",
   "safetyRule2Note": "Muskelanstrengung ist in Ordnung; Schmerzen nicht",
   "safetyRule3": "Hier werden Bewegungen vermittelt",
@@ -486,5 +486,6 @@
   "presetFlare": "Ganze Flare-Kette",
   "presetFlareLine": "Alle Hauptmuskelgruppen des Flares in einer Einheit",
   "planUpNext": "Als Nächstes",
-  "planDrillCount": "{count} Übungen"
+  "planDrillCount": "{count} Übungen",
+  "settingsHint": "Darstellung, Wiedergabe, Qualität"
 }

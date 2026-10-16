@@ -475,27 +475,20 @@ class _LibraryPageState extends State<LibraryPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            for (final item in [
-                              ('A', s.sceneNone),
-                              ('B', s.sceneHome),
-                              ('C', s.sceneGym),
-                            ])
-                              _FilterPill(
-                                label: item.$2,
-                                selected: tier == item.$1,
-                                onTap: () {
-                                  if (tier == item.$1) return;
-                                  FlareHaptics.selection();
-                                  widget.store.updateSettings(tier: item.$1);
-                                },
-                              ),
-                          ],
-                        ),
+                      const SizedBox(height: 12),
+                      FlareSegmented<String>(
+                        expand: true,
+                        segments: [
+                          ('A', s.sceneNone),
+                          ('B', s.sceneHome),
+                          ('C', s.sceneGym),
+                        ],
+                        selected: tier,
+                        onChanged: (value) {
+                          if (value == tier) return;
+                          FlareHaptics.selection();
+                          widget.store.updateSettings(tier: value);
+                        },
                       ),
                       const SizedBox(height: 16),
                       if (drills.isEmpty)

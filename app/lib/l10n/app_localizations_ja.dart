@@ -498,7 +498,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '設定、今日のトレーニング、自己評価、練習記録はこの端末だけに保存されます。モデルとメディアはアプリに含まれ、サーバーにはアップロードされません。ブラウザーのプレビューのデータはそのブラウザーに保存されます。端末の移行や再インストールの前にバックアップをエクスポートしてください。';
+      '設定、マイプラン、自己評価、練習記録はこの端末だけに保存されます。モデルとメディアはアプリに含まれ、サーバーにはアップロードされません。ブラウザーのプレビューのデータはそのブラウザーに保存されます。端末の移行や再インストールの前にバックアップをエクスポートしてください。';
 
   @override
   String get creditsTitle => 'モデルとメディアの出典';
@@ -621,7 +621,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get safetyRule1 => 'まず手首を温める';
 
   @override
-  String get safetyRule1Note => '約6分。学習コースの最初のレッスンです';
+  String get safetyRule1Note => 'プランの「ウォームアップ」で一通りできます';
 
   @override
   String get safetyRule2 => '鋭い痛み、しびれ、めまいがあれば中止する';
@@ -1047,4 +1047,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count 種目';
   }
+
+  @override
+  String get settingsHint => '外観・再生・画質';
 }

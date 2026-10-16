@@ -510,7 +510,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Einstellungen, heutiges Training, Selbsteinschätzungen und Trainingseinträge werden nur auf diesem Gerät gespeichert. Modelle und Medien sind Teil der App; es werden keine Daten an einen Server übertragen. Daten in der Browser-Vorschau gehören zu diesem Browser. Exportiere vor einem Gerätewechsel oder einer Neuinstallation eine Sicherung.';
+      'Einstellungen, deine Pläne, Selbsteinschätzungen und Trainingseinträge werden nur auf diesem Gerät gespeichert. Modelle und Medien sind Teil der App; es werden keine Daten an einen Server übertragen. Daten in der Browser-Vorschau gehören zu diesem Browser. Exportiere vor einem Gerätewechsel oder einer Neuinstallation eine Sicherung.';
 
   @override
   String get creditsTitle => 'Quellen für Modelle und Medien';
@@ -640,7 +640,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get safetyRule1 => 'Wärme zuerst deine Handgelenke auf';
 
   @override
-  String get safetyRule1Note => 'Etwa 6 Minuten; die erste Lektion im Lernpfad';
+  String get safetyRule1Note => 'Der Plan „Aufwärmen“ führt dich durch';
 
   @override
   String get safetyRule2 =>
@@ -1077,4 +1077,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count Übungen';
   }
+
+  @override
+  String get settingsHint => 'Darstellung, Wiedergabe, Qualität';
 }

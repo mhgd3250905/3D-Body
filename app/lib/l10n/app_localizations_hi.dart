@@ -507,7 +507,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'सेटिंग, आज का अभ्यास, स्व-मूल्यांकन और अभ्यास रिकॉर्ड केवल इसी डिवाइस पर सहेजे जाते हैं। मॉडल और मीडिया ऐप के साथ आते हैं; कुछ भी सर्वर पर अपलोड नहीं होता। ब्राउज़र पूर्वावलोकन का डेटा उसी ब्राउज़र का है। डिवाइस बदलने या फिर से इंस्टॉल करने से पहले बैकअप निर्यात करें।';
+      'सेटिंग, आपकी योजनाएँ, स्व-मूल्यांकन और अभ्यास रिकॉर्ड केवल इसी डिवाइस पर सहेजे जाते हैं। मॉडल और मीडिया ऐप के साथ आते हैं; कुछ भी सर्वर पर अपलोड नहीं होता। ब्राउज़र पूर्वावलोकन का डेटा उसी ब्राउज़र का है। डिवाइस बदलने या फिर से इंस्टॉल करने से पहले बैकअप निर्यात करें।';
 
   @override
   String get creditsTitle => 'मॉडल और मीडिया के स्रोत';
@@ -635,7 +635,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get safetyRule1 => 'पहले कलाई को गर्म करें';
 
   @override
-  String get safetyRule1Note => 'लगभग 6 मिनट; सीखने के मार्ग का पहला पाठ';
+  String get safetyRule1Note => 'वार्म-अप योजना आपको पूरा करवाती है';
 
   @override
   String get safetyRule2 => 'तेज़ दर्द, सुन्नपन या चक्कर आने पर रुकें';
@@ -1066,4 +1066,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count अभ्यास';
   }
+
+  @override
+  String get settingsHint => 'रूप, प्लेबैक, गुणवत्ता';
 }

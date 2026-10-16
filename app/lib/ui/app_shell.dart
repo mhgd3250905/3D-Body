@@ -1479,7 +1479,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     s.moreProgressHint(store.weekTrainingDays),
                     Icons.insights_outlined,
                   ),
-                  ('settings', s.settings, null, Icons.tune_outlined),
+                  ('settings', s.settings, s.settingsHint, Icons.tune_outlined),
                 ])
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 4),
@@ -1500,15 +1500,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    subtitle: entry.$3 == null
-                        ? null
-                        : Text(
-                            entry.$3!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: FlareColors.dim,
-                            ),
-                          ),
+                    subtitle: Text(
+                      entry.$3,
+                      style: TextStyle(fontSize: 12, color: FlareColors.dim),
+                    ),
                     trailing: Icon(
                       Icons.chevron_right_rounded,
                       size: 20,
@@ -1924,8 +1919,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     BodyText(s.teachingNote, color: FlareColors.secondary),
                     const SizedBox(height: 6),
                     BodyText(s.contentDraftNote, color: FlareColors.secondary),
-                    const SizedBox(height: 6),
-                    BodyText(s.courseDraft, color: FlareColors.secondary),
                     SectionTitle(s.privacyTitle),
                     BodyText(s.privacyBody, color: FlareColors.secondary),
                     SectionTitle(s.creditsTitle),

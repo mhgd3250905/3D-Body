@@ -493,7 +493,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。';
+      '设置、我的计划、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。';
 
   @override
   String get creditsTitle => '模型与素材来源';
@@ -616,7 +616,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get safetyRule1 => '每次先热身手腕';
 
   @override
-  String get safetyRule1Note => '约 6 分钟，学习路径第一课就是它';
+  String get safetyRule1Note => '计划里的「热身激活」会带你做一遍';
 
   @override
   String get safetyRule2 => '刺痛、麻木、头晕就停';
@@ -1040,6 +1040,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count 个动作';
   }
+
+  @override
+  String get settingsHint => '外观、播放与画质';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1532,7 +1535,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get privacyBody =>
-      '設置、今日訓練、自評與訓練記錄只保存在當前設備。模型與素材來自 App 安裝包；不向服務器上傳。瀏覽器預覽的數據屬于當前瀏覽器，遷移或重裝前請導出備份。';
+      '設置、我的計劃、自評與訓練記錄只保存在當前設備。模型與素材來自 App 安裝包；不向服務器上傳。瀏覽器預覽的數據屬于當前瀏覽器，遷移或重裝前請導出備份。';
 
   @override
   String get creditsTitle => '模型與素材來源';
@@ -1655,7 +1658,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get safetyRule1 => '每次先熱身手腕';
 
   @override
-  String get safetyRule1Note => '約 6 分鐘，學習路徑第一課就是它';
+  String get safetyRule1Note => '計劃裡的「熱身啟動」會帶你做一遍';
 
   @override
   String get safetyRule2 => '刺痛、麻木、頭暈就停';
@@ -2079,4 +2082,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String planDrillCount(int count) {
     return '$count 個動作';
   }
+
+  @override
+  String get settingsHint => '外觀、播放與畫質';
 }

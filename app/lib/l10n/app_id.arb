@@ -189,7 +189,7 @@
   "aboutTitle": "Tentang Flare",
   "aboutBody": "Versi pengembangan lokal 1.0.0. Tonton Thomas flare, pelajari peran otot pada setiap tahap, pilih latihan yang sesuai, dan catat latihan Anda. Gerakan, media, dan catatan latihan dapat digunakan offline.",
   "privacyTitle": "Data lokal dan privasi",
-  "privacyBody": "Pengaturan, latihan hari ini, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.",
+  "privacyBody": "Pengaturan, rencana Anda, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.",
   "creditsTitle": "Sumber model dan media",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; pakaian, material, dan animasi telah diubah. Human Base Meshes · Blender Studio dan kontributor komunitas · CC0. Three.js · MIT. Area berwarna pada manekin adalah panel pembelajaran dan bukan pengganti mesh anatomi BodyParts3D yang tidak tersedia. Gambar latihan dan merek diberikan oleh pengguna; lisensinya masih perlu diperiksa sebelum dirilis.",
   "speedLabel": "Kecepatan bawaan",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Sebelum berlatih",
   "safetySheetTitle": "Tiga hal penting",
   "safetyRule1": "Lakukan pemanasan pergelangan tangan terlebih dahulu",
-  "safetyRule1Note": "Sekitar 6 menit; ini pelajaran pertama di jalur belajar",
+  "safetyRule1Note": "Rencana Pemanasan memandu Anda",
   "safetyRule2": "Berhenti jika terasa nyeri tajam, mati rasa, atau pusing",
   "safetyRule2Note": "Otot terasa bekerja itu wajar; rasa sakit tidak",
   "safetyRule3": "Ini adalah materi pembelajaran gerakan",
@@ -486,5 +486,6 @@
   "presetFlare": "Rantai flare lengkap",
   "presetFlareLine": "Semua kelompok otot utama flare dalam satu set",
   "planUpNext": "Selanjutnya",
-  "planDrillCount": "{count} latihan"
+  "planDrillCount": "{count} latihan",
+  "settingsHint": "Tampilan, pemutaran, kualitas"
 }

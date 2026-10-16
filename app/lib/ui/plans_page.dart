@@ -473,14 +473,23 @@ class _PresetCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      preset.line(context),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        height: 1.35,
-                        color: Color(0xCCFFFFFF),
+                    // Two lines are always reserved so titles line up
+                    // across the grid whatever the subtitle length.
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.textScalerOf(
+                          context,
+                        ).scale(12 * 1.35 * 2),
+                      ),
+                      child: Text(
+                        preset.line(context),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: Color(0xCCFFFFFF),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),

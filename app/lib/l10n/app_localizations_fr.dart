@@ -513,7 +513,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Les réglages, l’entraînement du jour, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.';
+      'Les réglages, vos plans, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.';
 
   @override
   String get creditsTitle => 'Sources des modèles et des médias';
@@ -643,8 +643,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get safetyRule1 => 'Échauffez d’abord vos poignets';
 
   @override
-  String get safetyRule1Note =>
-      'Environ 6 minutes ; c’est la première leçon du parcours';
+  String get safetyRule1Note => 'Le plan Échauffement vous guide';
 
   @override
   String get safetyRule2 =>
@@ -1081,4 +1080,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count exercices';
   }
+
+  @override
+  String get settingsHint => 'Apparence, lecture, qualité';
 }

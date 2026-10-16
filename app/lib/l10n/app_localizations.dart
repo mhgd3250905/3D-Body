@@ -1072,7 +1072,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyBody.
   ///
   /// In zh, this message translates to:
-  /// **'设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。'**
+  /// **'设置、我的计划、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。'**
   String get privacyBody;
 
   /// No description provided for @creditsTitle.
@@ -1300,7 +1300,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyRule1Note.
   ///
   /// In zh, this message translates to:
-  /// **'约 6 分钟，学习路径第一课就是它'**
+  /// **'计划里的「热身激活」会带你做一遍'**
   String get safetyRule1Note;
 
   /// No description provided for @safetyRule2.
@@ -2064,6 +2064,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{count} 个动作'**
   String planDrillCount(int count);
+
+  /// No description provided for @settingsHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'外观、播放与画质'**
+  String get settingsHint;
 }
 
 class _AppLocalizationsDelegate

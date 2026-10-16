@@ -189,7 +189,7 @@
   "aboutTitle": "Acerca de Flare",
   "aboutBody": "Versión local de desarrollo 1.0.0. Observa un Thomas flare, aprende la función muscular de cada fase, elige ejercicios adecuados y registra tu práctica. El movimiento, el contenido multimedia y los registros funcionan sin conexión.",
   "privacyTitle": "Datos locales y privacidad",
-  "privacyBody": "Los ajustes, el entrenamiento de hoy, las autoevaluaciones y los registros se guardan solo en este dispositivo. Los modelos y archivos multimedia vienen con la app; no se sube nada a un servidor. Los datos de la vista previa web pertenecen a ese navegador. Exporta una copia de seguridad antes de cambiar de dispositivo o reinstalar.",
+  "privacyBody": "Los ajustes, tus planes, las autoevaluaciones y los registros se guardan solo en este dispositivo. Los modelos y archivos multimedia vienen con la app; no se sube nada a un servidor. Los datos de la vista previa web pertenecen a ese navegador. Exporta una copia de seguridad antes de cambiar de dispositivo o reinstalar.",
   "creditsTitle": "Fuentes de modelos y contenido multimedia",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; ropa, materiales y animación modificados. Human Base Meshes · Blender Studio y colaboradores de la comunidad · CC0. Three.js · MIT. Las zonas coloreadas del maniquí son paneles didácticos y no sustituyen las mallas anatómicas de BodyParts3D que faltan. El usuario proporcionó las imágenes de ejercicios y marca; aún hay que comprobar las licencias antes de publicar.",
   "speedLabel": "Velocidad predeterminada",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Antes de entrenar",
   "safetySheetTitle": "Tres cosas que debes saber",
   "safetyRule1": "Calienta primero las muñecas",
-  "safetyRule1Note": "Unos 6 minutos; es la primera lección de la ruta de aprendizaje",
+  "safetyRule1Note": "El plan Calentamiento te guía paso a paso",
   "safetyRule2": "Detente si sientes dolor agudo, entumecimiento o mareo",
   "safetyRule2Note": "El esfuerzo muscular está bien; el dolor, no",
   "safetyRule3": "Esto enseña movimientos",
@@ -486,5 +486,6 @@
   "presetFlare": "Cadena completa del flare",
   "presetFlareLine": "Todos los grupos clave del flare en una serie",
   "planUpNext": "A continuación",
-  "planDrillCount": "{count} ejercicios"
+  "planDrillCount": "{count} ejercicios",
+  "settingsHint": "Apariencia, reproducción, calidad"
 }

@@ -189,7 +189,7 @@
   "aboutTitle": "À propos de Flare",
   "aboutBody": "Version locale de développement 1.0.0. Observez un Thomas flare, découvrez le rôle des muscles à chaque phase, choisissez des exercices adaptés et consignez votre entraînement. Les mouvements, médias et données fonctionnent hors ligne.",
   "privacyTitle": "Données locales et confidentialité",
-  "privacyBody": "Les réglages, l’entraînement du jour, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.",
+  "privacyBody": "Les réglages, vos plans, les autoévaluations et l’historique restent sur cet appareil. Les modèles et médias sont fournis avec l’app ; rien n’est envoyé à un serveur. Les données de l’aperçu navigateur appartiennent à ce navigateur. Exportez une sauvegarde avant de changer d’appareil ou de réinstaller l’app.",
   "creditsTitle": "Sources des modèles et des médias",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0 ; vêtements, matériaux et animation modifiés. Human Base Meshes · Blender Studio et contributeurs de la communauté · CC0. Three.js · MIT. Les zones colorées du mannequin sont des panneaux pédagogiques et ne remplacent pas les maillages anatomiques BodyParts3D manquants. Les images d’exercices et de marque ont été fournies par l’utilisateur ; les licences doivent encore être vérifiées avant publication.",
   "speedLabel": "Vitesse par défaut",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Avant l’entraînement",
   "safetySheetTitle": "Trois points à retenir",
   "safetyRule1": "Échauffez d’abord vos poignets",
-  "safetyRule1Note": "Environ 6 minutes ; c’est la première leçon du parcours",
+  "safetyRule1Note": "Le plan Échauffement vous guide",
   "safetyRule2": "Arrêtez en cas de douleur vive, d’engourdissement ou de vertige",
   "safetyRule2Note": "L’effort musculaire est normal ; la douleur ne l’est pas",
   "safetyRule3": "Ce contenu enseigne des mouvements",
@@ -486,5 +486,6 @@
   "presetFlare": "Chaîne complète du flare",
   "presetFlareLine": "Tous les groupes clés du flare en une séance",
   "planUpNext": "Ensuite",
-  "planDrillCount": "{count} exercices"
+  "planDrillCount": "{count} exercices",
+  "settingsHint": "Apparence, lecture, qualité"
 }

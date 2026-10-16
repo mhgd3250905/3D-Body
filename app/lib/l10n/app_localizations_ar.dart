@@ -505,7 +505,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'تُحفظ الإعدادات وتدريب اليوم والتقييمات الذاتية وسجلات التدريب على هذا الجهاز فقط. تأتي النماذج والوسائط مع التطبيق ولا يُرفع شيء إلى خادم. بيانات معاينة المتصفح خاصة بذلك المتصفح. صدّر نسخة احتياطية قبل نقل البيانات أو إعادة التثبيت.';
+      'تُحفظ الإعدادات وخططك والتقييمات الذاتية وسجلات التدريب على هذا الجهاز فقط. تأتي النماذج والوسائط مع التطبيق ولا يُرفع شيء إلى خادم. بيانات معاينة المتصفح خاصة بذلك المتصفح. صدّر نسخة احتياطية قبل نقل البيانات أو إعادة التثبيت.';
 
   @override
   String get creditsTitle => 'مصادر النماذج والوسائط';
@@ -631,7 +631,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get safetyRule1 => 'أحمِ معصميك أولًا';
 
   @override
-  String get safetyRule1Note => 'نحو 6 دقائق؛ وهو الدرس الأول في مسار التعلّم';
+  String get safetyRule1Note => 'خطة الإحماء ترشدك خطوة بخطوة';
 
   @override
   String get safetyRule2 => 'توقف عند الألم الحاد أو الخدر أو الدوار';
@@ -1060,4 +1060,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count تمارين';
   }
+
+  @override
+  String get settingsHint => 'المظهر والتشغيل والجودة';
 }

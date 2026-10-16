@@ -509,7 +509,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Настройки, сегодняшняя тренировка, самооценки и записи хранятся только на этом устройстве. Модели и материалы входят в приложение; на сервер ничего не загружается. Данные браузерного предпросмотра принадлежат этому браузеру. Перед переносом или переустановкой экспортируйте резервную копию.';
+      'Настройки, ваши планы, самооценки и записи хранятся только на этом устройстве. Модели и материалы входят в приложение; на сервер ничего не загружается. Данные браузерного предпросмотра принадлежат этому браузеру. Перед переносом или переустановкой экспортируйте резервную копию.';
 
   @override
   String get creditsTitle => 'Источники моделей и материалов';
@@ -637,7 +637,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get safetyRule1 => 'Сначала разогрейте запястья';
 
   @override
-  String get safetyRule1Note => 'Около 6 минут; это первый урок учебного плана';
+  String get safetyRule1Note => 'План «Разминка» проведёт вас по шагам';
 
   @override
   String get safetyRule2 =>
@@ -1072,4 +1072,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count упражн.';
   }
+
+  @override
+  String get settingsHint => 'Оформление, воспроизведение, качество';
 }

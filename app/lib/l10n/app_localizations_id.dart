@@ -508,7 +508,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Pengaturan, latihan hari ini, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.';
+      'Pengaturan, rencana Anda, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.';
 
   @override
   String get creditsTitle => 'Sumber model dan media';
@@ -637,8 +637,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Lakukan pemanasan pergelangan tangan terlebih dahulu';
 
   @override
-  String get safetyRule1Note =>
-      'Sekitar 6 menit; ini pelajaran pertama di jalur belajar';
+  String get safetyRule1Note => 'Rencana Pemanasan memandu Anda';
 
   @override
   String get safetyRule2 =>
@@ -1074,4 +1073,7 @@ class AppLocalizationsId extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count latihan';
   }
+
+  @override
+  String get settingsHint => 'Tampilan, pemutaran, kualitas';
 }

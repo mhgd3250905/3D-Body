@@ -189,7 +189,7 @@
   "aboutTitle": "Sobre o Flare",
   "aboutBody": "Versão local de desenvolvimento 1.0.0. Assista a um Thomas flare, conheça a função dos músculos em cada fase, escolha exercícios adequados e registre sua prática. Movimento, mídia e registros funcionam offline.",
   "privacyTitle": "Dados locais e privacidade",
-  "privacyBody": "Configurações, treino de hoje, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.",
+  "privacyBody": "Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.",
   "creditsTitle": "Fontes de modelos e mídia",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; roupas, materiais e animação modificados. Human Base Meshes · Blender Studio e colaboradores da comunidade · CC0. Three.js · MIT. As áreas coloridas do manequim são painéis didáticos e não substituem malhas anatômicas ausentes do BodyParts3D. As imagens de exercícios e da marca foram fornecidas pelo usuário; as licenças ainda precisam ser verificadas antes da publicação.",
   "speedLabel": "Velocidade padrão",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Antes de treinar",
   "safetySheetTitle": "Três pontos importantes",
   "safetyRule1": "Aqueça os punhos primeiro",
-  "safetyRule1Note": "Cerca de 6 minutos; é a primeira aula do percurso de aprendizagem",
+  "safetyRule1Note": "O plano Aquecimento guia você",
   "safetyRule2": "Pare em caso de dor aguda, dormência ou tontura",
   "safetyRule2Note": "Esforço muscular tudo bem; dor, não",
   "safetyRule3": "Este conteúdo ensina movimentos",
@@ -486,5 +486,6 @@
   "presetFlare": "Cadeia completa do flare",
   "presetFlareLine": "Todos os grupos principais do flare numa série",
   "planUpNext": "A seguir",
-  "planDrillCount": "{count} exercícios"
+  "planDrillCount": "{count} exercícios",
+  "settingsHint": "Aparência, reprodução, qualidade"
 }

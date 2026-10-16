@@ -498,7 +498,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '설정, 오늘의 훈련, 자기평가, 훈련 기록은 이 기기에만 저장됩니다. 모델과 미디어는 앱에 포함되어 있으며 서버로 업로드되지 않습니다. 브라우저 미리보기 데이터는 해당 브라우저에 저장됩니다. 기기를 옮기거나 앱을 다시 설치하기 전에 백업을 내보내세요.';
+      '설정, 내 플랜, 자기평가, 훈련 기록은 이 기기에만 저장됩니다. 모델과 미디어는 앱에 포함되어 있으며 서버로 업로드되지 않습니다. 브라우저 미리보기 데이터는 해당 브라우저에 저장됩니다. 기기를 옮기거나 앱을 다시 설치하기 전에 백업을 내보내세요.';
 
   @override
   String get creditsTitle => '모델 및 미디어 출처';
@@ -621,7 +621,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get safetyRule1 => '먼저 손목을 준비운동하세요';
 
   @override
-  String get safetyRule1Note => '약 6분이며 학습 경로의 첫 레슨입니다';
+  String get safetyRule1Note => '플랜의 ‘워밍업’이 차례로 안내합니다';
 
   @override
   String get safetyRule2 => '찌르는 통증, 저림, 어지럼증이 있으면 멈추세요';
@@ -1048,4 +1048,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count개 동작';
   }
+
+  @override
+  String get settingsHint => '화면, 재생, 화질';
 }

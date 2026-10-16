@@ -508,7 +508,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Configurações, treino de hoje, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.';
+      'Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.';
 
   @override
   String get creditsTitle => 'Fontes de modelos e mídia';
@@ -638,8 +638,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get safetyRule1 => 'Aqueça os punhos primeiro';
 
   @override
-  String get safetyRule1Note =>
-      'Cerca de 6 minutos; é a primeira aula do percurso de aprendizagem';
+  String get safetyRule1Note => 'O plano Aquecimento guia você';
 
   @override
   String get safetyRule2 => 'Pare em caso de dor aguda, dormência ou tontura';
@@ -1073,4 +1072,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String planDrillCount(int count) {
     return '$count exercícios';
   }
+
+  @override
+  String get settingsHint => 'Aparência, reprodução, qualidade';
 }

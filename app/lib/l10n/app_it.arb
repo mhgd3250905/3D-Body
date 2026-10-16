@@ -189,7 +189,7 @@
   "aboutTitle": "Informazioni su Flare",
   "aboutBody": "Versione locale di sviluppo 1.0.0. Guarda un Thomas flare, scopri il ruolo dei muscoli in ogni fase, scegli esercizi adatti e registra l’allenamento. Movimento, contenuti multimediali e registri funzionano offline.",
   "privacyTitle": "Dati locali e privacy",
-  "privacyBody": "Impostazioni, allenamento di oggi, autovalutazioni e registri vengono salvati solo su questo dispositivo. Modelli e contenuti multimediali sono inclusi nell’app; non viene caricato nulla su un server. I dati dell’anteprima nel browser appartengono a quel browser. Esporta un backup prima di cambiare dispositivo o reinstallare.",
+  "privacyBody": "Impostazioni, i tuoi piani, autovalutazioni e registri vengono salvati solo su questo dispositivo. Modelli e contenuti multimediali sono inclusi nell’app; non viene caricato nulla su un server. I dati dell’anteprima nel browser appartengono a quel browser. Esporta un backup prima di cambiare dispositivo o reinstallare.",
   "creditsTitle": "Fonti di modelli e contenuti multimediali",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; abiti, materiali e animazione modificati. Human Base Meshes · Blender Studio e collaboratori della community · CC0. Three.js · MIT. Le aree colorate del modello sono pannelli didattici e non sostituiscono le mesh anatomiche mancanti di BodyParts3D. Le immagini degli esercizi e del marchio sono state fornite dall’utente; le licenze devono ancora essere verificate prima della pubblicazione.",
   "speedLabel": "Velocità predefinita",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "Prima di allenarti",
   "safetySheetTitle": "Tre cose da sapere",
   "safetyRule1": "Riscalda prima i polsi",
-  "safetyRule1Note": "Circa 6 minuti; è la prima lezione del percorso",
+  "safetyRule1Note": "Il piano Riscaldamento ti guida",
   "safetyRule2": "Fermati in caso di dolore acuto, intorpidimento o capogiri",
   "safetyRule2Note": "Lo sforzo muscolare va bene; il dolore no",
   "safetyRule3": "Qui si imparano i movimenti",
@@ -486,5 +486,6 @@
   "presetFlare": "Catena completa del flare",
   "presetFlareLine": "Tutti i gruppi chiave del flare in una serie",
   "planUpNext": "Prossimo",
-  "planDrillCount": "{count} esercizi"
+  "planDrillCount": "{count} esercizi",
+  "settingsHint": "Aspetto, riproduzione, qualità"
 }
