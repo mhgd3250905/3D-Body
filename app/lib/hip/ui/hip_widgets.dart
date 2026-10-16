@@ -73,9 +73,33 @@ class _HipDrillArtState extends State<HipDrillArt> {
     }
   }
 
+  /// HipLab's own renders (`assets/drill_media/hip-<id>.mp4`) carry their loop
+  /// length in the content pack; the shared FlareLab drills use the manifest.
+  static DrillMedia? _ownMedia(HipDrill d) {
+    final video = d.video, poster = d.poster, seconds = d.duration;
+    if (video == null || poster == null || seconds == null) return null;
+    final m = RegExp(r'^assets/drill_media/(hip-[a-z0-9]+(?:-[a-z0-9]+)*)\.mp4$').firstMatch(video);
+    if (m == null || poster != 'assets/drill_media/${m[1]}.jpg') return null;
+    return DrillMedia(
+      id: m[1]!,
+      videoAsset: video,
+      posterAsset: poster,
+      duration: seconds,
+      posterTime: d.posterTime,
+    );
+  }
+
   void _sync() {
     if (!_wantsVideo(context) || _controller != null) return;
     final controller = _controller = DrillMediaController();
+    final own = _ownMedia(widget.drill);
+    if (own != null) {
+      _media = own;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _controller == controller) controller.toggle();
+      });
+      return;
+    }
     DrillMedia.load().then((all) {
       if (!mounted || _controller != controller) return;
       setState(() => _media = all[widget.drill.id]);

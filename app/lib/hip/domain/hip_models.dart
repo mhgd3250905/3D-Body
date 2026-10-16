@@ -71,6 +71,8 @@ class HipDrill {
     required this.mediaStatus,
     this.video,
     this.poster,
+    this.duration,
+    this.posterTime = 0,
     this.alternative,
     this.note = '',
   });
@@ -86,6 +88,11 @@ class HipDrill {
   final HipMediaStatus mediaStatus;
   final String? video;
   final String? poster;
+
+  /// Loop length of [video] in seconds (HipLab's own renders); null for the
+  /// shared FlareLab media, whose length comes from its manifest.
+  final double? duration;
+  final double posterTime;
   final String? alternative;
   final String note;
 
@@ -109,6 +116,8 @@ class HipDrill {
       mediaStatus: HipMediaStatus.values.byName(media['status'] as String),
       video: media['video'] as String?,
       poster: media['poster'] as String?,
+      duration: (media['duration_seconds'] as num?)?.toDouble(),
+      posterTime: (media['poster_time_seconds'] as num? ?? 0).toDouble(),
       alternative: j['alternative'] as String?,
       note: (j['note'] as String?) ?? '',
     );
@@ -196,11 +205,13 @@ class AssessmentFollowUpOption {
     required this.label,
     required this.front,
     required this.back,
+    this.image,
   });
   final String id;
   final String label;
   final int front;
   final int back;
+  final String? image;
 }
 
 class AssessmentItem {
@@ -218,6 +229,7 @@ class AssessmentItem {
     this.followUpQuestion,
     this.followUp = const [],
     this.dancerNote,
+    this.demoMedia,
   });
   final String id;
   final int order;
@@ -234,6 +246,14 @@ class AssessmentItem {
   final String? followUpQuestion;
   final List<AssessmentFollowUpOption> followUp;
   final String? dancerNote;
+
+  /// Optional demo clip of its own (e.g. the cross-over part of
+  /// n-leg-circles); otherwise the demo is [demoDrill]'s loop.
+  final HipDrill? demoMedia;
+
+  /// The art to loop above the options: [demoMedia] when present.
+  HipDrill? demoArt(Map<String, HipDrill> drills) =>
+      demoMedia ?? drills[demoDrill];
 
   factory AssessmentItem.fromJson(Map<String, dynamic> j) {
     final follow = j['follow_up'] as Map?;
@@ -267,9 +287,13 @@ class AssessmentItem {
               label: o['label'] as String,
               front: o['front'] as int,
               back: o['back'] as int,
+              image: o['image'] as String?,
             ),
       ],
       dancerNote: j['note_for_dancer'] as String?,
+      demoMedia: j['demo_media'] == null
+          ? null
+          : HipDrill.fromJson(Map<String, dynamic>.from(j['demo_media'] as Map)),
     );
   }
 }

@@ -35,11 +35,15 @@ METHOD_BY_ZH = {'放松': 'relax', '柔韧': 'flexibility', '主动控制': 'con
 SCENE_BY_ZH = {'办公椅': 'chair', '居家垫': 'home'}
 LEVEL_BY_ZH = {'入门': 'beginner', '进阶': 'advanced'}
 
-# Media that already exists in the repository. Videos: the app's own 51 drill
-# media (assets/drill_media, shared with FlareLab). Posters: phase-0 prototype
-# renders (drill-anim scheme B, jade recolour), downscaled to assets/hip/posters.
+# Media that already exists in the repository, in order of preference:
+#  1. HipLab's own phase-1 renders (drill-anim scheme B, quick --pr 0.75):
+#     assets/drill_media/hip-<id>.mp4 + .jpg, loop length in source/hip-media.json
+#  2. the app's own 51 drill media (assets/drill_media/<group>-<A|B|C>, shared with FlareLab)
+#  3. phase-0 prototype posters (scheme B, jade recolour) in assets/hip/posters
 APP_VIDEO_DIR = os.path.join(APP, 'assets', 'drill_media')
 POSTER_DIR = os.path.join(APP, 'assets', 'hip', 'posters')
+ASSESS_DIR = os.path.join(APP, 'assets', 'hip', 'assessment')
+HIP_MEDIA = json.load(open(os.path.join(SRC, 'hip-media.json'), encoding='utf-8'))
 
 # 自测设计 4.4: explicit substitution pairs for the pain ladder.
 EXTRA_ALTERNATIVES = {
@@ -56,7 +60,31 @@ def split(value):
     return [v.strip() for v in value.split(';') if v.strip() and v.strip() != '—（二期）']
 
 
+def hip_media(key):
+    meta = HIP_MEDIA['videos'].get(key)
+    name = 'hip-' + key.lower()          # the media player only takes lower-case hip-<id>
+    mp4 = os.path.join(APP_VIDEO_DIR, name + '.mp4')
+    jpg = os.path.join(APP_VIDEO_DIR, name + '.jpg')
+    if not meta or not (os.path.exists(mp4) and os.path.exists(jpg)):
+        return None
+    return {
+        'status': 'video',
+        'video': f'assets/drill_media/{name}.mp4',
+        'poster': f'assets/drill_media/{name}.jpg',
+        'duration_seconds': meta['duration_seconds'],
+        'poster_time_seconds': meta['poster_time_seconds'],
+    }
+
+
+def assess_img(name):
+    # 自测对比图: assets/hip/assessment/<item>-<a|b|c|front|back>.webp
+    return f'assets/hip/assessment/{name}.webp' if os.path.exists(os.path.join(ASSESS_DIR, name + '.webp')) else None
+
+
 def media_for(drill_id):
+    own = hip_media(drill_id)
+    if own:
+        return own
     video = os.path.join(APP_VIDEO_DIR, drill_id + '.mp4')
     poster = os.path.join(POSTER_DIR, drill_id + '.webp')
     if os.path.exists(video):
@@ -142,6 +170,15 @@ def read_routines(drills):
     return routines
 
 
+def demo_clip(key, drill_id, name):
+    # A self-test demo cut from a drill loop (assets/drill_media/hip-<key>.mp4); None until rendered.
+    media = hip_media(key)
+    if not media:
+        return None
+    return {'id': f'{drill_id}#{key}', 'name': name, 'directions': [], 'methods': [], 'scenes': [],
+            'level': 'beginner', 'mvp': False, 'cautions': [], 'media': media}
+
+
 def assessment():
     # 自测设计 §2 / §3. Options are scored A=2 (松) / B=1 (一般) / C=0 (紧).
     # UI order follows the prototype (s2-assessment.png): 紧 · 一般 · 松.
@@ -174,9 +211,9 @@ def assessment():
                 'seconds': 12, 'sided': False, 'directions': ['abduction', 'external_rotation'],
                 'glow': '大腿内侧',
                 'options': [
-                    opt(0, '紧', '膝盖明显高于脚踝', 'assets/hip/assessment/butterfly-c.webp'),
-                    opt(1, '一般', '膝盖和脚踝差不多高', 'assets/hip/assessment/butterfly-b.webp'),
-                    opt(2, '松', '膝盖低于脚踝、接近地面', 'assets/hip/assessment/butterfly-a.webp'),
+                    opt(0, '紧', '膝盖明显高于脚踝', assess_img('butterfly-c')),
+                    opt(1, '一般', '膝盖和脚踝差不多高', assess_img('butterfly-b')),
+                    opt(2, '松', '膝盖低于脚踝、接近地面', assess_img('butterfly-a')),
                 ],
             },
             {
@@ -185,16 +222,16 @@ def assessment():
                 'seconds': 15, 'sided': True, 'directions': ['external_rotation', 'internal_rotation'],
                 'glow': '髋部',
                 'options': [
-                    opt(0, '紧', '有一个膝盖明显翘起来'),
-                    opt(1, '一般', '要用手撑或后仰才坐得住'),
-                    opt(2, '松', '手离地也能坐直，两膝贴地'),
+                    opt(0, '紧', '有一个膝盖明显翘起来', assess_img('9090-c')),
+                    opt(1, '一般', '要用手撑或后仰才坐得住', assess_img('9090-b')),
+                    opt(2, '松', '手离地也能坐直，两膝贴地', assess_img('9090-a')),
                 ],
                 # Only shown after "紧" (C). 自测设计 §2②.
                 'follow_up': {
                     'question': '哪条腿的膝盖翘？',
                     'options': [
-                        {'id': 'front', 'label': '前面那条腿', 'front': 0, 'back': 1},
-                        {'id': 'back', 'label': '后面那条腿', 'front': 1, 'back': 0},
+                        {'id': 'front', 'label': '前面那条腿', 'front': 0, 'back': 1, 'image': assess_img('9090-front')},
+                        {'id': 'back', 'label': '后面那条腿', 'front': 1, 'back': 0, 'image': assess_img('9090-back')},
                     ],
                 },
             },
@@ -204,19 +241,20 @@ def assessment():
                 'seconds': 15, 'sided': True, 'directions': ['extension'], 'glow': '髋前侧',
                 'note_for_dancer': '这项和托马斯全旋没关系，但髋前侧松不松，会影响你的 L 撑。',
                 'options': [
-                    opt(0, '紧', '拳头能塞进去，或大腿抬起'),
-                    opt(1, '一般', '手掌能塞进去'),
-                    opt(2, '松', '手塞不进去，整条腿贴地'),
+                    opt(0, '紧', '拳头能塞进去，或大腿抬起', assess_img('thomas-c')),
+                    opt(1, '一般', '手掌能塞进去', assess_img('thomas-b')),
+                    opt(2, '松', '手塞不进去，整条腿贴地', assess_img('thomas-a')),
                 ],
             },
             {
                 'id': 'supine_cross', 'order': 4, 'title': '仰卧横跨', 'question': '脚能跨多远？',
                 'cue': '一条腿伸直抬起来，往另一边跨过去。手按胯骨，胯骨一动就停。', 'demo_drill': 'n-leg-circles',
+                'demo_media': demo_clip('supine-cross-demo', 'n-leg-circles', '仰卧单腿横跨（演示）'),
                 'seconds': 15, 'sided': True, 'directions': ['adduction'], 'glow': '髋外侧',
                 'options': [
-                    opt(0, '紧', '没到另一条腿上方，胯骨就翻了'),
-                    opt(1, '一般', '刚好到另一条腿正上方'),
-                    opt(2, '松', '越过另一条腿外侧一个脚掌'),
+                    opt(0, '紧', '没到另一条腿上方，胯骨就翻了', assess_img('supine-cross-c')),
+                    opt(1, '一般', '刚好到另一条腿正上方', assess_img('supine-cross-b')),
+                    opt(2, '松', '越过另一条腿外侧一个脚掌', assess_img('supine-cross-a')),
                 ],
             },
             {
@@ -224,9 +262,9 @@ def assessment():
                 'cue': '膝盖别弯，从屁股那里往前折，手顺着腿往前走。', 'demo_drill': 's-seated-fold',
                 'seconds': 12, 'sided': False, 'directions': ['flexion'], 'glow': '大腿后侧',
                 'options': [
-                    opt(0, '紧', '手只到膝盖附近'),
-                    opt(1, '一般', '手到小腿或脚踝'),
-                    opt(2, '松', '摸到脚尖或更远'),
+                    opt(0, '紧', '手只到膝盖附近', assess_img('seated-fold-c')),
+                    opt(1, '一般', '手到小腿或脚踝', assess_img('seated-fold-b')),
+                    opt(2, '松', '摸到脚尖或更远', assess_img('seated-fold-a')),
                 ],
             },
             {
@@ -234,9 +272,9 @@ def assessment():
                 'cue': '脚跟踩稳，慢慢蹲到最低，停 3 秒。旁边放把椅子，不稳就扶。', 'demo_drill': 'h-squat',
                 'seconds': 12, 'sided': False, 'directions': ['flexion', 'abduction'], 'glow': '髋部',
                 'options': [
-                    opt(0, '紧', '大腿到水平附近就下不去'),
-                    opt(1, '一般', '脚跟抬起或要扶东西'),
-                    opt(2, '松', '蹲到底，脚跟贴地'),
+                    opt(0, '紧', '大腿到水平附近就下不去', assess_img('deep-squat-c')),
+                    opt(1, '一般', '脚跟抬起或要扶东西', assess_img('deep-squat-b')),
+                    opt(2, '松', '蹲到底，脚跟贴地', assess_img('deep-squat-a')),
                 ],
             },
         ],

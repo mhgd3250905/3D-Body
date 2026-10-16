@@ -49,7 +49,7 @@ class HipAssessmentIntro extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14),
                           child: HipDrillArt(
                             drill:
-                                store.content.drills[item.demoDrill] ??
+                                item.demoArt(store.content.drills) ??
                                 store.content.mvpDrills.first,
                             showPendingLabel: false,
                           ),
@@ -202,7 +202,7 @@ class _HipAssessmentPageState extends State<HipAssessmentPage>
 
   Widget _itemScreen() {
     final item = _item;
-    final demo = widget.store.content.drills[item.demoDrill];
+    final demo = item.demoArt(widget.store.content.drills);
     return Column(
       children: [
         _header(
@@ -411,6 +411,7 @@ class _HipAssessmentPageState extends State<HipAssessmentPage>
             key: ValueKey('follow-${o.id}'),
             selected: _follow == o.id,
             onTap: () => setState(() => _follow = o.id),
+            image: o.image,
             footer: Text(
               o.label,
               style: TextStyle(
