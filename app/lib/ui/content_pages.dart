@@ -814,12 +814,15 @@ class ProgressPage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               children: [
-                Row(
-                  children: [
-                    _stat('${store.weekTrainingDays}', s.weekDays),
-                    const SizedBox(width: 12),
-                    _stat('${store.streakDays}', s.streak),
-                  ],
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _stat('${store.weekTrainingDays}', s.weekDays),
+                      const SizedBox(width: 12),
+                      _stat('${store.streakDays}', s.streak),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 18),
                 Row(
@@ -894,7 +897,7 @@ class ProgressPage extends StatelessWidget {
                                 color: session.pain
                                     ? FlareColors.warning
                                     : session.completed
-                                    ? FlareColors.secondary
+                                    ? FlareColors.success
                                     : FlareColors.dim,
                               ),
                             ),

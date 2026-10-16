@@ -45,7 +45,12 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   bool _saved = false;
   bool _saveFailed = false;
   bool _confirming = false;
-  bool _showDemo = true;
+
+  /// Null until the user chooses; short screens start with the demo folded
+  /// so the count and the primary action never compete for space.
+  bool? _userShowDemo;
+  bool get _showDemo =>
+      _userShowDemo ?? MediaQuery.sizeOf(context).height >= 700;
   TimerPhase? _lastPhase;
   int? _lastCount;
   @override
@@ -437,53 +442,62 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                                         ),
                                     child: child,
                                   ),
+                              // Content stays inside the circle's inscribed
+                              // square so large text never crosses the ring.
                               child: Center(
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Each new count rolls up into place.
-                                      AnimatedSwitcher(
-                                        duration: FlareMotion.of(
-                                          context,
-                                          FlareMotion.collapse,
+                                child: FractionallySizedBox(
+                                  widthFactor: .7,
+                                  heightFactor: .7,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Each new count rolls up into place.
+                                        AnimatedSwitcher(
+                                          duration: FlareMotion.of(
+                                            context,
+                                            FlareMotion.collapse,
+                                          ),
+                                          switchInCurve: FlareMotion.settle,
+                                          switchOutCurve: FlareMotion.exit,
+                                          transitionBuilder:
+                                              (child, animation) {
+                                                final incoming =
+                                                    child.key ==
+                                                    ValueKey(value);
+                                                return FadeTransition(
+                                                  opacity: animation,
+                                                  child: SlideTransition(
+                                                    position: Tween(
+                                                      begin: Offset(
+                                                        0,
+                                                        incoming ? .32 : -.32,
+                                                      ),
+                                                      end: Offset.zero,
+                                                    ).animate(animation),
+                                                    child: child,
+                                                  ),
+                                                );
+                                              },
+                                          child: _CountText(
+                                            value,
+                                            key: ValueKey(value),
+                                            celebrate:
+                                                snap.phase ==
+                                                TimerPhase.finished,
+                                          ),
                                         ),
-                                        switchInCurve: FlareMotion.settle,
-                                        switchOutCurve: FlareMotion.exit,
-                                        transitionBuilder: (child, animation) {
-                                          final incoming =
-                                              child.key == ValueKey(value);
-                                          return FadeTransition(
-                                            opacity: animation,
-                                            child: SlideTransition(
-                                              position: Tween(
-                                                begin: Offset(
-                                                  0,
-                                                  incoming ? .32 : -.32,
-                                                ),
-                                                end: Offset.zero,
-                                              ).animate(animation),
-                                              child: child,
-                                            ),
-                                          );
-                                        },
-                                        child: _CountText(
-                                          value,
-                                          key: ValueKey(value),
-                                          celebrate:
-                                              snap.phase == TimerPhase.finished,
+                                        SizedBox(height: 4),
+                                        Text(
+                                          unit,
+                                          style: TextStyle(
+                                            color: FlareColors.dim,
+                                            fontSize: 13,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        unit,
-                                        style: TextStyle(
-                                          color: FlareColors.dim,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -523,7 +537,9 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
                             color: i <= snap.completedSets
-                                ? FlareColors.accent
+                                ? (finished
+                                      ? FlareColors.success
+                                      : FlareColors.accent)
                                 : i == snap.set && !finished
                                 ? FlareColors.accent.withValues(alpha: .45)
                                 : FlareColors.controlBorder,
@@ -546,13 +562,19 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                     Center(
                       child: TextButton.icon(
                         key: const ValueKey('timer-demo-toggle'),
-                        onPressed: () => setState(() => _showDemo = !_showDemo),
+                        onPressed: () =>
+                            setState(() => _userShowDemo = !_showDemo),
                         icon: Icon(
                           _showDemo
                               ? Icons.expand_less
                               : Icons.play_circle_outline,
                         ),
                         label: Text(_showDemo ? s.hideDrillDemo : s.drillDemo),
+                        // The demo toggle is secondary; orange stays reserved
+                        // for the primary action below.
+                        style: TextButton.styleFrom(
+                          foregroundColor: FlareColors.secondary,
+                        ),
                       ),
                     ),
                     if (_showDemo) ...[

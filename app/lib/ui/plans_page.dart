@@ -461,15 +461,19 @@ class _PresetCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      preset.title(context),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        height: 1.25,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                    // Long translated titles shrink rather than lose words.
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Text(
+                        preset.title(context),
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          height: 1.25,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 3),
