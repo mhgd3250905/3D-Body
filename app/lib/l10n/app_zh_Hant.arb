@@ -487,5 +487,8 @@
   "presetFlareLine": "一次練到托馬斯的主力肌群",
   "planUpNext": "接下來",
   "planDrillCount": "{count} 個動作",
-  "settingsHint": "外觀、播放與畫質"
+  "settingsHint": "外觀、播放與畫質",
+  "planRunEnded": "本輪訓練已結束",
+  "planSkipped": "已略過",
+  "planSkippedCount": "略過 {count} 個動作"
 }

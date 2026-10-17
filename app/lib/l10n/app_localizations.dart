@@ -2070,6 +2070,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'外观、播放与画质'**
   String get settingsHint;
+
+  /// No description provided for @planRunEnded.
+  ///
+  /// In zh, this message translates to:
+  /// **'本轮训练已结束'**
+  String get planRunEnded;
+
+  /// No description provided for @planSkipped.
+  ///
+  /// In zh, this message translates to:
+  /// **'已跳过'**
+  String get planSkipped;
+
+  /// No description provided for @planSkippedCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过 {count} 个动作'**
+  String planSkippedCount(int count);
 }
 
 class _AppLocalizationsDelegate

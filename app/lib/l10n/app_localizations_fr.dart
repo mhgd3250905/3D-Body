@@ -1083,4 +1083,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsHint => 'Apparence, lecture, qualité';
+
+  @override
+  String get planRunEnded => 'Séance terminée';
+
+  @override
+  String get planSkipped => 'Ignoré';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count exercices ignorés';
+  }
 }

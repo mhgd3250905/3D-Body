@@ -1075,4 +1075,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsHint => 'Оформление, воспроизведение, качество';
+
+  @override
+  String get planRunEnded => 'Тренировка завершена';
+
+  @override
+  String get planSkipped => 'Пропущено';
+
+  @override
+  String planSkippedCount(int count) {
+    return 'Пропущено упражнений: $count';
+  }
 }

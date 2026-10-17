@@ -487,5 +487,8 @@
   "presetFlareLine": "फ्लेयर के सभी मुख्य मांसपेशी समूह एक सेट में",
   "planUpNext": "आगे",
   "planDrillCount": "{count} अभ्यास",
-  "settingsHint": "रूप, प्लेबैक, गुणवत्ता"
+  "settingsHint": "रूप, प्लेबैक, गुणवत्ता",
+  "planRunEnded": "सत्र समाप्त",
+  "planSkipped": "छोड़ दिया",
+  "planSkippedCount": "{count} अभ्यास छोड़ दिए गए"
 }

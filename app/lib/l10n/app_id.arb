@@ -487,5 +487,8 @@
   "presetFlareLine": "Semua kelompok otot utama flare dalam satu set",
   "planUpNext": "Selanjutnya",
   "planDrillCount": "{count} latihan",
-  "settingsHint": "Tampilan, pemutaran, kualitas"
+  "settingsHint": "Tampilan, pemutaran, kualitas",
+  "planRunEnded": "Sesi berakhir",
+  "planSkipped": "Dilewati",
+  "planSkippedCount": "{count} latihan dilewati"
 }

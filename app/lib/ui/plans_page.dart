@@ -1392,6 +1392,7 @@ class PlanRunPage extends StatelessWidget {
     required this.title,
     required this.drills,
     required this.done,
+    this.skipped = const {},
     required this.index,
     required this.onStart,
     required this.onSelect,
@@ -1401,19 +1402,22 @@ class PlanRunPage extends StatelessWidget {
   final String title;
   final List<Drill> drills;
   final Set<int> done;
+  final Set<int> skipped;
   final int index;
   final VoidCallback onStart;
   final ValueChanged<int> onSelect;
   final VoidCallback onSkip;
   final VoidCallback onFinish;
 
-  bool get complete => index >= drills.length && done.length == drills.length;
+  bool get ended => index >= drills.length;
+  bool get complete => ended && done.length == drills.length;
 
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final total = drills.length;
     final progress = total == 0 ? 0.0 : done.length / total;
+    final endColor = complete ? FlareColors.success : FlareColors.secondary;
     return ColoredBox(
       color: FlareColors.background,
       child: Column(
@@ -1442,6 +1446,11 @@ class PlanRunPage extends StatelessWidget {
                   s.planAllDoneLine(done.length, total),
                   style: TextStyle(fontSize: 12, color: FlareColors.dim),
                 ),
+                if (skipped.isNotEmpty)
+                  Text(
+                    s.planSkippedCount(skipped.length),
+                    style: TextStyle(fontSize: 12, color: FlareColors.dim),
+                  ),
               ],
             ),
           ),
@@ -1450,7 +1459,7 @@ class PlanRunPage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
                 children: [
-                  if (complete)
+                  if (ended)
                     FadeSlideIn(
                       key: const ValueKey('run-complete'),
                       child: Padding(
@@ -1461,20 +1470,20 @@ class PlanRunPage extends StatelessWidget {
                               width: 72,
                               height: 72,
                               decoration: BoxDecoration(
-                                color: FlareColors.success.withValues(
-                                  alpha: .14,
-                                ),
+                                color: endColor.withValues(alpha: .14),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.check_rounded,
+                                complete
+                                    ? Icons.check_rounded
+                                    : Icons.flag_outlined,
                                 size: 38,
-                                color: FlareColors.success,
+                                color: endColor,
                               ),
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              s.planAllDone,
+                              complete ? s.planAllDone : s.planRunEnded,
                               style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
@@ -1506,7 +1515,18 @@ class PlanRunPage extends StatelessWidget {
                           : i == index
                           ? false
                           : null,
-                      trailing: const SizedBox(width: 8),
+                      trailing: skipped.contains(i)
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Text(
+                                s.planSkipped,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: FlareColors.dim,
+                                ),
+                              ),
+                            )
+                          : const SizedBox(width: 8),
                       onTap: () => onSelect(i),
                     ),
                 ],
@@ -1517,14 +1537,14 @@ class PlanRunPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
             child: PrimaryAction(
               key: const ValueKey('run-start'),
-              icon: complete ? Icons.check_rounded : Icons.play_arrow_rounded,
-              label: complete ? s.done : s.planStartDrill(drills[index].name),
-              onPressed: complete ? onFinish : onStart,
+              icon: ended ? Icons.check_rounded : Icons.play_arrow_rounded,
+              label: ended ? s.done : s.planStartDrill(drills[index].name),
+              onPressed: ended ? onFinish : onStart,
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: complete
+            child: ended
                 ? const SizedBox(height: 48)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,

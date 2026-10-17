@@ -490,5 +490,15 @@
   "settingsHint": "Appearance, playback, quality",
   "@settingsHint": {
     "description": "Subtitle of the Settings row in the More sheet."
+  },
+  "planRunEnded": "Session ended",
+  "planSkipped": "Skipped",
+  "planSkippedCount": "{count} drills skipped",
+  "@planSkippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

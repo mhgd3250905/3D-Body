@@ -1076,4 +1076,15 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsHint => 'Tampilan, pemutaran, kualitas';
+
+  @override
+  String get planRunEnded => 'Sesi berakhir';
+
+  @override
+  String get planSkipped => 'Dilewati';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count latihan dilewati';
+  }
 }

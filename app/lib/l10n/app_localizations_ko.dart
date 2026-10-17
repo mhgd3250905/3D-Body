@@ -1051,4 +1051,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsHint => '화면, 재생, 화질';
+
+  @override
+  String get planRunEnded => '이번 운동이 종료되었습니다';
+
+  @override
+  String get planSkipped => '건너뜀';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count개 운동을 건너뜀';
+  }
 }

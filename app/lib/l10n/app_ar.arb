@@ -487,5 +487,8 @@
   "presetFlareLine": "كل مجموعات عضلات الفلير الرئيسية في مجموعة واحدة",
   "planUpNext": "التالي",
   "planDrillCount": "{count} تمارين",
-  "settingsHint": "المظهر والتشغيل والجودة"
+  "settingsHint": "المظهر والتشغيل والجودة",
+  "planRunEnded": "انتهت الجلسة",
+  "planSkipped": "تم التخطي",
+  "planSkippedCount": "تم تخطي {count} تمارين"
 }

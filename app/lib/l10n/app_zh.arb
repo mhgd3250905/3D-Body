@@ -545,5 +545,15 @@
       }
     }
   },
-  "settingsHint": "外观、播放与画质"
+  "settingsHint": "外观、播放与画质",
+  "planRunEnded": "本轮训练已结束",
+  "planSkipped": "已跳过",
+  "planSkippedCount": "跳过 {count} 个动作",
+  "@planSkippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

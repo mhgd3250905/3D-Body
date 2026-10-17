@@ -1069,4 +1069,15 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get settingsHint => 'रूप, प्लेबैक, गुणवत्ता';
+
+  @override
+  String get planRunEnded => 'सत्र समाप्त';
+
+  @override
+  String get planSkipped => 'छोड़ दिया';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count अभ्यास छोड़ दिए गए';
+  }
 }

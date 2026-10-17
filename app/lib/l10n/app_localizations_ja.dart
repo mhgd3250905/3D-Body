@@ -1050,4 +1050,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsHint => '外観・再生・画質';
+
+  @override
+  String get planRunEnded => '今回のトレーニングは終了しました';
+
+  @override
+  String get planSkipped => 'スキップ済み';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count 種目をスキップ';
+  }
 }

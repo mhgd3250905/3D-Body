@@ -83,30 +83,72 @@ void main() {
     return store;
   }
 
-  testWidgets('skipping the only drill keeps the plan unfinished', (
-    tester,
-  ) async {
-    final semantics = tester.ensureSemantics();
-
-    final store = await open(tester);
+  Future<void> startPlan(WidgetTester tester) async {
     await tester.tap(helpers.labeledControl('计划'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Audit routine'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('plan-start')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('run-skip')));
+  }
+
+  Future<void> completeCurrentDrill(
+    WidgetTester tester,
+    LearningStore store,
+    String sessionId,
+  ) async {
+    await tester.tap(find.byKey(const ValueKey('run-start')));
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    final timer = tester.widget<TrainingTimerPage>(
+      find.byType(TrainingTimerPage),
+    );
+    final endedAt = DateTime.now().toUtc();
+    await store.logSession(
+      TrainingSession(
+        id: sessionId,
+        drillId: timer.drill.id,
+        startedAt: endedAt.subtract(const Duration(seconds: 60)),
+        endedAt: endedAt,
+        activeSeconds: 60,
+        completedSets: timer.drill.dose.sets,
+        plannedSets: timer.drill.dose.sets,
+        pain: false,
+        completed: true,
+      ),
+    );
+    timer.onClose();
     await tester.pumpAndSettle();
-    final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-    expect(run.done, isEmpty);
-    expect(store.sessions, isEmpty);
-    expect(find.text('完成 0 / 1 个动作'), findsOneWidget);
-    expect(find.text('这一套练完了'), findsNothing);
-    expect(run.complete, isFalse);
-    expect(run.index, 0);
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-    semantics.dispose();
+  }
+
+  testWidgets('skipping the only drill ends the round without completing it', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      final store = await open(tester);
+      await startPlan(tester);
+      await tester.tap(find.byKey(const ValueKey('run-skip')));
+      await tester.pumpAndSettle();
+      final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
+      expect(run.done, isEmpty);
+      expect(run.skipped, {0});
+      expect(run.index, 1);
+      expect(run.ended, isTrue);
+      expect(run.complete, isFalse);
+      expect(store.sessions, isEmpty);
+      expect(find.text('完成 0 / 1 个动作'), findsOneWidget);
+      expect(find.text('跳过 1 个动作'), findsOneWidget);
+      expect(find.text('已跳过'), findsOneWidget);
+      expect(find.text('本轮训练已结束'), findsOneWidget);
+      expect(find.text('这一套练完了'), findsNothing);
+      expect(find.byKey(const ValueKey('run-skip')), findsNothing);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('skipping the final unfinished drill still allows training it', (
@@ -115,73 +157,39 @@ void main() {
     final semantics = tester.ensureSemantics();
     try {
       final store = await open(tester, ids: ['abs-A', 'triceps-A']);
-      await tester.tap(helpers.labeledControl('计划'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Audit routine'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('plan-start')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('run-start')));
-      for (var i = 0; i < 6; i++) {
-        await tester.pump(const Duration(milliseconds: 200));
-      }
-      // The timer completion callback must advance only completed steps.
-      final timer = tester.widget<TrainingTimerPage>(
-        find.byType(TrainingTimerPage),
-      );
-      final endedAt = DateTime.now().toUtc();
-      await store.logSession(
-        TrainingSession(
-          id: 'plan-step-completed',
-          drillId: 'abs-A',
-          startedAt: endedAt.subtract(const Duration(seconds: 60)),
-          endedAt: endedAt,
-          activeSeconds: 60,
-          completedSets: timer.drill.dose.sets,
-          plannedSets: timer.drill.dose.sets,
-          pain: false,
-          completed: true,
-        ),
-      );
-      timer.onClose();
-      await tester.pumpAndSettle();
+      await startPlan(tester);
+      await completeCurrentDrill(tester, store, 'plan-step-completed');
       await tester.tap(find.byKey(const ValueKey('run-skip')));
       await tester.pumpAndSettle();
       final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
       expect(run.done, {0});
-      expect(run.index, 1);
+      expect(run.skipped, {1});
+      expect(run.index, 2);
+      expect(run.ended, isTrue);
       expect(run.complete, isFalse);
+      expect(find.text('本轮训练已结束'), findsOneWidget);
       expect(find.text('这一套练完了'), findsNothing);
-      expect(find.byKey(const ValueKey('run-start')), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('run-start')));
-      for (var i = 0; i < 6; i++) {
-        await tester.pump(const Duration(milliseconds: 200));
-      }
-      final secondTimer = tester.widget<TrainingTimerPage>(
-        find.byType(TrainingTimerPage),
-      );
-      final secondEnd = DateTime.now().toUtc();
-      await store.logSession(
-        TrainingSession(
-          id: 'plan-step-2-completed',
-          drillId: 'triceps-A',
-          startedAt: secondEnd.subtract(const Duration(seconds: 60)),
-          endedAt: secondEnd,
-          activeSeconds: 60,
-          completedSets: secondTimer.drill.dose.sets,
-          plannedSets: secondTimer.drill.dose.sets,
-          pain: false,
-          completed: true,
-        ),
-      );
-      secondTimer.onClose();
+      expect(find.text('跳过 1 个动作'), findsOneWidget);
+      expect(find.byKey(const ValueKey('run-skip')), findsNothing);
+      await helpers.tapVisible(tester, find.byKey(const ValueKey('run-row-1')));
       await tester.pumpAndSettle();
+      final retry = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
+      expect(retry.index, 1);
+      expect(retry.ended, isFalse);
+      await completeCurrentDrill(tester, store, 'plan-step-2-completed');
+      final completed = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
+      expect(completed.done, {0, 1});
+      expect(completed.skipped, isEmpty);
+      expect(completed.ended, isTrue);
+      expect(completed.complete, isTrue);
       expect(find.text('这一套练完了'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('run-row-0')));
+      expect(find.text('本轮训练已结束'), findsNothing);
+      await helpers.tapVisible(tester, find.byKey(const ValueKey('run-row-0')));
       await tester.pumpAndSettle();
       final repeat = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
       expect(repeat.done, {0, 1});
       expect(repeat.index, 0);
+      expect(repeat.ended, isFalse);
       expect(repeat.complete, isFalse);
       expect(find.text('这一套练完了'), findsNothing);
       expect(tester.takeException(), isNull);
@@ -190,6 +198,72 @@ void main() {
       semantics.dispose();
     }
   });
+
+  testWidgets(
+    'four skipped drills advance in order without wrapping or sessions',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        final store = await open(
+          tester,
+          ids: ['abs-A', 'triceps-A', 'deltoids-A', 'forearms-A'],
+        );
+        await startPlan(tester);
+        for (var next = 1; next <= 4; next++) {
+          await tester.tap(find.byKey(const ValueKey('run-skip')));
+          await tester.pumpAndSettle();
+          final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
+          expect(run.index, next);
+          expect(run.skipped, Set<int>.from(List.generate(next, (i) => i)));
+          expect(run.done, isEmpty);
+          expect(run.ended, next == 4);
+          expect(run.complete, isFalse);
+          expect(store.sessions, isEmpty);
+          expect(find.text('这一套练完了'), findsNothing);
+        }
+        expect(find.text('完成 0 / 4 个动作'), findsOneWidget);
+        expect(find.text('跳过 4 个动作'), findsOneWidget);
+        expect(find.text('本轮训练已结束'), findsOneWidget);
+        expect(find.byKey(const ValueKey('run-skip')), findsNothing);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
+    'completion after a skipped drill advances to the following drill',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        final store = await open(
+          tester,
+          ids: ['abs-A', 'triceps-A', 'deltoids-A'],
+        );
+        await startPlan(tester);
+        await tester.tap(find.byKey(const ValueKey('run-skip')));
+        await tester.pumpAndSettle();
+        await completeCurrentDrill(tester, store, 'mixed-step-2-completed');
+        final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
+        expect(run.index, 2);
+        expect(run.done, {1});
+        expect(run.skipped, {0});
+        expect(run.ended, isFalse);
+        expect(run.complete, isFalse);
+        expect(store.sessions.single.drillId, 'triceps-A');
+        expect(find.text('完成 1 / 3 个动作'), findsOneWidget);
+        expect(find.text('跳过 1 个动作'), findsOneWidget);
+        expect(find.text('第 3 / 3 个'), findsOneWidget);
+        expect(find.text('本轮训练已结束'), findsNothing);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
 
   testWidgets('copied backup includes routine identity name and drill order', (
     tester,

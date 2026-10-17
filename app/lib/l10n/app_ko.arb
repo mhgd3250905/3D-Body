@@ -487,5 +487,8 @@
   "presetFlareLine": "플레어 주요 근육군을 한 세트로",
   "planUpNext": "다음 동작",
   "planDrillCount": "{count}개 동작",
-  "settingsHint": "화면, 재생, 화질"
+  "settingsHint": "화면, 재생, 화질",
+  "planRunEnded": "이번 운동이 종료되었습니다",
+  "planSkipped": "건너뜀",
+  "planSkippedCount": "{count}개 운동을 건너뜀"
 }

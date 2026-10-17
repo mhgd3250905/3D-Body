@@ -487,5 +487,8 @@
   "presetFlareLine": "Tutti i gruppi chiave del flare in una serie",
   "planUpNext": "Prossimo",
   "planDrillCount": "{count} esercizi",
-  "settingsHint": "Aspetto, riproduzione, qualità"
+  "settingsHint": "Aspetto, riproduzione, qualità",
+  "planRunEnded": "Sessione terminata",
+  "planSkipped": "Saltato",
+  "planSkippedCount": "{count} esercizi saltati"
 }

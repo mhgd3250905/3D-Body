@@ -487,5 +487,8 @@
   "presetFlareLine": "Alle Hauptmuskelgruppen des Flares in einer Einheit",
   "planUpNext": "Als Nächstes",
   "planDrillCount": "{count} Übungen",
-  "settingsHint": "Darstellung, Wiedergabe, Qualität"
+  "settingsHint": "Darstellung, Wiedergabe, Qualität",
+  "planRunEnded": "Einheit beendet",
+  "planSkipped": "Übersprungen",
+  "planSkippedCount": "{count} Übungen übersprungen"
 }

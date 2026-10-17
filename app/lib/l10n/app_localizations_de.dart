@@ -1080,4 +1080,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsHint => 'Darstellung, Wiedergabe, Qualität';
+
+  @override
+  String get planRunEnded => 'Einheit beendet';
+
+  @override
+  String get planSkipped => 'Übersprungen';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count Übungen übersprungen';
+  }
 }

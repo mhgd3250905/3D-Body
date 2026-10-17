@@ -487,5 +487,8 @@
   "presetFlareLine": "Tous les groupes clés du flare en une séance",
   "planUpNext": "Ensuite",
   "planDrillCount": "{count} exercices",
-  "settingsHint": "Apparence, lecture, qualité"
+  "settingsHint": "Apparence, lecture, qualité",
+  "planRunEnded": "Séance terminée",
+  "planSkipped": "Ignoré",
+  "planSkippedCount": "{count} exercices ignorés"
 }

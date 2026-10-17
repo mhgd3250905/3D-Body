@@ -487,5 +487,8 @@
   "presetFlareLine": "Все основные группы мышц флэра за один комплекс",
   "planUpNext": "Далее",
   "planDrillCount": "{count} упражн.",
-  "settingsHint": "Оформление, воспроизведение, качество"
+  "settingsHint": "Оформление, воспроизведение, качество",
+  "planRunEnded": "Тренировка завершена",
+  "planSkipped": "Пропущено",
+  "planSkippedCount": "Пропущено упражнений: {count}"
 }

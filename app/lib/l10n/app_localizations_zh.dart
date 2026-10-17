@@ -1043,6 +1043,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsHint => '外观、播放与画质';
+
+  @override
+  String get planRunEnded => '本轮训练已结束';
+
+  @override
+  String get planSkipped => '已跳过';
+
+  @override
+  String planSkippedCount(int count) {
+    return '跳过 $count 个动作';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2085,4 +2096,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsHint => '外觀、播放與畫質';
+
+  @override
+  String get planRunEnded => '本輪訓練已結束';
+
+  @override
+  String get planSkipped => '已略過';
+
+  @override
+  String planSkippedCount(int count) {
+    return '略過 $count 個動作';
+  }
 }

@@ -1069,4 +1069,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHint => 'Appearance, playback, quality';
+
+  @override
+  String get planRunEnded => 'Session ended';
+
+  @override
+  String get planSkipped => 'Skipped';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count drills skipped';
+  }
 }

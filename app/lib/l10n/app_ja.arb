@@ -487,5 +487,8 @@
   "presetFlareLine": "フレアの主な筋群を1セットで",
   "planUpNext": "次の種目",
   "planDrillCount": "{count} 種目",
-  "settingsHint": "外観・再生・画質"
+  "settingsHint": "外観・再生・画質",
+  "planRunEnded": "今回のトレーニングは終了しました",
+  "planSkipped": "スキップ済み",
+  "planSkippedCount": "{count} 種目をスキップ"
 }

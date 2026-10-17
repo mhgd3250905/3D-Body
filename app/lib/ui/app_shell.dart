@@ -718,6 +718,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           title: run.title,
           drills: run.drills,
           done: run.done,
+          skipped: run.skipped,
           index: run.index,
           onStart: () {
             setState(() {
@@ -2581,32 +2582,44 @@ class _PlanRun {
     required this.drills,
     this.index = 0,
     Set<int> done = const {},
-  }) : done = Set.unmodifiable(done);
+    Set<int> skipped = const {},
+  }) : done = Set.unmodifiable(done),
+       skipped = Set.unmodifiable(skipped);
   final String title;
   final List<Drill> drills;
   final int index;
   final Set<int> done;
+  final Set<int> skipped;
 
-  _PlanRun _with({int? index, Set<int>? done}) => _PlanRun(
+  _PlanRun _with({int? index, Set<int>? done, Set<int>? skipped}) => _PlanRun(
     title: title,
     drills: drills,
     index: index ?? this.index,
     done: done ?? this.done,
+    skipped: skipped ?? this.skipped,
   );
 
-  /// The next drill not yet done after [from], wrapping; the end when none.
-  int _nextOpen(int from, Set<int> done) {
-    for (var step = 1; step <= drills.length; step++) {
-      final i = (from + step) % drills.length;
-      if (!done.contains(i)) return i;
+  /// Advance through this pass only. Earlier drills can be selected manually.
+  int _nextOpen(int from, Set<int> done, Set<int> skipped) {
+    for (var i = from + 1; i < drills.length; i++) {
+      if (!done.contains(i) && !skipped.contains(i)) return i;
     }
     return drills.length;
   }
 
   _PlanRun at(int i) => _with(index: i);
-  _PlanRun skip() => _with(index: _nextOpen(index, done));
+  _PlanRun skip() {
+    final next = done.contains(index) ? skipped : {...skipped, index};
+    return _with(index: _nextOpen(index, done, next), skipped: next);
+  }
+
   _PlanRun complete() {
     final next = {...done, index};
-    return _with(index: _nextOpen(index, next), done: next);
+    final remainingSkipped = {...skipped}..remove(index);
+    return _with(
+      index: _nextOpen(index, next, remainingSkipped),
+      done: next,
+      skipped: remainingSkipped,
+    );
   }
 }

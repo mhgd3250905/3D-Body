@@ -1063,4 +1063,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHint => 'المظهر والتشغيل والجودة';
+
+  @override
+  String get planRunEnded => 'انتهت الجلسة';
+
+  @override
+  String get planSkipped => 'تم التخطي';
+
+  @override
+  String planSkippedCount(int count) {
+    return 'تم تخطي $count تمارين';
+  }
 }

@@ -1075,4 +1075,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get settingsHint => 'Aparência, reprodução, qualidade';
+
+  @override
+  String get planRunEnded => 'Sessão encerrada';
+
+  @override
+  String get planSkipped => 'Pulado';
+
+  @override
+  String planSkippedCount(int count) {
+    return '$count exercícios pulados';
+  }
 }
