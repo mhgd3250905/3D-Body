@@ -50,6 +50,19 @@ Windows process identity and never kills existing workers. Its optional
 `--wait-pids` bootstraps the initial manually started slots; subsequent restores
 normally use the saved status alone.
 
+Motion fixes use additive revision specs and a new output directory:
+
+```text
+python tools/hiplab-render/render_batch.py preview --app <HipLab checkout> --output <new revision batch> --spec-overrides tools/hiplab-render/revisions/20261017/h-knee-hug.sources.json --port 8861
+python tools/hiplab-render/render_batch.py render --app <HipLab checkout> --output <same revision batch> --spec-overrides tools/hiplab-render/revisions/20261017/h-knee-hug.sources.json --port 8861
+```
+
+The JSON map selects only its listed App drill IDs and binds both the derived
+spec and frozen base spec hashes. The manifest marks motion as revised. Existing
+batches reject changed source maps before writing any overlay; each new candidate
+requires a new output directory. Keep original QA thresholds, inspect actual
+previews, and run full-loop QA before selecting a revision for delivery.
+
 ```text
 python tools/hiplab-render/run_queue.py --app <HipLab checkout> --output <batch> --dry-run
 python tools/hiplab-render/run_queue.py --app <HipLab checkout> --output <batch>
