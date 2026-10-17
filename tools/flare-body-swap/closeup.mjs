@@ -3,9 +3,11 @@
 // Two views per frame: "cam" = the video camera direction zoomed on the hips; "front" = from the
 // pelvis front, 35° below the hips, looking into the crotch between the spread thighs.
 import fs from 'node:fs';import path from 'node:path';import {bootFlare,loadSpec} from './stage.mjs';
+import {HUB} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
 const A=process.argv.slice(2),opt=(k,d)=>{const i=A.indexOf(k);return i<0?d:A[i+1];};
 const out=path.resolve(opt('--out','closeups')),SZ=+opt('--size',640),frames=opt('--frames','76,196').split(',').map(Number),before=A.includes('--before');
-fs.mkdirSync(out,{recursive:true});
+assertOutsidePoseHub(out,HUB);fs.mkdirSync(out,{recursive:true});
 const spec=loadSpec();spec.size=SZ;spec.highlight={groups:[],side:'both',pulseBase:1};
 const {b,p,crotchReport}=await bootFlare({size:SZ,spec,crotch:!before,crotchOpts:JSON.parse(opt('--crotch-opts','{}'))});
 await p.evaluate(d=>{window.__closeDist=d;},+opt('--dist',1.05));

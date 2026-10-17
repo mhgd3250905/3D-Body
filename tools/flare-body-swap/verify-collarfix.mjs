@@ -1,10 +1,13 @@
 // Verify the narrow collar derivative and the actual App shader integration.
-// node tools/flare-body-swap/verify-collarfix.mjs --pipeline-root ROOT --url URL --report REPORT
-import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';import {fileURLToPath,pathToFileURL} from 'node:url';
-const REPO=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+// node tools/flare-body-swap/verify-collarfix.mjs (set POSE_HUB_DIR) --url URL --report REPORT
+import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';import {pathToFileURL} from 'node:url';
+import {REPO,HUB,loadConfig} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
 const args=process.argv.slice(2),opt=(k,d)=>args.includes(k)?args[args.indexOf(k)+1]:d;
-const pipeline=path.resolve(opt('--pipeline-root',REPO)),url=opt('--url','http://127.0.0.1:8892');
+if(args.includes('--pipeline-root'))throw new Error('Use POSE_HUB_DIR for the migrated Pose-Hub checkout; --pipeline-root is retired.');
+const url=opt('--url','http://127.0.0.1:8892');
 const reportPath=path.resolve(opt('--report','collarfix-verification.json'));
+assertOutsidePoseHub(reportPath,HUB);
 const require=createRequire(path.join(REPO,'app/scene/package.json'));
 const {NodeIO}=await import(pathToFileURL(require.resolve('@gltf-transform/core')).href);
 const {ALL_EXTENSIONS}=await import(pathToFileURL(require.resolve('@gltf-transform/extensions')).href);
@@ -42,7 +45,7 @@ for(const channel of ca.listChannels()){
  check('track '+channel.getTargetNode().getName()+'.'+channel.getTargetPath(),!!next&&next.getSampler().getInterpolation()===channel.getSampler().getInterpolation()&&equal(channel.getSampler().getInput().getArray(),next.getSampler().getInput().getArray())&&equal(channel.getSampler().getOutput().getArray(),next.getSampler().getOutput().getArray()));
 }
 check('only native neck colour changed',changes.length===1&&changes[0].mesh==='Mesh001'&&changes[0].attribute==='COLOR_0',changes);
-const {config}=await import(pathToFileURL(path.join(pipeline,'tools/drill-anim/lib/config.mjs')).href),C=config();
+const {C}=await loadConfig();
 if(C.playwright_browsers_path)process.env.PLAYWRIGHT_BROWSERS_PATH=C.playwright_browsers_path;
 const {chromium}=await import(pathToFileURL(C.playwright_module).href);
 const b=await chromium.launch({args:C.chromium_args});let browser;const errors=[];

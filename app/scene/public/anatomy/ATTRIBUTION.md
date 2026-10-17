@@ -14,7 +14,7 @@ eye meshes. The official source bundle is released under **CC0 1.0**.
 - Original archive SHA-256: `811f43accbb31a88266d932f8f5563b2d13586fca0ba2693aad1f5fe582b3515`.
 - Preserved local acquisition record: `assets/blender-studio-source/SOURCE.md`.
 - Editable derivative: `assets/coach/fitness-reference.blend`.
-- Reproduction script: `tools/blender/build_fitness_reference.py`.
+- Reproduction script: [build_fitness_reference.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_fitness_reference.py).
 
 The derivative retains the authored complete head, body, arms, hands and feet.
 Original subdivision is evaluated only on the derivative; neutral low-gloss

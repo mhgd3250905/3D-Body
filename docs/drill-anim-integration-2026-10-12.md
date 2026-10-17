@@ -14,7 +14,7 @@
 
 ## Windows 运行与输出保护
 
-配置与运行见 [工具说明](../tools/drill-anim/README.md)，示例为 `config.windows.example.json`。本机 gitignored 配置使用项目根 Vite、既有 E 盘 Python / Playwright 环境及新 E 盘输出目录。启动不依赖 POSIX `.bin/vite`、`python3`、`killpg` 或 `/tmp`；文件模块通过 Node file URL 导入，Python子进程使用当前解释器并隐藏辅助窗口。相对路径以工具根目录解析。
+配置与运行见 [工具说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/README.md)，示例为 `config.windows.example.json`。本机 gitignored 配置使用项目根 Vite、既有 E 盘 Python / Playwright 环境及新 E 盘输出目录。启动不依赖 POSIX `.bin/vite`、`python3`、`killpg` 或 `/tmp`；文件模块通过 Node file URL 导入，Python子进程使用当前解释器并隐藏辅助窗口。相对路径以工具根目录解析。
 
 已有成品默认拒覆盖；显式 `--overwrite` 只用于主动替换。删除动作临时帧前校验动作ID、存在的源参数及绝对路径边界，禁止删除源码或成品目录。编码临时文件位于 `work_dir`，合成失败或缺帧停止编码。Windows文件名中的范围冒号改为连字符。Three.js或浏览器启动失败时关闭本次浏览器并给出诊断，Vite只关闭本次自行启动的进程。
 

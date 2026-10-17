@@ -52,7 +52,7 @@ App的51项正式视频直接来自用户 `3D-Pose` v1.0.0 的冻结选择。当
 
 ## 修复与复用方式
 
-完整人体基准为 [training-human-v2](training-human-v2.md)，版本及来源哈希见 [模型清单](../tools/drill-anim/models/training-human-v2.json)，后续制作要求写入 [drill-anim/AGENTS.md](../tools/drill-anim/AGENTS.md)。新动作显式指定 `modelProfile: 'training-human-v2'` 和 `alignClavicles: false`；历史spec未指定profile时保留原默认。已有成片保持原版本，待用户安排后另存新渲染。
+完整人体基准为 [training-human-v2](training-human-v2.md)，版本及来源哈希见 [模型清单](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/models/training-human-v2.json)，后续制作要求写入 [drill-anim/AGENTS.md](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/AGENTS.md)。新动作显式指定 `modelProfile: 'training-human-v2'` 和 `alignClavicles: false`；历史spec未指定profile时保留原默认。已有成片保持原版本，待用户安排后另存新渲染。
 
 `page/training-collar.js` 在已有成熟网格上修正肩颈局部权重，使用CPU蒙皮后的中立坐标确定修复范围，让头/颈/躯干/肩胛的权重连续过渡，消除肩部下沉时衣领形成的硬平台。颈部原shader重复绘制的黑领去掉；真实上衣、灰色人台头、服装、轮廓光与透明度保留。权重按四个逻辑分量读写，兼容原GLB的共享交错缓冲区。切回旧profile恢复原权重、材质回调及缓存标识。
 

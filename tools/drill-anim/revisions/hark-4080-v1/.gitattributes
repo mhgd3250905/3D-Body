@@ -1,5 +1,0 @@
-# Preserve delivery hashes across Windows checkout and Git storage.
-* -text whitespace=cr-at-eol
-*.mp4 binary
-*.gif binary
-*.jpg binary

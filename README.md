@@ -1,5 +1,9 @@
 # Flare Anatomy Studio
 
+2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
+
+第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
+
 2026-10-17，用户确认“很好 验证通过”，并说明本次初步测试结束，授权保存提交及台账对齐。**当前保存版本为 L52 / 1.0.9+11 / v42-R17，本次初步用户测试通过；后续App改动以L52另建批次。** 跳过按顺序前进，末项后结束本轮，完成与跳过分列；12项相关测试、静态分析及Web/真机四次连续跳过检查通过。完整原生交互、长期QA、iOS及设备矩阵仍待验收。R17动作、L50认可记录、旧包/媒体与个人数据保留。见[L52记录](app/docs/l52-plan-skip-2026-10-17.md)；下方L51及更早内容为历史阶段。
 
 历史L51：2026-10-17，当时测试交付为 **L51 / 1.0.8+10 / v42-R17**：PR117计划页及三项修复已同签名保留数据更新到Android，首页和计划页显示通过，用户测试待反馈。包与设备事实见[L51记录](app/docs/l51-plans-test-2026-10-17.md)。L50/R17保留为已认可版本；下方“仅源码、未安装”属于此前PR合入阶段。
@@ -36,7 +40,7 @@ Android已保留数据安装L44，形象切换、同帧返回、冷启动保存�
 
 历史素材制作阶段：同日用户明确要求本会话重渲全部已有演示、另存手机尺寸素材；94个冻结版本已全部成片，共23,454帧、781.8秒，含1080母版、720手机版和540封面。制作流程为83ready/11待核对，最终独立审计为56ready/38待核对、失败/待制作均0，所选188视频完整解码。托马斯2/10另存全周期恒定构图派生，原媒体与QA保留。素材目录、最终审计、便携交付范围及新增接触估计提示见[统一素材库](docs/training-media-library-2026-10-13.md)。人体入口2.0.1保持已验收2.0.0外观；App L43/v41/原51视频不变，成片完成不等于全部动作或设备验收。
 
-历史工具整合阶段：2026-10-12 已按用户授权纳入训练动作制作分支 `feature/drill-anim`，工具位于 [tools/drill-anim](tools/drill-anim/README.md)。当前 App 交付仍为 L43，51 项正式视频保持；59 个分支参数与 60 个冻结正式成片的版本区别、Windows 运行、云盘备份和验证见 [训练动作工具整合记录](docs/drill-anim-integration-2026-10-12.md)。
+历史工具整合阶段：2026-10-12 已按用户授权纳入训练动作制作分支 `feature/drill-anim`，工具位于 [tools/drill-anim](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/README.md)。当前 App 交付仍为 L43，51 项正式视频保持；59 个分支参数与 60 个冻结正式成片的版本区别、Windows 运行、云盘备份和验证见 [训练动作工具整合记录](docs/drill-anim-integration-2026-10-12.md)。
 
 历史主线整合阶段：同日已将官网、网页使用站、办公室拉伸、久坐强化、iOS 工程及五项历史修订归档整合到 `master`；10-13再将已验收的托马斯专项本地优化与人体标准保存到主线。制作源为75项原库＋12份专项规格（第1项停止，2–12及左侧镜像为12个已验收预览），App仍选用原51视频。GitHub PR #106仍为原源Draft，本地优化保存不冒称该PR已合并。合并收据、实际验证与未完成事项见 [整合审核记录](docs/integration-pr-audit-2026-10-12.md)。本轮源码整合没有改变手机已安装的 L43 交付身份。
 
@@ -208,7 +212,7 @@ node app/tools/verify-v41.mjs
 | 本轮网站、制作工具、iOS及PR整合收据 | [docs/integration-pr-audit-2026-10-12.md](docs/integration-pr-audit-2026-10-12.md)；版本身份、验证及待办分别归入上面三份台账 |
 | 2026-10-07网页历史保存与阶段1恢复 | [docs/handoff-2026-10-07.md](docs/handoff-2026-10-07.md)、[当时核查证据](docs/evidence/2026-10-07/README.md) |
 | 外部开发、验证与 PR 提交 | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| 新训练动作与旧动作优化的人体标准 | [人体标准](docs/training-human-v2.md)、[固定版本清单](tools/drill-anim/models/training-human-v2.json)、[验收与检查](docs/thomas-app-model-v3-2026-10-12.md) |
+| 新训练动作与旧动作优化的人体标准 | [人体标准](docs/training-human-v2.md)、[固定版本清单](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/models/training-human-v2.json)、[验收与检查](docs/thomas-app-model-v3-2026-10-12.md) |
 | 人物、免费许可与 Blender 复现 | [docs/friendly-coach.md](docs/friendly-coach.md)、[public/coach/ATTRIBUTION.md](public/coach/ATTRIBUTION.md) |
 | 默认静态健身人物、解剖结构来源、覆盖范围与加载 | [docs/anatomy-assets.md](docs/anatomy-assets.md)、[public/anatomy/manifest.json](public/anatomy/manifest.json) |
 | 编辑控制点、保存、镜像与检查入口 | [docs/pose-editor.md](docs/pose-editor.md) |

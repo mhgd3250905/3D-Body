@@ -6,13 +6,15 @@
 //   --mode old : the current web coach (Snow with face) in the web app's own stage/lighting
 // node tools/flare-body-swap/render.mjs --mode new|old --out <dir> [--size 720] [--pr 1] [--no-crotch-smooth]
 //      [--frames 0,27,66] | [--from 0 --to 270]
-// Needs the root Vite dev server (APP_URL) and tools/drill-anim/config.json (Playwright paths).
-import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
-const HERE=path.dirname(fileURLToPath(import.meta.url)),REPO=path.resolve(HERE,'../..'),DA=path.join(REPO,'tools/drill-anim');
+// Needs the Pose-Hub Vite dev server (APP_URL), POSE_HUB_DIR and its drill-anim/config.json.
+import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
+import {DA,HUB,loadConfig,loadSpec,provideFlareInputs} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
 const A=process.argv.slice(2),opt=(k,d)=>{const i=A.indexOf(k);return i<0?d:A[i+1];};
 const mode=opt('--mode','new'),out=path.resolve(opt('--out','out')),SZ=+opt('--size',720),PR=+opt('--pr',1);
+assertOutsidePoseHub(out,HUB);
 fs.mkdirSync(out,{recursive:true});
-const spec=JSON.parse(fs.readFileSync(path.join(DA,'batches/training-human-v2-20261013/specs/flare-v41-loop.json'),'utf8'));
+const spec=loadSpec();
 spec.size=SZ;spec.highlight={groups:[],side:'both',pulseBase:1};
 const FPS=30,N=spec.encodingFrames;
 const frames=opt('--frames')?opt('--frames').split(',').map(Number):Array.from({length:(+opt('--to',N))-(+opt('--from',0))},(_,i)=>i+(+opt('--from',0)));
@@ -27,7 +29,7 @@ const METRICS=`(()=>{const v=flareInspector.viewer,J=v.motion.getMetrics().joint
  let armLeg=9;for(const a of ['left','right'])for(const l of ['left','right'])for(const [p,q] of [[J[a+'Shoulder'],J[a+'Elbow']],[J[a+'Elbow'],J[a+'Wrist']]])for(const [m,n] of [[J[l+'Hip'],J[l+'Knee']],[J[l+'Knee'],J[l+'Ankle']]])armLeg=Math.min(armLeg,segd(p,q,m,n));
  r.armLeg=armLeg;r.pelvisY=J.pelvis[1];r.J=J;return r;})()`;
 
-const {config}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);const C=config();
+const {C}=await loadConfig();
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path+(process.env.LD_LIBRARY_PATH?':'+process.env.LD_LIBRARY_PATH:'');
 let b,p;
 if(mode==='new'){
@@ -55,6 +57,7 @@ if(mode==='new'){
   p=await b.newPage({viewport:{width:SZ,height:SZ},deviceScaleFactor:PR});
   p.on('pageerror',e=>console.log('pageerror',e.message));
   await p.goto(C.app_url+'/?inspect');await p.waitForFunction(()=>document.documentElement.dataset.ready==='true',null,{timeout:170000});log('boot');
+  await provideFlareInputs(p,spec);
   await p.addStyleTag({content:`body *{visibility:hidden!important} canvas{visibility:visible!important} .msync-canvas{visibility:hidden!important}`});
   await p.evaluate(async ([s,SZ])=>{
     const src=await (await fetch('/src/viewer.js')).text(),ver=src.match(/three\.js\?v=(\w+)/)[1];

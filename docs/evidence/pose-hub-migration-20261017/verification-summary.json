@@ -1,0 +1,64 @@
+{
+  "unchangedProtectedFiles": 1363,
+  "unchangedMediaFiles": 105,
+  "flutter": {
+    "passedBefore": 165,
+    "passedAfter": 165,
+    "failures": {
+      "before": [
+        "ui/flow_regressions_test.dart: appearance switch persists, repaints and tells the scene [E]",
+        "ui/flow_regressions_test.dart: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused [E]",
+        "ui/flow_regressions_test.dart: phone safety → phase muscle → drill → local pain record → same paused frame [E]",
+        "ui/ios_layout_test.dart: SE3 landscape dark text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape dark text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape light text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape light text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape dark text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape dark text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape light text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape light text 2.0 core pages fit [E]",
+        "ui/polish_round2_test.dart: drill page: picture under the status bar, bar forms on scroll [E]"
+      ],
+      "after": [
+        "ui/flow_regressions_test.dart: appearance switch persists, repaints and tells the scene [E]",
+        "ui/flow_regressions_test.dart: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused [E]",
+        "ui/flow_regressions_test.dart: phone safety → phase muscle → drill → local pain record → same paused frame [E]",
+        "ui/ios_layout_test.dart: SE3 landscape dark text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape dark text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape light text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: SE3 landscape light text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape dark text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape dark text 2.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape light text 1.0 core pages fit [E]",
+        "ui/ios_layout_test.dart: iPhone13 landscape light text 2.0 core pages fit [E]",
+        "ui/polish_round2_test.dart: drill page: picture under the status bar, bar forms on scroll [E]"
+      ]
+    }
+  },
+  "rootBuild": "passed_before_and_after",
+  "sceneBuild": "passed_before_and_after",
+  "sceneVerify": "passed_before_and_after",
+  "flutterAnalyze": "passed",
+  "pathTests": 5,
+  "base": "66067a6475e6be85bf0daa6f167da1c124e4f1eb",
+  "poseHubMigrationCommit": "2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee",
+  "mappedFilesVerified": 341,
+  "deletedTrackedFiles": 340,
+  "migrationPointer": "tools/drill-anim/README.md",
+  "protectedManifestSha256": "01b64ae346a4251248cb8ab9a2ee61cc644d32ee073465c1b722eae62ef2ff52",
+  "media": {
+    "mp4": 51,
+    "jpg": 51,
+    "changed": 0
+  },
+  "browser": {
+    "root": "normal display, no console errors",
+    "appScene": "ready=true, errorCode=null, contextLost=false; favicon.ico 404 only"
+  },
+  "notRun": [
+    "complete render / GLB export",
+    "APK build / native device install",
+    "media release sync"
+  ],
+  "originalIgnoredRulesRelocated": true
+}

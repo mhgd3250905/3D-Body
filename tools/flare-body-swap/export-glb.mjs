@@ -5,24 +5,29 @@
 // COLOR_0 with the drill theme colours on a matte MeshStandardMaterial.
 // node tools/flare-body-swap/export-glb.mjs <out.glb> [--no-crotch-smooth]
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
-const HERE=path.dirname(fileURLToPath(import.meta.url)),REPO=path.resolve(HERE,'../..'),DA=path.join(REPO,'tools/drill-anim');
+import {DA,HUB,loadConfig,loadSpec,provideFlareInputs} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
+const HERE=path.dirname(fileURLToPath(import.meta.url));
 const out=path.resolve(process.argv.slice(2).find(a=>!a.startsWith('--'))||'flare-coach-v41-training-human-collarfix-20261013.glb');
+assertOutsidePoseHub(out,HUB);
 if(fs.existsSync(out))throw new Error('Export output already exists; preserve it and choose a new filename.');
-const spec=JSON.parse(fs.readFileSync(path.join(DA,'batches/training-human-v2-20261013/specs/flare-v41-loop.json'),'utf8'));
-const {config,loadTheme}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);const C=config();
+const spec=loadSpec();
+const {loadTheme,C}=await loadConfig();
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path;
 const {boot}=await import(pathToFileURL(path.join(DA,'lib/boot.mjs')).href);
 const theme=loadTheme();const {b,p}=await boot({size:512,pr:1,theme,bakeHands:[]});
+await provideFlareInputs(p,spec);
+const exporterSource=fs.readFileSync(path.join(HUB.root,'node_modules/three/examples/jsm/exporters/GLTFExporter.js'),'utf8');
 // crotch-smooth mannequin pelvis (2026-10-13): shorts crotch weights diffused + front panel flattened + folds smoothed.
 // Mesh-only; bones, rest TRS and the v41 clip are untouched. --no-crotch-smooth exports the previous body.
 let crotchReport=null;
 if(!process.argv.includes('--no-crotch-smooth')){await p.addScriptTag({content:fs.readFileSync(path.join(HERE,'crotch-smooth.js'),'utf8')});crotchReport=await p.evaluate(()=>__applyCrotchSmooth());}
-const res=await p.evaluate(async ([s,th])=>{
+const res=await p.evaluate(async ([s,th,exporterSource])=>{
   const src=await (await fetch('/src/viewer.js')).text(),ver=src.match(/three\.js\?v=(\w+)/)[1];
   const T=await import('/node_modules/.vite/deps/three.js?v='+ver);
   const {GLTFLoader}=await import(src.match(/\/node_modules\/\.vite\/deps\/three_addons_loaders_GLTFLoader__js\.js\?v=\w+/)[0]);
   // three's raw example module keeps a bare 'three' import here: point it at the app's own Three build.
-  const ex=(await (await fetch('/node_modules/three/examples/jsm/exporters/GLTFExporter.js')).text()).replace(/from 'three'/g,`from '${location.origin}/node_modules/.vite/deps/three.js?v=${ver}'`);
+  const ex=exporterSource.replace(/from 'three'/g,`from '${location.origin}/node_modules/.vite/deps/three.js?v=${ver}'`);
   const {GLTFExporter}=await import(URL.createObjectURL(new Blob([ex],{type:'text/javascript'})));
   const v=flareInspector.viewer;v.playing=false;v.motion.reset();
   __drill.selectModelProfile(s);                       // training-human-v2 collar/shoulder weights on
@@ -73,7 +78,7 @@ const res=await p.evaluate(async ([s,th])=>{
   const glb=await new GLTFExporter().parseAsync(v.coach,{binary:true,animations:[clip],onlyVisible:true});
   const u8=new Uint8Array(glb);let bin='';for(let i=0;i<u8.length;i+=0x8000)bin+=String.fromCharCode(...u8.subarray(i,i+0x8000));
   return {b64:btoa(bin),report,bones,tracks:clip.tracks.length,dropped:drop.map(o=>o.name)};
-},[spec,theme]);
+},[spec,theme,exporterSource]);
 fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,Buffer.from(res.b64,'base64'));
 delete res.b64;res.crotchSmooth=crotchReport&&{...crotchReport,params:undefined};console.log(JSON.stringify(res,null,1));console.log('wrote',out,fs.statSync(out).size);
 await b.close();

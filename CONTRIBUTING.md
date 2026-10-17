@@ -1,5 +1,9 @@
 # 开发与 PR 协作
 
+2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
+
+第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
+
 仓库公开于 [mhgd3250905/3D-Body](https://github.com/mhgd3250905/3D-Body)。外部开发者请 Fork，在自己的分支完成修改，再向本仓库的 **`master`** 提交 PR。一个 PR 聚焦一个明确问题，便于审阅和验证。
 
 先读 [README](README.md)、[项目约定](AGENTS.md) 和 [版本台账](app/docs/version-ledger.md)，核对当前交付及本地检查点；实际验证见 [verification.md](app/docs/verification.md)，实施和待验收项见 [development-roadmap.md](app/docs/development-roadmap.md)。
@@ -27,7 +31,7 @@ npm start
 ## 开发边界
 
 - 保留原第 9–16 步再接回 9 的正式循环、原导出和阶段1快照。姿态、K 帧、轨迹或存储格式的修改应有明确任务依据，不能为调整肌群界面而改动它们。
-- 以现有动画为核心入口，默认完整人物与柔和功能提示，选中后查看局部肌群。后续新训练动作与旧动作优化采用已验收的[training-human-v2](docs/training-human-v2.md)，规格与验证见[制作工具](tools/drill-anim/README.md)。旧选版和历史媒体保留，按具体任务另存新版本。
+- 以现有动画为核心入口，默认完整人物与柔和功能提示，选中后查看局部肌群。后续新训练动作与旧动作优化采用已验收的[training-human-v2](docs/training-human-v2.md)，规格与验证见[制作工具](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/README.md)。旧选版和历史媒体保留，按具体任务另存新版本。
 - 预算为零，运行须离线可用，不引入 CDN。新增资产先确认免费许可、保留来源和署名；人物与解剖模型的约束见 [资产来源](docs/anatomy-assets.md) 与 [人物复现](docs/friendly-coach.md)。不使用球、柱、椭圆体拼接动作人体。
 - Snow 动作人物、静态健身人物和 BodyParts3D 解剖参考分别处理。保留真实肌群名称与左右，不用其他肌肉冒充缺失结构，不编造肌电百分比或声称模型精确配准。
 - 不清理、重置或覆盖个人数据，不修改兄弟项目 `E:\AII-3D\3D-Wrist`。

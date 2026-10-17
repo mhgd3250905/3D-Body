@@ -5,6 +5,8 @@ import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import {spawn,spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {poseHubPaths,assertOutsidePoseHub} from './tools/pose-hub-paths.mjs';
+const HUB=poseHubPaths();
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1]};
 // Resolve existing symlinks/junctions before any output write. New leaves inherit
@@ -21,9 +23,10 @@ const write=(p,v)=>{fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileS
 const pathKey=p=>process.platform==='win32'?p.toLowerCase():p;
 assert(pathKey(out)!==pathKey(source)&&!pathKey(out).startsWith(pathKey(source+path.sep)),'Derived output must be outside production');
 assert(ids.every(id=>/^[a-z0-9-]+$/.test(id)),'Invalid id');
-const plan=read(source+'/plan.json'),comp=ROOT+'/tools/drill-anim/lib/comp.py';
-const protectedPaths=['tools/drill-anim/batch-rerender.mjs','tools/drill-anim/lib/comp.py','tools/drill-anim/models/training-human-v2.json','tools/drill-anim/batches/training-human-v2-20261013/job-catalog.json'];
-const frozen=()=>Object.fromEntries(protectedPaths.map(n=>[n,hash(ROOT+'/'+n)]));
+assertOutsidePoseHub(out,HUB);
+const plan=read(source+'/plan.json'),comp=path.join(HUB.drillAnim,'lib/comp.py');
+const protectedPaths=['drill-anim/batch-rerender.mjs','drill-anim/lib/comp.py','drill-anim/models/training-human-v2.json','drill-anim/batches/training-human-v2-20261013/job-catalog.json'];
+const frozen=()=>Object.fromEntries(protectedPaths.map(n=>[n,hash(path.join(HUB.root,n))]));
 const frozenBefore=frozen();
 function child(exe,args,log){return new Promise((resolve,reject)=>{
  const stream=fs.createWriteStream(log,{flags:'a'}),p=spawn(exe,args,{cwd:ROOT,env:{...process.env,PYTHONUTF8:'1',OPENBLAS_NUM_THREADS:'1',OMP_NUM_THREADS:'1',MKL_NUM_THREADS:'1'},windowsHide:true});
@@ -40,7 +43,7 @@ function probe(file,n,size,duration){
  return {...s,duration:Number(s.duration??j.format.duration),frames:n,fps:30,sha256:sha(bytes),bytes:bytes.length,faststart:true};
 }
 fs.mkdirSync(out,{recursive:true});
-const manifest={schemaVersion:1,kind:'constant_full_cycle_reframe',sourceLibraryRoot:source.replaceAll('\\','/'),sourceModel:{id:plan.model.id,version:plan.model.version},sourceRecipe:plan.recipe,createdAt:new Date().toISOString(),overrides:{}};
+const manifest={schemaVersion:1,kind:'constant_full_cycle_reframe',sourceLibraryRoot:source.replaceAll('\\','/'),sourceModel:{id:plan.model.id,version:plan.model.version},sourceRecipe:plan.recipe,poseHub:{checkout:HUB.root.replaceAll('\\','/'),readOnlyInputsSha256:frozenBefore},createdAt:new Date().toISOString(),overrides:{}};
 if(fs.existsSync(out+'/delivery-manifest.json')){
  const old=read(out+'/delivery-manifest.json');assert.equal(old.sourceLibraryRoot,manifest.sourceLibraryRoot);manifest.overrides=old.overrides;manifest.createdAt=old.createdAt;
 }

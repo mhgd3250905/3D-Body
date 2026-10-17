@@ -1,5 +1,9 @@
 # 项目约定
 
+2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
+
+第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
+
 2026-10-17，用户确认“很好 验证通过”，并说明本次初步测试结束，授权保存提交及台账对齐。**当前保存版本为 L52 / 1.0.9+11 / v42-R17，本次初步用户测试通过；后续App改动以L52另建批次。** 跳过按顺序前进，末项后结束本轮，完成与跳过分列；12项相关测试、静态分析及Web/真机四次连续跳过检查通过。完整原生交互、长期QA、iOS及设备矩阵仍待验收。R17动作、L50认可记录、旧包/媒体与个人数据保留。见[L52记录](app/docs/l52-plan-skip-2026-10-17.md)；下方L51及更早内容为历史阶段。
 
 历史L51：2026-10-17，按用户追加授权已安装 **L51 / 1.0.8+10 / v42-R17** 供测试，内容为PR117计划页及三项审核修复。Android从L50同签名保留数据更新，首页/计划页观察通过；用户测试、完整原生与长期QA仍待验收。L50/R17已认可保存及旧资产保持，包和设备事实见[L51记录](app/docs/l51-plans-test-2026-10-17.md)。下方PR117“仅源码未安装”为历史阶段。
@@ -34,7 +38,7 @@ Android已保留数据安装L44，形象切换、同帧返回、冷启动保存�
 
 历史素材制作阶段：2026-10-13用户明确要求在本会话用已验收人体重渲全部已有演示、另存素材，94个冻结版本已全部成片（23,454帧/781.8秒，含正式Flare v41、五个真实早期示范、托马斯左侧变体），规则见[统一素材库](docs/training-media-library-2026-10-13.md)。producer为83ready/11待核对，最终独立audit-final为56ready/38待核对、failed/pending均0；保持原QA，不将成片数量写成全部通过。托马斯2/10仅另存恒定构图派生，动作/运镜及原媒体保留。本批次保留原参数/成片及App51视频，制作入口补丁为2.0.1、外观基准仍2.0.0。已冻结的page/lib/src和spec及历史批次不可覆盖；新制作代码或人体版本另建批次。便携目录与实际回读结果读取交付清单，此明确批次授权不扩大到自动替换App或以后自行重渲。
 
-人体标准确立阶段（历史App边界）：2026-10-13用户已验收托马斯第三轮肩颈优化。训练动作后续新制作、旧动作优化及安排重渲统一采用 `training-human-v2`，规范见[人体标准](docs/training-human-v2.md)与[固定源清单](tools/drill-anim/models/training-human-v2.json)，spec指定 `modelProfile: 'training-human-v2'`、`alignClavicles: false`。保留原成熟人体、灰色头、服装与骨架，不根据参考人物的宽松衣服重建身体。旧成片和参数保留；按具体任务另存新版，不自动重渲全部旧动作或替换App51视频。这个制作标准不改变现有App首页/详情v41人物与L43安装身份。
+人体标准确立阶段（历史App边界）：2026-10-13用户已验收托马斯第三轮肩颈优化。训练动作后续新制作、旧动作优化及安排重渲统一采用 `training-human-v2`，规范见[人体标准](docs/training-human-v2.md)与[固定源清单](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/models/training-human-v2.json)，spec指定 `modelProfile: 'training-human-v2'`、`alignClavicles: false`。保留原成熟人体、灰色头、服装与骨架，不根据参考人物的宽松衣服重建身体。旧成片和参数保留；按具体任务另存新版，不自动重渲全部旧动作或替换App51视频。这个制作标准不改变现有App首页/详情v41人物与L43安装身份。
 
 历史 L43 交付为 **L43**（1.0.0+1，动作v41）。支持14语离线内容与准确短名；均衡/高清/省电渲染密度上限分别3/4/1。肌群详情顶部栏下模型与介绍上下各半，站立人台及缩略图高亮当前肌群双侧，动作人物保持阶段侧别；知识卡片展开/收起字号、换行及阅读位置连续，无右侧图标或可见滚动条。手机已保留数据安装L43，用户自行验收。
 

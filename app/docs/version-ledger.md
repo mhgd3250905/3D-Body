@@ -1,5 +1,11 @@
 # Flare 版本管理台账
 
+## Pose-Hub 迁移边界（2026-10-17）
+
+动作生产已迁至 Pose-Hub `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`；后续仅消费其发布版本，现有51媒体及 L52 / 1.0.9+11 / v42-R17 保存身份保持。本次清理不新增素材、设备或历史QA验收；迁移来源、保留范围及发布后接入计划见[迁移记录](../../docs/pose-hub-migration-2026-10-17.md)。下方历史验证、旧源码路径和绿幕补充继续保留原时点事实，清理检查以本次实际执行结果为准。
+
+清理分支 `chore/move-drill-anim-to-pose-hub` 基于 `66067a6`：340个已迁文件移除，原工具README改迁移指针，保留工具以 `POSE_HUB_DIR` 读取外部checkout，文档链接固定迁移commit。51视频/封面及运行资产保持，App版本号不变；#121已关闭并指向Pose-Hub#1。验证前后无新增失败，详见[本次实测](../../docs/pose-hub-migration-2026-10-17.md#本次清理实测)。本地保存与远端推送分开记录；推送及新PR创建待用户同意。
+
 ## 当前保存身份与阶段收束（2026-10-17）
 
 | 项目 | 当前事实 |
@@ -191,7 +197,7 @@ APK：output/releases/Flare-L45-PR110-20261014-arm64.apk，75,901,782字节，SH
 
 ## 2026-10-13 人体标准与托马斯版本整理
 
-用户已观看第三轮预览并验收肩颈优化，指定 `training-human-v2` / `2.0.0` 为后续新训练动作、旧动作优化及安排重渲的统一人体标准。完整身份固定为原Snow派生GLB、灰色头、服装/骨架、肩颈权重与加载/求解管线的13份源SHA，见[人体标准](../../docs/training-human-v2.md)和[清单](../../tools/drill-anim/models/training-human-v2.json)。这不是新的App包编号，不创建L44，手机仍为L43 / 1.0.0+1 / v41 / 51视频。
+用户已观看第三轮预览并验收肩颈优化，指定 `training-human-v2` / `2.0.0` 为后续新训练动作、旧动作优化及安排重渲的统一人体标准。完整身份固定为原Snow派生GLB、灰色头、服装/骨架、肩颈权重与加载/求解管线的13份源SHA，见[人体标准](../../docs/training-human-v2.md)和[清单](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/models/training-human-v2.json)。这不是新的App包编号，不创建L44，手机仍为L43 / 1.0.0+1 / v41 / 51视频。
 
 本轮基线与原远端master为 `6fbf7a7050322ce2d138ed97a8745a06fac2b8cd`。主目录保持同一checkout，将隔离分支 `codex/thomas-reference-optimization` 的以下5个保存点快进吸收至 `4ef555624b95e1b39d6221efefa7d6bd7f692ba3`，28路径A23/M5，没有改写历史。近期14项PR合并收据与Git双亲/祖先再次一致，保留下一节原收据。
 

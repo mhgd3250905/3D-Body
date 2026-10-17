@@ -1,9 +1,10 @@
 // Screenshot the real App scene (app/scene, phone 390x844) with the current coach and with
 // ?body=training at the same seek times. node tools/flare-body-swap/shoot-app.mjs <url> <outdir> <t,t,...>
-import fs from 'node:fs';import path from 'node:path';import {fileURLToPath,pathToFileURL} from 'node:url';
-const HERE=path.dirname(fileURLToPath(import.meta.url)),DA=path.resolve(HERE,'../drill-anim');
-const [url,outDir,ts]=process.argv.slice(2);fs.mkdirSync(outDir,{recursive:true});
-const {config}=await import(pathToFileURL(path.join(DA,'lib/config.mjs')).href);const C=config();
+import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
+import {HUB,loadConfig} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
+const [url,outDir,ts]=process.argv.slice(2);assertOutsidePoseHub(outDir,HUB);fs.mkdirSync(outDir,{recursive:true});
+const {C}=await loadConfig();
 if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path;if(C.playwright_browsers_path)process.env.PLAYWRIGHT_BROWSERS_PATH=C.playwright_browsers_path;
 const {chromium}=await import(pathToFileURL(C.playwright_module).href);
 const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader']});

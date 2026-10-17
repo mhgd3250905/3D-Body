@@ -14,5 +14,10 @@ output/playwright/.cache/
 /托马斯/备份/
 __pycache__/
 *.pyc
+# Migration: retain locally ignored Pose-Hub predecessor configuration and caches.
+/tools/drill-anim/config.json
+/tools/drill-anim/out/
+/tools/drill-anim/refs/
+/tools/drill-anim/node_modules/
 /keys/
 /.playwright-mcp/

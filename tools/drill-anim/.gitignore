@@ -1,6 +1,0 @@
-config.json
-out/
-refs/
-node_modules/
-__pycache__/
-*.pyc

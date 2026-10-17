@@ -61,7 +61,7 @@ the current display. The upright mannequin retains its own materials.
 Retained original source at the repository root:
 `assets/blender-studio-source/snow-rig-v4/Snow/snow_v4.2.blend`.
 Editable derivative: `assets/coach/flare-coach-study.blend`.
-Reproduction: `tools/blender/build_coach_study.py` and its local helpers, then
+Reproduction: [build_coach_study.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_coach_study.py) and its local helpers, then
 `npm run optimize:study` in `app/scene`.
 The body/head gzip GLBs are lossless encodings of the completed Blender
 exports; this compression does not undo or conceal the deliberate sculpting,

@@ -1,27 +1,30 @@
 // Preserve PR109's original GLB. Derive only the accepted native-skin colour
 // and post-skinning cloth sink, sourced from the frozen training-human-v2 pipeline.
-// node tools/flare-body-swap/derive-collarfix.mjs --pipeline-root ROOT --out NEW_GLB --gzip NEW_GZIP --report NEW_REPORT
+// node tools/flare-body-swap/derive-collarfix.mjs (set POSE_HUB_DIR) --out NEW_GLB --gzip NEW_GZIP --report NEW_REPORT
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
-import {createRequire} from 'node:module';import {gzipSync} from 'node:zlib';import {fileURLToPath,pathToFileURL} from 'node:url';
-const REPO=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+import {createRequire} from 'node:module';import {gzipSync} from 'node:zlib';import {pathToFileURL} from 'node:url';
+import {REPO,DA,HUB,loadConfig} from './pose-hub.mjs';
+import {assertOutsidePoseHub} from '../pose-hub-paths.mjs';
 const args=process.argv.slice(2),opt=(k,d)=>args.includes(k)?args[args.indexOf(k)+1]:d;
-const pipeline=path.resolve(opt('--pipeline-root',REPO));
+if(args.includes('--pipeline-root'))throw new Error('Use POSE_HUB_DIR for the migrated Pose-Hub checkout; --pipeline-root is retired.');
 const source=path.join(REPO,'app/scene/source/coach/flare-coach-v41-training-human-animated.glb');
 const output=path.resolve(opt('--out',path.join(REPO,'app/scene/source/coach/flare-coach-v41-training-human-collarfix-20261013.glb')));
 const gzip=path.resolve(opt('--gzip',args.includes('--out')?output+'.gz':path.join(REPO,'app/scene/public/coach/flare-coach-v41-training-human-collarfix-20261013.glb.gz')));
 const reportPath=path.resolve(opt('--report',output+'.json'));
+for(const file of [output,gzip,reportPath])assertOutsidePoseHub(file,HUB);
 if(fs.existsSync(output)||fs.existsSync(gzip)||fs.existsSync(reportPath))throw new Error('Derivation output already exists; preserve it and choose new --out, --gzip and --report paths.');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const baseline=JSON.parse(fs.readFileSync(path.join(REPO,'tools/drill-anim/models/training-human-v2.json'),'utf8'));
+const baseline=JSON.parse(fs.readFileSync(path.join(DA,'models/training-human-v2.json'),'utf8'));
 const sources=Object.entries(baseline.sourceSha256).map(([file,expected])=>{
- let bytes=fs.readFileSync(path.join(pipeline,file));if(!file.endsWith('.glb'))bytes=Buffer.from(bytes.toString('utf8').replace(/\r\n/g,'\n'));
+ let bytes=fs.readFileSync(path.join(HUB.root,file));if(!file.endsWith('.glb'))bytes=Buffer.from(bytes.toString('utf8').replace(/\r\n/g,'\n'));
  const actual=sha(bytes);if(actual!==expected)throw new Error('Frozen source changed: '+file);return {file,sha256:actual};
 });
 const require=createRequire(path.join(REPO,'app/scene/package.json'));
 const {NodeIO,Accessor}=await import(pathToFileURL(require.resolve('@gltf-transform/core')).href);
 const {ALL_EXTENSIONS}=await import(pathToFileURL(require.resolve('@gltf-transform/extensions')).href);
-const {config,loadTheme}=await import(pathToFileURL(path.join(pipeline,'tools/drill-anim/lib/config.mjs')).href);
-const {boot}=await import(pathToFileURL(path.join(pipeline,'tools/drill-anim/lib/boot.mjs')).href);
+const {loadTheme,C}=await loadConfig();
+if(C.ld_library_path)process.env.LD_LIBRARY_PATH=C.ld_library_path;
+const {boot}=await import(pathToFileURL(path.join(DA,'lib/boot.mjs')).href);
 const theme=loadTheme(),{b,p}=await boot({size:512,pr:1,theme,bakeHands:[]});let live;
 try {
  live=await p.evaluate(th=>{

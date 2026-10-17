@@ -1,5 +1,7 @@
 # 资产来源与复现
 
+2026-10-17迁移说明：动作制作、渲染与人物模型工具已归 Pose-Hub；下文来源、制作命令及批次证据保留历史事实，后续修改按[迁移边界](../../docs/pose-hub-migration-2026-10-17.md)到 Pose-Hub 另建版本。FlareLab 场景/模型消费副本与现有51媒体保留。
+
 ## L50 R17循环起手修复（2026-10-17）
 
 沿用既有Snow两人体与许可，继承R16制作源，在5.5%–8%平滑接入游离臂微调，消除循环初始支撑肘被压弯；镜像半周期同样处理。原R16落手修复、人体外观和修改区外动作保持。两人体来源与无损meshopt/gzip见[R17接入清单](../scene/tools/v42-r17-source-manifest.json)，剪影来自同一实际GLB；R16/R15及旧素材保持。
@@ -137,7 +139,7 @@ L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面�
 
 此前制作的白膜副本还原了衣物下的同源完整皮肤，局部平顺肚脐与裆部，并采用无五官头部和暖米白哑光材质。用户于2026-10-08取消展示并形成历史检查点，随后在2026-10-09明确要求恢复这一外观用于指定肌群详情。当前重新采用 `flare-coach-study-body` 与 `flare-coach-study-head`，首页仍显示原衣物和原脸；源文件、可编辑副本、历史渲染和压缩产物均保留，没有删除或重置。
 
-历史源文件是仓库 `assets/blender-studio-source/snow-rig-v4/Snow/snow_v4.2.blend`，制作时读取现有 `assets/coach/flare-coach.blend` 的20骨静态骨架与已准备的手足。脚本 [build_coach_study.py](../../tools/blender/build_coach_study.py) 与同目录 `sculpt_coach_study.py` 在副本上恢复皮肤、处理腹部和裆部、衔接颈部，并从同源面部、头皮、耳和颈制作无五官头部。头部使用局部体素重建、平滑和减面；不是球体或其他程序化体块拼接的人头。制作保留原 `.blend`、正常着装模型、动作源文件和个人草稿，没有重新制作动作骨架。
+历史源文件是仓库 `assets/blender-studio-source/snow-rig-v4/Snow/snow_v4.2.blend`，制作时读取现有 `assets/coach/flare-coach.blend` 的20骨静态骨架与已准备的手足。脚本 [build_coach_study.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_coach_study.py) 与同目录 `sculpt_coach_study.py` 在副本上恢复皮肤、处理腹部和裆部、衔接颈部，并从同源面部、头皮、耳和颈制作无五官头部。头部使用局部体素重建、平滑和减面；不是球体或其他程序化体块拼接的人头。制作保留原 `.blend`、正常着装模型、动作源文件和个人草稿，没有重新制作动作骨架。
 
 可编辑派生保存为仓库 `assets/coach/flare-coach-study.blend`，完整编辑导出是 `scene/source/coach/flare-coach-study.glb`，实际 Blender 渲染与制作报告在 `output/coach-study-20261008/`。部件输出是 `coach/flare-coach-study-body.meshopt.glb.gz` 和 `coach/flare-coach-study-head.meshopt.glb.gz`。源部件各含20骨，新版适配借用动作人物同名骨并处理已烘焙腰部辅助骨与权重，保留部件逆绑定矩阵、绑定矩阵和 glTF 网格坐标偏移；原 v33 动作/资产导入基线没有被修改。
 

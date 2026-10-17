@@ -1,5 +1,7 @@
 # 解剖资产说明
 
+2026-10-17迁移说明：动作制作、渲染与人物模型工具已归 Pose-Hub；下文来源、制作命令及批次证据保留历史事实，后续修改按[迁移边界](pose-hub-migration-2026-10-17.md)到 Pose-Hub 另建版本。FlareLab 场景/模型消费副本与现有51媒体保留。
+
 动画内肌群浮窗默认使用 Blender Studio 官方 Human Base Meshes v1.4.1 的 Realistic 男性底模，以完整自然人体和表面功能色区讲解相关肌群位置。它是独立静态参考，与 Snow 动作人物和 BodyParts3D 解剖模型分别管理。
 
 **解剖结构**模式使用真实 BodyParts3D 4.0 几何，由 [ashemag/human-atlas](https://github.com/ashemag/human-atlas) 中已优化的模型整理而来。固定来源提交为 `1c38bf35c254a891200d3cedecfd57abebe83d8d`。它保持原成人男性站姿，肌肉与骨骼均可按结构选中。
@@ -126,7 +128,7 @@ Three.js 用本地 `GLTFLoader` 独立加载 GLB；运行时在体表与覆盖�
 
 人物使用独立米制坐标，`+Y` 向上、`+Z` 朝前；完整范围见 `fitness-reference.json`。相同单位和朝向不构成解剖配准：默认模式不把 BodyParts3D 内部结构嵌入这个不同拓扑和比例的人物。模型只用于静态浮窗，不新增 Flare 骨架或动画，Snow 的姿态、时间、K、路线和主镜头继续保留。
 
-制作脚本为 `tools/blender/build_fitness_reference.py`，可编辑场景为 `assets/coach/fitness-reference.blend`。原文件、输出体积、哈希、对象计数和实际 Blender 渲染的交付记录见下文。
+制作脚本为 [build_fitness_reference.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_fitness_reference.py)，可编辑场景为 `assets/coach/fitness-reference.blend`。原文件、输出体积、哈希、对象计数和实际 Blender 渲染的交付记录见下文。
 
 ### 保留的 BodyParts3D 解剖结构参照
 
@@ -134,7 +136,7 @@ Three.js 用本地 `GLTFLoader` 独立加载 GLB；运行时在体表与覆盖�
 
 解剖结构模式的目标肌肉来自原二进制网格，只借用几何并创建独立显示材质，保留源名称、本人左右、结构 ID 与原坐标。切换和释放浮窗不会修改或释放借用的源肌肉几何；源 Skin、骨骼／肌肉块及主索引保留。缺少独立结构的肌肉继续按 `missingStructures` 说明。
 
-旧体表与原肌肉同源，但仍是独立静态结构参考，未与 Snow 当前动作精确配准。其制作脚本为 `tools/blender/build_muscle_reference.py`，可编辑文件为 `assets/coach/muscle-reference.blend`。已有源校验和外观适配记录保留，隐私、服装与简化面孔使派生体表不适合精确体表测量。
+旧体表与原肌肉同源，但仍是独立静态结构参考，未与 Snow 当前动作精确配准。其制作脚本为 [build_muscle_reference.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_muscle_reference.py)，可编辑文件为 `assets/coach/muscle-reference.blend`。已有源校验和外观适配记录保留，隐私、服装与简化面孔使派生体表不适合精确体表测量。
 
 ### 选型记录
 

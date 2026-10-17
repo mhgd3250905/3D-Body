@@ -1,5 +1,14 @@
 # 托马斯动画换人体实验（2026-10-13，本地分支，未发布）
 
+> 2026-10-17 迁移后：本目录保留为 FlareLab 的历史换人体实验工具；动作、人体和渲染源只读依赖 [3D-Pose-Hub @ 2a1b5ef](https://github.com/mhgd3250905/3D-Pose-Hub/tree/2a1b5ef)。必须设置绝对路径 `POSE_HUB_DIR`，没有本地 fallback。新动作、姿态、脚向、高亮、模型版本和渲染修改均在 Pose-Hub 做；App 训练媒体等待发布版本后同步，当前 51 项媒体不变。
+>
+> 配置读取 `$env:POSE_HUB_DIR/drill-anim/config.json`，其 `app_dir` 必须指向 Pose-Hub 根目录，根 Vite 配置实际服务 `runtime/`。先在该 checkout 启动 Vite，并让 `APP_URL` 指向该服务；App 截图/验证仍使用单独的 `app/scene` URL。历史 v41 GLB 与 phase JSON 保留在 FlareLab，本工具只桥接这两个固定输入；GLTFExporter 从外部 checkout 的依赖读取。`--pipeline-root` 已停用，所有输出禁止写进 Pose-Hub checkout。
+
+```powershell
+$env:POSE_HUB_DIR = 'E:/AII-3D/3D-Pose-Hub'
+# 在 Pose-Hub 根目录 npm ci 后启动 Vite；不要在 FlareLab 重新建渲染源。
+```
+
 用户希望用健身动作模块已验收的训练人体 `training-human-v2`（无脸灰色人台头、肩颈蒙皮修复）替换托马斯动画里的 Snow 有脸教练。本目录是这次尝试的可复现工具与结论。默认App外观不变，只有加 `?body=training` 才换人体。
 
 ## 结论
@@ -19,9 +28,9 @@
 | `rules.py` | 根据 `render.mjs --mode new` 输出的每帧指标，检查托马斯规则。 |
 
 ```bash
-# 需先启动根目录 Vite（drill-anim config.json 的 app_url），App 场景另起 Vite（app/scene）
+# 先 export POSE_HUB_DIR=/absolute/path/to/3D-Pose-Hub；启动 Pose-Hub 根 Vite，App 场景另起 Vite（app/scene）
 node tools/flare-body-swap/render.mjs --mode new --out OUT --size 1080 --from 0 --to 270
-python3 tools/drill-anim/lib/comp.py OUT OUT/spec.json OUT/theme.json OUT/c   # 合成为 drill 画风
+python3 "$POSE_HUB_DIR/drill-anim/lib/comp.py" OUT OUT/spec.json OUT/theme.json OUT/c   # 合成为 drill 画风
 node tools/flare-body-swap/export-glb.mjs output/body-swap-rebuild/training-human-collarfix.glb
 (cd app/scene && node ../../tools/flare-body-swap/verify-glb.mjs)
 node tools/flare-body-swap/shoot-app.mjs http://127.0.0.1:8852/ OUT_APP 0,1.2,2.4,4.2,6.3,8.1
@@ -66,7 +75,7 @@ python3 tools/flare-body-swap/compare-sheet.py OUT crotch-closeup-compare.png
 - App 里的服装颜色是烘焙后的顶点色，配 App 自己的光照。drill 视频特有的 ember 描边、暗色背景和 toon 明暗属于离线合成，App 里没有。
 - 原PR阶段仅检查首页播放、seek和标签。L44补修已软件核对17肌群详情/交换/同帧返回与真实领口shader，限定真机切换及播放也已抽查；完整人工姿态/设备验收仍待完成，见app/docs/pr109-l44-upgrade-2026-10-13.md。
 - 裆部平滑只做在 Flare 这份 GLB 和渲染工具上；drill-anim 的 `training-human-v2` 原始资产本身没有改（它是运行时套用的配置，改它会影响所有已验收的健身动作视频）。
-- 根目录的 `verify:motion`、`verify:asset`、`verify:sequence` 在未改动的 master 上就已失败（历史快照或输出文件缺失），与本实验无关。`app/tools/verify-v41.mjs` 和 `tools/drill-anim/verify.mjs` 都通过。
+- 根目录的 `verify:motion`、`verify:asset`、`verify:sequence` 在未改动的 master 上就已失败（历史快照或输出文件缺失），与本实验无关。`app/tools/verify-v41.mjs` 和 [Pose-Hub `drill-anim/verify.mjs`](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef/drill-anim/verify.mjs) 都通过。
 
 ## App领口修复派生（2026-10-13）
 
@@ -80,10 +89,11 @@ python3 tools/flare-body-swap/compare-sheet.py OUT crotch-closeup-compare.png
 # 保留的原PR与派生分别验证；ESM依赖从app/scene明确解析，不依赖cwd。
 node tools/flare-body-swap/verify-glb.mjs
 node tools/flare-body-swap/verify-glb.mjs --model flare-coach-v41-training-human-collarfix-20261013
-# 根Vite服务提供固定制作源；App scene Vite服务用于270帧与真实shader检查。
+# Pose-Hub 根 Vite 服务提供固定制作源；App scene Vite 服务用于270帧与真实shader检查。
+$env:POSE_HUB_DIR = 'E:/AII-3D/3D-Pose-Hub'
 $env:APP_URL = 'http://127.0.0.1:8869'
-node tools/flare-body-swap/derive-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --out output/collarfix-reproduced.glb --report output/collarfix-reproduced.json
-node tools/flare-body-swap/verify-collarfix.mjs --pipeline-root E:/AII-3D/3D-Body --url http://127.0.0.1:8892 --report output/collarfix-verification.json
+node tools/flare-body-swap/derive-collarfix.mjs --out output/collarfix-reproduced.glb --report output/collarfix-reproduced.json
+node tools/flare-body-swap/verify-collarfix.mjs --url http://127.0.0.1:8892 --report output/collarfix-verification.json
 ```
 
 独立验证通过215项断言：只有上述允许属性发生变化；270帧关节与22骨骼矩阵差值均为0；44轨关键帧与插值完全相同；gzip与source完全相同；App首页和真实详情shader无编译错误，详情代理保留sink，脸与灰头材质不变，退出恢复原材质。源及证据报告见 `output/playwright/pr109-upgrade-20261013/collar/`。这些是软件验证，不代替用户随后真机外观验收。

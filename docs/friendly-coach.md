@@ -1,6 +1,8 @@
 # 零预算动作人物与静态肌群参考
 
-2026-10-13训练示范视频的统一人体标准为已验收的 [training-human-v2](training-human-v2.md)：保留Snow派生网格、灰色人台头、原服装/骨架并修复肩颈。后续新动作及旧动作优化/重渲采用完整版本，13份来源SHA见[模型清单](../tools/drill-anim/models/training-human-v2.json)。制作人体标准与动作时钟分别管理。L44 App可在设置中保存选择原卡通教练或领口修复训练人台，两者沿用Snow来源及v41骨骼/动画；App51视频也已按用户授权更新为该标准素材，见[L44记录](../app/docs/pr109-l44-upgrade-2026-10-13.md)。根网页原人物、旧成片和Blender原件保留。
+2026-10-17迁移说明：动作制作、渲染与人物模型工具已归 Pose-Hub；下文来源、制作命令及批次证据保留历史事实，后续修改按[迁移边界](pose-hub-migration-2026-10-17.md)到 Pose-Hub 另建版本。FlareLab 场景/模型消费副本与现有51媒体保留。
+
+2026-10-13训练示范视频的统一人体标准为已验收的 [training-human-v2](training-human-v2.md)：保留Snow派生网格、灰色人台头、原服装/骨架并修复肩颈。后续新动作及旧动作优化/重渲采用完整版本，13份来源SHA见[模型清单](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/drill-anim/models/training-human-v2.json)。制作人体标准与动作时钟分别管理。L44 App可在设置中保存选择原卡通教练或领口修复训练人台，两者沿用Snow来源及v41骨骼/动画；App51视频也已按用户授权更新为该标准素材，见[L44记录](../app/docs/pr109-l44-upgrade-2026-10-13.md)。根网页原人物、旧成片和Blender原件保留。
 
 2026-10-09当前默认网页/App动作已同步到v41：脚踝扭转与领口蒙皮优化，保留Snow原衣服、面孔及材质。网页保留原编辑器，App使用对应烘焙GLB；来源、复现与验证以 [v41同步合约](../app/docs/motion-v41.md) 为准。以下制作与历史展示说明保留；原网页GLB已独立备份为 `public/coach/flare-coach-before-web-v41.glb`，没有覆盖Blender原件或个人导出。
 
@@ -8,7 +10,7 @@
 
 ## 当前网页肌群参考（PR3整合后）
 
-首页同步面板与全屏3D肌群查看器实际加载 `public/anatomy/mannequin-reference.glb`，来源/改动为同名JSON，制作工具为 `tools/mannequin/build_mannequin.py`。它从已有CC0 Realistic male体表派生，去掉短裤并局部平顺人台裆部；静态、1网格/74,274三角形，1,338,688字节，记录SHA-256为 `ac4c0dd92d42504a949fd0aff0063aaff0886a68278f95878bc3da9df177e056`。本次只读取元数据与加载代码，没有重读或重建GLB。功能色区为位置示意，不是BodyParts3D内部网格或肌电百分比。
+首页同步面板与全屏3D肌群查看器实际加载 `public/anatomy/mannequin-reference.glb`，来源/改动为同名JSON，制作工具为 [build_mannequin.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/mannequin/build_mannequin.py)。它从已有CC0 Realistic male体表派生，去掉短裤并局部平顺人台裆部；静态、1网格/74,274三角形，1,338,688字节，记录SHA-256为 `ac4c0dd92d42504a949fd0aff0063aaff0886a68278f95878bc3da9df177e056`。本次只读取元数据与加载代码，没有重读或重建GLB。功能色区为位置示意，不是BodyParts3D内部网格或肌电百分比。
 
 下方 `fitness-reference.glb` 及有短裤浮窗描述属于保留资产/此前入口，不能覆盖PR3首页。App的人台、穿衣详情与v41烘焙人物以App合约为准；版本身份见 [版本管理台账](../app/docs/version-ledger.md)。
 
@@ -18,9 +20,9 @@
 - Three.js 模型：`public/coach/flare-coach.glb`。
 - 真实关节点与来源：`public/coach/coach-rig.json`、`public/coach/ATTRIBUTION.md`。
 - Blender 全身渲染：`output/blender/coach-preview.png`；面部近景：`output/blender/coach-portrait.png`。
-- 可复现制作脚本：`tools/blender/build_coach.py`；七个必需生成 helper 及调用顺序见下文“用本机 Blender 重建”。
-- 保留的有短裤静态参考及当前人台派生源：`public/anatomy/fitness-reference.glb`、`public/anatomy/fitness-reference.json`；可编辑场景为 `assets/coach/fitness-reference.blend`，制作脚本为 `tools/blender/build_fitness_reference.py`。当前网页人台见上节。
-- 解剖结构模式保留的同源完整体表：`public/anatomy/muscle-reference.glb`、`public/anatomy/muscle-reference.json`；可编辑文件和制作脚本仍为 `assets/coach/muscle-reference.blend`、`tools/blender/build_muscle_reference.py`。这些静态参考与 Snow 动作资产分开。
+- 可复现制作脚本：[build_coach.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_coach.py)；七个必需生成 helper 及调用顺序见下文“用本机 Blender 重建”。
+- 保留的有短裤静态参考及当前人台派生源：`public/anatomy/fitness-reference.glb`、`public/anatomy/fitness-reference.json`；可编辑场景为 `assets/coach/fitness-reference.blend`，制作脚本为 [build_fitness_reference.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_fitness_reference.py)。当前网页人台见上节。
+- 解剖结构模式保留的同源完整体表：`public/anatomy/muscle-reference.glb`、`public/anatomy/muscle-reference.json`；可编辑文件和制作脚本仍为 `assets/coach/muscle-reference.blend`、[build_muscle_reference.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/build_muscle_reference.py)。这些静态参考与 Snow 动作资产分开。
 
 Snow 动作人物的身体、面孔、眼睛、眉毛、头发、衣服和鞋均来自 Blender Studio 免费发布的 Snow v4.2。这个项目使用完整成熟网格，调整运动服、肤色、表情和灯光。没有用球、柱等体块拼接人体。原始专业 rig 及贴图仍保存在 `assets/blender-studio-source/snow-rig-v4/Snow/`，未改动源文件。
 
@@ -62,13 +64,13 @@ Adam 免费包本轮未取得或采用：访客下载需要 ArtStation 账号，
 
 以下保留各次修复当时的数值、截图路径和验证结果，本次文档对齐没有重跑这些检查。旧八预设、266,744 顶点及旧工作区检查数量是相应历史版本的记录，不能当作当前正式九步已重新验收的结果。
 
-2026-10-05 衣裤改为浅灰上衣、哑光黑色短裤，降低镜面反光以弱化裤裆原有褶皱的明暗。采用轻量材质调整，未增加布纹贴图或修改服装网格与权重。`tools/blender/style_coach_outfit.py` 同时更新派生 `.blend` 与 GLB，已接入重建脚本。实际网页材质对照在 `output/outfit/`，改动前资产备份在 `output/outfit/before/`。
+2026-10-05 衣裤改为浅灰上衣、哑光黑色短裤，降低镜面反光以弱化裤裆原有褶皱的明暗。采用轻量材质调整，未增加布纹贴图或修改服装网格与权重。[style_coach_outfit.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/style_coach_outfit.py) 同时更新派生 `.blend` 与 GLB，已接入重建脚本。实际网页材质对照在 `output/outfit/`，改动前资产备份在 `output/outfit/before/`。
 
 同日修复单手侧撑时裤腰穿出浅灰衣摆的问题：原衣摆局部增加 9 mm 包覆，低端延长 3 mm，向上平滑渐隐。保持材质、UV、衣服权重和骨架。当时第 3、7 步的局部对照与备份在 `output/outfit-hem/`，仅对这两个实际姿势做近景检查。
 
 2026-10-05 按用户要求将卷发和发髻换成普通短寸头：沿用原人物完整的头发底层，删除另外 11 个卷束及发髻部件，并轻微外移覆盖头皮，使用哑光深棕色。面孔、服装、骨架与关节点保留，已有姿势继续沿用。发型对照图在 `output/buzzcut/`，更换前的派生资产备份在 `assets/coach/backups/2026-10-05-before-buzzcut/`。
 
-此前只保留鞋口以上的小腿，虽然遮住了脚掌穿出白鞋底的问题，却会在脚踝旋转时暴露断开的皮肤边缘。本版重新保留原 Snow 连续的脚踝和脚部皮肤，把鞋内部分平滑收进白鞋内部，并调整 Shin / Foot 的过渡权重。鞋子、脚踝关节点及腿长保留；网页的地面约束按真实鞋面和鞋底计算，避免把有少量 Foot 权重的小腿皮肤当成整只鞋旋转。鞋底检查脚本为 `tools/blender/inspect_coach_shoes.py`，历史修复图保留在 `output/blender/coach-shoes-before.png` 和 `output/blender/coach-shoes-after.png`。
+此前只保留鞋口以上的小腿，虽然遮住了脚掌穿出白鞋底的问题，却会在脚踝旋转时暴露断开的皮肤边缘。本版重新保留原 Snow 连续的脚踝和脚部皮肤，把鞋内部分平滑收进白鞋内部，并调整 Shin / Foot 的过渡权重。鞋子、脚踝关节点及腿长保留；网页的地面约束按真实鞋面和鞋底计算，避免把有少量 Foot 权重的小腿皮肤当成整只鞋旋转。鞋底检查脚本为 [inspect_coach_shoes.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/inspect_coach_shoes.py)，历史修复图保留在 `output/blender/coach-shoes-before.png` 和 `output/blender/coach-shoes-after.png`。
 
 之前为撑地而将原手掌横截面强制投到固定平面，产生了刀切般的掌面；腕部从关节前 65 mm 到后 12 mm 的混合权重也会让弯折收缩出现在前臂末端。2026-10-05 根据用户指出的问题去掉这两种处理：恢复自然掌弓、鱼际及厚度，用原指骨轴与原权重舒展弯曲指节，腕部权重限定在原关节前 18 mm 到后 22 mm。整片手掌沿掌法线统一平移约 11.78 mm，并只在腕部短距离渐变，保留旧姿势的 25 mm 接触偏移；没有压平、裁切或缩薄掌面。20 个关节、骨长及保存格式保留，原始 Snow 未改动。预设仍按真实蒙皮顶点校正接触，掌弓的起伏不代表每根手指都完全接地。独立对照图及测量在 `output/hand-natural/`，更换前派生资产备份在 `assets/coach/backups/2026-10-05-before-natural-hands/`。手脚朝向与真实接触范围由 `tools/inspect-pose-orientations.mjs` 复核。
 
@@ -94,13 +96,13 @@ Adam 免费包本轮未取得或采用：访客下载需要 ArtStation 账号，
 
 | 顺序 | 生成 helper | 调用位置与作用 |
 | --- | --- | --- |
-| 1 | `tools/blender/prepare_coach_hands.py` | 在原身体完整求值网格上舒展手指，保留自然掌形及既有接触偏移 |
-| 2 | `tools/blender/fix_coach_joints.py` | 裁除被遮挡面之前，整理腕部与脚踝形态、可见性及过渡权重 |
-| 3 | `tools/blender/fix_coach_clothing.py` | 短裤裁短、权重归并后，3 mm Solidify 之前连续扩宽与修正裤裆权重 |
-| 4 | `tools/blender/style_coach_hair.py` | 人物网格与骨架创建后，保留原头发底层、删除卷束及发髻并外移 4 mm |
-| 5 | `tools/blender/refine_coach_ankles.py` | 在已有脚部收缩基础上细化鞋口宽度及 Shin / Foot 权重 |
-| 6 | `tools/blender/fix_coach_hem.py` | 为原上衣下摆增加局部包覆及延长 |
-| 7 | `tools/blender/style_coach_outfit.py` | GLB 导出前最终设置浅灰上衣、灰袖口与哑光黑裤材质 |
+| 1 | [prepare_coach_hands.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/prepare_coach_hands.py) | 在原身体完整求值网格上舒展手指，保留自然掌形及既有接触偏移 |
+| 2 | [fix_coach_joints.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/fix_coach_joints.py) | 裁除被遮挡面之前，整理腕部与脚踝形态、可见性及过渡权重 |
+| 3 | [fix_coach_clothing.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/fix_coach_clothing.py) | 短裤裁短、权重归并后，3 mm Solidify 之前连续扩宽与修正裤裆权重 |
+| 4 | [style_coach_hair.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/style_coach_hair.py) | 人物网格与骨架创建后，保留原头发底层、删除卷束及发髻并外移 4 mm |
+| 5 | [refine_coach_ankles.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/refine_coach_ankles.py) | 在已有脚部收缩基础上细化鞋口宽度及 Shin / Foot 权重 |
+| 6 | [fix_coach_hem.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/fix_coach_hem.py) | 为原上衣下摆增加局部包覆及延长 |
+| 7 | [style_coach_outfit.py](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/tools/blender/style_coach_outfit.py) | GLB 导出前最终设置浅灰上衣、灰袖口与哑光黑裤材质 |
 
 已验证本机路径：`E:\AII\toolchains\blender\4.5.3\blender-4.5.3-windows-x64\blender.exe`。
 
