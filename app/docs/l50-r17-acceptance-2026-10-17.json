@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-17",
+  "userStatement": "OK 测试通过 做好版本保存",
+  "status": "user-tested-and-accepted",
+  "version": "L50 / 1.0.7+9 / v42-R17",
+  "frozenImplementationCommit": "b151b8d39440a126cf0a24d101e2b559bf460e3b",
+  "frozenTags": [
+    "motion-v42-r17",
+    "app-l50-v1.0.7-build9"
+  ],
+  "acceptanceTag": "accepted-l50-r17-20261017",
+  "apk": {
+    "file": "output/releases/Flare-L50-v42-R17-20261017-arm64.apk",
+    "sha256": "b7453410d2c84f5dbfc2cf4986e9aefb82d223d9b1c17d846c9d0c9a2681310a"
+  },
+  "archive": {
+    "file": "output/releases/Flare-v42-R17-loop-takeoff-fix-20261017.zip",
+    "sha256": "60076f078f3df443ea3adb930c9c5b8c5ad488d352b5dd2916e1b9642faec97f"
+  },
+  "scope": "User confirmation of current R17 motion repair and L50 app test; no claim that previously unperformed full-device or long-duration QA was performed.",
+  "preservation": "Frozen source, release manifests, ZIP and APK unchanged. Acceptance is an additive record; future motion changes require a new batch."
+}
