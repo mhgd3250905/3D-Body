@@ -35,6 +35,14 @@ original thresholds, followed by green export and full CPU video decoding.
 `--format dark` is available for separate reference batches. Existing outputs
 are never overwritten automatically.
 
+CPU placement now uses `composite_alpha_parallel.py`, with four independent
+frame tasks per 3D slot. It delegates every pixel operation and edge metric to
+the unchanged serial compositor. The final 24-frame benchmark under production
+load was 8.940 s serial versus 2.858 s parallel (3.13x for this stage); PNG,
+placement and edge JSON bytes matched exactly. It atomically records per-range
+cache certificates binding producer, delegate, raw frame, spec, placement and
+output hashes. This does not change sequential motion solving or its warm starts.
+
 `run_queue.py` manages two slots, prioritizes missing App videos, previews and
 checks each action before full rendering, records reviews/errors separately,
 and stops new dispatch below 15 GiB free. It can recover live workers using
@@ -50,8 +58,17 @@ python tools/hiplab-render/run_queue.py --app <HipLab checkout> --output <batch>
 ## Green and alpha derivatives
 
 ```text
-python tools/hiplab-render/export_greenscreen_hq.py --output <batch> --ids n-chair-wiper --once --keep-alpha
+python tools/hiplab-render/export_greenscreen_fast.py --output <batch> --ids n-chair-wiper --once --keep-alpha
 ```
+
+The fast exporter validates every cache certificate, current raw/spec/placement
+and PNG hash before copying already placed transparent PNGs into independent
+staging files. Missing, corrupt or stale certificates fall back to the frozen HQ
+placement computation. All original color QA and full decoding still run; old
+published legacy and HQ recipes are strictly verified and never relabelled.
+The 240-frame s-pigeon fixture took 26.95 s to composite and 10.58 s to export,
+compared with the earlier production log's 79 s and about 50 s respectively.
+These postprocessing measurements do not assert a full-pipeline speedup.
 
 The exporter reads the original RGBA passes and the recorded placement, without
 solving or rendering the motion again. Each completed source needs all frames,
@@ -79,8 +96,9 @@ recipe, frame count, codec validation and inherited QA. Results and partial
 files are preserved. Changed sources/recipes require a new output batch.
 
 `queue-status.json` describes the entire production queue. The HQ export summary
-`greenscreen/delivery-manifest-hq.json` records each result's actual pixel format
-and recipe; a concurrently running legacy watcher owns `delivery-manifest.json`.
+`greenscreen/delivery-manifest-fast.json` records each result's actual pixel
+format, recipe and cache reuse. Earlier exporters retain their separate
+`delivery-manifest-hq.json` and `delivery-manifest.json` summaries.
 Green manifest
 `requested_ids` describes the current export invocation; use
 `all_batch_derivatives_complete` for the complete source batch. No completed

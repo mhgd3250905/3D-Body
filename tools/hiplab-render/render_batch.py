@@ -168,7 +168,7 @@ def main():
                 drill.qa(sid, fr)
                 qa = json.loads((output / "master/metrics" / (sid + ".json")).read_text(encoding="utf-8"))
                 if a.format == "green":
-                    subprocess.run([sys.executable, str(Path(__file__).with_name("export_greenscreen_hq.py")),
+                    subprocess.run([sys.executable, str(Path(__file__).with_name("export_greenscreen_fast.py")),
                         "--output", str(output), "--ids", sid, "--once", "--keep-alpha"], check=True)
                     result_path = output / "greenscreen/jobs" / sid / "result.json"
                     product = json.loads(result_path.read_text(encoding="utf-8"))
