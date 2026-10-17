@@ -144,7 +144,7 @@ def main():
         def alpha_command(args):
             args = list(args)
             if len(args) > 1 and Path(args[1]).resolve() == (ROOT / "lib/comp.py").resolve():
-                args[1] = str(Path(__file__).with_name("composite_alpha.py"))
+                args[1] = str(Path(__file__).with_name("composite_alpha_parallel.py"))
             return args
 
         drill.run = lambda args, **kw: original_run(alpha_command(args), **kw)
