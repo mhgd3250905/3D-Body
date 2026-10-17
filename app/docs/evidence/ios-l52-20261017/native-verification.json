@@ -1,0 +1,153 @@
+{
+  "date": "2026-10-17",
+  "source": "7b63f5db720d18c6feaa315cb6ce1c20693020d5",
+  "version": "1.0.9",
+  "build": "11",
+  "device": "dedicated iPhone 13 Simulator",
+  "os": "iOS 26.5",
+  "flutter": "3.44.7",
+  "dart": "3.12.2",
+  "xcode": "26.6",
+  "nativeTests": {
+    "ios_smoke": {
+      "passed": true,
+      "reported": [
+        {
+          "sceneReadyMs": 4489,
+          "openCloseOk": true,
+          "modelSwapOk": true,
+          "replacementWebViewRestoresFrame": true,
+          "repeatedTerminationWaitsForRetry": true,
+          "recoveryTrigger": "injected-host-error",
+          "pausedFrame": 2.375,
+          "sceneStateAcknowledgements": 16
+        }
+      ]
+    },
+    "ios_actor_choice": {
+      "passed": true,
+      "reported": [
+        {
+          "body": "training",
+          "modelLoaded": "flare-coach-v42-r17-training-human.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "shadow",
+          "modelLoaded": "flare-coach-v42-r17-training-human.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "chrome",
+          "modelLoaded": "flare-coach-v42-r17-training-human.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "street",
+          "modelLoaded": "flare-coach-v42-r17-animated.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "robot",
+          "modelLoaded": "flare-coach-v42-r17-training-human.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "cyber",
+          "modelLoaded": "flare-coach-v42-r17-training-human.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        },
+        {
+          "body": "original",
+          "modelLoaded": "flare-coach-v42-r17-animated.meshopt.glb.gz",
+          "pausedTime": 2.375,
+          "detail": "deltoids",
+          "preferenceRestored": true
+        }
+      ]
+    },
+    "ios_workflow": {
+      "passed": true,
+      "reported": [
+        {
+          "firstLaunchSafetyOk": true,
+          "darkAndLightThemesOk": true,
+          "realCountdownAndPauseOk": true,
+          "abandonedRecordIsNotCompletion": true,
+          "nativePreferencesRoundTripOk": true,
+          "nativePlanPersistenceOk": true,
+          "activeSeconds": 2,
+          "systemReduceMotion": false,
+          "appDisableAnimations": false,
+          "webReduceMotion": false,
+          "sceneResourceCount": 6,
+          "externalSceneResourceOrigins": [],
+          "sceneOriginIsLoopback": true
+        }
+      ]
+    },
+    "ios_drill_media": {
+      "passed": true,
+      "reported": []
+    }
+  },
+  "assetComparison": {
+    "source": "7b63f5db720d18c6feaa315cb6ce1c20693020d5",
+    "version": "1.0.9",
+    "build": "11",
+    "groupsMatched": {
+      "scene": 30,
+      "drill_media": 105,
+      "brand": 12
+    },
+    "total": 147,
+    "kind": "simulator-debug-assets"
+  },
+  "cleanup": {
+    "authorizedBy": "user",
+    "cacheGroups": 15,
+    "priorAllocatedBytes": 3104722944,
+    "retained": [
+      "sources",
+      "assets",
+      "packages",
+      "archives",
+      "simulator data",
+      "built Web previews"
+    ]
+  },
+  "limits": [
+    "Simulator evidence only; no physical device verification",
+    "Process recovery injects a host error, not OS memory pressure",
+    "No Apple account changes, IPA upload or public release",
+    "Long-term timing/performance, accessibility and full media QA remain pending"
+  ],
+  "productionEntrypoint": {
+    "target": "lib/main.dart",
+    "simulatorBuildPassed": true,
+    "installedPreservingData": true,
+    "launched": true,
+    "version": "1.0.9",
+    "build": "11",
+    "assetsComparedAfterFinalBuild": {
+      "scene": 30,
+      "drill_media": 105,
+      "brand": 12
+    },
+    "brandSelection": "explicit pubspec assets; production metadata and unused icon variants intentionally excluded",
+    "screenshot": "native-main.png",
+    "observedScreen": "first-launch welcome with rendered R17 athlete"
+  }
+}

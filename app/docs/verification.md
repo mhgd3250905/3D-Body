@@ -107,6 +107,10 @@ SmartFit 结构对齐、独立提问组件、实际新 UI 回归、浅深来源�
 动作生产已迁至 Pose-Hub `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`；后续仅消费其发布版本，现有51媒体及 L52 / 1.0.9+11 / v42-R17 保存身份保持。本次清理不新增素材、设备或历史QA验收；迁移来源、保留范围及发布后接入计划见[迁移记录](../../docs/pose-hub-migration-2026-10-17.md)。下方历史验证、旧源码路径和绿幕补充继续保留原时点事实，清理检查以本次实际执行结果为准。
 
 本次实测：根网页及 `app/scene` 构建、场景全套 `npm run verify` 均在清理前后通过；1363个受保护非Markdown文件（含51MP4/51JPG）哈希一致。Flutter 全套前后均165通过/12失败，失败名称逐项一致：3条flow、1条polish、8条已有iOS横屏布局失败；不同于交接预估的4失败。清理后静态分析无问题，5项迁移路径测试通过，根网页和App scene浏览器显示正常（独立场景仅favicon 404）。[实际范围与限制](../../docs/pose-hub-migration-2026-10-17.md#本次清理实测)及[失败清单](../../docs/evidence/pose-hub-migration-20261017/verification-summary.json)保留；未重新渲染或做真机验收。
+## 2026-10-17 L52 原生补充验证
+
+用户授权清理可再生成中间产物后，7b63f5d源码在专用iPhone13 / iOS26.5 Simulator的ios_smoke、ios_actor_choice、ios_workflow及ios_drill_media四项真实WKWebView集成全部通过；147项包内资源逐项SHA一致。清理15组缓存约2.89GiB，源码/资产/归档与设备数据保持。细节及未验范围见[原生补充](ios-l52-rebase-2026-10-17.md#用户授权清理后的原生补充2026-10-17)与[脱敏报告](evidence/ios-l52-20261017/native-verification.json)，本次没有L52真机或Apple操作。
+
 ## 2026-10-17 iOS L52 验证
 
 本地基于`origin/master @66067a6`完成22提交rebase，保留iOS平台与布局修复。实际命令、源状态和结果见[本轮对齐验证](ios-l52-rebase-2026-10-17.md)；下方主线Android、10-13/10-15 iOS证据均保持各自日期与来源，不外推为本轮原生或发布验证。
