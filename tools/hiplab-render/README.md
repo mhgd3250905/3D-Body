@@ -50,7 +50,7 @@ python tools/hiplab-render/run_queue.py --app <HipLab checkout> --output <batch>
 ## Green and alpha derivatives
 
 ```text
-python tools/hiplab-render/export_greenscreen.py --output <batch> --ids n-chair-wiper --once --keep-alpha
+python tools/hiplab-render/export_greenscreen_hq.py --output <batch> --ids n-chair-wiper --once --keep-alpha
 ```
 
 The exporter reads the original RGBA passes and the recorded placement, without
@@ -59,12 +59,17 @@ true 30 fps metadata, and completed original QA. Source QA may be `review`, whic
 remains explicit in the derivative record. An unavailable source stays pending.
 
 Products live under `greenscreen/`: `media/master/*-greenscreen.mp4` (1080 H.264
-yuv420p, CRF 14), PNG posters, white/dark key comparisons, and optional exact
+yuv444p, CRF 12 editing masters), PNG posters, white/dark key comparisons, and optional exact
 placed RGBA PNG sequences in `alpha/`. Keep the source RGBA passes too. Necessary
 props and muscle highlights remain part of the foreground. A fixed chroma-key
 sample verifies foreground and highlight retention; ordinary keying can retain
 a thin green fringe from antialiasing and chroma subsampling. Exact alpha avoids
-that reconstruction loss. No green video is automatically installed in the App.
+that reconstruction loss. The original yuv420p/CRF14 exporter and its published
+outputs are frozen. The additive HQ exporter preserves all color samples after
+a small cyan highlight failed the original unchanged MAE threshold in 4:2:0.
+Existing 4:2:0 products retain their original recipe and verification. New HQ
+masters require a compatible derivative before Android integration. No green
+video is automatically installed in the App.
 
 `--watch` may export selected old-style dark-reference workers in parallel with
 their production. Do not let a watcher and a green-primary worker export the
@@ -73,7 +78,10 @@ same action simultaneously; their exclusive locks deliberately reject that.
 recipe, frame count, codec validation and inherited QA. Results and partial
 files are preserved. Changed sources/recipes require a new output batch.
 
-`queue-status.json` describes the entire production queue. Green manifest
+`queue-status.json` describes the entire production queue. The HQ export summary
+`greenscreen/delivery-manifest-hq.json` records each result's actual pixel format
+and recipe; a concurrently running legacy watcher owns `delivery-manifest.json`.
+Green manifest
 `requested_ids` describes the current export invocation; use
 `all_batch_derivatives_complete` for the complete source batch. No completed
 keyframe preview or subset is evidence of full-batch completion.
