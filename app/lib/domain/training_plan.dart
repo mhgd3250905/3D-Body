@@ -1,3 +1,5 @@
+import 'package:characters/characters.dart';
+
 import '../data/catalog.dart';
 
 /// A ready-made set for one training direction. It names muscle groups, not
@@ -66,10 +68,14 @@ class TrainingRoutine {
   static const maxName = 24;
   static const maxDrills = 20;
 
+  /// Uses the same visible-character limit as the editor's TextField.
+  static String truncateName(String name) =>
+      name.characters.take(maxName).toString();
+
   bool get valid =>
       id.isNotEmpty &&
       name.trim().isNotEmpty &&
-      name.length <= maxName &&
+      name.characters.length <= maxName &&
       drillIds.isNotEmpty &&
       drillIds.length <= maxDrills &&
       drillIds.toSet().length == drillIds.length;

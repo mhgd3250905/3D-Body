@@ -819,9 +819,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
     final s = context.strings;
     var name = _name.text.trim();
     if (name.isEmpty) name = s.planDefaultName;
-    if (name.length > TrainingRoutine.maxName) {
-      name = name.substring(0, TrainingRoutine.maxName);
-    }
+    name = TrainingRoutine.truncateName(name);
     setState(() => _busy = true);
     final existing = widget.routine;
     TrainingRoutine? saved;
@@ -1409,7 +1407,7 @@ class PlanRunPage extends StatelessWidget {
   final VoidCallback onSkip;
   final VoidCallback onFinish;
 
-  bool get complete => index >= drills.length;
+  bool get complete => index >= drills.length && done.length == drills.length;
 
   @override
   Widget build(BuildContext context) {

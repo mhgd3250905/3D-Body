@@ -1963,6 +1963,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     'settings': store.settings.toJson(),
     'lastTime': store.lastTime,
     'todayIds': store.todayIds,
+    'routines': store.routines.map((routine) => routine.toJson()).toList(),
     'sessions': store.sessions.map((session) => session.toJson()).toList(),
     'completedLessonIds': store.completedLessonIds.toList(),
     'gateReports': store.gateReports,
@@ -2597,7 +2598,7 @@ class _PlanRun {
   int _nextOpen(int from, Set<int> done) {
     for (var step = 1; step <= drills.length; step++) {
       final i = (from + step) % drills.length;
-      if (!done.contains(i) && i != from) return i;
+      if (!done.contains(i)) return i;
     }
     return drills.length;
   }
