@@ -1,0 +1,30 @@
+{
+  "installed": true,
+  "version": "L51",
+  "versionName": "1.0.8",
+  "versionCode": 10,
+  "motion": "v42-R17",
+  "previous": "L50 / 1.0.7+9",
+  "model": "2602BRT18C",
+  "android": "16",
+  "method": "adb install -r",
+  "result": "Success",
+  "sourceCommit": "a603c82cb377d11d1db77782c0b1fd8d62e4fa82",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L51-plans-v42-R17-20261017-arm64.apk",
+  "sourceApkSha256": "2f6002a6bc16279f8feaff40ac168fb0289610de264343aa7cd4f79677ad66fd",
+  "installedApkRemoteSha256": "2f6002a6bc16279f8feaff40ac168fb0289610de264343aa7cd4f79677ad66fd",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "firstInstallTimeBefore": "2026-10-08 17:53:04",
+  "firstInstallTimeAfter": "2026-10-08 17:53:04",
+  "lastUpdateTime": "2026-10-17 10:09:06",
+  "coldStart": "Starting: Intent { cmp=dev.mhgd.flare/.MainActivity }\nStatus: ok\nLaunchState: COLD\nActivity: dev.mhgd.flare/.MainActivity\nTotalTime: 350\nWaitTime: 362\nComplete",
+  "observedNativePages": [
+    "R17 home",
+    "Plans with six presets and scene selector"
+  ],
+  "dataPreservation": "Replacement install, no uninstall/clear, firstInstallTime unchanged. Private records not extracted or compared.",
+  "limitations": [
+    "User acceptance pending",
+    "No complete native training/long-run/iOS/device matrix validation"
+  ]
+}

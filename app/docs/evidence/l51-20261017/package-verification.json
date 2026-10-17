@@ -1,0 +1,14 @@
+{
+  "version": "L51 / 1.0.8+10 / v42-R17",
+  "sourceCommit": "a603c82cb377d11d1db77782c0b1fd8d62e4fa82",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L51-plans-v42-R17-20261017-arm64.apk",
+  "bytes": 97593345,
+  "sha256": "2f6002a6bc16279f8feaff40ac168fb0289610de264343aa7cd4f79677ad66fd",
+  "packageBadging": "package: name='dev.mhgd.flare' versionCode='10' versionName='1.0.8' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "sameCertificateAsInstalledL50": true,
+  "alignment16KiB": "passed",
+  "unchangedBundledAppAssetsComparedWithInstalledL50": 420,
+  "changedBundledAppAssets": [],
+  "installed": false
+}
