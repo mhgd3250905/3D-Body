@@ -6,7 +6,7 @@
 
 ## L49 R16 支撑肘修复（2026-10-17）
 
-沿用既有Snow同源两人体与许可，无新增外部人体或收费资产。R16从R15制作源码另建批次，仅使自由臂时序微调在落手前平滑退出；两人体来源SHA、无损meshopt/gzip和教学阶段见[接入清单](../scene/tools/v42-r16-source-manifest.json)。R15/R12资产与剪影保留，当前R16剪影由同一实际GLB离线渲染。缺陷及数值证据见[修复记录](../../docs/flare-v42-r16-fix-2026-10-17.md)。
+沿用既有Snow同源两人体与许可，无新增外部人体或收费资产。R16从R15制作源码另建批次，仅使自由臂时序微调在落手前平滑退出；两人体来源SHA、无损meshopt/gzip和教学阶段见[接入清单](../scene/tools/v42-r16-source-manifest.json)。R15/R12资产与剪影保留，当时R16剪影由同一实际GLB离线渲染。缺陷及数值证据见[修复记录](../../docs/flare-v42-r16-fix-2026-10-17.md)。
 
 ## L46 已认可 R12 动作（2026-10-15）
 
@@ -26,7 +26,7 @@
 
 历史v41默认动作采用PR #3固定提交 `53d72b412840a942fefc818836b68ad2a2d7e0d1` 的v41网格/运行时，独立清单为 `scene/tools/v41-source-manifest.json`，复现见 [v41同步](motion-v41.md)。当前穿衣详情代理高亮，不加载历史白膜；下方旧制作包、v38和白膜记录保留历史，不覆盖当前合约。
 
-App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为R12与穿衣详情，不加载历史白膜派生。
+App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`，原件保留于仓库 `.reference/flare-app-info-20261008/unpacked/flare-app-package/`。下表原包路径相对于此目录。2026-10-09曾接入v38烘焙包与同源米白详情模特，当时记录见 [v38历史](motion-v38.md)；当前统一为R17与穿衣详情，不加载历史白膜派生。
 
 ## 当前 App 图标：青绿色运动服 Flare 人物（2026-10-11，用户选定 B）
 
@@ -85,14 +85,14 @@ L25摄影清单当时为 `muscle-photography-v2-ivory`，记录实际尺寸、�
 | 解压包 | 913 个文件，含索引与清单；`00_START_HERE/MANIFEST.tsv` 记录其余911个文件的大小与哈希 |
 | 动作版本 | 包标明 `design/muscle-sync@43da6c8`，动作 v33，提交 `b7602c8`；来源仍为原步骤09–16再接回09 |
 
-v33/v38/v41清单、源文件保留为独立历史基线；当前来源为 `scene/tools/v42-r12-source-manifest.json`。网页/App默认一起采用R12，`托马斯/` 原导出、个人正式动画/步骤/草稿与 `Air-Flare/` 不被覆盖。包内旧布局/动作说明不覆盖当前合约。
+v33/v38/v41清单、源文件保留为独立历史基线；当前来源为 `scene/tools/v42-r17-source-manifest.json`。网页/App新默认一起采用R17；R12/R15/R16来源和已有网页选择继续保留各自历史身份，`托马斯/` 原导出、个人正式动画/步骤/草稿与 `Air-Flare/` 不被覆盖。包内旧布局/动作说明不覆盖当前合约。
 
 ## 采用范围
 
 | App 文件 | 包内来源与说明 |
 | --- | --- |
 | `scene/src/legacy/*.js` | `08_源代码/3D-Body-design-muscle-sync/src/` 中12个动作/肌群模块；原样复制，逐文件哈希见 `scene/tools/source-manifest.json` |
-| `scene/src/public/coach/` 与原场景动作资产 | `05_动作与3D资产/sequence/`、`models/coach-rig.json`；保留v33序列基线，当时后续采用v38，当前另用独立v41烘焙片段 |
+| `scene/src/public/coach/` 与原场景动作资产 | `05_动作与3D资产/sequence/`、`models/coach-rig.json`；保留v33序列基线，当时后续采用v38，当前另用独立R17烘焙片段，v33/v38/v41来源保留历史 |
 | Snow 教练原网格 | `05_动作与3D资产/models/flare-coach.glb`，7,508,016字节；源 SHA-256 `ea6a8739aeb6d8b68a5ac4f50c6094bfec30c61b8612cb317cea4745172c14ff` |
 | `assets/data/phase-muscles.json` | `06_肌群数据/phase-muscles.json`；17肌群、8阶段、左右与教学说明 |
 | `assets/data/drills.json`、Schema | `07_训练库/` 原内容，51训练；原字段不改，App 按来源清单找到本地 WebP |
@@ -123,7 +123,7 @@ L38 在现有 `FlareSans.ttf` 外，为韩语、阿拉伯语和天城文界面�
 
 ## 历史：v38接入时的模型分工
 
-以下两段保留当时约定，不代表当前R12穿衣详情。当前合约见 [motion-v42.md](motion-v42.md)。
+以下两段保留当时约定，不代表当前R17穿衣详情。当前合约见 [motion-v42.md](motion-v42.md)。
 
 按2026-10-09最新明确要求，采用包内 v38 烘焙角色动画，用 AnimationMixer 播放已有22骨/44轨道，不再次执行 IK、安装腰骨或叠加 paced clock。首页保留原上衣、短裤、面孔与原材质；指定肌群详情恢复暖米白哑光、无衣、无五官模特，仅显示当前群组浅红柔边位置，不画肌肉纹路或硬轮廓，不叠加其他阶段色。模特复用同源派生皮肤/头部，与新版演员共享动作骨骼；绑定与腰部权重适配必须按新版检查，不能把此前20骨记录当作22骨适配已通过的证据。
 
