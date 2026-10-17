@@ -1,0 +1,61 @@
+{
+  "version": "L50 / 1.0.7+9 / v42-R17",
+  "status": "installed-awaiting-user-review",
+  "files": [
+    {
+      "file": "build-apk.log",
+      "bytes": 1005,
+      "sha256": "721d94a25baf2adef687818e66e1b1a8d1f8f0ea02080542c27e71156fa48db4"
+    },
+    {
+      "file": "build-web.log",
+      "bytes": 1387,
+      "sha256": "ff6ca5e7b6a04fb9c1f929808882acc06bde814f0af039af8ea9016cbb2ab213"
+    },
+    {
+      "file": "device-log-check.json",
+      "bytes": 151,
+      "sha256": "d7f25c2f757f3d47252ddafd65b975311601cd73e4b49f91508b41f808a95bdd"
+    },
+    {
+      "file": "flutter-analyze.log",
+      "bytes": 687,
+      "sha256": "84f2af11813e72a5002d763a9c61bd2ac9d307aed6120278c488e1c59061dc67"
+    },
+    {
+      "file": "flutter-test.log",
+      "bytes": 917,
+      "sha256": "6e45cdb3571f018d1519b77c8eb8c349502a003dea2a7200f01e74712c5af3fd"
+    },
+    {
+      "file": "installation.json",
+      "bytes": 1542,
+      "sha256": "751a9d7250bb869a0d6cd7074303e159d8ea2c3cf611b69bf8c3251cef04f17e"
+    },
+    {
+      "file": "native-home.png",
+      "bytes": 1064836,
+      "sha256": "330907b1abe42e0ad751d8a90203e95a591108cef3bfb819bae0cb514b5ec09d"
+    },
+    {
+      "file": "package-verification.json",
+      "bytes": 66359,
+      "sha256": "a7948def5ff7bf4c851ff275e3030aef2e3f8d9b10e9dc0012848216a7f41446"
+    },
+    {
+      "file": "root-build.log",
+      "bytes": 1156,
+      "sha256": "bfdb631f296baed024afe2cac256b0f8b4a17b2e2189120f90ca4b965fc5bd49"
+    },
+    {
+      "file": "scene-build.log",
+      "bytes": 770,
+      "sha256": "350f1835f48a1267aedd697ab4db3d44a01b7d8c07bcebe3f785103ddb7ac477"
+    },
+    {
+      "file": "scene-verify.log",
+      "bytes": 10014,
+      "sha256": "231c12d27bebcc9c0d8e16676b0e01df23b7cd1b30aecfc62e87e73ffe9a1b60"
+    }
+  ]
+}

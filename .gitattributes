@@ -32,3 +32,7 @@ tools/motion-v42-r16/** -text
 # Keep raw build and device evidence consistent with its byte-hash manifest.
 app/docs/evidence/l48-20261017/** -text
 app/docs/evidence/l49-20261017/** -text
+
+# R17 motion and L50 verification are frozen with exact byte hashes.
+tools/motion-v42-r17/** -text
+app/docs/evidence/l50-20261017/** -text

@@ -1,0 +1,69 @@
+{
+  "source": "output/flare-v42-r17-20261017/flare-coach-v42-candidate.glb",
+  "sourceSha256": "d01f6f5f812aa5df291da5a2f027309d4bb2b42847198e3ed40879b1bc9bfe6c",
+  "animation": "flare_v42_candidate_loop",
+  "sourceDurationSeconds": 1.35,
+  "startPhase": 0.25,
+  "renderedFrameCount": 32,
+  "nominalFps": 24,
+  "imageDurationSeconds": 1.35,
+  "width": 384,
+  "height": 384,
+  "captureWidth": 768,
+  "captureHeight": 768,
+  "color": "white silhouette; transparent background; runtime tint",
+  "renderer": {
+    "threeRevision": "170",
+    "clipName": "flare_v42_candidate_loop",
+    "clipDuration": 1.350000023841858,
+    "meshCount": 22,
+    "vertexCount": 211060,
+    "renderer": "WebKit WebGL"
+  },
+  "camera": {
+    "azimuthDegrees": -30,
+    "elevationDegrees": 28,
+    "position": [
+      -2.674672899778208,
+      3.39504836377818,
+      4.624348251526016
+    ],
+    "target": [
+      -0.02583012120142751,
+      0.5782189870628351,
+      0.03641797776911415
+    ],
+    "orthographicSpan": 2.739706915617688,
+    "cycleOccupancy": 0.8
+  },
+  "attribution": "Snow Rig © Blender Foundation | studio.blender.org, CC BY 4.0; existing project animation",
+  "sourceLicense": "https://creativecommons.org/licenses/by/4.0/",
+  "changes": "Offline silhouette capture only, using the original AnimationMixer clip with a cyclic start offset. Source GLB, rig and animation unchanged.",
+  "format": "lossless animated WebP RGBA, infinite loop",
+  "frameDurationsMilliseconds": [
+    42,
+    43
+  ],
+  "totalDurationMilliseconds": 1350,
+  "fullCycleAlphaBounds": [
+    36,
+    68,
+    348,
+    316
+  ],
+  "verification": "All 32 frames decoded; alpha bit-identical to downsampled captures; every frame has transparent margins on all sides.",
+  "animated": {
+    "path": "app/assets/brand/flare-loading-v42-r17.webp",
+    "bytes": 119820,
+    "sha256": "6a3156cf046381b5428302c60c94dab7c9f6758404dee6bf6fa2a16c8863a508"
+  },
+  "reducedMotionStill": {
+    "path": "app/assets/brand/flare-loading-v42-r17-still.webp",
+    "bytes": 4130,
+    "sha256": "bac50f177d17dc542982866eafdbcf5b0e79695740f30c8492fa55a51f054af9"
+  },
+  "reproduce": [
+    "node app/tools/render-flare-loading.mjs --source output/flare-v42-r17-20261017/flare-coach-v42-candidate.glb --animation flare_v42_candidate_loop --duration 1.35 --output output/flare-loading-v42-r17-20261017/three --playwright-root <existing Playwright package directory> --browser <existing Chromium executable>",
+    "python app/tools/encode-flare-loading.py --input output/flare-loading-v42-r17-20261017/three --name flare-loading-v42-r17"
+  ]
+}

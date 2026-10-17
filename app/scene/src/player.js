@@ -104,7 +104,7 @@ export class FlarePlayer {
     const [gltf, rig] = await Promise.all([
       // The App's saved body selection supplies ?body=training for the faceless
       // collar-fixed training human. The original actor remains the other choice;
-      // both use the identical 22-bone rig and v42/R16 clip.
+      // both use the identical 22-bone rig and v42/R17 clip.
       // ?character= picks one of the dressed characters on the same bodies.
       loadOfflineGlb(characterAsset(this.callbacks.character ?? { base: new URLSearchParams(location.search).get('body') === 'training' ? 'training' : 'coach' })),
       fetch(new URL('./coach/coach-v41-rig.json', document.baseURI)).then(response => {

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R17 · 接缝右肘修复 · 待用户复核</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/"}}</script>
+<body><main>
+<header><span class="eyebrow" id="releaseEyebrow">Flare 独立动作 · 2026.10.17</span><h1><span id="releaseTitle">R17 · 接缝右肘修复 · 待用户复核</span> <em id="releaseBadge">核对版本中</em></h1><p>本版修复循环首尾右肘抖动，保留人体外观及其余动作。两侧同速同相位，拖动任一模型同步旋转。</p></header>
+<section class="controlbar">
+  <button id="play" disabled>播放对照</button>
+  <button id="seam" disabled>接缝慢放 · 95% → 0% → 8%</button><button id="whole">整圈播放</button>
+  <label for="body">人体</label><select id="body"><option value="training">训练人台</option><option value="coach">卡通教练</option></select>
+  <label for="duration">播放速度</label><select id="duration"><option value="1.35">源速度 · 1.35 秒/圈</option><option value="2.7">慢放 · 2.7 秒/圈</option><option value="6">慢放 · 6 秒/圈</option><option value="1.1333333333333333">蓝衣参考节奏 · 1.133 秒/圈</option></select>
+  <label for="view">视角</label><select id="view"><option value="standard">推荐</option><option value="front" selected>正面</option><option value="side">侧面</option><option value="back">背面</option></select>
+</section>
+<section class="panels">
+  <article class="panel"><div class="panel-title"><h2>R16 · 修复前原版</h2><span>冻结原版</span></div><div id="baselineStage" class="stage" role="img" aria-label="R16 原版三维模型，可拖动同步旋转"></div><p id="baselineStatus">正在读取本地 R16…</p></article>
+  <article class="panel"><div class="panel-title"><h2 id="candidateTitle">R17 · 核对版本中</h2><span class="candidate-tag" id="candidateTag">读取资产</span></div><div id="candidateStage" class="stage" role="img" aria-label="R17 三维模型，可拖动同步旋转"><div class="pending" id="candidatePending">正在读取 R17 资产</div></div><p id="candidateStatus">读取 R17 修复资产并核对哈希，等待用户复核。</p></article>
+</section>
+<section class="timeline">
+  <div class="phase-heading"><label for="phase">同步相位</label><output id="phaseLabel">2.97%</output></div>
+  <input id="phase" type="range" min="0" max="100" step="0.01" value="2.97">
+  <div class="controlbar phases"><span>接缝重点</span><button data-phase="99.8">99.8%</button><button data-phase="0">0% · 接缝</button><button data-phase="2.97">2.97% · 右肘重点</button><button data-phase="5.5">5.5%</button><button data-phase="8">8%</button><button data-phase="52">52% · 对侧核对</button><button id="reloadCandidate">重新读取 R17 资产</button></div>
+  <p id="status" role="status">初始暂停在 2.97%；左 R16 原版，右 R17 接缝右肘修复，待用户复核。</p>
+</section>
+<details id="reference"><summary>蓝衣真人参考 · 第 50–84 帧，约 1.133 秒/圈</summary><div class="reference-body"><div class="reference-video"><video id="referenceVideo" src="./assets/blue-reference.mp4" muted playsinline preload="metadata" aria-label="蓝衣真人参考视频"></video></div><div class="reference-info"><p>真人第 50–84 帧近似对应模型 0–100% 相位，阶段由人工对齐；相机未标定。展开后画面随主对照进度与播放速度同步。</p><p><label><input id="mirrorReference" type="checkbox" checked> 镜像参考视频（对齐旋转方向）</label></p><p id="mirrorStatus" class="mirror-state">已镜像参考画面 · 原文件未改动</p><p id="referenceFrame">参考帧 60 / 130</p><p>真人运动方向与模型相反，镜像只帮助观察同侧支撑关系。原视频不改写；其弯膝不作为本次试调目标。</p><a href="../blue-r14-analysis/" target="_blank" rel="noopener">打开完整真人对照页</a></div></div></details>
+<footer><p>两侧均播放实际 GLB，1.35 秒基础循环；相位与机位同步。接缝慢放在 95% 到下一圈 8% 间连续经过 0%，仅在 8% 回到 95%；速度固定为整圈 6 秒。R16 原版及原预览页完整保留。</p><p>R17 接缝右肘修复待用户复核，此前版本的认可不代表本次修复验收。<a href="./manifest.json">页面记录</a> · <a href="./candidate-manifest.json">R17 资产记录</a></p></footer>
+</main><script type="module" src="./viewer.js"></script></body></html>

@@ -1,0 +1,1695 @@
+{
+  "version": "L50 / 1.0.7+9 / v42-R17",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L50-v42-R17-20261017-arm64.apk",
+  "bytes": 97462273,
+  "sha256": "b7453410d2c84f5dbfc2cf4986e9aefb82d223d9b1c17d846c9d0c9a2681310a",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "sameCertificateAsInstalledL49": true,
+  "alignment16KiB": "passed",
+  "verifiedApkAndWebSourceFiles": 420,
+  "preservedDataMediaBrandFiles": 152,
+  "sceneBundle": "index-0f5ayvts.js",
+  "assets": [
+    {
+      "file": "app/assets/brand/flare-loading-still.webp",
+      "sha256": "2e1706b9796335564237d99961e417b28fd2200c876122a8dd6ed05183042bf0"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r12-still.webp",
+      "sha256": "2f9c209abcce29e93db06311f01977633ad26d9280fe939bf3e25d995e3694b4"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r12.webp",
+      "sha256": "d58208091d9067eb97debb7c427444ad30db779d195302d6b91934c9b7baa5c6"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r15-still.webp",
+      "sha256": "bac50f177d17dc542982866eafdbcf5b0e79695740f30c8492fa55a51f054af9"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r15.webp",
+      "sha256": "cc6efb5389720a58fe3ced2d4b02e3563da46010f73a07d58c7bc1f8998f898d"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r16-still.webp",
+      "sha256": "bac50f177d17dc542982866eafdbcf5b0e79695740f30c8492fa55a51f054af9"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r16.webp",
+      "sha256": "74ec9b54806a971c2aecbc79ebeefd5f8da5426b453e687ac3c3c4c7c371b014"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r17-still.webp",
+      "sha256": "bac50f177d17dc542982866eafdbcf5b0e79695740f30c8492fa55a51f054af9"
+    },
+    {
+      "file": "app/assets/brand/flare-loading-v42-r17.webp",
+      "sha256": "6a3156cf046381b5428302c60c94dab7c9f6758404dee6bf6fa2a16c8863a508"
+    },
+    {
+      "file": "app/assets/brand/flare-loading.webp",
+      "sha256": "e21454db66628d415d0765789d74c15e25699edd0b66cd94f4cf7184752467c5"
+    },
+    {
+      "file": "app/assets/brand/hero-thomas.webp",
+      "sha256": "3802006d400ae793b45ecfd97836eb578239d4a5cb0797f21b472e8b78219ec8"
+    },
+    {
+      "file": "app/assets/brand/icon.png",
+      "sha256": "4efb4ce324c70e63cfc0612450b5a16b403b94033723b15e367702ee9e834d8d"
+    },
+    {
+      "file": "app/assets/data/course-stages.json",
+      "sha256": "07321f38867d90d88a4aa30fae90394986077b499b11765fa3e47f1c2e91b610"
+    },
+    {
+      "file": "app/assets/data/drill-media-manifest.json",
+      "sha256": "d36536863076ac95d3cf2d6dccaf67e5031e2398e3bf5efc3958aa41ea11a8fd"
+    },
+    {
+      "file": "app/assets/data/drills.json",
+      "sha256": "a62b1f0cd06fe5e14713210c64b6d029926030f3d31210d23ea91c7676ed7691"
+    },
+    {
+      "file": "app/assets/data/drills.schema.json",
+      "sha256": "8624642fd43056c1ca785a9760ecaedecc2b680f6887feb73aeda33a973b21a4"
+    },
+    {
+      "file": "app/assets/data/phase-muscles.json",
+      "sha256": "cebd33825c3436316078cf54547cceba1d4a039b7f2a87f39425a9d0aa8ba818"
+    },
+    {
+      "file": "app/assets/data/phase-muscles.schema.json",
+      "sha256": "2bb347a92ab7c1d538c680893a62d5f764559524afaa4728e4c27339857631d7"
+    },
+    {
+      "file": "app/assets/data/source-manifest.json",
+      "sha256": "2213df199952328df112cc1b9c1a9eb9921f93b63defa2b7e86a2ee2aa0b0474"
+    },
+    {
+      "file": "app/assets/drill_media/abs-A.jpg",
+      "sha256": "10784c2edfb89c8ba69dc89d9e0151f6703a41098bfbdc38bd75928ecbd54841"
+    },
+    {
+      "file": "app/assets/drill_media/abs-A.mp4",
+      "sha256": "8c4758c8773ea6d82929897cb590173af8cc7c326f3fca0ab1c225cea7bae2c7"
+    },
+    {
+      "file": "app/assets/drill_media/abs-B.jpg",
+      "sha256": "9e4110e2e0d81892e53370e0d563679491f2ac028cf95c0254ded33fe96d5c15"
+    },
+    {
+      "file": "app/assets/drill_media/abs-B.mp4",
+      "sha256": "eabd7b65b4e40866e4c21a5926868ad32cb9e46385da8ffecd795066bb7d27bc"
+    },
+    {
+      "file": "app/assets/drill_media/abs-C.jpg",
+      "sha256": "4de4e00ee61c9efb19d308df32b220a5cf5faf5697f5689f05a2e5beec4ae821"
+    },
+    {
+      "file": "app/assets/drill_media/abs-C.mp4",
+      "sha256": "d94179a7c899ee4cc82dbeca5c8694d62a99cb25a72d8611d9c534da343db031"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-A.jpg",
+      "sha256": "6d6bc095294a493580622137881479148487a1b6983d2c6c9a0080c4360a88c0"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-A.mp4",
+      "sha256": "07c24b6ab085002ea18e75fd6ac56f9652d50aaa2720596d76f22302ea65331e"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-B.jpg",
+      "sha256": "289c405855ba4daed71c1e95a8c356f3738b0192874a02936f16d6a14d91e608"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-B.mp4",
+      "sha256": "3db62b7b2648b6acd799d39a779ed68efad81b1ee59f9375e86f0393fdad6cb9"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-C.jpg",
+      "sha256": "abaa1b9d3b0d46122a4ccb57f94252250e8a4a3aec9ae59294e029f1cbe16a9c"
+    },
+    {
+      "file": "app/assets/drill_media/adductors-C.mp4",
+      "sha256": "7d57668dad57f7bd8a0f81a87ab853c3d3f564359685a3376a402cd2634e53ac"
+    },
+    {
+      "file": "app/assets/drill_media/chest-A.jpg",
+      "sha256": "440bb1b79b7e863dde14efd89b37d451b6099bb5b56300e497aa62ea7840f218"
+    },
+    {
+      "file": "app/assets/drill_media/chest-A.mp4",
+      "sha256": "f49c3b12da02d6ebb877d633a2f505b3e4b0270a954049573f4c76aab0485373"
+    },
+    {
+      "file": "app/assets/drill_media/chest-B.jpg",
+      "sha256": "1f1bb6ca13649afa7085fd584c6234c5fe5dde2743edaa191e37d114a80da907"
+    },
+    {
+      "file": "app/assets/drill_media/chest-B.mp4",
+      "sha256": "dac6fa2b3c5996670de243e45b392e83800da6788bdb367bed3c65cb6416ef7b"
+    },
+    {
+      "file": "app/assets/drill_media/chest-C.jpg",
+      "sha256": "027a77ec1fcbd6fd091a24278d5d8bbb17fc443d7020974bcc2fb523d738f5c9"
+    },
+    {
+      "file": "app/assets/drill_media/chest-C.mp4",
+      "sha256": "527c649462ce25e887375a5429d23fd0d8632ed5558bc985d093ec147753d02b"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-A.jpg",
+      "sha256": "02d0f07ff6b07ccb201a268625016f5f4ccc448ab4346bf8f1792e50e83466a7"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-A.mp4",
+      "sha256": "e2be8f6c9773e69b0d634f265a199bae16c4cf73e4dad6522e6d57257a13cb6b"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-B.jpg",
+      "sha256": "2b17765c5fa170d4cac0f93cca35b348811eacebc290b1ff6badcafd669b7734"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-B.mp4",
+      "sha256": "9a83699401ec3f7f39788f160f4de843a75b7cbb4f2ff0d68e6b3b6082828ee0"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-C.jpg",
+      "sha256": "1f1413f20bed24c8f4a4d2bcee8a08249e5f039c942ef8d44014b9ecb74ac021"
+    },
+    {
+      "file": "app/assets/drill_media/deltoids-C.mp4",
+      "sha256": "efcbaec73e7700ef53a358d63b2f5c743d06527b22c68315a20ace87f5a4d06c"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-A.jpg",
+      "sha256": "232347b7699f2848ab9532cd6d778d8bea2cbe1458b7d84de41b162da15f7953"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-A.mp4",
+      "sha256": "4c7b733b2eacf244fb3f35077d986f5956127ae69722ed1b5592d5f2c1beced5"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-B.jpg",
+      "sha256": "ddb13ca2c2cdd3ed20e0673993aa67f9df73ea986e1aaf100713c22c40bf58ca"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-B.mp4",
+      "sha256": "b6a576e0434742a399288c1167c4112bb89a70162393588a9cf8f09dde35df5e"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-C.jpg",
+      "sha256": "c3c7e90a041d7a99036b577c6376a6c5c97217674fd683df489377dbec7fc9ce"
+    },
+    {
+      "file": "app/assets/drill_media/erectors-C.mp4",
+      "sha256": "9b945d23fd3737870462bd8ef0483327d8d3a05ba97e42c13d3156962f7b45c7"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-A.jpg",
+      "sha256": "dbd47b4cc4a32b4d1e52031aca073cdb67e9f6bb3a46c69b508ea4a7f016528d"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-A.mp4",
+      "sha256": "625adc76e63113a187a479be1ed17124dd8ba5e0450ee3730cfdcef9f307868b"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-B.jpg",
+      "sha256": "60b218dc66be4f2c015e9ef44a5320eb45278435a52f4ede55b77a100b3f3525"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-B.mp4",
+      "sha256": "1d7c447300170e2bcefba433207a5f41b402fa2790b614c8881f1a62ba387708"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-C.jpg",
+      "sha256": "45eb3a9377ddde02061691778d1ccfb5607c7941a5af8cb3fd6c39b2052d9d06"
+    },
+    {
+      "file": "app/assets/drill_media/forearms-C.mp4",
+      "sha256": "3cbbcbff3eb9d420e3937e1a74d66d7e5e49ad091be7860729c24f28d76cbad6"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-A.jpg",
+      "sha256": "e9c8e553e6a9f2ca169fdbbc5d2912f316515d350f50b90d41f4e2a67dde1b55"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-A.mp4",
+      "sha256": "63d7f61166b8136aa2fb44d9ffdbc5dc98f96c9cab8b754ba7f53bef3ea7d0fb"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-B.jpg",
+      "sha256": "dbedb7cf97d5eb5b306f8547ebf7e12ddeec343ec51838dfa39e8b83bdd50f12"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-B.mp4",
+      "sha256": "f197730eeece1e8371cc2bfc0ceaa7f31c1e5cef7a46fc50f137e4a847c0a89c"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-C.jpg",
+      "sha256": "d9dc7e593d29970e4b37c6f0a2a0e562bcd524a1614b407d40a69b0de35ac212"
+    },
+    {
+      "file": "app/assets/drill_media/glute-max-C.mp4",
+      "sha256": "ddb81559345ccb68a4e380320d189b6f8af5a0ddfeea4fe20d57a4938d16996e"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-A.jpg",
+      "sha256": "1eac1d718874145b372695c02bc1c069848528d766dda9f6493c0de19680c5b3"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-A.mp4",
+      "sha256": "4b18cff7db897f353410a987b89e4f269792bb9e9bb56764350f174b604d9edc"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-B.jpg",
+      "sha256": "20d2dd840e94e7925b30832476f20db9b5f602e222518259d1bf256604b701a9"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-B.mp4",
+      "sha256": "16021b61da2885b403624039f382e76065d52a1ade83cc8013d7639c800ccca9"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-C.jpg",
+      "sha256": "c4ff300f939726e3e717f2b898eb3a318b239c429460c6d4216ffd554c01acfa"
+    },
+    {
+      "file": "app/assets/drill_media/hamstrings-C.mp4",
+      "sha256": "438122f0f45cbf1f04733c9c4e643e4f06d51f85cfb48e93d0f719229409b1e0"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-A.jpg",
+      "sha256": "cdfb2579be8934cc269ccaec0a19b8aa538058e1597108750e4c5eb120139696"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-A.mp4",
+      "sha256": "905b90fe792fc56e56e51fead178a59d657e25606f61d0fa16814d0ef85b8fe5"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-B.jpg",
+      "sha256": "09312d1b5dac9dca3004bf2eeeb432960a79a9d60dae4e4b745f6cb4a01e171a"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-B.mp4",
+      "sha256": "4635fd8a17af25ce1c542020c732d5cf2addbbc509415558ac65bf0b929c25dc"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-C.jpg",
+      "sha256": "85aca1414ec1b2b02d90393da74553d3d9357793cef7f6624dd776aa4c896a22"
+    },
+    {
+      "file": "app/assets/drill_media/hip-abductors-C.mp4",
+      "sha256": "fcf0b6865ce9beec94f7ffe7331bd5246ca9e9a223f4e4c7ac46c147d63c645a"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-A.jpg",
+      "sha256": "ee47b1939d9ec6f1b077a27943386864b175b32fd52046ae3b6f206d992ea408"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-A.mp4",
+      "sha256": "3fa4cc838865db2b5ee56fbc447545b5c93b2648ef9b7b5f4dcc6e32838861c3"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-B.jpg",
+      "sha256": "07eae2fcc9635e2fe19960a3f46f4b6d91b75eb4f2b4edc73edadb92967d2f30"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-B.mp4",
+      "sha256": "119d07cf51b08b98467532d1fa5ca38716fa19cb933f0375487f4f31d11e06ac"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-C.jpg",
+      "sha256": "1db05ccf0a114a5fed102b294350b8c4ba1bb7f409133d79193048d93e869adc"
+    },
+    {
+      "file": "app/assets/drill_media/hip-flexors-C.mp4",
+      "sha256": "23281de15a5365f591268c1f57e18047387c351398e905b4a4695d55d5a9c525"
+    },
+    {
+      "file": "app/assets/drill_media/lats-A.jpg",
+      "sha256": "5d05565af41c98da8ce23938ab42da8dfc77c02a5bcd7bdb6f7f534eab95046b"
+    },
+    {
+      "file": "app/assets/drill_media/lats-A.mp4",
+      "sha256": "b358eb8c838d0436827863afe1d99acb12cd06366703b5000f4f7cf6878b02be"
+    },
+    {
+      "file": "app/assets/drill_media/lats-B.jpg",
+      "sha256": "afb9c98ea987ebbd6a9217e2f1ae8d20e8e80df74d207ec2d73fcc9ddc0bf0c9"
+    },
+    {
+      "file": "app/assets/drill_media/lats-B.mp4",
+      "sha256": "46d6d46349105350450f062ce8fda27ad641afe5e2627d595bd420940ede2b1c"
+    },
+    {
+      "file": "app/assets/drill_media/lats-C.jpg",
+      "sha256": "6dc4e9868f434640c24f5efe36b19d9b7b5639244b112a4b6d6bf6bcca992dc3"
+    },
+    {
+      "file": "app/assets/drill_media/lats-C.mp4",
+      "sha256": "8291c9546cfa99e20b8da1e9be26eab841fb71885873aa098db0c9c1d531a76e"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-A.jpg",
+      "sha256": "8c27cea4009945a7cc062cf92b4a9193618d94874d8d8bcbbbf65bcfcd09eeaa"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-A.mp4",
+      "sha256": "8c5f55f2924de9529ebd6feacee6bd7c9de585659f6ec70fd4181111f890f78b"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-B.jpg",
+      "sha256": "50c6cc0de88b0b09ca0cec82d70ed91724aa171bcb2ea2f05005109a66067aa3"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-B.mp4",
+      "sha256": "0ac1cc05121701f531888ae687ce6ab2b5f3407b84a8f8fd2cd6bf9d393effe4"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-C.jpg",
+      "sha256": "161330e63909dadad26fd8772363443ae863a73a258c90021bc84b291c155945"
+    },
+    {
+      "file": "app/assets/drill_media/obliques-C.mp4",
+      "sha256": "9f422c2268cd060fc180d60ce6a5bd1c8e47c20efdf539e386fe062ad5fa9764"
+    },
+    {
+      "file": "app/assets/drill_media/player.css",
+      "sha256": "7a36aaa44bb343ad78b11b6feca5d0d90181bb6a5583ade612c91f9c4a14c438"
+    },
+    {
+      "file": "app/assets/drill_media/player.html",
+      "sha256": "3928cd912b2bc7694a81de4a975dc0e1b4e64547023fd0fc8c0e8116174fc4b5"
+    },
+    {
+      "file": "app/assets/drill_media/player.js",
+      "sha256": "c1b8c99532c0bb54e4827e648fe8b6a26f22748d1e319a9a7aa45f80ab1542be"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-A.jpg",
+      "sha256": "c55a2d3be5260d5d113573cc307627c3db67a0f2d54132a0828dc4ff0e7f74cd"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-A.mp4",
+      "sha256": "e08f4d92e92051753b606cbd02717507563468260faff7ff778487ebc905de8f"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-B.jpg",
+      "sha256": "d4565d0993856fc4fd3aa76ab1c3c9083a759491a8adba6de71531b685d987d6"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-B.mp4",
+      "sha256": "35d529d449ec51c8f5c08587928a96ef293d42fc9b1329bfadbae30f637ca458"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-C.jpg",
+      "sha256": "dfe0b4fd8ab134934502d52159f46bc3f33cefee4a59a97e179cece4ff6efaa0"
+    },
+    {
+      "file": "app/assets/drill_media/quadriceps-C.mp4",
+      "sha256": "35116b4674e9820e2f2fc4aec62a082f362c1ce63da079b5356bb4109abd6d36"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-A.jpg",
+      "sha256": "4f977cec9e4b8322477a87d0c74ea3af410d124d01ff1538ada0a884d765ea6b"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-A.mp4",
+      "sha256": "492f866c1cf3f74d732a88b103c73fd8aba415e70f63749a2c74246689c38e81"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-B.jpg",
+      "sha256": "13773bc9b1db38609e05f2a05f05529006f32223eb5e07c1c9f04b17270568d9"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-B.mp4",
+      "sha256": "3fe5e58cf30b04183fd9b76988299ec5114b32aa149a1dfc8182c5ada9a3461c"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-C.jpg",
+      "sha256": "b175fa4f386f00d25dfa9b3319a9e19640434875e719065d916d27644e761b4d"
+    },
+    {
+      "file": "app/assets/drill_media/rotator-cuff-C.mp4",
+      "sha256": "f345ac3b37ce3f4998c391ab2ae81726d7d171c48b95c90659ce31a686212dc9"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-A.jpg",
+      "sha256": "5e618b051edcd17ec9d25fcb50eaed87be4e081e11ed88bee8af3029e33ae419"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-A.mp4",
+      "sha256": "ecfbd59b5d0fe0f8b1c34b3919a237373e4ebac85236a358a5959f193dfa8817"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-B.jpg",
+      "sha256": "64d754e43d2752812678244513cf080beda8c24fd66af7384e390f937a6436ed"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-B.mp4",
+      "sha256": "8f8f8d8feda211be8333145317f871a2689cb286647555848d04e7161a349cc5"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-C.jpg",
+      "sha256": "f696a27b4716fc8ef4b8e526732d57e0c10960b67430f59afb631b7252b34f7e"
+    },
+    {
+      "file": "app/assets/drill_media/scapular-C.mp4",
+      "sha256": "60973e752ee5a8eae9298ee778c6453ea1794721cd3556554d4734909ad57d32"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-A.jpg",
+      "sha256": "e875d583b46ffbdd2088aeb98d5038916c0a23c1da0ff9600a03066d25fb989d"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-A.mp4",
+      "sha256": "dfcd46afccc5d28d42d87c6495df556fa7d2546aeb3fde1a89bec124775dcea6"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-B.jpg",
+      "sha256": "a53437a64cb72430b8b4ae7f8b38249791b931bb45014d03bd6d603df09a05ff"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-B.mp4",
+      "sha256": "d5aaaa326641b1f7188798383e89804ce167b04b832c5cda5e23803b56e2d274"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-C.jpg",
+      "sha256": "3d670600b1f634fe428005b6848d8eb9ae58be3c42a740366b71ee0239e6af33"
+    },
+    {
+      "file": "app/assets/drill_media/serratus-C.mp4",
+      "sha256": "3f46e2cd7c2cddcb0e9329cd46d05c73ce723d67ee27dc4ade39627d90f2b6e8"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-A.jpg",
+      "sha256": "baf83dadb752865cd785146a97c3dffc397cba2a0e6d0d0fc808bbc2e607ac85"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-A.mp4",
+      "sha256": "815d55ef51295b1545fb8176a7f171fa8cdf45d934354d26d3201d345f33f5b7"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-B.jpg",
+      "sha256": "81fe89081704e80639ae3440587ecd074e47d671c1ce9fe941d3b10f0fdc3860"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-B.mp4",
+      "sha256": "308f0d847a599aa92517abe1cb2b34d366b45084d9ae475a3411e68e38cfb737"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-C.jpg",
+      "sha256": "904b6d497a31fe0055bf903a2b6ff2ff6d4f3acfadfab0b6e4249cd6b4e2c2ac"
+    },
+    {
+      "file": "app/assets/drill_media/triceps-C.mp4",
+      "sha256": "a1f5347af2c1e0e68d0ce8d11602c70110ac01e65963ce90d1a8415c51f2a339"
+    },
+    {
+      "file": "app/assets/drills/abs-A-512.webp",
+      "sha256": "be77b710b0d7a66c7575f5235b879f72e536cc66cd336aa9977ac2043bd4092e"
+    },
+    {
+      "file": "app/assets/drills/abs-A.webp",
+      "sha256": "b0a1e6d4921815f4ade64cc6557da2d6a99ee4b8ff07871055f20a5e4a2a432d"
+    },
+    {
+      "file": "app/assets/drills/abs-B-512.webp",
+      "sha256": "dfc689b97070826a454dda5ed6f808d65a00773469c639e1e0db81c3e781fa6e"
+    },
+    {
+      "file": "app/assets/drills/abs-B.webp",
+      "sha256": "363c5cdfd4a221827085dd1d5bd89db18fa6f17bd04f209767de1989109457a2"
+    },
+    {
+      "file": "app/assets/drills/abs-C-512.webp",
+      "sha256": "3f8845e63b238c3e01769e18c49a8d4a7488f33a982aeb568bb71d512aed6114"
+    },
+    {
+      "file": "app/assets/drills/abs-C.webp",
+      "sha256": "7c7d0bdff8d054c9d653939a3160ec503b3ce525e828feb15a4935228df9694c"
+    },
+    {
+      "file": "app/assets/drills/adductors-A-512.webp",
+      "sha256": "439c0dc2580dc3fc0f6648b3e8fa93206392423e94f3099a522e8b66c8bcc675"
+    },
+    {
+      "file": "app/assets/drills/adductors-A.webp",
+      "sha256": "a1329b2c316ec24412ee222f69a0fc42b902cec6b01578af6381f15ad762af77"
+    },
+    {
+      "file": "app/assets/drills/adductors-B-512.webp",
+      "sha256": "bd30dc1c851e57def8be5c11be4a7f716c8d5cfb37f3100e0f8403ecd4c8325c"
+    },
+    {
+      "file": "app/assets/drills/adductors-B.webp",
+      "sha256": "017f26a06d816f122378d66c4e61b07046a3d3331373193b3dd1b448c1b96e53"
+    },
+    {
+      "file": "app/assets/drills/adductors-C-512.webp",
+      "sha256": "35cfd504e7e677ca587fd6691aa725ab43263b401b94fbea94521b9a140200e7"
+    },
+    {
+      "file": "app/assets/drills/adductors-C.webp",
+      "sha256": "7e145676aebe5bbd90a2fa957b3b1a31ec132b56318c93af774edbcbc6151448"
+    },
+    {
+      "file": "app/assets/drills/chest-A-512.webp",
+      "sha256": "2e561052bf16074192240ed359ad691f6aa5d0ef489803ee4a19e26af7015c68"
+    },
+    {
+      "file": "app/assets/drills/chest-A.webp",
+      "sha256": "853fa67e35dc3de7ea16136a8952280e54055fe321c81bb0eb82d8f061f2fc18"
+    },
+    {
+      "file": "app/assets/drills/chest-B-512.webp",
+      "sha256": "e552e37c4d887c2c7de14265cee6b04191395891910987cd0bd46c5df1a656b4"
+    },
+    {
+      "file": "app/assets/drills/chest-B.webp",
+      "sha256": "2a7b0fd46e8525c7c77759247b84562b1a8190d06113a8dfd3a507a4b0164df9"
+    },
+    {
+      "file": "app/assets/drills/chest-C-512.webp",
+      "sha256": "bc9c0d4e10183680d87dca490dc3cb0911c9c4618f05cecf8c239953738ae639"
+    },
+    {
+      "file": "app/assets/drills/chest-C.webp",
+      "sha256": "8ff90aa7b2bfd14095ef5ba6fcc03e761ac8cbedea9816c79f8e42dd6373ccf6"
+    },
+    {
+      "file": "app/assets/drills/deltoids-A-512.webp",
+      "sha256": "eefc52a837ca44551cc219d07c46e8035ce93e34b79feaac719efbc3e19739ec"
+    },
+    {
+      "file": "app/assets/drills/deltoids-A.webp",
+      "sha256": "5f6e16fdc62c8bd67daeb5826df3c189aed334389c7a26cdc19f1ea1e81cbf15"
+    },
+    {
+      "file": "app/assets/drills/deltoids-B-512.webp",
+      "sha256": "73536f87d9d4ba3c0301b4df5641c7287f63a7a141ce5aeb923239d45a7db6c0"
+    },
+    {
+      "file": "app/assets/drills/deltoids-B.webp",
+      "sha256": "1d1bf547e40794b695b1cb04b2dbfeafda93f2e435705ca8828363085e0d26ce"
+    },
+    {
+      "file": "app/assets/drills/deltoids-C-512.webp",
+      "sha256": "9a460598691c0caac035ff774b50ddcb69c889a6dc998afbee8a023a5c5bfb0c"
+    },
+    {
+      "file": "app/assets/drills/deltoids-C.webp",
+      "sha256": "79a85a49db4391655d4ab14d184826a9637d27091d15894ca4198da612662af4"
+    },
+    {
+      "file": "app/assets/drills/erectors-A-512.webp",
+      "sha256": "836332001dbb2e74faef513730db7fb85fc0e171b14fdc0f2f8a2b062aec5c98"
+    },
+    {
+      "file": "app/assets/drills/erectors-A.webp",
+      "sha256": "4dcf9f7b0f185d0137be5dcde3a7ae7f4eff4b027058908b7ebe8824bd5145b3"
+    },
+    {
+      "file": "app/assets/drills/erectors-B-512.webp",
+      "sha256": "f226830d2f8f46ca8783f3bc7c09f271bae316de7ebed3862d27f8736e992733"
+    },
+    {
+      "file": "app/assets/drills/erectors-B.webp",
+      "sha256": "0f5ca272576c1a672e1f3ff191b8f9fc9f58f727061e19597f2e790b6afc265f"
+    },
+    {
+      "file": "app/assets/drills/erectors-C-512.webp",
+      "sha256": "a99f9f42974e211804a8a9e954f0bb9e9a0de834e4cc89a53f1a60d2ec49eb18"
+    },
+    {
+      "file": "app/assets/drills/erectors-C.webp",
+      "sha256": "a949ec435690c00d75bef9304e04c0cc253d5aaaa322b292efe7ba3336e7daa8"
+    },
+    {
+      "file": "app/assets/drills/forearms-A-512.webp",
+      "sha256": "9f86f82d34bc4f44d358f359bbf0ca2ebf97e7b6e8b6ead5dfb7da0da96c587e"
+    },
+    {
+      "file": "app/assets/drills/forearms-A.webp",
+      "sha256": "af29256bd0fb67933d7f1e1c0a7f7f98c76ba088d622f0cceb7dc6100dce05b5"
+    },
+    {
+      "file": "app/assets/drills/forearms-B-512.webp",
+      "sha256": "f23dd5e0938e7a7f55761f814716a0f4fa8be2c35278f65d290a79abe7c94f22"
+    },
+    {
+      "file": "app/assets/drills/forearms-B.webp",
+      "sha256": "68b0399f660620483b8e55f26983255d8f927e961080ff42338e3ea444cdda4f"
+    },
+    {
+      "file": "app/assets/drills/forearms-C-512.webp",
+      "sha256": "2ad4f38227b4ec5415b395523cb26985d7cfed137b6aade6ce869f02cd5a508c"
+    },
+    {
+      "file": "app/assets/drills/forearms-C.webp",
+      "sha256": "8cbe5880c91bbc4a02b889e3bf23577231c8fe2565c5c0ed83d3bd11158c0f93"
+    },
+    {
+      "file": "app/assets/drills/glute-max-A-512.webp",
+      "sha256": "6d6a74c5683a5b555e1240f19c2bfc866b0b73913669995d01f4bffc04a18f00"
+    },
+    {
+      "file": "app/assets/drills/glute-max-A.webp",
+      "sha256": "2ccf561245e2d304c05b5169c2cdb8ecfc63ea4323b507dcf9bc939d42421b8d"
+    },
+    {
+      "file": "app/assets/drills/glute-max-B-512.webp",
+      "sha256": "2d6a356496e8b385702c9d871133c6282bb6be33d819358a495969495d830f43"
+    },
+    {
+      "file": "app/assets/drills/glute-max-B.webp",
+      "sha256": "9ed32edaa963a1c091d96b35d2a1c41b587f210ffc558ddc766abc7c6b48a18d"
+    },
+    {
+      "file": "app/assets/drills/glute-max-C-512.webp",
+      "sha256": "d97c57f16a877124c089dea310b01d0c48aeaec36164a2506deef56ed63423d0"
+    },
+    {
+      "file": "app/assets/drills/glute-max-C.webp",
+      "sha256": "fcb5508f62851f2a373c900fdffcc2a53906f86bfb7f81657e9d888b20078191"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-A-512.webp",
+      "sha256": "2cca8c628ff52460f288aec390a8ef32eaa2901c568cca57f4eba559c5c1d35e"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-A.webp",
+      "sha256": "ee4a05c4f72bedcbaf8421004e239e52eaf02bcd7da2d56685a27c68a0e8e23a"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-B-512.webp",
+      "sha256": "a564c5c9e56e02ae19936a92136e09e0b5556c371e5784e1c96317cb22e02c0b"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-B.webp",
+      "sha256": "dff0944280bbcc71e7e35130195f9b85d4ae325572d0ea4878b166f350290b58"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-C-512.webp",
+      "sha256": "0d23e1ebef777dbbd6e166bdf09be6dd0a0407a6997644b5825843b785c1c703"
+    },
+    {
+      "file": "app/assets/drills/hamstrings-C.webp",
+      "sha256": "d774b7e48e6ad087f3b3306a6b5d9701fa58d6409e740cf156747916cbe15867"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-A-512.webp",
+      "sha256": "6b1f55840bc9c2ac4ea6018c4f24851bd07a57b149733abc2a014ae00d8ad86f"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-A.webp",
+      "sha256": "ddef307527ffa720835babd3386f580dbcfeaee0a7b15a5962776baa83d6898c"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-B-512.webp",
+      "sha256": "a81e8e1eb437d9d6ea1dc0d9209b3fd9316dcb8f5bf114924c9cd9644b1ec230"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-B.webp",
+      "sha256": "855cfa57d5fa9b8167121cbe65698f3da22ac5e0e5bd3c6e141f675949ad8728"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-C-512.webp",
+      "sha256": "558a0492fa92c2c0183a49cf0134dcab3bf5ceb3547ff95cffcd0325124162c0"
+    },
+    {
+      "file": "app/assets/drills/hip-abductors-C.webp",
+      "sha256": "d8b7ae7cb823fc0f4603d4d8a2d94e71e660aaa2fe809a3865ea596052635a0c"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-A-512.webp",
+      "sha256": "9b38afacf97549c8114c27b83c21a6f102e09741aef17c62fab86906db53bce3"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-A.webp",
+      "sha256": "eb59f5a9131d96ccd2bc933d718f66d317a58213d54b961bb75a59cd2e597f39"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-B-512.webp",
+      "sha256": "4dd4419c3b981f9d68cc1e5312432128f0440a46e03b0bdd6a5e519ca29aaaaa"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-B.webp",
+      "sha256": "7e41ada8110334a18f18757b52e2d8d274021c27f301b647868f6a1bf74bd750"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-C-512.webp",
+      "sha256": "4a3c68450c0946502e07bb479bcec26d57cbf6bae3f83b7b432da7e5928a22a3"
+    },
+    {
+      "file": "app/assets/drills/hip-flexors-C.webp",
+      "sha256": "6debfead1af49113a92636feb1fc775394fb54fd38345ab94679f95439fa97f4"
+    },
+    {
+      "file": "app/assets/drills/lats-A-512.webp",
+      "sha256": "ac39c02c3cf24243ebe2548d2b1eb96dcbcc23548135d87c72041998b324e213"
+    },
+    {
+      "file": "app/assets/drills/lats-A.webp",
+      "sha256": "9568ba17a80d2c698d95f692787c2b8be60f951f6f5b30107e02ccefea9a6f80"
+    },
+    {
+      "file": "app/assets/drills/lats-B-512.webp",
+      "sha256": "caad3670cf6e92b09f2b8ea0acedc97107ec1c3761fc3c1613062ec227bbfd9a"
+    },
+    {
+      "file": "app/assets/drills/lats-B.webp",
+      "sha256": "646d4549127f0a25f345c08d628dd1b679ba486f30e8191d9f7601fd4a216958"
+    },
+    {
+      "file": "app/assets/drills/lats-C-512.webp",
+      "sha256": "20c0212aeee1a7e2e9744b06446193460809bef29ec9a8f2dff1e2010f801081"
+    },
+    {
+      "file": "app/assets/drills/lats-C.webp",
+      "sha256": "a7f042944dd77ca9df644aa567eb079ee6351bddff4945b9bad7391ed23276fd"
+    },
+    {
+      "file": "app/assets/drills/light/abs-A-512.webp",
+      "sha256": "e6592817a54949d4c62c0ddc487859b2cf126320b2252c6491783d816dd4baf4"
+    },
+    {
+      "file": "app/assets/drills/light/abs-A.webp",
+      "sha256": "70098c204372a9c4a23bb4d8263c3369bf7fa5b6b7d844056cc057847ded47c7"
+    },
+    {
+      "file": "app/assets/drills/light/abs-B-512.webp",
+      "sha256": "c615a81de769192635b004d92ff658a25571b23e91e30a6324c8c9686fd74427"
+    },
+    {
+      "file": "app/assets/drills/light/abs-B.webp",
+      "sha256": "de60dccc251ec9a346771a61b4f458c640282b799477d1e9ff7195cf22a3c9dc"
+    },
+    {
+      "file": "app/assets/drills/light/abs-C-512.webp",
+      "sha256": "e10b53f57309d28deba000ef150b06a1347604acfeea69d7b2a93b3529701e99"
+    },
+    {
+      "file": "app/assets/drills/light/abs-C.webp",
+      "sha256": "06667a9eed530fffa784460f3030faf6c267735f7fb07017be5577e8cf286406"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-A-512.webp",
+      "sha256": "8540156f8be62e751060918c8a583c62b3b5897d6ce08c374116dadf92533ed7"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-A.webp",
+      "sha256": "32e71ab9a05b0c64178751ac38f88959adb32342b8be80027ebb20a31392fd1c"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-B-512.webp",
+      "sha256": "f4485a4f395d257b2e12edb905d8a4a796764416bf05b4eec8656d6a84f0356b"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-B.webp",
+      "sha256": "47fee63d0f0db2a46a17de44120a969018b0b6ea184972cd2036a9fb4387741d"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-C-512.webp",
+      "sha256": "53b2a840e4c3c85a4488a0b8e3c885ef9353971f8242e62553c56aefc38cb9b8"
+    },
+    {
+      "file": "app/assets/drills/light/adductors-C.webp",
+      "sha256": "4e05b86e1db693d1d57028943e410d828a0cb6a30e2af99a3a712c594812ca56"
+    },
+    {
+      "file": "app/assets/drills/light/chest-A-512.webp",
+      "sha256": "54b60acf55d1ec9f062d501e1c7d9459bf8910d661b303c099f326e3690c7b42"
+    },
+    {
+      "file": "app/assets/drills/light/chest-A.webp",
+      "sha256": "1dd7159f695811cfca4607799da91619b0f164e01b993c8e93aef326b24fc251"
+    },
+    {
+      "file": "app/assets/drills/light/chest-B-512.webp",
+      "sha256": "070fdb5c42c5bf7c0dd8508908bbb8d36fbe93daac48a622b2ae355ae72934c4"
+    },
+    {
+      "file": "app/assets/drills/light/chest-B.webp",
+      "sha256": "9b70e7f8ca948326b1c109c55d8b292ea0fd6f0afa9ac3cdacdee7e6b616e422"
+    },
+    {
+      "file": "app/assets/drills/light/chest-C-512.webp",
+      "sha256": "fbbfc87edaba729115090e3d9496f76125c3dbe0c9d00fcdb2f4bbf36a45fdb9"
+    },
+    {
+      "file": "app/assets/drills/light/chest-C.webp",
+      "sha256": "cfd85960135b42c50faa18a92fb8815072a50045c4078678eeb788d35a2b7cd5"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-A-512.webp",
+      "sha256": "381e0a32ff07d508aa034b3c868abc8aef369a92db8a4049e536f7a21bd77c71"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-A.webp",
+      "sha256": "aa4aac9d290ee893d427dacfd0ac461a97ad28d0aeb6a3a35644429f2fbb2096"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-B-512.webp",
+      "sha256": "a10366030c29c89702b61c2f2a469504b2519dc31500fc378dfeba49a82f0edc"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-B.webp",
+      "sha256": "88a6a918b7213a12b545fa925af3c6f0d9a97c0e0c693ded1528a41b8bcb2c39"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-C-512.webp",
+      "sha256": "c341a0d61b0a15186b266fd23161f13cc0079f2a8d150ada070638d18bcab485"
+    },
+    {
+      "file": "app/assets/drills/light/deltoids-C.webp",
+      "sha256": "bb3a97c5552e47b4feb0d84ae1b47a506326b9c3984bba058d1cad8f9fd8d182"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-A-512.webp",
+      "sha256": "689d5504896504875848567dcda80f5bacab4105fa82541efb316feb2f9c0d00"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-A.webp",
+      "sha256": "fe13b8f8b0bad257dbbc51942f47d248caa3efd82bd0725152c3f0d1c8bf6abf"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-B-512.webp",
+      "sha256": "1158335cd2f5336cd62133b7caf1d9293eb90ceadcbbb27ac491d6ed893576dc"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-B.webp",
+      "sha256": "2e246fe135c404807368e2d11877792b45ab20232802e9ff42a5fa2201debb96"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-C-512.webp",
+      "sha256": "e039c2eb5a5fc2c1754b1f1e83fc771d31abb9285e2b840280242a8cd618695c"
+    },
+    {
+      "file": "app/assets/drills/light/erectors-C.webp",
+      "sha256": "919b675db63f0bb6f7bfe7b6ba87754385f44725290a1bfd8cde2be574d228a3"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-A-512.webp",
+      "sha256": "79b3a43ba5245b96811161e65eac717f3be6dc4ecdadea0139509ee487a4f518"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-A.webp",
+      "sha256": "53e3ba711ca0917ad2f4775ccb1b3eea50f8e0566c8234ab5451c22ea4762764"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-B-512.webp",
+      "sha256": "76f6f4c5f79ec1ff6a336e31f685fb902f876933a239698df258d3ed888ab50a"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-B.webp",
+      "sha256": "965bbf3aeb45bec81ba3b9f6ad7271259baed49ec5c6e07ec79bc9a1e23aa6d2"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-C-512.webp",
+      "sha256": "f5bd9db4abd2c08c467252b72aa1cfe2ef9b45715f61298fe3ece99e4b7c3ca5"
+    },
+    {
+      "file": "app/assets/drills/light/forearms-C.webp",
+      "sha256": "a0a0915b30e7fd28b2dbcdf14ed7265e7974a16840329d04e789f7ea173e536e"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-A-512.webp",
+      "sha256": "dbcda3234b63f1b73d3483569c3676e88d3018e236a2bc82cf7ec5d6312dfd52"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-A.webp",
+      "sha256": "e41e9f9eda9d41350c970af1fe6e9e0ca7f88d7dee448d9a90cdb14385b37d00"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-B-512.webp",
+      "sha256": "6c1270edb31c12d91c1b8f30192eff81e0847a13d2b54d5a92bc5fa5046d59da"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-B.webp",
+      "sha256": "832066e852f4048a9414e68e1263a6b799be05cb1241777c1d4829910738ef91"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-C-512.webp",
+      "sha256": "826810fba75747f3be35f957beca7e0fe6a9d41c75d5a58150de1de62a8d1f4c"
+    },
+    {
+      "file": "app/assets/drills/light/glute-max-C.webp",
+      "sha256": "473bc51280a38c0fe8f5d8b4edc8d2ea2d510dc525d62b0de938256ce2bb3a30"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-A-512.webp",
+      "sha256": "34366f949fd9b83065bb1bb63035fb3d06de25f2f36a930c7d76e2e83ebd59e0"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-A.webp",
+      "sha256": "19c3e52e1ab73fb9a103df036645b7314cb436c6143861bfae6f449517379271"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-B-512.webp",
+      "sha256": "294ffe1bd376356a73dfa622321eed6967d0e7b15cbf9ee358e85d153dddbccc"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-B.webp",
+      "sha256": "48039df4401a5fdf907f5dcc7df89c0af43641707e9b062526bd67f0eb8cb1eb"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-C-512.webp",
+      "sha256": "6b6272f90dbd7b0c569e0b7870628a1b68f286b1ac31b5ec9dd6949b1354c46e"
+    },
+    {
+      "file": "app/assets/drills/light/hamstrings-C.webp",
+      "sha256": "4679025346697b7636b36310736b0539c62512619e73d9a23814d0bc437d643c"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-A-512.webp",
+      "sha256": "0bbae4f6456a54c2f14b45b42fbd6f6104b801e9e08db016b8bd1bf8d3f1713d"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-A.webp",
+      "sha256": "b3ba454429f4735966df6cdafc7ca7c1be76c43190922a557c78bbc9b1b6f542"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-B-512.webp",
+      "sha256": "7cc20264427913e9c86b2961047e6d91d97ce7111cb2398d389244c76cd38dff"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-B.webp",
+      "sha256": "675948adb51d2d878b1474182c87832b69e1b602823965864c5f7b6e31bbbd1a"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-C-512.webp",
+      "sha256": "d6e73d48dfac28fd842b2c9608ea4db3c43749797907411a7de0670011f43ce8"
+    },
+    {
+      "file": "app/assets/drills/light/hip-abductors-C.webp",
+      "sha256": "6197052a7157a09cbb271fccfabb9c3ac90e605136082b2a812e21f01cdf9290"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-A-512.webp",
+      "sha256": "5d64e5d2c4fd0113114583f0ddb92ac6d9937fc2775b8dae4f7d5ac143f690bb"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-A.webp",
+      "sha256": "9f8d76c7c8986925adaaa188405f90b8bca5634ccbf0cbff747f7faa506df5ae"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-B-512.webp",
+      "sha256": "c8487750bd224bbe0f4f0fa6feb075a97425fd5b05b8a00d29599da09a9c31e4"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-B.webp",
+      "sha256": "49ea3ba4d7a71e8cfc6e9f564ecdf44a6fee162d32bd29c5bc24d4e6a26a9eec"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-C-512.webp",
+      "sha256": "f0fd025deb223c99809a3934a7edc70c1447da057bc1f9c3907a50192596684d"
+    },
+    {
+      "file": "app/assets/drills/light/hip-flexors-C.webp",
+      "sha256": "a0f840f317a79b57afe1f790ceda0b0bf5475c4475d440f1d358f95f42813750"
+    },
+    {
+      "file": "app/assets/drills/light/lats-A-512.webp",
+      "sha256": "4c6f661fe990cc6f54e50c01ca93d6938429882e8670a352baa7c76381f9d84e"
+    },
+    {
+      "file": "app/assets/drills/light/lats-A.webp",
+      "sha256": "8f41e64761534c478a2abde4ca21b4f707eee17ac2e0d470b3fb74d8ae044eed"
+    },
+    {
+      "file": "app/assets/drills/light/lats-B-512.webp",
+      "sha256": "8e74d2d7d3d35026ad001d849c56e393b08f2ce80eba92a9f0ac38b62d7c2c3b"
+    },
+    {
+      "file": "app/assets/drills/light/lats-B.webp",
+      "sha256": "67de08e37bf059283bdbed3d33fe39e22046a875f60013a26208fbf41a893efe"
+    },
+    {
+      "file": "app/assets/drills/light/lats-C-512.webp",
+      "sha256": "ca1064ef193ed1d8ffc7bf4b71427c38636eaf19ef4a986c99abb337e6d82b70"
+    },
+    {
+      "file": "app/assets/drills/light/lats-C.webp",
+      "sha256": "30b96f40b6e2ac955ac76c4cc3ddb37b71f0c2f5299bb666c8f94c11bd229cd4"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-A-512.webp",
+      "sha256": "47e5f4aa3242d9ddda056388bc1ae3021ea35ea6c221aed16f2301094f141d58"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-A.webp",
+      "sha256": "d869783088fb6015867be71fd82b120c4dd01ff6804ac89cee7703410ed67d21"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-B-512.webp",
+      "sha256": "77fb257a587dadf00aaf6e49ccb5e89588b13650903dec21942f973eda8906c5"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-B.webp",
+      "sha256": "5b24daefd575477edf95ff408b581e0cc50b5fc9de70ebb6d432cb97b5de7966"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-C-512.webp",
+      "sha256": "c0f220fc557a70bcf21a4c2dcc64c252935171be6d67ead66b34b8eb5e7e212c"
+    },
+    {
+      "file": "app/assets/drills/light/obliques-C.webp",
+      "sha256": "f0e234292a97c45eccf703171146269fcee54f2941cfcd0069ad2d5375968bee"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-A-512.webp",
+      "sha256": "407071a39c6d330cba16e88f4c5500e0ff6d42dd6becdfabe4c2685ba745937b"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-A.webp",
+      "sha256": "f32f372b37342ca68ac810078917f3e512ed6c4b610c16c6c84cd75c4d834824"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-B-512.webp",
+      "sha256": "d3aacb6cce19bafbac4f8b63702e8c8a9d0a9d5ba0db36decbd984d323209531"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-B.webp",
+      "sha256": "3fa842c6c4aaa21368d92aa78e2e2ca9c1b7a0cd820c2340172ff72757feb8df"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-C-512.webp",
+      "sha256": "9f2aeeeb0b40dd99610a90785e1d2044a88e9ad96b0e449a6a35119fb6264d42"
+    },
+    {
+      "file": "app/assets/drills/light/quadriceps-C.webp",
+      "sha256": "ac18c2c2613d7ee335c5ff0fd311307d8636d6dc75b1990e8acfb10ab35e07ab"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-A-512.webp",
+      "sha256": "127bf735d47ae3dd0dd97e5e1c2e951636ad655fccf0c8007d020a30a833d909"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-A.webp",
+      "sha256": "8eca8c49f43c5f5a5f9659bfaa9d8cf3c84bac8772720445ab51ee7e893d6ba7"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-B-512.webp",
+      "sha256": "853ff3aef90fd78e2a8e98cb9078804c5c5d8def0d110b25c84f91691047045a"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-B.webp",
+      "sha256": "55457062422f794aa125159547a6edb07afd5da76259436a8763b2c37acd840e"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-C-512.webp",
+      "sha256": "9e991a47909ed5de42a637076164324493a5afcfeeb19bad5406bcb52be0b76a"
+    },
+    {
+      "file": "app/assets/drills/light/rotator-cuff-C.webp",
+      "sha256": "068e52a36d9ed157b16414802d50a66acb6482b66804a576f8e19c4913de814c"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-A-512.webp",
+      "sha256": "958a8eba5293a47dcc9af8787bdf7c376824521bbc814b1d4c6e8b2eaa06987d"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-A.webp",
+      "sha256": "d0f0e8a676436496c59d18bd6ab9e9a067a2891e28eb0d02393d713a747a5cf4"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-B-512.webp",
+      "sha256": "5ed041fb427cb301e442f050918d283c678d82a910da7192c119ded29621ea75"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-B.webp",
+      "sha256": "0c123df27e9e4fbe3dd567de3b2e919c507ef9b44f0e9d5f9e9d22e01b782cba"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-C-512.webp",
+      "sha256": "a905f1f8a3721dcf22a2c1df00892b0b2713f72566a859c4f90bd5c0305f4639"
+    },
+    {
+      "file": "app/assets/drills/light/scapular-C.webp",
+      "sha256": "80b5f4ef4bc4265f8d539a8c1450a2e8572723dbad9fa33da16c531198f86b08"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-A-512.webp",
+      "sha256": "9ebb1e45a7de32abd289946e44e6086d9033890eaa8348f6e8a0e223a4cd1f06"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-A.webp",
+      "sha256": "f90f3b60b40fb856d6b29086f7b2f839c9ee8a6135322d74b967aaef94df33ef"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-B-512.webp",
+      "sha256": "407c1ba31f42af48770d0da1856bd8c8c7b880748a7f84b70e23bc58ae9b6ec7"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-B.webp",
+      "sha256": "f35ffaf2bff7eeb68f0227dc9c6fa172f493e08d8af7baadf5cfc004cc0a9c45"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-C-512.webp",
+      "sha256": "60e21ec9e09fdff98ee359945a4bbc75dce34b6a9f31c9187f6f9c9a492fd7de"
+    },
+    {
+      "file": "app/assets/drills/light/serratus-C.webp",
+      "sha256": "79742f9d2d8cf042f8293635ac700664ec79adf5b3e27c9237e0e527abc4aaa4"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-A-512.webp",
+      "sha256": "0f049785faf73c76c8ef856fc44ee035c7c5034b3c42dc22f524322d98107fe7"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-A.webp",
+      "sha256": "a52b463b177d62515258077ab4b328c5fb2ad25f550c6a8ece1c7346f7003930"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-B-512.webp",
+      "sha256": "7547056c685ed43c1d2aa7be45e13281f3d314b7831fb567e2dcfe2c827219c7"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-B.webp",
+      "sha256": "c41c588c8dd3882a5931ac3585097be0142d62cc7628e96aa15219a00525fee5"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-C-512.webp",
+      "sha256": "4af76a585ca67137052a8adec1b874950b5690380b72038b3e7aa818d0d583eb"
+    },
+    {
+      "file": "app/assets/drills/light/triceps-C.webp",
+      "sha256": "5ffa2c14bd7053721db749ac7f3f11ddb62379e1c4da59e517e457603e777ba4"
+    },
+    {
+      "file": "app/assets/drills/obliques-A-512.webp",
+      "sha256": "8f15315dc9fb69ed1c2964ff75f0157130303a1525a94c862da23a3fc2dd9b06"
+    },
+    {
+      "file": "app/assets/drills/obliques-A.webp",
+      "sha256": "a845f2c1e44ffec1182313c5b3eee60b23092b89815d61f46a1c474e6c553b33"
+    },
+    {
+      "file": "app/assets/drills/obliques-B-512.webp",
+      "sha256": "1c3950f806853214e2d4add41e9c2513262fd89468a6cba1fc2799f21a2129ff"
+    },
+    {
+      "file": "app/assets/drills/obliques-B.webp",
+      "sha256": "c69356d2945d245706f18bf9de7ce445c3c0b11a860b99596a1e151712a6b04c"
+    },
+    {
+      "file": "app/assets/drills/obliques-C-512.webp",
+      "sha256": "a83aea3ed09965b95d2a80b25ca7678c5bf693955402ce86acdb9e3b47ce7d31"
+    },
+    {
+      "file": "app/assets/drills/obliques-C.webp",
+      "sha256": "b0ddcf4083d42919a17aeb23156a112b87b01e282fa2910f66ca8e636e2bea9d"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-A-512.webp",
+      "sha256": "ffa4b9bfd1cc9f6527c494438d06ff35c50ee8a66937ed76f8698b6c7303257c"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-A.webp",
+      "sha256": "50ab02688dbd025cfadf83abe7ed24e86ce08e026a6cbf5b3139e828c63f0c79"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-B-512.webp",
+      "sha256": "a48fde1b5095b2125e345e3b90d45660dccd61a74349d85d04f9ae1bec424df2"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-B.webp",
+      "sha256": "87318dbe6f8d422e47613994561aa6920b8e4a79d4aefe5e5dd1f776a29a9042"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-C-512.webp",
+      "sha256": "d003e431bb963854fdbb6830372b3d32aa0849a084025023fbdb136068785a8a"
+    },
+    {
+      "file": "app/assets/drills/quadriceps-C.webp",
+      "sha256": "19bf8ff33dd4efb133a1180bd4b95c2842af7e25c72e852e8571da4dfa28fe83"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-A-512.webp",
+      "sha256": "1b0ba77d0732ceda46fd99867ad002e3d9f12f1d83f48f7c5fa3adf6635edb9d"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-A.webp",
+      "sha256": "a13fe68921d9397d9a122888e4cb36293b407d204fc19beea5f7a60800930909"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-B-512.webp",
+      "sha256": "b0788147de1aeac925ba1b72bf5baed1f09be7b1e64445d1f591b38c07a54f2f"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-B.webp",
+      "sha256": "657898f5b9efdcd45ebc0cd9cc7c4941b6b6fdc0fab180047f5815129dd7d989"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-C-512.webp",
+      "sha256": "4d95c8cdb4a9f17bc91175e1a21553c03f676660f1f7b56d5053f32d1bda0a91"
+    },
+    {
+      "file": "app/assets/drills/rotator-cuff-C.webp",
+      "sha256": "fc7863ae2fc91a33c7be910bea5bda250cef32a883fe598d82b67dcdf3e39ad7"
+    },
+    {
+      "file": "app/assets/drills/scapular-A-512.webp",
+      "sha256": "b005f77a832664672acc96bdbe716062736b1f8849719b3633907dfb0be1ee22"
+    },
+    {
+      "file": "app/assets/drills/scapular-A.webp",
+      "sha256": "94e20065e723d5d8178b4d6b50a240fb70c198f4ac832ac177bb2aa1964f533b"
+    },
+    {
+      "file": "app/assets/drills/scapular-B-512.webp",
+      "sha256": "b2e3293b9eefe774f2d23163741607b20bf10e388fab5284e53200fc062a5199"
+    },
+    {
+      "file": "app/assets/drills/scapular-B.webp",
+      "sha256": "a455219d4430fca75d08af4b0e227e9ac41d49983276add72f2f25215bd9f034"
+    },
+    {
+      "file": "app/assets/drills/scapular-C-512.webp",
+      "sha256": "79c7ae9d5974bc101122683de23a06edfe0c8fd2df0ca5aae9f226f882ff4573"
+    },
+    {
+      "file": "app/assets/drills/scapular-C.webp",
+      "sha256": "1b03ecf3f34a5e4a4d9e4f8431c2c669aa055888c893857d528d9243e846061a"
+    },
+    {
+      "file": "app/assets/drills/serratus-A-512.webp",
+      "sha256": "0d2421966db8c6bb9130a7ce8cf3ab34ffc69330f089d22a2606ee888f5e8c60"
+    },
+    {
+      "file": "app/assets/drills/serratus-A.webp",
+      "sha256": "7063e041cf4a3c97b6a80ab6784559143735991a636303c7bf9c59ea956ea173"
+    },
+    {
+      "file": "app/assets/drills/serratus-B-512.webp",
+      "sha256": "9c411b7cac7583b05f629b87a9e59389234c8e881150c5b9b2226e72b755acf7"
+    },
+    {
+      "file": "app/assets/drills/serratus-B.webp",
+      "sha256": "65f52b479961bda90f638c43ad0f2c6bf549e2a65887fd1f96be236d6fef2c36"
+    },
+    {
+      "file": "app/assets/drills/serratus-C-512.webp",
+      "sha256": "0da88a0672bd1f35c1c53c9bc24c5eb1d182ca205a9e00baac23889b5816bda2"
+    },
+    {
+      "file": "app/assets/drills/serratus-C.webp",
+      "sha256": "e2e239870bc5bb7a5d10fbdc3ef7bf342106a8455232b805cdc5f51633b255f1"
+    },
+    {
+      "file": "app/assets/drills/triceps-A-512.webp",
+      "sha256": "f6e8b5ffbe6029938ee81dd9e2090742a2a9674a94049b4b041ab28f9f80e1a5"
+    },
+    {
+      "file": "app/assets/drills/triceps-A.webp",
+      "sha256": "69b2f234ac3cfb1e5f9021594e6e1acbcb89f01e7ea121050c1a0cb9699ac551"
+    },
+    {
+      "file": "app/assets/drills/triceps-B-512.webp",
+      "sha256": "054ada5ee771259055f4e228b156b9cbba0d12d26d35daeb415eeea5e26655e9"
+    },
+    {
+      "file": "app/assets/drills/triceps-B.webp",
+      "sha256": "b98c73a56b2eb3675aa33775421d7e039b2f810dd13f9d9081f2fe63122d7b4f"
+    },
+    {
+      "file": "app/assets/drills/triceps-C-512.webp",
+      "sha256": "e01ddf75eaa178f5d31fb0e849743c184e4ba3756fbbfa697e0619d90de557b1"
+    },
+    {
+      "file": "app/assets/drills/triceps-C.webp",
+      "sha256": "af92ca4f6a22232d748bd66bacaaae5e1e6d304c3e130872f48be17ffcfb3918"
+    },
+    {
+      "file": "app/assets/fonts/FlareSans.ttf",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+    },
+    {
+      "file": "app/assets/fonts/NotoSansArabic.ttf",
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e"
+    },
+    {
+      "file": "app/assets/fonts/NotoSansDevanagari.ttf",
+      "sha256": "14ec4af41f27482216d1c2229f417ff9b1425e1babb014e57d1d40d03229853e"
+    },
+    {
+      "file": "app/assets/fonts/NotoSansKR.ttf",
+      "sha256": "194018e6b2b293a7964f037b25c0249ce1418bc9ab3c971060a03aa57861e252"
+    },
+    {
+      "file": "app/assets/l10n/content_ar.json",
+      "sha256": "052ada92bf881f1ca44d0e8fb5f409b791c18c5d62125a509d45faae22e0e4f4"
+    },
+    {
+      "file": "app/assets/l10n/content_de.json",
+      "sha256": "e501188d8c1fa2469030ffb911d07aea50eab3c2d365f90752cc0366d0fc51a6"
+    },
+    {
+      "file": "app/assets/l10n/content_en.json",
+      "sha256": "dd4ef57775e11615eefd6d679b26dcdb11e781aea00b1604b0eb9d6db0da5fc1"
+    },
+    {
+      "file": "app/assets/l10n/content_es.json",
+      "sha256": "67b7c2f6f7623eb39ecd1bf3d0fc1375b7565ef6911efd87c5c1c7493e72392e"
+    },
+    {
+      "file": "app/assets/l10n/content_fr.json",
+      "sha256": "6af285daec742734f0c69cbba548a104cb2be5a1077696be626b93e9947d0774"
+    },
+    {
+      "file": "app/assets/l10n/content_hi.json",
+      "sha256": "b17865fa5dc9086f171e3d4c89794e6a437ead485d4835f24a322f6e0ae4205b"
+    },
+    {
+      "file": "app/assets/l10n/content_id.json",
+      "sha256": "79050f86258a4f426fd12076e8e29bf8313a4a5adca3314547a69f4bbb350c61"
+    },
+    {
+      "file": "app/assets/l10n/content_it.json",
+      "sha256": "fde4b570accf76c768fc8e0d8874c08d0be5afc0c951019fd2da6c28764b5d95"
+    },
+    {
+      "file": "app/assets/l10n/content_ja.json",
+      "sha256": "19244923dba78c28e7c3a4a618b515181355281931a63cc9a35a4f474c65778d"
+    },
+    {
+      "file": "app/assets/l10n/content_ko.json",
+      "sha256": "05d616b6d7e9c862034129ec2bb4ae489a725b4527391f866b842040feb65f35"
+    },
+    {
+      "file": "app/assets/l10n/content_pt.json",
+      "sha256": "a066f699b6b09a41a7b3c6a1afc82fe84cd4b89dcce424d52280fbc13b4b1d54"
+    },
+    {
+      "file": "app/assets/l10n/content_ru.json",
+      "sha256": "7611a76203b8bec8262d2a9ea361048f423956ab7ac041d02fe0ee7acfe8a4ad"
+    },
+    {
+      "file": "app/assets/l10n/content_zh.json",
+      "sha256": "9af92fca6f82fdf82662567d321593cc0a1d14501e0878afb2c29bd47f78bf1b"
+    },
+    {
+      "file": "app/assets/l10n/content_zh_Hant.json",
+      "sha256": "f9bb46ea31374b847bb579966fccfffb23ae6e0920a496ef63607d23a7f745f2"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_ar.json",
+      "sha256": "47ed3986d432169b40a2fb636d789112c0f5c511b68df3151ba52d167d3b783c"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_de.json",
+      "sha256": "d0d2034efaca61f0e20dac6ca00828e5ac5c1cf5664d002f243b9ecc5244efdb"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_en.json",
+      "sha256": "4ecc4069d6eaf99a66cc40f641b75f2def1ac8d5979d0877a466c92f4f8a393e"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_es.json",
+      "sha256": "a88bb4b00a27f0ad29ef491c271a4a7ee29f9072c3a6bd2a7e36b672c0ff46b6"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_fr.json",
+      "sha256": "062599cbc1efa2104ce3804ebfd873159178146c72907d2238e3e80a693b1151"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_hi.json",
+      "sha256": "5c9ab6ace82b865261755449a2eaa758cfe72878df514e2860187cb5bf9d8d5b"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_id.json",
+      "sha256": "1f68ef8446be32c6cd398269f6efa2f00b1aebb1e9586dd7a18dfb756be36248"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_it.json",
+      "sha256": "1a5cd0f812bb18f1c9760b6225870f0060d1cb30755deae67ff66c934fb0e6ea"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_ja.json",
+      "sha256": "e7cd1921facc0636c5dcb26cabeb61b44094e6a1496a8d0dbe527da1e2f6aa8e"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_ko.json",
+      "sha256": "82707948fccce57f76d62a213457c905bafd4c69c74ea8a4b0ced4ff869ff39a"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_pt.json",
+      "sha256": "e01c3f9e3d04529a26487feb7afa08f5ae36c37f8b6268af64afc91500dcae2c"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_ru.json",
+      "sha256": "ac3202c6d23eb5d92125e7eb8de71bb04b24cd78f6fdbf1897f276dbf923e072"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_zh.json",
+      "sha256": "4fdcc9d98f44eee63a0ff3354ba2ed757010de9632e4c5be265661b43a741c7a"
+    },
+    {
+      "file": "app/assets/l10n/muscle_short_zh_Hant.json",
+      "sha256": "a9015cda2b39430f27590e910908d78e691772e2ffc3b9f1bc53b506536cb5f2"
+    },
+    {
+      "file": "app/assets/licenses/Anatomy-ATTRIBUTION.md",
+      "sha256": "cebd10bc0241ac88e5d4f4769a0653f6ca90f4d905636de9acb85b2497aa9bb3"
+    },
+    {
+      "file": "app/assets/licenses/Drill-media-ATTRIBUTION.md",
+      "sha256": "f6e73643eab708b4ecb694ccbc5b70e786e77d62b513a4b18de3ec9b86404075"
+    },
+    {
+      "file": "app/assets/licenses/NotoSansArabic-OFL.txt",
+      "sha256": "3b7e321615e412e5fbb9eab5bf1c0a4cb84c732d3d5a9e9e3822972d5fb70b97"
+    },
+    {
+      "file": "app/assets/licenses/NotoSansDevanagari-OFL.txt",
+      "sha256": "41221cfdd268fa8e338829cccec0526e0200a0ce9e0bc3c627254c12a99d3a98"
+    },
+    {
+      "file": "app/assets/licenses/NotoSansKR-OFL.txt",
+      "sha256": "e35ffdebb2225b49814c31889cbb3ce69cb3509e6a9f431edaba5e1a6de8cd15"
+    },
+    {
+      "file": "app/assets/licenses/NotoSansSC-OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+    },
+    {
+      "file": "app/assets/licenses/Snow-ATTRIBUTION.md",
+      "sha256": "b353fe6e70648ed24d3f8ecc8eace7271d1d4ef211fec869b78e50a9568e1da2"
+    },
+    {
+      "file": "app/assets/licenses/fflate-MIT.txt",
+      "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+    },
+    {
+      "file": "app/assets/licenses/human-atlas-MIT.txt",
+      "sha256": "db7a953239922e6e6460885afcbd47834fcb89f069b0b8c30f338cd76b322ded"
+    },
+    {
+      "file": "app/assets/licenses/lucide-ISC.txt",
+      "sha256": "1e7290b35280a048667bbf0ebabac1c7fd52a75300e8b2946ac165715997f2bc"
+    },
+    {
+      "file": "app/assets/licenses/meshoptimizer-MIT.txt",
+      "sha256": "d1bc307ff896c7fc65e3ff4823cc478194f7a5bc6436f99534ebede4d9e2017a"
+    },
+    {
+      "file": "app/assets/licenses/three-MIT.txt",
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    },
+    {
+      "file": "app/assets/muscles/abs.webp",
+      "sha256": "a307024f6e6e11daf47915caacabe8520f246384049f0b54262c28e825d50758"
+    },
+    {
+      "file": "app/assets/muscles/adductors.webp",
+      "sha256": "4205eda1c8f8664e05adb23aaf697ad356894c92a3d1617653d97d05c2d37e44"
+    },
+    {
+      "file": "app/assets/muscles/chest.webp",
+      "sha256": "6ebb7a94d0ca0582369bef0eab91695e3cd42d0e9f58a7f6788caf017a8cb6a8"
+    },
+    {
+      "file": "app/assets/muscles/deltoids.webp",
+      "sha256": "f3e1c766323482664d3e18d83830348651061ad106fcb1426e76350bd8e57bc8"
+    },
+    {
+      "file": "app/assets/muscles/erectors.webp",
+      "sha256": "b5be2842fd8eafd9f9f716693a8f0c9cce468af7858695831d94fb9ab75f3d6c"
+    },
+    {
+      "file": "app/assets/muscles/forearms.webp",
+      "sha256": "b8ccc5acb0a4035695f905e8bcd9a90f98212279b8c985ab0f8fe8f97f5ff22e"
+    },
+    {
+      "file": "app/assets/muscles/glute-max.webp",
+      "sha256": "c2b0599925147548c22c7d65b5e536d89f2e1e0d0455d2f53ed65e956a155f1f"
+    },
+    {
+      "file": "app/assets/muscles/hamstrings.webp",
+      "sha256": "30bb99ec0d23ee63590ebb63c8010b668d63a6f13ef549672efb896730b66f97"
+    },
+    {
+      "file": "app/assets/muscles/hip-abductors.webp",
+      "sha256": "86dcdfc308ee531dc0d9bc0955b43c9076d62c99cbb798029abb25a8a6dff8e1"
+    },
+    {
+      "file": "app/assets/muscles/hip-flexors.webp",
+      "sha256": "0fb29611d637fbd044dd794c486360dcb76d395d199aa1315629807b36042a99"
+    },
+    {
+      "file": "app/assets/muscles/lats.webp",
+      "sha256": "bf3cf5e8a5ee14ba3cd7457893c61df8481eb855a4655e800dbeb66d24b97058"
+    },
+    {
+      "file": "app/assets/muscles/manifest.json",
+      "sha256": "cfe20ab5f1e8e68f03146ae3631fe0eedb75d99a4edf5aae89d4f11dddc9eea8"
+    },
+    {
+      "file": "app/assets/muscles/obliques.webp",
+      "sha256": "281b313c7bd41f181ef0bf72cad056d4d862be629b33a6514058579850f154e0"
+    },
+    {
+      "file": "app/assets/muscles/quadriceps.webp",
+      "sha256": "43d7c33246597d2414671fc1a655f8cca2e94017d9223c0ed9aae7daad8f11d4"
+    },
+    {
+      "file": "app/assets/muscles/rotator-cuff.webp",
+      "sha256": "8bb3f8cbc6c28cf0105dde23899ab2c8cf59add63df5151cd56ba8e7e8c0728b"
+    },
+    {
+      "file": "app/assets/muscles/scapular.webp",
+      "sha256": "7dabc0229fa3746d792f53c1885ef6e3ae503bc7be3583f5d8dc822f128237ca"
+    },
+    {
+      "file": "app/assets/muscles/serratus.webp",
+      "sha256": "2281e5bda789eb99def9aee845f3537a7bee047ea626e45030d3c8320a86ad75"
+    },
+    {
+      "file": "app/assets/muscles/triceps.webp",
+      "sha256": "d3c9296259e8b9f76f36753ffaa8d7c1245b4105dd5a549400ee836efd688989"
+    },
+    {
+      "file": "app/assets/scene/anatomy/ATTRIBUTION.md",
+      "sha256": "cebd10bc0241ac88e5d4f4769a0653f6ca90f4d905636de9acb85b2497aa9bb3"
+    },
+    {
+      "file": "app/assets/scene/anatomy/mannequin-reference.json",
+      "sha256": "025f3c6e72d2fd59cda59e806ae211292d93ec01ac132178d9f3958689a33817"
+    },
+    {
+      "file": "app/assets/scene/anatomy/mannequin-reference.meshopt.glb.gz",
+      "sha256": "b8278a0e5049e432df1ae523a32576490bea1450916a0f5ad09232e25fadbcd6"
+    },
+    {
+      "file": "app/assets/scene/assets/index-0f5ayvts.js",
+      "sha256": "e00982c47782eb521509a3c1a26635bf2b6cb9a65bb03ae90c280d4d019593d3"
+    },
+    {
+      "file": "app/assets/scene/assets/index-D1CmUuBK.css",
+      "sha256": "8d69b1234b4e321c97871da2420bbedbba945b94013d318de8d69e14d5e3ec90"
+    },
+    {
+      "file": "app/assets/scene/coach/ATTRIBUTION-coach.md",
+      "sha256": "ae3d95542929d97395639107ea13b1cdf0d2e721fc749292b5fcd505d0f039aa"
+    },
+    {
+      "file": "app/assets/scene/coach/ATTRIBUTION-study.md",
+      "sha256": "9a4e185aaa381381518a74e22dc340247c6f867b9f7e66f5b47f4d0bfa8730e5"
+    },
+    {
+      "file": "app/assets/scene/coach/coach-rig.json",
+      "sha256": "b8566c2206181d1ea26568c42af927dd2414130709f1715c25a42fc2c4cdad1a"
+    },
+    {
+      "file": "app/assets/scene/coach/coach-v41-rig.json",
+      "sha256": "b8566c2206181d1ea26568c42af927dd2414130709f1715c25a42fc2c4cdad1a"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-study-body.meshopt.glb.gz",
+      "sha256": "c65863d734dc7210b6787dfc2101af0fd70c85109a8ae5f1caa432151f60eb7a"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-study-head.meshopt.glb.gz",
+      "sha256": "36bb7379e29c8ef7cffe48b1f2f13dbcde1457237e203494e9e343561a02fbcb"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v38-animated.meshopt.glb.gz",
+      "sha256": "15caa09f5fc7643b2dca93993afe30522e046dba3b8f34e7c4d63e906c75a492"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v41-animated.meshopt.glb.gz",
+      "sha256": "8f06a21c2f04ff0dd9caa88b0eacd5657703e00c8532d63114be0e0cbe559d25"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v41-training-human-animated.glb.gz",
+      "sha256": "7b3ef10903adecddcca55c0bb93a3ed921622dc9de629581d55db6fc6d5ef691"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v41-training-human-collarfix-20261013.glb.gz",
+      "sha256": "ea5f75f9510970ef4131a11655255d79e26d267ad19d6a4e4b62b481a4945f20"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r12-animated.meshopt.glb.gz",
+      "sha256": "64035eccbf233f029c2529b2a1bb0ea71298f220586281b57aa76d716c57c2aa"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r12-training-human.meshopt.glb.gz",
+      "sha256": "98a940484696efae7a7db604549cb293f3457e75183a760bb6c430a849cec474"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r15-animated.meshopt.glb.gz",
+      "sha256": "27679f03df8d5204ede9f262a7d0a8c4d231dcaf240a9fba8d02c1832a970200"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "sha256": "53803e03688cd7a699136fc956afdc4cf3ba42e02b4405baa57cbc76ba7cb1fd"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r16-animated.meshopt.glb.gz",
+      "sha256": "0de1a459e6e17643aed6cabd0f8477929c56344b5c245ec9c69131f7acf11755"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r16-training-human.meshopt.glb.gz",
+      "sha256": "80ae844aeebf34568bb779a375b6e9affcd205a964cf11ad2bd9dc8d59107329"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r17-animated.meshopt.glb.gz",
+      "sha256": "a449439d9309e84ab99340e51cd1b1703127a0ea37733269d5a3beeb3d26f870"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach-v42-r17-training-human.meshopt.glb.gz",
+      "sha256": "948c3cdab259a5b36d41a8ef173e4f540aa4b6e88ecfa5f7d933a15bdb0733e9"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-coach.meshopt.glb.gz",
+      "sha256": "08c4b04b579df5be7155766999429f01d26e303c605727e767742714694139b2"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-sequence-before-9-16.json",
+      "sha256": "e623c5c23d344b6563b747f0b2ffae473f5e8415bdafdf5f645b99bfaa58ab0f"
+    },
+    {
+      "file": "app/assets/scene/coach/flare-sequence.json",
+      "sha256": "924eab450e68727e2b51925553d19bf96b7dc3b811bc5a603765f946c9dda375"
+    },
+    {
+      "file": "app/assets/scene/index.html",
+      "sha256": "688f93aa7a92e173eaf50a6e240d2db7d8877cb060e8434f9f4f67e6c73732cd"
+    },
+    {
+      "file": "app/assets/scene/licenses/fflate-MIT.txt",
+      "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+    },
+    {
+      "file": "app/assets/scene/licenses/meshoptimizer-MIT.txt",
+      "sha256": "d1bc307ff896c7fc65e3ff4823cc478194f7a5bc6436f99534ebede4d9e2017a"
+    },
+    {
+      "file": "app/assets/scene/licenses/three-MIT.txt",
+      "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+    }
+  ],
+  "installed": false
+}

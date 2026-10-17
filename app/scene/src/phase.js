@@ -2,7 +2,7 @@ import { phaseTimeline, samplePhase, supportLabel } from './legacy/flare-phase-m
 import { FLARE_GROUPS } from './legacy/flare-muscle-groups.js';
 import { OFFICIAL_FLARE_SEQUENCE } from './legacy/official-poses.js';
 import bakedPhases from './v38-phases.json' with { type: 'json' };
-import currentPhases from './v42-r16-phases.json' with { type: 'json' };
+import currentPhases from './v42-r17-phases.json' with { type: 'json' };
 import v41Phases from './v41-phases.json' with { type: 'json' };
 import v41Clock from './v41-clock.json' with { type: 'json' };
 import historicalClock from './v38-clock.json' with { type: 'json' };

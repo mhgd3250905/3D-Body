@@ -1,0 +1,737 @@
+{
+  "generated": "2026-10-17T00:24:56.952Z",
+  "candidate": "output/flare-v42-r17-trial01-20261017",
+  "method": "Actual R16 and R17 GLBs, two bodies, 10001 phases each; LoopRepeat independently compared to explicit LoopOnce phases over cyclic ±5%. Unmodified area excludes the baked interpolation frame adjacent to 8%/58%.",
+  "results": {
+    "training": {
+      "r16Hash": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+      "r17Hash": "8ad0d85904567ca656f62d6a597848ae6e40378855a65d47bb0874bf21486461",
+      "windows": {
+        "takeoffRight": {
+          "r16": {
+            "side": "right",
+            "lo": 0,
+            "hi": 0.08,
+            "min": 164.06846721348217,
+            "minPhase": 0.0297,
+            "max": 177.00149287559367,
+            "maxPhase": 0.0787
+          },
+          "r17": {
+            "side": "right",
+            "lo": 0,
+            "hi": 0.08,
+            "min": 176.73543453423991,
+            "minPhase": 0.0037,
+            "max": 177.00149287559367,
+            "maxPhase": 0.0787
+          }
+        },
+        "takeoffLeft": {
+          "r16": {
+            "side": "left",
+            "lo": 0.5,
+            "hi": 0.58,
+            "min": 166.64194228447732,
+            "minPhase": 0.5111,
+            "max": 176.99998163487447,
+            "maxPhase": 0.5231
+          },
+          "r17": {
+            "side": "left",
+            "lo": 0.5,
+            "hi": 0.58,
+            "min": 176.72613236618983,
+            "minPhase": 0.5037,
+            "max": 176.99999420013236,
+            "maxPhase": 0.5121
+          }
+        },
+        "landingLeft": {
+          "r16": {
+            "side": "left",
+            "lo": 0.937,
+            "hi": 0.998,
+            "min": 176.8940890295516,
+            "minPhase": 0.9833,
+            "max": 177.000175998393,
+            "maxPhase": 0.938
+          },
+          "r17": {
+            "side": "left",
+            "lo": 0.937,
+            "hi": 0.998,
+            "min": 176.8940890295516,
+            "minPhase": 0.9833,
+            "max": 177.000175998393,
+            "maxPhase": 0.938
+          }
+        },
+        "landingRight": {
+          "r16": {
+            "side": "right",
+            "lo": 0.437,
+            "hi": 0.498,
+            "min": 176.94022687656897,
+            "minPhase": 0.4944,
+            "max": 177.0000004780777,
+            "maxPhase": 0.4861
+          },
+          "r17": {
+            "side": "right",
+            "lo": 0.437,
+            "hi": 0.498,
+            "min": 176.94022687656897,
+            "minPhase": 0.4944,
+            "max": 177.0000004780777,
+            "maxPhase": 0.4861
+          }
+        }
+      },
+      "peaks": {
+        "unmodifiedPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "unmodifiedRotationDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.083,
+          "bone": "leftFoot"
+        },
+        "supportWristPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "armSpanDifferenceMm": {
+          "value": 0.08821708866829647,
+          "phase": 0.5213,
+          "bone": "rightupperLength"
+        },
+        "torsoLocalShoulderNeckHeadDifferenceMm": {
+          "value": 0.00006589469185394195,
+          "phase": 0.0482,
+          "bone": "head"
+        },
+        "landingPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "landingRotationDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.4389,
+          "bone": "leftForearm"
+        },
+        "seamPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "seamRotationDegrees": {
+          "value": 0.0000024148365394514667,
+          "phase": 1,
+          "bone": "spineLower"
+        }
+      },
+      "repeatDifference": {
+        "positionMm": 1.6392246515987586e-12,
+        "rotationDegrees": 0.0000034150945850063755
+      },
+      "seam": {
+        "pelvis": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.21835929152220587,
+            "beforeVelocity": [
+              0.4548832967763124,
+              -0.4521266450502977,
+              0.26574718672505454
+            ],
+            "afterVelocity": [
+              0.4579216344190083,
+              -0.2378225379705432,
+              0.22397041821434052
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.21888804833475442,
+            "beforeVelocity": [
+              0.4548832967763124,
+              -0.4521266450502977,
+              0.26574718672505454
+            ],
+            "afterVelocity": [
+              0.45784414837905374,
+              -0.23725033336773863,
+              0.22413731122314917
+            ]
+          }
+        },
+        "torso": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.2631139504397006,
+            "beforeVelocity": [
+              -0.02229758725917205,
+              -0.6282662597744288,
+              0.12972654014868482
+            ],
+            "afterVelocity": [
+              -0.008292496389752622,
+              -0.36565066201221125,
+              0.12161135945336791
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.26368796442388037,
+            "beforeVelocity": [
+              -0.02229758725917205,
+              -0.6282662597744288,
+              0.12972654014868482
+            ],
+            "afterVelocity": [
+              -0.008369982429681476,
+              -0.36506653648035287,
+              0.1217722919978553
+            ]
+          }
+        },
+        "rightUpperArm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.050350858273157884,
+            "beforeVelocity": [
+              0.0193114629029,
+              0.011157734121319188,
+              -0.2636789528893495
+            ],
+            "afterVelocity": [
+              0.04900694002980377,
+              0.012850761700883484,
+              -0.30430556023803174
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.05019788352337509,
+            "beforeVelocity": [
+              0.0193114629029,
+              0.011157734121319188,
+              -0.2636789528893495
+            ],
+            "afterVelocity": [
+              0.04892945398992631,
+              0.013422966302865671,
+              -0.30414462769354433
+            ]
+          }
+        },
+        "rightForearm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.043644660011881255,
+            "beforeVelocity": [
+              -0.05303499904617995,
+              0.00264638565725368,
+              -0.09142249189381478
+            ],
+            "afterVelocity": [
+              -0.04782676803682773,
+              0.005102157706558959,
+              -0.13468563857719623
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.04644416784874944,
+            "beforeVelocity": [
+              -0.05303499904617995,
+              0.00264638565725368,
+              -0.09142249189381478
+            ],
+            "afterVelocity": [
+              -0.03751516426016996,
+              0.00560283673421856,
+              -0.13509691063530782
+            ]
+          }
+        },
+        "rightHand": {
+          "r16": {
+            "velocityDiscontinuityMps": 2.5699606597636868e-14,
+            "beforeVelocity": [
+              0,
+              0,
+              0
+            ],
+            "afterVelocity": [
+              0,
+              -2.5699606597636868e-14,
+              0
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 2.5699606597636868e-14,
+            "beforeVelocity": [
+              0,
+              0,
+              0
+            ],
+            "afterVelocity": [
+              0,
+              -2.5699606597636868e-14,
+              0
+            ]
+          }
+        },
+        "leftUpperArm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6800485265519918,
+            "beforeVelocity": [
+              0.04940515925998599,
+              -0.20302069425905278,
+              0.7940766259768783
+            ],
+            "afterVelocity": [
+              0.0522017490610328,
+              0.47688485257830326,
+              0.7804155524167381
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.6806290043289863,
+            "beforeVelocity": [
+              0.04940515925998599,
+              -0.20302069425905278,
+              0.7940766259768783
+            ],
+            "afterVelocity": [
+              0.052124263021155345,
+              0.4774689781101616,
+              0.7805764849612254
+            ]
+          }
+        },
+        "leftForearm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6519334517155939,
+            "beforeVelocity": [
+              0.023573097463148923,
+              -0.09507319282855974,
+              0.3731508082202654
+            ],
+            "afterVelocity": [
+              -0.011211633932758406,
+              0.5455017211770496,
+              0.4892155637416092
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.652533148515881,
+            "beforeVelocity": [
+              0.023573097463148923,
+              -0.09507319282855974,
+              0.3731508082202654
+            ],
+            "afterVelocity": [
+              -0.011277199043582094,
+              0.5460739257798541,
+              0.4894062986091936
+            ]
+          }
+        },
+        "leftHand": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6519405508217457,
+            "beforeVelocity": [
+              -0.0007808029753472486,
+              0.007033932147625424,
+              0.002832568057830882
+            ],
+            "afterVelocity": [
+              -0.06971359408752364,
+              0.6116949158540659,
+              0.23662702243689848
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.652551207531769,
+            "beforeVelocity": [
+              -0.0007808029753472486,
+              0.007033932147625424,
+              0.002832568057830882
+            ],
+            "afterVelocity": [
+              -0.06977915919814173,
+              0.6122611599920865,
+              0.23684604622827926
+            ]
+          }
+        }
+      }
+    },
+    "coach": {
+      "r16Hash": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055",
+      "r17Hash": "d01f6f5f812aa5df291da5a2f027309d4bb2b42847198e3ed40879b1bc9bfe6c",
+      "windows": {
+        "takeoffRight": {
+          "r16": {
+            "side": "right",
+            "lo": 0,
+            "hi": 0.08,
+            "min": 164.06846721348217,
+            "minPhase": 0.0297,
+            "max": 177.00149287559367,
+            "maxPhase": 0.0787
+          },
+          "r17": {
+            "side": "right",
+            "lo": 0,
+            "hi": 0.08,
+            "min": 176.73543453423991,
+            "minPhase": 0.0037,
+            "max": 177.00149287559367,
+            "maxPhase": 0.0787
+          }
+        },
+        "takeoffLeft": {
+          "r16": {
+            "side": "left",
+            "lo": 0.5,
+            "hi": 0.58,
+            "min": 166.64194228447732,
+            "minPhase": 0.5111,
+            "max": 176.99998163487447,
+            "maxPhase": 0.5231
+          },
+          "r17": {
+            "side": "left",
+            "lo": 0.5,
+            "hi": 0.58,
+            "min": 176.72613236618983,
+            "minPhase": 0.5037,
+            "max": 176.99999420013236,
+            "maxPhase": 0.5121
+          }
+        },
+        "landingLeft": {
+          "r16": {
+            "side": "left",
+            "lo": 0.937,
+            "hi": 0.998,
+            "min": 176.8940890295516,
+            "minPhase": 0.9833,
+            "max": 177.000175998393,
+            "maxPhase": 0.938
+          },
+          "r17": {
+            "side": "left",
+            "lo": 0.937,
+            "hi": 0.998,
+            "min": 176.8940890295516,
+            "minPhase": 0.9833,
+            "max": 177.000175998393,
+            "maxPhase": 0.938
+          }
+        },
+        "landingRight": {
+          "r16": {
+            "side": "right",
+            "lo": 0.437,
+            "hi": 0.498,
+            "min": 176.94022687656897,
+            "minPhase": 0.4944,
+            "max": 177.0000004780777,
+            "maxPhase": 0.4861
+          },
+          "r17": {
+            "side": "right",
+            "lo": 0.437,
+            "hi": 0.498,
+            "min": 176.94022687656897,
+            "minPhase": 0.4944,
+            "max": 177.0000004780777,
+            "maxPhase": 0.4861
+          }
+        }
+      },
+      "peaks": {
+        "unmodifiedPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "unmodifiedRotationDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.083,
+          "bone": "leftFoot"
+        },
+        "supportWristPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "armSpanDifferenceMm": {
+          "value": 0.08821708866829647,
+          "phase": 0.5213,
+          "bone": "rightupperLength"
+        },
+        "torsoLocalShoulderNeckHeadDifferenceMm": {
+          "value": 0.00006589469185394195,
+          "phase": 0.0482,
+          "bone": "head"
+        },
+        "landingPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "landingRotationDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.4389,
+          "bone": "leftForearm"
+        },
+        "seamPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "seamRotationDegrees": {
+          "value": 0.0000024148365394514667,
+          "phase": 1,
+          "bone": "spineLower"
+        }
+      },
+      "repeatDifference": {
+        "positionMm": 1.6392246515987586e-12,
+        "rotationDegrees": 0.0000034150945850063755
+      },
+      "seam": {
+        "pelvis": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.21835929152220587,
+            "beforeVelocity": [
+              0.4548832967763124,
+              -0.4521266450502977,
+              0.26574718672505454
+            ],
+            "afterVelocity": [
+              0.4579216344190083,
+              -0.2378225379705432,
+              0.22397041821434052
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.21888804833475442,
+            "beforeVelocity": [
+              0.4548832967763124,
+              -0.4521266450502977,
+              0.26574718672505454
+            ],
+            "afterVelocity": [
+              0.45784414837905374,
+              -0.23725033336773863,
+              0.22413731122314917
+            ]
+          }
+        },
+        "torso": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.2631139504397006,
+            "beforeVelocity": [
+              -0.02229758725917205,
+              -0.6282662597744288,
+              0.12972654014868482
+            ],
+            "afterVelocity": [
+              -0.008292496389752622,
+              -0.36565066201221125,
+              0.12161135945336791
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.26368796442388037,
+            "beforeVelocity": [
+              -0.02229758725917205,
+              -0.6282662597744288,
+              0.12972654014868482
+            ],
+            "afterVelocity": [
+              -0.008369982429681476,
+              -0.36506653648035287,
+              0.1217722919978553
+            ]
+          }
+        },
+        "rightUpperArm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.050350858273157884,
+            "beforeVelocity": [
+              0.0193114629029,
+              0.011157734121319188,
+              -0.2636789528893495
+            ],
+            "afterVelocity": [
+              0.04900694002980377,
+              0.012850761700883484,
+              -0.30430556023803174
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.05019788352337509,
+            "beforeVelocity": [
+              0.0193114629029,
+              0.011157734121319188,
+              -0.2636789528893495
+            ],
+            "afterVelocity": [
+              0.04892945398992631,
+              0.013422966302865671,
+              -0.30414462769354433
+            ]
+          }
+        },
+        "rightForearm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.043644660011881255,
+            "beforeVelocity": [
+              -0.05303499904617995,
+              0.00264638565725368,
+              -0.09142249189381478
+            ],
+            "afterVelocity": [
+              -0.04782676803682773,
+              0.005102157706558959,
+              -0.13468563857719623
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.04644416784874944,
+            "beforeVelocity": [
+              -0.05303499904617995,
+              0.00264638565725368,
+              -0.09142249189381478
+            ],
+            "afterVelocity": [
+              -0.03751516426016996,
+              0.00560283673421856,
+              -0.13509691063530782
+            ]
+          }
+        },
+        "rightHand": {
+          "r16": {
+            "velocityDiscontinuityMps": 2.5699606597636868e-14,
+            "beforeVelocity": [
+              0,
+              0,
+              0
+            ],
+            "afterVelocity": [
+              0,
+              -2.5699606597636868e-14,
+              0
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 2.5699606597636868e-14,
+            "beforeVelocity": [
+              0,
+              0,
+              0
+            ],
+            "afterVelocity": [
+              0,
+              -2.5699606597636868e-14,
+              0
+            ]
+          }
+        },
+        "leftUpperArm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6800485265519918,
+            "beforeVelocity": [
+              0.04940515925998599,
+              -0.20302069425905278,
+              0.7940766259768783
+            ],
+            "afterVelocity": [
+              0.0522017490610328,
+              0.47688485257830326,
+              0.7804155524167381
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.6806290043289863,
+            "beforeVelocity": [
+              0.04940515925998599,
+              -0.20302069425905278,
+              0.7940766259768783
+            ],
+            "afterVelocity": [
+              0.052124263021155345,
+              0.4774689781101616,
+              0.7805764849612254
+            ]
+          }
+        },
+        "leftForearm": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6519334517155939,
+            "beforeVelocity": [
+              0.023573097463148923,
+              -0.09507319282855974,
+              0.3731508082202654
+            ],
+            "afterVelocity": [
+              -0.011211633932758406,
+              0.5455017211770496,
+              0.4892155637416092
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.652533148515881,
+            "beforeVelocity": [
+              0.023573097463148923,
+              -0.09507319282855974,
+              0.3731508082202654
+            ],
+            "afterVelocity": [
+              -0.011277199043582094,
+              0.5460739257798541,
+              0.4894062986091936
+            ]
+          }
+        },
+        "leftHand": {
+          "r16": {
+            "velocityDiscontinuityMps": 0.6519405508217457,
+            "beforeVelocity": [
+              -0.0007808029753472486,
+              0.007033932147625424,
+              0.002832568057830882
+            ],
+            "afterVelocity": [
+              -0.06971359408752364,
+              0.6116949158540659,
+              0.23662702243689848
+            ]
+          },
+          "r17": {
+            "velocityDiscontinuityMps": 0.652551207531769,
+            "beforeVelocity": [
+              -0.0007808029753472486,
+              0.007033932147625424,
+              0.002832568057830882
+            ],
+            "afterVelocity": [
+              -0.06977915919814173,
+              0.6122611599920865,
+              0.23684604622827926
+            ]
+          }
+        }
+      }
+    }
+  },
+  "limits": [
+    "Skin surface contact checked separately by parent agent.",
+    "Kinematics only, not dynamics."
+  ]
+}

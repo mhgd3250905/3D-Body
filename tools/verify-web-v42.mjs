@@ -11,10 +11,10 @@ import { createV42Playback } from '../src/v42-playback.js';
 import { BodyViewer } from '../src/viewer.js';
 import { createBakedClock } from '../app/scene/src/baked-motion.js';
 import { OFFICIAL_FLARE_SEQUENCE } from '../src/official-poses.js';
-import { V42_DEFAULT_SEQUENCE, V42_R12_SEQUENCE, V42_R15_SEQUENCE, V42_SELECTION_HISTORY_KEY, resolveV42Sequence, saveV42DefaultSequence, createV42Clock, isV42Sequence } from '../src/v42-default.js';
+import { V42_DEFAULT_SEQUENCE, V42_R12_SEQUENCE, V42_R15_SEQUENCE, V42_R16_SEQUENCE, V42_SELECTION_HISTORY_KEY, resolveV42Sequence, saveV42DefaultSequence, createV42Clock, isV42Sequence } from '../src/v42-default.js';
 import { createTransitionEdits, compatibleTransitionEdits } from '../src/transition-edits.js';
 
-const root = fileURLToPath(new URL('../', import.meta.url)), out = path.join(root, 'output/web-v42-r16-integration');
+const root = fileURLToPath(new URL('../', import.meta.url)), out = path.join(root, 'output/web-v42-r17-integration');
 await fs.mkdir(out, { recursive: true });
 const checks = [];
 function check(name, pass, detail) { checks.push({ name, pass: Boolean(pass), detail });console.log(`${pass ? 'PASS' : 'FAIL'} ${name}`);assert.ok(pass, name); }
@@ -27,7 +27,7 @@ class Storage {
   removeItem(key) { this.values.delete(key); }
 }
 const formal = 'flare-demonstration-v1', undo = 'flare-demonstration-backup-v1';
-const clockDoc = JSON.parse(await fs.readFile(path.join(root, 'public/coach/flare-v42-r16-clock.json'), 'utf8'));
+const clockDoc = JSON.parse(await fs.readFile(path.join(root, 'public/coach/flare-v42-r17-clock.json'), 'utf8'));
 const clock = createV42Clock(clockDoc);
 let maxError = 0;
 for (let i = 0; i <= 1000; i++) { const t = 9 * i / 1000;maxError = Math.max(maxError, Math.abs(clock.toSequence(clock.toClip(t)) - t)); }
@@ -49,7 +49,7 @@ for (const [startTime, endTime] of [[0, 9], [1, 3], [3, 5], [7, 9]]) {
 }
 check('Subrange and full-circle clock crossings match App at four speeds including multiple wraps', loopError < 1e-12, loopError);
 const empty = new Storage();
-check('Fresh default is v42 without changing storage', resolveV42Sequence(empty).source.playback === 'flare-v42-r16' && empty.length === 0);
+check('Fresh default is v42 without changing storage', resolveV42Sequence(empty).source.playback === 'flare-v42-r17' && empty.length === 0);
 const custom = structuredClone(OFFICIAL_FLARE_SEQUENCE);custom.source.origin = 'browser-saved-steps';
 const selected = '\n' + JSON.stringify(custom, null, 2) + '\n';
 const user = new Storage({ [formal]: selected, [undo]: 'old undo bytes', 'flare-pose-library-v1': 'personal bytes', 'flare-transition-library-v1': 'K/routes/draft bytes' });
@@ -61,12 +61,12 @@ const rejected = new Storage({ [formal]: selected });
 rejected.setItem = function (key, value) { if (key !== V42_SELECTION_HISTORY_KEY) this.values.set(key, String(value)); };
 assert.throws(() => saveV42DefaultSequence(rejected));
 check('Rejected independent backup cannot replace formal animation', rejected.getItem(formal) === selected);
-check('v41 K library is isolated from R16 playback selection', !compatibleTransitionEdits(createTransitionEdits(OFFICIAL_FLARE_SEQUENCE), V42_DEFAULT_SEQUENCE));
+check('v41 K library is isolated from R17 playback selection', !compatibleTransitionEdits(createTransitionEdits(OFFICIAL_FLARE_SEQUENCE), V42_DEFAULT_SEQUENCE));
 check('New K/route edits leave baked playback instead of being ignored', !isV42Sequence({ ...V42_DEFAULT_SEQUENCE, corrections: [{ segment: 0 }] }) && !isV42Sequence({ ...V42_DEFAULT_SEQUENCE, footCurves: [{}] }) && !isV42Sequence({ ...V42_DEFAULT_SEQUENCE, interpolation: 'linear' }));
 const rigData = JSON.parse(await fs.readFile(path.join(root, 'public/coach/coach-rig.json'), 'utf8'));
 const [editable, accepted, appGltf] = await Promise.all([
-  loadGlb('../../public/coach/flare-coach.glb'), loadGlb('../../public/coach/flare-coach-v42-r16-animated.glb'),
-  loadGlb('../../app/scene/public/coach/flare-coach-v42-r16-animated.meshopt.glb.gz'),
+  loadGlb('../../public/coach/flare-coach.glb'), loadGlb('../../public/coach/flare-coach-v42-r17-animated.glb'),
+  loadGlb('../../app/scene/public/coach/flare-coach-v42-r17-animated.meshopt.glb.gz'),
 ]);
 const oldClockDoc = JSON.parse(await fs.readFile(path.join(root, 'public/coach/flare-v42-clock.json'), 'utf8'));
 const historicalGlb = await loadGlb('../../public/coach/flare-coach-v42-r12-animated.glb');
@@ -74,26 +74,34 @@ const oldSelection = JSON.stringify(V42_R12_SEQUENCE);
 const oldStorage = new Storage({ [formal]: oldSelection });
 check('Existing R12 selection remains R12 without rewriting storage', resolveV42Sequence(oldStorage).source.playback === 'flare-v42-r12' && oldStorage.getItem(formal) === oldSelection);
 saveV42DefaultSequence(oldStorage);
-check('Explicit R16 adoption backs up R12 and isolates its K library', oldStorage.getItem(undo) === oldSelection && !compatibleTransitionEdits(createTransitionEdits(V42_R12_SEQUENCE), V42_DEFAULT_SEQUENCE));
+check('Explicit R17 adoption backs up R12 and isolates its K library', oldStorage.getItem(undo) === oldSelection && !compatibleTransitionEdits(createTransitionEdits(V42_R12_SEQUENCE), V42_DEFAULT_SEQUENCE));
 const r15ClockDoc = JSON.parse(await fs.readFile(path.join(root, 'public/coach/flare-v42-r15-clock.json'), 'utf8'));
 const r15Glb = await loadGlb('../../public/coach/flare-coach-v42-r15-animated.glb');
 const r15Selection = JSON.stringify(V42_R15_SEQUENCE), r15Storage = new Storage({ [formal]: r15Selection });
 check('Existing R15 is not auto-upgraded', resolveV42Sequence(r15Storage).source.playback === 'flare-v42-r15' && r15Storage.getItem(formal) === r15Selection);
 saveV42DefaultSequence(r15Storage);
-check('R16 adoption preserves exact R15 undo and separate K library', r15Storage.getItem(undo) === r15Selection && !compatibleTransitionEdits(createTransitionEdits(V42_R15_SEQUENCE), V42_DEFAULT_SEQUENCE));
+check('R17 adoption preserves exact R15 undo and separate K library', r15Storage.getItem(undo) === r15Selection && !compatibleTransitionEdits(createTransitionEdits(V42_R15_SEQUENCE), V42_DEFAULT_SEQUENCE));
+const r16ClockDoc = JSON.parse(await fs.readFile(path.join(root, 'public/coach/flare-v42-r16-clock.json'), 'utf8'));
+const r16Glb = await loadGlb('../../public/coach/flare-coach-v42-r16-animated.glb');
+const r16Selection = JSON.stringify(V42_R16_SEQUENCE), r16Storage = new Storage({ [formal]: r16Selection });
+check('Existing R16 is not auto-upgraded', resolveV42Sequence(r16Storage).source.playback === 'flare-v42-r16' && r16Storage.getItem(formal) === r16Selection);
+saveV42DefaultSequence(r16Storage);
+check('R17 adoption preserves exact R16 undo and separate K library', r16Storage.getItem(undo) === r16Selection && !compatibleTransitionEdits(createTransitionEdits(V42_R16_SEQUENCE), V42_DEFAULT_SEQUENCE));
 const baseMotion = createCoachMotion({ model: editable.scene, rigData });
-const playback = createV42Playback({ base: baseMotion, gltf: accepted, clockDocument: clockDoc, historical: [{ gltf: historicalGlb, clockDocument: oldClockDoc }, { gltf: r15Glb, clockDocument: r15ClockDoc }], scene: new THREE.Scene(), rigData });
+const playback = createV42Playback({ base: baseMotion, gltf: accepted, clockDocument: clockDoc, historical: [{ gltf: historicalGlb, clockDocument: oldClockDoc }, { gltf: r15Glb, clockDocument: r15ClockDoc }, { gltf: r16Glb, clockDocument: r16ClockDoc }], scene: new THREE.Scene(), rigData });
 playback.setDisplayMode('motion');playback.setDisplaySequence(V42_R12_SEQUENCE);playback.update(2.4);
 check('Saved R12 routes to its original GLB and label', playback.group === historicalGlb.scene && playback.getMetrics().version === 'flare-v42-r12' && playback.getV42DisplayLabel() === 'v42 / R12' && !accepted.scene.visible);
 playback.setDisplaySequence(V42_R15_SEQUENCE);playback.update(2.4);
 check('Saved R15 uses original GLB and label', playback.group === r15Glb.scene && playback.getMetrics().version === 'flare-v42-r15' && playback.getV42DisplayLabel() === 'v42 / R15' && !accepted.scene.visible && !historicalGlb.scene.visible);
+playback.setDisplaySequence(V42_R16_SEQUENCE);playback.update(2.4);
+check('Saved R16 uses original GLB and label', playback.group === r16Glb.scene && playback.getMetrics().version === 'flare-v42-r16' && playback.getV42DisplayLabel() === 'v42 / R16' && !accepted.scene.visible && !historicalGlb.scene.visible && !r15Glb.scene.visible);
 playback.setDisplaySequence(V42_DEFAULT_SEQUENCE);playback.update(2.4);
-check('R16 routes to new GLB and hides R12', playback.group === accepted.scene && playback.getMetrics().version === 'flare-v42-r16' && !historicalGlb.scene.visible && !r15Glb.scene.visible);
+check('R17 routes to new GLB and hides R12', playback.group === accepted.scene && playback.getMetrics().version === 'flare-v42-r17' && !historicalGlb.scene.visible && !r15Glb.scene.visible && !r16Glb.scene.visible);
 function animationTick(motion, range, time, delta, speed, legacyStep) {
   const nextFrame = globalThis.requestAnimationFrame;
   const viewer = { motion, playbackRange: range, time, speed, previous: 0, playing: true, mode: 'motion', callbacks: {},
     controls: { update: () => false }, renderer: { render() {} }, animate() {},
-    paceStep: legacyStep ?? (() => { throw new Error('R16 must bypass sequence-domain pacing and wrapping'); }),
+    paceStep: legacyStep ?? (() => { throw new Error('R17 must bypass sequence-domain pacing and wrapping'); }),
   };
   try { globalThis.requestAnimationFrame = () => 0;BodyViewer.prototype.animate.call(viewer, delta * 1000);return viewer.time; }
   finally { globalThis.requestAnimationFrame = nextFrame; }
@@ -121,13 +129,13 @@ for (let i = 0; i <= 180; i++) {
 check('Web adapter matches packaged App GLB at 181 identical timeline times / 22 bones', boneError < 1e-6, boneError);
 const savedTime = playback.getMetrics().time;
 playback.sampleTrajectory({ startTime: 0, endTime: 9, samples: 64 });
-check('R16 trajectory sampling preserves the paused frame', playback.getMetrics().time === savedTime);
+check('R17 trajectory sampling preserves the paused frame', playback.getMetrics().time === savedTime);
 playback.applyPose(baseMotion.capturePose());
-check('Auxiliary pose preview shows original rig instead of leaving R16 over it', !accepted.scene.visible && editable.scene.visible && !playback.isV42Playback());
+check('Auxiliary pose preview shows original rig instead of leaving R17 over it', !accepted.scene.visible && editable.scene.visible && !playback.isV42Playback());
 playback.update(savedTime);
-check('Returning from auxiliary preview restores R16', accepted.scene.visible && !editable.scene.visible && playback.isV42Playback());
+check('Returning from auxiliary preview restores R17', accepted.scene.visible && !editable.scene.visible && playback.isV42Playback());
 playback.setDisplaySequence(OFFICIAL_FLARE_SEQUENCE);
-check('Choosing v41 immediately hides R16 and shows original rig', !accepted.scene.visible && editable.scene.visible);
+check('Choosing v41 immediately hides R17 and shows original rig', !accepted.scene.visible && editable.scene.visible);
 playback.setDisplaySequence(V42_DEFAULT_SEQUENCE);playback.setDisplayMode('pose');
 check('Original editor rig stays available independently', playback.group === editable.scene && playback.getEditableHandles().length > 0 && !accepted.scene.visible);
 if (process.argv.includes('--node-only')) {
@@ -141,7 +149,7 @@ const { chromium } = require(path.join(process.env.USERPROFILE, '.cache/codex-ru
 const dist = process.argv.includes('--dist');
 const server = dist
   ? await preview({ root, configFile: false, logLevel: 'error', preview: { host: '127.0.0.1', port: 8886, strictPort: true }, build: { outDir: 'dist' } })
-  : await createServer({ root, configFile: false, cacheDir: 'output/web-v42-r16-integration/.vite', logLevel: 'error', optimizeDeps: { entries: ['index.html', 'muscle-viewer.html'] }, server: { host: '127.0.0.1', port: 8886, strictPort: true, hmr: false } });
+  : await createServer({ root, configFile: false, cacheDir: 'output/web-v42-r17-integration/.vite', logLevel: 'error', optimizeDeps: { entries: ['index.html', 'muscle-viewer.html'] }, server: { host: '127.0.0.1', port: 8886, strictPort: true, hmr: false } });
 if (!dist) await server.listen();
 let browser, failure;
 const errors = [];
@@ -157,7 +165,7 @@ try {
     return p;
   }
   const p = await page();
-  check('Fresh browser displays R16 baked clip', await p.evaluate(() => window.flareInspector.status().motion.version === 'flare-v42-r16'));
+  check('Fresh browser displays R17 baked clip', await p.evaluate(() => window.flareInspector.status().motion.version === 'flare-v42-r17'));
   const browserTicks = await p.evaluate(() => {
     const v = window.flareInspector.viewer, saved = { time: v.time, speed: v.speed, range: v.playbackRange, playing: v.playing, previous: v.previous };
     const schedule = window.requestAnimationFrame, results = [];
@@ -172,8 +180,8 @@ try {
       window.requestAnimationFrame = schedule;v.playing = saved.playing;v.speed = saved.speed;v.playbackRange = saved.range;v.previous = saved.previous;v.setTime(saved.time);
     }
   });
-  check('Built browser R16 tick preserves precise subrange overshoot', Math.abs(browserTicks[0].time - preciseLoop) < 1e-12 && Math.abs(browserTicks[0].clipTime - clock.toClip(preciseLoop)) < 1e-12, browserTicks[0]);
-  check('Built browser R16 tick preserves whole-circle overshoot', Math.abs(browserTicks[1].time - appClock.advance(8.99, .04, 1)) < 1e-12, browserTicks[1]);
+  check('Built browser R17 tick preserves precise subrange overshoot', Math.abs(browserTicks[0].time - preciseLoop) < 1e-12 && Math.abs(browserTicks[0].clipTime - clock.toClip(preciseLoop)) < 1e-12, browserTicks[0]);
+  check('Built browser R17 tick preserves whole-circle overshoot', Math.abs(browserTicks[1].time - appClock.advance(8.99, .04, 1)) < 1e-12, browserTicks[1]);
   const poseSamples = [];
   for (const time of [0, 1.8, 3.5, 4.5, 6.8, 8.6, 9]) {
     const result = await p.evaluate(t => {
@@ -187,7 +195,7 @@ try {
   await p.evaluate(() => window.flareInspector.setTime(2.4));
   const beforeReturn = await p.evaluate(() => ({ time: window.flareInspector.status().time, bone: window.flareInspector.viewer.motion.group.getObjectByName('rightForearm').matrixWorld.elements.slice() }));
   await p.evaluate(() => { window.flareInspector.viewer.setMode('anatomy');window.flareInspector.viewer.setMode('motion'); });
-  check('Anatomy return preserves exact R16 frame', await p.evaluate(before => {
+  check('Anatomy return preserves exact R17 frame', await p.evaluate(before => {
     const v = window.flareInspector.viewer;return v.time === before.time && v.motion.group.getObjectByName('rightForearm').matrixWorld.elements.every((x, i) => Math.abs(x - before.bone[i]) < 1e-10);
   }, beforeReturn));
   await p.screenshot({ path: path.join(out, 'desktop.png') });
@@ -197,18 +205,18 @@ try {
   await p.waitForTimeout(350);
   check('390px layout has no page overflow', await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   const phoneProjection = await p.evaluate(() => window.flareInspector.projectCoach());
-  check('390px R16 body fits viewport', phoneProjection.min.every(v => v >= -1.01) && phoneProjection.max.every(v => v <= 1.01), phoneProjection);
+  check('390px R17 body fits viewport', phoneProjection.min.every(v => v >= -1.01) && phoneProjection.max.every(v => v <= 1.01), phoneProjection);
   await p.screenshot({ path: path.join(out, 'mobile.png') });
   const old = await page(selected);
-  check('Existing formal animation does not auto-upgrade', await old.evaluate(key => localStorage.getItem(key), formal) === selected && await old.evaluate(() => window.flareInspector.status().motion.version !== 'flare-v42-r16'));
+  check('Existing formal animation does not auto-upgrade', await old.evaluate(key => localStorage.getItem(key), formal) === selected && await old.evaluate(() => window.flareInspector.status().motion.version !== 'flare-v42-r17'));
   await old.locator('#use-v42-default').evaluate(button => button.click());
-  check('Explicit adoption selects baked R16 and stores independent backup', await old.evaluate(({ formal, history }) => JSON.parse(localStorage.getItem(formal)).source.playback === 'flare-v42-r16' && JSON.parse(localStorage.getItem(history)).entries.length === 1 && window.flareInspector.status().motion.version === 'flare-v42-r16', { formal, history: V42_SELECTION_HISTORY_KEY }));
+  check('Explicit adoption selects baked R17 and stores independent backup', await old.evaluate(({ formal, history }) => JSON.parse(localStorage.getItem(formal)).source.playback === 'flare-v42-r17' && JSON.parse(localStorage.getItem(history)).entries.length === 1 && window.flareInspector.status().motion.version === 'flare-v42-r17', { formal, history: V42_SELECTION_HISTORY_KEY }));
   await old.locator('#edit-current-pose').evaluate(button => button.click());
   check('Original pose editor remains available', await old.evaluate(() => window.flareInspector.viewer.poseEditor.getState().enabled && window.flareInspector.viewer.motion.getEditableHandles().length > 0));
   await old.locator('#pose-undo-demonstration').evaluate(button => button.click());
   check('Undo restores previous personal formal sequence', await old.evaluate(expected => JSON.stringify(window.flareInspector.demonstration()) === JSON.stringify(expected), custom));
   await old.locator('[data-mode="motion"]').evaluateAll(buttons => buttons[0].click());
-  check('Restored personal sequence uses original runtime', await old.evaluate(() => window.flareInspector.status().motion.version !== 'flare-v42-r16'));
+  check('Restored personal sequence uses original runtime', await old.evaluate(() => window.flareInspector.status().motion.version !== 'flare-v42-r17'));
   check('No browser runtime errors', errors.length === 0, errors);
   await fs.writeFile(path.join(out, 'samples.json'), JSON.stringify(poseSamples, null, 2));
 } catch (error) { failure = error; }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import clockData from './v42-r16-clock.json' with { type: 'json' };
+import clockData from './v42-r17-clock.json' with { type: 'json' };
 import v41ClockData from './v41-clock.json' with { type: 'json' };
 import historicalClockData from './v38-clock.json' with { type: 'json' };
 
@@ -144,7 +144,7 @@ export function createBakedMotion(gltf, rig, clock = null) {
       bounds = { min: union.min.toArray(), max: union.max.toArray() };
     }
     return { time, period: clock.period, joints, bounds, neutralHeight: rig.height, source: rig.source, license: rig.license,
-      motionRevision: revision, motionVersion: revision === 'v42' ? 'v42-r16' : revision, playback: 'AnimationMixer', clip: clip.name, wallTime: clock.toWall(time), clipDuration: clip.duration,
+      motionRevision: revision, motionVersion: revision === 'v42' ? 'v42-r17' : revision, playback: 'AnimationMixer', clip: clip.name, wallTime: clock.toWall(time), clipDuration: clip.duration,
       skinning: { bones: bones.size, batches: meshes.length, authoredWeights: true } };
   }
   return { reset, update, getMetrics, getBodyEnvelope, getBodyHulls, clock, dispose() { mixer.stopAllAction(); mixer.uncacheRoot(model); } };

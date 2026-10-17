@@ -1,0 +1,16 @@
+{
+  "version": "r17-preview",
+  "status": "awaiting-user-review",
+  "baseline": "R16 original with reported right-elbow cycle-seam jitter",
+  "candidate": "R17 seam correction",
+  "defaultPhase": 0.0297,
+  "seamWindowUnwrapped": [
+    0.95,
+    1.08
+  ],
+  "seamFullCycleSeconds": 6,
+  "baseline_hashes": {
+    "training": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+    "coach": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055"
+  }
+}
