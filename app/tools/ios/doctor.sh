@@ -18,7 +18,9 @@ if xcodebuild -version >/dev/null 2>&1; then
   [[ ${sdk%%.*} =~ ^[0-9]+$ && ${sdk%%.*} -ge 26 ]] && pass "iOS SDK $sdk" || fail "iOS SDK ${sdk:-未知}（App Store / TestFlight 上传需要 SDK ≥ 26；最低设备系统仍是 iOS 15）"
 else fail "未找到 Xcode（App Store 安装后运行 sudo xcode-select -s /Applications/Xcode.app）"; fi
 
-want=3.47.6
+# Keep the SDK compatible with the committed intl 0.20.2 lock. Flutter 3.47.6
+# requires intl ^0.20.3 through flutter_localizations.
+want=3.44.7
 if command -v "$flutter_bin" >/dev/null; then
   fv=$("$flutter_bin" --version 2>/dev/null | head -1 | awk '{print $2}')
   [[ "$fv" == "$want" ]] && pass "Flutter $fv" || fail "Flutter $fv（项目基线 $want：用 FLUTTER_BIN 指向对应 SDK，或 fvm use $want）"

@@ -88,7 +88,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('live iOS motion preferences select the L28 silhouette asset', (
+  testWidgets('live iOS motion preferences select the R17 silhouette asset', (
     tester,
   ) async {
     final platform = tester.binding.platformDispatcher;

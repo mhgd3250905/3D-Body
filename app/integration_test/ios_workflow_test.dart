@@ -10,6 +10,7 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/trainer_page.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -172,9 +173,20 @@ void main() {
     await tester.tap(find.text(selectedDrill.name));
     await tester.pumpAndSettle();
     await screenshot(tester, '04-drill-$screenshotTheme');
-    final addToday = find.byTooltip('加入今日训练');
-    await tester.ensureVisible(addToday);
-    await tester.tap(addToday);
+    await tester.tap(find.byTooltip('加入计划'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('新建计划并加入'));
+    await tester.pumpAndSettle();
+    expect(find.byType(RoutineEditorPage), findsOneWidget);
+    final savePlan = find.byKey(const ValueKey('routine-save'));
+    await tester.ensureVisible(savePlan);
+    await tester.tap(savePlan);
+    await tester.pumpAndSettle();
+    expect(store.routines.single.drillIds, [selectedDrill.id]);
+    ScaffoldMessenger.of(
+      tester.element(find.byType(DrillDetailPage)),
+    ).removeCurrentSnackBar();
+    await tester.pumpAndSettle();
     final startTraining = find.text('开始训练');
     await tester.ensureVisible(startTraining);
     await tester.tap(startTraining);

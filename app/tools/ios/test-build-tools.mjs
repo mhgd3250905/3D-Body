@@ -41,7 +41,7 @@ try {
   writeFileSync(join(app, 'analysis_options.yaml'), dirty);
   writeFileSync(calls, '');
   executable('project-flutter', `printf '%s\\n' "$*" >> "$IOS_TOOL_CALLS"
-if [[ "$1" == "--version" ]]; then echo 'Flutter 3.47.6 • channel stable'; fi
+if [[ "$1" == "--version" ]]; then echo 'Flutter 3.44.7 • channel stable'; fi
 if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi`);
   executable('uname', "echo Darwin");
   executable('sw_vers', "echo 26.6");
@@ -71,6 +71,18 @@ if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi
   assert.equal(run('bash', ['app/tools/ios/build.sh', 'sim']).status, 0);
   assert.match(readFileSync(calls, 'utf8'), /build ios --simulator --debug --target=lib\/main\.dart/);
   assert.notEqual(run('bash', ['app/tools/ios/build.sh', 'ipa']).status, 0);
+  const exportOptions = join(app, 'fixture-export.plist');
+  writeFileSync(exportOptions, '<plist><dict/></plist>');
+  const beforeIpa = readFileSync(calls, 'utf8');
+  assert.equal(run('bash', ['app/tools/ios/build.sh', 'ipa'], {
+    EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '7',
+  }).status, 1);
+  assert.equal(readFileSync(calls, 'utf8'), beforeIpa);
+  mkdirSync(join(app, 'build/ios/ipa'), { recursive: true });
+  assert.equal(run('bash', ['app/tools/ios/build.sh', 'ipa'], {
+    EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '11',
+  }).status, 0);
+  assert.match(readFileSync(calls, 'utf8'), /build ipa --release --target=lib\/main\.dart --build-number=11/);
   preserved();
   console.log('PASS: configuration changes survive success, dependency failure, and invalid usage; explicit SDK and device selection work; placeholder signing is refused.');
 } finally {

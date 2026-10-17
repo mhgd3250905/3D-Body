@@ -73,7 +73,15 @@ void main() {
       'paused detail acknowledgement',
     );
     await tester.pumpAndSettle();
-    for (final body in ['training', 'original']) {
+    for (final body in [
+      'training',
+      'shadow',
+      'chrome',
+      'street',
+      'robot',
+      'cyber',
+      'original',
+    ]) {
       final readyRevision = scene.readyRevision;
       final stateRevision = scene.stateRevision;
       await store.updateSettings(actorBody: body);
@@ -94,15 +102,22 @@ void main() {
       final raw = await web.platform.params.controller
           .runJavaScriptReturningResult('''JSON.stringify({
             body:new URLSearchParams(location.search).get('body'),
+            character:new URLSearchParams(location.search).get('character'),
             resources:performance.getEntriesByType('resource').map(x=>x.name)
           })''');
       var decoded = jsonDecode(raw.toString());
       if (decoded is String) decoded = jsonDecode(decoded);
       final diagnostics = Map<String, dynamic>.from(decoded as Map);
       final resources = (diagnostics['resources'] as List).cast<String>();
-      final model = body == 'training'
-          ? 'flare-coach-v41-training-human-collarfix-20261013.glb.gz'
-          : 'flare-coach-v41-animated.meshopt.glb.gz';
+      final usesCoach = body == 'original' || body == 'street';
+      final model = usesCoach
+          ? 'flare-coach-v42-r17-animated.meshopt.glb.gz'
+          : 'flare-coach-v42-r17-training-human.meshopt.glb.gz';
+      expect(diagnostics['body'], body == 'training' ? 'training' : isNull);
+      expect(
+        diagnostics['character'],
+        body == 'original' || body == 'training' ? isNull : body,
+      );
       expect(resources.any((url) => url.endsWith(model)), isTrue);
       final restored = LearningStore(catalog: catalog, storage: storage);
       await restored.initialize();
