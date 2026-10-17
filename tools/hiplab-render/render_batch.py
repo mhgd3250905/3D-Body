@@ -82,7 +82,8 @@ def main():
         "output_size":1080, "pixel_ratio":a.pr, "pose_camera_timing_unchanged":True, "drills":entries}
     if previous_manifest is not None and previous_manifest != manifest:
         raise RuntimeError("Batch source/recipe changed; preserve this batch and use a new output directory")
-    write_json(manifest_path, manifest)
+    if previous_manifest is None:
+        write_json(manifest_path, manifest)
 
     # Contact-sheet reference tiles are explicitly identified, never new evidence.
     from PIL import Image, ImageDraw, ImageFont
