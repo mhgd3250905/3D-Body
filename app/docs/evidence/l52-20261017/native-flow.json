@@ -1,0 +1,28 @@
+{
+  "preset": "warmup/A",
+  "steps": [
+    {
+      "skipped": 1,
+      "nextIndexOneBased": 2,
+      "ended": false
+    },
+    {
+      "skipped": 2,
+      "nextIndexOneBased": 3,
+      "ended": false
+    },
+    {
+      "skipped": 3,
+      "nextIndexOneBased": 4,
+      "ended": false
+    },
+    {
+      "skipped": 4,
+      "nextIndexOneBased": null,
+      "ended": true
+    }
+  ],
+  "completed": 0,
+  "skipped": 4,
+  "ended": true
+}

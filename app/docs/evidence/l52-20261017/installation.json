@@ -1,0 +1,23 @@
+{
+  "installed": true,
+  "version": "L52",
+  "versionName": "1.0.9",
+  "versionCode": 11,
+  "motion": "v42-R17",
+  "previous": "L51 / 1.0.8+10",
+  "model": "2602BRT18C",
+  "method": "adb install -r",
+  "result": "Success",
+  "sourceCommit": "38f57e419df11e42e6d1c7ef7c71478650b588cf",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L52-plan-skip-v42-R17-20261017-arm64.apk",
+  "sourceApkSha256": "6a1fa6d89019b61198c0428b796f55ce7ab511f758669e29e485c6fa4bbcb32b",
+  "installedApkRemoteSha256": "6a1fa6d89019b61198c0428b796f55ce7ab511f758669e29e485c6fa4bbcb32b",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "firstInstallTimeBefore": "2026-10-08 17:53:04",
+  "firstInstallTimeAfter": "2026-10-08 17:53:04",
+  "lastUpdateTime": "2026-10-17 10:37:35",
+  "coldStart": "Starting: Intent { cmp=dev.mhgd.flare/.MainActivity }\nStatus: ok\nLaunchState: COLD\nActivity: dev.mhgd.flare/.MainActivity\nTotalTime: 453\nWaitTime: 455\nComplete",
+  "nativeOrderedFourSkipFlow": "passed; 0 completed / 4 skipped / ended, no wrap",
+  "dataPreservation": "Replacement install, no uninstall/clear. Private personal records not extracted or compared.",
+  "userAcceptance": "pending"
+}

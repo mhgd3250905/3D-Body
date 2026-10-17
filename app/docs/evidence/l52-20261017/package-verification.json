@@ -1,0 +1,14 @@
+{
+  "version": "L52 / 1.0.9+11 / v42-R17",
+  "sourceCommit": "38f57e419df11e42e6d1c7ef7c71478650b588cf",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L52-plan-skip-v42-R17-20261017-arm64.apk",
+  "bytes": 97593345,
+  "sha256": "6a1fa6d89019b61198c0428b796f55ce7ab511f758669e29e485c6fa4bbcb32b",
+  "packageBadging": "package: name='dev.mhgd.flare' versionCode='11' versionName='1.0.9' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "sameCertificateAsInstalledL51": true,
+  "alignment16KiB": "passed",
+  "unchangedBundledAppAssetsComparedWithInstalledL51": 420,
+  "changedBundledAppAssets": [],
+  "installed": false
+}
