@@ -189,7 +189,7 @@
   "aboutTitle": "关于 Flare",
   "aboutBody": "观看托马斯全旋，了解各阶段的肌群作用，选择适合自己的训练并记录练习。动作、素材和训练记录都可离线使用。",
   "privacyTitle": "本地数据与隐私",
-  "privacyBody": "设置、今日训练、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。",
+  "privacyBody": "设置、我的计划、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。",
   "creditsTitle": "模型与素材来源",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0，服饰、材质与动画已修改。Human Base Meshes · Blender Studio 与社区贡献者 · CC0。Three.js · MIT。人台色区是教学面板，不能冒充缺失的 BodyParts3D 解剖网格。训练图与品牌图由应用发行者提供。",
   "speedLabel": "默认速度",
@@ -258,7 +258,7 @@
   "safetySheetEyebrow": "练之前",
   "safetySheetTitle": "三件事",
   "safetyRule1": "每次先热身手腕",
-  "safetyRule1Note": "约 6 分钟，学习路径第一课就是它",
+  "safetyRule1Note": "计划里的「热身激活」会带你做一遍",
   "safetyRule2": "刺痛、麻木、头晕就停",
   "safetyRule2Note": "酸可以，痛不行",
   "safetyRule3": "这是动作教学",
@@ -440,5 +440,110 @@
         "type": "String"
       }
     }
-  }
+  },
+  "plans": "计划",
+  "plansHint": "成套训练与我的计划",
+  "plansReady": "成套训练",
+  "plansMine": "我的计划",
+  "planNew": "新建计划",
+  "planNewHint": "把常练的动作组合起来，下次一键开始",
+  "planMeta": "{count} 个动作 · 约 {minutes} 分钟",
+  "@planMeta": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "planStart": "开始训练",
+  "planSaveAsMine": "存为我的计划",
+  "planSaved": "已存到我的计划",
+  "planEdit": "编辑",
+  "planDelete": "删除计划",
+  "planDeleted": "已删除计划",
+  "planNameHint": "计划名称",
+  "planDefaultName": "我的训练",
+  "planAddDrills": "添加动作",
+  "planEmptyDrills": "还没有动作，先添加几个",
+  "planSave": "保存",
+  "planAddTo": "加入计划",
+  "planAddedTo": "已加入「{name}」",
+  "@planAddedTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "planNewWith": "新建计划并加入",
+  "planNext": "下一个",
+  "planStartDrill": "开始：{name}",
+  "@planStartDrill": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "planSkip": "跳过",
+  "planFinish": "结束训练",
+  "planAllDone": "这一套练完了",
+  "planAllDoneLine": "完成 {done} / {total} 个动作",
+  "@planAllDoneLine": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "planOf": "第 {index} / {total} 个",
+  "@planOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "pickerTitle": "选择动作",
+  "pickerSelected": "已选 {count} 个",
+  "@pickerSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planReorderHint": "拖动右侧把手调整顺序",
+  "planRemoveDrill": "移出计划",
+  "presetWarmup": "热身激活",
+  "presetWarmupLine": "手腕和肩胛先醒过来，每次练前做",
+  "presetSupport": "肩臂支撑",
+  "presetSupportLine": "撑得住、撑得稳",
+  "presetCore": "核心折叠",
+  "presetCoreLine": "髋抬得起，腿收得进",
+  "presetLegs": "腿部绕环",
+  "presetLegsLine": "腿打得开、甩得圆",
+  "presetSide": "侧撑换手",
+  "presetSideLine": "侧撑稳，换手不塌肩",
+  "presetFlare": "托马斯全链",
+  "presetFlareLine": "一次练到托马斯的主力肌群",
+  "planUpNext": "接下来",
+  "planDrillCount": "{count} 个动作",
+  "@planDrillCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsHint": "外观、播放与画质"
 }

@@ -498,7 +498,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '設定、今日のトレーニング、自己評価、練習記録はこの端末だけに保存されます。モデルとメディアはアプリに含まれ、サーバーにはアップロードされません。ブラウザーのプレビューのデータはそのブラウザーに保存されます。端末の移行や再インストールの前にバックアップをエクスポートしてください。';
+      '設定、マイプラン、自己評価、練習記録はこの端末だけに保存されます。モデルとメディアはアプリに含まれ、サーバーにはアップロードされません。ブラウザーのプレビューのデータはそのブラウザーに保存されます。端末の移行や再インストールの前にバックアップをエクスポートしてください。';
 
   @override
   String get creditsTitle => 'モデルとメディアの出典';
@@ -621,7 +621,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get safetyRule1 => 'まず手首を温める';
 
   @override
-  String get safetyRule1Note => '約6分。学習コースの最初のレッスンです';
+  String get safetyRule1Note => 'プランの「ウォームアップ」で一通りできます';
 
   @override
   String get safetyRule2 => '鋭い痛み、しびれ、めまいがあれば中止する';
@@ -895,4 +895,159 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get wristExtension => '手首の伸展';
+
+  @override
+  String get plans => 'プラン';
+
+  @override
+  String get plansHint => 'セットとマイプラン';
+
+  @override
+  String get plansReady => 'おすすめセット';
+
+  @override
+  String get plansMine => 'マイプラン';
+
+  @override
+  String get planNew => '新しいプラン';
+
+  @override
+  String get planNewHint => 'よく行う種目をまとめて、次はワンタップで開始';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count 種目 · 約 $minutes 分';
+  }
+
+  @override
+  String get planStart => '開始';
+
+  @override
+  String get planSaveAsMine => 'マイプランに保存';
+
+  @override
+  String get planSaved => 'マイプランに保存しました';
+
+  @override
+  String get planEdit => '編集';
+
+  @override
+  String get planDelete => 'プランを削除';
+
+  @override
+  String get planDeleted => 'プランを削除しました';
+
+  @override
+  String get planNameHint => 'プラン名';
+
+  @override
+  String get planDefaultName => 'マイトレーニング';
+
+  @override
+  String get planAddDrills => '種目を追加';
+
+  @override
+  String get planEmptyDrills => 'まだ種目がありません。追加しましょう';
+
+  @override
+  String get planSave => '保存';
+
+  @override
+  String get planAddTo => 'プランに追加';
+
+  @override
+  String planAddedTo(String name) {
+    return '「$name」に追加しました';
+  }
+
+  @override
+  String get planNewWith => '新しいプランに追加';
+
+  @override
+  String get planNext => '次へ';
+
+  @override
+  String planStartDrill(String name) {
+    return '開始：$name';
+  }
+
+  @override
+  String get planSkip => 'スキップ';
+
+  @override
+  String get planFinish => 'トレーニング終了';
+
+  @override
+  String get planAllDone => 'このセットが完了しました';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$total 種目中 $done 完了';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index / $total';
+  }
+
+  @override
+  String get pickerTitle => '種目を選ぶ';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count 件選択';
+  }
+
+  @override
+  String get planReorderHint => 'ハンドルをドラッグして並べ替え';
+
+  @override
+  String get planRemoveDrill => 'プランから外す';
+
+  @override
+  String get presetWarmup => 'ウォームアップ';
+
+  @override
+  String get presetWarmupLine => '毎回の前に手首と肩甲骨を起こす';
+
+  @override
+  String get presetSupport => '腕の支持';
+
+  @override
+  String get presetSupportLine => '床をしっかり押して安定させる';
+
+  @override
+  String get presetCore => '体幹の折りたたみ';
+
+  @override
+  String get presetCoreLine => '腰を上げ、脚を引き込む';
+
+  @override
+  String get presetLegs => '脚の回旋';
+
+  @override
+  String get presetLegsLine => '脚を開いて大きく回す';
+
+  @override
+  String get presetSide => 'サイドサポート';
+
+  @override
+  String get presetSideLine => 'サイドプランクを安定、切り替えで肩を落とさない';
+
+  @override
+  String get presetFlare => 'フレア全体';
+
+  @override
+  String get presetFlareLine => 'フレアの主な筋群を1セットで';
+
+  @override
+  String get planUpNext => '次の種目';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count 種目';
+  }
+
+  @override
+  String get settingsHint => '外観・再生・画質';
 }

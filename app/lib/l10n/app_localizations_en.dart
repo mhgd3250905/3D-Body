@@ -507,7 +507,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Settings, today’s training, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
+      'Settings, your plans, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
 
   @override
   String get creditsTitle => 'Model and media sources';
@@ -634,8 +634,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyRule1 => 'Warm up your wrists first';
 
   @override
-  String get safetyRule1Note =>
-      'About 6 minutes; it is the first lesson in the learning path';
+  String get safetyRule1Note => 'The Warm-up plan walks you through it';
 
   @override
   String get safetyRule2 => 'Stop for sharp pain, numbness, or dizziness';
@@ -912,4 +911,162 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wristExtension => 'Wrist extension';
+
+  @override
+  String get plans => 'Plans';
+
+  @override
+  String get plansHint => 'Ready-made sets and your own';
+
+  @override
+  String get plansReady => 'Ready-made sets';
+
+  @override
+  String get plansMine => 'My plans';
+
+  @override
+  String get planNew => 'New plan';
+
+  @override
+  String get planNewHint =>
+      'Group the drills you repeat and start them in one tap';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count drills · about $minutes min';
+  }
+
+  @override
+  String get planStart => 'Start';
+
+  @override
+  String get planSaveAsMine => 'Save as my plan';
+
+  @override
+  String get planSaved => 'Saved to My plans';
+
+  @override
+  String get planEdit => 'Edit';
+
+  @override
+  String get planDelete => 'Delete plan';
+
+  @override
+  String get planDeleted => 'Plan deleted';
+
+  @override
+  String get planNameHint => 'Plan name';
+
+  @override
+  String get planDefaultName => 'My session';
+
+  @override
+  String get planAddDrills => 'Add drills';
+
+  @override
+  String get planEmptyDrills => 'No drills yet. Add a few to begin';
+
+  @override
+  String get planSave => 'Save';
+
+  @override
+  String get planAddTo => 'Add to plan';
+
+  @override
+  String planAddedTo(String name) {
+    return 'Added to “$name”';
+  }
+
+  @override
+  String get planNewWith => 'New plan with this drill';
+
+  @override
+  String get planNext => 'Next';
+
+  @override
+  String planStartDrill(String name) {
+    return 'Start: $name';
+  }
+
+  @override
+  String get planSkip => 'Skip';
+
+  @override
+  String get planFinish => 'End session';
+
+  @override
+  String get planAllDone => 'Set complete';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$done of $total drills done';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index of $total';
+  }
+
+  @override
+  String get pickerTitle => 'Choose drills';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get planReorderHint => 'Drag the handle to reorder';
+
+  @override
+  String get planRemoveDrill => 'Remove from plan';
+
+  @override
+  String get presetWarmup => 'Warm-up';
+
+  @override
+  String get presetWarmupLine =>
+      'Wake up wrists and shoulder blades before every session';
+
+  @override
+  String get presetSupport => 'Arm support';
+
+  @override
+  String get presetSupportLine => 'Hold the floor, stay stable';
+
+  @override
+  String get presetCore => 'Core compression';
+
+  @override
+  String get presetCoreLine => 'Lift the hips, fold the legs in';
+
+  @override
+  String get presetLegs => 'Leg circles';
+
+  @override
+  String get presetLegsLine => 'Open the legs, swing them round';
+
+  @override
+  String get presetSide => 'Side support';
+
+  @override
+  String get presetSideLine =>
+      'Steady side plank, no shoulder sag on the switch';
+
+  @override
+  String get presetFlare => 'Full flare chain';
+
+  @override
+  String get presetFlareLine => 'Every main flare muscle group in one set';
+
+  @override
+  String get planUpNext => 'Up next';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count drills';
+  }
+
+  @override
+  String get settingsHint => 'Appearance, playback, quality';
 }

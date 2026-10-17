@@ -498,7 +498,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '설정, 오늘의 훈련, 자기평가, 훈련 기록은 이 기기에만 저장됩니다. 모델과 미디어는 앱에 포함되어 있으며 서버로 업로드되지 않습니다. 브라우저 미리보기 데이터는 해당 브라우저에 저장됩니다. 기기를 옮기거나 앱을 다시 설치하기 전에 백업을 내보내세요.';
+      '설정, 내 플랜, 자기평가, 훈련 기록은 이 기기에만 저장됩니다. 모델과 미디어는 앱에 포함되어 있으며 서버로 업로드되지 않습니다. 브라우저 미리보기 데이터는 해당 브라우저에 저장됩니다. 기기를 옮기거나 앱을 다시 설치하기 전에 백업을 내보내세요.';
 
   @override
   String get creditsTitle => '모델 및 미디어 출처';
@@ -621,7 +621,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get safetyRule1 => '먼저 손목을 준비운동하세요';
 
   @override
-  String get safetyRule1Note => '약 6분이며 학습 경로의 첫 레슨입니다';
+  String get safetyRule1Note => '플랜의 ‘워밍업’이 차례로 안내합니다';
 
   @override
   String get safetyRule2 => '찌르는 통증, 저림, 어지럼증이 있으면 멈추세요';
@@ -896,4 +896,159 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get wristExtension => '손목 신전';
+
+  @override
+  String get plans => '플랜';
+
+  @override
+  String get plansHint => '추천 세트와 내 플랜';
+
+  @override
+  String get plansReady => '추천 세트';
+
+  @override
+  String get plansMine => '내 플랜';
+
+  @override
+  String get planNew => '새 플랜';
+
+  @override
+  String get planNewHint => '자주 하는 동작을 묶어 다음엔 한 번에 시작';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count개 동작 · 약 $minutes분';
+  }
+
+  @override
+  String get planStart => '시작';
+
+  @override
+  String get planSaveAsMine => '내 플랜으로 저장';
+
+  @override
+  String get planSaved => '내 플랜에 저장했어요';
+
+  @override
+  String get planEdit => '편집';
+
+  @override
+  String get planDelete => '플랜 삭제';
+
+  @override
+  String get planDeleted => '플랜을 삭제했어요';
+
+  @override
+  String get planNameHint => '플랜 이름';
+
+  @override
+  String get planDefaultName => '내 운동';
+
+  @override
+  String get planAddDrills => '동작 추가';
+
+  @override
+  String get planEmptyDrills => '아직 동작이 없어요. 몇 개 추가해 보세요';
+
+  @override
+  String get planSave => '저장';
+
+  @override
+  String get planAddTo => '플랜에 추가';
+
+  @override
+  String planAddedTo(String name) {
+    return '“$name”에 추가했어요';
+  }
+
+  @override
+  String get planNewWith => '새 플랜에 추가';
+
+  @override
+  String get planNext => '다음';
+
+  @override
+  String planStartDrill(String name) {
+    return '시작: $name';
+  }
+
+  @override
+  String get planSkip => '건너뛰기';
+
+  @override
+  String get planFinish => '운동 종료';
+
+  @override
+  String get planAllDone => '이 세트를 끝냈어요';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$total개 중 $done개 완료';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index / $total';
+  }
+
+  @override
+  String get pickerTitle => '동작 선택';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count개 선택됨';
+  }
+
+  @override
+  String get planReorderHint => '핸들을 끌어 순서 변경';
+
+  @override
+  String get planRemoveDrill => '플랜에서 빼기';
+
+  @override
+  String get presetWarmup => '워밍업';
+
+  @override
+  String get presetWarmupLine => '매번 시작 전에 손목과 견갑골 깨우기';
+
+  @override
+  String get presetSupport => '팔 지지';
+
+  @override
+  String get presetSupportLine => '바닥을 버티고 안정적으로';
+
+  @override
+  String get presetCore => '코어 접기';
+
+  @override
+  String get presetCoreLine => '골반을 들고 다리를 접어 넣기';
+
+  @override
+  String get presetLegs => '다리 회전';
+
+  @override
+  String get presetLegsLine => '다리를 벌려 크게 돌리기';
+
+  @override
+  String get presetSide => '사이드 지지';
+
+  @override
+  String get presetSideLine => '사이드 플랭크 안정, 손 바꿀 때 어깨 처짐 없이';
+
+  @override
+  String get presetFlare => '플레어 전체';
+
+  @override
+  String get presetFlareLine => '플레어 주요 근육군을 한 세트로';
+
+  @override
+  String get planUpNext => '다음 동작';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count개 동작';
+  }
+
+  @override
+  String get settingsHint => '화면, 재생, 화질';
 }

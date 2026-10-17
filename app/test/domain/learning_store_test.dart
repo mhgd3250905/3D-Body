@@ -428,4 +428,87 @@ void main() {
       'original',
     );
   });
+
+  test(
+    'saved plans persist, keep order, and older states load without them',
+    () async {
+      final storage = MemoryStorage();
+      final store = LearningStore(catalog: catalog, storage: storage);
+      await store.initialize();
+      final routine = await store.createRoutine('  赛前热身 ', [
+        'forearms-A',
+        'deltoids-A',
+      ]);
+      expect(routine!.name, '赛前热身');
+      await store.addToRoutine(routine.id, 'abs-B');
+      await store.addToRoutine(routine.id, 'abs-B');
+      await store.updateRoutine(
+        routine.id,
+        drillIds: ['abs-B', 'forearms-A', 'deltoids-A'],
+      );
+      expect(
+        () => store.updateRoutine(routine.id, drillIds: []),
+        throwsArgumentError,
+      );
+      final restored = LearningStore(catalog: catalog, storage: storage);
+      await restored.initialize();
+      expect(restored.routines.single.drillIds, [
+        'abs-B',
+        'forearms-A',
+        'deltoids-A',
+      ]);
+      expect(restored.routines.single.name, '赛前热身');
+      await restored.deleteRoutine(routine.id);
+      expect(restored.routines, isEmpty);
+      await restored.restoreRoutine(routine, 0);
+      expect(restored.routines.single.id, routine.id);
+      restored.dispose();
+      store.dispose();
+
+      // A version 1 state saved before plans existed still loads, and a set
+      // whose drills left the catalog keeps only the drills that remain.
+      final old = jsonDecode(storage.value!) as Map<String, dynamic>;
+      old.remove('routines');
+      final legacy = MemoryStorage(value: jsonEncode(old));
+      final fromOld = LearningStore(catalog: catalog, storage: legacy);
+      await fromOld.initialize();
+      expect(fromOld.corruptState, isFalse);
+      expect(fromOld.routines, isEmpty);
+      fromOld.dispose();
+      old['routines'] = [
+        {
+          'id': 'x',
+          'name': '旧',
+          'drillIds': ['gone-A', 'abs-A'],
+        },
+        {
+          'id': 'y',
+          'name': '空',
+          'drillIds': ['gone-A'],
+        },
+      ];
+      final pruned = LearningStore(
+        catalog: catalog,
+        storage: MemoryStorage(value: jsonEncode(old)),
+      );
+      await pruned.initialize();
+      expect(pruned.routines.single.drillIds, ['abs-A']);
+      pruned.dispose();
+    },
+  );
+
+  test('every preset resolves one drill per group in each scene', () {
+    for (final preset in PresetPlan.all) {
+      for (final tier in ['A', 'B', 'C']) {
+        final drills = preset.drills(catalog, tier);
+        expect(
+          drills,
+          hasLength(preset.groupIds.length),
+          reason: '${preset.id}/$tier',
+        );
+        expect(drills.every((drill) => drill.tier == tier), isTrue);
+        expect(estimateMinutes(drills), inInclusiveRange(5, 60));
+      }
+    }
+  });
 }

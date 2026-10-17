@@ -7,6 +7,7 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
@@ -321,7 +322,7 @@ void main() {
         // More keeps only the four entries and speed.
         await tester.tap(labeledControl('更多'));
         await tester.pumpAndSettle();
-        for (final label in ['训练', '学习路径', '记录', '设置']) {
+        for (final label in ['训练', '计划', '记录', '设置']) {
           expect(find.widgetWithText(ListTile, label), findsOneWidget);
         }
         expect(find.byType(FlareSegmented<double>), findsOneWidget);
@@ -514,9 +515,23 @@ void main() {
         expect(scene.detailModel, 'muscles');
         assertNoFlutterError(tester);
 
-        await tester.tap(find.byTooltip('加入今日训练'));
+        // Add the drill to a new plan straight from its page; saving returns
+        // to the same drill.
+        await tester.tap(find.byTooltip('加入计划'));
         await tester.pumpAndSettle();
-        expect(store.todayIds, ['deltoids-A']);
+        await tester.tap(find.text('新建计划并加入'));
+        await tester.pumpAndSettle();
+        expect(find.byType(RoutineEditorPage), findsOneWidget);
+        await tapVisible(tester, find.byKey(const ValueKey('routine-save')));
+        await tester.pumpAndSettle();
+        expect(find.byType(RoutineEditorPage), findsNothing);
+        expect(find.byType(DrillDetailPage), findsOneWidget);
+        expect(store.routines.single.drillIds, ['deltoids-A']);
+        expect(store.routines.single.name, '我的训练');
+        ScaffoldMessenger.of(
+          tester.element(find.byType(DrillDetailPage)),
+        ).removeCurrentSnackBar();
+        await tester.pumpAndSettle();
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
         // The timer rises as a modal sheet; let it land before touching it.
         await tester.pump(const Duration(milliseconds: 500));
@@ -615,7 +630,7 @@ void main() {
         final restored = LearningStore(catalog: catalog, storage: storage);
         await restored.initialize();
         expect(restored.sessions, hasLength(1));
-        expect(restored.todayIds, ['deltoids-A']);
+        expect(restored.routines.single.drillIds, ['deltoids-A']);
         expect(restored.sessions.single.pain, isTrue);
         restored.dispose();
         assertNoFlutterError(tester);
@@ -827,6 +842,133 @@ void main() {
   );
 
   testWidgets(
+    'plans: preset → run hub → finish, save as mine, then edit and delete with undo',
+    (tester) async {
+      await phoneSize(tester);
+      final semantics = tester.ensureSemantics();
+      try {
+        final store = LearningStore(
+          catalog: catalog,
+          storage: MemoryStateStorage(),
+        );
+        await store.initialize();
+        await store.acknowledgeSafety();
+        final scene = SceneController(commandSink: (_) {});
+        addTearDown(store.dispose);
+        addTearDown(scene.dispose);
+        await tester.pumpWidget(
+          testApp(
+            FlareShell(
+              catalog: catalog,
+              store: store,
+              sceneController: scene,
+              enableScene: false,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'ready',
+          'time': 0.0,
+          'period': 9.0,
+          'phase': {'source': 9},
+        });
+        await tester.pumpAndSettle();
+        await tester.tap(labeledControl('计划'));
+        await tester.pumpAndSettle();
+        expect(find.byType(PlansPage), findsOneWidget);
+        await tester.tap(find.text('居家'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('preset-core')));
+        await tester.pumpAndSettle();
+        final detail = tester.widget<PlanDetailPage>(
+          find.byType(PlanDetailPage),
+        );
+        expect(detail.title, '核心折叠');
+        expect(detail.drills.every((drill) => drill.tier == 'B'), isTrue);
+
+        await tapVisible(tester, find.byKey(const ValueKey('plan-start')));
+        await tester.pumpAndSettle();
+        expect(find.byType(PlanRunPage), findsOneWidget);
+        expect(find.text('第 1 / 4 个'), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('run-skip')));
+        await tester.pumpAndSettle();
+        expect(find.text('第 2 / 4 个'), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('run-start')));
+        for (var i = 0; i < 6; i++) {
+          await tester.pump(const Duration(milliseconds: 200));
+        }
+        expect(find.byType(TrainingTimerPage), findsOneWidget);
+        expect(
+          tester
+              .widget<TrainingTimerPage>(find.byType(TrainingTimerPage))
+              .drill
+              .id,
+          detail.drills[1].id,
+        );
+        // Leaving an unfinished timer returns to the hub without marking
+        // the drill done.
+        await tester.tap(
+          find.descendant(
+            of: find.byType(TrainingTimerPage),
+            matching: find.byIcon(Icons.close_rounded),
+          ),
+        );
+        for (var i = 0; i < 6; i++) {
+          await tester.pump(const Duration(milliseconds: 200));
+        }
+        if (find.text('结束并保存').evaluate().isNotEmpty) {
+          await tester.tap(find.text('结束并保存'));
+          await tester.pumpAndSettle();
+        }
+        expect(find.byType(TrainingTimerPage), findsNothing);
+        expect(find.byType(PlanRunPage), findsOneWidget);
+        expect(find.text('第 2 / 4 个'), findsOneWidget);
+        expect(find.text('完成 0 / 4 个动作'), findsOneWidget);
+        assertNoFlutterError(tester);
+
+        // Save a preset as an editable set of one's own.
+        await tester.tap(find.byKey(const ValueKey('run-end')));
+        await tester.pumpAndSettle();
+        expect(find.byType(PlanDetailPage), findsOneWidget);
+        await tapVisible(
+          tester,
+          find.byKey(const ValueKey('plan-save-as-mine')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(RoutineEditorPage), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('routine-save')));
+        await tester.pumpAndSettle();
+        expect(store.routines.single.name, '核心折叠');
+        expect(
+          store.routines.single.drillIds,
+          detail.drills.map((drill) => drill.id).toList(),
+        );
+        expect(
+          tester.widget<PlanDetailPage>(find.byType(PlanDetailPage)).onEdit,
+          isNotNull,
+        );
+
+        await tester.tap(find.byKey(const ValueKey('plan-edit')));
+        await tester.pumpAndSettle();
+        await tapVisible(tester, find.byKey(const ValueKey('routine-delete')));
+        await tester.pumpAndSettle();
+        expect(store.routines, isEmpty);
+        expect(find.byType(PlansPage), findsOneWidget);
+        await tester.tap(find.text('撤销'));
+        await tester.pumpAndSettle();
+        expect(store.routines.single.name, '核心折叠');
+        expect(find.text('核心折叠'), findsWidgets);
+        assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
     'compact home keeps navigation discoverable and timeline drag/keyboard seek paused',
     (tester) async {
       await phoneSize(tester);
@@ -872,9 +1014,9 @@ void main() {
         await tester.pumpAndSettle();
         assertLeanHome(tester);
 
-        await tester.tap(labeledControl('路径'));
+        await tester.tap(labeledControl('计划'));
         await tester.pumpAndSettle();
-        expect(find.byType(PathPage), findsOneWidget);
+        expect(find.byType(PlansPage), findsOneWidget);
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
         await tester.tap(find.byTooltip('返回'));
@@ -996,74 +1138,6 @@ void main() {
         [2.375],
       );
       expect((jsonDecode(storage.value!) as Map)['lastTime'], 2.375);
-      assertNoFlutterError(tester);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'expert self-assessment uses five original items and exact dips counts',
-    (tester) async {
-      await phoneSize(tester);
-      final storage = MemoryStateStorage();
-      final store = LearningStore(catalog: catalog, storage: storage);
-      await store.initialize();
-      addTearDown(store.dispose);
-      Map<String, int>? saved;
-      await tester.pumpWidget(
-        testApp(
-          Scaffold(
-            body: SafeArea(
-              child: AssessmentPage(
-                initialGrades: {
-                  for (final id in LearningStore.assessmentIds) id: 2,
-                },
-                onSave: (grades) async {
-                  saved = grades;
-                  await store.recordAssessment(grades);
-                },
-                onSkip: () async {},
-                onBack: () {},
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      // Five four-step selectors with short labels; the full wording of the
-      // chosen step sits under each and is what a screen reader hears.
-      expect(find.byType(FlareSegmented<int>), findsNWidgets(5));
-      await tester.scrollUntilVisible(find.text('13+'), 200);
-      await tester.pumpAndSettle();
-      for (final label in ['0–3', '4–7', '8–12', '13+']) {
-        expect(find.text(label), findsOneWidget);
-      }
-      expect(find.text('4–7 次 · 基础'), findsOneWidget);
-      expect(find.bySemanticsLabel('8–12 次 · 良好'), findsOneWidget);
-      await tester.tap(find.text('8–12'));
-      await tester.pumpAndSettle();
-      expect(find.text('8–12 次 · 良好'), findsOneWidget);
-      expect(find.text('4–7 次 · 基础'), findsNothing);
-      await tapVisible(tester, find.widgetWithText(FilledButton, '保存自评起点'));
-      await tester.pumpAndSettle();
-      expect(saved!.keys.toSet(), {
-        'wrist',
-        'pike',
-        'straddle',
-        'dips',
-        'lsit',
-      });
-      expect(saved!['dips'], 3);
-      expect(store.assessmentGrades, saved);
-      expect(store.startStage, 2);
-      final restored = LearningStore(catalog: catalog, storage: storage);
-      await restored.initialize();
-      expect(restored.assessmentGrades['dips'], 3);
-      expect(
-        restored.assessmentGrades.keys.toSet(),
-        LearningStore.assessmentIds,
-      );
-      restored.dispose();
       assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
     },

@@ -510,7 +510,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Los ajustes, el entrenamiento de hoy, las autoevaluaciones y los registros se guardan solo en este dispositivo. Los modelos y archivos multimedia vienen con la app; no se sube nada a un servidor. Los datos de la vista previa web pertenecen a ese navegador. Exporta una copia de seguridad antes de cambiar de dispositivo o reinstalar.';
+      'Los ajustes, tus planes, las autoevaluaciones y los registros se guardan solo en este dispositivo. Los modelos y archivos multimedia vienen con la app; no se sube nada a un servidor. Los datos de la vista previa web pertenecen a ese navegador. Exporta una copia de seguridad antes de cambiar de dispositivo o reinstalar.';
 
   @override
   String get creditsTitle => 'Fuentes de modelos y contenido multimedia';
@@ -640,8 +640,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get safetyRule1 => 'Calienta primero las muñecas';
 
   @override
-  String get safetyRule1Note =>
-      'Unos 6 minutos; es la primera lección de la ruta de aprendizaje';
+  String get safetyRule1Note => 'El plan Calentamiento te guía paso a paso';
 
   @override
   String get safetyRule2 =>
@@ -922,4 +921,162 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get wristExtension => 'Extensión de muñeca';
+
+  @override
+  String get plans => 'Planes';
+
+  @override
+  String get plansHint => 'Series listas y las tuyas';
+
+  @override
+  String get plansReady => 'Series listas';
+
+  @override
+  String get plansMine => 'Mis planes';
+
+  @override
+  String get planNew => 'Nuevo plan';
+
+  @override
+  String get planNewHint =>
+      'Agrupa los ejercicios que repites y empiézalos con un toque';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count ejercicios · unos $minutes min';
+  }
+
+  @override
+  String get planStart => 'Empezar';
+
+  @override
+  String get planSaveAsMine => 'Guardar como mi plan';
+
+  @override
+  String get planSaved => 'Guardado en Mis planes';
+
+  @override
+  String get planEdit => 'Editar';
+
+  @override
+  String get planDelete => 'Eliminar plan';
+
+  @override
+  String get planDeleted => 'Plan eliminado';
+
+  @override
+  String get planNameHint => 'Nombre del plan';
+
+  @override
+  String get planDefaultName => 'Mi sesión';
+
+  @override
+  String get planAddDrills => 'Añadir ejercicios';
+
+  @override
+  String get planEmptyDrills => 'Aún no hay ejercicios. Añade algunos';
+
+  @override
+  String get planSave => 'Guardar';
+
+  @override
+  String get planAddTo => 'Añadir a un plan';
+
+  @override
+  String planAddedTo(String name) {
+    return 'Añadido a «$name»';
+  }
+
+  @override
+  String get planNewWith => 'Nuevo plan con este ejercicio';
+
+  @override
+  String get planNext => 'Siguiente';
+
+  @override
+  String planStartDrill(String name) {
+    return 'Empezar: $name';
+  }
+
+  @override
+  String get planSkip => 'Saltar';
+
+  @override
+  String get planFinish => 'Terminar sesión';
+
+  @override
+  String get planAllDone => 'Serie completada';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return '$done de $total ejercicios hechos';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index de $total';
+  }
+
+  @override
+  String get pickerTitle => 'Elegir ejercicios';
+
+  @override
+  String pickerSelected(int count) {
+    return '$count elegidos';
+  }
+
+  @override
+  String get planReorderHint => 'Arrastra el asa para reordenar';
+
+  @override
+  String get planRemoveDrill => 'Quitar del plan';
+
+  @override
+  String get presetWarmup => 'Calentamiento';
+
+  @override
+  String get presetWarmupLine =>
+      'Despierta muñecas y escápulas antes de cada sesión';
+
+  @override
+  String get presetSupport => 'Apoyo de brazos';
+
+  @override
+  String get presetSupportLine => 'Sostén el suelo con estabilidad';
+
+  @override
+  String get presetCore => 'Compresión de core';
+
+  @override
+  String get presetCoreLine => 'Sube la cadera, recoge las piernas';
+
+  @override
+  String get presetLegs => 'Círculos de piernas';
+
+  @override
+  String get presetLegsLine => 'Abre las piernas y gíralas amplio';
+
+  @override
+  String get presetSide => 'Apoyo lateral';
+
+  @override
+  String get presetSideLine =>
+      'Plancha lateral firme, sin hundir el hombro al cambiar';
+
+  @override
+  String get presetFlare => 'Cadena completa del flare';
+
+  @override
+  String get presetFlareLine => 'Todos los grupos clave del flare en una serie';
+
+  @override
+  String get planUpNext => 'A continuación';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count ejercicios';
+  }
+
+  @override
+  String get settingsHint => 'Apariencia, reproducción, calidad';
 }

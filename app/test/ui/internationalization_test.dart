@@ -58,7 +58,7 @@ void main() {
         TextDirection.rtl,
       );
       final more = find.bySemanticsLabel(strings.more);
-      final path = find.bySemanticsLabel(strings.path);
+      final path = find.bySemanticsLabel(strings.plans);
       expect(more, findsOneWidget);
       expect(path, findsOneWidget);
       expect(
@@ -210,7 +210,6 @@ void main() {
                 catalog: catalog,
                 store: store,
                 onDrill: (_) {},
-                onRemove: (_) {},
               ),
             ),
           ),
@@ -227,8 +226,7 @@ void main() {
                 group: catalog.groupById(drill.groupId),
                 onBack: () {},
                 onStart: () {},
-                onAdd: () {},
-                added: false,
+                onAddToPlan: () {},
               ),
             ),
           ),

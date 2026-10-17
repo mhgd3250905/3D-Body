@@ -505,7 +505,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'تُحفظ الإعدادات وتدريب اليوم والتقييمات الذاتية وسجلات التدريب على هذا الجهاز فقط. تأتي النماذج والوسائط مع التطبيق ولا يُرفع شيء إلى خادم. بيانات معاينة المتصفح خاصة بذلك المتصفح. صدّر نسخة احتياطية قبل نقل البيانات أو إعادة التثبيت.';
+      'تُحفظ الإعدادات وخططك والتقييمات الذاتية وسجلات التدريب على هذا الجهاز فقط. تأتي النماذج والوسائط مع التطبيق ولا يُرفع شيء إلى خادم. بيانات معاينة المتصفح خاصة بذلك المتصفح. صدّر نسخة احتياطية قبل نقل البيانات أو إعادة التثبيت.';
 
   @override
   String get creditsTitle => 'مصادر النماذج والوسائط';
@@ -631,7 +631,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get safetyRule1 => 'أحمِ معصميك أولًا';
 
   @override
-  String get safetyRule1Note => 'نحو 6 دقائق؛ وهو الدرس الأول في مسار التعلّم';
+  String get safetyRule1Note => 'خطة الإحماء ترشدك خطوة بخطوة';
 
   @override
   String get safetyRule2 => 'توقف عند الألم الحاد أو الخدر أو الدوار';
@@ -907,4 +907,160 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get wristExtension => 'بسط المعصم';
+
+  @override
+  String get plans => 'الخطط';
+
+  @override
+  String get plansHint => 'مجموعات جاهزة وخططك';
+
+  @override
+  String get plansReady => 'مجموعات جاهزة';
+
+  @override
+  String get plansMine => 'خططي';
+
+  @override
+  String get planNew => 'خطة جديدة';
+
+  @override
+  String get planNewHint => 'اجمع التمارين التي تكررها وابدأها بلمسة واحدة';
+
+  @override
+  String planMeta(int count, int minutes) {
+    return '$count تمارين · نحو $minutes دقيقة';
+  }
+
+  @override
+  String get planStart => 'ابدأ';
+
+  @override
+  String get planSaveAsMine => 'حفظ كخطتي';
+
+  @override
+  String get planSaved => 'حُفظت في خططي';
+
+  @override
+  String get planEdit => 'تعديل';
+
+  @override
+  String get planDelete => 'حذف الخطة';
+
+  @override
+  String get planDeleted => 'حُذفت الخطة';
+
+  @override
+  String get planNameHint => 'اسم الخطة';
+
+  @override
+  String get planDefaultName => 'حصتي';
+
+  @override
+  String get planAddDrills => 'إضافة تمارين';
+
+  @override
+  String get planEmptyDrills => 'لا توجد تمارين بعد. أضف بعضها';
+
+  @override
+  String get planSave => 'حفظ';
+
+  @override
+  String get planAddTo => 'إضافة إلى خطة';
+
+  @override
+  String planAddedTo(String name) {
+    return 'أُضيف إلى «$name»';
+  }
+
+  @override
+  String get planNewWith => 'خطة جديدة بهذا التمرين';
+
+  @override
+  String get planNext => 'التالي';
+
+  @override
+  String planStartDrill(String name) {
+    return 'ابدأ: $name';
+  }
+
+  @override
+  String get planSkip => 'تخطٍّ';
+
+  @override
+  String get planFinish => 'إنهاء الحصة';
+
+  @override
+  String get planAllDone => 'اكتملت المجموعة';
+
+  @override
+  String planAllDoneLine(int done, int total) {
+    return 'أُنجز $done من $total تمارين';
+  }
+
+  @override
+  String planOf(int index, int total) {
+    return '$index من $total';
+  }
+
+  @override
+  String get pickerTitle => 'اختر التمارين';
+
+  @override
+  String pickerSelected(int count) {
+    return 'تم اختيار $count';
+  }
+
+  @override
+  String get planReorderHint => 'اسحب المقبض لإعادة الترتيب';
+
+  @override
+  String get planRemoveDrill => 'إزالة من الخطة';
+
+  @override
+  String get presetWarmup => 'الإحماء';
+
+  @override
+  String get presetWarmupLine => 'نشّط المعصمين ولوحي الكتف قبل كل حصة';
+
+  @override
+  String get presetSupport => 'دعم الذراعين';
+
+  @override
+  String get presetSupportLine => 'ثبّت الأرض وابقَ مستقرًا';
+
+  @override
+  String get presetCore => 'ضغط الجذع';
+
+  @override
+  String get presetCoreLine => 'ارفع الحوض واطوِ الساقين';
+
+  @override
+  String get presetLegs => 'دوائر الساقين';
+
+  @override
+  String get presetLegsLine => 'افتح الساقين وأدرهما باتساع';
+
+  @override
+  String get presetSide => 'الدعم الجانبي';
+
+  @override
+  String get presetSideLine => 'لوح جانبي ثابت دون هبوط الكتف عند التبديل';
+
+  @override
+  String get presetFlare => 'سلسلة الفلير كاملة';
+
+  @override
+  String get presetFlareLine =>
+      'كل مجموعات عضلات الفلير الرئيسية في مجموعة واحدة';
+
+  @override
+  String get planUpNext => 'التالي';
+
+  @override
+  String planDrillCount(int count) {
+    return '$count تمارين';
+  }
+
+  @override
+  String get settingsHint => 'المظهر والتشغيل والجودة';
 }

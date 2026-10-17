@@ -14,6 +14,7 @@ import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/theme_fade.dart';
@@ -287,7 +288,6 @@ void main() {
 
   testWidgets('08 library', (tester) async {
     final (store, scene) = await setup(tester);
-    await store.addToToday('obliques-A');
     await tester.pumpWidget(
       app(
         Scaffold(
@@ -296,7 +296,6 @@ void main() {
               catalog: catalog,
               store: store,
               onDrill: (_) {},
-              onRemove: (_) {},
               onBack: () {},
             ),
           ),
@@ -336,20 +335,25 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('13 path, 14 lesson, 15 progress, 16 settings, 17 about', (
+  testWidgets('13 plans, 14 plan detail, 15 progress, 16 settings, 17 about', (
     tester,
   ) async {
     final (store, scene) = await setup(tester, history: true);
+    await store.createRoutine('赛前热身', [
+      'forearms-A',
+      'scapular-A',
+      'deltoids-A',
+    ]);
     await tester.pumpWidget(
       app(
         Scaffold(
           body: SafeArea(
-            child: PathPage(
+            child: PlansPage(
               catalog: catalog,
               store: store,
-              onLesson: (_) {},
-              onGate: (_, _) {},
-              onAssessment: () {},
+              onPreset: (_) {},
+              onRoutine: (_) {},
+              onNewRoutine: () {},
               onBack: () {},
             ),
           ),
@@ -357,26 +361,27 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await shot(tester, '13-path');
+    await shot(tester, '13-plans');
     await tester.pumpWidget(
       app(
         Scaffold(
           body: SafeArea(
-            child: LessonPage(
-              catalog: catalog,
-              lesson: catalog.stages[1].lessons.first,
+            child: PlanDetailPage(
+              title: '托马斯全链',
+              line: '一次练到托马斯的主力肌群',
+              drills: PresetPlan.all.last.drills(catalog, 'A'),
               store: store,
               onBack: () {},
-              onWatch: () {},
-              onComplete: () {},
+              onStart: () {},
               onDrill: (_) {},
+              onSaveAsMine: () {},
             ),
           ),
         ),
       ),
     );
     await tester.pumpAndSettle();
-    await shot(tester, '14-lesson');
+    await shot(tester, '14-plan-detail');
     await tester.pumpWidget(
       app(
         Scaffold(
@@ -402,26 +407,6 @@ void main() {
     await tester.tap(find.text('关于 Flare'));
     await tester.pumpAndSettle();
     await shot(tester, '17-about');
-  });
-
-  testWidgets('18 assessment', (tester) async {
-    final (_, _) = await setup(tester);
-    await tester.pumpWidget(
-      app(
-        Scaffold(
-          body: SafeArea(
-            child: AssessmentPage(
-              initialGrades: const {},
-              onSave: (_) async {},
-              onSkip: () async {},
-              onBack: () {},
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await shot(tester, '18-assessment');
   });
 
   testWidgets('19 timer confirm, 20 timer finished', (tester) async {

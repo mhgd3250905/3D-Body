@@ -72,10 +72,7 @@ class PageHeader extends StatelessWidget {
 }
 
 /// The three-rule safety card. Shown once before entering, and from Settings.
-Future<bool?> showSafetySheet(
-  BuildContext context, {
-  VoidCallback? onAssessment,
-}) {
+Future<bool?> showSafetySheet(BuildContext context) {
   final s = context.strings;
   return showModalBottomSheet<bool>(
     context: context,
@@ -153,17 +150,6 @@ Future<bool?> showSafetySheet(
               label: s.gotIt,
               onPressed: () => Navigator.pop(sheet, true),
             ),
-            if (onAssessment != null)
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(sheet, false);
-                  onAssessment();
-                },
-                child: Text(
-                  s.startWithAssessment,
-                  style: TextStyle(color: FlareColors.secondary),
-                ),
-              ),
           ],
         ),
       ),
@@ -187,13 +173,9 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   Future<void> _start() async {
-    var assessment = false;
-    final accepted = await showSafetySheet(
-      context,
-      onAssessment: () => assessment = true,
-    );
+    final accepted = await showSafetySheet(context);
     if (!mounted) return;
-    if (accepted == true || assessment) await _enter(assessment);
+    if (accepted == true) await _enter(false);
   }
 
   @override
@@ -367,7 +349,6 @@ class LibraryPage extends StatefulWidget {
     required this.catalog,
     required this.store,
     required this.onDrill,
-    required this.onRemove,
     this.onBack,
     this.initialGroup,
     this.initialQuery,
@@ -376,7 +357,6 @@ class LibraryPage extends StatefulWidget {
   final Catalog catalog;
   final LearningStore store;
   final ValueChanged<Drill> onDrill;
-  final ValueChanged<String> onRemove;
   final VoidCallback? onBack;
   final MuscleGroup? initialGroup;
   final String? initialQuery;
@@ -495,66 +475,21 @@ class _LibraryPageState extends State<LibraryPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            for (final item in [
-                              ('A', s.sceneNone),
-                              ('B', s.sceneHome),
-                              ('C', s.sceneGym),
-                            ])
-                              _FilterPill(
-                                label: item.$2,
-                                selected: tier == item.$1,
-                                onTap: () {
-                                  if (tier == item.$1) return;
-                                  FlareHaptics.selection();
-                                  widget.store.updateSettings(tier: item.$1);
-                                },
-                              ),
-                          ],
-                        ),
+                      const SizedBox(height: 12),
+                      FlareSegmented<String>(
+                        expand: true,
+                        segments: [
+                          ('A', s.sceneNone),
+                          ('B', s.sceneHome),
+                          ('C', s.sceneGym),
+                        ],
+                        selected: tier,
+                        onChanged: (value) {
+                          if (value == tier) return;
+                          FlareHaptics.selection();
+                          widget.store.updateSettings(tier: value);
+                        },
                       ),
-                      if (_query.trim().isEmpty &&
-                          widget.store.todayIds.isNotEmpty) ...[
-                        SectionTitle(s.today),
-                        for (final id in widget.store.todayIds)
-                          if (catalog.drillById(id) case final Drill drill)
-                            DrillTile(
-                              drill: drill,
-                              onTap: () => widget.onDrill(drill),
-                              trailing: IconButton(
-                                tooltip: s.remove,
-                                icon: Icon(
-                                  Icons.remove_circle_outline_rounded,
-                                  size: 20,
-                                  color: FlareColors.dim,
-                                ),
-                                onPressed: () {
-                                  FlareHaptics.light();
-                                  widget.onRemove(id);
-                                  final messenger = ScaffoldMessenger.of(
-                                    context,
-                                  );
-                                  messenger
-                                    ..hideCurrentSnackBar()
-                                    ..showSnackBar(
-                                      SnackBar(
-                                        content: Text(s.removedFromToday),
-                                        duration: const Duration(seconds: 4),
-                                        action: SnackBarAction(
-                                          label: s.undo,
-                                          onPressed: () =>
-                                              widget.store.addToToday(id),
-                                        ),
-                                      ),
-                                    );
-                                },
-                              ),
-                            ),
-                      ],
                       const SizedBox(height: 16),
                       if (drills.isEmpty)
                         EmptyNote(
@@ -619,16 +554,14 @@ class DrillDetailPage extends StatefulWidget {
     required this.drill,
     required this.onBack,
     required this.onStart,
-    required this.onAdd,
-    required this.added,
+    required this.onAddToPlan,
     this.group,
   });
   final Drill drill;
   final MuscleGroup? group;
   final VoidCallback onBack;
   final VoidCallback onStart;
-  final VoidCallback onAdd;
-  final bool added;
+  final VoidCallback onAddToPlan;
 
   @override
   State<DrillDetailPage> createState() => _DrillDetailPageState();
@@ -638,15 +571,17 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
   Drill get drill => widget.drill;
   MuscleGroup? get group => widget.group;
 
-  Widget _spec(String label, String value) => Expanded(
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 12, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Eyebrow(label),
-          const SizedBox(height: 5),
-          Text(
+  /// One fact per line, label left and value right, so long Chinese doses
+  /// ("3 组 × 每侧 20–30 秒") stay on one line instead of breaking mid-unit.
+  Widget _spec(String label, String value) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(width: 56, child: Eyebrow(label)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
             value,
             style: const TextStyle(
               fontSize: 15,
@@ -654,8 +589,8 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
               fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 
@@ -701,17 +636,13 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             large: false,
             onBack: widget.onBack,
             action: RoundIconButton(
-              key: ValueKey(widget.added),
-              icon: widget.added
-                  ? Icons.bookmark_added_rounded
-                  : Icons.bookmark_add_outlined,
-              tooltip: widget.added ? s.addedToday : s.addToday,
-              onPressed: widget.added
-                  ? null
-                  : () {
-                      FlareHaptics.light();
-                      widget.onAdd();
-                    },
+              key: const ValueKey('drill-add-to-plan'),
+              icon: Icons.playlist_add_rounded,
+              tooltip: s.planAddTo,
+              onPressed: () {
+                FlareHaptics.light();
+                widget.onAddToPlan();
+              },
             ),
           ),
           Expanded(
@@ -744,7 +675,12 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                             child: Eyebrow(
                               [
                                 if (group != null) group!.label,
-                                drill.tierLabel,
+                                // Same words as the library's scene filter.
+                                switch (drill.tier) {
+                                  'B' => s.sceneHome,
+                                  'C' => s.sceneGym,
+                                  _ => s.sceneNone,
+                                },
                               ].join(' · '),
                             ),
                           ),
@@ -762,15 +698,13 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: FlareColors.hairline),
                         ),
-                        child: IntrinsicHeight(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _spec(s.spec, drill.prescription),
-                              const VerticalDivider(width: 1),
-                              _spec(s.equipment, drill.equipment),
-                            ],
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _spec(s.spec, drill.prescription),
+                            const Divider(height: 1, indent: 16, endIndent: 16),
+                            _spec(s.equipment, drill.equipment),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 22),
@@ -807,592 +741,6 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             child: PrimaryAction(
               label: s.startTimer,
               onPressed: widget.onStart,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PathPage extends StatefulWidget {
-  const PathPage({
-    super.key,
-    required this.catalog,
-    required this.store,
-    required this.onLesson,
-    required this.onGate,
-    required this.onAssessment,
-    this.onBack,
-  });
-  final Catalog catalog;
-  final LearningStore store;
-  final ValueChanged<Lesson> onLesson;
-  final void Function(String, bool) onGate;
-  final VoidCallback onAssessment;
-  final VoidCallback? onBack;
-  @override
-  State<PathPage> createState() => _PathPageState();
-}
-
-class _PathPageState extends State<PathPage> {
-  int? _open;
-  final _currentGatesKey = GlobalKey();
-
-  void _showCurrentGates() {
-    setState(() => _open = widget.store.currentStage);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final gatesContext = _currentGatesKey.currentContext;
-      if (gatesContext != null) {
-        Scrollable.ensureVisible(
-          gatesContext,
-          duration: FlareMotion.of(context, FlareMotion.push),
-          curve: FlareMotion.settle,
-          alignment: .1,
-        );
-      }
-    });
-  }
-
-  Lesson? _nextLesson() {
-    final store = widget.store;
-    final stage = widget.catalog.stageByNumber(store.currentStage);
-    if (stage == null) return null;
-    for (final lesson in stage.lessons) {
-      if (!store.completedLessonIds.contains(lesson.id)) return lesson;
-    }
-    return null;
-  }
-
-  Widget _marker(CourseStage stage, bool current) {
-    final store = widget.store;
-    final passed = store.isStagePassed(stage.n);
-    return Container(
-      width: 28,
-      height: 28,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: passed
-            ? FlareColors.success.withValues(alpha: .16)
-            : FlareColors.background,
-        border: Border.all(
-          color: current
-              ? FlareColors.accent
-              : passed
-              ? Colors.transparent
-              : FlareColors.controlBorder,
-          width: current ? 1.6 : 1,
-        ),
-      ),
-      child: passed
-          ? Icon(Icons.check_rounded, size: 16, color: FlareColors.success)
-          : Text(
-              '${stage.n}',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: current ? FlareColors.accentInk : FlareColors.dim,
-              ),
-            ),
-    );
-  }
-
-  Widget _lessons(CourseStage stage, Lesson? next) {
-    final s = context.strings;
-    final store = widget.store;
-    final unlocked = store.isStageUnlocked(stage.n);
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          RowGroup(
-            children: [
-              for (final lesson in stage.lessons)
-                FlareRow(
-                  title: lesson.title,
-                  subtitle: s.minutesShort(lesson.minutes),
-                  leading: Icon(
-                    store.completedLessonIds.contains(lesson.id)
-                        ? Icons.check_circle_rounded
-                        : lesson == next
-                        ? Icons.circle
-                        : Icons.circle_outlined,
-                    size: 18,
-                    color: store.completedLessonIds.contains(lesson.id)
-                        ? FlareColors.success
-                        : lesson == next
-                        ? FlareColors.accent
-                        : FlareColors.dim,
-                  ),
-                  onTap: () => widget.onLesson(lesson),
-                ),
-            ],
-          ),
-          if (stage.gates.isNotEmpty)
-            Column(
-              key: stage.n == store.currentStage ? _currentGatesKey : null,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SectionTitle(s.stageGates),
-                for (final gate in stage.gates)
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    value: store.gateReports[gate.id] ?? false,
-                    onChanged: unlocked
-                        ? (value) {
-                            FlareHaptics.selection();
-                            widget.onGate(gate.id, value ?? false);
-                          }
-                        : null,
-                    title: Text(
-                      gate.text,
-                      style: const TextStyle(fontSize: 13, height: 1.45),
-                    ),
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ),
-              ],
-            ),
-          if (!unlocked)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Eyebrow(s.locked),
-            ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = context.strings;
-    final store = widget.store;
-    final stages = widget.catalog.stages;
-    final open = _open ?? store.currentStage;
-    final next = _nextLesson();
-    final allDone = stages
-        .where((stage) => stage.n >= store.startStage)
-        .every((stage) => store.isStagePassed(stage.n));
-    return Column(
-      children: [
-        PageHeader(
-          title: s.pathTitle,
-          onBack: widget.onBack,
-          action: RoundIconButton(
-            icon: Icons.fact_check_outlined,
-            tooltip: s.assessment,
-            onPressed: widget.onAssessment,
-          ),
-        ),
-        Expanded(
-          child: ScrollEdge(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              children: [
-                for (final (index, stage) in stages.indexed)
-                  // No IntrinsicHeight: the rail is painted behind, so a
-                  // stage can fold open or shut smoothly.
-                  Stack(
-                    children: [
-                      if (index != stages.length - 1)
-                        Positioned(
-                          left: 13.5,
-                          top: 42,
-                          bottom: 0,
-                          child: Container(
-                            width: 1,
-                            color: FlareColors.controlBorder,
-                          ),
-                        ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 14),
-                            child: _marker(
-                              stage,
-                              stage.n == store.currentStage,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                InkWell(
-                                  borderRadius: BorderRadius.circular(12),
-                                  onTap: () => setState(
-                                    () => _open = open == stage.n ? 0 : stage.n,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                stage.title,
-                                                style: TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
-                                                      store.isStageUnlocked(
-                                                        stage.n,
-                                                      )
-                                                      ? FlareColors.text
-                                                      : FlareColors.secondary,
-                                                ),
-                                              ),
-                                              if (open == stage.n) ...[
-                                                const SizedBox(height: 4),
-                                                Eyebrow(
-                                                  store.isStagePassed(stage.n)
-                                                      ? s.passed
-                                                      : store.isStageUnlocked(
-                                                          stage.n,
-                                                        )
-                                                      ? s.current
-                                                      : s.locked,
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                        ),
-                                        AnimatedRotation(
-                                          turns: open == stage.n ? .5 : 0,
-                                          duration: FlareMotion.of(
-                                            context,
-                                            FlareMotion.expand,
-                                          ),
-                                          curve: FlareMotion.settle,
-                                          child: Icon(
-                                            Icons.expand_more_rounded,
-                                            size: 20,
-                                            color: FlareColors.dim,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                // The stage opens and closes as one smooth fold.
-                                FlareSizeTransition(
-                                  duration: FlareMotion.of(
-                                    context,
-                                    FlareMotion.expand,
-                                  ),
-                                  curve: FlareMotion.settle,
-                                  alignment: Alignment.topCenter,
-                                  child: open == stage.n
-                                      ? FadeSlideIn(
-                                          key: ValueKey('stage-${stage.n}'),
-                                          offset: 8,
-                                          child: _lessons(stage, next),
-                                        )
-                                      : const SizedBox(width: double.infinity),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
-          child: PrimaryAction(
-            label: next != null
-                ? s.continueLesson(next.title)
-                : allDone
-                ? s.allDone
-                : s.confirmStageGates,
-            onPressed: next != null
-                ? () => widget.onLesson(next)
-                : allDone
-                ? null
-                : _showCurrentGates,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class LessonPage extends StatelessWidget {
-  const LessonPage({
-    super.key,
-    required this.catalog,
-    required this.lesson,
-    required this.store,
-    required this.onBack,
-    required this.onWatch,
-    required this.onComplete,
-    required this.onDrill,
-  });
-  final Catalog catalog;
-  final Lesson lesson;
-  final LearningStore store;
-  final VoidCallback onBack;
-  final VoidCallback onWatch;
-  final VoidCallback onComplete;
-  final ValueChanged<Drill> onDrill;
-  @override
-  Widget build(BuildContext context) {
-    final s = context.strings;
-    final complete = store.completedLessonIds.contains(lesson.id);
-    final unlocked = store.isStageUnlocked(lesson.stage);
-    return Column(
-      children: [
-        PageHeader(
-          title: lesson.title,
-          subtitle:
-              '${s.stageLabel(lesson.stage)} · ${s.minutesShort(lesson.minutes)}',
-          onBack: onBack,
-        ),
-        Expanded(
-          child: ScrollEdge(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              children: [
-                if (lesson.phases.isNotEmpty) ...[
-                  SectionTitle(s.lessonPhases),
-                  RowGroup(
-                    children: [
-                      for (final source in lesson.phases)
-                        if (catalog.phaseBySource(source)
-                            case final Phase phase)
-                          FlareRow(
-                            title: phase.name,
-                            subtitle: phase.caption,
-                            leading: Text(
-                              source.toString().padLeft(2, '0'),
-                              style: TextStyle(
-                                color: FlareColors.accentInk,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                    onPressed: onWatch,
-                    icon: const Icon(Icons.view_in_ar_outlined, size: 18),
-                    label: Text(s.watchPhases),
-                  ),
-                ],
-                SectionTitle(s.suggestedDrills),
-                for (final id in lesson.drills)
-                  if (catalog.drillById(id) case final Drill drill)
-                    DrillTile(drill: drill, onTap: () => onDrill(drill)),
-                if (!unlocked)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Eyebrow(s.locked),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
-          child: PrimaryAction(
-            icon: complete ? Icons.check_rounded : null,
-            label: complete ? s.lessonCompleted : s.markLesson,
-            onPressed: unlocked && !complete
-                ? () {
-                    FlareHaptics.success();
-                    onComplete();
-                  }
-                : null,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class AssessmentPage extends StatefulWidget {
-  const AssessmentPage({
-    super.key,
-    required this.initialGrades,
-    required this.onSave,
-    required this.onSkip,
-    required this.onBack,
-  });
-  final Map<String, int> initialGrades;
-  final Future<void> Function(Map<String, int>) onSave;
-  final Future<void> Function() onSkip;
-  final VoidCallback onBack;
-  @override
-  State<AssessmentPage> createState() => _AssessmentPageState();
-}
-
-class _AssessmentPageState extends State<AssessmentPage> {
-  late final Map<String, int> _grades = {
-    for (final id in ['wrist', 'pike', 'straddle', 'dips', 'lsit'])
-      id: widget.initialGrades[id] ?? 1,
-  };
-  bool _busy = false;
-  @override
-  Widget build(BuildContext context) {
-    final s = context.strings;
-    return Column(
-      children: [
-        PageHeader(
-          title: s.assessment,
-          subtitle: s.assessmentNote,
-          onBack: widget.onBack,
-        ),
-        Expanded(
-          child: ScrollEdge(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              children: [
-                for (final item in [
-                  ('wrist', s.wristTest),
-                  ('pike', s.compressionTest),
-                  ('straddle', s.hipTest),
-                  ('dips', s.dipsTest),
-                  ('lsit', s.supportTest),
-                ]) ...[
-                  // One card per test: a four-step selector with short
-                  // labels, and the full wording of the chosen step below.
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: _GradeCard(
-                      title: item.$2,
-                      grades: item.$1 == 'dips'
-                          ? [
-                              (s.dipsShort1, s.dipsGrade1),
-                              (s.dipsShort2, s.dipsGrade2),
-                              (s.dipsShort3, s.dipsGrade3),
-                              (s.dipsShort4, s.dipsGrade4),
-                            ]
-                          : [
-                              (s.gradeShort1, s.grade1),
-                              (s.gradeShort2, s.grade2),
-                              (s.gradeShort3, s.grade3),
-                              (s.gradeShort4, s.grade4),
-                            ],
-                      value: _grades[item.$1]!,
-                      onChanged: (value) =>
-                          setState(() => _grades[item.$1] = value),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-          child: PrimaryAction(
-            label: s.saveAssessment,
-            onPressed: _busy
-                ? null
-                : () async {
-                    setState(() => _busy = true);
-                    await widget.onSave(Map.of(_grades));
-                    if (mounted) setState(() => _busy = false);
-                  },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: TextButton(
-            onPressed: _busy ? null : widget.onSkip,
-            child: Text(
-              s.skipAssessment,
-              style: TextStyle(color: FlareColors.secondary),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _GradeCard extends StatelessWidget {
-  const _GradeCard({
-    required this.title,
-    required this.grades,
-    required this.value,
-    required this.onChanged,
-  });
-  final String title;
-
-  /// (short label, full description) for grades 1–4.
-  final List<(String, String)> grades;
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final full = grades[(value - 1).clamp(0, grades.length - 1)].$2;
-    return SurfaceCard(
-      padding: 14,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 2, bottom: 12),
-            child: Semantics(
-              header: true,
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 1.3,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          FlareSegmented<int>(
-            expand: true,
-            segments: [
-              for (var i = 0; i < grades.length; i++) (i + 1, grades[i].$1),
-            ],
-            semanticLabels: [for (final grade in grades) grade.$2],
-            selected: value,
-            onChanged: onChanged,
-          ),
-          const SizedBox(height: 10),
-          AnimatedSwitcher(
-            duration: FlareMotion.of(context, FlareMotion.fade),
-            switchInCurve: FlareMotion.settle,
-            switchOutCurve: FlareMotion.exit,
-            layoutBuilder: (current, previous) => Stack(
-              alignment: Alignment.topLeft,
-              children: [...previous, ?current],
-            ),
-            child: Padding(
-              key: ValueKey(value),
-              padding: const EdgeInsets.only(left: 2),
-              child: ExcludeSemantics(
-                child: Text(
-                  full,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: FlareColors.secondary,
-                  ),
-                ),
-              ),
             ),
           ),
         ],
@@ -1466,12 +814,15 @@ class ProgressPage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               children: [
-                Row(
-                  children: [
-                    _stat('${store.weekTrainingDays}', s.weekDays),
-                    const SizedBox(width: 12),
-                    _stat('${store.streakDays}', s.streak),
-                  ],
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _stat('${store.weekTrainingDays}', s.weekDays),
+                      const SizedBox(width: 12),
+                      _stat('${store.streakDays}', s.streak),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 18),
                 Row(
@@ -1524,7 +875,11 @@ class ProgressPage extends StatelessWidget {
                 else
                   RowGroup(
                     children: [
-                      for (final session in store.sessions.reversed.take(30))
+                      for (final session
+                          in (store.sessions.toList()..sort(
+                                (a, b) => b.endedAt.compareTo(a.endedAt),
+                              ))
+                              .take(30))
                         if (catalog.drillById(session.drillId)
                             case final Drill drill)
                           FlareRow(
@@ -1542,7 +897,7 @@ class ProgressPage extends StatelessWidget {
                                 color: session.pain
                                     ? FlareColors.warning
                                     : session.completed
-                                    ? FlareColors.secondary
+                                    ? FlareColors.success
                                     : FlareColors.dim,
                               ),
                             ),
