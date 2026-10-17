@@ -1,0 +1,35 @@
+{
+  "version": "flare-v42-r16-candidate",
+  "status": "awaiting-user-review",
+  "source_batch": "flare-v42-r16-20261017",
+  "source_directory": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r16-20261017",
+  "stage": "candidate",
+  "published_at": "2026-10-17T00:12:33.976876+00:00",
+  "assets": [
+    {
+      "kind": "training",
+      "source": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r16-20261017\\flare-training-v42-candidate.glb",
+      "file": "assets/r16-training.glb",
+      "sha256": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+      "bytes": 8337208,
+      "duration_seconds": 1.350000023841858,
+      "tracks": 44,
+      "animation": "flare_v42_candidate_loop"
+    },
+    {
+      "kind": "coach",
+      "source": "E:\\AII-3D\\3D-Body\\output\\flare-v42-r16-20261017\\flare-coach-v42-candidate.glb",
+      "file": "assets/r16-coach.glb",
+      "sha256": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055",
+      "bytes": 8642744,
+      "duration_seconds": 1.350000023841858,
+      "tracks": 44,
+      "animation": "flare_v42_candidate_loop"
+    }
+  ],
+  "baseline_hashes": {
+    "training": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+    "coach": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c"
+  },
+  "scope": "Only isolated viewer candidate copies were replaced; original R15 and App untouched"
+}

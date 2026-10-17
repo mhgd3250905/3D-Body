@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.4+6
+version: 1.0.6+8
 
 environment:
   sdk: ^3.12.2
@@ -55,6 +55,10 @@ flutter:
     - assets/brand/flare-loading-still.webp
     - assets/brand/flare-loading-v42-r12.webp
     - assets/brand/flare-loading-v42-r12-still.webp
+    - assets/brand/flare-loading-v42-r15.webp
+    - assets/brand/flare-loading-v42-r15-still.webp
+    - assets/brand/flare-loading-v42-r16.webp
+    - assets/brand/flare-loading-v42-r16-still.webp
   fonts:
     - family: FlareSans
       fonts:

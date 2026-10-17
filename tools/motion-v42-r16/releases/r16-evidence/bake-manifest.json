@@ -1,0 +1,126 @@
+{
+  "version": "v42-r16-support-elbow-fix",
+  "branch": "local R16 reference study on master",
+  "date": "2026-10-17",
+  "status": "Authored motion candidate for visual review; not motion capture and not an App release.",
+  "duration": 1.35,
+  "frames": 541,
+  "tracks": 44,
+  "bones": 22,
+  "parameters": {
+    "revision": "v42-r16-support-elbow-fix",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "sideTorsoElevationDegrees": 18,
+    "maximumAdditionalTiltDegrees": 14,
+    "contactOverlapPhase": 0.005,
+    "armVelocityRampFraction": 0.01,
+    "contactTimingBlendPhase": 0.04,
+    "armLandingReturnPhase": [
+      0.39,
+      0.425
+    ],
+    "maximumElbowOpenDegrees": 177,
+    "maximumContactTranslationMetres": 0.03,
+    "sideWindows": {
+      "left": [
+        0.08,
+        0.21,
+        0.31,
+        0.425
+      ],
+      "right": [
+        0.58,
+        0.71,
+        0.81,
+        0.925
+      ]
+    },
+    "shoeDesiredMinY": 0.012,
+    "shoeMaximumCorrectionDegrees": 15
+  },
+  "recoveryDesign": {
+    "scope": "Frozen R14 animation as source. Side support wrist-pivot body tilt, shoulder-attached arms with at most 30mm contact reach translation, slight arm retiming, small whole-leg clearance correction preserving knee angles. Camera reference is not motion capture; no force model.",
+    "settings": {
+      "revision": "v42-r16-support-elbow-fix",
+      "cycleSeconds": 1.35,
+      "sampleCount": 540,
+      "sideTorsoElevationDegrees": 18,
+      "maximumAdditionalTiltDegrees": 14,
+      "contactOverlapPhase": 0.005,
+      "armVelocityRampFraction": 0.01,
+      "contactTimingBlendPhase": 0.04,
+      "armLandingReturnPhase": [
+        0.39,
+        0.425
+      ],
+      "maximumElbowOpenDegrees": 177,
+      "maximumContactTranslationMetres": 0.03,
+      "sideWindows": {
+        "left": [
+          0.08,
+          0.21,
+          0.31,
+          0.425
+        ],
+        "right": [
+          0.58,
+          0.71,
+          0.81,
+          0.925
+        ]
+      },
+      "shoeDesiredMinY": 0.012,
+      "shoeMaximumCorrectionDegrees": 15
+    }
+  },
+  "authoringBaseVersion": "motion-v42-r15",
+  "baseVersion": "motion-v42-r14",
+  "baseAssets": [
+    {
+      "kind": "coach",
+      "sha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d"
+    },
+    {
+      "kind": "training",
+      "sha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68"
+    }
+  ],
+  "implementationSha256": "ab075086109fe1af41e613911d79b9a1943af962267cc6d3b2004bb3f5530d7f",
+  "dependencies": [
+    {
+      "path": "tools/motion-v42-r16/reference-motion.mjs",
+      "sha256": "ab075086109fe1af41e613911d79b9a1943af962267cc6d3b2004bb3f5530d7f"
+    }
+  ],
+  "seamPositionMm": 0,
+  "seamAngleDeg": 0,
+  "randomAccessPositionMm": 0,
+  "randomAccessAngleDegrees": 0,
+  "assets": [
+    {
+      "kind": "coach",
+      "source": "output/flare-v42-r14-20261016/flare-coach-v42-candidate.glb",
+      "sourceSha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d",
+      "output": "output/flare-v42-r16-20261017/flare-coach-v42-candidate.glb",
+      "sha256": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055",
+      "bytes": 8642744,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005293340804695338
+    },
+    {
+      "kind": "training",
+      "source": "output/flare-v42-r14-20261016/flare-training-v42-candidate.glb",
+      "sourceSha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68",
+      "output": "output/flare-v42-r16-20261017/flare-training-v42-candidate.glb",
+      "sha256": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+      "bytes": 8337208,
+      "geometryAndSkinAttributesPreserved": true,
+      "materialsPreserved": true,
+      "bakedBoneErrorMm": 0.0005293340804695338
+    }
+  ],
+  "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+  "geometry": "Only animation replaced in copies of the two accepted bodies. Original meshes, weights, materials and source assets retained."
+}

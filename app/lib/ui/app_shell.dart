@@ -2309,7 +2309,7 @@ class _SceneRevealLayerState extends State<SceneRevealLayer>
   }
 }
 
-/// Placeholder while the 3D scene boots: the baked R12 action silhouette
+/// Placeholder while the 3D scene boots: the baked R16 action silhouette
 /// with one quiet line. The lightweight asset needs no live model to play.
 /// Flutter owns the hosted scene's loading UI. The scene only draws its own
 /// loader when opened on its own, avoiding two marks during initialization.

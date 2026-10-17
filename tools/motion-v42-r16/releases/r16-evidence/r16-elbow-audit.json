@@ -1,0 +1,551 @@
+{
+  "generated": "2026-10-17T00:11:29.584Z",
+  "candidate": "output/flare-v42-r16-trial01-20261017",
+  "method": "Independent GLTFLoader/AnimationMixer sample of actual two R15 and two R16 GLBs at 10001 phases per asset. 0.01% phase steps; velocity boundary measure uses 0.1% phase (1.35ms) on each side. Unmodified region excludes one baked frame adjacent to blend start.",
+  "results": {
+    "training": {
+      "r15Hash": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+      "r16Hash": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+      "windows": {
+        "r15Left": {
+          "side": "left",
+          "startPhase": 0.937,
+          "endPhase": 0.998,
+          "minElbowDegrees": 161.30450743525427,
+          "minPhase": 0.9667,
+          "maxElbowDegrees": 177.0000074598617,
+          "maxPhase": 0.9963,
+          "wristExcursionMm": 0.02826410293073752
+        },
+        "r16Left": {
+          "side": "left",
+          "startPhase": 0.937,
+          "endPhase": 0.998,
+          "minElbowDegrees": 176.8940890295516,
+          "minPhase": 0.9833,
+          "maxElbowDegrees": 177.000175998393,
+          "maxPhase": 0.938,
+          "wristExcursionMm": 0.02826410293073752
+        },
+        "r15Right": {
+          "side": "right",
+          "startPhase": 0.437,
+          "endPhase": 0.498,
+          "minElbowDegrees": 164.14469797927975,
+          "minPhase": 0.4797,
+          "maxElbowDegrees": 176.99999926687198,
+          "maxPhase": 0.4444,
+          "wristExcursionMm": 0.08036954548734654
+        },
+        "r16Right": {
+          "side": "right",
+          "startPhase": 0.437,
+          "endPhase": 0.498,
+          "minElbowDegrees": 176.94022687656897,
+          "minPhase": 0.4944,
+          "maxElbowDegrees": 177.0000004780777,
+          "maxPhase": 0.4861,
+          "wristExcursionMm": 0.08036954548734654
+        }
+      },
+      "peaks": {
+        "allBonePositionDeltaMm": {
+          "value": 32.83107226692309,
+          "phase": 0.9667,
+          "bone": "leftForearm"
+        },
+        "unmodifiedPositionDeltaMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "unmodifiedRotationDeltaDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.0224,
+          "bone": "leftShin"
+        },
+        "supportWristChangeMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "armSpanChangeMm": {
+          "value": 0.0876950894783679,
+          "phase": 0.4061,
+          "bone": "leftupperLength"
+        },
+        "torsoLocalShoulderNeckHeadChangeMm": {
+          "value": 0.00006109238008250344,
+          "phase": 0.9611,
+          "bone": "head"
+        },
+        "seamPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "seamAngleDegrees": {
+          "value": 0.0000024148365394514667,
+          "phase": 1,
+          "bone": "spineLower"
+        }
+      },
+      "boundaries": [
+        {
+          "phase": 0.39,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.007423900278097979,
+              "r16VelocityChangeMps": 0.007423900278097979
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.016726251056809353,
+              "r16VelocityChangeMps": 0.016726251056809353
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.022362624947695642,
+              "r16VelocityChangeMps": 0.022362624947695642
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.012996361699724172,
+              "r16VelocityChangeMps": 0.012996361699724172
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0.0005766882289933153,
+              "r15VelocityChangeMps": 0.08003959234939698,
+              "r16VelocityChangeMps": 0.07694350624971294
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006270572356695475,
+              "r16VelocityChangeMps": 0.006270572356695475
+            },
+            "leftHand": {
+              "positionDeltaMm": 0.0005391302174004116,
+              "r15VelocityChangeMps": 0.049595859515546986,
+              "r16VelocityChangeMps": 0.04692751426019694
+            },
+            "rightHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00000850005201920992,
+              "r16VelocityChangeMps": 0.00000850005201920992
+            }
+          }
+        },
+        {
+          "phase": 0.425,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.004429055682653657,
+              "r16VelocityChangeMps": 0.004429055682653657
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00378268027496302,
+              "r16VelocityChangeMps": 0.00378268027496302
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006992896180281424,
+              "r16VelocityChangeMps": 0.006992896180281424
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0013354155632325456,
+              "r16VelocityChangeMps": 0.0013354155632325456
+            },
+            "leftForearm": {
+              "positionDeltaMm": 6.058790721525014,
+              "r15VelocityChangeMps": 0.09284564353534788,
+              "r16VelocityChangeMps": 0.09522031333336134
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0006165834971525915,
+              "r16VelocityChangeMps": 0.0006165834971525915
+            },
+            "leftHand": {
+              "positionDeltaMm": 13.663472037550234,
+              "r15VelocityChangeMps": 0.06355267321475615,
+              "r16VelocityChangeMps": 0.06066877250947637
+            },
+            "rightHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00000518781053185282,
+              "r16VelocityChangeMps": 0.00000518781053185282
+            }
+          }
+        },
+        {
+          "phase": 0.89,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02639005714067299,
+              "r16VelocityChangeMps": 0.02639005714067299
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02091537881413698,
+              "r16VelocityChangeMps": 0.02091537881413698
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.013606367725985289,
+              "r16VelocityChangeMps": 0.013606367725985289
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02814512446407317,
+              "r16VelocityChangeMps": 0.02814512446407317
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006034315420211992,
+              "r16VelocityChangeMps": 0.006034315420211992
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0.0007219906437448877,
+              "r15VelocityChangeMps": 0.05797273613546269,
+              "r16VelocityChangeMps": 0.05990877932562916
+            },
+            "leftHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 9.634508735545128e-7,
+              "r16VelocityChangeMps": 9.634508735545128e-7
+            },
+            "rightHand": {
+              "positionDeltaMm": 0.0008110506947717566,
+              "r15VelocityChangeMps": 0.07027883497266056,
+              "r16VelocityChangeMps": 0.07389270656032883
+            }
+          }
+        },
+        {
+          "phase": 0.925,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.003056240451826314,
+              "r16VelocityChangeMps": 0.003056240451826314
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0035307902807208795,
+              "r16VelocityChangeMps": 0.0035307902807208795
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0020499547016675475,
+              "r16VelocityChangeMps": 0.0020499547016675475
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.009304856311839355,
+              "r16VelocityChangeMps": 0.00930472990495514
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.001187751265528298,
+              "r16VelocityChangeMps": 0.001187751265528298
+            },
+            "rightForearm": {
+              "positionDeltaMm": 11.915129286028144,
+              "r15VelocityChangeMps": 0.03169359609331084,
+              "r16VelocityChangeMps": 0.028232710727738846
+            },
+            "leftHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 1.6632627337410683e-7,
+              "r16VelocityChangeMps": 1.6632627337410683e-7
+            },
+            "rightHand": {
+              "positionDeltaMm": 11.444695444787675,
+              "r15VelocityChangeMps": 0.03519404112992265,
+              "r16VelocityChangeMps": 0.03655053206856087
+            }
+          }
+        }
+      ]
+    },
+    "coach": {
+      "r15Hash": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c",
+      "r16Hash": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055",
+      "windows": {
+        "r15Left": {
+          "side": "left",
+          "startPhase": 0.937,
+          "endPhase": 0.998,
+          "minElbowDegrees": 161.30450743525427,
+          "minPhase": 0.9667,
+          "maxElbowDegrees": 177.0000074598617,
+          "maxPhase": 0.9963,
+          "wristExcursionMm": 0.02826410293073752
+        },
+        "r16Left": {
+          "side": "left",
+          "startPhase": 0.937,
+          "endPhase": 0.998,
+          "minElbowDegrees": 176.8940890295516,
+          "minPhase": 0.9833,
+          "maxElbowDegrees": 177.000175998393,
+          "maxPhase": 0.938,
+          "wristExcursionMm": 0.02826410293073752
+        },
+        "r15Right": {
+          "side": "right",
+          "startPhase": 0.437,
+          "endPhase": 0.498,
+          "minElbowDegrees": 164.14469797927975,
+          "minPhase": 0.4797,
+          "maxElbowDegrees": 176.99999926687198,
+          "maxPhase": 0.4444,
+          "wristExcursionMm": 0.08036954548734654
+        },
+        "r16Right": {
+          "side": "right",
+          "startPhase": 0.437,
+          "endPhase": 0.498,
+          "minElbowDegrees": 176.94022687656897,
+          "minPhase": 0.4944,
+          "maxElbowDegrees": 177.0000004780777,
+          "maxPhase": 0.4861,
+          "wristExcursionMm": 0.08036954548734654
+        }
+      },
+      "peaks": {
+        "allBonePositionDeltaMm": {
+          "value": 32.83107226692309,
+          "phase": 0.9667,
+          "bone": "leftForearm"
+        },
+        "unmodifiedPositionDeltaMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "unmodifiedRotationDeltaDegrees": {
+          "value": 0.0000034150945850063755,
+          "phase": 0.0224,
+          "bone": "leftShin"
+        },
+        "supportWristChangeMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "armSpanChangeMm": {
+          "value": 0.0876950894783679,
+          "phase": 0.4061,
+          "bone": "leftupperLength"
+        },
+        "torsoLocalShoulderNeckHeadChangeMm": {
+          "value": 0.00006109238008250344,
+          "phase": 0.9611,
+          "bone": "head"
+        },
+        "seamPositionMm": {
+          "value": 0,
+          "phase": 0,
+          "bone": null
+        },
+        "seamAngleDegrees": {
+          "value": 0.0000024148365394514667,
+          "phase": 1,
+          "bone": "spineLower"
+        }
+      },
+      "boundaries": [
+        {
+          "phase": 0.39,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.007423900278097979,
+              "r16VelocityChangeMps": 0.007423900278097979
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.016726251056809353,
+              "r16VelocityChangeMps": 0.016726251056809353
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.022362624947695642,
+              "r16VelocityChangeMps": 0.022362624947695642
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.012996361699724172,
+              "r16VelocityChangeMps": 0.012996361699724172
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0.0005766882289933153,
+              "r15VelocityChangeMps": 0.08003959234939698,
+              "r16VelocityChangeMps": 0.07694350624971294
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006270572356695475,
+              "r16VelocityChangeMps": 0.006270572356695475
+            },
+            "leftHand": {
+              "positionDeltaMm": 0.0005391302174004116,
+              "r15VelocityChangeMps": 0.049595859515546986,
+              "r16VelocityChangeMps": 0.04692751426019694
+            },
+            "rightHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00000850005201920992,
+              "r16VelocityChangeMps": 0.00000850005201920992
+            }
+          }
+        },
+        {
+          "phase": 0.425,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.004429055682653657,
+              "r16VelocityChangeMps": 0.004429055682653657
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00378268027496302,
+              "r16VelocityChangeMps": 0.00378268027496302
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006992896180281424,
+              "r16VelocityChangeMps": 0.006992896180281424
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0013354155632325456,
+              "r16VelocityChangeMps": 0.0013354155632325456
+            },
+            "leftForearm": {
+              "positionDeltaMm": 6.058790721525014,
+              "r15VelocityChangeMps": 0.09284564353534788,
+              "r16VelocityChangeMps": 0.09522031333336134
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0006165834971525915,
+              "r16VelocityChangeMps": 0.0006165834971525915
+            },
+            "leftHand": {
+              "positionDeltaMm": 13.663472037550234,
+              "r15VelocityChangeMps": 0.06355267321475615,
+              "r16VelocityChangeMps": 0.06066877250947637
+            },
+            "rightHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.00000518781053185282,
+              "r16VelocityChangeMps": 0.00000518781053185282
+            }
+          }
+        },
+        {
+          "phase": 0.89,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02639005714067299,
+              "r16VelocityChangeMps": 0.02639005714067299
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02091537881413698,
+              "r16VelocityChangeMps": 0.02091537881413698
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.013606367725985289,
+              "r16VelocityChangeMps": 0.013606367725985289
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.02814512446407317,
+              "r16VelocityChangeMps": 0.02814512446407317
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.006034315420211992,
+              "r16VelocityChangeMps": 0.006034315420211992
+            },
+            "rightForearm": {
+              "positionDeltaMm": 0.0007219906437448877,
+              "r15VelocityChangeMps": 0.05797273613546269,
+              "r16VelocityChangeMps": 0.05990877932562916
+            },
+            "leftHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 9.634508735545128e-7,
+              "r16VelocityChangeMps": 9.634508735545128e-7
+            },
+            "rightHand": {
+              "positionDeltaMm": 0.0008110506947717566,
+              "r15VelocityChangeMps": 0.07027883497266056,
+              "r16VelocityChangeMps": 0.07389270656032883
+            }
+          }
+        },
+        {
+          "phase": 0.925,
+          "values": {
+            "pelvis": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.003056240451826314,
+              "r16VelocityChangeMps": 0.003056240451826314
+            },
+            "torso": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0035307902807208795,
+              "r16VelocityChangeMps": 0.0035307902807208795
+            },
+            "leftUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.0020499547016675475,
+              "r16VelocityChangeMps": 0.0020499547016675475
+            },
+            "rightUpperArm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.009304856311839355,
+              "r16VelocityChangeMps": 0.00930472990495514
+            },
+            "leftForearm": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 0.001187751265528298,
+              "r16VelocityChangeMps": 0.001187751265528298
+            },
+            "rightForearm": {
+              "positionDeltaMm": 11.915129286028144,
+              "r15VelocityChangeMps": 0.03169359609331084,
+              "r16VelocityChangeMps": 0.028232710727738846
+            },
+            "leftHand": {
+              "positionDeltaMm": 0,
+              "r15VelocityChangeMps": 1.6632627337410683e-7,
+              "r16VelocityChangeMps": 1.6632627337410683e-7
+            },
+            "rightHand": {
+              "positionDeltaMm": 11.444695444787675,
+              "r15VelocityChangeMps": 0.03519404112992265,
+              "r16VelocityChangeMps": 0.03655053206856087
+            }
+          }
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Surface contact independently checked by parent agent generic sampler; this audit checks support wrist retention, bone-length and attachment regression.",
+    "Kinematics only; no dynamics claim."
+  ]
+}

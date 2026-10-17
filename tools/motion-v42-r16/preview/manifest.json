@@ -1,0 +1,11 @@
+{
+  "version": "r16-preview",
+  "status": "awaiting-user-review",
+  "baseline": "R15 original, known support elbow bend",
+  "candidate": "R16 support elbow correction",
+  "defaultPhase": 0.967,
+  "baseline_hashes": {
+    "training": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+    "coach": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c"
+  }
+}

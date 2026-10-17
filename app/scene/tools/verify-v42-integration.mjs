@@ -25,7 +25,7 @@ async function load(file) {
   return new GLTFLoader().setMeshoptDecoder(MeshoptDecoder)
     .parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 }
-const clock = createBakedClock(), timing = read('src/v42-clock.json'), phases = read('src/v42-phases.json');
+const clock = createBakedClock(), timing = read('src/v42-r16-clock.json'), phases = read('src/v42-r16-phases.json');
 assert.equal(clock.period, 9); assert.equal(clock.duration, 1.35);
 assert.equal(timing.frameTimes.length, timing.sequenceTime.length);
 for (let i = 1; i < timing.frameTimes.length; i++) {
@@ -70,7 +70,7 @@ for (const speed of [0.25, 0.5, 1, 1.5]) {
 const rig = read('public/coach/coach-v41-rig.json'), rows = [];
 for (const search of ['', '?body=training', '?character=shadow', '?character=chrome', '?character=street', '?character=robot', '?character=cyber']) {
   const character = characterFromLocation(search), asset = characterAsset(character);
-  assert.ok(asset.includes('v42-r12'), 'every saved character selects v42/R12');
+  assert.ok(asset.includes('v42-r16'), 'every saved character selects v42/R16');
   const gltf = await load(asset), model = gltf.scene;
   applyCharacter(model, character); applyTrainingClothSink(model);
   const motion = createBakedMotion(gltf, rig), clip = gltf.animations.find(value => value.name === 'flare_v42_candidate_loop');
@@ -138,7 +138,7 @@ for (const [revision, asset, clockFile] of [
   assert.equal(motion.getMetrics().motionRevision, revision);
   assert.equal(motion.getMetrics().wallTime, createBakedClock(read(clockFile)).toWall(2.375)); motion.dispose();
 }
-console.log(JSON.stringify({ status: 'passed', scope: 'v42-r12-real-assets-app-clock-phases-seven-characters-detail-and-fx',
+console.log(JSON.stringify({ status: 'passed', scope: 'v42-r16-real-assets-app-clock-phases-seven-characters-detail-and-fx',
   period: clock.period, clipDuration: clock.duration, clockRoundtripMaxError: maxRoundtripError,
   phaseFrames: phases.frames.length, historicalClocksPreserved: ['v41', 'v38'], characters: rows,
   limitation: 'Node runtime regression; GPU output, native devices and long background timing require separate evidence.' }, null, 2));

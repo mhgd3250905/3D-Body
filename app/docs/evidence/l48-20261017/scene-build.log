@@ -1,0 +1,18 @@
+
+> flare-flutter-scene@0.1.0 build
+> vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 59 modules transformed.
+rendering chunks...
+computing gzip size...
+../assets/scene/index.html                     7.36 kB │ gzip:   3.11 kB
+../assets/scene/assets/index-D1CmUuBK.css      6.95 kB │ gzip:   2.07 kB
+../assets/scene/assets/index-CfH471Di.js   1,613.12 kB │ gzip: 286.70 kB
+
+(!) Some chunks are larger than 800 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.55s

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Three dressed Flare characters built on the two accepted bodies. They reuse
-// the body's own garments and the identical 22-bone rig and v42/R12 clip; only the
+// the body's own garments and the identical 22-bone rig and v42/R16 clip; only the
 // materials change, plus a body zone shader that dresses the bare arms and legs
 // as sleeves or tights where a character wears them. No geometry, weights or
 // tracks are altered, so every motion check of the base body still holds.
@@ -10,8 +10,8 @@ import * as THREE from 'three';
 // ?body=training / original coach choice is untouched.
 
 const BASES = {
-  coach: './coach/flare-coach-v42-r12-animated.meshopt.glb.gz',
-  training: './coach/flare-coach-v42-r12-training-human.meshopt.glb.gz',
+  coach: './coach/flare-coach-v42-r16-animated.meshopt.glb.gz',
+  training: './coach/flare-coach-v42-r16-training-human.meshopt.glb.gz',
 };
 
 // Zones: skin, arm (body surface of the arms), leg (body surface of the legs),

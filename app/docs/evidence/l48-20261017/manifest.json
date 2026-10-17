@@ -1,0 +1,97 @@
+{
+  "version": "L48 / 1.0.5+7 / v42-R15",
+  "scope": "Historical delivery evidence; known elbow regression; not complete acceptance",
+  "source": "output/l48-r15-20261017",
+  "files": [
+    {
+      "file": "build-apk.log",
+      "bytes": 1024,
+      "sha256": "9abf3e5fe884a1f50cbaae1bbcb3ec4b886f644a5a79641e1b821fe833f22a36"
+    },
+    {
+      "file": "build-web.log",
+      "bytes": 1409,
+      "sha256": "3ff35ad455bb5381c50f88536f51bb31de8af6778db3c009d472388e0203c43e"
+    },
+    {
+      "file": "certificate-after.txt",
+      "bytes": 311,
+      "sha256": "a34d085fc1c28e3ddfee9da1818acb137d39e588d053ced4df4bd537b9b41587"
+    },
+    {
+      "file": "cold-start.txt",
+      "bytes": 167,
+      "sha256": "9543a5e31b8165409c22300f4440bdb738b6f8915b029f896a27f5f245012907"
+    },
+    {
+      "file": "flutter-analyze.log",
+      "bytes": 704,
+      "sha256": "03b6bf13f0674d5dfb23c4d4928819551b4e49ec77c86f6bc6f2a396dfc9a010"
+    },
+    {
+      "file": "flutter-test.log",
+      "bytes": 937,
+      "sha256": "c62652eeed65925a15c932530ee6fb29df4a410cbb7e686a409c55d3351d0b5a"
+    },
+    {
+      "file": "install-result.txt",
+      "bytes": 38,
+      "sha256": "c4aa470acafcf8576c15b0f0b5ae7e852d1ec5413372d0e6a9272e788e1306d3"
+    },
+    {
+      "file": "installation.json",
+      "bytes": 1537,
+      "sha256": "302be123bd2db0bd3a665df5f76d2b1fb3df3b9a282637f0dd62060d9aafa0d1"
+    },
+    {
+      "file": "native-home.png",
+      "bytes": 1027632,
+      "sha256": "d7af812ad4d157616477e39362d22479c30c5c9a5251f24a2941356ccffd3030"
+    },
+    {
+      "file": "package-verification.json",
+      "bytes": 64955,
+      "sha256": "cd0da0e1fc5d7d28cbbf0e68c043c958a05afc7428c99fce52f4a0da0fb7c69a"
+    },
+    {
+      "file": "r15-elbow-audit.json",
+      "bytes": 209992,
+      "sha256": "8fced2d0485328287ee91b72bcdbe8d7a6c3410797e2bd271d6cd4a5a87c155b"
+    },
+    {
+      "file": "root-build.log",
+      "bytes": 1179,
+      "sha256": "5f206d8783f2ed8c89d3d864ce2bdacacfdb6efb280a790e1f8e559993fc7273"
+    },
+    {
+      "file": "scene-build.log",
+      "bytes": 788,
+      "sha256": "5af7c28f9cf0211989339da862e1fabefe61a85434965d952397f8dc69e2ad5d"
+    },
+    {
+      "file": "scene-verify.log",
+      "bytes": 8544,
+      "sha256": "76c7c91321e397ce2113e486ebf13de32447130857de7f2eecb8406c9e763499"
+    },
+    {
+      "file": "user-feedback.json",
+      "bytes": 460,
+      "sha256": "8b7b7dcbad8b9a96f8ef8d48dd115b793f42b507f3da1526ccac3fb5fdd09cd2"
+    },
+    {
+      "file": "web-detail.png",
+      "bytes": 48190,
+      "sha256": "27db3738c33a8ad93f636f605665f152cf093d2a97e087b1674a1e02faedbdcf"
+    },
+    {
+      "file": "web-home.png",
+      "bytes": 40302,
+      "sha256": "0cc28dbbaa8b12c9287ba2a0ce349dd7687f183d40ff48f60cba7590b98a72e2"
+    },
+    {
+      "file": "zipalign.txt",
+      "bytes": 7,
+      "sha256": "2700165975f68815c97d605c56eca8e90d497ade1264b6282401d13fee99ac27"
+    }
+  ]
+}

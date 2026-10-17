@@ -54,7 +54,7 @@ export const FX_PALETTES = {
 export function createFlareFx(player, { palette = 'ember', enabled = true } = {}) {
   const motion = player.motion, coach = player.coach, clock = motion.clock;
   // Keep the accepted short trail (roughly one tenth of a turn) when the
-  // R12 clip completes a turn in 1.35s instead of v41's roughly nine seconds.
+  // R16 clip completes a turn in 1.35s instead of v41's roughly nine seconds.
   const windowScale = motion.getMetrics().motionRevision === 'v42' ? clock.duration / 8.991662288 : 1;
   const trailSeconds = TRAIL_SECONDS * windowScale, rippleSeconds = RIPPLE_SECONDS * windowScale;
   const root = new THREE.Group(); root.name = 'FlareFx'; root.renderOrder = 2;

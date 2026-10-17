@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'motion.dart';
 import 'theme.dart';
 
-/// A small, offline render of the accepted v42 / R12 loop. It can play before the
+/// A small, offline render of the v42 / R16 support-elbow repair loop. It plays before the
 /// WebView or model is ready, without starting a second 3D renderer.
 class FlareLoadingSilhouette extends StatelessWidget {
   const FlareLoadingSilhouette({
@@ -15,8 +15,8 @@ class FlareLoadingSilhouette extends StatelessWidget {
   final double size;
   final bool animate;
 
-  static const animationAsset = 'assets/brand/flare-loading-v42-r12.webp';
-  static const stillAsset = 'assets/brand/flare-loading-v42-r12-still.webp';
+  static const animationAsset = 'assets/brand/flare-loading-v42-r16.webp';
+  static const stillAsset = 'assets/brand/flare-loading-v42-r16-still.webp';
 
   @override
   Widget build(BuildContext context) {

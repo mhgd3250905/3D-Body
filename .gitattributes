@@ -25,3 +25,10 @@ tools/motion-v42-r14/** -text
 
 # Frozen R15 authoring, preview and accepted review evidence use byte hashes.
 tools/motion-v42-r15/** -text
+
+# Preserve the R16 bugfix source and verification byte identities.
+tools/motion-v42-r16/** -text
+
+# Keep raw build and device evidence consistent with its byte-hash manifest.
+app/docs/evidence/l48-20261017/** -text
+app/docs/evidence/l49-20261017/** -text

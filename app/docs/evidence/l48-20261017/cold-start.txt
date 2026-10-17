@@ -1,0 +1,7 @@
+Starting: Intent { cmp=dev.mhgd.flare/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: dev.mhgd.flare/.MainActivity
+TotalTime: 387
+WaitTime: 388
+Complete

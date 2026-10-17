@@ -1,0 +1,262 @@
+
+> flare-flutter-scene@0.1.0 verify
+> node ../tools/verify-scene.mjs && node ../tools/verify-v38.mjs && node ../tools/verify-v41.mjs && node tools/verify-v42-assets.mjs && node tools/verify-v42-r15-assets.mjs && node tools/verify-v42-integration.mjs && node tools/verify-render-quality.mjs && node tools/verify-adaptive-resolution.mjs
+
+{
+  "status": "passed",
+  "scope": "historical-v33-source-and-runtime-parity",
+  "referenceAvailable": true,
+  "copiedFiles": 21,
+  "paritySamples": 181,
+  "jointMaxErrorMm": 0,
+  "quaternionMaxErrorRadians": 5.960464477539063e-8,
+  "kneeMinDegrees": 176.2338525905178,
+  "plantedElbowMinDegrees": 178.28768463523568,
+  "freeElbowMinDegrees": 179.9262709962686,
+  "limbMaxLengthErrorMeters": 3.885780586188048e-16,
+  "pacingMaxError": 0,
+  "substepClockMaxError": 0,
+  "phaseWallSecondsAt1x": [
+    1.20979591880066,
+    1.3995277956593453,
+    1.019867717703888,
+    0.8514723105580543,
+    0.936317809702281,
+    1.0522584556278696,
+    1.4939153740163895,
+    1.03013291977906
+  ],
+  "vertices": 211060,
+  "triangles": 332206,
+  "losslessAttributeValues": 4893246,
+  "triangleCyclicRotations": 58948,
+  "compressedCoachBytes": 2390231,
+  "compressedMiniatureBytes": 863833,
+  "historicalStudyBodyVertices": 41813,
+  "historicalStudyBodyTriangles": 58552,
+  "historicalStudyHeadVertices": 16669,
+  "historicalStudyHeadTriangles": 33144,
+  "bundledFiles": 26,
+  "bundledBytes": 27990446,
+  "currentMotionBytes": 10302986
+}
+{
+  "status": "passed",
+  "scope": "v38-baked-playback-and-clothed-detail-proxy",
+  "localSourcesOnly": true,
+  "frames": 540,
+  "tracks": 44,
+  "bones": 22,
+  "loopDurationAt1xSeconds": 8.991662,
+  "loopDurationAtHalfSpeedSeconds": 17.983324,
+  "clockRoundtripError": 0,
+  "losslessAttributeValues": 3349896,
+  "triangleCyclicRotations": 35065,
+  "inverseBindValues": 7744,
+  "losslessTrackValues": 106920,
+  "boneMaxErrorMm": 0.0013966780282626443,
+  "skinMaxErrorMm": 0.0016526928925446123,
+  "compatibilityJointMaxErrorMm": 0.5242724886404799,
+  "worstBone": {
+    "frame": 373,
+    "bone": "leftFoot",
+    "time": 5.663362
+  },
+  "skinVertexStride": 97,
+  "selectedGroups": 17,
+  "selectedPhases": 8,
+  "selectionCases": 136,
+  "tintedCases": 136,
+  "curatedAngles": 136,
+  "groinLeaks": 0,
+  "handLeaks": 0,
+  "runtimeStudyAttached": false,
+  "historicalStudyWaistHelpersBound": true,
+  "homeSelectionMaterialIdentity": true,
+  "detailTintProxyOnly": true,
+  "originalFaceMaterialIdentityDuringDetail": true,
+  "originalMaterialIdentityAndVisibilityRestored": true,
+  "limitation": "Does not verify visual shader output, real browser clicking, or native device performance."
+}
+{
+  "status": "passed",
+  "scope": "v41-source-bake-compression-root-vs-app-clock-phases-and-clothed-selection",
+  "commit": "53d72b412840a942fefc818836b68ad2a2d7e0d1",
+  "frames": 540,
+  "tracks": 44,
+  "bones": 22,
+  "rawPositionValues": 633180,
+  "normalizedNormalMaxError": 0,
+  "rawNormalNormalizationMaxDiff": 0.001595157853373435,
+  "helperWeightValues": 1688480,
+  "losslessAttributeValues": 3349896,
+  "triangleCyclicRotations": 35065,
+  "inverseBindValues": 7744,
+  "losslessTrackValues": 106920,
+  "seamTrackMaxError": 0,
+  "rootBoneMaxErrorMm": 0.0005329349374352341,
+  "rootSkinMaxErrorMm": 0.0005658056585111674,
+  "rootMatrixMaxError": 6.938358478453255e-7,
+  "clockRoundtripError": 0,
+  "rootPacingMaxError": 0,
+  "rootMinFootHeightMm": -8.6590365440469,
+  "liveParity": {
+    "version": "v41",
+    "scope": "node-live-runtime-vs-animation-mixer",
+    "capturedFrames": 540,
+    "uniqueFrames": 539,
+    "bones": 22,
+    "tracks": 44,
+    "loopWall": 8.991662288489888,
+    "viewerFrames60": 540,
+    "integrationStep": 0.0004166666666666667,
+    "frameJointMaxErrorMm": 0.0005329349374352341,
+    "frameSkinMaxErrorMm": 0.0005658056585111674,
+    "liveProbeCount": 24,
+    "probeJointMaxErrorMm": 0.23084280202022758,
+    "probeSkinMaxErrorMm": 0.2362187381869877,
+    "skinVertexStride": 97,
+    "skinVertexCountPerFrame": 288,
+    "skinCheckedEveryFrame": true,
+    "determinismMaxDiff": 0,
+    "rootAndArmatureIdentity": true,
+    "boneScalesConstantUnit": true,
+    "seamBoneMaxErrorMm": 0
+  },
+  "selectionCases": 136,
+  "tintedCases": 136,
+  "curatedAngles": 136,
+  "groinLeaks": 0,
+  "handLeaks": 0,
+  "originalFaceMaterialIdentity": true,
+  "runtimeStudyAttached": false,
+  "limitation": "CPU parity is not browser shader output, full-surface floor acceptance, native device performance, or clinical validation."
+}
+{
+  "passed": true,
+  "scope": "accepted-R12-source-and-lossless-runtime-byte-parity",
+  "publishedAssets": 8,
+  "bodies": [
+    {
+      "body": "coach",
+      "acceptedSha256": "3bc56bdca613368149107ea2211f93402baf52ae14b093932f6025d17ddacf0d",
+      "meshAttributes": 93,
+      "triangles": 332206,
+      "samplers": 44,
+      "materialsUnchanged": true,
+      "inverseBindsUnchanged": true
+    },
+    {
+      "body": "training",
+      "acceptedSha256": "188767d3219851b1faa751d81c4dce029c3d9fb7b693d5ad627ce646c469c2c8",
+      "meshAttributes": 47,
+      "triangles": 224042,
+      "samplers": 44,
+      "materialsUnchanged": true,
+      "inverseBindsUnchanged": true
+    }
+  ]
+}
+{
+  "passed": true,
+  "scope": "accepted-R15-source-and-lossless-runtime-byte-parity",
+  "publishedAssets": 8,
+  "bodies": [
+    {
+      "body": "coach",
+      "acceptedSha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c",
+      "meshAttributes": 93,
+      "triangles": 332206,
+      "samplers": 44,
+      "materialsUnchanged": true,
+      "inverseBindsUnchanged": true
+    },
+    {
+      "body": "training",
+      "acceptedSha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3",
+      "meshAttributes": 47,
+      "triangles": 224042,
+      "samplers": 44,
+      "materialsUnchanged": true,
+      "inverseBindsUnchanged": true
+    }
+  ],
+  "teachingClock": {
+    "frames": 541,
+    "maximumSequenceTimeError": 3.552713678800501e-15,
+    "phaseAndSupportLabelsUnchanged": true
+  }
+}
+{
+  "status": "passed",
+  "scope": "v42-r15-real-assets-app-clock-phases-seven-characters-detail-and-fx",
+  "period": 9,
+  "clipDuration": 1.35,
+  "clockRoundtripMaxError": 3.552713678800501e-15,
+  "phaseFrames": 541,
+  "historicalClocksPreserved": [
+    "v41",
+    "v38"
+  ],
+  "characters": [
+    {
+      "character": "coach",
+      "asset": "./coach/flare-coach-v42-r15-animated.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "training",
+      "asset": "./coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "shadow",
+      "asset": "./coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "chrome",
+      "asset": "./coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "street",
+      "asset": "./coach/flare-coach-v42-r15-animated.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "robot",
+      "asset": "./coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    },
+    {
+      "character": "cyber",
+      "asset": "./coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "poses": 181,
+      "detailSameFrame": true,
+      "materialRestored": true,
+      "reducedMotionFxSettled": true
+    }
+  ],
+  "limitation": "Node runtime regression; GPU output, native devices and long background timing require separate evidence."
+}
+Render quality passed: near-native defaults, host aliases, battery mode, density caps and invalid input.
+Adaptive resolution passed: moving caps, settle restore, hysteresis, recovery, severe stalls, ?adaptive=0.

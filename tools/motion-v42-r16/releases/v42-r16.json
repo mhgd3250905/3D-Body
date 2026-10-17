@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "id": "flare-v42-r16",
+  "gitTag": "motion-v42-r16",
+  "date": "2026-10-17",
+  "status": "verified-bugfix-awaiting-user-review",
+  "acceptance": {
+    "scope": "Targeted repair of user-reported R15 support-elbow buckle. R16 has not yet been visually accepted by the user.",
+    "baseAcceptedVersion": "motion-v42-r15",
+    "reportedWindow": [
+      0.937,
+      0.998
+    ]
+  },
+  "sourceVersionRef": "motion-v42-r16",
+  "authoringBaseVersion": "motion-v42-r15",
+  "originalOutput": "output/flare-v42-r16-20261017",
+  "duration": 1.35,
+  "frames": 541,
+  "tracks": 44,
+  "bones": 22,
+  "assets": [
+    {
+      "kind": "coach",
+      "file": "flare-coach-v42-candidate.glb",
+      "bytes": 8642744,
+      "sha256": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055",
+      "source": "output/flare-v42-r14-20261016/flare-coach-v42-candidate.glb",
+      "sourceSha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d"
+    },
+    {
+      "kind": "training",
+      "file": "flare-training-v42-candidate.glb",
+      "bytes": 8337208,
+      "sha256": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd",
+      "source": "output/flare-v42-r14-20261016/flare-training-v42-candidate.glb",
+      "sourceSha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68"
+    }
+  ],
+  "motionParameters": {
+    "revision": "v42-r16-support-elbow-fix",
+    "cycleSeconds": 1.35,
+    "sampleCount": 540,
+    "sideTorsoElevationDegrees": 18,
+    "maximumAdditionalTiltDegrees": 14,
+    "contactOverlapPhase": 0.005,
+    "armVelocityRampFraction": 0.01,
+    "contactTimingBlendPhase": 0.04,
+    "armLandingReturnPhase": [
+      0.39,
+      0.425
+    ],
+    "maximumElbowOpenDegrees": 177,
+    "maximumContactTranslationMetres": 0.03,
+    "sideWindows": {
+      "left": [
+        0.08,
+        0.21,
+        0.31,
+        0.425
+      ],
+      "right": [
+        0.58,
+        0.71,
+        0.81,
+        0.925
+      ]
+    },
+    "shoeDesiredMinY": 0.012,
+    "shoeMaximumCorrectionDegrees": 15
+  },
+  "requiredInputs": [
+    {
+      "path": "output/flare-v42-r14-20261016/flare-coach-v42-candidate.glb",
+      "bytes": 8301976,
+      "sha256": "364faba82bb68d1d6a40f5cb53003d4ff721912445474c404548632a93e5921d"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/flare-training-v42-candidate.glb",
+      "bytes": 7996440,
+      "sha256": "1b65dfa69ef674ad968a1534e0e0d6e7fa1a28b07c4ca0d9132d36282f324e68"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/recovery-samples.json",
+      "bytes": 1415287,
+      "sha256": "56e8175b80f430129759f3d68d2d366c2490f517b9d0c88f5d47c0470e64860e"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/comparison-clock.json",
+      "bytes": 20149,
+      "sha256": "550dc35d5e2685f752e03f75a1cdb590614dd3fd9b68a63b64ea3dbeca42bf70"
+    },
+    {
+      "path": "output/flare-v42-r14-20261016/bake-manifest.json",
+      "bytes": 9315,
+      "sha256": "5bb82d50567873f488451bc019bee42686f99917ec9a751fdad368a47fb2a7f0"
+    },
+    {
+      "path": "app/scene/source/coach/flare-coach-v41-base.glb",
+      "bytes": 7508016,
+      "sha256": "c14683e4ffa8ebbb3e6712af8e04ee3276059398cec03b1192d5b67c179b858f"
+    },
+    {
+      "path": "app/scene/source/coach/coach-v41-rig.json",
+      "bytes": 4240,
+      "sha256": "b8566c2206181d1ea26568c42af927dd2414130709f1715c25a42fc2c4cdad1a"
+    },
+    {
+      "path": "app/scene/tools/bake-v41-node.mjs",
+      "bytes": 14151,
+      "sha256": "09cdeb548be2230fac2f56ea98e7519f7ceda4cd65d0cbf500da53fe7927c369"
+    },
+    {
+      "path": "app/scene/source/v41-runtime/source-manifest.json",
+      "bytes": 4566,
+      "sha256": "cd5f8f4a95e200755d55de71d2362211812bd69f73ec255256234d0d67a5e898"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 35441,
+      "sha256": "5c2e6747f2aee5143fe6ed5c02da4d3edf9f8be45d4354c244dbcacd653a4f92"
+    },
+    {
+      "path": "app/scene/package-lock.json",
+      "bytes": 37503,
+      "sha256": "088cfe8bb056bd0b998bf436985c1fb8c18328595bb72dd90efb40b267eec510"
+    }
+  ],
+  "frozenFiles": [
+    {
+      "path": "tools/motion-v42-r16/bake.mjs",
+      "bytes": 13285,
+      "sha256": "9d94fbbc4b9ebace2ab90b5add8a0f319816aa30a68d0db8a999f0254e7fd3c5"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/candidate-manifest.json",
+      "bytes": 1420,
+      "sha256": "8c012311ac0abd6f1f026d562bced6797aba1fbed25eee026cc4a331bd421d32"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/index.html",
+      "bytes": 4430,
+      "sha256": "b2471b8e1813ef3dc291073b4e5f21419964c74d115e8d8474717ad3f6950ab7"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/manifest.json",
+      "bytes": 398,
+      "sha256": "1e526534f966167dfd0e4fc202729b64c4be034a248beefbd02d463852040f47"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/publish-candidate.ps1",
+      "bytes": 536,
+      "sha256": "7e16daff8594fa509760e29a71430dd01175f1b4ac609206175bb0557351082d"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/publish-candidate.py",
+      "bytes": 6356,
+      "sha256": "cbba2572e81fde29e5be853182f10acbf821a232efb6aaf0d1189198694df5b1"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/README.md",
+      "bytes": 1366,
+      "sha256": "50a19222590e11886ab17bb60419e3e0327f6aeb585adb99ca8dbe0ab0493a4d"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/style.css",
+      "bytes": 4397,
+      "sha256": "8d4c602aba4b7fa5e736e57a50a80f434291ff7ba425006935f22374b697c593"
+    },
+    {
+      "path": "tools/motion-v42-r16/preview/viewer.js",
+      "bytes": 10377,
+      "sha256": "cf6a00253338cf08efb6cfdcf176a35442182a9a700b7ed21eafdb0043dd0953"
+    },
+    {
+      "path": "tools/motion-v42-r16/README.md",
+      "bytes": 2439,
+      "sha256": "bf1d1d15e95f0a225ade0b29268c96498de9fd4995eb64ed75c285a1bf57caa3"
+    },
+    {
+      "path": "tools/motion-v42-r16/reference-motion.mjs",
+      "bytes": 17227,
+      "sha256": "ab075086109fe1af41e613911d79b9a1943af962267cc6d3b2004bb3f5530d7f"
+    },
+    {
+      "path": "tools/motion-v42-r16/releases/r16-evidence/bake-manifest.json",
+      "bytes": 4107,
+      "sha256": "2190dd7fcd8199fca4169bb357a7b278f066fb6c222021b22ac863e96c08ff20"
+    },
+    {
+      "path": "tools/motion-v42-r16/releases/r16-evidence/independent-actual-glb.json",
+      "bytes": 204424,
+      "sha256": "dc39056358176527a7bd9fcd6838d6a86ee25a2f405f9160a114ce8e4204fc93"
+    },
+    {
+      "path": "tools/motion-v42-r16/releases/r16-evidence/preview-96-7.png",
+      "bytes": 66635,
+      "sha256": "c66622b172e7cda7ed0cb21663dd5e002a126ae1988bb2984b5dfe280aaeacbb"
+    },
+    {
+      "path": "tools/motion-v42-r16/releases/r16-evidence/r15-bug-reproduction.json",
+      "bytes": 209992,
+      "sha256": "8fced2d0485328287ee91b72bcdbe8d7a6c3410797e2bd271d6cd4a5a87c155b"
+    },
+    {
+      "path": "tools/motion-v42-r16/releases/r16-evidence/r16-elbow-audit.json",
+      "bytes": 19469,
+      "sha256": "3d1817966950d12ffab7edb94b1e02bd8abe17e9a80d95828fa8fc110b083ebe"
+    },
+    {
+      "path": "tools/motion-v42-r16/verify-release.mjs",
+      "bytes": 1399,
+      "sha256": "11a3690c7a08c8de44eb73b0f19c11b7e77698ce24c17415cc2302aa4150e5bc"
+    }
+  ],
+  "verification": {
+    "finalMatchesTrialBytes": true,
+    "trialDirectory": "output/flare-v42-r16-trial01-20261017",
+    "leftElbowBeforeMinimumDegrees": 161.3045,
+    "leftElbowAfterRangeDegrees": [
+      176.8941,
+      177.0002
+    ],
+    "supportWristDifferenceMetres": 0,
+    "untouchedPhasePositionDifferenceMetres": 0,
+    "scope": "Actual GLB samples and finite visual checking; not full physical/device QA."
+  },
+  "appDelivery": "L49 / 1.0.6+8 / v42-R16"
+}

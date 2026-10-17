@@ -49,5 +49,5 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
   }
   motion.dispose();
 }
-console.log(JSON.stringify({ status: 'passed', scope: 'v42-r12-default-home-seven-characters-projection', poses: 181, vertexStride: 24,
+console.log(JSON.stringify({ status: 'passed', scope: 'v42-r16-default-home-seven-characters-projection', poses: 181, vertexStride: 24,
   cases: rows, limitation: 'CPU vertex projection checks canvas fit; it does not inspect GPU shading or host overlays.' }, null, 2));

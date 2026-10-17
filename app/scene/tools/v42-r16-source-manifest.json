@@ -1,0 +1,69 @@
+{
+  "version": "v42-r16",
+  "motionSourceRef": "motion-v42-r16",
+  "tag": "motion-v42-r16",
+  "duration": 1.35,
+  "frames": 541,
+  "bones": 22,
+  "tracks": 44,
+  "clip": "flare_v42_candidate_loop",
+  "clock": "Host sequence 0–9 maps through the verified R16 authored phase clock to the 1.35-second clip. Playback speed is applied once.",
+  "phaseSemantics": "Source teaching/support groups remapped through R16 sourceSequenceTime, not uniform sequence or old v41 frame indices. Functional associations, not EMG measurements.",
+  "encoding": "Lossless meshopt + gzip relative to verified R16; no quantization, simplification, animation resampling or retargeting.",
+  "acceptance": {
+    "scope": "Targeted repair of user-reported R15 support-elbow buckle. R16 has not yet been visually accepted by the user.",
+    "baseAcceptedVersion": "motion-v42-r15",
+    "reportedWindow": [
+      0.937,
+      0.998
+    ]
+  },
+  "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+  "inheritedClock": {
+    "source": "output/flare-v42-r14-20261016/comparison-clock.json",
+    "sha256": "550dc35d5e2685f752e03f75a1cdb590614dd3fd9b68a63b64ea3dbeca42bf70",
+    "maximumSequenceTimeError": 3.552713678800501e-15
+  },
+  "assets": [
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r16-animated.glb",
+      "bytes": 8642744,
+      "sha256": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r16-animated.meshopt.glb.gz",
+      "bytes": 2980509,
+      "sha256": "0de1a459e6e17643aed6cabd0f8477929c56344b5c245ec9c69131f7acf11755"
+    },
+    {
+      "destination": "public/coach/flare-coach-v42-r16-animated.glb",
+      "bytes": 8642744,
+      "sha256": "4da3f15e74f6f1c78c5e3db3022fc3daad46141c6b3a0ab9569f60d4cb495055"
+    },
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r16-training-human.glb",
+      "bytes": 8337208,
+      "sha256": "3b642a583bfed64303ce217d9894eecaae3c3668887a0e196cf91d0c024a96cd"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r16-training-human.meshopt.glb.gz",
+      "bytes": 2354442,
+      "sha256": "80ae844aeebf34568bb779a375b6e9affcd205a964cf11ad2bd9dc8d59107329"
+    },
+    {
+      "destination": "app/scene/src/v42-r16-clock.json",
+      "bytes": 16401,
+      "sha256": "bd9742faa0b22059672b7f176f08fcaf95976a691ca8bee22cb158f383a8c762"
+    },
+    {
+      "destination": "public/coach/flare-v42-r16-clock.json",
+      "bytes": 16401,
+      "sha256": "bd9742faa0b22059672b7f176f08fcaf95976a691ca8bee22cb158f383a8c762"
+    },
+    {
+      "destination": "app/scene/src/v42-r16-phases.json",
+      "bytes": 250992,
+      "sha256": "5c49fbad564b0d8a2ebc22c7dd99524422292eeeee12082275dc4dc801cbb957"
+    }
+  ]
+}

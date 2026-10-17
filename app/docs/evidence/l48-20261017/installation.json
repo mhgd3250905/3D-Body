@@ -1,0 +1,29 @@
+{
+  "installed": true,
+  "version": "L48",
+  "motion": "v42-R15",
+  "versionName": "1.0.5",
+  "versionCode": 7,
+  "previous": "L47 / 1.0.4+6",
+  "model": "2602BRT18C",
+  "android": "16",
+  "method": "adb install -r",
+  "result": "Success",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-L48-v42-R15-20261017-arm64.apk",
+  "sourceApkSha256": "2d2dd2299e245c4a56c9baf84fbb6fbfe2f99be140e17525e9201383151141ae",
+  "installedApkRemoteSha256": "2d2dd2299e245c4a56c9baf84fbb6fbfe2f99be140e17525e9201383151141ae",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "firstInstallTimeBefore": "2026-10-08 17:53:04",
+  "firstInstallTimeAfter": "2026-10-08 17:53:04",
+  "lastUpdateTime": "2026-10-17 08:05:41",
+  "coldStart": "Starting: Intent { cmp=dev.mhgd.flare/.MainActivity }\r\nStatus: ok\r\nLaunchState: COLD\r\nActivity: dev.mhgd.flare/.MainActivity\r\nTotalTime: 387\r\nWaitTime: 388\r\nComplete",
+  "foregroundActivity": [
+    "topResumedActivity=ActivityRecord{185981346 u0 dev.mhgd.flare/.MainActivity t8295}"
+  ],
+  "homeScreenshot": "output/l48-r15-20261017/native-home.png",
+  "dataPreservation": "Replacement install; firstInstallTime unchanged. No uninstall or clear. Private personal records not extracted or compared.",
+  "limitations": [
+    "Cold-start activity timing is not full 3D readiness or native FPS/thermal/energy proof.",
+    "User visual acceptance of L48, all-seven-character/native detail/long-run/device matrix remains separate."
+  ]
+}

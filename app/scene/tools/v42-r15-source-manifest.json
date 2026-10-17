@@ -1,0 +1,66 @@
+{
+  "version": "v42-r15",
+  "motionSourceRef": "motion-v42-r15",
+  "tag": "motion-v42-r15",
+  "duration": 1.35,
+  "frames": 541,
+  "bones": 22,
+  "tracks": 44,
+  "clip": "flare_v42_candidate_loop",
+  "clock": "Host sequence 0–9 maps through the accepted R15 authored phase clock to the 1.35-second clip. Playback speed is applied once.",
+  "phaseSemantics": "Source teaching/support groups remapped through R15 sourceSequenceTime, not uniform sequence or old v41 frame indices. Functional associations, not EMG measurements.",
+  "encoding": "Lossless meshopt + gzip relative to accepted R15; no quantization, simplification, animation resampling or retargeting.",
+  "acceptance": {
+    "quote": "算了不用了现在已经很好了 R15这次模型优化 做好版本管理",
+    "scope": "User accepted the current R15 independent motion/model preview. This is not App integration or full biomechanical/device QA.",
+    "cancelled_followup": "The additional leg comparison was cancelled; it is not recorded as completed or passed."
+  },
+  "license": "Snow Rig / Blender Foundation CC BY 4.0; original attribution retained",
+  "inheritedClock": {
+    "source": "output/flare-v42-r14-20261016/comparison-clock.json",
+    "sha256": "550dc35d5e2685f752e03f75a1cdb590614dd3fd9b68a63b64ea3dbeca42bf70",
+    "maximumSequenceTimeError": 3.552713678800501e-15
+  },
+  "assets": [
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r15-animated.glb",
+      "bytes": 8642744,
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r15-animated.meshopt.glb.gz",
+      "bytes": 2981203,
+      "sha256": "27679f03df8d5204ede9f262a7d0a8c4d231dcaf240a9fba8d02c1832a970200"
+    },
+    {
+      "destination": "public/coach/flare-coach-v42-r15-animated.glb",
+      "bytes": 8642744,
+      "sha256": "2f0843043a9a89112115ce3a73778aa6114beb06ae6f4d70b26fafc6f2469a7c"
+    },
+    {
+      "destination": "app/scene/source/coach/flare-coach-v42-r15-training-human.glb",
+      "bytes": 8337208,
+      "sha256": "9009d2178b40fa84438aa37f36374afbe6eb39c4d8ce0b484063a554159ce8d3"
+    },
+    {
+      "destination": "app/scene/public/coach/flare-coach-v42-r15-training-human.meshopt.glb.gz",
+      "bytes": 2355144,
+      "sha256": "53803e03688cd7a699136fc956afdc4cf3ba42e02b4405baa57cbc76ba7cb1fd"
+    },
+    {
+      "destination": "app/scene/src/v42-r15-clock.json",
+      "bytes": 16401,
+      "sha256": "acadf4fffe35c8a3ad634371f484949d1886887adf3b147b09b030c211c422b1"
+    },
+    {
+      "destination": "public/coach/flare-v42-r15-clock.json",
+      "bytes": 16401,
+      "sha256": "acadf4fffe35c8a3ad634371f484949d1886887adf3b147b09b030c211c422b1"
+    },
+    {
+      "destination": "app/scene/src/v42-r15-phases.json",
+      "bytes": 250992,
+      "sha256": "c8ec1eafbf7224c1ed7763eb2699082cd48ced8d2b5f0b471e9389e737f4f428"
+    }
+  ]
+}
