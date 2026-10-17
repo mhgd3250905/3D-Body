@@ -117,6 +117,27 @@ Green manifest
 `all_batch_derivatives_complete` for the complete source batch. No completed
 keyframe preview or subset is evidence of full-batch completion.
 
+## Android delivery
+
+`export_app_delivery.py` selects all 46 accepted App IDs, with explicitly supplied
+revision batches taking priority, verifies every exact-alpha source hash, then
+composites a separate `#101013` Android playback derivative. It retains 1080 square,
+true 30 fps, H.264/yuv420p CRF18, no audio and faststart. Each complete derivative
+gets a frame-count/full-decode check plus first/middle/last foreground and
+background pixel checks. Source green videos and alpha sequences stay intact.
+
+```text
+python tools/hiplab-render/export_app_delivery.py --app <HipLab checkout> --primary <original batch> --override <kneehug revision batch> --override <twist revision batch> --override <fold revision batch> --selection <new selection.json> --output <new Android delivery>
+```
+
+The HipLab checkout's `tools/sync_drill_media.py --copy-ready --force --size 1080
+--crf 18 --poster-size 1080 --out <Android delivery>` validates the bound source,
+codec and per-file hashes before copying accepted video bytes without another
+encode. It regenerates the self-test cut, posters and content pack. New source
+or derivative recipes require a new delivery folder. The forward-fold revision
+retains 63 historical wrist-reach warnings; its original contact/pose QA passes
+without changing any threshold or excluding geometry.
+
 ## Checks
 
 ```text
