@@ -36,12 +36,25 @@ def main():
     ap.add_argument("--frames", default="0,60,120")
     ap.add_argument("--port", type=int, default=8859)
     ap.add_argument("--format", choices=["green", "dark"], default="green")
+    ap.add_argument("--spec-overrides", type=Path,
+                    help="JSON map of drill IDs to additive revision specs under this repository; requires a new batch")
     a = ap.parse_args()
     output = a.output.resolve()
     app = a.app.resolve()
     output.mkdir(parents=True, exist_ok=True)
     content = json.loads((app / "assets/hip/hip-content.json").read_text(encoding="utf-8"))
     drills = {d["id"]: d for d in content["drills"]}
+    overrides = {}
+    if a.spec_overrides:
+        requested = json.loads(a.spec_overrides.read_text(encoding="utf-8-sig"))
+        if not isinstance(requested, dict) or not requested or any(s not in drills for s in requested):
+            ap.error("Spec overrides must be a nonempty map of known drill IDs")
+        for sid, path in requested.items():
+            source = (REPO / path).resolve()
+            if not source.is_relative_to(REPO) or not source.is_file():
+                ap.error("Revision spec must be an existing file under the repository: " + str(source))
+            overrides[sid] = source
+        drills = {sid: drills[sid] for sid in overrides}
     ids = a.ids or list(drills)
     if any(s not in drills for s in ids):
         ap.error("Unknown content drill id")
@@ -58,32 +71,40 @@ def main():
         "out_dir": str(output / "master"), "work_dir": str(output / "work"),
     })
     source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
-    entries = []
+    entries, overlays = [], {}
     for sid in drills:
-        source = ROOT / "specs" / (sid + ".js")
+        original = ROOT / "specs" / (sid + ".js")
+        source = overrides.get(sid, original)
         target = output / "specs" / (sid + ".js")
         # Import the original module, preserving every pose and timing track.
         # Production only opts into the accepted human profile and true 30fps.
         overlay = (
-            "// HipLab HD batch: original pose/camera/timing preserved.\n"
+            ("// HipLab versioned motion revision; original source retained separately.\n" if overrides else
+             "// HipLab HD batch: original pose/camera/timing preserved.\n") +
             "import source from " + json.dumps(source.as_uri()) + ";\n"
             "export default {...source, fps:30, modelProfile:'training-human-v2', alignClavicles:false};\n"
         )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        if not target.exists() or target.read_text(encoding="utf-8") != overlay:
-            target.write_text(overlay, encoding="utf-8", newline="\n")
-        entries.append({"id": sid, "source_sha256": hashlib.sha256(source.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
+        overlays[target] = overlay
+        entry = {"id": sid, "source_sha256": hashlib.sha256(source.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
                         "source": str(source.relative_to(REPO)), "overlay": str(target),
-                        "original_app_status": drills[sid]["media"]["status"]})
+                        "original_app_status": drills[sid]["media"]["status"]}
+        if overrides:
+            entry.update(revision=True, base_source=str(original.relative_to(REPO)),
+                         base_source_sha256=hashlib.sha256(original.read_bytes().replace(b"\r\n", b"\n")).hexdigest())
+        entries.append(entry)
     manifest_path = output / "source-manifest.json"
     previous_manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else None
     batch_source_commit = previous_manifest["source_commit"] if previous_manifest else source_sha
     manifest = {"source_commit":batch_source_commit, "profile":"training-human-v2", "fps":30,
-        "output_size":1080, "pixel_ratio":a.pr, "pose_camera_timing_unchanged":True, "drills":entries}
+        "output_size":1080, "pixel_ratio":a.pr, "pose_camera_timing_unchanged":not bool(overrides), "drills":entries}
     if previous_manifest is not None and previous_manifest != manifest:
         raise RuntimeError("Batch source/recipe changed; preserve this batch and use a new output directory")
     if previous_manifest is None:
         write_json(manifest_path, manifest)
+    for target, overlay in overlays.items():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists() or target.read_text(encoding="utf-8") != overlay:
+            target.write_text(overlay, encoding="utf-8", newline="\n")
 
     # Contact-sheet reference tiles are explicitly identified, never new evidence.
     from PIL import Image, ImageDraw, ImageFont

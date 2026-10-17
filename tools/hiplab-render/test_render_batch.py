@@ -97,6 +97,48 @@ class PrepareManifestTest(unittest.TestCase):
 
         self.assertEqual(self.manifest.read_bytes(), preserved)
 
+    def revision_map(self):
+        revision = self.repo / 'tools/hiplab-render/revisions/test-drill.js'
+        revision.parent.mkdir(parents=True, exist_ok=True)
+        revision.write_text("export default {id:'test-drill', revised:true};\n", encoding='utf-8')
+        mapping = self.directory / 'overrides.json'
+        mapping.write_text(json.dumps({'test-drill': revision.relative_to(self.repo).as_posix()}), encoding='utf-8')
+        return revision, mapping
+
+    def test_revision_has_explicit_base_provenance_and_separate_manifest(self):
+        revision, mapping = self.revision_map()
+        original = self.spec.read_bytes()
+        self.prepare('--spec-overrides', str(mapping))
+        result = json.loads(self.manifest.read_bytes())
+        self.assertFalse(result['pose_camera_timing_unchanged'])
+        self.assertTrue(result['drills'][0]['revision'])
+        self.assertEqual(result['drills'][0]['base_source'], str(self.spec.relative_to(self.repo)))
+        self.assertIn(revision.as_uri(), (self.output/'specs/test-drill.js').read_text(encoding='utf-8'))
+        self.assertEqual(self.spec.read_bytes(), original)
+
+    def test_revision_cannot_change_existing_batch_or_its_overlay(self):
+        self.prepare()
+        manifest_before = self.manifest.read_bytes()
+        overlay = self.output/'specs/test-drill.js'
+        overlay_before = overlay.read_bytes()
+        _, mapping = self.revision_map()
+        with self.assertRaisesRegex(RuntimeError, 'Batch source/recipe changed'):
+            self.prepare('--spec-overrides', str(mapping))
+        self.assertEqual(self.manifest.read_bytes(), manifest_before)
+        self.assertEqual(overlay.read_bytes(), overlay_before)
+
+    def test_changed_revision_preserves_existing_manifest_and_overlay(self):
+        revision, mapping = self.revision_map()
+        self.prepare('--spec-overrides', str(mapping))
+        manifest_before = self.manifest.read_bytes()
+        overlay = self.output/'specs/test-drill.js'
+        overlay_before = overlay.read_bytes()
+        revision.write_text("export default {id:'test-drill', revised:2};\n", encoding='utf-8')
+        with self.assertRaisesRegex(RuntimeError, 'Batch source/recipe changed'):
+            self.prepare('--spec-overrides', str(mapping))
+        self.assertEqual(self.manifest.read_bytes(), manifest_before)
+        self.assertEqual(overlay.read_bytes(), overlay_before)
+
 
 if __name__ == "__main__":
     unittest.main()
