@@ -2,21 +2,21 @@
 
 本会话后续范围为 FlareLab。HipLab App 在独立仓库维护，动作修订与生产工具归属 Pose-Hub。本次处理旧 PR 的归属及记录，App、动作和媒体保持。
 
-## 仓库 PR 收口：尚未清零
+## 仓库 PR 收口：已清零
 
-本次 GitHub 实查：3D-Body 当前仅剩1个开放 PR，即草稿 #120。**“3D-Body 开放 PR 清零”仍为待完成项**。
+初次核对时仅剩草稿 #120；2026-10-18 19:49（北京时间）确认 Pose-Hub PR #7 已合入后，已按此前授权留言关闭 #120。随后重新查询 GitHub 开放 PR，结果为0。**“3D-Body 开放 PR 清零”已完成**；这是仓库管理收口，L52 设备 QA 继续按下节管理。
 
 | PR | 本次处置 | 后续条件 |
 | --- | --- | --- |
 | [#118 HipLab 变体](https://github.com/mhgd3250905/3D-Body/pull/118) | 已按用户指定正文留言“已由独立仓库 HipLab 取代（main 5c7dc8e），关闭不合并”，关闭，`mergedAt=null` | 不审、不合；`feat/hiplab-flavor` 分支保留，远端仍为 `a83a0f4cde202f10ed9ddcaa5d3da519c6fc280e` |
-| [#120 高清制作线](https://github.com/mhgd3250905/3D-Body/pull/120) | 保持 `OPEN`、`isDraft=true`，未留言、未合并、未关闭或删除分支 | 等 Pose-Hub 的生产工具迁移 PR 开出，取得明确链接后，在 #120 留言该链接并关闭，不合入 3D-Body |
+| [#120 高清制作线](https://github.com/mhgd3250905/3D-Body/pull/120) | 已留言 Pose-Hub PR #7 链接并关闭，`mergedAt=null`，原草稿标识保持 | 源分支 `codex/hiplab-hd-20261017` 保留，远端仍为 `f8b5138fb377ec8cda464cfb08186fd696ca7921`；未合入 3D-Body |
 | [#121 动作修订](https://github.com/mhgd3250905/3D-Body/pull/121) | 此前已关闭且未合并，指向 [Pose-Hub#1](https://github.com/mhgd3250905/3D-Pose-Hub/pull/1) | 保留历史记录 |
 
 #118 的本次[关闭留言回执](https://github.com/mhgd3250905/3D-Body/pull/118#issuecomment-6248192131)与远端状态已核对。独立 HipLab 的用户指定基线为 `main 5c7dc8e`、`0.3.4+9`，已超出旧 #118 的功能范围；提交 [`5c7dc8e93dd577de0e2d46d2ab4da41e9a5a7148`](https://github.com/mhgd3250905/HipLab/commit/5c7dc8e93dd577de0e2d46d2ab4da41e9a5a7148)存在性已核对，本次未审计其功能或重新验证版本。
 
-按本次主线交接，#120 的动作修订已在 Pose-Hub main，名称为 `h-knee-hug-r2`、`h-supine-twist-r2`、`s-seated-fold-r3`；`tools/hiplab-render` 生产工具尚未迁移。生产工具迁移 PR 是关闭 #120 的前置条件，由 Pose-Hub 侧处理。
+此前交接中的 `h-knee-hug-r2`、`h-supine-twist-r2`、`s-seated-fold-r3` 已在 Pose-Hub main。高清生产工具随后由 [Pose-Hub PR #7](https://github.com/mhgd3250905/3D-Pose-Hub/pull/7) 从 #120 的固定源提交 `f8b5138fb377ec8cda464cfb08186fd696ca7921` 迁入 `drill-anim/tools/hd/`。本次实际读取 PR 状态、文件清单与正文，核对 `state=MERGED`、合并提交 `cb38fd5e4125c4dd094670d979273a23918a0717`，且与当时远端 main 相同，满足关闭 #120 的前置条件。该迁移保留已有三项修订；生产验证由 Pose-Hub 负责，本会话未重跑或计入 FlareLab 验收。
 
-后续关闭 #120 时，先核对迁移 PR 的真实链接与覆盖范围，再留言并关闭；重新查询全部开放 PR，只有查询结果确实为0，才将“开放 PR 清零”记为完成。清零单列为仓库管理结果，设备 QA 按下节管理。
+#120 已留言“已迁入 Pose-Hub（PR #7，合入 main cb38fd5e4125c4dd094670d979273a23918a0717）”，附上 PR #7 链接。[留言回执](https://github.com/mhgd3250905/3D-Body/pull/120#issuecomment-6249562542)及关闭状态已回读确认：`state=CLOSED`、`isDraft=true`、`mergedAt=null`。远端源分支存在性已核对；开放 PR 查询为0。原入口文档2026-10-17“迁移等待用户决定”的阶段描述由本条后续事实更新，不再作为待办。
 
 ## FlareLab L52 设备 QA：独立保持待验收
 
