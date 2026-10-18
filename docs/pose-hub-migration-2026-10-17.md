@@ -4,6 +4,8 @@ FlareLab 后续动作媒体只消费 [3D-Pose-Hub](https://github.com/mhgd325090
 
 ## 迁移来源与路径
 
+2026-10-18 后续处置：清理提交 `2be8cca` 已按用户授权快进并推送至 3D-Body `master`，没有新建 PR。#118 已由独立 HipLab 取代并关闭，分支保留；#120 的动作修订已按交接进入 Pose-Hub，但生产工具尚未迁移，继续保持开放草稿。取得 Pose-Hub 工具迁移 PR 链接后再留言关闭，当前开放 PR 为1个。仓库清零与 FlareLab 设备 QA 分开记录，见[PR收口与QA分账](pr-cleanup-2026-10-18.md)；下方2026-10-17的待授权描述保留当时状态。
+
 固定迁移提交为 [`2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`](https://github.com/mhgd3250905/3D-Pose-Hub/commit/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee)，标签 `v0.1.0-import`。根据 [MIGRATION.md](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)，来源 checkout 是 3D-Body `66067a6475e6be85bf0daa6f167da1c124e4f1eb`；最后触及迁移路径的提交为 `ae81d96f271a18129abbf6afc7064cfd9dd1d8c3`，映射到 Pose-Hub 导入提交 `9d1c6072ae47bf6d92adc6871bb2fb48e4d19e89`。两者对应的458个文件 blob 相同；迁移保留了440个相关提交的历史。
 
 | 原 3D-Body 路径 | Pose-Hub 路径 | 本仓库处置 |
