@@ -369,13 +369,17 @@ class LearningStore extends ChangeNotifier {
   /// Saves a new set and returns it, or null when nothing valid was given.
   Future<TrainingRoutine?> createRoutine(
     String name,
-    List<String> drillIds,
-  ) async {
+    List<String> drillIds, {
+    Map<String, RoutineDose> doses = const {},
+    String? source,
+  }) async {
     _ensureInitialized();
     final routine = TrainingRoutine(
       id: 'r${_now().microsecondsSinceEpoch}',
       name: name.trim(),
       drillIds: drillIds.where((id) => catalog.drillById(id) != null).toList(),
+      doses: doses,
+      source: source,
     );
     if (!routine.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines, routine];
