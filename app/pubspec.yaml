@@ -20,6 +20,12 @@ dependencies:
   characters: 1.4.1
 
   intl: 0.20.2
+  path_provider: 2.1.5
+  # AI 训练助理 SDK（mhgd3250905/ugk-3d-pose-sdk），固定到提交，升级时改 ref。
+  ugk_coach:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      ref: e6411eea251b35982bd29b07b3b621b785cc67b0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -39,6 +45,7 @@ flutter:
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
     - assets/data/drill-media-manifest.json
+    - assets/coach/
     - assets/l10n/
     - assets/drills/
     - assets/drills/light/

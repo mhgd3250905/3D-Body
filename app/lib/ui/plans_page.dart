@@ -168,6 +168,8 @@ class PlansPage extends StatelessWidget {
     required this.onRoutine,
     required this.onNewRoutine,
     this.onBack,
+    this.onAiCoach,
+    this.aiCoachConfigured = true,
   });
   final Catalog catalog;
   final LearningStore store;
@@ -175,6 +177,108 @@ class PlansPage extends StatelessWidget {
   final ValueChanged<TrainingRoutine> onRoutine;
   final VoidCallback onNewRoutine;
   final VoidCallback? onBack;
+
+  /// AI 定制入口（中文界面才给）；null 不显示。
+  final VoidCallback? onAiCoach;
+  final bool aiCoachConfigured;
+
+  Widget _aiCard(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 4),
+    child: Pressable(
+      scale: .98,
+      child: Material(
+        color: FlareColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          key: const ValueKey('plan-ai-coach'),
+          onTap: onAiCoach,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: FlareColors.accent.withValues(alpha: .35),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: FlareColors.accent.withValues(alpha: .14),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.auto_awesome_rounded,
+                    color: FlareColors.accentInk,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'AI 定制',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (!aiCoachConfigured)
+                            Container(
+                              key: const ValueKey('plan-ai-unconfigured'),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: FlareColors.warning.withValues(
+                                  alpha: .14,
+                                ),
+                                borderRadius: BorderRadius.circular(99),
+                              ),
+                              child: Text(
+                                '未配置',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: FlareColors.warning,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        aiCoachConfigured
+                            ? '说出场地、时长和想练的部位，排一份托马斯专项计划'
+                            : '暂未接入 AI，会按你的描述推荐一套预设方案',
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: FlareColors.dim,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 
   Widget _newCard(BuildContext context) {
     final s = context.strings;
@@ -329,7 +433,11 @@ class PlansPage extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverList.list(
-                    children: [if (routines.isNotEmpty) ...mine, ...ready],
+                    children: [
+                      if (onAiCoach != null) _aiCard(context),
+                      if (routines.isNotEmpty) ...mine,
+                      ...ready,
+                    ],
                   ),
                 ),
                 SliverPadding(
