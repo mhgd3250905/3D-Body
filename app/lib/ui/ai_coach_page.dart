@@ -145,6 +145,9 @@ class _AiCoachPageState extends State<AiCoachPage> {
   final _scroll = ScrollController();
   Timer? _ticker;
 
+  /// 本次等待已过的秒数（按 1 秒节拍累加）。
+  int _elapsed = 0;
+
   AiCoachSession get session => widget.session;
 
   @override
@@ -191,8 +194,13 @@ class _AiCoachPageState extends State<AiCoachPage> {
   }
 
   void _startTicker() {
-    _ticker ??= Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
+    if (_ticker != null) return;
+    final started = session.startedAt;
+    _elapsed = started == null
+        ? 0
+        : DateTime.now().difference(started).inSeconds.clamp(0, 999);
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() => _elapsed++);
     });
   }
 
@@ -240,42 +248,41 @@ class _AiCoachPageState extends State<AiCoachPage> {
             title: 'AI 定制',
             large: false,
             onBack: widget.onBack,
-            action: configured
-                ? null
-                : _StatusPill(
-                    key: const ValueKey('coach-unconfigured'),
-                    label: '未配置',
-                  ),
+            subtitle: configured ? null : '未配置 AI · 使用预设方案',
           ),
           Expanded(
             child: ScrollEdge(
-              child: ListView(
+              // 对话不长：整列一次排版，旧消息里的按钮也始终在树上。
+              child: SingleChildScrollView(
                 key: const ValueKey('coach-list'),
                 controller: _scroll,
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                children: [
-                  if (session.showDisclaimer)
-                    _Disclaimer(onAccept: session.acceptDisclaimer),
-                  if (session.messages.isEmpty)
-                    _Intro(
-                      configured: configured,
-                      onExample: session.busy ? null : _send,
-                    ),
-                  for (final (i, m) in session.messages.indexed)
-                    FadeSlideIn(
-                      key: ValueKey('coach-msg-$i'),
-                      offset: 8,
-                      child: m.isUser
-                          ? _UserBubble(m.text!)
-                          : _answer(context, m.answer!, i),
-                    ),
-                  if (session.busy)
-                    _Thinking(
-                      key: const ValueKey('coach-thinking'),
-                      startedAt: session.startedAt ?? DateTime.now(),
-                      onStop: session.stop,
-                    ),
-                ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (session.showDisclaimer)
+                      _Disclaimer(onAccept: session.acceptDisclaimer),
+                    if (session.messages.isEmpty)
+                      _Intro(
+                        configured: configured,
+                        onExample: session.busy ? null : _send,
+                      ),
+                    for (final (i, m) in session.messages.indexed)
+                      FadeSlideIn(
+                        key: ValueKey('coach-msg-$i'),
+                        offset: 8,
+                        child: m.isUser
+                            ? _UserBubble(m.text!)
+                            : _answer(context, m.answer!, i),
+                      ),
+                    if (session.busy)
+                      _Thinking(
+                        key: const ValueKey('coach-thinking'),
+                        seconds: _elapsed,
+                        onStop: session.stop,
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -338,30 +345,13 @@ class _AiCoachPageState extends State<AiCoachPage> {
       onSave: saved || entries.isEmpty ? null : () => _save(plan, entries),
       onStart: entries.isEmpty
           ? null
-          : () => widget.onStart(CoachPlanMapper.routineName(plan), drills),
+          : () {
+              // 保存提示别盖住跟练页底部按钮。
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              widget.onStart(CoachPlanMapper.routineName(plan), drills);
+            },
     );
   }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({super.key, required this.label});
-  final String label;
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: FlareColors.warning.withValues(alpha: .14),
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: FlareColors.warning,
-      ),
-    ),
-  );
 }
 
 class _Disclaimer extends StatelessWidget {
@@ -535,8 +525,8 @@ class _CoachBubble extends StatelessWidget {
 
 /// 推理模型出一份计划约 30–40 秒：分阶段提示 + 已用时 + 可停止。
 class _Thinking extends StatelessWidget {
-  const _Thinking({super.key, required this.startedAt, required this.onStop});
-  final DateTime startedAt;
+  const _Thinking({super.key, required this.seconds, required this.onStop});
+  final int seconds;
   final VoidCallback onStop;
 
   static (String, String) stage(int seconds) => switch (seconds) {
@@ -548,10 +538,6 @@ class _Thinking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final seconds = DateTime.now()
-        .difference(startedAt)
-        .inSeconds
-        .clamp(0, 999);
     final (title, step) = stage(seconds);
     final progress = (seconds / 40).clamp(.04, .94);
     return Padding(
