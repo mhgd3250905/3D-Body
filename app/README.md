@@ -86,6 +86,10 @@ npm run build
 
 回到 `app` 后重新运行 Flutter。`assets/scene/` 是场景构建产物，编辑源代码应在 `scene/src/` 完成。制作浏览器验证包使用 `flutter build web --no-web-resources-cdn`，使 Flutter 渲染资源也随包提供；构建后通过本地 HTTP 服务打开，不要直接双击 `build/web/index.html`。
 
+## AI 定制（试验田，分支 feat/ai-coach）
+
+计划页顶部「AI 定制」：一句话描述需求 → 助理最多追问一次 → 计划卡 →「保存到我的计划」/「开始训练」。接入共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk)（git 依赖，ref 固定到提交）。key 不进仓库，开发版用 `--dart-define=UGK_COACH_API_KEY=…` 运行；不传则入口显示「未配置」并只给预设方案。上线改走中转 Worker（`UGK_COACH_BASE_URL` + `UGK_COACH_RELAY_TOKEN`）。详见 [docs/ai-coach.md](docs/ai-coach.md)。
+
 ## 当前体验
 
 首页沿用制作包 v2 的 `h1-home` 布局：顶部为计划与更多入口，主要区域是完整人物，左下同步肌群小图，底部只保留播放/暂停和细时间轴。没有常驻底部导航、速度排、镜头排或肌群标签排；这些功能移入更多或暂停后的点选。详见 [首页视觉基准](docs/home-design.md)。
