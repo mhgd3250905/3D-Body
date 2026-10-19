@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/main.dart' as app;
 import 'package:flare/platform/scene/scene_view_native.dart';
+import 'package:flare/platform/training_display.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/components.dart';
