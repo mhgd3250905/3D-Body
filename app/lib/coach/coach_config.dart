@@ -1,14 +1,14 @@
 /// AI 训练助理的运行配置。开发版从 `--dart-define` 读取，key 绝不写进代码或仓库：
 ///
 /// ```
-/// flutter run --dart-define=UGK_COACH_API_KEY=sk-... \
-///   [--dart-define=UGK_COACH_BASE_URL=https://opencsg.com/aigateway/v1] \
+/// flutter run --dart-define=UGK_COACH_API_KEY=<UGK 中转站为本 App 发的令牌> \
+///   [--dart-define=UGK_COACH_BASE_URL=https://ai.uuugk.win/v1] \
 ///   [--dart-define=UGK_COACH_MODEL=deepseek-v4.1-flash-1017] \
 ///   [--dart-define=UGK_COACH_CATALOG_URL=https://…/manifest.json]
 /// ```
 ///
-/// 上线改走中转 Worker：`UGK_COACH_BASE_URL` 指向 Worker，App 只带可吊销的
-/// App 令牌（`UGK_COACH_RELAY_TOKEN`），真正的 key 只在 Worker 上（见 app/docs/ai-coach.md）。
+/// 默认走自建 UGK AI 中转站（New API，https://ai.uuugk.win/v1）：上游各家模型 key 只在中转站，
+/// App 只带中转站为它单独发的、可设额度和吊销的令牌（见 app/docs/ai-coach.md）。
 class CoachConfig {
   const CoachConfig({
     this.apiKey = '',
@@ -18,7 +18,7 @@ class CoachConfig {
     this.catalogManifestUrl = '',
   });
 
-  static const defaultBaseUrl = 'https://opencsg.com/aigateway/v1';
+  static const defaultBaseUrl = 'https://ai.uuugk.win/v1';
   static const defaultModel = 'deepseek-v4.1-flash-1017';
 
   /// 开发 / 内测直连用的 key。

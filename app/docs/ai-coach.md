@@ -38,24 +38,24 @@
 
 ## 配置与运行
 
-key 绝不进代码或仓库。开发版从 `--dart-define` 读取：
+令牌绝不进代码或仓库，从 `--dart-define` 读取。默认连自建 **UGK AI 中转站**（New API，`https://ai.uuugk.win/v1`）：DeepSeek 等上游 key 只放在中转站，App 用中转站后台给它单独发的令牌（可设额度、随时吊销；换便宜的上游只在后台改渠道，App 不用发版）。
 
 ```bash
 flutter run \
-  --dart-define=UGK_COACH_API_KEY=sk-...                      # 必填；不填 = 未配置，只给预设方案
-  --dart-define=UGK_COACH_BASE_URL=https://opencsg.com/aigateway/v1   # 可选，默认即此
+  --dart-define=UGK_COACH_API_KEY=<中转站令牌>                # 必填；不填 = 未配置，只给预设方案
+  --dart-define=UGK_COACH_BASE_URL=https://ai.uuugk.win/v1   # 可选，默认即此（UGK 中转站）
   --dart-define=UGK_COACH_MODEL=deepseek-v4.1-flash-1017       # 可选，默认即此
   --dart-define=UGK_COACH_CATALOG_URL=https://…/manifest.json  # 可选，目录远端更新
 ```
 
 模型参数用 SDK 预设 `LlmConfig.deepSeekOpenCsg`（max_tokens 6000、单次超时 90 秒、JSON 模式）。推理模型一次约 30–45 秒（冒烟 38.7 s / 42.6 s）。
 
-### 上线：改走中转 Worker
+### 中转站
 
-key 打进安装包可以被反编译取出，也没法单独吊销。上线时：
-
-1. 部署 SDK README 里的最小 Cloudflare Worker（持有 key，校验 `X-App-Token`，服务端决定模型与 max_tokens 上限，可加限流 / 配额）。
-2. App 改为 `--dart-define=UGK_COACH_BASE_URL=https://<worker>/v1 --dart-define=UGK_COACH_RELAY_TOKEN=<App 令牌>`，不再传 `UGK_COACH_API_KEY`。代码已支持（`CoachConfig.usesRelay` → SDK `RelayAuth`）。
+- 中转站：New API 自托管在 VPS，经 Cloudflare Tunnel 暴露为 `https://ai.uuugk.win`，后台管理渠道（上游 key）、令牌、额度与用量。
+- 每个 App 一把独立令牌；令牌泄露时在后台吊销重发即可，上游 key 不受影响。
+- 模型名保持 `deepseek-v4.1-flash-1017`；之后要换上游，在中转站做模型映射，并先跑 SDK `eval/` 的 24 条评测达标再切。
+- `UGK_COACH_RELAY_TOKEN`（X-App-Token 方式）保留给自写 Worker 用，接 New API 不需要。
 
 ## 回落与安全
 
