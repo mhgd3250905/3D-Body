@@ -70,9 +70,18 @@ class CoachService {
   final AssetReader _read;
 
   late final uc.CatalogRepository _repo;
-  late final uc.CoachProfile _profile;
-  late final TemplateFallback _templates = TemplateFallback(appCatalog);
+  late uc.CoachProfile _profile;
+  late final TemplateFallback _templates = TemplateFallback(
+    appCatalog,
+    cautionsOf: (id) => _active?[id]?.cautions ?? const [],
+  );
   uc.CoachAssistant? _assistant;
+
+  /// 当前范围（profile + 排除）是按哪份目录算的；assistant 只看这一份，
+  /// 远端目录切换后在下一轮开始前重算（见 [_syncCatalog]）。
+  uc.Catalog? _active;
+  late Map<String, Object?> _profileJson;
+  late Set<String> _usable;
   Future<void>? _loading;
   bool _disclaimerAccepted = false;
   Set<String> _excluded = const {};
@@ -95,16 +104,27 @@ class CoachService {
   bool get disclaimerAccepted => _disclaimerAccepted;
 
   /// 因 App 缺动作 / 视频而排除出 AI 范围的 id。
-  Set<String> get excludedIds => _excluded;
-  uc.CoachProfile get profile => _profile;
-  uc.Catalog get catalog => _repo.current;
+  Set<String> get excludedIds {
+    _syncCatalog();
+    return _excluded;
+  }
+
+  uc.CoachProfile get profile {
+    _syncCatalog();
+    return _profile;
+  }
+
+  uc.Catalog get catalog {
+    _syncCatalog();
+    return _active!;
+  }
 
   Future<void> load() => _loading ??= _load();
 
   Future<void> _load() async {
     final texts = await Future.wait([_read(profileAsset), _read(mediaAsset)]);
     final media = (jsonDecode(texts[1]) as Map)['actions'] as Map;
-    final usable = {
+    _usable = {
       for (final id in media.keys)
         if (appCatalog.drillById('$id') != null) '$id',
     };
@@ -115,39 +135,9 @@ class CoachService {
           ? null
           : uc.RemoteCatalogSource(manifestUrl: Uri.parse(manifest)),
     );
-    final catalog = await _repo.load();
-    final profileJson = Map<String, Object?>.from(jsonDecode(texts[0]) as Map);
-    final scope = uc.CoachProfile.fromJson(profileJson).scope(catalog);
-    _excluded = {
-      for (final d in scope)
-        if (!usable.contains(d.id)) d.id,
-    };
-    if (_excluded.isNotEmpty) {
-      final select = Map<String, Object?>.from(profileJson['select'] as Map);
-      select['exclude'] = [
-        ...((select['exclude'] as List?) ?? const []),
-        ..._excluded,
-      ];
-      profileJson['select'] = select;
-    }
-    _profile = uc.CoachProfile.fromJson(profileJson);
-    if (_client case final client?) {
-      _assistant = uc.CoachAssistant(
-        client: client,
-        catalog: () => _repo.current,
-        profile: _profile,
-        usage: usage,
-        appId: 'flarelab-app',
-        fallback: uc.FallbackFn(
-          (r) => _templates.reply(
-            r.userText,
-            reason: PresetReason.of(r.reason),
-            tier: _tier,
-            history: TemplateFallback.userTexts(r.conversation),
-          ),
-        ),
-      );
-    }
+    await _repo.load();
+    _profileJson = Map<String, Object?>.from(jsonDecode(texts[0]) as Map);
+    _syncCatalog();
     await usage.load();
     try {
       final raw = await _storage.read(storageKey);
@@ -161,6 +151,48 @@ class CoachService {
     // 远端目录：后台检查一次，失败保持随包目录。
     if (manifest.isNotEmpty) {
       unawaited(_repo.refresh().then((_) {}, onError: (_) {}));
+    }
+  }
+
+  /// 目录（随包或远端热更新）与 App 资产的交集：profile 范围里 App 没有动作 / 视频的 id
+  /// 写进 select.exclude，并按这份目录重建 assistant。目录没变时什么都不做。
+  /// 远端新增 / 改到 flarelab 范围的 id 若 App 没有，也会被排除，不会进提示词或通过校验。
+  void _syncCatalog() {
+    final current = _repo.current;
+    if (identical(current, _active)) return;
+    final scope = uc.CoachProfile.fromJson(_profileJson).scope(current);
+    final excluded = {
+      for (final d in scope)
+        if (!_usable.contains(d.id)) d.id,
+    };
+    final json = Map<String, Object?>.from(_profileJson);
+    if (excluded.isNotEmpty) {
+      final select = Map<String, Object?>.from(json['select'] as Map);
+      select['exclude'] = [
+        ...((select['exclude'] as List?) ?? const []),
+        ...excluded,
+      ];
+      json['select'] = select;
+    }
+    _active = current;
+    _excluded = excluded;
+    _profile = uc.CoachProfile.fromJson(json);
+    if (_client case final client?) {
+      _assistant = uc.CoachAssistant(
+        client: client,
+        catalog: () => current,
+        profile: _profile,
+        usage: usage,
+        appId: 'flarelab-app',
+        fallback: uc.FallbackFn(
+          (r) => _templates.reply(
+            r.userText,
+            reason: PresetReason.of(r.reason),
+            tier: _tier,
+            history: TemplateFallback.userTexts(r.conversation),
+          ),
+        ),
+      );
     }
   }
 
@@ -186,6 +218,7 @@ class CoachService {
     String tier = 'A',
   }) async {
     await load();
+    _syncCatalog();
     _tier = tier;
     final assistant = _assistant;
     if (assistant == null) {
@@ -264,5 +297,12 @@ class CoachService {
   }
 
   @visibleForTesting
-  uc.CoachAssistant? get assistant => _assistant;
+  uc.CoachAssistant? get assistant {
+    _syncCatalog();
+    return _assistant;
+  }
+
+  /// 测试用：模拟远端目录切换（`_repo.replace`）。
+  @visibleForTesting
+  uc.CatalogRepository get catalogRepository => _repo;
 }

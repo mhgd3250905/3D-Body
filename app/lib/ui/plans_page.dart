@@ -948,9 +948,16 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
+    // A saved AI plan keeps its own targets; show and estimate with them, the
+    // same targets the routine still holds after saving.
+    final doses = widget.routine?.doses ?? const <String, RoutineDose>{};
     final drills = [
       for (final id in _ids)
-        if (widget.catalog.drillById(id) case final Drill drill) drill,
+        if (widget.catalog.drillById(id) case final Drill drill)
+          switch (doses[id]) {
+            final RoutineDose dose => drill.withDose(dose.apply(drill.dose)),
+            null => drill,
+          },
     ];
     final full = _ids.length >= TrainingRoutine.maxDrills;
     return ColoredBox(

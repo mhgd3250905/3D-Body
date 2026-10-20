@@ -25,8 +25,12 @@ enum PresetReason {
 /// 离线回落：从 App 现有 6 个成套训练里按关键词挑最接近的一个，原样作为预设方案。
 /// 不生成新内容，也不改剂量（沿用动作库里的处方）。
 class TemplateFallback {
-  TemplateFallback(this.catalog);
+  TemplateFallback(this.catalog, {this.cautionsOf});
   final Catalog catalog;
+
+  /// 动作会加重哪些部位（SDK 目录 cautions 词表：手腕/肩/腰/膝/颈/髋/大腿内侧）。
+  /// 用于按用户说过的保护约束剔除预设里的动作；null = 不剔除。
+  final List<String> Function(String id)? cautionsOf;
 
   /// 与计划页一致的中文名。
   static const titles = {
@@ -95,19 +99,57 @@ class TemplateFallback {
     List<String> history = const [],
   }) {
     for (final t in [text, ...history.reversed]) {
-      final tier = _sceneTier(t);
+      final tier = _sceneTier(t, fallbackTier);
       if (tier != null) return tier;
     }
     return fallbackTier;
   }
 
-  static String? _sceneTier(String text) {
+  /// 场景只看最近一句说了场景的话。否定器械要先于泛词「器械」判断；
+  /// 只说「在家」（没提器械）＝不在健身房：沿用计划页的居家档位，计划页是健身房时用徒手。
+  static String? _sceneTier(String text, String fallbackTier) {
+    if (RegExp(
+      r'徒手|(没有|没|无|不用|不要|不需要)(任何)?(器械|器材|装备|工具)|什么都没有|空手',
+    ).hasMatch(text)) {
+      return 'A';
+    }
     if (RegExp(r'健身房|器械区|gym', caseSensitive: false).hasMatch(text)) {
       return 'C';
     }
     if (RegExp(r'哑铃|弹力带|壶铃|器械|拉力带|瑞士球|泡沫轴').hasMatch(text)) return 'B';
-    if (RegExp(r'徒手|没有器械|无器械|什么都没有').hasMatch(text)) return 'A';
+    if (RegExp(r'在家|家里|居家|宿舍|酒店|房间里').hasMatch(text)) {
+      return fallbackTier == 'C' ? 'A' : fallbackTier;
+    }
     return null;
+  }
+
+  /// cautions 词表部位 → 用户口语。
+  static final _parts = <String, RegExp>{
+    '手腕': RegExp(r'手腕|腕'),
+    '肩': RegExp(r'肩(?!胛)'),
+    '腰': RegExp(r'腰|下背'),
+    '膝': RegExp(r'膝'),
+    '颈': RegExp(r'颈|脖子'),
+    '髋': RegExp(r'髋'),
+    '大腿内侧': RegExp(r'大腿内侧|内收肌'),
+  };
+  static final _protect = RegExp(
+    r'不舒服|不适|疼|痛|酸|伤|别|不要|不能|避免|避开|不想|怕|保护|有问题|不好',
+  );
+
+  /// 用户（本轮或之前）明确要保护的部位：同一分句里既提到部位又提到不适 / 避让。
+  /// 例：「手腕不舒服，别安排手腕承重」→ {手腕}。整段对话都有效。
+  static Set<String> protectedParts(String text, List<String> history) {
+    final out = <String>{};
+    for (final t in [...history, text]) {
+      for (final clause in t.split(RegExp(r'[，,。.；;！!？?\n、]'))) {
+        if (!_protect.hasMatch(clause)) continue;
+        for (final e in _parts.entries) {
+          if (e.value.hasMatch(clause)) out.add(e.key);
+        }
+      }
+    }
+    return out;
   }
 
   static String tierLabel(String tier) => switch (tier) {
@@ -127,19 +169,45 @@ class TemplateFallback {
     }
     final presetId = pickPreset(text, history: history);
     final useTier = pickTier(text, tier, history: history);
-    final plan = build(presetId, useTier);
+    final avoid = cautionsOf == null
+        ? const <String>{}
+        : protectedParts(text, history);
+    final plan = build(presetId, useTier, avoid: avoid);
     final title = titles[presetId]!;
+    final parts = avoid.join('、');
+    if (plan == null) {
+      return uc.CoachReply.text(
+        '${reason.zh}。App 内置的预设方案「$title」（${tierLabel(useTier)}版）'
+        '里的动作都会加重$parts负担，按你说的要保护$parts，这次不给可开练的预设方案。'
+        '等网络恢复再让 AI 按你的情况排，或换个不涉及$parts的练习方向。',
+      );
+    }
+    final removed =
+        PresetPlan.byId(presetId)!.drills(catalog, useTier).length -
+        plan.exerciseIds.length;
     return uc.CoachReply.plan(
       '${reason.zh}，先给你 App 内置的预设方案「$title」'
-      '（${tierLabel(useTier)}版），不是 AI 定制。',
+      '（${tierLabel(useTier)}版），不是 AI 定制。'
+      '${removed > 0 ? '按你说的保护$parts，已去掉 $removed 个会加重$parts负担的动作。' : ''}',
       plan,
     );
   }
 
   /// 预设方案转成 TrainingPlan v1（source=template），剂量取动作库默认处方。
-  uc.TrainingPlan build(String presetId, String tier) {
+  /// [avoid] 里的部位：剔除 cautions 含这些部位的动作；全被剔除时返回 null。
+  uc.TrainingPlan? build(
+    String presetId,
+    String tier, {
+    Set<String> avoid = const {},
+  }) {
     final preset = PresetPlan.byId(presetId) ?? PresetPlan.all.last;
-    final drills = preset.drills(catalog, tier);
+    final drills = [
+      for (final d in preset.drills(catalog, tier))
+        if (avoid.isEmpty ||
+            !(cautionsOf?.call(d.id) ?? const []).any(avoid.contains))
+          d,
+    ];
+    if (drills.isEmpty) return null;
     return uc.TrainingPlan(
       id: 'template-${preset.id}-$tier',
       source: 'template',
@@ -173,6 +241,7 @@ class TemplateFallback {
           ],
         ),
       ],
+      avoid: avoid,
       safetyNotes: const ['训练中出现疼痛、麻木或头晕，立即停止。'],
     );
   }

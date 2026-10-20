@@ -65,6 +65,11 @@ class RoutineDose {
     required this.restSec,
   });
 
+  /// Upper bound for a plan's own set count (AI plans fold rounds into sets).
+  /// Training records accept the same bound, so a saved plan can always be
+  /// finished and logged.
+  static const maxSets = 12;
+
   final int sets;
 
   /// Only [DoseMode.time] or [DoseMode.reps].
@@ -77,7 +82,7 @@ class RoutineDose {
 
   bool get valid =>
       sets >= 1 &&
-      sets <= 12 &&
+      sets <= maxSets &&
       mode != DoseMode.manual &&
       target >= 1 &&
       target <= (mode == DoseMode.time ? 600 : 100) &&

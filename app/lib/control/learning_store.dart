@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
@@ -431,12 +432,17 @@ class LearningStore extends ChangeNotifier {
     return _persist();
   }
 
+  /// Most sets one record may plan: the drill's own range, or a saved plan's
+  /// own target (same bound as [RoutineDose.maxSets]).
+  static int maxPlannedSets(Drill drill) =>
+      math.max(drill.dose.setsMax, RoutineDose.maxSets);
+
   Future<bool> logSession(TrainingSession session) {
     _ensureInitialized();
     final drill = catalog.drillById(session.drillId);
     if (!session.valid ||
         drill == null ||
-        session.plannedSets > drill.dose.setsMax) {
+        session.plannedSets > maxPlannedSets(drill)) {
       throw ArgumentError('Invalid training session');
     }
     final existing = _sessions.where((row) => row.id == session.id).firstOrNull;

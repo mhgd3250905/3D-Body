@@ -32,7 +32,7 @@ class CoachPlanMapper {
   const CoachPlanMapper(this.catalog);
   final Catalog catalog;
 
-  static const maxSets = 12;
+  static const maxSets = RoutineDose.maxSets;
 
   List<CoachPlanEntry> entries(uc.TrainingPlan plan) {
     final template = plan.source == 'template';
