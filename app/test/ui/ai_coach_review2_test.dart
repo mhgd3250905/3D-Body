@@ -235,6 +235,74 @@ void main() {
       expect(r.text, contains('手腕'));
       expect(TemplateFallback.protectedParts('手腕热身', const []), isEmpty);
     });
+
+    test('顿号并列部位共享不适谓词：都保留（第三轮复审）', () {
+      expect(TemplateFallback.protectedParts('手腕、肩都不舒服，做热身', const []), {
+        '手腕',
+        '肩',
+      });
+      expect(TemplateFallback.protectedParts('腰、膝都不舒服，练腿', const []), {
+        '腰',
+        '膝',
+      });
+      // 不扩大为「提到部位就避让」：前一段有自己的内容时不继承后一段的不适。
+      expect(TemplateFallback.protectedParts('练肩、手腕不舒服', const []), {'手腕'});
+    });
+
+    Future<Set<String>> offlineIds(CoachService s, List<String> turns) async {
+      await s.load();
+      final conv = uc.CoachConversation();
+      uc.CoachReply? last;
+      for (final t in turns) {
+        last = (await s.ask(t, conv)).reply;
+      }
+      return last!.plan?.exerciseIds ?? const <String>{};
+    }
+
+    test('未配置模型：手腕、肩都不舒服 → 热身回落剔除手腕/肩 cautions', () async {
+      final s = service();
+      final ids = await offlineIds(s, ['手腕、肩都不舒服，做热身']);
+      expect(ids, isNot(contains('serratus-A')));
+      for (final id in ids) {
+        expect(
+          s.catalog[id]!.cautions,
+          isNot(anyOf(contains('手腕'), contains('肩'))),
+          reason: id,
+        );
+      }
+    });
+
+    test('未配置模型：腰、膝都不舒服 → 练腿回落剔除腰/膝 cautions', () async {
+      final s = service();
+      final ids = await offlineIds(s, ['腰、膝都不舒服，练腿']);
+      expect(ids, isNot(contains('glute-max-A')));
+      expect(ids, isNot(contains('hamstrings-A')));
+      for (final id in ids) {
+        expect(
+          s.catalog[id]!.cautions,
+          isNot(anyOf(contains('腰'), contains('膝'))),
+          reason: id,
+        );
+      }
+    });
+
+    test('历史说手腕、肩都不舒服 → 断网热身回落两者都保留', () async {
+      final s = service(
+        fake: uc.FakeLlmClient([
+          {'kind': 'reply', 'text': '好的，会避开手腕和肩的负担。'},
+          const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
+        ]),
+      );
+      final ids = await offlineIds(s, ['手腕、肩都不舒服', '给我一个热身方案']);
+      expect(ids, isNot(contains('serratus-A')));
+      for (final id in ids) {
+        expect(
+          s.catalog[id]!.cautions,
+          isNot(anyOf(contains('手腕'), contains('肩'))),
+          reason: id,
+        );
+      }
+    });
   });
 
   group('F122-4 远端目录切换后重算范围', () {

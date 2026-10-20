@@ -137,19 +137,47 @@ class TemplateFallback {
     r'不舒服|不适|疼|痛|酸|伤|别|不要|不能|避免|避开|不想|怕|保护|有问题|不好',
   );
 
+  /// 并列部位之间的连接词 / 修饰（去掉部位后只剩这些＝这一段只是部位列举）。
+  static final _partFiller = RegExp(r'以及|还有|和|与|跟|及|或|部|的|左|右|两边|两侧|双|侧|\s');
+
+  static Set<String> _partsIn(String s) => {
+    for (final e in _parts.entries)
+      if (e.value.hasMatch(s)) e.key,
+  };
+
   /// 用户（本轮或之前）明确要保护的部位：同一分句里既提到部位又提到不适 / 避让。
   /// 例：「手腕不舒服，别安排手腕承重」→ {手腕}。整段对话都有效。
+  /// 顿号并列共享同一个不适谓词：「手腕、肩都不舒服」→ {手腕, 肩}；
+  /// 只有纯部位列举的段才继承后面的不适（「练肩、手腕不舒服」只保护手腕）。
   static Set<String> protectedParts(String text, List<String> history) {
     final out = <String>{};
     for (final t in [...history, text]) {
-      for (final clause in t.split(RegExp(r'[，,。.；;！!？?\n、]'))) {
-        if (!_protect.hasMatch(clause)) continue;
-        for (final e in _parts.entries) {
-          if (e.value.hasMatch(clause)) out.add(e.key);
+      for (final clause in t.split(RegExp(r'[，,。.；;！!？?\n]'))) {
+        final pending = <String>{};
+        for (final seg in clause.split('、')) {
+          final parts = _partsIn(seg);
+          if (_protect.hasMatch(seg)) {
+            out
+              ..addAll(pending)
+              ..addAll(parts);
+            pending.clear();
+          } else if (parts.isNotEmpty && _isBarePartList(seg)) {
+            pending.addAll(parts);
+          } else {
+            pending.clear();
+          }
         }
       }
     }
     return out;
+  }
+
+  static bool _isBarePartList(String seg) {
+    var rest = seg;
+    for (final re in _parts.values) {
+      rest = rest.replaceAll(re, '');
+    }
+    return rest.replaceAll(_partFiller, '').isEmpty;
   }
 
   static String tierLabel(String tier) => switch (tier) {
