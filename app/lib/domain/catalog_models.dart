@@ -202,6 +202,28 @@ class Drill {
       dose: dose,
     );
   }
+
+  /// The same drill with another dose, e.g. a target chosen for one plan.
+  /// Identity, media and teaching text stay; only the target changes.
+  Drill withDose(Dose dose, {String? prescription}) => Drill(
+    id: id,
+    groupId: groupId,
+    tier: tier,
+    tierLabel: tierLabel,
+    name: name,
+    nameEn: nameEn,
+    equipment: equipment,
+    prescription: prescription ?? dose.raw,
+    cues: cues,
+    mistake: mistake,
+    why: why,
+    difficulty: difficulty,
+    imageAsset: imageAsset,
+    thumbnailAsset: thumbnailAsset,
+    dose: dose,
+    safety: safety,
+    illustrationNote: illustrationNote,
+  );
 }
 
 class CourseGate {

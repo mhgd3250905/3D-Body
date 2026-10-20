@@ -209,7 +209,14 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       snapshot: _timer.snapshot,
       pain: _pain,
     );
-    final result = await widget.store.logSession(session);
+    var result = false;
+    try {
+      result = await widget.store.logSession(session);
+    } on Object catch (error) {
+      // A rejected record must not leave the page stuck on "saving": show
+      // the failure and keep retry / close available.
+      debugPrint('Training session not saved: $error');
+    }
     if (!mounted) return;
     setState(() {
       _saving = false;
