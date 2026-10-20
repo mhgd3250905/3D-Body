@@ -20,6 +20,8 @@
 
 2026-10-20，PR #122「AI 定制」已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`），使用 SDK `ugk_coach` **0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`**。本轮仅源码整合，未安装、未发布；当前已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**，设备与长期 QA 缺口保持。源码、35 项 AI 回归及构建验证的提交绑定见 [PR122 整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
 
+2026-10-20 iOS发布：用户确认后，原获批 **S4 / 1.0.0（3）** 已按当前免费/175地区配置执行手动发布；08:57:59回执后及刷新页显示“可分发”，仍绑定Build3。08:58中国/美国公开商店页面尚404，公开可下载待传播确认。Build7内部测试、本地Build12和主线Android L52身份分别保留；[发布记录](docs/ios-release-2026-10-20.md)说明授权、回读与边界。下方按原日期保留历史状态。
+
 2026-10-19 iOS续作：`ios/main`已将24个本地提交rebase至当前可见`origin/master @2be8cca`，并补齐训练倒数/训练/休息期间防自动锁屏；暂停、失焦、退出与结束释放。当前iOS本地版本 **1.0.9（12）/ v42-R17**，功能源`9aa5b43`；45项定向测试、静态分析、原生UIKit回读及Simulator正式入口构建/安装启动通过。真机长时防锁屏及完整矩阵待验，未push或操作Apple候选。相对上次主线仅新增工具迁移，未发现其它App功能更新；[本轮记录](docs/ios-main-followup-2026-10-19.md)说明来源与限制。下方各日期保留历史身份，主线Android保存版仍L52/11。
 
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
