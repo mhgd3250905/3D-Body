@@ -143,6 +143,7 @@ class CoachService {
             r.userText,
             reason: PresetReason.of(r.reason),
             tier: _tier,
+            history: TemplateFallback.userTexts(r.conversation),
           ),
         ),
       );
@@ -192,6 +193,7 @@ class CoachService {
         text,
         reason: PresetReason.notConfigured,
         tier: tier,
+        history: TemplateFallback.userTexts(conversation),
       );
       final now = DateTime.now();
       conversation
@@ -248,6 +250,7 @@ class CoachService {
       text,
       reason: PresetReason.unavailable,
       tier: tier,
+      history: TemplateFallback.userTexts(conversation),
     );
     final now = DateTime.now();
     conversation

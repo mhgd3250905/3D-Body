@@ -58,12 +58,27 @@ class TemplateFallback {
 
   static bool isRedFlag(String text) => _redFlags.hasMatch(text);
 
+  /// 本轮或之前提过的红旗情况（手术、受伤……）整段对话都有效。
+  static bool anyRedFlag(String text, List<String> history) =>
+      isRedFlag(text) || history.any(isRedFlag);
+
+  /// 对话里用户说过的话（回落时带上，保留先前的禁忌和场景约束）。
+  static List<String> userTexts(uc.CoachConversation c) => [
+    for (final t in c.turns)
+      if (t.isUser) t.text,
+  ];
+
   /// 关键词得分最高的方向；都没命中用「托马斯全链」。
-  static String pickPreset(String text) {
+  /// [history] = 同一对话里之前用户说过的话：本轮命中算 2 分、之前的算 1 分，
+  /// 这样「想练核心」→「10分钟」不会忘了方向。
+  static String pickPreset(String text, {List<String> history = const []}) {
     var best = 'flare';
     var bestScore = 0;
     for (final entry in _keywords.entries) {
-      final score = entry.value.allMatches(text).length;
+      var score = entry.value.allMatches(text).length * 2;
+      for (final h in history) {
+        score += entry.value.allMatches(h).length;
+      }
       if (score > bestScore) {
         best = entry.key;
         bestScore = score;
@@ -73,13 +88,26 @@ class TemplateFallback {
   }
 
   /// 场景档位：说了健身房 → C，说了器械 → B，否则用计划页当前选择。
-  static String pickTier(String text, String fallbackTier) {
+  /// [history] 里之前提过的场景照样有效（最近一次说的为准）。
+  static String pickTier(
+    String text,
+    String fallbackTier, {
+    List<String> history = const [],
+  }) {
+    for (final t in [text, ...history.reversed]) {
+      final tier = _sceneTier(t);
+      if (tier != null) return tier;
+    }
+    return fallbackTier;
+  }
+
+  static String? _sceneTier(String text) {
     if (RegExp(r'健身房|器械区|gym', caseSensitive: false).hasMatch(text)) {
       return 'C';
     }
     if (RegExp(r'哑铃|弹力带|壶铃|器械|拉力带|瑞士球|泡沫轴').hasMatch(text)) return 'B';
     if (RegExp(r'徒手|没有器械|无器械|什么都没有').hasMatch(text)) return 'A';
-    return fallbackTier;
+    return null;
   }
 
   static String tierLabel(String tier) => switch (tier) {
@@ -92,10 +120,13 @@ class TemplateFallback {
     String text, {
     required PresetReason reason,
     required String tier,
+    List<String> history = const [],
   }) {
-    if (isRedFlag(text)) return const uc.CoachReply.text(redFlagReply);
-    final presetId = pickPreset(text);
-    final useTier = pickTier(text, tier);
+    if (anyRedFlag(text, history)) {
+      return const uc.CoachReply.text(redFlagReply);
+    }
+    final presetId = pickPreset(text, history: history);
+    final useTier = pickTier(text, tier, history: history);
     final plan = build(presetId, useTier);
     final title = titles[presetId]!;
     return uc.CoachReply.plan(

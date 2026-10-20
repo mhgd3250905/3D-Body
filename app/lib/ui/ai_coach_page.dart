@@ -19,10 +19,14 @@ bool aiCoachAvailable(BuildContext context) =>
 
 /// 对话里的一条。
 class CoachMessage {
-  const CoachMessage.user(String this.text) : answer = null;
-  const CoachMessage.answer(CoachAnswer this.answer) : text = null;
+  const CoachMessage.user(String this.text) : answer = null, resultId = -1;
+  const CoachMessage.answer(CoachAnswer this.answer, this.resultId)
+    : text = null;
   final String? text;
   final CoachAnswer? answer;
+
+  /// 应用给每份回答分配的身份（会话内唯一），保存状态按它绑定，不依赖模型给的 plan id。
+  final int resultId;
   bool get isUser => text != null;
 }
 
@@ -36,8 +40,10 @@ class AiCoachSession extends ChangeNotifier {
   final uc.CoachConversation conversation = uc.CoachConversation();
   final List<CoachMessage> messages = [];
 
-  /// 已保存的计划：计划 id → routine id。
-  final Map<String, String> saved = {};
+  /// 已保存的回答：回答身份（[CoachMessage.resultId]）→ routine id。
+  /// routine 可能已被删除，是否「已保存」以 store 里实际存在为准（[isSaved]）。
+  final Map<int, String> saved = {};
+  int _nextResult = 0;
   uc.CancelToken? _cancel;
   DateTime? _startedAt;
   bool _loaded = false;
@@ -91,7 +97,7 @@ class AiCoachSession extends ChangeNotifier {
       if (messages.isNotEmpty && messages.last.isUser) messages.removeLast();
       cancelledText = text;
     } else {
-      messages.add(CoachMessage.answer(answer));
+      messages.add(CoachMessage.answer(answer, _nextResult++));
     }
     _notify();
   }
@@ -99,9 +105,15 @@ class AiCoachSession extends ChangeNotifier {
   /// 停止正在进行的请求（HTTP 真正中止，不回落、不记进对话）。
   void stop() => _cancel?.cancel();
 
-  void markSaved(String planId, String routineId) {
-    saved[planId] = routineId;
+  void markSaved(int resultId, String routineId) {
+    saved[resultId] = routineId;
     _notify();
+  }
+
+  /// 这份回答保存的计划还在「我的计划」里（删了就可以重新保存）。
+  bool isSaved(int resultId, LearningStore store) {
+    final id = saved[resultId];
+    return id != null && store.routineById(id) != null;
   }
 
   void _notify() {
@@ -222,7 +234,11 @@ class _AiCoachPageState extends State<AiCoachPage> {
     unawaited(session.send(value, tier: widget.store.settings.tier));
   }
 
-  Future<void> _save(uc.TrainingPlan plan, List<CoachPlanEntry> entries) async {
+  Future<void> _save(
+    uc.TrainingPlan plan,
+    List<CoachPlanEntry> entries,
+    int resultId,
+  ) async {
     final routine = await widget.store.createRoutine(
       CoachPlanMapper.routineName(plan),
       [for (final e in entries) e.drill.id],
@@ -231,7 +247,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
     );
     if (!mounted || routine == null) return;
     FlareHaptics.success();
-    session.markSaved(plan.id, routine.id);
+    session.markSaved(resultId, routine.id);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text('已保存到「我的计划」：${routine.name}')));
@@ -273,7 +289,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
                         offset: 8,
                         child: m.isUser
                             ? _UserBubble(m.text!)
-                            : _answer(context, m.answer!, i),
+                            : _answer(context, m, i),
                       ),
                     if (session.busy)
                       _Thinking(
@@ -292,7 +308,8 @@ class _AiCoachPageState extends State<AiCoachPage> {
     );
   }
 
-  Widget _answer(BuildContext context, CoachAnswer answer, int index) {
+  Widget _answer(BuildContext context, CoachMessage message, int index) {
+    final answer = message.answer!;
     final reply = answer.reply;
     if (reply == null) return const SizedBox.shrink();
     final latest = index == session.messages.length - 1;
@@ -322,7 +339,8 @@ class _AiCoachPageState extends State<AiCoachPage> {
               ],
             ),
           ),
-        if (reply.plan case final plan?) _planCard(context, plan, answer),
+        if (reply.plan case final plan?)
+          _planCard(context, plan, answer, message.resultId),
       ],
     );
   }
@@ -331,18 +349,21 @@ class _AiCoachPageState extends State<AiCoachPage> {
     BuildContext context,
     uc.TrainingPlan plan,
     CoachAnswer answer,
+    int resultId,
   ) {
     final entries = CoachPlanMapper(widget.catalog).entries(plan);
     final drills = [for (final e in entries) e.drill];
-    final saved = session.saved.containsKey(plan.id);
+    final saved = session.isSaved(resultId, widget.store);
     return _PlanCard(
-      key: ValueKey('coach-plan-${plan.id}'),
+      key: ValueKey('coach-plan-$resultId'),
       plan: plan,
       entries: entries,
       preset: answer.preset,
       saved: saved,
       onDrill: widget.onDrill,
-      onSave: saved || entries.isEmpty ? null : () => _save(plan, entries),
+      onSave: saved || entries.isEmpty
+          ? null
+          : () => _save(plan, entries, resultId),
       onStart: entries.isEmpty
           ? null
           : () {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,6 +16,8 @@ import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../domain/fixtures.dart';
@@ -220,6 +223,47 @@ void main() {
       final red = t.reply('手腕刚扭伤肿了', reason: PresetReason.offline, tier: 'A');
       expect(red.plan, isNull);
       expect(red.text, contains('就医'));
+    });
+  });
+
+  group('PR #122 审核：多轮回落记得先前约束', () {
+    test('未配置：先说做了手术，第二轮仍不给计划', () async {
+      final s = service();
+      final conv = uc.CoachConversation();
+      expect((await s.ask('我做了手术，想恢复训练', conv)).reply!.plan, isNull);
+      final a2 = await s.ask('给我一个简单方案', conv);
+      expect(a2.reply!.plan, isNull);
+      expect(a2.reply!.text, contains('就医'));
+    });
+
+    test('首轮模型建议就医、第二轮断网：回落仍不给计划', () async {
+      final s = service(
+        fake: uc.FakeLlmClient([
+          {'kind': 'reply', 'text': '术后请先咨询医生，确认可以练再来。'},
+          const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
+        ]),
+      );
+      final conv = uc.CoachConversation();
+      await s.ask('我做了手术，想恢复训练', conv);
+      expect((await s.ask('给我一个简单方案', conv)).reply?.plan, isNull);
+    });
+
+    test('健身房练核心 → 追问时长 → 答「10分钟」时断网：回落仍是核心、健身房版', () async {
+      final s = service(
+        fake: uc.FakeLlmClient([
+          {
+            'kind': 'ask',
+            'text': '想练几分钟？',
+            'options': ['10分钟', '20分钟'],
+          },
+          const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
+        ]),
+      );
+      final conv = uc.CoachConversation();
+      await s.ask('在健身房，想练核心', conv);
+      final plan = (await s.ask('10分钟', conv)).reply?.plan;
+      expect(plan, isNotNull);
+      expect(plan!.id, 'template-core-C');
     });
   });
 
@@ -531,6 +575,138 @@ void main() {
         find.byKey(const ValueKey('coach-input')),
       );
       expect(field.controller!.text, '练支撑');
+    });
+
+    Finder inMsg(int i, String key) => find.descendant(
+      of: find.byKey(ValueKey('coach-msg-$i')),
+      matching: find.byKey(ValueKey(key)),
+    );
+    Finder textInMsg(int i, String text) => find.descendant(
+      of: find.byKey(ValueKey('coach-msg-$i')),
+      matching: find.text(text),
+    );
+
+    Map<String, Object?> planWithId(String id, int tricepsReps) {
+      final env = validPlanEnvelope();
+      final plan = env['plan'] as Map<String, Object?>;
+      plan['id'] = id;
+      ((((plan['blocks'] as List)[1] as Map)['items'] as List)[0]
+              as Map)['reps'] =
+          tricepsReps;
+      return env;
+    }
+
+    Future<void> dismissSnack(WidgetTester tester) async {
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('模型两轮给同一 plan id：第二张卡未保存，可单独保存', (tester) async {
+      final store = await pumpShell(
+        tester,
+        service(
+          fake: uc.FakeLlmClient([
+            planWithId('plan-1', 8),
+            planWithId('plan-1', 6),
+          ]),
+        ),
+      );
+      await openCoach(tester);
+      await say(tester, '在家 20 分钟，练支撑臂');
+      await tapVisible(tester, inMsg(1, 'coach-save'));
+      await dismissSnack(tester);
+      await say(tester, '次数少一点');
+      expect(textInMsg(3, '保存到我的计划'), findsOneWidget);
+      await tapVisible(tester, inMsg(3, 'coach-save'));
+      expect(store.routines, hasLength(2));
+      expect(store.routines.last.doses['triceps-A']!.target, 6);
+      expect(textInMsg(1, '已保存到我的计划'), findsOneWidget);
+      expect(textInMsg(3, '已保存到我的计划'), findsOneWidget);
+    });
+
+    testWidgets('预设 template-* 多轮：每张卡各自保存', (tester) async {
+      final store = await pumpShell(tester, service());
+      await openCoach(tester);
+      await say(tester, '练腿');
+      await tapVisible(tester, inMsg(1, 'coach-save'));
+      await dismissSnack(tester);
+      await say(tester, '再来一组练腿');
+      expect(textInMsg(3, '保存到我的计划'), findsOneWidget);
+      await tapVisible(tester, inMsg(3, 'coach-save'));
+      expect(store.routines, hasLength(2));
+    });
+
+    testWidgets('删除已保存的计划后：原计划可重新保存且内容一致', (tester) async {
+      final store = await pumpShell(
+        tester,
+        service(fake: uc.FakeLlmClient([validPlanEnvelope()])),
+      );
+      await openCoach(tester);
+      await say(tester, '在家 20 分钟，练支撑臂');
+      await tapVisible(tester, find.byKey(const ValueKey('coach-save')));
+      final first = store.routines.single;
+      await dismissSnack(tester);
+      await store.deleteRoutine(first.id);
+      await tester.pumpAndSettle();
+      expect(store.routines, isEmpty);
+      expect(find.text('保存到我的计划'), findsOneWidget);
+      await tapVisible(tester, find.byKey(const ValueKey('coach-save')));
+      final again = store.routines.single;
+      expect(again.name, first.name);
+      expect(again.drillIds, first.drillIds);
+      expect(again.doses['triceps-A']!.sets, 4);
+      expect(find.text('已保存到我的计划'), findsOneWidget);
+    });
+
+    testWidgets('重试退避中停止：立即结束、无第二次请求、不回落、恢复输入', (tester) async {
+      var calls = 0;
+      var sleeping = false;
+      final gate = Completer<void>();
+      final client = uc.OpenAiCompatibleClient(
+        config: const uc.LlmConfig(
+          baseUrl: 'https://gw.example.com/v1/',
+          model: 'm',
+          maxRetries: 2,
+        ),
+        sleep: (_) {
+          sleeping = true;
+          return gate.future;
+        },
+        httpClient: MockClient((_) async {
+          calls++;
+          return http.Response('limited', 429, headers: {'retry-after': '30'});
+        }),
+      );
+      final usage = CoachUsageStore();
+      final coach = CoachService(
+        config: const CoachConfig(apiKey: 'test'),
+        appCatalog: catalog,
+        client: client,
+        usage: usage,
+        storage: _Memory(),
+        readAsset: readAsset,
+      );
+      await pumpShell(tester, coach);
+      await openCoach(tester);
+      await tester.enterText(find.byKey(const ValueKey('coach-input')), '练支撑');
+      await tester.tap(find.byKey(const ValueKey('coach-send')));
+      for (var i = 0; i < 20 && !sleeping; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(sleeping, isTrue);
+      expect(find.byKey(const ValueKey('coach-thinking')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('coach-stop')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byKey(const ValueKey('coach-thinking')), findsNothing);
+      expect(calls, 1);
+      expect(find.byKey(const ValueKey('coach-msg-1')), findsNothing);
+      expect(find.byKey(const ValueKey('coach-badge-preset')), findsNothing);
+      final field = tester.widget<TextField>(
+        find.byKey(const ValueKey('coach-input')),
+      );
+      expect(field.controller!.text, '练支撑');
+      expect(usage.records.single.outcome, uc.CallOutcome.cancelled);
     });
 
     for (final dark in [false, true]) {
