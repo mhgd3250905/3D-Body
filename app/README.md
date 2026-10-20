@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-10-20，PR #122「AI 定制」已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`），使用 SDK `ugk_coach` **0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`**。本轮仅源码整合，未安装、未发布；当前已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**，设备与长期 QA 缺口保持。源码、35 项 AI 回归及构建验证的提交绑定见 [PR122 整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
+
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
 
 第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](../docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
@@ -86,9 +88,11 @@ npm run build
 
 回到 `app` 后重新运行 Flutter。`assets/scene/` 是场景构建产物，编辑源代码应在 `scene/src/` 完成。制作浏览器验证包使用 `flutter build web --no-web-resources-cdn`，使 Flutter 渲染资源也随包提供；构建后通过本地 HTTP 服务打开，不要直接双击 `build/web/index.html`。
 
-## AI 定制（试验田，分支 feat/ai-coach）
+<a id="ai-coach"></a>
 
-计划页顶部「AI 定制」：一句话描述需求 → 助理最多追问一次 → 计划卡 →「保存到我的计划」/「开始训练」。接入共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk)（git 依赖，ref 固定到提交）。key 不进仓库，开发版用 `--dart-define=UGK_COACH_API_KEY=…` 运行；不传则入口显示「未配置」并只给预设方案。上线改走中转 Worker（`UGK_COACH_BASE_URL` + `UGK_COACH_RELAY_TOKEN`）。详见 [docs/ai-coach.md](docs/ai-coach.md)。
+## AI 定制（试验田，PR #122 已合入主线）
+
+计划页顶部「AI 定制」：一句话描述需求 → 助理最多追问一次 → 计划卡 →「保存到我的计划」/「开始训练」。接入共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) 0.1.2，git ref 固定到 `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`。默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。未配置令牌时入口显示「未配置」并只给预设方案；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)，本轮源码及验证见 [整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
 
 ## 当前体验
 

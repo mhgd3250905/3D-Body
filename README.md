@@ -1,5 +1,7 @@
 # Flare Anatomy Studio
 
+2026-10-20，PR #122 的 AI 定制已通过三轮复审并经用户同意合入 `master`（远端 `d8e9a0a6047158687b8be72a6e5f486add95e7f5`，本地主线 `e000a3fe86e64c4fb651049528d4baea3f9180e5`）；SDK 固定 0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`。这是源码检查点，包版本仍为 1.0.9+11；已认可安装版保持 L52 / v42-R17，未安装或发布 AI 版本。版本与验证见[PR122 源码与版本记录](app/docs/pr122-ai-coach-integration-2026-10-20.md)，设备及长期 QA 仍独立待验收。
+
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
 
 第一版素材发布前，现有51项视频及封面保持不动；`pose_hub_sync.py`、`pose-hub.lock.json` 和旧导入器弃用待发布后按 [接入说明](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/docs/consumers.md#4-flarelab3d-body-app) 另开 PR 实施。PR #120 的 `tools/hiplab-render` 不合入本仓库，迁移等待用户决定。完整路径映射、旧冻结边界覆盖及后续流程见 [迁移记录](docs/pose-hub-migration-2026-10-17.md)。推送和开 PR 前须先取得用户同意。
@@ -205,6 +207,7 @@ node app/tools/verify-v41.mjs
 
 | 主题 | 当前来源 |
 | --- | --- |
+| 当前 AI 定制源码、合并与验证边界 | [PR122 合入记录](app/docs/pr122-ai-coach-integration-2026-10-20.md)；[App 使用与配置](app/README.md#ai-coach) |
 | 当前App动作与显示契约 | [app/docs/motion-v42.md](app/docs/motion-v42.md)；[L52交付](app/docs/l52-plan-skip-2026-10-17.md)；[R17用户认可](app/docs/l50-r17-acceptance-2026-10-17.md) |
 | 当前代码检查点、版本/安装包及发布观察 | [app/docs/version-ledger.md](app/docs/version-ledger.md) |
 | 当前M0–M7进度与待验收项 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |

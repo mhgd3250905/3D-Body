@@ -1,5 +1,20 @@
 # App 验证记录
 
+## PR122 复审与合入证据绑定（2026-10-20）
+
+最终复审源为 `298f1fa7818a2960aa6e799a6cd625825dbcb49d`，目标基线 `2be8cca34abebb204f3d30b79000eea02015b793`；2026-10-20 15:43:09（北京时间）经用户同意合为 `d8e9a0a6047158687b8be72a6e5f486add95e7f5`，本地主线整合为 `e000a3fe86e64c4fb651049528d4baea3f9180e5`。三轮修复、范围及已知缺口见 [PR122 版本记录](pr122-ai-coach-integration-2026-10-20.md)。
+
+| 执行时间 / source state | 本会话实际命令与结果 | 适用性 |
+| --- | --- | --- |
+| 2026-10-20 / 最终源 `298f1fa7818a2960aa6e799a6cd625825dbcb49d` | 在隔离 `app` 执行 `flutter test --no-pub --concurrency=1 --reporter expanded test/ui/ai_coach_test.dart test/ui/ai_coach_review2_test.dart E:/AII-3D/3D-Body/output/pr122-r3-review-20261020/independent_enumeration_test.dart`；39/39：35项 AI 回归、4项独立反例/边界 | 原3条当前/历史并列部位反例已修；独立探针在本机 output 保存，不作为随包测试 |
+| 同上 | `flutter analyze --no-pub`：No issues found；`PUB_HOSTED_URL=https://pub.flutter-io.cn flutter pub get --enforce-lockfile`：成功，锁文件未改；`git diff --check 91226d8 298f1fa`：通过 | Flutter 3.44.7 / Dart 3.12.2；SDK0.1.2/26e3255，intl0.20.2 |
+| 2026-10-20 / 第二轮源 `91226d85a73bc8e35e0eea6b63e2af198ed4cc68`；对照 `2be8cca34abebb204f3d30b79000eea02015b793` | 各自在隔离 `app` 执行 `flutter test --no-pub --concurrency=1 --reporter json`；196通过/12失败 vs 165通过/12失败，失败文件与名称完全相同（flow3、iOS横屏8、polish1） | 历史对照；第三轮后未重跑全量，不能写成最终HEAD全量通过 |
+| 2026-10-20 / 第二轮源 `91226d85a73bc8e35e0eea6b63e2af198ed4cc68` | `flutter build apk --debug --target-platform android-arm64 --no-pub --dart-define-from-file=<本地私有配置>` 成功，exit0；APK ZIP及教练目录入包检查通过 | 仅第二轮 debug 构建，未安装/上传；第三轮和本次文档收束未重新构建，不作为新源码安装或设备证据 |
+
+证据复用证明：`git diff --name-status 298f1fa7818a2960aa6e799a6cd625825dbcb49d e000a3fe86e64c4fb651049528d4baea3f9180e5` 只有 `app/docs/development-roadmap.md`、`docs/pose-hub-migration-2026-10-17.md`、`docs/pr-cleanup-2026-10-18.md` 三份此前清理文档；App运行代码、资产、测试、pubspec及教练同步工具逐路径 diff 为空。未提交的既有3份改动及本次对齐也仅为文档，故复用最终源39项、静态分析和锁文件验证，不重复扩大测试。
+
+本次 closeout Preflight 基线为合并前主线 `ca9c133766946ada6959b5d6b397efe8c7e417b7`，预检HEAD为 `e000a3fe86e64c4fb651049528d4baea3f9180e5`；完整归属、canonical分类和必要文档检查见[阶段记录](pr122-ai-coach-integration-2026-10-20.md#文档收束preflight)。真实IO首次写入失败后的重试冲突在master和PR均复现，仍单列待办；本轮不调用真实模型 API，不读取密钥、不以历史冒烟或截图证明最终源。
+
 ## Pose-Hub 迁移边界（2026-10-17）
 
 动作生产已迁至 Pose-Hub `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`；后续仅消费其发布版本，现有51媒体及 L52 / 1.0.9+11 / v42-R17 保存身份保持。本次清理不新增素材、设备或历史QA验收；迁移来源、保留范围及发布后接入计划见[迁移记录](../../docs/pose-hub-migration-2026-10-17.md)。下方历史验证、旧源码路径和绿幕补充继续保留原时点事实，清理检查以本次实际执行结果为准。

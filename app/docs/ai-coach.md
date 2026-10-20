@@ -1,6 +1,8 @@
 # AI 定制（AI 训练助理试验田）
 
-2026-10-20 · 分支 `feat/ai-coach` · 依赖 [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) 0.1.1（`ab2da7d`）
+2026-10-20 · PR #122 已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`）· 依赖 [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) **0.1.2**（`26e32557058e582d3f1b2b7f722dfa53c2b16aa6`）
+
+本轮仅源码整合，未安装、未发布；已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**。本轮 35 项 AI 回归及全量测试、构建的源提交、命令与限制见 [PR122 整合记录](pr122-ai-coach-integration-2026-10-20.md)。未重新发起真实模型请求，下方 SDK 0.1.0/0.1.1 的真实冒烟仅保留历史证据。
 
 托马斯训练助手是三 App 共用 AI 训练助理 SDK 的第一个接入方。用户在计划页点「AI 定制」，用一句话描述需求，助理最多追问一次，然后给出一张计划卡（动作缩略图 / 名称 / 剂量 / 估算时长），可以「保存到我的计划」或「开始训练」。
 
@@ -30,25 +32,27 @@
 
 `routines[].doses` / `routines[].source` 都是可选字段：旧数据照常读，手动编辑计划时删掉的动作连同剂量一起删掉。
 
+计划剂量与训练记录共用 12 组上限；记录仍兼容动作库原有的更高组数范围。合法 AI 计划超过动作库默认组数时可完成或中退保存。编辑已保存计划的处方与估时使用保存的剂量，改名、重排和重载不改剂量。每张回答用 App 自己生成的 `resultId` 绑定保存状态，不依赖模型的计划 ID；删除保存的计划后可重新保存。对话卡片保留原回答的计划快照，其「开始训练」始终与卡片本身一致，不跟随后续对「我的计划」的编辑改变。
+
 ## 动作范围
 
 - 目录：`assets/coach/catalog.json` = SDK 内 Pose-Hub 目录快照（0.1.0）里 `apps` 含 `flarelab` 的 51 个动作；profile：`assets/coach/flarelab.json`。升级 SDK 时用同一提交的 SDK 仓库重跑 `python3 tools/coach/sync_coach_assets.py <sdk 路径>`。
 - 运行时范围 = profile 白名单 ∩ App 里真有这个动作且媒体清单有示范视频的 id。不在交集里的 id 写进 `profile.select.exclude`，提示词目录表和校验器同时排除（校验报 `E_SCOPE`，触发重写）。目前交集完整（51/51），此时系统提示词与 SDK 评测金样逐字节一致（已核对）。
-- 目录远端更新：配了 `UGK_COACH_CATALOG_URL`（manifest.json 地址）时启动后后台检查一次，SDK 校验大小 / sha256 / 版本后才切换，失败保持随包目录。目前只存内存（下次启动重新检查）；远端发布位置待定。
+- 目录远端更新：配了 `UGK_COACH_CATALOG_URL`（manifest.json 地址）时启动后后台检查一次，SDK 校验大小 / sha256 / 版本后才切换，失败保持随包目录。换版后重算 profile 与 App 实际动作及媒体的交集，远端新增而 App 不具备的动作仍排除。目前只存内存（下次启动重新检查）；远端发布位置待定。
 
 ## 配置与运行
 
 令牌绝不进代码或仓库，从 `--dart-define` 读取。默认连自建 **UGK AI 中转站**（New API，`https://ai.uuugk.win/v1`）：DeepSeek 等上游 key 只放在中转站，App 用中转站后台给它单独发的令牌（可设额度、随时吊销；换便宜的上游只在后台改渠道，App 不用发版）。
 
-```bash
-flutter run \
-  --dart-define=UGK_COACH_API_KEY=<中转站令牌>                # 必填；不填 = 未配置，只给预设方案
-  --dart-define=UGK_COACH_BASE_URL=https://ai.uuugk.win/v1   # 可选，默认即此（UGK 中转站）
-  --dart-define=UGK_COACH_MODEL=deepseek-v4.1-flash-1017       # 可选，默认即此
-  --dart-define=UGK_COACH_CATALOG_URL=https://…/manifest.json  # 可选，目录远端更新
+在 `app/` 目录使用本机 `coach.local.json` 配置；文件中的 `UGK_COACH_API_KEY` 为中转站给本 App 发的令牌，不放上游模型 key，也不提交该文件。`UGK_COACH_BASE_URL` 默认 `https://ai.uuugk.win/v1`，`UGK_COACH_MODEL` 默认 `deepseek-v4.1-flash-1017`；`UGK_COACH_CATALOG_URL` 可选，留空只用随包目录。运行、离线 Web 与 Android debug 验证构建示例：
+
+```powershell
+flutter run --dart-define-from-file=coach.local.json
+flutter build web --no-web-resources-cdn --dart-define-from-file=coach.local.json
+flutter build apk --debug --dart-define-from-file=coach.local.json
 ```
 
-模型参数用 SDK 预设 `LlmConfig.deepSeekOpenCsg`（max_tokens 6000、单次超时 90 秒、JSON 模式）。推理模型一次约 30–45 秒（冒烟 38.7 s / 42.6 s）。
+未提供令牌时只给预设方案，不调用模型。以上为本地验证命令，不代表已安装或发布。模型参数用 SDK 预设 `LlmConfig.deepSeekOpenCsg`（max_tokens 6000、单次超时 90 秒、JSON 模式）。历史 SDK 0.1.0/0.1.1 的真实冒烟耗时为 38.7 s / 42.6 s，不作为当前版本的性能验收。
 
 ### 中转站
 
@@ -60,9 +64,14 @@ flutter run \
 ## 回落与安全
 
 - 断网 / 超时 / 限流 / 鉴权 / 服务端错误 / 输出截断：不重写，直接回落；输出两次校验都不合格（首次 + 带错误重写 1 次）：回落。
-- 回落 = 从现有 6 个成套训练里按关键词挑最接近的一个（热身 / 支撑 / 核心 / 腿 / 侧撑 / 全链，没命中用托马斯全链），场景按话里的「健身房 / 哑铃…」或计划页当前选择；回复第一句写明原因并说明「这是 App 内置的预设方案，不是 AI 定制」，卡片带「预设方案」标记。
+- 回落 = 从现有 6 个成套训练里按关键词挑最接近的一个（热身 / 支撑 / 核心 / 腿 / 侧撑 / 全链，没命中用托马斯全链）。方向按本轮与历史关键词加权，场景按最近一次明确的场景描述，未提及时用计划页当前选择；「没有器械」按徒手处理，本轮改成「在家」可覆盖历史的健身房场景。回复第一句写明原因并说明「这是 App 内置的预设方案，不是 AI 定制」，卡片带「预设方案」标记。
 - 未配置 key：不调模型，直接走同一回落。
 - 安全：AI 路径沿用 SDK 内核的红旗规则（剧痛、刺痛、麻木 / 放射痛、明显肿胀、刚受伤、术后、孕期产后、头晕胸闷 → 不出计划、建议就医；一般不适 → 写进 avoid 并避开相关动作）。离线 / 未配置时 App 用同口径关键词判断，命中就只回复就医建议、不给预设计划。每张计划卡末尾固定一句「训练中出现疼痛、麻木或头晕，立即停止」。首次使用显示免责说明。
+- 回落同时读取当前与历史的保护约束；并列部位也分别保留，例如「腰、膝都不舒服」。命中目录 `cautions` 的动作从预设中剔除，计划带 `avoid` 并说明删减；全部动作被剔除时只给说明，不提供可开练的空计划。历史红旗情况不会因本轮只回复时长或要求简单方案而丢失。
+
+## 已知边界
+
+计时页保存抛异常后会恢复按钮并显示重试。真实磁盘写入失败仍有既有缺口：首次保存已把 session 留在内存，重试重新生成 `endedAt`，可能被同 ID 不同内容校验拒绝。本轮未修改该旧路径，不把「异常后可操作」记为所有 IO 失败均能成功重试；复现与后续处理边界见 [整合记录](pr122-ai-coach-integration-2026-10-20.md)。
 
 ## 用量记录
 
@@ -77,11 +86,11 @@ flutter run \
 - `lib/coach/usage_store.dart`（+ `usage_file_io.dart` / `usage_file_stub.dart`）：JSONL 记账
 - `lib/ui/ai_coach_page.dart`：对话页、计划卡、进度
 - `lib/domain/training_plan.dart`：`RoutineDose`、`TrainingRoutine.doses/source`
-- `test/ui/ai_coach_test.dart`：15 个测试（SDK `FakeLlmClient`，不打真实网络）
+- `test/ui/ai_coach_test.dart` 及复审追加的回归测试：本轮共 35 项 AI 相关回归；使用 SDK `FakeLlmClient` 或本地 mock，不调用真实模型。具体测试集合、源提交绑定与全量测试既有失败对照见 [整合记录](pr122-ai-coach-integration-2026-10-20.md)。
 
-## 真实冒烟（2026-10-20，经 OpenCSG，沙盒代理注入 key）
+## 历史真实冒烟（2026-10-20，SDK 0.1.0/0.1.1，经 OpenCSG）
 
-用 App 随包的 profile + 目录快照、SDK 原样编排，各 1 次计费调用：
+当时用 App 随包的 profile + 目录快照、SDK 原样编排，各 1 次计费调用；本轮没有重跑，不证明 SDK 0.1.2 或合入主线后的真实服务验收：
 
 | | 内核 v1（SDK 0.1.0） | 内核 v2（SDK 0.1.1） |
 |---|---|---|
