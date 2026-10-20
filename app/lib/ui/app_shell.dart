@@ -19,6 +19,8 @@ import 'muscle_widgets.dart';
 import 'motion.dart';
 import 'timer_page.dart';
 import 'plans_page.dart';
+import 'ai_coach_page.dart';
+import '../coach/coach_service.dart';
 import 'startup_splash.dart';
 import 'theme.dart';
 import 'theme_fade.dart';
@@ -32,8 +34,12 @@ class FlareShell extends StatefulWidget {
     this.enableScene = true,
     this.sceneRevision = 0,
     this.startupCovered = false,
+    this.coach,
   });
   final Catalog catalog;
+
+  /// AI 定制服务；null 时按 `--dart-define` 配置创建（未配置 key 走预设方案）。
+  final CoachService? coach;
   final LearningStore store;
   final SceneController? sceneController;
   final bool enableScene;
@@ -63,6 +69,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
   _PlanRun? _run;
+  bool _coachOpen = false;
+  AiCoachSession? _coachSession;
+  CoachService? _coachService;
+  CoachService get coachService =>
+      _coachService ??= widget.coach ?? CoachService(appCatalog: catalog);
   MuscleGroup? _detail;
   MuscleGroup? _libraryGroup;
   String _libraryQuery = '';
@@ -239,13 +250,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       !_timing;
 
   bool get _inPlan =>
-      _preset != null || _routine != null || _editing != null || _run != null;
+      _preset != null ||
+      _routine != null ||
+      _editing != null ||
+      _run != null ||
+      _coachOpen;
 
   void _clearPlan() {
     _preset = null;
     _routine = null;
     _editing = null;
     _run = null;
+    _coachOpen = false;
   }
 
   bool get _preparingScene => widget.enableScene && !_scene.presented;
@@ -437,6 +453,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _drill = null;
       } else if (_run != null) {
         _run = null;
+      } else if (_coachOpen) {
+        _coachOpen = false;
       } else if (_routine != null) {
         _routine = null;
       } else if (_preset != null) {
@@ -476,6 +494,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   void dispose() {
     _scene.removeListener(_sceneChanged);
     store.removeListener(_storeChanged);
+    _coachSession?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     if (widget.sceneController == null) _scene.dispose();
     super.dispose();
@@ -733,6 +752,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       );
     }
+    if (_coachOpen) {
+      final session = _coachSession ??= AiCoachSession(coachService);
+      return (
+        'coach',
+        2,
+        false,
+        AiCoachPage(
+          session: session,
+          catalog: catalog,
+          store: store,
+          onBack: _back,
+          onDrill: _openDrill,
+          onStart: _startRun,
+        ),
+      );
+    }
     if (_routine case final viewed?) {
       final routine = store.routineById(viewed.id) ?? viewed;
       final drills = routine.drills(catalog);
@@ -803,6 +838,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
           onNewRoutine: () => setState(() => _editing = const _RoutineEdit()),
+          onAiCoach: aiCoachAvailable(context)
+              ? () => setState(() => _coachOpen = true)
+              : null,
+          aiCoachConfigured: coachService.configured,
         ),
       ),
       _ => (
@@ -1829,6 +1868,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
+                    if (aiCoachAvailable(context)) _aiUsageRow(),
                     FlareRow(
                       title: s.aboutFlare,
                       subtitle: s.aboutHint,
@@ -1849,6 +1889,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       ],
     );
   }
+
+  /// 设置 → AI 定制用量：本机累计模型调用次数与 token（来自本地 JSONL 记录）。
+  Widget _aiUsageRow() => FutureBuilder<void>(
+    future: coachService.usage.load(),
+    builder: (context, snapshot) {
+      final t = coachService.usage.totals;
+      final subtitle = !coachService.configured && t.calls == 0
+          ? '未配置 AI · 尚无调用'
+          : '累计调用 ${t.calls} 次 · 输入 ${t.promptTokens} / 输出 ${t.completionTokens} token';
+      return FlareRow(
+        key: const ValueKey('settings-ai-usage'),
+        title: 'AI 定制用量',
+        subtitle: subtitle,
+      );
+    },
+  );
 
   Future<void> _chooseLanguage(BuildContext context) async {
     final s = context.strings;

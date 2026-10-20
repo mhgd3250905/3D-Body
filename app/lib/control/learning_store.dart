@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
@@ -369,13 +370,17 @@ class LearningStore extends ChangeNotifier {
   /// Saves a new set and returns it, or null when nothing valid was given.
   Future<TrainingRoutine?> createRoutine(
     String name,
-    List<String> drillIds,
-  ) async {
+    List<String> drillIds, {
+    Map<String, RoutineDose> doses = const {},
+    String? source,
+  }) async {
     _ensureInitialized();
     final routine = TrainingRoutine(
       id: 'r${_now().microsecondsSinceEpoch}',
       name: name.trim(),
       drillIds: drillIds.where((id) => catalog.drillById(id) != null).toList(),
+      doses: doses,
+      source: source,
     );
     if (!routine.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines, routine];
@@ -427,12 +432,17 @@ class LearningStore extends ChangeNotifier {
     return _persist();
   }
 
+  /// Most sets one record may plan: the drill's own range, or a saved plan's
+  /// own target (same bound as [RoutineDose.maxSets]).
+  static int maxPlannedSets(Drill drill) =>
+      math.max(drill.dose.setsMax, RoutineDose.maxSets);
+
   Future<bool> logSession(TrainingSession session) {
     _ensureInitialized();
     final drill = catalog.drillById(session.drillId);
     if (!session.valid ||
         drill == null ||
-        session.plannedSets > drill.dose.setsMax) {
+        session.plannedSets > maxPlannedSets(drill)) {
       throw ArgumentError('Invalid training session');
     }
     final existing = _sessions.where((row) => row.id == session.id).firstOrNull;

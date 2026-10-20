@@ -1,0 +1,7018 @@
+{
+ "format": "pose-hub-catalog",
+ "formatVersion": 1,
+ "version": "0.1.0",
+ "generatedAt": "2026-10-19T23:59:26+08:00",
+ "source": {
+  "repo": "mhgd3250905/3D-Pose-Hub",
+  "commit": "b6c6bd9",
+  "inputs": [
+   {
+    "repo": "mhgd3250905/Sport-Helper",
+    "commit": "6d4eb30"
+   },
+   {
+    "repo": "mhgd3250905/HipLab",
+    "commit": "cdbb14c"
+   },
+   {
+    "repo": "mhgd3250905/3D-Body",
+    "commit": "2be8cca"
+   }
+  ],
+  "flarelabSnapshot": {
+   "sdkCommit": "ab2da7dbdc97e20cd46b5af51834f547f7153781",
+   "filter": {
+    "apps": [
+     "flarelab"
+    ]
+   }
+  }
+ },
+ "taxonomy": {
+  "categories": {
+   "strength": {
+    "zh": "力量",
+    "en": "Strength"
+   },
+   "core": {
+    "zh": "核心",
+    "en": "Core"
+   },
+   "cardio": {
+    "zh": "有氧",
+    "en": "Cardio"
+   },
+   "mobility": {
+    "zh": "灵活/活动度",
+    "en": "Mobility"
+   },
+   "stretch": {
+    "zh": "拉伸",
+    "en": "Stretch"
+   }
+  },
+  "muscleGroups": {
+   "deltoids": {
+    "zh": "三角肌"
+   },
+   "rotator-cuff": {
+    "zh": "肩袖肌群"
+   },
+   "triceps": {
+    "zh": "肱三头肌"
+   },
+   "biceps": {
+    "zh": "肱二头肌"
+   },
+   "forearms": {
+    "zh": "前臂 · 腕屈伸肌"
+   },
+   "serratus": {
+    "zh": "前锯肌"
+   },
+   "scapular": {
+    "zh": "斜方肌中下部 · 菱形肌"
+   },
+   "chest": {
+    "zh": "胸大肌"
+   },
+   "lats": {
+    "zh": "背阔肌"
+   },
+   "abs": {
+    "zh": "腹直肌（含深层腹横肌）"
+   },
+   "obliques": {
+    "zh": "腹斜肌"
+   },
+   "erectors": {
+    "zh": "竖脊肌"
+   },
+   "hip-flexors": {
+    "zh": "髋屈肌"
+   },
+   "glute-max": {
+    "zh": "臀大肌"
+   },
+   "hip-abductors": {
+    "zh": "臀中肌 · 髋外展"
+   },
+   "adductors": {
+    "zh": "内收肌群"
+   },
+   "quadriceps": {
+    "zh": "股四头肌"
+   },
+   "hamstrings": {
+    "zh": "腘绳肌"
+   },
+   "calves": {
+    "zh": "小腿三头肌"
+   },
+   "tibialis": {
+    "zh": "胫骨前肌"
+   }
+  },
+  "equipment": {
+   "mat": {
+    "zh": "瑜伽垫",
+    "scenes": [
+     "home",
+     "gym"
+    ]
+   },
+   "chair": {
+    "zh": "椅子/凳子",
+    "scenes": [
+     "home",
+     "office",
+     "gym"
+    ]
+   },
+   "wall": {
+    "zh": "墙",
+    "scenes": [
+     "home",
+     "office",
+     "gym"
+    ]
+   },
+   "block": {
+    "zh": "瑜伽砖（可用厚书代替）",
+    "scenes": [
+     "home",
+     "gym"
+    ]
+   },
+   "band": {
+    "zh": "弹力带",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "dumbbell": {
+    "zh": "哑铃",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "slider": {
+    "zh": "滑垫（可用毛巾代替）",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "kettlebell": {
+    "zh": "壶铃",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "parallettes": {
+    "zh": "平行杆（俯撑架）",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "pullup-bar": {
+    "zh": "单杠",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "foam-roller": {
+    "zh": "泡沫轴",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "swiss-ball": {
+    "zh": "瑞士球",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "dip-bars": {
+    "zh": "双杠",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "rings": {
+    "zh": "吊环",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "cable": {
+    "zh": "绳索器械",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "landmine": {
+    "zh": "地雷杆",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "roman-chair": {
+    "zh": "45° 罗马椅",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "ghd": {
+    "zh": "GHD 臀腿训练器",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "reverse-hyper": {
+    "zh": "反向背伸机",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "hip-abductor-machine": {
+    "zh": "髋外展机",
+    "scenes": [
+     "gym"
+    ]
+   },
+   "leg-extension-machine": {
+    "zh": "腿屈伸机",
+    "scenes": [
+     "gym"
+    ]
+   }
+  },
+  "positions": {
+   "standing": {
+    "zh": "站姿",
+    "floor": false
+   },
+   "seated": {
+    "zh": "坐姿",
+    "floor": false
+   },
+   "supine": {
+    "zh": "仰卧",
+    "floor": true
+   },
+   "prone": {
+    "zh": "俯卧/俯撑",
+    "floor": true
+   },
+   "quadruped": {
+    "zh": "四足跪撑",
+    "floor": true
+   },
+   "kneeling": {
+    "zh": "跪姿",
+    "floor": true
+   },
+   "side_lying": {
+    "zh": "侧卧/侧撑",
+    "floor": true
+   },
+   "support": {
+    "zh": "器械支撑（平行杆/双杠/吊环）",
+    "floor": false
+   },
+   "hanging": {
+    "zh": "悬垂",
+    "floor": false
+   }
+  },
+  "scenes": {
+   "home": {
+    "zh": "居家"
+   },
+   "office": {
+    "zh": "办公室"
+   },
+   "gym": {
+    "zh": "健身房"
+   }
+  },
+  "cautions": [
+   "膝",
+   "腰",
+   "肩",
+   "手腕",
+   "颈",
+   "髋",
+   "大腿内侧"
+  ],
+  "rules": {
+   "sceneMatch": "动作 scenes 含请求场所即可用；健身房请求额外接受 scenes 含 home 的动作（健身房有垫/凳/墙）。办公室请求不接受 floor=true 的体位。",
+   "equipmentByScene": "用户没说器械时：home 默认有 mat/chair/wall/block；office 默认有 chair/wall；gym 默认有全部器械。徒手 = equipment 为空。"
+  }
+ },
+ "apps": {
+  "flarelab": {
+   "name": "托马斯训练助手 FlareLab",
+   "repo": "mhgd3250905/3D-Body",
+   "commit": "2be8cca",
+   "mediaFormat": "flarelab-drill-media@1"
+  }
+ },
+ "drills": [
+  {
+   "id": "abs-A",
+   "name": {
+    "zh": "空心体支撑",
+    "en": "Hollow Body Hold"
+   },
+   "purpose": "空心体支撑，练腹部整体张力",
+   "category": "core",
+   "muscles": [
+    "腹直肌（含深层腹横肌）"
+   ],
+   "muscleGroups": [
+    "abs"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 20,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "seconds": [
+     15,
+     30
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "下背压实地面，肩胛离地",
+     "手和腿离地越低越难，以腰不离地为准"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "w-dead-bug",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:abs:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "abs",
+    "tier": "A",
+    "prescription": "3 组 × 15–25 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/abs-A.js",
+     "sha256": "dba607622b89b25d5ce7075f0c28eaeeaae6c5b636cab8da479247163492a868",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "10784c2edfb89c8ba69dc89d9e0151f6703a41098bfbdc38bd75928ecbd54841"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "8c4758c8773ea6d82929897cb590173af8cc7c326f3fca0ab1c225cea7bae2c7",
+       "bytes": 226690
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "abs-B",
+   "name": {
+    "zh": "平行杆团身 L 撑",
+    "en": "Parallette Tuck L-Sit"
+   },
+   "purpose": "平行杆团身 L 撑，练压缩与支撑",
+   "category": "core",
+   "muscles": [
+    "腹直肌（含深层腹横肌）",
+    "髋屈肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "abs",
+    "hip-flexors",
+    "triceps"
+   ],
+   "equipment": [
+    "parallettes"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 4,
+    "seconds": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     5
+    ],
+    "seconds": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直、肩下压，把膝盖抬到胸前",
+     "能力够了再一条腿伸直，逐步到 L 撑"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "hip-flexors-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:abs:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "abs",
+    "tier": "B",
+    "prescription": "4 组 × 8–12 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/abs-B.js",
+     "sha256": "57b8529fd9dca74a4f401f271729de4579e07180c65a2511a02a8f42eb45a389",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "9e4110e2e0d81892e53370e0d563679491f2ac028cf95c0254ded33fe96d5c15"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "eabd7b65b4e40866e4c21a5926868ad32cb9e46385da8ffecd795066bb7d27bc",
+       "bytes": 477621
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "abs-C",
+   "name": {
+    "zh": "双杠直臂支撑举腿",
+    "en": "Dip-Bar Support Leg Raise"
+   },
+   "purpose": "双杠直臂支撑举腿，练下腹与压缩",
+   "category": "core",
+   "muscles": [
+    "腹直肌（含深层腹横肌）",
+    "髋屈肌"
+   ],
+   "muscleGroups": [
+    "abs",
+    "hip-flexors"
+   ],
+   "equipment": [
+    "dip-bars"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直撑起，骨盆后倾卷腹抬腿",
+     "慢慢放下，腿不摆动"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-reverse-crunch",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:abs:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "abs",
+    "tier": "C",
+    "prescription": "3 组 × 6–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/abs-C.js",
+     "sha256": "2de30bffc4a774c228a6d66f245e3f0b9dcc56b8998384d17bf0e6ba98a2bf64",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "4de4e00ee61c9efb19d308df32b220a5cf5faf5697f5689f05a2e5beec4ae821"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/abs-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "d94179a7c899ee4cc82dbeca5c8694d62a99cb25a72d8611d9c534da343db031",
+       "bytes": 320034
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "adductors-A",
+   "name": {
+    "zh": "哥萨克蹲",
+    "en": "Cossack Squat"
+   },
+   "purpose": "哥萨克蹲，练内收肌与侧向深蹲",
+   "category": "strength",
+   "muscles": [
+    "内收肌群",
+    "臀大肌",
+    "股四头肌"
+   ],
+   "muscleGroups": [
+    "adductors",
+    "glute-max",
+    "quadriceps"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 5,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     8
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "宽站距，蹲向一侧，另一腿伸直脚尖朝上",
+     "脚跟踩实，胸口挺起"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝"
+   ],
+   "contraindications": [],
+   "alternative": "n-squat-shift",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:adductors:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "adductors",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 5–6 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/adductors-A.js",
+     "sha256": "9478258360d5a617a4fbd8b561ef49abbac0182f2bba0dc8e276cb0c15359924",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "6d6bc095294a493580622137881479148487a1b6983d2c6c9a0080c4360a88c0"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "07c24b6ab085002ea18e75fd6ac56f9652d50aaa2720596d76f22302ea65331e",
+       "bytes": 309125
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "adductors-B",
+   "name": {
+    "zh": "屈膝哥本哈根侧撑",
+    "en": "Short-Lever Copenhagen Plank"
+   },
+   "purpose": "屈膝哥本哈根侧撑，练内收肌",
+   "category": "strength",
+   "muscles": [
+    "内收肌群",
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "adductors",
+    "obliques"
+   ],
+   "equipment": [
+    "chair",
+    "mat"
+   ],
+   "position": "side_lying",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 15,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "seconds": [
+     10,
+     25
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "上方腿膝内侧压在凳上，前臂撑地",
+     "用内收肌把髋顶起，身体成一条直线"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "大腿内侧"
+   ],
+   "contraindications": [],
+   "alternative": "n-seated-squeeze",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:adductors:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "adductors",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 15–20 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/adductors-B.js",
+     "sha256": "33a4632b8810c7dc5840b157d56153a10377df5ef1b2eb7875d6e849215d4275",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "289c405855ba4daed71c1e95a8c356f3738b0192874a02936f16d6a14d91e608"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "3db62b7b2648b6acd799d39a779ed68efad81b1ee59f9375e86f0393fdad6cb9",
+       "bytes": 249253
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标",
+     "器械『长凳或结实的沙发边』记为 chair；没有 bench 器械枚举。"
+    ]
+   }
+  },
+  {
+   "id": "adductors-C",
+   "name": {
+    "zh": "绳索站姿髋内收",
+    "en": "Cable Standing Hip Adduction"
+   },
+   "purpose": "绳索站姿髋内收，练大腿内侧",
+   "category": "strength",
+   "muscles": [
+    "内收肌群"
+   ],
+   "muscleGroups": [
+    "adductors"
+   ],
+   "equipment": [
+    "cable"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "侧对器械，内侧腿扣绳索，腿伸直",
+     "从外侧拉回并越过中线，慢放"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "adductors-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:adductors:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "adductors",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 12 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/adductors-C.js",
+     "sha256": "9871ae7b7a5fe458521d584244966acc2db9608221c8a1a43fdc84d0eb153caa",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "abaa1b9d3b0d46122a4ccb57f94252250e8a4a3aec9ae59294e029f1cbe16a9c"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/adductors-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "7d57668dad57f7bd8a0f81a87ab853c3d3f564359685a3376a402cd2634e53ac",
+       "bytes": 160962
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "chest-A",
+   "name": {
+    "zh": "俯卧撑转侧撑",
+    "en": "Push-Up to Side Plank Rotation"
+   },
+   "purpose": "俯卧撑接转体侧撑，练前撑转侧撑",
+   "category": "strength",
+   "muscles": [
+    "胸大肌",
+    "腹斜肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "chest",
+    "obliques",
+    "deltoids"
+   ],
+   "equipment": [],
+   "position": "prone",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 5,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     8
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "推起后整体转向侧面，支撑手不动",
+     "转动时胸和骨盆一起走，不先扭腰"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-incline-pushup",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:chest:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "chest",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 5–6 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/chest-A.js",
+     "sha256": "c059e0a40b597768e1f9e8971655d044820f626a69236b9a3f4b8a49fee84714",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "440bb1b79b7e863dde14efd89b37d451b6099bb5b56300e497aa62ea7840f218"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 12.0,
+       "sha256": "f49c3b12da02d6ebb877d633a2f505b3e4b0270a954049573f4c76aab0485373",
+       "bytes": 619401
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "chest-B",
+   "name": {
+    "zh": "平行杆深幅俯卧撑",
+    "en": "Parallette Deficit Push-Up"
+   },
+   "purpose": "平行杆深幅俯卧撑，加大胸肌行程",
+   "category": "strength",
+   "muscles": [
+    "胸大肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "chest",
+    "triceps"
+   ],
+   "equipment": [
+    "parallettes"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "胸口下沉到双手之间，肘约 45° 夹向身体",
+     "推起后手臂锁直，肩胛前伸"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩",
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "h-incline-pushup",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:chest:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "chest",
+    "tier": "B",
+    "prescription": "3 组 × 6–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/chest-B.js",
+     "sha256": "0faa5f2ff94bb1412fee949dd513e8df8c8e4408080d737b5a543b42b8cef2d0",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "1f1bb6ca13649afa7085fd584c6234c5fe5dde2743edaa191e37d114a80da907"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 7.0,
+       "sha256": "dac6fa2b3c5996670de243e45b392e83800da6788bdb367bed3c65cb6416ef7b",
+       "bytes": 540612
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "chest-C",
+   "name": {
+    "zh": "绳索单臂站姿推胸",
+    "en": "Single-Arm Standing Cable Press"
+   },
+   "purpose": "绳索单臂站姿推胸，练推力与抗旋",
+   "category": "strength",
+   "muscles": [
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "chest"
+   ],
+   "equipment": [
+    "cable"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "弓步站稳，单臂向前推到伸直",
+     "推的时候躯干不跟着转，核心抗旋转"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-db-floor-press",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:chest:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "chest",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/chest-C.js",
+     "sha256": "db4c1abef9e3da9610c4bede161a473455716afe70650d998e172da5489250c1",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "027a77ec1fcbd6fd091a24278d5d8bbb17fc443d7020974bcc2fb523d738f5c9"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/chest-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "527c649462ce25e887375a5429d23fd0d8632ed5558bc985d093ec147753d02b",
+       "bytes": 213419
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "deltoids-A",
+   "name": {
+    "zh": "直臂侧平板支撑",
+    "en": "Straight-Arm Side Plank"
+   },
+   "purpose": "单臂撑起全身，练承重肩的稳定",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "obliques"
+   ],
+   "equipment": [],
+   "position": "side_lying",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 25,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "seconds": [
+     15,
+     45
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "支撑手在肩正下方，推地让肩远离耳朵",
+     "髋抬到与肩同高，身体侧面成一条直线"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩",
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "rotator-cuff-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:deltoids:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "deltoids",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 20–30 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/deltoids-A.js",
+     "sha256": "321c1d635a695a96cc155b6fd3f7253b842eec91baae0bdd6cf8d38594eb7ba7",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "02d0f07ff6b07ccb201a268625016f5f4ccc448ab4346bf8f1792e50e83466a7"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "e2be8f6c9773e69b0d634f265a199bae16c4cf73e4dad6522e6d57257a13cb6b",
+       "bytes": 263780
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "deltoids-B",
+   "name": {
+    "zh": "哑铃半程土耳其起立（至高桥）",
+    "en": "Dumbbell Half Turkish Get-Up (to High Bridge)"
+   },
+   "purpose": "半程土耳其起立，在体位变化中稳住肩",
+   "category": "strength",
+   "muscles": [
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "deltoids"
+   ],
+   "equipment": [
+    "dumbbell",
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 3,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     2,
+     5
+    ],
+    "restSeconds": [
+     0,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "负重手臂始终垂直指天，眼睛看着哑铃",
+     "撑地手推地抬髋，像侧撑一样把身体顶起"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩",
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "deltoids-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:deltoids:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "deltoids",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 2–3 次（慢速）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/deltoids-B.js",
+     "sha256": "1d3e49f7c1b77e99b1136d166c11e995cd2318379c4dc47793379d5896070f14",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "2b17765c5fa170d4cac0f93cca35b348811eacebc290b1ff6badcafd669b7734"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 12.0,
+       "sha256": "9a83699401ec3f7f39788f160f4de843a75b7cbb4f2ff0d68e6b3b6082828ee0",
+       "bytes": 344323
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标",
+     "FlareLab 名称已改『哑铃半程土耳其起立（至高桥）』，Pose-Hub catalog 仍叫『哑铃土耳其起立』；本目录用 App 名。"
+    ]
+   }
+  },
+  {
+   "id": "deltoids-C",
+   "name": {
+    "zh": "地雷杆半跪单臂推举",
+    "en": "Half-Kneeling Landmine Press"
+   },
+   "purpose": "斜向单臂推举，强化过头承重的肩力",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus"
+   ],
+   "equipment": [
+    "landmine"
+   ],
+   "position": "kneeling",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "斜向前上方推到手臂伸直，最后肩胛向前送",
+     "收紧臀部和腹部，躯干不后仰"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-db-press",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:deltoids:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "deltoids",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/deltoids-C.js",
+     "sha256": "bc34a8bb3fa12798b7ac940d65d23d5a6849c46387226ae23c29efc99b111b42",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "1f1413f20bed24c8f4a4d2bcee8a08249e5f039c942ef8d44014b9ecb74ac021"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/deltoids-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "efcbaec73e7700ef53a358d63b2f5c743d06527b22c68315a20ace87f5a4d06c",
+       "bytes": 236056
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "erectors-A",
+   "name": {
+    "zh": "反向平板（后撑抬髋）",
+    "en": "Reverse Plank"
+   },
+   "purpose": "后撑抬髋成一直线，练后链与后撑",
+   "category": "core",
+   "muscles": [
+    "竖脊肌",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "erectors",
+    "glute-max"
+   ],
+   "equipment": [],
+   "position": "supine",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 20,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "seconds": [
+     15,
+     30
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双手在肩下方，手指朝脚或朝两侧",
+     "推地抬髋到身体一条直线，夹紧臀部"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-tabletop",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:erectors:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "erectors",
+    "tier": "A",
+    "prescription": "3 组 × 15–25 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/erectors-A.js",
+     "sha256": "e6d0f35aababc2e6a319209392c070130dc27703706001ce8945b747b4f8b82e",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "232347b7699f2848ab9532cd6d778d8bea2cbe1458b7d84de41b162da15f7953"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "4c7b733b2eacf244fb3f35077d986f5956127ae69722ed1b5592d5f2c1beced5",
+       "bytes": 390069
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "erectors-B",
+   "name": {
+    "zh": "瑞士球背伸",
+    "en": "Stability Ball Back Extension"
+   },
+   "purpose": "瑞士球背伸，练竖脊肌",
+   "category": "strength",
+   "muscles": [
+    "竖脊肌"
+   ],
+   "muscleGroups": [
+    "erectors"
+   ],
+   "equipment": [
+    "swiss-ball",
+    "wall"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "髋压在球上，双脚抵住墙根",
+     "抬到身体一条直线即可，不过度后仰"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "h-superman",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:erectors:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "erectors",
+    "tier": "B",
+    "prescription": "3 组 × 10–12 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/erectors-B.js",
+     "sha256": "d38cdb0a92363873660d918cb1b1f2d0c505c0827b631bac825e0ba6e5c259ff",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "ddb13ca2c2cdd3ed20e0673993aa67f9df73ea986e1aaf100713c22c40bf58ca"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "b6a576e0434742a399288c1167c4112bb89a70162393588a9cf8f09dde35df5e",
+       "bytes": 477462
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "erectors-C",
+   "name": {
+    "zh": "45° 罗马椅背伸",
+    "en": "45° Hyperextension"
+   },
+   "purpose": "45° 罗马椅背伸，练下背与臀",
+   "category": "strength",
+   "muscles": [
+    "竖脊肌",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "erectors",
+    "glute-max"
+   ],
+   "equipment": [
+    "roman-chair"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "垫子顶在髋骨下方，以髋为轴下放",
+     "起到身体一条直线、停 1 秒，不再往后仰"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "erectors-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:erectors:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "erectors",
+    "tier": "C",
+    "prescription": "3 组 × 10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/erectors-C.js",
+     "sha256": "bc05afd48a6e8c4fd96b94d402dcbc77383f134f32a94f0f9b51e6784839345d",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "c3c7e90a041d7a99036b577c6376a6c5c97217674fd683df489377dbec7fc9ce"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/erectors-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "9b945d23fd3737870462bd8ef0483327d8d3a05ba97e42c13d3156962f7b45c7",
+       "bytes": 453990
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "forearms-A",
+   "name": {
+    "zh": "跪姿多方向腕部摇摆",
+    "en": "Quadruped Wrist Rocks"
+   },
+   "purpose": "多方向腕部摇摆，撑地训练前的手腕热身",
+   "category": "mobility",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [],
+   "position": "quadruped",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 10,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手指朝前、朝侧、朝后、掌背着地依次摇",
+     "前后移动身体重心，力度由轻到重"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:forearms:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "forearms",
+    "tier": "A",
+    "prescription": "2 轮 × 4 个方向 × 10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/forearms-A.js",
+     "sha256": "6b21940bfd4fa5dd0b6796d6c94591ca17fcca8b0c8eb364392272e31b17152a",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "dbd47b4cc4a32b4d1e52031aca073cdb67e9f6bb3a46c69b508ea4a7f016528d"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 16.0,
+       "sha256": "625adc76e63113a187a479be1ed17124dd8ba5e0450ee3730cfdcef9f307868b",
+       "bytes": 695533
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标",
+     "FlareLab 处方『2 轮 × 4 方向 × 10 次』，TrainingPlan 没有多段动作概念，暂记为 2 组 × 10 次（每组含 4 个方向）。"
+    ]
+   }
+  },
+  {
+   "id": "forearms-B",
+   "name": {
+    "zh": "哑铃腕屈 + 腕伸",
+    "en": "Dumbbell Wrist Curl & Reverse Curl"
+   },
+   "purpose": "哑铃腕屈腕伸，练腕部力量与耐力",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "dumbbell",
+    "chair"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 15,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "reps": [
+     12,
+     20
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂平放在大腿上，只动手腕",
+     "上 1 秒、下 3 秒，全幅度慢放"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "forearms-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:forearms:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "forearms",
+    "tier": "B",
+    "prescription": "各 2–3 组 × 15 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/forearms-B.js",
+     "sha256": "5b75be65a7c7d786d75e39feaefe19dfbc46a8b77e1d04e7c6e6da23257bec49",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "60b218dc66be4f2c015e9ef44a5320eb45278435a52f4ede55b77a100b3f3525"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "1d7c447300170e2bcefba433207a5f41b402fa2790b614c8881f1a62ba387708",
+       "bytes": 359557
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "forearms-C",
+   "name": {
+    "zh": "壶铃倒握行走",
+    "en": "Bottoms-Up Kettlebell Carry"
+   },
+   "purpose": "倒握壶铃行走，练腕部稳定和握力",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌",
+    "肩袖肌群"
+   ],
+   "muscleGroups": [
+    "forearms",
+    "rotator-cuff"
+   ],
+   "equipment": [
+    "kettlebell"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 30,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "seconds": [
+     20,
+     45
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "壶铃底朝上，前臂竖直、手腕中立",
+     "握紧手柄，肘在肩前下方，慢步走"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "forearms-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:forearms:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "forearms",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 20–30 米"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/forearms-C.js",
+     "sha256": "f5641adad4fd0763626c713d438b272e6f1f67e1db9f2105c29323b6a2454ffe",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "45eb3a9377ddde02061691778d1ccfb5607c7941a5af8cb3fd6c39b2052d9d06"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/forearms-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "3cbbcbff3eb9d420e3937e1a74d66d7e5e49ad091be7860729c24f28d76cbad6",
+       "bytes": 301515
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标",
+     "处方按距离『每侧 20–30 米』，改为计时每侧 30 秒（10–120 秒范围内）。"
+    ]
+   }
+  },
+  {
+   "id": "glute-max-A",
+   "name": {
+    "zh": "单腿臀桥",
+    "en": "Single-Leg Glute Bridge"
+   },
+   "purpose": "单腿臀桥，练臀大肌伸髋（每侧）",
+   "category": "strength",
+   "muscles": [
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "glute-max"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     5,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "一腿伸直，另一侧脚跟推地把臀部抬起",
+     "用臀部把骨盆顶起，骨盆不歪"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "w-feet-on-chair-bridge",
+   "apps": [
+    "flarelab",
+    "hiplab",
+    "smartfit"
+   ],
+   "tags": [
+    "flarelab:glute-max:A",
+    "hip",
+    "hip:extension",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "glute-max",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/glute-max-A.js",
+     "sha256": "2d5844dc5caa3cfdd6ff1368133a4f798c4571da8b2908a387eb30d65f6d0c8c",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [
+     "0.1.0",
+     "0.2.0"
+    ],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "smartfit",
+       "path": "assets/packs/glute-max-A/cover.jpg",
+       "width": 540,
+       "height": 540,
+       "coverSeconds": 2.1
+      },
+      {
+       "app": "hiplab",
+       "variant": "dark",
+       "path": "assets/drill_media/hip-glute-max-a.jpg"
+      },
+      {
+       "app": "hiplab",
+       "variant": "light",
+       "path": "assets/drill_media/light/hip-glute-max-a.jpg"
+      },
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "e9c8e553e6a9f2ca169fdbbc5d2912f316515d350f50b90d41f4e2a67dde1b55"
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.1.0",
+       "variant": "dark",
+       "path": "glute-max-A/glute-max-A.dark.poster.1080.jpg",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "cf36c53143120b62c720aef9aa9aaf962418f10529db212859dd94ed3cf031dd",
+       "bytes": 22329
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.2.0",
+       "variant": "dark",
+       "path": "glute-max-A/glute-max-A.dark.poster.540.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "1762ede74a0fddeb87831273de01fc6d1a8e40c85382254b22133491f153bf2d",
+       "bytes": 8028
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "smartfit",
+       "path": "assets/packs/glute-max-A/demo.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "repSeconds": 4.0
+      },
+      {
+       "app": "hiplab",
+       "variant": "dark",
+       "path": "assets/drill_media/hip-glute-max-a.mp4",
+       "loopSeconds": 8.0,
+       "release": "0.2.0",
+       "showsSide": "right"
+      },
+      {
+       "app": "hiplab",
+       "variant": "light",
+       "path": "assets/drill_media/light/hip-glute-max-a.mp4",
+       "loopSeconds": 8.0,
+       "release": "0.2.0",
+       "showsSide": "right"
+      },
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "63d7f61166b8136aa2fb44d9ffdbc5dc98f96c9cab8b754ba7f53bef3ea7d0fb",
+       "bytes": 220058
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.1.0",
+       "variant": "dark",
+       "path": "glute-max-A/glute-max-A.dark.1080.mp4",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "e4e08f7ff72bce4625f556f421dbc5de8532604387467247b812c950d48a2f49",
+       "bytes": 525745
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.2.0",
+       "variant": "dark",
+       "path": "glute-max-A/glute-max-A.dark.1080.mp4",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "6abf4b421c44faf1fa4379f0005e20a3306b0256ebb8bc615e70f21a000a064a",
+       "bytes": 524324
+      }
+     ]
+    },
+    "voice": {
+     "status": "ok",
+     "languages": [
+      "en",
+      "zh"
+     ],
+     "lines": [
+      {
+       "id": "name",
+       "role": "name",
+       "text": {
+        "zh": "单腿臀桥"
+       },
+       "ms": {
+        "zh": 1045
+       }
+      },
+      {
+       "id": "intro",
+       "role": "intro",
+       "text": {
+        "zh": "单腿臀桥，练臀部"
+       },
+       "ms": {
+        "zh": 1881
+       }
+      },
+      {
+       "id": "cue1",
+       "role": "cue",
+       "text": {
+        "zh": "一腿伸直，另一侧脚跟推地把臀部抬起"
+       },
+       "ms": {
+        "zh": 3553
+       }
+      },
+      {
+       "id": "cue2",
+       "role": "cue",
+       "text": {
+        "zh": "用臀部把骨盆顶起，骨盆不歪"
+       },
+       "ms": {
+        "zh": 2670
+       }
+      },
+      {
+       "id": "rest",
+       "role": "rest",
+       "text": {
+        "zh": "放松一下。下一组记住，用臀部把骨盆顶起，骨盆不歪"
+       },
+       "ms": {
+        "zh": 5201
+       }
+      },
+      {
+       "id": "finish",
+       "role": "finish",
+       "text": {
+        "zh": "单腿臀桥，完成"
+       },
+       "ms": {
+        "zh": 1718
+       }
+      }
+     ],
+     "audio": [
+      {
+       "app": "smartfit",
+       "pathPattern": "assets/packs/glute-max-A/voice/{lang}/{line}.m4a",
+       "languages": [
+        "zh"
+       ]
+      },
+      {
+       "app": "hiplab",
+       "pathPattern": "assets/voice/{lang}/{line}.m4a",
+       "languages": [
+        "en",
+        "zh"
+       ],
+       "keys": [
+        "drill.glute-max-A",
+        "point.glute-max-A"
+       ]
+      }
+     ]
+    },
+    "drillPack": {
+     "app": "smartfit",
+     "path": "assets/packs/glute-max-A/pack.json",
+     "version": "1.0.0"
+    }
+   },
+   "completeness": {
+    "complete": true,
+    "missing": []
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "人工更正：单腿臀桥左右各做：FlareLab 处方『每侧 10 次』、HipLab action-kit sided=true；SmartFit pack 写成 false（SmartFit pack 需同步改）",
+     "unilateral 由 false 改为 true 的 7 个动作（glute-max-A、h-band-pallof、h-supine-twist、n-seated-ir-drop、n-seated-knee-lift、s-9090、t-seated-straddle-lift-1leg）需要同步改 SmartFit pack（unilateral + side_switch 台词），否则 SmartFit 现有 Dart 校验会拒绝 perSide=true。level：SmartFit=2、FlareLab=1，保留 2。"
+    ]
+   }
+  },
+  {
+   "id": "glute-max-B",
+   "name": {
+    "zh": "弹力带四足直腿后踢",
+    "en": "Banded Straight-Leg Kickback"
+   },
+   "purpose": "四足直腿后踢，练臀大肌伸髋",
+   "category": "strength",
+   "muscles": [
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "glute-max"
+   ],
+   "equipment": [
+    "band",
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "四足跪姿，腿伸直向后上方抬",
+     "腰不塌，只让髋发力"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "n-prone-hip-ext",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:glute-max:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "glute-max",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 12 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/glute-max-B.js",
+     "sha256": "e59bd9a64f886c90aadd7358a2fa39594c67b58e511c844d1ddf94d08e4df4cb",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "dbedb7cf97d5eb5b306f8547ebf7e12ddeec343ec51838dfa39e8b83bdd50f12"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "f197730eeece1e8371cc2bfc0ceaa7f31c1e5cef7a46fc50f137e4a847c0a89c",
+       "bytes": 270837
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "glute-max-C",
+   "name": {
+    "zh": "反向背伸机",
+    "en": "Reverse Hyperextension"
+   },
+   "purpose": "反向背伸机，练臀大肌与后链",
+   "category": "strength",
+   "muscles": [
+    "臀大肌",
+    "腘绳肌"
+   ],
+   "muscleGroups": [
+    "glute-max",
+    "hamstrings"
+   ],
+   "equipment": [
+    "reverse-hyper"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     15
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "上身趴在垫上握紧把手，双腿伸直",
+     "靠臀发力把腿抬到与躯干同高，慢放"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "w-chair-hip-thrust",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:glute-max:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "glute-max",
+    "tier": "C",
+    "prescription": "3 组 × 10–12 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/glute-max-C.js",
+     "sha256": "14c48e71091a7830ed03d7bc799096105657a6d0a26e4f9fd812a1f09d0971ec",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "d9dc7e593d29970e4b37c6f0a2a0e562bcd524a1614b407d40a69b0de35ac212"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/glute-max-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "ddb81559345ccb68a4e380320d189b6f8af5a0ddfeea4fe20d57a4938d16996e",
+       "bytes": 390729
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hamstrings-A",
+   "name": {
+    "zh": "徒手单腿罗马尼亚硬拉",
+    "en": "Bodyweight Single-Leg RDL"
+   },
+   "purpose": "徒手单腿罗马尼亚硬拉，练腘绳肌与平衡",
+   "category": "strength",
+   "muscles": [
+    "腘绳肌",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "hamstrings",
+    "glute-max"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "支撑腿膝微屈，以髋为轴向前折",
+     "后腿与躯干成一条直线，骨盆端平"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "h-good-morning",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hamstrings:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hamstrings",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hamstrings-A.js",
+     "sha256": "2f4805986cf1d425fcac9f929a149f836d6fa6f6e70a603c1fb9455dbf0649a6",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "1eac1d718874145b372695c02bc1c069848528d766dda9f6493c0de19680c5b3"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "4b18cff7db897f353410a987b89e4f269792bb9e9bb56764350f174b604d9edc",
+       "bytes": 313071
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hamstrings-B",
+   "name": {
+    "zh": "滑盘腿弯举",
+    "en": "Slider Hamstring Curl"
+   },
+   "purpose": "滑盘腿弯举，练腘绳肌",
+   "category": "strength",
+   "muscles": [
+    "腘绳肌",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "hamstrings",
+    "glute-max"
+   ],
+   "equipment": [
+    "slider",
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "仰卧抬髋，脚跟踩在滑盘上",
+     "保持髋高，脚跟向臀部拉回再慢慢推出"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "w-feet-on-chair-bridge",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hamstrings:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hamstrings",
+    "tier": "B",
+    "prescription": "3 组 × 6–8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hamstrings-B.js",
+     "sha256": "b0d79cba23ee73f28ce768fc8803860b9bf8b4b859402c937f5dcfe4c56ae7d4",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "20d2dd840e94e7925b30832476f20db9b5f602e222518259d1bf256604b701a9"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "16021b61da2885b403624039f382e76065d52a1ade83cc8013d7639c800ccca9",
+       "bytes": 235719
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hamstrings-C",
+   "name": {
+    "zh": "GHD 北欧离心",
+    "en": "GHD Nordic Eccentric"
+   },
+   "purpose": "GHD 北欧离心，强化腘绳肌",
+   "category": "strength",
+   "muscles": [
+    "腘绳肌"
+   ],
+   "muscleGroups": [
+    "hamstrings"
+   ],
+   "equipment": [
+    "ghd"
+   ],
+   "position": "kneeling",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 4,
+    "restSeconds": 90
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     3,
+     6
+    ],
+    "restSeconds": [
+     0,
+     180
+    ]
+   },
+   "cues": {
+    "zh": [
+     "脚跟扣紧，膝到头一条直线",
+     "尽量慢地向前下放，手推地辅助回起"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝"
+   ],
+   "contraindications": [],
+   "alternative": "hamstrings-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hamstrings:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hamstrings",
+    "tier": "C",
+    "prescription": "3 组 × 4–5 次（下放 4 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hamstrings-C.js",
+     "sha256": "15e0a69e1eb3f89798288da8a17f38a22f15e70646471c0210b8709e8c771f83",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "c4ff300f939726e3e717f2b898eb3a318b239c429460c6d4216ffd554c01acfa"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hamstrings-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "438122f0f45cbf1f04733c9c4e643e4f06d51f85cfb48e93d0f719229409b1e0",
+       "bytes": 297887
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hip-abductors-A",
+   "name": {
+    "zh": "侧平板抬腿",
+    "en": "Side Plank Hip Abduction"
+   },
+   "purpose": "侧平板抬腿，练臀中肌与侧向支撑",
+   "category": "strength",
+   "muscles": [
+    "臀中肌 · 髋外展",
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "hip-abductors",
+    "obliques"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "side_lying",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂侧撑，髋抬起成一条直线",
+     "上方腿伸直抬起，脚尖朝前不外转"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "w-clamshell",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hip-abductors:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-abductors",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-abductors-A.js",
+     "sha256": "631e4836babbfbfe0b8c7e8b85f1853b4e55f7a7349e332e1da53c7656a4d413",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "cdfb2579be8934cc269ccaec0a19b8aa538058e1597108750e4c5eb120139696"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 6.0,
+       "sha256": "905b90fe792fc56e56e51fead178a59d657e25606f61d0fa16814d0ef85b8fe5",
+       "bytes": 178643
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hip-abductors-B",
+   "name": {
+    "zh": "仰卧弹力带 V 字开腿",
+    "en": "Banded Supine Straddle Opens"
+   },
+   "purpose": "仰卧弹力带 V 字开腿，练髋外展",
+   "category": "strength",
+   "muscles": [
+    "臀中肌 · 髋外展"
+   ],
+   "muscleGroups": [
+    "hip-abductors"
+   ],
+   "equipment": [
+    "band",
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "仰卧，双腿伸直举起与地面垂直",
+     "对抗弹力带把腿分开成大 V 字，再慢慢合拢"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "w-clamshell",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hip-abductors:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-abductors",
+    "tier": "B",
+    "prescription": "3 组 × 12 次（开到最大停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-abductors-B.js",
+     "sha256": "b92fa84de358fddd7fffb6edf17773e51f82c610b96f3a40abd3f7293e32cbb9",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "09312d1b5dac9dca3004bf2eeeb432960a79a9d60dae4e4b745f6cb4a01e171a"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "4635fd8a17af25ce1c542020c732d5cf2addbbc509415558ac65bf0b929c25dc",
+       "bytes": 471822
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hip-abductors-C",
+   "name": {
+    "zh": "器械髋外展",
+    "en": "Hip Abduction Machine"
+   },
+   "purpose": "器械髋外展，练臀中肌",
+   "category": "strength",
+   "muscles": [
+    "臀中肌 · 髋外展"
+   ],
+   "muscleGroups": [
+    "hip-abductors"
+   ],
+   "equipment": [
+    "hip-abductor-machine"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "坐稳靠背，膝外侧推开垫子",
+     "慢回 3 秒，不让重量砸回"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "hip-abductors-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hip-abductors:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-abductors",
+    "tier": "C",
+    "prescription": "3 组 × 12–15 次（顶端停 1 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-abductors-C.js",
+     "sha256": "befb6903f1919af5a536c644bf93ec362c548714f7b9465821c3cc6498424d16",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "85aca1414ec1b2b02d90393da74553d3d9357793cef7f6624dd776aa4c896a22"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-abductors-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "fcf0b6865ce9beec94f7ffe7331bd5246ca9e9a223f4e4c7ac46c147d63c645a",
+       "bytes": 173885
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hip-flexors-A",
+   "name": {
+    "zh": "坐姿直腿抬腿（压缩）",
+    "en": "Seated Pike Leg Lifts"
+   },
+   "purpose": "坐姿直腿抬腿（压缩），练 L 撑所需的屈髋力量",
+   "category": "core",
+   "muscles": [
+    "髋屈肌"
+   ],
+   "muscleGroups": [
+    "hip-flexors"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "坐直，腿伸直抬起，停一下再放下",
+     "直腿抬起离地，停 1 秒"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "n-seated-knee-lift",
+   "apps": [
+    "flarelab",
+    "hiplab",
+    "smartfit"
+   ],
+   "tags": [
+    "flarelab:hip-flexors:A",
+    "hip",
+    "hip:flexion",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-flexors",
+    "tier": "A",
+    "prescription": "3 组 × 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-flexors-A.js",
+     "sha256": "1aa89cba0c2962a1f89370d7b347e14074d0684474b76962bb17ab27efe345b5",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [
+     "0.1.0",
+     "0.2.0"
+    ],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "smartfit",
+       "path": "assets/packs/hip-flexors-A/cover.jpg",
+       "width": 540,
+       "height": 540,
+       "coverSeconds": 1.9
+      },
+      {
+       "app": "hiplab",
+       "variant": "dark",
+       "path": "assets/drill_media/hip-hip-flexors-a.jpg"
+      },
+      {
+       "app": "hiplab",
+       "variant": "light",
+       "path": "assets/drill_media/light/hip-hip-flexors-a.jpg"
+      },
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "ee47b1939d9ec6f1b077a27943386864b175b32fd52046ae3b6f206d992ea408"
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.1.0",
+       "variant": "dark",
+       "path": "hip-flexors-A/hip-flexors-A.dark.poster.1080.jpg",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "04f58a6201d356ef5d06faad8646fa23c16dafe7fae1c34919d637acd521af23",
+       "bytes": 31038
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.2.0",
+       "variant": "dark",
+       "path": "hip-flexors-A/hip-flexors-A.dark.poster.540.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "c84f74e49e470de460764f673df0d768c03f16a2676866f3ee3716ca7d5bcc43",
+       "bytes": 11721
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "smartfit",
+       "path": "assets/packs/hip-flexors-A/demo.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "repSeconds": 3.0
+      },
+      {
+       "app": "hiplab",
+       "variant": "dark",
+       "path": "assets/drill_media/hip-hip-flexors-a.mp4",
+       "loopSeconds": 8.0,
+       "release": "0.2.0"
+      },
+      {
+       "app": "hiplab",
+       "variant": "light",
+       "path": "assets/drill_media/light/hip-hip-flexors-a.mp4",
+       "loopSeconds": 8.0,
+       "release": "0.2.0"
+      },
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "3fa4cc838865db2b5ee56fbc447545b5c93b2648ef9b7b5f4dcc6e32838861c3",
+       "bytes": 257200
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.1.0",
+       "variant": "dark",
+       "path": "hip-flexors-A/hip-flexors-A.dark.1080.mp4",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "bec90e872e9d3ac1f889cad40593680b6c756e27248a7952672d957c0da991b8",
+       "bytes": 697235
+      },
+      {
+       "app": "pose-hub",
+       "release": "0.2.0",
+       "variant": "dark",
+       "path": "hip-flexors-A/hip-flexors-A.dark.1080.mp4",
+       "width": 1080,
+       "height": 1080,
+       "sha256": "576784a5667c1a03aba847d9d70289b33449b40562df53ae824ce15a3349e82c",
+       "bytes": 702480
+      }
+     ]
+    },
+    "voice": {
+     "status": "ok",
+     "languages": [
+      "en",
+      "zh"
+     ],
+     "lines": [
+      {
+       "id": "name",
+       "role": "name",
+       "text": {
+        "zh": "坐姿直腿抬腿，压缩"
+       },
+       "ms": {
+        "zh": 2113
+       }
+      },
+      {
+       "id": "intro",
+       "role": "intro",
+       "text": {
+        "zh": "坐姿直腿抬腿，压缩，练髋前侧"
+       },
+       "ms": {
+        "zh": 3204
+       }
+      },
+      {
+       "id": "cue1",
+       "role": "cue",
+       "text": {
+        "zh": "坐直，腿伸直抬起，停一下再放下"
+       },
+       "ms": {
+        "zh": 3111
+       }
+      },
+      {
+       "id": "cue2",
+       "role": "cue",
+       "text": {
+        "zh": "直腿抬起离地，停 1 秒"
+       },
+       "ms": {
+        "zh": 2113
+       }
+      },
+      {
+       "id": "rest",
+       "role": "rest",
+       "text": {
+        "zh": "放松一下。下一组记住，直腿抬起离地，停 1 秒"
+       },
+       "ms": {
+        "zh": 4621
+       }
+      },
+      {
+       "id": "finish",
+       "role": "finish",
+       "text": {
+        "zh": "坐姿直腿抬腿，压缩，完成"
+       },
+       "ms": {
+        "zh": 2833
+       }
+      }
+     ],
+     "audio": [
+      {
+       "app": "smartfit",
+       "pathPattern": "assets/packs/hip-flexors-A/voice/{lang}/{line}.m4a",
+       "languages": [
+        "zh"
+       ]
+      },
+      {
+       "app": "hiplab",
+       "pathPattern": "assets/voice/{lang}/{line}.m4a",
+       "languages": [
+        "en",
+        "zh"
+       ],
+       "keys": [
+        "drill.hip-flexors-A",
+        "point.hip-flexors-A"
+       ]
+      }
+     ]
+    },
+    "drillPack": {
+     "app": "smartfit",
+     "path": "assets/packs/hip-flexors-A/pack.json",
+     "version": "1.0.0"
+    }
+   },
+   "completeness": {
+    "complete": true,
+    "missing": []
+   },
+   "review": {
+    "status": "auto",
+    "notes": []
+   }
+  },
+  {
+   "id": "hip-flexors-B",
+   "name": {
+    "zh": "弹力带站姿高抬膝",
+    "en": "Banded Standing Knee Drive"
+   },
+   "purpose": "弹力带站姿高抬膝，练主动屈髋",
+   "category": "strength",
+   "muscles": [
+    "髋屈肌"
+   ],
+   "muscleGroups": [
+    "hip-flexors"
+   ],
+   "equipment": [
+    "band"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "站直扶墙，膝盖抬过髋的高度",
+     "顶端停 2 秒，骨盆不后倾、不弯腰"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "n-seated-knee-lift",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hip-flexors:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-flexors",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 10 次（顶端停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-flexors-B.js",
+     "sha256": "ad6bb748167ef420843f52fce40cf5e3fc6f5e237b9cee324f42c966cbe70b58",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "07eae2fcc9635e2fe19960a3f46f4b6d91b75eb4f2b4edc73edadb92967d2f30"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "119d07cf51b08b98467532d1fa5ca38716fa19cb933f0375487f4f31d11e06ac",
+       "bytes": 285097
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "hip-flexors-C",
+   "name": {
+    "zh": "绳索站姿直腿前抬",
+    "en": "Cable Straight-Leg Raise"
+   },
+   "purpose": "绳索站姿直腿前抬，练屈髋力量",
+   "category": "strength",
+   "muscles": [
+    "髋屈肌"
+   ],
+   "muscleGroups": [
+    "hip-flexors"
+   ],
+   "equipment": [
+    "cable"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "脚踝扣连低位绳索，膝伸直、脚尖勾起",
+     "抬到能控制的最高点，慢放"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "hip-flexors-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:hip-flexors:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "hip-flexors",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/hip-flexors-C.js",
+     "sha256": "58b1401769648d0eede42f33ccf35f9ccc4411ac4ad3ee4a8c632f7c294026a5",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "1db05ccf0a114a5fed102b294350b8c4ba1bb7f409133d79193048d93e869adc"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/hip-flexors-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "23281de15a5365f591268c1f57e18047387c351398e905b4a4695d55d5a9c525",
+       "bytes": 225454
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "lats-A",
+   "name": {
+    "zh": "坐姿撑地抬臀",
+    "en": "Floor Support Lift (Seated Dip Shrug)"
+   },
+   "purpose": "坐姿撑地抬臀，练肩下压与支撑",
+   "category": "strength",
+   "muscles": [
+    "背阔肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "lats",
+    "triceps"
+   ],
+   "equipment": [],
+   "position": "seated",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "长坐，双手撑在髋两侧，手臂伸直",
+     "用肩往下压把臀部抬离地面，不靠弯肘"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-tabletop",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:lats:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "lats",
+    "tier": "A",
+    "prescription": "3 组 × 8 次（顶端停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/lats-A.js",
+     "sha256": "b9585fea4408d926aaa51e7d5e490d7207e6b64f26633b0fb25b8ddad6a255b4",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "5d05565af41c98da8ce23938ab42da8dfc77c02a5bcd7bdb6f7f534eab95046b"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "b358eb8c838d0436827863afe1d99acb12cd06366703b5000f4f7cf6878b02be",
+       "bytes": 198465
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "lats-B",
+   "name": {
+    "zh": "弹力带直臂下拉",
+    "en": "Band Straight-Arm Pulldown"
+   },
+   "purpose": "弹力带直臂下拉，练背阔肌下压",
+   "category": "strength",
+   "muscles": [
+    "背阔肌"
+   ],
+   "muscleGroups": [
+    "lats"
+   ],
+   "equipment": [
+    "band",
+    "pullup-bar"
+   ],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直，从额头高度下拉到大腿旁",
+     "下拉时肩胛下沉，肋骨不外翻"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:lats:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "lats",
+    "tier": "B",
+    "prescription": "3 组 × 12–15 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/lats-B.js",
+     "sha256": "cb063513bfcc082a47253653086b401ad3852dd2052b075b98ef166be2ec9e8a",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "afb9c98ea987ebbd6a9217e2f1ae8d20e8e80df74d207ec2d73fcc9ddc0bf0c9"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "46d6d46349105350450f062ce8fda27ad641afe5e2627d595bd420940ede2b1c",
+       "bytes": 268873
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "lats-C",
+   "name": {
+    "zh": "双杠支撑耸肩下压",
+    "en": "Dip-Bar Scapular Depression"
+   },
+   "purpose": "双杠支撑耸肩下压，练支撑时的肩下沉",
+   "category": "strength",
+   "muscles": [
+    "背阔肌"
+   ],
+   "muscleGroups": [
+    "lats"
+   ],
+   "equipment": [
+    "dip-bars"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，让肩慢慢升向耳朵",
+     "再用力下压把身体顶高，顶端停 1 秒"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "lats-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:lats:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "lats",
+    "tier": "C",
+    "prescription": "3 组 × 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/lats-C.js",
+     "sha256": "fbab9996bcd2f1a0b3974ec5e6f4b812889dceb926ab23887a37ad2de3fb499d",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "6dc4e9868f434640c24f5efe36b19d9b7b5639244b112a4b6d6bf6bcca992dc3"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/lats-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "8291c9546cfa99e20b8da1e9be26eab841fb71885873aa098db0c9c1d531a76e",
+       "bytes": 257521
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "obliques-A",
+   "name": {
+    "zh": "熊爬穿腿",
+    "en": "Kick-Through (Beast Flow)"
+   },
+   "purpose": "熊爬穿腿，练转体与侧向控制",
+   "category": "core",
+   "muscles": [
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "obliques"
+   ],
+   "equipment": [],
+   "position": "quadruped",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     8
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "从四足悬膝位起，单手撑地，腿从身体下方穿过去",
+     "转体时支撑手推地，髋不要落地"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "h-russian-twist",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:obliques:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "obliques",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 6 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/obliques-A.js",
+     "sha256": "07a7fb90103e762e2a15d52e4ca96a34668e7b697e9683578df1220b092d76d0",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "8c27cea4009945a7cc062cf92b4a9193618d94874d8d8bcbbbf65bcfcd09eeaa"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "8c5f55f2924de9529ebd6feacee6bd7c9de585659f6ec70fd4181111f890f78b",
+       "bytes": 343687
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "obliques-B",
+   "name": {
+    "zh": "弹力带抗旋转推",
+    "en": "Band Pallof Press"
+   },
+   "purpose": "弹力带抗旋转推，练核心抗扭",
+   "category": "core",
+   "muscles": [
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "obliques"
+   ],
+   "equipment": [
+    "band"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "侧对固定点，双手握带在胸前向前推直",
+     "推直后停 2 秒，身体不被拉转"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [],
+   "contraindications": [],
+   "alternative": "h-band-pallof",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:obliques:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "obliques",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 10 次（停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/obliques-B.js",
+     "sha256": "b6c695dad3ab8aa15d1e4f727a923be34455c99c7ebfac70f4cdfa12007f75a0",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "50c6cc0de88b0b09ca0cec82d70ed91724aa171bcb2ea2f05005109a66067aa3"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "0ac1cc05121701f531888ae687ce6ab2b5f3407b84a8f8fd2cd6bf9d393effe4",
+       "bytes": 236394
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "obliques-C",
+   "name": {
+    "zh": "绳索高位伐木",
+    "en": "Cable High-to-Low Woodchop"
+   },
+   "purpose": "绳索高位伐木，练转体发力",
+   "category": "core",
+   "muscles": [
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "obliques"
+   ],
+   "equipment": [
+    "cable"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "从高处斜向下拉到对侧髋外，手臂基本伸直",
+     "肩与骨盆一起转，后脚跟随转动"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰"
+   ],
+   "contraindications": [],
+   "alternative": "obliques-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:obliques:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "obliques",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/obliques-C.js",
+     "sha256": "738934860c4afae6cbdcb8ee1641d7c928eb6d972f376d54015c14ca311a0d17",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "161330e63909dadad26fd8772363443ae863a73a258c90021bc84b291c155945"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/obliques-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "9f422c2268cd060fc180d60ce6a5bd1c8e47c20efdf539e386fe062ad5fa9764",
+       "bytes": 218121
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "quadriceps-A",
+   "name": {
+    "zh": "跪姿反向北欧",
+    "en": "Reverse Nordic"
+   },
+   "purpose": "跪姿反向北欧，练股四头肌离心",
+   "category": "strength",
+   "muscles": [
+    "股四头肌"
+   ],
+   "muscleGroups": [
+    "quadriceps"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "kneeling",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     4,
+     8
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "跪立，膝到肩一条直线，夹紧臀部",
+     "向后倾到可控范围再回正，不在髋处折叠"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝"
+   ],
+   "contraindications": [],
+   "alternative": "w-wall-sit",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:quadriceps:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "quadriceps",
+    "tier": "A",
+    "prescription": "3 组 × 6 次（小幅度起）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/quadriceps-A.js",
+     "sha256": "d292acbb310fc9f8d57eedd4461b9231c87a8c764ba9b932306ddc766cce6d6d",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "c55a2d3be5260d5d113573cc307627c3db67a0f2d54132a0828dc4ff0e7f74cd"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "e08f4d92e92051753b606cbd02717507563468260faff7ff778487ebc905de8f",
+       "bytes": 269507
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "quadriceps-B",
+   "name": {
+    "zh": "弹力带终末伸膝",
+    "en": "Banded Terminal Knee Extension"
+   },
+   "purpose": "弹力带终末伸膝，练膝关节锁直",
+   "category": "strength",
+   "muscles": [
+    "股四头肌"
+   ],
+   "muscleGroups": [
+    "quadriceps"
+   ],
+   "equipment": [
+    "band"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 15,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     12,
+     20
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "弹力带套在膝后，微屈膝开始",
+     "用力把膝锁直，大腿前侧绷紧"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝"
+   ],
+   "contraindications": [],
+   "alternative": "w-wall-sit",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:quadriceps:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "quadriceps",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 15 次（锁直停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/quadriceps-B.js",
+     "sha256": "8f3617576d279098d9624fd27a81bc9504484dff8b4db273f91b21f33ea9e95b",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "d4565d0993856fc4fd3aa76ab1c3c9083a759491a8adba6de71531b685d987d6"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "35d529d449ec51c8f5c08587928a96ef293d42fc9b1329bfadbae30f637ca458",
+       "bytes": 176062
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "quadriceps-C",
+   "name": {
+    "zh": "器械腿屈伸（顶端锁直）",
+    "en": "Leg Extension with Lockout Hold"
+   },
+   "purpose": "器械腿屈伸，练股四头肌",
+   "category": "strength",
+   "muscles": [
+    "股四头肌"
+   ],
+   "muscleGroups": [
+    "quadriceps"
+   ],
+   "equipment": [
+    "leg-extension-machine"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     15
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "膝关节对齐器械转轴",
+     "踢到完全伸直、脚尖回勾，停 2 秒慢放"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝"
+   ],
+   "contraindications": [],
+   "alternative": "quadriceps-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:quadriceps:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "quadriceps",
+    "tier": "C",
+    "prescription": "3 组 × 10–12 次（顶端停 2 秒）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/quadriceps-C.js",
+     "sha256": "1767ac1c2855bbe38893ead6bd10487a9a8e54100b14c45d4e75b043954c29ee",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "dfe0b4fd8ab134934502d52159f46bc3f33cefee4a59a97e179cece4ff6efaa0"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/quadriceps-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 10.0,
+       "sha256": "35116b4674e9820e2f2fc4aec62a082f362c1ce63da079b5356bb4109abd6d36",
+       "bytes": 202110
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "rotator-cuff-A",
+   "name": {
+    "zh": "俯撑交替触肩",
+    "en": "Plank Shoulder Taps"
+   },
+   "purpose": "高平板交替触肩，练单手支撑时的肩稳定",
+   "category": "strength",
+   "muscles": [
+    "肩袖肌群",
+    "腹直肌（含深层腹横肌）"
+   ],
+   "muscleGroups": [
+    "rotator-cuff",
+    "abs"
+   ],
+   "equipment": [],
+   "position": "prone",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双脚略分开，触肩时骨盆不左右晃",
+     "承重手推地、肘锁直，肩不往下塌"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-forearm-plank",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:rotator-cuff:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "rotator-cuff",
+    "tier": "A",
+    "prescription": "3 组 × 每侧 8–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/rotator-cuff-A.js",
+     "sha256": "495eb70bdd29f8dc9f65c90fe85718d50d24b11f4bd77b6a01647632fb2a1b70",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "4f977cec9e4b8322477a87d0c74ea3af410d124d01ff1538ada0a884d765ea6b"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "492f866c1cf3f74d732a88b103c73fd8aba415e70f63749a2c74246689c38e81",
+       "bytes": 869505
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "rotator-cuff-B",
+   "name": {
+    "zh": "弹力带肘贴体侧外旋",
+    "en": "Band External Rotation"
+   },
+   "purpose": "肘贴体侧弹力带外旋，护住肩袖",
+   "category": "strength",
+   "muscles": [
+    "肩袖肌群"
+   ],
+   "muscleGroups": [
+    "rotator-cuff"
+   ],
+   "equipment": [
+    "band"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 12,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "肘贴住身体、弯 90°，只让前臂向外打开",
+     "慢放 3 秒，肩不耸起"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-side-er",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:rotator-cuff:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "rotator-cuff",
+    "tier": "B",
+    "prescription": "3 组 × 每侧 12–15 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/rotator-cuff-B.js",
+     "sha256": "d2465af07409b73045253102f0ff5fabfab0c8e5d9fd03a8647e76872d62504b",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "13773bc9b1db38609e05f2a05f05529006f32223eb5e07c1c9f04b17270568d9"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "3fe5e58cf30b04183fd9b76988299ec5114b32aa149a1dfc8182c5ada9a3461c",
+       "bytes": 104021
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "rotator-cuff-C",
+   "name": {
+    "zh": "绳索 90/90 外旋",
+    "en": "Cable 90/90 External Rotation"
+   },
+   "purpose": "90/90 位绳索外旋，强化肩袖",
+   "category": "strength",
+   "muscles": [
+    "肩袖肌群"
+   ],
+   "muscleGroups": [
+    "rotator-cuff"
+   ],
+   "equipment": [
+    "cable"
+   ],
+   "position": "standing",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "上臂与肩同高、肘成 90°，前臂由前向上转到竖直",
+     "肩胛下沉后收，躯干不动"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "rotator-cuff-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:rotator-cuff:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "rotator-cuff",
+    "tier": "C",
+    "prescription": "3 组 × 每侧 10–12 次（轻重量）"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/rotator-cuff-C.js",
+     "sha256": "858895b5e6f49bed3e4e094c735a6251e7fcb8b93f6207571dc104fdea13b6ab",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "b175fa4f386f00d25dfa9b3319a9e19640434875e719065d916d27644e761b4d"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/rotator-cuff-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "f345ac3b37ce3f4998c391ab2ae81726d7d171c48b95c90659ce31a686212dc9",
+       "bytes": 157541
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "scapular-A",
+   "name": {
+    "zh": "俯卧 Y-T-W 举",
+    "en": "Prone Y-T-W Raise"
+   },
+   "purpose": "俯卧 Y-T-W 举，练中下斜方肌与菱形肌",
+   "category": "strength",
+   "muscles": [
+    "斜方肌中下部 · 菱形肌"
+   ],
+   "muscleGroups": [
+    "scapular"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "额头轻贴地，先把肩胛下沉后收再抬手",
+     "拇指朝上，顶端停 2 秒"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "w-prone-swimmer",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:scapular:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "scapular",
+    "tier": "A",
+    "prescription": "2 组 × 每个字母 8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/scapular-A.js",
+     "sha256": "864dd6689cccf13dfa4fae3073884083b13bbb32b4b0fa6bd83f6371e863babe",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "5e618b051edcd17ec9d25fcb50eaed87be4e081e11ed88bee8af3029e33ae419"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 12.0,
+       "sha256": "ecfbd59b5d0fe0f8b1c34b3919a237373e4ebac85236a358a5959f193dfa8817",
+       "bytes": 258574
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "doubt",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标",
+     "处方『2 组 × 每个字母 8 次』，暂记为 2 组 × 8 次（Y/T/W 各 8 次算一组）。"
+    ]
+   }
+  },
+  {
+   "id": "scapular-B",
+   "name": {
+    "zh": "单杠肩胛引体",
+    "en": "Scapular Pull-Up"
+   },
+   "purpose": "单杠悬垂下沉肩胛，练肩胛控制",
+   "category": "strength",
+   "muscles": [
+    "斜方肌中下部 · 菱形肌",
+    "背阔肌"
+   ],
+   "muscleGroups": [
+    "scapular",
+    "lats"
+   ],
+   "equipment": [
+    "pullup-bar"
+   ],
+   "position": "hanging",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂始终伸直，只靠肩胛下沉把身体抬起几厘米",
+     "顶端停 1 秒，再慢慢回到悬垂"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "lats-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:scapular:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "scapular",
+    "tier": "B",
+    "prescription": "3 组 × 8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/scapular-B.js",
+     "sha256": "09c0d9659a0ac794f16e04643040444bdfe8c5717bbfe0d155ac4f41e4939151",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "64d754e43d2752812678244513cf080beda8c24fd66af7384e390f937a6436ed"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "8f8f8d8feda211be8333145317f871a2689cb286647555848d04e7161a349cc5",
+       "bytes": 141099
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "scapular-C",
+   "name": {
+    "zh": "吊环直臂支撑",
+    "en": "Ring Support Hold"
+   },
+   "purpose": "吊环直臂支撑，练不稳定支撑下的肩胛稳定",
+   "category": "strength",
+   "muscles": [
+    "斜方肌中下部 · 菱形肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "scapular",
+    "triceps"
+   ],
+   "equipment": [
+    "rings"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 4,
+    "seconds": 15,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     5
+    ],
+    "seconds": [
+     10,
+     20
+    ],
+    "restSeconds": [
+     0,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直，环贴身体两侧，掌心微微外旋",
+     "肩胛下压，身体保持中空、不晃"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩",
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "triceps-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:scapular:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "scapular",
+    "tier": "C",
+    "prescription": "4 组 × 10–20 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/scapular-C.js",
+     "sha256": "647a87591ea5ed8f2b1141537892e81ae20837ea7ee82510587e4bca2bbc0d60",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "f696a27b4716fc8ef4b8e526732d57e0c10960b67430f59afb631b7252b34f7e"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/scapular-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "60973e752ee5a8eae9298ee778c6453ea1794721cd3556554d4734909ad57d32",
+       "bytes": 211412
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "serratus-A",
+   "name": {
+    "zh": "俯撑肩胛前伸",
+    "en": "Push-Up Plus"
+   },
+   "purpose": "俯撑把地面推远，激活前锯肌",
+   "category": "strength",
+   "muscles": [
+    "前锯肌"
+   ],
+   "muscleGroups": [
+    "serratus"
+   ],
+   "equipment": [],
+   "position": "prone",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂始终伸直，只让胸口下沉再推高",
+     "顶端把背部推圆，肩胛向前包住胸廓"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "serratus-B",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:serratus:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "serratus",
+    "tier": "A",
+    "prescription": "3 组 × 10–12 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/serratus-A.js",
+     "sha256": "a93947ece5a625b4ec0c1ed8fce1eb9cab827ccbb546c616a71466cb9771e3b5",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "e875d583b46ffbdd2088aeb98d5038916c0a23c1da0ff9600a03066d25fb989d"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 6.0,
+       "sha256": "dfcd46afccc5d28d42d87c6495df556fa7d2546aeb3fde1a89bec124775dcea6",
+       "bytes": 184584
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "serratus-B",
+   "name": {
+    "zh": "泡沫轴墙面上滑",
+    "en": "Foam Roller Wall Slide"
+   },
+   "purpose": "泡沫轴贴墙上滑，练肩胛上回旋",
+   "category": "strength",
+   "muscles": [
+    "前锯肌"
+   ],
+   "muscleGroups": [
+    "serratus"
+   ],
+   "equipment": [
+    "foam-roller",
+    "wall"
+   ],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂贴住泡沫轴，往前推墙并向上滚",
+     "最高处手臂略离开泡沫轴，停 2 秒"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-wall-angel",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:serratus:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "serratus",
+    "tier": "B",
+    "prescription": "3 组 × 10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/serratus-B.js",
+     "sha256": "73b017dc0a64c148e231afa47424371a2a2f4c962f0aae6bac81fed02f7a6a9c",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "a53437a64cb72430b8b4ae7f8b38249791b931bb45014d03bd6d603df09a05ff"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "d5aaaa326641b1f7188798383e89804ce167b04b832c5cda5e23803b56e2d274",
+       "bytes": 182766
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "serratus-C",
+   "name": {
+    "zh": "吊环俯卧撑加前伸",
+    "en": "Ring Push-Up Plus"
+   },
+   "purpose": "吊环俯卧撑加前伸，练不稳定支撑",
+   "category": "strength",
+   "muscles": [
+    "前锯肌",
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "serratus",
+    "chest"
+   ],
+   "equipment": [
+    "rings"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     5,
+     8
+    ],
+    "restSeconds": [
+     0,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "吊环离地 10–20 厘米，环贴身体两侧",
+     "推起后再把背推圆一点，稳住环不外散"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩",
+    "手腕"
+   ],
+   "contraindications": [],
+   "alternative": "serratus-A",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:serratus:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "serratus",
+    "tier": "C",
+    "prescription": "3 组 × 6–8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/serratus-C.js",
+     "sha256": "28cad511441e9bdba7edbbcd032e63c022dcd0d6cb49bce0862f001983cb42df",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "3d670600b1f634fe428005b6848d8eb9ae58be3c42a740366b71ee0239e6af33"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/serratus-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "3f46e2cd7c2cddcb0e9329cd46d05c73ce723d67ee27dc4ade39627d90f2b6e8",
+       "bytes": 438008
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "triceps-A",
+   "name": {
+    "zh": "窄距俯卧撑（锁肘停顿）",
+    "en": "Close-Grip Push-Up with Lockout"
+   },
+   "purpose": "窄距俯卧撑锁肘停顿，练支撑臂伸直力",
+   "category": "strength",
+   "muscles": [
+    "肱三头肌",
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "triceps",
+    "chest"
+   ],
+   "equipment": [],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双手与肩同宽或略窄，肘贴身体向后弯",
+     "顶端肘完全伸直并停 1 秒，再把地面推远"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-incline-pushup",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:triceps:A",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "triceps",
+    "tier": "A",
+    "prescription": "3 组 × 6–10 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/triceps-A.js",
+     "sha256": "f19ae8dac8cc22d7bd0e72c48f6a0d18cdf97180ac47da10b9004dba0e4f0d73",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-A.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "baf83dadb752865cd785146a97c3dffc397cba2a0e6d0d0fc808bbc2e607ac85"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-A.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 7.2,
+       "sha256": "815d55ef51295b1545fb8176a7f171fa8cdf45d934354d26d3201d345f33f5b7",
+       "bytes": 339652
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "triceps-B",
+   "name": {
+    "zh": "平行杆直臂支撑",
+    "en": "Parallette Support Hold"
+   },
+   "purpose": "平行杆直臂撑起，练锁肘承重",
+   "category": "strength",
+   "muscles": [
+    "肱三头肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "triceps",
+    "deltoids"
+   ],
+   "equipment": [
+    "parallettes"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 4,
+    "seconds": 15,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     5
+    ],
+    "seconds": [
+     10,
+     20
+    ],
+    "restSeconds": [
+     0,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直锁肘，肩往下压、远离耳朵",
+     "屈膝收腿把身体撑离地面，可脚尖轻点地辅助"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕",
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-chair-dip",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:triceps:B",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "triceps",
+    "tier": "B",
+    "prescription": "4 组 × 15–20 秒"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/triceps-B.js",
+     "sha256": "38d79b409d0c9a976c0e8b23d063f4ff07b9c3ae654d43b9dd7fa32cbafec7df",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-B.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "81fe89081704e80639ae3440587ecd074e47d671c1ce9fe941d3b10f0fdc3860"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-B.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 7.0,
+       "sha256": "308f0d847a599aa92517abe1cb2b34d366b45084d9ae475a3411e68e38cfb737",
+       "bytes": 344261
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  },
+  {
+   "id": "triceps-C",
+   "name": {
+    "zh": "双杠臂屈伸",
+    "en": "Parallel Bar Dips"
+   },
+   "purpose": "双杠臂屈伸，练推撑力量",
+   "category": "strength",
+   "muscles": [
+    "肱三头肌",
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "triceps",
+    "chest"
+   ],
+   "equipment": [
+    "dip-bars"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     4
+    ],
+    "reps": [
+     5,
+     8
+    ],
+    "restSeconds": [
+     0,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "下放到上臂约与地面平行即可，不要过深",
+     "顶端肘锁直、肩下压，停 1 秒"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩"
+   ],
+   "contraindications": [],
+   "alternative": "h-chair-dip",
+   "apps": [
+    "flarelab"
+   ],
+   "tags": [
+    "flarelab:triceps:C",
+    "thomas"
+   ],
+   "flarelab": {
+    "group": "triceps",
+    "tier": "C",
+    "prescription": "3 组 × 5–8 次"
+   },
+   "assets": {
+    "spec": {
+     "status": "ok",
+     "path": "drill-anim/specs/triceps-C.js",
+     "sha256": "044f0caab99294418458b3e63048cd9061ed1f46e67863f4573c11c98bb3bcfb",
+     "revisionOf": null,
+     "modelProfile": null
+    },
+    "releases": [],
+    "cover": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-C.jpg",
+       "width": 540,
+       "height": 540,
+       "sha256": "904b6d497a31fe0055bf903a2b6ff2ff6d4f3acfadfab0b6e4249cd6b4e2c2ac"
+      }
+     ]
+    },
+    "video": {
+     "status": "ok",
+     "sources": [
+      {
+       "app": "flarelab",
+       "path": "assets/drill_media/triceps-C.mp4",
+       "width": 720,
+       "height": 720,
+       "loopSeconds": 8.0,
+       "sha256": "a1f5347af2c1e0e68d0ce8d11602c70110ac01e65963ce90d1a8415c51f2a339",
+       "bytes": 325201
+      }
+     ]
+    },
+    "voice": {
+     "status": "missing",
+     "languages": []
+    },
+    "drillPack": null
+   },
+   "completeness": {
+    "complete": false,
+    "missing": [
+     "voice.zh",
+     "voice.en",
+     "release"
+    ]
+   },
+   "review": {
+    "status": "reviewed",
+    "notes": [
+     "FlareLab 动作：标签由人工按 drills.json 文案与成片手标"
+    ]
+   }
+  }
+ ]
+}
