@@ -5,11 +5,15 @@ import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/ugk_trainer.dart' show SessionResult;
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
+import '../platform/drill_media/media_controller.dart';
+import '../trainer/training_plan_adapter.dart';
 import 'components.dart';
 import 'actor_body_selector.dart';
 import 'content_pages.dart';
@@ -17,7 +21,8 @@ import 'flare_silhouette.dart';
 import 'motion_controls.dart';
 import 'muscle_widgets.dart';
 import 'motion.dart';
-import 'timer_page.dart';
+import 'trainer_page.dart';
+import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
 import 'ai_coach_page.dart';
 import '../coach/coach_service.dart';
@@ -35,11 +40,13 @@ class FlareShell extends StatefulWidget {
     this.sceneRevision = 0,
     this.startupCovered = false,
     this.coach,
+    this.trainingPageBuilder,
   });
   final Catalog catalog;
 
   /// AI 定制服务；null 时按 `--dart-define` 配置创建（未配置 key 走预设方案）。
   final CoachService? coach;
+  final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
   final LearningStore store;
   final SceneController? sceneController;
   final bool enableScene;
@@ -63,12 +70,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double? _recoveryTime;
   late String _actorBody;
   bool _settings = false;
-  bool _timing = false;
+  bool _trainingOpen = false;
   Drill? _drill;
   PresetPlan? _preset;
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
-  _PlanRun? _run;
   bool _coachOpen = false;
   AiCoachSession? _coachSession;
   CoachService? _coachService;
@@ -247,20 +253,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _drill == null &&
       !_inPlan &&
       !_settings &&
-      !_timing;
+      !_trainingOpen;
 
   bool get _inPlan =>
-      _preset != null ||
-      _routine != null ||
-      _editing != null ||
-      _run != null ||
-      _coachOpen;
+      _preset != null || _routine != null || _editing != null || _coachOpen;
 
   void _clearPlan() {
     _preset = null;
     _routine = null;
     _editing = null;
-    _run = null;
     _coachOpen = false;
   }
 
@@ -340,28 +341,32 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
-  void _startRun(String title, List<Drill> drills) {
-    if (drills.isEmpty) return;
+  Future<void> _startPlan(uc.TrainingPlan plan) async {
+    if (_trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
-    setState(() => _run = _PlanRun(title: title, drills: drills));
+    DrillPlaybackCoordinator.shared.pauseAll();
+    setState(() => _trainingOpen = true);
+    _syncSceneVisibility();
+    try {
+      await Navigator.of(context).push<SessionResult>(
+        MaterialPageRoute(
+          settings: const RouteSettings(name: '/training'),
+          builder: (_) =>
+              widget.trainingPageBuilder?.call(plan) ??
+              FlareTrainingPage(plan: plan, catalog: catalog, store: store),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _trainingOpen = false);
+        _syncSceneVisibility();
+      }
+    }
   }
 
-  /// Closing the timer inside a set returns to the run hub. A drill counts as
-  /// done only when its timer finished and saved a completed session.
-  void _timerClosed() {
-    final run = _run;
-    final drill = _drill;
-    setState(() {
-      _timing = false;
-      if (run != null) {
-        final last = store.sessions.lastOrNull;
-        if (drill != null && last?.drillId == drill.id && last!.completed) {
-          _run = run.complete();
-        }
-        _drill = null;
-      }
-    });
-    _syncSceneVisibility();
+  void _startDrills(String title, List<Drill> drills) {
+    if (drills.isEmpty) return;
+    unawaited(_startPlan(trainingPlanFromDrills(title: title, drills: drills)));
   }
 
   Future<void> _addToPlan(Drill drill) async {
@@ -437,7 +442,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _back() {
-    if (_timing) return;
+    if (_trainingOpen) return;
     if (_tab == 0 &&
         _drill == null &&
         !_inPlan &&
@@ -451,8 +456,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _editing = null;
       } else if (_drill != null) {
         _drill = null;
-      } else if (_run != null) {
-        _run = null;
       } else if (_coachOpen) {
         _coachOpen = false;
       } else if (_routine != null) {
@@ -553,9 +556,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _stageKey = route.$1;
     }
     final shell = PopScope(
-      canPop: !canBack && !_timing,
+      canPop: !canBack && !_trainingOpen,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && !_timing) _back();
+        if (!didPop && !_trainingOpen) _back();
       },
       child: DecoratedBox(
         key: _stageBackdropKey,
@@ -612,7 +615,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               setState(() => _holdWatch = false);
                             }
                           },
-                          onSwipeBack: canBack && !_timing && route.$4 != null
+                          onSwipeBack:
+                              canBack && !_trainingOpen && route.$4 != null
                               ? _back
                               : null,
                           child: route.$4 == null
@@ -656,29 +660,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   (String, int, bool, Widget?) _route(BuildContext context) {
     final s = context.strings;
     final drill = _drill;
-    if (_timing && drill != null) {
-      return (
-        'timer:${drill.id}',
-        9,
-        true,
-        TrainingTimerPage(
-          drill: drill,
-          store: store,
-          onClose: _timerClosed,
-          planLabel: switch (_run) {
-            final run? when run.index < run.drills.length => s.planOf(
-              run.index + 1,
-              run.drills.length,
-            ),
-            _ => null,
-          },
-        ),
-      );
-    }
     if (_editing case final edit?) {
       final routine = edit.routineId == null
           ? null
           : store.routineById(edit.routineId!);
+      if (routine?.sdkPlan case final plan?) {
+        return (
+          'edit:${routine!.id}',
+          3,
+          false,
+          SdkPlanEditorPage(
+            plan: plan,
+            catalog: catalog,
+            initialTier: store.settings.tier,
+            onBack: _back,
+            onSaved: (updated) async {
+              final saved = await store.updateRoutine(
+                routine.id,
+                name: TrainingRoutine.truncateName(updated.title),
+                sdkPlan: updated,
+              );
+              if (!mounted) return false;
+              if (saved) {
+                setState(() {
+                  _editing = null;
+                  _routine = store.routineById(routine.id);
+                });
+              }
+              return saved;
+            },
+          ),
+        );
+      }
       return (
         'edit:${edit.routineId ?? 'new'}',
         drill != null ? 5 : 3,
@@ -721,34 +734,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           group: catalog.groupById(drill.groupId),
           onBack: _back,
           onAddToPlan: () => _addToPlan(drill),
-          onStart: () {
-            setState(() => _timing = true);
-            _syncSceneVisibility();
-          },
-        ),
-      );
-    }
-    if (_run case final run?) {
-      return (
-        'run',
-        3,
-        false,
-        PlanRunPage(
-          title: run.title,
-          drills: run.drills,
-          done: run.done,
-          skipped: run.skipped,
-          index: run.index,
-          onStart: () {
-            setState(() {
-              _drill = run.drills[run.index];
-              _timing = true;
-            });
-            _syncSceneVisibility();
-          },
-          onSelect: (index) => setState(() => _run = run.at(index)),
-          onSkip: () => setState(() => _run = run.skip()),
-          onFinish: () => setState(() => _run = null),
+          onStart: () => _startDrills(drill.name, [drill]),
         ),
       );
     }
@@ -764,7 +750,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           store: store,
           onBack: _back,
           onDrill: _openDrill,
-          onStart: _startRun,
+          onStart: _startPlan,
         ),
       );
     }
@@ -780,7 +766,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           drills: drills,
           onBack: _back,
           onDrill: _openDrill,
-          onStart: () => _startRun(routine.name, drills),
+          sdkPlan: routine.sdkPlan,
+          catalog: catalog,
+          onStart: () => routine.sdkPlan != null
+              ? _startPlan(routine.sdkPlan!)
+              : _startDrills(routine.name, drills),
           onEdit: () =>
               setState(() => _editing = _RoutineEdit(routineId: routine.id)),
         ),
@@ -800,7 +790,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           store: store,
           onBack: _back,
           onDrill: _openDrill,
-          onStart: () => _startRun(title, drills),
+          onStart: () => _startDrills(title, drills),
           onSaveAsMine: () => setState(
             () => _editing = _RoutineEdit(
               seedName: title,
@@ -2022,6 +2012,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     'todayIds': store.todayIds,
     'routines': store.routines.map((routine) => routine.toJson()).toList(),
     'sessions': store.sessions.map((session) => session.toJson()).toList(),
+    'trainerSessions': store.trainerSessionJson,
     'completedLessonIds': store.completedLessonIds.toList(),
     'gateReports': store.gateReports,
     'assessmentGrades': store.assessmentGrades,
@@ -2629,53 +2620,4 @@ class _RoutineEdit {
 
   /// Started from a drill page: saving returns there instead of the set.
   final bool fromDrill;
-}
-
-/// A set in progress. Immutable; each step returns the next state.
-class _PlanRun {
-  _PlanRun({
-    required this.title,
-    required this.drills,
-    this.index = 0,
-    Set<int> done = const {},
-    Set<int> skipped = const {},
-  }) : done = Set.unmodifiable(done),
-       skipped = Set.unmodifiable(skipped);
-  final String title;
-  final List<Drill> drills;
-  final int index;
-  final Set<int> done;
-  final Set<int> skipped;
-
-  _PlanRun _with({int? index, Set<int>? done, Set<int>? skipped}) => _PlanRun(
-    title: title,
-    drills: drills,
-    index: index ?? this.index,
-    done: done ?? this.done,
-    skipped: skipped ?? this.skipped,
-  );
-
-  /// Advance through this pass only. Earlier drills can be selected manually.
-  int _nextOpen(int from, Set<int> done, Set<int> skipped) {
-    for (var i = from + 1; i < drills.length; i++) {
-      if (!done.contains(i) && !skipped.contains(i)) return i;
-    }
-    return drills.length;
-  }
-
-  _PlanRun at(int i) => _with(index: i);
-  _PlanRun skip() {
-    final next = done.contains(index) ? skipped : {...skipped, index};
-    return _with(index: _nextOpen(index, done, next), skipped: next);
-  }
-
-  _PlanRun complete() {
-    final next = {...done, index};
-    final remainingSkipped = {...skipped}..remove(index);
-    return _with(
-      index: _nextOpen(index, next, remainingSkipped),
-      done: next,
-      skipped: remainingSkipped,
-    );
-  }
 }

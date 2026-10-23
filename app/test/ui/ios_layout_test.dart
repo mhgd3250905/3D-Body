@@ -5,11 +5,11 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/theme.dart';
-import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../domain/fixtures.dart';
+import 'flow_regressions_test.dart' show TrainingRouteProbe;
 
 class _MemoryStorage implements LocalStateStorage {
   String? value;
@@ -82,6 +82,7 @@ void main() {
                   store: store,
                   sceneController: scene,
                   enableScene: false,
+                  trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
                 ),
               ),
             );
@@ -131,8 +132,24 @@ void main() {
             await tester.ensureVisible(start);
             await tester.tap(start);
             await tester.pumpAndSettle();
-            expect(find.byType(TrainingTimerPage), findsOneWidget);
-            expect(tester.takeException(), isNull, reason: 'timer ready');
+            expect(find.byType(TrainingRouteProbe), findsOneWidget);
+            expect(
+              tester
+                  .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
+                  .plan
+                  .exerciseIds,
+              {drill.id},
+            );
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: 'SDK route handoff (player layout covered separately)',
+            );
+            await tester.tap(
+              find.byKey(const ValueKey('training-probe-close')),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(DrillDetailPage), findsOneWidget);
             await tester.pumpWidget(const SizedBox());
           },
           tags: name.contains('landscape') ? ['landscape'] : ['portrait'],

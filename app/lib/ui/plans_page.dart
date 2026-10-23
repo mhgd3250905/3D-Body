@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/engine.dart' as ut;
+import '../coach/plan_mapping.dart';
+import '../trainer/trainer_strings.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
@@ -653,6 +657,8 @@ class PlanDetailPage extends StatelessWidget {
     this.store,
     this.onSaveAsMine,
     this.onEdit,
+    this.sdkPlan,
+    this.catalog,
   });
   final String title;
   final String? line;
@@ -660,6 +666,8 @@ class PlanDetailPage extends StatelessWidget {
   final VoidCallback onBack;
   final VoidCallback onStart;
   final ValueChanged<Drill> onDrill;
+  final uc.TrainingPlan? sdkPlan;
+  final Catalog? catalog;
 
   /// Given for presets: shows the scene switch.
   final LearningStore? store;
@@ -669,7 +677,15 @@ class PlanDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    final minutes = estimateMinutes(drills);
+    final plan = sdkPlan;
+    final mapper = catalog == null ? null : CoachPlanMapper(catalog!);
+    final available =
+        plan == null || (mapper != null && mapper.missingIds(plan).isEmpty);
+    final entries = plan != null && available ? mapper!.entries(plan) : null;
+    final minutes = plan == null
+        ? estimateMinutes(drills)
+        : (ut.SessionBuilder().planSeconds(plan) / 60).ceil().clamp(1, 999);
+    final ts = trainerStrings(s);
     return ColoredBox(
       color: FlareColors.background,
       child: Column(
@@ -706,7 +722,7 @@ class PlanDetailPage extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    s.planMeta(drills.length, minutes),
+                    s.planMeta(entries?.length ?? drills.length, minutes),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: FlareColors.dim),
                   ),
@@ -715,16 +731,45 @@ class PlanDetailPage extends StatelessWidget {
                     _SceneSwitch(store: store),
                     const SizedBox(height: 16),
                   ],
-                  for (final (index, drill) in drills.indexed)
-                    FadeSlideIn(
-                      key: ValueKey('plan-row-${drill.id}'),
-                      delay: FadeSlideIn.stagger(index),
-                      child: _NumberedDrill(
-                        index: index,
-                        drill: drill,
-                        onTap: () => onDrill(drill),
-                      ),
+                  if (!available)
+                    Text(
+                      ts.mediaUnavailable,
+                      style: TextStyle(color: FlareColors.warning),
                     ),
+                  if (entries != null)
+                    for (final (index, entry) in entries.indexed) ...[
+                      if (index == 0 ||
+                          entries[index - 1].blockIndex != entry.blockIndex)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            [
+                              entry.block.name,
+                              if (entry.block.type == uc.BlockType.circuit)
+                                ts.roundOf(1, entry.block.rounds),
+                              if (entry.block.type == uc.BlockType.circuit)
+                                '${s.rest} · ${s.secondsLabel(entry.block.restBetweenRoundsSeconds)}',
+                            ].where((part) => part.isNotEmpty).join(' · '),
+                          ),
+                        ),
+                      _NumberedDrill(
+                        key: ValueKey('sdk-plan-row-$index'),
+                        index: index,
+                        drill: entry.drill,
+                        onTap: () => onDrill(entry.drill),
+                      ),
+                    ],
+                  if (entries == null)
+                    for (final (index, drill) in drills.indexed)
+                      FadeSlideIn(
+                        key: ValueKey('plan-row-${drill.id}'),
+                        delay: FadeSlideIn.stagger(index),
+                        child: _NumberedDrill(
+                          index: index,
+                          drill: drill,
+                          onTap: () => onDrill(drill),
+                        ),
+                      ),
                   if (onSaveAsMine != null)
                     Center(
                       child: TextButton.icon(
@@ -744,7 +789,7 @@ class PlanDetailPage extends StatelessWidget {
               key: const ValueKey('plan-start'),
               icon: Icons.play_arrow_rounded,
               label: s.planStart,
-              onPressed: drills.isEmpty ? null : onStart,
+              onPressed: drills.isEmpty || !available ? null : onStart,
             ),
           ),
         ],
@@ -1501,6 +1546,8 @@ Future<String?> showAddToPlanSheet(
 );
 
 /// The run hub between drills: what is next, what is done, and one button.
+/// Historical run-hub fixture. Production entry points now push the complete
+/// plan directly into FlareTrainingPage / TrainerPlayer.
 class PlanRunPage extends StatelessWidget {
   const PlanRunPage({
     super.key,

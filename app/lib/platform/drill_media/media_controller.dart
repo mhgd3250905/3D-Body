@@ -78,6 +78,15 @@ class DrillPlaybackCoordinator {
   static final shared = DrillPlaybackCoordinator();
   Object? _owner;
   VoidCallback? _release;
+
+  /// Release a demonstration before another full-screen route covers it.
+  void pauseAll() {
+    final previous = _release;
+    _owner = null;
+    _release = null;
+    previous?.call();
+  }
+
   void claim(Object owner, VoidCallback release) {
     if (_owner == owner) return;
     final previous = _release;

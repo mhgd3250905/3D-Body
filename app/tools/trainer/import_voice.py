@@ -64,22 +64,48 @@ def verify():
         if len(data) != entry["bytes"]:
             raise ValueError(f"Size mismatch: {entry['asset']}")
     pack = json.loads((DEST / "_common/pack.json").read_text("utf-8"))
-    speech = {entry["line"]: entry for entry in manifest["files"] if "line" in entry}
-    if len(speech) != 85 or pack["voice"]["languages"] != ["zh"]:
+    speech = {(entry["lang"], entry["line"]): entry
+              for entry in manifest["files"] if "line" in entry}
+    zh = {key: entry for (lang, key), entry in speech.items() if lang == "zh"}
+    en = {key: entry for (lang, key), entry in speech.items() if lang == "en"}
+    languages = ["zh", "en"] if en else ["zh"]
+    if len(zh) != 85 or pack["voice"]["languages"] != languages:
         raise ValueError("Unexpected speech inventory")
-    right = speech["p.switch_right"]
+    right = zh["p.switch_right"]
     if (right["sha256"] != RIGHT_SHA or right["bytes"] != 7618
             or right["decodedMs"] != 789 or right["sourceCommit"] != HIPLAB_COMMIT):
         raise ValueError("Unexpected HipLab right-side recording")
     for line in pack["voice"]["lines"]:
-        if line["ms"] != {"zh": speech[line["id"]]["decodedMs"]}:
+        expected = {lang: speech[(lang, line["id"])]["decodedMs"]
+                    for lang in languages if (lang, line["id"]) in speech}
+        if line["ms"] != expected:
             raise ValueError(f"Incorrect decoded duration: {line['id']}")
+    if en:
+        generated = manifest["englishSource"]
+        spec = json.loads((APP / generated["textSpec"]).read_text("utf-8"))
+        if set(en) != set(spec["phrases"]) or generated["offline"] is not True:
+            raise ValueError("Unexpected offline English vocabulary")
+        for field in ["generator", "textSpec"]:
+            path = (APP / generated[field]).resolve()
+            if not path.is_relative_to((APP / "tools/trainer_voice").resolve()):
+                raise ValueError("English provenance escapes tool directory")
+            checked(path.read_bytes(), generated[field + "Sha256"], field)
+        for key, entry in en.items():
+            if entry["text"] != spec["phrases"][key]:
+                raise ValueError(f"English source text mismatch: {key}")
     print(json.dumps({"verifiedFiles": len(manifest["files"]),
-                      "speech": len(speech), "chimes": len(pack["chimes"]),
+                      "speech": {"zh": len(zh), "en": len(en)},
+                      "chimes": len(pack["chimes"]),
                       "sourceCommit": SOURCE_COMMIT}))
 
 
 def import_assets(source, hiplab, refresh_metadata=False):
+    existing_manifest = DEST / "source-manifest.json"
+    if existing_manifest.exists():
+        existing = json.loads(existing_manifest.read_text("utf-8"))
+        if "englishSource" in existing:
+            raise ValueError("Bilingual local package exists; use --check. "
+                             "The Chinese importer must not erase English provenance.")
     # Read immutable Git blobs; never rely on uncommitted source modifications.
     common_data = checked(git_blob(source, COMMON), COMMON_SHA, COMMON)
     bundle_data = checked(git_blob(source, BUNDLE), BUNDLE_SHA, BUNDLE)

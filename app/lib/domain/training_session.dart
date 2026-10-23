@@ -1,3 +1,5 @@
+import 'package:ugk_trainer/engine.dart' as trainer;
+
 import 'drill_timer.dart';
 
 /// A user-confirmed local log. It is never an automated skill or health score.
@@ -23,6 +25,38 @@ class TrainingSession {
   final int plannedSets;
   final bool pain;
   final bool completed;
+
+  /// Compatibility projection only. The SDK result remains the authority:
+  /// do not reconstruct sides/visits or repair its known completion counters.
+  /// Unreached or unrepresentable items stay in the full SDK archive only.
+  static TrainingSession? fromTrainerItem(
+    trainer.SessionResult result,
+    trainer.ItemResult item,
+  ) {
+    if (item.status == trainer.ItemStatus.notReached ||
+        !item.activeSeconds.isFinite ||
+        item.activeSeconds < 0) {
+      return null;
+    }
+    final row = TrainingSession(
+      id:
+          'sdk:${Uri.encodeComponent(result.sessionId)}:'
+          'b${item.blockIndex}:i${item.itemInBlock}',
+      drillId: item.exerciseId,
+      startedAt: result.startedAt,
+      endedAt: result.endedAt,
+      activeSeconds: item.activeSeconds.round(),
+      completedSets: item.completedSets,
+      plannedSets: item.plannedSets,
+      pain: result.discomfort.any(
+        (event) =>
+            event.blockIndex == item.blockIndex &&
+            event.itemInBlock == item.itemInBlock,
+      ),
+      completed: item.status == trainer.ItemStatus.completed,
+    );
+    return row.valid ? row : null;
+  }
 
   factory TrainingSession.fromTimer({
     required String id,

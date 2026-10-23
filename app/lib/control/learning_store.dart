@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/engine.dart' as trainer;
 
 import '../data/catalog.dart';
 import '../data/local_state_storage.dart';
@@ -43,6 +45,9 @@ class LearningStore extends ChangeNotifier {
   List<String> _todayIds = [];
   List<TrainingRoutine> _routines = [];
   List<TrainingSession> _sessions = [];
+  // Detached SDK JSON snapshots retain every public result field. Expose
+  // decoded copies so mutable SDK lists/maps cannot change stored history.
+  List<Map<String, dynamic>> _trainerSessions = [];
   Set<String> _completedLessonIds = {};
   Map<String, bool> _gateReports = {};
   Map<String, int> _assessmentGrades = {};
@@ -60,6 +65,14 @@ class LearningStore extends ChangeNotifier {
   List<String> get todayIds =>
       List.unmodifiable(_todayDate == _today ? _todayIds : <String>[]);
   List<TrainingSession> get sessions => List.unmodifiable(_sessions);
+  List<trainer.SessionResult> get trainerSessions => List.unmodifiable([
+    for (final json in _trainerSessions)
+      trainer.SessionResult.fromJson(_copyJson(json)),
+  ]);
+
+  /// Detached, lossless backup snapshots, including forward-compatible fields.
+  List<Map<String, dynamic>> get trainerSessionJson =>
+      List.unmodifiable([for (final json in _trainerSessions) _copyJson(json)]);
   List<TrainingRoutine> get routines => List.unmodifiable(_routines);
   TrainingRoutine? routineById(String id) =>
       _routines.where((routine) => routine.id == id).firstOrNull;
@@ -195,6 +208,14 @@ class LearningStore extends ChangeNotifier {
               TrainingSession.fromJson(Map<String, dynamic>.from(value as Map)),
         )
         .toList();
+    final trainerSessions = <Map<String, dynamic>>[
+      for (final value in (json['trainerSessions'] as List? ?? const []))
+        _trainerResultJson(Map<String, dynamic>.from(value as Map)),
+    ];
+    if (trainerSessions.map((row) => row['sessionId']).toSet().length !=
+        trainerSessions.length) {
+      throw const FormatException('Duplicate SDK session IDs');
+    }
     final lessons = (json['completedLessonIds'] as List).cast<String>().toSet();
     final gates = Map<String, bool>.from(json['gateReports'] as Map);
     final grades = Map<String, int>.from(json['assessmentGrades'] as Map);
@@ -207,12 +228,15 @@ class LearningStore extends ChangeNotifier {
     ];
     final keptRoutines = [
       for (final routine in routines)
-        routine.copyWith(
-          drillIds: [
-            for (final id in routine.drillIds)
-              if (catalog.drillById(id) != null) id,
-          ],
-        ),
+        if (routine.sdkPlan != null)
+          routine
+        else
+          routine.copyWith(
+            drillIds: [
+              for (final id in routine.drillIds)
+                if (catalog.drillById(id) != null) id,
+            ],
+          ),
     ].where((routine) => routine.valid).toList();
     final parsedDate = DateTime.tryParse('${todayDate}T12:00:00');
     if (!settings.valid ||
@@ -241,6 +265,7 @@ class LearningStore extends ChangeNotifier {
     _todayDate = todayDate;
     _todayIds = todayIds;
     _sessions = sessions;
+    _trainerSessions = trainerSessions;
     _completedLessonIds = lessons;
     _gateReports = gates;
     _assessmentGrades = grades;
@@ -260,6 +285,7 @@ class LearningStore extends ChangeNotifier {
     'lastTime': _lastTime,
     'today': {'date': _todayDate, 'ids': _todayIds},
     'sessions': _sessions.map((session) => session.toJson()).toList(),
+    'trainerSessions': _trainerSessions,
     'completedLessonIds': _completedLessonIds.toList()..sort(),
     'gateReports': _gateReports,
     'assessmentGrades': _assessmentGrades,
@@ -373,14 +399,18 @@ class LearningStore extends ChangeNotifier {
     List<String> drillIds, {
     Map<String, RoutineDose> doses = const {},
     String? source,
+    uc.TrainingPlan? sdkPlan,
   }) async {
     _ensureInitialized();
     final routine = TrainingRoutine(
       id: 'r${_now().microsecondsSinceEpoch}',
       name: name.trim(),
-      drillIds: drillIds.where((id) => catalog.drillById(id) != null).toList(),
+      drillIds: sdkPlan != null
+          ? sdkPlan.exerciseIds.toList()
+          : drillIds.where((id) => catalog.drillById(id) != null).toList(),
       doses: doses,
       source: source,
+      sdkPlan: sdkPlan,
     );
     if (!routine.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines, routine];
@@ -392,15 +422,26 @@ class LearningStore extends ChangeNotifier {
     String id, {
     String? name,
     List<String>? drillIds,
+    uc.TrainingPlan? sdkPlan,
   }) {
     _ensureInitialized();
     final index = _routines.indexWhere((routine) => routine.id == id);
     if (index < 0) throw ArgumentError.value(id, 'id');
+    final previous = _routines[index];
+    if (previous.sdkPlan != null &&
+        sdkPlan == null &&
+        drillIds != null &&
+        !listEquals(previous.drillIds, drillIds)) {
+      return Future.value(false);
+    }
     final next = _routines[index].copyWith(
       name: name?.trim(),
-      drillIds: drillIds
-          ?.where((drillId) => catalog.drillById(drillId) != null)
-          .toList(),
+      sdkPlan: sdkPlan,
+      drillIds: sdkPlan != null
+          ? sdkPlan.exerciseIds.toList()
+          : drillIds
+                ?.where((drillId) => catalog.drillById(drillId) != null)
+                .toList(),
     );
     if (!next.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines]..[index] = next;
@@ -412,6 +453,40 @@ class LearningStore extends ChangeNotifier {
     final routine = routineById(id);
     if (routine == null) throw ArgumentError.value(id, 'id');
     if (routine.drillIds.contains(drillId)) return Future.value(true);
+    if (routine.sdkPlan case final plan?) {
+      final drill = catalog.drillById(drillId);
+      if (drill == null) return Future.value(false);
+      final dose = drill.dose;
+      final blockIds = plan.blocks.map((block) => block.id).toSet();
+      var blockId = 'added-$drillId';
+      while (blockIds.contains(blockId)) {
+        blockId = '$blockId-1';
+      }
+      final block = uc.PlanBlock(
+        id: blockId,
+        name: drill.name,
+        type: uc.BlockType.main,
+        items: [
+          uc.PlanItem(
+            exerciseId: drillId,
+            mode: dose.mode == DoseMode.time
+                ? uc.DoseMode.time
+                : uc.DoseMode.reps,
+            sets: dose.sets,
+            reps: dose.mode == DoseMode.time ? null : dose.min,
+            workSeconds: dose.mode == DoseMode.time ? dose.min : null,
+            perSide: dose.perSide,
+            restSeconds: dose.restSec,
+          ),
+        ],
+      );
+      final blocks = [...plan.blocks];
+      final cooldown = blocks.indexWhere(
+        (b) => b.type == uc.BlockType.cooldown,
+      );
+      blocks.insert(cooldown < 0 ? blocks.length : cooldown, block);
+      return updateRoutine(id, sdkPlan: plan.copyWith(blocks: blocks));
+    }
     return updateRoutine(id, drillIds: [...routine.drillIds, drillId]);
   }
 
@@ -454,6 +529,92 @@ class LearningStore extends ChangeNotifier {
     }
     _sessions.add(session);
     return _persist();
+  }
+
+  static Map<String, dynamic> _copyJson(Map<String, dynamic> value) =>
+      jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
+
+  /// Parse/validate without changing SDK completion semantics. In particular,
+  /// a completed item alongside an incomplete session is preserved verbatim.
+  static Map<String, dynamic> _trainerResultJson(Map<String, dynamic> json) {
+    if (json['schema'] != trainer.SessionResult.schema) {
+      throw const FormatException('Unsupported SDK session result');
+    }
+    final result = trainer.SessionResult.fromJson(json);
+    if (result.sessionId.isEmpty ||
+        result.planId.isEmpty ||
+        !result.activeSeconds.isFinite ||
+        result.activeSeconds < 0 ||
+        result.completedExercises < 0 ||
+        result.totalExercises < 0 ||
+        result.completedExercises > result.totalExercises ||
+        result.items.any(
+          (item) =>
+              item.exerciseId.isEmpty ||
+              item.blockIndex < 0 ||
+              item.itemInBlock < 0 ||
+              !item.activeSeconds.isFinite ||
+              item.activeSeconds < 0 ||
+              item.plannedSets < 0 ||
+              item.completedSets < 0,
+        ) ||
+        result.items
+                .map((item) => (item.blockIndex, item.itemInBlock))
+                .toSet()
+                .length !=
+            result.items.length ||
+        result.discomfort.any((event) => !event.at.isFinite || event.at < 0)) {
+      throw const FormatException('Invalid SDK session result');
+    }
+    return _copyJson(json);
+  }
+
+  /// Save a full SDK result and legacy history rows in one ordered snapshot.
+  /// Same-ID retries never duplicate rows; failed/blocked writes must throw so
+  /// TrainerPlayer retains its retry UI instead of reporting a false success.
+  Future<void> saveTrainerSession(trainer.SessionResult result) async {
+    _ensureInitialized();
+    final json = _trainerResultJson(result.toJson());
+    final existing = _trainerSessions
+        .where((row) => row['sessionId'] == result.sessionId)
+        .firstOrNull;
+    if (existing != null &&
+        !_sameJson(trainer.SessionResult.fromJson(existing).toJson(), json)) {
+      throw ArgumentError(
+        'SDK session ID already belongs to a different result',
+      );
+    }
+    if (existing == null) {
+      final rows = <TrainingSession>[];
+      for (final item in result.items) {
+        final row = TrainingSession.fromTrainerItem(result, item);
+        if (row == null || catalog.drillById(row.drillId) == null) continue;
+        final previous = _sessions.where((s) => s.id == row.id).firstOrNull;
+        if (previous != null && !_sameJson(previous.toJson(), row.toJson())) {
+          throw ArgumentError(
+            'SDK legacy row ID collides with existing history',
+          );
+        }
+        if (previous == null) rows.add(row);
+      }
+      _trainerSessions = [..._trainerSessions, json];
+      _sessions = [..._sessions, ...rows];
+    }
+    if (!await _persist()) throw StateError('SDK session could not be saved');
+  }
+
+  static bool _sameJson(Object? a, Object? b) {
+    if (a is Map && b is Map) {
+      return a.length == b.length &&
+          a.keys.every(
+            (key) => b.containsKey(key) && _sameJson(a[key], b[key]),
+          );
+    }
+    if (a is List && b is List) {
+      return a.length == b.length &&
+          List.generate(a.length, (i) => i).every((i) => _sameJson(a[i], b[i]));
+    }
+    return a == b;
   }
 
   Future<bool> completeLesson(String lessonId, {bool completed = true}) {

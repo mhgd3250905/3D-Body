@@ -8,7 +8,6 @@ import 'package:flare/coach/plan_mapping.dart';
 import 'package:flare/coach/template_fallback.dart';
 import 'package:flare/coach/usage_store.dart';
 import 'package:flare/control/learning_store.dart';
-import 'package:flare/domain/dose.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
@@ -160,7 +159,7 @@ void main() {
       expect(s.validatePlan(plan).errors, isEmpty);
     });
 
-    test('计划映射：块拍平、轮数折进组数、剂量随 routine 保存', () {
+    test('计划展示保留原块和逐项剂量；持久化以完整SDK计划为准', () {
       final plan = const uc.EnvelopeParser()
           .parse(jsonEncode(validPlanEnvelope()), planId: 'p')
           .reply!
@@ -172,38 +171,33 @@ void main() {
         'triceps-A',
         'deltoids-A',
       ]);
-      final triceps = entries[2];
-      expect(triceps.dose!.sets, 4); // 2 组 × 2 轮
-      expect(triceps.drill.dose.sets, 4);
-      expect(triceps.drill.dose.min, 8);
-      expect(triceps.doseText, '4 组 × 8 次');
-      final side = entries[3];
-      expect(side.drill.dose.mode, DoseMode.time);
-      expect(side.drill.dose.perSide, isTrue);
-      expect(side.doseText, '2 组 × 每侧 20 秒');
-
+      expect(
+        entries[2].dose.sets,
+        2,
+      ); // main.rounds is not an extra set multiplier.
+      expect(entries[2].doseText, '2 组 × 8 次');
+      expect(entries[3].doseText, '1 组 × 每侧 20 秒');
       final routine = TrainingRoutine(
         id: 'r1',
         name: 'AI',
-        drillIds: [for (final e in entries) e.drill.id],
-        doses: {for (final e in entries) e.drill.id: e.dose!},
+        drillIds: plan.exerciseIds.toList(),
+        sdkPlan: plan,
         source: 'ai',
       );
       final back = TrainingRoutine.fromJson(
         jsonDecode(jsonEncode(routine.toJson())) as Map<String, dynamic>,
       );
-      expect(back.doses.keys, routine.drillIds);
-      expect(back.drills(catalog)[2].dose.sets, 4);
+      expect(back.sdkPlan!.toJson(), plan.toJson());
       expect(back.source, 'ai');
-      // 去掉一个动作，剂量跟着去掉；旧格式（没有 doses）照常读。
-      expect(back.copyWith(drillIds: ['abs-A']).doses, isEmpty);
+      expect(back.copyWith(name: '改名').sdkPlan!.toJson(), plan.toJson());
+      expect(() => back.copyWith(drillIds: ['abs-A']), throwsStateError);
       expect(
         TrainingRoutine.fromJson({
           'id': 'r2',
           'name': 'old',
           'drillIds': ['abs-A'],
-        }).drills(catalog).single.dose.raw,
-        catalog.drillById('abs-A')!.dose.raw,
+        }).sdkPlan,
+        isNull,
       );
     });
 
@@ -412,6 +406,7 @@ void main() {
       Size size = const Size(390, 844),
       double textScale = 1,
       Brightness brightness = Brightness.light,
+      ValueChanged<uc.TrainingPlan>? onTraining,
     }) async {
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1;
@@ -444,6 +439,20 @@ void main() {
             sceneController: scene,
             enableScene: false,
             coach: coach,
+            trainingPageBuilder: onTraining == null
+                ? null
+                : (plan) {
+                    onTraining(plan);
+                    return Scaffold(
+                      body: Builder(
+                        builder: (context) => TextButton(
+                          key: const ValueKey('test-close-training'),
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Close'),
+                        ),
+                      ),
+                    );
+                  },
           ),
         ),
       );
@@ -579,7 +588,8 @@ void main() {
       final usage = CoachUsageStore();
       final fake = AgentFakeLlmClient([validPlanEnvelope()]);
       final coach = service(fake: fake, usage: usage);
-      final store = await pumpShell(tester, coach);
+      final started = <uc.TrainingPlan>[];
+      final store = await pumpShell(tester, coach, onTraining: started.add);
       expect(find.byKey(const ValueKey('plan-ai-unconfigured')), findsNothing);
       await openCoach(tester);
       expect(find.text('说说你想怎么练'), findsOneWidget);
@@ -589,7 +599,7 @@ void main() {
       expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
       expect(find.byKey(const ValueKey('coach-badge-ai')), findsOneWidget);
       expect(find.text('居家支撑臂 20 分钟'), findsOneWidget);
-      expect(find.text('4 组 × 8 次'), findsOneWidget);
+      expect(find.text('2 组 × 8 次'), findsNWidgets(2));
       expect(find.text(catalog.drillById('triceps-A')!.name), findsOneWidget);
       expect(find.byType(DrillPoster), findsNWidgets(4));
       expect(usage.totals.calls, 1);
@@ -599,18 +609,23 @@ void main() {
       final routine = store.routines.single;
       expect(routine.name, '居家支撑臂 20 分钟');
       expect(routine.source, 'ai');
-      expect(routine.doses['triceps-A']!.sets, 4);
+      expect(
+        routine.sdkPlan!.items
+            .firstWhere((i) => i.exerciseId == 'triceps-A')
+            .sets,
+        2,
+      );
       expect(find.text('已保存到我的计划'), findsOneWidget);
 
-      // 直接开练：进入跟练，第一项是热身动作。
+      // Direct start passes the exact SDK structure into the player route.
       await tapVisible(tester, find.byKey(const ValueKey('coach-start')));
-      final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(run.title, '居家支撑臂 20 分钟');
-      expect(run.drills.map((d) => d.id).first, 'forearms-A');
-      expect(run.drills[2].dose.sets, 4);
+      expect(started, hasLength(1));
+      expect(started.single.toJson(), routine.sdkPlan!.toJson());
+      expect(started.single.blocks[1].rounds, 2);
+      expect(started.single.items.first.exerciseId, 'forearms-A');
 
       // 结束跟练回到对话，再返回计划页：我的计划里有这份。
-      await tester.tap(find.byKey(const ValueKey('run-end')));
+      await tester.tap(find.byKey(const ValueKey('test-close-training')));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
       expect(find.text('已保存到我的计划'), findsOneWidget);
@@ -621,9 +636,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('plan-start')));
       await tester.pumpAndSettle();
-      final again = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(again.drills[2].dose.sets, 4);
-      expect(again.drills[3].prescription, '2 组 × 每侧 20 秒');
+      expect(started, hasLength(2));
+      expect(started.last.toJson(), routine.sdkPlan!.toJson());
       expect(tester.takeException(), isNull);
     });
 
@@ -1014,7 +1028,12 @@ void main() {
       expect(textInMsg(3, '保存到我的计划'), findsOneWidget);
       await tapVisible(tester, inMsg(3, 'coach-save'));
       expect(store.routines, hasLength(2));
-      expect(store.routines.last.doses['triceps-A']!.target, 6);
+      expect(
+        store.routines.last.sdkPlan!.items
+            .firstWhere((i) => i.exerciseId == 'triceps-A')
+            .reps,
+        6,
+      );
       expect(textInMsg(3, '已保存到我的计划'), findsOneWidget);
       await tester.scrollUntilVisible(
         inMsg(1, 'coach-plan-expand'),
@@ -1059,7 +1078,12 @@ void main() {
       final again = store.routines.single;
       expect(again.name, first.name);
       expect(again.drillIds, first.drillIds);
-      expect(again.doses['triceps-A']!.sets, 4);
+      expect(
+        again.sdkPlan!.items
+            .firstWhere((i) => i.exerciseId == 'triceps-A')
+            .sets,
+        2,
+      );
       expect(find.text('已保存到我的计划'), findsOneWidget);
     });
 

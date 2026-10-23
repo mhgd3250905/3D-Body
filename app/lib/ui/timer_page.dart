@@ -14,6 +14,8 @@ import 'motion.dart';
 import 'theme.dart';
 import 'drill_media.dart';
 
+/// Legacy single-drill screen retained for historical regression fixtures.
+/// App entry points use FlareTrainingPage and the SDK's whole-plan player.
 class TrainingTimerPage extends StatefulWidget {
   const TrainingTimerPage({
     super.key,
@@ -121,7 +123,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
 
   Future<void> _loadVoice(String language) async {
     try {
-      final source = await loadTrainerVoiceSource();
+      final source = await loadTrainerVoiceSource(language: language);
       if (!mounted || _servicesEnded) return;
       _voiceOutput = widget.voiceOutput ?? trainerAudio.acquire();
       _voiceQueue = trainer.VoiceQueue(
@@ -177,7 +179,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
             channelName: context.strings.work,
             channelDescription: context.strings.startTimer,
             title: widget.drill.name,
-            text: context.strings.work,
+            text: context.strings.library,
           ),
         );
       }

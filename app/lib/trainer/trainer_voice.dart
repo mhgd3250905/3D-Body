@@ -4,10 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:ugk_trainer/ugk_trainer.dart';
 
 /// Offline shared prompts from the pinned SmartFit LC32 bundle, with HipLab's
-/// right-side prompt to preserve FlareLab's left-first sequence.
-/// Only zh speech is supplied; the SDK retains chimes for other languages.
+/// side prompt retained for legacy single-drill fixtures. The whole-plan
+/// player passes leftFirst: false and follows the SDK side sequence.
+/// English prompts are generated offline with the installed Windows Zira voice.
+/// These recordings are internal-test assets; see source-manifest.json.
+/// The SDK retains chimes for other languages.
 /// The caller can map the app's zh_Hant UI preference to spoken zh.
 Future<VoiceSource> loadTrainerVoiceSource({
+  String language = 'zh',
+  bool leftFirst = true,
   Future<String> Function(String path)? read,
 }) async {
   const root = 'assets/trainer_voice';
@@ -17,15 +22,27 @@ Future<VoiceSource> loadTrainerVoiceSource({
       common: jsonDecode(text) as Map<String, dynamic>,
       root: root,
     ),
+    language: language,
+    leftFirst: leftFirst,
   );
 }
 
-/// SDK's right-first announcement is unsuitable for FlareLab's established
-/// left-first sequence. Adapt the semantic call while preserving all source
-/// recordings and metadata. The explicit side-switch call remains unchanged.
+/// English phrase grammar and optional legacy side-call compatibility.
+/// New whole-plan routes preserve the SDK's goRight announcement.
 class _LeftFirstVoiceSource extends VoiceSource {
-  _LeftFirstVoiceSource(this.source);
+  _LeftFirstVoiceSource(
+    this.source, {
+    required this.language,
+    required this.leftFirst,
+  });
   final VoiceSource source;
+  final String language;
+  final bool leftFirst;
+
+  List<String> _englishOrdinal(String prefix, int n) {
+    final digits = source.number(n);
+    return digits.isEmpty ? const [] : [prefix, ...digits];
+  }
 
   @override
   Set<String> get languages => source.languages;
@@ -42,7 +59,7 @@ class _LeftFirstVoiceSource extends VoiceSource {
       source.seconds(key, lang: lang);
   @override
   String? call(VoiceCall c) =>
-      source.call(c == VoiceCall.goRight ? VoiceCall.go : c);
+      source.call(leftFirst && c == VoiceCall.goRight ? VoiceCall.go : c);
   @override
   String? drill(String exerciseId, DrillLine line) =>
       source.drill(exerciseId, line);
@@ -51,15 +68,25 @@ class _LeftFirstVoiceSource extends VoiceSource {
   @override
   List<String> number(int n) => source.number(n);
   @override
-  List<String> secondsPhrase(int n) => source.secondsPhrase(n);
+  List<String> secondsPhrase(int n) => language == 'en' && n == 1
+      ? ['n.1', 'u.sec_one']
+      : source.secondsPhrase(n);
   @override
-  List<String> minutesPhrase(int n) => source.minutesPhrase(n);
+  List<String> minutesPhrase(int n) => language == 'en' && n == 1
+      ? ['n.1', 'u.min_one']
+      : source.minutesPhrase(n);
   @override
-  List<String> setsPhrase(int n) => source.setsPhrase(n);
+  List<String> setsPhrase(int n) =>
+      language == 'en' && n == 1 ? ['n.1', 'u.sets_one'] : source.setsPhrase(n);
   @override
-  List<String> repsPhrase(int n) => source.repsPhrase(n);
+  List<String> repsPhrase(int n) =>
+      language == 'en' && n == 1 ? ['n.1', 'u.reps_one'] : source.repsPhrase(n);
   @override
-  List<String> ordinalSet(int n) => source.ordinalSet(n);
+  List<String> ordinalSet(int n) => language == 'en'
+      ? _englishOrdinal('p.set_number', n)
+      : source.ordinalSet(n);
   @override
-  List<String> ordinalRound(int n) => source.ordinalRound(n);
+  List<String> ordinalRound(int n) => language == 'en'
+      ? _englishOrdinal('p.round_number', n)
+      : source.ordinalRound(n);
 }

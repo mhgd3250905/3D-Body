@@ -3,7 +3,8 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/plans_page.dart';
-import 'package:flare/ui/timer_page.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/engine.dart' as sdk;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,6 +50,8 @@ void main() {
   Future<LearningStore> open(
     WidgetTester tester, {
     List<String> ids = const ['abs-A'],
+    uc.TrainingPlan? sdkPlan,
+    Widget Function(uc.TrainingPlan)? trainingPageBuilder,
   }) async {
     await helpers.phoneSize(tester);
     final store = LearningStore(
@@ -57,7 +60,7 @@ void main() {
     );
     await store.initialize();
     await store.acknowledgeSafety();
-    await store.createRoutine('Audit routine', ids);
+    await store.createRoutine('Audit routine', ids, sdkPlan: sdkPlan);
     final scene = SceneController(commandSink: (_) {});
     addTearDown(store.dispose);
     addTearDown(scene.dispose);
@@ -68,6 +71,7 @@ void main() {
           store: store,
           sceneController: scene,
           enableScene: false,
+          trainingPageBuilder: trainingPageBuilder,
         ),
       ),
     );
@@ -92,139 +96,60 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> completeCurrentDrill(
-    WidgetTester tester,
-    LearningStore store,
-    String sessionId,
-  ) async {
-    await tester.tap(find.byKey(const ValueKey('run-start')));
-    for (var i = 0; i < 6; i++) {
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    final timer = tester.widget<TrainingTimerPage>(
-      find.byType(TrainingTimerPage),
-    );
-    final endedAt = DateTime.now().toUtc();
-    await store.logSession(
-      TrainingSession(
-        id: sessionId,
-        drillId: timer.drill.id,
-        startedAt: endedAt.subtract(const Duration(seconds: 60)),
-        endedAt: endedAt,
-        activeSeconds: 60,
-        completedSets: timer.drill.dose.sets,
-        plannedSets: timer.drill.dose.sets,
-        pain: false,
-        completed: true,
+  Widget route(uc.TrainingPlan plan) => Builder(
+    builder: (context) => Scaffold(
+      key: const ValueKey('sdk-plan-route'),
+      body: Column(
+        children: [
+          Text(plan.title),
+          TextButton(
+            key: const ValueKey('sdk-route-close'),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Return from SDK'),
+          ),
+        ],
       ),
-    );
-    timer.onClose();
-    await tester.pumpAndSettle();
-  }
-
-  testWidgets('skipping the only drill ends the round without completing it', (
-    tester,
-  ) async {
-    final semantics = tester.ensureSemantics();
-    try {
-      final store = await open(tester);
-      await startPlan(tester);
-      await tester.tap(find.byKey(const ValueKey('run-skip')));
-      await tester.pumpAndSettle();
-      final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(run.done, isEmpty);
-      expect(run.skipped, {0});
-      expect(run.index, 1);
-      expect(run.ended, isTrue);
-      expect(run.complete, isFalse);
-      expect(store.sessions, isEmpty);
-      expect(find.text('完成 0 / 1 个动作'), findsOneWidget);
-      expect(find.text('跳过 1 个动作'), findsOneWidget);
-      expect(find.text('已跳过'), findsOneWidget);
-      expect(find.text('本轮训练已结束'), findsOneWidget);
-      expect(find.text('这一套练完了'), findsNothing);
-      expect(find.byKey(const ValueKey('run-skip')), findsNothing);
-      expect(tester.takeException(), isNull);
-      await tester.pumpWidget(const SizedBox());
-    } finally {
-      semantics.dispose();
-    }
-  });
-
-  testWidgets('skipping the final unfinished drill still allows training it', (
-    tester,
-  ) async {
-    final semantics = tester.ensureSemantics();
-    try {
-      final store = await open(tester, ids: ['abs-A', 'triceps-A']);
-      await startPlan(tester);
-      await completeCurrentDrill(tester, store, 'plan-step-completed');
-      await tester.tap(find.byKey(const ValueKey('run-skip')));
-      await tester.pumpAndSettle();
-      final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(run.done, {0});
-      expect(run.skipped, {1});
-      expect(run.index, 2);
-      expect(run.ended, isTrue);
-      expect(run.complete, isFalse);
-      expect(find.text('本轮训练已结束'), findsOneWidget);
-      expect(find.text('这一套练完了'), findsNothing);
-      expect(find.text('跳过 1 个动作'), findsOneWidget);
-      expect(find.byKey(const ValueKey('run-skip')), findsNothing);
-      await helpers.tapVisible(tester, find.byKey(const ValueKey('run-row-1')));
-      await tester.pumpAndSettle();
-      final retry = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(retry.index, 1);
-      expect(retry.ended, isFalse);
-      await completeCurrentDrill(tester, store, 'plan-step-2-completed');
-      final completed = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(completed.done, {0, 1});
-      expect(completed.skipped, isEmpty);
-      expect(completed.ended, isTrue);
-      expect(completed.complete, isTrue);
-      expect(find.text('这一套练完了'), findsOneWidget);
-      expect(find.text('本轮训练已结束'), findsNothing);
-      await helpers.tapVisible(tester, find.byKey(const ValueKey('run-row-0')));
-      await tester.pumpAndSettle();
-      final repeat = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-      expect(repeat.done, {0, 1});
-      expect(repeat.index, 0);
-      expect(repeat.ended, isFalse);
-      expect(repeat.complete, isFalse);
-      expect(find.text('这一套练完了'), findsNothing);
-      expect(tester.takeException(), isNull);
-      await tester.pumpWidget(const SizedBox());
-    } finally {
-      semantics.dispose();
-    }
-  });
+    ),
+  );
 
   testWidgets(
-    'four skipped drills advance in order without wrapping or sessions',
+    'all routine actions enter one SDK route; return does not replay',
     (tester) async {
       final semantics = tester.ensureSemantics();
+      final received = <uc.TrainingPlan>[];
       try {
         final store = await open(
           tester,
           ids: ['abs-A', 'triceps-A', 'deltoids-A', 'forearms-A'],
+          trainingPageBuilder: (plan) {
+            received.add(plan);
+            return route(plan);
+          },
         );
         await startPlan(tester);
-        for (var next = 1; next <= 4; next++) {
-          await tester.tap(find.byKey(const ValueKey('run-skip')));
-          await tester.pumpAndSettle();
-          final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-          expect(run.index, next);
-          expect(run.skipped, Set<int>.from(List.generate(next, (i) => i)));
-          expect(run.done, isEmpty);
-          expect(run.ended, next == 4);
-          expect(run.complete, isFalse);
-          expect(store.sessions, isEmpty);
-          expect(find.text('这一套练完了'), findsNothing);
-        }
-        expect(find.text('完成 0 / 4 个动作'), findsOneWidget);
-        expect(find.text('跳过 4 个动作'), findsOneWidget);
-        expect(find.text('本轮训练已结束'), findsOneWidget);
-        expect(find.byKey(const ValueKey('run-skip')), findsNothing);
+        expect(received, hasLength(1));
+        expect(
+          received.single.blocks
+              .expand((b) => b.items)
+              .map((i) => i.exerciseId),
+          ['abs-A', 'triceps-A', 'deltoids-A', 'forearms-A'],
+        );
+        expect(find.byKey(const ValueKey('sdk-plan-route')), findsOneWidget);
+        expect(store.sessions, isEmpty);
+        await tester.tap(find.byKey(const ValueKey('sdk-route-close')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('sdk-plan-route')), findsNothing);
+        expect(find.byKey(const ValueKey('plan-start')), findsOneWidget);
+        expect(received, hasLength(1));
+        await tester.pump(const Duration(seconds: 1));
+        expect(received, hasLength(1));
+        await tester.tap(find.byKey(const ValueKey('plan-start')));
+        await tester.pumpAndSettle();
+        expect(received, hasLength(2));
+        expect(received.last.blocks.expand((b) => b.items), hasLength(4));
+        await tester.tap(find.byKey(const ValueKey('sdk-route-close')));
+        await tester.pumpAndSettle();
+        expect(store.sessions, isEmpty); // Returning never invents completion.
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       } finally {
@@ -234,29 +159,60 @@ void main() {
   );
 
   testWidgets(
-    'completion after a skipped drill advances to the following drill',
+    'saved SDK circuit enters route with all rounds repeated items and rests intact',
     (tester) async {
       final semantics = tester.ensureSemantics();
+      final plan = uc.TrainingPlan(
+        id: 'whole-circuit',
+        source: 'ai',
+        title: 'Structured',
+        goal: 'flare',
+        scene: 'home',
+        level: 1,
+        targetMinutes: 10,
+        blocks: const [
+          uc.PlanBlock(
+            id: 'rounds',
+            name: 'Rounds',
+            type: uc.BlockType.circuit,
+            rounds: 3,
+            restBetweenRoundsSeconds: 47,
+            items: [
+              uc.PlanItem(
+                exerciseId: 'abs-A',
+                mode: uc.DoseMode.time,
+                sets: 1,
+                workSeconds: 20,
+                perSide: false,
+                restSeconds: 11,
+              ),
+              uc.PlanItem(
+                exerciseId: 'abs-A',
+                mode: uc.DoseMode.time,
+                sets: 1,
+                workSeconds: 30,
+                perSide: false,
+                restSeconds: 13,
+              ),
+            ],
+          ),
+        ],
+      );
+      uc.TrainingPlan? received;
       try {
-        final store = await open(
+        await open(
           tester,
-          ids: ['abs-A', 'triceps-A', 'deltoids-A'],
+          sdkPlan: plan,
+          trainingPageBuilder: (value) {
+            received = value;
+            return route(value);
+          },
         );
         await startPlan(tester);
-        await tester.tap(find.byKey(const ValueKey('run-skip')));
+        expect(received!.toJson(), plan.toJson());
+        await tester.tap(find.byKey(const ValueKey('sdk-route-close')));
         await tester.pumpAndSettle();
-        await completeCurrentDrill(tester, store, 'mixed-step-2-completed');
-        final run = tester.widget<PlanRunPage>(find.byType(PlanRunPage));
-        expect(run.index, 2);
-        expect(run.done, {1});
-        expect(run.skipped, {0});
-        expect(run.ended, isFalse);
-        expect(run.complete, isFalse);
-        expect(store.sessions.single.drillId, 'triceps-A');
-        expect(find.text('完成 1 / 3 个动作'), findsOneWidget);
-        expect(find.text('跳过 1 个动作'), findsOneWidget);
-        expect(find.text('第 3 / 3 个'), findsOneWidget);
-        expect(find.text('本轮训练已结束'), findsNothing);
+        expect(find.byKey(const ValueKey('plan-start')), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       } finally {
@@ -287,6 +243,30 @@ void main() {
       ),
     );
     final store = await open(tester, ids: ['triceps-A', 'abs-A']);
+    final start = DateTime.utc(2026, 10, 23, 12);
+    final result = sdk.SessionResult(
+      sessionId: 'backup-session',
+      planId: 'backup-plan',
+      planTitle: 'Backup training',
+      startedAt: start,
+      endedAt: start.add(const Duration(minutes: 1)),
+      activeSeconds: 20,
+      endedEarly: false,
+      completedExercises: 1,
+      totalExercises: 1,
+      items: const [
+        sdk.ItemResult(
+          exerciseId: 'abs-A',
+          blockIndex: 0,
+          itemInBlock: 0,
+          plannedSets: 1,
+          completedSets: 1,
+          activeSeconds: 20,
+          status: sdk.ItemStatus.completed,
+        ),
+      ],
+    );
+    await store.saveTrainerSession(result);
     await tester.tap(helpers.labeledControl('更多'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('设置'));
@@ -299,6 +279,8 @@ void main() {
     final backup = jsonDecode(copied!) as Map<String, dynamic>;
     expect(backup['format'], 'flare.local.backup.v1');
     expect(backup['routines'], [store.routines.single.toJson()]);
+    expect(backup['trainerSessions'], [result.toJson()]);
+    expect(backup['sessions'], [store.sessions.single.toJson()]);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
     semantics.dispose();

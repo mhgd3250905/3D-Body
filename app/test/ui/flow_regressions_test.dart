@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_trainer/engine.dart' show MutedVoiceOutput;
+import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../domain/fixtures.dart';
 
@@ -109,6 +110,22 @@ void assertLeanHome(WidgetTester tester) {
   expect(
     tester.getSize(find.byType(MotionTimeline)).height,
     lessThanOrEqualTo(56),
+  );
+}
+
+/// Route probe only. Real SDK player/result behavior has dedicated tests.
+class TrainingRouteProbe extends StatelessWidget {
+  const TrainingRouteProbe(this.plan, {super.key});
+  final uc.TrainingPlan plan;
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: TextButton(
+        key: const ValueKey('training-probe-close'),
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text('Close training'),
+      ),
+    ),
   );
 }
 
@@ -255,7 +272,7 @@ void main() {
   });
 
   testWidgets(
-    'phone safety → phase muscle → drill → local pain record → same paused frame',
+    'phone safety → phase muscle → drill → SDK plan route → same paused frame',
     (tester) async {
       await phoneSize(tester);
       final semantics = tester.ensureSemantics();
@@ -275,6 +292,7 @@ void main() {
               store: store,
               sceneController: scene,
               enableScene: false,
+              trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
             ),
           ),
         );
@@ -534,27 +552,21 @@ void main() {
         ).removeCurrentSnackBar();
         await tester.pumpAndSettle();
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
-        // The timer rises as a modal sheet; let it land before touching it.
-        await tester.pump(const Duration(milliseconds: 500));
-        expect(find.byType(TrainingTimerPage), findsOneWidget);
+        await tester.pumpAndSettle();
+        final delivered = tester
+            .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
+            .plan;
+        expect(delivered.exerciseIds, {'deltoids-A'});
         expect(
-          tester
-              .widget<TrainingTimerPage>(find.byType(TrainingTimerPage))
-              .drill
-              .id,
-          'deltoids-A',
+          delivered.items.first.workSeconds,
+          catalog.drillById('deltoids-A')!.dose.min,
         );
         assertNoFlutterError(tester);
-
-        await tapVisible(tester, find.text('不适，停止练习'));
-        await tester.pump(const Duration(milliseconds: 150));
-        expect(store.sessions, hasLength(1));
-        expect(store.sessions.single.drillId, 'deltoids-A');
-        expect(store.sessions.single.pain, isTrue);
-        expect(store.sessions.single.completed, isFalse);
-        expect(find.text('已保存在本机'), findsOneWidget);
-        await tapVisible(tester, find.widgetWithText(FilledButton, '完成'));
+        // Closing a route with no SDK result must not fabricate a local record.
+        await tester.tap(find.byKey(const ValueKey('training-probe-close')));
         await tester.pumpAndSettle();
+        expect(store.sessions, isEmpty);
+        expect(find.byType(DrillDetailPage), findsOneWidget);
         await tester.tap(find.byTooltip('返回'));
         await tester.pumpAndSettle();
         expect(find.byType(DrillDetailPage), findsNothing);
@@ -843,7 +855,7 @@ void main() {
   );
 
   testWidgets(
-    'plans: preset → run hub → finish, save as mine, then edit and delete with undo',
+    'plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo',
     (tester) async {
       await phoneSize(tester);
       final semantics = tester.ensureSemantics();
@@ -864,6 +876,7 @@ void main() {
               store: store,
               sceneController: scene,
               enableScene: false,
+              trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
             ),
           ),
         );
@@ -891,47 +904,22 @@ void main() {
 
         await tapVisible(tester, find.byKey(const ValueKey('plan-start')));
         await tester.pumpAndSettle();
-        expect(find.byType(PlanRunPage), findsOneWidget);
-        expect(find.text('第 1 / 4 个'), findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('run-skip')));
-        await tester.pumpAndSettle();
-        expect(find.text('第 2 / 4 个'), findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('run-start')));
-        for (var i = 0; i < 6; i++) {
-          await tester.pump(const Duration(milliseconds: 200));
-        }
-        expect(find.byType(TrainingTimerPage), findsOneWidget);
+        final delivered = tester
+            .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
+            .plan;
         expect(
-          tester
-              .widget<TrainingTimerPage>(find.byType(TrainingTimerPage))
-              .drill
-              .id,
-          detail.drills[1].id,
+          delivered.items.map((item) => item.exerciseId),
+          detail.drills.map((drill) => drill.id),
         );
-        // Leaving an unfinished timer returns to the hub without marking
-        // the drill done.
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TrainingTimerPage),
-            matching: find.byIcon(Icons.close_rounded),
-          ),
-        );
-        for (var i = 0; i < 6; i++) {
-          await tester.pump(const Duration(milliseconds: 200));
-        }
-        if (find.text('结束并保存').evaluate().isNotEmpty) {
-          await tester.tap(find.text('结束并保存'));
-          await tester.pumpAndSettle();
-        }
-        expect(find.byType(TrainingTimerPage), findsNothing);
-        expect(find.byType(PlanRunPage), findsOneWidget);
-        expect(find.text('第 2 / 4 个'), findsOneWidget);
-        expect(find.text('完成 0 / 4 个动作'), findsOneWidget);
+        expect(delivered.items.first.sets, detail.drills.first.dose.sets);
+        await tester.tap(find.byKey(const ValueKey('training-probe-close')));
+        await tester.pumpAndSettle();
+        expect(find.byType(TrainingRouteProbe), findsNothing);
+        expect(find.byType(PlanDetailPage), findsOneWidget);
+        expect(store.sessions, isEmpty);
         assertNoFlutterError(tester);
 
         // Save a preset as an editable set of one's own.
-        await tester.tap(find.byKey(const ValueKey('run-end')));
-        await tester.pumpAndSettle();
         expect(find.byType(PlanDetailPage), findsOneWidget);
         await tapVisible(
           tester,
@@ -1145,7 +1133,7 @@ void main() {
   );
 
   testWidgets(
-    'real rep drill completes three sets and saves only one completed local record',
+    'legacy timer: real rep drill completes three sets and saves one local record',
     (tester) async {
       await phoneSize(tester);
       final storage = MemoryStateStorage();

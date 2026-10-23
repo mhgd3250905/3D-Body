@@ -3,91 +3,81 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../data/catalog.dart';
 import '../domain/training_plan.dart';
 
-/// 计划卡上的一行，也是保存 / 跟练用的一个动作。
+/// A display row for one plan item. Execution always receives the whole plan.
 class CoachPlanEntry {
   const CoachPlanEntry({
     required this.drill,
-    required this.blockName,
+    required this.blockIndex,
+    required this.block,
+    required this.item,
     required this.doseText,
-    this.dose,
+    required this.dose,
   });
 
-  /// App 动作（AI 计划已套上计划自己的剂量）。
   final Drill drill;
-  final String blockName;
+  final int blockIndex;
+  final uc.PlanBlock block;
+  final uc.PlanItem item;
   final String doseText;
 
-  /// AI 计划给的剂量；预设方案为 null（沿用动作库处方）。
-  final RoutineDose? dose;
+  /// Per-item display compatibility only, never a flattened execution recipe.
+  final RoutineDose dose;
+
+  String get blockName {
+    final name = block.name.isEmpty ? block.type.zh : block.name;
+    if (block.type == uc.BlockType.circuit && block.rounds > 1) {
+      return '$name · ${block.rounds} 轮 · 轮间休息 ${block.restBetweenRoundsSeconds} 秒';
+    }
+    return name;
+  }
 }
 
-/// TrainingPlan v1 → App 的计划 / routine。
-///
-/// - App 的成套训练是一串不重复的动作、依次跟练，所以：块按顺序拍平；
-///   `rounds` 折算进组数（sets × rounds，最多 12 组）；同一动作再次出现时并进第一次的组数。
-/// - AI 计划的剂量保存在 routine.doses 里，跟练计时 / 计次按它走；
-///   预设方案（source=template）沿用动作库原处方。
-/// - App 里没有的动作跳过（校验阶段已按「profile 范围 ∩ App 实际资产」排除，正常不会出现）。
+/// Resolves media for display without merging repeated items, multiplying
+/// rounds or changing the SDK plan. Missing actions reject the entire display
+/// mapping; the caller must show an unavailable state instead of a partial plan.
 class CoachPlanMapper {
   const CoachPlanMapper(this.catalog);
   final Catalog catalog;
 
-  static const maxSets = RoutineDose.maxSets;
+  Set<String> missingIds(uc.TrainingPlan plan) => {
+    for (final id in plan.exerciseIds)
+      if (catalog.drillById(id) == null) id,
+  };
 
   List<CoachPlanEntry> entries(uc.TrainingPlan plan) {
-    final template = plan.source == 'template';
-    final order = <String>[];
-    final doses = <String, RoutineDose>{};
-    final blocks = <String, String>{};
-    for (final block in plan.blocks) {
-      for (final item in block.items) {
-        final drill = catalog.drillById(item.exerciseId);
-        if (drill == null) continue;
-        final sets = item.sets * (block.rounds < 1 ? 1 : block.rounds);
-        final existing = doses[drill.id];
-        if (existing != null) {
-          doses[drill.id] = RoutineDose(
-            sets: (existing.sets + sets).clamp(1, maxSets),
-            mode: existing.mode,
-            target: existing.target,
-            perSide: existing.perSide,
-            restSec: existing.restSec,
-          );
-          continue;
-        }
-        if (order.length >= TrainingRoutine.maxDrills) continue;
-        order.add(drill.id);
-        blocks[drill.id] = block.name.isEmpty ? block.type.zh : block.name;
-        final time = item.mode == uc.DoseMode.time;
-        doses[drill.id] = RoutineDose(
-          sets: sets.clamp(1, maxSets),
-          mode: time ? DoseMode.time : DoseMode.reps,
-          target: (time ? item.workSeconds : item.reps) ?? drill.dose.min,
-          perSide: item.perSide,
-          restSec: item.restSeconds,
-        );
-      }
+    final missing = missingIds(plan);
+    if (missing.isNotEmpty) {
+      throw StateError('计划动作不可用：${missing.join('、')}');
     }
     return [
-      for (final id in order)
-        if (catalog.drillById(id) case final Drill drill)
-          if (template)
-            CoachPlanEntry(
-              drill: drill,
-              blockName: blocks[id]!,
-              doseText: drill.prescription,
-            )
-          else
-            CoachPlanEntry(
-              drill: drill.withDose(doses[id]!.apply(drill.dose)),
-              blockName: blocks[id]!,
-              doseText: doses[id]!.text,
-              dose: doses[id],
-            ),
+      for (final (bi, block) in plan.blocks.indexed)
+        for (final item in block.items) _entry(bi, block, item),
     ];
   }
 
-  /// 保存成「我的计划」时的名字（不超过 24 个字）。
+  CoachPlanEntry _entry(int bi, uc.PlanBlock block, uc.PlanItem item) {
+    final drill = catalog.drillById(item.exerciseId)!;
+    final time = item.mode == uc.DoseMode.time;
+    final circuit = block.type == uc.BlockType.circuit && block.rounds > 1;
+    final dose = RoutineDose(
+      sets: item.sets,
+      mode: time ? DoseMode.time : DoseMode.reps,
+      target: (time ? item.workSeconds : item.reps)!,
+      perSide: item.perSide,
+      restSec: item.restSeconds,
+    );
+    final side = item.perSide ? '每侧 ' : '';
+    final amount = '${dose.target} ${time ? '秒' : '次'}';
+    return CoachPlanEntry(
+      drill: drill,
+      blockIndex: bi,
+      block: block,
+      item: item,
+      dose: dose,
+      doseText: circuit ? '每轮 1 组 × $side$amount' : dose.text,
+    );
+  }
+
   static String routineName(uc.TrainingPlan plan) {
     final title = plan.title.trim().isEmpty ? 'AI 定制计划' : plan.title.trim();
     return TrainingRoutine.truncateName(title);

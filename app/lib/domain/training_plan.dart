@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:characters/characters.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../data/catalog.dart';
 
@@ -147,7 +150,8 @@ class TrainingRoutine {
     required List<String> drillIds,
     Map<String, RoutineDose> doses = const {},
     this.source,
-  }) : drillIds = List.unmodifiable(drillIds),
+    this.sdkPlan,
+  }) : drillIds = List.unmodifiable(sdkPlan?.exerciseIds ?? drillIds),
        doses = Map.unmodifiable({
          for (final entry in doses.entries)
            if (drillIds.contains(entry.key) && entry.value.valid)
@@ -165,6 +169,10 @@ class TrainingRoutine {
   /// Where the set came from when not built by hand: 'ai' or 'template'.
   final String? source;
 
+  /// Authoritative executable plan. drillIds/doses are legacy list metadata;
+  /// they must never be used to reconstruct or flatten this plan.
+  final uc.TrainingPlan? sdkPlan;
+
   static const maxName = 24;
   static const maxDrills = 20;
 
@@ -177,7 +185,7 @@ class TrainingRoutine {
       name.trim().isNotEmpty &&
       name.characters.length <= maxName &&
       drillIds.isNotEmpty &&
-      drillIds.length <= maxDrills &&
+      (sdkPlan != null || drillIds.length <= maxDrills) &&
       drillIds.toSet().length == drillIds.length;
 
   /// Drills in order, with this set's own targets applied.
@@ -190,15 +198,31 @@ class TrainingRoutine {
         },
   ];
 
-  /// Removed drills drop their targets with them.
-  TrainingRoutine copyWith({String? name, List<String>? drillIds}) =>
-      TrainingRoutine(
-        id: id,
-        name: name ?? this.name,
-        drillIds: drillIds ?? this.drillIds,
-        doses: doses,
-        source: source,
-      );
+  /// Legacy lists can be edited normally. Structured edits supply a complete
+  /// sdkPlan; a flat list alone cannot represent blocks, rounds or repeats.
+  TrainingRoutine copyWith({
+    String? name,
+    List<String>? drillIds,
+    uc.TrainingPlan? sdkPlan,
+  }) {
+    if (this.sdkPlan != null &&
+        sdkPlan == null &&
+        drillIds != null &&
+        (drillIds.length != this.drillIds.length ||
+            drillIds.indexed.any(
+              (entry) => entry.$2 != this.drillIds[entry.$1],
+            ))) {
+      throw StateError('完整 SDK 计划不能通过平面动作列表修改');
+    }
+    return TrainingRoutine(
+      id: id,
+      name: name ?? this.name,
+      drillIds: sdkPlan?.exerciseIds.toList() ?? drillIds ?? this.drillIds,
+      doses: doses,
+      source: source,
+      sdkPlan: sdkPlan ?? this.sdkPlan,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -209,10 +233,26 @@ class TrainingRoutine {
         for (final entry in doses.entries) entry.key: entry.value.toJson(),
       },
     'source': ?source,
+    if (sdkPlan case final plan?)
+      'sdkPlan': jsonDecode(const uc.PlanCodec().encode(plan)),
   };
 
   factory TrainingRoutine.fromJson(Map<String, dynamic> json) {
     final rawDoses = json['doses'];
+    uc.TrainingPlan? sdkPlan;
+    if (json['sdkPlan'] case final raw?) {
+      // sdkPlan was introduced as a complete PlanCodec snapshot. Unlike
+      // decode(), decodeStrict exposes errors even when b8 returns a partial
+      // plan after dropping an invalid item/block. Never persist that partial
+      // result over the original stored plan. Legacy routines omit this field.
+      final decoded = const uc.PlanCodec().decodeStrict(raw);
+      if (!decoded.ok) {
+        throw FormatException(
+          'Invalid saved SDK plan: ${decoded.issues.where((issue) => issue.isError).map((issue) => issue.message).join('; ')}',
+        );
+      }
+      sdkPlan = decoded.plan;
+    }
     return TrainingRoutine(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -224,6 +264,7 @@ class TrainingRoutine {
               '${entry.key}': dose,
       },
       source: json['source'] as String?,
+      sdkPlan: sdkPlan,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/engine.dart' as trainer;
 
 import '../coach/coach_service.dart';
 import '../coach/plan_mapping.dart';
@@ -159,7 +160,7 @@ class AiCoachPage extends StatefulWidget {
   final Catalog catalog;
   final LearningStore store;
   final VoidCallback onBack;
-  final void Function(String title, List<Drill> drills) onStart;
+  final ValueChanged<uc.TrainingPlan> onStart;
   final ValueChanged<Drill> onDrill;
 
   static const examples = ['在家 20 分钟，练支撑臂', '健身房 30 分钟，核心和腿', '手腕有点不舒服，先做热身'];
@@ -265,8 +266,8 @@ class _AiCoachPageState extends State<AiCoachPage> {
   ) async {
     final routine = await widget.store.createRoutine(
       CoachPlanMapper.routineName(plan),
-      [for (final e in entries) e.drill.id],
-      doses: {for (final e in entries) e.drill.id: ?e.dose},
+      plan.exerciseIds.toList(),
+      sdkPlan: plan,
       source: plan.source == 'template' ? 'template' : 'ai',
     );
     if (!mounted || routine == null) return;
@@ -464,8 +465,12 @@ class _AiCoachPageState extends State<AiCoachPage> {
     CoachAnswer answer,
     int resultId,
   ) {
-    final entries = CoachPlanMapper(widget.catalog).entries(plan);
-    final drills = [for (final e in entries) e.drill];
+    final mapper = CoachPlanMapper(widget.catalog);
+    final missing = mapper.missingIds(plan);
+    if (missing.isNotEmpty) {
+      return _CoachBubble(text: '计划包含暂不可用的动作，无法开始：${missing.join('、')}');
+    }
+    final entries = mapper.entries(plan);
     final saved = session.isSaved(resultId, widget.store);
     return _PlanCard(
       key: ValueKey('coach-plan-$resultId'),
@@ -482,7 +487,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
           : () {
               // 保存提示别盖住跟练页底部按钮。
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              widget.onStart(CoachPlanMapper.routineName(plan), drills);
+              widget.onStart(plan);
             },
     );
   }
@@ -881,9 +886,8 @@ class _PlanCardState extends State<_PlanCard>
     super.build(context);
     final plan = widget.plan;
     final entries = widget.entries;
-    final minutes = estimateMinutes([for (final e in entries) e.drill]);
+    final minutes = (trainer.SessionBuilder().planSeconds(plan) / 60).ceil();
     final summary = '${entries.length} 个动作 · 约 $minutes 分钟';
-    String? lastBlock;
     return Align(
       alignment: Alignment.centerLeft,
       child: ConstrainedBox(
@@ -1061,10 +1065,11 @@ class _PlanCardState extends State<_PlanCard>
                         ),
                       ),
                     for (final (i, entry) in entries.indexed) ...[
-                      if (entry.blockName != lastBlock && !widget.preset)
+                      if (i == 0 ||
+                          entry.blockIndex != entries[i - 1].blockIndex)
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
-                          child: Eyebrow(lastBlock = entry.blockName),
+                          child: Eyebrow(entry.blockName),
                         ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),

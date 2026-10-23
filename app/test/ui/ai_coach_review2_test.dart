@@ -31,9 +31,23 @@ void main() {
       .reply!
       .plan!;
 
-  Drill aiTriceps() => CoachPlanMapper(
-    catalog,
-  ).entries(aiPlan()).firstWhere((e) => e.drill.id == 'triceps-A').drill;
+  Map<String, RoutineDose> legacyDoses() => {
+    for (final block in aiPlan().blocks)
+      for (final item in block.items)
+        item.exerciseId: RoutineDose(
+          sets: item.sets * block.rounds,
+          mode: item.mode == uc.DoseMode.time ? DoseMode.time : DoseMode.reps,
+          target: (item.mode == uc.DoseMode.time
+              ? item.workSeconds
+              : item.reps)!,
+          perSide: item.perSide,
+          restSec: item.restSeconds,
+        ),
+  };
+  Drill aiTriceps() {
+    final drill = catalog.drillById('triceps-A')!;
+    return drill.withDose(legacyDoses()[drill.id]!.apply(drill.dose));
+  }
 
   CoachService service({uc.FakeLlmClient? fake}) => CoachService(
     config: fake == null ? const CoachConfig() : const CoachConfig(apiKey: 't'),
@@ -96,7 +110,7 @@ void main() {
       final routine = (await store.createRoutine(
         'AI',
         [for (final e in entries) e.drill.id],
-        doses: {for (final e in entries) e.drill.id: e.dose!},
+        doses: legacyDoses(),
         source: 'ai',
       ))!;
       final again = routine.drills(catalog)[2];
@@ -362,7 +376,7 @@ void main() {
       final routine = (await store.createRoutine(
         'AI',
         [for (final e in entries) e.drill.id],
-        doses: {for (final e in entries) e.drill.id: e.dose!},
+        doses: legacyDoses(),
         source: 'ai',
       ))!;
       TrainingRoutine? saved;

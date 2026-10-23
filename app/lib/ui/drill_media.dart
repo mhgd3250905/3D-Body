@@ -7,11 +7,20 @@ import '../l10n/app_localizations.dart';
 import 'motion.dart';
 import 'theme_fade.dart';
 
-/// Still frame until tapped. Only the current card creates a media platform view.
+/// Still frame until tapped by default; the SDK player opts into autoplay.
+/// Only the current card creates a media platform view.
 class DrillMediaCard extends StatefulWidget {
-  const DrillMediaCard({super.key, required this.drillId, this.active = true});
+  const DrillMediaCard({
+    super.key,
+    required this.drillId,
+    this.active = true,
+    this.mirrored = false,
+    this.autoPlay = false,
+  });
   final String drillId;
   final bool active;
+  final bool mirrored;
+  final bool autoPlay;
   @override
   State<DrillMediaCard> createState() => _DrillMediaCardState();
 }
@@ -26,6 +35,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   bool _pageActive = true;
   bool _opened = false;
   int _attempt = 0;
+  bool _autoPlayScheduled = false;
   bool get _active => widget.active && _foreground && _pageActive;
   @override
   void initState() {
@@ -33,6 +43,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     _loading = DrillMedia.load();
     _controller = DrillMediaController()..setActive(widget.active);
     WidgetsBinding.instance.addObserver(this);
+    _scheduleAutoPlay();
   }
 
   @override
@@ -41,6 +52,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     _pageActive = FlarePageActivity.of(context);
     _controller.setActive(_active);
     if (!_pageActive && _opened) _close();
+    _scheduleAutoPlay();
   }
 
   void _close() {
@@ -60,6 +72,11 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.drillId != widget.drillId) _close();
     _controller.setActive(_active);
+    if (oldWidget.drillId != widget.drillId ||
+        (!oldWidget.active && widget.active) ||
+        (!oldWidget.autoPlay && widget.autoPlay)) {
+      _scheduleAutoPlay();
+    }
   }
 
   @override
@@ -67,7 +84,30 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     if (kIsWeb && state == AppLifecycleState.inactive) return;
     _foreground = state == AppLifecycleState.resumed;
     _controller.setActive(_active);
+    if (_foreground) _scheduleAutoPlay();
   }
+
+  void _scheduleAutoPlay() {
+    if (!widget.autoPlay || _autoPlayScheduled) return;
+    _autoPlayScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoPlayScheduled = false;
+      if (!mounted || !_active || !widget.autoPlay || _controller.failed) {
+        return;
+      }
+      if (!_opened) {
+        _toggle();
+      } else if (!_controller.wantsPlay) {
+        _controller.toggle();
+      }
+    });
+  }
+
+  // Only the still/video is mirrored. Flutter buttons, labels, semantics and
+  // SDK overlays retain their normal reading direction. The platform player
+  // document contains only a video element (no text or playback controls).
+  Widget _visual(Widget child) =>
+      Transform.flip(flipX: widget.mirrored, child: child);
 
   void _toggle() {
     if (!_active) return;
@@ -109,13 +149,15 @@ class _DrillMediaCardState extends State<DrillMediaCard>
                 children: [
                   ColoredBox(
                     color: const Color(0xff101013),
-                    child: Image.asset(
-                      'assets/drill_media/${widget.drillId}.jpg',
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Center(
-                        child: Icon(
-                          Icons.fitness_center,
-                          color: Colors.white54,
+                    child: _visual(
+                      Image.asset(
+                        'assets/drill_media/${widget.drillId}.jpg',
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, _, _) => const Center(
+                          child: Icon(
+                            Icons.fitness_center,
+                            color: Colors.white54,
+                          ),
                         ),
                       ),
                     ),
@@ -124,17 +166,19 @@ class _DrillMediaCardState extends State<DrillMediaCard>
                     Positioned.fill(
                       child: ThemeFadeWindow(enabled: _pageActive),
                     ),
-                    DrillMediaPlatformView(
-                      key: ValueKey('${widget.drillId}:$_attempt'),
-                      media: media,
-                      controller: _controller,
-                      labels: {
-                        'title': s.drillDemo,
-                        'play': s.play,
-                        'pause': s.pause,
-                        'error': s.demoFailed,
-                        'disabled': s.demoPaused,
-                      },
+                    _visual(
+                      DrillMediaPlatformView(
+                        key: ValueKey('${widget.drillId}:$_attempt'),
+                        media: media,
+                        controller: _controller,
+                        labels: {
+                          'title': s.drillDemo,
+                          'play': s.play,
+                          'pause': s.pause,
+                          'error': s.demoFailed,
+                          'disabled': s.demoPaused,
+                        },
+                      ),
                     ),
                     // Keep the still frame above the platform's startup surface
                     // until the decoder has actually presented a video frame.
@@ -147,9 +191,11 @@ class _DrillMediaCardState extends State<DrillMediaCard>
                         ),
                         child: ColoredBox(
                           color: const Color(0xff101013),
-                          child: Image.asset(
-                            'assets/drill_media/${widget.drillId}.jpg',
-                            fit: BoxFit.contain,
+                          child: _visual(
+                            Image.asset(
+                              'assets/drill_media/${widget.drillId}.jpg',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                       ),
