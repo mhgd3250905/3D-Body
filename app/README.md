@@ -79,7 +79,9 @@ flutter run -d chrome
 
 浏览器数据按浏览器与网址保存；需要稳定预览地址时可加 `--web-port 8840`。依赖首次安装需要网络，安装后的 App 内容随包提供。
 
-当前本机交付为 **L52 / 1.0.9+11 / v42-R17**。离线Web、Android具名包、哈希、签名、安装及本次初步用户测试见[L52记录](docs/l52-plan-skip-2026-10-17.md)。L50/R17的动作认可与冻结身份见[此前认可记录](docs/l50-r17-acceptance-2026-10-17.md)，L51及更早具名包保留历史；通用 `build/app/outputs/flutter-apk/app-release.apk` 的身份按版本台账和哈希判定。Google Play P01 AAB及Apple S4保持历史包，本轮未上传或发布。
+当前手机内测交付为 **Liquid Glass / 1.0.11+16 / v42-R17**，SDK 固定 `8b60032`（trainer 0.2.0 / coach 0.4.1）；已同签名保留数据安装，用户测试待反馈。[本轮包身份、版本整理与验证边界](docs/liquid-glass-android-test-2026-10-24.md)。本包来自 `52ee561`，以构建参数覆盖版本，源码 `pubspec.yaml` 仍为 1.0.10+15。
+
+此前 **L52 / 1.0.9+11 / v42-R17** 的有限初步用户认可见[L52记录](docs/l52-plan-skip-2026-10-17.md)，不自动覆盖本轮 +16。L50/R17的动作认可与冻结身份见[此前认可记录](docs/l50-r17-acceptance-2026-10-17.md)，L51及更早具名包保留历史；通用 `build/app/outputs/flutter-apk/app-release.apk` 的身份按[版本台账](docs/version-ledger.md)和哈希判定。Google Play P01 AAB及Apple S4保持历史包，本轮未上传或发布。
 
 安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
 
