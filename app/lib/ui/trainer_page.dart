@@ -50,6 +50,9 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   }
 
   Future<_PlayerData> _load(String language) async {
+    final wristDirections = trainerWristDirections(
+      AppLocalizations.of(context),
+    );
     validateTrainingPlan(widget.plan, widget.catalog);
     final sourceCatalog = uc.Catalog.fromJson(
       jsonDecode(await rootBundle.loadString('assets/coach/catalog.json')),
@@ -64,7 +67,11 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       leftFirst: false,
     );
     return _PlayerData(
-      plan: expandSegmentedTrainingPlan(widget.plan, widget.catalog),
+      plan: expandSegmentedTrainingPlan(
+        widget.plan,
+        widget.catalog,
+        wristDirections: wristDirections,
+      ),
       rhythms: sdk.rhythmsFromCatalog(sourceCatalog),
       source: voice,
       language: language,
@@ -74,22 +81,14 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   String? _doseLabel(sdk.SessionPhase phase) {
     final item = phase.item;
     if (item == null) return null;
-    final drill = widget.catalog.drillById(item.exerciseId)!;
-    if (drill.dose.mode == DoseMode.manual) return drill.prescription;
-    if (drill.dose.blockLabels.length <= 1) return null;
+    // Let SDK 0.2 display the current segment's own dose/label and resolve its
+    // exerciseId. A parent amount can differ from the current segment amount.
+    if (item.segments.isNotEmpty) return null;
+    if (item.exerciseId != 'forearms-C' || item.mode != uc.DoseMode.time) {
+      return null;
+    }
     final s = AppLocalizations.of(context);
-    final amount = trainerStrings(s).dose(
-      reps: item.mode == uc.DoseMode.reps,
-      amount: item.mode == uc.DoseMode.reps
-          ? item.reps ?? 1
-          : item.workSeconds ?? 1,
-      perSide: item.perSide,
-    );
-    return [
-      if (item.note?.isNotEmpty ?? false) item.note!.split('\n').first,
-      if (phase.rounds > 1) s.setsLabel(phase.round, phase.rounds),
-      amount,
-    ].join(' · ');
+    return '${s.secondsLabel(item.workSeconds!)} · ${item.note ?? widget.catalog.drillById(item.exerciseId)!.prescription}';
   }
 
   @override
@@ -162,6 +161,9 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           ),
           onFinished: widget.store.saveTrainerSession,
           keepAlive: widget.keepAlive,
+          showExtendRest: true,
+          showCompleteTimedPhase: true,
+          showSoundToggle: true,
           notificationIcon: 'mipmap/ic_launcher',
           doseLabel: _doseLabel,
           mediaBuilder: (context, request) => DrillMediaCard(

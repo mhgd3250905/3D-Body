@@ -14,6 +14,7 @@ import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
 import '../platform/drill_media/media_controller.dart';
 import '../trainer/training_plan_adapter.dart';
+import '../trainer/trainer_strings.dart';
 import 'components.dart';
 import 'actor_body_selector.dart';
 import 'content_pages.dart';
@@ -364,9 +365,28 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  void _startDrills(String title, List<Drill> drills) {
-    if (drills.isEmpty) return;
-    unawaited(_startPlan(trainingPlanFromDrills(title: title, drills: drills)));
+  Future<void> _startDrills(String title, List<Drill> drills) async {
+    if (_trainingOpen || drills.isEmpty) return;
+    try {
+      final source = uc.Catalog.fromJson(
+        jsonDecode(
+          await rootBundle.loadString(CoachService.catalogAsset, cache: false),
+        ),
+      );
+      if (!mounted) return;
+      await _startPlan(
+        trainingPlanFromDrills(
+          title: title,
+          drills: drills,
+          sourceCatalog: source,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(trainerLoadFailed(context.strings))),
+      );
+    }
   }
 
   Future<void> _addToPlan(Drill drill) async {

@@ -27,7 +27,7 @@ sdk.ItemResult _item(
   activeSeconds: seconds,
   status: status,
   plannedSideSets: const {'left': 1, 'right': 1},
-  completedSideSets: const {'left': 1, 'right': 0},
+  completedSideSets: {'left': completed, 'right': completed},
 );
 
 sdk.SessionResult _result({
@@ -118,6 +118,60 @@ uc.TrainingPlan _plan() => uc.TrainingPlan(
   ],
 );
 
+uc.TrainingPlan _oneItemPlan(uc.PlanItem item) => _plan().copyWith(
+  blocks: [
+    uc.PlanBlock(
+      id: 'main',
+      name: 'Main',
+      type: uc.BlockType.main,
+      items: [item],
+    ),
+  ],
+);
+
+uc.PlanItem _segmentedItem({int sets = 1, bool perSide = false}) => uc.PlanItem(
+  exerciseId: 'scapular-A',
+  mode: uc.DoseMode.time,
+  sets: sets,
+  perSide: perSide,
+  restSeconds: 0,
+  segments: const [
+    uc.PlanSegment(
+      id: 'y',
+      exerciseId: 'scapular-A',
+      label: 'Y',
+      mode: uc.DoseMode.time,
+      workSeconds: 10,
+    ),
+    uc.PlanSegment(
+      id: 't',
+      exerciseId: 'triceps-A',
+      label: 'T',
+      mode: uc.DoseMode.time,
+      workSeconds: 10,
+    ),
+    uc.PlanSegment(
+      id: 'w',
+      exerciseId: 'deltoids-A',
+      label: 'W',
+      mode: uc.DoseMode.time,
+      workSeconds: 10,
+    ),
+  ],
+);
+
+sdk.SessionResult _recordEngine(
+  String id,
+  uc.TrainingPlan plan,
+  sdk.SessionEngine engine,
+  double elapsed,
+) => sdk.SessionRecorder(
+  plan: plan,
+  totalExercises: 1,
+  sessionId: id,
+  startedAt: DateTime.utc(2020),
+).finish(engine, activeSeconds: elapsed);
+
 void main() {
   final catalog = loadCatalogFixture();
   Future<LearningStore> open(MemoryStorage storage) async {
@@ -172,19 +226,196 @@ void main() {
   );
 
   test(
-    'SDK completion inconsistencies remain unchanged, not repaired in App',
+    'historical SDK 0.1 result counters are retained without retroactive repair',
     () async {
-      final store = await open(MemoryStorage());
+      final storage = MemoryStorage();
+      final store = await open(storage);
       final result = _result(items: [_item(0)], endedEarly: true);
       await store.saveTrainerSession(result);
-      expect(store.trainerSessions.single.toJson(), result.toJson());
-      expect(store.trainerSessions.single.full, isFalse);
-      expect(store.sessions.single.completed, isTrue);
-      expect(store.sessions.single.completedSets, 1);
+      final oldState = jsonDecode(storage.value!) as Map<String, dynamic>;
+      final oldResult = (oldState['trainerSessions'] as List).single as Map;
+      (((oldResult['items'] as List).single as Map)['completedSideSets']
+              as Map)['right'] =
+          0;
+      oldResult['oldSdkNote'] = 'left-first partial counter before 0.2.0';
+      storage.value = jsonEncode(oldState);
+      final restored = await open(storage);
+      expect(restored.trainerSessionJson.single, oldResult);
+      expect(restored.trainerSessions.single.full, isFalse);
+      expect(restored.sessions.single.completed, isTrue);
+      expect(restored.sessions.single.completedSets, 1);
       expect(
-        store.trainerSessions.single.items.single.completedSideSets['right'],
+        restored.trainerSessions.single.items.single.completedSideSets['right'],
         0,
       );
+      await restored.saveTrainerSession(restored.trainerSessions.single);
+      expect(restored.sessions, hasLength(1));
+      expect((jsonDecode(storage.value!) as Map)['trainerSessions'], [
+        oldResult,
+      ]);
+    },
+  );
+
+  test(
+    'SDK 0.2 segments persist one parent row and restore same-session idempotently',
+    () async {
+      final storage = MemoryStorage();
+      final store = await open(storage);
+      final plan = _oneItemPlan(_segmentedItem(sets: 2));
+      await store.createRoutine('分段计划', [], sdkPlan: plan);
+      final builder = sdk.SessionBuilder(prepSeconds: 0, transitionSeconds: 0);
+      final engine = sdk.SessionEngine(builder.phases(plan))..update(60);
+      final result = _recordEngine('segments-full', plan, engine, 60);
+      expect(engine.done, isTrue);
+      expect(result.full, isTrue);
+      expect(result.items, hasLength(1));
+      expect(result.items.single.exerciseId, 'scapular-A');
+      expect(result.items.single.completedSets, 2);
+      await store.saveTrainerSession(result);
+      expect(store.sessions, hasLength(1));
+      expect(store.sessions.single.drillId, 'scapular-A');
+      expect(store.sessions.single.completedSets, 2);
+      expect(store.sessions.single.activeSeconds, 60);
+      final restored = await open(storage);
+      expect(restored.persistenceBlocked, isFalse);
+      expect(restored.routines.single.sdkPlan!.toJson(), plan.toJson());
+      await restored.saveTrainerSession(result);
+      expect(restored.sessions, hasLength(1));
+      expect(restored.trainerSessionJson.single, result.toJson());
+    },
+  );
+
+  test(
+    'skipping a segment keeps parent partial instead of completing a set',
+    () async {
+      final store = await open(MemoryStorage());
+      final plan = _oneItemPlan(_segmentedItem());
+      final engine = sdk.SessionEngine(
+        sdk.SessionBuilder(prepSeconds: 0, transitionSeconds: 0).phases(plan),
+      )..update(10);
+      expect(engine.phase.segmentId, 't');
+      expect(engine.skipSegment(11), isTrue);
+      engine.update(21);
+      final result = _recordEngine('segments-partial', plan, engine, 21);
+      expect(result.full, isFalse);
+      expect(result.items.single.status, sdk.ItemStatus.partial);
+      expect(result.items.single.completedSets, 0);
+      await store.saveTrainerSession(result);
+      expect(store.sessions, hasLength(1));
+      expect(store.sessions.single.completed, isFalse);
+      expect(store.sessions.single.completedSets, 0);
+      expect(store.sessions.single.activeSeconds, 21);
+    },
+  );
+
+  test(
+    'all segments on only one side cannot mark the parent completed',
+    () async {
+      final store = await open(MemoryStorage());
+      final plan = _oneItemPlan(_segmentedItem(perSide: true));
+      final engine = sdk.SessionEngine(
+        sdk.SessionBuilder(
+          prepSeconds: 0,
+          transitionSeconds: 0,
+          switchSideSeconds: 0,
+        ).phases(plan),
+      );
+      engine.update(50);
+      engine.finish(52);
+      final result = _recordEngine('segments-partial-side', plan, engine, 52);
+      expect(result.items.single.completedSideSets, {'right': 1, 'left': 0});
+      expect(result.items.single.completedSets, 0);
+      expect(result.items.single.status, sdk.ItemStatus.partial);
+      expect(result.full, isFalse);
+      await store.saveTrainerSession(result);
+      expect(store.sessions, hasLength(1));
+      expect(store.sessions.single.completed, isFalse);
+      expect(store.trainerSessionJson.single, result.toJson());
+    },
+  );
+
+  test(
+    'left-first and right-first partial sides both save zero completed sets',
+    () async {
+      final store = await open(MemoryStorage());
+      const item = uc.PlanItem(
+        exerciseId: 'abs-A',
+        mode: uc.DoseMode.time,
+        sets: 1,
+        workSeconds: 10,
+        perSide: true,
+        restSeconds: 0,
+      );
+      final plan = _oneItemPlan(item);
+      for (final sides in [
+        [sdk.Side.left, sdk.Side.right],
+        [sdk.Side.right, sdk.Side.left],
+      ]) {
+        final engine =
+            sdk.SessionEngine([
+                for (final side in sides)
+                  sdk.SessionPhase(
+                    kind: sdk.PhaseKind.work,
+                    seconds: 10,
+                    exerciseId: item.exerciseId,
+                    item: item,
+                    itemIndex: 0,
+                    blockIndex: 0,
+                    itemInBlock: 0,
+                    set: 1,
+                    sets: 1,
+                    side: side,
+                  ),
+                const sdk.SessionPhase(
+                  kind: sdk.PhaseKind.done,
+                  seconds: 0,
+                  itemIndex: 1,
+                ),
+              ])
+              ..update(10)
+              ..finish(12);
+        final result = _recordEngine(
+          'side-${sides.first.name}',
+          plan,
+          engine,
+          12,
+        );
+        expect(result.items.single.completedSets, 0);
+        expect(result.items.single.status, sdk.ItemStatus.partial);
+        expect(result.full, isFalse);
+        await store.saveTrainerSession(result);
+      }
+      expect(store.sessions, hasLength(2));
+      expect(
+        store.sessions.every((row) => !row.completed && row.completedSets == 0),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'repeating a completed set adds work time but cannot replace an uncompleted set',
+    () async {
+      final store = await open(MemoryStorage());
+      final plan = _oneItemPlan(_segmentedItem(sets: 2));
+      final engine = sdk.SessionEngine(
+        sdk.SessionBuilder(prepSeconds: 0, transitionSeconds: 0).phases(plan),
+      );
+      engine.update(30); // All segments of set one; set two begins.
+      engine.previous(31);
+      engine.update(61); // Repeats the same three completed identities.
+      engine.finish(62);
+      final result = _recordEngine('segments-repeat', plan, engine, 62);
+      expect(result.items.single.plannedSets, 2);
+      expect(result.items.single.completedSets, 1);
+      expect(result.items.single.activeSeconds, 62);
+      expect(result.items.single.status, sdk.ItemStatus.partial);
+      expect(result.full, isFalse);
+      await store.saveTrainerSession(result);
+      await store.saveTrainerSession(result);
+      expect(store.sessions, hasLength(1));
+      expect(store.sessions.single.completedSets, 1);
+      expect(store.sessions.single.completed, isFalse);
     },
   );
 
@@ -416,6 +647,50 @@ void main() {
         (jsonDecode(storage.value!) as Map)['futureBackupNote'],
         'keep me',
       );
+    },
+  );
+
+  test(
+    'adding manual forearms-C uses published timed dose, not a placeholder rep',
+    () async {
+      final storage = MemoryStorage();
+      final store = await open(storage);
+      final routine = (await store.createRoutine('腕部', [], sdkPlan: _plan()))!;
+      expect(await store.addToRoutine(routine.id, 'forearms-C'), isTrue);
+      final plan = store.routineById(routine.id)!.sdkPlan!;
+      final added = plan.items.singleWhere(
+        (item) => item.exerciseId == 'forearms-C',
+      );
+      expect(added.mode, uc.DoseMode.time);
+      expect(added.workSeconds, 30);
+      expect(added.reps, isNull);
+      expect(added.sets, 3);
+      expect(added.restSeconds, 45);
+      expect(plan.blocks.first.toJson(), _plan().blocks.first.toJson());
+      expect(plan.blocks.last.type, uc.BlockType.cooldown);
+      final restored = await open(storage);
+      expect(restored.routines.single.sdkPlan!.toJson(), plan.toJson());
+    },
+  );
+
+  test(
+    'an existing segment material may also be added as one independent parent',
+    () async {
+      final store = await open(MemoryStorage());
+      final original = _oneItemPlan(_segmentedItem());
+      final routine = (await store.createRoutine('分段', [], sdkPlan: original))!;
+      expect(routine.drillIds, contains('triceps-A'));
+      expect(
+        original.items.any((item) => item.exerciseId == 'triceps-A'),
+        isFalse,
+      );
+      expect(await store.addToRoutine(routine.id, 'triceps-A'), isTrue);
+      final added = store.routineById(routine.id)!.sdkPlan!;
+      expect(added.items, hasLength(2));
+      expect(added.items.first.toJson(), original.items.single.toJson());
+      expect(added.items.last.exerciseId, 'triceps-A');
+      await store.addToRoutine(routine.id, 'triceps-A');
+      expect(store.routineById(routine.id)!.sdkPlan!.toJson(), added.toJson());
     },
   );
 

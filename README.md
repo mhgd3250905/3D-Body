@@ -1,5 +1,7 @@
 # Flare Anatomy Studio
 
+2026-10-23，SDK 第 1 步升级至 trainer 0.2.0 / coach 0.4.1，固定 `8b60032`，完成自动报数、整计划 segments 和三项新控制，内测版 `1.0.10+15`。定向测试与交付见[0.2 接入记录](app/docs/sdk-trainer-020-2026-10-23.md)。开哥已明确授权先合入并推送、优先推进界面改版；完整设备细项未因此记为通过。第 2 步先给关键页浅深对比，确认后铺开。
+
 2026-10-23，SDK 第 1 步已继续改为整计划 `TrainerPlayer`，完整计划/循环保真、14 语主题文字、视频和结果幂等保存均已接入，见[整计划接入记录](app/docs/sdk-whole-plan-player-2026-10-23.md)。仍固定 b8f5b82；源码版本 +14，手机仍为此前 +13。等待 SDK 新版后完成自动缺省节奏与 segments 等功能、出新内测包；真机验收及开哥同意后再合并推送，第 2 步尚未开始。
 
 2026-10-23，分支 `codex/flarelab-sdk-agent-trainer` 开始 SDK 接入第 1 步：固定 Agent 0.4.0 与 trainer 0.1.7 到 `b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0`。基础 SDK 检查点为 1.0.10+12，追加 SmartFit 对话结构对齐的内测批次为 1.0.10+13，功能与验证见 [SDK 第 1 步记录](app/docs/sdk-step1-2026-10-23.md) 和 [对话页补充记录](app/docs/sdk-step1-chat-smartfit-2026-10-23.md)；等待用户同意合入。已认可安装版仍为 L52/R17，第 2 步 UI 改版尚未开始。

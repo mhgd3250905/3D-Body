@@ -3,6 +3,7 @@ import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
+import 'package:flare/ui/drill_media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -73,6 +74,7 @@ Future<LearningStore> _open(
   String language = 'zh',
   bool dark = false,
   bool reps = false,
+  uc.TrainingPlan? sdkPlan,
   _Storage? storage,
   List<sdk.SessionResult>? popped,
   double textScale = 1,
@@ -110,7 +112,7 @@ Future<LearningStore> _open(
                     .push<sdk.SessionResult>(
                       MaterialPageRoute(
                         builder: (_) => FlareTrainingPage(
-                          plan: _plan(reps: reps),
+                          plan: sdkPlan ?? _plan(reps: reps),
                           catalog: store.catalog,
                           store: store,
                           voiceOutput: sdk.MutedVoiceOutput(),
@@ -195,26 +197,127 @@ void main() {
     },
   );
 
+  testWidgets('0.2 counts repetitions automatically using catalog defaults', (
+    tester,
+  ) async {
+    final store = await _open(tester, reps: true);
+    await _advance(tester, 28);
+    expect(find.byKey(const ValueKey('complete-set-button')), findsNothing);
+    expect(store.trainerSessions, isEmpty);
+    final player = tester.widget<sdk.TrainerPlayer>(
+      find.byType(sdk.TrainerPlayer),
+    );
+    expect(player.rhythms.containsKey('glute-max-A'), isTrue);
+    expect(player.rhythms['chest-A']!.selfPaced, isFalse);
+    await _advance(tester, 7);
+    expect(store.trainerSessions.single.full, isTrue);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
   testWidgets(
-    'b8 keeps its self-paced fallback until SDK automatic pacing is available',
+    'optional SDK controls extend rest, complete timer and toggle sound',
     (tester) async {
-      final store = await _open(tester, reps: true);
-      await _advance(tester, 30);
-      expect(find.byKey(const ValueKey('complete-set-button')), findsOneWidget);
-      expect(store.trainerSessions, isEmpty);
+      final base = _plan();
+      final plan = base.copyWith(
+        blocks: [
+          uc.PlanBlock(
+            id: 'main',
+            name: 'Main',
+            type: uc.BlockType.main,
+            items: [
+              base.items.first.copyWith(workSeconds: 30),
+              base.items.last,
+            ],
+          ),
+        ],
+      );
+      final store = await _open(tester, sdkPlan: plan);
       final player = tester.widget<sdk.TrainerPlayer>(
         find.byType(sdk.TrainerPlayer),
       );
-      expect(player.rhythms.containsKey('glute-max-A'), isTrue);
-      expect(player.rhythms.containsKey('chest-A'), isFalse);
-      await tester.tap(find.byKey(const ValueKey('complete-set-button')));
+      expect(player.showExtendRest, isTrue);
+      expect(player.showCompleteTimedPhase, isTrue);
+      expect(player.showSoundToggle, isTrue);
+      expect(player.showSkipSegment, isFalse);
+      await tester.tap(find.byKey(const ValueKey('sound-toggle')));
       await tester.pump();
+      expect(find.byTooltip(player.strings.soundOn), findsOneWidget);
+      await _advance(tester, 11);
+      await tester.tap(find.byKey(const ValueKey('complete-timed-phase')));
       await tester.pump();
+      expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('extend-rest')));
+      await _advance(tester, 16);
+      expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
+      expect(store.trainerSessions, isEmpty);
+      await _advance(tester, 16);
       expect(store.trainerSessions.single.full, isTrue);
+      expect(store.sessions, hasLength(2));
       await tester.pumpWidget(const SizedBox());
       await tester.pump();
     },
   );
+
+  testWidgets('segments use their own media but persist one parent result', (
+    tester,
+  ) async {
+    final parent = uc.PlanItem(
+      exerciseId: 'scapular-A',
+      mode: uc.DoseMode.reps,
+      sets: 1,
+      perSide: false,
+      restSeconds: 0,
+      segments: const [
+        uc.PlanSegment(
+          id: 'a',
+          exerciseId: 'abs-A',
+          mode: uc.DoseMode.time,
+          workSeconds: 3,
+          label: 'Segment A',
+        ),
+        uc.PlanSegment(
+          id: 'b',
+          exerciseId: 'chest-A',
+          mode: uc.DoseMode.time,
+          workSeconds: 3,
+          label: 'Segment B',
+        ),
+      ],
+    );
+    final plan = _plan().copyWith(
+      blocks: [
+        uc.PlanBlock(
+          id: 'main',
+          name: 'Main',
+          type: uc.BlockType.main,
+          items: [parent],
+        ),
+      ],
+    );
+    final store = await _open(tester, sdkPlan: plan);
+    await _advance(tester, 11);
+    expect(
+      tester
+          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
+          .map((card) => card.drillId),
+      contains('abs-A'),
+    );
+    await _advance(tester, 3);
+    expect(
+      tester
+          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
+          .map((card) => card.drillId),
+      contains('chest-A'),
+    );
+    expect(store.trainerSessions, isEmpty);
+    await _advance(tester, 4);
+    expect(store.trainerSessions.single.items, hasLength(1));
+    expect(store.trainerSessions.single.items.single.completedSets, 1);
+    expect(store.sessions.single.drillId, 'scapular-A');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
 
   for (final language in languageNames.keys) {
     for (final dark in [false, true]) {

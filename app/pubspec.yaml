@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.10+14
+version: 1.0.10+15
 
 environment:
   sdk: ^3.12.2
@@ -25,12 +25,12 @@ dependencies:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0
+      ref: 8b60032c2f43fd8e91f8802c8f054a8ecb7cc110
   ugk_trainer:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
       path: packages/ugk_trainer
-      ref: b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0
+      ref: 8b60032c2f43fd8e91f8802c8f054a8ecb7cc110
 dev_dependencies:
   flutter_test:
     sdk: flutter

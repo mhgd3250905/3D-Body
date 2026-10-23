@@ -10,6 +10,7 @@ import 'package:flare/coach/usage_store.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
@@ -114,6 +115,32 @@ void main() {
   );
 
   group('服务与映射', () {
+    test('所有预设三档可执行，manual处方使用发布剂量而非零次', () {
+      final templates = TemplateFallback(catalog);
+      final source = uc.Catalog.fromJson(
+        jsonDecode(File('assets/coach/catalog.json').readAsStringSync()),
+      );
+      for (final preset in PresetPlan.all) {
+        for (final tier in ['A', 'B', 'C']) {
+          final plan = templates.build(preset.id, tier)!;
+          expect(() => validateTrainingPlan(plan, catalog), returnsNormally);
+          expect(estimateTrainingPlanSeconds(plan, catalog), greaterThan(0));
+          for (final item in plan.items) {
+            if (catalog.drillById(item.exerciseId)!.dose.mode.name !=
+                'manual') {
+              continue;
+            }
+            final expected = source[item.exerciseId]!.defaultDose;
+            expect(item.mode, expected.mode);
+            expect(item.reps, expected.reps);
+            expect(item.workSeconds, expected.seconds);
+            expect(item.sets, expected.sets);
+            expect(item.restSeconds, expected.restSeconds);
+          }
+        }
+      }
+    });
+
     test('范围 = profile 白名单 ∩ App 动作与视频；交集完整时不改 profile', () async {
       final s = service(fake: AgentFakeLlmClient(const []));
       await s.load();
@@ -172,7 +199,7 @@ void main() {
         'deltoids-A',
       ]);
       expect(
-        entries[2].dose.sets,
+        entries[2].dose!.sets,
         2,
       ); // main.rounds is not an extra set multiplier.
       expect(entries[2].doseText, '2 组 × 8 次');

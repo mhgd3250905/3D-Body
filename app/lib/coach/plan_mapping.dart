@@ -20,8 +20,9 @@ class CoachPlanEntry {
   final uc.PlanItem item;
   final String doseText;
 
-  /// Per-item display compatibility only, never a flattened execution recipe.
-  final RoutineDose dose;
+  /// Legacy scalar display only. Segmented parents have no scalar dose;
+  /// their full ordered segment doses remain in item and doseText.
+  final RoutineDose? dose;
 
   String get blockName {
     final name = block.name.isEmpty ? block.type.zh : block.name;
@@ -59,6 +60,24 @@ class CoachPlanMapper {
     final drill = catalog.drillById(item.exerciseId)!;
     final time = item.mode == uc.DoseMode.time;
     final circuit = block.type == uc.BlockType.circuit && block.rounds > 1;
+    if (item.segments.isNotEmpty) {
+      final heading = circuit ? '每轮 1 组' : '${item.sets} 组';
+      final side = item.perSide ? ' · 每侧' : '';
+      final parts = [
+        for (final (index, segment) in item.segments.indexed)
+          '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : catalog.drillById(segment.exerciseId)!.name} · '
+              '${segment.mode == uc.DoseMode.time ? '${segment.workSeconds} 秒' : '${segment.reps} 次'}'
+              '${segment.holdSeconds == null ? '' : ' · 停留 ${segment.holdSeconds} 秒'}',
+      ];
+      return CoachPlanEntry(
+        drill: drill,
+        blockIndex: bi,
+        block: block,
+        item: item,
+        dose: null,
+        doseText: '$heading$side\n${parts.join('\n')}',
+      );
+    }
     final dose = RoutineDose(
       sets: item.sets,
       mode: time ? DoseMode.time : DoseMode.reps,

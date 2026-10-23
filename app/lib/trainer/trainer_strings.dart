@@ -213,9 +213,107 @@ List<String> _for(AppLocalizations s) =>
 String trainerLoadFailed(AppLocalizations s) => _for(s)[9];
 String trainerMoveUnavailable(AppLocalizations s) => _for(s)[10];
 
+const _completeTimed = <String, String>{
+  'zh': '提前完成本段',
+  'zh_Hant': '提前完成本段',
+  'en': 'Finish this timed part',
+  'es': 'Terminar este tramo cronometrado',
+  'pt': 'Concluir esta parte cronometrada',
+  'fr': 'Terminer cette partie chronométrée',
+  'de': 'Diesen Zeitabschnitt beenden',
+  'it': 'Termina questa parte a tempo',
+  'ru': 'Завершить этот отрезок',
+  'ja': 'この時間区間を終了',
+  'ko': '이 시간 구간 완료',
+  'ar': 'إنهاء هذا الجزء الموقّت',
+  'hi': 'यह समयबद्ध भाग पूरा करें',
+  'id': 'Selesaikan bagian berwaktu ini',
+};
+
+// The four positions come from the existing forearms-A teaching cue. They are
+// labels for the shared demonstration, not newly rendered individual clips.
+const _wristDirections = <String, List<String>>{
+  'zh': ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+  'zh_Hant': ['手指朝前', '手指朝側', '手指朝後', '手背撐地'],
+  'en': [
+    'Fingers forward',
+    'Fingers sideways',
+    'Fingers backward',
+    'Backs of hands down',
+  ],
+  'es': [
+    'Dedos al frente',
+    'Dedos hacia los lados',
+    'Dedos hacia atrás',
+    'Dorso de las manos apoyado',
+  ],
+  'pt': [
+    'Dedos para a frente',
+    'Dedos para os lados',
+    'Dedos para trás',
+    'Dorso das mãos apoiado',
+  ],
+  'fr': [
+    'Doigts vers l’avant',
+    'Doigts sur les côtés',
+    'Doigts vers l’arrière',
+    'Dos des mains au sol',
+  ],
+  'de': [
+    'Finger nach vorn',
+    'Finger zur Seite',
+    'Finger nach hinten',
+    'Handrücken am Boden',
+  ],
+  'it': [
+    'Dita in avanti',
+    'Dita verso i lati',
+    'Dita all’indietro',
+    'Dorso delle mani a terra',
+  ],
+  'ru': [
+    'Пальцы вперёд',
+    'Пальцы в стороны',
+    'Пальцы назад',
+    'Тыльной стороной ладоней вниз',
+  ],
+  'ja': ['指を前に向ける', '指を横に向ける', '指を後ろに向ける', '手の甲を床につける'],
+  'ko': ['손가락을 앞으로', '손가락을 옆으로', '손가락을 뒤로', '손등을 바닥에'],
+  'ar': [
+    'الأصابع للأمام',
+    'الأصابع إلى الجانبين',
+    'الأصابع للخلف',
+    'ظهر اليدين على الأرض',
+  ],
+  'hi': [
+    'उँगलियाँ आगे',
+    'उँगलियाँ बगल की ओर',
+    'उँगलियाँ पीछे',
+    'हाथों का पिछला भाग नीचे',
+  ],
+  'id': [
+    'Jari ke depan',
+    'Jari ke samping',
+    'Jari ke belakang',
+    'Punggung tangan di lantai',
+  ],
+};
+
+List<String> trainerWristDirections(AppLocalizations s) =>
+    _wristDirections[s.localeName] ??
+    _wristDirections[s.localeName.split('_').first] ??
+    _wristDirections['en']!;
+
 sdk.TrainerStrings trainerStrings(AppLocalizations s) {
   final w = _for(s);
   return sdk.TrainerStrings(
+    extendRest: s.addRest,
+    completeTimedPhase:
+        _completeTimed[s.localeName] ??
+        _completeTimed[s.localeName.split('_').first] ??
+        _completeTimed['en']!,
+    soundOn: s.trainerSoundOn,
+    soundOff: s.trainerSoundOff,
     prepFirst: '${s.countdown} · ${w[0]}',
     restNext: '${s.rest} · ${s.planNext}',
     restBetweenSets: s.rest,

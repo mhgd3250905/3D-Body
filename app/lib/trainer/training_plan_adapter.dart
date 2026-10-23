@@ -1,87 +1,153 @@
 import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
 
 import '../data/catalog.dart';
 
-/// Converts existing saved routines and single-drill entry points without
-/// inventing repetitions for a distance/manual prescription. A manual set uses
-/// the SDK's ordinary self-paced completion, with its original wording visible.
+// Exact contracts in pinned Pose-Hub 0.3.0 (93d8f52), for synchronous legacy
+// callers. Prefer sourceCatalog when loaded. forearms-C's 30 seconds is the
+// catalog's published approximation (review=doubt), not a distance conversion.
+const _manualDefaults = <String, uc.Dose>{
+  'forearms-A': uc.Dose(
+    mode: uc.DoseMode.reps,
+    sets: 2,
+    reps: 10,
+    restSeconds: 15,
+  ),
+  'forearms-C': uc.Dose(
+    mode: uc.DoseMode.time,
+    sets: 3,
+    seconds: 30,
+    restSeconds: 45,
+  ),
+};
+
+/// Known manual prescriptions consume published defaults; unknown ones fail.
+/// A placeholder repetition must never become an automatically completed set.
 uc.TrainingPlan trainingPlanFromDrills({
   required String title,
   required List<Drill> drills,
   String? id,
+  uc.Catalog? sourceCatalog,
 }) {
   if (drills.isEmpty) throw ArgumentError.value(drills, 'drills', 'Empty plan');
-  return uc.TrainingPlan(
+  final items = <uc.PlanItem>[];
+  for (final drill in drills) {
+    final d = drill.dose;
+    if (d.mode == DoseMode.manual) {
+      if (!_manualDefaults.containsKey(drill.id)) {
+        throw FormatException(
+          'Manual dose needs an authored plan: ${drill.id}',
+        );
+      }
+      final published = sourceCatalog?[drill.id];
+      if (sourceCatalog != null && published == null) {
+        throw UnknownTrainingDrills([drill.id]);
+      }
+      final dose = published?.defaultDose ?? _manualDefaults[drill.id]!;
+      items.add(
+        uc.PlanItem(
+          exerciseId: drill.id,
+          mode: dose.mode,
+          sets: dose.sets,
+          reps: dose.reps,
+          workSeconds: dose.seconds,
+          perSide: published?.unilateral ?? d.perSide,
+          restSeconds: dose.restSeconds,
+          note: drill.prescription,
+        ),
+      );
+    } else {
+      items.add(
+        uc.PlanItem(
+          exerciseId: drill.id,
+          mode: d.mode == DoseMode.time ? uc.DoseMode.time : uc.DoseMode.reps,
+          sets: d.sets,
+          reps: d.mode == DoseMode.reps ? d.min : null,
+          workSeconds: d.mode == DoseMode.time ? d.min : null,
+          perSide: d.perSide,
+          restSeconds: d.restSec,
+          note: drill.prescription,
+        ),
+      );
+    }
+  }
+  final plan = uc.TrainingPlan(
     id: id ?? 'practice-${DateTime.now().microsecondsSinceEpoch}',
     source: 'template',
     title: title,
     goal: 'flare',
     scene: drills.first.tier == 'C' ? 'gym' : 'home',
     level: 1,
-    targetMinutes:
-        ((10 +
-                    drills.fold<int>(0, (total, drill) {
-                      final d = drill.dose;
-                      final work = d.mode == DoseMode.time
-                          ? d.min
-                          : d.min.clamp(1, 1000000) * 3;
-                      return total +
-                          d.sets * d.blocksPerSet * work +
-                          (d.sets - 1) * d.restSec +
-                          15;
-                    })) /
-                60)
-            .ceil(),
+    targetMinutes: 1,
+    blocks: [
+      uc.PlanBlock(
+        id: 'practice',
+        name: title,
+        type: uc.BlockType.main,
+        items: items,
+      ),
+    ],
+  );
+  final estimatePlan = plan.copyWith(
     blocks: [
       uc.PlanBlock(
         id: 'practice',
         name: title,
         type: uc.BlockType.main,
         items: [
-          for (final drill in drills)
-            uc.PlanItem(
-              exerciseId: drill.id,
-              mode: drill.dose.mode == DoseMode.time
-                  ? uc.DoseMode.time
-                  : uc.DoseMode.reps,
-              sets: drill.dose.sets,
-              reps: drill.dose.mode == DoseMode.time
-                  ? null
-                  : drill.dose.min.clamp(1, 1000000),
-              workSeconds: drill.dose.mode == DoseMode.time
-                  ? drill.dose.min
-                  : null,
-              perSide: drill.dose.perSide,
-              restSeconds: drill.dose.restSec,
-              note: drill.prescription,
-            ),
+          for (final (index, item) in items.indexed)
+            _withSegments(item, drills[index], const [
+              '手指朝前',
+              '手指朝侧',
+              '手指朝后',
+              '手背撑地',
+            ]),
         ],
       ),
     ],
   );
+  final estimate = sdk.SessionBuilder(
+    rhythms: sourceCatalog == null
+        ? const {}
+        : sdk.rhythmsFromCatalog(sourceCatalog),
+  ).planSeconds(estimatePlan);
+  return plan.copyWith(
+    targetMinutes: ((estimate + 10) / 60).ceil().clamp(1, 1000000),
+  );
 }
 
-/// Reject the whole plan before entering TrainerPlayer: its drillOf callback
-/// deliberately skips unknown ids, which would otherwise hide missing actions.
 void validateTrainingPlan(uc.TrainingPlan plan, Catalog catalog) {
   if (plan.items.isEmpty) throw const FormatException('Empty training plan');
   final unknown = plan.exerciseIds
       .where((id) => catalog.drillById(id) == null)
       .toList();
   if (unknown.isNotEmpty) throw UnknownTrainingDrills(unknown);
+  bool validDose(uc.DoseMode mode, int? reps, int? seconds) {
+    final amount = mode == uc.DoseMode.reps ? reps : seconds;
+    return amount != null && amount > 0;
+  }
+
   for (final block in plan.blocks) {
     if (block.rounds < 1 || block.restBetweenRoundsSeconds < 0) {
       throw const FormatException('Invalid block dose');
     }
     for (final item in block.items) {
-      final amount = item.mode == uc.DoseMode.time
-          ? item.workSeconds
-          : item.reps;
       if (item.sets < 1 ||
-          amount == null ||
-          amount < 1 ||
-          item.restSeconds < 0) {
+          item.restSeconds < 0 ||
+          (item.segments.isEmpty &&
+              !validDose(item.mode, item.reps, item.workSeconds))) {
         throw FormatException('Invalid dose: ${item.exerciseId}');
+      }
+      final ids = <String>{};
+      for (final segment in item.segments) {
+        if (segment.id.isEmpty ||
+            !ids.add(segment.id) ||
+            !validDose(segment.mode, segment.reps, segment.workSeconds) ||
+            (segment.holdSeconds != null && segment.holdSeconds! <= 0)) {
+          throw FormatException(
+            'Invalid segment: ${item.exerciseId}/${segment.id}',
+          );
+        }
       }
     }
   }
@@ -92,102 +158,85 @@ class UnknownTrainingDrills implements Exception {
   final List<String> ids;
 }
 
-/// The SDK circuit sequence represents a complete multi-segment set exactly:
-/// Y → T → W, then the next set, with the original rest between complete sets.
-/// Segment transitions and side order remain the SDK's own behavior.
+/// Card estimates include the same composite segments as the player, using
+/// SDK default rhythms. Missing-media plans stay readable but cannot start.
+double estimateTrainingPlanSeconds(uc.TrainingPlan plan, Catalog? catalog) {
+  final builder = sdk.SessionBuilder();
+  if (catalog == null ||
+      plan.exerciseIds.any((id) => catalog.drillById(id) == null)) {
+    return builder.planSeconds(plan);
+  }
+  return builder.planSeconds(expandSegmentedTrainingPlan(plan, catalog));
+}
+
+/// SDK 0.2 owns segment identity, per-set order and completion accounting.
+/// Reuse existing composite demonstrations, not invented segment-specific media.
+/// Explicit segments and their chosen material ids are preserved unchanged.
 uc.TrainingPlan expandSegmentedTrainingPlan(
   uc.TrainingPlan plan,
-  Catalog catalog,
-) {
+  Catalog catalog, {
+  List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+}) {
   validateTrainingPlan(plan, catalog);
-  final blocks = <uc.PlanBlock>[];
-  List<uc.PlanItem> segments(uc.PlanItem item) {
-    final drill = catalog.drillById(item.exerciseId)!;
-    return [
-      for (final label in drill.dose.blockLabels)
-        uc.PlanItem(
-          exerciseId: item.exerciseId,
-          mode: item.mode,
-          sets: 1,
-          reps: item.reps,
-          workSeconds: item.workSeconds,
-          perSide: item.perSide,
-          restSeconds: item.restSeconds,
-          note: [
-            label,
-            if (item.note?.isNotEmpty ?? false) item.note!,
-          ].join('\n'),
-          replacedFrom: item.replacedFrom,
-        ),
-    ];
+  if (wristDirections.length != 4) {
+    throw ArgumentError('Four wrist directions required');
   }
-
-  for (final block in plan.blocks) {
-    // Idempotent for a prepared plan passed back through an entry point.
-    if (block.id.startsWith('flare-segments:') ||
-        block.id.startsWith('flare-segment-circuit:')) {
-      blocks.add(block);
-      continue;
-    }
-    if (!block.items.any(
-      (item) => catalog.drillById(item.exerciseId)!.dose.blockLabels.length > 1,
-    )) {
-      blocks.add(block);
-      continue;
-    }
-    if (block.type == uc.BlockType.circuit && block.rounds > 1) {
-      blocks.add(
+  return plan.copyWith(
+    blocks: [
+      for (final block in plan.blocks)
         uc.PlanBlock(
-          id: 'flare-segment-circuit:${block.id}',
+          id: block.id,
           name: block.name,
           type: block.type,
           rounds: block.rounds,
           restBetweenRoundsSeconds: block.restBetweenRoundsSeconds,
           items: [
             for (final item in block.items)
-              if (catalog.drillById(item.exerciseId)!.dose.blockLabels.length >
-                  1)
-                ...segments(item)
-              else
+              _withSegments(
                 item,
+                catalog.drillById(item.exerciseId)!,
+                wristDirections,
+              ),
           ],
         ),
-      );
-      continue;
-    }
-    var pending = <uc.PlanItem>[];
-    void flush() {
-      if (pending.isEmpty) return;
-      blocks.add(
-        uc.PlanBlock(
-          id: '${block.id}:${blocks.length}',
-          name: block.name,
-          type: block.type,
-          items: List.unmodifiable(pending),
-        ),
-      );
-      pending = [];
-    }
+    ],
+  );
+}
 
-    for (final (index, item) in block.items.indexed) {
-      final drill = catalog.drillById(item.exerciseId)!;
-      if (drill.dose.blockLabels.length == 1) {
-        pending.add(item);
-        continue;
-      }
-      flush();
-      blocks.add(
-        uc.PlanBlock(
-          id: 'flare-segments:${block.id}:$index',
-          name: drill.name,
-          type: uc.BlockType.circuit,
-          rounds: item.sets,
-          restBetweenRoundsSeconds: item.restSeconds,
-          items: segments(item),
+uc.PlanItem _withSegments(
+  uc.PlanItem item,
+  Drill drill,
+  List<String> wristDirections,
+) {
+  if (item.segments.isNotEmpty) return item;
+  final labels = switch (item.exerciseId) {
+    'forearms-A' => wristDirections,
+    'scapular-A' => const ['Y', 'T', 'W'],
+    'forearms-B' => drill.dose.blockLabels,
+    _ => const <String>[],
+  };
+  if (labels.length <= 1) return item;
+  final ids = switch (item.exerciseId) {
+    'forearms-A' => const [
+      'fingers-forward',
+      'fingers-sideways',
+      'fingers-backward',
+      'back-of-hand',
+    ],
+    'scapular-A' => const ['y', 't', 'w'],
+    _ => const ['wrist-flexion', 'wrist-extension'],
+  };
+  return item.copyWith(
+    segments: [
+      for (final (index, label) in labels.indexed)
+        uc.PlanSegment(
+          id: ids[index],
+          exerciseId: item.exerciseId,
+          label: label,
+          mode: item.mode,
+          reps: item.reps,
+          workSeconds: item.workSeconds,
         ),
-      );
-    }
-    flush();
-  }
-  return plan.copyWith(blocks: blocks);
+    ],
+  );
 }

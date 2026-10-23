@@ -27,7 +27,9 @@ class TrainingSession {
   final bool completed;
 
   /// Compatibility projection only. The SDK result remains the authority:
-  /// do not reconstruct sides/visits or repair its known completion counters.
+  /// do not reconstruct sides/visits or recalculate historical counters.
+  /// SDK 0.2.0 segments already aggregate into one parent ItemResult, so this
+  /// projection stays one row per parent for both old and new result JSON.
   /// Unreached or unrepresentable items stay in the full SDK archive only.
   static TrainingSession? fromTrainerItem(
     trainer.SessionResult result,

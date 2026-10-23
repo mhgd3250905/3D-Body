@@ -11,6 +11,7 @@ import '../data/local_state_storage.dart';
 import '../domain/learning_settings.dart';
 import '../domain/training_session.dart';
 import '../domain/training_plan.dart';
+import '../trainer/training_plan_adapter.dart';
 
 export '../data/local_state_storage.dart';
 export '../domain/learning_settings.dart';
@@ -452,11 +453,18 @@ class LearningStore extends ChangeNotifier {
   Future<bool> addToRoutine(String id, String drillId) {
     final routine = routineById(id);
     if (routine == null) throw ArgumentError.value(id, 'id');
-    if (routine.drillIds.contains(drillId)) return Future.value(true);
     if (routine.sdkPlan case final plan?) {
+      // exerciseIds also contains segment media; only a parent item counts
+      // as an independently added exercise.
+      if (plan.items.any((item) => item.exerciseId == drillId)) {
+        return Future.value(true);
+      }
       final drill = catalog.drillById(drillId);
       if (drill == null) return Future.value(false);
-      final dose = drill.dose;
+      final item = trainingPlanFromDrills(
+        title: drill.name,
+        drills: [drill],
+      ).items.single;
       final blockIds = plan.blocks.map((block) => block.id).toSet();
       var blockId = 'added-$drillId';
       while (blockIds.contains(blockId)) {
@@ -466,19 +474,7 @@ class LearningStore extends ChangeNotifier {
         id: blockId,
         name: drill.name,
         type: uc.BlockType.main,
-        items: [
-          uc.PlanItem(
-            exerciseId: drillId,
-            mode: dose.mode == DoseMode.time
-                ? uc.DoseMode.time
-                : uc.DoseMode.reps,
-            sets: dose.sets,
-            reps: dose.mode == DoseMode.time ? null : dose.min,
-            workSeconds: dose.mode == DoseMode.time ? dose.min : null,
-            perSide: dose.perSide,
-            restSeconds: dose.restSec,
-          ),
-        ],
+        items: [item],
       );
       final blocks = [...plan.blocks];
       final cooldown = blocks.indexWhere(
@@ -487,6 +483,7 @@ class LearningStore extends ChangeNotifier {
       blocks.insert(cooldown < 0 ? blocks.length : cooldown, block);
       return updateRoutine(id, sdkPlan: plan.copyWith(blocks: blocks));
     }
+    if (routine.drillIds.contains(drillId)) return Future.value(true);
     return updateRoutine(id, drillIds: [...routine.drillIds, drillId]);
   }
 

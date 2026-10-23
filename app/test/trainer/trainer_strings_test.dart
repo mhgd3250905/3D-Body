@@ -25,6 +25,11 @@ void main() {
         s.saveFailed,
         s.mediaUnavailable,
         s.notificationText,
+        s.extendRest,
+        s.completeTimedPhase,
+        s.soundOn,
+        s.soundOff,
+        ...trainerWristDirections(app),
         s.dose(reps: true, amount: 12, perSide: true),
         trainerLoadFailed(app),
         trainerMoveUnavailable(app),
@@ -32,6 +37,19 @@ void main() {
         expect(text.trim(), isNotEmpty, reason: locale.toString());
       }
       expect(s.notificationText, app.library);
+      expect(s.extendRest, app.addRest);
+      expect(trainerWristDirections(app), hasLength(4));
+      if (app.localeName == 'zh') {
+        expect(trainerWristDirections(app), ['手指朝前', '手指朝侧', '手指朝后', '手背撑地']);
+      }
+      if (app.localeName == 'en') {
+        expect(trainerWristDirections(app), [
+          'Fingers forward',
+          'Fingers sideways',
+          'Fingers backward',
+          'Backs of hands down',
+        ]);
+      }
       expect(s.sideName(Side.left), app.leftSide);
       expect(s.sideName(Side.right), app.rightSide);
     }

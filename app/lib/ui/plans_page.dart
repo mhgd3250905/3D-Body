@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/engine.dart' as ut;
 import '../coach/plan_mapping.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
@@ -10,6 +10,10 @@ import 'content_pages.dart' show PageHeader;
 import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
+
+bool _routineHasItem(TrainingRoutine routine, String drillId) =>
+    routine.sdkPlan?.items.any((item) => item.exerciseId == drillId) ??
+    routine.drillIds.contains(drillId);
 
 /// Titles and one-line purposes for the ready-made directions.
 extension PresetText on PresetPlan {
@@ -345,7 +349,17 @@ class PlansPage extends StatelessWidget {
 
   Widget _routineRow(BuildContext context, TrainingRoutine routine) {
     final s = context.strings;
-    final drills = routine.drills(catalog);
+    final plan = routine.sdkPlan;
+    final drills = plan == null
+        ? routine.drills(catalog)
+        : [for (final item in plan.items) ?catalog.drillById(item.exerciseId)];
+    final count = plan?.items.length ?? drills.length;
+    final minutes = plan == null
+        ? estimateMinutes(drills)
+        : (estimateTrainingPlanSeconds(plan, catalog) / 60).ceil().clamp(
+            1,
+            999,
+          );
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Pressable(
@@ -378,7 +392,7 @@ class PlansPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          s.planMeta(drills.length, estimateMinutes(drills)),
+                          s.planMeta(count, minutes),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -684,7 +698,10 @@ class PlanDetailPage extends StatelessWidget {
     final entries = plan != null && available ? mapper!.entries(plan) : null;
     final minutes = plan == null
         ? estimateMinutes(drills)
-        : (ut.SessionBuilder().planSeconds(plan) / 60).ceil().clamp(1, 999);
+        : (estimateTrainingPlanSeconds(plan, catalog) / 60).ceil().clamp(
+            1,
+            999,
+          );
     final ts = trainerStrings(s);
     return ColoredBox(
       color: FlareColors.background,
@@ -756,6 +773,7 @@ class PlanDetailPage extends StatelessWidget {
                         key: ValueKey('sdk-plan-row-$index'),
                         index: index,
                         drill: entry.drill,
+                        doseText: entry.doseText,
                         onTap: () => onDrill(entry.drill),
                       ),
                     ],
@@ -806,11 +824,13 @@ class _NumberedDrill extends StatelessWidget {
     required this.onTap,
     this.trailing,
     this.state,
+    this.doseText,
   });
   final int index;
   final Drill drill;
   final VoidCallback onTap;
   final Widget? trailing;
+  final String? doseText;
 
   /// null: plain; true: done; false: current.
   final bool? state;
@@ -886,9 +906,11 @@ class _NumberedDrill extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          drill.prescription,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          doseText ?? drill.prescription,
+                          maxLines: doseText == null ? 1 : null,
+                          overflow: doseText == null
+                              ? TextOverflow.ellipsis
+                              : null,
                           style: TextStyle(
                             color: FlareColors.dim,
                             fontSize: 12,
@@ -1508,15 +1530,18 @@ Future<String?> showAddToPlanSheet(
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 subtitle: Text(
-                  s.planDrillCount(routine.drillIds.length),
+                  s.planDrillCount(
+                    routine.sdkPlan?.items.length ?? routine.drillIds.length,
+                  ),
                   style: TextStyle(fontSize: 12, color: FlareColors.dim),
                 ),
-                trailing: routine.drillIds.contains(drill.id)
+                trailing: _routineHasItem(routine, drill.id)
                     ? Icon(Icons.check_rounded, color: FlareColors.success)
                     : Icon(Icons.add_rounded, color: FlareColors.dim),
                 enabled:
-                    !routine.drillIds.contains(drill.id) &&
-                    routine.drillIds.length < TrainingRoutine.maxDrills,
+                    !_routineHasItem(routine, drill.id) &&
+                    (routine.sdkPlan != null ||
+                        routine.drillIds.length < TrainingRoutine.maxDrills),
                 onTap: () => Navigator.pop(sheet, routine.id),
               ),
             ListTile(

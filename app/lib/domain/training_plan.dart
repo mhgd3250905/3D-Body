@@ -160,6 +160,9 @@ class TrainingRoutine {
 
   final String id;
   final String name;
+
+  /// Asset lookup index for SDK plans (parents plus segment media IDs).
+  /// Display counts and execution order come from sdkPlan.items, not this list.
   final List<String> drillIds;
 
   /// Per-drill targets that replace the drill's default (only for drills in

@@ -2,6 +2,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../data/catalog.dart';
 import '../domain/training_plan.dart';
+import '../trainer/training_plan_adapter.dart';
 
 /// 为什么用了预设方案（给用户看的一句话）。
 enum PresetReason {
@@ -23,7 +24,7 @@ enum PresetReason {
 }
 
 /// 离线回落：从 App 现有 6 个成套训练里按关键词挑最接近的一个，原样作为预设方案。
-/// 不生成新内容，也不改剂量（沿用动作库里的处方）。
+/// 沿用目录处方；旧手动处方使用已发布的默认剂量，与普通开练入口一致。
 class TemplateFallback {
   TemplateFallback(this.catalog, {this.cautionsOf, this.equipmentOf});
   final Catalog catalog;
@@ -237,41 +238,31 @@ class TemplateFallback {
           d,
     ];
     if (drills.isEmpty) return null;
+    final defaults = trainingPlanFromDrills(
+      title: titles[preset.id]!,
+      drills: drills,
+    );
+    final minutes = (estimateTrainingPlanSeconds(defaults, catalog) / 60)
+        .ceil();
     return uc.TrainingPlan(
       id: 'template-${preset.id}-$tier',
       source: 'template',
       templateId: preset.id,
       title: '预设方案 · ${titles[preset.id]}',
-      summary:
-          '计划页「${titles[preset.id]}」的${tierLabel(tier)}版，预计 ${estimateMinutes(drills)} 分钟',
+      summary: '计划页「${titles[preset.id]}」的${tierLabel(tier)}版，预计 $minutes 分钟',
       goal: preset.id == 'warmup' ? 'warmup' : 'strength',
       scene: tier == 'C' ? 'gym' : 'home',
       equipment: {for (final d in drills) ...?equipmentOf?.call(d.id)}.toList(),
       level: 1,
       // The profile accepts a 5–60 minute budget. Safety filtering can leave
       // a shorter routine; keep its actual dose and display its estimate.
-      targetMinutes: estimateMinutes(drills).clamp(5, 60),
+      targetMinutes: minutes.clamp(5, 60),
       blocks: [
         uc.PlanBlock(
           id: 'b1',
           name: titles[preset.id]!,
           type: preset.id == 'warmup' ? uc.BlockType.warmup : uc.BlockType.main,
-          items: [
-            for (final drill in drills)
-              uc.PlanItem(
-                exerciseId: drill.id,
-                mode: drill.dose.mode.name == 'time'
-                    ? uc.DoseMode.time
-                    : uc.DoseMode.reps,
-                sets: drill.dose.sets,
-                reps: drill.dose.mode.name == 'time' ? null : drill.dose.min,
-                workSeconds: drill.dose.mode.name == 'time'
-                    ? drill.dose.min
-                    : null,
-                perSide: drill.dose.perSide,
-                restSeconds: drill.dose.restSec,
-              ),
-          ],
+          items: defaults.items.toList(),
         ),
       ],
       avoid: avoid,

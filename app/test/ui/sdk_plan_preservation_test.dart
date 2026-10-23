@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flare/coach/plan_mapping.dart';
-import 'package:flare/domain/training_plan.dart';
+import 'package:flare/coach/coach_config.dart';
+import 'package:flare/coach/coach_service.dart';
+import 'package:flare/coach/usage_store.dart';
+import 'package:flare/control/learning_store.dart';
+import 'package:flare/ui/ai_coach_page.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/sdk_plan_editor_page.dart';
@@ -13,6 +18,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer/engine.dart' as trainer;
 
 import '../domain/fixtures.dart';
+import 'flow_regressions_test.dart' show MemoryStateStorage;
 
 uc.TrainingPlan structuredPlan() => uc.TrainingPlan(
   id: 'structured',
@@ -73,6 +79,68 @@ uc.TrainingPlan structuredPlan() => uc.TrainingPlan(
   ],
 );
 
+uc.TrainingPlan segmentedPlan() => structuredPlan().copyWith(
+  blocks: [
+    const uc.PlanBlock(
+      id: 'segments',
+      name: '分段循环',
+      type: uc.BlockType.circuit,
+      rounds: 3,
+      restBetweenRoundsSeconds: 60,
+      items: [
+        uc.PlanItem(
+          exerciseId: 'scapular-A',
+          mode: uc.DoseMode.reps,
+          sets: 2,
+          perSide: false,
+          restSeconds: 30,
+          note: '原父项备注',
+          segments: [
+            uc.PlanSegment(
+              id: 'y',
+              label: 'Y',
+              exerciseId: 'scapular-A',
+              mode: uc.DoseMode.reps,
+              reps: 8,
+            ),
+            uc.PlanSegment(
+              id: 't',
+              label: 'T',
+              exerciseId: 'triceps-A',
+              mode: uc.DoseMode.time,
+              workSeconds: 20,
+            ),
+            uc.PlanSegment(
+              id: 'w',
+              label: 'W',
+              exerciseId: 'forearms-A',
+              mode: uc.DoseMode.reps,
+              reps: 6,
+              holdSeconds: 2,
+              rhythm: {
+                'kind': 'rep_hold',
+                'leadSeconds': 0,
+                'phases': [
+                  {'id': 'go', 'seconds': 1},
+                  {'id': 'hold', 'seconds': 2},
+                ],
+              },
+            ),
+          ],
+        ),
+        uc.PlanItem(
+          exerciseId: 'scapular-A',
+          mode: uc.DoseMode.reps,
+          sets: 1,
+          reps: 10,
+          perSide: false,
+          restSeconds: 15,
+        ),
+      ],
+    ),
+  ],
+);
+
 void main() {
   final catalog = loadCatalogFixture();
   test('完整计划往返保留重复动作、块、轮休、剂量与元数据，执行次序由SDK确定', () {
@@ -113,8 +181,8 @@ void main() {
     final entries = CoachPlanMapper(catalog).entries(plan);
     expect(entries, hasLength(3));
     expect(entries.map((e) => e.blockIndex), [0, 1, 1]);
-    expect(entries[0].dose.target, 8);
-    expect(entries[1].dose.target, 12);
+    expect(entries[0].dose!.target, 8);
+    expect(entries[1].dose!.target, 12);
     expect(entries[1].doseText, '每轮 1 组 × 12 次');
     expect(entries[1].blockName, contains('3 轮'));
     expect(entries[1].blockName, contains('60 秒'));
@@ -207,6 +275,86 @@ void main() {
       }).sdkPlan,
       isNull,
     );
+  });
+
+  test('0.4.1分段父剂量可空，Codec/显示保留有序分段和重复父项', () {
+    final plan = segmentedPlan();
+    final routine = TrainingRoutine(
+      id: 'segments',
+      name: '分段',
+      drillIds: const [],
+      sdkPlan: plan,
+    );
+    final restored = TrainingRoutine.fromJson(
+      jsonDecode(jsonEncode(routine.toJson())) as Map<String, dynamic>,
+    );
+    expect(restored.sdkPlan!.toJson(), plan.toJson());
+    expect(restored.sdkPlan!.items.first.reps, isNull);
+    expect(restored.sdkPlan!.items.first.workSeconds, isNull);
+    expect(restored.drillIds, ['scapular-A', 'triceps-A', 'forearms-A']);
+    final entries = CoachPlanMapper(catalog).entries(restored.sdkPlan!);
+    expect(
+      entries,
+      hasLength(2),
+    ); // Assets are not additional parent exercises.
+    expect(entries.map((entry) => entry.drill.id), [
+      'scapular-A',
+      'scapular-A',
+    ]);
+    expect(entries.first.dose, isNull);
+    expect(
+      entries.first.doseText,
+      '每轮 1 组\n1. Y · 8 次\n2. T · 20 秒\n3. W · 6 次 · 停留 2 秒',
+    );
+    expect(entries.first.item.segments.map((segment) => segment.id), [
+      'y',
+      't',
+      'w',
+    ]);
+    expect(
+      entries.first.item.segments.last.rhythm,
+      plan.items.first.segments.last.rhythm,
+    );
+    expect(entries.first.blockName, contains('3 轮'));
+    expect(entries.last.dose!.target, 10);
+  });
+
+  test('坏分段不能被静默恢复，段素材缺失阻止整计划展示', () {
+    final plan = segmentedPlan();
+    final raw = TrainingRoutine(
+      id: 'r',
+      name: '坏分段',
+      drillIds: const [],
+      sdkPlan: plan,
+    ).toJson();
+    final firstItem =
+        (((raw['sdkPlan'] as Map)['blocks'] as List).first as Map)['items']
+            as List;
+    ((firstItem.first as Map)['segments'] as List)[1]['mode'] = 'invalid';
+    expect(() => TrainingRoutine.fromJson(raw), throwsFormatException);
+    final missing = plan.copyWith(
+      blocks: [
+        uc.PlanBlock(
+          id: 'missing',
+          name: '',
+          type: uc.BlockType.main,
+          items: [
+            plan.items.first.copyWith(
+              segments: const [
+                uc.PlanSegment(
+                  id: 'm',
+                  exerciseId: 'missing-segment',
+                  mode: uc.DoseMode.time,
+                  workSeconds: 20,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    expect(CoachPlanMapper(catalog).missingIds(missing), {'missing-segment'});
+    expect(() => CoachPlanMapper(catalog).entries(missing), throwsStateError);
   });
 
   Future<void> showEditor(
@@ -355,5 +503,115 @@ void main() {
           .onPressed,
       isNotNull,
     );
+  });
+  testWidgets('0.2分段计划编辑显示混合剂量，改名重排保存不丢分段节奏', (tester) async {
+    final original = segmentedPlan();
+    uc.TrainingPlan? saved;
+    await showEditor(tester, original, (value) => saved = value);
+    expect(find.textContaining('1. Y · 8 次'), findsOneWidget);
+    expect(find.textContaining('2. T · 20 秒'), findsOneWidget);
+    expect(find.textContaining('3. W · 6 次'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.enterText(find.byKey(const ValueKey('sdk-plan-name')), '分段改名');
+    final list = tester.widget<ReorderableListView>(
+      find.byKey(const ValueKey('sdk-plan-block-0')),
+    );
+    list.onReorderItem!(0, 1);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('sdk-plan-save')));
+    await tester.pumpAndSettle();
+    expect(saved!.title, '分段改名');
+    expect(saved!.blocks.single.rounds, 3);
+    expect(saved!.blocks.single.restBetweenRoundsSeconds, 60);
+    expect(saved!.items.last.toJson(), original.items.first.toJson());
+    expect(saved!.items.first.toJson(), original.items.last.toJson());
+    expect(saved!.items.last.reps, isNull);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('AI分段卡按父项计数，完整显示各段并原样交付开练', (tester) async {
+    tester.view.physicalSize = const Size(390, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final plan = segmentedPlan();
+    final store = LearningStore(
+      catalog: catalog,
+      storage: MemoryStateStorage(),
+    );
+    await store.initialize();
+    final service = CoachService(
+      config: const CoachConfig(),
+      appCatalog: catalog,
+      usage: CoachUsageStore(),
+      storage: MemoryStateStorage(),
+      readAsset: (path) async => File(path).readAsStringSync(),
+    );
+    final session = AiCoachSession(service);
+    await session.load();
+    await session.acceptDisclaimer();
+    session.messages.add(
+      CoachMessage.answer(CoachAnswer(reply: uc.CoachReply.plan('', plan)), 0),
+    );
+    addTearDown(session.dispose);
+    addTearDown(store.dispose);
+    uc.TrainingPlan? started;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: flareTheme(),
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: AiCoachPage(
+            session: session,
+            catalog: catalog,
+            store: store,
+            onBack: () {},
+            onDrill: (_) {},
+            onStart: (value) => started = value,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('2 个动作 ·'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('coach-plan-expand')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('1. Y · 8 次'), findsOneWidget);
+    expect(find.textContaining('2. T · 20 秒'), findsOneWidget);
+    expect(find.textContaining('3. W · 6 次 · 停留 2 秒'), findsOneWidget);
+    final start = find.byKey(const ValueKey('coach-start'));
+    await tester.ensureVisible(start);
+    await tester.pumpAndSettle();
+    await tester.tap(start);
+    expect(identical(started, plan), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('段素材可另加为父项，manual腕部使用已发布默认次数而非占位1次', (tester) async {
+    final original = segmentedPlan();
+    uc.TrainingPlan? saved;
+    await showEditor(tester, original, (value) => saved = value);
+    final add = find.byKey(const ValueKey('sdk-plan-add-0'));
+    await tester.ensureVisible(add);
+    await tester.pumpAndSettle();
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('picker-search')),
+      catalog.drillById('forearms-A')!.name,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('pick-forearms-A')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('picker-done')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('sdk-plan-save')));
+    await tester.pumpAndSettle();
+    expect(saved!.items, hasLength(3));
+    expect(saved!.items.first.toJson(), original.items.first.toJson());
+    expect(saved!.items.last.exerciseId, 'forearms-A');
+    expect(saved!.items.last.mode, uc.DoseMode.reps);
+    expect(saved!.items.last.sets, 2);
+    expect(saved!.items.last.reps, 10);
+    expect(saved!.items.last.restSeconds, 15);
   });
 }

@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/engine.dart' as trainer;
 
 import '../coach/coach_service.dart';
 import '../coach/plan_mapping.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../trainer/training_plan_adapter.dart';
 import 'components.dart';
 import 'coach_question_bubble.dart';
 import 'motion.dart';
@@ -473,6 +473,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
     final entries = mapper.entries(plan);
     final saved = session.isSaved(resultId, widget.store);
     return _PlanCard(
+      catalog: widget.catalog,
       key: ValueKey('coach-plan-$resultId'),
       plan: plan,
       entries: entries,
@@ -828,6 +829,7 @@ class _PlanCard extends StatefulWidget {
   const _PlanCard({
     super.key,
     required this.plan,
+    required this.catalog,
     required this.entries,
     required this.preset,
     required this.saved,
@@ -836,6 +838,7 @@ class _PlanCard extends StatefulWidget {
     required this.onStart,
   });
   final uc.TrainingPlan plan;
+  final Catalog catalog;
   final List<CoachPlanEntry> entries;
   final bool preset;
   final bool saved;
@@ -886,7 +889,8 @@ class _PlanCardState extends State<_PlanCard>
     super.build(context);
     final plan = widget.plan;
     final entries = widget.entries;
-    final minutes = (trainer.SessionBuilder().planSeconds(plan) / 60).ceil();
+    final minutes = (estimateTrainingPlanSeconds(plan, widget.catalog) / 60)
+        .ceil();
     final summary = '${entries.length} 个动作 · 约 $minutes 分钟';
     return Align(
       alignment: Alignment.centerLeft,
