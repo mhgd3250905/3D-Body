@@ -1,0 +1,46 @@
+{
+  "version": "1.0.11+16",
+  "sourceCommit": "52ee561f411faefb47903376bcf66cf98f80e7b0",
+  "buildOverride": {
+    "pubspecVersion": "1.0.10+15",
+    "buildName": "1.0.11",
+    "buildNumber": 16
+  },
+  "apk": "output/releases/Flare-LiquidGlass-1.0.11+16-20261024-arm64.apk",
+  "bytes": 101785930,
+  "sha256": "a3afd64bcd0639b1c767a30a79897993f1cabab8a489a2510979d3ac8b28d34a",
+  "signingSHA256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "signature": "v2/v3 verified",
+  "alignment": "zipalign -c -P 16 4 passed",
+  "mode": "release, Flutter AOT arm64",
+  "unchangedAssetsFromInstalledBuild15": 605,
+  "sourceAssetsVerified": 605,
+  "liquidGlassShaders": 5,
+  "sameFlutterEngineAsInstalled": true,
+  "samePrivateAiConfigAsInstalled": true,
+  "installedAt": "2026-10-24T01:57:19.255891+08:00",
+  "device": {
+    "model": "2602BRT18C",
+    "android": "16",
+    "primaryAbi": "arm64-v8a"
+  },
+  "installCommand": "adb -s <connected-device> install -r --user 0 <apk>",
+  "installation": "Success; no uninstall or clear-data",
+  "installedApkSha256Matches": true,
+  "dataPreservation": {
+    "packageMetadataBeforeAfterIdentical": true,
+    "appId": 10306,
+    "firstInstallTime": "2026-10-08 17:53:04",
+    "ceDeDataInodesUnchanged": true,
+    "observedSavedPlanCountBefore": 1,
+    "observedSavedPlanCountAfter": 1,
+    "observedWeekTrainingDaysBefore": 1,
+    "observedWeekTrainingDaysAfter": 1,
+    "savedAppearanceAndLightThemePreserved": true,
+    "savedSpeedPreserved": 0.5,
+    "allPrivateFilesReadOrBackedUp": false
+  },
+  "startup": "Cold launch succeeded; real 3D home and new glass controls visible; left on home for user testing",
+  "fatalLaunchErrorsInCapturedWindow": 0,
+  "acceptance": "Installed for user testing; full native flows, dark mode, optics and performance remain pending"
+}

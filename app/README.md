@@ -1,6 +1,8 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-24，Liquid Glass 自有页面改造经用户授权合入并推送 `master`，源码 `1e7c3b0`；相关 109 项测试、静态分析与离线 Web 构建通过。[实现、浅深截图、合入及验证范围](docs/liquid-glass-rollout-2026-10-24.md)。本轮未构建新 APK 或安装手机，包版本仍 1.0.10+15；下方旧交付保留历史状态。
+2026-10-24，新增 Liquid Glass 真机内测交付 **1.0.11+16**，来自 `52ee561`，已从 +15 同签名保留数据覆盖安装；首屏、安装包回读和既有内容保留检查通过，用户测试待反馈。[交付和限制](docs/liquid-glass-android-test-2026-10-24.md)。版本通过构建参数覆盖，源码 pubspec 仍 +15；下方合入时“未安装”为此前阶段事实。
+
+此前源码合入阶段（2026-10-24，安装前）：Liquid Glass 自有页面改造经用户授权合入并推送 `master`，源码 `1e7c3b0`；相关 109 项测试、静态分析与离线 Web 构建通过。[实现、浅深截图、合入及验证范围](docs/liquid-glass-rollout-2026-10-24.md)。该阶段未构建新 APK 或安装手机，当时包版本为 1.0.10+15；后续 +16 安装见上文，下方旧交付保留历史状态。
 
 2026-10-20，PR #122「AI 定制」已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`），使用 SDK `ugk_coach` **0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`**。本轮仅源码整合，未安装、未发布；当前已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**，设备与长期 QA 缺口保持。源码、35 项 AI 回归及构建验证的提交绑定见 [PR122 整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
 
@@ -92,9 +94,13 @@ npm run build
 
 <a id="ai-coach"></a>
 
-## AI 定制（试验田，PR #122 已合入主线）
+<a id="ai-coach"></a>
 
-计划页顶部「AI 定制」：一句话描述需求 → 助理最多追问一次 → 计划卡 →「保存到我的计划」/「开始训练」。接入共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) 0.1.2，git ref 固定到 `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`。默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。未配置令牌时入口显示「未配置」并只给预设方案；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)，本轮源码及验证见 [整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
+## AI 定制（当前 SDK 0.4.1）
+
+计划页顶部「AI 定制」支持描述需求、独立问题气泡与多轮补充，计划卡可「保存到我的计划」或「开始训练」。当前共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) 为 **0.4.1**，`ugk_trainer` 为 **0.2.0**，两个 git ref 均固定到 `8b60032c2f43fd8e91f8802c8f054a8ecb7cc110`；与 `pubspec.yaml` / lock 一致。当前完整计划播放器及分段剂量接入见 [SDK 0.2 记录](docs/sdk-trainer-020-2026-10-23.md)，原 [PR122 合入记录](docs/pr122-ai-coach-integration-2026-10-20.md) 保留历史。
+
+默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。未配置令牌时入口显示「未配置」并只给预设方案；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
 
 ## 当前体验
 

@@ -1,6 +1,8 @@
 # Flare Anatomy Studio
 
-2026-10-24，Liquid Glass 已铺开至 App 自有页面，经用户“推进合并吧”授权，源码 `1e7c3b0` 已快进合入并推送 `master`。109 项相关测试、静态分析与离线 Web 构建通过；[实现、26 张浅深截图与合入记录](app/docs/liquid-glass-rollout-2026-10-24.md)。本轮未构建新 APK 或安装手机；SDK、R17 与原媒体保持，原生材质和性能待后续验证。
+2026-10-24，按用户追加要求，已将合并后的 Liquid Glass 源码 `52ee561` 构建为 **1.0.11+16** release 内测包，同签名保留数据更新手机，首屏启动与原有内容保留检查通过，用户测试待反馈。[包、签名、安装及验证边界](app/docs/liquid-glass-android-test-2026-10-24.md)。此为构建版本覆盖，`pubspec.yaml` 仍 +15；完整原生 / 性能 QA 不因此销项。
+
+此前源码合入阶段（2026-10-24，安装前）：Liquid Glass 已铺开至 App 自有页面，经用户“推进合并吧”授权，源码 `1e7c3b0` 已快进合入并推送 `master`。109 项相关测试、静态分析与离线 Web 构建通过；[实现、26 张浅深截图与合入记录](app/docs/liquid-glass-rollout-2026-10-24.md)。该阶段未构建新 APK 或安装手机；后续 +16 安装见上文。SDK、R17 与原媒体保持，原生材质和性能仍待验证。
 
 2026-10-23，SDK 第 1 步升级至 trainer 0.2.0 / coach 0.4.1，固定 `8b60032`，完成自动报数、整计划 segments 和三项新控制，内测版 `1.0.10+15`。定向测试与交付见[0.2 接入记录](app/docs/sdk-trainer-020-2026-10-23.md)。开哥已明确授权先合入并推送、优先推进界面改版；完整设备细项未因此记为通过。第 2 步先给关键页浅深对比，确认后铺开。
 
@@ -215,7 +217,8 @@ node app/tools/verify-v41.mjs
 
 | 主题 | 当前来源 |
 | --- | --- |
-| 当前 AI 定制源码、合并与验证边界 | [PR122 合入记录](app/docs/pr122-ai-coach-integration-2026-10-20.md)；[App 使用与配置](app/README.md#ai-coach) |
+| 当前 AI / Trainer SDK 与使用配置 | [SDK 0.2.0 / 0.4.1 接入](app/docs/sdk-trainer-020-2026-10-23.md)；[App 使用与配置](app/README.md#ai-coach)；[PR122 历史合入记录](app/docs/pr122-ai-coach-integration-2026-10-20.md) |
+| 当前 Liquid Glass 源码与手机内测包 | [页面实现与合入](app/docs/liquid-glass-rollout-2026-10-24.md)；[1.0.11+16 安装及阶段保存](app/docs/liquid-glass-android-test-2026-10-24.md) |
 | 当前App动作与显示契约 | [app/docs/motion-v42.md](app/docs/motion-v42.md)；[L52交付](app/docs/l52-plan-skip-2026-10-17.md)；[R17用户认可](app/docs/l50-r17-acceptance-2026-10-17.md) |
 | 当前代码检查点、版本/安装包及发布观察 | [app/docs/version-ledger.md](app/docs/version-ledger.md) |
 | 当前M0–M7进度与待验收项 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |
