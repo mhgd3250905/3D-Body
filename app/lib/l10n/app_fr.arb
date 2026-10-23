@@ -490,5 +490,7 @@
   "settingsHint": "Apparence, lecture, qualité",
   "planRunEnded": "Séance terminée",
   "planSkipped": "Ignoré",
-  "planSkippedCount": "{count} exercices ignorés"
+  "planSkippedCount": "{count} exercices ignorés",
+  "trainerSoundOn": "Activer la voix et les sons",
+  "trainerSoundOff": "Désactiver la voix et les sons"
 }

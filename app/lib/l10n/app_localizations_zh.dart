@@ -1054,6 +1054,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String planSkippedCount(int count) {
     return '跳过 $count 个动作';
   }
+
+  @override
+  String get trainerSoundOn => '开启语音和提示音';
+
+  @override
+  String get trainerSoundOff => '关闭语音和提示音';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2107,4 +2113,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String planSkippedCount(int count) {
     return '略過 $count 個動作';
   }
+
+  @override
+  String get trainerSoundOn => '開啟語音和提示音';
+
+  @override
+  String get trainerSoundOff => '關閉語音和提示音';
 }

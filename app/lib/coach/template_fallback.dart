@@ -8,7 +8,7 @@ enum PresetReason {
   notConfigured('AI 还没配置'),
   offline('网络不可用'),
   timeout('AI 响应超时'),
-  invalid('AI 两次都没排出合格的计划'),
+  invalid('AI 暂未排出合格的计划'),
   unavailable('AI 暂时不可用');
 
   const PresetReason(this.zh);
@@ -25,8 +25,9 @@ enum PresetReason {
 /// 离线回落：从 App 现有 6 个成套训练里按关键词挑最接近的一个，原样作为预设方案。
 /// 不生成新内容，也不改剂量（沿用动作库里的处方）。
 class TemplateFallback {
-  TemplateFallback(this.catalog, {this.cautionsOf});
+  TemplateFallback(this.catalog, {this.cautionsOf, this.equipmentOf});
   final Catalog catalog;
+  final List<String> Function(String id)? equipmentOf;
 
   /// 动作会加重哪些部位（SDK 目录 cautions 词表：手腕/肩/腰/膝/颈/髋/大腿内侧）。
   /// 用于按用户说过的保护约束剔除预设里的动作；null = 不剔除。
@@ -241,11 +242,15 @@ class TemplateFallback {
       source: 'template',
       templateId: preset.id,
       title: '预设方案 · ${titles[preset.id]}',
-      summary: '计划页「${titles[preset.id]}」的${tierLabel(tier)}版',
+      summary:
+          '计划页「${titles[preset.id]}」的${tierLabel(tier)}版，预计 ${estimateMinutes(drills)} 分钟',
       goal: preset.id == 'warmup' ? 'warmup' : 'strength',
       scene: tier == 'C' ? 'gym' : 'home',
+      equipment: {for (final d in drills) ...?equipmentOf?.call(d.id)}.toList(),
       level: 1,
-      targetMinutes: estimateMinutes(drills),
+      // The profile accepts a 5–60 minute budget. Safety filtering can leave
+      // a shorter routine; keep its actual dose and display its estimate.
+      targetMinutes: estimateMinutes(drills).clamp(5, 60),
       blocks: [
         uc.PlanBlock(
           id: 'b1',

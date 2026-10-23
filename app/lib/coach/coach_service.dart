@@ -21,6 +21,10 @@ class CoachAnswer {
     this.cancelled = false,
     this.rewritten = false,
     this.tokens = 0,
+    this.turnId,
+    this.question,
+    this.actions,
+    this.limitReached = false,
   });
 
   /// 给用户的回复（取消时为 null）。
@@ -33,6 +37,10 @@ class CoachAnswer {
   /// 第一次输出没过校验、重写后通过。
   final bool rewritten;
   final int tokens;
+  final String? turnId;
+  final uc.AskUserQuestion? question;
+  final uc.ValidatedActions? actions;
+  final bool limitReached;
 
   bool get preset => presetReason != null;
 }
@@ -42,7 +50,7 @@ class CoachAnswer {
 /// - 目录：随包 `assets/coach/catalog.json`（Pose-Hub 目录的 flarelab 范围快照），
 ///   配了 `UGK_COACH_CATALOG_URL` 时可远端更新（SDK 校验大小 / sha256 / 版本后才切换）。
 /// - 范围：profile 白名单 ∩ App 里真有动作和示范视频的 id；不在交集里的 id 写进
-///   profile.select.exclude，提示词目录表和校验器都会排除（交集完整时提示词与评测逐字节一致）。
+///   profile.select.exclude，Agent 动作目录和门禁都会排除。
 class CoachService {
   CoachService({
     this.config = CoachConfig.fromEnvironment,
@@ -51,6 +59,8 @@ class CoachService {
     CoachUsageStore? usage,
     LocalStateStorage? storage,
     AssetReader? readAsset,
+    this.maxRequestRetries = 4,
+    this.retryBaseDelay = const Duration(seconds: 1),
   }) : _client = client ?? _clientFor(config),
        usage = usage ?? CoachUsageStore.device(),
        _storage = storage ?? SharedPreferencesLocalStateStorage(),
@@ -62,6 +72,8 @@ class CoachService {
   static const storageKey = 'flare.coach.v1';
 
   final CoachConfig config;
+  final int maxRequestRetries;
+  final Duration retryBaseDelay;
   final Catalog appCatalog;
   final CoachUsageStore usage;
 
@@ -74,11 +86,13 @@ class CoachService {
   late final TemplateFallback _templates = TemplateFallback(
     appCatalog,
     cautionsOf: (id) => _active?[id]?.cautions ?? const [],
+    equipmentOf: (id) => _active?[id]?.equipment ?? const [],
   );
-  uc.CoachAssistant? _assistant;
+  uc.CoachAgent? _agent;
+  uc.CoachConversation? _conversation;
+  uc.CoachContext _context = const uc.CoachContext();
 
-  /// 当前范围（profile + 排除）是按哪份目录算的；assistant 只看这一份，
-  /// 远端目录切换后在下一轮开始前重算（见 [_syncCatalog]）。
+  /// 当前会话使用固定目录快照；远端更新在明确开始新对话时生效。
   uc.Catalog? _active;
   late Map<String, Object?> _profileJson;
   late Set<String> _usable;
@@ -92,6 +106,8 @@ class CoachService {
       config: uc.LlmConfig.deepSeekOpenCsg.copyWith(
         baseUrl: c.baseUrl,
         model: c.model,
+        jsonMode: false,
+        maxRetries: 0,
       ),
       auth: c.usesRelay
           ? uc.RelayAuth(appToken: () async => c.relayToken)
@@ -155,11 +171,14 @@ class CoachService {
   }
 
   /// 目录（随包或远端热更新）与 App 资产的交集：profile 范围里 App 没有动作 / 视频的 id
-  /// 写进 select.exclude，并按这份目录重建 assistant。目录没变时什么都不做。
+  /// 写进 select.exclude，新会话按这份目录创建 Agent。进行中的会话保持快照。
   /// 远端新增 / 改到 flarelab 范围的 id 若 App 没有，也会被排除，不会进提示词或通过校验。
   void _syncCatalog() {
     final current = _repo.current;
     if (identical(current, _active)) return;
+    // A conversation uses one admitted catalog/profile snapshot. A background
+    // refresh must not erase history or the ask_user question budget.
+    if (_agent != null && (_agent!.isBusy || _agent!.turnCount > 0)) return;
     final scope = uc.CoachProfile.fromJson(_profileJson).scope(current);
     final excluded = {
       for (final d in scope)
@@ -177,21 +196,31 @@ class CoachService {
     _active = current;
     _excluded = excluded;
     _profile = uc.CoachProfile.fromJson(json);
+    final previous = _agent;
+    if (previous != null) unawaited(previous.dispose());
     if (_client case final client?) {
-      _assistant = uc.CoachAssistant(
+      _agent = uc.CoachAgent(
         client: client,
         catalog: () => current,
         profile: _profile,
         usage: usage,
         appId: 'flarelab-app',
-        fallback: uc.FallbackFn(
-          (r) => _templates.reply(
+        // Device memory was not part of the previous opt-in. Retain chat history
+        // in this session without introducing cross-session personal memory.
+        enableUserMemory: false,
+        maxRequestRetries: maxRequestRetries,
+        retryBaseDelay: retryBaseDelay,
+        fallback: (r) {
+          final reply = _templates.reply(
             r.userText,
             reason: PresetReason.of(r.reason),
             tier: _tier,
-            history: TemplateFallback.userTexts(r.conversation),
-          ),
-        ),
+            history: _conversation == null
+                ? const []
+                : TemplateFallback.userTexts(_conversation!),
+          );
+          return uc.SessionFallbackReply(reply.text, plan: reply.plan);
+        },
       );
     }
   }
@@ -210,96 +239,166 @@ class CoachService {
     }
   }
 
-  /// 问一轮。[tier] 是计划页当前场景（A 徒手 / B 居家器械 / C 健身房），只用于预设方案。
+  /// Ask one turn using the same Agent across all clarification answers.
+  /// The legacy conversation is an App fallback ledger, not the model protocol.
   Future<CoachAnswer> ask(
     String text,
     uc.CoachConversation conversation, {
     uc.CancelToken? cancel,
     String tier = 'A',
+    ValueChanged<uc.AgentEvent>? onProgress,
   }) async {
     await load();
+    if (cancel?.isCancelled ?? false) {
+      return const CoachAnswer(cancelled: true);
+    }
+    if (_agent?.isBusy ?? false) return const CoachAnswer(cancelled: true);
+    if (_conversation != null && !identical(_conversation, conversation)) {
+      _agent?.reset();
+      _context = const uc.CoachContext();
+    }
+    _conversation = conversation;
     _syncCatalog();
     _tier = tier;
-    final assistant = _assistant;
-    if (assistant == null) {
+    final history = TemplateFallback.userTexts(conversation);
+    final chosenTier = TemplateFallback.pickTier(text, tier, history: history);
+    final allText = [...history, text];
+    Set<String>? equipment;
+    const namedEquipment = {
+      '哑铃': 'dumbbell',
+      '弹力带': 'band',
+      '壶铃': 'kettlebell',
+      '瑞士球': 'swiss-ball',
+      '泡沫轴': 'foam-roller',
+    };
+    for (final value in allText) {
+      for (final clause in value.split(
+        RegExp(r'[，,。.；;！!？?\n]|但是|但|不过|(?=只有|只用|仅有|仅用)'),
+      )) {
+        if (RegExp(r'徒手|(没有|没|无|不用|不要)(任何)?(器械|器材|装备)|空手').hasMatch(clause)) {
+          equipment = <String>{};
+          continue;
+        }
+        if (RegExp(r'只有|只用|仅有|仅用').hasMatch(clause)) {
+          equipment = <String>{};
+        }
+        final excluded = RegExp(r'没有|没带|不要|不用|缺少|无|别用').hasMatch(clause);
+        for (final item in namedEquipment.entries) {
+          if (!clause.contains(item.key)) continue;
+          if (excluded) {
+            equipment?.remove(item.value);
+          } else {
+            (equipment ??= <String>{}).add(item.value);
+          }
+        }
+      }
+    }
+    final previousContext = _context;
+    _context = _context.copyWith(
+      scene: chosenTier == 'C' ? 'gym' : 'home',
+      avoid: {
+        ..._context.avoid,
+        ...TemplateFallback.protectedParts(text, history),
+      },
+      equipment: equipment,
+      notes: ['计划页场景：${TemplateFallback.tierLabel(chosenTier)}。'],
+    );
+    final agent = _agent;
+    if (agent == null || TemplateFallback.anyRedFlag(text, history)) {
       final reply = _templates.reply(
         text,
-        reason: PresetReason.notConfigured,
+        reason: agent == null
+            ? PresetReason.notConfigured
+            : PresetReason.unavailable,
         tier: tier,
-        history: TemplateFallback.userTexts(conversation),
+        history: history,
       );
-      final now = DateTime.now();
-      conversation
-        ..addUser(text.trim(), now)
-        ..addAssistant(reply, now);
+      _record(conversation, text, reply);
       return CoachAnswer(
         reply: reply,
-        presetReason: PresetReason.notConfigured,
+        presetReason: agent == null
+            ? PresetReason.notConfigured
+            : PresetReason.unavailable,
       );
     }
-    // 助理最多追问一次：上一条已经是追问，这轮要求直接出计划。
-    final asked =
-        conversation.turns.isNotEmpty &&
-        conversation.turns.last.reply?.kind == uc.ReplyKind.ask;
-    final result = await assistant.ask(
-      text,
-      conversation: conversation,
-      cancel: cancel,
-      context: uc.CoachContext(
-        notes: asked
-            ? const ['已经追问过一次：这一轮请直接给出计划，缺的条件用默认值并在 text 里说明。']
-            : const [],
-      ),
-    );
+    final subscription = onProgress == null
+        ? null
+        : agent.events.listen(onProgress);
+    late final uc.CoachTurnResult result;
+    try {
+      result = await agent.send(text, context: _context, cancel: cancel);
+    } finally {
+      if (subscription != null) unawaited(subscription.cancel());
+    }
     final tokens = result.usage.promptTokens + result.usage.completionTokens;
-    return switch (result.outcome) {
-      uc.TurnOutcome.cancelled => CoachAnswer(cancelled: true, tokens: tokens),
-      uc.TurnOutcome.fallback => CoachAnswer(
-        reply: result.reply,
-        presetReason: PresetReason.of(result.fallbackReason!),
-        tokens: tokens,
+    if (result.status == uc.TurnStatus.cancelled) {
+      _context = previousContext;
+      return CoachAnswer(cancelled: true, tokens: tokens);
+    }
+    if (result.status == uc.TurnStatus.busy) {
+      return const CoachAnswer(cancelled: true);
+    }
+    final question = result.question;
+    final plan = result.plan?.plan;
+    final reply = switch (result.status) {
+      uc.TurnStatus.limitReached => const uc.CoachReply.text(
+        '本次对话已达到上限。请点击“新对话”继续，已保存的计划会保留。',
       ),
-      uc.TurnOutcome.error => _presetAfterError(
-        text,
-        conversation,
-        tier,
-        tokens,
+      uc.TurnStatus.inputTooLong => const uc.CoachReply.text(
+        '这条消息太长了，请缩短后再发送。',
       ),
-      _ => CoachAnswer(
-        reply: result.reply,
-        rewritten: result.outcome == uc.TurnOutcome.rewritten,
-        tokens: tokens,
-      ),
+      uc.TurnStatus.error => const uc.CoachReply.text('暂时没能排出合格的计划，请稍后再试。'),
+      _ =>
+        question != null
+            ? uc.CoachReply.ask(question.question, question.options)
+            : plan != null
+            ? uc.CoachReply.plan(result.text, plan)
+            : uc.CoachReply.text(result.text),
     };
-  }
-
-  CoachAnswer _presetAfterError(
-    String text,
-    uc.CoachConversation conversation,
-    String tier,
-    int tokens,
-  ) {
-    final reply = _templates.reply(
-      text,
-      reason: PresetReason.unavailable,
-      tier: tier,
-      history: TemplateFallback.userTexts(conversation),
-    );
-    final now = DateTime.now();
-    conversation
-      ..addUser(text.trim(), now)
-      ..addAssistant(reply, now);
+    _record(conversation, text, reply);
     return CoachAnswer(
       reply: reply,
-      presetReason: PresetReason.unavailable,
+      turnId: result.turnId,
+      question: question,
+      actions: result.actions,
+      limitReached: result.status == uc.TurnStatus.limitReached,
+      rewritten: result.resubmits > 0,
+      presetReason: result.status == uc.TurnStatus.fallback
+          ? PresetReason.of(result.fallbackReason!)
+          : null,
       tokens: tokens,
     );
   }
 
-  @visibleForTesting
-  uc.CoachAssistant? get assistant {
+  void _record(
+    uc.CoachConversation conversation,
+    String text,
+    uc.CoachReply reply,
+  ) {
+    final now = DateTime.now();
+    conversation
+      ..addUser(text.trim(), now)
+      ..addAssistant(reply, now);
+  }
+
+  /// Called only for an explicit new chat, never between clarification turns.
+  void resetConversation() {
+    _agent?.reset();
+    _conversation = null;
+    _context = const uc.CoachContext();
     _syncCatalog();
-    return _assistant;
+  }
+
+  @visibleForTesting
+  uc.CoachAgent? get agent => _agent;
+
+  @visibleForTesting
+  uc.ValidationReport validatePlan(uc.TrainingPlan plan) {
+    _syncCatalog();
+    return uc.PlanValidator(
+      catalog: _active!,
+      profile: _profile,
+    ).validate(plan);
   }
 
   /// 测试用：模拟远端目录切换（`_repo.replace`）。

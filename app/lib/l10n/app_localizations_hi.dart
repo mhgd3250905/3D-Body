@@ -1080,4 +1080,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count अभ्यास छोड़ दिए गए';
   }
+
+  @override
+  String get trainerSoundOn => 'आवाज़ और ध्वनियाँ चालू करें';
+
+  @override
+  String get trainerSoundOff => 'आवाज़ और ध्वनियाँ बंद करें';
 }

@@ -1062,4 +1062,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count개 운동을 건너뜀';
   }
+
+  @override
+  String get trainerSoundOn => '음성 및 효과음 켜기';
+
+  @override
+  String get trainerSoundOff => '음성 및 효과음 끄기';
 }

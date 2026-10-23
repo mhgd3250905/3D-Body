@@ -16,6 +16,7 @@ import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_trainer/engine.dart' show MutedVoiceOutput;
 
 import '../domain/fixtures.dart';
 
@@ -1160,6 +1161,7 @@ void main() {
               child: TrainingTimerPage(
                 drill: drill,
                 store: store,
+                voiceOutput: const MutedVoiceOutput(),
                 onClose: () => closed = true,
               ),
             ),

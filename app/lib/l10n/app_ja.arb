@@ -490,5 +490,7 @@
   "settingsHint": "外観・再生・画質",
   "planRunEnded": "今回のトレーニングは終了しました",
   "planSkipped": "スキップ済み",
-  "planSkippedCount": "{count} 種目をスキップ"
+  "planSkippedCount": "{count} 種目をスキップ",
+  "trainerSoundOn": "音声と効果音をオン",
+  "trainerSoundOff": "音声と効果音をオフ"
 }

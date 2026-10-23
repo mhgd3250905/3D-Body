@@ -1086,4 +1086,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count exercícios pulados';
   }
+
+  @override
+  String get trainerSoundOn => 'Ativar voz e sons';
+
+  @override
+  String get trainerSoundOff => 'Desativar voz e sons';
 }

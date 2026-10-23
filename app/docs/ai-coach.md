@@ -1,5 +1,21 @@
 # AI 定制（AI 训练助理试验田）
 
+2026-10-23，第 1 步 SDK 迁移分支已改用 **ugk_coach 0.4.0 Agent / ugk_trainer 0.1.7**，共同固定 `b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0`。当前功能对照、真实服务验证、内测包及 SDK 缺口以 [第 1 步交付记录](sdk-step1-2026-10-23.md) 为准，等待用户同意合入。以下 PR122 内容保留旧版来源及历史行为，不能作为当前 Agent 的协议说明。
+
+## 当前 Agent 路径
+
+`CoachService` 在一个对话内保持同一个 `CoachAgent` 和 `CoachContext`，模型采用 SDK 工具协议。按 SDK `docs/ask-user.md`，App 只在 `send` 返回 `CoachTurnResult.question` 后显示问题；`askUser` 流事件不生成第二份问题气泡。文字问题由底部输入框回答，单选直接提交选项，多选显式确认后提交；所有问题也允许自由文字输入。请求期间禁用问题按钮，旧问题不能重复抢答。任务最多三次问题由 SDK 负责计数，出有效方案后归零；取消不提交临时问题，显式“新对话”才重置会话。
+
+Pose-Hub 目录更新为 0.3.0 / `36e1bb678047a3d5613a553a05be37dac8d9046b`，仍取 App 有动作和视频的交集。远端目录更新在当前 Agent 已开始对话时不会重置其历史或问题预算，下一次新对话使用新的目录快照。同步命令：
+
+```powershell
+python tools/coach/sync_coach_assets.py E:/AII-3D/3D-Pose-SDK --pose-hub E:/AII-3D/3D-Pose-Hub
+```
+
+AI 入口继续沿用原来的中文界面范围。App 训练页支持原有 14 种 UI 语言；语音语言覆盖独立说明，不把 UI 语言数当作录音语言数。模型令牌只由本机私有配置传入，源码、测试证据和文档不保存令牌。
+
+## PR122 历史记录（0.1.2）
+
 2026-10-20 · PR #122 已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`）· 依赖 [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) **0.1.2**（`26e32557058e582d3f1b2b7f722dfa53c2b16aa6`）
 
 本轮仅源码整合，未安装、未发布；已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**。本轮 35 项 AI 回归及全量测试、构建的源提交、命令与限制见 [PR122 整合记录](pr122-ai-coach-integration-2026-10-20.md)。未重新发起真实模型请求，下方 SDK 0.1.0/0.1.1 的真实冒烟仅保留历史证据。

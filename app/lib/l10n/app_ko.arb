@@ -490,5 +490,7 @@
   "settingsHint": "화면, 재생, 화질",
   "planRunEnded": "이번 운동이 종료되었습니다",
   "planSkipped": "건너뜀",
-  "planSkippedCount": "{count}개 운동을 건너뜀"
+  "planSkippedCount": "{count}개 운동을 건너뜀",
+  "trainerSoundOn": "음성 및 효과음 켜기",
+  "trainerSoundOff": "음성 및 효과음 끄기"
 }

@@ -490,5 +490,7 @@
   "settingsHint": "Darstellung, Wiedergabe, Qualität",
   "planRunEnded": "Einheit beendet",
   "planSkipped": "Übersprungen",
-  "planSkippedCount": "{count} Übungen übersprungen"
+  "planSkippedCount": "{count} Übungen übersprungen",
+  "trainerSoundOn": "Sprache und Töne einschalten",
+  "trainerSoundOff": "Sprache und Töne ausschalten"
 }

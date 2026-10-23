@@ -490,5 +490,7 @@
   "settingsHint": "रूप, प्लेबैक, गुणवत्ता",
   "planRunEnded": "सत्र समाप्त",
   "planSkipped": "छोड़ दिया",
-  "planSkippedCount": "{count} अभ्यास छोड़ दिए गए"
+  "planSkippedCount": "{count} अभ्यास छोड़ दिए गए",
+  "trainerSoundOn": "आवाज़ और ध्वनियाँ चालू करें",
+  "trainerSoundOff": "आवाज़ और ध्वनियाँ बंद करें"
 }

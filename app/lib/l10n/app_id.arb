@@ -490,5 +490,7 @@
   "settingsHint": "Tampilan, pemutaran, kualitas",
   "planRunEnded": "Sesi berakhir",
   "planSkipped": "Dilewati",
-  "planSkippedCount": "{count} latihan dilewati"
+  "planSkippedCount": "{count} latihan dilewati",
+  "trainerSoundOn": "Aktifkan suara dan bunyi",
+  "trainerSoundOff": "Nonaktifkan suara dan bunyi"
 }

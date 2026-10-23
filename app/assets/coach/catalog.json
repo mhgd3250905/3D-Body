@@ -1,11 +1,11 @@
 {
  "format": "pose-hub-catalog",
  "formatVersion": 1,
- "version": "0.1.0",
- "generatedAt": "2026-10-19T23:59:26+08:00",
+ "version": "0.3.0",
+ "generatedAt": "2026-10-20T20:30:00+08:00",
  "source": {
   "repo": "mhgd3250905/3D-Pose-Hub",
-  "commit": "b6c6bd9",
+  "commit": "93d8f52",
   "inputs": [
    {
     "repo": "mhgd3250905/Sport-Helper",
@@ -21,7 +21,9 @@
    }
   ],
   "flarelabSnapshot": {
-   "sdkCommit": "ab2da7dbdc97e20cd46b5af51834f547f7153781",
+   "sdkCommit": "b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0",
+   "poseHubCommit": "36e1bb678047a3d5613a553a05be37dac8d9046b",
+   "catalogSha256": "40610dbb71b58886ebe001409ae15161761747b4f776e74a252e7b1f8df6e983",
    "filter": {
     "apps": [
      "flarelab"
@@ -402,7 +404,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-A.jpg",
+       "path": "app/assets/drill_media/abs-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "10784c2edfb89c8ba69dc89d9e0151f6703a41098bfbdc38bd75928ecbd54841"
@@ -414,7 +416,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-A.mp4",
+       "path": "app/assets/drill_media/abs-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -531,7 +533,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-B.jpg",
+       "path": "app/assets/drill_media/abs-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "9e4110e2e0d81892e53370e0d563679491f2ac028cf95c0254ded33fe96d5c15"
@@ -543,7 +545,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-B.mp4",
+       "path": "app/assets/drill_media/abs-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -656,7 +658,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-C.jpg",
+       "path": "app/assets/drill_media/abs-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "4de4e00ee61c9efb19d308df32b220a5cf5faf5697f5689f05a2e5beec4ae821"
@@ -668,7 +670,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/abs-C.mp4",
+       "path": "app/assets/drill_media/abs-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -782,7 +784,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-A.jpg",
+       "path": "app/assets/drill_media/adductors-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "6d6bc095294a493580622137881479148487a1b6983d2c6c9a0080c4360a88c0"
@@ -794,7 +796,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-A.mp4",
+       "path": "app/assets/drill_media/adductors-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -909,7 +911,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-B.jpg",
+       "path": "app/assets/drill_media/adductors-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "289c405855ba4daed71c1e95a8c356f3738b0192874a02936f16d6a14d91e608"
@@ -921,7 +923,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-B.mp4",
+       "path": "app/assets/drill_media/adductors-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -1031,7 +1033,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-C.jpg",
+       "path": "app/assets/drill_media/adductors-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "abaa1b9d3b0d46122a4ccb57f94252250e8a4a3aec9ae59294e029f1cbe16a9c"
@@ -1043,7 +1045,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/adductors-C.mp4",
+       "path": "app/assets/drill_media/adductors-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -1158,7 +1160,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-A.jpg",
+       "path": "app/assets/drill_media/chest-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "440bb1b79b7e863dde14efd89b37d451b6099bb5b56300e497aa62ea7840f218"
@@ -1170,7 +1172,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-A.mp4",
+       "path": "app/assets/drill_media/chest-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 12.0,
@@ -1285,7 +1287,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-B.jpg",
+       "path": "app/assets/drill_media/chest-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "1f1bb6ca13649afa7085fd584c6234c5fe5dde2743edaa191e37d114a80da907"
@@ -1297,7 +1299,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-B.mp4",
+       "path": "app/assets/drill_media/chest-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 7.0,
@@ -1408,7 +1410,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-C.jpg",
+       "path": "app/assets/drill_media/chest-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "027a77ec1fcbd6fd091a24278d5d8bbb17fc443d7020974bcc2fb523d738f5c9"
@@ -1420,7 +1422,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/chest-C.mp4",
+       "path": "app/assets/drill_media/chest-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -1533,7 +1535,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-A.jpg",
+       "path": "app/assets/drill_media/deltoids-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "02d0f07ff6b07ccb201a268625016f5f4ccc448ab4346bf8f1792e50e83466a7"
@@ -1545,7 +1547,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-A.mp4",
+       "path": "app/assets/drill_media/deltoids-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -1659,7 +1661,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-B.jpg",
+       "path": "app/assets/drill_media/deltoids-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "2b17765c5fa170d4cac0f93cca35b348811eacebc290b1ff6badcafd669b7734"
@@ -1671,7 +1673,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-B.mp4",
+       "path": "app/assets/drill_media/deltoids-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 12.0,
@@ -1785,7 +1787,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-C.jpg",
+       "path": "app/assets/drill_media/deltoids-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "1f1413f20bed24c8f4a4d2bcee8a08249e5f039c942ef8d44014b9ecb74ac021"
@@ -1797,7 +1799,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/deltoids-C.mp4",
+       "path": "app/assets/drill_media/deltoids-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -1910,7 +1912,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-A.jpg",
+       "path": "app/assets/drill_media/erectors-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "232347b7699f2848ab9532cd6d778d8bea2cbe1458b7d84de41b162da15f7953"
@@ -1922,7 +1924,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-A.mp4",
+       "path": "app/assets/drill_media/erectors-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2035,7 +2037,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-B.jpg",
+       "path": "app/assets/drill_media/erectors-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "ddb13ca2c2cdd3ed20e0673993aa67f9df73ea986e1aaf100713c22c40bf58ca"
@@ -2047,7 +2049,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-B.mp4",
+       "path": "app/assets/drill_media/erectors-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2160,7 +2162,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-C.jpg",
+       "path": "app/assets/drill_media/erectors-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "c3c7e90a041d7a99036b577c6376a6c5c97217674fd683df489377dbec7fc9ce"
@@ -2172,7 +2174,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/erectors-C.mp4",
+       "path": "app/assets/drill_media/erectors-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2282,7 +2284,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-A.jpg",
+       "path": "app/assets/drill_media/forearms-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "dbd47b4cc4a32b4d1e52031aca073cdb67e9f6bb3a46c69b508ea4a7f016528d"
@@ -2294,7 +2296,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-A.mp4",
+       "path": "app/assets/drill_media/forearms-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 16.0,
@@ -2408,7 +2410,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-B.jpg",
+       "path": "app/assets/drill_media/forearms-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "60b218dc66be4f2c015e9ef44a5320eb45278435a52f4ede55b77a100b3f3525"
@@ -2420,7 +2422,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-B.mp4",
+       "path": "app/assets/drill_media/forearms-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2535,7 +2537,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-C.jpg",
+       "path": "app/assets/drill_media/forearms-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "45eb3a9377ddde02061691778d1ccfb5607c7941a5af8cb3fd6c39b2052d9d06"
@@ -2547,7 +2549,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/forearms-C.mp4",
+       "path": "app/assets/drill_media/forearms-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2621,6 +2623,32 @@
      60
     ]
    },
+   "rhythm": {
+    "kind": "rep_updown",
+    "leadSeconds": 1.0,
+    "phases": [
+     {
+      "id": "go",
+      "seconds": 0.95,
+      "cue": "w.hips_up"
+     },
+     {
+      "id": "hold",
+      "seconds": 1.65
+     },
+     {
+      "id": "back",
+      "seconds": 0.95,
+      "cue": "w.lower"
+     },
+     {
+      "id": "rest",
+      "seconds": 0.45
+     }
+    ],
+    "reps": 6,
+    "source": "hiplab"
+   },
    "cues": {
     "zh": [
      "一腿伸直，另一侧脚跟推地把臀部抬起",
@@ -2683,7 +2711,7 @@
       },
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-A.jpg",
+       "path": "app/assets/drill_media/glute-max-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "e9c8e553e6a9f2ca169fdbbc5d2912f316515d350f50b90d41f4e2a67dde1b55"
@@ -2739,7 +2767,7 @@
       },
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-A.mp4",
+       "path": "app/assets/drill_media/glute-max-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -2872,7 +2900,7 @@
     "status": "doubt",
     "notes": [
      "人工更正：单腿臀桥左右各做：FlareLab 处方『每侧 10 次』、HipLab action-kit sided=true；SmartFit pack 写成 false（SmartFit pack 需同步改）",
-     "unilateral 由 false 改为 true 的 7 个动作（glute-max-A、h-band-pallof、h-supine-twist、n-seated-ir-drop、n-seated-knee-lift、s-9090、t-seated-straddle-lift-1leg）需要同步改 SmartFit pack（unilateral + side_switch 台词），否则 SmartFit 现有 Dart 校验会拒绝 perSide=true。level：SmartFit=2、FlareLab=1，保留 2。"
+     "unilateral 由 false 改为 true 的 7 个动作（glute-max-A、h-band-pallof、h-supine-twist、n-seated-ir-drop、n-seated-knee-lift、s-9090、t-seated-straddle-lift-1leg）需要同步改 SmartFit pack（unilateral + side_switch 台词），否则 SmartFit 现有 Dart 校验会拒绝 perSide=true。level：SmartFit=2、FlareLab=1，保留 2。 另：8 个动作（h-adductor-rock、h-knee-hug、h-sumo-pry、n-pelvis-circle、n-seated-ir-drop、n-seated-knee-lift、n-seated-squeeze、n-squat-shift）剂量已按 HipLab 动作包统一，SmartFit pack 的 defaultDose 也需同步，消费端需支持 defaultDose.holdSeconds（rep_hold）。"
     ]
    }
   },
@@ -2959,7 +2987,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-B.jpg",
+       "path": "app/assets/drill_media/glute-max-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "dbedb7cf97d5eb5b306f8547ebf7e12ddeec343ec51838dfa39e8b83bdd50f12"
@@ -2971,7 +2999,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-B.mp4",
+       "path": "app/assets/drill_media/glute-max-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3084,7 +3112,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-C.jpg",
+       "path": "app/assets/drill_media/glute-max-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "d9dc7e593d29970e4b37c6f0a2a0e562bcd524a1614b407d40a69b0de35ac212"
@@ -3096,7 +3124,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/glute-max-C.mp4",
+       "path": "app/assets/drill_media/glute-max-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3208,7 +3236,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-A.jpg",
+       "path": "app/assets/drill_media/hamstrings-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "1eac1d718874145b372695c02bc1c069848528d766dda9f6493c0de19680c5b3"
@@ -3220,7 +3248,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-A.mp4",
+       "path": "app/assets/drill_media/hamstrings-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3333,7 +3361,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-B.jpg",
+       "path": "app/assets/drill_media/hamstrings-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "20d2dd840e94e7925b30832476f20db9b5f602e222518259d1bf256604b701a9"
@@ -3345,7 +3373,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-B.mp4",
+       "path": "app/assets/drill_media/hamstrings-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3456,7 +3484,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-C.jpg",
+       "path": "app/assets/drill_media/hamstrings-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "c4ff300f939726e3e717f2b898eb3a318b239c429460c6d4216ffd554c01acfa"
@@ -3468,7 +3496,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hamstrings-C.mp4",
+       "path": "app/assets/drill_media/hamstrings-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3582,7 +3610,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-A.jpg",
+       "path": "app/assets/drill_media/hip-abductors-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "cdfb2579be8934cc269ccaec0a19b8aa538058e1597108750e4c5eb120139696"
@@ -3594,7 +3622,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-A.mp4",
+       "path": "app/assets/drill_media/hip-abductors-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 6.0,
@@ -3705,7 +3733,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-B.jpg",
+       "path": "app/assets/drill_media/hip-abductors-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "09312d1b5dac9dca3004bf2eeeb432960a79a9d60dae4e4b745f6cb4a01e171a"
@@ -3717,7 +3745,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-B.mp4",
+       "path": "app/assets/drill_media/hip-abductors-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3826,7 +3854,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-C.jpg",
+       "path": "app/assets/drill_media/hip-abductors-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "85aca1414ec1b2b02d90393da74553d3d9357793cef7f6624dd776aa4c896a22"
@@ -3838,7 +3866,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-abductors-C.mp4",
+       "path": "app/assets/drill_media/hip-abductors-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -3911,6 +3939,32 @@
      60
     ]
    },
+   "rhythm": {
+    "kind": "rep_updown",
+    "leadSeconds": 1.0,
+    "phases": [
+     {
+      "id": "go",
+      "seconds": 0.75,
+      "cue": "w.lift"
+     },
+     {
+      "id": "hold",
+      "seconds": 1.45
+     },
+     {
+      "id": "back",
+      "seconds": 0.75,
+      "cue": "w.lower"
+     },
+     {
+      "id": "rest",
+      "seconds": 1.05
+     }
+    ],
+    "reps": 8,
+    "source": "hiplab"
+   },
    "cues": {
     "zh": [
      "坐直，腿伸直抬起，停一下再放下",
@@ -3971,7 +4025,7 @@
       },
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-A.jpg",
+       "path": "app/assets/drill_media/hip-flexors-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "ee47b1939d9ec6f1b077a27943386864b175b32fd52046ae3b6f206d992ea408"
@@ -4025,7 +4079,7 @@
       },
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-A.mp4",
+       "path": "app/assets/drill_media/hip-flexors-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4239,7 +4293,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-B.jpg",
+       "path": "app/assets/drill_media/hip-flexors-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "07eae2fcc9635e2fe19960a3f46f4b6d91b75eb4f2b4edc73edadb92967d2f30"
@@ -4251,7 +4305,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-B.mp4",
+       "path": "app/assets/drill_media/hip-flexors-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4362,7 +4416,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-C.jpg",
+       "path": "app/assets/drill_media/hip-flexors-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "1db05ccf0a114a5fed102b294350b8c4ba1bb7f409133d79193048d93e869adc"
@@ -4374,7 +4428,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/hip-flexors-C.mp4",
+       "path": "app/assets/drill_media/hip-flexors-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4487,7 +4541,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-A.jpg",
+       "path": "app/assets/drill_media/lats-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "5d05565af41c98da8ce23938ab42da8dfc77c02a5bcd7bdb6f7f534eab95046b"
@@ -4499,7 +4553,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-A.mp4",
+       "path": "app/assets/drill_media/lats-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4612,7 +4666,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-B.jpg",
+       "path": "app/assets/drill_media/lats-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "afb9c98ea987ebbd6a9217e2f1ae8d20e8e80df74d207ec2d73fcc9ddc0bf0c9"
@@ -4624,7 +4678,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-B.mp4",
+       "path": "app/assets/drill_media/lats-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4735,7 +4789,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-C.jpg",
+       "path": "app/assets/drill_media/lats-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "6dc4e9868f434640c24f5efe36b19d9b7b5639244b112a4b6d6bf6bcca992dc3"
@@ -4747,7 +4801,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/lats-C.mp4",
+       "path": "app/assets/drill_media/lats-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4857,7 +4911,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-A.jpg",
+       "path": "app/assets/drill_media/obliques-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "8c27cea4009945a7cc062cf92b4a9193618d94874d8d8bcbbbf65bcfcd09eeaa"
@@ -4869,7 +4923,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-A.mp4",
+       "path": "app/assets/drill_media/obliques-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -4979,7 +5033,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-B.jpg",
+       "path": "app/assets/drill_media/obliques-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "50c6cc0de88b0b09ca0cec82d70ed91724aa171bcb2ea2f05005109a66067aa3"
@@ -4991,7 +5045,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-B.mp4",
+       "path": "app/assets/drill_media/obliques-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5102,7 +5156,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-C.jpg",
+       "path": "app/assets/drill_media/obliques-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "161330e63909dadad26fd8772363443ae863a73a258c90021bc84b291c155945"
@@ -5114,7 +5168,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/obliques-C.mp4",
+       "path": "app/assets/drill_media/obliques-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5226,7 +5280,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-A.jpg",
+       "path": "app/assets/drill_media/quadriceps-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "c55a2d3be5260d5d113573cc307627c3db67a0f2d54132a0828dc4ff0e7f74cd"
@@ -5238,7 +5292,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-A.mp4",
+       "path": "app/assets/drill_media/quadriceps-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5350,7 +5404,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-B.jpg",
+       "path": "app/assets/drill_media/quadriceps-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "d4565d0993856fc4fd3aa76ab1c3c9083a759491a8adba6de71531b685d987d6"
@@ -5362,7 +5416,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-B.mp4",
+       "path": "app/assets/drill_media/quadriceps-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5473,7 +5527,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-C.jpg",
+       "path": "app/assets/drill_media/quadriceps-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "dfe0b4fd8ab134934502d52159f46bc3f33cefee4a59a97e179cece4ff6efaa0"
@@ -5485,7 +5539,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/quadriceps-C.mp4",
+       "path": "app/assets/drill_media/quadriceps-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 10.0,
@@ -5598,7 +5652,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-A.jpg",
+       "path": "app/assets/drill_media/rotator-cuff-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "4f977cec9e4b8322477a87d0c74ea3af410d124d01ff1538ada0a884d765ea6b"
@@ -5610,7 +5664,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-A.mp4",
+       "path": "app/assets/drill_media/rotator-cuff-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5722,7 +5776,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-B.jpg",
+       "path": "app/assets/drill_media/rotator-cuff-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "13773bc9b1db38609e05f2a05f05529006f32223eb5e07c1c9f04b17270568d9"
@@ -5734,7 +5788,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-B.mp4",
+       "path": "app/assets/drill_media/rotator-cuff-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5845,7 +5899,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-C.jpg",
+       "path": "app/assets/drill_media/rotator-cuff-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "b175fa4f386f00d25dfa9b3319a9e19640434875e719065d916d27644e761b4d"
@@ -5857,7 +5911,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/rotator-cuff-C.mp4",
+       "path": "app/assets/drill_media/rotator-cuff-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -5969,7 +6023,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-A.jpg",
+       "path": "app/assets/drill_media/scapular-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "5e618b051edcd17ec9d25fcb50eaed87be4e081e11ed88bee8af3029e33ae419"
@@ -5981,7 +6035,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-A.mp4",
+       "path": "app/assets/drill_media/scapular-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 12.0,
@@ -6096,7 +6150,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-B.jpg",
+       "path": "app/assets/drill_media/scapular-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "64d754e43d2752812678244513cf080beda8c24fd66af7384e390f937a6436ed"
@@ -6108,7 +6162,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-B.mp4",
+       "path": "app/assets/drill_media/scapular-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -6222,7 +6276,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-C.jpg",
+       "path": "app/assets/drill_media/scapular-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "f696a27b4716fc8ef4b8e526732d57e0c10960b67430f59afb631b7252b34f7e"
@@ -6234,7 +6288,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/scapular-C.mp4",
+       "path": "app/assets/drill_media/scapular-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -6344,7 +6398,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-A.jpg",
+       "path": "app/assets/drill_media/serratus-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "e875d583b46ffbdd2088aeb98d5038916c0a23c1da0ff9600a03066d25fb989d"
@@ -6356,7 +6410,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-A.mp4",
+       "path": "app/assets/drill_media/serratus-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 6.0,
@@ -6469,7 +6523,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-B.jpg",
+       "path": "app/assets/drill_media/serratus-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "a53437a64cb72430b8b4ae7f8b38249791b931bb45014d03bd6d603df09a05ff"
@@ -6481,7 +6535,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-B.mp4",
+       "path": "app/assets/drill_media/serratus-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -6595,7 +6649,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-C.jpg",
+       "path": "app/assets/drill_media/serratus-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "3d670600b1f634fe428005b6848d8eb9ae58be3c42a740366b71ee0239e6af33"
@@ -6607,7 +6661,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/serratus-C.mp4",
+       "path": "app/assets/drill_media/serratus-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,
@@ -6720,7 +6774,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-A.jpg",
+       "path": "app/assets/drill_media/triceps-A.jpg",
        "width": 540,
        "height": 540,
        "sha256": "baf83dadb752865cd785146a97c3dffc397cba2a0e6d0d0fc808bbc2e607ac85"
@@ -6732,7 +6786,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-A.mp4",
+       "path": "app/assets/drill_media/triceps-A.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 7.2,
@@ -6847,7 +6901,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-B.jpg",
+       "path": "app/assets/drill_media/triceps-B.jpg",
        "width": 540,
        "height": 540,
        "sha256": "81fe89081704e80639ae3440587ecd074e47d671c1ce9fe941d3b10f0fdc3860"
@@ -6859,7 +6913,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-B.mp4",
+       "path": "app/assets/drill_media/triceps-B.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 7.0,
@@ -6972,7 +7026,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-C.jpg",
+       "path": "app/assets/drill_media/triceps-C.jpg",
        "width": 540,
        "height": 540,
        "sha256": "904b6d497a31fe0055bf903a2b6ff2ff6d4f3acfadfab0b6e4249cd6b4e2c2ac"
@@ -6984,7 +7038,7 @@
      "sources": [
       {
        "app": "flarelab",
-       "path": "assets/drill_media/triceps-C.mp4",
+       "path": "app/assets/drill_media/triceps-C.mp4",
        "width": 720,
        "height": 720,
        "loopSeconds": 8.0,

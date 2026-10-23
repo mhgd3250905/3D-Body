@@ -490,5 +490,7 @@
   "settingsHint": "Aparência, reprodução, qualidade",
   "planRunEnded": "Sessão encerrada",
   "planSkipped": "Pulado",
-  "planSkippedCount": "{count} exercícios pulados"
+  "planSkippedCount": "{count} exercícios pulados",
+  "trainerSoundOn": "Ativar voz e sons",
+  "trainerSoundOff": "Desativar voz e sons"
 }

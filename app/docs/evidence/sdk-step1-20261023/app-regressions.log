@@ -1,0 +1,74 @@
+00:00 +0: loading E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart
+00:00 +0: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: 服务与映射 范围 = profile 白名单 ∩ App 动作与视频；交集完整时不改 profile
+00:00 +1: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: 服务与映射 App 缺视频的动作从 AI 范围里排除，校验报 E_SCOPE
+00:00 +2: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: 服务与映射 合格样例计划通过 SDK 校验
+00:00 +3: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: 服务与映射 计划映射：块拍平、轮数折进组数、剂量随 routine 保存
+00:00 +4: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: 服务与映射 预设回落按关键词挑方向、按场景挑档位；红旗情况建议就医
+00:00 +5: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: PR #122 审核：多轮回落记得先前约束 未配置：先说做了手术，第二轮仍不给计划
+00:00 +6: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: PR #122 审核：多轮回落记得先前约束 首轮模型建议就医、第二轮断网：回落仍不给计划
+00:00 +7: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: PR #122 审核：多轮回落记得先前约束 健身房练核心 → 追问时长 → 答「10分钟」时断网：回落仍是核心、健身房版
+00:00 +8: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: PR #122 审核：多轮回落记得先前约束 健身房练核心 → 追问时长 → 答「10分钟」时断网：回落仍是核心、健身房版
+00:00 +9: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:00 +10: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:00 +11: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:00 +12: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:00 +13: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:00 +14: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +15: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +16: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +17: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +18: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +19: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +20: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +21: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +22: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +23: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +24: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +25: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +26: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +27: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +28: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +29: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：AI 四组开始后结束并保存 → 记录并关闭
+00:01 +30: E:/AII-3D/3D-Body/app/test/ui/plans_test.dart: scene switch turns every preset into that scene
+00:01 +31: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:01 +32: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:01 +32: E:/AII-3D/3D-Body/app/test/ui/ai_coach_review2_test.dart: F122-1 合法 AI 四组可结束保存 跟练页：保存抛异常 → 不卡在「正在保存」，可重试
+Training session not saved: Invalid argument(s): Invalid training session
+00:01 +33: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:01 +34: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:01 +35: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +36: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +37: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +38: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +39: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +40: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +41: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +42: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +43: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +44: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +45: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +46: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +47: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:02 +48: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练
+00:03 +49: E:/AII-3D/3D-Body/app/test/ui/internationalization_test.dart: library, drill detail, and settings stay usable on phone widths
+00:03 +50: E:/AII-3D/3D-Body/app/test/ui/plan_regressions_test.dart: skipping the final unfinished drill still allows training it
+00:03 +51: E:/AII-3D/3D-Body/app/test/ui/plan_regressions_test.dart: skipping the final unfinished drill still allows training it
+00:03 +52: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 ask_user 多选 → 文字追问 → 自由回答，问题不重复且保留 Agent
+00:04 +53: E:/AII-3D/3D-Body/app/test/ui/plan_regressions_test.dart: four skipped drills advance in order without wrapping or sessions
+00:04 +54: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 choice 也能直接打字；取消回答后原问题可继续回答
+00:04 +55: E:/AII-3D/3D-Body/app/test/ui/plan_regressions_test.dart: completion after a skipped drill advances to the following drill
+00:04 +56: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 明确新对话才清空 Agent 询问计数和界面
+00:04 +57: E:/AII-3D/3D-Body/app/test/ui/plan_regressions_test.dart: copied backup includes routine identity name and drill order
+00:04 +58: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 第一次输出校验失败 → 带错误重写 → 通过
+00:04 +59: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 三次提交校验失败 → 回落预设方案并说明
+00:05 +60: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 断网 → 离线回落预设方案，可保存可开练
+00:05 +61: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 未配置 key：入口显示未配置，不调模型，直接给预设方案
+00:05 +62: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 首次使用显示免责说明，确认后不再显示
+00:05 +63: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 等待中显示分步进度与已用时，可停止；停止后原话回到输入框
+00:05 +64: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 模型两轮给同一 plan id：第二张卡未保存，可单独保存
+00:06 +65: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 预设 template-* 多轮：每张卡各自保存
+00:06 +66: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 删除已保存的计划后：原计划可重新保存且内容一致
+00:06 +67: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 重试退避中停止：立即结束、无第二次请求、不回落、恢复输入
+00:06 +68: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 360 宽 + 1.3 倍字号不溢出
+00:07 +69: E:/AII-3D/3D-Body/app/test/ui/ai_coach_test.dart: AI 定制页 360 宽 + 1.3 倍字号（深色）不溢出
+00:07 +70: All tests passed!

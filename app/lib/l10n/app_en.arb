@@ -500,5 +500,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "trainerSoundOn": "Turn on voice and sounds",
+  "trainerSoundOff": "Turn off voice and sounds"
 }

@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.9+11
+version: 1.0.10+12
 
 environment:
   sdk: ^3.12.2
@@ -20,12 +20,17 @@ dependencies:
   characters: 1.4.1
 
   intl: 0.20.2
-  path_provider: 2.1.5
+  path_provider: 2.1.6
   # AI 训练助理 SDK（mhgd3250905/ugk-3d-pose-sdk），固定到提交，升级时改 ref。
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 26e32557058e582d3f1b2b7f722dfa53c2b16aa6
+      ref: b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0
+  ugk_trainer:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      path: packages/ugk_trainer
+      ref: b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,6 +52,10 @@ flutter:
     - assets/data/source-manifest.json
     - assets/data/drill-media-manifest.json
     - assets/coach/
+    - assets/trainer_voice/
+    - assets/trainer_voice/_common/
+    - assets/trainer_voice/_common/voice/zh/
+    - assets/trainer_voice/_common/chime/
     - assets/l10n/
     - assets/drills/
     - assets/drills/light/

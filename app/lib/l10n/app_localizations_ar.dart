@@ -1074,4 +1074,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String planSkippedCount(int count) {
     return 'تم تخطي $count تمارين';
   }
+
+  @override
+  String get trainerSoundOn => 'تشغيل الصوت والتنبيهات';
+
+  @override
+  String get trainerSoundOff => 'إيقاف الصوت والتنبيهات';
 }

@@ -1,0 +1,41 @@
+{
+  "sdkCommit": "b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0",
+  "model": "deepseek-v4.1-flash-1017",
+  "calls": 2,
+  "elapsedMs": 36057,
+  "turns": [
+    {
+      "index": 1,
+      "cancelled": false,
+      "presetReason": null,
+      "questionMode": "choice",
+      "multiple": true,
+      "optionCount": 6,
+      "planId": null,
+      "actionIds": null,
+      "tokens": 7269,
+      "questionCount": 1
+    },
+    {
+      "index": 2,
+      "cancelled": false,
+      "presetReason": null,
+      "questionMode": null,
+      "multiple": null,
+      "optionCount": null,
+      "planId": "plan-1792748073111-3",
+      "actionIds": [
+        "forearms-A",
+        "serratus-A",
+        "scapular-A",
+        "rotator-cuff-A",
+        "deltoids-A",
+        "abs-A",
+        "erectors-A"
+      ],
+      "tokens": 10297,
+      "questionCount": 0
+    }
+  ],
+  "askedThenPlanned": true
+}

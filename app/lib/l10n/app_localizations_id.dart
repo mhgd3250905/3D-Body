@@ -1087,4 +1087,10 @@ class AppLocalizationsId extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count latihan dilewati';
   }
+
+  @override
+  String get trainerSoundOn => 'Aktifkan suara dan bunyi';
+
+  @override
+  String get trainerSoundOff => 'Nonaktifkan suara dan bunyi';
 }

@@ -490,5 +490,7 @@
   "settingsHint": "المظهر والتشغيل والجودة",
   "planRunEnded": "انتهت الجلسة",
   "planSkipped": "تم التخطي",
-  "planSkippedCount": "تم تخطي {count} تمارين"
+  "planSkippedCount": "تم تخطي {count} تمارين",
+  "trainerSoundOn": "تشغيل الصوت والتنبيهات",
+  "trainerSoundOff": "إيقاف الصوت والتنبيهات"
 }

@@ -1,0 +1,34 @@
+{
+  "sdkCommit": "b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0",
+  "versions": {
+    "ugk_coach": "0.4.0",
+    "ugk_trainer": "0.1.7",
+    "app": "1.0.10+12"
+  },
+  "targetedTests": {
+    "passed": 93,
+    "failed": 0,
+    "groups": {
+      "coachPlansI18nStorage": 70,
+      "trainerAudioPausePersistence": 22,
+      "newFractionalPhaseBoundary": 1
+    }
+  },
+  "existingFlowSuite": {
+    "passed": 7,
+    "failed": 3,
+    "failures": "historical-failures.json"
+  },
+  "analyze": "no issues",
+  "voiceIntegrity": {
+    "verifiedFiles": 91,
+    "speech": 85,
+    "chimes": 5
+  },
+  "mediaIntegrity": {
+    "drills": 51,
+    "videosAndCovers": 102
+  },
+  "androidDevice": "not connected; not installed",
+  "ios": "not built on Windows"
+}

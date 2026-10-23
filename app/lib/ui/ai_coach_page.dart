@@ -46,6 +46,7 @@ class AiCoachSession extends ChangeNotifier {
   int _nextResult = 0;
   uc.CancelToken? _cancel;
   DateTime? _startedAt;
+  uc.AgentEvent? progress;
   bool _loaded = false;
   bool _disposed = false;
 
@@ -74,6 +75,7 @@ class AiCoachSession extends ChangeNotifier {
     final cancel = uc.CancelToken();
     _cancel = cancel;
     _startedAt = _now();
+    progress = null;
     messages.add(CoachMessage.user(text));
     _notify();
     CoachAnswer answer;
@@ -83,6 +85,10 @@ class AiCoachSession extends ChangeNotifier {
         conversation,
         cancel: cancel,
         tier: tier,
+        onProgress: (event) {
+          progress = event;
+          _notify();
+        },
       );
     } on Object {
       answer = const CoachAnswer(
@@ -99,6 +105,16 @@ class AiCoachSession extends ChangeNotifier {
     } else {
       messages.add(CoachMessage.answer(answer, _nextResult++));
     }
+    _notify();
+  }
+
+  void newConversation() {
+    if (busy) return;
+    service.resetConversation();
+    conversation.clear();
+    messages.clear();
+    saved.clear();
+    cancelledText = null;
     _notify();
   }
 
@@ -265,6 +281,14 @@ class _AiCoachPageState extends State<AiCoachPage> {
             large: false,
             onBack: widget.onBack,
             subtitle: configured ? null : '未配置 AI · 使用预设方案',
+            action: RoundIconButton(
+              key: const ValueKey('coach-new-chat'),
+              icon: Icons.add_comment_outlined,
+              tooltip: '新对话',
+              onPressed: session.busy || session.messages.isEmpty
+                  ? null
+                  : session.newConversation,
+            ),
           ),
           Expanded(
             child: ScrollEdge(
@@ -295,6 +319,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
                       _Thinking(
                         key: const ValueKey('coach-thinking'),
                         seconds: _elapsed,
+                        event: session.progress,
                         onStop: session.stop,
                       ),
                   ],
@@ -316,29 +341,35 @@ class _AiCoachPageState extends State<AiCoachPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (reply.text.isNotEmpty)
+        if (reply.text.isNotEmpty && answer.question == null)
           _CoachBubble(
             text: reply.text,
             preset: answer.preset && reply.plan == null,
           ),
-        if (reply.kind == uc.ReplyKind.ask && reply.options.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final (i, option) in reply.options.indexed)
-                  ActionChip(
-                    key: ValueKey('coach-option-$i'),
-                    label: Text(option),
-                    onPressed: latest && !session.busy
-                        ? () => _send(option)
-                        : null,
-                  ),
-              ],
-            ),
+        if (answer.question case final question?)
+          _QuestionBubble(
+            key: ValueKey('coach-question-${answer.turnId}'),
+            question: question,
+            enabled: latest && !session.busy,
+            onAnswer: _send,
           ),
+        if (answer.actions case final actions?)
+          for (final item in actions.items)
+            if (widget.catalog.drillById(item.id) case final drill?)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  leading: SizedBox(
+                    width: 52,
+                    height: 52,
+                    child: DrillPoster(drill),
+                  ),
+                  title: Text(drill.name),
+                  subtitle: item.note == null ? null : Text(item.note!),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => widget.onDrill(drill),
+                ),
+              ),
         if (reply.plan case final plan?)
           _planCard(context, plan, answer, message.resultId),
       ],
@@ -371,6 +402,90 @@ class _AiCoachPageState extends State<AiCoachPage> {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               widget.onStart(CoachPlanMapper.routineName(plan), drills);
             },
+    );
+  }
+}
+
+/// Only built from send()'s admitted result. Events cannot enable these controls
+/// while the SDK is still committing its question/history and releasing isBusy.
+class _QuestionBubble extends StatefulWidget {
+  const _QuestionBubble({
+    super.key,
+    required this.question,
+    required this.enabled,
+    required this.onAnswer,
+  });
+  final uc.AskUserQuestion question;
+  final bool enabled;
+  final ValueChanged<String> onAnswer;
+
+  @override
+  State<_QuestionBubble> createState() => _QuestionBubbleState();
+}
+
+class _QuestionBubbleState extends State<_QuestionBubble> {
+  final _selected = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
+    final question = widget.question;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CoachBubble(text: question.question),
+          if (question.mode == uc.AskUserMode.text)
+            Text('在下方输入你的回答', style: TextStyle(color: FlareColors.secondary)),
+          if (question.mode == uc.AskUserMode.choice) ...[
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final (i, option) in question.options.indexed)
+                  if (question.multiple)
+                    FilterChip(
+                      key: ValueKey('coach-option-$i'),
+                      label: Text(option),
+                      selected: _selected.contains(option),
+                      onSelected: !widget.enabled
+                          ? null
+                          : (selected) {
+                              setState(() {
+                                if (selected) {
+                                  _selected.add(option);
+                                } else {
+                                  _selected.remove(option);
+                                }
+                              });
+                            },
+                    )
+                  else
+                    ActionChip(
+                      key: ValueKey('coach-option-$i'),
+                      label: Text(option),
+                      onPressed: widget.enabled
+                          ? () => widget.onAnswer(option)
+                          : null,
+                    ),
+              ],
+            ),
+            if (question.multiple)
+              TextButton(
+                key: const ValueKey('coach-options-submit'),
+                onPressed: !widget.enabled || _selected.isEmpty
+                    ? null
+                    : () {
+                        widget.onAnswer(
+                          question.options.where(_selected.contains).join('、'),
+                        );
+                      },
+                child: const Text('确认选择'),
+              ),
+            Text('也可以在下方直接输入', style: TextStyle(color: FlareColors.secondary)),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -544,23 +659,30 @@ class _CoachBubble extends StatelessWidget {
   );
 }
 
-/// 推理模型出一份计划约 30–40 秒：分阶段提示 + 已用时 + 可停止。
+/// Show real SDK progress; elapsed time is not a fabricated completion ratio.
 class _Thinking extends StatelessWidget {
-  const _Thinking({super.key, required this.seconds, required this.onStop});
+  const _Thinking({
+    super.key,
+    required this.seconds,
+    required this.onStop,
+    this.event,
+  });
   final int seconds;
   final VoidCallback onStop;
+  final uc.AgentEvent? event;
 
-  static (String, String) stage(int seconds) => switch (seconds) {
-    < 6 => ('正在理解你的需求…', '第 1 步 / 共 3 步'),
-    < 22 => ('正在从托马斯动作库里挑动作、配剂量…', '第 2 步 / 共 3 步'),
-    < 45 => ('正在核对动作范围、剂量和安全…', '第 3 步 / 共 3 步'),
-    _ => ('比平时久一点，可以继续等，或停止后改用预设方案', '仍在等待'),
+  String get title => switch (event?.kind) {
+    uc.AgentEventKind.reading || uc.AgentEventKind.listing => '正在查阅托马斯动作库…',
+    uc.AgentEventKind.checking => '正在核对计划与安全条件…',
+    uc.AgentEventKind.retrying =>
+      '网络不稳，正在重试（${event!.attempt}/${event!.maxAttempts}）…',
+    uc.AgentEventKind.slow => '响应比平时久，仍在等待；你可以随时停止',
+    uc.AgentEventKind.askUser => '正在整理需要确认的问题…',
+    _ => '正在理解你的需求…',
   };
 
   @override
   Widget build(BuildContext context) {
-    final (title, step) = stage(seconds);
-    final progress = (seconds / 40).clamp(.04, .94);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -590,7 +712,7 @@ class _Thinking extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(3),
                 child: LinearProgressIndicator(
-                  value: progress,
+                  value: null,
                   minHeight: 5,
                   backgroundColor: FlareColors.track,
                   color: FlareColors.accent,
@@ -602,7 +724,7 @@ class _Thinking extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '$step · 已用 $seconds 秒，通常 30–40 秒',
+                    '已用 $seconds 秒',
                     key: const ValueKey('coach-elapsed'),
                     style: TextStyle(fontSize: 12, color: FlareColors.dim),
                   ),

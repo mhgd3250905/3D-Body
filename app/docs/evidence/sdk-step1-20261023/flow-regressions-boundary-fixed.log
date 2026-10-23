@@ -1,0 +1,100 @@
+00:00 +0: loading E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart
+00:00 +0: fixed stage sends home inset before system back camera glide
+00:00 +1: scene retry reinstalls inset and paused detail before framing
+00:01 +2: phone safety → phase muscle → drill → local pain record → same paused frame
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.first (dart:core/iterable.dart:663:7)
+#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1383:28)
+#3      _AncestorFinderMixin.allCandidates (package:flutter_test/src/finders.dart:1857:49)
+#4      FinderBase.evaluate (package:flutter_test/src/finders.dart:1030:76)
+#5      WidgetController.widgetList (package:flutter_test/src/controller.dart:848:19)
+#6      WidgetController._maybeViewOf (package:flutter_test/src/controller.dart:795:34)
+#7      WidgetController.tap (package:flutter_test/src/controller.dart:1078:31)
+#8      main.<anonymous closure> (file:///E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart:319:22)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  phone safety → phase muscle → drill → local pain record → same paused frame
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -1: phone safety → phase muscle → drill → local pain record → same paused frame [E]
+  Test failed. See exception logs above.
+  The test description was: phone safety → phase muscle → drill → local pain record → same paused frame
+
+00:01 +2 -1: thumbnail model state retains phase role and reviewed knowledge without metadata
+00:01 +3 -1: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: empty
+  Actual: WhereIterable<Map<String, Object?>>:[{'type': 'visibility', 'visible': false}]
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart:804:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart line 804
+The test description was:
+  inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +3 -2: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused [E]
+  Test failed. See exception logs above.
+  The test description was: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused
+
+00:02 +3 -2: plans: preset → run hub → finish, save as mine, then edit and delete with undo
+00:03 +4 -2: compact home keeps navigation discoverable and timeline drag/keyboard seek paused
+00:04 +5 -2: first scene ready applies speed without overwriting saved paused time
+00:04 +6 -2: real rep drill completes three sets and saves only one completed local record
+00:13 +7 -2: appearance switch persists, repaints and tells the scene
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 2 widgets with text "跟随系统": [
+            Text("跟随系统", inherit: true, color: Color(alpha: 1.0000, red: 0.4549, green: 0.4549,
+blue: 0.4902, colorSpace: ColorSpace.sRGB), size: 12.0, dependencies: [DefaultSelectionStyle,
+DefaultTextStyle, MediaQuery]),
+            Text("跟随系统", softWrap: no wrapping except at line break characters, maxLines: 1,
+dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: is too many
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart:1266:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart line 1266
+The test description was:
+  appearance switch persists, repaints and tells the scene
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:14 +7 -3: appearance switch persists, repaints and tells the scene [E]
+  Test failed. See exception logs above.
+  The test description was: appearance switch persists, repaints and tells the scene
+
+00:14 +7 -3: Some tests failed.
+
+Failing tests:
+  E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart: appearance switch persists, repaints and tells the scene
+  E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused
+  E:/AII-3D/3D-Body/app/test/ui/flow_regressions_test.dart: phone safety → phase muscle → drill → local pain record → same paused frame

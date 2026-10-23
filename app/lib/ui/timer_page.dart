@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:ugk_trainer/ugk_trainer.dart' as trainer;
 import '../control/learning_store.dart';
 import '../domain/catalog_models.dart';
 import '../domain/dose.dart';
-import '../domain/drill_timer.dart';
+import '../domain/drill_timer.dart' show TimerPhase, TimerSnapshot;
+import '../trainer/drill_training_session.dart';
+import '../trainer/trainer_audio.dart';
+import '../trainer/trainer_voice.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -17,6 +21,7 @@ class TrainingTimerPage extends StatefulWidget {
     required this.store,
     required this.onClose,
     this.now,
+    this.voiceOutput,
     this.planLabel,
   });
   final Drill drill;
@@ -29,6 +34,11 @@ class TrainingTimerPage extends StatefulWidget {
   /// Optional monotonic clock for deterministic timer interaction tests.
   @visibleForTesting
   final int Function()? now;
+
+  /// Widget hosts without platform audio can inject a silent/fake output
+  /// while exercising the real monotonic clock and voice scheduling.
+  @visibleForTesting
+  final trainer.VoiceOutput? voiceOutput;
   @override
   State<TrainingTimerPage> createState() => _TrainingTimerPageState();
 }
@@ -36,10 +46,22 @@ class TrainingTimerPage extends StatefulWidget {
 class _TrainingTimerPageState extends State<TrainingTimerPage>
     with WidgetsBindingObserver {
   final Stopwatch _clock = Stopwatch();
-  late final DrillTimer _timer;
+  late final DrillTrainingSession _timer;
   late final DateTime _startedAt;
   late final String _sessionId;
   Timer? _ticker;
+  Timer? _audioTail;
+  trainer.VoiceOutput _voiceOutput = const trainer.MutedVoiceOutput();
+  trainer.VoiceQueue? _voiceQueue;
+  trainer.TrainingHold? _trainingHold;
+  StreamSubscription<trainer.AudioInterruption>? _interruptions;
+  bool _voiceLoading = false;
+  bool _sound = true;
+  bool _servicesStarted = false;
+  bool _servicesEnded = false;
+  TimerPhase? _servicePhase;
+  TrainingSession? _record;
+  Future<void>? _saveOperation;
   bool _pain = false;
   bool _saving = false;
   bool _saved = false;
@@ -59,14 +81,24 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     _startedAt = DateTime.now().toUtc();
     _sessionId = 'practice-${_startedAt.microsecondsSinceEpoch}';
     _clock.start();
-    _timer = DrillTimer(
+    _sound = widget.store.settings.sound;
+    _timer = DrillTrainingSession(
       widget.drill.dose,
+      drillId: widget.drill.id,
+      title: widget.drill.name,
       now: widget.now ?? () => _clock.elapsedMilliseconds,
     );
+    _timer.onCues = (cues, time) {
+      for (final cue in cues) {
+        _voiceQueue?.submit(cue.cue, time);
+      }
+    };
     WidgetsBinding.instance.addObserver(this);
     _ticker = Timer.periodic(Duration(milliseconds: 150), (_) {
       _timer.tick();
       if (!mounted) return;
+      _syncServices();
+      _voiceQueue?.tick(_timer.activeSeconds);
       _feedback(_timer.snapshot);
       setState(() {});
       if (_timer.snapshot.phase == TimerPhase.finished &&
@@ -76,6 +108,114 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
         unawaited(_persist());
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_voiceLoading || widget.now != null) return;
+    _voiceLoading = true;
+    final language = Localizations.localeOf(context).languageCode;
+    unawaited(_loadVoice(language));
+  }
+
+  Future<void> _loadVoice(String language) async {
+    try {
+      final source = await loadTrainerVoiceSource();
+      if (!mounted || _servicesEnded) return;
+      _voiceOutput = widget.voiceOutput ?? trainerAudio.acquire();
+      _voiceQueue = trainer.VoiceQueue(
+        output: _voiceOutput,
+        lib: source,
+        settings: trainer.VoiceSettings(
+          voice: _sound,
+          chimes: _sound,
+          language: language,
+        ),
+      );
+      _timer.configureVoice(source, language);
+      if (_voiceOutput case final trainer.InterruptibleVoiceOutput output) {
+        _interruptions = output.interruptions.listen((event) {
+          if (!mounted || event == trainer.AudioInterruption.ended) return;
+          _act(_timer.pause);
+        });
+      }
+      if (_servicesStarted && _sound) await _voiceOutput.begin();
+    } on Object catch (error) {
+      debugPrint('Training voice unavailable: $error');
+    }
+  }
+
+  void _syncServices() {
+    final phase = _timer.snapshot.phase;
+    if (phase == _servicePhase) return;
+    final previous = _servicePhase;
+    _servicePhase = phase;
+    if (phase == TimerPhase.ready) return;
+    if (phase == TimerPhase.finished || phase == TimerPhase.abandoned) {
+      if (_servicesEnded) return;
+      _servicesEnded = true;
+      if (_servicesStarted && widget.now == null) trainer.ScreenAwake.release();
+      final tail = phase == TimerPhase.finished && widget.now == null
+          ? const Duration(seconds: 5)
+          : Duration.zero;
+      _trainingHold?.release(after: tail);
+      _audioTail = Timer(tail, () {
+        _voiceQueue?.cancelAll(_timer.activeSeconds);
+        unawaited(_voiceOutput.end());
+      });
+      return;
+    }
+    if (!_servicesStarted) {
+      _servicesStarted = true;
+      if (widget.now == null) {
+        trainer.ScreenAwake.acquire();
+        _trainingHold = trainer.TrainingHold.begin(
+          Duration(seconds: _timer.expectedSeconds.ceil()),
+          mediaPlayback: true,
+          notice: trainer.TrainingNotice(
+            channelName: context.strings.work,
+            channelDescription: context.strings.startTimer,
+            title: widget.drill.name,
+            text: context.strings.work,
+          ),
+        );
+      }
+      if (_sound) unawaited(_voiceOutput.begin());
+    }
+    final waiting = phase == TimerPhase.paused || phase == TimerPhase.nextSide;
+    _trainingHold?.setPlaybackState(paused: waiting || !_sound);
+    if (phase == TimerPhase.paused) {
+      _voiceQueue?.cancelAll(_timer.activeSeconds);
+    } else if (previous == TimerPhase.paused ||
+        previous == TimerPhase.nextSide) {
+      _trainingHold?.renew(Duration(seconds: _timer.expectedSeconds.ceil()));
+      if (_sound && _voiceOutput is trainer.InterruptibleVoiceOutput) {
+        unawaited(
+          (_voiceOutput as trainer.InterruptibleVoiceOutput).reactivate(),
+        );
+      }
+    }
+  }
+
+  void _toggleSound() {
+    setState(() => _sound = !_sound);
+    _voiceQueue?.settings = _voiceQueue!.settings.copyWith(
+      voice: _sound,
+      chimes: _sound,
+    );
+    if (!_sound) {
+      _voiceQueue?.cancelAll(_timer.activeSeconds);
+      unawaited(_voiceOutput.end());
+    } else if (_servicesStarted && !_servicesEnded) {
+      unawaited(_voiceOutput.begin());
+    }
+    final phase = _timer.snapshot.phase;
+    _trainingHold?.setPlaybackState(
+      paused:
+          !_sound || phase == TimerPhase.paused || phase == TimerPhase.nextSide,
+    );
+    unawaited(widget.store.updateSettings(sound: _sound));
   }
 
   /// Haptics carry the timer when the phone is on the floor: a tick for each
@@ -117,6 +257,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   void _act(VoidCallback action) {
     FlareHaptics.light();
     setState(action);
+    _syncServices();
   }
 
   bool get _inProgress {
@@ -136,7 +277,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
       TimerPhase.countdown,
       TimerPhase.rest,
     ].contains(_timer.snapshot.phase);
-    if (running) setState(_timer.pause);
+    if (running) _act(_timer.pause);
     _confirming = true;
     final s = context.strings;
     final end = await showModalBottomSheet<bool>(
@@ -194,14 +335,22 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
     if (end == true) {
       await _exit();
     } else if (running && _timer.snapshot.phase == TimerPhase.paused) {
-      setState(_timer.resume);
+      _act(_timer.resume);
     }
   }
 
-  Future<void> _persist() async {
+  Future<void> _persist() {
+    final pending = _saveOperation;
+    if (pending != null) return pending;
+    final operation = _persistOnce();
+    _saveOperation = operation;
+    return operation.whenComplete(() => _saveOperation = null);
+  }
+
+  Future<void> _persistOnce() async {
     if (_saving || _saved || _timer.snapshot.phase == TimerPhase.ready) return;
     setState(() => _saving = true);
-    final session = TrainingSession.fromTimer(
+    final session = _record ??= TrainingSession.fromTimer(
       id: _sessionId,
       drillId: widget.drill.id,
       startedAt: _startedAt,
@@ -227,6 +376,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
 
   Future<void> _exit() async {
     if (_timer.snapshot.phase != TimerPhase.finished) _timer.abandon();
+    _syncServices();
     await _persist();
     if (mounted && (!_saveFailed || widget.store.persistenceBlocked)) {
       widget.onClose();
@@ -235,9 +385,13 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Preserve the existing deliberate-resume policy. The SDK foreground
+    // service keeps this guided session alive; it does not grant unobserved
+    // exercise credit when the app leaves the foreground or the screen locks.
     if (kIsWeb && state == AppLifecycleState.inactive) return;
     if (state != AppLifecycleState.resumed) {
       _timer.suspendForBackground();
+      _syncServices();
       if (mounted) setState(() {});
     }
   }
@@ -245,6 +399,16 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
   @override
   void dispose() {
     _ticker?.cancel();
+    _audioTail?.cancel();
+    unawaited(_interruptions?.cancel());
+    _trainingHold?.release();
+    if (_servicesStarted && !_servicesEnded && widget.now == null) {
+      trainer.ScreenAwake.release();
+    }
+    _voiceQueue?.cancelAll(_timer.activeSeconds);
+    // The app-scoped lease serializes shutdown with the next route's begin.
+    // A disposed old route never disposes the shared SDK audio players.
+    unawaited(_voiceOutput.end());
     _clock.stop();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -398,7 +562,16 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                         ),
                       ),
                     ),
-                    const SizedBox(width: 44),
+                    IconButton(
+                      key: const ValueKey('training-sound-toggle'),
+                      tooltip: _sound ? s.trainerSoundOff : s.trainerSoundOn,
+                      onPressed: _toggleSound,
+                      icon: Icon(
+                        _sound
+                            ? Icons.volume_up_outlined
+                            : Icons.volume_off_outlined,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -658,6 +831,7 @@ class _TrainingTimerPageState extends State<TrainingTimerPage>
                           _pain = true;
                           _timer.abandon();
                         });
+                        _syncServices();
                         unawaited(_persist());
                       },
                       icon: Icon(

@@ -1061,4 +1061,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count 種目をスキップ';
   }
+
+  @override
+  String get trainerSoundOn => '音声と効果音をオン';
+
+  @override
+  String get trainerSoundOff => '音声と効果音をオフ';
 }

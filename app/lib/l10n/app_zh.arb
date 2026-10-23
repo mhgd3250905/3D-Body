@@ -555,5 +555,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "trainerSoundOn": "开启语音和提示音",
+  "trainerSoundOff": "关闭语音和提示音"
 }

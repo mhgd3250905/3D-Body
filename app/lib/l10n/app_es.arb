@@ -490,5 +490,7 @@
   "settingsHint": "Apariencia, reproducción, calidad",
   "planRunEnded": "Sesión terminada",
   "planSkipped": "Omitido",
-  "planSkippedCount": "{count} ejercicios omitidos"
+  "planSkippedCount": "{count} ejercicios omitidos",
+  "trainerSoundOn": "Activar voz y sonidos",
+  "trainerSoundOff": "Desactivar voz y sonidos"
 }

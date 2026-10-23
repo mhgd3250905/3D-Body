@@ -490,5 +490,7 @@
   "settingsHint": "外觀、播放與畫質",
   "planRunEnded": "本輪訓練已結束",
   "planSkipped": "已略過",
-  "planSkippedCount": "略過 {count} 個動作"
+  "planSkippedCount": "略過 {count} 個動作",
+  "trainerSoundOn": "開啟語音和提示音",
+  "trainerSoundOff": "關閉語音和提示音"
 }

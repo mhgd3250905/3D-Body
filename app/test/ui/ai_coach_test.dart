@@ -21,6 +21,7 @@ import 'package:http/testing.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../domain/fixtures.dart';
+import 'coach_agent_fixtures.dart';
 import 'flow_regressions_test.dart' as helpers;
 
 /// 测试里同步读资产文件（widget 测试的假时钟里异步 IO 不会完成）。
@@ -110,11 +111,12 @@ void main() {
     usage: usage ?? CoachUsageStore(),
     storage: storage ?? _Memory(),
     readAsset: reader,
+    maxRequestRetries: 0,
   );
 
   group('服务与映射', () {
     test('范围 = profile 白名单 ∩ App 动作与视频；交集完整时不改 profile', () async {
-      final s = service(fake: uc.FakeLlmClient(const []));
+      final s = service(fake: AgentFakeLlmClient(const []));
       await s.load();
       expect(s.excludedIds, isEmpty);
       expect(s.profile.scope(s.catalog), hasLength(51));
@@ -133,7 +135,7 @@ void main() {
         return jsonEncode(json);
       }
 
-      final s = service(fake: uc.FakeLlmClient(const []), reader: reader);
+      final s = service(fake: AgentFakeLlmClient(const []), reader: reader);
       await s.load();
       expect(s.excludedIds, {'triceps-A'});
       expect(
@@ -144,18 +146,18 @@ void main() {
           .parse(jsonEncode(validPlanEnvelope()), planId: 'p')
           .reply!
           .plan!;
-      final report = s.assistant!.validate(plan);
+      final report = s.validatePlan(plan);
       expect(report.errorCategories, contains('E_SCOPE'));
     });
 
     test('合格样例计划通过 SDK 校验', () async {
-      final s = service(fake: uc.FakeLlmClient(const []));
+      final s = service(fake: AgentFakeLlmClient(const []));
       await s.load();
       final plan = const uc.EnvelopeParser()
           .parse(jsonEncode(validPlanEnvelope()), planId: 'p')
           .reply!
           .plan!;
-      expect(s.assistant!.validate(plan).errors, isEmpty);
+      expect(s.validatePlan(plan).errors, isEmpty);
     });
 
     test('计划映射：块拍平、轮数折进组数、剂量随 routine 保存', () {
@@ -238,7 +240,7 @@ void main() {
 
     test('首轮模型建议就医、第二轮断网：回落仍不给计划', () async {
       final s = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           {'kind': 'reply', 'text': '术后请先咨询医生，确认可以练再来。'},
           const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
         ]),
@@ -250,7 +252,7 @@ void main() {
 
     test('健身房练核心 → 追问时长 → 答「10分钟」时断网：回落仍是核心、健身房版', () async {
       final s = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           {
             'kind': 'ask',
             'text': '想练几分钟？',
@@ -264,6 +266,142 @@ void main() {
       final plan = (await s.ask('10分钟', conv)).reply?.plan;
       expect(plan, isNotNull);
       expect(plan!.id, 'template-core-C');
+    });
+  });
+
+  group('0.4 Agent 多轮约定', () {
+    test('三次提问上限由 SDK 保持，第四次拒绝后交付计划', () async {
+      Map<String, Object?> question(String text) => {
+        'kind': 'ask',
+        'text': text,
+      };
+      final fake = AgentFakeLlmClient([
+        question('练哪里？'),
+        question('练多久？'),
+        question('还有补充吗？'),
+        question('还要再问一次？'),
+        validPlanEnvelope(),
+      ]);
+      final s = service(fake: fake);
+      final conv = uc.CoachConversation();
+      for (final text in ['想练托马斯', '支撑臂', '20 分钟']) {
+        expect((await s.ask(text, conv)).question, isNotNull);
+      }
+      expect(s.agent!.questionsAsked, 3);
+      final result = await s.ask('没有，直接出', conv);
+      expect(result.question, isNull);
+      expect(result.reply!.plan, isNotNull);
+      expect(
+        fake.requests.last.messages.map((m) => m.content).join(),
+        contains('ask_limit'),
+      );
+      expect(s.agent!.questionsAsked, 0);
+      expect(s.agent!.turnCount, 4);
+    });
+
+    test('否定器械不作为可用器械传给下一轮', () async {
+      final fake = AgentFakeLlmClient([
+        {'kind': 'ask', 'text': '想练什么？'},
+        {'kind': 'reply', 'text': '按你的器械条件安排。'},
+      ]);
+      final s = service(fake: fake);
+      final conv = uc.CoachConversation();
+      await s.ask('在家，没有哑铃，但有弹力带', conv);
+      await s.ask('练核心', conv);
+      final current = fake.requests.last.messages.last.content;
+      expect(current, contains('弹力带'));
+      expect(current, isNot(contains('哑铃')));
+    });
+
+    test('回答中移除器械及只用某器械会覆盖此前集合', () async {
+      final fake = AgentFakeLlmClient([
+        {'kind': 'ask', 'text': '练哪里？'},
+        {'kind': 'ask', 'text': '练多久？'},
+        {'kind': 'ask', 'text': '还有什么补充？'},
+        {'kind': 'reply', 'text': '已按新器械条件更新。'},
+      ]);
+      final s = service(fake: fake);
+      final conv = uc.CoachConversation();
+      await s.ask('在家，有哑铃和弹力带以及壶铃', conv);
+      await s.ask('不要哑铃', conv);
+      var current = fake.requests.last.messages.last.content.split('\n').first;
+      expect(current, contains('弹力带'));
+      expect(current, isNot(contains('哑铃')));
+      await s.ask('只有弹力带', conv);
+      current = fake.requests.last.messages.last.content;
+      expect(current, contains('弹力带'));
+      expect(current, isNot(contains('壶铃')));
+      expect(current, isNot(contains('哑铃')));
+      await s.ask('现在改为徒手', conv);
+      expect(fake.requests.last.messages.last.content, contains('没有器械'));
+    });
+
+    test('问题事件期间取消不显示、不提交历史、不增加问题数', () async {
+      final s = service(
+        fake: AgentFakeLlmClient([
+          {
+            'kind': 'ask',
+            'text': '练多久？',
+            'options': ['10 分钟', '20 分钟'],
+          },
+        ]),
+      );
+      final conv = uc.CoachConversation();
+      final token = uc.CancelToken();
+      var busyAtEvent = false;
+      final result = await s.ask(
+        '想练核心',
+        conv,
+        cancel: token,
+        onProgress: (event) {
+          if (event.kind == uc.AgentEventKind.askUser) {
+            busyAtEvent = s.agent!.isBusy;
+            token.cancel();
+          }
+        },
+      );
+      expect(busyAtEvent, isTrue);
+      expect(result.cancelled, isTrue);
+      expect(result.question, isNull);
+      expect(conv.turns, isEmpty);
+      expect(s.agent!.turnCount, 0);
+      expect(s.agent!.questionsAsked, 0);
+    });
+
+    test('回答每轮继续传场所、器械和保护部位，目录刷新不重建已有对话', () async {
+      final fake = AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '重点想练哪里？',
+          'options': ['核心', '腿部'],
+        },
+        {'kind': 'ask', 'text': '有什么要补充的？'},
+      ]);
+      final s = service(fake: fake);
+      final conv = uc.CoachConversation();
+      await s.ask('在家没有器械，手腕不舒服', conv);
+      final agent = s.agent;
+      final json =
+          jsonDecode(File(CoachService.catalogAsset).readAsStringSync())
+              as Map<String, dynamic>;
+      json['version'] = '9.9.9';
+      s.catalogRepository.replace(
+        uc.CatalogPayload(
+          text: jsonEncode(json),
+          origin: 'remote',
+          sha256: 'x',
+        ).parse(),
+        origin: 'remote',
+      );
+      await s.ask('核心', conv);
+      expect(identical(s.agent, agent), isTrue);
+      expect(agent!.questionsAsked, 2);
+      final request = fake.requests.last.messages.last.content;
+      expect(request, contains('手腕'));
+      expect(request, contains('home'));
+      expect(request, contains('没有器械'));
+      s.resetConversation();
+      expect(s.catalog.version, '9.9.9');
     });
   });
 
@@ -359,7 +497,7 @@ void main() {
 
     testWidgets('生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练', (tester) async {
       final usage = CoachUsageStore();
-      final fake = uc.FakeLlmClient([validPlanEnvelope()]);
+      final fake = AgentFakeLlmClient([validPlanEnvelope()]);
       final coach = service(fake: fake, usage: usage);
       final store = await pumpShell(tester, coach);
       expect(find.byKey(const ValueKey('plan-ai-unconfigured')), findsNothing);
@@ -409,8 +547,8 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('助理追问一次 → 点选项 → 出计划；第二轮要求直接出计划', (tester) async {
-      final fake = uc.FakeLlmClient([
+    testWidgets('Agent 提问 → 点选项 → 同一会话出计划', (tester) async {
+      final fake = AgentFakeLlmClient([
         {
           'kind': 'ask',
           'text': '在家还是健身房？',
@@ -429,7 +567,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pumpAndSettle();
       expect(fake.requests, hasLength(2));
-      expect(fake.requests.last.messages.last.content, contains('已经追问过一次'));
+      expect(coach.agent!.questionsAsked, 0);
+      expect(coach.agent!.turnCount, 2);
       expect(fake.requests.last.messages.last.content, contains('在家'));
       expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
       // 选项只在最新一条追问上可点。
@@ -437,6 +576,134 @@ void main() {
         find.byKey(const ValueKey('coach-option-0')),
       );
       expect(chip.onPressed, isNull);
+    });
+
+    testWidgets('ask_user 多选 → 文字追问 → 自由回答，问题不重复且保留 Agent', (tester) async {
+      final fake = AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '主要想练哪些部位？',
+          'options': ['核心', '腿部', '支撑臂'],
+          'multiple': true,
+        },
+        {'kind': 'ask', 'text': '还有什么想补充的？'},
+        validPlanEnvelope(),
+      ]);
+      final coach = service(fake: fake);
+      await pumpShell(
+        tester,
+        coach,
+        size: const Size(360, 740),
+        textScale: 1.3,
+      );
+      await openCoach(tester);
+      await say(tester, '在家练托马斯');
+      final agent = coach.agent;
+      expect(find.text('主要想练哪些部位？'), findsOneWidget);
+      expect(agent!.questionsAsked, 1);
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('coach-options-submit')),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(find.byKey(const ValueKey('coach-option-2')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('coach-option-0')));
+      await tester.pumpAndSettle();
+      await tapVisible(
+        tester,
+        find.byKey(const ValueKey('coach-options-submit')),
+      );
+      expect(find.text('核心、支撑臂'), findsOneWidget);
+      expect(find.text('还有什么想补充的？'), findsOneWidget);
+      expect(find.text('在下方输入你的回答'), findsOneWidget);
+      expect(identical(coach.agent, agent), isTrue);
+      expect(agent.questionsAsked, 2);
+      expect(
+        tester
+            .widget<FilterChip>(find.byKey(const ValueKey('coach-option-0')))
+            .onSelected,
+        isNull,
+      );
+      await say(tester, '20 分钟，先热身');
+      expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
+      expect(agent.questionsAsked, 0);
+      expect(agent.turnCount, 3);
+      expect(
+        fake.requests.last.messages.map((m) => m.content).join(),
+        contains('核心、支撑臂'),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('choice 也能直接打字；取消回答后原问题可继续回答', (tester) async {
+      final fake = AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '练哪里？',
+          'options': ['核心', '腿部'],
+        },
+        (uc.LlmRequest _) async {
+          await Future<void>.delayed(const Duration(seconds: 30));
+          return validPlanEnvelope();
+        },
+        validPlanEnvelope(),
+      ]);
+      final coach = service(fake: fake);
+      await pumpShell(tester, coach);
+      await openCoach(tester);
+      await say(tester, '想练托马斯');
+      await tester.enterText(
+        find.byKey(const ValueKey('coach-input')),
+        '我想练支撑臂',
+      );
+      await tester.tap(find.byKey(const ValueKey('coach-send')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(
+        tester
+            .widget<ActionChip>(find.byKey(const ValueKey('coach-option-0')))
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(find.byKey(const ValueKey('coach-stop')));
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
+      expect(find.text('练哪里？'), findsOneWidget);
+      expect(
+        tester
+            .widget<ActionChip>(find.byKey(const ValueKey('coach-option-0')))
+            .onPressed,
+        isNotNull,
+      );
+      expect(coach.agent!.questionsAsked, 1);
+      await say(tester, '我想练支撑臂');
+      expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
+      expect(coach.agent!.turnCount, 2);
+    });
+
+    testWidgets('明确新对话才清空 Agent 询问计数和界面', (tester) async {
+      final coach = service(
+        fake: AgentFakeLlmClient([
+          {
+            'kind': 'ask',
+            'text': '想练多久？',
+            'options': ['10 分钟', '20 分钟'],
+          },
+        ]),
+      );
+      await pumpShell(tester, coach);
+      await openCoach(tester);
+      await say(tester, '练核心');
+      expect(coach.agent!.questionsAsked, 1);
+      await tester.tap(find.byKey(const ValueKey('coach-new-chat')));
+      await tester.pumpAndSettle();
+      expect(coach.agent!.questionsAsked, 0);
+      expect(coach.agent!.turnCount, 0);
+      expect(find.text('想练多久？'), findsNothing);
+      expect(find.text('说说你想怎么练'), findsOneWidget);
     });
 
     testWidgets('第一次输出校验失败 → 带错误重写 → 通过', (tester) async {
@@ -451,13 +718,16 @@ void main() {
         'restSeconds': 15,
       };
       final usage = CoachUsageStore();
-      final fake = uc.FakeLlmClient([bad, validPlanEnvelope()]);
+      final fake = AgentFakeLlmClient([bad, validPlanEnvelope()]);
       final coach = service(fake: fake, usage: usage);
       await pumpShell(tester, coach);
       await openCoach(tester);
       await say(tester, '在家 20 分钟，练支撑臂');
       expect(fake.requests, hasLength(2));
-      expect(fake.requests.last.messages.last.content, contains('E_UNKNOWN'));
+      expect(
+        fake.requests.last.messages.last.content,
+        contains('unknown_exercise'),
+      );
       expect(find.byKey(const ValueKey('coach-badge-ai')), findsOneWidget);
       expect(find.byKey(const ValueKey('coach-badge-preset')), findsNothing);
       expect(usage.records.map((r) => r.outcome), [
@@ -466,7 +736,7 @@ void main() {
       ]);
     });
 
-    testWidgets('两次校验失败 → 回落预设方案并说明', (tester) async {
+    testWidgets('三次提交校验失败 → 回落预设方案并说明', (tester) async {
       final bad = validPlanEnvelope();
       (((bad['plan'] as Map)['blocks'] as List)[1] as Map)['items'] = [
         {
@@ -478,19 +748,19 @@ void main() {
           'restSeconds': 30,
         },
       ];
-      final coach = service(fake: uc.FakeLlmClient([bad, bad]));
+      final coach = service(fake: AgentFakeLlmClient([bad, bad, bad]));
       await pumpShell(tester, coach);
       await openCoach(tester);
       await say(tester, '想练核心');
       expect(find.byKey(const ValueKey('coach-badge-preset')), findsOneWidget);
       expect(find.byKey(const ValueKey('coach-preset-note')), findsOneWidget);
-      expect(find.textContaining('AI 两次都没排出合格的计划'), findsOneWidget);
+      expect(find.textContaining('AI 暂未排出合格的计划'), findsOneWidget);
       expect(find.textContaining('核心折叠'), findsWidgets);
     });
 
     testWidgets('断网 → 离线回落预设方案，可保存可开练', (tester) async {
       final usage = CoachUsageStore();
-      final fake = uc.FakeLlmClient([
+      final fake = AgentFakeLlmClient([
         const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
       ]);
       final coach = service(fake: fake, usage: usage);
@@ -548,7 +818,7 @@ void main() {
 
     testWidgets('等待中显示分步进度与已用时，可停止；停止后原话回到输入框', (tester) async {
       final coach = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           (uc.LlmRequest r) async {
             await Future<void>.delayed(const Duration(seconds: 30));
             return jsonEncode(validPlanEnvelope());
@@ -564,7 +834,7 @@ void main() {
       expect(find.byKey(const ValueKey('coach-thinking')), findsOneWidget);
       expect(find.text('正在理解你的需求…'), findsOneWidget);
       await tester.pump(const Duration(seconds: 8));
-      expect(find.textContaining('正在从托马斯动作库里挑动作'), findsOneWidget);
+      expect(find.text('正在理解你的需求…'), findsOneWidget);
       expect(find.textContaining('已用'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('coach-stop')));
       await tester.pump(const Duration(seconds: 30));
@@ -605,7 +875,7 @@ void main() {
       final store = await pumpShell(
         tester,
         service(
-          fake: uc.FakeLlmClient([
+          fake: AgentFakeLlmClient([
             planWithId('plan-1', 8),
             planWithId('plan-1', 6),
           ]),
@@ -639,7 +909,7 @@ void main() {
     testWidgets('删除已保存的计划后：原计划可重新保存且内容一致', (tester) async {
       final store = await pumpShell(
         tester,
-        service(fake: uc.FakeLlmClient([validPlanEnvelope()])),
+        service(fake: AgentFakeLlmClient([validPlanEnvelope()])),
       );
       await openCoach(tester);
       await say(tester, '在家 20 分钟，练支撑臂');
@@ -711,7 +981,7 @@ void main() {
 
     for (final dark in [false, true]) {
       testWidgets('360 宽 + 1.3 倍字号${dark ? '（深色）' : ''}不溢出', (tester) async {
-        final coach = service(fake: uc.FakeLlmClient([validPlanEnvelope()]));
+        final coach = service(fake: AgentFakeLlmClient([validPlanEnvelope()]));
         await pumpShell(
           tester,
           coach,

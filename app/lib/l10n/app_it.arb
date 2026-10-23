@@ -490,5 +490,7 @@
   "settingsHint": "Aspetto, riproduzione, qualità",
   "planRunEnded": "Sessione terminata",
   "planSkipped": "Saltato",
-  "planSkippedCount": "{count} esercizi saltati"
+  "planSkippedCount": "{count} esercizi saltati",
+  "trainerSoundOn": "Attiva voce e suoni",
+  "trainerSoundOff": "Disattiva voce e suoni"
 }

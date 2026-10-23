@@ -1086,4 +1086,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String planSkippedCount(int count) {
     return 'Пропущено упражнений: $count';
   }
+
+  @override
+  String get trainerSoundOn => 'Включить голос и звуки';
+
+  @override
+  String get trainerSoundOff => 'Выключить голос и звуки';
 }

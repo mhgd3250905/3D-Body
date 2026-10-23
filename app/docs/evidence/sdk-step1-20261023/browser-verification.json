@@ -1,0 +1,24 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "runtime": "Chromium, locally served offline Flutter Web build",
+  "passed": [
+    "onboarding and safety acknowledgement",
+    "home 3D rendering",
+    "plans and AI entry",
+    "live ask_user multiple choice: hip front + shoulder/upper back",
+    "live AI seven-action plan, save and start",
+    "training media cover retained",
+    "manual reps: two sets of ten",
+    "pause and resume retain rep count",
+    "sound setting toggle",
+    "rest naturally advances to second set",
+    "completed training saved locally",
+    "return to plan increments completed actions to 1/7"
+  ],
+  "consoleErrors": 0,
+  "consoleWarnings": 0,
+  "nativeDeviceValidation": false
+}

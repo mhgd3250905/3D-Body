@@ -1091,4 +1091,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String planSkippedCount(int count) {
     return '$count Übungen übersprungen';
   }
+
+  @override
+  String get trainerSoundOn => 'Sprache und Töne einschalten';
+
+  @override
+  String get trainerSoundOff => 'Sprache und Töne ausschalten';
 }

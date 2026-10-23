@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../domain/fixtures.dart';
+import 'coach_agent_fixtures.dart';
 import 'ai_coach_test.dart' show readAsset, validPlanEnvelope;
 import 'flow_regressions_test.dart' as helpers;
 
@@ -41,6 +42,7 @@ void main() {
     usage: CoachUsageStore(),
     storage: helpers.MemoryStateStorage(),
     readAsset: readAsset,
+    maxRequestRetries: 0,
   );
 
   /// 用真实 DrillTimer 跑一个动作：[finish]=false 时做完 1 组后中途退出。
@@ -188,7 +190,7 @@ void main() {
 
     test('历史健身房 → 本轮改在家：用居家档位', () async {
       final s = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           {
             'kind': 'ask',
             'text': '想练几分钟？',
@@ -208,7 +210,7 @@ void main() {
   group('F122-3 回落保留保护约束', () {
     test('历史说手腕不舒服 → 断网热身回落不含手腕承重动作、带 avoid', () async {
       final s = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           {'kind': 'reply', 'text': '好的，我会避开手腕承重。'},
           const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
         ]),
@@ -288,7 +290,7 @@ void main() {
 
     test('历史说手腕、肩都不舒服 → 断网热身回落两者都保留', () async {
       final s = service(
-        fake: uc.FakeLlmClient([
+        fake: AgentFakeLlmClient([
           {'kind': 'reply', 'text': '好的，会避开手腕和肩的负担。'},
           const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
         ]),
@@ -307,7 +309,7 @@ void main() {
 
   group('F122-4 远端目录切换后重算范围', () {
     test('远端新增 flarelab 动作但 App 没有：排除出范围、校验报错', () async {
-      final s = service(fake: uc.FakeLlmClient(const []));
+      final s = service(fake: AgentFakeLlmClient(const []));
       await s.load();
       expect(s.excludedIds, isEmpty);
       final json =
@@ -341,7 +343,7 @@ void main() {
           .parse(jsonEncode(env), planId: 'p')
           .reply!
           .plan!;
-      expect(s.assistant!.validate(plan).errors, isNotEmpty);
+      expect(s.validatePlan(plan).errors, isNotEmpty);
     });
   });
 

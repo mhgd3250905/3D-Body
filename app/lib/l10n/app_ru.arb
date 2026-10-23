@@ -490,5 +490,7 @@
   "settingsHint": "Оформление, воспроизведение, качество",
   "planRunEnded": "Тренировка завершена",
   "planSkipped": "Пропущено",
-  "planSkippedCount": "Пропущено упражнений: {count}"
+  "planSkippedCount": "Пропущено упражнений: {count}",
+  "trainerSoundOn": "Включить голос и звуки",
+  "trainerSoundOff": "Выключить голос и звуки"
 }

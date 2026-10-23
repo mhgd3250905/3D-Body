@@ -2088,6 +2088,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'跳过 {count} 个动作'**
   String planSkippedCount(int count);
+
+  /// No description provided for @trainerSoundOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'开启语音和提示音'**
+  String get trainerSoundOn;
+
+  /// No description provided for @trainerSoundOff.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭语音和提示音'**
+  String get trainerSoundOff;
 }
 
 class _AppLocalizationsDelegate

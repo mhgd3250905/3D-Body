@@ -1,0 +1,24 @@
+00:00 +0: loading E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart
+00:00 +0: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: SDK voice announces upcoming set and respects left-first segments
+00:00 +1: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: SDK timed early completion retains real work and both-side identity
+00:00 +2: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: SDK segment completion cannot credit unfinished Y T W segments
+00:00 +3: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: extended and skipped rest do not invent active work or lose prep
+00:00 +4: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: per-side timed sets only count after both sides; rest separates full sets
+00:00 +5: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: named rep blocks Y, T, W cannot count as one movement
+00:00 +6: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: pause and app suspension freeze active work and never grant background sets
+00:00 +7: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: polling stall cannot credit an unattended work block or chain through sets
+00:00 +8: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: one tick crossing expired rest creates a fresh countdown without overshoot
+00:00 +9: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: manual distance dose needs both sides and abandonment retains only observed work
+00:00 +10: E:/AII-3D/3D-Body/app/test/domain/sdk_training_session_test.dart: a clock moving backward and duplicate commands do not corrupt state
+00:00 +11: E:/AII-3D/3D-Body/app/test/trainer/trainer_audio_test.dart: a new ready page cleans up even when queued old end loses ownership
+00:00 +12: E:/AII-3D/3D-Body/app/test/trainer/trainer_audio_test.dart: new session waits for old OS shutdown and ignores stale owner
+00:00 +13: E:/AII-3D/3D-Body/app/test/trainer/trainer_voice_test.dart: offline source supplies shared counts, prompts and all five chimes
+00:00 +14: E:/AII-3D/3D-Body/app/test/trainer/trainer_voice_test.dart: unsupported speech languages retain chimes without Chinese fallback
+00:00 +15: E:/AII-3D/3D-Body/app/test/trainer/trainer_voice_test.dart: scheduler uses LC decoded durations and every recorded asset exists
+00:00 +16: E:/AII-3D/3D-Body/app/test/ui/timer_pause_ui_test.dart: rep countdown pause preserves seconds, status and progress
+00:01 +17: E:/AII-3D/3D-Body/app/test/ui/sdk_timer_persistence_test.dart: closing during save waits; failed retry reuses exact record
+00:01 +18: E:/AII-3D/3D-Body/app/test/ui/timer_pause_ui_test.dart: rep work and rest retain their own units across pauses
+00:02 +19: E:/AII-3D/3D-Body/app/test/ui/timer_pause_ui_test.dart: timed rest pause uses rest duration and includes added rest
+00:03 +20: E:/AII-3D/3D-Body/app/test/ui/timer_pause_ui_test.dart: closing mid-session asks first and the clock waits
+00:03 +21: E:/AII-3D/3D-Body/app/test/ui/timer_pause_ui_test.dart: closing before starting leaves without asking
+00:03 +22: All tests passed!

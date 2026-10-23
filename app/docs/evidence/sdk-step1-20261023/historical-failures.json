@@ -1,0 +1,10 @@
+{
+  "source": "output/pr122-review-20261020/base-results-summary.json",
+  "baseline": "2be8cca34abebb204f3d30b79000eea02015b793",
+  "testFile": "test/ui/flow_regressions_test.dart",
+  "previouslyFailing": [
+    "phone safety → phase muscle → drill → local pain record → same paused frame",
+    "inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+    "appearance switch persists, repaints and tells the scene"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "path": "output/releases/Flare-SDK-step1-1.0.10+12-20261023-arm64.apk",
+  "bytes": 100484534,
+  "sha256": "a1974402bff34268ec8dbe25f4b992aed62526f1c5760254f2952a9486d3c258",
+  "package": "dev.mhgd.flare",
+  "version": "1.0.10+12",
+  "abi": "arm64-v8a",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "sameCertificateAsL52": true,
+  "unchangedL52Assets": 417,
+  "documentationDifferences": [
+    {
+      "asset": "assets/flutter_assets/assets/licenses/Anatomy-ATTRIBUTION.md",
+      "matchesCurrentBaseline": true,
+      "oldDifferenceOnlyLineEndings": false
+    },
+    {
+      "asset": "assets/flutter_assets/assets/scene/anatomy/ATTRIBUTION.md",
+      "matchesCurrentBaseline": true,
+      "oldDifferenceOnlyLineEndings": false
+    },
+    {
+      "asset": "assets/flutter_assets/assets/scene/coach/ATTRIBUTION-study.md",
+      "matchesCurrentBaseline": true,
+      "oldDifferenceOnlyLineEndings": false
+    }
+  ],
+  "voiceSourceFilesMatch": 92,
+  "coachAssetsMatch": true,
+  "zipalign16KiB": true,
+  "foregroundService": "com.ugk.trainer.TrainingSessionService",
+  "installed": false
+}
