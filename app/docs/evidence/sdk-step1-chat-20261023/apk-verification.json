@@ -1,0 +1,15 @@
+{
+  "path": "output/releases/Flare-SDK-step1-chat-1.0.10+13-20261023-arm64.apk",
+  "bytes": 100484534,
+  "sha256": "be956e2a21cf92cc650accbe82d2cc8fe3897c48360bb74a35e2a12829522b34",
+  "package": "dev.mhgd.flare",
+  "version": "1.0.10+13",
+  "abi": "arm64-v8a",
+  "certificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "sameCertificateAsL52AndBuild12": true,
+  "sameBundledAssetsAsBuild12": 514,
+  "zipalign16KiB": true,
+  "installed": false,
+  "aotSha256": "3d9a7d0033a7d6a53d3736f62f877dfeda30588a365d6611bc2eee8cdda2f9e1",
+  "aotIncludesNewChatComponent": true
+}

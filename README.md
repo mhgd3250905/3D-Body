@@ -1,6 +1,6 @@
 # Flare Anatomy Studio
 
-2026-10-23，分支 `codex/flarelab-sdk-agent-trainer` 开始 SDK 接入第 1 步：固定 Agent 0.4.0 与 trainer 0.1.7 到 `b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0`。本批次内测身份为 1.0.10+12，功能、验证与交付以 [SDK 第 1 步记录](app/docs/sdk-step1-2026-10-23.md) 为准；等待用户同意合入。已认可安装版仍为 L52/R17，第 2 步 UI 改版尚未开始。
+2026-10-23，分支 `codex/flarelab-sdk-agent-trainer` 开始 SDK 接入第 1 步：固定 Agent 0.4.0 与 trainer 0.1.7 到 `b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0`。基础 SDK 检查点为 1.0.10+12，追加 SmartFit 对话结构对齐的内测批次为 1.0.10+13，功能与验证见 [SDK 第 1 步记录](app/docs/sdk-step1-2026-10-23.md) 和 [对话页补充记录](app/docs/sdk-step1-chat-smartfit-2026-10-23.md)；等待用户同意合入。已认可安装版仍为 L52/R17，第 2 步 UI 改版尚未开始。
 
 2026-10-20，PR #122 的 AI 定制已通过三轮复审并经用户同意合入 `master`（远端 `d8e9a0a6047158687b8be72a6e5f486add95e7f5`，本地主线 `e000a3fe86e64c4fb651049528d4baea3f9180e5`）；SDK 固定 0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`。这是源码检查点，包版本仍为 1.0.9+11；已认可安装版保持 L52 / v42-R17，未安装或发布 AI 版本。版本与验证见[PR122 源码与版本记录](app/docs/pr122-ai-coach-integration-2026-10-20.md)，设备及长期 QA 仍独立待验收。
 

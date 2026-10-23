@@ -1,0 +1,26 @@
+{
+  "referenceRepository": "mhgd3250905/Sport-Helper",
+  "referenceWorkspace": "E:/AII-3D/3D-Sport-AI/Sport-Helper-media-cache",
+  "referenceHead": "5faba74ba22edbefc7d2e69ffba5a50ffcc2ad57",
+  "kind": "Actual SmartFitApp widget renders, not device screenshots",
+  "date": "2026-10-23",
+  "logicalViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "dpr": 3,
+  "sourceEvidence": "docs/screenshots/performance-scroll-cards/README.md",
+  "uncommittedFixedGlassExperiments": "not used as the scrolling card reference",
+  "files": [
+    {
+      "file": "smartfit-light.png",
+      "sourcePath": "docs/screenshots/performance-scroll-cards/plan-light-after.png",
+      "sha256": "e5a95b3a7a3864ddd8516d42b9ab3fc01d4ed140ee374edcb7f4cc6543da8db5"
+    },
+    {
+      "file": "smartfit-dark.png",
+      "sourcePath": "docs/screenshots/performance-scroll-cards/plan-dark-after.png",
+      "sha256": "e8173b41b9c9f08cc887b8db61e773721f811dc5dc439e3b82fb2b7be874464a"
+    }
+  ]
+}

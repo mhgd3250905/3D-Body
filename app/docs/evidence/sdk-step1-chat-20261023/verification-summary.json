@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-23",
+  "version": "1.0.10+13",
+  "sdkCommit": "b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0",
+  "targetedChatTests": {
+    "passed": 54,
+    "failed": 0,
+    "files": [
+      "test/ui/ai_coach_test.dart",
+      "test/ui/coach_question_bubble_test.dart",
+      "test/ui/ai_coach_review2_test.dart"
+    ],
+    "logScope": "coach-tests.log contains final output tail and command metadata, not full stdout"
+  },
+  "analyze": "No issues found",
+  "builds": [
+    "web offline resources",
+    "android release arm64"
+  ],
+  "browser": {
+    "engine": "Chromium",
+    "viewport": [
+      390,
+      844
+    ],
+    "data": "deterministic intercepted SDK chat-completions fixtures; not new real model requests",
+    "flows": [
+      "multi-choice ask_user select two and continue to admitted plan",
+      "compact plan light/dark screenshot",
+      "expand and save plan",
+      "text ask_user free answer and continue to admitted plan",
+      "show_actions recommendation opens existing action detail"
+    ],
+    "appConsoleErrors": 0,
+    "appConsoleWarnings": 0
+  },
+  "reference": "reference-source.json",
+  "package": "apk-verification.json",
+  "limitations": [
+    "No native device install or QA in this batch",
+    "No iOS build",
+    "No native Raster measurement; belongs to step 2",
+    "Baseline real AI and training tests remain tied to c8a023d and build 12",
+    "Baseline full flow suite has 3 historical failures; not reported as full green"
+  ]
+}

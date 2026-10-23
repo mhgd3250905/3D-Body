@@ -8,7 +8,7 @@ import '../coach/plan_mapping.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
-import 'content_pages.dart';
+import 'coach_question_bubble.dart';
 import 'motion.dart';
 import 'plans_page.dart' show DrillPoster;
 import 'theme.dart';
@@ -235,7 +235,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
   void _toEnd() {
     if (!_scroll.hasClients) return;
     _scroll.animateTo(
-      _scroll.position.maxScrollExtent,
+      _scroll.position.minScrollExtent,
       duration: FlareMotion.of(context, const Duration(milliseconds: 260)),
       curve: Curves.easeOutCubic,
     );
@@ -248,6 +248,14 @@ class _AiCoachPageState extends State<AiCoachPage> {
     _input.clear();
     FocusScope.of(context).unfocus();
     unawaited(session.send(value, tier: widget.store.settings.tier));
+  }
+
+  List<String> get _suggestions {
+    if (session.messages.isEmpty) return AiCoachPage.examples;
+    final latest = session.messages.last.answer;
+    if (latest?.question != null) return const ['直接出计划'];
+    if (latest?.reply?.plan != null) return const ['时间短一点', '换成徒手', '难度低一点'];
+    return const ['在家练核心', '托马斯热身', '练支撑臂'];
   }
 
   Future<void> _save(
@@ -276,58 +284,135 @@ class _AiCoachPageState extends State<AiCoachPage> {
       color: FlareColors.background,
       child: Column(
         children: [
-          PageHeader(
-            title: 'AI 定制',
-            large: false,
-            onBack: widget.onBack,
-            subtitle: configured ? null : '未配置 AI · 使用预设方案',
-            action: RoundIconButton(
-              key: const ValueKey('coach-new-chat'),
-              icon: Icons.add_comment_outlined,
-              tooltip: '新对话',
-              onPressed: session.busy || session.messages.isEmpty
-                  ? null
-                  : session.newConversation,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 2, 12, 4),
+            child: Row(
+              children: [
+                RoundIconButton(
+                  icon: Icons.arrow_back_rounded,
+                  tooltip: '返回',
+                  diameter: 40,
+                  onPressed: widget.onBack,
+                ),
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      'AI 定制',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                RoundIconButton(
+                  key: const ValueKey('coach-new-chat'),
+                  icon: Icons.add_comment_outlined,
+                  tooltip: '新对话',
+                  diameter: 40,
+                  onPressed: session.busy || session.messages.isEmpty
+                      ? null
+                      : session.newConversation,
+                ),
+              ],
             ),
           ),
+          if (!configured)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                '未配置 AI · 使用预设方案',
+                style: TextStyle(fontSize: 12, color: FlareColors.secondary),
+              ),
+            ),
           Expanded(
-            child: ScrollEdge(
-              // 对话不长：整列一次排版，旧消息里的按钮也始终在树上。
-              child: SingleChildScrollView(
-                key: const ValueKey('coach-list'),
-                controller: _scroll,
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (session.showDisclaimer)
-                      _Disclaimer(onAccept: session.acceptDisclaimer),
-                    if (session.messages.isEmpty)
-                      _Intro(
-                        configured: configured,
-                        onExample: session.busy ? null : _send,
-                      ),
-                    for (final (i, m) in session.messages.indexed)
-                      FadeSlideIn(
-                        key: ValueKey('coach-msg-$i'),
-                        offset: 8,
-                        child: m.isUser
-                            ? _UserBubble(m.text!)
-                            : _answer(context, m, i),
-                      ),
-                    if (session.busy)
-                      _Thinking(
+            child: ListView.builder(
+              key: const ValueKey('coach-list'),
+              controller: _scroll,
+              reverse: true,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+              itemCount:
+                  session.messages.length +
+                  (session.busy ? 1 : 0) +
+                  (session.messages.isEmpty ? 1 : 0) +
+                  (session.showDisclaimer ? 1 : 0),
+              findChildIndexCallback: (key) {
+                if (key is ObjectKey && key.value is CoachMessage) {
+                  final i = session.messages.indexOf(key.value as CoachMessage);
+                  return i < 0
+                      ? null
+                      : session.messages.length -
+                            i -
+                            1 +
+                            (session.busy ? 1 : 0);
+                }
+                if (key == const ValueKey('coach-thinking-row')) {
+                  return session.busy ? 0 : null;
+                }
+                final base = session.messages.length + (session.busy ? 1 : 0);
+                if (key == const ValueKey('coach-intro-row')) {
+                  return session.messages.isEmpty ? base : null;
+                }
+                if (key == const ValueKey('coach-disclaimer-row')) {
+                  return session.showDisclaimer
+                      ? base + (session.messages.isEmpty ? 1 : 0)
+                      : null;
+                }
+                return null;
+              },
+              itemBuilder: (context, position) {
+                var index = position;
+                if (session.busy) {
+                  if (index == 0) {
+                    return RepaintBoundary(
+                      key: const ValueKey('coach-thinking-row'),
+                      child: _Thinking(
                         key: const ValueKey('coach-thinking'),
                         seconds: _elapsed,
                         event: session.progress,
                         onStop: session.stop,
                       ),
-                  ],
-                ),
-              ),
+                    );
+                  }
+                  index--;
+                }
+                if (index < session.messages.length) {
+                  final i = session.messages.length - index - 1;
+                  final m = session.messages[i];
+                  return RepaintBoundary(
+                    key: ObjectKey(m),
+                    child: KeyedSubtree(
+                      key: ValueKey('coach-msg-$i'),
+                      child: m.isUser
+                          ? _UserBubble(m.text!)
+                          : _answer(context, m, i),
+                    ),
+                  );
+                }
+                index -= session.messages.length;
+                if (session.messages.isEmpty && index == 0) {
+                  return KeyedSubtree(
+                    key: const ValueKey('coach-intro-row'),
+                    child: _Intro(configured: configured),
+                  );
+                }
+                return KeyedSubtree(
+                  key: const ValueKey('coach-disclaimer-row'),
+                  child: _Disclaimer(onAccept: session.acceptDisclaimer),
+                );
+              },
             ),
           ),
-          _Composer(controller: _input, busy: session.busy, onSend: _send),
+          _SuggestionStrip(
+            items: session.busy ? const [] : _suggestions,
+            onTap: _send,
+          ),
+          _Composer(
+            controller: _input,
+            busy: session.busy,
+            onSend: _send,
+            onPlans: widget.onBack,
+          ),
         ],
       ),
     );
@@ -347,29 +432,26 @@ class _AiCoachPageState extends State<AiCoachPage> {
             preset: answer.preset && reply.plan == null,
           ),
         if (answer.question case final question?)
-          _QuestionBubble(
-            key: ValueKey('coach-question-${answer.turnId}'),
-            question: question,
-            enabled: latest && !session.busy,
-            onAnswer: _send,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: CoachQuestionBubble(
+              key: ValueKey('coach-question-${answer.turnId}'),
+              question: question,
+              enabled: latest && !session.busy,
+              onAnswer: _send,
+              backgroundColor: FlareColors.surface,
+              foregroundColor: FlareColors.text,
+              secondaryColor: FlareColors.secondary,
+              optionColor: FlareColors.raised,
+              accentColor: FlareColors.accentInk,
+            ),
           ),
         if (answer.actions case final actions?)
-          for (final item in actions.items)
-            if (widget.catalog.drillById(item.id) case final drill?)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 52,
-                    height: 52,
-                    child: DrillPoster(drill),
-                  ),
-                  title: Text(drill.name),
-                  subtitle: item.note == null ? null : Text(item.note!),
-                  trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () => widget.onDrill(drill),
-                ),
-              ),
+          _ActionCard(
+            actions: actions,
+            catalog: widget.catalog,
+            onDrill: widget.onDrill,
+          ),
         if (reply.plan case final plan?)
           _planCard(context, plan, answer, message.resultId),
       ],
@@ -402,90 +484,6 @@ class _AiCoachPageState extends State<AiCoachPage> {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               widget.onStart(CoachPlanMapper.routineName(plan), drills);
             },
-    );
-  }
-}
-
-/// Only built from send()'s admitted result. Events cannot enable these controls
-/// while the SDK is still committing its question/history and releasing isBusy.
-class _QuestionBubble extends StatefulWidget {
-  const _QuestionBubble({
-    super.key,
-    required this.question,
-    required this.enabled,
-    required this.onAnswer,
-  });
-  final uc.AskUserQuestion question;
-  final bool enabled;
-  final ValueChanged<String> onAnswer;
-
-  @override
-  State<_QuestionBubble> createState() => _QuestionBubbleState();
-}
-
-class _QuestionBubbleState extends State<_QuestionBubble> {
-  final _selected = <String>{};
-
-  @override
-  Widget build(BuildContext context) {
-    final question = widget.question;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CoachBubble(text: question.question),
-          if (question.mode == uc.AskUserMode.text)
-            Text('在下方输入你的回答', style: TextStyle(color: FlareColors.secondary)),
-          if (question.mode == uc.AskUserMode.choice) ...[
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final (i, option) in question.options.indexed)
-                  if (question.multiple)
-                    FilterChip(
-                      key: ValueKey('coach-option-$i'),
-                      label: Text(option),
-                      selected: _selected.contains(option),
-                      onSelected: !widget.enabled
-                          ? null
-                          : (selected) {
-                              setState(() {
-                                if (selected) {
-                                  _selected.add(option);
-                                } else {
-                                  _selected.remove(option);
-                                }
-                              });
-                            },
-                    )
-                  else
-                    ActionChip(
-                      key: ValueKey('coach-option-$i'),
-                      label: Text(option),
-                      onPressed: widget.enabled
-                          ? () => widget.onAnswer(option)
-                          : null,
-                    ),
-              ],
-            ),
-            if (question.multiple)
-              TextButton(
-                key: const ValueKey('coach-options-submit'),
-                onPressed: !widget.enabled || _selected.isEmpty
-                    ? null
-                    : () {
-                        widget.onAnswer(
-                          question.options.where(_selected.contains).join('、'),
-                        );
-                      },
-                child: const Text('确认选择'),
-              ),
-            Text('也可以在下方直接输入', style: TextStyle(color: FlareColors.secondary)),
-          ],
-        ],
-      ),
     );
   }
 }
@@ -547,9 +545,8 @@ class _Disclaimer extends StatelessWidget {
 }
 
 class _Intro extends StatelessWidget {
-  const _Intro({required this.configured, required this.onExample});
+  const _Intro({required this.configured});
   final bool configured;
-  final ValueChanged<String>? onExample;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 4, bottom: 12),
@@ -582,19 +579,6 @@ class _Intro extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 14),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final (i, example) in AiCoachPage.examples.indexed)
-              ActionChip(
-                key: ValueKey('coach-example-$i'),
-                label: Text(example),
-                onPressed: onExample == null ? null : () => onExample!(example),
-              ),
-          ],
-        ),
       ],
     ),
   );
@@ -604,25 +588,7 @@ class _UserBubble extends StatelessWidget {
   const _UserBubble(this.text);
   final String text;
   @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.centerRight,
-    child: Padding(
-      padding: const EdgeInsets.only(left: 48, bottom: 12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: FlareColors.accent.withValues(alpha: .16),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(18),
-            bottomRight: Radius.circular(6),
-          ),
-        ),
-        child: Text(text, style: const TextStyle(fontSize: 15, height: 1.45)),
-      ),
-    ),
-  );
+  Widget build(BuildContext context) => _TextBubble(text: text, user: true);
 }
 
 class _CoachBubble extends StatelessWidget {
@@ -630,30 +596,136 @@ class _CoachBubble extends StatelessWidget {
   final String text;
   final bool preset;
   @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.centerLeft,
-    child: Padding(
-      padding: const EdgeInsets.only(right: 32, bottom: 12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: FlareColors.surface,
-          border: Border.all(color: FlareColors.hairline),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(18),
-            topRight: Radius.circular(18),
-            bottomLeft: Radius.circular(6),
-            bottomRight: Radius.circular(18),
+  Widget build(BuildContext context) =>
+      _TextBubble(text: text, secondary: preset);
+}
+
+/// Match SmartFit's content-level bubbles: a flat face, a small tail and no rim.
+class _TextBubble extends StatelessWidget {
+  const _TextBubble({
+    required this.text,
+    this.user = false,
+    this.secondary = false,
+  });
+  final String text;
+  final bool user;
+  final bool secondary;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 14),
+    child: Align(
+      alignment: user ? Alignment.centerRight : Alignment.centerLeft,
+      child: FractionallySizedBox(
+        widthFactor: user ? .78 : .86,
+        alignment: user ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 11, 16, 12),
+          decoration: BoxDecoration(
+            color: user
+                ? FlareColors.accent.withValues(alpha: .14)
+                : FlareColors.surface,
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(22),
+              topRight: const Radius.circular(22),
+              bottomLeft: Radius.circular(user ? 22 : 6),
+              bottomRight: Radius.circular(user ? 6 : 22),
+            ),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 16,
+              height: 1.5,
+              color: secondary ? FlareColors.secondary : FlareColors.text,
+            ),
           ),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 15,
-            height: 1.5,
-            color: preset ? FlareColors.secondary : FlareColors.text,
+      ),
+    ),
+  );
+}
+
+class _ActionCard extends StatelessWidget {
+  const _ActionCard({
+    required this.actions,
+    required this.catalog,
+    required this.onDrill,
+  });
+  final uc.ValidatedActions actions;
+  final Catalog catalog;
+  final ValueChanged<Drill> onDrill;
+  @override
+  Widget build(BuildContext context) => RepaintBoundary(
+    child: Container(
+      key: const ValueKey('coach-actions-card'),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: FlareColors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: FlareColors.hairline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '动作推荐',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
-        ),
+          for (final item in actions.items)
+            if (catalog.drillById(item.id) case final drill?)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: InkWell(
+                  key: ValueKey('coach-action-${item.id}'),
+                  onTap: () => onDrill(drill),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: DrillPoster(drill),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              drill.name,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                              ),
+                            ),
+                            if (item.note != null && item.note!.isNotEmpty)
+                              Text(
+                                item.note!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  height: 1.4,
+                                  color: FlareColors.secondary,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: 18,
+                        color: FlareColors.dim,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        ],
       ),
     ),
   );
@@ -682,69 +754,72 @@ class _Thinking extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(14, 12, 8, 8),
-        decoration: BoxDecoration(
-          color: FlareColors.surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: FlareColors.hairline),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 1.4,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(3),
-                child: LinearProgressIndicator(
-                  value: null,
-                  minHeight: 5,
-                  backgroundColor: FlareColors.track,
-                  color: FlareColors.accent,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '已用 $seconds 秒',
-                    key: const ValueKey('coach-elapsed'),
-                    style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                  ),
-                ),
-                TextButton.icon(
-                  key: const ValueKey('coach-stop'),
-                  onPressed: onStop,
-                  icon: const Icon(Icons.stop_circle_outlined, size: 18),
-                  label: const Text('停止'),
-                ),
-              ],
-            ),
-          ],
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(context).width * .86,
+      ),
+      decoration: BoxDecoration(
+        color: FlareColors.surface,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(22),
+          topRight: Radius.circular(22),
+          bottomLeft: Radius.circular(6),
+          bottomRight: Radius.circular(22),
         ),
       ),
-    );
-  }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < 3; i++)
+                Padding(
+                  padding: const EdgeInsets.only(right: 5),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: FlareColors.dim.withValues(alpha: .45 + i * .2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const SizedBox(width: 6, height: 6),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(title, style: const TextStyle(fontSize: 15, height: 1.45)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '已用 $seconds 秒',
+                key: const ValueKey('coach-elapsed'),
+                style: TextStyle(fontSize: 12, color: FlareColors.dim),
+              ),
+              const SizedBox(width: 12),
+              TextButton.icon(
+                key: const ValueKey('coach-stop'),
+                onPressed: onStop,
+                icon: const Icon(Icons.stop_circle_outlined, size: 17),
+                label: const Text('停止'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
-class _PlanCard extends StatelessWidget {
+/// Compact media-first plan, matching SmartFit's folded / expanded contract.
+/// The scrolling card paints one static face and keeps one start control.
+class _PlanCard extends StatefulWidget {
   const _PlanCard({
     super.key,
     required this.plan,
@@ -762,144 +837,366 @@ class _PlanCard extends StatelessWidget {
   final ValueChanged<Drill> onDrill;
   final VoidCallback? onSave;
   final VoidCallback? onStart;
+  @override
+  State<_PlanCard> createState() => _PlanCardState();
+}
+
+class _PlanCardState extends State<_PlanCard>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  bool _expanded = false;
+
+  Widget _start() => IconButton.filled(
+    key: const ValueKey('coach-start'),
+    tooltip: '开始训练',
+    style: IconButton.styleFrom(
+      backgroundColor: FlareColors.accent,
+      foregroundColor: FlareColors.onAccent,
+      minimumSize: const Size(48, 48),
+    ),
+    onPressed: widget.onStart,
+    icon: const Icon(Icons.play_arrow_rounded, size: 27),
+  );
+
+  Widget _toggle({bool onMedia = false}) => TextButton.icon(
+    key: const ValueKey('coach-plan-expand'),
+    onPressed: () => setState(() => _expanded = !_expanded),
+    style: TextButton.styleFrom(
+      foregroundColor: onMedia ? Colors.white : FlareColors.secondary,
+      backgroundColor: onMedia ? const Color(0x66000000) : FlareColors.raised,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      minimumSize: const Size(64, 36),
+    ),
+    iconAlignment: IconAlignment.end,
+    icon: Icon(
+      _expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+      size: 18,
+    ),
+    label: Text(_expanded ? '收起' : '展开'),
+  );
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    final plan = widget.plan;
+    final entries = widget.entries;
     final minutes = estimateMinutes([for (final e in entries) e.drill]);
+    final summary = '${entries.length} 个动作 · 约 $minutes 分钟';
     String? lastBlock;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Container(
-        key: const ValueKey('coach-plan-card'),
-        decoration: BoxDecoration(
-          color: FlareColors.surface,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: preset
-                ? FlareColors.hairline
-                : FlareColors.accent.withValues(alpha: .45),
-          ),
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 6,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                _Badge(
-                  key: ValueKey(
-                    preset ? 'coach-badge-preset' : 'coach-badge-ai',
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: RepaintBoundary(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: Container(
+              key: const ValueKey('coach-plan-card'),
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: FlareColors.surface.withValues(alpha: .94),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: FlareColors.controlBorder.withValues(alpha: .65),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: .05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  label: preset ? '预设方案' : 'AI 定制',
-                  color: preset ? FlareColors.warning : FlareColors.accentInk,
-                ),
-                Text(
-                  '${entries.length} 个动作 · 约 $minutes 分钟',
-                  style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              plan.title,
-              style: const TextStyle(
-                fontSize: 19,
-                height: 1.3,
-                fontWeight: FontWeight.w700,
+                ],
               ),
-            ),
-            if (plan.summary.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                plan.summary,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: FlareColors.secondary,
-                ),
-              ),
-            ],
-            if (preset) ...[
-              const SizedBox(height: 6),
-              Text(
-                '这是 App 内置的成套训练，不是按你的需求定制的。',
-                key: const ValueKey('coach-preset-note'),
-                style: TextStyle(
-                  fontSize: 12,
-                  height: 1.4,
-                  color: FlareColors.warning,
-                ),
-              ),
-            ],
-            const SizedBox(height: 10),
-            for (final (i, entry) in entries.indexed) ...[
-              if (entry.blockName != lastBlock && !preset)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, bottom: 4),
-                  child: Eyebrow(lastBlock = entry.blockName),
-                ),
-              _EntryRow(
-                key: ValueKey('coach-row-$i'),
-                entry: entry,
-                onTap: () => onDrill(entry.drill),
-              ),
-            ],
-            for (final note in {...plan.safetyNotes, '训练中出现疼痛、麻木或头晕，立即停止。'})
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (!_expanded && entries.length > 1)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(19),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: DrillPoster(entries.first.drill),
+                          ),
+                          const Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Color(0xcc000000),
+                                  ],
+                                  stops: [.2, 1],
+                                ),
+                              ),
+                            ),
+                          ),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 180),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(14, 8, 14, 13),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: _toggle(onMedia: true),
+                                  ),
+                                  const SizedBox(height: 56),
+                                  Text(
+                                    plan.title,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 19,
+                                      height: 1.3,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    summary,
+                                    style: const TextStyle(
+                                      color: Color(0xffdddddf),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (!_expanded && entries.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Icon(
-                        Icons.info_outline_rounded,
-                        size: 14,
-                        color: FlareColors.dim,
+                      padding: const EdgeInsets.all(6),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(17),
+                            child: SizedBox(
+                              width: 108,
+                              height: 130,
+                              child: DrillPoster(entries.first.drill),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  plan.title,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.3,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  entries.first.doseText,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: FlareColors.secondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                _toggle(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  plan.title,
+                                  style: const TextStyle(
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.3,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  summary,
+                                  style: TextStyle(
+                                    color: FlareColors.secondary,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          _toggle(),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        note,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.4,
-                          color: FlareColors.dim,
+                    if (plan.summary.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 4, 10, 8),
+                        child: Text(
+                          plan.summary,
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.45,
+                            color: FlareColors.secondary,
+                          ),
                         ),
                       ),
-                    ),
+                    for (final (i, entry) in entries.indexed) ...[
+                      if (entry.blockName != lastBlock && !widget.preset)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
+                          child: Eyebrow(lastBlock = entry.blockName),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: _EntryRow(
+                          key: ValueKey('coach-row-$i'),
+                          entry: entry,
+                          onTap: () => widget.onDrill(entry.drill),
+                        ),
+                      ),
+                    ],
+                    for (final note in {
+                      ...plan.safetyNotes,
+                      '训练中出现疼痛、麻木或头晕，立即停止。',
+                    })
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                        child: Text(
+                          note,
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: FlareColors.secondary,
+                          ),
+                        ),
+                      ),
                   ],
-                ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(6, 8, 2, 2),
+                    child: Row(
+                      children: [
+                        if (_expanded)
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton.icon(
+                                key: const ValueKey('coach-save'),
+                                onPressed: widget.onSave,
+                                icon: Icon(
+                                  widget.saved
+                                      ? Icons.check_rounded
+                                      : Icons.bookmark_add_outlined,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  widget.saved ? '已保存到我的计划' : '保存到我的计划',
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: Row(
+                              children: [
+                                for (final entry in entries.skip(1).take(3))
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 6),
+                                    child: InkWell(
+                                      onTap: () => widget.onDrill(entry.drill),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Tooltip(
+                                        message: entry.drill.name,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child: SizedBox(
+                                            width: 36,
+                                            height: 36,
+                                            child: DrillPoster(entry.drill),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                if (entries.length > 4)
+                                  Text(
+                                    '+${entries.length - 4}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: FlareColors.secondary,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(width: 6),
+                        _start(),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 5),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        _Badge(
+                          key: ValueKey(
+                            widget.preset
+                                ? 'coach-badge-preset'
+                                : 'coach-badge-ai',
+                          ),
+                          label: widget.preset ? '预设方案' : 'AI 定制',
+                          color: widget.preset
+                              ? FlareColors.warning
+                              : FlareColors.accentInk,
+                        ),
+                        if (widget.preset)
+                          Text(
+                            'App 内置成套训练',
+                            key: const ValueKey('coach-preset-note'),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: FlareColors.secondary,
+                            ),
+                          ),
+                        if (widget.saved && !_expanded)
+                          Text(
+                            '已保存到我的计划',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: FlareColors.secondary,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            const SizedBox(height: 14),
-            PrimaryAction(
-              key: const ValueKey('coach-start'),
-              icon: Icons.play_arrow_rounded,
-              label: '开始训练',
-              height: 52,
-              onPressed: onStart,
             ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                key: const ValueKey('coach-save'),
-                onPressed: onSave,
-                icon: Icon(
-                  saved ? Icons.check_rounded : Icons.bookmark_add_outlined,
-                  size: 18,
-                ),
-                label: Text(saved ? '已保存到我的计划' : '保存到我的计划'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -978,51 +1275,117 @@ class _EntryRow extends StatelessWidget {
   );
 }
 
+class _SuggestionStrip extends StatelessWidget {
+  const _SuggestionStrip({required this.items, required this.onTap});
+  final List<String> items;
+  final ValueChanged<String> onTap;
+  @override
+  Widget build(BuildContext context) => items.isEmpty
+      ? const SizedBox(height: 6)
+      : SizedBox(
+          key: const ValueKey('coach-suggestions'),
+          height:
+              52 +
+              (MediaQuery.textScalerOf(context).scale(14) - 14).clamp(0, 28),
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (_, i) => ActionChip(
+              key: ValueKey('coach-suggestion-$i'),
+              label: Text(items[i]),
+              backgroundColor: FlareColors.surface,
+              side: BorderSide(color: FlareColors.hairline),
+              shape: const StadiumBorder(),
+              onPressed: () => onTap(items[i]),
+            ),
+          ),
+        );
+}
+
 class _Composer extends StatelessWidget {
   const _Composer({
     required this.controller,
     required this.busy,
     required this.onSend,
+    required this.onPlans,
   });
+  final VoidCallback onPlans;
   final TextEditingController controller;
   final bool busy;
   final VoidCallback onSend;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(16, 8, 10, 12),
-    decoration: BoxDecoration(
-      color: FlareColors.background,
-      border: Border(top: BorderSide(color: FlareColors.hairline)),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: TextField(
-            key: const ValueKey('coach-input'),
-            controller: controller,
-            enabled: !busy,
-            minLines: 1,
-            maxLines: 4,
-            maxLength: 300,
-            textInputAction: TextInputAction.send,
-            onSubmitted: (_) => onSend(),
-            decoration: const InputDecoration(
-              hintText: '比如：在家 15 分钟，练侧撑换手',
-              counterText: '',
-              isDense: true,
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+    child: Container(
+      decoration: BoxDecoration(
+        color: FlareColors.surface,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: FlareColors.controlBorder),
+      ),
+      padding: const EdgeInsets.fromLTRB(4, 0, 7, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: IconButton(
+              key: const ValueKey('coach-open-plans'),
+              tooltip: '我的计划',
+              onPressed: onPlans,
+              icon: Icon(
+                Icons.bookmark_border_rounded,
+                color: FlareColors.secondary,
+                size: 21,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 6),
-        RoundIconButton(
-          key: const ValueKey('coach-send'),
-          icon: Icons.arrow_upward_rounded,
-          tooltip: '发送',
-          diameter: 44,
-          onPressed: busy ? null : onSend,
-        ),
-      ],
+          Expanded(
+            child: TextField(
+              key: const ValueKey('coach-input'),
+              controller: controller,
+              enabled: !busy,
+              minLines: 1,
+              maxLines: 4,
+              maxLength: 300,
+              textInputAction: TextInputAction.send,
+              style: const TextStyle(fontSize: 16, height: 1.5),
+              onSubmitted: (_) => onSend(),
+              decoration: const InputDecoration(
+                hintText: '说说想怎么练…',
+                counterText: '',
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+                filled: false,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 6, bottom: 7),
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (context, value, _) {
+                final ready = !busy && value.text.trim().isNotEmpty;
+                return IconButton.filled(
+                  key: const ValueKey('coach-send'),
+                  tooltip: '发送',
+                  style: IconButton.styleFrom(
+                    backgroundColor: FlareColors.accent,
+                    foregroundColor: FlareColors.onAccent,
+                    minimumSize: const Size(38, 38),
+                  ),
+                  onPressed: ready ? onSend : null,
+                  icon: const Icon(Icons.arrow_upward_rounded, size: 20),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

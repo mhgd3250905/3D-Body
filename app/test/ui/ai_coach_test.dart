@@ -473,12 +473,27 @@ void main() {
       }
     }
 
-    Future<void> say(WidgetTester tester, String text) async {
+    Future<void> say(
+      WidgetTester tester,
+      String text, {
+      bool expandPlan = true,
+    }) async {
       await tester.enterText(find.byKey(const ValueKey('coach-input')), text);
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('coach-send')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pumpAndSettle();
+      if (expandPlan) {
+        final toggle = find.byKey(const ValueKey('coach-plan-expand'));
+        if (toggle.evaluate().isNotEmpty &&
+            find.text('展开').evaluate().isNotEmpty) {
+          await tester.ensureVisible(toggle.first);
+          await tester.pumpAndSettle();
+          await tester.tap(toggle.first);
+          await tester.pumpAndSettle();
+        }
+      }
     }
 
     Future<void> tapVisible(WidgetTester tester, Finder f) async {
@@ -494,6 +509,71 @@ void main() {
       await tester.tap(f);
       await tester.pumpAndSettle();
     }
+
+    testWidgets('SmartFit结构：紧凑计划展开/收起，唯一开始入口与底部建议', (tester) async {
+      await pumpShell(
+        tester,
+        service(fake: AgentFakeLlmClient([validPlanEnvelope()])),
+      );
+      await openCoach(tester);
+      final send = tester.widget<IconButton>(
+        find.byKey(const ValueKey('coach-send')),
+      );
+      expect(send.onPressed, isNull);
+      expect(find.byKey(const ValueKey('coach-suggestions')), findsOneWidget);
+      await say(tester, '在家 20 分钟练支撑', expandPlan: false);
+      expect(find.byKey(const ValueKey('coach-start')), findsOneWidget);
+      expect(find.byKey(const ValueKey('coach-save')), findsNothing);
+      expect(find.byKey(const ValueKey('coach-plan-expand')), findsOneWidget);
+      expect(find.byKey(const ValueKey('coach-row-0')), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('coach-list')),
+          matching: find.byType(BackdropFilter),
+        ),
+        findsNothing,
+      );
+      await tester.tap(find.byKey(const ValueKey('coach-plan-expand')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('coach-start')), findsOneWidget);
+      expect(find.byKey(const ValueKey('coach-save')), findsOneWidget);
+      expect(find.byKey(const ValueKey('coach-row-0')), findsOneWidget);
+      await tapVisible(tester, find.byKey(const ValueKey('coach-plan-expand')));
+      expect(find.byKey(const ValueKey('coach-save')), findsNothing);
+      expect(find.byKey(const ValueKey('coach-start')), findsOneWidget);
+    });
+
+    testWidgets('show_actions通过门禁后显示静态推荐卡，并打开原动作详情', (tester) async {
+      final fake = AgentFakeLlmClient([
+        uc.LlmResponse(
+          content: '这两个动作可以先了解。',
+          toolCalls: [
+            uc.LlmToolCall(
+              id: 'actions',
+              name: 'show_actions',
+              arguments: jsonEncode({
+                'items': [
+                  {'actionId': 'scapular-A', 'note': '先控制肩胛'},
+                  {'actionId': 'triceps-A'},
+                ],
+              }),
+            ),
+          ],
+        ),
+      ]);
+      await pumpShell(tester, service(fake: fake));
+      await openCoach(tester);
+      await say(tester, '推荐两个支撑动作');
+      expect(find.byKey(const ValueKey('coach-actions-card')), findsOneWidget);
+      expect(find.text('动作推荐'), findsOneWidget);
+      expect(find.byType(DrillPoster), findsNWidgets(2));
+      expect(find.text('先控制肩胛'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('coach-action-scapular-A')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('drill-add-to-plan')), findsOneWidget);
+      expect(find.text(catalog.drillById('scapular-A')!.name), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('生成 → 渲染计划卡 → 保存 → 出现在我的计划 → 开始训练', (tester) async {
       final usage = CoachUsageStore();
@@ -660,6 +740,7 @@ void main() {
         find.byKey(const ValueKey('coach-input')),
         '我想练支撑臂',
       );
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('coach-send')));
       await tester.pump(const Duration(milliseconds: 100));
       expect(
@@ -682,6 +763,49 @@ void main() {
       await say(tester, '我想练支撑臂');
       expect(find.byKey(const ValueKey('coach-plan-card')), findsOneWidget);
       expect(coach.agent!.turnCount, 2);
+    });
+
+    testWidgets('多选提交进入busy再取消，反向列表保留问题选择', (tester) async {
+      final fake = AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '今天练哪些？',
+          'options': ['核心', '腿部'],
+          'multiple': true,
+        },
+        (uc.LlmRequest _) async {
+          await Future<void>.delayed(const Duration(seconds: 30));
+          return validPlanEnvelope();
+        },
+      ]);
+      await pumpShell(tester, service(fake: fake));
+      await openCoach(tester);
+      await say(tester, '今天练一会');
+      await tester.tap(find.byKey(const ValueKey('coach-option-0')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('coach-options-submit')));
+      await tester.pump(const Duration(milliseconds: 100));
+      var chip = tester.widget<FilterChip>(
+        find.byKey(const ValueKey('coach-option-0')),
+      );
+      expect(chip.selected, isTrue);
+      expect(chip.onSelected, isNull);
+      await tester.tap(find.byKey(const ValueKey('coach-stop')));
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
+      chip = tester.widget<FilterChip>(
+        find.byKey(const ValueKey('coach-option-0')),
+      );
+      expect(chip.selected, isTrue);
+      expect(chip.onSelected, isNotNull);
+      expect(
+        tester
+            .widget<TextButton>(
+              find.byKey(const ValueKey('coach-options-submit')),
+            )
+            .onPressed,
+        isNotNull,
+      );
     });
 
     testWidgets('明确新对话才清空 Agent 询问计数和界面', (tester) async {
@@ -828,6 +952,7 @@ void main() {
       await pumpShell(tester, coach);
       await openCoach(tester);
       await tester.enterText(find.byKey(const ValueKey('coach-input')), '练支撑');
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('coach-send')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -890,8 +1015,18 @@ void main() {
       await tapVisible(tester, inMsg(3, 'coach-save'));
       expect(store.routines, hasLength(2));
       expect(store.routines.last.doses['triceps-A']!.target, 6);
-      expect(textInMsg(1, '已保存到我的计划'), findsOneWidget);
       expect(textInMsg(3, '已保存到我的计划'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        inMsg(1, 'coach-plan-expand'),
+        200,
+        scrollable: find.descendant(
+          of: find.byKey(const ValueKey('coach-list')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(textInMsg(1, '收起'), findsOneWidget);
+      expect(textInMsg(1, '已保存到我的计划'), findsOneWidget);
     });
 
     testWidgets('预设 template-* 多轮：每张卡各自保存', (tester) async {
@@ -959,6 +1094,7 @@ void main() {
       await pumpShell(tester, coach);
       await openCoach(tester);
       await tester.enterText(find.byKey(const ValueKey('coach-input')), '练支撑');
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('coach-send')));
       for (var i = 0; i < 20 && !sleeping; i++) {
         await tester.pump(const Duration(milliseconds: 50));
@@ -978,6 +1114,35 @@ void main() {
       expect(field.controller!.text, '练支撑');
       expect(usage.records.single.outcome, uc.CallOutcome.cancelled);
     });
+
+    for (final dark in [false, true]) {
+      testWidgets('320宽2倍字号长计划标题与展开入口${dark ? '深色' : '浅色'}', (tester) async {
+        final env = validPlanEnvelope();
+        final title = '托马斯基础支撑与肩胛控制训练计划按个人情况逐步增加难度并保留充分恢复时间';
+        (env['plan'] as Map)['title'] = title;
+        await pumpShell(
+          tester,
+          service(fake: AgentFakeLlmClient([env])),
+          size: const Size(320, 740),
+          textScale: 2,
+          brightness: dark ? Brightness.dark : Brightness.light,
+        );
+        await openCoach(tester);
+        await say(tester, '在家练支撑', expandPlan: false);
+        final toggle = find.byKey(const ValueKey('coach-plan-expand'));
+        await tester.ensureVisible(toggle);
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(toggle).bottom,
+          lessThanOrEqualTo(tester.getRect(find.text(title)).top),
+        );
+        await tester.tap(toggle);
+        await tester.pumpAndSettle();
+        expect(find.text('收起'), findsOneWidget);
+        expect(find.text(title), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     for (final dark in [false, true]) {
       testWidgets('360 宽 + 1.3 倍字号${dark ? '（深色）' : ''}不溢出', (tester) async {
