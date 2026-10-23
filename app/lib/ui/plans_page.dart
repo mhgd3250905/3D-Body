@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
+import 'app_glass.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../coach/plan_mapping.dart';
 import '../trainer/trainer_strings.dart';
@@ -118,11 +120,55 @@ class _Stack extends StatelessWidget {
 }
 
 class _SceneSwitch extends StatelessWidget {
-  const _SceneSwitch({required this.store});
+  const _SceneSwitch({required this.store, this.preview = false});
   final LearningStore store;
+  final bool preview;
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
+    if (preview) {
+      return SizedBox(
+        width: double.infinity,
+        child: CupertinoSlidingSegmentedControl<String>(
+          groupValue: store.settings.tier,
+          backgroundColor: FlareColors.palette.segmentTrack,
+          thumbColor: FlareColors.palette.segmentThumb,
+          padding: const EdgeInsets.all(4),
+          children: {
+            for (final entry in [
+              ('A', s.sceneNone),
+              ('B', s.sceneHome),
+              ('C', s.sceneGym),
+            ])
+              entry.$1: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 10,
+                ),
+                child: Text(
+                  entry.$2,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: FlareColors.text,
+                    fontSize: 13,
+                    height: 1.25,
+                    fontWeight: entry.$1 == store.settings.tier
+                        ? FontWeight.w600
+                        : FontWeight.w400,
+                  ),
+                ),
+              ),
+          },
+          onValueChanged: (tier) {
+            if (tier == null || tier == store.settings.tier) {
+              return;
+            }
+            FlareHaptics.selection();
+            store.updateSettings(tier: tier);
+          },
+        ),
+      );
+    }
     return FlareSegmented<String>(
       expand: true,
       segments: [('A', s.sceneNone), ('B', s.sceneHome), ('C', s.sceneGym)],
@@ -190,162 +236,117 @@ class PlansPage extends StatelessWidget {
   final VoidCallback? onAiCoach;
   final bool aiCoachConfigured;
 
-  Widget _aiCard(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 4),
-    child: Pressable(
-      scale: .98,
-      child: Material(
-        color: FlareColors.surface,
-        borderRadius: BorderRadius.circular(18),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          key: const ValueKey('plan-ai-coach'),
-          onTap: onAiCoach,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: FlareColors.accent.withValues(alpha: .35),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: FlareColors.accent.withValues(alpha: .14),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.auto_awesome_rounded,
-                    color: FlareColors.accentInk,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          const Text(
-                            'AI 定制',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          if (!aiCoachConfigured)
-                            Container(
-                              key: const ValueKey('plan-ai-unconfigured'),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: FlareColors.warning.withValues(
-                                  alpha: .14,
-                                ),
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                              child: Text(
-                                '未配置',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: FlareColors.warning,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        aiCoachConfigured
-                            ? '说出场地、时长和想练的部位，排一份托马斯专项计划'
-                            : '暂未接入 AI，会按你的描述推荐一套预设方案',
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.35,
-                          color: FlareColors.dim,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
-              ],
-            ),
-          ),
-        ),
+  Widget _entrySurface({
+    required Widget child,
+    required Key key,
+    required VoidCallback onTap,
+  }) => FlareStaticSurface(
+    child: Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        key: key,
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
     ),
   );
 
-  Widget _newCard(BuildContext context) {
-    final s = context.strings;
-    return Pressable(
-      scale: .98,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          key: const ValueKey('plan-new'),
-          borderRadius: BorderRadius.circular(18),
-          onTap: onNewRoutine,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(14, 14, 16, 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: FlareColors.controlBorder),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: FlareColors.accent.withValues(alpha: .14),
-                    shape: BoxShape.circle,
+  Widget _entryIcon(IconData icon) => Container(
+    width: 44,
+    height: 44,
+    decoration: BoxDecoration(
+      color: FlareColors.accent.withValues(alpha: .10),
+      shape: BoxShape.circle,
+    ),
+    child: Icon(icon, color: FlareColors.accentInk, size: 21),
+  );
+
+  Widget _aiCard(BuildContext context) => _entrySurface(
+    key: const ValueKey('plan-ai-coach'),
+    onTap: onAiCoach!,
+    child: Row(
+      children: [
+        _entryIcon(Icons.auto_awesome_rounded),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text(
+                    'AI 定制',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
-                  child: Icon(Icons.add_rounded, color: FlareColors.accentInk),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        s.planNew,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
+                  if (!aiCoachConfigured)
+                    Text(
+                      '未配置',
+                      key: const ValueKey('plan-ai-unconfigured'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: FlareColors.warning,
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        s.planNewHint,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.35,
-                          color: FlareColors.dim,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                aiCoachConfigured
+                    ? '说出场地、时长和想练的部位，排一份托马斯专项计划'
+                    : '暂未接入 AI，会按你的描述推荐一套预设方案',
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.45,
+                  color: FlareColors.secondary,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
+        const SizedBox(width: 8),
+        Icon(Icons.chevron_right_rounded, color: FlareColors.dim, size: 20),
+      ],
+    ),
+  );
+
+  Widget _newCard(BuildContext context) => _entrySurface(
+    key: const ValueKey('plan-new'),
+    onTap: onNewRoutine,
+    child: Row(
+      children: [
+        _entryIcon(Icons.add_rounded),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.strings.planNew,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                context.strings.planNewHint,
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.45,
+                  color: FlareColors.secondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _routineRow(BuildContext context, TrainingRoutine routine) {
     final s = context.strings;
@@ -362,51 +363,45 @@ class PlansPage extends StatelessWidget {
           );
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Pressable(
-        scale: .98,
-        child: Material(
-          color: FlareColors.surface,
-          borderRadius: BorderRadius.circular(18),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            key: ValueKey('routine-${routine.id}'),
-            onTap: () => onRoutine(routine),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
-              child: Row(
-                children: [
-                  _Stack(drills),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          routine.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          s.planMeta(count, minutes),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: FlareColors.dim,
-                          ),
-                        ),
-                      ],
+      child: RepaintBoundary(
+        child: _entrySurface(
+          key: ValueKey('routine-${routine.id}'),
+          onTap: () => onRoutine(routine),
+          child: Row(
+            children: [
+              _Stack(drills),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      routine.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.3,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  Icon(Icons.chevron_right_rounded, color: FlareColors.dim),
-                ],
+                    const SizedBox(height: 5),
+                    Text(
+                      s.planMeta(count, minutes),
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.4,
+                        color: FlareColors.secondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: FlareColors.dim,
+                size: 20,
+              ),
+            ],
           ),
         ),
       ),
@@ -427,7 +422,7 @@ class PlansPage extends StatelessWidget {
                 key: const ValueKey('plan-new-small'),
                 icon: Icons.add_rounded,
                 tooltip: s.planNew,
-                diameter: 36,
+                diameter: 44,
                 onPressed: onNewRoutine,
               ),
       ),
@@ -436,74 +431,113 @@ class PlansPage extends StatelessWidget {
       else
         for (final routine in routines) _routineRow(context, routine),
     ];
-    final ready = <Widget>[
-      _SectionHeader(s.plansReady),
-      _SceneSwitch(store: store),
-      const SizedBox(height: 14),
-    ];
     return Column(
       children: [
-        PageHeader(title: s.plans, onBack: onBack),
-        Expanded(
-          child: ScrollEdge(
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverList.list(
-                    children: [
-                      if (onAiCoach != null) _aiCard(context),
-                      if (routines.isNotEmpty) ...mine,
-                      ...ready,
-                    ],
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverLayoutBuilder(
-                    builder: (context, box) => SliverGrid.builder(
-                      itemCount: PresetPlan.all.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: box.crossAxisExtent > 700 ? 3 : 2,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        mainAxisExtent:
-                            (box.crossAxisExtent > 700
-                                    ? (box.crossAxisExtent - 24) / 3
-                                    : (box.crossAxisExtent - 12) / 2) *
-                                1.22 +
-                            MediaQuery.textScalerOf(context).scale(14) -
-                            14,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 48,
+                child: onBack == null
+                    ? null
+                    : FlareGlassIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        label: s.goBack,
+                        onPressed: onBack,
                       ),
-                      itemBuilder: (context, index) {
-                        final preset = PresetPlan.all[index];
-                        return FadeSlideIn(
-                          key: ValueKey('preset-$tier-${preset.id}'),
-                          delay: FadeSlideIn.stagger(index),
-                          child: _PresetCard(
-                            preset: preset,
-                            drills: preset.drills(catalog, tier),
-                            color: Color(
-                              catalog
-                                      .groupById(preset.groupIds.first)
-                                      ?.colorValue ??
-                                  FlareColors.accent.toARGB32(),
-                            ),
-                            onTap: () => onPreset(preset),
-                          ),
-                        );
-                      },
+              ),
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    s.plans,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      height: 1.25,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                  sliver: SliverList.list(
-                    children: [if (routines.isEmpty) ...mine],
-                  ),
+              ),
+              const SizedBox(width: 48),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: _SceneSwitch(store: store, preview: true),
+        ),
+        Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList.list(
+                  children: [
+                    if (onAiCoach != null) _aiCard(context),
+                    if (routines.isNotEmpty) ...mine,
+                    _SectionHeader(s.plansReady),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverLayoutBuilder(
+                  builder: (context, box) {
+                    final textScale =
+                        MediaQuery.textScalerOf(context).scale(14) / 14;
+                    final columns =
+                        box.crossAxisExtent < 330 || textScale > 1.35 ? 1 : 2;
+                    final presets = PresetPlan.all;
+                    return SliverList.builder(
+                      itemCount: (presets.length / columns).ceil(),
+                      itemBuilder: (context, row) => Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (
+                              var column = 0;
+                              column < columns;
+                              column++
+                            ) ...[
+                              if (column > 0) const SizedBox(width: 14),
+                              Expanded(
+                                child: row * columns + column >= presets.length
+                                    ? const SizedBox.shrink()
+                                    : RepaintBoundary(
+                                        key: ValueKey(
+                                          'preset-$tier-${presets[row * columns + column].id}',
+                                        ),
+                                        child: _PresetCard(
+                                          preset:
+                                              presets[row * columns + column],
+                                          drills:
+                                              presets[row * columns + column]
+                                                  .drills(catalog, tier),
+                                          onTap: () => onPreset(
+                                            presets[row * columns + column],
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                sliver: SliverList.list(
+                  children: [if (routines.isEmpty) ...mine],
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -515,136 +549,73 @@ class _PresetCard extends StatelessWidget {
   const _PresetCard({
     required this.preset,
     required this.drills,
-    required this.color,
     required this.onTap,
   });
   final PresetPlan preset;
   final List<Drill> drills;
-  final Color color;
   final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    // A poster card: the set's lead drill full-bleed, words on a soft scrim,
-    // so six cards read as six pictures rather than six text blocks.
-    return Pressable(
-      scale: .97,
+    return FlareStaticSurface(
       child: Material(
-        color: FlareColors.raised,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(22),
-        clipBehavior: Clip.antiAlias,
         child: InkWell(
           key: ValueKey('preset-${preset.id}'),
+          borderRadius: BorderRadius.circular(22),
           onTap: onTap,
-          child: Stack(
-            fit: StackFit.expand,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              if (drills.isNotEmpty) DrillPoster(drills.first),
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0, .38, 1],
-                    colors: [
-                      Color(0x00000000),
-                      Color(0x14000000),
-                      Color(0xE6000000),
-                    ],
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(22),
+                ),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: RepaintBoundary(
+                    child: drills.isEmpty
+                        ? ColoredBox(
+                            color: FlareColors.raised,
+                            child: Icon(preset.icon, color: FlareColors.dim),
+                          )
+                        : DrillPoster(drills.first),
                   ),
                 ),
               ),
-              Positioned(
-                left: 10,
-                top: 10,
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(7, 4, 9, 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0x8C000000),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(preset.icon, size: 13, color: color),
-                      const SizedBox(width: 4),
-                      Text(
-                        s.planDrillCount(drills.length),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xE6FFFFFF),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 12,
-                right: 12,
-                bottom: 12,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 13, 14, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Long translated titles shrink rather than lose words.
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Text(
-                        preset.title(context),
-                        maxLines: 1,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          height: 1.25,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    // Two lines are always reserved so titles line up
-                    // across the grid whatever the subtitle length.
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: MediaQuery.textScalerOf(
-                          context,
-                        ).scale(12 * 1.35 * 2),
-                      ),
-                      child: Text(
-                        preset.line(context),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          height: 1.35,
-                          color: Color(0xCCFFFFFF),
-                        ),
+                    Text(
+                      preset.title(context),
+                      style: const TextStyle(
+                        fontSize: 17,
+                        height: 1.3,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Container(
-                          width: 14,
-                          height: 2,
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            '≈ ${s.minutesShort(estimateMinutes(drills))}',
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0x99FFFFFF),
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      preset.line(context),
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.45,
+                        color: FlareColors.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '${s.planDrillCount(drills.length)} · ≈ ${s.minutesShort(estimateMinutes(drills))}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        height: 1.4,
+                        color: FlareColors.secondary,
+                      ),
                     ),
                   ],
                 ),

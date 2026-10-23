@@ -1,0 +1,30 @@
+{
+  "baseline": "4b7e7339d9a5c2774edd7133980236485ded45dc",
+  "branch": "codex/flarelab-liquid-glass-preview",
+  "platform": "Flutter Web release, local CanvasKit",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "data": "Same isolated in-memory fixture; 2 routines, 3 coach messages, 6-item plan; fake LLM; no user data",
+  "beforeBuild": "web-before",
+  "afterBuild": "web-after",
+  "screens": 8,
+  "tests": "39 relevant widget tests passed; flutter analyze clean",
+  "browserChecks": {
+    "fourAfterStatesRender": true,
+    "pageErrors": 0,
+    "planExpandAndCollapse": true,
+    "draftInputPreservedAcrossExpandCollapse": true,
+    "sendEnabledWithDraft": true
+  },
+  "pending": [
+    "native glass optics",
+    "Android/iOS screenshots",
+    "profile Raster average/P99",
+    "full 14 language layout matrix"
+  ],
+  "userDecision": "Web preview first; phone later; direction approval before rollout",
+  "captureReadiness": "Network idle, Flutter semantics available, then 2–2.5 seconds for local fonts, images and entrance animations; all 8 captures visually inspected.",
+  "capturedOn": "2026-10-24 Asia/Shanghai"
+}
