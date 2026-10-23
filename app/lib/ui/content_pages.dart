@@ -6,6 +6,7 @@ import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
 import 'drill_media.dart';
+import 'app_glass.dart';
 
 class PageHeader extends StatelessWidget {
   const PageHeader({
@@ -47,8 +48,6 @@ class PageHeader extends StatelessWidget {
                   child: Text(
                     title,
                     textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: large ? 24 : 20,
                       height: 1.2,
@@ -502,41 +501,24 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  sliver: SliverLayoutBuilder(
-                    builder: (context, constraints) => SliverGrid.builder(
-                      itemCount: drills.length,
-                      gridDelegate:
-                          constraints.crossAxisExtent <= 700 ||
-                              MediaQuery.sizeOf(context).shortestSide < 600
-                          ? const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: .78,
-                            )
-                          : const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 220,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: .78,
-                            ),
-                      itemBuilder: (context, index) {
-                        final drill = drills[index];
-                        final group = catalog.groupById(drill.groupId)!;
-                        // Re-keyed per filter so a new result set eases in,
-                        // staggered from the top.
-                        return FadeSlideIn(
-                          key: ValueKey('$tier|$_section|$_query|${drill.id}'),
-                          delay: FadeSlideIn.stagger(index),
-                          child: DrillCard(
-                            drill: drill,
-                            groupLabel: group.shortLabel,
-                            color: Color(group.colorValue),
-                            onTap: () => widget.onDrill(drill),
-                          ),
-                        );
-                      },
-                    ),
+                  sliver: SliverCardRows(
+                    itemCount: drills.length,
+                    itemBuilder: (context, index) {
+                      final drill = drills[index];
+                      final group = catalog.groupById(drill.groupId)!;
+                      // Re-keyed per filter so a new result set eases in,
+                      // staggered from the top.
+                      return FadeSlideIn(
+                        key: ValueKey('$tier|$_section|$_query|${drill.id}'),
+                        delay: FadeSlideIn.stagger(index),
+                        child: DrillCard(
+                          drill: drill,
+                          groupLabel: group.shortLabel,
+                          color: Color(group.colorValue),
+                          onTap: () => widget.onDrill(drill),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -692,12 +674,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                         style: TextStyle(color: FlareColors.dim, fontSize: 12),
                       ),
                       const SizedBox(height: 18),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: FlareColors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: FlareColors.hairline),
-                        ),
+                      FlareStaticSurface(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -736,8 +713,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
+          FlareActionBar(
             child: PrimaryAction(
               label: s.startTimer,
               onPressed: widget.onStart,
@@ -765,13 +741,8 @@ class ProgressPage extends StatelessWidget {
   final DateTime Function()? now;
 
   Widget _stat(String value, String label) => Expanded(
-    child: Container(
+    child: FlareStaticSurface(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-      decoration: BoxDecoration(
-        color: FlareColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FlareColors.hairline),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

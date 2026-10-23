@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_media.dart';
+import 'app_glass.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -15,15 +16,8 @@ class SurfaceCard extends StatelessWidget {
   final Widget child;
   final double padding;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(padding),
-    decoration: BoxDecoration(
-      color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: FlareColors.hairline),
-    ),
-    child: child,
-  );
+  Widget build(BuildContext context) =>
+      FlareStaticSurface(padding: EdgeInsets.all(padding), child: child);
 }
 
 /// Small grey label above a block ("一起发力", "最近").
@@ -78,6 +72,7 @@ class PrimaryAction extends StatelessWidget {
       width: double.infinity,
       height: height,
       child: FilledButton(
+        style: FilledButton.styleFrom(shape: const StadiumBorder()),
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,21 +113,11 @@ class RoundIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double diameter;
   @override
-  Widget build(BuildContext context) => Pressable(
-    scale: .9,
-    child: IconButton(
-      onPressed: onPressed,
-      tooltip: tooltip,
-      style: IconButton.styleFrom(
-        fixedSize: Size.square(diameter),
-        minimumSize: const Size.square(44),
-        backgroundColor: FlareColors.control,
-        foregroundColor: FlareColors.controlIcon,
-        side: BorderSide(color: FlareColors.controlBorder, width: .5),
-        shape: const CircleBorder(),
-      ),
-      icon: Icon(icon, size: 18),
-    ),
+  Widget build(BuildContext context) => FlareGlassIconButton(
+    icon: icon,
+    label: tooltip,
+    onPressed: onPressed,
+    diameter: diameter.clamp(44, double.infinity),
   );
 }
 
@@ -187,20 +172,20 @@ class RowGroup extends StatelessWidget {
   const RowGroup({super.key, required this.children});
   final List<Widget> children;
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(color: FlareColors.hairline),
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Column(
-      children: [
-        for (var i = 0; i < children.length; i++) ...[
-          if (i > 0) const Divider(indent: 16, endIndent: 16),
-          children[i],
-        ],
-      ],
+  Widget build(BuildContext context) => FlareStaticSurface(
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) const Divider(indent: 20, endIndent: 20),
+              children[i],
+            ],
+          ],
+        ),
+      ),
     ),
   );
 }
@@ -223,9 +208,9 @@ class FlareRow extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
     child: ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 56),
+      constraints: const BoxConstraints(minHeight: 60),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(
           children: [
             if (leading != null) ...[leading!, const SizedBox(width: 14)],
@@ -251,6 +236,7 @@ class FlareRow extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(width: 10),
             trailing ??
                 (onTap == null
                     ? const SizedBox.shrink()
@@ -332,10 +318,9 @@ class DrillTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 10),
-    child: Pressable(
-      scale: .98,
+    child: RepaintBoundary(
       child: Material(
-        color: FlareColors.surface,
+        color: FlareStaticSurface.colorOf(context),
         borderRadius: BorderRadius.circular(18),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -358,8 +343,6 @@ class DrillTile extends StatelessWidget {
                     children: [
                       Text(
                         drill.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -368,8 +351,6 @@ class DrillTile extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         drill.prescription,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: FlareColors.dim, fontSize: 12),
                       ),
                     ],
@@ -406,19 +387,18 @@ class DrillCard extends StatelessWidget {
   final String groupLabel;
   final Color color;
   @override
-  Widget build(BuildContext context) => Pressable(
-    // Playback is an in-place toggle; do not resize its live platform surface.
-    scale: 1,
+  Widget build(BuildContext context) => RepaintBoundary(
     child: Material(
-      color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(20),
+      color: FlareStaticSurface.colorOf(context),
+      borderRadius: BorderRadius.circular(22),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
+            AspectRatio(
+              aspectRatio: 4 / 3,
               child: ColoredBox(
                 color: FlareColors.raised,
                 child: DrillMediaCard(drillId: drill.id),
@@ -431,8 +411,6 @@ class DrillCard extends StatelessWidget {
                 children: [
                   Text(
                     drill.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -453,8 +431,6 @@ class DrillCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           groupLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 11,
                             color: FlareColors.dim,
@@ -470,6 +446,51 @@ class DrillCard extends StatelessWidget {
         ),
       ),
     ),
+  );
+}
+
+/// Lazy rows of cards whose text determines their height. Media retains a
+/// fixed aspect ratio; translation and accessibility text never shrink into
+/// a grid cell. Phone layouts use at most two columns.
+class SliverCardRows extends StatelessWidget {
+  const SliverCardRows({
+    super.key,
+    required this.itemCount,
+    required this.itemBuilder,
+  });
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
+
+  @override
+  Widget build(BuildContext context) => SliverLayoutBuilder(
+    builder: (context, constraints) {
+      final scaled = MediaQuery.textScalerOf(context).scale(14) / 14;
+      final width = constraints.crossAxisExtent;
+      final columns = width < 310 || scaled > 1.2
+          ? 1
+          : MediaQuery.sizeOf(context).shortestSide < 600
+          ? 2
+          : (width / 220).floor().clamp(2, 4);
+      return SliverList.builder(
+        itemCount: (itemCount / columns).ceil(),
+        itemBuilder: (context, row) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var column = 0; column < columns; column++) ...[
+                if (column > 0) const SizedBox(width: 12),
+                Expanded(
+                  child: row * columns + column < itemCount
+                      ? itemBuilder(context, row * columns + column)
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    },
   );
 }
 

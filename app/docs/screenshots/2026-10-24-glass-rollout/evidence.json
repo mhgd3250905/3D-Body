@@ -1,0 +1,246 @@
+{
+  "capturedAt": "2026-10-24T00:52:25.473534+08:00",
+  "baselineHead": "21bddc20cbd87fd0c75bfe37f02873011b133e85",
+  "branch": "codex/flarelab-liquid-glass-preview",
+  "sourceState": "baseline plus uncommitted UI and test files listed below; unrelated pre-existing changes retained",
+  "sourceFingerprint": "2eed3d06a283e713df63bfa605d03d6b06b9c3d5b61b5db8616c6bdc7852afa3",
+  "sourceFiles": {
+    "app/lib/ui/app_glass.dart": "2652e4afe5c259bf2208bc6ae10879d9be2d67d936ccb3ee2593a5b8023ca566",
+    "app/lib/ui/app_shell.dart": "d97f9d8d200507714fbe97635269834fa1c2f8375d5a506b66c368b94f489e0e",
+    "app/lib/ui/components.dart": "6f4a0bc8a11223a777102c64082ce4b6085c4e5427ade1c64cc0677a5455e44c",
+    "app/lib/ui/content_pages.dart": "856b61ecc5bba684fcc2877ce6538ac99b821162067a968cf72d96497d566061",
+    "app/lib/ui/plans_page.dart": "c3eda5e8e94ab3dc97cad5ab00f836d7670dacea7bc13cc18e9aee9b2c39ef3d",
+    "app/test/ui/glass_rollout_test.dart": "d9329af369c8c9b957c1aa8ade4b031150676dc65d6de2b09a8fe5b7518d42be",
+    "app/test/ui/library_filters_and_header_test.dart": "63467cf1d8ee010bc77898fd033d5748c69537193881ebbb4fa0cf5fab85f493",
+    "app/test/ui/muscle_library_flow_test.dart": "93b66e66848924d3c227592ba7fce2257280f207e4ed33950bcbe7341ebb9a71",
+    "app/test/ui/plan_regressions_test.dart": "ea4b6ef4050ddf48f00d57139ba465fedd87470f39106281de49459f6413ece3",
+    "app/test/ui/plans_test.dart": "13ad18e171353bb0c39b078a66a6f4cbf20473bc92ac5ae5b29509d86432e3e0"
+  },
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "deviceScaleFactor": 1
+  },
+  "platform": "Chromium / Flutter Web release / CanvasKit with local resources",
+  "fixture": "In-memory routines, sessions and fixed AI response; no private configuration; seed clock 2026-10-24 09:30",
+  "appBundleSha256": "1949a59216a4f7922d4330ac9bfb8a95e0815a48e53d69c0e36ac00811257ab4",
+  "previewBundleSha256": "238a8b0a86c4370d81e15d6856bbafee1e9073ca31f55bd99cc1bcfe98ef68aa",
+  "previewEntrySha256": "80496e275b717f0a75eec1621a2ee841dc722415cda9b3baa390a2a40e014041",
+  "checks": {
+    "flutterAnalyze": "No issues found",
+    "widgetTests": {
+      "passed": 109,
+      "failed": 0,
+      "log": "output/ui-glass-rollout-20261024/ui-tests-verified.log"
+    },
+    "browser": {
+      "pageErrors": 0,
+      "consoleWarnings": 0,
+      "failedResources": 0
+    },
+    "builds": [
+      "App offline web",
+      "Isolated interactive preview offline web"
+    ],
+    "interactions": [
+      "Search/filter/empty results",
+      "Video play/pause and decoded frame readyState=4",
+      "Add two drills in tap order",
+      "Open SDK whole-plan player",
+      "Settings theme switch",
+      "Copy fixture backup and show SnackBar",
+      "Muscle detail and same-frame return"
+    ],
+    "pending": [
+      "Android/iOS rendering and optical comparison",
+      "Device profile Raster average and P99",
+      "Native accessibility and system settings matrix",
+      "Full 14-language page/device matrix",
+      "User review of this rollout"
+    ]
+  },
+  "screenshots": [
+    {
+      "page": "home",
+      "title": "动作首页",
+      "theme": "light",
+      "file": "home-light.png",
+      "sha256": "3feafd98c0dbe2a18829e9dfa3e1b0ef20fac4f1697b0be29578144a5e59833f"
+    },
+    {
+      "page": "home",
+      "title": "动作首页",
+      "theme": "dark",
+      "file": "home-dark.png",
+      "sha256": "8aca1fa54c118e78d6a50b1226627d313ebfb78025b1cb80a34158377824f9a8"
+    },
+    {
+      "page": "muscle",
+      "title": "肌群详情",
+      "theme": "light",
+      "file": "muscle-light.png",
+      "sha256": "cd74ef560798a106332030ffc145b333b580ee044d74859ac7b99855cfdd5697"
+    },
+    {
+      "page": "muscle",
+      "title": "肌群详情",
+      "theme": "dark",
+      "file": "muscle-dark.png",
+      "sha256": "b3cc65a31403fb70369de408a086d1563107f42b1bab88c533b7af9a1abea1ff"
+    },
+    {
+      "page": "more",
+      "title": "更多",
+      "theme": "light",
+      "file": "more-light.png",
+      "sha256": "1a24dc1437374ad6762e61c464ac376cad44bd75c10ed823a6e04049351fa2d1"
+    },
+    {
+      "page": "more",
+      "title": "更多",
+      "theme": "dark",
+      "file": "more-dark.png",
+      "sha256": "bba14891ac759457e4bf5899fc373fcc55092bd764a85c0bdd59471a0aa4b664"
+    },
+    {
+      "page": "library",
+      "title": "训练库",
+      "theme": "light",
+      "file": "library-light.png",
+      "sha256": "efa5fd0e5f8fd9c26f089d99cdd0e4f539b1f4aa87eca134b10332b74864639c"
+    },
+    {
+      "page": "library",
+      "title": "训练库",
+      "theme": "dark",
+      "file": "library-dark.png",
+      "sha256": "58ddd606a60db6556f1a5ecf340750899613c0c39e5f9a65c78193327c8da02f"
+    },
+    {
+      "page": "drill",
+      "title": "动作详情",
+      "theme": "light",
+      "file": "drill-light.png",
+      "sha256": "39a358f7e441aac9d7be87d5fb171608adcbc4abf6d338b29404db4621dccc33"
+    },
+    {
+      "page": "drill",
+      "title": "动作详情",
+      "theme": "dark",
+      "file": "drill-dark.png",
+      "sha256": "db2525500b1cecd7aef17036c2faf64b74cfc08cba149df4da0ea22d9c05ec77"
+    },
+    {
+      "page": "plans",
+      "title": "计划",
+      "theme": "light",
+      "file": "plans-light.png",
+      "sha256": "32f0305f9c31e4ef35ad76a0c8e0f2f15238ad484a3e58e04e809302814c59b9"
+    },
+    {
+      "page": "plans",
+      "title": "计划",
+      "theme": "dark",
+      "file": "plans-dark.png",
+      "sha256": "f5c9eaf28724032b0c2bb62b40c545252c8d17c2b2a7398a308f43c114bca066"
+    },
+    {
+      "page": "plan",
+      "title": "计划详情",
+      "theme": "light",
+      "file": "plan-light.png",
+      "sha256": "f875652ccb656929e06c67c9fc74b3c8dfbcf27d63389f6234fd5442f04c09ef"
+    },
+    {
+      "page": "plan",
+      "title": "计划详情",
+      "theme": "dark",
+      "file": "plan-dark.png",
+      "sha256": "910422fa688e93832eb11ea702cc6a1664631a13d9c777ce945a1c5c3866680a"
+    },
+    {
+      "page": "editor",
+      "title": "计划编辑",
+      "theme": "light",
+      "file": "editor-light.png",
+      "sha256": "16d6fa45d0a196a38e4edf5fa35f18ccc582a5e6ed064369247afa94e638046e"
+    },
+    {
+      "page": "editor",
+      "title": "计划编辑",
+      "theme": "dark",
+      "file": "editor-dark.png",
+      "sha256": "cd3b1d5e00ca412a2925891244d0ba25fece6749425a2f7897b57b7cdcfe6a40"
+    },
+    {
+      "page": "picker",
+      "title": "动作选择",
+      "theme": "light",
+      "file": "picker-light.png",
+      "sha256": "42341bc7e72a772f79cab3eecdf4bd7392dfda5652f1b26624a77cf98393dccc"
+    },
+    {
+      "page": "picker",
+      "title": "动作选择",
+      "theme": "dark",
+      "file": "picker-dark.png",
+      "sha256": "ccd2aece7c821415eab15f56f27c90edd6c8770d68892d80f010e5ce65259d3e"
+    },
+    {
+      "page": "progress",
+      "title": "训练记录",
+      "theme": "light",
+      "file": "progress-light.png",
+      "sha256": "436939ff5837f7707f3285db895d6ccf75d59c8412d21cd44a69195818840453"
+    },
+    {
+      "page": "progress",
+      "title": "训练记录",
+      "theme": "dark",
+      "file": "progress-dark.png",
+      "sha256": "06c6d95c057e6d88adca953e350ef2be0d5fe9c2dcd58b7af0d550ec3b3ff6f4"
+    },
+    {
+      "page": "settings",
+      "title": "设置",
+      "theme": "light",
+      "file": "settings-light.png",
+      "sha256": "cd76627fc29f2222a823489f1a281ef29cd25993882a2929713e66c14ddf66b5"
+    },
+    {
+      "page": "settings",
+      "title": "设置",
+      "theme": "dark",
+      "file": "settings-dark.png",
+      "sha256": "3a5757c5cad64e3cc44193b89a802f685829fb04eb2450d54fb15542b15daf2e"
+    },
+    {
+      "page": "about",
+      "title": "关于与备份",
+      "theme": "light",
+      "file": "about-light.png",
+      "sha256": "0b0a22a9d0f059caf8b2f20fe8adc2f6697d1d619537ec71d77721eb4f1b90c5"
+    },
+    {
+      "page": "about",
+      "title": "关于与备份",
+      "theme": "dark",
+      "file": "about-dark.png",
+      "sha256": "0f647f64f5e0983fb3c4d4a378dbefe09a2aacf09750fadec05a8cb9b0753da9"
+    },
+    {
+      "page": "coach",
+      "title": "AI 定制",
+      "theme": "light",
+      "file": "coach-light.png",
+      "sha256": "5a75b461351fd4a107c645b50ea15da911ae7cb14cd739cd80ae730055938d1f"
+    },
+    {
+      "page": "coach",
+      "title": "AI 定制",
+      "theme": "dark",
+      "file": "coach-dark.png",
+      "sha256": "774fc5689e58db2e990b9ee716a2e29bd1ccc59b31c5ea944fb638105b7bb36d"
+    }
+  ]
+}

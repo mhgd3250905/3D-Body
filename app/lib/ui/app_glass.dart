@@ -64,10 +64,12 @@ class FlareGlassIconButton extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onPressed,
+    this.diameter = 44,
   });
   final IconData icon;
   final String label;
   final VoidCallback? onPressed;
+  final double diameter;
 
   @override
   Widget build(BuildContext context) => FlareGlassScope(
@@ -76,6 +78,7 @@ class FlareGlassIconButton extends StatelessWidget {
       child: GlassIconButton(
         useOwnLayer: true,
         icon: Icon(icon, color: FlareColors.text),
+        size: diameter,
         iconSize: 20,
         semanticLabel: label,
         onPressed: onPressed,
@@ -91,17 +94,24 @@ class FlareStaticSurface extends StatelessWidget {
     required this.child,
     this.padding = EdgeInsets.zero,
     this.radius = 22,
+    this.color,
   });
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double radius;
+  final Color? color;
+
+  static Color colorOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+      ? const Color(0xea18181c)
+      : const Color(0xeeffffff);
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: dark ? const Color(0xea242428) : const Color(0xeeffffff),
+        color: color ?? colorOf(context),
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
           color: dark ? const Color(0x18ffffff) : const Color(0xb3ffffff),
@@ -119,4 +129,17 @@ class FlareStaticSurface extends StatelessWidget {
       child: Padding(padding: padding, child: child),
     );
   }
+}
+
+/// Fixed actions stay outside media and scrollable content. Material Scaffold
+/// still owns keyboard insets and SnackBars; SDK routes do not use this bar.
+class FlareActionBar extends StatelessWidget {
+  const FlareActionBar({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+    child: FlareGlassBar(padding: const EdgeInsets.all(6), child: child),
+  );
 }

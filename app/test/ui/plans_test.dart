@@ -104,9 +104,18 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('routine-add')));
     await tester.pumpAndSettle();
     // Already in the set: shown, but not selectable twice.
-    await tester.tap(find.byKey(const ValueKey('pick-forearms-A')));
-    await tester.tap(find.byKey(const ValueKey('pick-abs-A')));
-    await tester.tap(find.byKey(const ValueKey('pick-deltoids-A')));
+    Future<void> pick(String id) async {
+      await tester.enterText(
+        find.byKey(const ValueKey('picker-search')),
+        catalog.drillById(id)!.name,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ValueKey('pick-$id')));
+    }
+
+    await pick('forearms-A');
+    await pick('abs-A');
+    await pick('deltoids-A');
     await tester.pump();
     expect(find.text('已选 2 个'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('picker-done')));

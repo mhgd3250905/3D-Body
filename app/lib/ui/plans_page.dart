@@ -772,8 +772,7 @@ class PlanDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
+          FlareActionBar(
             child: PrimaryAction(
               key: const ValueKey('plan-start'),
               icon: Icons.play_arrow_rounded,
@@ -811,13 +810,12 @@ class _NumberedDrill extends StatelessWidget {
     final current = state == false;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Pressable(
-        scale: .98,
+      child: RepaintBoundary(
         child: Material(
           color: current
               ? FlareColors.accent.withValues(alpha: .10)
-              : FlareColors.surface,
-          borderRadius: BorderRadius.circular(18),
+              : FlareStaticSurface.colorOf(context),
+          borderRadius: BorderRadius.circular(22),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
@@ -854,10 +852,7 @@ class _NumberedDrill extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: SizedBox.square(
                       dimension: 60,
-                      child: Opacity(
-                        opacity: done ? .55 : 1,
-                        child: DrillPoster(drill),
-                      ),
+                      child: DrillPoster(drill),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -867,8 +862,6 @@ class _NumberedDrill extends StatelessWidget {
                       children: [
                         Text(
                           drill.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -878,10 +871,6 @@ class _NumberedDrill extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           doseText ?? drill.prescription,
-                          maxLines: doseText == null ? 1 : null,
-                          overflow: doseText == null
-                              ? TextOverflow.ellipsis
-                              : null,
                           style: TextStyle(
                             color: FlareColors.dim,
                             fontSize: 12,
@@ -1131,8 +1120,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
+          FlareActionBar(
             child: PrimaryAction(
               key: const ValueKey('routine-save'),
               label: s.planSave,
@@ -1312,126 +1300,129 @@ class _DrillPickerState extends State<_DrillPicker> {
             Expanded(
               child: drills.isEmpty
                   ? EmptyNote(icon: Icons.search_off_rounded, text: s.noResults)
-                  : GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                  : CustomScrollView(
                       keyboardDismissBehavior:
                           ScrollViewKeyboardDismissBehavior.onDrag,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 130,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: .74,
-                          ),
-                      itemCount: drills.length,
-                      itemBuilder: (context, index) {
-                        final drill = drills[index];
-                        final already = widget.exclude.contains(drill.id);
-                        final order = _picked.indexOf(drill.id);
-                        final picked = order >= 0;
-                        final full = _picked.length >= widget.room;
-                        return Semantics(
-                          selected: picked || already,
-                          button: true,
-                          child: GestureDetector(
-                            key: ValueKey('pick-${drill.id}'),
-                            onTap: already || (!picked && full)
-                                ? null
-                                : () {
-                                    FlareHaptics.selection();
-                                    setState(() {
-                                      picked
-                                          ? _picked.remove(drill.id)
-                                          : _picked.add(drill.id);
-                                    });
-                                  },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: AnimatedContainer(
-                                    duration: FlareMotion.of(
-                                      context,
-                                      FlareMotion.fade,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: picked
-                                            ? FlareColors.accent
-                                            : Colors.transparent,
-                                      ),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Stack(
-                                        fit: StackFit.expand,
-                                        children: [
-                                          Opacity(
-                                            opacity: already ? .4 : 1,
-                                            child: DrillPoster(drill),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                          sliver: SliverCardRows(
+                            itemCount: drills.length,
+                            itemBuilder: (context, index) {
+                              final drill = drills[index];
+                              final already = widget.exclude.contains(drill.id);
+                              final order = _picked.indexOf(drill.id);
+                              final picked = order >= 0;
+                              final full = _picked.length >= widget.room;
+                              return Semantics(
+                                selected: picked || already,
+                                button: true,
+                                child: GestureDetector(
+                                  key: ValueKey('pick-${drill.id}'),
+                                  onTap: already || (!picked && full)
+                                      ? null
+                                      : () {
+                                          FlareHaptics.selection();
+                                          setState(() {
+                                            picked
+                                                ? _picked.remove(drill.id)
+                                                : _picked.add(drill.id);
+                                          });
+                                        },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      AspectRatio(
+                                        aspectRatio: 4 / 3,
+                                        child: AnimatedContainer(
+                                          duration: FlareMotion.of(
+                                            context,
+                                            FlareMotion.fade,
                                           ),
-                                          if (picked || already)
-                                            Positioned(
-                                              top: 6,
-                                              right: 6,
-                                              child: Container(
-                                                width: 22,
-                                                height: 22,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: already
-                                                      ? FlareColors.dim
-                                                      : FlareColors.accent,
-                                                ),
-                                                child: already
-                                                    ? Icon(
-                                                        Icons.check_rounded,
-                                                        size: 14,
-                                                        color: FlareColors
-                                                            .onAccent,
-                                                      )
-                                                    : Text(
-                                                        '${order + 1}',
-                                                        style: TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: FlareColors
-                                                              .onAccent,
-                                                        ),
-                                                      ),
-                                              ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              14,
                                             ),
-                                        ],
+                                            border: Border.all(
+                                              width: 2,
+                                              color: picked
+                                                  ? FlareColors.accent
+                                                  : Colors.transparent,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            child: Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                DrillPoster(drill),
+                                                if (picked || already)
+                                                  Positioned(
+                                                    top: 6,
+                                                    right: 6,
+                                                    child: Container(
+                                                      width: 22,
+                                                      height: 22,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: already
+                                                            ? FlareColors.dim
+                                                            : FlareColors
+                                                                  .accent,
+                                                      ),
+                                                      child: already
+                                                          ? Icon(
+                                                              Icons
+                                                                  .check_rounded,
+                                                              size: 14,
+                                                              color: FlareColors
+                                                                  .onAccent,
+                                                            )
+                                                          : Text(
+                                                              '${order + 1}',
+                                                              style: TextStyle(
+                                                                fontSize: 11,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: FlareColors
+                                                                    .onAccent,
+                                                              ),
+                                                            ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        drill.name,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          height: 1.3,
+                                          color: already
+                                              ? FlareColors.dim
+                                              : FlareColors.text,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  drill.name,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    height: 1.3,
-                                    color: already
-                                        ? FlareColors.dim
-                                        : FlareColors.text,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+            FlareActionBar(
               child: PrimaryAction(
                 key: const ValueKey('picker-done'),
                 label: _picked.isEmpty
@@ -1738,51 +1729,50 @@ class _NextCard extends StatelessWidget {
   final Drill drill;
   final String label;
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: FlareColors.hairline),
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AspectRatio(
-          aspectRatio: 16 / 10,
-          child: DrillMediaCard(
-            key: ValueKey('run-media-${drill.id}'),
-            drillId: drill.id,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Eyebrow(label, color: FlareColors.accentInk),
-              const SizedBox(height: 4),
-              Text(
-                drill.name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  height: 1.25,
-                  fontWeight: FontWeight.w700,
-                ),
+  Widget build(BuildContext context) => RepaintBoundary(
+    child: FlareStaticSurface(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 10,
+              child: DrillMediaCard(
+                key: ValueKey('run-media-${drill.id}'),
+                drillId: drill.id,
               ),
-              const SizedBox(height: 6),
-              Text(
-                '${drill.prescription} · ${drill.equipment}',
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.4,
-                  color: FlareColors.secondary,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Eyebrow(label, color: FlareColors.accentInk),
+                  const SizedBox(height: 4),
+                  Text(
+                    drill.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      height: 1.25,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${drill.prescription} · ${drill.equipment}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     ),
   );
 }

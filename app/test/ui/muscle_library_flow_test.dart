@@ -293,10 +293,7 @@ void main() {
         isEmpty,
       );
       expect(
-        tester
-            .widget<SliverGrid>(find.byType(SliverGrid))
-            .delegate
-            .estimatedChildCount,
+        tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
         8,
       );
       for (final card in tester.widgetList<DrillCard>(find.byType(DrillCard))) {
@@ -306,10 +303,7 @@ void main() {
       await tester.tap(find.text('全部部位'));
       await tester.pumpAndSettle();
       expect(
-        tester
-            .widget<SliverGrid>(find.byType(SliverGrid))
-            .delegate
-            .estimatedChildCount,
+        tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
         17,
       );
       await tester.tap(find.byTooltip('返回'));
@@ -336,10 +330,7 @@ void main() {
       );
       expect(find.byKey(const ValueKey('library-group-filter')), findsNothing);
       expect(
-        tester
-            .widget<SliverGrid>(find.byType(SliverGrid))
-            .delegate
-            .estimatedChildCount,
+        tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
         17,
       );
       expect(scene.time, 2.375);

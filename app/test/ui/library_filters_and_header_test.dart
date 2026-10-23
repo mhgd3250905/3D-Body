@@ -57,10 +57,10 @@ void _expectResults(
   Set<String>? exactIds,
 }) {
   final cards = tester.widgetList<DrillCard>(find.byType(DrillCard)).toList();
-  final grid = tester.widget<SliverGrid>(find.byType(SliverGrid));
+  final grid = tester.widget<SliverCardRows>(find.byType(SliverCardRows));
   if (exactIds != null && exactIds.isEmpty) {
     expect(cards, isEmpty);
-    expect(grid.delegate.estimatedChildCount, 0);
+    expect(grid.itemCount, 0);
     return;
   }
   expect(cards, isNotEmpty);
@@ -72,7 +72,7 @@ void _expectResults(
     if (exactIds != null) expect(exactIds, contains(card.drill.id));
   }
   if (exactIds != null) {
-    expect(grid.delegate.estimatedChildCount, exactIds.length);
+    expect(grid.itemCount, exactIds.length);
     expect(cards.map((card) => card.drill.id).toSet(), exactIds);
   }
 }
@@ -169,10 +169,7 @@ void main() {
         await _tapLabel(tester, '全部部位');
         _expectResults(tester, catalog, tier: 'A');
         expect(
-          tester
-              .widget<SliverGrid>(find.byType(SliverGrid))
-              .delegate
-              .estimatedChildCount,
+          tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
           17,
         );
         final searchRect = tester.getRect(find.byType(TextField));
@@ -180,7 +177,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(
           Scrollable.of(
-            tester.element(find.byType(SliverGrid)),
+            tester.element(find.byType(SliverCardRows)),
           ).position.pixels,
           greaterThan(0),
         );

@@ -87,6 +87,23 @@ void main() {
     return store;
   }
 
+  // These routes load the SDK catalog from the real asset bundle. Settle
+  // animations and wait for host IO, which a fake test clock does not advance.
+  Future<void> waitForSdk(WidgetTester tester) async {
+    for (
+      var i = 0;
+      i < 50 && find.byKey(const ValueKey('sdk-plan-route')).evaluate().isEmpty;
+      i++
+    ) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('sdk-plan-route')), findsOneWidget);
+  }
+
   Future<void> startPlan(WidgetTester tester) async {
     await tester.tap(helpers.labeledControl('计划'));
     await tester.pumpAndSettle();
@@ -94,6 +111,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('plan-start')));
     await tester.pumpAndSettle();
+    await waitForSdk(tester);
   }
 
   Widget route(uc.TrainingPlan plan) => Builder(
@@ -144,7 +162,7 @@ void main() {
         await tester.pump(const Duration(seconds: 1));
         expect(received, hasLength(1));
         await tester.tap(find.byKey(const ValueKey('plan-start')));
-        await tester.pumpAndSettle();
+        await waitForSdk(tester);
         expect(received, hasLength(2));
         expect(received.last.blocks.expand((b) => b.items), hasLength(4));
         await tester.tap(find.byKey(const ValueKey('sdk-route-close')));

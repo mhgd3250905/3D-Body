@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-10-24，Liquid Glass 自有页面改造进入网页评审，相关 109 项测试、静态分析与离线 Web 构建通过；[实现、浅深截图和验证范围](docs/liquid-glass-rollout-2026-10-24.md)。当前为独立分支未提交增量，未合入推送、未构建新 APK 或安装手机；包版本仍 1.0.10+15。下方旧交付保留历史状态。
+
 2026-10-20，PR #122「AI 定制」已合入 `master`（`d8e9a0a6047158687b8be72a6e5f486add95e7f5`），使用 SDK `ugk_coach` **0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`**。本轮仅源码整合，未安装、未发布；当前已认可安装版仍为 **L52 / 1.0.9+11 / v42-R17**，设备与长期 QA 缺口保持。源码、35 项 AI 回归及构建验证的提交绑定见 [PR122 整合记录](docs/pr122-ai-coach-integration-2026-10-20.md)。
 
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。

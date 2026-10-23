@@ -30,6 +30,7 @@ import '../coach/coach_service.dart';
 import 'startup_splash.dart';
 import 'theme.dart';
 import 'theme_fade.dart';
+import 'app_glass.dart';
 
 class FlareShell extends StatefulWidget {
   const FlareShell({
@@ -892,12 +893,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
           child: Row(
             children: [
-              _roundControl(
+              FlareGlassIconButton(
                 label: detail == null ? s.plans : s.returnToMotion,
                 icon: detail == null
                     ? Icons.playlist_play_rounded
                     : Icons.arrow_back_ios_new_rounded,
-                onTap: detail == null ? () => _changeTab(2) : _returnToMotion,
+                onPressed: detail == null
+                    ? () => _changeTab(2)
+                    : _returnToMotion,
               ),
               Expanded(
                 child: AnimatedSwitcher(
@@ -949,10 +952,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 ),
               ),
               if (detail == null)
-                _roundControl(
+                FlareGlassIconButton(
                   label: s.more,
                   icon: Icons.more_horiz_rounded,
-                  onTap: _showMore,
+                  onPressed: _showMore,
                 )
               else
                 const SizedBox(width: 44),
@@ -1341,85 +1344,88 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         16,
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
       ),
-      child: SizedBox(
-        height: 72,
-        child: Row(
-          children: [
-            _roundControl(
-              label: _scene.playing ? s.pause : s.play,
-              icon: _scene.playing
-                  ? Icons.pause_rounded
-                  : Icons.play_arrow_rounded,
-              diameter: 48,
-              solid: !_scene.playing,
-              onTap: () {
-                FlareHaptics.light();
-                _scene.playing ? _scene.pause() : _scene.play();
-              },
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Row(
-                      children: [
-                        Text(
-                          phase.source.toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            color: FlareColors.accentInk,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          child: Text(
-                            phase.name,
-                            key: const ValueKey('home-phase-name'),
-                            maxLines: 2,
-                            style: const TextStyle(
+      child: FlareGlassBar(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: SizedBox(
+          height: 72,
+          child: Row(
+            children: [
+              _roundControl(
+                label: _scene.playing ? s.pause : s.play,
+                icon: _scene.playing
+                    ? Icons.pause_rounded
+                    : Icons.play_arrow_rounded,
+                diameter: 48,
+                solid: !_scene.playing,
+                onTap: () {
+                  FlareHaptics.light();
+                  _scene.playing ? _scene.pause() : _scene.play();
+                },
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Row(
+                        children: [
+                          Text(
+                            phase.source.toString().padLeft(2, '0'),
+                            style: TextStyle(
+                              color: FlareColors.accentInk,
                               fontSize: 13,
-                              height: 1.15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxWidth: 75,
-                            maxHeight: 22,
-                          ),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
+                          const SizedBox(width: 5),
+                          Expanded(
                             child: Text(
-                              '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: FlareColors.dim,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
+                              phase.name,
+                              key: const ValueKey('home-phase-name'),
+                              maxLines: 2,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                height: 1.15,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth: 75,
+                              maxHeight: 22,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: FlareColors.dim,
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: MotionTimeline(
-                      catalog: catalog,
-                      time: _scene.time,
-                      phase: phase.source,
-                      onSeek: _seek,
+                    Expanded(
+                      child: MotionTimeline(
+                        catalog: catalog,
+                        time: _scene.time,
+                        phase: phase.source,
+                        onSeek: _seek,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1508,60 +1514,74 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final entry in [
-                  (
-                    'library',
-                    s.library,
-                    s.libraryHint,
-                    Icons.fitness_center_outlined,
-                  ),
-                  (
-                    'plans',
-                    s.plans,
-                    store.routines.isEmpty
-                        ? s.plansHint
-                        : '${s.plansMine} · ${store.routines.length}',
-                    Icons.playlist_play_rounded,
-                  ),
-                  (
-                    'progress',
-                    s.progress,
-                    s.moreProgressHint(store.weekTrainingDays),
-                    Icons.insights_outlined,
-                  ),
-                  ('settings', s.settings, s.settingsHint, Icons.tune_outlined),
-                ])
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    minTileHeight: 64,
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: FlareColors.raised,
-                        borderRadius: BorderRadius.circular(12),
+                RowGroup(
+                  children: [
+                    for (final entry in [
+                      (
+                        'library',
+                        s.library,
+                        s.libraryHint,
+                        Icons.fitness_center_outlined,
                       ),
-                      child: Icon(entry.$4, size: 19),
-                    ),
-                    title: Text(
-                      entry.$2,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                      (
+                        'plans',
+                        s.plans,
+                        store.routines.isEmpty
+                            ? s.plansHint
+                            : '${s.plansMine} · ${store.routines.length}',
+                        Icons.playlist_play_rounded,
                       ),
-                    ),
-                    subtitle: Text(
-                      entry.$3,
-                      style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                    ),
-                    trailing: Icon(
-                      Icons.chevron_right_rounded,
-                      size: 20,
-                      color: FlareColors.dim,
-                    ),
-                    onTap: () => Navigator.pop(sheetContext, entry.$1),
-                  ),
-                const Divider(height: 24),
+                      (
+                        'progress',
+                        s.progress,
+                        s.moreProgressHint(store.weekTrainingDays),
+                        Icons.insights_outlined,
+                      ),
+                      (
+                        'settings',
+                        s.settings,
+                        s.settingsHint,
+                        Icons.tune_outlined,
+                      ),
+                    ])
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                        ),
+                        minTileHeight: 64,
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: FlareColors.raised,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(entry.$4, size: 19),
+                        ),
+                        title: Text(
+                          entry.$2,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Text(
+                          entry.$3,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: FlareColors.dim,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right_rounded,
+                          size: 20,
+                          color: FlareColors.dim,
+                        ),
+                        onTap: () => Navigator.pop(sheetContext, entry.$1),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Row(
@@ -1756,7 +1776,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       ValueChanged<T> on,
     ) => FlareSegmented<T>(segments: items, selected: selected, onChanged: on);
     Widget line(String label, Widget control) => Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       child: LayoutBuilder(
         builder: (context, constraints) => constraints.maxWidth < 440
             ? Column(
@@ -1820,7 +1840,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     // Full width, so the label lines up with 语言 and 主题
                     // instead of centring with the chip block.
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 12, 12),
+                      padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -2164,8 +2184,8 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
           : _anchorKey,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: FlareColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: FlareStaticSurface.colorOf(context),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: FlareColors.hairline, width: .5),
         boxShadow: lift <= 0
             ? null
