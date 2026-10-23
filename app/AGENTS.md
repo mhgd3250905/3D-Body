@@ -1,5 +1,7 @@
 # Flutter App 工作约定
 
+2026-10-24，Liquid Glass 自有页面改造经用户“推进合并吧”授权，样稿 `21bddc2` 与铺开源码 `1e7c3b056b8ef062ffe9939df4422366ee9e52d3` 已快进合入并推送 `master`；[实现、26 张浅深截图、109 项验证及合入记录](docs/liquid-glass-rollout-2026-10-24.md)。包版本仍 1.0.10+15，SDK 固定 trainer 0.2.0 / coach 0.4.1、`8b60032c2f43fd8e91f8802c8f054a8ecb7cc110`；SDK 界面边界、R17 和 51 媒体保持。本轮未构建新 APK 或安装手机，原生材质、光学和性能待后续阶段，不把源码合入当设备验收；下方交付保留历史状态。
+
 2026-10-20，PR #122 的 AI 定制已通过三轮复审并经用户同意合入 `master`（远端 `d8e9a0a6047158687b8be72a6e5f486add95e7f5`，本地主线 `e000a3fe86e64c4fb651049528d4baea3f9180e5`）；SDK 固定 0.1.2 / `26e32557058e582d3f1b2b7f722dfa53c2b16aa6`。这是源码检查点，包版本仍为 1.0.9+11；已认可安装版保持 L52 / v42-R17，未安装或发布 AI 版本。版本与验证见[PR122 合入记录](docs/pr122-ai-coach-integration-2026-10-20.md)，设备及长期 QA 仍独立待验收。
 
 2026-10-17，动作制作体系已迁至 [3D-Pose-Hub](https://github.com/mhgd3250905/3D-Pose-Hub/blob/2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee/MIGRATION.md)（固定提交 `2a1b5ef7cd47cc375eea7c10f14f290e2f6ee4ee`，标签 `v0.1.0-import`）。此后动作姿态、脚向、高亮、渲染及人物模型工具只在 Pose-Hub 修改并发布版本；FlareLab 只消费已发布的固定版本。根 `index.html`、`src/`、`public/coach/`、`public/anatomy/`、整个 `app/` 及未迁移的 `tools/motion-v42*`、`tools/bake`、`tools/rekey`、`tools/verify*.mjs` 保留，供网页、App 和接入验证使用。人物模型只在 Pose-Hub 升版本（例如 `training-human-v3`）后同步产出回本仓库，并记录来源 commit。
