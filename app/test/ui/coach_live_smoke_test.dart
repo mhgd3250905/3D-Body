@@ -71,23 +71,23 @@ void main() {
         maxRequestRetries: 0,
         readAsset: (path) async => File(path).readAsStringSync(),
       );
-      final conversation = uc.CoachConversation();
       final watch = Stopwatch()..start();
       final turns = <Map<String, Object?>>[];
       var input = '我是 bboy，平时久坐，肌肉紧张，练托马斯前想热身。';
       try {
         for (var i = 0; i < 2; i++) {
-          final answer = await service.ask(input, conversation);
+          final answer = await service.send(input);
+          if (answer == null) break;
           turns.add({
             'index': i + 1,
-            'cancelled': answer.cancelled,
-            'presetReason': answer.presetReason?.name,
+            'cancelled': answer.status == uc.TurnStatus.cancelled,
+            'presetReason': answer.fallbackReason?.name,
             'questionMode': answer.question?.mode.name,
             'multiple': answer.question?.multiple,
             'optionCount': answer.question?.options.length,
-            'planId': answer.reply?.plan?.id,
-            'actionIds': answer.reply?.plan?.exerciseIds.toList(),
-            'tokens': answer.tokens,
+            'planId': answer.plan?.plan.id,
+            'actionIds': answer.plan?.plan.exerciseIds.toList(),
+            'tokens': answer.usage.promptTokens + answer.usage.completionTokens,
             'questionCount': service.agent?.questionsAsked,
           });
           if (answer.question == null) break;
@@ -99,7 +99,7 @@ void main() {
       } finally {
         watch.stop();
         final report = {
-          'sdkCommit': 'b8f5b82bcf6f4075480fa6fb2382acea4c44b9c0',
+          'sdkCommit': 'd7e0b8fa3afc514fe3a53427cfddb8f7b24c984f',
           'model': config.model,
           'calls': client.calls,
           'elapsedMs': watch.elapsedMilliseconds,
@@ -117,6 +117,7 @@ void main() {
         File(
           output,
         ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
+        await service.dispose();
         transport.close();
       }
       expect(turns, hasLength(2));

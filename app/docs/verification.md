@@ -1,5 +1,9 @@
 # App 验证记录
 
+## SDK conversation controller 验证（2026-10-24）
+
+正式 tag coach 0.5.0 / trainer 0.2.3、原 UI 0.1.1，`flutter pub get --enforce-lockfile` 通过，最终分析无问题。全量 335 通过、26 失败、1 项 opt-in 跳过；独立未修改基线 `63d3318` 全量 333 通过、同 26 项失败及同一跳过，新增失败为 0。本次会话/问题接线与保存开练用例通过，但全量未全绿，未合入/推送。没有放宽或跳过基线失败测试；未做浏览器、编译包或真机。[命令、失败范围与源指纹](coach-conversation-controller-2026-10-24.md)，[公开证据](evidence/coach-controller-20261024/verification.json)。
+
 ## SDK 共用 UI 修复版验证（2026-10-24）
 
 在 `e8ae7b5` 上改锁 coach 0.4.2 / trainer 0.2.2 / coach_ui 0.1.1 正式 tag，全部解析至 `3302d6235a39e2c2b4b51fa196cc32b37c31b54c`。本机临时编码适配已删除，原生 Pub 从远端解析并强制复核锁文件通过；静态分析无问题，153 项受影响测试全部通过，含原 SDK 320px / 2 倍字浅深失败用例。本机 Flutter 3.47.8 所需 intl 0.20.3 和 SDK 固定依赖已同步。Android arm64 release 执行一次并通过，只编译验证、不安装；浏览器复核按用户要求不做。命令、产物及来源见[本轮记录](sdk-shared-ui-r2-2026-10-24.md)和[公开证据](evidence/sdk-shared-ui-20261024-r2/verification.json)。下方候选结果保留原历史状态。

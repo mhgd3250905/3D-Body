@@ -13,38 +13,6 @@ import 'usage_store.dart';
 
 typedef AssetReader = Future<String> Function(String path);
 
-/// 一轮问答在 App 里的结果。
-class CoachAnswer {
-  const CoachAnswer({
-    this.reply,
-    this.presetReason,
-    this.cancelled = false,
-    this.rewritten = false,
-    this.tokens = 0,
-    this.turnId,
-    this.question,
-    this.actions,
-    this.limitReached = false,
-  });
-
-  /// 给用户的回复（取消时为 null）。
-  final uc.CoachReply? reply;
-
-  /// 非 null = 这是 App 内置预设方案（或离线安全提示），不是 AI 定制。
-  final PresetReason? presetReason;
-  final bool cancelled;
-
-  /// 第一次输出没过校验、重写后通过。
-  final bool rewritten;
-  final int tokens;
-  final String? turnId;
-  final uc.AskUserQuestion? question;
-  final uc.ValidatedActions? actions;
-  final bool limitReached;
-
-  bool get preset => presetReason != null;
-}
-
 /// FlareLab 的 AI 训练助理：SDK（ugk_coach）+ App 的目录交集、预设回落、记账、免责标记。
 ///
 /// - 目录：随包 `assets/coach/catalog.json`（Pose-Hub 目录的 flarelab 范围快照），
@@ -82,15 +50,19 @@ class CoachService {
   final AssetReader _read;
 
   late final uc.CatalogRepository _repo;
+  late final uc.CoachProfile _baseProfile;
   late uc.CoachProfile _profile;
+  late uc.Catalog _trustedCatalog;
   late final TemplateFallback _templates = TemplateFallback(
     appCatalog,
     cautionsOf: (id) => _active?[id]?.cautions ?? const [],
     equipmentOf: (id) => _active?[id]?.equipment ?? const [],
   );
   uc.CoachAgent? _agent;
-  uc.CoachConversation? _conversation;
-  uc.CoachContext _context = const uc.CoachContext();
+  uc.CoachConversationController? _conversation;
+
+  /// SDK owns all conversation messages, questions and Agent lifecycle.
+  uc.CoachConversationController? get conversation => _conversation;
 
   /// 当前会话使用固定目录快照；远端更新在明确开始新对话时生效。
   uc.Catalog? _active;
@@ -98,6 +70,8 @@ class CoachService {
   late Set<String> _usable;
   Future<void>? _loading;
   bool _disclaimerAccepted = false;
+  bool _disposed = false;
+  Future<void>? _disposal;
   Set<String> _excluded = const {};
 
   static uc.LlmClient? _clientFor(CoachConfig c) {
@@ -135,7 +109,7 @@ class CoachService {
     return _active!;
   }
 
-  Future<void> load() => _loading ??= _load();
+  Future<void> load() => _disposed ? Future.value() : _loading ??= _load();
 
   Future<void> _load() async {
     final texts = await Future.wait([_read(profileAsset), _read(mediaAsset)]);
@@ -152,7 +126,9 @@ class CoachService {
           : uc.RemoteCatalogSource(manifestUrl: Uri.parse(manifest)),
     );
     await _repo.load();
+    if (_disposed) return;
     _profileJson = Map<String, Object?>.from(jsonDecode(texts[0]) as Map);
+    _baseProfile = uc.CoachProfile.fromJson(_profileJson);
     _syncCatalog();
     await usage.load();
     try {
@@ -171,15 +147,22 @@ class CoachService {
   }
 
   /// 目录（随包或远端热更新）与 App 资产的交集：profile 范围里 App 没有动作 / 视频的 id
-  /// 写进 select.exclude，新会话按这份目录创建 Agent。进行中的会话保持快照。
+  /// 写进 select.exclude，Agent 的目录同时只包含这份交集。进行中的会话保持快照。
   /// 远端新增 / 改到 flarelab 范围的 id 若 App 没有，也会被排除，不会进提示词或通过校验。
   void _syncCatalog() {
     final current = _repo.current;
     if (identical(current, _active)) return;
     // A conversation uses one admitted catalog/profile snapshot. A background
     // refresh must not erase history or the ask_user question budget.
-    if (_agent != null && (_agent!.isBusy || _agent!.turnCount > 0)) return;
-    final scope = uc.CoachProfile.fromJson(_profileJson).scope(current);
+    if (_conversation case final conversation?) {
+      if (conversation.state.isWaiting ||
+          conversation.state.messages.isNotEmpty ||
+          conversation.agent.isBusy ||
+          conversation.agent.turnCount > 0) {
+        return;
+      }
+    }
+    final scope = _baseProfile.scope(current).toList();
     final excluded = {
       for (final d in scope)
         if (!_usable.contains(d.id)) d.id,
@@ -194,15 +177,28 @@ class CoachService {
       json['select'] = select;
     }
     _active = current;
-    _excluded = excluded;
+    _excluded = Set.unmodifiable(excluded);
     _profile = uc.CoachProfile.fromJson(json);
-    final previous = _agent;
-    if (previous != null) unawaited(previous.dispose());
-    if (_client case final client?) {
+    _trustedCatalog = uc.Catalog(
+      version: current.version,
+      formatVersion: current.formatVersion,
+      generatedAt: current.generatedAt,
+      sourceCommit: current.sourceCommit,
+      taxonomy: current.taxonomy,
+      problems: current.problems,
+      drills: [
+        for (final drill in scope)
+          if (_usable.contains(drill.id)) drill,
+      ],
+    );
+    final client = _client;
+    if (_conversation == null && client != null) {
       _agent = uc.CoachAgent(
         client: client,
-        catalog: () => current,
-        profile: _profile,
+        catalog: () => _trustedCatalog,
+        // Keep the same Agent through explicit new conversations. Its original
+        // profile rules apply to the current App-filtered catalog snapshot.
+        profile: _baseProfile,
         usage: usage,
         appId: 'flarelab-app',
         // Device memory was not part of the previous opt-in. Retain chat history
@@ -215,13 +211,12 @@ class CoachService {
             r.userText,
             reason: PresetReason.of(r.reason),
             tier: _tier,
-            history: _conversation == null
-                ? const []
-                : TemplateFallback.userTexts(_conversation!),
+            history: _userTexts,
           );
           return uc.SessionFallbackReply(reply.text, plan: reply.plan);
         },
       );
+      _conversation = uc.CoachConversationController(agent: _agent!);
     }
   }
 
@@ -239,28 +234,144 @@ class CoachService {
     }
   }
 
-  /// Ask one turn using the same Agent across all clarification answers.
-  /// The legacy conversation is an App fallback ledger, not the model protocol.
-  Future<CoachAnswer> ask(
-    String text,
-    uc.CoachConversation conversation, {
-    uc.CancelToken? cancel,
+  List<String> get _userTexts => [
+    for (final message
+        in _conversation?.state.messages ??
+            const <uc.CoachConversationMessage>[])
+      if (message.isUser) message.text,
+  ];
+
+  Future<uc.CoachTurnResult?> send(
+    String text, {
     String tier = 'A',
-    ValueChanged<uc.AgentEvent>? onProgress,
-  }) async {
-    await load();
+    uc.CancelToken? cancel,
+  }) {
+    if (_disposed) return Future.value();
+    final conversation = _conversation;
+    if (conversation == null) {
+      return load().then(
+        (_) => _conversation == null
+            ? null
+            : send(text, tier: tier, cancel: cancel),
+      );
+    }
+    return _submit(
+      conversation,
+      text,
+      tier: tier,
+      cancel: cancel,
+      submit: (context) =>
+          conversation.send(text, context: context, cancel: cancel),
+    );
+  }
+
+  Future<uc.CoachTurnResult?> answerText(
+    String questionId,
+    String text, {
+    String tier = 'A',
+  }) {
+    if (_disposed) return Future.value();
+    final conversation = _conversation;
+    if (conversation == null) {
+      return load().then(
+        (_) => _conversation == null
+            ? null
+            : answerText(questionId, text, tier: tier),
+      );
+    }
+    if (!conversation.canAnswer(questionId)) return Future.value();
+    return _submit(
+      conversation,
+      text,
+      tier: tier,
+      submit: (context) =>
+          conversation.answerText(questionId, text, context: context),
+    );
+  }
+
+  Future<uc.CoachTurnResult?> answerChoices(
+    String questionId,
+    List<String> choices, {
+    String tier = 'A',
+  }) {
+    if (_disposed) return Future.value();
+    final conversation = _conversation;
+    if (conversation == null) {
+      return load().then(
+        (_) => _conversation == null
+            ? null
+            : answerChoices(questionId, choices, tier: tier),
+      );
+    }
+    // Use the SDK's exact validated ordering to derive App context as well.
+    final text = conversation.choiceText(questionId, choices);
+    if (text == null) return Future.value();
+    return _submit(
+      conversation,
+      text,
+      tier: tier,
+      submit: (context) =>
+          conversation.answerChoices(questionId, choices, context: context),
+    );
+  }
+
+  Future<uc.CoachTurnResult?> _submit(
+    uc.CoachConversationController conversation,
+    String raw, {
+    required String tier,
+    required Future<uc.CoachTurnResult?> Function(uc.CoachContext) submit,
+    uc.CancelToken? cancel,
+  }) {
+    final text = raw.trim();
+    if (_disposed || text.isEmpty || conversation.state.isWaiting) {
+      return Future.value();
+    }
     if (cancel?.isCancelled ?? false) {
-      return const CoachAnswer(cancelled: true);
+      conversation.cancel();
+      return Future.value();
     }
-    if (_agent?.isBusy ?? false) return const CoachAnswer(cancelled: true);
-    if (_conversation != null && !identical(_conversation, conversation)) {
-      _agent?.reset();
-      _context = const uc.CoachContext();
-    }
-    _conversation = conversation;
     _syncCatalog();
     _tier = tier;
-    final history = TemplateFallback.userTexts(conversation);
+    final history = _userTexts;
+    if (TemplateFallback.anyRedFlag(text, history)) {
+      return Future.value(_safetyCommand(conversation, text));
+    }
+    return submit(_contextFor(text, tier, history));
+  }
+
+  /// App-owned safety command: never send red-flag requests to the model.
+  /// Display history remains exclusively in the SDK controller.
+  uc.CoachTurnResult _safetyCommand(
+    uc.CoachConversationController conversation,
+    String text,
+  ) {
+    conversation.invalidateQuestion();
+    final at = DateTime.now();
+    final id =
+        'local-safety-${at.microsecondsSinceEpoch}-${conversation.state.messages.length}';
+    conversation.restoreHistory([
+      ...conversation.state.messages,
+      uc.CoachConversationMessage(
+        id: '$id-user',
+        at: at,
+        isUser: true,
+        text: text,
+      ),
+      uc.CoachConversationMessage(
+        id: id,
+        at: at,
+        text: TemplateFallback.redFlagReply,
+        turnId: id,
+      ),
+    ]);
+    return uc.CoachTurnResult(
+      turnId: id,
+      status: uc.TurnStatus.fallback,
+      text: TemplateFallback.redFlagReply,
+    );
+  }
+
+  uc.CoachContext _contextFor(String text, String tier, List<String> history) {
     final chosenTier = TemplateFallback.pickTier(text, tier, history: history);
     final allText = [...history, text];
     Set<String>? equipment;
@@ -293,100 +404,89 @@ class CoachService {
         }
       }
     }
-    final previousContext = _context;
-    _context = _context.copyWith(
+    return uc.CoachContext(
       scene: chosenTier == 'C' ? 'gym' : 'home',
-      avoid: {
-        ..._context.avoid,
-        ...TemplateFallback.protectedParts(text, history),
-      },
+      avoid: TemplateFallback.protectedParts(text, history),
       equipment: equipment,
       notes: ['计划页场景：${TemplateFallback.tierLabel(chosenTier)}。'],
     );
-    final agent = _agent;
-    if (agent == null || TemplateFallback.anyRedFlag(text, history)) {
-      final reply = _templates.reply(
-        text,
-        reason: agent == null
-            ? PresetReason.notConfigured
-            : PresetReason.unavailable,
-        tier: tier,
-        history: history,
-      );
-      _record(conversation, text, reply);
-      return CoachAnswer(
-        reply: reply,
-        presetReason: agent == null
-            ? PresetReason.notConfigured
-            : PresetReason.unavailable,
-      );
-    }
-    final subscription = onProgress == null
-        ? null
-        : agent.events.listen(onProgress);
-    late final uc.CoachTurnResult result;
-    try {
-      result = await agent.send(text, context: _context, cancel: cancel);
-    } finally {
-      if (subscription != null) unawaited(subscription.cancel());
-    }
-    final tokens = result.usage.promptTokens + result.usage.completionTokens;
-    if (result.status == uc.TurnStatus.cancelled) {
-      _context = previousContext;
-      return CoachAnswer(cancelled: true, tokens: tokens);
-    }
-    if (result.status == uc.TurnStatus.busy) {
-      return const CoachAnswer(cancelled: true);
-    }
-    final question = result.question;
-    final plan = result.plan?.plan;
-    final reply = switch (result.status) {
-      uc.TurnStatus.limitReached => const uc.CoachReply.text(
-        '本次对话已达到上限。请点击“新对话”继续，已保存的计划会保留。',
-      ),
-      uc.TurnStatus.inputTooLong => const uc.CoachReply.text(
-        '这条消息太长了，请缩短后再发送。',
-      ),
-      uc.TurnStatus.error => const uc.CoachReply.text('暂时没能排出合格的计划，请稍后再试。'),
-      _ =>
-        question != null
-            ? uc.CoachReply.ask(question.question, question.options)
-            : plan != null
-            ? uc.CoachReply.plan(result.text, plan)
-            : uc.CoachReply.text(result.text),
-    };
-    _record(conversation, text, reply);
-    return CoachAnswer(
-      reply: reply,
-      turnId: result.turnId,
-      question: question,
-      actions: result.actions,
-      limitReached: result.status == uc.TurnStatus.limitReached,
-      rewritten: result.resubmits > 0,
-      presetReason: result.status == uc.TurnStatus.fallback
-          ? PresetReason.of(result.fallbackReason!)
-          : null,
-      tokens: tokens,
-    );
-  }
-
-  void _record(
-    uc.CoachConversation conversation,
-    String text,
-    uc.CoachReply reply,
-  ) {
-    final now = DateTime.now();
-    conversation
-      ..addUser(text.trim(), now)
-      ..addAssistant(reply, now);
   }
 
   /// Called only for an explicit new chat, never between clarification turns.
-  void resetConversation() {
-    _agent?.reset();
-    _conversation = null;
-    _context = const uc.CoachContext();
-    _syncCatalog();
+  void newConversation() {
+    if (_disposed) return;
+    _conversation?.newConversation();
+    if (_active != null) _syncCatalog();
+  }
+
+  /// Restores only presentation data, after admission with the current App gate.
+  /// The SDK closes every historical question and resets the same Agent.
+  void restoreHistory(List<uc.CoachConversationMessage> messages) {
+    final conversation = _conversation;
+    if (_disposed || conversation == null) return;
+    final gate = uc.ToolGate(catalog: catalog, profile: profile);
+    final admitted = <uc.CoachConversationMessage>[];
+    for (final message in messages) {
+      final storedPlan = message.plan;
+      final plan = storedPlan == null
+          ? null
+          : gate.admitTemplate(storedPlan.plan);
+      if (storedPlan != null && plan == null) {
+        throw StateError('Stored plan is outside the current App gate');
+      }
+      uc.ValidatedActions? actions;
+      if (message.actions case final storedActions?) {
+        final checked = gate.check('', [
+          uc.LlmToolCall(
+            id: 'restore-${message.id}',
+            name: uc.CoachTools.showActions,
+            arguments: jsonEncode({
+              'items': [
+                for (final item in storedActions.items)
+                  {
+                    'actionId': item.id,
+                    if (item.note != null) 'note': item.note,
+                  },
+              ],
+            }),
+          ),
+        ]);
+        if (!checked.ok || checked.actions == null) {
+          throw StateError('Stored actions are outside the current App gate');
+        }
+        actions = checked.actions;
+      }
+      admitted.add(
+        uc.CoachConversationMessage(
+          id: message.id,
+          at: message.at,
+          isUser: message.isUser,
+          text: message.text,
+          question: message.question,
+          questionAnswered: message.questionAnswered,
+          answeredChoices: message.answeredChoices,
+          plan: plan,
+          actions: actions,
+          turnId: message.turnId,
+        ),
+      );
+    }
+    conversation.restoreHistory(admitted);
+  }
+
+  Future<void> dispose() => _disposal ??= _dispose();
+
+  Future<void> _dispose() async {
+    _disposed = true;
+    try {
+      if (_loading case final loading?) await loading;
+    } finally {
+      try {
+        await _conversation?.dispose();
+      } finally {
+        if (_client case final uc.OpenAiCompatibleClient client) client.close();
+      }
+    }
   }
 
   @visibleForTesting

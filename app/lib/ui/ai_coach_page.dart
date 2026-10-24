@@ -20,23 +20,8 @@ import 'theme.dart';
 bool aiCoachAvailable(BuildContext context) =>
     Localizations.localeOf(context).languageCode == 'zh';
 
-/// 对话里的一条。
-class CoachMessage {
-  const CoachMessage.user(String this.text, {this.at})
-    : answer = null,
-      resultId = -1;
-  const CoachMessage.answer(CoachAnswer this.answer, this.resultId, {this.at})
-    : text = null;
-  final DateTime? at;
-  final String? text;
-  final CoachAnswer? answer;
-
-  /// 应用给每份回答分配的身份（会话内唯一），保存状态按它绑定，不依赖模型给的 plan id。
-  final int resultId;
-  bool get isUser => text != null;
-}
-
-/// 一次 AI 定制对话的状态。由外壳持有，进入跟练 / 动作详情再回来时对话还在。
+/// App presentation state: progress, composer recovery and plan persistence.
+/// Messages, questions and the Agent lifecycle belong to the SDK controller.
 class AiCoachSession extends ChangeNotifier {
   AiCoachSession(this.service, {DateTime Function()? now})
     : _now = now ?? DateTime.now,
@@ -45,92 +30,52 @@ class AiCoachSession extends ChangeNotifier {
   final CoachService service;
   final DateTime Function() _now;
   final DateTime createdAt;
-  int generation = 0;
-  int? _activeQuestionResultId;
-  bool _acceptNewQuestions = true;
-  final Set<int> _answeredQuestions = {};
-  final Map<int, List<String>> answeredQuestionChoices = {};
-
-  int? get activeQuestionResultId => _activeQuestionResultId;
-  bool questionActive(int resultId) =>
-      !_disposed && !busy && _activeQuestionResultId == resultId;
-  bool questionAnswered(int resultId) => _answeredQuestions.contains(resultId);
-
-  uc.AskUserQuestion? _question(int resultId) {
-    for (final message in messages) {
-      if (message.resultId == resultId) return message.answer?.question;
-    }
-    return null;
-  }
-
-  Future<void> answerText(
-    int resultId,
-    String raw, {
-    required String tier,
-  }) async {
-    if (!questionActive(resultId) ||
-        _question(resultId)?.mode != uc.AskUserMode.text) {
-      return;
-    }
-    await send(raw, tier: tier);
-  }
-
-  Future<void> answerChoices(
-    int resultId,
-    List<String> choices, {
-    required String tier,
-  }) async {
-    final question = _question(resultId);
-    if (!questionActive(resultId) ||
-        question == null ||
-        question.mode != uc.AskUserMode.choice) {
-      return;
-    }
-    final selected = choices.toSet();
-    if (selected.isEmpty ||
-        selected.length != choices.length ||
-        choices.any((v) => !question.options.contains(v)) ||
-        (!question.multiple && choices.length != 1)) {
-      return;
-    }
-    final ordered = question.options.where(selected.contains).toList();
-    answeredQuestionChoices[resultId] = List.unmodifiable(ordered);
-    await send(ordered.join('、'), tier: tier);
-  }
-
-  /// Reopening history never silently revives an old pending ask_user task.
-  void closePresentation() {
-    _acceptNewQuestions = false;
-    _activeQuestionResultId = null;
-  }
-
-  void openPresentation() => _acceptNewQuestions = true;
-  final uc.CoachConversation conversation = uc.CoachConversation();
-  final List<CoachMessage> messages = [];
-
-  /// 已保存的回答：回答身份（[CoachMessage.resultId]）→ routine id。
-  /// routine 可能已被删除，是否「已保存」以 store 里实际存在为准（[isSaved]）。
-  final Map<int, String> saved = {};
-  final Map<int, String> pendingSaved = {};
-  int _nextResult = 0;
-  uc.CancelToken? _cancel;
-  DateTime? _startedAt;
-  uc.AgentEvent? progress;
-  bool _loaded = false;
-  bool _disposed = false;
-
-  /// 刚被停止的那句话（页面取走后清空）。
-  String? cancelledText;
-
-  bool get busy => _cancel != null;
-  DateTime? get startedAt => _startedAt;
+  uc.CoachConversationController? get controller => service.conversation;
+  List<uc.CoachConversationMessage> get messages =>
+      controller?.state.messages ?? const [];
+  bool get busy => controller?.state.isWaiting ?? false;
   bool get loaded => _loaded;
   bool get showDisclaimer => _loaded && !service.disclaimerAccepted;
+  DateTime? get startedAt => _pendingInput?.at;
+  String? get pendingText => busy ? _pendingInput?.text : null;
 
-  Future<void> load() async {
+  final Map<String, String> saved = {};
+  final Map<String, String> pendingSaved = {};
+  final Set<String> _presetTurns = {};
+  StreamSubscription<uc.AgentEvent>? _events;
+  Future<void>? _loading;
+  _PendingInput? _pendingInput;
+  bool _loaded = false;
+  bool _disposed = false;
+  bool _presented = true;
+  int generation = 0;
+  uc.AgentEvent? progress;
+  String? cancelledText;
+  String? notice;
+
+  Future<void> load() => _loading ??= _load();
+
+  Future<void> _load() async {
     await service.load();
+    if (_disposed) return;
+    controller?.addListener(_changed);
+    _events = controller?.events.listen((event) {
+      progress = event;
+      _notify();
+    });
     _loaded = true;
     _notify();
+  }
+
+  void _changed() {
+    if (!_presented) controller?.invalidateQuestion();
+    _notify();
+  }
+
+  void openPresentation() => _presented = true;
+  void closePresentation() {
+    _presented = false;
+    controller?.invalidateQuestion();
   }
 
   Future<void> acceptDisclaimer() async {
@@ -138,86 +83,99 @@ class AiCoachSession extends ChangeNotifier {
     _notify();
   }
 
-  Future<void> send(String raw, {required String tier}) async {
-    final text = raw.trim();
-    if (_disposed || text.isEmpty || busy) return;
-    final previousQuestion = _activeQuestionResultId;
-    if (previousQuestion != null) _answeredQuestions.add(previousQuestion);
-    _activeQuestionResultId = null;
-    final cancel = uc.CancelToken();
-    _cancel = cancel;
-    _startedAt = _now();
+  Future<void> send(String text, {required String tier}) async {
+    await load();
+    await _submit(text, () => service.send(text, tier: tier));
+  }
+
+  Future<void> answerText(
+    String id,
+    String text, {
+    required String tier,
+  }) async {
+    await _submit(text, () => service.answerText(id, text, tier: tier));
+  }
+
+  Future<void> answerChoices(
+    String id,
+    List<String> choices, {
+    required String tier,
+  }) async {
+    final text = controller?.choiceText(id, choices);
+    if (text == null) return;
+    await _submit(text, () => service.answerChoices(id, choices, tier: tier));
+  }
+
+  Future<void> _submit(
+    String raw,
+    Future<uc.CoachTurnResult?> Function() submit,
+  ) async {
+    if (_disposed || raw.trim().isEmpty || busy) return;
+    final input = _PendingInput(raw.trim(), _now());
+    _pendingInput = input;
     progress = null;
-    messages.add(CoachMessage.user(text, at: _now()));
-    _notify();
-    CoachAnswer answer;
+    notice = null;
     try {
-      answer = await service.ask(
-        text,
-        conversation,
-        cancel: cancel,
-        tier: tier,
-        onProgress: (event) {
-          progress = event;
-          _notify();
-        },
-      );
+      final result = await submit();
+      if (_disposed || !identical(_pendingInput, input)) return;
+      if (result != null) {
+        if (result.status == uc.TurnStatus.fallback) {
+          _presetTurns.add(result.turnId);
+        }
+        notice = switch (result.status) {
+          uc.TurnStatus.limitReached => '本次对话已达到上限。请点击“新对话”继续，已保存的计划会保留。',
+          uc.TurnStatus.inputTooLong => '这条消息太长了，请缩短后再发送。',
+          uc.TurnStatus.error => '暂时没能排出合格的计划，请稍后再试。',
+          _ => null,
+        };
+      }
     } on Object {
-      answer = const CoachAnswer(
-        reply: uc.CoachReply.text('出了点问题，没能排出计划。请稍后再试。'),
-      );
-    }
-    if (_disposed) return;
-    _cancel = null;
-    _startedAt = null;
-    if (answer.cancelled) {
-      // 取消：撤回这句话，页面把它放回输入框。
-      if (messages.isNotEmpty && messages.last.isUser) messages.removeLast();
-      cancelledText = text;
-    } else {
-      final resultId = _nextResult++;
-      messages.add(CoachMessage.answer(answer, resultId, at: _now()));
-      if (answer.question != null && _acceptNewQuestions) {
-        _activeQuestionResultId = resultId;
+      if (!_disposed && identical(_pendingInput, input)) {
+        notice = '出了点问题，没能排出计划。请稍后再试。';
+      }
+    } finally {
+      if (identical(_pendingInput, input)) {
+        _pendingInput = null;
+        _notify();
       }
     }
-    _notify();
   }
+
+  bool isPreset(uc.CoachConversationMessage message) =>
+      message.plan?.plan.source == 'template' ||
+      _presetTurns.contains(message.turnId);
 
   void newConversation() {
     if (busy) return;
-    service.resetConversation();
-    conversation.clear();
-    messages.clear();
+    service.newConversation();
+    _pendingInput = null;
     saved.clear();
     pendingSaved.clear();
+    _presetTurns.clear();
     generation++;
-    _activeQuestionResultId = null;
-    _answeredQuestions.clear();
-    answeredQuestionChoices.clear();
     cancelledText = null;
+    notice = null;
     _notify();
   }
 
-  /// 停止正在进行的请求（HTTP 真正中止，不回落、不记进对话）。
   void stop() {
-    _activeQuestionResultId = null;
-    _cancel?.cancel();
+    cancelledText = _pendingInput?.text;
+    _pendingInput = null;
+    controller?.cancel();
   }
 
-  void markPendingSave(int resultId, String routineId) {
+  void markPendingSave(String resultId, String routineId) {
     pendingSaved[resultId] = routineId;
     _notify();
   }
 
-  void markSaved(int resultId, String routineId) {
+  void markSaved(String resultId, String routineId) {
     pendingSaved.remove(resultId);
     saved[resultId] = routineId;
     _notify();
   }
 
-  /// 这份回答保存的计划还在「我的计划」里（删了就可以重新保存）。
-  bool isSaved(int resultId, LearningStore store) {
+  bool isSaved(String resultId, LearningStore store) {
     final id = saved[resultId];
     return id != null && store.routineById(id) != null;
   }
@@ -229,10 +187,18 @@ class AiCoachSession extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    _activeQuestionResultId = null;
-    _cancel?.cancel();
+    controller?.removeListener(_changed);
+    unawaited(_events?.cancel());
+    unawaited(service.dispose());
     super.dispose();
   }
+}
+
+/// Only the uncommitted composer bubble; never a second conversation history.
+class _PendingInput {
+  const _PendingInput(this.text, this.at);
+  final String text;
+  final DateTime at;
 }
 
 class AiCoachPage extends StatefulWidget {
@@ -264,7 +230,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
   final _scroll = ScrollController();
   late final Set<String> _initiallySeen;
   Timer? _ticker;
-  final _saving = <int>{};
+  final _saving = <String>{};
 
   /// 本次等待已过的秒数（按 1 秒节拍累加）。
   int _elapsed = 0;
@@ -275,10 +241,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
   void initState() {
     super.initState();
     session.openPresentation();
-    _initiallySeen = {
-      for (var i = 0; i < session.messages.length; i++)
-        'coach-${session.generation}-$i',
-    };
+    _initiallySeen = {for (final message in session.messages) message.id};
     session.addListener(_changed);
     if (!session.loaded) unawaited(session.load());
     if (session.busy) _startTicker();
@@ -353,16 +316,16 @@ class _AiCoachPageState extends State<AiCoachPage> {
 
   List<String> get _suggestions {
     if (session.messages.isEmpty) return AiCoachPage.examples;
-    final latest = session.messages.last.answer;
-    if (latest?.question != null) return const ['直接出计划'];
-    if (latest?.reply?.plan != null) return const ['时间短一点', '换成徒手', '难度低一点'];
+    final latest = session.messages.last;
+    if (latest.question != null) return const ['直接出计划'];
+    if (latest.plan != null) return const ['时间短一点', '换成徒手', '难度低一点'];
     return const ['在家练核心', '托马斯热身', '练支撑臂'];
   }
 
   Future<void> _save(
     uc.TrainingPlan plan,
     List<CoachPlanEntry> entries,
-    int resultId,
+    String resultId,
   ) async {
     if (entries.isEmpty ||
         session.isSaved(resultId, widget.store) ||
@@ -485,7 +448,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
                       isUser: false,
                       child: _Disclaimer(onAccept: session.acceptDisclaimer),
                     ),
-                  if (session.messages.isEmpty)
+                  if (session.messages.isEmpty && session.pendingText == null)
                     cui.CoachChatEntry(
                       id: 'intro-${session.generation}',
                       at: session.createdAt,
@@ -499,20 +462,34 @@ class _AiCoachPageState extends State<AiCoachPage> {
                     ),
                   for (var i = 0; i < session.messages.length; i++)
                     cui.CoachChatEntry(
-                      id: 'coach-${session.generation}-$i',
-                      at: session.messages[i].at ?? session.createdAt,
+                      id: session.messages[i].id,
+                      at: session.messages[i].at,
                       isUser: session.messages[i].isUser,
-                      isCard: session.messages[i].answer?.reply?.plan != null,
+                      isCard: session.messages[i].plan != null,
                       child: KeyedSubtree(
                         key: ValueKey('coach-msg-$i'),
                         child: session.messages[i].isUser
                             ? _plain(
-                                session.messages[i].text!,
+                                session.messages[i].text,
                                 user: true,
                                 id: 'user-$i',
                               )
                             : _answer(context, session.messages[i], i),
                       ),
+                    ),
+                  if (session.pendingText case final text?)
+                    cui.CoachChatEntry(
+                      id: 'pending-input-${session.generation}',
+                      at: session.startedAt ?? session.createdAt,
+                      isUser: true,
+                      child: _plain(text, user: true),
+                    ),
+                  if (session.notice case final notice?)
+                    cui.CoachChatEntry(
+                      id: 'notice-${session.generation}-${session.messages.length}',
+                      at: DateTime.now(),
+                      isUser: false,
+                      child: _plain(notice),
                     ),
                 ],
               ),
@@ -549,60 +526,63 @@ class _AiCoachPageState extends State<AiCoachPage> {
     onOption: (_) {},
   );
 
-  Widget _answer(BuildContext context, CoachMessage message, int index) {
-    final answer = message.answer!;
-    final reply = answer.reply;
-    if (reply == null) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (reply.text.isNotEmpty && answer.question == null)
-          _plain(
-            reply.text,
-            caption: answer.preset && reply.plan == null ? '预设方案' : null,
+  Widget _answer(
+    BuildContext context,
+    uc.CoachConversationMessage message,
+    int index,
+  ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      if (message.text.isNotEmpty)
+        _plain(
+          message.text,
+          caption: session.isPreset(message) && message.plan == null
+              ? '预设方案'
+              : null,
+        ),
+      if (message.question case final question?)
+        cui.CoachQuestionBubble(
+          key: ValueKey('coach-question-${message.id}'),
+          question: coachQuestionData(
+            question,
+            id: 'coach-question-${message.id}',
+            answered: message.questionAnswered,
+            answeredChoices: message.answeredChoices,
           ),
-        if (answer.question case final question?)
-          cui.CoachQuestionBubble(
-            key: ValueKey(
-              'coach-question-${answer.turnId ?? message.resultId}',
-            ),
-            question: coachQuestionData(
-              question,
-              id: 'coach-question-${message.resultId}',
-              answered: session.questionAnswered(message.resultId),
-              answeredChoices:
-                  session.answeredQuestionChoices[message.resultId] ?? const [],
-            ),
-            enabled: session.questionActive(message.resultId),
-            onTextAnswer: (text) => session.answerText(
-              message.resultId,
-              text,
-              tier: widget.store.settings.tier,
-            ),
-            onChoiceAnswer: (choices) => session.answerChoices(
-              message.resultId,
-              choices,
-              tier: widget.store.settings.tier,
-            ),
+          enabled: session.controller?.canAnswer(message.id) ?? false,
+          onTextAnswer: (text) => session.answerText(
+            message.id,
+            text,
+            tier: widget.store.settings.tier,
           ),
-        if (answer.actions case final actions?)
-          _ActionCard(
-            actions: actions,
-            catalog: widget.catalog,
-            onDrill: widget.onDrill,
+          onChoiceAnswer: (choices) => session.answerChoices(
+            message.id,
+            choices,
+            tier: widget.store.settings.tier,
           ),
-        if (reply.plan case final plan?)
-          _planCard(context, plan, answer, message.resultId),
-      ],
-    );
-  }
+        ),
+      if (message.actions case final actions?)
+        _ActionCard(
+          actions: actions,
+          catalog: widget.catalog,
+          onDrill: widget.onDrill,
+        ),
+      if (message.plan case final admitted?)
+        _planCard(
+          context,
+          admitted.plan,
+          message.id,
+          session.isPreset(message),
+        ),
+    ],
+  );
 
   Widget _planCard(
     BuildContext context,
     uc.TrainingPlan plan,
-    CoachAnswer answer,
-    int resultId,
+    String resultId,
+    bool preset,
   ) {
     if (!session.loaded) return const SizedBox.shrink();
     final service = session.service;
@@ -622,7 +602,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
     );
     final cui.CoachRoutine routine;
     try {
-      routine = mapper.routine(plan, resultId: resultId, preset: answer.preset);
+      routine = mapper.routine(plan, resultId: resultId, preset: preset);
     } on StateError {
       return _plain('计划包含暂不可用的动作，无法开始。');
     }

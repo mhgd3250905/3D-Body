@@ -546,8 +546,9 @@ void main() {
     );
     await store.initialize();
     final service = CoachService(
-      config: const CoachConfig(),
+      config: const CoachConfig(apiKey: 'test'),
       appCatalog: catalog,
+      client: uc.FakeLlmClient(const []),
       usage: CoachUsageStore(),
       storage: MemoryStateStorage(),
       readAsset: (path) async => File(path).readAsStringSync(),
@@ -556,9 +557,18 @@ void main() {
     await session.load();
     await session.acceptDisclaimer();
     expect(service.validatePlan(plan).errors, isEmpty);
-    session.messages.add(
-      CoachMessage.answer(CoachAnswer(reply: uc.CoachReply.plan('', plan)), 0),
-    );
+    final admitted = uc.ToolGate(
+      catalog: service.catalog,
+      profile: service.profile,
+    ).admitTemplate(plan);
+    expect(admitted, isNotNull);
+    service.restoreHistory([
+      uc.CoachConversationMessage(
+        id: 'saved-segmented-plan',
+        at: DateTime.utc(2026, 10, 24),
+        plan: admitted,
+      ),
+    ]);
     addTearDown(session.dispose);
     addTearDown(store.dispose);
     uc.TrainingPlan? started;

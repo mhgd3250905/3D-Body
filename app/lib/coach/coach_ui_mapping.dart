@@ -28,7 +28,7 @@ class FlareCoachUiMapper {
 
   cui.CoachRoutine routine(
     uc.TrainingPlan plan, {
-    required int resultId,
+    required String resultId,
     required bool preset,
   }) {
     if (plan.exerciseIds.any((id) => !trustedIds.contains(id))) {

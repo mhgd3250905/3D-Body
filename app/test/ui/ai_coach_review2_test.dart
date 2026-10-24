@@ -213,9 +213,8 @@ void main() {
           const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
         ]),
       );
-      final conv = uc.CoachConversation();
-      await s.ask('在健身房练核心', conv);
-      final plan = (await s.ask('改为在家练10分钟', conv)).reply!.plan!;
+      await s.send('在健身房练核心');
+      final plan = (await s.send('改为在家练10分钟'))!.plan!.plan;
       expect(plan.id, 'template-core-A');
       expect(TemplateFallback.pickTier('在家练', 'B'), 'B');
     });
@@ -230,17 +229,16 @@ void main() {
         ]),
       );
       await s.load();
-      final conv = uc.CoachConversation();
-      await s.ask('手腕不舒服，别安排手腕承重', conv);
-      final reply = (await s.ask('给我一个热身方案', conv)).reply!;
-      final ids = reply.plan?.exerciseIds ?? const <String>{};
+      await s.send('手腕不舒服，别安排手腕承重');
+      final reply = (await s.send('给我一个热身方案'))!;
+      final ids = reply.plan?.plan.exerciseIds ?? const <String>{};
       expect(ids, isNot(contains('serratus-A')));
       for (final id in ids) {
         expect(s.catalog[id]!.cautions, isNot(contains('手腕')), reason: id);
       }
       // 热身徒手版 4 个动作里 3 个含手腕负担，只留肩胛动作。
       expect(ids, {'scapular-A'});
-      expect(reply.plan!.avoid, contains('手腕'));
+      expect(reply.plan!.plan.avoid, contains('手腕'));
       expect(reply.text, contains('已去掉 3 个'));
     });
 
@@ -267,15 +265,32 @@ void main() {
 
     Future<Set<String>> offlineIds(CoachService s, List<String> turns) async {
       await s.load();
-      final conv = uc.CoachConversation();
-      uc.CoachReply? last;
-      for (final t in turns) {
-        last = (await s.ask(t, conv)).reply;
+      if (!s.configured) {
+        final templates = TemplateFallback(
+          catalog,
+          cautionsOf: (id) => s.catalog[id]?.cautions ?? const [],
+        );
+        final history = <String>[];
+        uc.CoachReply? reply;
+        for (final text in turns) {
+          reply = templates.reply(
+            text,
+            reason: PresetReason.notConfigured,
+            tier: 'A',
+            history: history,
+          );
+          history.add(text);
+        }
+        return reply!.plan?.exerciseIds ?? const <String>{};
       }
-      return last!.plan?.exerciseIds ?? const <String>{};
+      uc.CoachTurnResult? last;
+      for (final text in turns) {
+        last = await s.send(text);
+      }
+      return last!.plan?.plan.exerciseIds ?? const <String>{};
     }
 
-    test('未配置模型：手腕、肩都不舒服 → 热身回落剔除手腕/肩 cautions', () async {
+    test('App 预设：手腕、肩都不舒服 → 热身回落剔除手腕/肩 cautions', () async {
       final s = service();
       final ids = await offlineIds(s, ['手腕、肩都不舒服，做热身']);
       expect(ids, isNot(contains('serratus-A')));
@@ -288,7 +303,7 @@ void main() {
       }
     });
 
-    test('未配置模型：腰、膝都不舒服 → 练腿回落剔除腰/膝 cautions', () async {
+    test('App 预设：腰、膝都不舒服 → 练腿回落剔除腰/膝 cautions', () async {
       final s = service();
       final ids = await offlineIds(s, ['腰、膝都不舒服，练腿']);
       expect(ids, isNot(contains('glute-max-A')));

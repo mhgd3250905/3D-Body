@@ -1,5 +1,9 @@
 # Flare 版本管理台账
 
+## SDK conversation controller 待审候选（2026-10-24）
+
+从 `master 63d3318` 建立 `codex/coach-conversation-controller`，锁定 coach 0.5.0 / trainer 0.2.3（`d7e0b8f`），UI 0.1.1 保持。删除旧会话/问题状态实现，分析无问题，全量 335 通过、26 项基线失败、1 项原 opt-in 跳过；与干净基线失败名单相同。尚未满足全量通过条件，未合入/推送/安装，`release/1.0` 保持。[迁移、验证与阻塞](coach-conversation-controller-2026-10-24.md)。源码版本和既有手机 +16/R17 身份保持。
+
 ## SDK 共用 UI 修复版主线接入（2026-10-24）
 
 用户在候选 `e8ae7b5` 上追加授权：改锁 `ugk_coach-v0.4.2`、`ugk_trainer-v0.2.2`、`ugk_coach_ui-v0.1.1`（均为 `3302d62`），移除本机编码适配，分析/测试及一次 Android release 编译全过后直接合入并推送 `master`；`release/1.0` 不动。原两项 SDK 布局失败已由正式 tag 修复，153 项相关测试全过；[版本与证据](sdk-shared-ui-r2-2026-10-24.md)。App 源码版本仍 `1.0.10+15`，本轮没有手机安装或商店发布，原 +16/R17 及 L52 有限用户认可继续分列。

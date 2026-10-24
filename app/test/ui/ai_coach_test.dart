@@ -261,29 +261,31 @@ void main() {
     });
   });
 
-  group('PR #122 审核：多轮回落记得先前约束', () {
-    test('未配置：先说做了手术，第二轮仍不给计划', () async {
+  group('App 与 SDK conversation 接线', () {
+    test('未配置时不创建 AI 会话，也不处理隐藏入口的输入', () async {
       final s = service();
-      final conv = uc.CoachConversation();
-      expect((await s.ask('我做了手术，想恢复训练', conv)).reply!.plan, isNull);
-      final a2 = await s.ask('给我一个简单方案', conv);
-      expect(a2.reply!.plan, isNull);
-      expect(a2.reply!.text, contains('就医'));
+      addTearDown(s.dispose);
+      await s.load();
+      expect(s.conversation, isNull);
+      expect(await s.send('想练托马斯'), isNull);
     });
 
-    test('首轮模型建议就医、第二轮断网：回落仍不给计划', () async {
-      final s = service(
-        fake: AgentFakeLlmClient([
-          {'kind': 'reply', 'text': '术后请先咨询医生，确认可以练再来。'},
-          const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
-        ]),
+    test('红旗本地提示保留历史约束，两轮均不调用模型', () async {
+      final fake = AgentFakeLlmClient(const []);
+      final s = service(fake: fake);
+      addTearDown(s.dispose);
+      await s.send('我做了手术，想恢复训练');
+      final result = await s.send('给我一个简单方案');
+      expect(result!.plan, isNull);
+      expect(result.text, contains('就医'));
+      expect(fake.requests, isEmpty);
+      expect(
+        s.conversation!.state.messages.where((m) => m.isUser),
+        hasLength(2),
       );
-      final conv = uc.CoachConversation();
-      await s.ask('我做了手术，想恢复训练', conv);
-      expect((await s.ask('给我一个简单方案', conv)).reply?.plan, isNull);
     });
 
-    test('健身房练核心 → 追问时长 → 答「10分钟」时断网：回落仍是核心、健身房版', () async {
+    test('追问回答断网时仍按历史方向和场所选择 App 预设', () async {
       final s = service(
         fake: AgentFakeLlmClient([
           {
@@ -294,114 +296,68 @@ void main() {
           const uc.LlmException(uc.LlmErrorKind.network, 'offline'),
         ]),
       );
-      final conv = uc.CoachConversation();
-      await s.ask('在健身房，想练核心', conv);
-      final plan = (await s.ask('10分钟', conv)).reply?.plan;
-      expect(plan, isNotNull);
-      expect(plan!.id, 'template-core-C');
-    });
-  });
-
-  group('0.4 Agent 多轮约定', () {
-    test('三次提问上限由 SDK 保持，第四次拒绝后交付计划', () async {
-      Map<String, Object?> question(String text) => {
-        'kind': 'ask',
-        'text': text,
-      };
-      final fake = AgentFakeLlmClient([
-        question('练哪里？'),
-        question('练多久？'),
-        question('还有补充吗？'),
-        question('还要再问一次？'),
-        validPlanEnvelope(),
-      ]);
-      final s = service(fake: fake);
-      final conv = uc.CoachConversation();
-      for (final text in ['想练托马斯', '支撑臂', '20 分钟']) {
-        expect((await s.ask(text, conv)).question, isNotNull);
-      }
-      expect(s.agent!.questionsAsked, 3);
-      final result = await s.ask('没有，直接出', conv);
-      expect(result.question, isNull);
-      expect(result.reply!.plan, isNotNull);
-      expect(
-        fake.requests.last.messages.map((m) => m.content).join(),
-        contains('ask_limit'),
-      );
-      expect(s.agent!.questionsAsked, 0);
-      expect(s.agent!.turnCount, 4);
+      addTearDown(s.dispose);
+      await s.send('在健身房，想练核心');
+      final question = s.conversation!.state.pendingQuestion!;
+      final result = await s.answerChoices(question.id, ['10分钟']);
+      expect(result!.plan!.plan.id, 'template-core-C');
     });
 
-    test('否定器械不作为可用器械传给下一轮', () async {
+    test('选择按 SDK 原顺序整理后仍传入 App 器械上下文', () async {
       final fake = AgentFakeLlmClient([
-        {'kind': 'ask', 'text': '想练什么？'},
-        {'kind': 'reply', 'text': '按你的器械条件安排。'},
-      ]);
-      final s = service(fake: fake);
-      final conv = uc.CoachConversation();
-      await s.ask('在家，没有哑铃，但有弹力带', conv);
-      await s.ask('练核心', conv);
-      final current = fake.requests.last.messages.last.content;
-      expect(current, contains('弹力带'));
-      expect(current, isNot(contains('哑铃')));
-    });
-
-    test('回答中移除器械及只用某器械会覆盖此前集合', () async {
-      final fake = AgentFakeLlmClient([
-        {'kind': 'ask', 'text': '练哪里？'},
+        {
+          'kind': 'ask',
+          'text': '有哪些器械？',
+          'options': ['弹力带', '哑铃', '壶铃'],
+          'multiple': true,
+        },
         {'kind': 'ask', 'text': '练多久？'},
-        {'kind': 'ask', 'text': '还有什么补充？'},
         {'kind': 'reply', 'text': '已按新器械条件更新。'},
       ]);
       final s = service(fake: fake);
-      final conv = uc.CoachConversation();
-      await s.ask('在家，有哑铃和弹力带以及壶铃', conv);
-      await s.ask('不要哑铃', conv);
-      var current = fake.requests.last.messages.last.content.split('\n').first;
-      expect(current, contains('弹力带'));
-      expect(current, isNot(contains('哑铃')));
-      await s.ask('只有弹力带', conv);
-      current = fake.requests.last.messages.last.content;
+      addTearDown(s.dispose);
+      await s.send('在家练支撑臂');
+      final question = s.conversation!.state.pendingQuestion!;
+      await s.answerChoices(question.id, ['壶铃', '弹力带']);
+      expect(
+        s.conversation!.state.messages.where((m) => m.isUser).last.text,
+        '弹力带、壶铃',
+      );
+      await s.send('只有弹力带');
+      final current = fake.requests.last.messages.last.content;
       expect(current, contains('弹力带'));
       expect(current, isNot(contains('壶铃')));
       expect(current, isNot(contains('哑铃')));
-      await s.ask('现在改为徒手', conv);
-      expect(fake.requests.last.messages.last.content, contains('没有器械'));
     });
 
-    test('问题事件期间取消不显示、不提交历史、不增加问题数', () async {
+    test('App 取消事件接到 SDK，问题不进入展示历史', () async {
       final s = service(
         fake: AgentFakeLlmClient([
           {
             'kind': 'ask',
             'text': '练多久？',
-            'options': ['10 分钟', '20 分钟'],
+            'options': ['10分钟', '20分钟'],
           },
         ]),
       );
-      final conv = uc.CoachConversation();
-      final token = uc.CancelToken();
+      addTearDown(s.dispose);
+      await s.load();
       var busyAtEvent = false;
-      final result = await s.ask(
-        '想练核心',
-        conv,
-        cancel: token,
-        onProgress: (event) {
-          if (event.kind == uc.AgentEventKind.askUser) {
-            busyAtEvent = s.agent!.isBusy;
-            token.cancel();
-          }
-        },
-      );
+      final subscription = s.conversation!.events.listen((event) {
+        if (event.kind == uc.AgentEventKind.askUser) {
+          busyAtEvent = s.conversation!.state.isWaiting;
+          s.conversation!.cancel();
+        }
+      });
+      addTearDown(subscription.cancel);
+      final result = await s.send('想练核心');
       expect(busyAtEvent, isTrue);
-      expect(result.cancelled, isTrue);
-      expect(result.question, isNull);
-      expect(conv.turns, isEmpty);
-      expect(s.agent!.turnCount, 0);
-      expect(s.agent!.questionsAsked, 0);
+      expect(result, isNull);
+      expect(s.conversation!.state.messages, isEmpty);
+      expect(s.conversation!.state.pendingQuestion, isNull);
     });
 
-    test('ask_user进度期间仍禁答，await完成后才公开待答问题', () async {
+    test('App 进度监听期间禁答，SDK 返回后才启用问题', () async {
       final session = AiCoachSession(
         service(
           fake: AgentFakeLlmClient([
@@ -414,21 +370,76 @@ void main() {
         ),
       );
       addTearDown(session.dispose);
+      await session.load();
       final beforeReturn = <bool>[];
       session.addListener(() {
         if (session.busy &&
             session.progress?.kind == uc.AgentEventKind.askUser) {
-          beforeReturn.add(session.activeQuestionResultId == null);
+          beforeReturn.add(session.controller!.state.pendingQuestion == null);
         }
       });
       await session.send('想练托马斯', tier: 'A');
       expect(beforeReturn, isNotEmpty);
       expect(beforeReturn, everyElement(isTrue));
-      expect(session.messages.last.answer!.question, isNotNull);
-      expect(session.questionActive(session.messages.last.resultId), isTrue);
+      final message = session.messages.last;
+      expect(message.question, isNotNull);
+      expect(session.controller!.canAnswer(message.id), isTrue);
     });
 
-    test('回答每轮继续传场所、器械和保护部位，目录刷新不重建已有对话', () async {
+    test('连续回答同步锁定一次，取消恢复首份输入且下一轮可继续', () async {
+      final started = Completer<void>();
+      final lateReply = Completer<Map<String, Object?>>();
+      final fake = AgentFakeLlmClient([
+        {'kind': 'ask', 'text': '今天练多久？'},
+        (uc.LlmRequest _) {
+          started.complete();
+          return lateReply.future;
+        },
+        {'kind': 'reply', 'text': '已按下一轮条件继续。'},
+      ]);
+      final session = AiCoachSession(service(fake: fake));
+      addTearDown(() {
+        if (!lateReply.isCompleted) {
+          lateReply.complete({'kind': 'reply', 'text': '迟到的旧回复'});
+        }
+        session.dispose();
+      });
+      await session.load();
+      await session.send('在家练核心', tier: 'A');
+      final questionId = session.controller!.state.pendingQuestion!.id;
+      final agent = session.service.agent;
+
+      final first = session.answerText(questionId, '第一份回答：十分钟', tier: 'A');
+      final duplicate = session.answerText(questionId, '第二份回答：二十分钟', tier: 'A');
+      expect(session.controller!.state.isWaiting, isTrue);
+      expect(session.busy, isTrue);
+      expect(session.pendingText, '第一份回答：十分钟');
+      await duplicate;
+      await started.future;
+      expect(fake.requests, hasLength(2));
+      expect(session.pendingText, '第一份回答：十分钟');
+
+      session.stop();
+      expect(session.cancelledText, '第一份回答：十分钟');
+      expect(session.pendingText, isNull);
+      expect(session.busy, isFalse);
+      expect(session.controller!.canAnswer(questionId), isFalse);
+      await session.send('下一轮改练支撑臂', tier: 'A');
+      await first;
+      lateReply.complete({'kind': 'reply', 'text': '迟到的旧回复'});
+      await Future<void>.delayed(Duration.zero);
+
+      expect(identical(session.service.agent, agent), isTrue);
+      expect(fake.requests, hasLength(3));
+      expect(session.messages.where((m) => m.isUser).map((m) => m.text), [
+        '在家练核心',
+        '下一轮改练支撑臂',
+      ]);
+      expect(session.messages.last.text, '已按下一轮条件继续。');
+      expect(session.cancelledText, '第一份回答：十分钟');
+    });
+
+    test('回答继承 App 条件，新对话刷新目录但复用同一个 Agent', () async {
       final fake = AgentFakeLlmClient([
         {
           'kind': 'ask',
@@ -438,9 +449,10 @@ void main() {
         {'kind': 'ask', 'text': '有什么要补充的？'},
       ]);
       final s = service(fake: fake);
-      final conv = uc.CoachConversation();
-      await s.ask('在家没有器械，手腕不舒服', conv);
+      addTearDown(s.dispose);
+      await s.send('在家没有器械，手腕不舒服');
       final agent = s.agent;
+      final controller = s.conversation;
       final json =
           jsonDecode(File(CoachService.catalogAsset).readAsStringSync())
               as Map<String, dynamic>;
@@ -453,15 +465,47 @@ void main() {
         ).parse(),
         origin: 'remote',
       );
-      await s.ask('核心', conv);
+      final question = controller!.state.pendingQuestion!;
+      await s.answerChoices(question.id, ['核心']);
       expect(identical(s.agent, agent), isTrue);
-      expect(agent!.questionsAsked, 2);
+      expect(s.catalog.version, isNot('9.9.9'));
       final request = fake.requests.last.messages.last.content;
       expect(request, contains('手腕'));
       expect(request, contains('home'));
       expect(request, contains('没有器械'));
-      s.resetConversation();
+      s.newConversation();
+      expect(identical(s.agent, agent), isTrue);
+      expect(identical(s.conversation, controller), isTrue);
+      expect(controller.state.messages, isEmpty);
       expect(s.catalog.version, '9.9.9');
+    });
+
+    test('恢复历史只读问题，新的输入仍经同一 Agent 和 App 条件门禁', () async {
+      final fake = AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '练多久？',
+          'options': ['10分钟', '20分钟'],
+        },
+        {'kind': 'reply', 'text': '好的，继续安排。'},
+      ]);
+      final s = service(fake: fake);
+      addTearDown(s.dispose);
+      await s.send('在家没有器械，手腕不舒服');
+      final controller = s.conversation!;
+      final history = controller.state.messages;
+      final id = controller.state.pendingQuestion!.id;
+      final agent = s.agent;
+      s.restoreHistory(history);
+      expect(controller.canAnswer(id), isFalse);
+      expect(controller.state.pendingQuestion, isNull);
+      expect(controller.state.messages.last.questionAnswered, isTrue);
+      expect(await s.answerChoices(id, ['10分钟']), isNull);
+      expect(fake.requests, hasLength(1));
+      await s.send('继续练核心');
+      expect(identical(s.agent, agent), isTrue);
+      expect(fake.requests.last.messages.last.content, contains('手腕'));
+      expect(fake.requests.last.messages.last.content, contains('没有器械'));
     });
   });
 
@@ -563,8 +607,18 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    Future<void> expand(WidgetTester tester, int resultId) async {
-      final finder = key('plan-expand-coach-plan-$resultId');
+    String planId(WidgetTester tester, int index) {
+      final page = tester.widget<AiCoachPage>(find.byType(AiCoachPage));
+      return 'coach-plan-${page.session.messages.where((m) => m.plan != null).elementAt(index).id}';
+    }
+
+    String questionId(WidgetTester tester, int index) {
+      final page = tester.widget<AiCoachPage>(find.byType(AiCoachPage));
+      return 'coach-question-${page.session.messages.where((m) => m.question != null).elementAt(index).id}';
+    }
+
+    Future<void> expand(WidgetTester tester, int index) async {
+      final finder = key('plan-expand-${planId(tester, index)}');
       await tester.ensureVisible(finder);
       await tester.pumpAndSettle();
       await tester.tap(finder);
@@ -583,15 +637,15 @@ void main() {
       if (settle) await tester.pumpAndSettle();
     }
 
-    Future<void> save(WidgetTester tester, int resultId) async {
-      await expand(tester, resultId);
-      await tapVisible(tester, key('plan-save-coach-plan-$resultId'));
+    Future<void> save(WidgetTester tester, int index) async {
+      await expand(tester, index);
+      await tapVisible(tester, key('plan-save-${planId(tester, index)}'));
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
     }
 
-    Finder option(int resultId, int i) =>
-        key('question-option-coach-question-$resultId-$i');
+    Finder option(WidgetTester tester, int index, int i) =>
+        key('question-option-${questionId(tester, index)}-$i');
 
     testWidgets('SDK列表、气泡和套路卡替代App布局，保留唯一开始按钮', (tester) async {
       await pumpShell(
@@ -647,7 +701,7 @@ void main() {
         tester.widget<cui.CoachPlanCard>(find.byType(cui.CoachPlanCard)).saved,
         isTrue,
       );
-      await tapVisible(tester, key('plan-start-coach-plan-0'));
+      await tapVisible(tester, key('plan-start-${planId(tester, 0)}'));
       expect(started.single.toJson(), routine.sdkPlan!.toJson());
       await tester.tap(key('test-close-training'));
       await tester.pumpAndSettle();
@@ -684,29 +738,29 @@ void main() {
       expect(
         tester
             .widget<cui.CoachTextAction>(
-              key('question-submit-coach-question-0'),
+              key('question-submit-${questionId(tester, 0)}'),
             )
             .onPressed,
         isNull,
       );
-      await tester.tap(option(0, 2));
+      await tester.tap(option(tester, 0, 2));
       await tester.pumpAndSettle();
-      await tester.tap(option(0, 0));
+      await tester.tap(option(tester, 0, 0));
       await tester.pumpAndSettle();
-      await tapVisible(tester, key('question-submit-coach-question-0'));
+      await tapVisible(tester, key('question-submit-${questionId(tester, 0)}'));
       expect(identical(coach.agent, agent), isTrue);
       expect(agent!.questionsAsked, 2);
       expect(find.text('核心、支撑臂'), findsOneWidget);
       expect(find.text('还有什么想补充的？'), findsOneWidget);
-      final old = tester.widget<cui.CoachOptionPill>(option(0, 0));
+      final old = tester.widget<cui.CoachOptionPill>(option(tester, 0, 0));
       expect(old.enabled, isFalse);
       expect(old.chosen, isTrue);
       await tester.enterText(
-        key('question-input-coach-question-1'),
+        key('question-input-${questionId(tester, 1)}'),
         '20分钟，先热身',
       );
       await tester.pump();
-      await tapVisible(tester, key('question-submit-coach-question-1'));
+      await tapVisible(tester, key('question-submit-${questionId(tester, 1)}'));
       expect(identical(coach.agent, agent), isTrue);
       expect(agent.turnCount, 3);
       expect(agent.questionsAsked, 0);
@@ -715,6 +769,68 @@ void main() {
         contains('核心、支撑臂'),
       );
       expect(find.byType(cui.CoachPlanCard), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('SDK问题去重，历史快照中的不同正文与问题同显', (tester) async {
+      final coach = service(
+        fake: AgentFakeLlmClient([
+          {'kind': 'ask', 'text': '今天练多久？'},
+        ]),
+      );
+      await pumpShell(tester, coach);
+      await openCoach(tester);
+      await say(tester, '在家练核心');
+      expect(find.text('今天练多久？'), findsOneWidget);
+      final history = coach.conversation!.state.messages;
+      expect(history.last.text, isEmpty);
+      // History may carry distinct narration alongside an admitted question.
+      coach.restoreHistory([
+        ...history.take(history.length - 1),
+        history.last.copyWith(text: '我先按居家条件安排。'),
+      ]);
+      await tester.pumpAndSettle();
+      expect(find.text('我先按居家条件安排。'), findsOneWidget);
+      expect(find.text('今天练多久？'), findsOneWidget);
+      expect(
+        tester
+            .widget<cui.CoachQuestionBubble>(
+              find.byType(cui.CoachQuestionBubble),
+            )
+            .enabled,
+        isFalse,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('离开期间返回的问题在重开时仍是只读历史', (tester) async {
+      final coach = service(
+        fake: AgentFakeLlmClient([
+          (uc.LlmRequest _) async {
+            await Future<void>.delayed(const Duration(seconds: 30));
+            return {
+              'kind': 'ask',
+              'text': '练多久？',
+              'options': ['10分钟', '20分钟'],
+            };
+          },
+        ]),
+      );
+      await pumpShell(tester, coach);
+      await openCoach(tester);
+      await say(tester, '练核心', settle: false);
+      await tester.tap(find.byTooltip('返回').first);
+      await tester.pumpAndSettle();
+      expect(find.byType(AiCoachPage), findsNothing);
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
+      await openCoach(tester);
+      expect(find.text('练多久？'), findsOneWidget);
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isFalse,
+      );
+      expect(coach.conversation!.state.pendingQuestion, isNull);
       expect(tester.takeException(), isNull);
     });
 
@@ -732,16 +848,19 @@ void main() {
       await openCoach(tester);
       await say(tester, '想练支撑');
       final agent = coach.agent;
-      await tester.tap(option(0, 0));
+      await tester.tap(option(tester, 0, 0));
       await tester.pumpAndSettle();
       expect(fake.requests, hasLength(2));
       expect(identical(agent, coach.agent), isTrue);
       expect(fake.requests.last.messages.last.content, contains('在家'));
-      expect(tester.widget<cui.CoachOptionPill>(option(0, 0)).enabled, isFalse);
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isFalse,
+      );
       expect(find.byType(cui.CoachPlanCard), findsOneWidget);
     });
 
-    testWidgets('取消回答后旧问题仍禁用，可用输入栏继续同一Agent', (tester) async {
+    testWidgets('取消后立即再发，旧问题仍禁用且迟到结果不覆盖新轮', (tester) async {
       final fake = AgentFakeLlmClient([
         {
           'kind': 'ask',
@@ -761,18 +880,31 @@ void main() {
       final agent = coach.agent;
       await say(tester, '练支撑臂', settle: false);
       expect(find.byType(cui.CoachTypingBubble), findsOneWidget);
-      expect(tester.widget<cui.CoachOptionPill>(option(0, 0)).enabled, isFalse);
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isFalse,
+      );
       await tester.tap(key('chat-cancel'));
-      await tester.pump(const Duration(seconds: 30));
-      await tester.pumpAndSettle();
-      expect(tester.widget<cui.CoachOptionPill>(option(0, 0)).enabled, isFalse);
+      await tester.pump();
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isFalse,
+      );
       expect(
         tester.widget<TextField>(key('coach-input')).controller!.text,
         '练支撑臂',
       );
-      await say(tester, '练支撑臂');
+      await say(tester, '在家20分钟练支撑臂', settle: false);
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
       expect(identical(agent, coach.agent), isTrue);
       expect(find.byType(cui.CoachPlanCard), findsOneWidget);
+      expect(
+        coach.conversation!.state.messages
+            .where((m) => m.isUser)
+            .map((m) => m.text),
+        ['练托马斯', '在家20分钟练支撑臂'],
+      );
     });
 
     testWidgets('退出再打开只显示历史，旧澄清不重新启用', (tester) async {
@@ -788,12 +920,18 @@ void main() {
       await pumpShell(tester, coach);
       await openCoach(tester);
       await say(tester, '练核心');
-      expect(tester.widget<cui.CoachOptionPill>(option(0, 0)).enabled, isTrue);
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isTrue,
+      );
       await tester.tap(find.byTooltip('返回').first);
       await tester.pumpAndSettle();
       await openCoach(tester);
       expect(find.text('练多久？'), findsOneWidget);
-      expect(tester.widget<cui.CoachOptionPill>(option(0, 0)).enabled, isFalse);
+      expect(
+        tester.widget<cui.CoachOptionPill>(option(tester, 0, 0)).enabled,
+        isFalse,
+      );
       await tester.tap(key('coach-new-chat'));
       await tester.pumpAndSettle();
       expect(coach.agent!.turnCount, 0);
@@ -819,9 +957,11 @@ void main() {
       expect(store.routines[0].id, isNot(store.routines[1].id));
       await store.deleteRoutine(store.routines.last.id);
       await tester.pumpAndSettle();
-      final secondCard = tester.widget<cui.CoachPlanCard>(key('coach-plan-1'));
+      final secondCard = tester.widget<cui.CoachPlanCard>(
+        key(planId(tester, 1)),
+      );
       expect(secondCard.saved, isFalse);
-      await tapVisible(tester, key('plan-save-coach-plan-1'));
+      await tapVisible(tester, key('plan-save-${planId(tester, 1)}'));
       expect(store.routines, hasLength(2));
       expect(
         store.routines.last.sdkPlan!.exerciseIds,
@@ -941,7 +1081,7 @@ void main() {
       expect(card.plan.metaLabel, contains('预设方案'));
       await save(tester, 0);
       expect(store.routines.single.source, 'template');
-      await tapVisible(tester, key('plan-start-coach-plan-0'));
+      await tapVisible(tester, key('plan-start-${planId(tester, 0)}'));
       expect(started.single.source, 'template');
       expect(tester.takeException(), isNull);
     });

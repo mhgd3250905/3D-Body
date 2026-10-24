@@ -518,7 +518,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   void dispose() {
     _scene.removeListener(_sceneChanged);
     store.removeListener(_storeChanged);
-    _coachSession?.dispose();
+    if (_coachSession case final session?) {
+      session.dispose();
+    } else {
+      unawaited(_coachService?.dispose());
+    }
     WidgetsBinding.instance.removeObserver(this);
     if (widget.sceneController == null) _scene.dispose();
     super.dispose();

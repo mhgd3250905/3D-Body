@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-10-24，会话 controller 候选在 `codex/coach-conversation-controller`：正式 tag coach 0.5.0 / trainer 0.2.3 固定 `d7e0b8f`，UI 0.1.1 仍为 `3302d62`。分析无问题，全量 335 通过、26 项基线失败、1 项 opt-in 跳过；尚未合入或推送，详见[迁移与合入阻塞](docs/coach-conversation-controller-2026-10-24.md)。
+
 2026-10-24，共用聊天 UI/训练现固定 coach 0.4.2、trainer 0.2.2、coach_ui 0.1.1 正式 tag，均解析至 `3302d62`；153 项相关测试全过，原窄屏大字溢出已由 SDK 修复，无需本机编码适配。验证通过后按用户授权合入推送 `master`。[当前接入与验证](docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方 +16 交付保持。
 
 2026-10-24，新增 Liquid Glass 真机内测交付 **1.0.11+16**，来自 `52ee561`，已从 +15 同签名保留数据覆盖安装；首屏、安装包回读和既有内容保留检查通过，用户测试待反馈。[交付和限制](docs/liquid-glass-android-test-2026-10-24.md)。版本通过构建参数覆盖，源码 pubspec 仍 +15；下方合入时“未安装”为此前阶段事实。
@@ -100,11 +102,11 @@ npm run build
 
 <a id="ai-coach"></a>
 
-## AI 定制（当前 SDK 0.4.1）
+## AI 定制（SDK controller 候选）
 
-计划页顶部「AI 定制」支持描述需求、独立问题气泡与多轮补充，计划卡可「保存到我的计划」或「开始训练」。当前共用 SDK [ugk_coach](https://github.com/mhgd3250905/ugk-3d-pose-sdk) 为 **0.4.1**，`ugk_trainer` 为 **0.2.0**，两个 git ref 均固定到 `8b60032c2f43fd8e91f8802c8f054a8ecb7cc110`；与 `pubspec.yaml` / lock 一致。当前完整计划播放器及分段剂量接入见 [SDK 0.2 记录](docs/sdk-trainer-020-2026-10-23.md)，原 [PR122 合入记录](docs/pr122-ai-coach-integration-2026-10-20.md) 保留历史。
+计划页顶部「AI 定制」支持描述需求、独立问题气泡与多轮补充，计划卡可「保存到我的计划」或「开始训练」。本候选使用正式 `ugk_coach-v0.5.0` 与 `ugk_trainer-v0.2.3`（`d7e0b8f`），`ugk_coach_ui-v0.1.1`（`3302d62`）；与 pubspec/lock 一致。会话和问题状态由 `CoachConversationController` 管理，App 保留安全上下文、映射和训练回调。[本轮验证与范围](docs/coach-conversation-controller-2026-10-24.md)，旧接入记录保留历史。
 
-默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。未配置令牌时入口显示「未配置」并只给预设方案；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
+默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。无有效 Key/relay token 时全部 AI 入口隐藏；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
 
 ## 当前体验
 

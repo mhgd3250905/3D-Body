@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-24",
+  "branch": "codex/coach-conversation-controller",
+  "baseline": "63d3318e257e2331a4af1f9f9f5cada40d0d357b",
+  "status": "candidate_not_merged_full_suite_blocked_by_baseline_failures",
+  "sdk": {
+    "ugk_coach": {
+      "tag": "ugk_coach-v0.5.0",
+      "commit": "d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f"
+    },
+    "ugk_trainer": {
+      "tag": "ugk_trainer-v0.2.3",
+      "commit": "d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f"
+    },
+    "ugk_coach_ui": {
+      "tag": "ugk_coach_ui-v0.1.1",
+      "commit": "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+    },
+    "sourceModified": false
+  },
+  "toolchain": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7"
+  },
+  "commands": [
+    {
+      "command": "flutter pub get --enforce-lockfile",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter analyze --no-pub",
+      "exitCode": 0,
+      "result": "No issues found"
+    },
+    {
+      "command": "flutter test --no-pub --reporter expanded",
+      "exitCode": 1,
+      "scope": "App full test suite"
+    },
+    {
+      "command": "flutter pub get --enforce-lockfile",
+      "exitCode": 0,
+      "scope": "unchanged baseline worktree"
+    },
+    {
+      "command": "flutter test --no-pub --reporter expanded",
+      "exitCode": 1,
+      "scope": "unchanged baseline full test suite"
+    }
+  ],
+  "tests": {
+    "passed": 335,
+    "skipped": 1,
+    "failed": 26,
+    "failures": [
+      "ui/compact_localization_test.dart: compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+      "ui/flow_regressions_test.dart: appearance switch persists, repaints and tells the scene",
+      "ui/flow_regressions_test.dart: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+      "ui/flow_regressions_test.dart: phone safety → phase muscle → drill → SDK plan route → same paused frame",
+      "ui/flow_regressions_test.dart: plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+      "ui/ios_layout_test.dart: ProMax dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 light text 2.0 core pages fit",
+      "ui/polish_round2_test.dart: drill page: picture under the status bar, bar forms on scroll"
+    ]
+  },
+  "baselineTests": {
+    "passed": 333,
+    "skipped": 1,
+    "failed": 26,
+    "failures": [
+      "ui/compact_localization_test.dart: compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+      "ui/flow_regressions_test.dart: appearance switch persists, repaints and tells the scene",
+      "ui/flow_regressions_test.dart: inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+      "ui/flow_regressions_test.dart: phone safety → phase muscle → drill → SDK plan route → same paused frame",
+      "ui/flow_regressions_test.dart: plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+      "ui/ios_layout_test.dart: ProMax dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: ProMax light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 landscape light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: SE3 light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape dark text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape dark text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 landscape light text 2.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 light text 1.0 core pages fit",
+      "ui/ios_layout_test.dart: iPhone13 light text 2.0 core pages fit",
+      "ui/polish_round2_test.dart: drill page: picture under the status bar, bar forms on scroll"
+    ]
+  },
+  "sameFailureSet": true,
+  "newFailures": [],
+  "skipReason": "Existing RUN_COACH_LIVE_SMOKE opt-in test; no live model, Key or network test calls enabled.",
+  "mergeConditionsMet": false,
+  "merged": false,
+  "pushed": false,
+  "release10Untouched": true,
+  "hiplabUntouched": true,
+  "deviceOrBrowserTested": false,
+  "newApkBuilt": false,
+  "appVersion": "1.0.10+15",
+  "scope": "Conversation/questions/answers/cancel/reset/restore delegated to SDK; App configuration, context, safe rules, catalog/profile, save/DTO/training retained.",
+  "deletedLegacy": [
+    "CoachAnswer",
+    "CoachMessage",
+    "mutable conversation message ledger",
+    "legacy CoachConversation",
+    "active and answered question collections",
+    "App choice validation/order code",
+    "App send CancelToken and result counter",
+    "CoachService.ask/_record/direct Agent send-reset",
+    "context rollback ledger",
+    "TemplateFallback.userTexts(CoachConversation)",
+    "obsolete type-injection/state tests and duplicate SDK question budget test"
+  ],
+  "baselineFailureClassification": {
+    "staleTestWiring": 16,
+    "landscapeDetailOverflow": 8,
+    "localizedPhaseTextTruncation": 1,
+    "inactiveSceneVisibility": 1,
+    "classificationMethod": "read-only source/log inspection; tests not changed or weakened"
+  },
+  "unchangedFailingTestGitBlobs": {
+    "app/test/ui/flow_regressions_test.dart": "7abdedb3dc9b891a25dd19222a2a84116b0d8ad3",
+    "app/test/ui/ios_layout_test.dart": "44b0d22d941340e2da0bf4886a9c5c1b8603138e",
+    "app/test/ui/compact_localization_test.dart": "ea898a73cde6c54fde7dfc24a8bb4b233b2167da",
+    "app/test/ui/polish_round2_test.dart": "10c895365829882cc0e45628b192e8d86fcfcc75"
+  },
+  "sourceGitBlobs": {
+    "app/lib/coach/coach_service.dart": "10b211c74992a885b8371f6b0eabe7071ed37dde",
+    "app/lib/coach/coach_ui_mapping.dart": "35dc9599e03831c8932cbe4144a4b4ffd839af22",
+    "app/lib/coach/template_fallback.dart": "4cd1d93c41655dd171d42fd4a5abd0aa3f885b98",
+    "app/lib/ui/ai_coach_page.dart": "aae0867edcf7c79ff25674a65e27a9ab89d2a98f",
+    "app/lib/ui/app_shell.dart": "c997992305b0a93f9ceb34e78116f7fb1b0e4c82",
+    "app/pubspec.lock": "f9dd53290cabedddf5c3b99a0a7e65e82d37ed14",
+    "app/pubspec.yaml": "8d2e22e778d4c1c0db01611093526d56b8abbace",
+    "app/test/ui/ai_coach_review2_test.dart": "5f1c19b641aaa71985dc9d7f1fae3cb86b97d84f",
+    "app/test/ui/ai_coach_test.dart": "3d90434c370727f56f94cfa3074bd9c6ab57f701",
+    "app/test/ui/coach_live_smoke_test.dart": "15c762235bc77d490013148734923c0540a7f00d",
+    "app/test/ui/sdk_plan_preservation_test.dart": "7e2a1d5be7d183718d2496298ca63b8e113b4317"
+  },
+  "logs": {
+    "output/coach-controller-20261024/pub-locked.log": {
+      "sha256": "91c580a70c2ee60b56cc7251104daa91ba93ee24c44912b213c8f95088579330",
+      "bytes": 953
+    },
+    "output/coach-controller-20261024/analyze-final.log": {
+      "sha256": "8691b314ccf0fcfd94dc5c59d0b0c3a121d42d209928f9c9e94d0fcb7b89dc0b",
+      "bytes": 99
+    },
+    "output/coach-controller-20261024/full-tests-final.log": {
+      "sha256": "b95bd728baaf2a7a04a3d26728e55a585b53ed71e6defe05a73ed5c437a0e3ef",
+      "bytes": 122490
+    },
+    "output/coach-controller-20261024/baseline-pub.log": {
+      "sha256": "91c580a70c2ee60b56cc7251104daa91ba93ee24c44912b213c8f95088579330",
+      "bytes": 953
+    },
+    "output/coach-controller-20261024/baseline-tests.log": {
+      "sha256": "32f1ff8a8c15b1214c14a22d79fdba9d87e25d5746897c1822b971e53d08768b",
+      "bytes": 143742
+    },
+    "output/coach-controller-20261024/baseline-comparison.json": {
+      "sha256": "46d6336ba870f20cc3475525d383dd7a6c4d953c92c0ae297700307cd6b94a95",
+      "bytes": 4455
+    }
+  }
+}

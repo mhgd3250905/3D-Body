@@ -68,12 +68,6 @@ class TemplateFallback {
   static bool anyRedFlag(String text, List<String> history) =>
       isRedFlag(text) || history.any(isRedFlag);
 
-  /// 对话里用户说过的话（回落时带上，保留先前的禁忌和场景约束）。
-  static List<String> userTexts(uc.CoachConversation c) => [
-    for (final t in c.turns)
-      if (t.isUser) t.text,
-  ];
-
   /// 关键词得分最高的方向；都没命中用「托马斯全链」。
   /// [history] = 同一对话里之前用户说过的话：本轮命中算 2 分、之前的算 1 分，
   /// 这样「想练核心」→「10分钟」不会忘了方向。
