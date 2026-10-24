@@ -1,6 +1,10 @@
 # Flare 版本管理台账
 
-## SDK conversation controller 待审候选（2026-10-24）
+## 迁移已合入、26 项基线修复单独待审（2026-10-24）
+
+会话迁移 `4b5f70dbdaf37fbec961822870fb4eedc29196dd` 已经用户同意快进合入并推送 master，远端回读一致。其后从新 master 建立 `codex/fix-baseline-tests`，真实布局/文本/可见性问题修代码，过时测试按当前正确行为更新；全量 361 通过、0 失败、1 项原 opt-in 跳过，分析和锁文件检查通过。[独立修复与证据](baseline-fixes-2026-10-24.md)。修复分支尚未合入/推送。源码 +15、既有手机 +16/R17 身份、HipLab、release/1.0、原素材与个人数据保持，无新安装或发布。
+
+## 历史：SDK conversation controller 交审候选（2026-10-24）
 
 从 `master 63d3318` 建立 `codex/coach-conversation-controller`，锁定 coach 0.5.0 / trainer 0.2.3（`d7e0b8f`），UI 0.1.1 保持。删除旧会话/问题状态实现，分析无问题，全量 335 通过、26 项基线失败、1 项原 opt-in 跳过；与干净基线失败名单相同。按用户追加的基线等价标准已满足技术交审条件；尚未获准合入，未合入/推送/安装，`release/1.0` 保持。[迁移、验证与失败对照](coach-conversation-controller-2026-10-24.md)。源码版本和既有手机 +16/R17 身份保持。
 

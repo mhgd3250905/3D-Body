@@ -1,5 +1,7 @@
 # CoachConversationController 接入候选（2026-10-24）
 
+后续合入记录：用户同意后，`4b5f70dbdaf37fbec961822870fb4eedc29196dd` 已快进合入并推送 `master`，远端回读一致。26 项基线失败已从新 master 另建修复分支，见[独立修复与验证](baseline-fixes-2026-10-24.md)。下文为迁移交审时的历史快照，原验证证据保持。
+
 基线为 Flare `master` 的 `63d3318e257e2331a4af1f9f9f5cada40d0d357b`，候选分支为 `codex/coach-conversation-controller`。按用户追加的基线等价标准，技术交审条件已满足；尚未获得合入同意，未合入或推送。全量仍保留 26 项已核对一致的基线失败。HipLab 与 `release/1.0` 未修改。
 
 ## 正式依赖

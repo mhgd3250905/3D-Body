@@ -1,7 +1,9 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
+import 'package:flare/ui/app_glass.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/drill_media.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
@@ -96,38 +98,73 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('drill page: picture under the status bar, bar forms on scroll', (
-    tester,
-  ) async {
-    _size(tester, const Size(390, 844), top: 47);
-    final drill = catalog.drills.first;
-    await tester.pumpWidget(
-      _app(
-        DrillDetailPage(
-          drill: drill,
-          group: catalog.groupById(drill.groupId),
-          onBack: () {},
-          onStart: () {},
-          onAddToPlan: () {},
+  testWidgets(
+    'drill page: fixed header and action stay outside scrolling content',
+    (tester) async {
+      _size(tester, const Size(390, 844), top: 47);
+      final drill = catalog.drills.first;
+      var starts = 0;
+      var backs = 0;
+      await tester.pumpWidget(
+        _app(
+          SafeArea(
+            bottom: false,
+            child: DrillDetailPage(
+              drill: drill,
+              group: catalog.groupById(drill.groupId),
+              onBack: () => backs++,
+              onStart: () => starts++,
+              onAddToPlan: () {},
+            ),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    // The hero starts at the very top, behind the status bar ...
-    expect(tester.getTopLeft(find.byType(AspectRatio).first).dy, 0);
-    // ... while the back button sits below it.
-    expect(tester.getTopLeft(find.byType(RoundIconButton).first).dy, 47 + 8);
-    expect(find.byType(BackdropFilter), findsNothing);
-    await tester.tap(find.text('更多要点、常见错误与安全'));
-    await tester.pumpAndSettle();
-    await tester.drag(find.byType(ListView), const Offset(0, -600));
-    await tester.pumpAndSettle();
-    expect(find.byType(BackdropFilter), findsOneWidget);
-    // The compact title has faded in once the large one scrolled away.
-    final titles = find.text(drill.name);
-    expect(titles, findsNWidgets(2));
-    expect(tester.takeException(), isNull);
-  });
+      );
+      await tester.pumpAndSettle();
+      final header = find.byType(PageHeader);
+      final actions = find.byType(FlareActionBar);
+      final list = find.byType(ListView);
+      final back = find.byTooltip('返回');
+      final start = find.widgetWithText(FilledButton, '开始训练');
+      expect(header, findsOneWidget);
+      expect(actions, findsOneWidget);
+      expect(find.text(drill.name), findsOneWidget);
+      final headerBefore = tester.getRect(header);
+      final actionsBefore = tester.getRect(actions);
+      expect(tester.getTopLeft(back).dy, greaterThanOrEqualTo(47));
+      expect(
+        tester.getTopLeft(find.byType(DrillMediaCard)).dy,
+        greaterThanOrEqualTo(headerBefore.bottom),
+      );
+      expect(tester.getRect(list).bottom, lessThanOrEqualTo(actionsBefore.top));
+      expect(
+        find.descendant(of: list, matching: find.byType(FlareGlassBar)),
+        findsNothing,
+        reason: 'Scrolling media and text retain static content surfaces',
+      );
+      final disclosure = find.text('更多要点、常见错误与安全');
+      await tester.ensureVisible(disclosure);
+      await tester.pumpAndSettle();
+      await tester.tap(disclosure);
+      await tester.pumpAndSettle();
+      await tester.drag(list, const Offset(0, -600));
+      await tester.pumpAndSettle();
+      final scroll = tester.state<ScrollableState>(
+        find.descendant(of: list, matching: find.byType(Scrollable)),
+      );
+      expect(scroll.position.pixels, greaterThan(0));
+      expect(tester.getRect(header), headerBefore);
+      expect(tester.getRect(actions), actionsBefore);
+      expect(find.text(drill.name), findsOneWidget);
+      expect(start.hitTestable(), findsOneWidget);
+      expect(back.hitTestable(), findsOneWidget);
+      await tester.tap(start);
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+      expect(starts, 1);
+      expect(backs, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   for (final brightness in Brightness.values) {
     testWidgets('small phone + large text: key pages do not overflow '

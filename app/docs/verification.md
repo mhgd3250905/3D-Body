@@ -1,6 +1,12 @@
 # App 验证记录
 
-## SDK conversation controller 验证（2026-10-24）
+## 26 项基线修复候选验证（2026-10-24）
+
+用户同意后，迁移 `4b5f70d` 已合入并推送 master；随后从该主线建立 `codex/fix-baseline-tests` 单独修复。本轮锁文件强制检查通过，分析无问题，最终全量 **361 通过、0 失败、1 项原 opt-in 跳过**，退出 0。26 项原失败按完整测试名逐一确认通过，唯一布局测试更名已记录，测试总数仍 362。产品代码修横屏/多语/inactive，过时测试更新接线，没有删测试或新增 skip；[实现、对照和验证](baseline-fixes-2026-10-24.md)。修复分支尚未合入/推送，未构建新包或做设备验收。
+
+## SDK conversation controller 交审阶段验证（2026-10-24）
+
+以下保留交审时事实；后续已按用户同意合入推送 `master 4b5f70d`。
 
 正式 tag coach 0.5.0 / trainer 0.2.3、原 UI 0.1.1，`flutter pub get --enforce-lockfile` 通过，最终分析无问题。全量 335 通过、26 失败、1 项 opt-in 跳过；独立未修改基线 `63d3318` 全量 333 通过、同 26 项失败及同一跳过，新增失败为 0。本次会话/问题接线与保存开练用例全部通过；按用户追加的基线等价标准已满足技术交审条件。全量仍有上述基线失败，尚未获准合入，未合入/推送。26 项测试名已[逐项对照](evidence/coach-controller-20261024/failure-comparison.md)。没有放宽或跳过基线失败测试；未做浏览器、编译包或真机。[命令、失败范围与源指纹](coach-conversation-controller-2026-10-24.md)，[公开证据](evidence/coach-controller-20261024/verification.json)。
 

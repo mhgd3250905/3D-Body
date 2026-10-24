@@ -67,6 +67,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   int _sceneGeneration = 0;
   DateTime? _lastAutoRestart;
   late bool _appActive;
+  late bool _appVisible;
   bool? _recoveryWasPlaying;
   String? _recoveryDetailModel;
   double? _recoveryTime;
@@ -108,6 +109,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     // the background, before this observer could receive that transition.
     final lifecycle = WidgetsBinding.instance.lifecycleState;
     _appActive = lifecycle == null || lifecycle == AppLifecycleState.resumed;
+    _appVisible =
+        lifecycle == null ||
+        lifecycle == AppLifecycleState.resumed ||
+        lifecycle == AppLifecycleState.inactive;
     _scene = widget.sceneController ?? SceneController();
     _actorBody = store.settings.actorBody;
     _scene.addListener(_sceneChanged);
@@ -212,7 +217,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _recoveryTime = null;
       // A recovered WebGL context may still belong to a hidden, prewarmed
       // view. Let it produce its replacement frame before hiding it again.
-      _scene.setVisible(_appActive);
+      _scene.setVisible(_appVisible);
       if (widget.enableScene) _scene.requestPresentation();
       _configuring = false;
       _refreshView();
@@ -270,7 +275,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool get _preparingScene => widget.enableScene && !_scene.presented;
 
   void _syncSceneVisibility() {
-    _scene.setVisible(_appActive && (_watchVisible || _preparingScene));
+    _scene.setVisible(_appVisible && (_watchVisible || _preparingScene));
     if (!_watchVisible) {
       _scene.pause();
       if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
@@ -497,6 +502,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _appActive = state == AppLifecycleState.resumed;
+    // Losing focus pauses playback but does not make an on-screen view hidden.
+    _appVisible = _appActive || state == AppLifecycleState.inactive;
     if (state != AppLifecycleState.resumed) {
       _scene.pause();
       // An embedded Web scene owns document visibility. Host focus/lifecycle
@@ -1135,7 +1142,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (detail) {
       return _stageArea * .5;
     }
-    return 72 +
+    return _transportHeightFor(context) +
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30).toDouble();
   }
 
@@ -1188,93 +1195,105 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               constraints.maxHeight < 270 ||
               (constraints.maxHeight < 330 &&
                   (s.localeName != 'zh' || roleWraps));
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, compact ? 2 : 10, 24, 0),
-                  child: FadeSlideIn(
-                    key: ValueKey('detail-${detail.id}'),
-                    delay: FadeSlideIn.stagger(2, step: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+          final scaler = MediaQuery.textScalerOf(context);
+          // Preserve a readable knowledge viewport even when the model/detail
+          // split leaves less vertical space than the title and fixed cards.
+          final minContentHeight =
+              (compact ? 2 : 10) +
+              (compact ? 27 : 36) +
+              (compact ? 2 : 6) +
+              scaler.scale(compact ? 12.5 : 14.5) * 1.35 * 2 +
+              (compact ? 2 : 8) +
+              48;
+          final assistHeight = together.isEmpty
+              ? 0.0
+              : (scaler.scale(13) * 1.35 * 2).clamp(
+                      compact ? 32.0 : 48.0,
+                      double.infinity,
+                    ) +
+                    (compact ? 16 : 20) +
+                    (compact ? 8 : 16);
+          final content = Padding(
+            padding: EdgeInsets.fromLTRB(24, compact ? 2 : 10, 24, 0),
+            child: FadeSlideIn(
+              key: ValueKey('detail-${detail.id}'),
+              delay: FadeSlideIn.stagger(2, step: 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Semantics(
-                          header: true,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 4,
-                                height: compact ? 24 : 30,
-                                margin: const EdgeInsetsDirectional.only(
-                                  top: 3,
-                                  end: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: color,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                              Expanded(
-                                child: SizedBox(
-                                  height: compact ? 26 : 36,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    alignment: AlignmentDirectional.centerStart,
-                                    child: Text(
-                                      detail.shortLabel,
-                                      semanticsLabel: detail.label,
-                                      key: const ValueKey('muscle-panel-title'),
-                                      style: TextStyle(
-                                        fontSize: 30,
-                                        height: 1.2,
-                                        letterSpacing: -.6,
-                                        fontWeight: FontWeight.w800,
-                                        color: FlareColors.text,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                        Container(
+                          width: 4,
+                          height: compact ? 24 : 30,
+                          margin: const EdgeInsetsDirectional.only(
+                            top: 3,
+                            end: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        SizedBox(height: compact ? 2 : 6),
-                        Text(
-                          muscle?.why ?? detail.role,
-                          key: const ValueKey('muscle-role'),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: compact ? 12.5 : 14.5,
-                            height: 1.35,
-                            fontWeight: FontWeight.w600,
-                            color: FlareColors.text.withValues(alpha: .88),
-                          ),
-                        ),
-                        SizedBox(height: compact ? 2 : 8),
                         Expanded(
-                          child: _MuscleKnowledgeBlock(
-                            key: ValueKey('knowledge-${detail.id}'),
-                            text: catalog
-                                .translate(
-                                  muscleKnowledge[detail.id] ?? detail.role,
-                                )
-                                .replaceFirstMapped(
-                                  RegExp(r'[。.!؟।]'),
-                                  (m) => '${m[0]}\n\n',
+                          child: SizedBox(
+                            height: compact ? 26 : 36,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Text(
+                                detail.shortLabel,
+                                semanticsLabel: detail.label,
+                                key: const ValueKey('muscle-panel-title'),
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  height: 1.2,
+                                  letterSpacing: -.6,
+                                  fontWeight: FontWeight.w800,
+                                  color: FlareColors.text,
                                 ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  SizedBox(height: compact ? 2 : 6),
+                  Text(
+                    muscle?.why ?? detail.role,
+                    key: const ValueKey('muscle-role'),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: compact ? 12.5 : 14.5,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                      color: FlareColors.text.withValues(alpha: .88),
+                    ),
+                  ),
+                  SizedBox(height: compact ? 2 : 8),
+                  Expanded(
+                    child: _MuscleKnowledgeBlock(
+                      key: ValueKey('knowledge-${detail.id}'),
+                      text: catalog
+                          .translate(muscleKnowledge[detail.id] ?? detail.role)
+                          .replaceFirstMapped(
+                            RegExp(r'[。.!؟।]'),
+                            (m) => '${m[0]}\n\n',
+                          ),
+                    ),
+                  ),
+                ],
               ),
-              if (together.isNotEmpty)
-                Padding(
+            ),
+          );
+          final assists = together.isEmpty
+              ? null
+              : Padding(
                   padding: EdgeInsets.fromLTRB(
                     24,
                     compact ? 4 : 8,
@@ -1302,7 +1321,35 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
+                );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, body) {
+                    if (body.maxHeight >= minContentHeight + assistHeight) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: content),
+                          ?assists,
+                        ],
+                      );
+                    }
+                    return SingleChildScrollView(
+                      key: const ValueKey('muscle-panel-scroll'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: minContentHeight, child: content),
+                          ?assists,
+                        ],
+                      ),
+                    );
+                  },
                 ),
+              ),
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: FlareColors.background,
@@ -1339,6 +1386,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
+  double _transportHeightFor(BuildContext context) =>
+      (MediaQuery.textScalerOf(context).scale(13) * 1.15 * 2 + 42)
+          .clamp(72, double.infinity)
+          .toDouble();
+
   Widget _transport(BuildContext context, Phase phase) {
     final s = context.strings;
     return Padding(
@@ -1351,20 +1403,46 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       child: FlareGlassBar(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
-          height: 72,
+          height: _transportHeightFor(context),
           child: Row(
             children: [
-              _roundControl(
-                label: _scene.playing ? s.pause : s.play,
-                icon: _scene.playing
-                    ? Icons.pause_rounded
-                    : Icons.play_arrow_rounded,
-                diameter: 48,
-                solid: !_scene.playing,
-                onTap: () {
-                  FlareHaptics.light();
-                  _scene.playing ? _scene.pause() : _scene.play();
-                },
+              SizedBox(
+                width: 75,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _roundControl(
+                      label: _scene.playing ? s.pause : s.play,
+                      icon: _scene.playing
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      diameter: 48,
+                      solid: !_scene.playing,
+                      onTap: () {
+                        FlareHaptics.light();
+                        _scene.playing ? _scene.pause() : _scene.play();
+                      },
+                    ),
+                    const SizedBox(height: 4),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: 75,
+                        maxHeight: 22,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: FlareColors.dim,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1392,25 +1470,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                 fontSize: 13,
                                 height: 1.15,
                                 fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxWidth: 75,
-                              maxHeight: 22,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: FlareColors.dim,
-                                  fontFeatures: const [
-                                    FontFeature.tabularFigures(),
-                                  ],
-                                ),
                               ),
                             ),
                           ),

@@ -1,6 +1,6 @@
 # Flare Anatomy Studio
 
-2026-10-24，`codex/coach-conversation-controller` 从 `master 63d3318` 迁移 SDK 会话 controller，锁定 coach 0.5.0 / trainer 0.2.3，UI 0.1.1 保持。分析无问题；全量 335 通过、26 项基线失败、1 项 opt-in 跳过，失败与未修改基线完全相同。按用户追加的基线等价标准已满足技术交审条件，尚未合入或推送，[改动、删除范围与失败对照](app/docs/coach-conversation-controller-2026-10-24.md)。
+2026-10-24，会话迁移 `4b5f70d` 已经用户同意合入并推送 `master`。随后从新 master 建立 `codex/fix-baseline-tests`，修复 26 项基线失败：全量 361 通过、0 失败、1 项原 opt-in 跳过，分析无问题；修复候选待单独审阅，尚未合入或推送。[修复、逐项对照与证据](app/docs/baseline-fixes-2026-10-24.md)。
 
 2026-10-24，共用聊天/训练接入已更新为正式 `ugk_coach-v0.4.2`、`ugk_trainer-v0.2.2`、`ugk_coach_ui-v0.1.1`，全部固定 `3302d62`；153 项相关测试通过，原两项 SDK 窄屏大字失败已修复，本机编码适配已删除。验证通过后按用户授权合入推送 `master`，`release/1.0` 保持。[修复版接入与证据](app/docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方已安装 +16 的身份保持。
 

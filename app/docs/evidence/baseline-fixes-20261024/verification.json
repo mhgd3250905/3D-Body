@@ -1,0 +1,317 @@
+{
+  "date": "2026-10-24",
+  "branch": "codex/fix-baseline-tests",
+  "base": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+  "migrationIntegration": {
+    "date": "2026-10-24",
+    "approvedMigration": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+    "integration": "fast-forward",
+    "master": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+    "remoteMaster": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+    "pushed": true,
+    "fixBranch": "codex/fix-baseline-tests",
+    "fixBranchBase": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+    "release10Untouched": true,
+    "hiplabUntouched": true
+  },
+  "fixReviewState": "awaiting_user_approval",
+  "fixMerged": false,
+  "fixPushed": false,
+  "scope": "Fix 26 known baseline failures in a separate branch after the approved conversation migration.",
+  "toolchain": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7"
+  },
+  "sdkUnchanged": {
+    "ugk_coach": {
+      "tag": "ugk_coach-v0.5.0",
+      "commit": "d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f"
+    },
+    "ugk_trainer": {
+      "tag": "ugk_trainer-v0.2.3",
+      "commit": "d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f"
+    },
+    "ugk_coach_ui": {
+      "tag": "ugk_coach_ui-v0.1.1",
+      "commit": "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+    },
+    "pubspecBlob": "8d2e22e778d4c1c0db01611093526d56b8abbace",
+    "lockBlob": "f9dd53290cabedddf5c3b99a0a7e65e82d37ed14"
+  },
+  "commands": [
+    {
+      "command": "flutter pub get --enforce-lockfile",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter analyze --no-pub",
+      "exitCode": 0,
+      "result": "No issues found!"
+    },
+    {
+      "command": "flutter test --no-pub --reporter json",
+      "exitCode": 0
+    }
+  ],
+  "before": {
+    "sourceCommit": "78a8a65a7af8c00dafa7fcd6211e69a07aab852d",
+    "integratedAs": "4b5f70dbdaf37fbec961822870fb4eedc29196dd",
+    "passed": 335,
+    "failed": 26,
+    "skipped": 1,
+    "evidence": "../coach-controller-20261024/verification.json"
+  },
+  "after": {
+    "passed": 361,
+    "failed": 0,
+    "skipped": 1,
+    "skippedTests": [
+      "opt-in live Agent clarification and plan smoke"
+    ],
+    "original26AllPassed": true,
+    "testComparison": [
+      {
+        "file": "app/test/ui/compact_localization_test.dart",
+        "baselineTest": "compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+        "currentTest": "compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "baselineTest": "appearance switch persists, repaints and tells the scene",
+        "currentTest": "appearance switch persists, repaints and tells the scene",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "baselineTest": "inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+        "currentTest": "inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "baselineTest": "phone safety → phase muscle → drill → SDK plan route → same paused frame",
+        "currentTest": "phone safety → phase muscle → drill → SDK plan route → same paused frame",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "baselineTest": "plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+        "currentTest": "plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "ProMax dark text 1.0 core pages fit",
+        "currentTest": "ProMax dark text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "ProMax dark text 2.0 core pages fit",
+        "currentTest": "ProMax dark text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "ProMax light text 1.0 core pages fit",
+        "currentTest": "ProMax light text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "ProMax light text 2.0 core pages fit",
+        "currentTest": "ProMax light text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 dark text 1.0 core pages fit",
+        "currentTest": "SE3 dark text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 dark text 2.0 core pages fit",
+        "currentTest": "SE3 dark text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 landscape dark text 1.0 core pages fit",
+        "currentTest": "SE3 landscape dark text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 landscape dark text 2.0 core pages fit",
+        "currentTest": "SE3 landscape dark text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 landscape light text 1.0 core pages fit",
+        "currentTest": "SE3 landscape light text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 landscape light text 2.0 core pages fit",
+        "currentTest": "SE3 landscape light text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 light text 1.0 core pages fit",
+        "currentTest": "SE3 light text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "SE3 light text 2.0 core pages fit",
+        "currentTest": "SE3 light text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 dark text 1.0 core pages fit",
+        "currentTest": "iPhone13 dark text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 dark text 2.0 core pages fit",
+        "currentTest": "iPhone13 dark text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 landscape dark text 1.0 core pages fit",
+        "currentTest": "iPhone13 landscape dark text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 landscape dark text 2.0 core pages fit",
+        "currentTest": "iPhone13 landscape dark text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 landscape light text 1.0 core pages fit",
+        "currentTest": "iPhone13 landscape light text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 landscape light text 2.0 core pages fit",
+        "currentTest": "iPhone13 landscape light text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 light text 1.0 core pages fit",
+        "currentTest": "iPhone13 light text 1.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "baselineTest": "iPhone13 light text 2.0 core pages fit",
+        "currentTest": "iPhone13 light text 2.0 core pages fit",
+        "before": "failed",
+        "after": "passed"
+      },
+      {
+        "file": "app/test/ui/polish_round2_test.dart",
+        "baselineTest": "drill page: picture under the status bar, bar forms on scroll",
+        "currentTest": "drill page: fixed header and action stay outside scrolling content",
+        "before": "failed",
+        "after": "passed"
+      }
+    ]
+  },
+  "testCountBefore": 362,
+  "testCountAfter": 362,
+  "testsRemoved": 0,
+  "newSkips": 0,
+  "renamedTests": [
+    {
+      "file": "app/test/ui/polish_round2_test.dart",
+      "baselineTest": "drill page: picture under the status bar, bar forms on scroll",
+      "currentTest": "drill page: fixed header and action stay outside scrolling content",
+      "before": "failed",
+      "after": "passed"
+    }
+  ],
+  "productFixes": [
+    "Short-height detail body scrolls when fixed readable content will not fit; training action remains fixed and 3D half-stage preserved.",
+    "Clock moved below play control so localized phase names fit two full lines without shrinking; text-scaled control height matches 3D bottom inset.",
+    "Separate active from visible: inactive pauses but retains visible canvas; hidden/paused remain stopped; initial ready/recovery share visibility policy."
+  ],
+  "testWiringUpdates": [
+    "Bounded real asset IO wait before asserting SDK route and full TrainingPlan.",
+    "Current hint/appearance selectors and scroll-to-visible drill taps.",
+    "Current fixed header/footer and independent scrolling detail behavior.",
+    "No SDK result means no training record after exit/reload; full saved routine persists."
+  ],
+  "sourceGitBlobs": {
+    "app/lib/ui/app_shell.dart": "3196da236c1768a7a664e20329c1491cc9f6bc33",
+    "app/test/ui/flow_regressions_test.dart": "ba3d2b426d3648cd402043b885088dc68ea22a52",
+    "app/test/ui/ios_layout_test.dart": "83c6875807a86f2632fdfc25e74ae5bbe4af30b4",
+    "app/test/ui/polish_round2_test.dart": "0722f56aa9603fc65f481f99d52f39d11379206f"
+  },
+  "release10Untouched": true,
+  "hiplabUntouched": true,
+  "sdkSourceModified": false,
+  "appVersion": "1.0.10+15",
+  "newApkBuilt": false,
+  "newDeviceInstall": false,
+  "browserReviewed": false,
+  "verificationScope": "Full Flutter test suite and static analysis; existing opt-in live model smoke remains skipped. No new physical-device or long-term QA acceptance.",
+  "logs": {
+    "output/baseline-fixes-20261024/pub-locked.log": {
+      "sha256": "91c580a70c2ee60b56cc7251104daa91ba93ee24c44912b213c8f95088579330",
+      "bytes": 953
+    },
+    "output/baseline-fixes-20261024/analyze-final.log": {
+      "sha256": "570ccfc770119b83f72ffec9e31aa08c80c002d302ef001055c1155dd12cd2d3",
+      "bytes": 99
+    },
+    "output/baseline-fixes-20261024/full-tests.jsonl": {
+      "sha256": "d4b9e76cdf31bf20a51aa3cf743e8e69426ad3ade2076ac1d758a2cfb194f584",
+      "bytes": 196752
+    },
+    "output/baseline-fixes-20261024/test-summary.json": {
+      "sha256": "420c65d9fd7be3c51cec6c46a886869be319462f3a5cfd055c47f3bf7c290f8e",
+      "bytes": 6994
+    },
+    "output/baseline-fixes-20261024/integration-receipt.json": {
+      "sha256": "19344d822899e663e000992f883fa7c97dd3b8fd98be8c9cd0eb49980e08e4e3",
+      "bytes": 426
+    }
+  }
+}

@@ -129,6 +129,27 @@ class TrainingRouteProbe extends StatelessWidget {
   );
 }
 
+/// The App loads SDK voice/media metadata before pushing the training route.
+/// Pumping only the fake clock cannot complete rootBundle's real asset IO.
+Future<void> waitForTrainingRoute(WidgetTester tester) async {
+  for (
+    var attempt = 0;
+    attempt < 100 && find.byType(TrainingRouteProbe).evaluate().isEmpty;
+    attempt++
+  ) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  await tester.pumpAndSettle();
+  expect(
+    find.byType(TrainingRouteProbe),
+    findsOneWidget,
+    reason: 'Training route must open after its bounded asset IO wait',
+  );
+}
+
 void main() {
   final catalog = loadCatalogFixture();
 
@@ -334,7 +355,12 @@ void main() {
         assertLeanHome(tester);
         assertNoFlutterError(tester);
 
-        await tester.tap(labeledControl('暂停后可点选肌群'));
+        final muscleHint = find.byKey(const ValueKey('home-muscle-hint'));
+        expect(
+          find.descendant(of: muscleHint, matching: find.text('暂停后查看')),
+          findsOneWidget,
+        );
+        await tester.tap(muscleHint);
         await tester.pumpAndSettle();
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
@@ -352,7 +378,11 @@ void main() {
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
         assertLeanHome(tester);
-        await tester.tap(labeledControl('点选肌群查看详解'));
+        expect(
+          find.descendant(of: muscleHint, matching: find.text('点选肌群')),
+          findsOneWidget,
+        );
+        await tester.tap(muscleHint);
         await tester.pumpAndSettle();
         // The picker leads with this moment's primary groups only.
         expect(find.text('第一侧支撑'), findsWidgets);
@@ -552,7 +582,7 @@ void main() {
         ).removeCurrentSnackBar();
         await tester.pumpAndSettle();
         await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
-        await tester.pumpAndSettle();
+        await waitForTrainingRoute(tester);
         final delivered = tester
             .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
             .plan;
@@ -635,16 +665,28 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.widgetWithText(ListTile, '记录'));
         await tester.pumpAndSettle();
-        expect(find.text('记录了不适'), findsOneWidget);
-        expect(
-          find.text(catalog.drillById('deltoids-A')!.name),
-          findsOneWidget,
-        );
+        expect(find.byType(ProgressPage), findsOneWidget);
+        final historyEmpty = AppLocalizations.of(
+          tester.element(find.byType(ProgressPage)),
+        ).historyEmpty;
+        expect(find.byType(EmptyNote), findsOneWidget);
+        expect(find.text(historyEmpty), findsOneWidget);
+        expect(find.text('记录了不适'), findsNothing);
+        expect(find.text(catalog.drillById('deltoids-A')!.name), findsNothing);
+        expect(store.sessions, isEmpty);
+        expect(store.trainerSessions, isEmpty);
         final restored = LearningStore(catalog: catalog, storage: storage);
         await restored.initialize();
-        expect(restored.sessions, hasLength(1));
+        // Opening and closing the SDK route probe produced no result. Saving
+        // a routine must survive reload without fabricating a training record.
+        expect(restored.sessions, isEmpty);
+        expect(restored.trainerSessions, isEmpty);
+        expect(restored.routines.single.name, '我的训练');
         expect(restored.routines.single.drillIds, ['deltoids-A']);
-        expect(restored.sessions.single.pain, isTrue);
+        expect(
+          restored.routines.single.toJson(),
+          store.routines.single.toJson(),
+        );
         restored.dispose();
         assertNoFlutterError(tester);
         await tester.pumpWidget(const SizedBox());
@@ -903,7 +945,7 @@ void main() {
         expect(detail.drills.every((drill) => drill.tier == 'B'), isTrue);
 
         await tapVisible(tester, find.byKey(const ValueKey('plan-start')));
-        await tester.pumpAndSettle();
+        await waitForTrainingRoute(tester);
         final delivered = tester
             .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
             .plan;
@@ -1251,8 +1293,20 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, '设置'));
     await tester.pumpAndSettle();
-    expect(find.text('跟随系统'), findsOneWidget);
-    await tester.tap(find.text('浅色'));
+    final appearance = find.byWidgetPredicate(
+      (widget) =>
+          widget is FlareSegmented<String> &&
+          widget.segments.map((segment) => segment.$1).join(',') ==
+              'system,dark,light',
+    );
+    expect(appearance, findsOneWidget);
+    expect(
+      find.descendant(of: appearance, matching: find.text('跟随系统')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.descendant(of: appearance, matching: find.text('浅色')),
+    );
     await tester.pumpAndSettle();
     expect(store.settings.themeMode, 'light');
     expect(FlareColors.palette.isDark, isFalse);
@@ -1262,7 +1316,9 @@ void main() {
       'value': 'light',
     });
     assertNoFlutterError(tester);
-    await tester.tap(find.text('深色'));
+    await tester.tap(
+      find.descendant(of: appearance, matching: find.text('深色')),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
     // The whole screen dissolves from the old (light) appearance.

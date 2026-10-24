@@ -1,6 +1,6 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-24，会话 controller 候选在 `codex/coach-conversation-controller`：正式 tag coach 0.5.0 / trainer 0.2.3 固定 `d7e0b8f`，UI 0.1.1 仍为 `3302d62`。分析无问题，全量 335 通过、26 项基线失败、1 项 opt-in 跳过；按追加的基线等价标准已满足技术交审条件；尚未合入或推送，详见[迁移与失败对照](docs/coach-conversation-controller-2026-10-24.md)。
+2026-10-24，会话 controller 迁移 `4b5f70d` 已合入并推送 `master`。26 项基线修复位于独立分支 `codex/fix-baseline-tests`：全量 361 通过、0 失败、1 项原 opt-in 跳过，分析无问题，尚未合入或推送。[修复候选与验证](docs/baseline-fixes-2026-10-24.md)。
 
 2026-10-24，共用聊天 UI/训练现固定 coach 0.4.2、trainer 0.2.2、coach_ui 0.1.1 正式 tag，均解析至 `3302d62`；153 项相关测试全过，原窄屏大字溢出已由 SDK 修复，无需本机编码适配。验证通过后按用户授权合入推送 `master`。[当前接入与验证](docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方 +16 交付保持。
 
@@ -102,9 +102,9 @@ npm run build
 
 <a id="ai-coach"></a>
 
-## AI 定制（SDK controller 候选）
+## AI 定制（SDK controller）
 
-计划页顶部「AI 定制」支持描述需求、独立问题气泡与多轮补充，计划卡可「保存到我的计划」或「开始训练」。本候选使用正式 `ugk_coach-v0.5.0` 与 `ugk_trainer-v0.2.3`（`d7e0b8f`），`ugk_coach_ui-v0.1.1`（`3302d62`）；与 pubspec/lock 一致。会话和问题状态由 `CoachConversationController` 管理，App 保留安全上下文、映射和训练回调。[本轮验证与范围](docs/coach-conversation-controller-2026-10-24.md)，旧接入记录保留历史。
+计划页顶部「AI 定制」支持描述需求、独立问题气泡与多轮补充，计划卡可「保存到我的计划」或「开始训练」。主线使用正式 `ugk_coach-v0.5.0` 与 `ugk_trainer-v0.2.3`（`d7e0b8f`），`ugk_coach_ui-v0.1.1`（`3302d62`）；与 pubspec/lock 一致。会话和问题状态由 `CoachConversationController` 管理，App 保留安全上下文、映射和训练回调。[本轮验证与范围](docs/coach-conversation-controller-2026-10-24.md)，旧接入记录保留历史。
 
 默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。无有效 Key/relay token 时全部 AI 入口隐藏；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
 
