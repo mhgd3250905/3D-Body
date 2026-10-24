@@ -2,15 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_coach_ui/ugk_coach_ui.dart' as cui;
 
 import '../coach/coach_service.dart';
+import '../coach/coach_ui_mapping.dart';
 import '../coach/plan_mapping.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
-import '../trainer/training_plan_adapter.dart';
 import 'app_glass.dart';
-import 'components.dart';
 import 'coach_question_bubble.dart';
+import 'coach_ui_theme.dart';
 import 'motion.dart';
 import 'plans_page.dart' show DrillPoster;
 import 'theme.dart';
@@ -21,9 +22,12 @@ bool aiCoachAvailable(BuildContext context) =>
 
 /// 对话里的一条。
 class CoachMessage {
-  const CoachMessage.user(String this.text) : answer = null, resultId = -1;
-  const CoachMessage.answer(CoachAnswer this.answer, this.resultId)
+  const CoachMessage.user(String this.text, {this.at})
+    : answer = null,
+      resultId = -1;
+  const CoachMessage.answer(CoachAnswer this.answer, this.resultId, {this.at})
     : text = null;
+  final DateTime? at;
   final String? text;
   final CoachAnswer? answer;
 
@@ -35,16 +39,79 @@ class CoachMessage {
 /// 一次 AI 定制对话的状态。由外壳持有，进入跟练 / 动作详情再回来时对话还在。
 class AiCoachSession extends ChangeNotifier {
   AiCoachSession(this.service, {DateTime Function()? now})
-    : _now = now ?? DateTime.now;
+    : _now = now ?? DateTime.now,
+      createdAt = (now ?? DateTime.now)();
 
   final CoachService service;
   final DateTime Function() _now;
+  final DateTime createdAt;
+  int generation = 0;
+  int? _activeQuestionResultId;
+  bool _acceptNewQuestions = true;
+  final Set<int> _answeredQuestions = {};
+  final Map<int, List<String>> answeredQuestionChoices = {};
+
+  int? get activeQuestionResultId => _activeQuestionResultId;
+  bool questionActive(int resultId) =>
+      !_disposed && !busy && _activeQuestionResultId == resultId;
+  bool questionAnswered(int resultId) => _answeredQuestions.contains(resultId);
+
+  uc.AskUserQuestion? _question(int resultId) {
+    for (final message in messages) {
+      if (message.resultId == resultId) return message.answer?.question;
+    }
+    return null;
+  }
+
+  Future<void> answerText(
+    int resultId,
+    String raw, {
+    required String tier,
+  }) async {
+    if (!questionActive(resultId) ||
+        _question(resultId)?.mode != uc.AskUserMode.text) {
+      return;
+    }
+    await send(raw, tier: tier);
+  }
+
+  Future<void> answerChoices(
+    int resultId,
+    List<String> choices, {
+    required String tier,
+  }) async {
+    final question = _question(resultId);
+    if (!questionActive(resultId) ||
+        question == null ||
+        question.mode != uc.AskUserMode.choice) {
+      return;
+    }
+    final selected = choices.toSet();
+    if (selected.isEmpty ||
+        selected.length != choices.length ||
+        choices.any((v) => !question.options.contains(v)) ||
+        (!question.multiple && choices.length != 1)) {
+      return;
+    }
+    final ordered = question.options.where(selected.contains).toList();
+    answeredQuestionChoices[resultId] = List.unmodifiable(ordered);
+    await send(ordered.join('、'), tier: tier);
+  }
+
+  /// Reopening history never silently revives an old pending ask_user task.
+  void closePresentation() {
+    _acceptNewQuestions = false;
+    _activeQuestionResultId = null;
+  }
+
+  void openPresentation() => _acceptNewQuestions = true;
   final uc.CoachConversation conversation = uc.CoachConversation();
   final List<CoachMessage> messages = [];
 
   /// 已保存的回答：回答身份（[CoachMessage.resultId]）→ routine id。
   /// routine 可能已被删除，是否「已保存」以 store 里实际存在为准（[isSaved]）。
   final Map<int, String> saved = {};
+  final Map<int, String> pendingSaved = {};
   int _nextResult = 0;
   uc.CancelToken? _cancel;
   DateTime? _startedAt;
@@ -73,12 +140,15 @@ class AiCoachSession extends ChangeNotifier {
 
   Future<void> send(String raw, {required String tier}) async {
     final text = raw.trim();
-    if (text.isEmpty || busy) return;
+    if (_disposed || text.isEmpty || busy) return;
+    final previousQuestion = _activeQuestionResultId;
+    if (previousQuestion != null) _answeredQuestions.add(previousQuestion);
+    _activeQuestionResultId = null;
     final cancel = uc.CancelToken();
     _cancel = cancel;
     _startedAt = _now();
     progress = null;
-    messages.add(CoachMessage.user(text));
+    messages.add(CoachMessage.user(text, at: _now()));
     _notify();
     CoachAnswer answer;
     try {
@@ -105,7 +175,11 @@ class AiCoachSession extends ChangeNotifier {
       if (messages.isNotEmpty && messages.last.isUser) messages.removeLast();
       cancelledText = text;
     } else {
-      messages.add(CoachMessage.answer(answer, _nextResult++));
+      final resultId = _nextResult++;
+      messages.add(CoachMessage.answer(answer, resultId, at: _now()));
+      if (answer.question != null && _acceptNewQuestions) {
+        _activeQuestionResultId = resultId;
+      }
     }
     _notify();
   }
@@ -116,14 +190,28 @@ class AiCoachSession extends ChangeNotifier {
     conversation.clear();
     messages.clear();
     saved.clear();
+    pendingSaved.clear();
+    generation++;
+    _activeQuestionResultId = null;
+    _answeredQuestions.clear();
+    answeredQuestionChoices.clear();
     cancelledText = null;
     _notify();
   }
 
   /// 停止正在进行的请求（HTTP 真正中止，不回落、不记进对话）。
-  void stop() => _cancel?.cancel();
+  void stop() {
+    _activeQuestionResultId = null;
+    _cancel?.cancel();
+  }
+
+  void markPendingSave(int resultId, String routineId) {
+    pendingSaved[resultId] = routineId;
+    _notify();
+  }
 
   void markSaved(int resultId, String routineId) {
+    pendingSaved.remove(resultId);
     saved[resultId] = routineId;
     _notify();
   }
@@ -141,6 +229,7 @@ class AiCoachSession extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _activeQuestionResultId = null;
     _cancel?.cancel();
     super.dispose();
   }
@@ -173,7 +262,9 @@ class AiCoachPage extends StatefulWidget {
 class _AiCoachPageState extends State<AiCoachPage> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
+  late final Set<String> _initiallySeen;
   Timer? _ticker;
+  final _saving = <int>{};
 
   /// 本次等待已过的秒数（按 1 秒节拍累加）。
   int _elapsed = 0;
@@ -183,6 +274,11 @@ class _AiCoachPageState extends State<AiCoachPage> {
   @override
   void initState() {
     super.initState();
+    session.openPresentation();
+    _initiallySeen = {
+      for (var i = 0; i < session.messages.length; i++)
+        'coach-${session.generation}-$i',
+    };
     session.addListener(_changed);
     if (!session.loaded) unawaited(session.load());
     if (session.busy) _startTicker();
@@ -193,6 +289,8 @@ class _AiCoachPageState extends State<AiCoachPage> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.session, widget.session)) {
       oldWidget.session.removeListener(_changed);
+      oldWidget.session.closePresentation();
+      widget.session.openPresentation();
       widget.session.addListener(_changed);
     }
   }
@@ -200,6 +298,7 @@ class _AiCoachPageState extends State<AiCoachPage> {
   @override
   void dispose() {
     session.removeListener(_changed);
+    session.closePresentation();
     _ticker?.cancel();
     _input.dispose();
     _scroll.dispose();
@@ -265,26 +364,55 @@ class _AiCoachPageState extends State<AiCoachPage> {
     List<CoachPlanEntry> entries,
     int resultId,
   ) async {
-    final routine = await widget.store.createRoutine(
-      CoachPlanMapper.routineName(plan),
-      plan.exerciseIds.toList(),
-      sdkPlan: plan,
-      source: plan.source == 'template' ? 'template' : 'ai',
-    );
-    if (!mounted || routine == null) return;
-    FlareHaptics.success();
-    session.markSaved(resultId, routine.id);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('已保存到「我的计划」：${routine.name}')));
+    if (entries.isEmpty ||
+        session.isSaved(resultId, widget.store) ||
+        !_saving.add(resultId)) {
+      return;
+    }
+    try {
+      final pending = session.pendingSaved[resultId];
+      final previous = pending == null
+          ? null
+          : widget.store.routineById(pending);
+      final routine =
+          previous ??
+          await widget.store.createRoutine(
+            CoachPlanMapper.routineName(plan),
+            plan.exerciseIds.toList(),
+            sdkPlan: plan,
+            source: plan.source == 'template' ? 'template' : 'ai',
+          );
+      if (routine == null) throw StateError('Plan was not saved');
+      session.markPendingSave(resultId, routine.id);
+      if (previous != null) {
+        if (!await widget.store.retrySave()) {
+          throw StateError('Plan persistence failed');
+        }
+      } else if (widget.store.storageError != null ||
+          widget.store.persistenceBlocked) {
+        throw StateError('Plan persistence failed');
+      }
+      session.markSaved(resultId, routine.id);
+      if (!mounted) return;
+      FlareHaptics.success();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text('已保存到「我的计划」：${routine.name}')));
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('保存失败，请重试保存。计划仍保留在本次对话中。')),
+        );
+    } finally {
+      _saving.remove(resultId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final configured = session.service.configured;
-    final headerHeight =
-        58.0 +
-        (configured ? 0 : MediaQuery.textScalerOf(context).scale(12) * 1.4 + 8);
     final header = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -326,137 +454,136 @@ class _AiCoachPageState extends State<AiCoachPage> {
           ),
       ],
     );
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                ListView.builder(
-                  key: const ValueKey('coach-list'),
-                  controller: _scroll,
-                  reverse: true,
-                  padding: EdgeInsets.fromLTRB(16, headerHeight + 12, 16, 10),
-                  itemCount:
-                      session.messages.length +
-                      (session.busy ? 1 : 0) +
-                      (session.messages.isEmpty ? 1 : 0) +
-                      (session.showDisclaimer ? 1 : 0),
-                  findChildIndexCallback: (key) {
-                    if (key is ObjectKey && key.value is CoachMessage) {
-                      final i = session.messages.indexOf(
-                        key.value as CoachMessage,
-                      );
-                      return i < 0
-                          ? null
-                          : session.messages.length -
-                                i -
-                                1 +
-                                (session.busy ? 1 : 0);
-                    }
-                    if (key == const ValueKey('coach-thinking-row')) {
-                      return session.busy ? 0 : null;
-                    }
-                    final base =
-                        session.messages.length + (session.busy ? 1 : 0);
-                    if (key == const ValueKey('coach-intro-row')) {
-                      return session.messages.isEmpty ? base : null;
-                    }
-                    if (key == const ValueKey('coach-disclaimer-row')) {
-                      return session.showDisclaimer
-                          ? base + (session.messages.isEmpty ? 1 : 0)
-                          : null;
-                    }
-                    return null;
-                  },
-                  itemBuilder: (context, position) {
-                    var index = position;
-                    if (session.busy) {
-                      if (index == 0) {
-                        return RepaintBoundary(
-                          key: const ValueKey('coach-thinking-row'),
-                          child: _Thinking(
-                            key: const ValueKey('coach-thinking'),
-                            seconds: _elapsed,
-                            event: session.progress,
-                            onStop: session.stop,
-                          ),
-                        );
-                      }
-                      index--;
-                    }
-                    if (index < session.messages.length) {
-                      final i = session.messages.length - index - 1;
-                      final m = session.messages[i];
-                      return RepaintBoundary(
-                        key: ObjectKey(m),
-                        child: KeyedSubtree(
-                          key: ValueKey('coach-msg-$i'),
-                          child: m.isUser
-                              ? _UserBubble(m.text!)
-                              : _answer(context, m, i),
-                        ),
-                      );
-                    }
-                    index -= session.messages.length;
-                    if (session.messages.isEmpty && index == 0) {
-                      return KeyedSubtree(
-                        key: const ValueKey('coach-intro-row'),
-                        child: _Intro(configured: configured),
-                      );
-                    }
-                    return KeyedSubtree(
-                      key: const ValueKey('coach-disclaimer-row'),
+    return cui.CoachUiTheme(
+      style: flareCoachUiStyle(context),
+      child: ColoredBox(
+        color: FlareColors.background,
+        child: Column(
+          children: [
+            header,
+            Expanded(
+              child: cui.CoachChatList(
+                key: ValueKey('coach-list-${session.generation}'),
+                controller: _scroll,
+                topColor: FlareColors.background,
+                dockHeight: 0,
+                initiallySeen: _initiallySeen,
+                timeMarkBuilder: (at, now) => cui.CoachTimeMark(at, now: now),
+                typing: session.busy
+                    ? _Thinking(
+                        key: const ValueKey('coach-thinking'),
+                        seconds: _elapsed,
+                        event: session.progress,
+                        onStop: session.stop,
+                      )
+                    : null,
+                entries: [
+                  if (session.showDisclaimer)
+                    cui.CoachChatEntry(
+                      id: 'disclaimer-${session.generation}',
+                      at: session.createdAt,
+                      isUser: false,
                       child: _Disclaimer(onAccept: session.acceptDisclaimer),
-                    );
-                  },
-                ),
-                Positioned(top: 0, left: 0, right: 0, child: header),
-              ],
+                    ),
+                  if (session.messages.isEmpty)
+                    cui.CoachChatEntry(
+                      id: 'intro-${session.generation}',
+                      at: session.createdAt,
+                      isUser: false,
+                      greeting: true,
+                      child: const cui.CoachGreetingBlock(
+                        text:
+                            '说说你想怎么练\n场地、时长、想练的部位、哪里不舒服都可以讲。'
+                            '我只用 App 里的托马斯动作排计划，排好可以存进「我的计划」或直接开练。',
+                      ),
+                    ),
+                  for (var i = 0; i < session.messages.length; i++)
+                    cui.CoachChatEntry(
+                      id: 'coach-${session.generation}-$i',
+                      at: session.messages[i].at ?? session.createdAt,
+                      isUser: session.messages[i].isUser,
+                      isCard: session.messages[i].answer?.reply?.plan != null,
+                      child: KeyedSubtree(
+                        key: ValueKey('coach-msg-$i'),
+                        child: session.messages[i].isUser
+                            ? _plain(
+                                session.messages[i].text!,
+                                user: true,
+                                id: 'user-$i',
+                              )
+                            : _answer(context, session.messages[i], i),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          _SuggestionStrip(
-            items: session.busy ? const [] : _suggestions,
-            onTap: _send,
-          ),
-          _Composer(
-            controller: _input,
-            busy: session.busy,
-            onSend: _send,
-            onPlans: widget.onBack,
-          ),
-        ],
+            _SuggestionStrip(
+              items: session.busy ? const [] : _suggestions,
+              onTap: _send,
+            ),
+            _Composer(
+              controller: _input,
+              busy: session.busy,
+              onSend: _send,
+              onPlans: widget.onBack,
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  Widget _plain(
+    String text, {
+    bool user = false,
+    String id = 'notice',
+    String? caption,
+  }) => cui.CoachMessageBubble(
+    message: cui.CoachBubbleData(
+      id: id,
+      text: text,
+      isUser: user,
+      caption: caption,
+    ),
+    optionsActive: false,
+    onOption: (_) {},
+  );
 
   Widget _answer(BuildContext context, CoachMessage message, int index) {
     final answer = message.answer!;
     final reply = answer.reply;
     if (reply == null) return const SizedBox.shrink();
-    final latest = index == session.messages.length - 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (reply.text.isNotEmpty && answer.question == null)
-          _CoachBubble(
-            text: reply.text,
-            preset: answer.preset && reply.plan == null,
+          _plain(
+            reply.text,
+            caption: answer.preset && reply.plan == null ? '预设方案' : null,
           ),
         if (answer.question case final question?)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: CoachQuestionBubble(
-              key: ValueKey('coach-question-${answer.turnId}'),
-              question: question,
-              enabled: latest && !session.busy,
-              onAnswer: _send,
-              backgroundColor: FlareColors.surface.withValues(alpha: .88),
-              foregroundColor: FlareColors.text,
-              secondaryColor: FlareColors.secondary,
-              optionColor: FlareColors.raised,
-              accentColor: FlareColors.text,
+          cui.CoachQuestionBubble(
+            key: ValueKey(
+              'coach-question-${answer.turnId ?? message.resultId}',
+            ),
+            question: coachQuestionData(
+              question,
+              id: 'coach-question-${message.resultId}',
+              answered: session.questionAnswered(message.resultId),
+              answeredChoices:
+                  session.answeredQuestionChoices[message.resultId] ?? const [],
+            ),
+            enabled: session.questionActive(message.resultId),
+            onTextAnswer: (text) => session.answerText(
+              message.resultId,
+              text,
+              tier: widget.store.settings.tier,
+            ),
+            onChoiceAnswer: (choices) => session.answerChoices(
+              message.resultId,
+              choices,
+              tier: widget.store.settings.tier,
             ),
           ),
         if (answer.actions case final actions?)
@@ -477,31 +604,99 @@ class _AiCoachPageState extends State<AiCoachPage> {
     CoachAnswer answer,
     int resultId,
   ) {
-    final mapper = CoachPlanMapper(widget.catalog);
-    final missing = mapper.missingIds(plan);
-    if (missing.isNotEmpty) {
-      return _CoachBubble(text: '计划包含暂不可用的动作，无法开始：${missing.join('、')}');
+    if (!session.loaded) return const SizedBox.shrink();
+    final service = session.service;
+    // Recheck the coach gate before any display DTO is constructed. Paths/names
+    // come exclusively from this App catalog, never from the model or DTOs.
+    if (!uc.PlanValidator(
+      catalog: service.catalog,
+      profile: service.profile,
+    ).validate(plan).ok) {
+      return _plain('计划未通过本 App 的训练校验，无法开始。');
     }
-    final entries = mapper.entries(plan);
+    final mapper = FlareCoachUiMapper(
+      widget.catalog,
+      trustedIds: {
+        for (final drill in service.profile.scope(service.catalog)) drill.id,
+      },
+    );
+    final cui.CoachRoutine routine;
+    try {
+      routine = mapper.routine(plan, resultId: resultId, preset: answer.preset);
+    } on StateError {
+      return _plain('计划包含暂不可用的动作，无法开始。');
+    }
+    final entries = CoachPlanMapper(widget.catalog).entries(plan);
     final saved = session.isSaved(resultId, widget.store);
-    return _PlanCard(
-      catalog: widget.catalog,
-      key: ValueKey('coach-plan-$resultId'),
-      plan: plan,
-      entries: entries,
-      preset: answer.preset,
-      saved: saved,
-      onDrill: widget.onDrill,
-      onSave: saved || entries.isEmpty
-          ? null
-          : () => _save(plan, entries, resultId),
-      onStart: entries.isEmpty
-          ? null
-          : () {
-              // 保存提示别盖住跟练页底部按钮。
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              widget.onStart(plan);
-            },
+    final retry = session.pendingSaved.containsKey(resultId) && !saved;
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (retry)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('尚未写入本机存储，请重试保存', key: ValueKey('coach-save-retry')),
+            ),
+          KeyedSubtree(
+            key: const ValueKey('coach-plan-card'),
+            child: cui.CoachPlanCard(
+              key: ValueKey('coach-plan-$resultId'),
+              plan: routine,
+              library: mapper.library(flareCoachUiStyle(context).colors.stage),
+              saved: saved,
+              onSave: () {
+                if (!saved) unawaited(_save(plan, entries, resultId));
+              },
+              onStart: (_) {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                widget.onStart(plan);
+              },
+              onOpen: () => _openPlan(plan, entries),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openPlan(uc.TrainingPlan plan, List<CoachPlanEntry> entries) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(plan.title, style: Theme.of(context).textTheme.titleLarge),
+                if (plan.summary.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(plan.summary),
+                  ),
+                for (final entry in entries)
+                  ListTile(
+                    title: Text(entry.drill.name),
+                    subtitle: Text('${entry.blockName}\n${entry.doseText}'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      widget.onDrill(entry.drill);
+                    },
+                  ),
+                for (final note in [...plan.notes, ...plan.safetyNotes])
+                  Text(note),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -554,107 +749,6 @@ class _Disclaimer extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    ),
-  );
-}
-
-class _Intro extends StatelessWidget {
-  const _Intro({required this.configured});
-  final bool configured;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 4, bottom: 12),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '说说你想怎么练',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          '场地、时长、想练的部位、哪里不舒服都可以讲。'
-          '我只用 App 里的托马斯动作排计划，排好可以存进「我的计划」或直接开练。',
-          style: TextStyle(
-            fontSize: 14,
-            height: 1.5,
-            color: FlareColors.secondary,
-          ),
-        ),
-        if (!configured) ...[
-          const SizedBox(height: 10),
-          Text(
-            'AI 还没配置：现在会直接给出 App 内置的预设方案。',
-            key: const ValueKey('coach-unconfigured-note'),
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.45,
-              color: FlareColors.warning,
-            ),
-          ),
-        ],
-      ],
-    ),
-  );
-}
-
-class _UserBubble extends StatelessWidget {
-  const _UserBubble(this.text);
-  final String text;
-  @override
-  Widget build(BuildContext context) => _TextBubble(text: text, user: true);
-}
-
-class _CoachBubble extends StatelessWidget {
-  const _CoachBubble({required this.text, this.preset = false});
-  final String text;
-  final bool preset;
-  @override
-  Widget build(BuildContext context) =>
-      _TextBubble(text: text, secondary: preset);
-}
-
-/// Match SmartFit's content-level bubbles: a flat face, a small tail and no rim.
-class _TextBubble extends StatelessWidget {
-  const _TextBubble({
-    required this.text,
-    this.user = false,
-    this.secondary = false,
-  });
-  final String text;
-  final bool user;
-  final bool secondary;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 14),
-    child: Align(
-      alignment: user ? Alignment.centerRight : Alignment.centerLeft,
-      child: FractionallySizedBox(
-        widthFactor: user ? .78 : .86,
-        alignment: user ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 11, 16, 12),
-          decoration: BoxDecoration(
-            color: user
-                ? FlareColors.raised.withValues(alpha: .94)
-                : FlareColors.surface.withValues(alpha: .84),
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(22),
-              topRight: const Radius.circular(22),
-              bottomLeft: Radius.circular(user ? 22 : 6),
-              bottomRight: Radius.circular(user ? 6 : 22),
-            ),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.5,
-              color: secondary ? FlareColors.secondary : FlareColors.text,
-            ),
-          ),
-        ),
       ),
     ),
   );
@@ -766,517 +860,9 @@ class _Thinking extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.centerLeft,
-    child: Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.sizeOf(context).width * .86,
-      ),
-      decoration: BoxDecoration(
-        color: FlareColors.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(22),
-          topRight: Radius.circular(22),
-          bottomLeft: Radius.circular(6),
-          bottomRight: Radius.circular(22),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var i = 0; i < 3; i++)
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: FlareColors.dim.withValues(alpha: .45 + i * .2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const SizedBox(width: 6, height: 6),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(fontSize: 15, height: 1.45)),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '已用 $seconds 秒',
-                key: const ValueKey('coach-elapsed'),
-                style: TextStyle(fontSize: 12, color: FlareColors.dim),
-              ),
-              const SizedBox(width: 12),
-              TextButton.icon(
-                key: const ValueKey('coach-stop'),
-                onPressed: onStop,
-                icon: const Icon(Icons.stop_circle_outlined, size: 17),
-                label: const Text('停止'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-/// Compact media-first plan, matching SmartFit's folded / expanded contract.
-/// The scrolling card paints one static face and keeps one start control.
-class _PlanCard extends StatefulWidget {
-  const _PlanCard({
-    super.key,
-    required this.plan,
-    required this.catalog,
-    required this.entries,
-    required this.preset,
-    required this.saved,
-    required this.onDrill,
-    required this.onSave,
-    required this.onStart,
-  });
-  final uc.TrainingPlan plan;
-  final Catalog catalog;
-  final List<CoachPlanEntry> entries;
-  final bool preset;
-  final bool saved;
-  final ValueChanged<Drill> onDrill;
-  final VoidCallback? onSave;
-  final VoidCallback? onStart;
-  @override
-  State<_PlanCard> createState() => _PlanCardState();
-}
-
-class _PlanCardState extends State<_PlanCard>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-  bool _expanded = false;
-
-  Widget _start() => IconButton.filled(
-    key: const ValueKey('coach-start'),
-    tooltip: '开始训练',
-    style: IconButton.styleFrom(
-      backgroundColor: FlareColors.accent,
-      foregroundColor: FlareColors.onAccent,
-      minimumSize: const Size(48, 48),
-    ),
-    onPressed: widget.onStart,
-    icon: const Icon(Icons.play_arrow_rounded, size: 27),
-  );
-
-  Widget _toggle({bool onMedia = false}) => TextButton.icon(
-    key: const ValueKey('coach-plan-expand'),
-    onPressed: () => setState(() => _expanded = !_expanded),
-    style: TextButton.styleFrom(
-      foregroundColor: onMedia ? Colors.white : FlareColors.secondary,
-      backgroundColor: onMedia ? const Color(0x66000000) : FlareColors.raised,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      minimumSize: const Size(64, 36),
-    ),
-    iconAlignment: IconAlignment.end,
-    icon: Icon(
-      _expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
-      size: 18,
-    ),
-    label: Text(_expanded ? '收起' : '展开'),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    final plan = widget.plan;
-    final entries = widget.entries;
-    final minutes = (estimateTrainingPlanSeconds(plan, widget.catalog) / 60)
-        .ceil();
-    final summary = '${entries.length} 个动作 · 约 $minutes 分钟';
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: RepaintBoundary(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: FlareStaticSurface(
-              key: const ValueKey('coach-plan-card'),
-              padding: const EdgeInsets.all(6),
-              radius: 24,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (!_expanded && entries.length > 1)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(19),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: DrillPoster(entries.first.drill),
-                          ),
-                          const Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Color(0xcc000000),
-                                  ],
-                                  stops: [.2, 1],
-                                ),
-                              ),
-                            ),
-                          ),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 180),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(14, 8, 14, 13),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: _toggle(onMedia: true),
-                                  ),
-                                  const SizedBox(height: 56),
-                                  Text(
-                                    plan.title,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 19,
-                                      height: 1.3,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    summary,
-                                    style: const TextStyle(
-                                      color: Color(0xffdddddf),
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else if (!_expanded && entries.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(17),
-                            child: SizedBox(
-                              width: 108,
-                              height: 130,
-                              child: DrillPoster(entries.first.drill),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  plan.title,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.3,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  entries.first.doseText,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: FlareColors.secondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                _toggle(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  plan.title,
-                                  style: const TextStyle(
-                                    fontSize: 19,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.3,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  summary,
-                                  style: TextStyle(
-                                    color: FlareColors.secondary,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          _toggle(),
-                        ],
-                      ),
-                    ),
-                    if (plan.summary.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 4, 10, 8),
-                        child: Text(
-                          plan.summary,
-                          style: TextStyle(
-                            fontSize: 13,
-                            height: 1.45,
-                            color: FlareColors.secondary,
-                          ),
-                        ),
-                      ),
-                    for (final (i, entry) in entries.indexed) ...[
-                      if (i == 0 ||
-                          entry.blockIndex != entries[i - 1].blockIndex)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
-                          child: Eyebrow(entry.blockName),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: _EntryRow(
-                          key: ValueKey('coach-row-$i'),
-                          entry: entry,
-                          onTap: () => widget.onDrill(entry.drill),
-                        ),
-                      ),
-                    ],
-                    for (final note in {
-                      ...plan.safetyNotes,
-                      '训练中出现疼痛、麻木或头晕，立即停止。',
-                    })
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-                        child: Text(
-                          note,
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.4,
-                            color: FlareColors.secondary,
-                          ),
-                        ),
-                      ),
-                  ],
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(6, 8, 2, 2),
-                    child: Row(
-                      children: [
-                        if (_expanded)
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton.icon(
-                                key: const ValueKey('coach-save'),
-                                onPressed: widget.onSave,
-                                style: TextButton.styleFrom(
-                                  foregroundColor: FlareColors.text,
-                                ),
-                                icon: Icon(
-                                  widget.saved
-                                      ? Icons.check_rounded
-                                      : Icons.bookmark_add_outlined,
-                                  size: 18,
-                                ),
-                                label: Text(
-                                  widget.saved ? '已保存到我的计划' : '保存到我的计划',
-                                ),
-                              ),
-                            ),
-                          )
-                        else
-                          Expanded(
-                            child: Row(
-                              children: [
-                                for (final entry in entries.skip(1).take(3))
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 6),
-                                    child: InkWell(
-                                      onTap: () => widget.onDrill(entry.drill),
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Tooltip(
-                                        message: entry.drill.name,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          child: SizedBox(
-                                            width: 36,
-                                            height: 36,
-                                            child: DrillPoster(entry.drill),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                if (entries.length > 4)
-                                  Text(
-                                    '+${entries.length - 4}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: FlareColors.secondary,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(width: 6),
-                        _start(),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 5),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        _Badge(
-                          key: ValueKey(
-                            widget.preset
-                                ? 'coach-badge-preset'
-                                : 'coach-badge-ai',
-                          ),
-                          label: widget.preset ? '预设方案' : 'AI 定制',
-                          color: widget.preset
-                              ? FlareColors.warning
-                              : FlareColors.accentInk,
-                        ),
-                        if (widget.preset)
-                          Text(
-                            'App 内置成套训练',
-                            key: const ValueKey('coach-preset-note'),
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: FlareColors.secondary,
-                            ),
-                          ),
-                        if (widget.saved && !_expanded)
-                          Text(
-                            '已保存到我的计划',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: FlareColors.secondary,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  const _Badge({super.key, required this.label, required this.color});
-  final String label;
-  final Color color;
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: .14),
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
-    ),
-  );
-}
-
-class _EntryRow extends StatelessWidget {
-  const _EntryRow({super.key, required this.entry, required this.onTap});
-  final CoachPlanEntry entry;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) => InkWell(
-    borderRadius: BorderRadius.circular(14),
-    onTap: onTap,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SizedBox(
-              width: 52,
-              height: 52,
-              child: DrillPoster(entry.drill),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.drill.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.3,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  entry.doseText,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.35,
-                    color: FlareColors.secondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_right_rounded, size: 20, color: FlareColors.dim),
-        ],
-      ),
-    ),
+  Widget build(BuildContext context) => cui.CoachTypingBubble(
+    progressLabel: '$title · 已用 $seconds 秒',
+    onCancel: onStop,
   );
 }
 

@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flare/ui/coach_question_bubble.dart';
+import 'package:flare/ui/coach_ui_theme.dart';
+import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_coach/ugk_coach.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_coach_ui/ugk_coach_ui.dart' as cui;
 
-AskUserQuestion question({bool multiple = false, bool text = false}) =>
-    AskUserGate.check(
+uc.AskUserQuestion question({bool multiple = false, bool text = false}) =>
+    uc.AskUserGate.check(
       jsonEncode({
         'question': '今天想先练习什么？',
         'mode': text ? 'text' : 'choice',
@@ -17,34 +20,48 @@ AskUserQuestion question({bool multiple = false, bool text = false}) =>
         },
       }),
     ).question!;
-
 void main() {
   Future<void> show(
     WidgetTester tester,
-    AskUserQuestion q,
-    ValueChanged<String> onAnswer, {
+    uc.AskUserQuestion q,
+    Future<void> Function(String) onText,
+    Future<void> Function(List<String>) onChoices, {
     bool enabled = true,
     bool dark = false,
+    bool answered = false,
+    List<String> answeredChoices = const [],
   }) async {
-    tester.view.physicalSize = const Size(320, 900);
+    tester.view.physicalSize = const Size(320, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(brightness: dark ? Brightness.dark : Brightness.light),
-        home: MediaQuery(
-          data: const MediaQueryData(
-            size: Size(320, 900),
-            textScaler: TextScaler.linear(2),
-          ),
-          child: Scaffold(
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: CoachQuestionBubble(
-                  question: q,
-                  enabled: enabled,
-                  onAnswer: onAnswer,
+        theme: flareTheme(dark ? Brightness.dark : Brightness.light),
+        home: Builder(
+          builder: (context) => MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 1100),
+              textScaler: TextScaler.linear(2),
+              disableAnimations: true,
+            ),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: cui.CoachUiTheme(
+                    style: flareCoachUiStyle(context),
+                    child: cui.CoachQuestionBubble(
+                      question: coachQuestionData(
+                        q,
+                        id: 'q1',
+                        answered: answered,
+                        answeredChoices: answeredChoices,
+                      ),
+                      enabled: enabled,
+                      onTextAnswer: onText,
+                      onChoiceAnswer: onChoices,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -55,78 +72,98 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Finder option(int i) => find.byKey(ValueKey('question-option-q1-$i'));
+  final submit = find.byKey(const ValueKey('question-submit-q1'));
   for (final dark in [false, true]) {
     for (final multiple in [false, true]) {
-      testWidgets('SDK选项12码点320宽2倍字完整换行 dark=$dark multiple=$multiple', (
+      testWidgets('SDK问题选项320宽2倍字完整换行 dark=$dark multiple=$multiple', (
         tester,
       ) async {
-        final answers = <String>[];
+        final answers = <List<String>>[];
         final q = question(multiple: multiple);
-        await show(tester, q, answers.add, dark: dark);
+        await show(
+          tester,
+          q,
+          (_) async {},
+          (v) async => answers.add(v),
+          dark: dark,
+        );
         for (final value in q.options) {
-          final paragraph = tester.renderObject<RenderParagraph>(
-            find.text(value),
-          );
-          expect(paragraph.didExceedMaxLines, isFalse);
-          expect(paragraph.size.width, lessThan(250));
-          expect(paragraph.size.height, greaterThan(40));
+          final p = tester.renderObject<RenderParagraph>(find.text(value));
+          expect(p.didExceedMaxLines, isFalse);
+          expect(p.size.height, greaterThan(30));
         }
-        await tester.tap(find.byKey(const ValueKey('coach-option-0')));
+        await tester.tap(option(0));
         await tester.pumpAndSettle();
         if (multiple) {
           expect(answers, isEmpty);
-          final submit = find.byKey(const ValueKey('coach-options-submit'));
           await tester.ensureVisible(submit);
-          await tester.pumpAndSettle();
           await tester.tap(submit);
+          await tester.pumpAndSettle();
         }
-        expect(answers, [q.options.first]);
+        expect(answers, [
+          [q.options.first],
+        ]);
         expect(tester.takeException(), isNull);
       });
     }
   }
-
-  testWidgets('多选按SDK选项顺序提交；禁用后不丢选择且不能重发', (tester) async {
-    final answers = <String>[];
+  testWidgets('SDK多选保留原字符串与顺序，历史禁用不能重发', (tester) async {
+    final answers = <List<String>>[];
     final q = question(multiple: true);
-    await show(tester, q, answers.add);
+    await show(tester, q, (_) async {}, (v) async => answers.add(v));
+    expect(tester.widget<cui.CoachTextAction>(submit).onPressed, isNull);
+    await tester.tap(option(1));
+    await tester.pumpAndSettle();
+    await tester.tap(option(0));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(answers, [q.options]);
+    await show(
+      tester,
+      q,
+      (_) async {},
+      (v) async => answers.add(v),
+      enabled: false,
+      answered: true,
+      answeredChoices: q.options,
+    );
+    for (final pill in tester.widgetList<cui.CoachOptionPill>(
+      find.byType(cui.CoachOptionPill),
+    )) {
+      expect(pill.chosen, isTrue);
+      expect(pill.enabled, isFalse);
+    }
+    expect(submit, findsNothing);
+    expect(answers, hasLength(1));
+  });
+  testWidgets('SDK文字问题使用独立回答回调，异步提交期间不能重复提交', (tester) async {
+    final answers = <String>[];
+    final gate = Completer<void>();
+    await show(tester, question(text: true), (v) async {
+      answers.add(v);
+      await gate.future;
+    }, (_) async {});
+    await tester.enterText(
+      find.byKey(const ValueKey('question-input-q1')),
+      '  今天20分钟  ',
+    );
+    await tester.pump();
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
+    await tester.pump();
+    expect(answers, ['今天20分钟']);
+    expect(tester.widget<cui.CoachTextAction>(submit).onPressed, isNull);
     expect(
       tester
-          .widget<TextButton>(
-            find.byKey(const ValueKey('coach-options-submit')),
-          )
-          .onPressed,
-      isNull,
+          .widget<TextField>(find.byKey(const ValueKey('question-input-q1')))
+          .enabled,
+      isFalse,
     );
-    await tester.tap(find.byKey(const ValueKey('coach-option-1')));
+    gate.complete();
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('coach-option-0')));
-    await tester.pumpAndSettle();
-    final submit = find.byKey(const ValueKey('coach-options-submit'));
-    await tester.ensureVisible(submit);
-    await tester.pumpAndSettle();
-    await tester.tap(submit);
-    expect(answers, [q.options.join('、')]);
-    await show(tester, q, answers.add, enabled: false);
-    expect(tester.widget<TextButton>(submit).onPressed, isNull);
-    for (final chip in tester.widgetList<FilterChip>(find.byType(FilterChip))) {
-      expect(chip.selected, isTrue);
-      expect(chip.onSelected, isNull);
-    }
-    await show(tester, q, answers.add);
-    expect(tester.widget<TextButton>(submit).onPressed, isNotNull);
     expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('文字提问只显示问题和输入提示；单选禁用不发送', (tester) async {
-    final answers = <String>[];
-    await show(tester, question(text: true), answers.add);
-    expect(find.text('在下方输入你的回答'), findsOneWidget);
-    expect(find.byType(ActionChip), findsNothing);
-    await show(tester, question(), answers.add, enabled: false);
-    for (final chip in tester.widgetList<ActionChip>(find.byType(ActionChip))) {
-      expect(chip.onPressed, isNull);
-    }
-    expect(answers, isEmpty);
   });
 }

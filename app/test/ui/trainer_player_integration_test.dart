@@ -1,6 +1,10 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/domain/dose.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
+import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flare/ui/drill_media.dart';
@@ -11,6 +15,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
 
 import '../domain/fixtures.dart';
+import 'flow_regressions_test.dart' as flow;
 
 class _Storage implements LocalStateStorage {
   String? value;
@@ -154,6 +159,149 @@ void main() {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
   });
+
+  for (final singleDrill in [false, true]) {
+    testWidgets(
+      '${singleDrill ? 'selected drill' : 'saved circuit'} in the App shell completes in the SDK and returns',
+      (tester) async {
+        final semantics = tester.ensureSemantics();
+        try {
+          await flow.phoneSize(tester);
+          final storage = _Storage();
+          final catalog = loadCatalogFixture();
+          final store = LearningStore(catalog: catalog, storage: storage);
+          await store.initialize();
+          await store.acknowledgeSafety();
+          addTearDown(store.dispose);
+          final plan = _plan().copyWith(
+            blocks: [
+              uc.PlanBlock(
+                id: 'selected-circuit',
+                name: 'Circuit',
+                type: uc.BlockType.circuit,
+                rounds: 2,
+                restBetweenRoundsSeconds: 1,
+                items: _plan().items.toList(),
+              ),
+            ],
+          );
+          final routine = await store.createRoutine(
+            'Selected routine',
+            const ['abs-A'],
+            sdkPlan: singleDrill ? null : plan,
+            doses: const {
+              'abs-A': RoutineDose(
+                sets: 1,
+                mode: DoseMode.time,
+                target: 1,
+                perSide: false,
+                restSec: 0,
+              ),
+            },
+          );
+          final scene = SceneController(commandSink: (_) {});
+          addTearDown(scene.dispose);
+          final received = <uc.TrainingPlan>[];
+          await tester.pumpWidget(
+            flow.testApp(
+              FlareShell(
+                catalog: catalog,
+                store: store,
+                sceneController: scene,
+                enableScene: false,
+                trainingPageBuilder: (value) {
+                  received.add(value);
+                  return FlareTrainingPage(
+                    plan: value,
+                    catalog: catalog,
+                    store: store,
+                    voiceOutput: sdk.MutedVoiceOutput(),
+                    keepAlive: false,
+                  );
+                },
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          scene.receiveEvent({
+            'source': 'flare-scene',
+            'type': 'ready',
+            'time': 0.0,
+            'period': 9.0,
+            'phase': {'source': 9},
+          });
+          await tester.pumpAndSettle();
+          await tester.tap(flow.labeledControl('计划'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(ValueKey('routine-${routine!.id}')));
+          await tester.pumpAndSettle();
+          if (singleDrill) {
+            await tester.tap(find.byKey(const ValueKey('plan-row-abs-A')));
+            await tester.pumpAndSettle();
+            final context = tester.element(find.byType(DrillDetailPage));
+            await tester.tap(
+              find.text(AppLocalizations.of(context).startTimer),
+            );
+          } else {
+            await tester.tap(find.byKey(const ValueKey('plan-start')));
+          }
+          for (
+            var i = 0;
+            i < 50 && find.byType(sdk.TrainerPlayer).evaluate().isEmpty;
+            i++
+          ) {
+            await tester.runAsync(
+              () => Future<void>.delayed(const Duration(milliseconds: 10)),
+            );
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(received, hasLength(1));
+          expect(find.byType(sdk.TrainerPlayer), findsOneWidget);
+          if (singleDrill) {
+            expect(received.single.items.single.exerciseId, 'abs-A');
+            expect(received.single.items.single.workSeconds, 1);
+          } else {
+            expect(received.single.toJson(), plan.toJson());
+          }
+          final player = tester.widget<sdk.TrainerPlayer>(
+            find.byType(sdk.TrainerPlayer),
+          );
+          await _advance(
+            tester,
+            // SDK estimates exclude the lead-in; advance its public prep too.
+            sdk.SessionBuilder().planSeconds(received.single).ceil() +
+                player.prepSeconds +
+                2,
+          );
+          expect(find.byKey(const ValueKey('finish')), findsOneWidget);
+          expect(store.trainerSessions, hasLength(1));
+          final result = store.trainerSessions.single;
+          expect(result.full, isTrue);
+          expect(result.items, hasLength(singleDrill ? 1 : 2));
+          expect(
+            result.items.map((item) => item.completedSets),
+            singleDrill ? [1] : [2, 2],
+          );
+          expect(store.sessions.every((row) => row.completed), isTrue);
+          final restored = LearningStore(catalog: catalog, storage: storage);
+          await restored.initialize();
+          expect(restored.trainerSessions.single.toJson(), result.toJson());
+          expect(restored.sessions, hasLength(singleDrill ? 1 : 2));
+          restored.dispose();
+          await tester.tap(find.byKey(const ValueKey('finish')));
+          await tester.pumpAndSettle();
+          expect(find.byType(FlareTrainingPage), findsNothing);
+          expect(received, hasLength(1));
+          expect(store.trainerSessions.single.sessionId, result.sessionId);
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+        } finally {
+          semantics.dispose();
+        }
+      },
+    );
+  }
+
   testWidgets('one SDK route plays both items, persists once, returns once', (
     tester,
   ) async {

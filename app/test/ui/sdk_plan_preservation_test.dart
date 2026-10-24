@@ -15,6 +15,7 @@ import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_coach_ui/ugk_coach_ui.dart' as cui;
 import 'package:ugk_trainer/engine.dart' as trainer;
 
 import '../domain/fixtures.dart';
@@ -532,7 +533,13 @@ void main() {
     tester.view.physicalSize = const Size(390, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final plan = segmentedPlan();
+    // The display fixture must also pass the actual coach gate: triceps-A is
+    // reps-only in the trusted catalog, so use the timed abs-A for this segment.
+    final raw = segmentedPlan().toJson();
+    final items = ((raw['blocks'] as List).single as Map)['items'] as List;
+    final segments = (items.first as Map)['segments'] as List;
+    (segments[1] as Map)['exerciseId'] = 'abs-A';
+    final plan = const uc.PlanCodec().decode(raw);
     final store = LearningStore(
       catalog: catalog,
       storage: MemoryStateStorage(),
@@ -548,6 +555,7 @@ void main() {
     final session = AiCoachSession(service);
     await session.load();
     await session.acceptDisclaimer();
+    expect(service.validatePlan(plan).errors, isEmpty);
     session.messages.add(
       CoachMessage.answer(CoachAnswer(reply: uc.CoachReply.plan('', plan)), 0),
     );
@@ -573,16 +581,30 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('2 个动作 ·'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('coach-plan-expand')));
+    final cardFinder = find.byType(cui.CoachPlanCard);
+    expect(cardFinder, findsOneWidget);
+    final card = tester.widget<cui.CoachPlanCard>(cardFinder);
+    // Segment media are not independent parent rows. The SDK receives full
+    // localized doses; its own expanded layout renders those public DTOs.
+    expect(card.plan.items, hasLength(2));
+    expect(card.plan.items.map((item) => item.exerciseId), [
+      'scapular-A',
+      'scapular-A',
+    ]);
+    expect(card.plan.items.first.detailDose, contains('3 轮'));
+    expect(card.plan.items.first.detailDose, contains('1. Y · 8 次'));
+    expect(card.plan.items.first.detailDose, contains('2. T · 20 秒'));
+    expect(card.plan.items.first.detailDose, contains('3. W · 6 次 · 停留 2 秒'));
+    expect(card.plan.items.last.detailDose, contains('10 次'));
+    expect(card.saved, isFalse);
+    card.onSave();
+    card.onSave();
     await tester.pumpAndSettle();
-    expect(find.textContaining('1. Y · 8 次'), findsOneWidget);
-    expect(find.textContaining('2. T · 20 秒'), findsOneWidget);
-    expect(find.textContaining('3. W · 6 次 · 停留 2 秒'), findsOneWidget);
-    final start = find.byKey(const ValueKey('coach-start'));
-    await tester.ensureVisible(start);
-    await tester.pumpAndSettle();
-    await tester.tap(start);
+    expect(store.routines, hasLength(1));
+    expect(store.routines.single.sdkPlan!.toJson(), plan.toJson());
+    final savedCard = tester.widget<cui.CoachPlanCard>(cardFinder);
+    expect(savedCard.saved, isTrue);
+    savedCard.onStart(() => null);
     expect(identical(started, plan), isTrue);
     expect(tester.takeException(), isNull);
   });

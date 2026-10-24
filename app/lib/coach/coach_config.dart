@@ -46,8 +46,8 @@ class CoachConfig {
     catalogManifestUrl: String.fromEnvironment('UGK_COACH_CATALOG_URL'),
   );
 
-  bool get usesRelay => relayToken.isNotEmpty;
+  bool get usesRelay => relayToken.trim().isNotEmpty;
 
-  /// 有 key 或中转令牌才会调模型；否则入口显示「未配置」，一律走预设方案。
-  bool get configured => apiKey.isNotEmpty || usesRelay;
+  /// A Key/token enables AI. Empty builds expose no AI entry points.
+  bool get configured => apiKey.trim().isNotEmpty || usesRelay;
 }

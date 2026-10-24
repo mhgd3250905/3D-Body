@@ -1,5 +1,9 @@
 # Flare 版本管理台账
 
+## SDK 共用聊天 UI 待审源码（2026-10-24）
+
+候选分支 `codex/sdk-coach-ui-integration`，基线 `debf6a9`。`ugk_coach-v0.4.1`、`ugk_trainer-v0.2.1`、`ugk_coach_ui-v0.1.0` 正式 tag 已在 pubspec/lock 固定；界面来自 SDK，保留本 App 的白名单、门禁、同 Agent 多轮和持久化/训练回调。SDK 套路卡窄屏大字溢出仍待修复，候选未合入、未推送、未安装，暂不提高 App 版本；当前已安装 +16/R17、L52 有限认可和其它 QA 待办继续分列。[候选及验证详情](sdk-shared-ui-2026-10-24.md)。
+
 ## Liquid Glass Android 1.0.11+16 内测安装（2026-10-24）
 
 用户要求将合并版打包并保留原数据安装。源码 `52ee561` 通过 `--build-name=1.0.11 --build-number=16` 构建 release 内测包，pubspec 保持 1.0.10+15；同签名从 +15 覆盖安装到 Android 16 / 2602BRT18C。APK 回读 SHA 一致、数据目录 / 首次安装时间保持、原有计划及设置仍在、基本冷启动通过；完整用户测试待反馈。包身份、SHA、605 份旧资源及安装证据见[内测记录](liquid-glass-android-test-2026-10-24.md)。L52 有限用户认可及 SDK 第 1 步 +15 的安装记录保留，不把本次安装记为完整设备或性能验收。

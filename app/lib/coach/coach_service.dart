@@ -115,7 +115,7 @@ class CoachService {
     );
   }
 
-  /// 有模型可调；false 时入口显示「未配置」，问什么都给预设方案。
+  /// Whether a model client is available; false hides AI entry points.
   bool get configured => _client != null;
   bool get disclaimerAccepted => _disclaimerAccepted;
 

@@ -1,0 +1,97 @@
+{
+  "base": "debf6a9b157d26ebc5bc21cbf370a5488e146339",
+  "branch": "codex/sdk-coach-ui-integration",
+  "tags": {
+    "ugk_coach": [
+      "ugk_coach-v0.4.1",
+      "88da65ab4e7d6753ab548d779f4168f023dbf9f8"
+    ],
+    "ugk_trainer": [
+      "ugk_trainer-v0.2.1",
+      "f0ea0647586913b205fc6dbb75fc9f97cedc55ce"
+    ],
+    "ugk_coach_ui": [
+      "ugk_coach_ui-v0.1.0",
+      "f0ea0647586913b205fc6dbb75fc9f97cedc55ce"
+    ]
+  },
+  "tests": {
+    "trainer": {
+      "passed": 86,
+      "failed": 0,
+      "log": "trainer-tests.log"
+    },
+    "host": {
+      "passed": 29,
+      "failed": 0,
+      "log": "host-regressions.log"
+    },
+    "chat": {
+      "passed": 36,
+      "failed": 2,
+      "log": "chat-tests.log"
+    }
+  },
+  "totalPassed": 151,
+  "totalFailed": 2,
+  "analyze": "pass",
+  "productionWebBuild": "pass",
+  "androidArm64ReleaseBuild": "pass",
+  "androidApk": {
+    "bytes": 101769867,
+    "sha256": "dc978255ac2064811391a4616b37b84a14936257fc07378db246aede0dff466a",
+    "sourceVersion": "1.0.10+15",
+    "aiCredentialsInjected": false,
+    "installed": false
+  },
+  "sdkChanges": false,
+  "smartFitCodeCopied": false,
+  "mergeStatus": "blocked_by_sdk_card_overflow_and_pending_user_approval",
+  "knownSdkIssue": {
+    "tag": "ugk_coach_ui-v0.1.0",
+    "file": "packages/ugk_coach_ui/lib/src/plan_card.dart",
+    "line": 1887,
+    "repro": "320x740, textScale=2, light/dark",
+    "request": "Constrained wrapping dose text and dynamic row height with matching expansion/flight measurements"
+  },
+  "webPreview": {
+    "compile": "pass",
+    "interaction": "not_run",
+    "reason": "Local preview service start rejected by automatic approval: blocked by policy"
+  },
+  "commands": {
+    "trainer": "flutter test --no-pub test/trainer test/domain/sdk_training_session_test.dart test/domain/trainer_session_store_test.dart test/ui/trainer_player_integration_test.dart test/ui/sdk_timer_persistence_test.dart --reporter expanded",
+    "host": "flutter test --no-pub test/ui/sdk_plan_preservation_test.dart test/ui/ai_coach_review2_test.dart test/ui/coach_entry_visibility_test.dart --reporter expanded",
+    "chat": "flutter test --no-pub test/ui/ai_coach_test.dart test/ui/coach_question_bubble_test.dart --reporter expanded",
+    "analyze": "flutter analyze --no-pub",
+    "lock": "flutter pub get --enforce-lockfile",
+    "web": "flutter build web --no-pub --no-web-resources-cdn",
+    "android": "flutter build apk --release --target-platform android-arm64"
+  },
+  "sourceGitBlobHashes": {
+    "app/lib/coach/coach_config.dart": "c519fe6188fcd44ad3c2af2f3dde44810342eaef",
+    "app/lib/coach/coach_service.dart": "2bc71c0b16d57d635b95eb241049d09fca8d8a48",
+    "app/lib/coach/coach_ui_mapping.dart": "def49c8f4323d886dc1d7feaac6c0abe9198e839",
+    "app/lib/ui/ai_coach_page.dart": "30266cf79192ee422507922669932a92cb40c23c",
+    "app/lib/ui/app_shell.dart": "0a3b381a3f0df4e4de126ba96bb9b63928896f95",
+    "app/lib/ui/coach_question_bubble.dart": "85f42cfec773b1b4c99883d7cf23477226d06d93",
+    "app/lib/ui/coach_ui_theme.dart": "5715d0583170d52603697faa483fe91fab2dd773",
+    "app/pubspec.lock": "f86c917663ce3e651789d5138614dd092e366576",
+    "app/pubspec.yaml": "6a89aa6b0f8952e1d03a993635a1790ca7af05f0",
+    "app/test/ui/ai_coach_test.dart": "287cfe97b7a35b1dc45a7764bbd3abd3db293ad3",
+    "app/test/ui/coach_entry_visibility_test.dart": "684ff64fa74c13ddb60894d320b1f95e272b2b57",
+    "app/test/ui/coach_question_bubble_test.dart": "ab7596b44cf272334857a9d2b6b1742205b8bd78",
+    "app/test/ui/sdk_plan_preservation_test.dart": "9147377dec9198d2357bccdd48fbd847d56368d5",
+    "app/test/ui/trainer_player_integration_test.dart": "59e87ff779487382fafbf6babc21ba1992ec6121"
+  },
+  "logSha256": {
+    "trainer-tests.log": "c5b71f66802da27b74f33d7d44059541ca0651819ce7f4a29ac9032341f8c850",
+    "host-regressions.log": "aa5740844db4bebe566721b15dd2e8da06e21c83701e07e2f873636db837de1d",
+    "chat-tests.log": "1290316f0000880345a9f7d7adbf801ef816e48013ea31f32f656ce1728f0402",
+    "analyze.log": "e9421a3bb7981d35d5a86f3f0fa980e63a31c1d24a61d5b94c62d7b57b65d462",
+    "pub-locked.log": "e4f6b9f1c1aee8643e86a03e45e57711448c82249334b83498f64ff82c0932f5",
+    "web-build.log": "6ce9644f2d80c9e747a90c049aa6152029c381b05f9b4c8ec58916996ab55718",
+    "apk-build-pub.log": "c3134f71c9b56eda0874dddd08263610521a97abd6d403bfe90633929f3bedca",
+    "preview-build-final.log": "6d36193256db58b033a4090afe67cbecd1e8f781c2f495570ccac1ffa91d9a4b"
+  }
+}

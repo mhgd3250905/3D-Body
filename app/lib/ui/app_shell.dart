@@ -46,7 +46,7 @@ class FlareShell extends StatefulWidget {
   });
   final Catalog catalog;
 
-  /// AI 定制服务；null 时按 `--dart-define` 配置创建（未配置 key 走预设方案）。
+  /// AI service; without a configured Key/token, all AI entry points stay hidden.
   final CoachService? coach;
   final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
   final LearningStore store;
@@ -759,7 +759,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       );
     }
-    if (_coachOpen) {
+    if (_coachOpen && coachService.configured && aiCoachAvailable(context)) {
       final session = _coachSession ??= AiCoachSession(coachService);
       return (
         'coach',
@@ -849,7 +849,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
           onNewRoutine: () => setState(() => _editing = const _RoutineEdit()),
-          onAiCoach: aiCoachAvailable(context)
+          onAiCoach: coachService.configured && aiCoachAvailable(context)
               ? () => setState(() => _coachOpen = true)
               : null,
           aiCoachConfigured: coachService.configured,
@@ -1898,7 +1898,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
-                    if (aiCoachAvailable(context)) _aiUsageRow(),
+                    if (coachService.configured && aiCoachAvailable(context))
+                      _aiUsageRow(),
                     FlareRow(
                       title: s.aboutFlare,
                       subtitle: s.aboutHint,
