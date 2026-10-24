@@ -1,6 +1,8 @@
-# SDK 共用聊天与训练接入候选
+# SDK 共用聊天与训练接入候选（历史）
 
-本轮在 `codex/sdk-coach-ui-integration` 实现，基线为 `master` 的 `debf6a9b157d26ebc5bc21cbf370a5488e146339`。仓库默认分支实际名为 `master`；用户所说的主线按此执行，不新建或改名为 `main`。当前为待审候选，未合入、未推送、未安装手机；SDK 与 `release/1.0` 均未修改。
+此文保留 `e8ae7b5` 与旧 tag 的当时验证结果。后续用户提供的 `3302d62` 修复版已在新一轮接入；当前结果见[修复版主线接入](sdk-shared-ui-r2-2026-10-24.md)。下文的待审、两项失败及编码适配均为历史阶段。
+
+本轮在 `codex/sdk-coach-ui-integration` 实现，基线为 `master` 的 `debf6a9b157d26ebc5bc21cbf370a5488e146339`。仓库默认分支实际名为 `master`；用户所说的主线按此执行，不新建或改名为 `main`。当时为待审候选，未合入、未推送、未安装手机；SDK 与 `release/1.0` 均未修改。
 
 ## 正式 tag
 

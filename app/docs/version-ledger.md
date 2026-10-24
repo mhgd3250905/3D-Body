@@ -1,5 +1,9 @@
 # Flare 版本管理台账
 
+## SDK 共用 UI 修复版主线接入（2026-10-24）
+
+用户在候选 `e8ae7b5` 上追加授权：改锁 `ugk_coach-v0.4.2`、`ugk_trainer-v0.2.2`、`ugk_coach_ui-v0.1.1`（均为 `3302d62`），移除本机编码适配，分析/测试及一次 Android release 编译全过后直接合入并推送 `master`；`release/1.0` 不动。原两项 SDK 布局失败已由正式 tag 修复，153 项相关测试全过；[版本与证据](sdk-shared-ui-r2-2026-10-24.md)。App 源码版本仍 `1.0.10+15`，本轮没有手机安装或商店发布，原 +16/R17 及 L52 有限用户认可继续分列。
+
 ## SDK 共用聊天 UI 待审源码（2026-10-24）
 
 候选分支 `codex/sdk-coach-ui-integration`，基线 `debf6a9`。`ugk_coach-v0.4.1`、`ugk_trainer-v0.2.1`、`ugk_coach_ui-v0.1.0` 正式 tag 已在 pubspec/lock 固定；界面来自 SDK，保留本 App 的白名单、门禁、同 Agent 多轮和持久化/训练回调。SDK 套路卡窄屏大字溢出仍待修复，候选未合入、未推送、未安装，暂不提高 App 版本；当前已安装 +16/R17、L52 有限认可和其它 QA 待办继续分列。[候选及验证详情](sdk-shared-ui-2026-10-24.md)。

@@ -20,23 +20,23 @@ dependencies:
   characters: 1.4.1
   liquid_glass_widgets: 1.14.0
 
-  intl: 0.20.2
+  intl: 0.20.3
   path_provider: 2.1.6
   # Shared SDK packages use published tags; resolved commits stay in pubspec.lock.
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_coach-v0.4.1
+      ref: ugk_coach-v0.4.2
   ugk_trainer:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
       path: packages/ugk_trainer
-      ref: ugk_trainer-v0.2.1
+      ref: ugk_trainer-v0.2.2
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
       path: packages/ugk_coach_ui
-      ref: ugk_coach_ui-v0.1.0
+      ref: ugk_coach_ui-v0.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,6 @@
 # Flare Anatomy Studio
 
-2026-10-24，分支 `codex/sdk-coach-ui-integration` 已适配正式 SDK tag 的共用聊天 UI 与训练接口，处于待审状态；SDK 套路卡在窄屏大字下的溢出仍需 SDK 修复，尚未合入或安装。[候选、版本锁定及验证边界](app/docs/sdk-shared-ui-2026-10-24.md)。下方已安装 +16 的身份保持。
+2026-10-24，共用聊天/训练接入已更新为正式 `ugk_coach-v0.4.2`、`ugk_trainer-v0.2.2`、`ugk_coach_ui-v0.1.1`，全部固定 `3302d62`；153 项相关测试通过，原两项 SDK 窄屏大字失败已修复，本机编码适配已删除。验证通过后按用户授权合入推送 `master`，`release/1.0` 保持。[修复版接入与证据](app/docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方已安装 +16 的身份保持。
 
 2026-10-24，按用户追加要求，已将合并后的 Liquid Glass 源码 `52ee561` 构建为 **1.0.11+16** release 内测包，同签名保留数据更新手机，首屏启动与原有内容保留检查通过，用户测试待反馈。[包、签名、安装及验证边界](app/docs/liquid-glass-android-test-2026-10-24.md)。此为构建版本覆盖，`pubspec.yaml` 仍 +15；完整原生 / 性能 QA 不因此销项。
 

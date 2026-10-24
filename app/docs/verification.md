@@ -1,5 +1,9 @@
 # App 验证记录
 
+## SDK 共用 UI 修复版验证（2026-10-24）
+
+在 `e8ae7b5` 上改锁 coach 0.4.2 / trainer 0.2.2 / coach_ui 0.1.1 正式 tag，全部解析至 `3302d6235a39e2c2b4b51fa196cc32b37c31b54c`。本机临时编码适配已删除，原生 Pub 从远端解析并强制复核锁文件通过；静态分析无问题，153 项受影响测试全部通过，含原 SDK 320px / 2 倍字浅深失败用例。本机 Flutter 3.47.8 所需 intl 0.20.3 和 SDK 固定依赖已同步。Android arm64 release 执行一次并通过，只编译验证、不安装；浏览器复核按用户要求不做。命令、产物及来源见[本轮记录](sdk-shared-ui-r2-2026-10-24.md)和[公开证据](evidence/sdk-shared-ui-20261024-r2/verification.json)。下方候选结果保留原历史状态。
+
 ## 共用 SDK 聊天 UI 接入候选（2026-10-24）
 
 `codex/sdk-coach-ui-integration` 从 `debf6a9` 开发，coach/trainer/coach_ui 分别锁定正式 `0.4.1/0.2.1/0.1.0` tag。训练 86 项、宿主 29 项、聊天 36 项通过；聊天侧 SDK 窄屏 2 倍字的两项溢出回归保留失败，不宣称全绿。静态分析、锁文件强制复核、正式离线 Web 与 arm64 release 编译通过；浏览器预览服务启动被自动审批拒绝，交互核对未执行。详细命令、源码/产物指纹与 SDK 需求见[接入记录](sdk-shared-ui-2026-10-24.md)，本机证据目录 `output/sdk-coach-ui-20261024/`。未合入、未推送、未安装手机，不扩大 +16 或 L52 的验收范围。

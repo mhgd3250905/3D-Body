@@ -1,0 +1,91 @@
+{
+  "recordedAt": "2026-10-24T11:15:51.879626+00:00",
+  "candidateBase": "e8ae7b5cf8de3ee53f176cca962c674fb669e0e2",
+  "masterBase": "debf6a9b157d26ebc5bc21cbf370a5488e146339",
+  "branch": "codex/sdk-coach-ui-integration",
+  "tags": {
+    "ugk_coach": {
+      "ref": "ugk_coach-v0.4.2",
+      "version": "0.4.2",
+      "resolvedRef": "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+    },
+    "ugk_trainer": {
+      "ref": "ugk_trainer-v0.2.2",
+      "version": "0.2.2",
+      "resolvedRef": "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+    },
+    "ugk_coach_ui": {
+      "ref": "ugk_coach_ui-v0.1.1",
+      "version": "0.1.1",
+      "resolvedRef": "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+    }
+  },
+  "toolchain": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "intl": "0.20.3",
+    "requiredFlutterTransitives": {
+      "matcher": "0.12.20",
+      "meta": "1.19.0",
+      "test_api": "0.7.12",
+      "vector_math": "2.4.3"
+    }
+  },
+  "nativePubGet": "pass",
+  "enforceLockfile": "pass",
+  "temporaryEncodingScriptsDeleted": true,
+  "temporaryPathInjection": false,
+  "sdkPubspecsAscii": true,
+  "sdkSourceChanges": false,
+  "appRuntimeAndTestsUnchangedFromCandidate": true,
+  "analysis": "No issues found",
+  "tests": {
+    "passed": 153,
+    "failed": 0,
+    "former320px2xLightAndDarkCases": "pass",
+    "skipped": 0
+  },
+  "androidRelease": {
+    "buildsInvoked": 1,
+    "result": "pass",
+    "abi": "arm64-v8a",
+    "sourceVersion": "1.0.10+15",
+    "apkBytes": 102017167,
+    "apkSha256": "2afc42ed6d603a5e2e1d06bf24cf419daf6cdd47c290261fb6716dcef3edfa99",
+    "credentialsInjected": false,
+    "installed": false
+  },
+  "browserPreview": "not run, explicitly waived by user",
+  "release1_0": "untouched",
+  "sourceGitBlobHashes": {
+    "app/lib/coach/coach_config.dart": "c519fe6188fcd44ad3c2af2f3dde44810342eaef",
+    "app/lib/coach/coach_service.dart": "2bc71c0b16d57d635b95eb241049d09fca8d8a48",
+    "app/lib/coach/coach_ui_mapping.dart": "def49c8f4323d886dc1d7feaac6c0abe9198e839",
+    "app/lib/ui/ai_coach_page.dart": "30266cf79192ee422507922669932a92cb40c23c",
+    "app/lib/ui/app_shell.dart": "0a3b381a3f0df4e4de126ba96bb9b63928896f95",
+    "app/lib/ui/coach_question_bubble.dart": "85f42cfec773b1b4c99883d7cf23477226d06d93",
+    "app/lib/ui/coach_ui_theme.dart": "5715d0583170d52603697faa483fe91fab2dd773",
+    "app/pubspec.lock": "fa5aa625f880e742876d6d8a380e1da6393e00f3",
+    "app/pubspec.yaml": "e1bef69322971a73085f6029824c01aed4fbb09f",
+    "app/test/ui/ai_coach_test.dart": "287cfe97b7a35b1dc45a7764bbd3abd3db293ad3",
+    "app/test/ui/coach_entry_visibility_test.dart": "684ff64fa74c13ddb60894d320b1f95e272b2b57",
+    "app/test/ui/coach_question_bubble_test.dart": "ab7596b44cf272334857a9d2b6b1742205b8bd78",
+    "app/test/ui/sdk_plan_preservation_test.dart": "9147377dec9198d2357bccdd48fbd847d56368d5",
+    "app/test/ui/trainer_player_integration_test.dart": "59e87ff779487382fafbf6babc21ba1992ec6121"
+  },
+  "logs": {
+    "native-environment.json": "30fbfafd8480ea319be1e724c64c5bc0992c4dc331502c586ce27ebba25e253e",
+    "pub-get-final.log": "0ac82ecc014f31358b228206b2c74b29565fcdd158fed52fa574ebf679f95400",
+    "pub-locked.log": "ef896a44760865afe84b8d1f9aa978cfa2616a4e9461f1db42bc8572746031e7",
+    "analyze.log": "7ac93762cb430ef2db5af15913114ea7276233fe3ba85e9284cb3eec0eb1b6eb",
+    "scoped-tests.log": "e33631921f2b9c003865d468aa631e0703a9e59cc24e43afdbff73fdc9d4142c",
+    "apk-build.log": "ca92a98104d49cdc18dd1254c24c04199fbedb722cccb8e1651cf72db9d16f75"
+  },
+  "commands": [
+    "flutter pub get",
+    "flutter pub get --enforce-lockfile",
+    "flutter analyze --no-pub",
+    "flutter test --no-pub test/trainer test/domain/sdk_training_session_test.dart test/domain/trainer_session_store_test.dart test/ui/trainer_player_integration_test.dart test/ui/sdk_timer_persistence_test.dart test/ui/sdk_plan_preservation_test.dart test/ui/ai_coach_review2_test.dart test/ui/coach_entry_visibility_test.dart test/ui/ai_coach_test.dart test/ui/coach_question_bubble_test.dart --reporter expanded",
+    "flutter build apk --release --target-platform android-arm64"
+  ]
+}
