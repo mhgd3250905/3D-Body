@@ -1,6 +1,6 @@
 # CoachConversationController 接入候选（2026-10-24）
 
-基线为 Flare `master` 的 `63d3318e257e2331a4af1f9f9f5cada40d0d357b`，候选分支为 `codex/coach-conversation-controller`。尚未合入或推送；全量测试有 26 项基线失败，未满足合入条件。HipLab 与 `release/1.0` 未修改。
+基线为 Flare `master` 的 `63d3318e257e2331a4af1f9f9f5cada40d0d357b`，候选分支为 `codex/coach-conversation-controller`。按用户追加的基线等价标准，技术交审条件已满足；尚未获得合入同意，未合入或推送。全量仍保留 26 项已核对一致的基线失败。HipLab 与 `release/1.0` 未修改。
 
 ## 正式依赖
 
@@ -22,16 +22,16 @@ App 只创建一个 Agent/controller；页面直接呈现 SDK 不可变消息，
 
 Key、HTTP client、接口、白名单/profile、媒体交集、器械/场景/保护部位上下文和既有安全/预设规则继续属于 App。新对话复用同 Agent，并刷新可信目录快照。已有红旗安全命令保留本地提示且禁止联网，历史交由 controller；没有新增回落实现。无 Key 仍隐藏全部 AI 入口。CoachRoutine 映射、持久化、训练前门禁及完整 TrainerPlayer 启动保持，布局/主题组件和训练素材未改。
 
-## 验证与阻塞
+## 验证与交审条件
 
 Flutter 3.47.8 / Dart 3.13.7，最终静态分析无问题。App 全量 `flutter test --no-pub --reporter expanded`：**335 通过、26 失败、1 跳过**。跳过项为原有显式 opt-in 的真实 AI smoke；本轮不传 Key、不调用真实模型。
 
-迁移相关测试覆盖同 Agent 多轮、SDK 选择排序与 App 上下文、同步双提交、取消立即重发和迟到回复、关页期间完成、恢复历史只读、正文/问题同显、无 Key 隐藏、保存重试与完整计划开练。
+迁移相关用例补跑 **155/155 通过、0 失败、0 跳过**，覆盖同 Agent 多轮、SDK 选择排序与 App 上下文、同步双提交、取消立即重发和迟到回复、关页期间完成、恢复历史只读、正文/问题同显、无 Key 隐藏、保存重试与完整计划开练。
 
 独立临时工作树检出未修改的 `63d3318`，强制锁文件解析后执行相同全量命令：**333 通过、相同 26 项失败、同一项跳过**。候选/基线失败名单逐项相同，新增失败为 0；没有删除、跳过或放宽这些失败断言。
 
-26 项均来自本轮未改的四份测试：`flow_regressions_test.dart` 4 项、`ios_layout_test.dart` 20 项、`compact_localization_test.dart` 1 项、`polish_round2_test.dart` 1 项。只读排查发现 16 项旧测试接线问题（旧选择器、重复标签、资产 IO 等待、旧详情结构断言），以及 8 项横屏详情溢出、1 项多语阶段名截断、1 项 inactive 场景可见性问题。修复会超出本轮会话迁移范围，需另定范围；在此之前不满足“全量通过后合入”条件。
+26 项均来自本轮未改的四份测试：`flow_regressions_test.dart` 4 项、`ios_layout_test.dart` 20 项、`compact_localization_test.dart` 1 项、`polish_round2_test.dart` 1 项。只读排查发现 16 项旧测试接线问题（旧选择器、重复标签、资产 IO 等待、旧详情结构断言），以及 8 项横屏详情溢出、1 项多语阶段名截断、1 项 inactive 场景可见性问题。用户随后明确本轮按“与基线完全相同的 26 项失败、无新增失败、迁移相关用例全部通过、分析无问题”交审，不要求本轮修复基线失败；这些条件均已满足。旧的全量全绿门槛已由该追加指令替换，合入仍需开哥同意。
 
-完整失败名单、命令、日志哈希与源指纹见[公开证据](evidence/coach-controller-20261024/verification.json)。本机原始日志在 `output/coach-controller-20261024/`；基线工作树仅用于对照，验证结束后移除。
+26 项测试名及基线/候选结果已[逐项列出对照](evidence/coach-controller-20261024/failure-comparison.md)。完整命令、日志哈希与源指纹见[公开证据](evidence/coach-controller-20261024/verification.json)。本机原始日志在 `output/coach-controller-20261024/`；基线工作树仅用于对照，验证结束后移除。
 
-本轮未做浏览器、Android release 或真机验证，没有安装/发布新包。源码版本仍 `1.0.10+15`，既有手机 `1.0.11+16 / R17`、L52 有限认可和长期设备 QA 的边界保持。下一步审阅迁移候选并确定基线失败处理范围，合入和推送仍需开哥同意。
+本轮未做浏览器、Android release 或真机验证，没有安装/发布新包。源码版本仍 `1.0.10+15`，既有手机 `1.0.11+16 / R17`、L52 有限认可和长期设备 QA 的边界保持。下一步审阅迁移候选，合入和推送仍需开哥同意。迁移合入后，再另开分支修复这 26 项：真实横屏布局、多语文本及其它产品问题修代码，过时测试按当前正确行为更新，目标全量全绿并单独交审。本轮不提前建立该修复分支或混入相关改动。

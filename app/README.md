@@ -1,6 +1,6 @@
 # Flare 托马斯 · Flutter App
 
-2026-10-24，会话 controller 候选在 `codex/coach-conversation-controller`：正式 tag coach 0.5.0 / trainer 0.2.3 固定 `d7e0b8f`，UI 0.1.1 仍为 `3302d62`。分析无问题，全量 335 通过、26 项基线失败、1 项 opt-in 跳过；尚未合入或推送，详见[迁移与合入阻塞](docs/coach-conversation-controller-2026-10-24.md)。
+2026-10-24，会话 controller 候选在 `codex/coach-conversation-controller`：正式 tag coach 0.5.0 / trainer 0.2.3 固定 `d7e0b8f`，UI 0.1.1 仍为 `3302d62`。分析无问题，全量 335 通过、26 项基线失败、1 项 opt-in 跳过；按追加的基线等价标准已满足技术交审条件；尚未合入或推送，详见[迁移与失败对照](docs/coach-conversation-controller-2026-10-24.md)。
 
 2026-10-24，共用聊天 UI/训练现固定 coach 0.4.2、trainer 0.2.2、coach_ui 0.1.1 正式 tag，均解析至 `3302d62`；153 项相关测试全过，原窄屏大字溢出已由 SDK 修复，无需本机编码适配。验证通过后按用户授权合入推送 `master`。[当前接入与验证](docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方 +16 交付保持。
 

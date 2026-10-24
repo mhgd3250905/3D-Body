@@ -2,7 +2,7 @@
   "date": "2026-10-24",
   "branch": "codex/coach-conversation-controller",
   "baseline": "63d3318e257e2331a4af1f9f9f5cada40d0d357b",
-  "status": "candidate_not_merged_full_suite_blocked_by_baseline_failures",
+  "status": "candidate_ready_for_review_under_baseline_equivalence_criteria",
   "sdk": {
     "ugk_coach": {
       "tag": "ugk_coach-v0.5.0",
@@ -117,7 +117,6 @@
   "sameFailureSet": true,
   "newFailures": [],
   "skipReason": "Existing RUN_COACH_LIVE_SMOKE opt-in test; no live model, Key or network test calls enabled.",
-  "mergeConditionsMet": false,
   "merged": false,
   "pushed": false,
   "release10Untouched": true,
@@ -189,6 +188,106 @@
     "output/coach-controller-20261024/baseline-comparison.json": {
       "sha256": "46d6336ba870f20cc3475525d383dd7a6c4d953c92c0ae297700307cd6b94a95",
       "bytes": 4455
+    },
+    "output/coach-controller-20261024/migration-tests.jsonl": {
+      "sha256": "d9f459776ad5ea0d37b0a3f95954da6089be0e5cbeb74eeb54fb89cbf9b3346d",
+      "bytes": 79607
     }
+  },
+  "technicalAcceptanceMet": true,
+  "fullSuiteGreen": false,
+  "reviewStatus": "awaiting_user_approval",
+  "approvalGranted": false,
+  "testedImplementationCommit": "78a8a65a7af8c00dafa7fcd6211e69a07aab852d",
+  "acceptanceCriteria": {
+    "basis": "User follow-up on 2026-10-24",
+    "same26FailuresAsBaseline": true,
+    "noNewFailures": true,
+    "migrationRelatedCasesAllPass": true,
+    "analysisNoIssues": true,
+    "fullSuiteGreenRequiredForThisMigration": false,
+    "mergeAndPushRequiresUserApproval": true
+  },
+  "failureComparison": "failure-comparison.md",
+  "followUp": {
+    "startAfter": "Migration merged with user approval",
+    "scope": "Separate branch for all 26 baseline failures; real product defects fixed in App code, obsolete tests updated to correct current behavior.",
+    "target": "Full suite green, separate review",
+    "started": false
+  },
+  "targetedMigrationTests": {
+    "command": "flutter test --no-pub test/trainer test/domain/sdk_training_session_test.dart test/domain/trainer_session_store_test.dart test/ui/trainer_player_integration_test.dart test/ui/sdk_timer_persistence_test.dart test/ui/sdk_plan_preservation_test.dart test/ui/ai_coach_review2_test.dart test/ui/coach_entry_visibility_test.dart test/ui/ai_coach_test.dart test/ui/coach_question_bubble_test.dart --reporter json",
+    "exitCode": 0,
+    "passed": 155,
+    "failed": 0,
+    "skipped": 0,
+    "suites": {
+      "test/domain/sdk_training_session_test.dart": {
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/domain/trainer_session_store_test.dart": {
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/trainer/trainer_audio_test.dart": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/trainer/trainer_strings_test.dart": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/trainer/trainer_voice_test.dart": {
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/trainer/training_plan_adapter_test.dart": {
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/ai_coach_review2_test.dart": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/ai_coach_test.dart": {
+        "passed": 34,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/coach_entry_visibility_test.dart": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/coach_question_bubble_test.dart": {
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/sdk_plan_preservation_test.dart": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/sdk_timer_persistence_test.dart": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "test/ui/trainer_player_integration_test.dart": {
+        "passed": 35,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "sourceCommit": "78a8a65a7af8c00dafa7fcd6211e69a07aab852d"
   }
 }
