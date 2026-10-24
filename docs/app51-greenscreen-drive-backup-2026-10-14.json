@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-14T05:41:46.898Z",
+  "purpose": "User-requested Google Drive backup of independent App51 greenscreen media",
+  "folder": {
+    "id": "1lgMm0HM9xg2hrppZIHk9bBOx1tcfFQ3I",
+    "name": "App51_绿幕素材_2026-10-14",
+    "url": "https://drive.google.com/drive/folders/1lgMm0HM9xg2hrppZIHk9bBOx1tcfFQ3I",
+    "parentId": "11pdgvTZihwSkoZGyxasEjw-J4nOJZ4xB"
+  },
+  "files": [
+    {
+      "dimension": 1080,
+      "bytes": 89314842,
+      "sha256": "dd7fabf8f633c55a9a2cf7c7a448f24e6c654cae6befa579aa6ce1160e2b2932",
+      "driveId": "1KoiijimUu4tDFI_ixCArZJoGwgyrdDvn",
+      "name": "App51-Greenscreen-1080-20261014.zip",
+      "url": "https://drive.google.com/file/d/1KoiijimUu4tDFI_ixCArZJoGwgyrdDvn/view?usp=drivesdk",
+      "parentId": "1lgMm0HM9xg2hrppZIHk9bBOx1tcfFQ3I",
+      "cloudCreatedAt": "2026-10-14T05:38:30.344Z",
+      "shared": false,
+      "localPath": "output/app51-greenscreen-drive-20261014/App51-Greenscreen-1080-20261014.zip",
+      "downloadReadbackPath": "output/app51-greenscreen-drive-20261014/cloud-readback/App51-Greenscreen-1080-20261014.zip",
+      "verification": {
+        "metadataSizeMatches": true,
+        "metadataParentMatches": true,
+        "downloadReadbackSizeMatches": true,
+        "downloadReadbackSha256Matches": true
+      }
+    },
+    {
+      "dimension": 720,
+      "bytes": 38212597,
+      "sha256": "1c5b5f41fd62764c1846f2873f688816d83d7641d2ca7174f74089aa68a28726",
+      "driveId": "1SExNnIlTz3kVmey9yvy8Xb-uJXCBpjw0",
+      "name": "App51-Greenscreen-720-20261014.zip",
+      "url": "https://drive.google.com/file/d/1SExNnIlTz3kVmey9yvy8Xb-uJXCBpjw0/view?usp=drivesdk",
+      "parentId": "1lgMm0HM9xg2hrppZIHk9bBOx1tcfFQ3I",
+      "cloudCreatedAt": "2026-10-14T05:39:01.455Z",
+      "shared": false,
+      "localPath": "output/app51-greenscreen-drive-20261014/App51-Greenscreen-720-20261014.zip",
+      "downloadReadbackPath": "output/app51-greenscreen-drive-20261014/cloud-readback/App51-Greenscreen-720-20261014.zip",
+      "verification": {
+        "metadataSizeMatches": true,
+        "metadataParentMatches": true,
+        "downloadReadbackSizeMatches": true,
+        "downloadReadbackSha256Matches": true
+      }
+    }
+  ],
+  "packaging": {
+    "type": "Two independently usable standard ZIPs, 51 videos per dimension with posters and offline gallery",
+    "reason": "Connector rejected the original 120280962-byte ZIP before upload because the single-file limit is 104857600 bytes",
+    "videoBytesUnchanged": true,
+    "originalFullZip": {
+      "path": "output/App51-Greenscreen-20261014.zip",
+      "bytes": 120280962,
+      "sha256": "dd36051147b8fc0d27519a9867465b308bc2fc7eb05baffd368bf1cb0822f47d",
+      "preserved": true,
+      "uploaded": false
+    },
+    "sourceBatch": "output/app51-greenscreen-20261014",
+    "tool": "tools/drill-anim/greenscreen-20261014/package_drive.py"
+  },
+  "verification": {
+    "localZipIntegrity": "pass",
+    "allIncludedMediaSha256": "pass",
+    "cloudMetadataReadback": "pass",
+    "bothCloudZipDownloadSha256": "pass",
+    "downloadMethod": "Google Drive connector authenticated raw-file fetch followed by local hash calculation; temporary download references excluded"
+  },
+  "scope": {
+    "appMediaReplaced": false,
+    "appVersionChanged": false,
+    "postureQa": {
+      "ready": 23,
+      "review_required": 28
+    },
+    "allPostureQaPassed": false,
+    "sharingChanged": false
+  }
+}
