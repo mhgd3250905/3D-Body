@@ -376,6 +376,14 @@ class _AiCoachPageState extends State<AiCoachPage> {
   @override
   Widget build(BuildContext context) {
     final configured = session.service.configured;
+    final safeTop = MediaQuery.paddingOf(context).top;
+    final headerHeight =
+        (56 +
+                (MediaQuery.textScalerOf(context).scale(17) - 17).clamp(0, 26) +
+                (configured
+                    ? 0
+                    : MediaQuery.textScalerOf(context).scale(12) * 1.5 + 4))
+            .toDouble();
     final header = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -390,9 +398,16 @@ class _AiCoachPageState extends State<AiCoachPage> {
               ),
               const Expanded(
                 child: Center(
-                  child: Text(
-                    'AI 定制',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  child: FlareStaticSurface(
+                    radius: 18,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Text(
+                      'AI 定制',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -421,88 +436,118 @@ class _AiCoachPageState extends State<AiCoachPage> {
       style: flareCoachUiStyle(context),
       child: ColoredBox(
         color: FlareColors.background,
-        child: Column(
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            header,
-            Expanded(
-              child: cui.CoachChatList(
-                key: ValueKey('coach-list-${session.generation}'),
-                controller: _scroll,
-                topColor: FlareColors.background,
-                dockHeight: 0,
-                initiallySeen: _initiallySeen,
-                timeMarkBuilder: (at, now) => cui.CoachTimeMark(at, now: now),
-                typing: session.busy
-                    ? _Thinking(
-                        key: const ValueKey('coach-thinking'),
-                        seconds: _elapsed,
-                        event: session.progress,
-                        onStop: session.stop,
-                      )
-                    : null,
-                entries: [
-                  if (session.showDisclaimer)
-                    cui.CoachChatEntry(
-                      id: 'disclaimer-${session.generation}',
-                      at: session.createdAt,
-                      isUser: false,
-                      child: _Disclaimer(onAccept: session.acceptDisclaimer),
-                    ),
-                  if (session.messages.isEmpty && session.pendingText == null)
-                    cui.CoachChatEntry(
-                      id: 'intro-${session.generation}',
-                      at: session.createdAt,
-                      isUser: false,
-                      greeting: true,
-                      child: const cui.CoachGreetingBlock(
-                        text:
-                            '说说你想怎么练\n场地、时长、想练的部位、哪里不舒服都可以讲。'
-                            '我只用 App 里的托马斯动作排计划，排好可以存进「我的计划」或直接开练。',
+            Column(
+              children: [
+                Expanded(
+                  child: cui.CoachChatList(
+                    key: ValueKey('coach-list-${session.generation}'),
+                    controller: _scroll,
+                    topColor: FlareColors.background,
+                    // The viewport reaches behind the transparent system bar;
+                    // only the initial content reserves space for fixed controls.
+                    topInset: safeTop + headerHeight,
+                    fadeTop: false,
+                    dockHeight: 0,
+                    initiallySeen: _initiallySeen,
+                    timeMarkBuilder: (at, now) =>
+                        cui.CoachTimeMark(at, now: now),
+                    typing: session.busy
+                        ? _Thinking(
+                            key: const ValueKey('coach-thinking'),
+                            seconds: _elapsed,
+                            event: session.progress,
+                            onStop: session.stop,
+                          )
+                        : null,
+                    entries: [
+                      if (session.showDisclaimer)
+                        cui.CoachChatEntry(
+                          id: 'disclaimer-${session.generation}',
+                          at: session.createdAt,
+                          isUser: false,
+                          child: _Disclaimer(
+                            onAccept: session.acceptDisclaimer,
+                          ),
+                        ),
+                      if (session.messages.isEmpty &&
+                          session.pendingText == null)
+                        cui.CoachChatEntry(
+                          id: 'intro-${session.generation}',
+                          at: session.createdAt,
+                          isUser: false,
+                          greeting: true,
+                          child: const cui.CoachGreetingBlock(
+                            text:
+                                '说说你想怎么练\n场地、时长、想练的部位、哪里不舒服都可以讲。'
+                                '我只用 App 里的托马斯动作排计划，排好可以存进「我的计划」或直接开练。',
+                          ),
+                        ),
+                      for (var i = 0; i < session.messages.length; i++)
+                        cui.CoachChatEntry(
+                          id: session.messages[i].id,
+                          at: session.messages[i].at,
+                          isUser: session.messages[i].isUser,
+                          isCard: session.messages[i].plan != null,
+                          child: KeyedSubtree(
+                            key: ValueKey('coach-msg-$i'),
+                            child: session.messages[i].isUser
+                                ? _plain(
+                                    session.messages[i].text,
+                                    user: true,
+                                    id: 'user-$i',
+                                  )
+                                : _answer(context, session.messages[i], i),
+                          ),
+                        ),
+                      if (session.pendingText case final text?)
+                        cui.CoachChatEntry(
+                          id: 'pending-input-${session.generation}',
+                          at: session.startedAt ?? session.createdAt,
+                          isUser: true,
+                          child: _plain(text, user: true),
+                        ),
+                      if (session.notice case final notice?)
+                        cui.CoachChatEntry(
+                          id: 'notice-${session.generation}-${session.messages.length}',
+                          at: DateTime.now(),
+                          isUser: false,
+                          child: _plain(notice),
+                        ),
+                    ],
+                  ),
+                ),
+                SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _SuggestionStrip(
+                        items: session.busy ? const [] : _suggestions,
+                        onTap: _send,
                       ),
-                    ),
-                  for (var i = 0; i < session.messages.length; i++)
-                    cui.CoachChatEntry(
-                      id: session.messages[i].id,
-                      at: session.messages[i].at,
-                      isUser: session.messages[i].isUser,
-                      isCard: session.messages[i].plan != null,
-                      child: KeyedSubtree(
-                        key: ValueKey('coach-msg-$i'),
-                        child: session.messages[i].isUser
-                            ? _plain(
-                                session.messages[i].text,
-                                user: true,
-                                id: 'user-$i',
-                              )
-                            : _answer(context, session.messages[i], i),
+                      _Composer(
+                        controller: _input,
+                        busy: session.busy,
+                        onSend: _send,
+                        onPlans: widget.onBack,
                       ),
-                    ),
-                  if (session.pendingText case final text?)
-                    cui.CoachChatEntry(
-                      id: 'pending-input-${session.generation}',
-                      at: session.startedAt ?? session.createdAt,
-                      isUser: true,
-                      child: _plain(text, user: true),
-                    ),
-                  if (session.notice case final notice?)
-                    cui.CoachChatEntry(
-                      id: 'notice-${session.generation}-${session.messages.length}',
-                      at: DateTime.now(),
-                      isUser: false,
-                      child: _plain(notice),
-                    ),
-                ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              top: safeTop,
+              child: SizedBox(
+                key: const ValueKey('coach-header'),
+                height: headerHeight,
+                child: header,
               ),
-            ),
-            _SuggestionStrip(
-              items: session.busy ? const [] : _suggestions,
-              onTap: _send,
-            ),
-            _Composer(
-              controller: _input,
-              busy: session.busy,
-              onSend: _send,
-              onPlans: widget.onBack,
             ),
           ],
         ),

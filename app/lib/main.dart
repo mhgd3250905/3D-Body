@@ -21,6 +21,7 @@ SemanticsHandle? _webSemantics;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await configureFlareSystemUi();
   await initializeFlareGlass();
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
@@ -42,6 +43,14 @@ Future<void> main() async {
   });
   if (kIsWeb) _webSemantics = SemanticsBinding.instance.ensureSemantics();
   runApp(const FlareBootstrap());
+}
+
+/// Keep page backgrounds behind Android's system bars. Individual pages retain
+/// responsibility for safe controls and the current theme supplies icon color.
+Future<void> configureFlareSystemUi() async {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
 }
 
 class FlareBootstrap extends StatefulWidget {
@@ -140,6 +149,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
         value: (dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
             .copyWith(
               statusBarColor: const Color(0x00000000),
+              systemStatusBarContrastEnforced: false,
               systemNavigationBarColor: FlareColors.background,
               systemNavigationBarIconBrightness: dark
                   ? Brightness.light

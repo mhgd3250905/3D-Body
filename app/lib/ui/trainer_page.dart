@@ -7,13 +7,13 @@ import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
 
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/drill_media.dart' as app_media;
 import '../l10n/app_localizations.dart';
 import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
-import 'drill_media.dart';
 
 /// Push on its own Navigator route: TrainerPlayer owns back/finish and returns
 /// one immutable SDK SessionResult. This host supplies data and public slots.
@@ -57,8 +57,9 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final sourceCatalog = uc.Catalog.fromJson(
       jsonDecode(await rootBundle.loadString('assets/coach/catalog.json')),
     );
+    final media = await app_media.DrillMedia.load();
     final missing = widget.plan.exerciseIds
-        .where((id) => sourceCatalog[id] == null)
+        .where((id) => sourceCatalog[id] == null || media[id] == null)
         .toList();
     if (missing.isNotEmpty) throw UnknownTrainingDrills(missing);
     final voice = await loadTrainerVoiceSource(
@@ -75,6 +76,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       rhythms: sdk.rhythmsFromCatalog(sourceCatalog),
       source: voice,
       language: language,
+      media: media,
     );
   }
 
@@ -140,12 +142,24 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           rhythms: data.rhythms,
           drillOf: (id) {
             final drill = widget.catalog.drillById(id);
-            return drill == null
+            final media = data.media[id];
+            return drill == null || media == null
                 ? null
                 : sdk.TrainerDrill(
                     id: drill.id,
                     name: drill.name,
                     cue: drill.cues.isEmpty ? null : drill.cues.first,
+                    media: sdk.DrillMedia(
+                      id: media.id,
+                      videoAsset: media.videoAsset,
+                      posterAsset: media.posterAsset,
+                      duration: media.duration,
+                      posterTime: media.posterTime,
+                      theme: Theme.of(context).brightness == Brightness.dark
+                          ? 'dark'
+                          : 'light',
+                      bundledOnly: true,
+                    ),
                   );
           },
           strings: trainerStrings(s),
@@ -166,13 +180,6 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           showSoundToggle: true,
           notificationIcon: 'mipmap/ic_launcher',
           doseLabel: _doseLabel,
-          mediaBuilder: (context, request) => DrillMediaCard(
-            key: ValueKey(request.drill.id),
-            drillId: request.drill.id,
-            active: !request.paused,
-            mirrored: request.mirrored,
-            autoPlay: true,
-          ),
         );
       },
     );
@@ -185,9 +192,11 @@ class _PlayerData {
     required this.rhythms,
     required this.source,
     required this.language,
+    required this.media,
   });
   final uc.TrainingPlan plan;
   final Map<String, sdk.Rhythm> rhythms;
   final sdk.VoiceSource source;
   final String language;
+  final Map<String, app_media.DrillMedia> media;
 }

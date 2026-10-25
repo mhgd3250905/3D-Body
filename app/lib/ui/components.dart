@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_media.dart';
@@ -567,18 +568,43 @@ class ScrollEdge extends StatefulWidget {
 class _ScrollEdgeState extends State<ScrollEdge> {
   bool _under = false;
   bool _more = false;
+  ({bool under, bool more})? _pendingEdges;
+  bool _edgeUpdateScheduled = false;
 
   bool _onMetrics(ScrollMetrics metrics) {
     if (metrics.axis != Axis.vertical) return false;
     final under = metrics.pixels > 1;
     final more = metrics.extentAfter > 1;
+    // A lazy viewport can dispatch scroll starts while applying new layout
+    // dimensions. Coalesce those metrics until the current frame is complete.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      _pendingEdges = (under: under, more: more);
+      if (!_edgeUpdateScheduled) {
+        _edgeUpdateScheduled = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _edgeUpdateScheduled = false;
+          final pending = _pendingEdges;
+          _pendingEdges = null;
+          if (mounted && pending != null) {
+            _updateEdges(pending.under, pending.more);
+          }
+        });
+      }
+    } else {
+      _pendingEdges = null;
+      _updateEdges(under, more);
+    }
+    return false;
+  }
+
+  void _updateEdges(bool under, bool more) {
     if (under != _under || more != _more) {
       setState(() {
         _under = under;
         _more = more;
       });
     }
-    return false;
   }
 
   @override

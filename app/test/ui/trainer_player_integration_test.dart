@@ -1,5 +1,6 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/domain/dose.dart';
+import 'package:flare/data/drill_media.dart' as app_media;
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
@@ -7,7 +8,6 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
-import 'package:flare/ui/drill_media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -151,8 +151,16 @@ Future<LearningStore> _open(
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late Map<String, app_media.DrillMedia> bundledMedia;
+  setUpAll(() async {
+    // The App media index caches its Future. Create it in the real test zone,
+    // so later widget tests do not await a completed Future owned by an earlier
+    // fake-async zone whose microtask queue is no longer being pumped.
+    bundledMedia = await app_media.DrillMedia.load();
+  });
   setUp(() {
-    // Cached futures must not leak from one test's fake async zone to the next.
+    // Keep voice/catalog asset loads independent between widget tests.
     rootBundle.clear();
   });
   tearDown(() {
@@ -447,15 +455,15 @@ void main() {
     await _advance(tester, 11);
     expect(
       tester
-          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
-          .map((card) => card.drillId),
+          .widgetList<sdk.DrillMediaView>(find.byType(sdk.DrillMediaView))
+          .map((view) => view.media.id),
       contains('abs-A'),
     );
     await _advance(tester, 3);
     expect(
       tester
-          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
-          .map((card) => card.drillId),
+          .widgetList<sdk.DrillMediaView>(find.byType(sdk.DrillMediaView))
+          .map((view) => view.media.id),
       contains('chest-A'),
     );
     expect(store.trainerSessions, isEmpty);
@@ -467,12 +475,71 @@ void main() {
     await tester.pump();
   });
 
+  for (final dark in [false, true]) {
+    testWidgets('SDK default media preserves bundled clips and Flare pause '
+        'theme dark=$dark', (tester) async {
+      final original = _plan();
+      final plan = original.copyWith(
+        blocks: [
+          uc.PlanBlock(
+            id: 'media',
+            name: 'Media',
+            type: uc.BlockType.main,
+            items: [
+              for (final item in original.items) item.copyWith(workSeconds: 30),
+            ],
+          ),
+        ],
+      );
+      await _open(tester, dark: dark, sdkPlan: plan);
+      final player = tester.widget<sdk.TrainerPlayer>(
+        find.byType(sdk.TrainerPlayer),
+      );
+      final expected = bundledMedia['abs-A']!;
+      final media = player.drillOf('abs-A')!.media!;
+      expect(player.mediaBuilder, isNull);
+      expect(media.videoAsset, expected.videoAsset);
+      expect(media.posterAsset, expected.posterAsset);
+      expect(media.duration, expected.duration);
+      expect(media.posterTime, expected.posterTime);
+      expect(media.bundledOnly, isTrue);
+      expect(media.hasPackedAlpha, isFalse);
+      expect(media.theme, dark ? 'dark' : 'light');
+      final palette = dark ? FlarePalette.dark : FlarePalette.light;
+      expect(player.theme.pausedColor, palette.accent);
+      expect(player.theme.onPaused, palette.onAccent);
+
+      await _advance(tester, 11);
+      expect(find.byType(sdk.DrillMediaHandoff), findsOneWidget);
+      final view = find.byType(sdk.DrillMediaView);
+      expect(view, findsOneWidget);
+      final element = tester.element(view);
+      expect(tester.widget<sdk.DrillMediaView>(view).media.id, 'abs-A');
+      await tester.tap(find.byKey(const ValueKey('pause')));
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.widget<sdk.DrillMediaView>(view).paused, isTrue);
+      expect(tester.element(view), same(element));
+      final button = tester.widget<sdk.UgkPlayPauseButton>(
+        find.byType(sdk.UgkPlayPauseButton),
+      );
+      expect(button.isPlaying, isFalse);
+      expect(button.theme.pausedColor, palette.accent);
+      await tester.tap(find.byKey(const ValueKey('pause')));
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.widget<sdk.DrillMediaView>(view).paused, isFalse);
+      expect(tester.element(view), same(element));
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final language in languageNames.keys) {
     for (final dark in [false, true]) {
       testWidgets(
-        'SDK player $language ${dark ? 'dark' : 'light'} at 1.5x has no layout errors',
+        'SDK player $language ${dark ? 'dark' : 'light'} at normal text size has no layout errors',
         (tester) async {
-          await _open(tester, language: language, dark: dark, textScale: 1.5);
+          await _open(tester, language: language, dark: dark, textScale: 1.0);
           final player = tester.widget<sdk.TrainerPlayer>(
             find.byType(sdk.TrainerPlayer),
           );

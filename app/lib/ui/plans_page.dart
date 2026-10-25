@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
 import 'app_glass.dart';
@@ -7,6 +10,7 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../platform/drill_media/media_controller.dart';
 import 'components.dart';
 import 'content_pages.dart' show PageHeader;
 import 'drill_media.dart';
@@ -628,9 +632,9 @@ class _PresetCard extends StatelessWidget {
   }
 }
 
-/// One set, ready to run: what it is for, the scene, and its drills in order.
-/// Presets follow the shared scene switch; the user's own sets are fixed.
-class PlanDetailPage extends StatelessWidget {
+/// A readable training article. The original plan still owns execution/doses;
+/// this page only presents trusted App drills and hands it back unchanged.
+class PlanDetailPage extends StatefulWidget {
   const PlanDetailPage({
     super.key,
     required this.title,
@@ -653,137 +657,525 @@ class PlanDetailPage extends StatelessWidget {
   final ValueChanged<Drill> onDrill;
   final uc.TrainingPlan? sdkPlan;
   final Catalog? catalog;
-
-  /// Given for presets: shows the scene switch.
   final LearningStore? store;
   final VoidCallback? onSaveAsMine;
   final VoidCallback? onEdit;
 
   @override
+  State<PlanDetailPage> createState() => _PlanDetailPageState();
+}
+
+class _PlanDetailPageState extends State<PlanDetailPage>
+    with WidgetsBindingObserver {
+  final _scroll = ScrollController();
+  final _viewport = GlobalKey();
+  final _button = GlobalKey();
+  final _media = <String, GlobalKey>{};
+  Set<String> _visible = const {};
+  bool _measurementQueued = false;
+  bool _starting = false;
+  double _buttonHeight = 56;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_measureAfterLayout);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _measureAfterLayout();
+  }
+
+  @override
+  void didChangeMetrics() => _measureAfterLayout();
+
+  @override
+  void didUpdateWidget(PlanDetailPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldIds = oldWidget.drills.map((drill) => drill.id).join('|');
+    final newIds = widget.drills.map((drill) => drill.id).join('|');
+    if (oldWidget.sdkPlan != widget.sdkPlan || oldIds != newIds) {
+      _visible = const {};
+      _media.clear();
+    }
+    _measureAfterLayout();
+  }
+
+  void _measureAfterLayout() {
+    if (_measurementQueued || !mounted) return;
+    _measurementQueued = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _measurementQueued = false;
+      if (!mounted) return;
+      final viewport = _viewport.currentContext?.findRenderObject();
+      if (viewport is! RenderBox || !viewport.hasSize) return;
+      final bounds = viewport.localToGlobal(Offset.zero) & viewport.size;
+      final visible = <String>{};
+      for (final entry in _media.entries) {
+        final box = entry.value.currentContext?.findRenderObject();
+        if (box is RenderBox && box.attached && box.hasSize) {
+          final rect = box.localToGlobal(Offset.zero) & box.size;
+          if (rect.overlaps(bounds)) visible.add(entry.key);
+        }
+      }
+      final button = _button.currentContext?.findRenderObject();
+      final height = button is RenderBox && button.hasSize
+          ? button.size.height
+          : _buttonHeight;
+      if (_visible.length != visible.length ||
+          !visible.containsAll(_visible) ||
+          (height - _buttonHeight).abs() > .5) {
+        setState(() {
+          _visible = visible;
+          _buttonHeight = height;
+        });
+      }
+    });
+  }
+
+  void _leave(VoidCallback action) {
+    DrillPlaybackCoordinator.shared.pauseAll();
+    action();
+  }
+
+  Future<void> _start() async {
+    if (_starting) return;
+    DrillPlaybackCoordinator.shared.pauseAll();
+    setState(() => _starting = true);
+    // Dispose article media in a frame before the SDK route can mount. Passing
+    // the callback directly also waits for an async training route to return.
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    try {
+      await Future<void>.sync(widget.onStart);
+    } finally {
+      if (mounted) setState(() => _starting = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    final plan = sdkPlan;
-    final mapper = catalog == null ? null : CoachPlanMapper(catalog!);
+    final catalog = widget.catalog ?? widget.store?.catalog;
+    final plan = widget.sdkPlan;
+    final mapper = catalog == null ? null : CoachPlanMapper(catalog);
     final available =
         plan == null || (mapper != null && mapper.missingIds(plan).isEmpty);
     final entries = plan != null && available ? mapper!.entries(plan) : null;
     final minutes = plan == null
-        ? estimateMinutes(drills)
+        ? estimateMinutes(widget.drills)
         : (estimateTrainingPlanSeconds(plan, catalog) / 60).ceil().clamp(
             1,
             999,
           );
     final ts = trainerStrings(s);
+    final items = <_PlanArticleItem>[
+      if (entries != null)
+        for (final (index, entry) in entries.indexed)
+          _PlanArticleItem(
+            drill: entry.drill,
+            dose: entry.doseText,
+            rowKey: ValueKey('sdk-plan-row-$index'),
+            heading:
+                index == 0 || entries[index - 1].blockIndex != entry.blockIndex
+                ? [
+                    entry.block.name.isEmpty
+                        ? entry.block.type.zh
+                        : entry.block.name,
+                    if (entry.block.type == uc.BlockType.circuit)
+                      ts.roundOf(1, entry.block.rounds),
+                    if (entry.block.type == uc.BlockType.circuit)
+                      '${s.rest} · ${s.secondsLabel(entry.block.restBetweenRoundsSeconds)}',
+                  ].where((part) => part.isNotEmpty).join(' · ')
+                : null,
+            note: entry.item.note,
+            demos: entry.item.segments.isEmpty
+                ? [_PlanArticleDemo(entry.drill, '$index:parent')]
+                : [
+                    for (final (segmentIndex, segment)
+                        in entry.item.segments.indexed)
+                      _PlanArticleDemo(
+                        catalog!.drillById(segment.exerciseId)!,
+                        '$index:segment:$segmentIndex',
+                        label: segment.label,
+                      ),
+                  ],
+          ),
+      if (entries == null && available)
+        for (final (index, drill) in widget.drills.indexed)
+          _PlanArticleItem(
+            drill: drill,
+            dose: drill.prescription,
+            rowKey: ValueKey('plan-row-${drill.id}'),
+            demos: [_PlanArticleDemo(drill, '$index:parent')],
+          ),
+    ];
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    final parentActive = FlarePageActivity.of(context);
     return ColoredBox(
       color: FlareColors.background,
       child: Column(
         children: [
           PageHeader(
-            title: title,
+            title: s.plans,
             large: false,
-            onBack: onBack,
-            action: onEdit == null
+            onBack: () => _leave(widget.onBack),
+            action: widget.onEdit == null
                 ? null
                 : RoundIconButton(
                     key: const ValueKey('plan-edit'),
                     icon: Icons.edit_outlined,
                     tooltip: s.planEdit,
-                    onPressed: onEdit,
+                    onPressed: () => _leave(widget.onEdit!),
                   ),
           ),
           Expanded(
-            child: ScrollEdge(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                children: [
-                  if (line != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        line!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.45,
-                          color: FlareColors.secondary,
-                        ),
-                      ),
-                    ),
-                  Text(
-                    s.planMeta(entries?.length ?? drills.length, minutes),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                  ),
-                  const SizedBox(height: 16),
-                  if (store case final store?) ...[
-                    _SceneSwitch(store: store),
-                    const SizedBox(height: 16),
-                  ],
-                  if (!available)
-                    Text(
-                      ts.mediaUnavailable,
-                      style: TextStyle(color: FlareColors.warning),
-                    ),
-                  if (entries != null)
-                    for (final (index, entry) in entries.indexed) ...[
-                      if (index == 0 ||
-                          entries[index - 1].blockIndex != entry.blockIndex)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            [
-                              entry.block.name,
-                              if (entry.block.type == uc.BlockType.circuit)
-                                ts.roundOf(1, entry.block.rounds),
-                              if (entry.block.type == uc.BlockType.circuit)
-                                '${s.rest} · ${s.secondsLabel(entry.block.restBetweenRoundsSeconds)}',
-                            ].where((part) => part.isNotEmpty).join(' · '),
+            child: FlarePageActivity(
+              active: parentActive && !_starting,
+              child: LayoutBuilder(
+                builder: (context, box) => Stack(
+                  children: [
+                    Positioned.fill(
+                      child: SizedBox(
+                        key: _viewport,
+                        child: ScrollEdge(
+                          child: ListView.builder(
+                            key: const ValueKey('plan-article'),
+                            controller: _scroll,
+                            padding: EdgeInsets.fromLTRB(
+                              math.max(20, (box.maxWidth - 720) / 2),
+                              2,
+                              math.max(20, (box.maxWidth - 720) / 2),
+                              _buttonHeight + bottom + 40,
+                            ),
+                            itemCount: items.length + 2,
+                            itemBuilder: (context, index) {
+                              _measureAfterLayout();
+                              if (index == 0) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Semantics(
+                                      header: true,
+                                      child: Text(
+                                        widget.title,
+                                        key: const ValueKey(
+                                          'plan-article-title',
+                                        ),
+                                        style: const TextStyle(
+                                          fontSize: 27,
+                                          height: 1.25,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      s.planMeta(items.length, minutes),
+                                      key: const ValueKey('plan-article-meta'),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        height: 1.5,
+                                        color: FlareColors.secondary,
+                                      ),
+                                    ),
+                                    if (widget.line ?? plan?.summary
+                                        case final String description
+                                        when description.isNotEmpty) ...[
+                                      const SizedBox(height: 14),
+                                      Text(
+                                        description,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          height: 1.55,
+                                        ),
+                                      ),
+                                    ],
+                                    if (widget.store case final store?) ...[
+                                      const SizedBox(height: 16),
+                                      _SceneSwitch(store: store),
+                                    ],
+                                    if (!available) ...[
+                                      const SizedBox(height: 18),
+                                      Text(
+                                        ts.mediaUnavailable,
+                                        style: TextStyle(
+                                          color: FlareColors.warning,
+                                        ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 24),
+                                  ],
+                                );
+                              }
+                              if (index == items.length + 1) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (plan != null)
+                                      for (final note in plan.notes)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
+                                          child: Text(
+                                            note,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              height: 1.55,
+                                            ),
+                                          ),
+                                        ),
+                                    if (plan != null &&
+                                        plan.safetyNotes.isNotEmpty) ...[
+                                      SectionTitle(s.safety),
+                                      for (final note in plan.safetyNotes)
+                                        BodyText(note),
+                                    ],
+                                    if (widget.onSaveAsMine != null)
+                                      TextButton.icon(
+                                        key: const ValueKey(
+                                          'plan-save-as-mine',
+                                        ),
+                                        onPressed: () =>
+                                            _leave(widget.onSaveAsMine!),
+                                        icon: const Icon(
+                                          Icons.bookmark_add_outlined,
+                                          size: 18,
+                                        ),
+                                        label: Text(s.planSaveAsMine),
+                                      ),
+                                  ],
+                                );
+                              }
+                              return _articleItem(
+                                context,
+                                items[index - 1],
+                                index - 1,
+                                catalog,
+                              );
+                            },
                           ),
                         ),
-                      _NumberedDrill(
-                        key: ValueKey('sdk-plan-row-$index'),
-                        index: index,
-                        drill: entry.drill,
-                        doseText: entry.doseText,
-                        onTap: () => onDrill(entry.drill),
-                      ),
-                    ],
-                  if (entries == null)
-                    for (final (index, drill) in drills.indexed)
-                      FadeSlideIn(
-                        key: ValueKey('plan-row-${drill.id}'),
-                        delay: FadeSlideIn.stagger(index),
-                        child: _NumberedDrill(
-                          index: index,
-                          drill: drill,
-                          onTap: () => onDrill(drill),
-                        ),
-                      ),
-                  if (onSaveAsMine != null)
-                    Center(
-                      child: TextButton.icon(
-                        key: const ValueKey('plan-save-as-mine'),
-                        onPressed: onSaveAsMine,
-                        icon: const Icon(Icons.bookmark_add_outlined, size: 18),
-                        label: Text(s.planSaveAsMine),
                       ),
                     ),
-                ],
+                    PositionedDirectional(
+                      end: 16,
+                      bottom: bottom + 12,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: math.min(
+                            168,
+                            math.max(0, box.maxWidth - 32),
+                          ),
+                          maxWidth: math.min(
+                            320,
+                            math.max(0, box.maxWidth - 32),
+                          ),
+                        ),
+                        child: SizedBox(
+                          key: _button,
+                          child: FilledButton.icon(
+                            key: const ValueKey('plan-start'),
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 56),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 22,
+                                vertical: 15,
+                              ),
+                              shape: const StadiumBorder(),
+                            ),
+                            icon: const Icon(
+                              Icons.play_arrow_rounded,
+                              size: 22,
+                            ),
+                            label: Text(
+                              s.planStart,
+                              textAlign: TextAlign.center,
+                            ),
+                            onPressed:
+                                widget.drills.isEmpty || !available || _starting
+                                ? null
+                                : _start,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          FlareActionBar(
-            child: PrimaryAction(
-              key: const ValueKey('plan-start'),
-              icon: Icons.play_arrow_rounded,
-              label: s.planStart,
-              onPressed: drills.isEmpty || !available ? null : onStart,
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget _articleItem(
+    BuildContext context,
+    _PlanArticleItem item,
+    int index,
+    Catalog? catalog,
+  ) {
+    final s = context.strings;
+    final group = catalog?.groupById(item.drill.groupId);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (item.heading case final heading?) ...[
+            Text(
+              heading,
+              key: ValueKey('plan-article-section-$index'),
+              style: const TextStyle(
+                fontSize: 20,
+                height: 1.4,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+          TextButton(
+            key: item.rowKey,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 44),
+              alignment: AlignmentDirectional.centerStart,
+              foregroundColor: FlareColors.text,
+            ),
+            onPressed: () => _leave(() => widget.onDrill(item.drill)),
+            child: Text(
+              '${index + 1}. ${item.drill.name}',
+              style: const TextStyle(
+                fontSize: 21,
+                height: 1.35,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Text(
+            item.dose,
+            key: ValueKey('plan-article-dose-$index'),
+            style: TextStyle(
+              fontSize: 15,
+              height: 1.55,
+              color: FlareColors.accentInk,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            [if (group != null) group.label, item.drill.equipment].join(' · '),
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.55,
+              color: FlareColors.secondary,
+            ),
+          ),
+          if (item.note case final note? when note.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(note, style: const TextStyle(fontSize: 15, height: 1.55)),
+          ],
+          for (final demo in item.demos) ...[
+            const SizedBox(height: 14),
+            if (demo.label case final label? when label.isNotEmpty) ...[
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 17,
+                  height: 1.4,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: SizedBox(
+                  key: _media.putIfAbsent(demo.slot, GlobalKey.new),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: DrillMediaCard(
+                      key: ValueKey('plan-article-media-${demo.slot}'),
+                      drillId: demo.drill.id,
+                      active: !_starting && _visible.contains(demo.slot),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              demo.drill.why,
+              style: const TextStyle(fontSize: 16, height: 1.6),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              s.cues,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            for (final cue in demo.drill.cues)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  '• $cue',
+                  style: const TextStyle(fontSize: 15, height: 1.6),
+                ),
+              ),
+            if (demo.drill.safety case final safety?
+                when safety.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                safety,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.55,
+                  color: FlareColors.secondary,
+                ),
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PlanArticleItem {
+  const _PlanArticleItem({
+    required this.drill,
+    required this.dose,
+    required this.rowKey,
+    required this.demos,
+    this.heading,
+    this.note,
+  });
+  final Drill drill;
+  final String dose;
+  final Key rowKey;
+  final List<_PlanArticleDemo> demos;
+  final String? heading;
+  final String? note;
+}
+
+class _PlanArticleDemo {
+  const _PlanArticleDemo(this.drill, this.slot, {this.label});
+  final Drill drill;
+  final String slot;
+  final String? label;
 }
 
 class _NumberedDrill extends StatelessWidget {
@@ -794,13 +1186,11 @@ class _NumberedDrill extends StatelessWidget {
     required this.onTap,
     this.trailing,
     this.state,
-    this.doseText,
   });
   final int index;
   final Drill drill;
   final VoidCallback onTap;
   final Widget? trailing;
-  final String? doseText;
 
   /// null: plain; true: done; false: current.
   final bool? state;
@@ -870,7 +1260,7 @@ class _NumberedDrill extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          doseText ?? drill.prescription,
+                          drill.prescription,
                           style: TextStyle(
                             color: FlareColors.dim,
                             fontSize: 12,

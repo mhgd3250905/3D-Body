@@ -70,7 +70,9 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   @override
   void didUpdateWidget(DrillMediaCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.drillId != widget.drillId) _close();
+    if (oldWidget.drillId != widget.drillId || (!_active && _opened)) {
+      _close();
+    }
     _controller.setActive(_active);
     if (oldWidget.drillId != widget.drillId ||
         (!oldWidget.active && widget.active) ||

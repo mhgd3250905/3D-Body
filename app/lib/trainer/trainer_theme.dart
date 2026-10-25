@@ -13,6 +13,8 @@ sdk.TrainerTheme trainerTheme(BuildContext context) {
     accent: p.accent,
     accentText: p.accentInk,
     onAccent: p.onAccent,
+    pausedColor: p.accent,
+    onPaused: p.onAccent,
     text: p.text,
     muted: p.muted,
     fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,

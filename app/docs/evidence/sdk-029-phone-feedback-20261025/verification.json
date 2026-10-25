@@ -1,0 +1,1301 @@
+{
+  "date": "2026-10-25",
+  "branch": "codex/sdk-029-phone-feedback",
+  "baseCommit": "4f091acf7e557f125ef3527470f53485066ecb3c",
+  "sdkTags": {
+    "sdkMain": "e6dd32d90d0533aecf595f17f002701c0bec7d7a",
+    "tags": {
+      "ugk_coach-v0.5.0": {
+        "commit": "d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f",
+        "isAncestorOfSdkMain": true
+      },
+      "ugk_trainer-v0.2.9": {
+        "commit": "953be22414f23128af879dc62686db200db34265",
+        "isAncestorOfSdkMain": true
+      },
+      "ugk_coach_ui-v0.1.3": {
+        "commit": "159dadf058ef47f701e36a496668265f9fd3fc0d",
+        "isAncestorOfSdkMain": true
+      }
+    }
+  },
+  "preservation": {
+    "baseCommit": "4f091acf7e557f125ef3527470f53485066ecb3c",
+    "branch": "codex/sdk-029-phone-feedback",
+    "smartFitSource": {
+      "repository": "mhgd3250905/Sport-Helper",
+      "commit": "5efb3e0ba8dfe418f4b5ea0ce87e9e04f9b3e594",
+      "status": ""
+    },
+    "preservedFiles": {
+      "app/assets/data/drill-media-manifest.json": {
+        "gitBlob": "a077174e914f480e56eaadfbef10f7b91ff05ae8",
+        "sha256": "d36536863076ac95d3cf2d6dccaf67e5031e2398e3bf5efc3958aa41ea11a8fd"
+      },
+      "app/assets/coach/catalog.json": {
+        "gitBlob": "b3d783f03609f823f44503e1035d0b0bc521eb40",
+        "sha256": "a6b4699883abb9769ad68aab3d54c3fbeef686cd15bee8bd1cb054c454ea4614"
+      }
+    },
+    "assetDiff": "",
+    "master": "4f091acf7e557f125ef3527470f53485066ecb3c",
+    "originMasterLocalTracking": "4f091acf7e557f125ef3527470f53485066ecb3c"
+  },
+  "pubGet": {
+    "normalExitCode": 0,
+    "enforceLockfileExitCode": 0
+  },
+  "commands": [
+    {
+      "command": [
+        "flutter",
+        "test",
+        "--no-pub",
+        "test/ui/plan_article_test.dart",
+        "test/ui/chat_immersion_test.dart",
+        "test/ui/ai_coach_test.dart",
+        "test/ui/coach_question_bubble_test.dart",
+        "test/ui/coach_entry_visibility_test.dart",
+        "test/ui/trainer_player_integration_test.dart",
+        "test/ui/sdk_plan_preservation_test.dart",
+        "test/ui/sdk_timer_persistence_test.dart",
+        "test/ui/flow_regressions_test.dart",
+        "test/ui/ios_layout_test.dart",
+        "test/ui/compact_localization_test.dart",
+        "test/ui/polish_round2_test.dart",
+        "test/platform/drill_media_controller_test.dart",
+        "--name",
+        "^(?!.*(?:text 2\\.0|small phone \\+ large text)).*$",
+        "--reporter",
+        "json",
+        "--timeout",
+        "45s"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 26.64
+    },
+    {
+      "command": [
+        "flutter",
+        "analyze",
+        "--no-pub"
+      ],
+      "exitCode": 0,
+      "seconds": 22.65,
+      "log": "analyze-final.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "build",
+        "web",
+        "--release",
+        "--no-pub",
+        "--output=E:/AII-3D/3D-Body/output/sdk-029-phone-feedback-20261025/web"
+      ],
+      "exitCode": 0,
+      "seconds": 64.62,
+      "log": "web-build-final.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "analyze",
+        "--no-pub",
+        "test/ui/plan_article_test.dart"
+      ],
+      "exitCode": 0,
+      "log": "plan-article-test-analyze.log"
+    }
+  ],
+  "tests": {
+    "passed": 135,
+    "failed": 0,
+    "skipped": 0,
+    "fullSuiteRun": false,
+    "textScale": 1.0,
+    "fileCounts": {
+      "app/test/ui/chat_immersion_test.dart": 3,
+      "app/test/ui/ai_coach_test.dart": 34,
+      "app/test/ui/coach_entry_visibility_test.dart": 3,
+      "app/test/ui/sdk_plan_preservation_test.dart": 13,
+      "app/test/ui/plan_article_test.dart": 6,
+      "app/test/ui/coach_question_bubble_test.dart": 6,
+      "app/test/platform/drill_media_controller_test.dart": 8,
+      "app/test/ui/sdk_timer_persistence_test.dart": 1,
+      "app/test/ui/polish_round2_test.dart": 3,
+      "app/test/ui/flow_regressions_test.dart": 10,
+      "app/test/ui/ios_layout_test.dart": 10,
+      "app/test/ui/trainer_player_integration_test.dart": 37,
+      "app/test/ui/compact_localization_test.dart": 1
+    },
+    "excludedByUser": "iOS text 2.0 and dedicated small-phone large-text cases; original definitions retained",
+    "normalTrainerMatrix": "14 languages x light/dark",
+    "cases": [
+      {
+        "file": "app/test/ui/chat_immersion_test.dart",
+        "name": "Android explicitly enables edge-to-edge before mounting App routes (variant: TargetPlatform.android)",
+        "sourceLine": 25,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 所有预设三档可执行，manual处方使用发布剂量而非零次",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 范围 = profile 白名单 ∩ App 动作与视频；交集完整时不改 profile",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 App 缺视频的动作从 AI 范围里排除，校验报 E_SCOPE",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 合格样例计划通过 SDK 校验",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 计划展示保留原块和逐项剂量；持久化以完整SDK计划为准",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "服务与映射 预设回落按关键词挑方向、按场景挑档位；红旗情况建议就医",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 未配置时不创建 AI 会话，也不处理隐藏入口的输入",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_entry_visibility_test.dart",
+        "name": "Empty and whitespace credentials keep AI disabled",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 红旗本地提示保留历史约束，两轮均不调用模型",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 追问回答断网时仍按历史方向和场所选择 App 预设",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 选择按 SDK 原顺序整理后仍传入 App 器械上下文",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 App 取消事件接到 SDK，问题不进入展示历史",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 App 进度监听期间禁答，SDK 返回后才启用问题",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 连续回答同步锁定一次，取消恢复首份输入且下一轮可继续",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 回答继承 App 条件，新对话刷新目录但复用同一个 Agent",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "App 与 SDK conversation 接线 恢复历史只读问题，新的输入仍经同一 Agent 和 App 条件门禁",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "完整计划往返保留重复动作、块、轮休、剂量与元数据，执行次序由SDK确定",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "SDK计划不按旧20动作/12组截断；缺目录动作阻止映射而非跳过",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "旧routine兼容，结构化更新须传完整计划，损坏SDK数据不降级执行",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "坏SDK存档中单个item.mode或block.type不得被部分解码后覆写",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "0.4.1分段父剂量可空，Codec/显示保留有序分段和重复父项",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "坏分段不能被静默恢复，段素材缺失阻止整计划展示",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "article wraps at Size(320.0, 700.0) / 1.0 with a fixed readable CTA",
+        "sourceLine": 93,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK问题选项320宽2倍字完整换行 dark=false multiple=false",
+        "sourceLine": 79,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK问题选项320宽2倍字完整换行 dark=false multiple=true",
+        "sourceLine": 79,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK问题选项320宽2倍字完整换行 dark=true multiple=false",
+        "sourceLine": 79,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "article wraps at Size(390.0, 844.0) / 1.0 with a fixed readable CTA",
+        "sourceLine": 93,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK问题选项320宽2倍字完整换行 dark=true multiple=true",
+        "sourceLine": 79,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK多选保留原字符串与顺序，历史禁用不能重发",
+        "sourceLine": 111,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "article retains block rounds and each segment media and dose",
+        "sourceLine": 145,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "scrolling a manual preview out stops it without starting another",
+        "sourceLine": 188,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_question_bubble_test.dart",
+        "name": "SDK文字问题使用独立回答回调，异步提交期间不能重复提交",
+        "sourceLine": 142,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "metadata and playing state keep the poster until a presented frame",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "pause before first frame keeps the poster and resume can reveal it",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "first frame notification is once and errors restore the poster",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "unrelated or disposed first-frame events cannot reveal a poster",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "pausing before metadata arrives cancels the queued play",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "rapid card switching releases the former owner only once",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "late ready cannot restart a hidden or outgoing demonstration",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/platform/drill_media_controller_test.dart",
+        "name": "unrelated scene events cannot change media state",
+        "sourceLine": null,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "training waits for preview disposal and its async callback",
+        "sourceLine": 274,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/plan_article_test.dart",
+        "name": "unavailable plan never displays a partial article or starts",
+        "sourceLine": 312,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/chat_immersion_test.dart",
+        "name": "real dark chat bubbles paint into the status area with safe controls",
+        "sourceLine": 52,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_timer_persistence_test.dart",
+        "name": "closing during save waits; failed retry reuses exact record",
+        "sourceLine": 33,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "保真编辑：改名、块内重排、删除空块，原剂量轮次备注保持",
+        "sourceLine": 394,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_entry_visibility_test.dart",
+        "name": "All AI entry points respect Key presence: false",
+        "sourceLine": 27,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "整计划删除为空时不能保存",
+        "sourceLine": 423,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/chat_immersion_test.dart",
+        "name": "real light chat bubbles paint into the status area with safe controls",
+        "sourceLine": 52,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/polish_round2_test.dart",
+        "name": "segmented control: tap, drag across, semantics",
+        "sourceLine": 53,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "fixed stage sends home inset before system back camera glide",
+        "sourceLine": 156,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/coach_entry_visibility_test.dart",
+        "name": "All AI entry points respect Key presence: true",
+        "sourceLine": 27,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "scene retry reinstalls inset and paused detail before framing",
+        "sourceLine": 220,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/polish_round2_test.dart",
+        "name": "drill page: fixed header and action stay outside scrolling content",
+        "sourceLine": 101,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "保真编辑新增动作使用库默认剂量，原块和条目不改写",
+        "sourceLine": 439,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/polish_round2_test.dart",
+        "name": "empty history reads as one quiet sentence",
+        "sourceLine": 249,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK列表、气泡和套路卡替代App布局，保留唯一开始按钮",
+        "sourceLine": 650,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "保存期间防重复，持久化失败保留编辑并显示失败",
+        "sourceLine": 470,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 dark text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "0.2分段计划编辑显示混合剂量，改名重排保存不丢分段节奏",
+        "sourceLine": 508,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 light text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "AI分段卡按父项计数，完整显示各段并原样交付开练",
+        "sourceLine": 532,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/sdk_plan_preservation_test.dart",
+        "name": "段素材可另加为父项，manual腕部使用已发布默认次数而非占位1次",
+        "sourceLine": 621,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 dark text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 生成→SDK卡保存→完整计划开练→回对话→我的计划再次开练",
+        "sourceLine": 686,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "saved circuit in the App shell completes in the SDK and returns",
+        "sourceLine": 172,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 light text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 多选→文字澄清→套路：同一个Agent，原顺序字符串，问题不重复",
+        "sourceLine": 720,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax dark text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "selected drill in the App shell completes in the SDK and returns",
+        "sourceLine": 172,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK问题去重，历史快照中的不同正文与问题同显",
+        "sourceLine": 775,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax light text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "phone safety → phase muscle → drill → SDK plan route → same paused frame",
+        "sourceLine": 295,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "thumbnail model state retains phase role and reviewed knowledge without metadata",
+        "sourceLine": 699,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+        "sourceLine": 788,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape dark text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 离开期间返回的问题在重开时仍是只读历史",
+        "sourceLine": 806,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "one SDK route plays both items, persists once, returns once",
+        "sourceLine": 313,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape light text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 单选原字符串立即回答，旧问题关闭且不会重发",
+        "sourceLine": 837,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape dark text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK save retry retains the same session without duplicate history",
+        "sourceLine": 331,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 取消后立即再发，旧问题仍禁用且迟到结果不覆盖新轮",
+        "sourceLine": 863,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+        "sourceLine": 899,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape light text 1.0 core pages fit",
+        "sourceLine": 34,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 退出再打开只显示历史，旧澄清不重新启用",
+        "sourceLine": 910,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "compact home keeps navigation discoverable and timeline drag/keyboard seek paused",
+        "sourceLine": 1002,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "first scene ready applies speed without overwriting saved paused time",
+        "sourceLine": 1129,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "0.2 counts repetitions automatically using catalog defaults",
+        "sourceLine": 356,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 模型重复plan id仍独立保存；删除后可再次保存完整原计划",
+        "sourceLine": 942,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "optional SDK controls extend rest, complete timer and toggle sound",
+        "sourceLine": 374,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK保存双击去重，写入完成才标为已保存",
+        "sourceLine": 972,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "segments use their own media but persist one parent result",
+        "sourceLine": 418,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 保存失败提示并可重试，复用同一份内存计划不重复建档",
+        "sourceLine": 1004,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/compact_localization_test.dart",
+        "name": "compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+        "sourceLine": 45,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK default media preserves bundled clips and Flare pause theme dark=false",
+        "sourceLine": 479,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 模型未入白名单的动作不能映射为可执行SDK卡，只能安全回落",
+        "sourceLine": 1037,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK default media preserves bundled clips and Flare pause theme dark=true",
+        "sourceLine": 479,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player zh light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player zh dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 断网仍显示明确预设来源，可信模板可保存并开练",
+        "sourceLine": 1065,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 无Key时AI入口、未配置提示及用量均隐藏",
+        "sourceLine": 1089,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player zh_Hant light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player zh_Hant dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 首次免责说明仍由App保存",
+        "sourceLine": 1096,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player en light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player en dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player es light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK等待气泡显示真实进度，取消后输入恢复，不回落",
+        "sourceLine": 1111,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player es dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player pt light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player pt dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 390宽正常字号深色SDK套路卡可展开，使用App字体和文案",
+        "sourceLine": 1135,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player fr light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player fr dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK呈现320宽2倍字号浅色，主题字体由App注入",
+        "sourceLine": 1154,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player de light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player de dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player it light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/ai_coach_test.dart",
+        "name": "SDK 共用聊天页 SDK呈现320宽2倍字号深色，主题字体由App注入",
+        "sourceLine": 1154,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player it dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ru light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ru dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ja light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ja dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ko light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ko dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ar light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player ar dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player hi light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player hi dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player id light at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/trainer_player_integration_test.dart",
+        "name": "SDK player id dark at normal text size has no layout errors",
+        "sourceLine": 539,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "legacy timer: real rep drill completes three sets and saves one local record",
+        "sourceLine": 1177,
+        "result": "success",
+        "skipped": false
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "appearance switch persists, repaints and tells the scene",
+        "sourceLine": 1245,
+        "result": "success",
+        "skipped": false
+      }
+    ]
+  },
+  "original26": {
+    "alreadyFixedInBase": true,
+    "historicalFullSuite": {
+      "passed": 361,
+      "failed": 0,
+      "skipped": 1
+    },
+    "normalTextRechecked": 16,
+    "enlargedTextNotRerun": 10,
+    "comparison": [
+      {
+        "file": "app/test/ui/compact_localization_test.dart",
+        "name": "compact muscle labels, home hint, and detail actions fit across locales and phone sizes",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "appearance switch persists, repaints and tells the scene",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "phone safety → phase muscle → drill → SDK plan route → same paused frame",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/flow_regressions_test.dart",
+        "name": "plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax dark text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax dark text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax light text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "ProMax light text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 dark text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 dark text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape dark text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape dark text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape light text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 landscape light text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 light text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "SE3 light text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 dark text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 dark text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape dark text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape dark text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape light text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 landscape light text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 light text 1.0 core pages fit",
+        "thisRun": "success"
+      },
+      {
+        "file": "app/test/ui/ios_layout_test.dart",
+        "name": "iPhone13 light text 2.0 core pages fit",
+        "thisRun": "not rerun: user excluded enlarged text"
+      },
+      {
+        "file": "app/test/ui/polish_round2_test.dart",
+        "name": "drill page: fixed header and action stay outside scrolling content",
+        "thisRun": "success"
+      }
+    ],
+    "nameMatchNote": "Suite path and ASCII-normalized name; Windows runner replaced arrow glyphs in two names."
+  },
+  "web": {
+    "url": "http://127.0.0.1:8861/",
+    "browser": "isolated headless Chrome",
+    "checks": [
+      "App boot and existing R17 stage",
+      "No-Key plans entry hides AI",
+      "continuous article: light 390 and dark 320",
+      "dark landscape 667x375",
+      "article end content clears floating CTA",
+      "manual preview and return to static after training",
+      "SDK training route, pause accent, end/save and return"
+    ],
+    "finalReloadAfterFinalBuild": true,
+    "consoleErrors": 0,
+    "consoleWarnings": 0,
+    "chatPixelProof": "widget test: real shell, light/dark, viewport y=0, bubble RGBA y=14..16, safe header/input",
+    "nativeDeviceUsed": false,
+    "screenshots": {
+      "article-light-390.png": {
+        "bytes": 123750,
+        "sha256": "4df446b83cb1e7d33591f74aec1d964049ec103716ebfbe45fac765031a32a48"
+      },
+      "article-dark-320.png": {
+        "bytes": 87690,
+        "sha256": "c57f5ce5e15b3053690116896d181c519fd073473a15396be2681e8d6c50a5d9"
+      },
+      "article-end-dark-320.png": {
+        "bytes": 85526,
+        "sha256": "b3181ff650392dfeda01d458ecb615902a1f79c4973f08a5e025c910a4ca873e"
+      },
+      "article-dark-landscape.png": {
+        "bytes": 36612,
+        "sha256": "d91281606c00dc65b8cf87e385650d33427f5741985dc4653cf192d7da6f47b7"
+      },
+      "trainer-paused-light.png": {
+        "bytes": 221847,
+        "sha256": "6939c0cb9cb6883b339740f01b67ecde340c98776c75e9609153f1da9b8caa94"
+      }
+    }
+  },
+  "sdkSourceModified": false,
+  "smartFitSourceModified": false,
+  "sdkNotes": [
+    {
+      "requestedScopeAffected": false,
+      "condition": "Indonesian, 390x844, 1.5 text scale, light/dark",
+      "observed": "20px right RenderFlex overflow in SDK player",
+      "handling": "Recorded before user excluded enlarged text; no SDK patch or App workaround."
+    }
+  ],
+  "sourceGitBlobs": {
+    "app/pubspec.yaml": "f876665eccda1c98c9db6317470c7f84109b3f1d",
+    "app/pubspec.lock": "fd81f9da54513c2c767516f8614f935e57fde9f3",
+    "app/lib/main.dart": "97d71d27ef2893b76b739502cf160a02228388d2",
+    "app/lib/trainer/trainer_theme.dart": "b3ea54a075319b7be7ae43aa16433f404a10897f",
+    "app/lib/ui/trainer_page.dart": "089b391c4bb80fb7cd03d5409ef47f821be484dc",
+    "app/lib/ui/app_shell.dart": "379616e9e75fedfaaa789285ca2aa9ec9b6b7428",
+    "app/lib/ui/ai_coach_page.dart": "1de8110f9742833d00fe113fd0b88e50087974bb",
+    "app/lib/ui/plans_page.dart": "c61e80bba474ab016cc1a21e41fcc7febaf3b260",
+    "app/lib/ui/components.dart": "495fb845c641b7754087120831e17d6c3e56ca1e",
+    "app/lib/ui/drill_media.dart": "0b497fc539b1d0e0cbebdcdb0213444ee33ca2fa",
+    "app/test/ui/trainer_player_integration_test.dart": "21adb026aad82ed021727a5c2a774fc23b7d3a7f",
+    "app/test/ui/chat_immersion_test.dart": "5c766f9344b400624ff300891adec4d1bfc4cc02",
+    "app/test/ui/plan_article_test.dart": "5e544f4e282d2d1ee3df3d95866ad764bf7872ef"
+  },
+  "logHashes": {
+    "pub-get.log": "8e72e98a4f126bb6b8c938d6fcd9e6ea22862f2c377756aeadaad8d3952764d5",
+    "pub-locked.log": "91c580a70c2ee60b56cc7251104daa91ba93ee24c44912b213c8f95088579330",
+    "analyze-final.log": "dba2cfcc2695523536e6842fab22b67b7ecab6f55a7ac50163c2423088758181",
+    "plan-article-test-analyze.log": "195b784c5dc1da7065dfbd1f177321a6647ba9515cc8034e6b6b157510d0d517",
+    "web-build-final.log": "65c9b5b36c7cababc040bec0d4faee2bddea29eb48237400df9bc5048db89c85",
+    "affected-tests-final.jsonl": "8dba37ef2f1a2603adf519b4aebc05ac3c1aaf316f8790eba3e5811f5dd310a5"
+  },
+  "nativeDeviceUsed": false,
+  "merged": false,
+  "pushed": false
+}

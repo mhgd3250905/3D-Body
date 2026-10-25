@@ -355,6 +355,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() => _trainingOpen = true);
     _syncSceneVisibility();
     try {
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
       await Navigator.of(context).push<SessionResult>(
         MaterialPageRoute(
           settings: const RouteSettings(name: '/training'),
@@ -601,8 +603,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           backgroundColor: _watchVisible || _holdWatch
               ? Colors.transparent
               : FlareColors.background,
-          // Titled pages sit below the status bar; the shared 3D stage owns
-          // its own inset.
+          // Regular titled pages and the 3D stage own their safe controls.
+          // Chat reserves its top clearance inside the scrollable content.
           body: SafeArea(
             top: false,
             child: Column(
@@ -653,7 +655,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               : null,
                           child: route.$4 == null
                               ? route.$4
-                              : SafeArea(bottom: false, child: route.$4!),
+                              : SafeArea(
+                                  top: route.$1 != 'coach',
+                                  bottom: false,
+                                  child: route.$4!,
+                                ),
                         ),
                       ],
                     ),
