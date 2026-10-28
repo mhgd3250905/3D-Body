@@ -10,7 +10,6 @@ import 'l10n/app_localizations.dart';
 import 'l10n/languages.dart';
 import 'platform/scene/scene_controller.dart';
 import 'ui/app_shell.dart';
-import 'ui/app_glass.dart';
 import 'ui/components.dart';
 import 'ui/motion.dart';
 import 'ui/startup_splash.dart';
@@ -21,7 +20,6 @@ SemanticsHandle? _webSemantics;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeFlareGlass();
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
       ('Snow Rig', 'Snow-ATTRIBUTION.md'),

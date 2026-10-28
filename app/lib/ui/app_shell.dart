@@ -1523,7 +1523,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 height: diameter,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: solid ? FlareColors.solid : FlareColors.control,
+                  color: solid ? FlareColors.accent : FlareColors.control,
                   border: Border.all(
                     color: FlareColors.controlBorder,
                     width: .5,
@@ -1532,7 +1532,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 child: Icon(
                   icon,
                   size: diameter == 48 ? 23 : 18,
-                  color: solid ? FlareColors.onSolid : FlareColors.controlIcon,
+                  color: solid ? FlareColors.onAccent : FlareColors.controlIcon,
                 ),
               ),
             ),
@@ -1579,7 +1579,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               children: [
                 RowGroup(
                   children: [
-                    for (final entry in [
+                    for (final (index, entry) in [
                       (
                         'library',
                         s.library,
@@ -1606,41 +1606,51 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         s.settingsHint,
                         Icons.tune_outlined,
                       ),
-                    ])
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                        ),
-                        minTileHeight: 64,
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: FlareColors.raised,
-                            borderRadius: BorderRadius.circular(12),
+                    ].indexed)
+                      FadeSlideIn(
+                        delay: FadeSlideIn.stagger(index),
+                        offset: 8,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 4,
                           ),
-                          child: Icon(entry.$4, size: 19),
-                        ),
-                        title: Text(
-                          entry.$2,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          minTileHeight: 64,
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: FlareColors.accent.withValues(alpha: .13),
+                              borderRadius: BorderRadius.circular(
+                                FlareRadius.tag,
+                              ),
+                            ),
+                            child: Icon(
+                              entry.$4,
+                              size: 19,
+                              color: FlareColors.accentInk,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          entry.$3,
-                          style: TextStyle(
-                            fontSize: 12,
+                          title: Text(
+                            entry.$2,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            entry.$3,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: FlareColors.dim,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.chevron_right_rounded,
+                            size: 20,
                             color: FlareColors.dim,
                           ),
+                          onTap: () => Navigator.pop(sheetContext, entry.$1),
                         ),
-                        trailing: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: FlareColors.dim,
-                        ),
-                        onTap: () => Navigator.pop(sheetContext, entry.$1),
                       ),
                   ],
                 ),
@@ -2249,7 +2259,7 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(FlareRadius.item),
         border: Border.all(color: FlareColors.hairline, width: .5),
         boxShadow: lift <= 0
             ? null

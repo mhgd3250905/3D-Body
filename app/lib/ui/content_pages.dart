@@ -299,7 +299,7 @@ class _FilterPill extends StatelessWidget {
           duration: FlareMotion.of(context, FlareMotion.fade),
           curve: FlareMotion.standard,
           decoration: ShapeDecoration(
-            color: selected ? FlareColors.solid : FlareColors.pill,
+            color: selected ? FlareColors.accent : FlareColors.pill,
             shape: StadiumBorder(
               side: BorderSide(
                 color: selected ? Colors.transparent : FlareColors.hairline,
@@ -326,7 +326,7 @@ class _FilterPill extends StatelessWidget {
                               ? FontWeight.w600
                               : FontWeight.w400,
                           color: selected
-                              ? FlareColors.onSolid
+                              ? FlareColors.onAccent
                               : FlareColors.secondary,
                         ),
                       ),
@@ -506,17 +506,22 @@ class _LibraryPageState extends State<LibraryPage> {
                     itemBuilder: (context, index) {
                       final drill = drills[index];
                       final group = catalog.groupById(drill.groupId)!;
+                      final card = DrillCard(
+                        key: ValueKey('drill-card-${drill.id}'),
+                        drill: drill,
+                        groupLabel: group.shortLabel,
+                        color: Color(group.colorValue),
+                        onTap: () => widget.onDrill(drill),
+                      );
                       // Re-keyed per filter so a new result set eases in,
-                      // staggered from the top.
+                      // staggered from the top (R27: 300ms, 65ms apart, six
+                      // groups). Cards built later by scrolling appear in
+                      // place: a lazily built row never pops in mid-scroll.
+                      if (index >= FlareMotion.staggerGroups) return card;
                       return FadeSlideIn(
                         key: ValueKey('$tier|$_section|$_query|${drill.id}'),
                         delay: FadeSlideIn.stagger(index),
-                        child: DrillCard(
-                          drill: drill,
-                          groupLabel: group.shortLabel,
-                          color: Color(group.colorValue),
-                          onTap: () => widget.onDrill(drill),
-                        ),
+                        child: card,
                       );
                     },
                   ),
@@ -588,11 +593,16 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: FlareColors.controlBorder),
+            color: FlareColors.accent.withValues(alpha: .13),
           ),
           child: Text(
             '${index + 1}',
-            style: TextStyle(fontSize: 11, color: FlareColors.secondary),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: FlareColors.accentInk,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -631,12 +641,22 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                DrillMediaCard(
-                  key: ValueKey('demo:${drill.id}'),
-                  drillId: drill.id,
+                // The demo is the page's main card (R27: 24dp), inset so the
+                // page reads as one framed spread rather than a bleed.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                  child: RepaintBoundary(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(FlareRadius.card),
+                      child: DrillMediaCard(
+                        key: ValueKey('demo:${drill.id}'),
+                        drillId: drill.id,
+                      ),
+                    ),
+                  ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+                  padding: const EdgeInsets.fromLTRB(22, 16, 22, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

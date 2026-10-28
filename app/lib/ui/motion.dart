@@ -79,8 +79,20 @@ abstract final class FlareMotion {
   static const Duration push = Duration(milliseconds: 420);
   static const Duration pop = Duration(milliseconds: 360);
   static const Duration modal = Duration(milliseconds: 460);
-  static const Duration sheet = Duration(milliseconds: 420);
+
+  /// Bottom sheets open and close on the same 260ms beat (R27 menu).
+  static const Duration sheet = Duration(milliseconds: 260);
   static const Duration sheetClose = Duration(milliseconds: 260);
+
+  /// Whole panels sliding in or out over a fixed stage (R27 calendar).
+  static const Duration panel = Duration(milliseconds: 350);
+
+  /// Swapping one panel for its neighbour (R27 calendar ↔ day detail).
+  static const Duration swap = Duration(milliseconds: 300);
+
+  /// Panel slides and list rows: R27 easeInOutCubic / easeOutCubic.
+  static const Curve panelCurve = Curves.easeInOutCubic;
+  static const Curve rowCurve = Curves.easeOutCubic;
 
   /// Folding a section open, and closed again.
   static const Duration expand = Duration(milliseconds: 340);
@@ -90,7 +102,10 @@ abstract final class FlareMotion {
   static const Duration theme = Duration(milliseconds: 360);
 
   /// Content entering a list or a swapped panel.
-  static const Duration enter = Duration(milliseconds: 420);
+  /// One row 300ms; rows start 65ms apart, at most six groups (R27).
+  static const Duration enter = Duration(milliseconds: 300);
+  static const int staggerStepMs = 65;
+  static const int staggerGroups = 6;
   static const Duration fade = Duration(milliseconds: 260);
   static const Duration quick = Duration(milliseconds: 180);
 
@@ -112,7 +127,7 @@ abstract final class FlareMotion {
       reduced(context) ? Duration.zero : value;
 
   static AnimationStyle sheetStyle(BuildContext context) => AnimationStyle(
-    curve: settle,
+    curve: Curves.easeOutCubic,
     duration: of(context, sheet),
     reverseCurve: exit,
     reverseDuration: of(context, sheetClose),
@@ -537,17 +552,23 @@ class FadeSlideIn extends StatefulWidget {
     super.key,
     required this.child,
     this.delay = Duration.zero,
-    this.offset = 14,
+    this.offset = 10,
     this.duration = FlareMotion.enter,
+    this.curve = FlareMotion.rowCurve,
   });
   final Widget child;
   final Duration delay;
   final double offset;
   final Duration duration;
+  final Curve curve;
 
   /// Delay for the [index]th item of a list, capped so long lists never wait.
-  static Duration stagger(int index, {int step = 32, int cap = 10}) =>
-      Duration(milliseconds: step * (index < cap ? index : cap));
+  /// Defaults follow R27: 65ms apart, at most six groups.
+  static Duration stagger(
+    int index, {
+    int step = FlareMotion.staggerStepMs,
+    int cap = FlareMotion.staggerGroups - 1,
+  }) => Duration(milliseconds: step * (index < cap ? index : cap));
 
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();
@@ -588,7 +609,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
     animation: _controller,
     child: widget.child,
     builder: (context, child) {
-      final t = FlareMotion.settle.transform(_controller.value);
+      final t = widget.curve.transform(_controller.value);
       if (t >= 1) return child!;
       return Opacity(
         opacity: Curves.easeOut.transform(_controller.value),

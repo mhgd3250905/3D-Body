@@ -174,7 +174,7 @@ class RowGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FlareStaticSurface(
     child: ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(FlareRadius.group),
       child: Material(
         type: MaterialType.transparency,
         child: Column(
@@ -319,52 +319,61 @@ class DrillTile extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 10),
     child: RepaintBoundary(
-      child: Material(
-        color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(18),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox.square(
-                    dimension: 64,
-                    child: DrillMediaCard(drillId: drill.id),
+      child: DecoratedBox(
+        decoration: FlareStaticSurface.decoration(
+          context,
+          radius: FlareRadius.item,
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.circular(FlareRadius.item),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox.square(
+                      dimension: 64,
+                      child: DrillMediaCard(drillId: drill.id),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        drill.name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          drill.name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          drill.prescription,
+                          style: TextStyle(
+                            color: FlareColors.dim,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  trailing ??
+                      Padding(
+                        padding: EdgeInsets.only(right: 6),
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: FlareColors.dim,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        drill.prescription,
-                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                trailing ??
-                    Padding(
-                      padding: EdgeInsets.only(right: 6),
-                      child: Icon(
-                        Icons.chevron_right_rounded,
-                        color: FlareColors.dim,
-                      ),
-                    ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -388,61 +397,64 @@ class DrillCard extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) => RepaintBoundary(
-    child: Material(
-      color: FlareStaticSurface.colorOf(context),
-      borderRadius: BorderRadius.circular(22),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AspectRatio(
-              aspectRatio: 4 / 3,
-              child: ColoredBox(
-                color: FlareColors.raised,
-                child: DrillMediaCard(drillId: drill.id),
+    child: DecoratedBox(
+      decoration: FlareStaticSurface.decoration(context),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(FlareRadius.group),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 4 / 3,
+                child: ColoredBox(
+                  color: FlareColors.raised,
+                  child: DrillMediaCard(drillId: drill.id),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    drill.name,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                        ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      drill.name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          groupLabel,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: FlareColors.dim,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            groupLabel,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: FlareColors.dim,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ),

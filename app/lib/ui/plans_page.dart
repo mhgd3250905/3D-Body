@@ -243,10 +243,10 @@ class PlansPage extends StatelessWidget {
   }) => FlareStaticSurface(
     child: Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(FlareRadius.group),
       child: InkWell(
         key: key,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(FlareRadius.group),
         onTap: onTap,
         child: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
@@ -561,10 +561,10 @@ class _PresetCard extends StatelessWidget {
     return FlareStaticSurface(
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(FlareRadius.group),
         child: InkWell(
           key: ValueKey('preset-${preset.id}'),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(FlareRadius.group),
           onTap: onTap,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -572,7 +572,7 @@ class _PresetCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(22),
+                  top: Radius.circular(FlareRadius.group),
                 ),
                 child: AspectRatio(
                   aspectRatio: 4 / 3,
@@ -815,7 +815,7 @@ class _NumberedDrill extends StatelessWidget {
           color: current
               ? FlareColors.accent.withValues(alpha: .10)
               : FlareStaticSurface.colorOf(context),
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(FlareRadius.group),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
@@ -1078,7 +1078,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                   color: Colors.transparent,
                   elevation: 6,
                   shadowColor: Colors.black38,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(FlareRadius.item),
                   child: child,
                 ),
                 itemBuilder: (context, index) {
@@ -1185,7 +1185,7 @@ class _DrillPickerState extends State<_DrillPicker> {
         selected: selected,
         button: true,
         child: Material(
-          color: selected ? FlareColors.solid : FlareColors.pill,
+          color: selected ? FlareColors.accent : FlareColors.pill,
           shape: StadiumBorder(
             side: BorderSide(
               color: selected ? Colors.transparent : FlareColors.hairline,
@@ -1207,7 +1207,7 @@ class _DrillPickerState extends State<_DrillPicker> {
                     fontSize: 13,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                     color: selected
-                        ? FlareColors.onSolid
+                        ? FlareColors.onAccent
                         : FlareColors.secondary,
                   ),
                 ),
@@ -1732,7 +1732,7 @@ class _NextCard extends StatelessWidget {
   Widget build(BuildContext context) => RepaintBoundary(
     child: FlareStaticSurface(
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(FlareRadius.group),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
