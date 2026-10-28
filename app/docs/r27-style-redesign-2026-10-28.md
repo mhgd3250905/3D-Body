@@ -47,3 +47,30 @@
 - 3D 场景 bundle（`assets/scene`，首页“肌群图”小卡与肌群标签在 WebView 内）未重建，外观沿用；如需统一圆角 / 配色需在根 `src/` 改后重新构建场景并按既有包核对流程更新哈希。
 - SDK 播放器 / 编辑器（`ugk_coach_ui` 等）界面不在本次范围。
 - 训练计时页、AI 定制页、设置页只继承新的色板、圆角和表面，没有单独重排。
+
+## 截图
+
+Flutter Web release（CanvasKit）/ 无头 Chromium（SwiftShader）/ 390×844 / 1 倍像素，全新本地数据（因此计划页没有“我的计划”和 AI 定制入口，这是数据差异不是改动）。改版前取 2026-10-24 合入记录的同尺寸截图；启动页改版前只有 2026-10-09 的加载页截图，作参考。
+
+- [浅色前后对比](screenshots/2026-10-28-r27/before-after-light.jpg)
+- [深色前后对比](screenshots/2026-10-28-r27/before-after-dark.jpg)
+- [训练库错峰入场三帧（浅 / 深）](screenshots/2026-10-28-r27/transition-library-stagger.jpg)
+
+无头环境没有中日韩系统字体，3D 场景 WebView 内“肌群图”小卡下方的文字显示为方框；Flutter 层文字使用自带字体正常。真机不受影响（场景未改动）。
+
+## 验证
+
+| 检查 | 结果 |
+| --- | --- |
+| `flutter analyze --no-pub` | No issues found |
+| `flutter test --no-pub -j 1` | 361 通过 / 0 失败 / 1 跳过（原有 opt-in 真实 AI smoke）。首轮唯一失败为深色卡片小字对比度，已把深色静态表面底色恢复到原值后单测复跑通过 |
+| `flutter build web --release --no-web-resources-cdn` | 成功 |
+| 浏览器走查 | 首次欢迎 / 安全须知 → 首页 3D → 更多 → 训练库 → 动作详情 → 计划；场景内点肌群标签进入肌群详情；浅深两套各一轮 |
+
+环境说明：沙箱 Flutter 为 3.44.7（仓库记录 3.47.x），其 `flutter_localizations` 固定 intl 0.20.2，本地验证时用未提交的 `pubspec_overrides.yaml` 覆盖 intl；提交的 pubspec / lock 只删除 `liquid_glass_widgets`，其余与 master 一致。
+
+## 需真机确认
+
+- Android / iOS 原生上新表面在 3D 舞台与视频上的观感、阴影强度，以及去掉 Liquid Glass 后的实际帧时间（预期 Raster 降低，未测）。
+- 高对比、减少动画、大字号的原生系统设置下的表现（单测覆盖了可访问字号与减少动画逻辑，未上真机）。
+- 珊瑚色 `#D95636` 在户外强光下与首页青绿字标的搭配是否需要再调。
