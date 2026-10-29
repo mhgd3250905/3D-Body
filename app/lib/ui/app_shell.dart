@@ -1400,8 +1400,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         16,
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
       ),
-      child: FlareGlassBar(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+      // No backing plate: the transport floats on the stage like the old
+      // design. Layered surfaces read heavy here (user, 2026-10-29).
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
         child: SizedBox(
           height: _transportHeightFor(context),
           child: Row(
@@ -1615,18 +1617,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             horizontal: 4,
                           ),
                           minTileHeight: 64,
-                          leading: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: FlareColors.accent.withValues(alpha: .13),
-                              borderRadius: BorderRadius.circular(
-                                FlareRadius.tag,
-                              ),
-                            ),
+                          leading: SizedBox(
+                            width: 32,
                             child: Icon(
                               entry.$4,
-                              size: 19,
+                              size: 21,
                               color: FlareColors.accentInk,
                             ),
                           ),

@@ -253,11 +253,8 @@ class FlareActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-    child: FlareGlassBar(
-      padding: const EdgeInsets.all(6),
-      radius: FlareRadius.panel,
-      child: child,
-    ),
+    // The button is the surface; no plate behind it (user, 2026-10-29).
+    padding: const EdgeInsets.fromLTRB(22, 8, 22, 14),
+    child: child,
   );
 }
