@@ -20,6 +20,7 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/plans_page.dart';
+import 'package:flare/ui/sdk_plan_editor_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -28,6 +29,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../test/domain/fixtures.dart';
 import '../test/ui/coach_agent_fixtures.dart';
+import '../test/ui/sdk_plan_preservation_test.dart' show structuredPlan;
 
 class _Memory implements LocalStateStorage {
   final values = <String, String>{};
@@ -444,19 +446,44 @@ void main() {
       final language = find.byKey(const ValueKey('language-setting'));
       if (language.evaluate().isNotEmpty) {
         await tester.ensureVisible(language);
-        await tester.tap(language);
+        await tester.drag(find.byType(Scrollable).first, const Offset(0, 240));
+        await settle(tester);
+        await tester.tap(language, warnIfMissed: false);
         await settle(tester);
         await shot(tester, d, '19-language-sheet');
-        await tester.tapAt(const Offset(196, 60));
-        await settle(tester);
+        final sheetNav = find.byType(BottomSheet);
+        if (sheetNav.evaluate().isNotEmpty) {
+          Navigator.of(tester.element(sheetNav.first)).pop();
+          await settle(tester);
+        }
       }
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -2000));
+      await settle(tester);
       final about = find.text('关于 Flare');
       if (about.evaluate().isNotEmpty) {
-        await tester.ensureVisible(about.first);
-        await tester.tap(about.first);
+        await tester.tap(about.first, warnIfMissed: false);
         await settle(tester);
         await shot(tester, d, '18-about');
       }
+    });
+
+    testWidgets('$d 22 ai plan editor', (tester) async {
+      await setup(tester, mode);
+      await tester.pumpWidget(
+        app(
+          page(
+            SdkPlanEditorPage(
+              plan: structuredPlan(),
+              catalog: catalog,
+              onBack: () {},
+              onSaved: (_) async => true,
+            ),
+          ),
+          mode,
+        ),
+      );
+      await settle(tester);
+      await shot(tester, d, '22-ai-plan-editor');
     });
 
     testWidgets('$d 20 ai coach', (tester) async {
