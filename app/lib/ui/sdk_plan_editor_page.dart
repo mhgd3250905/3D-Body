@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
+import '../coach/plan_mapping.dart';
 import '../data/catalog.dart';
+import '../data/flare_shared_library.dart';
 import '../trainer/training_plan_adapter.dart' show trainingPlanFromDrills;
 import 'components.dart';
 import 'content_pages.dart';
@@ -167,12 +169,15 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                     },
                     itemBuilder: (context, ii) {
                       final item = _items[bi][ii];
-                      final drill = widget.catalog.drillById(item.exerciseId);
+                      final drill = CoachPlanMapper(
+                        widget.catalog,
+                        shared: FlareShared.current?.catalog,
+                      ).drillById(item.exerciseId);
                       final amount = item.segments.isNotEmpty
                           ? [
                               for (final (index, segment)
                                   in item.segments.indexed)
-                                '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : widget.catalog.drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
+                                '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : CoachPlanMapper(widget.catalog, shared: FlareShared.current?.catalog).drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
                                     '${segment.mode == uc.DoseMode.time ? s.secondsLabel(segment.workSeconds!) : s.countLabel(segment.reps!)}'
                                     '${segment.holdSeconds == null ? '' : ' · ⏸ ${s.secondsLabel(segment.holdSeconds!)}'}',
                             ].join('\n')

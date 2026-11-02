@@ -53,11 +53,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       AppLocalizations.of(context),
     );
     final shared = FlareShared.current ?? await FlareShared.load();
-    validateTrainingPlan(
-      widget.plan,
-      widget.catalog,
-      known: (id) => shared.catalog[id] != null,
-    );
+    bool known(String id) => shared.catalog[id] != null;
+    validateTrainingPlan(widget.plan, widget.catalog, known: known);
     final voice = await loadTrainerVoiceSource(
       language: language,
       // TrainerPlayer uses its default right-first side sequence.
@@ -68,6 +65,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         widget.plan,
         widget.catalog,
         wristDirections: wristDirections,
+        known: known,
       ),
       rhythms: shared.rhythms,
       shared: shared,

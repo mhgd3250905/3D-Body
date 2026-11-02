@@ -167,11 +167,14 @@ class UnknownTrainingDrills implements Exception {
 /// SDK default rhythms. Missing-media plans stay readable but cannot start.
 double estimateTrainingPlanSeconds(uc.TrainingPlan plan, Catalog? catalog) {
   final builder = sdk.SessionBuilder();
-  if (catalog == null ||
-      plan.exerciseIds.any((id) => catalog.drillById(id) == null)) {
+  if (catalog == null) return builder.planSeconds(plan);
+  try {
+    return builder.planSeconds(
+      expandSegmentedTrainingPlan(plan, catalog, known: (_) => true),
+    );
+  } on Object {
     return builder.planSeconds(plan);
   }
-  return builder.planSeconds(expandSegmentedTrainingPlan(plan, catalog));
 }
 
 /// SDK 0.2 owns segment identity, per-set order and completion accounting.
@@ -181,8 +184,9 @@ uc.TrainingPlan expandSegmentedTrainingPlan(
   uc.TrainingPlan plan,
   Catalog catalog, {
   List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+  bool Function(String id)? known,
 }) {
-  validateTrainingPlan(plan, catalog);
+  validateTrainingPlan(plan, catalog, known: known);
   if (wristDirections.length != 4) {
     throw ArgumentError('Four wrist directions required');
   }
@@ -197,11 +201,11 @@ uc.TrainingPlan expandSegmentedTrainingPlan(
           restBetweenRoundsSeconds: block.restBetweenRoundsSeconds,
           items: [
             for (final item in block.items)
-              _withSegments(
+              // Shared public actions keep their SDK-authored item unchanged.
+              if (catalog.drillById(item.exerciseId) case final Drill drill)
+                _withSegments(item, drill, wristDirections)
+              else
                 item,
-                catalog.drillById(item.exerciseId)!,
-                wristDirections,
-              ),
           ],
         ),
     ],

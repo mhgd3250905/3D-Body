@@ -1,6 +1,7 @@
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../data/catalog.dart';
+import '../data/flare_drill_resolver.dart';
 import '../domain/training_plan.dart';
 
 /// A display row for one plan item. Execution always receives the whole plan.
@@ -37,12 +38,18 @@ class CoachPlanEntry {
 /// rounds or changing the SDK plan. Missing actions reject the entire display
 /// mapping; the caller must show an unavailable state instead of a partial plan.
 class CoachPlanMapper {
-  const CoachPlanMapper(this.catalog);
+  const CoachPlanMapper(this.catalog, {this.shared});
   final Catalog catalog;
+
+  /// SDK shared public scope (211 actions); resolved after Flare's own drills.
+  final uc.Catalog? shared;
+
+  Drill? drillById(String id) =>
+      catalog.drillById(id) ?? sharedDisplayDrill(shared, id);
 
   Set<String> missingIds(uc.TrainingPlan plan) => {
     for (final id in plan.exerciseIds)
-      if (catalog.drillById(id) == null) id,
+      if (drillById(id) == null) id,
   };
 
   List<CoachPlanEntry> entries(uc.TrainingPlan plan) {
@@ -57,7 +64,7 @@ class CoachPlanMapper {
   }
 
   CoachPlanEntry _entry(int bi, uc.PlanBlock block, uc.PlanItem item) {
-    final drill = catalog.drillById(item.exerciseId)!;
+    final drill = drillById(item.exerciseId)!;
     final time = item.mode == uc.DoseMode.time;
     final circuit = block.type == uc.BlockType.circuit && block.rounds > 1;
     if (item.segments.isNotEmpty) {
@@ -65,7 +72,7 @@ class CoachPlanMapper {
       final side = item.perSide ? ' · 每侧' : '';
       final parts = [
         for (final (index, segment) in item.segments.indexed)
-          '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : catalog.drillById(segment.exerciseId)!.name} · '
+          '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : drillById(segment.exerciseId)!.name} · '
               '${segment.mode == uc.DoseMode.time ? '${segment.workSeconds} 秒' : '${segment.reps} 次'}'
               '${segment.holdSeconds == null ? '' : ' · 停留 ${segment.holdSeconds} 秒'}',
       ];
