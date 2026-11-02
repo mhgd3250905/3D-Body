@@ -1,4 +1,5 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/flare_public_media.dart';
 import 'package:flare/domain/dose.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
@@ -7,7 +8,6 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
-import 'package:flare/ui/drill_media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,6 +72,32 @@ Future<void> _advance(WidgetTester tester, int seconds) async {
   for (var n = 0; n < seconds * 10; n++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+}
+
+Future<void> _expectPoster(WidgetTester tester, String id) async {
+  final media = find.byWidgetPredicate(
+    (widget) => widget is sdk.DrillMediaView && widget.media.id == id,
+  );
+  expect(media, findsOneWidget);
+  expect(
+    tester.widget<sdk.DrillMediaView>(media).media.posterAsset,
+    'assets/public_posters/$id.webp',
+  );
+  final decoded = find.descendant(
+    of: media,
+    matching: find.byWidgetPredicate(
+      (widget) => widget is RawImage && widget.image != null,
+    ),
+  );
+  // Asset IO and codec callbacks need real asynchronous work; advancing the
+  // fake session clock could skip the very segment whose poster we inspect.
+  for (var i = 0; i < 100 && decoded.evaluate().isEmpty; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump();
+  }
+  expect(decoded, findsWidgets);
 }
 
 Future<LearningStore> _open(
@@ -151,6 +177,18 @@ Future<LearningStore> _open(
 }
 
 void main() {
+  setUpAll(() async {
+    for (final name in [
+      'FlareSans',
+      'NotoSansKR',
+      'NotoSansArabic',
+      'NotoSansDevanagari',
+    ]) {
+      await (FontLoader(
+        name,
+      )..addFont(rootBundle.load('assets/fonts/$name.ttf'))).load();
+    }
+  });
   setUp(() {
     // Cached futures must not leak from one test's fake async zone to the next.
     rootBundle.clear();
@@ -345,20 +383,25 @@ void main() {
     },
   );
 
-  testWidgets('0.2 counts repetitions automatically using catalog defaults', (
+  testWidgets('unreviewed public rep cadence stays manual until completed', (
     tester,
   ) async {
     final store = await _open(tester, reps: true);
     await _advance(tester, 28);
-    expect(find.byKey(const ValueKey('complete-set-button')), findsNothing);
+    expect(find.byKey(const ValueKey('complete-set-button')), findsOneWidget);
     expect(store.trainerSessions, isEmpty);
     final player = tester.widget<sdk.TrainerPlayer>(
       find.byType(sdk.TrainerPlayer),
     );
     expect(player.rhythms.containsKey('glute-max-A'), isTrue);
-    expect(player.rhythms['chest-A']!.selfPaced, isFalse);
+    expect(player.rhythms['chest-A']!.selfPaced, isTrue);
     await _advance(tester, 7);
+    expect(store.trainerSessions, isEmpty);
+    await tester.tap(find.byKey(const ValueKey('complete-set-button')));
+    await tester.pump();
+    await tester.pump();
     expect(store.trainerSessions.single.full, isTrue);
+    expect(store.trainerSessions.single.items.last.completedSets, 1);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
@@ -410,6 +453,17 @@ void main() {
   testWidgets('segments use their own media but persist one parent result', (
     tester,
   ) async {
+    final policy = await tester.runAsync(
+      () => FlarePublicMedia.load(
+        rootDirectory: '../output/trainer-widget-media-20261102',
+        prefetchBeforeTraining: false,
+      ),
+    );
+    FlarePublicMedia.current = policy;
+    addTearDown(() {
+      FlarePublicMedia.current = null;
+      policy!.repository.dispose();
+    });
     final parent = uc.PlanItem(
       exerciseId: 'scapular-A',
       mode: uc.DoseMode.reps,
@@ -445,19 +499,9 @@ void main() {
     );
     final store = await _open(tester, sdkPlan: plan);
     await _advance(tester, 11);
-    expect(
-      tester
-          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
-          .map((card) => card.drillId),
-      contains('abs-A'),
-    );
+    await _expectPoster(tester, 'abs-A');
     await _advance(tester, 3);
-    expect(
-      tester
-          .widgetList<DrillMediaCard>(find.byType(DrillMediaCard))
-          .map((card) => card.drillId),
-      contains('chest-A'),
-    );
+    await _expectPoster(tester, 'chest-A');
     expect(store.trainerSessions, isEmpty);
     await _advance(tester, 4);
     expect(store.trainerSessions.single.items, hasLength(1));
@@ -469,25 +513,32 @@ void main() {
 
   for (final language in languageNames.keys) {
     for (final dark in [false, true]) {
-      testWidgets(
-        'SDK player $language ${dark ? 'dark' : 'light'} at 1.5x has no layout errors',
-        (tester) async {
-          await _open(tester, language: language, dark: dark, textScale: 1.5);
-          final player = tester.widget<sdk.TrainerPlayer>(
-            find.byType(sdk.TrainerPlayer),
-          );
-          expect(player.strings.pause, isNotEmpty);
-          expect(
-            player.voice!.settings.language,
-            language == 'zh_Hant' ? 'zh' : language,
-          );
-          expect(find.byKey(const ValueKey('pause')), findsOneWidget);
-          expect(tester.takeException(), isNull);
-          await tester.pumpWidget(const SizedBox());
-          await tester.pump();
-          expect(tester.takeException(), isNull);
-        },
-      );
+      for (final scale in [1.0, 1.5]) {
+        testWidgets(
+          'SDK player $language ${dark ? 'dark' : 'light'} at ${scale}x has no layout errors',
+          (tester) async {
+            await _open(
+              tester,
+              language: language,
+              dark: dark,
+              textScale: scale,
+            );
+            final player = tester.widget<sdk.TrainerPlayer>(
+              find.byType(sdk.TrainerPlayer),
+            );
+            expect(player.strings.pause, isNotEmpty);
+            expect(
+              player.voice!.settings.language,
+              language == 'zh_Hant' ? 'zh' : language,
+            );
+            expect(find.byKey(const ValueKey('pause')), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            await tester.pumpWidget(const SizedBox());
+            await tester.pump();
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
     }
   }
 }
