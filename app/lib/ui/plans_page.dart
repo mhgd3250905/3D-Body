@@ -1225,7 +1225,7 @@ class _DrillPickerState extends State<_DrillPicker> {
                 key: const ValueKey('picker-done'),
                 label: _picked.isEmpty
                     ? s.planAddDrills
-                    : '${s.planAddDrills} · ${_picked.length}',
+                    : s.pickerAddCount(_picked.length),
                 onPressed: _picked.isEmpty
                     ? null
                     : () => Navigator.pop(context, List.of(_picked)),

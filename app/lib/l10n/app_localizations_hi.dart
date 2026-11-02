@@ -1088,78 +1088,83 @@ class AppLocalizationsHi extends AppLocalizations {
   String get trainerSoundOff => 'आवाज़ और ध्वनियाँ बंद करें';
 
   @override
-  String get filterAction => 'Filter';
+  String get filterAction => 'फ़िल्टर';
 
   @override
-  String get filterReset => 'Reset';
+  String get filterReset => 'रीसेट';
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    return '$count अभ्यास दिखाएँ';
   }
 
   @override
-  String get filterScene => 'Setting';
+  String get filterScene => 'परिवेश';
 
   @override
-  String get filterSection => 'Body area';
+  String get filterSection => 'क्षेत्र';
 
   @override
-  String get pickerAdded => 'Added';
+  String get pickerAdded => 'जोड़ा गया';
 
   @override
-  String get recordsStreakUnit => 'day streak';
+  String get recordsStreakUnit => 'दिन लगातार';
 
   @override
-  String get recordsSessions => 'Sessions';
+  String get recordsSessions => 'सत्र';
 
   @override
-  String get recordsMinutes => 'Minutes';
+  String get recordsMinutes => 'मिनट';
 
   @override
-  String get recordsDays => 'Days trained';
+  String get recordsDays => 'अभ्यास के दिन';
 
   @override
-  String get recordsThisWeek => 'This week';
+  String get recordsThisWeek => 'इस सप्ताह';
 
   @override
-  String get recordsHeatmap => 'Last 16 weeks';
+  String get recordsHeatmap => 'पिछले 16 सप्ताह';
 
   @override
-  String get recordsMilestones => 'Milestones';
+  String get recordsMilestones => 'उपलब्धियाँ';
 
   @override
   String milestoneDays(int count) {
-    return '$count-day streak';
+    return 'लगातार $count दिन';
   }
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    return '$count दिन बाकी';
   }
 
   @override
   String milestoneEarned(String date) {
-    return 'Earned $date';
+    return '$date को हासिल';
   }
 
   @override
-  String get milestoneLocked => 'Locked';
+  String get milestoneLocked => 'लॉक';
 
   @override
   String milestoneUnlocked(int count) {
-    return 'Milestone unlocked: $count-day streak';
+    return 'उपलब्धि मिली: लगातार $count दिन';
   }
 
   @override
-  String get recordsEmptyTitle => 'No sessions yet';
+  String get recordsEmptyTitle => 'अभी कोई सत्र नहीं';
 
   @override
-  String get recordsEmptyAction => 'Try your first drill';
+  String get recordsEmptyAction => 'पहला अभ्यास करें';
 
   @override
-  String get heatLess => 'Less';
+  String get heatLess => 'कम';
 
   @override
-  String get heatMore => 'More';
+  String get heatMore => 'ज़्यादा';
+
+  @override
+  String pickerAddCount(int count) {
+    return '$count अभ्यास जोड़ें';
+  }
 }

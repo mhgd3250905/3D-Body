@@ -1094,78 +1094,123 @@ class AppLocalizationsRu extends AppLocalizations {
   String get trainerSoundOff => 'Выключить голос и звуки';
 
   @override
-  String get filterAction => 'Filter';
+  String get filterAction => 'Фильтр';
 
   @override
-  String get filterReset => 'Reset';
+  String get filterReset => 'Сбросить';
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Показать $count упражнения',
+      many: 'Показать $count упражнений',
+      few: 'Показать $count упражнения',
+      one: 'Показать $count упражнение',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get filterScene => 'Setting';
+  String get filterScene => 'Условия';
 
   @override
-  String get filterSection => 'Body area';
+  String get filterSection => 'Область';
 
   @override
-  String get pickerAdded => 'Added';
+  String get pickerAdded => 'Добавлено';
 
   @override
-  String get recordsStreakUnit => 'day streak';
+  String get recordsStreakUnit => 'дн. подряд';
 
   @override
-  String get recordsSessions => 'Sessions';
+  String get recordsSessions => 'Занятия';
 
   @override
-  String get recordsMinutes => 'Minutes';
+  String get recordsMinutes => 'Минуты';
 
   @override
-  String get recordsDays => 'Days trained';
+  String get recordsDays => 'Дни тренировок';
 
   @override
-  String get recordsThisWeek => 'This week';
+  String get recordsThisWeek => 'Эта неделя';
 
   @override
-  String get recordsHeatmap => 'Last 16 weeks';
+  String get recordsHeatmap => 'Последние 16 недель';
 
   @override
-  String get recordsMilestones => 'Milestones';
+  String get recordsMilestones => 'Достижения';
 
   @override
   String milestoneDays(int count) {
-    return '$count-day streak';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count дня подряд',
+      many: '$count дней подряд',
+      few: '$count дня подряд',
+      one: '$count день подряд',
+    );
+    return '$_temp0';
   }
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Осталось $count дня',
+      many: 'Осталось $count дней',
+      few: 'Осталось $count дня',
+      one: 'Остался $count день',
+    );
+    return '$_temp0';
   }
 
   @override
   String milestoneEarned(String date) {
-    return 'Earned $date';
+    return 'Получено $date';
   }
 
   @override
-  String get milestoneLocked => 'Locked';
+  String get milestoneLocked => 'Закрыто';
 
   @override
   String milestoneUnlocked(int count) {
-    return 'Milestone unlocked: $count-day streak';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Новое достижение: $count дня подряд',
+      many: 'Новое достижение: $count дней подряд',
+      few: 'Новое достижение: $count дня подряд',
+      one: 'Новое достижение: $count день подряд',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get recordsEmptyTitle => 'No sessions yet';
+  String get recordsEmptyTitle => 'Занятий пока нет';
 
   @override
-  String get recordsEmptyAction => 'Try your first drill';
+  String get recordsEmptyAction => 'Начать первое упражнение';
 
   @override
-  String get heatLess => 'Less';
+  String get heatLess => 'Меньше';
 
   @override
-  String get heatMore => 'More';
+  String get heatMore => 'Больше';
+
+  @override
+  String pickerAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Добавить $count упражнения',
+      many: 'Добавить $count упражнений',
+      few: 'Добавить $count упражнения',
+      one: 'Добавить $count упражнение',
+    );
+    return '$_temp0';
+  }
 }

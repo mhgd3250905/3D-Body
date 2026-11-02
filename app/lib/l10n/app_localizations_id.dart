@@ -1098,75 +1098,80 @@ class AppLocalizationsId extends AppLocalizations {
   String get filterAction => 'Filter';
 
   @override
-  String get filterReset => 'Reset';
+  String get filterReset => 'Atur ulang';
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    return 'Tampilkan $count latihan';
   }
 
   @override
-  String get filterScene => 'Setting';
+  String get filterScene => 'Suasana';
 
   @override
-  String get filterSection => 'Body area';
+  String get filterSection => 'Bagian';
 
   @override
-  String get pickerAdded => 'Added';
+  String get pickerAdded => 'Ditambahkan';
 
   @override
-  String get recordsStreakUnit => 'day streak';
+  String get recordsStreakUnit => 'hari berturut-turut';
 
   @override
-  String get recordsSessions => 'Sessions';
+  String get recordsSessions => 'Sesi';
 
   @override
-  String get recordsMinutes => 'Minutes';
+  String get recordsMinutes => 'Menit';
 
   @override
-  String get recordsDays => 'Days trained';
+  String get recordsDays => 'Hari latihan';
 
   @override
-  String get recordsThisWeek => 'This week';
+  String get recordsThisWeek => 'Minggu ini';
 
   @override
-  String get recordsHeatmap => 'Last 16 weeks';
+  String get recordsHeatmap => '16 minggu terakhir';
 
   @override
-  String get recordsMilestones => 'Milestones';
+  String get recordsMilestones => 'Pencapaian';
 
   @override
   String milestoneDays(int count) {
-    return '$count-day streak';
+    return '$count hari berturut-turut';
   }
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    return '$count hari lagi';
   }
 
   @override
   String milestoneEarned(String date) {
-    return 'Earned $date';
+    return 'Dicapai $date';
   }
 
   @override
-  String get milestoneLocked => 'Locked';
+  String get milestoneLocked => 'Terkunci';
 
   @override
   String milestoneUnlocked(int count) {
-    return 'Milestone unlocked: $count-day streak';
+    return 'Pencapaian terbuka: $count hari berturut-turut';
   }
 
   @override
-  String get recordsEmptyTitle => 'No sessions yet';
+  String get recordsEmptyTitle => 'Belum ada sesi';
 
   @override
-  String get recordsEmptyAction => 'Try your first drill';
+  String get recordsEmptyAction => 'Coba latihan pertama';
 
   @override
-  String get heatLess => 'Less';
+  String get heatLess => 'Sedikit';
 
   @override
-  String get heatMore => 'More';
+  String get heatMore => 'Banyak';
+
+  @override
+  String pickerAddCount(int count) {
+    return 'Tambah $count latihan';
+  }
 }

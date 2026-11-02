@@ -2232,6 +2232,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'多'**
   String get heatMore;
+
+  /// No description provided for @pickerAddCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加 {count} 个动作'**
+  String pickerAddCount(int count);
 }
 
 class _AppLocalizationsDelegate

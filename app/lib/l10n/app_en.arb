@@ -505,7 +505,7 @@
   "trainerSoundOff": "Turn off voice and sounds",
   "filterAction": "Filter",
   "filterReset": "Reset",
-  "filterShowCount": "Show {count} drills",
+  "filterShowCount": "{count, plural, =1{Show 1 drill} other{Show {count} drills}}",
   "filterScene": "Setting",
   "filterSection": "Body area",
   "pickerAdded": "Added",
@@ -517,12 +517,13 @@
   "recordsHeatmap": "Last 16 weeks",
   "recordsMilestones": "Milestones",
   "milestoneDays": "{count}-day streak",
-  "milestoneLeft": "{count} days to go",
+  "milestoneLeft": "{count, plural, =1{1 day to go} other{{count} days to go}}",
   "milestoneEarned": "Earned {date}",
   "milestoneLocked": "Locked",
   "milestoneUnlocked": "Milestone unlocked: {count}-day streak",
   "recordsEmptyTitle": "No sessions yet",
   "recordsEmptyAction": "Try your first drill",
   "heatLess": "Less",
-  "heatMore": "More"
+  "heatMore": "More",
+  "pickerAddCount": "{count, plural, =1{Add 1 drill} other{Add {count} drills}}"
 }

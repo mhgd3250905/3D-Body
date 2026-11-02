@@ -1136,6 +1136,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get heatMore => '多';
+
+  @override
+  String pickerAddCount(int count) {
+    return '添加 $count 个动作';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2271,4 +2276,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get heatMore => '多';
+
+  @override
+  String pickerAddCount(int count) {
+    return '新增 $count 個動作';
+  }
 }

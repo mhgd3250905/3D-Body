@@ -1070,78 +1070,83 @@ class AppLocalizationsKo extends AppLocalizations {
   String get trainerSoundOff => '음성 및 효과음 끄기';
 
   @override
-  String get filterAction => 'Filter';
+  String get filterAction => '필터';
 
   @override
-  String get filterReset => 'Reset';
+  String get filterReset => '초기화';
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    return '동작 $count개 보기';
   }
 
   @override
-  String get filterScene => 'Setting';
+  String get filterScene => '환경';
 
   @override
-  String get filterSection => 'Body area';
+  String get filterSection => '부위';
 
   @override
-  String get pickerAdded => 'Added';
+  String get pickerAdded => '추가됨';
 
   @override
-  String get recordsStreakUnit => 'day streak';
+  String get recordsStreakUnit => '일 연속';
 
   @override
-  String get recordsSessions => 'Sessions';
+  String get recordsSessions => '누적 횟수';
 
   @override
-  String get recordsMinutes => 'Minutes';
+  String get recordsMinutes => '누적 시간(분)';
 
   @override
-  String get recordsDays => 'Days trained';
+  String get recordsDays => '훈련 일수';
 
   @override
-  String get recordsThisWeek => 'This week';
+  String get recordsThisWeek => '이번 주';
 
   @override
-  String get recordsHeatmap => 'Last 16 weeks';
+  String get recordsHeatmap => '최근 16주';
 
   @override
-  String get recordsMilestones => 'Milestones';
+  String get recordsMilestones => '마일스톤';
 
   @override
   String milestoneDays(int count) {
-    return '$count-day streak';
+    return '$count일 연속';
   }
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    return '$count일 남음';
   }
 
   @override
   String milestoneEarned(String date) {
-    return 'Earned $date';
+    return '$date 달성';
   }
 
   @override
-  String get milestoneLocked => 'Locked';
+  String get milestoneLocked => '잠김';
 
   @override
   String milestoneUnlocked(int count) {
-    return 'Milestone unlocked: $count-day streak';
+    return '마일스톤 달성: $count일 연속';
   }
 
   @override
-  String get recordsEmptyTitle => 'No sessions yet';
+  String get recordsEmptyTitle => '아직 훈련 기록이 없습니다';
 
   @override
-  String get recordsEmptyAction => 'Try your first drill';
+  String get recordsEmptyAction => '첫 동작 해 보기';
 
   @override
-  String get heatLess => 'Less';
+  String get heatLess => '적음';
 
   @override
-  String get heatMore => 'More';
+  String get heatMore => '많음';
+
+  @override
+  String pickerAddCount(int count) {
+    return '동작 $count개 추가';
+  }
 }

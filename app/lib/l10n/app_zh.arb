@@ -614,5 +614,13 @@
   "recordsEmptyTitle": "还没有训练记录",
   "recordsEmptyAction": "去练第一个动作",
   "heatLess": "少",
-  "heatMore": "多"
+  "heatMore": "多",
+  "pickerAddCount": "添加 {count} 个动作",
+  "@pickerAddCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

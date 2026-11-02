@@ -1095,7 +1095,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count drills',
+      one: 'Show 1 drill',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1135,7 +1141,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days to go',
+      one: '1 day to go',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1162,4 +1174,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get heatMore => 'More';
+
+  @override
+  String pickerAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count drills',
+      one: 'Add 1 drill',
+    );
+    return '$_temp0';
+  }
 }

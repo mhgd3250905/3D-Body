@@ -72,7 +72,13 @@ class PrimaryAction extends StatelessWidget {
       width: double.infinity,
       height: height,
       child: FilledButton(
-        style: FilledButton.styleFrom(shape: const StadiumBorder()),
+        style: FilledButton.styleFrom(
+          shape: const StadiumBorder(),
+          // Disabled stays on-brand and legible: a soft accent wash with
+          // accent ink, not Material's flat grey-on-grey.
+          disabledBackgroundColor: FlareColors.accent.withValues(alpha: .16),
+          disabledForegroundColor: FlareColors.accentInk.withValues(alpha: .78),
+        ),
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

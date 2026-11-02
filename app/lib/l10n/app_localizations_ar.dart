@@ -1082,78 +1082,119 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trainerSoundOff => 'إيقاف الصوت والتنبيهات';
 
   @override
-  String get filterAction => 'Filter';
+  String get filterAction => 'تصفية';
 
   @override
-  String get filterReset => 'Reset';
+  String get filterReset => 'إعادة ضبط';
 
   @override
   String filterShowCount(int count) {
-    return 'Show $count drills';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'عرض $count تمرينًا',
+      few: 'عرض $count تمارين',
+      two: 'عرض تمرينين',
+      one: 'عرض تمرين واحد',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get filterScene => 'Setting';
+  String get filterScene => 'البيئة';
 
   @override
-  String get filterSection => 'Body area';
+  String get filterSection => 'المنطقة';
 
   @override
-  String get pickerAdded => 'Added';
+  String get pickerAdded => 'مضاف';
 
   @override
-  String get recordsStreakUnit => 'day streak';
+  String get recordsStreakUnit => 'أيام متتالية';
 
   @override
-  String get recordsSessions => 'Sessions';
+  String get recordsSessions => 'الجلسات';
 
   @override
-  String get recordsMinutes => 'Minutes';
+  String get recordsMinutes => 'الدقائق';
 
   @override
-  String get recordsDays => 'Days trained';
+  String get recordsDays => 'أيام التدريب';
 
   @override
-  String get recordsThisWeek => 'This week';
+  String get recordsThisWeek => 'هذا الأسبوع';
 
   @override
-  String get recordsHeatmap => 'Last 16 weeks';
+  String get recordsHeatmap => 'آخر 16 أسبوعًا';
 
   @override
-  String get recordsMilestones => 'Milestones';
+  String get recordsMilestones => 'الإنجازات';
 
   @override
   String milestoneDays(int count) {
-    return '$count-day streak';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count يومًا متتاليًا',
+      few: '$count أيام متتالية',
+    );
+    return '$_temp0';
   }
 
   @override
   String milestoneLeft(int count) {
-    return '$count days to go';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بقي $count يومًا',
+      few: 'بقيت $count أيام',
+      two: 'بقي يومان',
+      one: 'بقي يوم واحد',
+    );
+    return '$_temp0';
   }
 
   @override
   String milestoneEarned(String date) {
-    return 'Earned $date';
+    return 'تحقق في $date';
   }
 
   @override
-  String get milestoneLocked => 'Locked';
+  String get milestoneLocked => 'مقفل';
 
   @override
   String milestoneUnlocked(int count) {
-    return 'Milestone unlocked: $count-day streak';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'إنجاز جديد: $count يومًا متتاليًا',
+      few: 'إنجاز جديد: $count أيام متتالية',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get recordsEmptyTitle => 'No sessions yet';
+  String get recordsEmptyTitle => 'لا توجد جلسات بعد';
 
   @override
-  String get recordsEmptyAction => 'Try your first drill';
+  String get recordsEmptyAction => 'جرّب تمرينك الأول';
 
   @override
-  String get heatLess => 'Less';
+  String get heatLess => 'أقل';
 
   @override
-  String get heatMore => 'More';
+  String get heatMore => 'أكثر';
+
+  @override
+  String pickerAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'إضافة $count تمرينًا',
+      few: 'إضافة $count تمارين',
+      two: 'إضافة تمرينين',
+      one: 'إضافة تمرين واحد',
+    );
+    return '$_temp0';
+  }
 }
