@@ -300,6 +300,9 @@ void main() {
         expect(card.drill.tier, 'B');
         expect(catalog.groupById(card.drill.groupId)!.section, 'support');
       }
+      // One shared filter row: scroll the chip into view before tapping.
+      await tester.ensureVisible(find.text('全部部位'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('全部部位'));
       await tester.pumpAndSettle();
       expect(

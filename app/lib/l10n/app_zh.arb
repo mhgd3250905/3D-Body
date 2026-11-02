@@ -557,5 +557,62 @@
     }
   },
   "trainerSoundOn": "开启语音和提示音",
-  "trainerSoundOff": "关闭语音和提示音"
+  "trainerSoundOff": "关闭语音和提示音",
+  "filterAction": "筛选",
+  "filterReset": "重置",
+  "filterShowCount": "显示 {count} 个动作",
+  "@filterShowCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterScene": "场景",
+  "filterSection": "部位",
+  "pickerAdded": "已加入",
+  "recordsStreakUnit": "天连续训练",
+  "recordsSessions": "累计次数",
+  "recordsMinutes": "累计分钟",
+  "recordsDays": "训练天数",
+  "recordsThisWeek": "本周",
+  "recordsHeatmap": "近 16 周",
+  "recordsMilestones": "里程碑",
+  "milestoneDays": "连续 {count} 天",
+  "@milestoneDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "milestoneLeft": "还差 {count} 天",
+  "@milestoneLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "milestoneEarned": "{date} 达成",
+  "@milestoneEarned": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "milestoneLocked": "未解锁",
+  "milestoneUnlocked": "解锁里程碑：连续 {count} 天",
+  "@milestoneUnlocked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsEmptyTitle": "还没有训练记录",
+  "recordsEmptyAction": "去练第一个动作",
+  "heatLess": "少",
+  "heatMore": "多"
 }

@@ -8,6 +8,7 @@ import 'theme.dart';
 import 'drill_media.dart';
 import 'app_glass.dart';
 import 'page_kit.dart';
+import 'drill_filter.dart';
 
 /// The three-rule safety card. Shown once before entering, and from Settings.
 Future<bool?> showSafetySheet(BuildContext context) {
@@ -217,70 +218,6 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 }
 
-class _FilterPill extends StatelessWidget {
-  const _FilterPill({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-  final String label;
-  final bool selected;
-  final VoidCallback? onTap;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(right: 8),
-    child: Semantics(
-      selected: selected,
-      button: true,
-      child: Pressable(
-        scale: .95,
-        child: AnimatedContainer(
-          duration: FlareMotion.of(context, FlareMotion.fade),
-          curve: FlareMotion.standard,
-          decoration: ShapeDecoration(
-            color: selected ? FlareColors.solid : FlareColors.pill,
-            shape: StadiumBorder(
-              side: BorderSide(
-                color: selected ? Colors.transparent : FlareColors.hairline,
-              ),
-            ),
-          ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: InkWell(
-              customBorder: const StadiumBorder(),
-              onTap: onTap,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 36),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: selected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                          color: selected
-                              ? FlareColors.onSolid
-                              : FlareColors.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
 class LibraryPage extends StatefulWidget {
   const LibraryPage({
     super.key,
@@ -358,31 +295,19 @@ class _LibraryPageState extends State<LibraryPage> {
     return Column(
       children: [
         FlareNavBar(title: s.library, onBack: widget.onBack),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-          child: TextField(
-            key: const ValueKey('library-search'),
-            controller: _searchController,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: s.searchDrills,
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: _query.isEmpty
-                  ? null
-                  : IconButton(
-                      key: const ValueKey('library-clear-search'),
-                      tooltip: s.clearSearch,
-                      icon: const Icon(Icons.close_rounded),
-                      onPressed: () {
-                        _searchController.clear();
-                        _queryChanged('');
-                      },
-                    ),
-            ),
-            onChanged: _queryChanged,
-            onSubmitted: (_) => FocusScope.of(context).unfocus(),
-          ),
+        FlareDrillFilter(
+          catalog: catalog,
+          controller: _searchController,
+          query: _query,
+          tier: tier,
+          section: _section,
+          searchKey: const ValueKey('library-search'),
+          clearKey: const ValueKey('library-clear-search'),
+          onQueryChanged: _queryChanged,
+          onTier: (value) => widget.store.updateSettings(tier: value),
+          onSection: (value) => setState(() => _selectSection(value)),
         ),
+        const SizedBox(height: 12),
         Expanded(
           child: ScrollEdge(
             child: CustomScrollView(
@@ -392,43 +317,6 @@ class _LibraryPageState extends State<LibraryPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverList.list(
                     children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _FilterPill(
-                              label: s.allSections,
-                              selected: _section == null,
-                              onTap: () => setState(() => _selectSection(null)),
-                            ),
-                            for (final section in catalog.sections)
-                              _FilterPill(
-                                label: section.short,
-                                selected: _section == section.id,
-                                onTap: () {
-                                  FlareHaptics.selection();
-                                  setState(() => _selectSection(section.id));
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      FlareSegmented<String>(
-                        expand: true,
-                        segments: [
-                          ('A', s.sceneNone),
-                          ('B', s.sceneHome),
-                          ('C', s.sceneGym),
-                        ],
-                        selected: tier,
-                        onChanged: (value) {
-                          if (value == tier) return;
-                          FlareHaptics.selection();
-                          widget.store.updateSettings(tier: value);
-                        },
-                      ),
-                      const SizedBox(height: 16),
                       if (drills.isEmpty)
                         EmptyNote(
                           icon: Icons.search_off_rounded,
@@ -663,161 +551,140 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
   }
 }
 
-class ProgressPage extends StatelessWidget {
+/// 训练记录 as an achievement page. Every number comes from the local
+/// session log: current streak, sessions, minutes, days trained, this week,
+/// a 16-week heatmap, and streak milestones earned on their real dates.
+class ProgressPage extends StatefulWidget {
   const ProgressPage({
     super.key,
     required this.catalog,
     required this.store,
     required this.onDrill,
     this.onBack,
+    this.onStart,
     this.now,
   });
   final Catalog catalog;
   final LearningStore store;
   final ValueChanged<Drill> onDrill;
   final VoidCallback? onBack;
+
+  /// Empty state's 去练第一个动作 (opens the library). Hidden when null.
+  final VoidCallback? onStart;
   final DateTime Function()? now;
 
-  Widget _stat(String value, String label) => Expanded(
-    child: FlareStaticSurface(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 40,
-              height: 1.1,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Eyebrow(label),
-        ],
-      ),
-    ),
-  );
+  static const milestones = [3, 7, 14, 30, 60, 100];
+
+  /// First day each streak milestone was reached, over all history.
+  static Map<int, DateTime> earnedDates(Set<DateTime> days) {
+    final sorted = days.toList()..sort();
+    final earned = <int, DateTime>{};
+    var run = 0;
+    DateTime? previous;
+    for (final day in sorted) {
+      final next = previous == null
+          ? null
+          : DateTime(previous.year, previous.month, previous.day + 1);
+      run = next == day ? run + 1 : 1;
+      previous = day;
+      for (final m in milestones) {
+        if (run >= m) earned.putIfAbsent(m, () => day);
+      }
+    }
+    return earned;
+  }
+
+  @override
+  State<ProgressPage> createState() => _ProgressPageState();
+}
+
+class _ProgressPageState extends State<ProgressPage> {
+  int? _celebrate;
+
+  @override
+  void initState() {
+    super.initState();
+    final earned = ProgressPage.earnedDates(widget.store.trainingDates);
+    if (earned.isEmpty) return;
+    final best = earned.keys.reduce((a, b) => a > b ? a : b);
+    if (best > widget.store.celebratedStreak) {
+      // One-time: shown on this visit, persisted so it never repeats.
+      _celebrate = best;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.store.markStreakCelebrated(best);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    final today = (now ?? DateTime.now)();
+    final store = widget.store;
+    final today = (widget.now ?? DateTime.now)();
     final day = DateTime(today.year, today.month, today.day);
-    final monday = day.subtract(Duration(days: day.weekday - 1));
-    final trained = {
-      for (final session in store.sessions)
-        if (session.completedSets > 0 || session.activeSeconds > 0)
-          DateTime(
-            session.endedAt.toLocal().year,
-            session.endedAt.toLocal().month,
-            session.endedAt.toLocal().day,
-          ),
-    };
-    final labels = s.weekdayLabels.split(',');
-    return Column(
-      children: [
-        FlareNavBar(title: s.history, onBack: onBack),
-        Expanded(
-          child: ScrollEdge(
+    final days = store.trainingDates;
+    final logged = store.sessions
+        .where((x) => x.completedSets > 0 || x.activeSeconds > 0)
+        .toList();
+    final body = logged.isEmpty
+        ? _EmptyRecords(onStart: widget.onStart)
+        : ScrollEdge(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               children: [
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _stat('${store.weekTrainingDays}', s.weekDays),
-                      const SizedBox(width: 12),
-                      _stat('${store.streakDays}', s.streak),
-                    ],
-                  ),
+                if (_celebrate case final int unlocked)
+                  FadeSlideIn(child: _CelebrateBanner(days: unlocked)),
+                _Hero(
+                  streak: store.streakDays,
+                  sessions: logged.length,
+                  minutes: store.totalActiveSeconds ~/ 60,
+                  days: days.length,
                 ),
-                const SizedBox(height: 18),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                FlareSection(s.recordsThisWeek),
+                _WeekStrip(trained: days, today: day),
+                FlareSection(s.recordsHeatmap),
+                _Heatmap(sessions: logged, today: day),
+                FlareSection(s.recordsMilestones),
+                _Milestones(
+                  earned: ProgressPage.earnedDates(days),
+                  streak: store.streakDays,
+                ),
+                FlareSection(s.recent),
+                FlareListGroup(
                   children: [
-                    for (var i = 0; i < 7; i++)
-                      Semantics(
-                        label: trained.contains(monday.add(Duration(days: i)))
-                            ? s.trainedOn(s.weekDayLabel(labels[i]))
-                            : s.notTrainedOn(s.weekDayLabel(labels[i])),
-                        child: ExcludeSemantics(
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      trained.contains(
-                                        monday.add(Duration(days: i)),
-                                      )
-                                      ? FlareColors.accent
-                                      : FlareColors.palette.track,
-                                  border: monday.add(Duration(days: i)) == day
-                                      ? Border.all(
-                                          color: FlareColors.secondary,
-                                          width: 1,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                labels[i],
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: FlareColors.dim,
-                                ),
-                              ),
-                            ],
+                    for (final session
+                        in (logged
+                              ..sort((a, b) => b.endedAt.compareTo(a.endedAt)))
+                            .take(30))
+                      if (widget.catalog.drillById(session.drillId)
+                          case final Drill drill)
+                        FlareListRow(
+                          title: drill.name,
+                          subtitle:
+                              '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel, s.localeName)} · ${s.setsLabel(session.completedSets, session.plannedSets).replaceAll(' ', '\u00a0')}',
+                          trailing: _StatusTag(
+                            label: session.pain
+                                ? s.painFlag
+                                : session.completed
+                                ? s.completed
+                                : s.incomplete,
+                            color: session.pain
+                                ? FlareColors.warning
+                                : session.completed
+                                ? FlareColors.success
+                                : FlareColors.dim,
                           ),
+                          onTap: () => widget.onDrill(drill),
                         ),
-                      ),
                   ],
                 ),
-                SectionTitle(s.recent),
-                if (store.sessions.isEmpty)
-                  EmptyNote(icon: Icons.insights_outlined, text: s.historyEmpty)
-                else
-                  RowGroup(
-                    children: [
-                      for (final session
-                          in (store.sessions.toList()..sort(
-                                (a, b) => b.endedAt.compareTo(a.endedAt),
-                              ))
-                              .take(30))
-                        if (catalog.drillById(session.drillId)
-                            case final Drill drill)
-                          FlareRow(
-                            title: drill.name,
-                            subtitle:
-                                '${_dateLabel(session.startedAt.toLocal(), day, s.todayLabel, s.localeName)} · ${s.setsLabel(session.completedSets, session.plannedSets)}',
-                            trailing: Text(
-                              session.pain
-                                  ? s.painFlag
-                                  : session.completed
-                                  ? s.completed
-                                  : s.incomplete,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: session.pain
-                                    ? FlareColors.warning
-                                    : session.completed
-                                    ? FlareColors.success
-                                    : FlareColors.dim,
-                              ),
-                            ),
-                            onTap: () => onDrill(drill),
-                          ),
-                    ],
-                  ),
               ],
             ),
-          ),
-        ),
+          );
+    return Column(
+      children: [
+        FlareNavBar(title: s.history, onBack: widget.onBack),
+        Expanded(child: body),
       ],
     );
   }
@@ -834,5 +701,534 @@ class ProgressPage extends StatelessWidget {
       return '$todayLabel $time';
     }
     return '${DateFormat.MMMd(locale).format(date)} $time';
+  }
+}
+
+class _CelebrateBanner extends StatelessWidget {
+  const _CelebrateBanner({required this.days});
+  final int days;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: Container(
+      key: const ValueKey('records-celebrate'),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: FlareColors.accent.withValues(alpha: .16),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.emoji_events_rounded,
+            color: FlareColors.accentInk,
+            size: 22,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              context.strings.milestoneUnlocked(days),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: FlareColors.accentInk,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _Hero extends StatelessWidget {
+  const _Hero({
+    required this.streak,
+    required this.sessions,
+    required this.minutes,
+    required this.days,
+  });
+  final int streak;
+  final int sessions;
+  final int minutes;
+  final int days;
+
+  Widget _stat(String value, String label) => Expanded(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: AlignmentDirectional.centerStart,
+          child: Text(
+            value,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 22,
+              height: 1.2,
+              fontWeight: FontWeight.w700,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 2,
+          style: TextStyle(fontSize: 12, color: FlareColors.dim),
+        ),
+      ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    return FlareStaticSurface(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            label: '${s.streak} $streak',
+            child: ExcludeSemantics(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: 8,
+                children: [
+                  Text(
+                    '$streak',
+                    textScaler: MediaQuery.textScalerOf(
+                      context,
+                    ).clamp(maxScaleFactor: 1.2),
+                    style: TextStyle(
+                      fontSize: 64,
+                      height: 1,
+                      fontWeight: FontWeight.w800,
+                      color: FlareColors.accentInk,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      s.recordsStreakUnit,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: FlareColors.secondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _stat('$sessions', s.recordsSessions),
+              const SizedBox(width: 12),
+              _stat('$minutes', s.recordsMinutes),
+              const SizedBox(width: 12),
+              _stat('$days', s.recordsDays),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mon–Sun: trained = solid orange with a check, today = ring, future = faint.
+class _WeekStrip extends StatelessWidget {
+  const _WeekStrip({required this.trained, required this.today});
+  final Set<DateTime> trained;
+  final DateTime today;
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    final labels = s.weekdayLabels.split(',');
+    final monday = DateTime(
+      today.year,
+      today.month,
+      today.day - today.weekday + 1,
+    );
+    return FlareStaticSurface(
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      child: Row(
+        children: [
+          for (var i = 0; i < 7; i++)
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  final date = DateTime(
+                    monday.year,
+                    monday.month,
+                    monday.day + i,
+                  );
+                  final done = trained.contains(date);
+                  final isToday = date == today;
+                  final future = date.isAfter(today);
+                  return Semantics(
+                    label: done
+                        ? s.trainedOn(s.weekDayLabel(labels[i]))
+                        : s.notTrainedOn(s.weekDayLabel(labels[i])),
+                    child: ExcludeSemantics(
+                      child: Opacity(
+                        opacity: future ? .4 : 1,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: done
+                                    ? FlareColors.accent
+                                    : FlareColors.palette.track,
+                                border: isToday
+                                    ? Border.all(
+                                        color: done
+                                            ? FlareColors.text
+                                            : FlareColors.accent,
+                                        width: 2,
+                                      )
+                                    : null,
+                              ),
+                              child: done
+                                  ? Icon(
+                                      Icons.check_rounded,
+                                      size: 18,
+                                      color: FlareColors.onAccent,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              labels[i],
+                              maxLines: 1,
+                              textScaler: MediaQuery.textScalerOf(
+                                context,
+                              ).clamp(maxScaleFactor: 1.3),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: isToday
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: isToday
+                                    ? FlareColors.text
+                                    : FlareColors.dim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 16 weeks × 7 days, oldest left; shade by sessions that day (1, 2, 3+).
+class _Heatmap extends StatelessWidget {
+  const _Heatmap({required this.sessions, required this.today});
+  final List<TrainingSession> sessions;
+  final DateTime today;
+  static const weeks = 16;
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    final counts = <DateTime, int>{};
+    for (final x in sessions) {
+      final t = x.endedAt.toLocal();
+      final d = DateTime(t.year, t.month, t.day);
+      counts[d] = (counts[d] ?? 0) + 1;
+    }
+    final monday = DateTime(
+      today.year,
+      today.month,
+      today.day - today.weekday + 1,
+    );
+    final start = DateTime(
+      monday.year,
+      monday.month,
+      monday.day - 7 * (weeks - 1),
+    );
+    Color shade(int n) => switch (n) {
+      0 => FlareColors.palette.track,
+      1 => FlareColors.accent.withValues(alpha: .4),
+      2 => FlareColors.accent.withValues(alpha: .7),
+      _ => FlareColors.accent,
+    };
+    final legend = TextStyle(fontSize: 11, color: FlareColors.dim);
+    return FlareStaticSurface(
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          LayoutBuilder(
+            builder: (context, box) {
+              const gap = 3.0;
+              final cell = (box.maxWidth - gap * (weeks - 1)) / weeks;
+              return ExcludeSemantics(
+                child: Row(
+                  children: [
+                    for (var w = 0; w < weeks; w++) ...[
+                      if (w > 0) const SizedBox(width: gap),
+                      Column(
+                        children: [
+                          for (var d = 0; d < 7; d++) ...[
+                            if (d > 0) const SizedBox(height: gap),
+                            Builder(
+                              builder: (_) {
+                                final date = DateTime(
+                                  start.year,
+                                  start.month,
+                                  start.day + w * 7 + d,
+                                );
+                                final future = date.isAfter(today);
+                                return Container(
+                                  width: cell,
+                                  height: cell,
+                                  decoration: BoxDecoration(
+                                    color: future
+                                        ? Colors.transparent
+                                        : shade(counts[date] ?? 0),
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: date == today
+                                        ? Border.all(
+                                            color: FlareColors.text,
+                                            width: 1.2,
+                                          )
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(s.heatLess, style: legend),
+              const SizedBox(width: 6),
+              for (final n in [0, 1, 2, 3]) ...[
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: shade(n),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 3),
+              ],
+              const SizedBox(width: 3),
+              Text(s.heatMore, style: legend),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Earned: orange badge + date. Next one: progress + 还差 N 天. Rest dimmed.
+class _Milestones extends StatelessWidget {
+  const _Milestones({required this.earned, required this.streak});
+  final Map<int, DateTime> earned;
+  final int streak;
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    final next = ProgressPage.milestones.firstWhere(
+      (m) => !earned.containsKey(m) && m > streak,
+      orElse: () => -1,
+    );
+    Widget badge(int m) {
+      final date = earned[m];
+      final got = date != null;
+      final isNext = m == next;
+      final sub = got
+          ? s.milestoneEarned(DateFormat.Md(s.localeName).format(date))
+          : isNext
+          ? s.milestoneLeft(m - streak)
+          : s.milestoneLocked;
+      return Opacity(
+        key: ValueKey('milestone-$m'),
+        opacity: got || isNext ? 1 : .45,
+        child: Column(
+          children: [
+            SizedBox.square(
+              dimension: 60,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isNext)
+                    SizedBox.expand(
+                      child: CircularProgressIndicator(
+                        value: (streak / m).clamp(0, 1).toDouble(),
+                        strokeWidth: 3,
+                        color: FlareColors.accent,
+                        backgroundColor: FlareColors.palette.track,
+                      ),
+                    ),
+                  Container(
+                    width: isNext ? 48 : 56,
+                    height: isNext ? 48 : 56,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: got
+                          ? FlareColors.accent
+                          : FlareColors.palette.track,
+                    ),
+                    child: Text(
+                      '$m',
+                      textScaler: TextScaler.noScaling,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: got
+                            ? FlareColors.onAccent
+                            : FlareColors.secondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              s.milestoneDays(m),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sub,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11,
+                color: got ? FlareColors.accentInk : FlareColors.dim,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return FlareStaticSurface(
+      padding: const EdgeInsets.fromLTRB(8, 16, 8, 14),
+      child: Column(
+        children: [
+          for (var row = 0; row < 2; row++) ...[
+            if (row > 0) const SizedBox(height: 16),
+            Row(
+              children: [
+                for (final m in ProgressPage.milestones.skip(row * 3).take(3))
+                  Expanded(child: badge(m)),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Status as a small fixed pill that never wraps.
+class _StatusTag extends StatelessWidget {
+  const _StatusTag({required this.label, required this.color});
+  final String label;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: .14),
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Text(
+      label,
+      maxLines: 1,
+      softWrap: false,
+      textScaler: MediaQuery.textScalerOf(context).clamp(maxScaleFactor: 1.2),
+      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+    ),
+  );
+}
+
+class _EmptyRecords extends StatelessWidget {
+  const _EmptyRecords({this.onStart});
+  final VoidCallback? onStart;
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(32, 0, 32, 48),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              key: const ValueKey('records-empty'),
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: FlareColors.accent.withValues(alpha: .14),
+              ),
+              child: Icon(
+                Icons.emoji_events_outlined,
+                size: 56,
+                color: FlareColors.accentInk,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              s.recordsEmptyTitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              s.historyEmpty,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.45,
+                color: FlareColors.dim,
+              ),
+            ),
+            if (onStart != null) ...[
+              const SizedBox(height: 28),
+              PrimaryAction(
+                key: const ValueKey('records-start'),
+                label: s.recordsEmptyAction,
+                onPressed: onStart,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -2100,6 +2100,138 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'关闭语音和提示音'**
   String get trainerSoundOff;
+
+  /// No description provided for @filterAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'筛选'**
+  String get filterAction;
+
+  /// No description provided for @filterReset.
+  ///
+  /// In zh, this message translates to:
+  /// **'重置'**
+  String get filterReset;
+
+  /// No description provided for @filterShowCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'显示 {count} 个动作'**
+  String filterShowCount(int count);
+
+  /// No description provided for @filterScene.
+  ///
+  /// In zh, this message translates to:
+  /// **'场景'**
+  String get filterScene;
+
+  /// No description provided for @filterSection.
+  ///
+  /// In zh, this message translates to:
+  /// **'部位'**
+  String get filterSection;
+
+  /// No description provided for @pickerAdded.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加入'**
+  String get pickerAdded;
+
+  /// No description provided for @recordsStreakUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'天连续训练'**
+  String get recordsStreakUnit;
+
+  /// No description provided for @recordsSessions.
+  ///
+  /// In zh, this message translates to:
+  /// **'累计次数'**
+  String get recordsSessions;
+
+  /// No description provided for @recordsMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'累计分钟'**
+  String get recordsMinutes;
+
+  /// No description provided for @recordsDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练天数'**
+  String get recordsDays;
+
+  /// No description provided for @recordsThisWeek.
+  ///
+  /// In zh, this message translates to:
+  /// **'本周'**
+  String get recordsThisWeek;
+
+  /// No description provided for @recordsHeatmap.
+  ///
+  /// In zh, this message translates to:
+  /// **'近 16 周'**
+  String get recordsHeatmap;
+
+  /// No description provided for @recordsMilestones.
+  ///
+  /// In zh, this message translates to:
+  /// **'里程碑'**
+  String get recordsMilestones;
+
+  /// No description provided for @milestoneDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'连续 {count} 天'**
+  String milestoneDays(int count);
+
+  /// No description provided for @milestoneLeft.
+  ///
+  /// In zh, this message translates to:
+  /// **'还差 {count} 天'**
+  String milestoneLeft(int count);
+
+  /// No description provided for @milestoneEarned.
+  ///
+  /// In zh, this message translates to:
+  /// **'{date} 达成'**
+  String milestoneEarned(String date);
+
+  /// No description provided for @milestoneLocked.
+  ///
+  /// In zh, this message translates to:
+  /// **'未解锁'**
+  String get milestoneLocked;
+
+  /// No description provided for @milestoneUnlocked.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁里程碑：连续 {count} 天'**
+  String milestoneUnlocked(int count);
+
+  /// No description provided for @recordsEmptyTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有训练记录'**
+  String get recordsEmptyTitle;
+
+  /// No description provided for @recordsEmptyAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'去练第一个动作'**
+  String get recordsEmptyAction;
+
+  /// No description provided for @heatLess.
+  ///
+  /// In zh, this message translates to:
+  /// **'少'**
+  String get heatLess;
+
+  /// No description provided for @heatMore.
+  ///
+  /// In zh, this message translates to:
+  /// **'多'**
+  String get heatMore;
 }
 
 class _AppLocalizationsDelegate

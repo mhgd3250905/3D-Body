@@ -247,7 +247,7 @@ void main() {
     });
   }
 
-  testWidgets('empty history reads as one quiet sentence', (tester) async {
+  testWidgets('empty history shows the empty-state slot and one sentence', (tester) async {
     final store = LearningStore(catalog: catalog, storage: _Memory());
     await store.initialize();
     addTearDown(store.dispose);
@@ -262,7 +262,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(EmptyNote), findsOneWidget);
+    expect(find.byKey(const ValueKey('records-empty')), findsOneWidget);
     expect(find.bySemanticsLabel('完成一次计时训练，记录会留在这里'), findsOneWidget);
   });
 }

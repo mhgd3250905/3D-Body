@@ -502,5 +502,27 @@
     }
   },
   "trainerSoundOn": "Turn on voice and sounds",
-  "trainerSoundOff": "Turn off voice and sounds"
+  "trainerSoundOff": "Turn off voice and sounds",
+  "filterAction": "Filter",
+  "filterReset": "Reset",
+  "filterShowCount": "Show {count} drills",
+  "filterScene": "Setting",
+  "filterSection": "Body area",
+  "pickerAdded": "Added",
+  "recordsStreakUnit": "day streak",
+  "recordsSessions": "Sessions",
+  "recordsMinutes": "Minutes",
+  "recordsDays": "Days trained",
+  "recordsThisWeek": "This week",
+  "recordsHeatmap": "Last 16 weeks",
+  "recordsMilestones": "Milestones",
+  "milestoneDays": "{count}-day streak",
+  "milestoneLeft": "{count} days to go",
+  "milestoneEarned": "Earned {date}",
+  "milestoneLocked": "Locked",
+  "milestoneUnlocked": "Milestone unlocked: {count}-day streak",
+  "recordsEmptyTitle": "No sessions yet",
+  "recordsEmptyAction": "Try your first drill",
+  "heatLess": "Less",
+  "heatMore": "More"
 }

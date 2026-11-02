@@ -9,6 +9,7 @@ import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
 import 'page_kit.dart';
+import 'drill_filter.dart';
 import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -1140,50 +1141,19 @@ class _DrillPickerState extends State<_DrillPicker> {
   String? _section;
   String _query = '';
   final List<String> _picked = [];
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final catalog = widget.catalog;
     final drills = catalog.searchDrills(_query, tier: _tier, section: _section);
-    Widget pill(String label, bool selected, VoidCallback onTap) => Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: Semantics(
-        selected: selected,
-        button: true,
-        child: Material(
-          color: selected ? FlareColors.solid : FlareColors.pill,
-          shape: StadiumBorder(
-            side: BorderSide(
-              color: selected ? Colors.transparent : FlareColors.hairline,
-            ),
-          ),
-          child: InkWell(
-            customBorder: const StadiumBorder(),
-            onTap: () {
-              FlareHaptics.selection();
-              onTap();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Center(
-                widthFactor: 1,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    color: selected
-                        ? FlareColors.onSolid
-                        : FlareColors.secondary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
     return SafeArea(
       child: SizedBox(
         height: MediaQuery.sizeOf(context).height * .86,
@@ -1215,53 +1185,16 @@ class _DrillPickerState extends State<_DrillPicker> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child: TextField(
-                key: const ValueKey('picker-search'),
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: s.searchDrills,
-                  prefixIcon: const Icon(Icons.search_rounded),
-                  isDense: true,
-                ),
-                onChanged: (value) => setState(() => _query = value),
-              ),
-            ),
-            SizedBox(
-              height: 36,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
-                  for (final item in [
-                    ('A', s.sceneNone),
-                    ('B', s.sceneHome),
-                    ('C', s.sceneGym),
-                  ])
-                    pill(
-                      item.$2,
-                      _tier == item.$1,
-                      () => setState(() => _tier = item.$1),
-                    ),
-                  Container(
-                    width: 1,
-                    margin: const EdgeInsets.fromLTRB(2, 8, 10, 8),
-                    color: FlareColors.hairline,
-                  ),
-                  pill(
-                    s.allSections,
-                    _section == null,
-                    () => setState(() => _section = null),
-                  ),
-                  for (final section in catalog.sections)
-                    pill(
-                      section.short,
-                      _section == section.id,
-                      () => setState(() => _section = section.id),
-                    ),
-                ],
-              ),
+            FlareDrillFilter(
+              catalog: catalog,
+              controller: _searchController,
+              query: _query,
+              tier: _tier,
+              section: _section,
+              searchKey: const ValueKey('picker-search'),
+              onQueryChanged: (value) => setState(() => _query = value),
+              onTier: (value) => setState(() => _tier = value),
+              onSection: (value) => setState(() => _section = value),
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -1282,7 +1215,7 @@ class _DrillPickerState extends State<_DrillPicker> {
                               final picked = order >= 0;
                               final full = _picked.length >= widget.room;
                               return Semantics(
-                                selected: picked || already,
+                                selected: picked,
                                 button: true,
                                 child: GestureDetector(
                                   key: ValueKey('pick-${drill.id}'),
@@ -1325,42 +1258,44 @@ class _DrillPickerState extends State<_DrillPicker> {
                                             child: Stack(
                                               fit: StackFit.expand,
                                               children: [
-                                                DrillPoster(drill),
-                                                if (picked || already)
+                                                Opacity(
+                                                  opacity: already ? .38 : 1,
+                                                  child: DrillPoster(drill),
+                                                ),
+                                                if (already)
+                                                  Positioned(
+                                                    left: 6,
+                                                    bottom: 6,
+                                                    child: _AddedTag(
+                                                      label: s.pickerAdded,
+                                                    ),
+                                                  ),
+                                                if (picked)
                                                   Positioned(
                                                     top: 6,
                                                     right: 6,
                                                     child: Container(
-                                                      width: 22,
-                                                      height: 22,
+                                                      width: 24,
+                                                      height: 24,
                                                       alignment:
                                                           Alignment.center,
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
-                                                        color: already
-                                                            ? FlareColors.dim
-                                                            : FlareColors
-                                                                  .accent,
+                                                        color:
+                                                            FlareColors.accent,
                                                       ),
-                                                      child: already
-                                                          ? Icon(
-                                                              Icons
-                                                                  .check_rounded,
-                                                              size: 14,
-                                                              color: FlareColors
-                                                                  .onAccent,
-                                                            )
-                                                          : Text(
-                                                              '${order + 1}',
-                                                              style: TextStyle(
-                                                                fontSize: 11,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                color: FlareColors
-                                                                    .onAccent,
-                                                              ),
-                                                            ),
+                                                      child: Text(
+                                                        '${order + 1}',
+                                                        textScaler: TextScaler
+                                                            .noScaling,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: FlareColors
+                                                              .onAccent,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                               ],
@@ -1405,6 +1340,38 @@ class _DrillPickerState extends State<_DrillPicker> {
       ),
     );
   }
+}
+
+/// 已加入: a neutral frosted tag with a small check, never the accent, so it
+/// cannot be mistaken for a new pick (accent ring + order number).
+class _AddedTag extends StatelessWidget {
+  const _AddedTag({required this.label});
+  final String label;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.fromLTRB(6, 3, 8, 3),
+    decoration: BoxDecoration(
+      color: FlareColors.popup.withValues(alpha: .92),
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.check_rounded, size: 12, color: FlareColors.secondary),
+        const SizedBox(width: 3),
+        Text(
+          label,
+          maxLines: 1,
+          textScaler: TextScaler.noScaling,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: FlareColors.secondary,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// From a drill page: add it to one of the user's sets, or start a new set

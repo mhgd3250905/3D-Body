@@ -53,6 +53,7 @@ class LearningStore extends ChangeNotifier {
   Map<String, bool> _gateReports = {};
   Map<String, int> _assessmentGrades = {};
   int _startStage = 1;
+  int _celebratedStreak = 0;
   String? _storageError;
   Map<String, dynamic> _preservedRoot = {};
 
@@ -272,6 +273,10 @@ class LearningStore extends ChangeNotifier {
     _assessmentGrades = grades;
     _startStage = startStage;
     _routines = keptRoutines;
+    _celebratedStreak = switch (json['celebratedStreak']) {
+      final int value when value >= 0 => value,
+      _ => 0,
+    };
     _preservedRoot = json;
   }
 
@@ -292,6 +297,7 @@ class LearningStore extends ChangeNotifier {
     'assessmentGrades': _assessmentGrades,
     'startStage': _startStage,
     'routines': _routines.map((routine) => routine.toJson()).toList(),
+    if (_celebratedStreak > 0) 'celebratedStreak': _celebratedStreak,
   };
 
   void _ensureInitialized() {
@@ -323,6 +329,27 @@ class LearningStore extends ChangeNotifier {
   }
 
   Future<bool> retrySave() => _persist();
+
+  /// Highest streak milestone whose one-time celebration was already shown.
+  int get celebratedStreak => _celebratedStreak;
+
+  Future<bool> markStreakCelebrated(int days) {
+    _ensureInitialized();
+    if (days <= _celebratedStreak) return Future.value(true);
+    _celebratedStreak = days;
+    return _persist();
+  }
+
+  /// Local calendar days with at least one set or active second.
+  Set<DateTime> get trainingDates => {
+    for (final session in _sessions)
+      if (session.completedSets > 0 || session.activeSeconds > 0)
+        DateTime(
+          session.endedAt.toLocal().year,
+          session.endedAt.toLocal().month,
+          session.endedAt.toLocal().day,
+        ),
+  };
 
   Future<bool> acknowledgeSafety() {
     _ensureInitialized();

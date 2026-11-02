@@ -1060,6 +1060,82 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trainerSoundOff => '关闭语音和提示音';
+
+  @override
+  String get filterAction => '筛选';
+
+  @override
+  String get filterReset => '重置';
+
+  @override
+  String filterShowCount(int count) {
+    return '显示 $count 个动作';
+  }
+
+  @override
+  String get filterScene => '场景';
+
+  @override
+  String get filterSection => '部位';
+
+  @override
+  String get pickerAdded => '已加入';
+
+  @override
+  String get recordsStreakUnit => '天连续训练';
+
+  @override
+  String get recordsSessions => '累计次数';
+
+  @override
+  String get recordsMinutes => '累计分钟';
+
+  @override
+  String get recordsDays => '训练天数';
+
+  @override
+  String get recordsThisWeek => '本周';
+
+  @override
+  String get recordsHeatmap => '近 16 周';
+
+  @override
+  String get recordsMilestones => '里程碑';
+
+  @override
+  String milestoneDays(int count) {
+    return '连续 $count 天';
+  }
+
+  @override
+  String milestoneLeft(int count) {
+    return '还差 $count 天';
+  }
+
+  @override
+  String milestoneEarned(String date) {
+    return '$date 达成';
+  }
+
+  @override
+  String get milestoneLocked => '未解锁';
+
+  @override
+  String milestoneUnlocked(int count) {
+    return '解锁里程碑：连续 $count 天';
+  }
+
+  @override
+  String get recordsEmptyTitle => '还没有训练记录';
+
+  @override
+  String get recordsEmptyAction => '去练第一个动作';
+
+  @override
+  String get heatLess => '少';
+
+  @override
+  String get heatMore => '多';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2119,4 +2195,80 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trainerSoundOff => '關閉語音和提示音';
+
+  @override
+  String get filterAction => '篩選';
+
+  @override
+  String get filterReset => '重設';
+
+  @override
+  String filterShowCount(int count) {
+    return '顯示 $count 個動作';
+  }
+
+  @override
+  String get filterScene => '場景';
+
+  @override
+  String get filterSection => '部位';
+
+  @override
+  String get pickerAdded => '已加入';
+
+  @override
+  String get recordsStreakUnit => '天連續訓練';
+
+  @override
+  String get recordsSessions => '累計次數';
+
+  @override
+  String get recordsMinutes => '累計分鐘';
+
+  @override
+  String get recordsDays => '訓練天數';
+
+  @override
+  String get recordsThisWeek => '本週';
+
+  @override
+  String get recordsHeatmap => '近 16 週';
+
+  @override
+  String get recordsMilestones => '里程碑';
+
+  @override
+  String milestoneDays(int count) {
+    return '連續 $count 天';
+  }
+
+  @override
+  String milestoneLeft(int count) {
+    return '還差 $count 天';
+  }
+
+  @override
+  String milestoneEarned(String date) {
+    return '$date 達成';
+  }
+
+  @override
+  String get milestoneLocked => '未解鎖';
+
+  @override
+  String milestoneUnlocked(int count) {
+    return '解鎖里程碑：連續 $count 天';
+  }
+
+  @override
+  String get recordsEmptyTitle => '還沒有訓練記錄';
+
+  @override
+  String get recordsEmptyAction => '去練第一個動作';
+
+  @override
+  String get heatLess => '少';
+
+  @override
+  String get heatMore => '多';
 }

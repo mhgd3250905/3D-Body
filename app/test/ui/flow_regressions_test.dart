@@ -669,7 +669,7 @@ void main() {
         final historyEmpty = AppLocalizations.of(
           tester.element(find.byType(ProgressPage)),
         ).historyEmpty;
-        expect(find.byType(EmptyNote), findsOneWidget);
+        expect(find.byKey(const ValueKey('records-empty')), findsOneWidget);
         expect(find.text(historyEmpty), findsOneWidget);
         expect(find.text('记录了不适'), findsNothing);
         expect(find.text(catalog.drillById('deltoids-A')!.name), findsNothing);

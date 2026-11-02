@@ -152,10 +152,15 @@ void main() {
         );
         // Saved sets live under Plans; the library is search and filters only.
         expect(find.text('今日训练'), findsNothing);
+        // FlareDrillFilter: one chip row, scenes first, then body areas.
         expect(
-          tester.getRect(find.text('核心')).top,
-          lessThan(tester.getRect(find.text('居家')).top),
-          reason: 'Body categories precede the second-row training settings',
+          tester.getRect(find.text('居家')).center.dy,
+          closeTo(tester.getRect(find.text('核心')).center.dy, .5),
+        );
+        expect(
+          tester.getRect(find.text('居家')).left,
+          lessThan(tester.getRect(find.text('核心')).left),
+          reason: 'Scenes lead the shared chip row, body areas follow',
         );
 
         await _tapLabel(tester, '核心');

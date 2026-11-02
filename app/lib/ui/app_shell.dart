@@ -876,6 +876,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           store: store,
           onBack: _back,
           onDrill: _openDrill,
+          onStart: () => _changeTab(1),
         ),
       ),
     };

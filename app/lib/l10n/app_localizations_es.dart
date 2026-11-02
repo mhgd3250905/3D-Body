@@ -1096,4 +1096,80 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get trainerSoundOff => 'Desactivar voz y sonidos';
+
+  @override
+  String get filterAction => 'Filter';
+
+  @override
+  String get filterReset => 'Reset';
+
+  @override
+  String filterShowCount(int count) {
+    return 'Show $count drills';
+  }
+
+  @override
+  String get filterScene => 'Setting';
+
+  @override
+  String get filterSection => 'Body area';
+
+  @override
+  String get pickerAdded => 'Added';
+
+  @override
+  String get recordsStreakUnit => 'day streak';
+
+  @override
+  String get recordsSessions => 'Sessions';
+
+  @override
+  String get recordsMinutes => 'Minutes';
+
+  @override
+  String get recordsDays => 'Days trained';
+
+  @override
+  String get recordsThisWeek => 'This week';
+
+  @override
+  String get recordsHeatmap => 'Last 16 weeks';
+
+  @override
+  String get recordsMilestones => 'Milestones';
+
+  @override
+  String milestoneDays(int count) {
+    return '$count-day streak';
+  }
+
+  @override
+  String milestoneLeft(int count) {
+    return '$count days to go';
+  }
+
+  @override
+  String milestoneEarned(String date) {
+    return 'Earned $date';
+  }
+
+  @override
+  String get milestoneLocked => 'Locked';
+
+  @override
+  String milestoneUnlocked(int count) {
+    return 'Milestone unlocked: $count-day streak';
+  }
+
+  @override
+  String get recordsEmptyTitle => 'No sessions yet';
+
+  @override
+  String get recordsEmptyAction => 'Try your first drill';
+
+  @override
+  String get heatLess => 'Less';
+
+  @override
+  String get heatMore => 'More';
 }
