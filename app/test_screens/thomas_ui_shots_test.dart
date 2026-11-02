@@ -125,6 +125,7 @@ void main() {
     Brightness mode, {
     bool accepted = true,
     bool history = false,
+    bool records = false,
     double scale = 1,
   }) async {
     tester.view.physicalSize = const Size(393 * 2, 852 * 2);
@@ -173,10 +174,63 @@ void main() {
         'scapular-A',
         'deltoids-A',
       ]);
-      await store.createRoutine('支撑臂加强', [
-        'triceps-A',
-        'obliques-A',
-      ]);
+      await store.createRoutine('支撑臂加强', ['triceps-A', 'obliques-A']);
+    }
+    if (records) {
+      // ~20 training days over five weeks: an 8-day current streak, a few
+      // doubles and one pain row, so every records element has real input.
+      final now = DateTime.now();
+      const ids = ['obliques-A', 'forearms-A', 'deltoids-A', 'triceps-A'];
+      var n = 0;
+      for (final offset in [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        12,
+        15,
+        16,
+        17,
+        20,
+        23,
+        24,
+        27,
+        30,
+        33,
+      ]) {
+        for (var k = 0; k < (offset % 5 == 0 ? 2 : 1); k++) {
+          final id = ids[n % ids.length];
+          final planned = catalog.drillById(id)!.dose.sets;
+          final pain = n == 3;
+          final start = DateTime(
+            now.year,
+            now.month,
+            now.day - offset,
+            offset == 0 ? (now.hour > 0 ? now.hour - 1 : 0) : 19,
+            k * 20,
+          ).toUtc();
+          await store.logSession(
+            TrainingSession(
+              id: 'r$n',
+              drillId: id,
+              startedAt: start,
+              endedAt: start.add(const Duration(minutes: 9)),
+              plannedSets: planned,
+              completedSets: n % 6 == 2 ? planned - 1 : planned,
+              activeSeconds: 300 + 30 * (n % 4),
+              completed: n % 6 != 2 && !pain,
+              pain: pain,
+            ),
+          );
+          n++;
+        }
+      }
     }
     addTearDown(store.dispose);
     return store;
@@ -537,4 +591,119 @@ void main() {
       await shot(tester, d, name);
     }
   });
+
+  // T3 + T4: shared drill filter, picker states, records achievement page.
+  for (final (mode, d, scale) in [
+    (Brightness.dark, 'dark', 1.0),
+    (Brightness.light, 'light', 1.0),
+    (Brightness.dark, 'dark-x1.5', 1.5),
+  ]) {
+    testWidgets('t3t4 $d library, filter sheet, picker', (tester) async {
+      final store = await setup(tester, mode, history: true, scale: scale);
+      await tester.pumpWidget(
+        app(
+          page(
+            LibraryPage(
+              catalog: catalog,
+              store: store,
+              onDrill: (_) {},
+              onBack: () {},
+            ),
+          ),
+          mode,
+        ),
+      );
+      await settle(tester);
+      await shot(tester, d, 't3-library');
+      final core = find.byKey(const ValueKey('drill-filter-section-core'));
+      if (core.evaluate().isNotEmpty) {
+        await tester.ensureVisible(core);
+        await settle(tester);
+        await tester.tap(core);
+        await settle(tester);
+        await shot(tester, d, 't3-library-core');
+      }
+      await tester.tap(find.byKey(const ValueKey('drill-filter-open')));
+      await settle(tester);
+      await shot(tester, d, 't3-filter-sheet');
+      Navigator.of(tester.element(find.byType(BottomSheet).first)).pop();
+      await settle(tester);
+      final routine = store.routines.first;
+      await tester.pumpWidget(
+        app(
+          page(
+            RoutineEditorPage(
+              catalog: catalog,
+              store: store,
+              routine: routine,
+              onBack: () {},
+              onSaved: (_) {},
+              onDeleted: () {},
+            ),
+          ),
+          mode,
+        ),
+      );
+      await settle(tester);
+      await tester.tap(find.byIcon(Icons.add_rounded).last);
+      await settle(tester);
+      var picked = 0;
+      for (final drill in catalog.drills.where((x) => x.tier == 'A')) {
+        if (picked == 2) break;
+        if (routine.drillIds.contains(drill.id)) continue;
+        final tile = find.byKey(ValueKey('pick-${drill.id}'));
+        if (tile.hitTestable().evaluate().isEmpty) continue;
+        await tester.tap(tile);
+        await settle(tester);
+        picked++;
+      }
+      await shot(tester, d, 't3-picker');
+      final scroll = find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(Scrollable),
+      );
+      await tester.drag(scroll.last, const Offset(0, -500));
+      await settle(tester);
+      await shot(tester, d, 't3-picker-scrolled');
+    });
+
+    testWidgets('t3t4 $d records, empty', (tester) async {
+      final store = await setup(tester, mode, records: true, scale: scale);
+      await tester.pumpWidget(
+        app(
+          page(
+            ProgressPage(
+              catalog: catalog,
+              store: store,
+              onBack: () {},
+              onDrill: (_) {},
+            ),
+          ),
+          mode,
+        ),
+      );
+      await settle(tester);
+      await shot(tester, d, 't4-records');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
+      await settle(tester);
+      await shot(tester, d, 't4-records-scrolled');
+      final empty = await setup(tester, mode, scale: scale);
+      await tester.pumpWidget(
+        app(
+          page(
+            ProgressPage(
+              catalog: catalog,
+              store: empty,
+              onBack: () {},
+              onDrill: (_) {},
+              onStart: () {},
+            ),
+          ),
+          mode,
+        ),
+      );
+      await settle(tester);
+      await shot(tester, d, 't4-records-empty');
+    });
+  }
 }

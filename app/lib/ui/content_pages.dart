@@ -1184,7 +1184,7 @@ class _EmptyRecords extends StatelessWidget {
     final s = context.strings;
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(32, 0, 32, 48),
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
