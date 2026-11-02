@@ -1,5 +1,6 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ void main() {
     await home(tester);
     await tester.tap(labeledControl('更多'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, '训练'));
+    await tester.tap(find.widgetWithText(FlareListRow, '训练'));
     await tester.pumpAndSettle();
     expect(find.byType(LibraryPage), findsOneWidget);
     final gesture = await tester.startGesture(const Offset(4, 400));

@@ -190,6 +190,12 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                               end: 4,
                             ),
                             subtitleTextStyle: TextStyle(
+                              fontFamily: 'FlareSans',
+                              fontFamilyFallback: const [
+                                'NotoSansKR',
+                                'NotoSansArabic',
+                                'NotoSansDevanagari',
+                              ],
                               fontSize: 13,
                               color: FlareColors.dim,
                             ),

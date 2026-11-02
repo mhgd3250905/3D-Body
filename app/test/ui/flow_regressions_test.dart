@@ -4,6 +4,7 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/muscle_knowledge.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
@@ -368,7 +369,7 @@ void main() {
         await tester.tap(labeledControl('更多'));
         await tester.pumpAndSettle();
         for (final label in ['训练', '计划', '记录', '设置']) {
-          expect(find.widgetWithText(ListTile, label), findsOneWidget);
+          expect(find.widgetWithText(FlareListRow, label), findsOneWidget);
         }
         expect(find.byType(FlareSegmented<double>), findsOneWidget);
         expect(find.byType(ActionChip), findsNothing);
@@ -566,7 +567,7 @@ void main() {
 
         // Add the drill to a new plan straight from its page; saving returns
         // to the same drill.
-        await tester.tap(find.byTooltip('加入计划'));
+        await tester.tap(find.byKey(const ValueKey('drill-add-to-plan')));
         await tester.pumpAndSettle();
         await tester.tap(find.text('新建计划并加入'));
         await tester.pumpAndSettle();
@@ -663,7 +664,7 @@ void main() {
         expect(scene.time, 2.0);
         await tester.tap(labeledControl('更多'));
         await tester.pumpAndSettle();
-        await tester.tap(find.widgetWithText(ListTile, '记录'));
+        await tester.tap(find.widgetWithText(FlareListRow, '记录'));
         await tester.pumpAndSettle();
         expect(find.byType(ProgressPage), findsOneWidget);
         final historyEmpty = AppLocalizations.of(
@@ -1291,7 +1292,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(labeledControl('更多'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, '设置'));
+    await tester.tap(find.widgetWithText(FlareListRow, '设置'));
     await tester.pumpAndSettle();
     final appearance = find.byWidgetPredicate(
       (widget) =>

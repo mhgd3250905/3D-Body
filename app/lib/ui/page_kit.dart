@@ -341,9 +341,13 @@ class FlareListRow extends StatelessWidget {
             ),
             if (meta != null) ...[
               const SizedBox(width: 8),
-              Text(
-                meta!,
-                style: TextStyle(fontSize: 14, color: FlareColors.secondary),
+              Flexible(
+                child: Text(
+                  meta!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, color: FlareColors.secondary),
+                ),
               ),
             ],
             const SizedBox(width: 4),

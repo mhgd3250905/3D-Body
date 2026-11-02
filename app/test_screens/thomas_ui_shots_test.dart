@@ -19,6 +19,7 @@ import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/sdk_plan_editor_page.dart';
 import 'package:flare/ui/theme.dart';
@@ -294,7 +295,7 @@ void main() {
     await tester.tap(find.bySemanticsLabel(RegExp('^更多')).first);
     await settle(tester);
     if (entry != null) {
-      await tester.tap(find.widgetWithText(ListTile, entry).first);
+      await tester.tap(find.widgetWithText(FlareListRow, entry).first);
       await settle(tester);
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/actor_body_selector.dart';
 import 'package:flare/ui/theme.dart';
@@ -63,7 +64,7 @@ void main() {
       );
       await tester.tap(find.bySemanticsLabel(strings.more));
       await tester.pumpAndSettle();
-      final settings = find.widgetWithText(ListTile, strings.settings);
+      final settings = find.widgetWithText(FlareListRow, strings.settings);
       await tester.ensureVisible(settings);
       await tester.tap(settings);
       await tester.pumpAndSettle();

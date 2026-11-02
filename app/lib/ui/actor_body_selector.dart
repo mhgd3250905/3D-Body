@@ -43,7 +43,7 @@ class ActorBodySelector extends StatelessWidget {
               label,
               style: TextStyle(
                 color: value == id ? FlareColors.accentInk : FlareColors.text,
-                fontWeight: value == id ? FontWeight.w600 : FontWeight.w500,
+                fontWeight: FontWeight.w500,
                 fontFamily: 'FlareSans',
                 fontFamilyFallback: const [
                   'NotoSansKR',
