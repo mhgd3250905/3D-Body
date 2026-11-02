@@ -544,10 +544,18 @@ void main() {
     await store.initialize();
     addTearDown(store.dispose);
     final shared = await FlareShared.load(bundle: _FileBundle());
+    // Admission requires equipment the user actually confirmed; the plan's
+    // own declaration does not establish availability in the shared SDK.
+    const context = uc.CoachContext(equipment: {'mat'});
+    final validation = uc.PlanValidator(
+      catalog: shared.catalog,
+      profile: flareCoachProfile,
+    ).validate(plan, context);
+    expect(validation.ok, isTrue, reason: '${validation.issues}');
     final admitted = uc.ToolGate(
       catalog: shared.catalog,
       profile: flareCoachProfile,
-    ).admitTemplate(plan);
+    ).admitTemplate(plan, context);
     expect(admitted, isNotNull);
     final plans = FlareCoachPlanStore(store);
     final saved = await plans.save(
