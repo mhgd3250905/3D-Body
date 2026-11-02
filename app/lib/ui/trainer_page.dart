@@ -1,22 +1,21 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/flare_public_media.dart';
+import '../data/flare_shared_library.dart';
 import '../l10n/app_localizations.dart';
 import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
-import 'drill_media.dart';
 
-/// Push on its own Navigator route: TrainerPlayer owns back/finish and returns
-/// one immutable SDK SessionResult. This host supplies data and public slots.
+/// Opened through the SDK TrainerLauncher: TrainerPlayer owns back/finish,
+/// poster entry and on-demand public media, and returns one immutable SDK
+/// SessionResult. This host supplies Flare dose, strings, voice and saving.
 class FlareTrainingPage extends StatefulWidget {
   const FlareTrainingPage({
     super.key,
@@ -53,14 +52,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final wristDirections = trainerWristDirections(
       AppLocalizations.of(context),
     );
-    validateTrainingPlan(widget.plan, widget.catalog);
-    final sourceCatalog = uc.Catalog.fromJson(
-      jsonDecode(await rootBundle.loadString('assets/coach/catalog.json')),
+    final shared = FlareShared.current ?? await FlareShared.load();
+    validateTrainingPlan(
+      widget.plan,
+      widget.catalog,
+      known: (id) => shared.catalog[id] != null,
     );
-    final missing = widget.plan.exerciseIds
-        .where((id) => sourceCatalog[id] == null)
-        .toList();
-    if (missing.isNotEmpty) throw UnknownTrainingDrills(missing);
     final voice = await loadTrainerVoiceSource(
       language: language,
       // TrainerPlayer uses its default right-first side sequence.
@@ -72,7 +69,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         widget.catalog,
         wristDirections: wristDirections,
       ),
-      rhythms: sdk.rhythmsFromCatalog(sourceCatalog),
+      rhythms: shared.rhythms,
+      shared: shared,
       source: voice,
       language: language,
     );
@@ -139,14 +137,33 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           plan: data.plan,
           rhythms: data.rhythms,
           drillOf: (id) {
+            final language = Localizations.localeOf(context).languageCode;
             final drill = widget.catalog.drillById(id);
-            return drill == null
-                ? null
-                : sdk.TrainerDrill(
-                    id: drill.id,
-                    name: drill.name,
-                    cue: drill.cues.isEmpty ? null : drill.cues.first,
-                  );
+            final public = data.shared.catalog[id];
+            final name = drill?.name ?? data.shared.nameOf(id, language);
+            if (name == null) return null;
+            final poster = FlarePublicMedia.current?.posterAssetFor(id);
+            return sdk.TrainerDrill(
+              id: id,
+              name: name,
+              cue: drill == null || drill.cues.isEmpty
+                  ? null
+                  : drill.cues.first,
+              cues: drill == null ? public?.cues['zh'] ?? const [] : const [],
+              precautions: [
+                ...?public?.cautions,
+                ...?public?.contraindications,
+              ],
+              media: poster == null
+                  ? null
+                  : sdk.DrillMedia(
+                      id: id,
+                      actionId: id,
+                      videoAsset: '',
+                      posterAsset: poster,
+                      duration: 0,
+                    ),
+            );
           },
           strings: trainerStrings(s),
           theme: trainerTheme(context),
@@ -166,13 +183,6 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           showSoundToggle: true,
           notificationIcon: 'mipmap/ic_launcher',
           doseLabel: _doseLabel,
-          mediaBuilder: (context, request) => DrillMediaCard(
-            key: ValueKey(request.drill.id),
-            drillId: request.drill.id,
-            active: !request.paused,
-            mirrored: request.mirrored,
-            autoPlay: true,
-          ),
         );
       },
     );
@@ -185,9 +195,11 @@ class _PlayerData {
     required this.rhythms,
     required this.source,
     required this.language,
+    required this.shared,
   });
   final uc.TrainingPlan plan;
   final Map<String, sdk.Rhythm> rhythms;
   final sdk.VoiceSource source;
   final String language;
+  final FlareShared shared;
 }

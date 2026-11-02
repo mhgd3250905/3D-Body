@@ -1,5 +1,5 @@
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../data/catalog.dart';
 
@@ -116,10 +116,15 @@ uc.TrainingPlan trainingPlanFromDrills({
   );
 }
 
-void validateTrainingPlan(uc.TrainingPlan plan, Catalog catalog) {
+/// [known] admits the shared public scope in addition to Flare's own drills.
+void validateTrainingPlan(
+  uc.TrainingPlan plan,
+  Catalog catalog, {
+  bool Function(String id)? known,
+}) {
   if (plan.items.isEmpty) throw const FormatException('Empty training plan');
   final unknown = plan.exerciseIds
-      .where((id) => catalog.drillById(id) == null)
+      .where((id) => catalog.drillById(id) == null && known?.call(id) != true)
       .toList();
   if (unknown.isNotEmpty) throw UnknownTrainingDrills(unknown);
   bool validDose(uc.DoseMode mode, int? reps, int? seconds) {

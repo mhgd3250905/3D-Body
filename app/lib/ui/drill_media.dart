@@ -1,14 +1,38 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../data/drill_media.dart';
-import '../platform/drill_media/media_controller.dart';
-import '../platform/drill_media/media_view.dart';
-import '../l10n/app_localizations.dart';
-import 'motion.dart';
-import 'theme_fade.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
-/// Still frame until tapped by default; the SDK player opts into autoplay.
-/// Only the current card creates a media platform view.
+import '../data/flare_public_media.dart';
+import '../data/flare_shared_library.dart';
+import '../l10n/app_localizations.dart';
+
+/// Only one inline demonstration plays at a time across Flare's pages.
+class DrillPlaybackCoordinator extends ChangeNotifier {
+  static final shared = DrillPlaybackCoordinator();
+  Object? _owner;
+  Object? get owner => _owner;
+
+  void play(Object owner) {
+    if (identical(_owner, owner)) return;
+    _owner = owner;
+    notifyListeners();
+  }
+
+  void release(Object owner) {
+    if (!identical(_owner, owner)) return;
+    _owner = null;
+    notifyListeners();
+  }
+
+  void pauseAll() {
+    if (_owner == null) return;
+    _owner = null;
+    notifyListeners();
+  }
+}
+
+/// Public SDK action art (verified poster, then on-demand public video). The
+/// SDK owns download, decoding and the poster→video handoff; Flare only says
+/// whether this card should play. Tap toggles playback unless [autoPlay].
 class DrillMediaCard extends StatefulWidget {
   const DrillMediaCard({
     super.key,
@@ -25,236 +49,65 @@ class DrillMediaCard extends StatefulWidget {
   State<DrillMediaCard> createState() => _DrillMediaCardState();
 }
 
-class _DrillMediaCardState extends State<DrillMediaCard>
-    with WidgetsBindingObserver {
-  final Object _token = Object();
+class _DrillMediaCardState extends State<DrillMediaCard> {
   final _coordinator = DrillPlaybackCoordinator.shared;
-  late DrillMediaController _controller;
-  late Future<Map<String, DrillMedia>> _loading;
-  bool _foreground = true;
-  bool _pageActive = true;
-  bool _opened = false;
-  int _attempt = 0;
-  bool _autoPlayScheduled = false;
-  bool get _active => widget.active && _foreground && _pageActive;
+
   @override
   void initState() {
     super.initState();
-    _loading = DrillMedia.load();
-    _controller = DrillMediaController()..setActive(widget.active);
-    WidgetsBinding.instance.addObserver(this);
-    _scheduleAutoPlay();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _pageActive = FlarePageActivity.of(context);
-    _controller.setActive(_active);
-    if (!_pageActive && _opened) _close();
-    _scheduleAutoPlay();
-  }
-
-  void _close() {
-    _coordinator.release(_token);
-    _controller.dispose();
-    _controller = DrillMediaController()..setActive(_active);
-    _attempt++;
-    _opened = false;
-  }
-
-  void _releaseForAnotherCard() {
-    if (mounted) setState(_close);
-  }
-
-  @override
-  void didUpdateWidget(DrillMediaCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.drillId != widget.drillId) _close();
-    _controller.setActive(_active);
-    if (oldWidget.drillId != widget.drillId ||
-        (!oldWidget.active && widget.active) ||
-        (!oldWidget.autoPlay && widget.autoPlay)) {
-      _scheduleAutoPlay();
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (kIsWeb && state == AppLifecycleState.inactive) return;
-    _foreground = state == AppLifecycleState.resumed;
-    _controller.setActive(_active);
-    if (_foreground) _scheduleAutoPlay();
-  }
-
-  void _scheduleAutoPlay() {
-    if (!widget.autoPlay || _autoPlayScheduled) return;
-    _autoPlayScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _autoPlayScheduled = false;
-      if (!mounted || !_active || !widget.autoPlay || _controller.failed) {
-        return;
-      }
-      if (!_opened) {
-        _toggle();
-      } else if (!_controller.wantsPlay) {
-        _controller.toggle();
-      }
-    });
-  }
-
-  // Only the still/video is mirrored. Flutter buttons, labels, semantics and
-  // SDK overlays retain their normal reading direction. The platform player
-  // document contains only a video element (no text or playback controls).
-  Widget _visual(Widget child) =>
-      Transform.flip(flipX: widget.mirrored, child: child);
-
-  void _toggle() {
-    if (!_active) return;
-    if (!_opened || _controller.failed) {
-      _coordinator.claim(_token, _releaseForAnotherCard);
-      setState(() {
-        _controller.dispose();
-        _controller = DrillMediaController()..setActive(_active);
-        _attempt++;
-        _opened = true;
-        _controller.toggle();
-      });
-    } else {
-      _controller.toggle();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = AppLocalizations.of(context);
-    return AspectRatio(
-      aspectRatio: 1,
-      child: FutureBuilder<Map<String, DrillMedia>>(
-        future: _loading,
-        builder: (context, snapshot) {
-          final media = snapshot.data?[widget.drillId];
-          return AnimatedBuilder(
-            animation: _controller,
-            builder: (context, _) {
-              final failed =
-                  _opened &&
-                  (snapshot.hasError ||
-                      snapshot.connectionState == ConnectionState.done &&
-                          media == null ||
-                      _controller.failed);
-              final wantsPlay = _opened && _controller.wantsPlay;
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  ColoredBox(
-                    color: const Color(0xff101013),
-                    child: _visual(
-                      Image.asset(
-                        'assets/drill_media/${widget.drillId}.jpg',
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, _, _) => const Center(
-                          child: Icon(
-                            Icons.fitness_center,
-                            color: Colors.white54,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (_opened && media != null && !failed) ...[
-                    Positioned.fill(
-                      child: ThemeFadeWindow(enabled: _pageActive),
-                    ),
-                    _visual(
-                      DrillMediaPlatformView(
-                        key: ValueKey('${widget.drillId}:$_attempt'),
-                        media: media,
-                        controller: _controller,
-                        labels: {
-                          'title': s.drillDemo,
-                          'play': s.play,
-                          'pause': s.pause,
-                          'error': s.demoFailed,
-                          'disabled': s.demoPaused,
-                        },
-                      ),
-                    ),
-                    // Keep the still frame above the platform's startup surface
-                    // until the decoder has actually presented a video frame.
-                    IgnorePointer(
-                      child: AnimatedOpacity(
-                        opacity: _controller.hasFrame ? 0 : 1,
-                        duration: FlareMotion.of(
-                          context,
-                          const Duration(milliseconds: 120),
-                        ),
-                        child: ColoredBox(
-                          color: const Color(0xff101013),
-                          child: _visual(
-                            Image.asset(
-                              'assets/drill_media/${widget.drillId}.jpg',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  Semantics(
-                    button: true,
-                    label: failed
-                        ? s.retry
-                        : wantsPlay
-                        ? s.pause
-                        : s.play,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: _active ? _toggle : null,
-                      child: LayoutBuilder(
-                        builder: (context, size) => Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: !wantsPlay || failed
-                                ? Container(
-                                    width: (size.maxWidth * .16).clamp(24, 48),
-                                    height: (size.maxWidth * .16).clamp(24, 48),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xaa101013),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white24),
-                                    ),
-                                    child: Icon(
-                                      failed
-                                          ? Icons.refresh
-                                          : Icons.play_arrow_rounded,
-                                      color: _active
-                                          ? Colors.white
-                                          : Colors.white38,
-                                      size: (size.maxWidth * .09).clamp(16, 28),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
-    );
+    _coordinator.addListener(_changed);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _coordinator.release(_token);
-    _controller.dispose();
+    _coordinator
+      ..removeListener(_changed)
+      ..release(this);
     super.dispose();
+  }
+
+  void _changed() {
+    if (mounted) setState(() {});
+  }
+
+  bool get _playing =>
+      widget.active && (widget.autoPlay || identical(_coordinator.owner, this));
+
+  void _toggle() => identical(_coordinator.owner, this)
+      ? _coordinator.release(this)
+      : _coordinator.play(this);
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppLocalizations.of(context);
+    final shared = FlareShared.current;
+    final policy = FlarePublicMedia.current;
+    final poster = 'assets/public_posters/${widget.drillId}.webp';
+    final Widget art = shared != null && policy != null
+        ? trainer.TrainingLibraryActionArt(
+            actionId: widget.drillId,
+            config: shared.library,
+            mediaPolicy: policy,
+            theme: FlareShared.theme(context),
+            playing: _playing,
+            mirrored: widget.mirrored,
+          )
+        : Image.asset(
+            poster,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) => const SizedBox.expand(),
+          );
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Semantics(
+        button: !widget.autoPlay,
+        label: _playing ? s.pause : s.play,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.active && !widget.autoPlay ? _toggle : null,
+          child: art,
+        ),
+      ),
+    );
   }
 }

@@ -70,7 +70,6 @@ flutter:
     - assets/data/drills.json
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
-    - assets/data/drill-media-manifest.json
     - assets/coach/
     - assets/trainer_voice/
     - assets/trainer_voice/_common/
@@ -80,7 +79,10 @@ flutter:
     - assets/l10n/
     - assets/drills/
     - assets/drills/light/
-    - assets/drill_media/
+    # Shared SDK public definitions and posters; videos load on demand.
+    - assets/public_media/
+    - assets/public_media/catalog/
+    - assets/public_posters/
     - assets/muscles/
     - assets/scene/
     - assets/scene/assets/
