@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ugk_trainer/ugk_trainer.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 /// One app-scoped audio output, as required by the SDK. Old training routes
 /// cannot deactivate the audio session owned by a newer route. Lifecycle

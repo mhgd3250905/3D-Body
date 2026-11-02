@@ -216,10 +216,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "1ca20c894b1717686a2319b8548763d812bc0aabdac580420a44c5178c57a867"
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.20.3"
+    version: "0.20.2"
   jni:
     dependency: transitive
     description:
@@ -320,10 +320,10 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: "31bd099b47c10cd1aeb55146a2d46ce0277630ecef3f7dae54ad7873f36696cd"
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.12.20"
+    version: "0.12.19"
   material_color_utilities:
     dependency: transitive
     description:
@@ -336,10 +336,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "307249ce4ff29d58a18e97f6345f539382eb9c9c29ecda628900f31de0443dd9"
+      sha256: "1741988757a65eb6b36abe716829688cf01910bbf91c34354ff7ec1c3de2b349"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.19.0"
+    version: "1.18.0"
   nm:
     dependency: transitive
     description:
@@ -504,10 +504,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: "1e12aafe408aa50da80edfd679a2a6bf63ba7ab37c7fa98286da459a757b3399"
+      sha256: "33b38b07d9ac7d16aff0426c61418752fd3e7a8c7dc8be786c875d6ce673b002"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.28"
+    version: "2.5.4"
   shared_preferences_foundation:
     dependency: transitive
     description:
@@ -613,10 +613,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "2a122cbe059f8b610d3a5415f42e255b6c17b1f21eee1d960f31080237fb4f11"
+      sha256: "949a932224383300f01be9221c39180316445ecb8e7547f70a41a35bf421fb9e"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.7.12"
+    version: "0.7.11"
   typed_data:
     dependency: transitive
     description:
@@ -629,29 +629,38 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "ugk_coach-v0.5.0"
-      resolved-ref: d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f
+      ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
+      resolved-ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
       url: "https://github.com/mhgd3250905/ugk-3d-pose-sdk.git"
     source: git
-    version: "0.5.0"
+    version: "0.8.0"
+  ugk_coach_chat:
+    dependency: "direct main"
+    description:
+      path: "packages/ugk_coach_chat"
+      ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
+      resolved-ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
+      url: "https://github.com/mhgd3250905/ugk-3d-pose-sdk.git"
+    source: git
+    version: "0.1.0"
   ugk_coach_ui:
     dependency: "direct main"
     description:
       path: "packages/ugk_coach_ui"
-      ref: "ugk_coach_ui-v0.1.1"
-      resolved-ref: "3302d6235a39e2c2b4b51fa196cc32b37c31b54c"
+      ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
+      resolved-ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
       url: "https://github.com/mhgd3250905/ugk-3d-pose-sdk.git"
     source: git
-    version: "0.1.1"
-  ugk_trainer:
+    version: "0.4.0"
+  ugk_trainer_runtime:
     dependency: "direct main"
     description:
-      path: "packages/ugk_trainer"
-      ref: "ugk_trainer-v0.2.3"
-      resolved-ref: d7e0b8fa3afc514fe3a53427cfddb8f7b24c984f
+      path: "packages/ugk_trainer_runtime"
+      ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
+      resolved-ref: d4502f35b1503d41cd782aa7fb3780c7f6591ad0
       url: "https://github.com/mhgd3250905/ugk-3d-pose-sdk.git"
     source: git
-    version: "0.2.3"
+    version: "0.1.0"
   uuid:
     dependency: transitive
     description:
@@ -664,18 +673,18 @@ packages:
     dependency: transitive
     description:
       name: vector_math
-      sha256: "92b9910f66ed1057fd4da7b040ae7c74cafacf885bdc81be496928d5049b032d"
+      sha256: d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.3"
+    version: "2.2.0"
   vm_service:
     dependency: transitive
     description:
       name: vm_service
-      sha256: "5f37239c4851efcef929cea7824e76df7f2f0970aef85d66bbc430afa40e72f0"
+      sha256: "89b11d62e1040ee681af3b4f1c97a803ecbf010c6e8b9c5896ee5b08c3bf7b78"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "15.3.0"
+    version: "15.4.0"
   wakelock_plus:
     dependency: transitive
     description:

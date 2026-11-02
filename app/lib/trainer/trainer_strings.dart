@@ -1,4 +1,4 @@
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../l10n/app_localizations.dart';
 

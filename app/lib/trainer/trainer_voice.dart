@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:ugk_trainer/ugk_trainer.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 /// Offline shared prompts from the pinned SmartFit LC32 bundle, with HipLab's
 /// side prompt retained for legacy single-drill fixtures. The whole-plan

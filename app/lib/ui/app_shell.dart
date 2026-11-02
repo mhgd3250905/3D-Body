@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/ugk_trainer.dart' show SessionResult;
+import 'package:ugk_coach_chat/ugk_coach_chat.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
-import '../platform/drill_media/media_controller.dart';
+import '../data/flare_public_media.dart';
+import '../data/flare_shared_library.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../trainer/trainer_strings.dart';
 import 'components.dart';
@@ -25,8 +27,10 @@ import 'motion.dart';
 import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
-import 'ai_coach_page.dart';
-import '../coach/coach_service.dart';
+import 'drill_media.dart';
+import 'flare_coach_chat_page.dart';
+import '../coach/flare_coach_chat.dart';
+import '../coach/usage_store.dart';
 import 'startup_splash.dart';
 import 'theme.dart';
 import 'theme_fade.dart';
@@ -46,8 +50,8 @@ class FlareShell extends StatefulWidget {
   });
   final Catalog catalog;
 
-  /// AI service; without a configured Key/token, all AI entry points stay hidden.
-  final CoachService? coach;
+  /// SDK chat host; without a configured Key/token, all AI entries stay hidden.
+  final FlareCoachChat? coach;
   final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
   final LearningStore store;
   final SceneController? sceneController;
@@ -78,11 +82,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   PresetPlan? _preset;
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
-  bool _coachOpen = false;
-  AiCoachSession? _coachSession;
-  CoachService? _coachService;
-  CoachService get coachService =>
-      _coachService ??= widget.coach ?? CoachService(appCatalog: catalog);
+  FlareCoachChat? _coach;
+  FlareCoachChat get coach =>
+      _coach ??= widget.coach ?? FlareCoachChat(store: store);
+  late final _usage = CoachUsageStore.device();
   MuscleGroup? _detail;
   MuscleGroup? _libraryGroup;
   String _libraryQuery = '';
@@ -262,14 +265,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       !_settings &&
       !_trainingOpen;
 
-  bool get _inPlan =>
-      _preset != null || _routine != null || _editing != null || _coachOpen;
+  bool get _inPlan => _preset != null || _routine != null || _editing != null;
 
   void _clearPlan() {
     _preset = null;
     _routine = null;
     _editing = null;
-    _coachOpen = false;
   }
 
   bool get _preparingScene => widget.enableScene && !_scene.presented;
@@ -348,6 +349,34 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
+  /// Content, dose and saving stay with Flare; the SDK launcher owns poster
+  /// entry, on-demand public media and the no-flash handoff into the player.
+  Future<sdk.SessionResult?> _launchTraining(
+    BuildContext context,
+    uc.TrainingPlan plan, {
+    Future<bool> Function()? onStarting,
+    VoidCallback Function()? holdTransition,
+  }) {
+    final policy = FlarePublicMedia.current;
+    final ids = plan.exerciseIds.toList();
+    String? posterFor(String id) =>
+        policy?.posterAssetFor(id) ?? 'assets/public_posters/$id.webp';
+    return sdk.TrainerLauncher.open<sdk.SessionResult>(
+      context,
+      builder: (_) =>
+          widget.trainingPageBuilder?.call(plan) ??
+          FlareTrainingPage(plan: plan, catalog: catalog, store: store),
+      firstPosterAsset: ids.isEmpty ? null : posterFor(ids.first),
+      posterAssets: [for (final id in ids) ?posterFor(id)],
+      mediaPolicy: policy,
+      planActionIds: ids,
+      theme: FlareShared.theme(context),
+      onStarting: onStarting,
+      holdTransition: holdTransition,
+      settings: const RouteSettings(name: '/training'),
+    );
+  }
+
   Future<void> _startPlan(uc.TrainingPlan plan) async {
     if (_trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
@@ -355,14 +384,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() => _trainingOpen = true);
     _syncSceneVisibility();
     try {
-      await Navigator.of(context).push<SessionResult>(
-        MaterialPageRoute(
-          settings: const RouteSettings(name: '/training'),
-          builder: (_) =>
-              widget.trainingPageBuilder?.call(plan) ??
-              FlareTrainingPage(plan: plan, catalog: catalog, store: store),
-        ),
-      );
+      await _launchTraining(context, plan);
     } finally {
       if (mounted) {
         setState(() => _trainingOpen = false);
@@ -371,14 +393,65 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
+  /// The SDK chat is its own route; Flare supplies only navigation targets.
+  Future<void> _openCoach() async {
+    _scene.pause();
+    final navigator = Navigator.of(context);
+    void leaveChat(VoidCallback change) {
+      navigator.popUntil((route) => route.isFirst);
+      if (mounted) setState(change);
+    }
+
+    await navigator.push<void>(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: '/coach'),
+        builder: (_) => FlareCoachChatPage(
+          coach: coach,
+          actions: CoachChatHostActions(
+            onStartTraining: (context, request) => _launchTraining(
+              context,
+              request.plan.plan,
+              onStarting: request.onStarting,
+              holdTransition: request.holdTransition,
+            ),
+            onOpenAction: (context, request) =>
+                FlareShared.openDetail(context, request.actionId),
+            onOpenLibrary: (context, request) => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => Scaffold(
+                  appBar: AppBar(title: Text(context.strings.library)),
+                  body: const FlareSharedLibraryPage(),
+                ),
+              ),
+            ),
+            onOpenSavedPlans: (_) async => leaveChat(() {
+              _clearPlan();
+              _drill = null;
+              _settings = false;
+              _tab = 2;
+            }),
+            onOpenCustomPlan: (_) async => leaveChat(() {
+              _drill = null;
+              _settings = false;
+              _tab = 2;
+              _editing = const _RoutineEdit();
+            }),
+            onOpenSettings: (_) async => leaveChat(() {
+              _clearPlan();
+              _drill = null;
+              _settings = true;
+            }),
+          ),
+        ),
+      ),
+    );
+    if (mounted) _syncSceneVisibility();
+  }
+
   Future<void> _startDrills(String title, List<Drill> drills) async {
     if (_trainingOpen || drills.isEmpty) return;
     try {
-      final source = uc.Catalog.fromJson(
-        jsonDecode(
-          await rootBundle.loadString(CoachService.catalogAsset, cache: false),
-        ),
-      );
+      final source = (FlareShared.current ?? await FlareShared.load()).catalog;
       if (!mounted) return;
       await _startPlan(
         trainingPlanFromDrills(
@@ -482,8 +555,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _editing = null;
       } else if (_drill != null) {
         _drill = null;
-      } else if (_coachOpen) {
-        _coachOpen = false;
       } else if (_routine != null) {
         _routine = null;
       } else if (_preset != null) {
@@ -525,11 +596,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   void dispose() {
     _scene.removeListener(_sceneChanged);
     store.removeListener(_storeChanged);
-    if (_coachSession case final session?) {
-      session.dispose();
-    } else {
-      unawaited(_coachService?.dispose());
-    }
+    if (widget.coach == null) unawaited(_coach?.close());
     WidgetsBinding.instance.removeObserver(this);
     if (widget.sceneController == null) _scene.dispose();
     super.dispose();
@@ -770,22 +837,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       );
     }
-    if (_coachOpen && coachService.configured && aiCoachAvailable(context)) {
-      final session = _coachSession ??= AiCoachSession(coachService);
-      return (
-        'coach',
-        2,
-        false,
-        AiCoachPage(
-          session: session,
-          catalog: catalog,
-          store: store,
-          onBack: _back,
-          onDrill: _openDrill,
-          onStart: _startPlan,
-        ),
-      );
-    }
     if (_routine case final viewed?) {
       final routine = store.routineById(viewed.id) ?? viewed;
       final drills = routine.drills(catalog);
@@ -839,15 +890,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         'tab1',
         1,
         false,
-        LibraryPage(
-          catalog: catalog,
-          store: store,
-          initialGroup: _libraryGroup,
-          initialQuery: _libraryQuery,
-          onQueryChanged: (value) => _libraryQuery = value,
-          onBack: _back,
-          onDrill: _openDrill,
-        ),
+        FlareShared.current != null && FlarePublicMedia.current != null
+            ? const FlareSharedLibraryPage()
+            : LibraryPage(
+                catalog: catalog,
+                store: store,
+                initialGroup: _libraryGroup,
+                initialQuery: _libraryQuery,
+                onQueryChanged: (value) => _libraryQuery = value,
+                onBack: _back,
+                onDrill: _openDrill,
+              ),
       ),
       2 => (
         'tab2',
@@ -860,10 +913,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
           onNewRoutine: () => setState(() => _editing = const _RoutineEdit()),
-          onAiCoach: coachService.configured && aiCoachAvailable(context)
-              ? () => setState(() => _coachOpen = true)
+          onAiCoach: coach.configured && aiCoachAvailable(context)
+              ? _openCoach
               : null,
-          aiCoachConfigured: coachService.configured,
+          aiCoachConfigured: coach.configured,
         ),
       ),
       _ => (
@@ -1961,7 +2014,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
-                    if (coachService.configured && aiCoachAvailable(context))
+                    if (coach.configured && aiCoachAvailable(context))
                       _aiUsageRow(),
                     FlareRow(
                       title: s.aboutFlare,
@@ -1986,10 +2039,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   /// 设置 → AI 定制用量：本机累计模型调用次数与 token（来自本地 JSONL 记录）。
   Widget _aiUsageRow() => FutureBuilder<void>(
-    future: coachService.usage.load(),
+    future: _usage.load(),
     builder: (context, snapshot) {
-      final t = coachService.usage.totals;
-      final subtitle = !coachService.configured && t.calls == 0
+      final t = _usage.totals;
+      final subtitle = !coach.configured && t.calls == 0
           ? '未配置 AI · 尚无调用'
           : '累计调用 ${t.calls} 次 · 输入 ${t.promptTokens} / 输出 ${t.completionTokens} token';
       return FlareRow(

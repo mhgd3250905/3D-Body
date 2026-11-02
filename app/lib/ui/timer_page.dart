@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:ugk_trainer/ugk_trainer.dart' as trainer;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as trainer;
 import '../control/learning_store.dart';
 import '../domain/catalog_models.dart';
 import '../domain/dose.dart';

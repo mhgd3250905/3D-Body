@@ -1,5 +1,5 @@
 import 'package:ugk_coach/ugk_coach.dart' as coach;
-import 'package:ugk_trainer/engine.dart' as trainer;
+import 'package:ugk_trainer_runtime/engine.dart' as trainer;
 
 import '../domain/dose.dart';
 import '../domain/drill_timer.dart' show TimerPhase, TimerSnapshot;
