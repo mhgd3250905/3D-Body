@@ -794,7 +794,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appearanceLabel => 'السمة';
 
   @override
-  String get themeSystem => 'اتباع إعداد النظام';
+  String get themeSystem => 'النظام';
 
   @override
   String get themeDark => 'داكن';

@@ -387,7 +387,12 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(width: 56, child: Eyebrow(label)),
+        // Fits long labels (Dosierung, Оборудование at 1.5×) without
+        // breaking mid-word, but never eats the value column.
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 56, maxWidth: 124),
+          child: Eyebrow(label),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -528,36 +533,92 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             ),
           ),
           FlareBottomAction(
-            child: Row(
-              children: [
-                SizedBox(
-                  height: FlareBottomAction.buttonHeight,
-                  child: FilledButton.tonalIcon(
-                    key: const ValueKey('drill-add-to-plan'),
-                    style: FilledButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
-                      backgroundColor: FlareColors.accent.withValues(
-                        alpha: .14,
+            child: LayoutBuilder(
+              builder: (context, box) {
+                // When 加入计划 cannot fit at a readable size (long languages
+                // at 320 / 1.5× text) it becomes a labelled icon button
+                // instead of shrinking to unreadable type.
+                final label = TextPainter(
+                  text: TextSpan(
+                    text: s.planAddTo,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  textScaler: MediaQuery.textScalerOf(context),
+                  textDirection: Directionality.of(context),
+                  maxLines: 1,
+                )..layout();
+                final compact = label.width + 64 > box.maxWidth * .46;
+                label.dispose();
+                return Row(
+                  children: [
+                    if (compact)
+                      SizedBox.square(
+                        dimension: FlareBottomAction.buttonHeight,
+                        child: IconButton.filledTonal(
+                          key: const ValueKey('drill-add-to-plan'),
+                          tooltip: s.planAddTo,
+                          style: IconButton.styleFrom(
+                            backgroundColor: FlareColors.accent.withValues(
+                              alpha: .14,
+                            ),
+                            foregroundColor: FlareColors.accentInk,
+                          ),
+                          onPressed: () {
+                            FlareHaptics.light();
+                            widget.onAddToPlan();
+                          },
+                          icon: const Icon(
+                            Icons.playlist_add_rounded,
+                            size: 22,
+                          ),
+                        ),
+                      )
+                    else
+                      ConstrainedBox(
+                        // Long languages / large text: the secondary pill shrinks
+                        // its label instead of pushing 开始 off screen.
+                        constraints: BoxConstraints(
+                          maxWidth: box.maxWidth * .46,
+                        ),
+                        child: SizedBox(
+                          height: FlareBottomAction.buttonHeight,
+                          child: FilledButton.tonalIcon(
+                            key: const ValueKey('drill-add-to-plan'),
+                            style: FilledButton.styleFrom(
+                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                              ),
+                              backgroundColor: FlareColors.accent.withValues(
+                                alpha: .14,
+                              ),
+                              foregroundColor: FlareColors.accentInk,
+                            ),
+                            onPressed: () {
+                              FlareHaptics.light();
+                              widget.onAddToPlan();
+                            },
+                            icon: const Icon(
+                              Icons.playlist_add_rounded,
+                              size: 20,
+                            ),
+                            label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(s.planAddTo, maxLines: 1),
+                            ),
+                          ),
+                        ),
                       ),
-                      foregroundColor: FlareColors.accentInk,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: PrimaryAction(
+                        label: s.startTimer,
+                        onPressed: widget.onStart,
+                      ),
                     ),
-                    onPressed: () {
-                      FlareHaptics.light();
-                      widget.onAddToPlan();
-                    },
-                    icon: const Icon(Icons.playlist_add_rounded, size: 20),
-                    label: Text(s.planAddTo),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: PrimaryAction(
-                    label: s.startTimer,
-                    onPressed: widget.onStart,
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -787,9 +848,8 @@ class _Hero extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
+        FlareWordSafeText(
           label,
-          maxLines: 2,
           style: TextStyle(fontSize: 12, color: FlareColors.dim),
         ),
       ],
@@ -1129,10 +1189,9 @@ class _Milestones extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            FlareWordSafeText(
               s.milestoneDays(m),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              align: TextAlign.center,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 2),

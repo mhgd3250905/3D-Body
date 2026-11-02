@@ -372,7 +372,7 @@
   "countUnit": "reps",
   "appearanceGroup": "Appearance",
   "appearanceLabel": "Theme",
-  "themeSystem": "Follow system",
+  "themeSystem": "System",
   "themeDark": "Dark",
   "themeLight": "Light",
   "sceneLoading": "Loading 3D motion",

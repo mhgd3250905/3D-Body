@@ -146,16 +146,21 @@ class _SceneSwitch extends StatelessWidget {
                   horizontal: 6,
                   vertical: 10,
                 ),
-                child: Text(
-                  entry.$2,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: FlareColors.text,
-                    fontSize: 13,
-                    height: 1.25,
-                    fontWeight: entry.$1 == store.settings.tier
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    entry.$2,
+                    maxLines: 1,
+                    softWrap: false,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: FlareColors.text,
+                      fontSize: 13,
+                      height: 1.25,
+                      fontWeight: entry.$1 == store.settings.tier
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
                   ),
                 ),
               ),
@@ -1058,10 +1063,16 @@ class _DrillPickerState extends State<_DrillPicker> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child: Row(
+              // Wrap, not Row: a long title (Выбор упражнений at 1.5×) drops
+              // the count to the next line instead of splitting mid-word.
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: 12,
+                runSpacing: 2,
                 children: [
-                  Expanded(
-                    child: Text(
+                  Builder(
+                    builder: (context) => Text(
                       s.pickerTitle,
                       style: const TextStyle(
                         fontSize: 20,

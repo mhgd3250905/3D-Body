@@ -784,7 +784,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appearanceLabel => 'テーマ';
 
   @override
-  String get themeSystem => 'システム設定に合わせる';
+  String get themeSystem => 'システム';
 
   @override
   String get themeDark => 'ダーク';

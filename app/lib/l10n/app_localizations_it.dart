@@ -802,7 +802,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appearanceLabel => 'Tema';
 
   @override
-  String get themeSystem => 'Segui il sistema';
+  String get themeSystem => 'Sistema';
 
   @override
   String get themeDark => 'Scuro';

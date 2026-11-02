@@ -809,7 +809,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appearanceLabel => 'Thème';
 
   @override
-  String get themeSystem => 'Suivre le système';
+  String get themeSystem => 'Système';
 
   @override
   String get themeDark => 'Sombre';

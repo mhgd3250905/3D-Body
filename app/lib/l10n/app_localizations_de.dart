@@ -806,7 +806,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appearanceLabel => 'Design';
 
   @override
-  String get themeSystem => 'Systemeinstellung';
+  String get themeSystem => 'System';
 
   @override
   String get themeDark => 'Dunkel';

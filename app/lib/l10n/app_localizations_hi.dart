@@ -798,7 +798,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appearanceLabel => 'थीम';
 
   @override
-  String get themeSystem => 'सिस्टम के अनुसार';
+  String get themeSystem => 'सिस्टम';
 
   @override
   String get themeDark => 'गहरा';

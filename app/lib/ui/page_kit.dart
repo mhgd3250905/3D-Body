@@ -319,8 +319,9 @@ class FlareListRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  FlareWordSafeText(
                     title,
+                    maxLines: 3,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -341,7 +342,13 @@ class FlareListRow extends StatelessWidget {
             ),
             if (meta != null) ...[
               const SizedBox(width: 8),
-              Flexible(
+              // The meta value never takes more than ~40% of the row, so a
+              // title like "Sprache" never splits at 1.5× / 320 wide; the
+              // title still gets all the room a short value leaves.
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.sizeOf(context).width * .34,
+                ),
                 child: Text(
                   meta!,
                   maxLines: 1,
@@ -408,5 +415,49 @@ class FlareFieldGroup extends StatelessWidget {
         child: field,
       ),
     ],
+  );
+}
+
+/// Up to two lines that never split a word: when the longest word
+/// (Einheiten, тренировок) is wider than the column at the current text
+/// scale, the font shrinks just enough for it to fit.
+class FlareWordSafeText extends StatelessWidget {
+  const FlareWordSafeText(
+    this.text, {
+    super.key,
+    required this.style,
+    this.align,
+    this.maxLines = 2,
+  });
+  final int maxLines;
+  final String text;
+  final TextStyle style;
+  final TextAlign? align;
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      final base = DefaultTextStyle.of(context).style.merge(style);
+      var widest = 0.0;
+      for (final word in text.split(RegExp(r'\s+'))) {
+        final painter = TextPainter(
+          text: TextSpan(text: word, style: base),
+          textScaler: MediaQuery.textScalerOf(context),
+          textDirection: Directionality.of(context),
+          maxLines: 1,
+        )..layout();
+        if (painter.width > widest) widest = painter.width;
+        painter.dispose();
+      }
+      final fit = box.maxWidth.isFinite && widest > box.maxWidth
+          ? box.maxWidth / widest * .98
+          : 1.0;
+      return Text(
+        text,
+        maxLines: maxLines,
+        textAlign: align,
+        overflow: TextOverflow.ellipsis,
+        style: style.copyWith(fontSize: (style.fontSize ?? 14) * fit),
+      );
+    },
   );
 }

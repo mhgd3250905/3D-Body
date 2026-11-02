@@ -801,7 +801,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appearanceLabel => 'Tema';
 
   @override
-  String get themeSystem => 'Seguir o sistema';
+  String get themeSystem => 'Sistema';
 
   @override
   String get themeDark => 'Escuro';

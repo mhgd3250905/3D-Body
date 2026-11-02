@@ -684,7 +684,9 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => _choose(i),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  // 6 not 12: long labels (Systemeinstellung, Энергосбережение)
+                  // keep a readable size before FittedBox has to shrink them.
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Center(
                     child: AnimatedDefaultTextStyle(
                       duration: FlareMotion.of(context, FlareMotion.quick),

@@ -803,7 +803,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get appearanceLabel => 'Tema';
 
   @override
-  String get themeSystem => 'Ikuti sistem';
+  String get themeSystem => 'Sistem';
 
   @override
   String get themeDark => 'Gelap';
