@@ -306,8 +306,26 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
       backgroundColor: p.surface,
       selectedColor: p.accent.withValues(alpha: .2),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      labelStyle: TextStyle(fontSize: 12, color: p.text),
-      secondaryLabelStyle: TextStyle(fontSize: 12, color: p.text),
+      labelStyle: TextStyle(
+        fontFamily: 'FlareSans',
+        fontFamilyFallback: const [
+          'NotoSansKR',
+          'NotoSansArabic',
+          'NotoSansDevanagari',
+        ],
+        fontSize: 12,
+        color: p.text,
+      ),
+      secondaryLabelStyle: TextStyle(
+        fontFamily: 'FlareSans',
+        fontFamilyFallback: const [
+          'NotoSansKR',
+          'NotoSansArabic',
+          'NotoSansDevanagari',
+        ],
+        fontSize: 12,
+        color: p.text,
+      ),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: p.navigation,

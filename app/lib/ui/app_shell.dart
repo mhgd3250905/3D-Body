@@ -16,6 +16,7 @@ import '../platform/drill_media/media_controller.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../trainer/trainer_strings.dart';
 import 'components.dart';
+import 'page_kit.dart';
 import 'actor_body_selector.dart';
 import 'content_pages.dart';
 import 'flare_silhouette.dart';
@@ -928,37 +929,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ),
                           ),
                         )
+                      // The panel below carries the large muscle title; the
+                      // bar keeps its height (stage framing) but no title,
+                      // so the name is not shown twice.
                       : SizedBox(
-                          key: ValueKey(detail.id),
+                          key: const ValueKey('muscle-detail-title'),
                           height: headingHeight,
-                          child: LayoutBuilder(
-                            builder: (context, box) => FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: SizedBox(
-                                width: box.maxWidth,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      detail.shortLabel,
-                                      semanticsLabel: detail.label,
-                                      key: const ValueKey(
-                                        'muscle-detail-title',
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        height: 1.35,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
                         ),
                 ),
               ),
@@ -1350,13 +1326,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   },
                 ),
               ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: FlareColors.background,
-                  border: Border(
-                    top: BorderSide(color: FlareColors.hairline, width: .5),
-                  ),
-                ),
+              ColoredBox(
+                color: FlareColors.background,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
                     20,
@@ -1369,7 +1340,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   ),
                   child: PrimaryAction(
                     key: const ValueKey('train-group'),
-                    height: compact ? 48 : 56,
+                    height: compact ? 46 : 50,
                     label: s.trainGroup(detail.shortLabel),
                     semanticsLabel: s.trainGroup(detail.label),
                     arrow: true,
@@ -1862,7 +1833,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
     return Column(
       children: [
-        PageHeader(title: s.settings, onBack: _back),
+        FlareNavBar(title: s.settings, onBack: _back),
         Expanded(
           child: ScrollEdge(
             child: ListView(
@@ -2056,7 +2027,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         color: FlareColors.background,
         child: Column(
           children: [
-            PageHeader(
+            FlareNavBar(
               title: s.aboutFlare,
               onBack: () => Navigator.of(context).pop(),
             ),

@@ -56,7 +56,7 @@ class PrimaryAction extends StatelessWidget {
     required this.onPressed,
     this.arrow = false,
     this.icon,
-    this.height = 56,
+    this.height = 50,
     this.semanticsLabel,
   });
   final String label;

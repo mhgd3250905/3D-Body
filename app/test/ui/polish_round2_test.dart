@@ -1,5 +1,6 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_glass.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
@@ -120,8 +121,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final header = find.byType(PageHeader);
-      final actions = find.byType(FlareActionBar);
+      final header = find.byType(FlareNavBar);
+      final actions = find.byType(FlareBottomAction);
       final list = find.byType(ListView);
       final back = find.byTooltip('返回');
       final start = find.widgetWithText(FilledButton, '开始训练');

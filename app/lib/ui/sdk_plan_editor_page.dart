@@ -4,7 +4,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../data/catalog.dart';
 import '../trainer/training_plan_adapter.dart' show trainingPlanFromDrills;
 import 'components.dart';
-import 'content_pages.dart';
+import 'page_kit.dart';
 import 'plans_page.dart' show showDrillPicker;
 import 'theme.dart';
 
@@ -114,9 +114,8 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
       color: FlareColors.background,
       child: Column(
         children: [
-          PageHeader(
+          FlareNavBar(
             title: s.planEdit,
-            large: false,
             onBack: _saving ? () {} : widget.onBack,
           ),
           Expanded(
@@ -218,8 +217,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+          FlareBottomAction(
             child: PrimaryAction(
               key: const ValueKey('sdk-plan-save'),
               label: s.planSave,

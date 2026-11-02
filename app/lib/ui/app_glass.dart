@@ -130,16 +130,3 @@ class FlareStaticSurface extends StatelessWidget {
     );
   }
 }
-
-/// Fixed actions stay outside media and scrollable content. Material Scaffold
-/// still owns keyboard insets and SnackBars; SDK routes do not use this bar.
-class FlareActionBar extends StatelessWidget {
-  const FlareActionBar({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-    child: FlareGlassBar(padding: const EdgeInsets.all(6), child: child),
-  );
-}

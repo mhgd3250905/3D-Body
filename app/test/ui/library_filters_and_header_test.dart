@@ -2,6 +2,7 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/catalog.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,7 +22,7 @@ void _expectCenteredTitle(
   double viewportWidth,
 ) {
   final titleFinder = find.descendant(
-    of: find.byType(PageHeader),
+    of: find.byType(FlareNavBar),
     matching: find.text(title),
   );
   expect(titleFinder, findsOneWidget);
@@ -87,9 +88,9 @@ void main() {
         await tester.pumpWidget(
           testApp(
             Scaffold(
-              body: PageHeader(
+              body: FlareNavBar(
                 title: '训练',
-                action: RoundIconButton(
+                action: FlareNavIconButton(
                   icon: Icons.search_rounded,
                   tooltip: '搜索',
                   onPressed: () {},
@@ -100,7 +101,7 @@ void main() {
         );
         _expectCenteredTitle(tester, '训练', size.width);
         expect(
-          tester.getCenter(find.byType(RoundIconButton)).dy,
+          tester.getCenter(find.byType(FlareNavIconButton)).dy,
           closeTo(tester.getCenter(find.text('训练')).dy, .5),
         );
         expect(tester.takeException(), isNull);
@@ -137,7 +138,7 @@ void main() {
         _expectCenteredTitle(tester, '训练', size.width);
         expect(find.byType(TextField), findsOneWidget);
         expect(
-          tester.widget<PageHeader>(find.byType(PageHeader)).action,
+          tester.widget<FlareNavBar>(find.byType(FlareNavBar)).action,
           isNull,
         );
         expect(find.byTooltip('搜索'), findsNothing);
@@ -147,7 +148,7 @@ void main() {
         );
         expect(
           tester.getRect(find.byType(TextField)).top,
-          greaterThanOrEqualTo(tester.getRect(find.byType(PageHeader)).bottom),
+          greaterThanOrEqualTo(tester.getRect(find.byType(FlareNavBar)).bottom),
         );
         // Saved sets live under Plans; the library is search and filters only.
         expect(find.text('今日训练'), findsNothing);

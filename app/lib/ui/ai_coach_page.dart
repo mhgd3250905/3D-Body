@@ -14,6 +14,7 @@ import 'coach_question_bubble.dart';
 import 'coach_ui_theme.dart';
 import 'motion.dart';
 import 'plans_page.dart' show DrillPoster;
+import 'page_kit.dart';
 import 'theme.dart';
 
 /// AI 定制只做中文（模型、目录文案都是中文），其他语言界面不显示入口。
@@ -379,32 +380,16 @@ class _AiCoachPageState extends State<AiCoachPage> {
     final header = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 2, 12, 4),
-          child: Row(
-            children: [
-              FlareGlassIconButton(
-                icon: Icons.arrow_back_rounded,
-                label: '返回',
-                onPressed: widget.onBack,
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'AI 定制',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-              FlareGlassIconButton(
-                key: const ValueKey('coach-new-chat'),
-                icon: Icons.add_comment_outlined,
-                label: '新对话',
-                onPressed: session.busy || session.messages.isEmpty
-                    ? null
-                    : session.newConversation,
-              ),
-            ],
+        FlareNavBar(
+          title: 'AI 定制',
+          onBack: widget.onBack,
+          action: FlareNavIconButton(
+            key: const ValueKey('coach-new-chat'),
+            icon: Icons.add_comment_outlined,
+            tooltip: '新对话',
+            onPressed: session.busy || session.messages.isEmpty
+                ? null
+                : session.newConversation,
           ),
         ),
         if (!configured)
@@ -866,6 +851,16 @@ class _SuggestionStrip extends StatelessWidget {
             itemBuilder: (_, i) => ActionChip(
               key: ValueKey('coach-suggestion-$i'),
               label: Text(items[i]),
+              labelStyle: TextStyle(
+                fontFamily: 'FlareSans',
+                fontFamilyFallback: const [
+                  'NotoSansKR',
+                  'NotoSansArabic',
+                  'NotoSansDevanagari',
+                ],
+                fontSize: 13,
+                color: FlareColors.text,
+              ),
               backgroundColor: FlareColors.surface.withValues(alpha: .72),
               side: BorderSide.none,
               shape: const StadiumBorder(),

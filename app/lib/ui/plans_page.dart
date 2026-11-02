@@ -8,7 +8,7 @@ import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import 'components.dart';
-import 'content_pages.dart' show PageHeader;
+import 'page_kit.dart';
 import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -433,38 +433,7 @@ class PlansPage extends StatelessWidget {
     ];
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 48,
-                child: onBack == null
-                    ? null
-                    : FlareGlassIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        label: s.goBack,
-                        onPressed: onBack,
-                      ),
-              ),
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    s.plans,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      height: 1.25,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 48),
-            ],
-          ),
-        ),
+        FlareNavBar(title: s.plans, onBack: onBack),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: _SceneSwitch(store: store, preview: true),
@@ -678,13 +647,12 @@ class PlanDetailPage extends StatelessWidget {
       color: FlareColors.background,
       child: Column(
         children: [
-          PageHeader(
+          FlareNavBar(
             title: title,
-            large: false,
             onBack: onBack,
             action: onEdit == null
                 ? null
-                : RoundIconButton(
+                : FlareNavIconButton(
                     key: const ValueKey('plan-edit'),
                     icon: Icons.edit_outlined,
                     tooltip: s.planEdit,
@@ -772,7 +740,7 @@ class PlanDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          FlareActionBar(
+          FlareBottomAction(
             child: PrimaryAction(
               key: const ValueKey('plan-start'),
               icon: Icons.play_arrow_rounded,
@@ -991,9 +959,8 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
       color: FlareColors.background,
       child: Column(
         children: [
-          PageHeader(
+          FlareNavBar(
             title: widget.routine == null ? s.planNew : s.planEdit,
-            large: false,
             onBack: widget.onBack,
           ),
           Expanded(
@@ -1120,7 +1087,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
               ),
             ),
           ),
-          FlareActionBar(
+          FlareBottomAction(
             child: PrimaryAction(
               key: const ValueKey('routine-save'),
               label: s.planSave,
@@ -1422,7 +1389,7 @@ class _DrillPickerState extends State<_DrillPicker> {
                       ],
                     ),
             ),
-            FlareActionBar(
+            FlareBottomAction(
               child: PrimaryAction(
                 key: const ValueKey('picker-done'),
                 label: _picked.isEmpty
@@ -1571,7 +1538,7 @@ class PlanRunPage extends StatelessWidget {
       color: FlareColors.background,
       child: Column(
         children: [
-          PageHeader(title: title, large: false, onBack: onFinish),
+          FlareNavBar(title: title, onBack: onFinish),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
             child: Column(

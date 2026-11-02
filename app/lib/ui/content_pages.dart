@@ -7,68 +7,7 @@ import 'motion.dart';
 import 'theme.dart';
 import 'drill_media.dart';
 import 'app_glass.dart';
-
-class PageHeader extends StatelessWidget {
-  const PageHeader({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.onBack,
-    this.action,
-    this.large = true,
-  });
-  final String title;
-  final String? subtitle;
-  final VoidCallback? onBack;
-  final Widget? action;
-  final bool large;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 14),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 44,
-                child: onBack == null
-                    ? null
-                    : RoundIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        tooltip: context.strings.goBack,
-                        onPressed: onBack,
-                      ),
-              ),
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: large ? 24 : 20,
-                      height: 1.2,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 44, child: action),
-            ],
-          ),
-        ),
-        if (subtitle != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Eyebrow(subtitle!),
-          ),
-      ],
-    ),
-  );
-}
+import 'page_kit.dart';
 
 /// The three-rule safety card. Shown once before entering, and from Settings.
 Future<bool?> showSafetySheet(BuildContext context) {
@@ -418,7 +357,7 @@ class _LibraryPageState extends State<LibraryPage> {
     final drills = catalog.searchDrills(_query, tier: tier, section: _section);
     return Column(
       children: [
-        PageHeader(title: s.library, onBack: widget.onBack),
+        FlareNavBar(title: s.library, onBack: widget.onBack),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: TextField(
@@ -613,11 +552,10 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          PageHeader(
+          FlareNavBar(
             title: drill.name,
-            large: false,
             onBack: widget.onBack,
-            action: RoundIconButton(
+            action: FlareNavIconButton(
               key: const ValueKey('drill-add-to-plan'),
               icon: Icons.playlist_add_rounded,
               tooltip: s.planAddTo,
@@ -713,7 +651,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
               ],
             ),
           ),
-          FlareActionBar(
+          FlareBottomAction(
             child: PrimaryAction(
               label: s.startTimer,
               onPressed: widget.onStart,
@@ -779,7 +717,7 @@ class ProgressPage extends StatelessWidget {
     final labels = s.weekdayLabels.split(',');
     return Column(
       children: [
-        PageHeader(title: s.history, onBack: onBack),
+        FlareNavBar(title: s.history, onBack: onBack),
         Expanded(
           child: ScrollEdge(
             child: ListView(
