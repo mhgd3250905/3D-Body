@@ -5,7 +5,7 @@ import 'package:flare/data/catalog.dart';
 import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../domain/fixtures.dart';
 

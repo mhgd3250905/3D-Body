@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../domain/fixtures.dart';
 import 'flow_regressions_test.dart' as flow;

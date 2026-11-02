@@ -5,7 +5,7 @@ import 'package:flare/domain/drill_timer.dart';
 import 'package:flare/trainer/drill_training_session.dart';
 import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_trainer/engine.dart' as sdk;
+import 'package:ugk_trainer_runtime/engine.dart' as sdk;
 
 DrillTrainingSession session(Dose dose, {required int Function() now}) =>
     DrillTrainingSession(dose, drillId: 'test-drill', title: 'Test', now: now);

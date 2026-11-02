@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flare/control/learning_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_trainer/engine.dart' as sdk;
+import 'package:ugk_trainer_runtime/engine.dart' as sdk;
 
 import 'fixtures.dart';
 import 'learning_store_test.dart' show MemoryStorage;
