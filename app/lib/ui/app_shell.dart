@@ -933,8 +933,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       // bar keeps its height (stage framing) but no title,
                       // so the name is not shown twice.
                       : SizedBox(
-                          key: const ValueKey('muscle-detail-title'),
+                          key: ValueKey(detail.id),
                           height: headingHeight,
+                          child: const SizedBox.expand(
+                            key: ValueKey('muscle-detail-title'),
+                          ),
                         ),
                 ),
               ),
@@ -1326,8 +1329,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   },
                 ),
               ),
-              ColoredBox(
-                color: FlareColors.background,
+              DecoratedBox(
+                decoration: BoxDecoration(color: FlareColors.background),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
                     20,
