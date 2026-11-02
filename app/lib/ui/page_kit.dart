@@ -324,7 +324,7 @@ class FlareListRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: destructive ? const Color(0xffe5484d) : null,
+                      color: destructive ? FlareColors.danger : null,
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -359,5 +359,50 @@ class FlareListRow extends StatelessWidget {
         ),
       ),
     ),
+  );
+}
+
+/// A labelled text field sitting in a flat grouped panel: the label is a
+/// [FlareSection] above, the field itself has no outline.
+class FlareFieldGroup extends StatelessWidget {
+  const FlareFieldGroup({super.key, required this.label, required this.field});
+  final String label;
+  final Widget field;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      FlareSection(label),
+      Theme(
+        data: Theme.of(context).copyWith(
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: FlareColors.surface,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide(
+                color: FlareColors.accent.withValues(alpha: .6),
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+        child: field,
+      ),
+    ],
   );
 }

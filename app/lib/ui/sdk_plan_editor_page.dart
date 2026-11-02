@@ -122,96 +122,112 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               children: [
-                TextField(
-                  key: const ValueKey('sdk-plan-name'),
-                  controller: _name,
-                  enabled: !_saving,
-                  decoration: InputDecoration(labelText: s.planNameHint),
+                FlareFieldGroup(
+                  label: s.planNameHint,
+                  field: TextField(
+                    key: const ValueKey('sdk-plan-name'),
+                    controller: _name,
+                    enabled: !_saving,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  s.planReorderHint,
-                  style: TextStyle(color: FlareColors.secondary),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+                  child: Text(
+                    s.planReorderHint,
+                    style: TextStyle(fontSize: 13, color: FlareColors.dim),
+                  ),
                 ),
                 for (final (bi, block) in widget.plan.blocks.indexed) ...[
-                  const SizedBox(height: 18),
-                  Text(
-                    block.name,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  FlareSection(
+                    block.type == uc.BlockType.circuit
+                        ? '${block.name} · × ${block.rounds} · ${s.rest} ${s.secondsLabel(block.restBetweenRoundsSeconds)}'
+                        : block.name,
                   ),
-                  if (block.type == uc.BlockType.circuit)
-                    Row(
-                      children: [
-                        const Icon(Icons.repeat_rounded, size: 18),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            '× ${block.rounds} · ${s.rest} ${s.secondsLabel(block.restBetweenRoundsSeconds)}',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ReorderableListView.builder(
-                    key: ValueKey('sdk-plan-block-$bi'),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    buildDefaultDragHandles: false,
-                    itemCount: _items[bi].length,
-                    onReorderItem: (from, to) {
-                      if (_saving) return;
-                      setState(() {
-                        final item = _items[bi].removeAt(from);
-                        _items[bi].insert(to, item);
-                      });
-                    },
-                    itemBuilder: (context, ii) {
-                      final item = _items[bi][ii];
-                      final drill = widget.catalog.drillById(item.exerciseId);
-                      final amount = item.segments.isNotEmpty
-                          ? [
-                              for (final (index, segment)
-                                  in item.segments.indexed)
-                                '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : widget.catalog.drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
-                                    '${segment.mode == uc.DoseMode.time ? s.secondsLabel(segment.workSeconds!) : s.countLabel(segment.reps!)}'
-                                    '${segment.holdSeconds == null ? '' : ' · ⏸ ${s.secondsLabel(segment.holdSeconds!)}'}',
-                            ].join('\n')
-                          : item.mode == uc.DoseMode.time
-                          ? s.secondsLabel(item.workSeconds!)
-                          : s.countLabel(item.reps!);
-                      final sets =
-                          block.type == uc.BlockType.circuit && block.rounds > 1
-                          ? 1
-                          : item.sets;
-                      return ListTile(
-                        key: ObjectKey(item),
-                        contentPadding: EdgeInsets.zero,
-                        leading: ReorderableDragStartListener(
-                          index: ii,
-                          child: const Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Icon(Icons.drag_handle),
-                          ),
-                        ),
-                        title: Text(drill?.name ?? item.exerciseId),
-                        subtitle: Text(
-                          '× $sets${item.perSide ? ' · ${s.bothSides}' : ''} · ${s.rest} ${s.secondsLabel(item.restSeconds)}${item.segments.isEmpty ? ' · ' : '\n'}$amount',
-                        ),
-                        trailing: IconButton(
-                          key: ValueKey('sdk-plan-remove-$bi-$ii'),
-                          tooltip: s.planRemoveDrill,
-                          icon: const Icon(Icons.remove_circle_outline),
-                          onPressed: _saving
-                              ? null
-                              : () => setState(() => _items[bi].removeAt(ii)),
-                        ),
-                      );
-                    },
-                  ),
-                  OutlinedButton.icon(
-                    key: ValueKey('sdk-plan-add-$bi'),
-                    onPressed: _saving ? null : () => _add(bi),
-                    icon: const Icon(Icons.add_rounded),
-                    label: Text(s.planAddDrills),
+                  FlareListGroup(
+                    children: [
+                      ReorderableListView.builder(
+                        key: ValueKey('sdk-plan-block-$bi'),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        buildDefaultDragHandles: false,
+                        itemCount: _items[bi].length,
+                        onReorderItem: (from, to) {
+                          if (_saving) return;
+                          setState(() {
+                            final item = _items[bi].removeAt(from);
+                            _items[bi].insert(to, item);
+                          });
+                        },
+                        itemBuilder: (context, ii) {
+                          final item = _items[bi][ii];
+                          final drill = widget.catalog.drillById(
+                            item.exerciseId,
+                          );
+                          final amount = item.segments.isNotEmpty
+                              ? [
+                                  for (final (index, segment)
+                                      in item.segments.indexed)
+                                    '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : widget.catalog.drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
+                                        '${segment.mode == uc.DoseMode.time ? s.secondsLabel(segment.workSeconds!) : s.countLabel(segment.reps!)}'
+                                        '${segment.holdSeconds == null ? '' : ' · ⏸ ${s.secondsLabel(segment.holdSeconds!)}'}',
+                                ].join('\n')
+                              : item.mode == uc.DoseMode.time
+                              ? s.secondsLabel(item.workSeconds!)
+                              : s.countLabel(item.reps!);
+                          final sets =
+                              block.type == uc.BlockType.circuit &&
+                                  block.rounds > 1
+                              ? 1
+                              : item.sets;
+                          return ListTile(
+                            key: ObjectKey(item),
+                            contentPadding: const EdgeInsetsDirectional.only(
+                              start: 4,
+                              end: 4,
+                            ),
+                            subtitleTextStyle: TextStyle(
+                              fontSize: 13,
+                              color: FlareColors.dim,
+                            ),
+                            leading: ReorderableDragStartListener(
+                              index: ii,
+                              child: const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Icon(Icons.drag_indicator_rounded),
+                              ),
+                            ),
+                            title: Text(drill?.name ?? item.exerciseId),
+                            subtitle: Text(
+                              '× $sets${item.perSide ? ' · ${s.bothSides}' : ''} · ${s.rest} ${s.secondsLabel(item.restSeconds)}${item.segments.isEmpty ? ' · ' : '\n'}$amount',
+                            ),
+                            trailing: IconButton(
+                              key: ValueKey('sdk-plan-remove-$bi-$ii'),
+                              tooltip: s.planRemoveDrill,
+                              icon: Icon(
+                                Icons.remove_circle_outline_rounded,
+                                size: 20,
+                                color: FlareColors.dim,
+                              ),
+                              onPressed: _saving
+                                  ? null
+                                  : () =>
+                                        setState(() => _items[bi].removeAt(ii)),
+                            ),
+                          );
+                        },
+                      ),
+                      FlareListRow(
+                        key: ValueKey('sdk-plan-add-$bi'),
+                        leading: const FlareRowIcon(Icons.add_rounded),
+                        title: s.planAddDrills,
+                        trailing: const SizedBox.shrink(),
+                        onTap: _saving ? null : () => _add(bi),
+                      ),
+                    ],
                   ),
                 ],
               ],

@@ -94,7 +94,7 @@ class _Stack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shown = drills.take(3).toList();
-    const size = 44.0, step = 18.0;
+    const size = 40.0, step = 14.0;
     return SizedBox(
       width: size + step * 2,
       height: size,
@@ -184,9 +184,8 @@ class _SceneSwitch extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.text, {this.action});
+  const _SectionHeader(this.text);
   final String text;
-  final Widget? action;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(top: 18, bottom: 10, left: 2),
@@ -205,7 +204,6 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
         ),
-        ?action,
       ],
     ),
   );
@@ -237,116 +235,39 @@ class PlansPage extends StatelessWidget {
   final VoidCallback? onAiCoach;
   final bool aiCoachConfigured;
 
-  Widget _entrySurface({
-    required Widget child,
-    required Key key,
-    required VoidCallback onTap,
-  }) => FlareStaticSurface(
-    child: Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        key: key,
-        borderRadius: BorderRadius.circular(22),
-        onTap: onTap,
-        child: Padding(padding: const EdgeInsets.all(16), child: child),
-      ),
-    ),
-  );
-
-  Widget _entryIcon(IconData icon) => Container(
-    width: 44,
-    height: 44,
-    decoration: BoxDecoration(
-      color: FlareColors.accent.withValues(alpha: .10),
-      shape: BoxShape.circle,
-    ),
-    child: Icon(icon, color: FlareColors.accentInk, size: 21),
-  );
-
-  Widget _aiCard(BuildContext context) => _entrySurface(
+  Widget _aiRow(BuildContext context) => FlareListRow(
     key: const ValueKey('plan-ai-coach'),
-    onTap: onAiCoach!,
-    child: Row(
-      children: [
-        _entryIcon(Icons.auto_awesome_rounded),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    leading: const FlareRowIcon(Icons.auto_awesome_rounded),
+    title: 'AI 定制',
+    subtitle: aiCoachConfigured
+        ? '说出场地、时长和想练的部位，排一份专项计划'
+        : '暂未接入 AI，会按你的描述推荐一套预设方案',
+    trailing: aiCoachConfigured
+        ? null
+        : Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  const Text(
-                    'AI 定制',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  if (!aiCoachConfigured)
-                    Text(
-                      '未配置',
-                      key: const ValueKey('plan-ai-unconfigured'),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: FlareColors.warning,
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 5),
               Text(
-                aiCoachConfigured
-                    ? '说出场地、时长和想练的部位，排一份托马斯专项计划'
-                    : '暂未接入 AI，会按你的描述推荐一套预设方案',
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: FlareColors.secondary,
-                ),
+                '未配置',
+                key: const ValueKey('plan-ai-unconfigured'),
+                style: TextStyle(fontSize: 13, color: FlareColors.dim),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: FlareColors.dim,
               ),
             ],
           ),
-        ),
-        const SizedBox(width: 8),
-        Icon(Icons.chevron_right_rounded, color: FlareColors.dim, size: 20),
-      ],
-    ),
+    onTap: onAiCoach,
   );
 
-  Widget _newCard(BuildContext context) => _entrySurface(
-    key: const ValueKey('plan-new'),
+  Widget _newRow(BuildContext context, {required bool first}) => FlareListRow(
+    key: ValueKey(first ? 'plan-new' : 'plan-new-small'),
+    leading: const FlareRowIcon(Icons.add_rounded),
+    title: context.strings.planNew,
+    subtitle: first ? context.strings.planNewHint : null,
     onTap: onNewRoutine,
-    child: Row(
-      children: [
-        _entryIcon(Icons.add_rounded),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.strings.planNew,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                context.strings.planNewHint,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: FlareColors.secondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
   );
 
   Widget _routineRow(BuildContext context, TrainingRoutine routine) {
@@ -362,49 +283,13 @@ class PlansPage extends StatelessWidget {
             1,
             999,
           );
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: RepaintBoundary(
-        child: _entrySurface(
-          key: ValueKey('routine-${routine.id}'),
-          onTap: () => onRoutine(routine),
-          child: Row(
-            children: [
-              _Stack(drills),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      routine.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 1.3,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      s.planMeta(count, minutes),
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.4,
-                        color: FlareColors.secondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: FlareColors.dim,
-                size: 20,
-              ),
-            ],
-          ),
-        ),
+    return RepaintBoundary(
+      child: FlareListRow(
+        key: ValueKey('routine-${routine.id}'),
+        leading: _Stack(drills),
+        title: routine.name,
+        subtitle: s.planMeta(count, minutes),
+        onTap: () => onRoutine(routine),
       ),
     );
   }
@@ -414,31 +299,9 @@ class PlansPage extends StatelessWidget {
     final s = context.strings;
     final tier = store.settings.tier;
     final routines = store.routines;
-    final mine = <Widget>[
-      _SectionHeader(
-        s.plansMine,
-        action: routines.isEmpty
-            ? null
-            : RoundIconButton(
-                key: const ValueKey('plan-new-small'),
-                icon: Icons.add_rounded,
-                tooltip: s.planNew,
-                diameter: 44,
-                onPressed: onNewRoutine,
-              ),
-      ),
-      if (routines.isEmpty)
-        _newCard(context)
-      else
-        for (final routine in routines) _routineRow(context, routine),
-    ];
     return Column(
       children: [
         FlareNavBar(title: s.plans, onBack: onBack),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-          child: _SceneSwitch(store: store, preview: true),
-        ),
         Expanded(
           child: CustomScrollView(
             slivers: [
@@ -446,9 +309,19 @@ class PlansPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 sliver: SliverList.list(
                   children: [
-                    if (onAiCoach != null) _aiCard(context),
-                    if (routines.isNotEmpty) ...mine,
+                    _SectionHeader(s.plansMine),
+                    FlareListGroup(
+                      children: [
+                        for (final routine in routines)
+                          _routineRow(context, routine),
+                        _newRow(context, first: routines.isEmpty),
+                        if (onAiCoach != null) _aiRow(context),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                     _SectionHeader(s.plansReady),
+                    _SceneSwitch(store: store, preview: true),
+                    const SizedBox(height: 14),
                   ],
                 ),
               ),
@@ -501,12 +374,7 @@ class PlansPage extends StatelessWidget {
                   },
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                sliver: SliverList.list(
-                  children: [if (routines.isEmpty) ...mine],
-                ),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 28)),
             ],
           ),
         ),
@@ -528,70 +396,66 @@ class _PresetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    return FlareStaticSurface(
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(22),
-        child: InkWell(
-          key: ValueKey('preset-${preset.id}'),
-          borderRadius: BorderRadius.circular(22),
-          onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(22),
+    return Material(
+      color: FlareColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: ValueKey('preset-${preset.id}'),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.zero,
+              child: AspectRatio(
+                aspectRatio: 4 / 3,
+                child: RepaintBoundary(
+                  child: drills.isEmpty
+                      ? ColoredBox(
+                          color: FlareColors.raised,
+                          child: Icon(preset.icon, color: FlareColors.dim),
+                        )
+                      : DrillPoster(drills.first),
                 ),
-                child: AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: RepaintBoundary(
-                    child: drills.isEmpty
-                        ? ColoredBox(
-                            color: FlareColors.raised,
-                            child: Icon(preset.icon, color: FlareColors.dim),
-                          )
-                        : DrillPoster(drills.first),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 13, 14, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    preset.title(context),
+                    style: const TextStyle(
+                      fontSize: 17,
+                      height: 1.3,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 6),
+                  Text(
+                    preset.line(context),
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.45,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '${s.planDrillCount(drills.length)} · ≈ ${s.minutesShort(estimateMinutes(drills))}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.4,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 13, 14, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      preset.title(context),
-                      style: const TextStyle(
-                        fontSize: 17,
-                        height: 1.3,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      preset.line(context),
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.45,
-                        color: FlareColors.secondary,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '${s.planDrillCount(drills.length)} · ≈ ${s.minutesShort(estimateMinutes(drills))}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.4,
-                        color: FlareColors.secondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -629,6 +493,21 @@ class PlanDetailPage extends StatelessWidget {
   final VoidCallback? onSaveAsMine;
   final VoidCallback? onEdit;
 
+  /// Consecutive entries of one block, keeping their global index.
+  static List<List<(int, CoachPlanEntry)>> _blocks(
+    List<CoachPlanEntry> entries,
+  ) {
+    final out = <List<(int, CoachPlanEntry)>>[];
+    int? last;
+    for (final (index, entry) in entries.indexed) {
+      final block = entry.blockIndex;
+      if (last != block) out.add([]);
+      last = block;
+      out.last.add((index, entry));
+    }
+    return out;
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
@@ -650,6 +529,7 @@ class PlanDetailPage extends StatelessWidget {
         children: [
           FlareNavBar(
             title: title,
+            subtitle: s.planMeta(entries?.length ?? drills.length, minutes),
             onBack: onBack,
             action: onEdit == null
                 ? null
@@ -667,10 +547,9 @@ class PlanDetailPage extends StatelessWidget {
                 children: [
                   if (line != null)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
                       child: Text(
                         line!,
-                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 15,
                           height: 1.45,
@@ -678,56 +557,62 @@ class PlanDetailPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  Text(
-                    s.planMeta(entries?.length ?? drills.length, minutes),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                  ),
-                  const SizedBox(height: 16),
                   if (store case final store?) ...[
-                    _SceneSwitch(store: store),
                     const SizedBox(height: 16),
+                    _SceneSwitch(store: store),
                   ],
                   if (!available)
-                    Text(
-                      ts.mediaUnavailable,
-                      style: TextStyle(color: FlareColors.warning),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Text(
+                        ts.mediaUnavailable,
+                        style: TextStyle(color: FlareColors.warning),
+                      ),
                     ),
                   if (entries != null)
-                    for (final (index, entry) in entries.indexed) ...[
-                      if (index == 0 ||
-                          entries[index - 1].blockIndex != entry.blockIndex)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            [
-                              entry.block.name,
-                              if (entry.block.type == uc.BlockType.circuit)
-                                ts.roundOf(1, entry.block.rounds),
-                              if (entry.block.type == uc.BlockType.circuit)
-                                '${s.rest} · ${s.secondsLabel(entry.block.restBetweenRoundsSeconds)}',
-                            ].where((part) => part.isNotEmpty).join(' · '),
-                          ),
-                        ),
-                      _NumberedDrill(
-                        key: ValueKey('sdk-plan-row-$index'),
-                        index: index,
-                        drill: entry.drill,
-                        doseText: entry.doseText,
-                        onTap: () => onDrill(entry.drill),
+                    for (final block in _blocks(entries)) ...[
+                      FlareSection(
+                        [
+                          block.first.$2.block.name,
+                          if (block.first.$2.block.type == uc.BlockType.circuit)
+                            ts.roundOf(1, block.first.$2.block.rounds),
+                          if (block.first.$2.block.type == uc.BlockType.circuit)
+                            '${s.rest} · ${s.secondsLabel(block.first.$2.block.restBetweenRoundsSeconds)}',
+                        ].where((part) => part.isNotEmpty).join(' · '),
+                      ),
+                      FlareListGroup(
+                        children: [
+                          for (final (index, entry) in block)
+                            _NumberedDrill(
+                              key: ValueKey('sdk-plan-row-$index'),
+                              index: index,
+                              drill: entry.drill,
+                              doseText: entry.doseText,
+                              grouped: true,
+                              onTap: () => onDrill(entry.drill),
+                            ),
+                        ],
                       ),
                     ],
-                  if (entries == null)
-                    for (final (index, drill) in drills.indexed)
-                      FadeSlideIn(
-                        key: ValueKey('plan-row-${drill.id}'),
-                        delay: FadeSlideIn.stagger(index),
-                        child: _NumberedDrill(
-                          index: index,
-                          drill: drill,
-                          onTap: () => onDrill(drill),
-                        ),
-                      ),
+                  if (entries == null) ...[
+                    const SizedBox(height: 16),
+                    FlareListGroup(
+                      children: [
+                        for (final (index, drill) in drills.indexed)
+                          FadeSlideIn(
+                            key: ValueKey('plan-row-${drill.id}'),
+                            delay: FadeSlideIn.stagger(index),
+                            child: _NumberedDrill(
+                              index: index,
+                              drill: drill,
+                              grouped: true,
+                              onTap: () => onDrill(drill),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 12),
                   if (onSaveAsMine != null)
                     Center(
                       child: TextButton.icon(
@@ -764,7 +649,11 @@ class _NumberedDrill extends StatelessWidget {
     this.trailing,
     this.state,
     this.doseText,
+    this.grouped = false,
   });
+
+  /// Inside a [FlareListGroup]: no own panel, no gap.
+  final bool grouped;
   final int index;
   final Drill drill;
   final VoidCallback onTap;
@@ -778,13 +667,15 @@ class _NumberedDrill extends StatelessWidget {
     final done = state == true;
     final current = state == false;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: grouped ? 0 : 8),
       child: RepaintBoundary(
         child: Material(
           color: current
               ? FlareColors.accent.withValues(alpha: .10)
-              : FlareStaticSurface.colorOf(context),
-          borderRadius: BorderRadius.circular(22),
+              : grouped
+              ? Colors.transparent
+              : FlareColors.surface,
+          borderRadius: BorderRadius.circular(grouped ? 0 : 16),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
@@ -818,9 +709,9 @@ class _NumberedDrill extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     child: SizedBox.square(
-                      dimension: 60,
+                      dimension: 52,
                       child: DrillPoster(drill),
                     ),
                   ),
@@ -972,21 +863,23 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                 header: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextField(
-                      key: const ValueKey('routine-name'),
-                      controller: _name,
-                      maxLength: TrainingRoutine.maxName,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
+                    FlareFieldGroup(
+                      label: s.planNameHint,
+                      field: TextField(
+                        key: const ValueKey('routine-name'),
+                        controller: _name,
+                        maxLength: TrainingRoutine.maxName,
+                        textInputAction: TextInputAction.done,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: s.planDefaultName,
+                          counterText: '',
+                        ),
+                        onSubmitted: (_) => FocusScope.of(context).unfocus(),
                       ),
-                      decoration: InputDecoration(
-                        hintText: s.planDefaultName,
-                        labelText: s.planNameHint,
-                        counterText: '',
-                      ),
-                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
                     ),
                     const SizedBox(height: 18),
                     Row(
@@ -1009,26 +902,29 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      OutlinedButton.icon(
-                        key: const ValueKey('routine-add'),
-                        onPressed: full ? null : _add,
-                        icon: const Icon(Icons.add_rounded, size: 18),
-                        label: Text(s.planAddDrills),
+                      FlareListGroup(
+                        children: [
+                          FlareListRow(
+                            key: const ValueKey('routine-add'),
+                            leading: const FlareRowIcon(Icons.add_rounded),
+                            title: s.planAddDrills,
+                            trailing: const SizedBox.shrink(),
+                            onTap: full ? null : _add,
+                          ),
+                        ],
                       ),
                       if (widget.onDeleted != null) ...[
-                        const SizedBox(height: 24),
-                        Center(
-                          child: TextButton(
-                            key: const ValueKey('routine-delete'),
-                            onPressed: _busy ? null : widget.onDeleted,
-                            child: Text(
-                              s.planDelete,
-                              style: TextStyle(
-                                color: FlareColors.warning,
-                                fontWeight: FontWeight.w600,
-                              ),
+                        const SizedBox(height: 28),
+                        FlareListGroup(
+                          children: [
+                            FlareListRow(
+                              key: const ValueKey('routine-delete'),
+                              title: s.planDelete,
+                              destructive: true,
+                              trailing: const SizedBox.shrink(),
+                              onTap: _busy ? null : widget.onDeleted,
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ],

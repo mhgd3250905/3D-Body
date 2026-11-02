@@ -1206,16 +1206,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Same group-colour dot as drill detail, not a bar.
                         Container(
-                          width: 4,
-                          height: compact ? 24 : 30,
-                          margin: const EdgeInsetsDirectional.only(
-                            top: 3,
-                            end: 12,
+                          width: 8,
+                          height: 8,
+                          margin: EdgeInsetsDirectional.only(
+                            top: compact ? 9 : 14,
+                            end: 10,
                           ),
                           decoration: BoxDecoration(
                             color: color,
-                            borderRadius: BorderRadius.circular(2),
+                            shape: BoxShape.circle,
                           ),
                         ),
                         Expanded(
@@ -1274,10 +1275,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           final assists = together.isEmpty
               ? null
               : Padding(
-                  padding: EdgeInsets.fromLTRB(
+                  // Cards run to the screen edge so a cut-off card reads
+                  // as "scrolls sideways".
+                  padding: EdgeInsetsDirectional.fromSTEB(
                     24,
                     compact ? 4 : 8,
-                    24,
+                    0,
                     compact ? 4 : 8,
                   ),
                   child: Column(
@@ -1286,6 +1289,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       SingleChildScrollView(
                         key: const ValueKey('muscle-assist-cards'),
                         scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsetsDirectional.only(end: 14),
                         child: Row(
                           children: [
                             for (final group in together) ...[
@@ -1552,7 +1556,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                RowGroup(
+                FlareListGroup(
                   children: [
                     for (final entry in [
                       (
@@ -1572,7 +1576,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       (
                         'progress',
                         s.progress,
-                        s.moreProgressHint(store.weekTrainingDays),
+                        store.weekTrainingDays == 0
+                            ? s.recordsEmptyAction
+                            : s.moreProgressHint(store.weekTrainingDays),
                         Icons.insights_outlined,
                       ),
                       (
@@ -1582,76 +1588,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         Icons.tune_outlined,
                       ),
                     ])
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                        ),
-                        minTileHeight: 64,
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: FlareColors.raised,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(entry.$4, size: 19),
-                        ),
-                        title: Text(
-                          entry.$2,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        subtitle: Text(
-                          entry.$3,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: FlareColors.dim,
-                          ),
-                        ),
-                        trailing: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: FlareColors.dim,
-                        ),
+                      FlareListRow(
+                        key: ValueKey('more-${entry.$1}'),
+                        leading: FlareRowIcon(entry.$4),
+                        title: entry.$2,
+                        subtitle: entry.$3,
                         onTap: () => Navigator.pop(sheetContext, entry.$1),
                       ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Row(
-                    children: [
-                      Text(
-                        s.playbackSpeed,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: FlareColors.secondary,
-                        ),
+                FlareSection(s.playbackSpeed),
+                FlareListGroup(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: FlareSegmented<double>(
+                        expand: true,
+                        segments: const [
+                          (.25, '0.25×'),
+                          (.5, '0.5×'),
+                          (1.0, '1×'),
+                        ],
+                        selected: _scene.speed,
+                        // Speed applies in place; the sheet stays so the
+                        // new choice is visible, and play resumes on close.
+                        onChanged: (value) {
+                          _scene.setSpeed(value);
+                          unawaited(store.updateSettings(speed: value));
+                          setSheet(() {});
+                        },
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: FlareSegmented<double>(
-                          expand: true,
-                          segments: const [
-                            (.25, '0.25×'),
-                            (.5, '0.5×'),
-                            (1.0, '1×'),
-                          ],
-                          selected: _scene.speed,
-                          // Speed applies in place; the sheet stays so the
-                          // new choice is visible, and play resumes on close.
-                          onChanged: (value) {
-                            _scene.setSpeed(value);
-                            unawaited(store.updateSettings(speed: value));
-                            setSheet(() {});
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1808,31 +1776,34 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   Widget _settingsPage(BuildContext context) {
     final s = context.strings;
-    Widget segmented<T>(
-      List<(T, String)> items,
-      T selected,
-      ValueChanged<T> on,
-    ) => FlareSegmented<T>(segments: items, selected: selected, onChanged: on);
-    Widget line(String label, Widget control) => Padding(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-      child: LayoutBuilder(
-        builder: (context, constraints) => constraints.maxWidth < 440
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: const TextStyle(fontSize: 15)),
-                  const SizedBox(height: 8),
-                  SizedBox(width: constraints.maxWidth, child: control),
-                ],
-              )
-            : Row(
-                children: [
-                  Expanded(
-                    child: Text(label, style: const TextStyle(fontSize: 15)),
+    // Title row with icon, then the control on its own line under the
+    // title (aligned with the title, not the icon). One control height (34).
+    Widget line(String label, IconData icon, Widget control) => Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              FlareRowIcon(icon),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  control,
-                ],
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 44),
+            child: control,
+          ),
+        ],
       ),
     );
     return Column(
@@ -1843,8 +1814,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               children: [
-                SectionTitle(s.appearanceGroup),
-                RowGroup(
+                FlareSection(s.appearanceGroup),
+                FlareListGroup(
                   children: [
                     Semantics(
                       container: true,
@@ -1853,10 +1824,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           '${s.languageLabel} ${languageNames[store.settings.language] ?? s.languageSystem}',
                       onTap: () => _chooseLanguage(context),
                       excludeSemantics: true,
-                      child: FlareRow(
+                      child: FlareListRow(
                         key: const ValueKey('language-setting'),
+                        leading: const FlareRowIcon(Icons.translate_rounded),
                         title: s.languageLabel,
-                        subtitle:
+                        meta:
                             languageNames[store.settings.language] ??
                             s.languageSystem,
                         onTap: () => _chooseLanguage(context),
@@ -1864,48 +1836,45 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     ),
                     line(
                       s.appearanceLabel,
-                      segmented<String>(
-                        [
+                      Icons.contrast_rounded,
+                      FlareSegmented<String>(
+                        expand: true,
+                        segments: [
                           ('system', s.themeSystem),
                           ('dark', s.themeDark),
                           ('light', s.themeLight),
                         ],
-                        store.settings.themeMode,
-                        (value) =>
+                        selected: store.settings.themeMode,
+                        onChanged: (value) =>
                             _result(store.updateSettings(themeMode: value)),
                       ),
                     ),
-                    // Full width, so the label lines up with 语言 and 主题
-                    // instead of centring with the chip block.
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            s.actorBodyLabel,
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                          const SizedBox(height: 8),
-                          ActorBodySelector(
-                            value: store.settings.actorBody,
-                            onChanged: (value) =>
-                                _result(store.updateSettings(actorBody: value)),
-                          ),
-                        ],
+                    line(
+                      s.actorBodyLabel,
+                      Icons.accessibility_new_rounded,
+                      ActorBodySelector(
+                        value: store.settings.actorBody,
+                        onChanged: (value) =>
+                            _result(store.updateSettings(actorBody: value)),
                       ),
                     ),
                   ],
                 ),
-                SectionTitle(s.playbackGroup),
-                RowGroup(
+                FlareSection(s.playbackGroup),
+                FlareListGroup(
                   children: [
                     line(
                       s.speedLabel,
-                      segmented<double>(
-                        const [(.25, '0.25×'), (.5, '0.5×'), (1.0, '1×')],
-                        store.settings.speed,
-                        (value) {
+                      Icons.speed_rounded,
+                      FlareSegmented<double>(
+                        expand: true,
+                        segments: const [
+                          (.25, '0.25×'),
+                          (.5, '0.5×'),
+                          (1.0, '1×'),
+                        ],
+                        selected: store.settings.speed,
+                        onChanged: (value) {
                           _scene.setSpeed(value);
                           unawaited(store.updateSettings(speed: value));
                         },
@@ -1913,14 +1882,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     ),
                     line(
                       s.qualityLabel,
-                      segmented<String>(
-                        [
+                      Icons.high_quality_outlined,
+                      FlareSegmented<String>(
+                        expand: true,
+                        segments: [
                           ('battery', s.battery),
                           ('balanced', s.balanced),
                           ('high', s.high),
                         ],
-                        _quality,
-                        (value) {
+                        selected: _quality,
+                        onChanged: (value) {
                           setState(() => _quality = value);
                           _scene.setQuality(value);
                         },
@@ -1928,17 +1899,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                SectionTitle(s.otherGroup),
-                RowGroup(
+                FlareSection(s.otherGroup),
+                FlareListGroup(
                   children: [
-                    FlareRow(
+                    FlareListRow(
+                      leading: const FlareRowIcon(
+                        Icons.health_and_safety_outlined,
+                      ),
                       title: s.safety,
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
                     if (coachService.configured && aiCoachAvailable(context))
                       _aiUsageRow(),
-                    FlareRow(
+                    FlareListRow(
+                      leading: const FlareRowIcon(Icons.info_outline_rounded),
                       title: s.aboutFlare,
                       subtitle: s.aboutHint,
                       onTap: () => Navigator.of(context).push(
@@ -1964,13 +1939,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     future: coachService.usage.load(),
     builder: (context, snapshot) {
       final t = coachService.usage.totals;
-      final subtitle = !coachService.configured && t.calls == 0
-          ? '未配置 AI · 尚无调用'
-          : '累计调用 ${t.calls} 次 · 输入 ${t.promptTokens} / 输出 ${t.completionTokens} token';
-      return FlareRow(
+      return FlareListRow(
         key: const ValueKey('settings-ai-usage'),
-        title: 'AI 定制用量',
-        subtitle: subtitle,
+        leading: const FlareRowIcon(Icons.auto_awesome_rounded),
+        title: 'AI 定制',
+        subtitle: t.calls == 0 ? '本机还没有用过' : '本机已生成 ${t.calls} 次',
       );
     },
   );

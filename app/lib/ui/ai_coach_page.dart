@@ -666,54 +666,70 @@ class _AiCoachPageState extends State<AiCoachPage> {
   }
 }
 
-class _Disclaimer extends StatelessWidget {
+/// One quiet line (tap to read it all) with a 知道了 — not a floating card.
+class _Disclaimer extends StatefulWidget {
   const _Disclaimer({required this.onAccept});
   final VoidCallback onAccept;
   @override
+  State<_Disclaimer> createState() => _DisclaimerState();
+}
+
+class _DisclaimerState extends State<_Disclaimer> {
+  bool _open = false;
+  @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 14),
-    child: FlareStaticSurface(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Material(
       key: const ValueKey('coach-disclaimer'),
-      padding: const EdgeInsets.fromLTRB(14, 12, 8, 6),
-      radius: 20,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      color: FlareColors.surface,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => setState(() => _open = !_open),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 4, 4, 4),
+          child: Row(
+            crossAxisAlignment: _open
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 2),
+                padding: EdgeInsets.only(top: _open ? 12 : 0),
                 child: Icon(
                   Icons.health_and_safety_outlined,
-                  size: 18,
-                  color: FlareColors.secondary,
+                  size: 16,
+                  color: FlareColors.dim,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  'AI 排的计划只作训练参考，不能代替医生或教练的判断；'
-                  '训练中出现疼痛、麻木或头晕，请立即停止。',
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.45,
-                    color: FlareColors.secondary,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    'AI 排的计划只作训练参考，不能代替医生或教练的判断；'
+                    '训练中出现疼痛、麻木或头晕，请立即停止。',
+                    maxLines: _open ? null : 1,
+                    overflow: _open ? null : TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      height: 1.45,
+                      color: FlareColors.secondary,
+                    ),
                   ),
                 ),
               ),
+              TextButton(
+                key: const ValueKey('coach-disclaimer-ok'),
+                onPressed: widget.onAccept,
+                style: TextButton.styleFrom(
+                  foregroundColor: FlareColors.accentInk,
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Text('知道了'),
+              ),
             ],
           ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              key: const ValueKey('coach-disclaimer-ok'),
-              onPressed: onAccept,
-              style: TextButton.styleFrom(foregroundColor: FlareColors.text),
-              child: const Text('知道了'),
-            ),
-          ),
-        ],
+        ),
       ),
     ),
   );

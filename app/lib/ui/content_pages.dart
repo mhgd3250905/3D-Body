@@ -415,11 +415,15 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: FlareColors.controlBorder),
+            color: FlareColors.accent.withValues(alpha: .14),
           ),
           child: Text(
             '${index + 1}',
-            style: TextStyle(fontSize: 11, color: FlareColors.secondary),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: FlareColors.accentInk,
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -440,19 +444,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FlareNavBar(
-            title: drill.name,
-            onBack: widget.onBack,
-            action: FlareNavIconButton(
-              key: const ValueKey('drill-add-to-plan'),
-              icon: Icons.playlist_add_rounded,
-              tooltip: s.planAddTo,
-              onPressed: () {
-                FlareHaptics.light();
-                widget.onAddToPlan();
-              },
-            ),
-          ),
+          FlareNavBar(title: drill.name, onBack: widget.onBack),
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
@@ -500,15 +492,11 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                         style: TextStyle(color: FlareColors.dim, fontSize: 12),
                       ),
                       const SizedBox(height: 18),
-                      FlareStaticSurface(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _spec(s.spec, drill.prescription),
-                            const Divider(height: 1, indent: 16, endIndent: 16),
-                            _spec(s.equipment, drill.equipment),
-                          ],
-                        ),
+                      FlareListGroup(
+                        children: [
+                          _spec(s.spec, drill.prescription),
+                          _spec(s.equipment, drill.equipment),
+                        ],
                       ),
                       const SizedBox(height: 22),
                       for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
@@ -540,9 +528,36 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             ),
           ),
           FlareBottomAction(
-            child: PrimaryAction(
-              label: s.startTimer,
-              onPressed: widget.onStart,
+            child: Row(
+              children: [
+                SizedBox(
+                  height: FlareBottomAction.buttonHeight,
+                  child: FilledButton.tonalIcon(
+                    key: const ValueKey('drill-add-to-plan'),
+                    style: FilledButton.styleFrom(
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      backgroundColor: FlareColors.accent.withValues(
+                        alpha: .14,
+                      ),
+                      foregroundColor: FlareColors.accentInk,
+                    ),
+                    onPressed: () {
+                      FlareHaptics.light();
+                      widget.onAddToPlan();
+                    },
+                    icon: const Icon(Icons.playlist_add_rounded, size: 20),
+                    label: Text(s.planAddTo),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PrimaryAction(
+                    label: s.startTimer,
+                    onPressed: widget.onStart,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -182,6 +182,9 @@ abstract final class FlareColors {
   static Color get muted => palette.muted;
   static Color get success => palette.success;
   static Color get warning => palette.warning;
+
+  /// Destructive actions (delete). Same red in both themes.
+  static const Color danger = Color(0xffe5484d);
   static Color get text => palette.text;
   static Color get secondary => palette.secondary;
   static Color get dim => palette.dim;
