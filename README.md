@@ -1,5 +1,17 @@
 # Flare Anatomy Studio
 
+## 当前主线与内测交付（2026-11-04 对齐）
+
+当前产品源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含基线修复、共享 SDK 聊天/动作库/训练接入，以及 PR #124 / #125 对应的 UI 与 SDK 更新。四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`（发行标签 `ugk_trainer-v0.6.0`）；实际包版本、提交脉络和交付身份见[版本台账](app/docs/version-ledger.md)。首页与页面控件已统一，计划封面、记录与里程碑、14 语 UI 文案和浅色转场阴影已更新；这些源码事实不代表真机视觉验收。
+
+训练浏览、详情、媒体和播放器由共享 SDK 提供，固定范围 211 项、随包 WebP 封面；视频首次使用按需下载，缓存命中后复用。公共包标记为测试素材，`releaseEligible=false`，不能据素材 ready 数量宣称动作 QA 或发布完成。R17 首页动作、七形象及历史资产来源保持；旧 51 本地视频属于历史包，本阶段已从 App 打包清单移除。配置与使用见 [app/README.md](app/README.md)。
+
+最新内部包为 **1.0.12 / 实际 versionCode 2017**，对应上述产品源码；源码 `pubspec.yaml` 仍 **1.0.10+15**。11 月 3 日仅出包、未安装；11 月 2 日旧 SDK 包曾安装为 2017，不能混称最新包已上机。测试来源与排除范围见[验证记录](app/docs/verification.md)，真机、完整 AI 往返和 iOS 等见[待验收台账](app/docs/development-roadmap.md)。本次仅整理文档，不构建、安装或发布。
+
+## 历史阶段记录
+
+以下按原时点保留；其中“当前”“待合入”和安装身份均属于对应历史阶段，最新状态以上文及三份台账顶部为准。
+
 2026-10-24，会话迁移 `4b5f70d` 已经用户同意合入并推送 `master`。随后从新 master 建立 `codex/fix-baseline-tests`，修复 26 项基线失败：全量 361 通过、0 失败、1 项原 opt-in 跳过，分析无问题；修复候选待单独审阅，尚未合入或推送。[修复、逐项对照与证据](app/docs/baseline-fixes-2026-10-24.md)。
 
 2026-10-24，共用聊天/训练接入已更新为正式 `ugk_coach-v0.4.2`、`ugk_trainer-v0.2.2`、`ugk_coach_ui-v0.1.1`，全部固定 `3302d62`；153 项相关测试通过，原两项 SDK 窄屏大字失败已修复，本机编码适配已删除。验证通过后按用户授权合入推送 `master`，`release/1.0` 保持。[修复版接入与证据](app/docs/sdk-shared-ui-r2-2026-10-24.md)。本轮未安装手机，下方已安装 +16 的身份保持。
@@ -223,8 +235,8 @@ node app/tools/verify-v41.mjs
 
 | 主题 | 当前来源 |
 | --- | --- |
-| 当前 AI / Trainer SDK 与使用配置 | [SDK 0.2.0 / 0.4.1 接入](app/docs/sdk-trainer-020-2026-10-23.md)；[App 使用与配置](app/README.md#ai-coach)；[PR122 历史合入记录](app/docs/pr122-ai-coach-integration-2026-10-20.md) |
-| 当前 Liquid Glass 源码与手机内测包 | [页面实现与合入](app/docs/liquid-glass-rollout-2026-10-24.md)；[1.0.11+16 安装及阶段保存](app/docs/liquid-glass-android-test-2026-10-24.md) |
+| 当前 AI / Trainer SDK 与使用配置 | [当前 SDK / 主线身份](app/docs/version-ledger.md)；[App 使用与配置](app/README.md#ai-coach)；0.2 接入与 PR122 文档仅保留历史 |
+| 当前 UI 源码、内测包与设备边界 | [近期更新与包台账](app/docs/version-ledger.md)；[验证及 source state](app/docs/verification.md)；10 月 Liquid Glass 交付为历史记录 |
 | 当前App动作与显示契约 | [app/docs/motion-v42.md](app/docs/motion-v42.md)；[L52交付](app/docs/l52-plan-skip-2026-10-17.md)；[R17用户认可](app/docs/l50-r17-acceptance-2026-10-17.md) |
 | 当前代码检查点、版本/安装包及发布观察 | [app/docs/version-ledger.md](app/docs/version-ledger.md) |
 | 当前M0–M7进度与待验收项 | [app/docs/development-roadmap.md](app/docs/development-roadmap.md) |

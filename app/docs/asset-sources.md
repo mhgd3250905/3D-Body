@@ -1,6 +1,16 @@
 # 资产来源与复现
 
-2026-10-17迁移说明：动作制作、渲染与人物模型工具已归 Pose-Hub；下文来源、制作命令及批次证据保留历史事实，后续修改按[迁移边界](../../docs/pose-hub-migration-2026-10-17.md)到 Pose-Hub 另建版本。FlareLab 场景/模型消费副本与现有51媒体保留。
+## 当前消费来源（2026-11-04）
+
+功能源码 `7eaccf7cf87cf7468b9df838680dab9edf515d27` 的首页 / 肌群详情仍消费原 Snow 同源 R17 烘焙模型，七形象、署名和历史冻结批次保持。训练库、AI 和训练播放器已改为共享公共目录与 SDK 媒体，四个 SDK 包固定 `693cbc02cdf284163409868e117e438515c6a8d8`。包版本与安装分账见[版本台账](version-ledger.md)，验证及设备限制见[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+
+公共交付目录为 `assets/public_media/catalog.json`（219条、`readyCount=219`），语义目录为 `assets/public_media/catalog/catalog.json`（0.3.0、142条）；来源 commit 为 `1fdd117d8e29bb0efcc8c57cb23dc1d9dc7422dd`，由 `lib/data/flare_public_catalog.dart` 交 SDK 适配器校验。`lib/data/flare_action_scope.dart` 固定211个授权 ID，排除8项partial；授权范围、交付条数、语义定义条数和随包211张 WebP 封面分别计数，不能互换。公共素材仍标记 `ready-test-unreviewed`、`releaseEligible=false`，不是全部动作已通过最终 QA 或具备发布资格。
+
+封面位于 `assets/public_posters/`，计划卡和训练卡统一引用。视频通过 `lib/data/flare_public_media.dart` 配置的 SDK `TrainingMediaRepository`，从固定公共媒体 release 按需下载并缓存；首次下载需网络，缓存命中可复用，不把随包封面或缓存能力写成全部视频已离线提供。Flare 不在本阶段重渲或上传媒体，既有许可、来源及历史制作记录继续保留。
+
+## 历史来源与冻结批次
+
+2026-10-17迁移说明：动作制作、渲染与人物模型工具已归 Pose-Hub；下文来源、制作命令及批次证据保留历史事实，后续修改按[迁移边界](../../docs/pose-hub-migration-2026-10-17.md)到 Pose-Hub 另建版本。FlareLab 场景/模型消费副本与旧51媒体的历史来源保留；它们不再描述当前共享训练媒体的打包方式。
 
 ## L50 R17循环起手修复（2026-10-17）
 
@@ -22,7 +32,7 @@
 
 原卡通教练和原PR训练人台资产继续保留。App保存的训练人台选项加载Snow同源的collarfix-20261013派生，修正旧导出着色并恢复training-human-v2已有的肩颈内收；22骨/44轨v41与材质来源保持，无新模型许可或收费资产。source/gzip输入输出SHA及验证见 [L44记录](pr109-l44-upgrade-2026-10-13.md)。独立解剖人台及Snow/Human Base Meshes/Three.js署名保留。
 
-51项正式训练视频与封面现选自已保存的training-human-v2-library-footfix-20261013，含瑞士球背伸鞋向修正。原媒体另存且Git基线保留，manifest同时记录旧媒体、新来源和原QA；选中素材23ready/28review，不冒称所有姿态通过。当前署名见assets/licenses/Drill-media-ATTRIBUTION.md，下方旧阶段来源保持历史。
+该历史批次的51项训练视频与封面选自已保存的training-human-v2-library-footfix-20261013，含瑞士球背伸鞋向修正。原媒体另存且Git基线保留，当时manifest记录旧媒体、新来源和原QA；选中素材23ready/28review，不冒称所有姿态通过。历史署名见assets/licenses/Drill-media-ATTRIBUTION.md，下方旧阶段来源保持历史。
 
 2026-10-12 整合保留 iOS S4 的来源说明：2026-10-10 用户在 iOS 发布流程确认训练图与品牌图具备发布权，该记录来自 `ios/main` 历史文档。本轮不新增法律核验，也不改变模型、软件及当前51项训练视频各自的来源与许可证；关于页继续保留 Snow / Human Base Meshes / Three.js 署名。
 

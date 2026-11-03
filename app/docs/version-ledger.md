@@ -1,5 +1,48 @@
 # Flare 版本管理台账
 
+## 当前：共享 SDK、UI 整合与内测包（2026-11-04 对齐）
+
+本次整理绑定产品源码 **`master 7eaccf7cf87cf7468b9df838680dab9edf515d27`**。PR #124 的 UI 更新（至 `f501498`）与 PR #125 的 SDK 更新已在该主线源码中；本次只修改文档，后续文档提交不改变此产品源码身份。基线修复 `4f091acf7e557f125ef3527470f53485066ecb3c` 也已是该 HEAD 的祖先，旧“尚未合入”保留为当时交审记录。
+
+### 更新整理
+
+| 主题 / 提交 | 已核对的源码变化 |
+| --- | --- |
+| 基线修复 `4f091ac` | 10 月 24 日布局、流程与过时测试修复已纳入当前主线；原 361 项结果属于该阶段，不能直接算最新源全量复测 |
+| 共享聊天 `1be728f` | 改由 `ugk_coach_chat` 的 `CoachChatController` / `CoachChatPage` 管理对话；App 保留生命周期、品牌、安全上下文、持久化与导航回调，移除原宿主会话/问题实现 |
+| 动作库与媒体 `eb3b6e8` | 浏览、详情、媒体和训练入口统一使用 SDK；固定 211 项 scope，封面本地化为 WebP，视频按需获取、缓存及训练前预取；旧 `app/assets/drill_media/` 的 51 MP4 已从当前 Git/打包素材移除，历史包与制作来源保留 |
+| 计划与执行 `d83f5b6`、`8f5dde5` | 计划解析覆盖原 Flare catalog ∪ SDK 共享 scope；Coach 和播放器共用节奏/SessionBuilder，接推荐换侧余量；完整 SDK 结果保存、相同 session 结果重试幂等、冲突拒绝 |
+| UI `ea5cfcd` 至 `f501498` | 统一导航/底部操作、20pt 页面边距、r12 控件与 r16 表面；首页普通 Flare 标题、玻璃播放条及 8 段进度；多语阶段名所需双行高度稳定；计划/详情/设置/更多/安全/欢迎页统一；训练记录、16 周热图、里程碑与一次庆祝状态保存 |
+| 计划封面 `195879b` | 从已删除的旧 JPG 回退路径改为 `assets/public_posters/<id>.webp`，计划卡和行封面统一 |
+| 浅色与本地化 `1108d91`、`ec46b2c`、`3118372` | 14 语 UI 文案及选择器数量复数；浅色表面和页面转场去投影。历史大字号适配代码在主线中，本轮按用户要求不再进行大字号/小屏幕测试或修订 |
+| 旧入口清理 `211cc7d` | 删除闲置 `TrainingTimerPage` / `PlanRunPage`、14 语中的 16 个专属字符串和仅覆盖旧入口的测试；iOS workflow 测试源码改查 SDK trainer，未据此记为 iOS 实机通过 |
+
+### 依赖、目录与包身份
+
+四项依赖的 git ref / resolved-ref 均为 **`693cbc02cdf284163409868e117e438515c6a8d8`**；对应发行标签 `ugk_trainer-v0.6.0`。实际 lock 包版本为 `ugk_coach 0.8.0`、`ugk_coach_chat 0.1.0`、`ugk_coach_ui 0.4.0`、`ugk_trainer_runtime 0.1.0`，不能把发行标签当成 runtime 包版本。宿主配置见 [App 使用说明](../README.md#ai-coach)。
+
+公共交付目录为 `app-test-pack-r1`，219 条素材、`readyCount=219`；语义目录版本 0.3.0、142 项定义，来源 commit `1fdd117d8e29bb0efcc8c57cb23dc1d9dc7422dd`；浏览/Coach/训练授权范围为 211，排除 8 项 partial。三种数量含义不同。交付标记 **`releaseEligible=false` / `ready-test-unreviewed`**，素材就绪不等于动作 QA 或正式发布验收。
+
+| 身份 | 事实与边界 |
+| --- | --- |
+| 源码版本 | `app/pubspec.yaml` 仍 **1.0.10+15**，没有因构建覆盖而修改 |
+| 11 月 3 日最新内部包 | **1.0.12 / 实际 versionCode 2017**，产品源码 `7eaccf7`；`--split-per-abi` 的 arm64 将 build-number 17 映射为 2017，不能写成实际 +17 |
+| 包文件（本机保留） | `output/releases/Flare-Master-7eaccf7-SDK060-1.0.12-vc2017-20261103-arm64.apk`；原会话记录 92,542,112 字节，SHA-256 `5FC5D4DC5FCA0D434EE1085D8665956E3476F6512D173ED703E691A2DF1A3517` |
+| 原会话出包核对 | 仅 arm64-v8a、0 MP4、211 WebP；原内测签名、16 KiB ZIP 对齐通过。默认上传签名与原内测签名不同，不可直接混用；本次未读取密钥或重新验包 |
+| 安装与验收 | **11 月 3 日仅出包、未安装**，用户安排真机验收；11 月 2 日旧 SDK 同源码包曾以 2017 保留数据安装，随后实际 +17 降级被系统拒绝，详见[历史设备记录](sdk-shared-experience-local-2026-11-02.md)。不把旧包启动观察算作最新包通过 |
+
+包数据来自已恢复的原会话出包回执，本次未重新读取 APK、日志或私有配置。原会话完整产物引用为 `output/master-sdk060-package-20261103/receipt.json`；验证来源、过滤范围及本次文档检查见[验证记录](verification.md)，待办见[实施路线](development-roadmap.md)。无商店上传、公开部署或新发布。
+
+### 保存与保留范围
+
+文档收束基线采用旧台账明确记录的迁移检查点 `4b5f70dbdaf37fbec961822870fb4eedc29196dd`。到产品源码 HEAD 共 33 提交、437 路径；本次只对齐入口、台账及动作/资产说明，不改运行代码、SDK、R17 或媒体内容。初始工作区干净，后续只按明确文档路径提交并普通 push `origin/master`。
+
+3 份原 stash 均保留，未应用：`98ec04e344c16a4353b04f20e407d4e5ab30c458`（SDK 验证段）、`ba7d24d34d9f73be510d4606f0e6f92eecf412c3`（UI 验证段）、`7c2cee83780df151a8b97d08470e5c95c6716760`（更早用户文档）。本地 `codex/ui-polish-local-e000d72` 的历史 integration/docs 提交保留，不记为当前主线或已执行的 iOS 验证；`feat/website-v2` 不纳入本次收束。
+
+## 历史记录说明
+
+以下记录按原日期保留；“当前”“尚未合入”、+16/51 媒体等均为当时状态，当前身份以上节为准。历史 L50/L52 有限用户认可不自动覆盖最新 SDK/UI 包。
+
 ## 迁移已合入、26 项基线修复单独待审（2026-10-24）
 
 会话迁移 `4b5f70dbdaf37fbec961822870fb4eedc29196dd` 已经用户同意快进合入并推送 master，远端回读一致。其后从新 master 建立 `codex/fix-baseline-tests`，真实布局/文本/可见性问题修代码，过时测试按当前正确行为更新；全量 361 通过、0 失败、1 项原 opt-in 跳过，分析和锁文件检查通过。[独立修复与证据](baseline-fixes-2026-10-24.md)。修复分支尚未合入/推送。源码 +15、既有手机 +16/R17 身份、HipLab、release/1.0、原素材与个人数据保持，无新安装或发布。

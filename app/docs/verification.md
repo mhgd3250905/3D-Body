@@ -1,5 +1,48 @@
 # App 验证记录
 
+## 当前阶段：文档收束与证据边界（2026-11-04）
+
+### Preflight
+
+| 字段 | 实际核对 |
+| --- | --- |
+| 收束 scope | 10 月 24 日迁移检查点后到 11 月 3 日主线的 SDK/媒体/训练/UI 更新、配置、包身份和待验台账；本次只改文档，不做设备/媒体制作/依赖升级或发布 |
+| baseline | `4b5f70dbdaf37fbec961822870fb4eedc29196dd`，ref `4b5f70d`；依据根 README 与 version-ledger 已明确记录的迁移合入检查点，并非按最近提交猜选 |
+| HEAD / source state | `7eaccf7cf87cf7468b9df838680dab9edf515d27`；`git rev-parse --show-toplevel` 确认为 `E:/AII-3D/3D-Body`，分支 master |
+| 基线验证命令 | `git rev-parse --verify '4b5f70d^{commit}'` 返回上述 SHA；`git merge-base --is-ancestor 4b5f70d HEAD` 退出 0 |
+| stage delta | `git log --reverse --format="%h %ad %s" --date=short 4b5f70d..HEAD` / `git diff --name-status 4b5f70d..HEAD`：33 提交、437 路径（436 app、1 根 README）；资产319、本地化28、运行代码46、测试33、配置2、文档/证据9 |
+| 完整状态与归属 | `git status --porcelain=v1 --untracked-files=all` 完整输出为空：staged/unstaged/deleted/renamed/untracked 均0；随后文档改动归本次 Agent，未纳入3份原 stash、旧本地分支或产物 |
+| 证据适用性 | `git diff 7eaccf7cf87cf7468b9df838680dab9edf515d27 HEAD -- app/lib app/pubspec.yaml app/pubspec.lock app/test app/assets` 为空；产品源与接力记录一致，本次后续增量仅文档，不扩大历史测试或设备结论 |
+| alignment findings | 待合入状态落后、SDK版本/controller归属过时、51本地媒体/离线承诺失配、首页UI及最新包/安装身份滞后；分别按已提交源码与原会话交付记录修正文档，历史事实保留 |
+
+入口一跳发现并实际核对的 current 来源：`AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`（项目约定/配置入口）；`app/docs/version-ledger.md`（版本/包）；本文（验证）；`app/docs/development-roadmap.md`（实施/待验）；`app/docs/motion-v42.md`（动作契约）；`app/docs/asset-sources.md`（资产来源）。这些职责由根 README 的“当前文档与历史记录”及 App AGENTS/README 明确指定。源码/配置主题核对 pubspec/lock、共享聊天/媒体/目录/计划/结果保存与 UI 对应路径；目录元数据及 scope 数量按源码分别记录。
+
+Archive/history 来源：`app/docs/sdk-trainer-020-2026-10-23.md`、`app/docs/liquid-glass-rollout-2026-10-24.md`、`app/docs/liquid-glass-android-test-2026-10-24.md`（入口链接的旧阶段记录），以及 `app/docs/sdk-shared-experience-local-2026-11-02.md`（本阶段 delta 中的旧 SDK/设备记录）。均按日期保留，不代替当前 SDK、包或设备验收事实。
+
+### 11 月 3 日原会话结果摘要
+
+以下来自恢复成功的 Cockpit relayContext，产品 source state 为完整 `7eaccf7cf87cf7468b9df838680dab9edf515d27`：pub get 成功、锁文件未变；分析无问题；`app/test` 排除 81 项用户明确不做的大字号/小屏幕验证后 **246 通过 / 0 失败**，计划保真 13 项另跑通过（已含于246，不能相加）；`test/ui` 相同过滤范围 **128 通过 / 0 失败**（也是子集，不能相加）。这是过滤后的范围通过，不是未过滤全量通过，未删除测试。
+
+原会话命令族为 `flutter pub get`、`flutter analyze`、`flutter test`（过滤后 app/test 与 test/ui），Flutter 路径 `E:\DevCaches\flutter-3.44.7-hiplab\bin\flutter.bat`。完整测试参数/过滤表达式未随接力文本带回，故本段保留为**历史报告，不作为本次重新执行的测试证明**；过滤清单引用 `output/master-align-7eaccf7-20261103/test-filter.txt`。本次未读取该目录日志/构建产物，也不把测试摘要补写为真机通过。
+
+同源最新 arm64 内部包的构建、签名、内容及16 KiB核对由原会话报告，身份与SHA见[版本台账](version-ledger.md)。最新包未安装，当前不新增 Web/Android/iOS/视觉/性能验收。本次无需因纯文档对齐重复 Flutter 全量测试、构建或占用手机。
+
+### 保留的分支证据与已更新边界
+
+只读查看两个原 stash 的 `app/docs/verification.md` diff，未应用 stash：UI `695338a` 当时报告3文件14项通过、转场投影待修；SDK `2b76439` 当时报告过滤后246通过、仅分支推送。两者的“未合入master”和 UI 阴影待修均是历史时点；现主线已有 `3118372` 去浅色转场阴影与 `7eaccf7` 整合，不能照搬旧状态。较早11月2日322通过/4项SDK大字号失败同样只代表旧源，不证明新源修复或复现这4项失败。
+
+本次必要检查仅为已知源码/配置对照、文档事实和新改链接目标检查、`git diff --check`、明确暂存路径及完整Git状态/HEAD复核。最终结果记录于下方，不把文档检查当产品 QA。
+
+### 本次实际检查结果
+
+2026-11-04，产品 source state 仍为 `7eaccf7cf87cf7468b9df838680dab9edf515d27` 加本次9份已归属 Markdown 改动。内联 Python（`python -`）检查完整 porcelain 状态只含这9份 unstaged 文档、0 staged / untracked；新增/修改行的37个本地链接文件目标均存在，UTF-8读取通过，AI锚点仅1个；pubspec版本与lock的4项resolved-ref一致。另按JSON读取核对交付219、语义142与tracked WebP211，测试素材不可发布标记保留。独立只读复核发现的两处数量混用已更正。
+
+`git diff --check` 退出0；`git diff --exit-code -- app/lib app/assets app/pubspec.yaml app/pubspec.lock app/test app/integration_test app/scene src public` 退出0，运行源码/配置/测试/资产未变。远端 `git ls-remote --heads origin master` 在提交前返回产品SHA `7eaccf7cf87cf7468b9df838680dab9edf515d27`，origin确认是本项目，master上游为origin/master。原stash及本地历史分支保留。本次没有运行Flutter测试、构建、安装或真实AI调用；文档提交及推送结果以Git和Cockpit实际回执为准。
+
+## 历史阶段验证
+
+以下保留原命令、结果和原时点范围；不得将其计数累计或改写为最新 HEAD 的新执行结果。
+
 2026-11-02，共享 SDK 本机复核：App 分析无问题，全量测试 322 通过 / 4 项 SDK 1.5 倍字体溢出失败，正常字号 14 语浅深通过，无本轮删除用例。用户收窄设备范围为安装与基本核对，细节由用户验收。[修订、出包及设备记录](sdk-shared-experience-local-2026-11-02.md)。
 
 ## 26 项基线修复候选验证（2026-10-24）
