@@ -5,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import 'drill_media.dart';
 import 'app_glass.dart';
 import 'motion.dart';
-import 'page_kit.dart' show FlareWordSafeText;
+import 'page_kit.dart' show FlareSection, FlareWordSafeText;
 import 'theme.dart';
 
 extension FlareStrings on BuildContext {
@@ -44,10 +44,8 @@ class SectionTitle extends StatelessWidget {
   const SectionTitle(this.text, {super.key});
   final String text;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 22, bottom: 10, left: 2),
-    child: Semantics(header: true, child: Eyebrow(text)),
-  );
+  // Same header as the page kit's [FlareSection].
+  Widget build(BuildContext context) => FlareSection(text);
 }
 
 /// The one primary action of a page. Full width, accent, generous height.
@@ -75,7 +73,9 @@ class PrimaryAction extends StatelessWidget {
       height: height,
       child: FilledButton(
         style: FilledButton.styleFrom(
-          shape: const StadiumBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           // Disabled stays on-brand and legible: a soft accent wash with
           // accent ink, not Material's flat grey-on-grey.
           disabledBackgroundColor: FlareColors.accent.withValues(alpha: .16),
@@ -182,7 +182,7 @@ class RowGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FlareStaticSurface(
     child: ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(16),
       child: Material(
         type: MaterialType.transparency,
         child: Column(
@@ -329,7 +329,10 @@ class DrillTile extends StatelessWidget {
     child: RepaintBoundary(
       child: Material(
         color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(18),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: FlareColors.hairline, width: .5),
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -398,7 +401,10 @@ class DrillCard extends StatelessWidget {
   Widget build(BuildContext context) => RepaintBoundary(
     child: Material(
       color: FlareStaticSurface.colorOf(context),
-      borderRadius: BorderRadius.circular(22),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: FlareColors.hairline, width: .5),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -786,26 +792,13 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                         decoration: BoxDecoration(
                           color: FlareColors.palette.segmentThumb,
                           borderRadius: BorderRadius.circular(8),
+                          // Light: hairline rim only, no drop shadow.
                           border: dark
                               ? null
                               : Border.all(
-                                  color: const Color(0x0a000000),
+                                  color: const Color(0x14000000),
                                   width: .5,
                                 ),
-                          boxShadow: dark
-                              ? null
-                              : const [
-                                  BoxShadow(
-                                    color: Color(0x1f000000),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 3),
-                                  ),
-                                  BoxShadow(
-                                    color: Color(0x0a000000),
-                                    blurRadius: 1,
-                                    offset: Offset(0, 1),
-                                  ),
-                                ],
                         ),
                       ),
                     ),
@@ -912,14 +905,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                         ? FlareColors.palette.segmentThumb
                         : null,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: i == _selectedIndex && !dark
-                        ? const [
-                            BoxShadow(
-                              color: Color(0x14000000),
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
-                            ),
-                          ]
+                    border: i == _selectedIndex && !dark
+                        ? Border.all(color: const Color(0x14000000), width: .5)
                         : null,
                   ),
                   child: Row(

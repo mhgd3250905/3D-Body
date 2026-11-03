@@ -951,15 +951,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
+          // 48pt targets with their 40pt squares on the 20pt content margin.
           padding: EdgeInsets.fromLTRB(
-            12,
+            16,
             (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
-            12,
+            16,
             10,
           ),
           child: Row(
             children: [
-              FlareGlassIconButton(
+              FlareGlassSquareButton(
                 label: detail == null ? s.plans : s.returnToMotion,
                 icon: detail == null
                     ? Icons.playlist_play_rounded
@@ -996,13 +997,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 ),
               ),
               if (detail == null)
-                FlareGlassIconButton(
+                FlareGlassSquareButton(
                   label: s.more,
                   icon: Icons.more_horiz_rounded,
                   onPressed: _showMore,
                 )
               else
-                const SizedBox(width: 44),
+                const SizedBox(width: 48),
             ],
           ),
         ),
@@ -1103,7 +1104,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               ),
                             if (detail == null)
                               Positioned(
-                                right: 16,
+                                right: 20,
                                 bottom: box.maxWidth < 380 ? 228 : 18,
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
@@ -1111,39 +1112,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         ? box.maxWidth * .46
                                         : box.maxWidth - 218,
                                   ),
-                                  child: TextButton.icon(
-                                    key: const ValueKey('home-muscle-hint'),
-                                    onPressed: _scene.playing
-                                        ? _scene.pause
-                                        : _showMuscles,
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: FlareColors.secondary,
-                                      backgroundColor: FlareColors.control,
-                                      side: BorderSide(
-                                        color: FlareColors.controlBorder,
-                                        width: .5,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                      ),
-                                      minimumSize: const Size(0, 44),
-                                      shape: const StadiumBorder(),
-                                    ),
-                                    icon: Icon(
-                                      _scene.playing
-                                          ? Icons.pause_rounded
-                                          : Icons.touch_app_outlined,
-                                      size: 12,
-                                    ),
-                                    label: Text(
-                                      _scene.playing
-                                          ? s.playingHint
-                                          : s.pausedHint,
-                                      style: const TextStyle(fontSize: 11),
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
+                                  child: _homeHint(context),
                                 ),
                               ),
                           ],
@@ -1247,7 +1216,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     (compact ? 16 : 20) +
                     (compact ? 8 : 16);
           final content = Padding(
-            padding: EdgeInsets.fromLTRB(24, compact ? 2 : 10, 24, 0),
+            padding: EdgeInsets.fromLTRB(20, compact ? 2 : 10, 20, 0),
             child: FadeSlideIn(
               key: ValueKey('detail-${detail.id}'),
               delay: FadeSlideIn.stagger(2, step: 40),
@@ -1418,95 +1387,126 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  double _transportHeightFor(BuildContext context) =>
-      (MediaQuery.textScalerOf(context).scale(13) * 1.15 * 2 + 42)
-          .clamp(72, double.infinity)
-          .toDouble();
+  // ~72pt: 12pt padding around one 48pt row (phase line + compact timeline).
+  // A locale whose longest phase name wraps at this width gets a second
+  // line for every phase, so the bar (and the 3D inset) stays put while
+  // playing.
+  double _transportHeightFor(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final lines = _transportNameLines(context);
+    return (scaler.scale(13) * 1.25 * lines + 32 + 24)
+        .clamp(72, double.infinity)
+        .toDouble();
+  }
+
+  String? _nameLinesKey;
+  int _nameLines = 1;
+
+  TextStyle _phaseTextStyle(BuildContext context) =>
+      DefaultTextStyle.of(context).style.merge(
+        const TextStyle(
+          fontSize: 13,
+          height: 1.25,
+          fontWeight: FontWeight.w600,
+        ),
+      );
+
+  int _transportNameLines(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final style = _phaseTextStyle(context);
+    final names = [for (final p in catalog.phases) p.name];
+    final key =
+        '$width|${scaler.scale(13)}|${style.fontFamily}|${names.join('|')}';
+    if (key == _nameLinesKey) return _nameLines;
+    final number = TextPainter(
+      text: TextSpan(
+        text: '00',
+        style: style.copyWith(
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+      ),
+      textScaler: scaler,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    // 20 margins, 12 padding, 48 play, 16 gap, number, 6 gap.
+    final available = width - 40 - 24 - 48 - 16 - number.width - 6;
+    number.dispose();
+    var lines = 1;
+    for (final name in names) {
+      final painter = TextPainter(
+        text: TextSpan(text: name, style: style),
+        textScaler: scaler,
+        textDirection: Directionality.of(context),
+        maxLines: 2,
+      )..layout(maxWidth: available.clamp(1, double.infinity).toDouble());
+      if (painter.computeLineMetrics().length > 1) lines = 2;
+      painter.dispose();
+      if (lines == 2) break;
+    }
+    _nameLinesKey = key;
+    return _nameLines = lines;
+  }
 
   Widget _transport(BuildContext context, Phase phase) {
     final s = context.strings;
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        16,
+        20,
         0,
-        16,
+        20,
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
       ),
       child: FlareGlassBar(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.all(12),
         child: SizedBox(
-          height: _transportHeightFor(context),
+          height: _transportHeightFor(context) - 24,
           child: Row(
             children: [
-              SizedBox(
-                width: 75,
+              _roundControl(
+                label: _scene.playing ? s.pause : s.play,
+                icon: _scene.playing
+                    ? Icons.pause_rounded
+                    : Icons.play_arrow_rounded,
+                diameter: 48,
+                solid: !_scene.playing,
+                onTap: () {
+                  FlareHaptics.light();
+                  _scene.playing ? _scene.pause() : _scene.play();
+                },
+              ),
+              const SizedBox(width: 16),
+              Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _roundControl(
-                      label: _scene.playing ? s.pause : s.play,
-                      icon: _scene.playing
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      diameter: 48,
-                      solid: !_scene.playing,
-                      onTap: () {
-                        FlareHaptics.light();
-                        _scene.playing ? _scene.pause() : _scene.play();
-                      },
-                    ),
-                    const SizedBox(height: 4),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 75,
-                        maxHeight: 22,
-                      ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          phase.source.toString().padLeft(2, '0'),
                           style: TextStyle(
-                            fontSize: 11,
-                            color: FlareColors.dim,
+                            color: FlareColors.accentInk,
+                            fontSize: 13,
+                            height: 1.25,
+                            fontWeight: FontWeight.w600,
                             fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Row(
-                        children: [
-                          Text(
-                            phase.source.toString().padLeft(2, '0'),
-                            style: TextStyle(
-                              color: FlareColors.accentInk,
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            phase.name,
+                            key: const ValueKey('home-phase-name'),
+                            maxLines: 2,
+                            style: const TextStyle(
                               fontSize: 13,
+                              height: 1.25,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              phase.name,
-                              key: const ValueKey('home-phase-name'),
-                              maxLines: 2,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                height: 1.15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     Expanded(
                       child: MotionTimeline(
@@ -1574,6 +1574,70 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     ),
   );
 
+  /// 「点选肌群」: the home-glass control (r12, 40pt, hairline rim, blur
+  /// over the stage), inside a 48pt tap target, matching the top bar.
+  Widget _homeHint(BuildContext context) {
+    final s = context.strings;
+    final playing = _scene.playing;
+    final onTap = playing ? _scene.pause : _showMuscles;
+    final label = playing ? s.playingHint : s.pausedHint;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        key: const ValueKey('home-muscle-hint'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Pressable(
+          scale: .95,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Center(
+              widthFactor: 1,
+              child: FlareHipGlassSurface(
+                radius: 12,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 28),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        playing
+                            ? Icons.pause_rounded
+                            : Icons.touch_app_outlined,
+                        size: 15,
+                        color: FlareColors.secondary,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.25,
+                            fontWeight: FontWeight.w500,
+                            color: FlareColors.secondary,
+                          ),
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showMore() async {
     if (_sheetOpen) return;
     _sheetOpen = true;
@@ -1605,7 +1669,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheet) => SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1742,7 +1806,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1768,7 +1832,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         InkWell(
                           onTap: () => setSheet(() => expanded = true),
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
+                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
                             child: Row(
                               children: [
                                 MuscleThumbnailStack(
@@ -1805,7 +1869,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ),
                       if (expanded) ...[
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Divider(height: 20),
                         ),
                         for (final (index, other) in others.indexed)
@@ -2256,9 +2320,9 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: FlareColors.hairline, width: .5),
-        boxShadow: lift <= 0
+        boxShadow: lift <= 0 || !FlareColors.palette.isDark
             ? null
             : [
                 BoxShadow(
@@ -2365,7 +2429,8 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
   );
 }
 
-/// A compact wordmark with one accessible name and a teal brand accent.
+/// Plain two-line title: "Flare" 17 semibold over the subtitle in 12 grey
+/// with a small teal dot. One accessible name.
 class _HomeWordmark extends StatelessWidget {
   const _HomeWordmark({required this.label});
 
@@ -2377,47 +2442,54 @@ class _HomeWordmark extends StatelessWidget {
     final teal = Theme.of(context).brightness == Brightness.dark
         ? const Color(0xff75dfd0)
         : const Color(0xff16776f);
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: parts.first,
-            style: TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.w800,
-              fontStyle: FontStyle.italic,
-              letterSpacing: .3,
-              color: FlareColors.text,
-              decoration: TextDecoration.underline,
-              decorationColor: teal.withValues(alpha: .65),
-              decorationThickness: 2,
-            ),
-          ),
-          if (parts.length > 1) ...[
-            TextSpan(
-              text: ' · ',
+    final subtitle = parts.skip(1).join(' · ');
+    return Semantics(
+      label: label,
+      header: true,
+      child: ExcludeSemantics(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              parts.first,
+              maxLines: 1,
+              softWrap: false,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: teal,
-              ),
-            ),
-            TextSpan(
-              text: parts.skip(1).join(' · '),
-              style: TextStyle(
-                fontSize: 12,
+                fontSize: 17,
+                height: 1.25,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-                color: FlareColors.secondary,
+                color: FlareColors.text,
               ),
             ),
+            if (subtitle.isNotEmpty)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 5,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: teal,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.3,
+                      fontWeight: FontWeight.w500,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                ],
+              ),
           ],
-        ],
+        ),
       ),
-      semanticsLabel: label,
-      maxLines: 1,
-      softWrap: false,
-      textAlign: TextAlign.center,
     );
   }
 }

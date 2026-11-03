@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_glass.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -13,7 +14,8 @@ import 'theme.dart';
 /// centred even when only one side has a control.
 const double _kNavSlot = 48;
 
-/// Plain icon control for the navigation bar: 44pt touch target, no ring.
+/// Navigation-bar control: the home top-bar 40pt r12 glass square in a
+/// 48pt touch target.
 class FlareNavIconButton extends StatelessWidget {
   const FlareNavIconButton({
     super.key,
@@ -33,21 +35,34 @@ class FlareNavIconButton extends StatelessWidget {
     child: Semantics(
       button: true,
       label: tooltip,
+      enabled: onPressed != null,
       excludeSemantics: true,
-      child: Material(
-        type: MaterialType.transparency,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onPressed,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onPressed,
+        child: Pressable(
+          scale: .94,
           child: SizedBox.square(
-            dimension: 44,
-            child: Icon(
-              icon,
-              size: 21,
-              color: onPressed == null
-                  ? FlareColors.dim
-                  : (color ?? FlareColors.text),
+            dimension: 48,
+            child: Center(
+              child: SizedBox.square(
+                dimension: 40,
+                // The home top-bar square: HipLab glass without blur (plain
+                // page behind it), r12, hairline rim, no light shadow.
+                child: FlareHipGlassSurface(
+                  radius: 12,
+                  blur: false,
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      size: 18,
+                      color: onPressed == null
+                          ? FlareColors.dim
+                          : (color ?? FlareColors.text),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -76,7 +91,9 @@ class FlareNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(6, 4, 6, 8),
+    // 16 + the 4pt inset of the 40pt glass square in its 48pt target puts
+    // the visible control on the 20pt page margin, like the home top bar.
+    padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -237,10 +254,15 @@ class FlareListGroup extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(18),
+  Widget build(BuildContext context) => Material(
+    color: FlareColors.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: FlareColors.hairline, width: .5),
+    ),
+    clipBehavior: Clip.antiAlias,
     child: Material(
-      color: FlareColors.surface,
+      type: MaterialType.transparency,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -396,15 +418,15 @@ class FlareFieldGroup extends StatelessWidget {
               vertical: 16,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
                 color: FlareColors.accent.withValues(alpha: .6),
                 width: 1,

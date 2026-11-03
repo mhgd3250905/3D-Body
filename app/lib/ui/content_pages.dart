@@ -19,7 +19,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
     isScrollControlled: true,
     builder: (sheet) => SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -585,7 +585,9 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                           child: FilledButton.tonalIcon(
                             key: const ValueKey('drill-add-to-plan'),
                             style: FilledButton.styleFrom(
-                              shape: const StadiumBorder(),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 18,
                               ),
