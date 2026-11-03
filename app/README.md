@@ -1,5 +1,9 @@
 # Flare 托马斯 · Flutter App
 
+## iOS 本轮对齐（2026-11-04）
+
+既有`ios/main`已将29项本地提交rebase到`origin/master @a2af14a`，当前开发源码1.0.10+15 / R17；共享SDK继续固定693cbc0，App侧屏幕常亮控制移交SDK，原生测试入口随新路径更新。147项定向检查通过、4项SDK大字号溢出失败；分析与Web/dist构建通过。Xcode缺少可用iOS26.5组件/destination，原生编译与运行未通过验证。SDK仍缺iOS透明视频后端，只显示封面；按用户要求仅输出[SDK报告](docs/sdk-ios-readiness-report-2026-11-04.md)，不修改SDK。来源、备份、验证及后续见[本轮记录](docs/ios-sdk-sync-2026-11-04.md)。未操作物理设备、Apple发布、push或PR，旧发布记录保留历史身份。
+
 ## 当前检查点（2026-11-04）
 
 最新功能源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含共享聊天、公共动作库与训练接入、PR #124 页面优化和 PR #125 SDK 固定更新。四个 SDK 包均固定 `693cbc02cdf284163409868e117e438515c6a8d8`（`ugk_trainer-v0.6.0` 发行检查点）：`ugk_coach 0.8.0`、`ugk_coach_chat 0.1.0`、`ugk_coach_ui 0.4.0`、`ugk_trainer_runtime 0.1.0`。App 源码版本仍为 `1.0.10+15`。

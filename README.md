@@ -1,5 +1,9 @@
 # Flare Anatomy Studio
 
+## iOS 本轮对齐（2026-11-04）
+
+既有`ios/main`已将29项本地提交rebase到`origin/master @a2af14a`，当前开发源码1.0.10+15 / R17；共享SDK继续固定693cbc0，App侧屏幕常亮控制移交SDK，原生测试入口随新路径更新。147项定向检查通过、4项SDK大字号溢出失败；分析与Web/dist构建通过。Xcode缺少可用iOS26.5组件/destination，原生编译与运行未通过验证。SDK仍缺iOS透明视频后端，只显示封面；按用户要求仅输出[SDK报告](app/docs/sdk-ios-readiness-report-2026-11-04.md)，不修改SDK。来源、备份、验证及后续见[本轮记录](app/docs/ios-sdk-sync-2026-11-04.md)。未操作物理设备、Apple发布、push或PR，旧发布记录保留历史身份。
+
 ## 当前主线与内测交付（2026-11-04 对齐）
 
 当前产品源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含基线修复、共享 SDK 聊天/动作库/训练接入，以及 PR #124 / #125 对应的 UI 与 SDK 更新。四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`（发行标签 `ugk_trainer-v0.6.0`）；实际包版本、提交脉络和交付身份见[版本台账](app/docs/version-ledger.md)。首页与页面控件已统一，计划封面、记录与里程碑、14 语 UI 文案和浅色转场阴影已更新；这些源码事实不代表真机视觉验收。

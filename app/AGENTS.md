@@ -1,5 +1,9 @@
 # Flutter App 工作约定
 
+## iOS 本轮对齐（2026-11-04）
+
+既有`ios/main`已将29项本地提交rebase到`origin/master @a2af14a`，当前开发源码1.0.10+15 / R17；共享SDK继续固定693cbc0，App侧屏幕常亮控制移交SDK，原生测试入口随新路径更新。147项定向检查通过、4项SDK大字号溢出失败；分析与Web/dist构建通过。Xcode缺少可用iOS26.5组件/destination，原生编译与运行未通过验证。SDK仍缺iOS透明视频后端，只显示封面；按用户要求仅输出[SDK报告](docs/sdk-ios-readiness-report-2026-11-04.md)，不修改SDK。来源、备份、验证及后续见[本轮记录](docs/ios-sdk-sync-2026-11-04.md)。未操作物理设备、Apple发布、push或PR，旧发布记录保留历史身份。
+
 ## 当前执行基线（2026-11-04 文档对齐）
 
 产品源码 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`。SDK 负责共享聊天、动作库、详情、媒体和播放器；App 保留 scope、业务回调及本地保存。依赖版本以 pubspec/lock 为准，`ugk_trainer-v0.6.0` 是发行标签。当前范围 211 项，封面随包，视频按需下载缓存；首次视频使用需网络，完整离线体验不能由封面随包推定。公共目录为测试包，`releaseEligible=false`；旧 51 媒体记录不再是当前 APK 清单，不删除历史来源。

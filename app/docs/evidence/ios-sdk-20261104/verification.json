@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-04",
+  "workspace": "existing ios/main worktree",
+  "upstream": "a2af14a7899fc27c01f619233c8df6c68e535dd0",
+  "productSource": "550e3cd7fc37134e8baf0979135eb9e8f723aa85",
+  "rebaseOriginalHead": "e093ea82e16e6b5017f7905a30b9ce99a289e9de",
+  "rebasedHead": "1025072e98987b15d13b4452602aca6761e3369e",
+  "replayedCommits": 29,
+  "version": "1.0.10+15",
+  "sdkCommit": "693cbc02cdf284163409868e117e438515c6a8d8",
+  "sdkAndHostLockUnchangedFromUpstream": true,
+  "analyze": "No issues found",
+  "targetedTests": {
+    "passed": 137,
+    "failed": 4,
+    "failures": [
+      {
+        "language": "ar",
+        "theme": "light",
+        "textScale": 1.5,
+        "bottomOverflowPx": 0.963
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "textScale": 1.5,
+        "bottomOverflowPx": 0.963
+      },
+      {
+        "language": "hi",
+        "theme": "light",
+        "textScale": 1.5,
+        "bottomOverflowPx": 2.0
+      },
+      {
+        "language": "hi",
+        "theme": "dark",
+        "textScale": 1.5,
+        "bottomOverflowPx": 2.0
+      }
+    ]
+  },
+  "iosNormalTextLayouts": {
+    "passed": 10,
+    "failed": 0
+  },
+  "distBuild": "passed",
+  "flutterWebBuild": "passed; no external web resources CDN",
+  "nativeBuilds": {
+    "simulatorDebug": "blocked before compilation: iOS 26.5 not installed / no destination",
+    "deviceReleaseNoCodesign": "blocked before compilation: iOS 26.5 not installed / no destination",
+    "installedSimulatorRuntimes": 0,
+    "runtimeDiskImages": 0
+  },
+  "nativeIntegrationTests": "updated but NOT executed",
+  "browserVerification": "NOT executed: target persistent profile owned by another instance",
+  "sdkIosPackedVideo": {
+    "status": "MISSING_IN_PINNED_SDK",
+    "evidence": [
+      "plugin registers Android only",
+      "isSupported explicitly gated to Android",
+      "TrainingActionMedia returns before creating decoder on iOS"
+    ],
+    "fallback": "bundled WebP poster; not video verification"
+  },
+  "scope": {
+    "authorizedActions": 211,
+    "publicDeliveryRows": 219,
+    "semanticRows": 142,
+    "releaseEligible": false
+  },
+  "notPerformed": [
+    "SDK source/cache edits",
+    "Dependency upgrades",
+    "Physical device operation",
+    "Apple writes/signing/upload/release",
+    "Git push or PR",
+    "Large iOS runtime download"
+  ]
+}
