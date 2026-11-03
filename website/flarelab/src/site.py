@@ -148,7 +148,7 @@ def render(lang):
 <link rel="stylesheet" href="/site.css">
 </head>
 <body>
-<nav id="nav"><a class="brand" href="{'/' if zh else '/en/'}"><img src="/img/icon.png" width="34" height="34" alt=""><span><b>{e(C['zh']['h1'])}</b><i>FlareLab</i></span></a>
+<nav id="nav"><a class="brand" href="{'/' if zh else '/en/'}"><img src="/img/icon.png" width="34" height="34" alt=""><span>{'<b>托马斯训练助手</b><i>FlareLab</i>' if zh else '<b>FlareLab</b><i>托马斯训练助手</i>'}</span></a>
 <div class="links">{navl}<a class="lang" href="{other_href}" hreflang="{'en' if zh else 'zh-CN'}" aria-label="{e(other_long)}">{e(other_short)}</a><a class="btn sm" href="#join">{e(c['cta'])}</a></div></nav>
 
 <header class="hero">

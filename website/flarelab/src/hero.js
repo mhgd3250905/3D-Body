@@ -192,10 +192,10 @@ function initGL() {
       });
     }
     autoAz += dt * 0.06;
-    const az = 0.75 + yawUser + autoAz, el = 0.2, dist = m ? 5.6 : 4.55, ty = m ? 0.75 : 0.6;
+    const az = 0.75 + yawUser + autoAz, el = 0.2, dist = m ? 5.6 : 4.9, ty = m ? 0.75 : 0.6;
     camera.position.set(Math.sin(az) * Math.cos(el) * dist, ty + Math.sin(el) * dist, Math.cos(az) * Math.cos(el) * dist);
     camera.lookAt(0, ty, 0);
-    camera.filmOffset = m ? 0 : -5.0; camera.updateProjectionMatrix();
+    camera.filmOffset = m ? 0 : -6.2; camera.updateProjectionMatrix();
     stageU.uTime.value = now / 1000; partU.uTime.value = now / 1000;
     renderer.render(scene, camera);
   }

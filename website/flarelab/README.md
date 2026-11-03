@@ -22,6 +22,17 @@
 
 加载时 000→100 计数；WebGL 不可用或 15 秒未加载完成时自动降级为循环动图。手机（390×844）单独排版。
 
+## v2（2026-11-03，分支 feat/website-v2，预览版）
+
+产品优先的改版：标题即功能，不再用口号。
+- 页面：`/`（中文）与 `/en/`（英文）由 `src/site.py` 生成（文案集中在 `C['zh']` / `C['en']`），样式 `src/site.css`。
+- 首屏：先显示静态海报 `img/hero-*.webp`，`src/hero.js` 在空闲时加载 coach.glb，首帧渲染后淡入实时 3D（可拖动旋转、实时阶段名）；无 WebGL 换循环动图，Save-Data / 2G / 减少动态效果保持静图；`?still` 强制静图。离开首屏即停止渲染。
+- 板块：首屏 → 数字条 → 3 台手机截图 → 8 个阶段逐帧拆解 → 17 块肌群实时高亮 → 51 个分级训练（A/B/C 三档）→ 成套计划与自建计划 → 训练记录与里程碑 → 4 步开始训练 → 常见问题 → 报名内测。
+- 截图：App 深色截图转 WebP（360w / 640w，srcset）。
+- 字体：`FONTS_DIR=<含 NotoSansSC.ttf 可变字体> python3 build.py` 按两页实际用字重新子集化（400/900 各约 80KB），结果写回 `src/fonts/`；需要 fonttools + brotli。
+- 构建需要 esbuild：`ESBUILD=<esbuild 可执行文件> python3 build.py`（或仓库根目录 npm ci）。
+- 预览部署：`python3 deploy.py --preview` → Worker `flarelab-preview`（workers.dev），不动线上 `flarelab` / flare.uuugk.win。`--worker NAME` 可指定其他名字。
+
 ## 目录
 
 ```

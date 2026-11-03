@@ -38,11 +38,11 @@ nav.solid{background:rgba(9,9,11,.86);backdrop-filter:blur(14px);-webkit-backdro
 .hero-stage .loopimg{object-fit:contain;object-position:72% 60%;background:#08080a}
 .hero-stage.live canvas{opacity:1}
 .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.9) 0%,rgba(0,0,0,.55) 36%,rgba(0,0,0,0) 60%),linear-gradient(0deg,var(--bg) 0%,rgba(9,9,11,0) 26%)}
-.hero-copy{position:absolute;z-index:2;left:var(--pad);bottom:clamp(64px,10vh,120px);max-width:640px}
+.hero-copy{position:absolute;z-index:2;left:var(--pad);bottom:clamp(64px,10vh,120px);max-width:min(760px,56vw)}
 .kicker{display:flex;align-items:center;gap:10px;color:var(--ember2);margin-bottom:26px}
 .kicker i{width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember)}
 .brand2{font-size:clamp(18px,1.6vw,24px);letter-spacing:.14em;color:var(--mute);margin-bottom:10px}
-h1{font-weight:900;font-size:clamp(56px,7.2vw,112px);line-height:1;letter-spacing:-.02em}
+h1{font-weight:900;font-size:clamp(52px,6vw,96px);white-space:nowrap;line-height:1;letter-spacing:-.02em}
 html[lang=en] h1{font-family:"FL Display";font-weight:400;letter-spacing:.01em;font-size:clamp(72px,9vw,140px);text-transform:uppercase}
 .lead{margin-top:22px;font-size:clamp(20px,1.9vw,28px);font-weight:900;line-height:1.35;max-width:600px}
 .sub{margin-top:14px;max-width:540px;color:var(--mute);font-size:16px;line-height:1.75}
@@ -74,7 +74,7 @@ html[lang=en] h1{font-family:"FL Display";font-weight:400;letter-spacing:.01em;f
 .feat{max-width:var(--max);margin:0 auto;padding:130px var(--pad) 40px;display:grid;grid-template-columns:1fr 1.15fr;gap:72px;align-items:center}
 .feat.flip .feat-copy{order:2}
 .num{color:var(--ember2);margin-bottom:18px}
-h2{font-weight:900;font-size:clamp(34px,4vw,60px);line-height:1.12;letter-spacing:-.01em}
+h2{font-weight:900;font-size:clamp(32px,3.3vw,52px);line-height:1.15;letter-spacing:-.01em;text-wrap:balance}
 html[lang=en] h2{letter-spacing:-.02em}
 .body{margin-top:22px;color:var(--mute);font-size:17px;line-height:1.85;max-width:540px}
 .ticks{list-style:none;margin-top:28px;border-top:1px solid var(--line);max-width:540px}
@@ -147,7 +147,7 @@ footer a:hover,footer a[aria-current]{color:var(--ink)}
   .hero::after{background:linear-gradient(0deg,var(--bg) 0%,rgba(9,9,11,0) 30%);height:min(118vw,520px)}
   .hero-copy{position:relative;left:auto;bottom:auto;margin:-40px var(--pad) 0}
   .kicker{margin-bottom:18px}
-  h1{font-size:46px}
+  h1{font-size:44px;white-space:normal}
   html[lang=en] h1{font-size:68px}
   .brand2{font-size:15px}
   .lead{font-size:20px;margin-top:16px}
