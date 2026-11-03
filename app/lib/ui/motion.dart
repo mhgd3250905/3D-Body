@@ -495,7 +495,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(scale < 1 ? 18 : 0),
                       boxShadow: [
-                        if (shadow)
+                        if (shadow && FlareColors.palette.isDark)
                           BoxShadow(
                             color: Colors.black.withValues(alpha: .18),
                             blurRadius: 24,
