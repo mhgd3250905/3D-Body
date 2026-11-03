@@ -12,8 +12,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flare/coach/coach_config.dart';
-import 'package:flare/coach/coach_service.dart';
-import 'package:flare/coach/usage_store.dart';
+import 'package:flare/coach/flare_coach_chat.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
@@ -27,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_coach_chat/ugk_coach_chat.dart' show CoachGatewayBinding;
 
 import '../test/domain/fixtures.dart';
 import '../test/ui/coach_agent_fixtures.dart';
@@ -39,8 +39,6 @@ class _Memory implements LocalStateStorage {
   @override
   Future<void> write(String key, String value) async => values[key] = value;
 }
-
-Future<String> _readAsset(String path) async => File(path).readAsStringSync();
 
 final _out = Platform.environment['THOMAS_SHOTS'];
 final _boundary = GlobalKey();
@@ -237,27 +235,26 @@ void main() {
     return store;
   }
 
-  CoachService coach() => CoachService(
+  FlareCoachChat coach(LearningStore store) => FlareCoachChat(
+    store: store,
     config: const CoachConfig(apiKey: 'test'),
-    appCatalog: catalog,
-    client: AgentFakeLlmClient([
-      {
-        'kind': 'ask',
-        'text': '今天想练多久？',
-        'options': ['10 分钟', '20 分钟', '30 分钟'],
-      },
-    ]),
-    usage: CoachUsageStore(),
+    gateway: CoachGatewayBinding.shared(
+      AgentFakeLlmClient([
+        {
+          'kind': 'ask',
+          'text': '今天想练多久？',
+          'options': ['10 分钟', '20 分钟', '30 分钟'],
+        },
+      ]),
+    ),
     storage: _Memory(),
-    readAsset: _readAsset,
-    maxRequestRetries: 0,
   );
 
   Future<SceneController> shell(
     WidgetTester tester,
     LearningStore store,
     Brightness mode, {
-    CoachService? coachService,
+    FlareCoachChat? coachService,
   }) async {
     final scene = SceneController(commandSink: (_) {});
     addTearDown(scene.dispose);
@@ -543,7 +540,7 @@ void main() {
 
     testWidgets('$d 20 ai coach', (tester) async {
       final store = await setup(tester, mode);
-      final service = coach();
+      final service = coach(store);
       await shell(tester, store, mode, coachService: service);
       await more(tester, '计划');
       final entry = find.byKey(const ValueKey('plan-ai-coach'));
