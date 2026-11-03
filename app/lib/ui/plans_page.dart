@@ -7,6 +7,7 @@ import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/flare_shared_library.dart';
+import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
@@ -62,6 +63,14 @@ String sceneLabel(BuildContext context, String tier) {
   };
 }
 
+/// Bundled poster for a plan row or card. Every drill — Flare's own catalog
+/// and the SDK shared scope — has one under `assets/public_posters/`; the old
+/// `assets/drill_media/<id>.jpg` stills were removed with the SDK media move.
+String drillPosterAsset(Drill drill) =>
+    drill.thumbnailAsset.startsWith(FlarePublicMedia.posterRoot)
+    ? drill.thumbnailAsset
+    : '${FlarePublicMedia.posterRoot}${drill.id}.webp';
+
 /// Still poster of a drill's video. Never plays: plan surfaces are for
 /// choosing, and the drill page owns playback.
 class DrillPoster extends StatelessWidget {
@@ -71,10 +80,7 @@ class DrillPoster extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
     color: FlareColors.raised,
     child: Image.asset(
-      // Shared public actions carry their bundled public poster.
-      drill.thumbnailAsset.startsWith('assets/public_posters/')
-          ? drill.thumbnailAsset
-          : 'assets/drill_media/${drill.id}.jpg',
+      drillPosterAsset(drill),
       fit: BoxFit.cover,
       gaplessPlayback: true,
       excludeFromSemantics: true,
