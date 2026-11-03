@@ -31,7 +31,7 @@
 - 截图：App 深色截图转 WebP（360w / 640w，srcset）。
 - 字体：`FONTS_DIR=<含 NotoSansSC.ttf 可变字体> python3 build.py` 按两页实际用字重新子集化（400/900 各约 80KB），结果写回 `src/fonts/`；需要 fonttools + brotli。
 - 构建需要 esbuild：`ESBUILD=<esbuild 可执行文件> python3 build.py`（或仓库根目录 npm ci）。
-- 预览部署：`python3 deploy.py --preview` → Worker `flarelab-preview`（workers.dev），不动线上 `flarelab` / flare.uuugk.win。`--worker NAME` 可指定其他名字。
+- 预览部署：Hark 里的 Cloudflare token 只有 Pages 权限、没有 Workers Scripts 权限（Workers API 返回 403），所以预览用 `python3 deploy_pages.py` 直传到 Pages 项目 `flarelab-preview` → https://flarelab-preview.pages.dev （需要 requests + blake3）。`deploy.py --preview` / `--worker NAME` 已支持部署到 Worker `flarelab-preview`，换成有 Workers Scripts:Edit 的 token 即可用。两者都不动线上 `flarelab` / flare.uuugk.win。
 
 ## 目录
 
