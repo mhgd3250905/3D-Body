@@ -260,7 +260,7 @@ class FlareStaticSurface extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = EdgeInsets.zero,
-    this.radius = 22,
+    this.radius = 16,
     this.color,
   });
   final Widget child;

@@ -252,7 +252,7 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 54),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: p.accent,
         foregroundColor: p.onAccent,
         disabledBackgroundColor: p.disabled,

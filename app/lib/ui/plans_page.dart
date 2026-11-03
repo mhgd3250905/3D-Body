@@ -200,26 +200,8 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader(this.text);
   final String text;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 18, bottom: 10, left: 2),
-    child: Row(
-      children: [
-        Expanded(
-          child: Semantics(
-            header: true,
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 17,
-                height: 1.3,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
+  // The kit's one section header, so plans read like settings and records.
+  Widget build(BuildContext context) => FlareSection(text);
 }
 
 /// The plans tab: the user's own sets, then six ready-made directions with
@@ -417,7 +399,10 @@ class _PresetCard extends StatelessWidget {
     final s = context.strings;
     return Material(
       color: FlareColors.surface,
-      borderRadius: BorderRadius.circular(18),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: FlareColors.hairline, width: .5),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         key: ValueKey('preset-${preset.id}'),
@@ -448,9 +433,9 @@ class _PresetCard extends StatelessWidget {
                   Text(
                     preset.title(context),
                     style: const TextStyle(
-                      fontSize: 17,
+                      fontSize: 16,
                       height: 1.3,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -697,7 +682,12 @@ class _NumberedDrill extends StatelessWidget {
       child: RepaintBoundary(
         child: Material(
           color: grouped ? Colors.transparent : FlareColors.surface,
-          borderRadius: BorderRadius.circular(grouped ? 0 : 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(grouped ? 0 : 16),
+            side: grouped
+                ? BorderSide.none
+                : BorderSide(color: FlareColors.hairline, width: .5),
+          ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
@@ -956,7 +946,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                   elevation: FlareColors.palette.isDark ? 6 : 0,
                   shadowColor: Colors.black38,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(16),
                     side: FlareColors.palette.isDark
                         ? BorderSide.none
                         : BorderSide(color: FlareColors.hairline, width: .5),
@@ -1314,10 +1304,10 @@ Future<String?> showAddToPlanSheet(
         ),
         child: ListView(
           shrinkWrap: true,
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
               child: Text(
                 s.planAddTo,
                 style: const TextStyle(

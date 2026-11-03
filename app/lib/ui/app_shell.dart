@@ -1216,7 +1216,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     (compact ? 16 : 20) +
                     (compact ? 8 : 16);
           final content = Padding(
-            padding: EdgeInsets.fromLTRB(24, compact ? 2 : 10, 24, 0),
+            padding: EdgeInsets.fromLTRB(20, compact ? 2 : 10, 20, 0),
             child: FadeSlideIn(
               key: ValueKey('detail-${detail.id}'),
               delay: FadeSlideIn.stagger(2, step: 40),
@@ -1669,7 +1669,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheet) => SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1806,7 +1806,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1832,7 +1832,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         InkWell(
                           onTap: () => setSheet(() => expanded = true),
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
+                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
                             child: Row(
                               children: [
                                 MuscleThumbnailStack(
@@ -1869,7 +1869,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ),
                       if (expanded) ...[
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
                           child: Divider(height: 20),
                         ),
                         for (final (index, other) in others.indexed)
@@ -2320,7 +2320,7 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: FlareColors.hairline, width: .5),
         boxShadow: lift <= 0 || !FlareColors.palette.isDark
             ? null
