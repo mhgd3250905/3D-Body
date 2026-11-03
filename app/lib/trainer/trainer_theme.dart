@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ugk_trainer/ugk_trainer.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../ui/theme.dart';
 

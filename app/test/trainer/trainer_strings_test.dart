@@ -1,7 +1,7 @@
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/trainer/trainer_strings.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_trainer/ugk_trainer.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

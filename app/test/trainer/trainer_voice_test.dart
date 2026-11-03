@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_trainer/ugk_trainer.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 void main() {
   Future<String> read(String path) => File(path).readAsString();

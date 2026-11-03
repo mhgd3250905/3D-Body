@@ -3,20 +3,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flare/coach/plan_mapping.dart';
-import 'package:flare/coach/coach_config.dart';
-import 'package:flare/coach/coach_service.dart';
-import 'package:flare/coach/usage_store.dart';
+import 'package:flare/coach/flare_coach_chat_storage.dart';
+import 'package:flare/coach/flare_coach_profile.dart';
+import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/control/learning_store.dart';
-import 'package:flare/ui/ai_coach_page.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/sdk_plan_editor_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_coach_chat/ugk_coach_chat.dart'
+    show CoachPlanWriteMode, CoachPlanWriteRequest, CoachPlanWriteStatus;
 import 'package:ugk_coach/ugk_coach.dart' as uc;
-import 'package:ugk_coach_ui/ugk_coach_ui.dart' as cui;
-import 'package:ugk_trainer/engine.dart' as trainer;
+import 'package:ugk_trainer_runtime/engine.dart' as trainer;
 
 import '../domain/fixtures.dart';
 import 'flow_regressions_test.dart' show MemoryStateStorage;
@@ -529,12 +530,8 @@ void main() {
     expect(saved!.items.last.reps, isNull);
     expect(tester.takeException(), isNull);
   });
-  testWidgets('AI分段卡按父项计数，完整显示各段并原样交付开练', (tester) async {
-    tester.view.physicalSize = const Size(390, 1100);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    // The display fixture must also pass the actual coach gate: triceps-A is
-    // reps-only in the trusted catalog, so use the timed abs-A for this segment.
+  test('SDK聊天保存走「我的计划」：完整计划原样入库，过期修订返回冲突', () async {
+    // The SDK chat admits the plan; Flare's adapter must store it unchanged.
     final raw = segmentedPlan().toJson();
     final items = ((raw['blocks'] as List).single as Map)['items'] as List;
     final segments = (items.first as Map)['segments'] as List;
@@ -545,78 +542,44 @@ void main() {
       storage: MemoryStateStorage(),
     );
     await store.initialize();
-    final service = CoachService(
-      config: const CoachConfig(apiKey: 'test'),
-      appCatalog: catalog,
-      client: uc.FakeLlmClient(const []),
-      usage: CoachUsageStore(),
-      storage: MemoryStateStorage(),
-      readAsset: (path) async => File(path).readAsStringSync(),
-    );
-    final session = AiCoachSession(service);
-    await session.load();
-    await session.acceptDisclaimer();
-    expect(service.validatePlan(plan).errors, isEmpty);
-    final admitted = uc.ToolGate(
-      catalog: service.catalog,
-      profile: service.profile,
-    ).admitTemplate(plan);
-    expect(admitted, isNotNull);
-    service.restoreHistory([
-      uc.CoachConversationMessage(
-        id: 'saved-segmented-plan',
-        at: DateTime.utc(2026, 10, 24),
-        plan: admitted,
-      ),
-    ]);
-    addTearDown(session.dispose);
     addTearDown(store.dispose);
-    uc.TrainingPlan? started;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: flareTheme(),
-        locale: const Locale('zh'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: AiCoachPage(
-            session: session,
-            catalog: catalog,
-            store: store,
-            onBack: () {},
-            onDrill: (_) {},
-            onStart: (value) => started = value,
-          ),
-        ),
+    final shared = await FlareShared.load(bundle: _FileBundle());
+    // Admission requires equipment the user actually confirmed; the plan's
+    // own declaration does not establish availability in the shared SDK.
+    const context = uc.CoachContext(equipment: {'mat'});
+    final validation = uc.PlanValidator(
+      catalog: shared.catalog,
+      profile: flareCoachProfile,
+    ).validate(plan, context);
+    expect(validation.ok, isTrue, reason: '${validation.issues}');
+    final admitted = uc.ToolGate(
+      catalog: shared.catalog,
+      profile: flareCoachProfile,
+    ).admitTemplate(plan, context);
+    expect(admitted, isNotNull);
+    final plans = FlareCoachPlanStore(store);
+    final saved = await plans.save(
+      CoachPlanWriteRequest(
+        admittedPlan: admitted!,
+        mode: CoachPlanWriteMode.create,
+        name: plan.title,
       ),
     );
-    await tester.pumpAndSettle();
-    final cardFinder = find.byType(cui.CoachPlanCard);
-    expect(cardFinder, findsOneWidget);
-    final card = tester.widget<cui.CoachPlanCard>(cardFinder);
-    // Segment media are not independent parent rows. The SDK receives full
-    // localized doses; its own expanded layout renders those public DTOs.
-    expect(card.plan.items, hasLength(2));
-    expect(card.plan.items.map((item) => item.exerciseId), [
-      'scapular-A',
-      'scapular-A',
-    ]);
-    expect(card.plan.items.first.detailDose, contains('3 轮'));
-    expect(card.plan.items.first.detailDose, contains('1. Y · 8 次'));
-    expect(card.plan.items.first.detailDose, contains('2. T · 20 秒'));
-    expect(card.plan.items.first.detailDose, contains('3. W · 6 次 · 停留 2 秒'));
-    expect(card.plan.items.last.detailDose, contains('10 次'));
-    expect(card.saved, isFalse);
-    card.onSave();
-    card.onSave();
-    await tester.pumpAndSettle();
-    expect(store.routines, hasLength(1));
+    expect(saved.ok, isTrue);
     expect(store.routines.single.sdkPlan!.toJson(), plan.toJson());
-    final savedCard = tester.widget<cui.CoachPlanCard>(cardFinder);
-    expect(savedCard.saved, isTrue);
-    savedCard.onStart(() => null);
-    expect(identical(started, plan), isTrue);
-    expect(tester.takeException(), isNull);
+    expect((await plans.load()).single.plan.toJson(), plan.toJson());
+    await store.updateRoutine(store.routines.single.id, name: '已改名');
+    final stale = await plans.save(
+      CoachPlanWriteRequest(
+        admittedPlan: admitted,
+        mode: CoachPlanWriteMode.update,
+        name: '覆盖',
+        externalId: saved.saved!.externalId,
+        expectedStorageRevision: saved.saved!.storageRevision,
+      ),
+    );
+    expect(stale.status, CoachPlanWriteStatus.conflict);
+    expect(store.routines.single.name, '已改名');
   });
   testWidgets('段素材可另加为父项，manual腕部使用已发布默认次数而非占位1次', (tester) async {
     final original = segmentedPlan();
@@ -646,4 +609,11 @@ void main() {
     expect(saved!.items.last.reps, 10);
     expect(saved!.items.last.restSeconds, 15);
   });
+}
+
+/// Reads bundled assets from the package directory (no fake-async isolate).
+class _FileBundle extends CachingAssetBundle {
+  @override
+  Future<ByteData> load(String key) async =>
+      ByteData.sublistView(File(key).readAsBytesSync());
 }

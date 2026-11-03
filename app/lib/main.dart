@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import 'control/learning_store.dart';
 import 'data/catalog.dart';
 import 'data/content_translations.dart';
+import 'data/flare_public_media.dart';
+import 'data/flare_shared_library.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/languages.dart';
 import 'platform/scene/scene_controller.dart';
@@ -44,6 +47,11 @@ Future<void> main() async {
   runApp(const FlareBootstrap());
 }
 
+Widget _mediaScope(Widget child) => switch (FlarePublicMedia.current) {
+  final policy? => sdk.TrainingMediaPolicyScope(policy: policy, child: child),
+  null => child,
+};
+
 class FlareBootstrap extends StatefulWidget {
   const FlareBootstrap({super.key});
   @override
@@ -67,7 +75,17 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     final values = await Future.wait<Object>([
       Catalog.load(),
       ContentTranslations.load(),
+      FlareShared.load(),
     ]);
+    FlareShared.current = values[2] as FlareShared;
+    try {
+      // Opens the shared public pack's on-demand media; no network at startup.
+      FlarePublicMedia.current ??= await FlarePublicMedia.load();
+    } on Object {
+      FlarePublicMedia.current = null;
+    }
+    // Rebuild MaterialApp.builder so the media scope wraps every route.
+    if (mounted) setState(() {});
     final catalog = values[0] as Catalog;
     _content = values[1] as ContentTranslations;
     _localizedCatalogs.clear();
@@ -146,7 +164,9 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                   : Brightness.dark,
             ),
         child: FlareMotionPreferences(
-          child: ThemeCrossFade(brightness: brightness, child: child!),
+          child: _mediaScope(
+            ThemeCrossFade(brightness: brightness, child: child!),
+          ),
         ),
       );
     },

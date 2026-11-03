@@ -6,6 +6,7 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/flare_shared_library.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
@@ -70,7 +71,10 @@ class DrillPoster extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
     color: FlareColors.raised,
     child: Image.asset(
-      'assets/drill_media/${drill.id}.jpg',
+      // Shared public actions carry their bundled public poster.
+      drill.thumbnailAsset.startsWith('assets/public_posters/')
+          ? drill.thumbnailAsset
+          : 'assets/drill_media/${drill.id}.jpg',
       fit: BoxFit.cover,
       gaplessPlayback: true,
       excludeFromSemantics: true,
@@ -278,7 +282,13 @@ class PlansPage extends StatelessWidget {
     final plan = routine.sdkPlan;
     final drills = plan == null
         ? routine.drills(catalog)
-        : [for (final item in plan.items) ?catalog.drillById(item.exerciseId)];
+        : [
+            for (final item in plan.items)
+              ?CoachPlanMapper(
+                catalog,
+                shared: FlareShared.current?.catalog,
+              ).drillById(item.exerciseId),
+          ];
     final count = plan?.items.length ?? drills.length;
     final minutes = plan == null
         ? estimateMinutes(drills)
@@ -515,7 +525,9 @@ class PlanDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final plan = sdkPlan;
-    final mapper = catalog == null ? null : CoachPlanMapper(catalog!);
+    final mapper = catalog == null
+        ? null
+        : CoachPlanMapper(catalog!, shared: FlareShared.current?.catalog);
     final available =
         plan == null || (mapper != null && mapper.missingIds(plan).isEmpty);
     final entries = plan != null && available ? mapper!.entries(plan) : null;
@@ -592,7 +604,11 @@ class PlanDetailPage extends StatelessWidget {
                               drill: entry.drill,
                               doseText: entry.doseText,
                               grouped: true,
-                              onTap: () => onDrill(entry.drill),
+                              // Shared public actions open the SDK details.
+                              onTap: () =>
+                                  catalog!.drillById(entry.drill.id) == null
+                                  ? FlareShared.openDetail(context, entry.drill.id)
+                                  : onDrill(entry.drill),
                             ),
                         ],
                       ),
@@ -634,7 +650,11 @@ class PlanDetailPage extends StatelessWidget {
               key: const ValueKey('plan-start'),
               icon: Icons.play_arrow_rounded,
               label: s.planStart,
-              onPressed: drills.isEmpty || !available ? null : onStart,
+              onPressed:
+                  (plan == null ? drills.isEmpty : plan.items.isEmpty) ||
+                      !available
+                  ? null
+                  : onStart,
             ),
           ),
         ],

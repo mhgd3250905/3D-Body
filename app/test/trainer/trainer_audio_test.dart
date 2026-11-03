@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flare/trainer/trainer_audio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_trainer/ugk_trainer.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 class _DelayedAudio extends MutedVoiceOutput {
   final events = <String>[];

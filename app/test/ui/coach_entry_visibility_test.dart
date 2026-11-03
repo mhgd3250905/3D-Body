@@ -1,6 +1,5 @@
 import 'package:flare/coach/coach_config.dart';
-import 'package:flare/coach/coach_service.dart';
-import 'package:flare/coach/usage_store.dart';
+import 'package:flare/coach/flare_coach_chat.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
@@ -9,6 +8,7 @@ import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_coach_chat/ugk_coach_chat.dart' show CoachGatewayBinding;
 
 import '../domain/fixtures.dart';
 import 'coach_agent_fixtures.dart';
@@ -39,13 +39,12 @@ void main() {
         await store.acknowledgeSafety();
         final scene = SceneController(commandSink: (_) {});
         final fake = AgentFakeLlmClient(const []);
-        final coach = CoachService(
-          appCatalog: catalog,
+        final coach = FlareCoachChat(
+          store: store,
           config: configured
               ? const CoachConfig(apiKey: 'test-key')
               : const CoachConfig(),
-          client: configured ? fake : null,
-          usage: CoachUsageStore(),
+          gateway: configured ? CoachGatewayBinding.shared(fake) : null,
           storage: helpers.MemoryStateStorage(),
         );
         addTearDown(store.dispose);
