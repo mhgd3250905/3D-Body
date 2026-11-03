@@ -786,26 +786,13 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                         decoration: BoxDecoration(
                           color: FlareColors.palette.segmentThumb,
                           borderRadius: BorderRadius.circular(8),
+                          // Light: hairline rim only, no drop shadow.
                           border: dark
                               ? null
                               : Border.all(
-                                  color: const Color(0x0a000000),
+                                  color: const Color(0x14000000),
                                   width: .5,
                                 ),
-                          boxShadow: dark
-                              ? null
-                              : const [
-                                  BoxShadow(
-                                    color: Color(0x1f000000),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 3),
-                                  ),
-                                  BoxShadow(
-                                    color: Color(0x0a000000),
-                                    blurRadius: 1,
-                                    offset: Offset(0, 1),
-                                  ),
-                                ],
                         ),
                       ),
                     ),
@@ -912,14 +899,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                         ? FlareColors.palette.segmentThumb
                         : null,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: i == _selectedIndex && !dark
-                        ? const [
-                            BoxShadow(
-                              color: Color(0x14000000),
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
-                            ),
-                          ]
+                    border: i == _selectedIndex && !dark
+                        ? Border.all(color: const Color(0x14000000), width: .5)
                         : null,
                   ),
                   child: Row(

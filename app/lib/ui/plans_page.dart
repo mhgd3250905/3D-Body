@@ -613,7 +613,10 @@ class PlanDetailPage extends StatelessWidget {
                               // Shared public actions open the SDK details.
                               onTap: () =>
                                   catalog!.drillById(entry.drill.id) == null
-                                  ? FlareShared.openDetail(context, entry.drill.id)
+                                  ? FlareShared.openDetail(
+                                      context,
+                                      entry.drill.id,
+                                    )
                                   : onDrill(entry.drill),
                             ),
                         ],
@@ -946,11 +949,18 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                     _ids.insert(to, id);
                   });
                 },
+                // Dark lifts the dragged row; light outlines it with a
+                // hairline instead of a drop shadow (开哥 2026-11-03).
                 proxyDecorator: (child, _, _) => Material(
                   color: Colors.transparent,
-                  elevation: 6,
+                  elevation: FlareColors.palette.isDark ? 6 : 0,
                   shadowColor: Colors.black38,
-                  borderRadius: BorderRadius.circular(18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    side: FlareColors.palette.isDark
+                        ? BorderSide.none
+                        : BorderSide(color: FlareColors.hairline, width: .5),
+                  ),
                   child: child,
                 ),
                 itemBuilder: (context, index) {

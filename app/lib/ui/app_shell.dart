@@ -1104,7 +1104,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               ),
                             if (detail == null)
                               Positioned(
-                                right: 16,
+                                right: 20,
                                 bottom: box.maxWidth < 380 ? 228 : 18,
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
@@ -1112,39 +1112,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         ? box.maxWidth * .46
                                         : box.maxWidth - 218,
                                   ),
-                                  child: TextButton.icon(
-                                    key: const ValueKey('home-muscle-hint'),
-                                    onPressed: _scene.playing
-                                        ? _scene.pause
-                                        : _showMuscles,
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: FlareColors.secondary,
-                                      backgroundColor: FlareColors.control,
-                                      side: BorderSide(
-                                        color: FlareColors.controlBorder,
-                                        width: .5,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                      ),
-                                      minimumSize: const Size(0, 44),
-                                      shape: const StadiumBorder(),
-                                    ),
-                                    icon: Icon(
-                                      _scene.playing
-                                          ? Icons.pause_rounded
-                                          : Icons.touch_app_outlined,
-                                      size: 12,
-                                    ),
-                                    label: Text(
-                                      _scene.playing
-                                          ? s.playingHint
-                                          : s.pausedHint,
-                                      style: const TextStyle(fontSize: 11),
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
+                                  child: _homeHint(context),
                                 ),
                               ),
                           ],
@@ -1605,6 +1573,70 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       ),
     ),
   );
+
+  /// 「点选肌群」: the home-glass control (r12, 40pt, hairline rim, blur
+  /// over the stage), inside a 48pt tap target, matching the top bar.
+  Widget _homeHint(BuildContext context) {
+    final s = context.strings;
+    final playing = _scene.playing;
+    final onTap = playing ? _scene.pause : _showMuscles;
+    final label = playing ? s.playingHint : s.pausedHint;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        key: const ValueKey('home-muscle-hint'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Pressable(
+          scale: .95,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Center(
+              widthFactor: 1,
+              child: FlareHipGlassSurface(
+                radius: 12,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 28),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        playing
+                            ? Icons.pause_rounded
+                            : Icons.touch_app_outlined,
+                        size: 15,
+                        color: FlareColors.secondary,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.25,
+                            fontWeight: FontWeight.w500,
+                            color: FlareColors.secondary,
+                          ),
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Future<void> _showMore() async {
     if (_sheetOpen) return;
@@ -2290,7 +2322,7 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
         color: FlareStaticSurface.colorOf(context),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: FlareColors.hairline, width: .5),
-        boxShadow: lift <= 0
+        boxShadow: lift <= 0 || !FlareColors.palette.isDark
             ? null
             : [
                 BoxShadow(

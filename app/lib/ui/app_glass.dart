@@ -67,13 +67,18 @@ abstract final class FlareHipGlass {
 
   static double rimWidth({bool high = false}) => high ? 1 : .5;
 
-  static List<BoxShadow> shadow({required bool dark}) => [
-    BoxShadow(
-      color: dark ? const Color(0x2e000000) : const Color(0x0f1d2b25),
-      blurRadius: 16,
-      offset: const Offset(0, 4),
-    ),
-  ];
+  /// Dark keeps HipLab's soft lift. Light has no drop shadow (开哥
+  /// 2026-11-03: the shadow under light buttons reads cheap); depth there
+  /// is the hairline rim plus the fill only.
+  static List<BoxShadow> shadow({required bool dark}) => dark
+      ? const [
+          BoxShadow(
+            color: Color(0x2e000000),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+          ),
+        ]
+      : const [];
 
   /// Blur plus HipLab's slight saturation lift (1.35; light ×1.04).
   static ui.ImageFilter filter(double sigma, {required bool dark}) {
@@ -275,18 +280,21 @@ class FlareStaticSurface extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? colorOf(context),
         borderRadius: BorderRadius.circular(radius),
+        // Light: hairline rim + fill, no drop shadow (开哥 2026-11-03).
         border: Border.all(
-          color: dark ? const Color(0x18ffffff) : const Color(0xb3ffffff),
-          width: .75,
+          color: dark ? const Color(0x18ffffff) : const Color(0x0f000000),
+          width: dark ? .75 : .5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: dark ? .12 : .035),
-            offset: const Offset(0, 5),
-            blurRadius: 16,
-            spreadRadius: -8,
-          ),
-        ],
+        boxShadow: dark
+            ? const [
+                BoxShadow(
+                  color: Color(0x1f000000),
+                  offset: Offset(0, 5),
+                  blurRadius: 16,
+                  spreadRadius: -8,
+                ),
+              ]
+            : null,
       ),
       child: Padding(padding: padding, child: child),
     );
