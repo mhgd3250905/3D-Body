@@ -19,7 +19,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
     isScrollControlled: true,
     builder: (sheet) => SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -27,16 +27,20 @@ Future<bool?> showSafetySheet(BuildContext context) {
             const SizedBox(height: 4),
             Text(
               s.safetySheetTitle,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontSize: 22,
+                height: 1.25,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 24),
             for (final (index, rule) in [
               (s.safetyRule1, s.safetyRule1Note),
               (s.safetyRule2, s.safetyRule2Note),
               (s.safetyRule3, s.safetyRule3Note),
             ].indexed)
               Padding(
-                padding: const EdgeInsets.only(bottom: 18),
+                padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -46,7 +50,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: FlareColors.accent.withValues(alpha: .12),
-                        borderRadius: BorderRadius.circular(9),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${index + 1}',
@@ -57,7 +61,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +73,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 3),
+                          const SizedBox(height: 4),
                           Text(
                             rule.$2,
                             style: TextStyle(
@@ -84,7 +88,7 @@ Future<bool?> showSafetySheet(BuildContext context) {
                   ],
                 ),
               ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 24),
             PrimaryAction(
               label: s.gotIt,
               onPressed: () => Navigator.pop(sheet, true),
@@ -136,7 +140,8 @@ class _WelcomePageState extends State<WelcomePage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 520),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 12, 28, 16),
+                // 20pt page margin; SafeArea supplies the home-indicator inset.
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -149,40 +154,40 @@ class _WelcomePageState extends State<WelcomePage> {
                             fadeInFrame(context, child, frame, sync),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 24),
                     Text(
                       s.brandEyebrow,
                       style: TextStyle(
                         color: FlareColors.accentInk,
                         fontSize: 12,
-                        letterSpacing: 3,
-                        fontWeight: FontWeight.w700,
+                        letterSpacing: .3,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
                       s.welcomeHeadline,
                       style: const TextStyle(
-                        fontSize: 36,
-                        height: 1.15,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 28,
+                        height: 1.2,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     Text(
                       s.welcomeLine,
                       style: TextStyle(
-                        fontSize: 16,
-                        height: 1.5,
+                        fontSize: 15,
+                        height: 1.45,
                         color: FlareColors.secondary,
                       ),
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
                     PrimaryAction(
                       label: s.startApp,
                       onPressed: _busy ? null : _start,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Center(
                       child: TextButton(
                         onPressed: _busy ? null : _start,
@@ -788,28 +793,35 @@ class _CelebrateBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
-    child: Container(
+    // Plain r16 surface with the hairline rim (no tint wash, no shadow in
+    // light); the accent lives only in the small icon tile.
+    child: FlareStaticSurface(
       key: const ValueKey('records-celebrate'),
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-      decoration: BoxDecoration(
-        color: FlareColors.accent.withValues(alpha: .16),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      padding: const EdgeInsets.fromLTRB(12, 12, 16, 12),
       child: Row(
         children: [
-          Icon(
-            Icons.emoji_events_rounded,
-            color: FlareColors.accentInk,
-            size: 22,
+          Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: FlareColors.accent.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.emoji_events_rounded,
+              color: FlareColors.accentInk,
+              size: 18,
+            ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               context.strings.milestoneUnlocked(days),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
+                height: 1.35,
                 fontWeight: FontWeight.w600,
-                color: FlareColors.accentInk,
               ),
             ),
           ),
@@ -842,17 +854,17 @@ class _Hero extends StatelessWidget {
             value,
             maxLines: 1,
             style: const TextStyle(
-              fontSize: 22,
+              fontSize: 20,
               height: 1.2,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontFeatures: [FontFeature.tabularFigures()],
             ),
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         FlareWordSafeText(
           label,
-          style: TextStyle(fontSize: 12, color: FlareColors.dim),
+          style: TextStyle(fontSize: 12, height: 1.3, color: FlareColors.dim),
         ),
       ],
     ),
@@ -862,7 +874,7 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     return FlareStaticSurface(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -871,7 +883,7 @@ class _Hero extends StatelessWidget {
             child: ExcludeSemantics(
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.end,
-                spacing: 8,
+                spacing: 6,
                 children: [
                   Text(
                     '$streak',
@@ -879,21 +891,21 @@ class _Hero extends StatelessWidget {
                       context,
                     ).clamp(maxScaleFactor: 1.2),
                     style: TextStyle(
-                      fontSize: 64,
-                      height: 1,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 32,
+                      height: 1.1,
+                      fontWeight: FontWeight.w600,
                       color: FlareColors.accentInk,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: 5),
                     child: Text(
                       s.recordsStreakUnit,
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: FlareColors.secondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: FlareColors.dim,
                       ),
                     ),
                   ),
@@ -901,7 +913,9 @@ class _Hero extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
+          Divider(height: 1, thickness: .5, color: FlareColors.hairline),
+          const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1180,7 +1194,7 @@ class _Milestones extends StatelessWidget {
                       textScaler: TextScaler.noScaling,
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: got
                             ? FlareColors.onAccent
                             : FlareColors.secondary,
