@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flare/coach/flare_coach_chat.dart';
@@ -33,6 +34,7 @@ class _Model implements coach.LlmClient {
   final _ToolReply reply;
   final requests = <coach.LlmRequest>[];
   final counts = <String, int>{};
+  final replies = <Map<String, Object?>>[];
 
   @override
   String get model => 'fake-qa-sdk';
@@ -50,6 +52,8 @@ class _Model implements coach.LlmClient {
     final context = request.messages
         .lastWhere((message) => message.role == coach.LlmRole.user)
         .content;
+    final arguments = reply(tool, context, count);
+    replies.add({'tool': tool, 'arguments': arguments});
     return coach.LlmResponse(
       content: '',
       model: model,
@@ -57,7 +61,7 @@ class _Model implements coach.LlmClient {
         coach.LlmToolCall(
           id: '$tool-$count',
           name: tool,
-          arguments: jsonEncode(reply(tool, context, count)),
+          arguments: jsonEncode(arguments),
         ),
       ],
     );
@@ -99,37 +103,67 @@ class _Harness {
   static Future<_Harness> open(WidgetTester tester, _Model model) async {
     final sharedBefore = FlareShared.current;
     final harness = (await tester.runAsync(() async {
-      FlareShared.current = await FlareShared.load();
+      FlareShared.current = await FlareShared.load().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () =>
+            throw StateError('QA fixture: shared catalogue timed out'),
+      );
       final storage = _Storage();
       final store = LearningStore(
         catalog: loadCatalogFixture(),
         storage: storage,
       );
-      await store.initialize();
-      await store.acknowledgeSafety();
+      await store.initialize().timeout(const Duration(seconds: 15));
+      await store.acknowledgeSafety().timeout(const Duration(seconds: 15));
       final host = FlareCoachChat(
         store: store,
         storage: storage,
         gateway: CoachGatewayBinding.shared(model),
         replyDelay: Duration.zero,
       );
-      final controller = await host.load(
-        actions: CoachChatHostActions(
-          onStartTraining: (_, _) async => null,
-          onOpenAction: (_, _) async {},
-          onOpenLibrary: (_, _) async {},
-          onOpenSavedPlans: (_) async {},
-          onOpenCustomPlan: (_) async {},
-          onOpenSettings: (_) async {},
-        ),
-      );
+      final controller = await host
+          .load(
+            actions: CoachChatHostActions(
+              onStartTraining: (_, _) async => null,
+              onOpenAction: (_, _) async {},
+              onOpenLibrary: (_, _) async {},
+              onOpenSavedPlans: (_) async {},
+              onOpenCustomPlan: (_) async {},
+              onOpenSettings: (_) async {},
+            ),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () =>
+                throw StateError('QA fixture: FlareCoachChat.load timed out'),
+          );
       return _Harness(host, controller, store);
     }))!;
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox());
-      await tester.runAsync(harness.host.close);
+      var closed = false;
+      Object? closeError;
+      unawaited(
+        harness.host.close().then(
+          (_) => closed = true,
+          onError: (Object error, StackTrace _) {
+            closeError = error;
+            closed = true;
+          },
+        ),
+      );
+      for (var attempt = 0; attempt < 20 && !closed; attempt++) {
+        await _pump(tester);
+      }
       harness.store.dispose();
       FlareShared.current = sharedBefore;
+      expect(
+        closed,
+        isTrue,
+        reason: 'SDK QA fixture close must finish while pumped',
+      );
+      expect(closeError, isNull, reason: 'SDK QA fixture close failed');
+      harness.controller.dispose();
     });
     return harness;
   }
@@ -164,6 +198,45 @@ Future<void> _send(WidgetTester tester, String text) async {
   await tester.tap(find.byKey(const ValueKey('chat-send')));
   await _pump(tester);
 }
+
+Future<void> _waitFor(
+  WidgetTester tester,
+  bool Function() ready,
+  String stage, {
+  String Function()? diagnostics,
+}) async {
+  for (var attempt = 0; attempt < 20; attempt++) {
+    await _pump(tester);
+    if (ready()) return;
+  }
+  fail(
+    'SDK QA page did not finish: $stage'
+    '${diagnostics == null ? '' : '\n${diagnostics()}'}',
+  );
+}
+
+String _errorDescription(Object? error) => error is StateError
+    ? '${error.runtimeType}: ${error.message}'
+    : '${error?.runtimeType}: $error';
+
+String _diagnostics(CoachChatController controller, _Model model) =>
+    jsonEncode({
+      'modelToolCounts': model.counts,
+      'modelRequestTools': [
+        for (final request in model.requests)
+          request.tools.map((tool) => tool.name).toList(),
+      ],
+      'fakeReplies': model.replies,
+      'typing': controller.typing,
+      'controllerError': _errorDescription(controller.error),
+      'lastResultStatus': controller.lastResult?.status.name,
+      'lastResultError': _errorDescription(controller.lastResult?.error),
+      'lastResultIssues': [
+        for (final issue in controller.lastResult?.issues ?? []) '$issue',
+      ],
+      'lastQaReplyKind': controller.lastQaReply?.kind,
+      'lastQaReplyIssues': controller.lastQaReply?.issues,
+    });
 
 void main() {
   testWidgets('Flare SDK QA page submits single/multiple choices once', (
@@ -222,10 +295,22 @@ void main() {
     );
     await harness.mount(tester);
     await _send(tester, '想练几个动作');
+    await _waitFor(
+      tester,
+      () => !controller.typing && controller.messages.last.question != null,
+      'place question',
+    );
     final place = controller.messages.last;
     expect(place.question!.multiple, isFalse);
     await tester.tap(find.byKey(ValueKey('question-option-${place.id}-0')));
-    await _pump(tester);
+    await _waitFor(
+      tester,
+      () =>
+          !controller.typing &&
+          controller.messages.last.id != place.id &&
+          controller.messages.last.question != null,
+      'equipment question',
+    );
     final equipment = controller.messages.last;
     expect(equipment.question!.multiple, isTrue);
     expect(controller.canAnswerQuestion(place), isFalse);
@@ -243,7 +328,13 @@ void main() {
     final submit = find.byKey(ValueKey('question-submit-${equipment.id}'));
     await tester.ensureVisible(submit);
     await tester.tap(submit);
-    await _pump(tester);
+    await _waitFor(
+      tester,
+      () =>
+          !controller.typing &&
+          controller.lastQaReply?.cards.isNotEmpty == true,
+      'recommendation',
+    );
     expect(model.requests, hasLength(6));
     expect(
       controller.messages
@@ -289,6 +380,14 @@ void main() {
     await harness.mount(tester);
     await _send(tester, '在健身房练十五分钟力量');
     final controller = harness.controller;
+    await _waitFor(
+      tester,
+      () =>
+          !controller.typing &&
+          controller.messages.any((message) => message.plan != null),
+      'plan',
+      diagnostics: () => _diagnostics(controller, model),
+    );
     final message = controller.messages.lastWhere(
       (message) => message.plan != null,
     );
