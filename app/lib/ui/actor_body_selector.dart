@@ -17,6 +17,14 @@ class ActorBodySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
+    // A label wider than the row (Серебряное крыло at 320 pt, 1.5×) wraps
+    // to two lines inside its chip instead of being clipped at the edge.
+    return LayoutBuilder(
+      builder: (context, box) => _chips(context, s, box.maxWidth),
+    );
+  }
+
+  Widget _chips(BuildContext context, AppLocalizations s, double maxWidth) {
     return Wrap(
       spacing: 8,
       runSpacing: 6,
@@ -39,19 +47,28 @@ class ActorBodySelector extends StatelessWidget {
             visualDensity: const VisualDensity(vertical: -2),
             backgroundColor: FlareColors.palette.segmentTrack,
             selectedColor: FlareColors.accent.withValues(alpha: .16),
-            label: Text(
-              label,
-              style: TextStyle(
-                color: value == id ? FlareColors.accentInk : FlareColors.text,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'FlareSans',
-                fontFamilyFallback: const [
-                  'NotoSansKR',
-                  'NotoSansArabic',
-                  'NotoSansDevanagari',
-                ],
-                fontSize: 13,
-                height: 1.2,
+            label: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: maxWidth.isFinite
+                    ? (maxWidth - 40).clamp(40, double.infinity)
+                    : double.infinity,
+              ),
+              child: Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: value == id ? FlareColors.accentInk : FlareColors.text,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'FlareSans',
+                  fontFamilyFallback: const [
+                    'NotoSansKR',
+                    'NotoSansArabic',
+                    'NotoSansDevanagari',
+                  ],
+                  fontSize: 13,
+                  height: 1.2,
+                ),
               ),
             ),
             selected: value == id,

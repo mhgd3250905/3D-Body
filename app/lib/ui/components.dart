@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_media.dart';
 import 'app_glass.dart';
 import 'motion.dart';
+import 'page_kit.dart' show FlareWordSafeText;
 import 'theme.dart';
 
 extension FlareStrings on BuildContext {
@@ -579,10 +581,22 @@ class _ScrollEdgeState extends State<ScrollEdge> {
     final under = metrics.pixels > 1;
     final more = metrics.extentAfter > 1;
     if (under != _under || more != _more) {
-      setState(() {
-        _under = under;
-        _more = more;
-      });
+      void apply() {
+        if (!mounted) return;
+        setState(() {
+          _under = under;
+          _more = more;
+        });
+      }
+
+      // Metrics can change while the list lays out a taller child; never
+      // rebuild in the middle of that frame.
+      if (SchedulerBinding.instance.schedulerPhase ==
+          SchedulerPhase.persistentCallbacks) {
+        SchedulerBinding.instance.addPostFrameCallback((_) => apply());
+      } else {
+        apply();
+      }
     }
     return false;
   }
@@ -804,11 +818,147 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
         ),
       ),
     );
-    return Semantics(
-      container: true,
-      child: widget.expand
-          ? SizedBox(width: double.infinity, child: control)
-          : IntrinsicWidth(child: control),
+    if (!widget.expand) {
+      return Semantics(container: true, child: IntrinsicWidth(child: control));
+    }
+    // Long labels on a narrow phone with large text (de/ru at 320 pt, 1.5×)
+    // would otherwise be squeezed far below a readable size by FittedBox.
+    // When any label would drop under 12 sp, list the choices one per row.
+    return LayoutBuilder(
+      builder: (context, box) {
+        final fits =
+            !box.maxWidth.isFinite || _labelsFit(context, box.maxWidth);
+        return Semantics(
+          container: true,
+          child: fits
+              ? SizedBox(width: double.infinity, child: control)
+              : _stacked(context),
+        );
+      },
+    );
+  }
+
+  /// Smallest font size (before text scaling) a segment label may shrink to.
+  static const _minFontSize = 12.0;
+
+  bool _labelsFit(BuildContext context, double width) {
+    final count = widget.segments.length;
+    // Track padding 2+2, label padding 6+6 per segment.
+    final slot = (width - 4) / count - 12;
+    if (slot <= 0) return false;
+    final scaler = MediaQuery.textScalerOf(context);
+    for (final (_, label) in widget.segments) {
+      final painter = TextPainter(
+        text: TextSpan(
+          text: label,
+          style: const TextStyle(
+            fontFamily: 'FlareSans',
+            fontFamilyFallback: [
+              'NotoSansKR',
+              'NotoSansArabic',
+              'NotoSansDevanagari',
+            ],
+            fontSize: 13,
+            height: 1.2,
+            letterSpacing: .2,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        textScaler: scaler,
+        textDirection: Directionality.of(context),
+        maxLines: 1,
+      )..layout();
+      final w = painter.width;
+      painter.dispose();
+      if (w > slot && 13 * slot / w < _minFontSize) return false;
+    }
+    return true;
+  }
+
+  Widget _stacked(BuildContext context) {
+    final dark = FlareColors.palette.isDark;
+    return Container(
+      key: const ValueKey('flare-segmented-stacked'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: FlareColors.palette.segmentTrack,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < widget.segments.length; i++)
+            Semantics(
+              button: true,
+              inMutuallyExclusiveGroup: true,
+              selected: i == _selectedIndex,
+              label: widget.semanticLabels?[i] ?? widget.segments[i].$2,
+              onTap: () => _choose(i),
+              excludeSemantics: true,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => _choose(i),
+                child: AnimatedContainer(
+                  duration: FlareMotion.of(context, FlareMotion.quick),
+                  constraints: const BoxConstraints(minHeight: 40),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: i == _selectedIndex
+                        ? FlareColors.palette.segmentThumb
+                        : null,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: i == _selectedIndex && !dark
+                        ? const [
+                            BoxShadow(
+                              color: Color(0x14000000),
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: FlareWordSafeText(
+                          widget.segments[i].$2,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontFamily: 'FlareSans',
+                            fontFamilyFallback: const [
+                              'NotoSansKR',
+                              'NotoSansArabic',
+                              'NotoSansDevanagari',
+                            ],
+                            fontSize: 14,
+                            height: 1.2,
+                            color: i == _selectedIndex
+                                ? FlareColors.text
+                                : FlareColors.palette.muted,
+                            fontWeight: i == _selectedIndex
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      if (i == _selectedIndex)
+                        Icon(
+                          Icons.check_rounded,
+                          size: 18,
+                          color: FlareColors.accent,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

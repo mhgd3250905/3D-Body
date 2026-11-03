@@ -1799,9 +1799,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             ],
           ),
           const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 44),
-            child: control,
+          // On a narrow phone the control takes the full row width (no
+          // 44 pt title indent) so long labels stay at a readable size.
+          LayoutBuilder(
+            builder: (context, box) => Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: box.maxWidth >= 300 ? 44 : 0,
+              ),
+              child: control,
+            ),
           ),
         ],
       ),

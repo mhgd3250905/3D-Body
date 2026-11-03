@@ -1192,16 +1192,23 @@ class _Milestones extends StatelessWidget {
             FlareWordSafeText(
               s.milestoneDays(m),
               align: TextAlign.center,
+              maxLines: 3,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 2),
-            Text(
-              sub,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 11,
-                color: got ? FlareColors.accentInk : FlareColors.dim,
+            // Two lines, centered: «Осталось 4 дня» / «تحقق في …» at 320 pt
+            // and 1.5× text wrap at a space instead of being cut.
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: FlareWordSafeText(
+                sub,
+                align: TextAlign.center,
+                maxLines: 2,
+                style: TextStyle(
+                  fontSize: 11,
+                  height: 1.2,
+                  color: got ? FlareColors.accentInk : FlareColors.dim,
+                ),
               ),
             ),
           ],
