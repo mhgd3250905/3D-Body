@@ -16,12 +16,18 @@ class FlareShared {
     required this.catalog,
     required this.rhythms,
     required this.scope,
-  }) : library = trainer.TrainingLibraryConfig(
-         scopeManifest: scope,
-         brand: 'Flare',
-         // SF-style defaults: strength first; no start button in details.
-         categoryOrder: const ['力量', '拉伸放松'],
-       );
+  }) : library = _libraryConfig(scope, 'zh');
+
+  static trainer.TrainingLibraryConfig _libraryConfig(
+    coach.CoachActionScopeManifest scope,
+    String languageTag,
+  ) => trainer.TrainingLibraryConfig(
+    scopeManifest: scope,
+    brand: 'Flare',
+    // SF-style defaults: strength first; no start button in details.
+    categoryOrder: const ['力量', '拉伸放松'],
+    strings: trainer.TrainingLibraryStrings.forLanguage(languageTag),
+  );
 
   /// Set at startup (main.dart); tests may install their own.
   static FlareShared? current;
@@ -33,6 +39,10 @@ class FlareShared {
   final Map<String, trainer.Rhythm> rhythms;
   final coach.CoachActionScopeManifest scope;
   final trainer.TrainingLibraryConfig library;
+
+  /// [library] with SDK library strings for the current app locale.
+  trainer.TrainingLibraryConfig libraryFor(BuildContext context) =>
+      _libraryConfig(scope, Localizations.localeOf(context).toLanguageTag());
 
   Set<String> get allowedActionIds => scope.allowedActionIds;
 
@@ -52,6 +62,9 @@ class FlareShared {
   trainer.SessionBuilder sessionBuilder() => trainer.SessionBuilder(
     rhythms: rhythms,
     known: (id) => catalog[id] != null,
+    // Estimate allowance per side switch (SDK v0.6.0, user 2026-11-03).
+    sideSwitchMarginSeconds:
+        trainer.SessionBuilder.recommendedSideSwitchMarginSeconds,
   );
 
   /// Display name in the current language, falling back to Chinese.
@@ -98,7 +111,7 @@ class FlareShared {
     await trainer.TrainingLibraryDetails.open(
       context,
       actionId: id,
-      config: shared.library,
+      config: shared.libraryFor(context),
       mediaPolicy: policy,
       theme: theme(context),
     );
@@ -110,7 +123,7 @@ class FlareSharedLibraryPage extends StatelessWidget {
   const FlareSharedLibraryPage({super.key});
   @override
   Widget build(BuildContext context) => trainer.TrainingLibraryPage(
-    config: FlareShared.current!.library,
+    config: FlareShared.current!.libraryFor(context),
     mediaPolicy: FlarePublicMedia.current!,
     theme: FlareShared.theme(context),
     embedded: true,
