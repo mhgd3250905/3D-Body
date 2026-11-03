@@ -75,7 +75,6 @@
   "todayEmpty": "從肌群詳解或訓練庫加入，組成今天的練習",
   "remove": "移出今日訓練",
   "clearMuscleFilter": "清除肌群篩選",
-  "timerReady": "準備開始",
   "countdown": "準備",
   "work": "練習中",
   "rest": "組間休息",
@@ -84,18 +83,14 @@
   "abandoned": "本次已結束",
   "paused": "已暫停",
   "start": "開始",
-  "completeRep": "完成 1 次",
   "completeSet": "本組完成",
   "skipRest": "結束休息",
   "addRest": "+15 秒休息",
-  "painStop": "不適，停止練習",
-  "painMessage": "已記錄不適。停止當前練習，休息后再決定是否繼續。",
   "saved": "已保存在本機",
   "saving": "正在保存…",
   "saveFailed": "保存未完成，記錄仍在本次會話中，請重試",
   "storageReadFailed": "本地記錄暫時無法讀取，原數據已保留",
   "done": "完成",
-  "exitTimer": "結束本次練習",
   "manualMode": "按原訓練說明完成，再手動確認本組",
   "backgroundPause": "切到后臺時練習會暫停；回來后點繼續",
   "setsLabel": "第 {current} / {total} 組",
@@ -306,25 +301,6 @@
   "spec": "劑量",
   "moreCuesAndSafety": "更多要點、常見錯誤與安全",
   "addTodayShort": "加入今日",
-  "setOfTotal": "第 {current} 組 / 共 {total} 組",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} 次",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "秒",
   "painStopShort": "不適，停止練習",
   "pathTitle": "學習路徑",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "次",
   "appearanceGroup": "外觀",
   "appearanceLabel": "主題",
   "themeSystem": "跟隨系統",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "觀看動作示範",
-  "hideDrillDemo": "收起示范",
   "demoReplay": "重播",
   "demoSeek": "播放進度",
   "demoSpeed": "示范速度",
   "demoFailed": "視頻暫時無法播放，請重試",
   "demoPaused": "訓練已暫停，示范也已暫停",
-  "finishedLine": "{sets} 組全部完成",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "語言",
   "languageSystem": "跟隨系統",
   "languageTitle": "App 語言",
@@ -463,12 +429,8 @@
   "planAddedTo": "已加入「{name}」",
   "planNewWith": "新增計畫並加入",
   "planNext": "下一個",
-  "planStartDrill": "開始：{name}",
   "planSkip": "略過",
-  "planFinish": "結束訓練",
   "planAllDone": "這一套練完了",
-  "planAllDoneLine": "完成 {done} / {total} 個動作",
-  "planOf": "第 {index} / {total} 個",
   "pickerTitle": "選擇動作",
   "pickerSelected": "已選 {count} 個",
   "planReorderHint": "拖動右側把手調整順序",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} 個動作",
   "settingsHint": "外觀、播放與畫質",
   "planRunEnded": "本輪訓練已結束",
-  "planSkipped": "已略過",
-  "planSkippedCount": "略過 {count} 個動作",
   "trainerSoundOn": "開啟語音和提示音",
   "trainerSoundOff": "關閉語音和提示音",
   "filterAction": "篩選",

@@ -75,7 +75,6 @@
   "todayEmpty": "Tambahkan latihan dari detail otot atau pustaka untuk menyusun sesi hari ini",
   "remove": "Hapus dari latihan hari ini",
   "clearMuscleFilter": "Hapus filter otot",
-  "timerReady": "Siap",
   "countdown": "Bersiap",
   "work": "Sedang berlatih",
   "rest": "Istirahat antarset",
@@ -84,18 +83,14 @@
   "abandoned": "Sesi berakhir",
   "paused": "Dijeda",
   "start": "Mulai",
-  "completeRep": "Selesaikan 1 repetisi",
   "completeSet": "Selesaikan set",
   "skipRest": "Akhiri istirahat",
   "addRest": "+15 detik istirahat",
-  "painStop": "Berhenti jika terasa tidak nyaman",
-  "painMessage": "Rasa tidak nyaman dicatat. Hentikan latihan ini, istirahat, lalu putuskan apakah akan melanjutkan.",
   "saved": "Tersimpan di perangkat ini",
   "saving": "Menyimpan…",
   "saveFailed": "Penyimpanan belum selesai. Sesi ini masih tersedia; coba lagi.",
   "storageReadFailed": "Catatan lokal sedang tidak tersedia. Data asli tetap tersimpan.",
   "done": "Selesai",
-  "exitTimer": "Akhiri sesi ini",
   "manualMode": "Ikuti petunjuk latihan, lalu tandai setiap set selesai secara manual",
   "backgroundPause": "Latihan dijeda saat aplikasi berjalan di latar belakang. Ketuk Lanjutkan saat kembali.",
   "setsLabel": "Set {current} dari {total}",
@@ -306,25 +301,6 @@
   "spec": "Dosis",
   "moreCuesAndSafety": "Panduan tambahan, kesalahan umum, dan keamanan",
   "addTodayShort": "Tambah hari ini",
-  "setOfTotal": "Set {current} dari {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} repetisi",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "dtk",
   "painStopShort": "Berhenti jika terasa tidak nyaman",
   "pathTitle": "Jalur belajar",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "repetisi",
   "appearanceGroup": "Tampilan",
   "appearanceLabel": "Tema",
   "themeSystem": "Sistem",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "Tonton contoh latihan",
-  "hideDrillDemo": "Sembunyikan contoh",
   "demoReplay": "Putar ulang",
   "demoSeek": "Posisi pemutaran",
   "demoSpeed": "Kecepatan contoh",
   "demoFailed": "Video sedang tidak tersedia. Coba lagi.",
   "demoPaused": "Latihan dijeda; contoh juga dijeda",
-  "finishedLine": "Semua {sets} set selesai",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "Bahasa",
   "languageSystem": "Ikuti sistem",
   "languageTitle": "Bahasa aplikasi",
@@ -463,12 +429,8 @@
   "planAddedTo": "Ditambahkan ke “{name}”",
   "planNewWith": "Rencana baru dengan latihan ini",
   "planNext": "Berikutnya",
-  "planStartDrill": "Mulai: {name}",
   "planSkip": "Lewati",
-  "planFinish": "Akhiri sesi",
   "planAllDone": "Set selesai",
-  "planAllDoneLine": "{done} dari {total} latihan selesai",
-  "planOf": "{index} dari {total}",
   "pickerTitle": "Pilih latihan",
   "pickerSelected": "{count} dipilih",
   "planReorderHint": "Seret pegangan untuk mengurutkan",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} latihan",
   "settingsHint": "Tampilan, pemutaran, kualitas",
   "planRunEnded": "Sesi berakhir",
-  "planSkipped": "Dilewati",
-  "planSkippedCount": "{count} latihan dilewati",
   "trainerSoundOn": "Aktifkan suara dan bunyi",
   "trainerSoundOff": "Nonaktifkan suara dan bunyi",
   "filterAction": "Filter",

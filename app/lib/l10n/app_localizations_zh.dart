@@ -234,9 +234,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clearMuscleFilter => '清除肌群筛选';
 
   @override
-  String get timerReady => '准备开始';
-
-  @override
   String get countdown => '准备';
 
   @override
@@ -261,9 +258,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get start => '开始';
 
   @override
-  String get completeRep => '完成 1 次';
-
-  @override
   String get completeSet => '本组完成';
 
   @override
@@ -271,12 +265,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addRest => '+15 秒休息';
-
-  @override
-  String get painStop => '不适，停止练习';
-
-  @override
-  String get painMessage => '已记录不适。停止当前练习，休息后再决定是否继续。';
 
   @override
   String get saved => '已保存在本机';
@@ -292,9 +280,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get done => '完成';
-
-  @override
-  String get exitTimer => '结束本次练习';
 
   @override
   String get manualMode => '按原训练说明完成，再手动确认本组';
@@ -684,16 +669,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addTodayShort => '加入今日';
 
   @override
-  String setOfTotal(int current, int total) {
-    return '第 $current 组 / 共 $total 组';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count 次';
-  }
-
-  @override
   String get secondsUnit => '秒';
 
   @override
@@ -769,9 +744,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get countUnit => '次';
-
-  @override
   String get appearanceGroup => '外观';
 
   @override
@@ -824,9 +796,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get drillDemo => '观看动作示范';
 
   @override
-  String get hideDrillDemo => '收起示范';
-
-  @override
   String get demoReplay => '重播';
 
   @override
@@ -840,11 +809,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get demoPaused => '训练已暂停，示范也已暂停';
-
-  @override
-  String finishedLine(int sets) {
-    return '$sets 组全部完成';
-  }
 
   @override
   String get languageLabel => '语言';
@@ -960,28 +924,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get planNext => '下一个';
 
   @override
-  String planStartDrill(String name) {
-    return '开始：$name';
-  }
-
-  @override
   String get planSkip => '跳过';
 
   @override
-  String get planFinish => '结束训练';
-
-  @override
   String get planAllDone => '这一套练完了';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '完成 $done / $total 个动作';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '第 $index / $total 个';
-  }
 
   @override
   String get pickerTitle => '选择动作';
@@ -1046,14 +992,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get planRunEnded => '本轮训练已结束';
-
-  @override
-  String get planSkipped => '已跳过';
-
-  @override
-  String planSkippedCount(int count) {
-    return '跳过 $count 个动作';
-  }
 
   @override
   String get trainerSoundOn => '开启语音和提示音';
@@ -1373,9 +1311,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get clearMuscleFilter => '清除肌群篩選';
 
   @override
-  String get timerReady => '準備開始';
-
-  @override
   String get countdown => '準備';
 
   @override
@@ -1400,9 +1335,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get start => '開始';
 
   @override
-  String get completeRep => '完成 1 次';
-
-  @override
   String get completeSet => '本組完成';
 
   @override
@@ -1410,12 +1342,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get addRest => '+15 秒休息';
-
-  @override
-  String get painStop => '不適，停止練習';
-
-  @override
-  String get painMessage => '已記錄不適。停止當前練習，休息后再決定是否繼續。';
 
   @override
   String get saved => '已保存在本機';
@@ -1431,9 +1357,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get done => '完成';
-
-  @override
-  String get exitTimer => '結束本次練習';
 
   @override
   String get manualMode => '按原訓練說明完成，再手動確認本組';
@@ -1824,16 +1747,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get addTodayShort => '加入今日';
 
   @override
-  String setOfTotal(int current, int total) {
-    return '第 $current 組 / 共 $total 組';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count 次';
-  }
-
-  @override
   String get secondsUnit => '秒';
 
   @override
@@ -1909,9 +1822,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get countUnit => '次';
-
-  @override
   String get appearanceGroup => '外觀';
 
   @override
@@ -1964,9 +1874,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get drillDemo => '觀看動作示範';
 
   @override
-  String get hideDrillDemo => '收起示范';
-
-  @override
   String get demoReplay => '重播';
 
   @override
@@ -1980,11 +1887,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get demoPaused => '訓練已暫停，示范也已暫停';
-
-  @override
-  String finishedLine(int sets) {
-    return '$sets 組全部完成';
-  }
 
   @override
   String get languageLabel => '語言';
@@ -2100,28 +2002,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get planNext => '下一個';
 
   @override
-  String planStartDrill(String name) {
-    return '開始：$name';
-  }
-
-  @override
   String get planSkip => '略過';
 
   @override
-  String get planFinish => '結束訓練';
-
-  @override
   String get planAllDone => '這一套練完了';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '完成 $done / $total 個動作';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '第 $index / $total 個';
-  }
 
   @override
   String get pickerTitle => '選擇動作';
@@ -2186,14 +2070,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get planRunEnded => '本輪訓練已結束';
-
-  @override
-  String get planSkipped => '已略過';
-
-  @override
-  String planSkippedCount(int count) {
-    return '略過 $count 個動作';
-  }
 
   @override
   String get trainerSoundOn => '開啟語音和提示音';

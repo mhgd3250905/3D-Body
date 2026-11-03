@@ -75,7 +75,6 @@
   "todayEmpty": "أضف تمارين من تفاصيل العضلات أو المكتبة لإعداد تدريب اليوم",
   "remove": "إزالة من تدريب اليوم",
   "clearMuscleFilter": "مسح تصفية العضلات",
-  "timerReady": "جاهز",
   "countdown": "استعد",
   "work": "قيد التدريب",
   "rest": "الراحة بين المجموعات",
@@ -84,18 +83,14 @@
   "abandoned": "انتهت الجلسة",
   "paused": "متوقف مؤقتًا",
   "start": "ابدأ",
-  "completeRep": "أكمل تكرارًا واحدًا",
   "completeSet": "أكمل المجموعة",
   "skipRest": "إنهاء الراحة",
   "addRest": "+15 ثانية راحة",
-  "painStop": "توقف عند الشعور بعدم الارتياح",
-  "painMessage": "سُجّل الشعور بعدم الارتياح. أوقف هذا التمرين واسترح، ثم قرر إن كنت ستتابع.",
   "saved": "حُفظ على هذا الجهاز",
   "saving": "جارٍ الحفظ…",
   "saveFailed": "لم يكتمل الحفظ. ما زالت هذه الجلسة متاحة؛ حاول مجددًا.",
   "storageReadFailed": "السجلات المحلية غير متاحة مؤقتًا. تم الاحتفاظ ببياناتك الأصلية.",
   "done": "تم",
-  "exitTimer": "إنهاء هذه الجلسة",
   "manualMode": "اتبع تعليمات التمرين ثم أكّد إكمال كل مجموعة يدويًا",
   "backgroundPause": "يتوقف التدريب مؤقتًا عند انتقال التطبيق إلى الخلفية. اضغط متابعة عند العودة.",
   "setsLabel": "المجموعة {current} من {total}",
@@ -306,25 +301,6 @@
   "spec": "الجرعة التدريبية",
   "moreCuesAndSafety": "مزيد من الإرشادات والأخطاء الشائعة والسلامة",
   "addTodayShort": "أضف اليوم",
-  "setOfTotal": "المجموعة {current} من {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} تكرارًا",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "ث",
   "painStopShort": "توقف عند الشعور بعدم الارتياح",
   "pathTitle": "مسار التعلّم",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "تكرار",
   "appearanceGroup": "المظهر",
   "appearanceLabel": "السمة",
   "themeSystem": "النظام",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "مشاهدة عرض التمرين",
-  "hideDrillDemo": "إخفاء العرض",
   "demoReplay": "إعادة التشغيل",
   "demoSeek": "موضع التشغيل",
   "demoSpeed": "سرعة العرض",
   "demoFailed": "الفيديو غير متاح مؤقتًا. حاول مجددًا.",
   "demoPaused": "توقف التدريب والعرض مؤقتًا",
-  "finishedLine": "اكتملت المجموعات كلها: {sets}",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "اللغة",
   "languageSystem": "اتباع إعداد النظام",
   "languageTitle": "لغة التطبيق",
@@ -463,12 +429,8 @@
   "planAddedTo": "أُضيف إلى «{name}»",
   "planNewWith": "خطة جديدة بهذا التمرين",
   "planNext": "التالي",
-  "planStartDrill": "ابدأ: {name}",
   "planSkip": "تخطٍّ",
-  "planFinish": "إنهاء الحصة",
   "planAllDone": "اكتملت المجموعة",
-  "planAllDoneLine": "أُنجز {done} من {total} تمارين",
-  "planOf": "{index} من {total}",
   "pickerTitle": "اختر التمارين",
   "pickerSelected": "تم اختيار {count}",
   "planReorderHint": "اسحب المقبض لإعادة الترتيب",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} تمارين",
   "settingsHint": "المظهر والتشغيل والجودة",
   "planRunEnded": "انتهت الجلسة",
-  "planSkipped": "تم التخطي",
-  "planSkippedCount": "تم تخطي {count} تمارين",
   "trainerSoundOn": "تشغيل الصوت والتنبيهات",
   "trainerSoundOff": "إيقاف الصوت والتنبيهات",
   "filterAction": "تصفية",

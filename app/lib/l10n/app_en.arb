@@ -75,7 +75,6 @@
   "todayEmpty": "Add exercises from muscle details or the library to build today’s session",
   "remove": "Remove from today’s training",
   "clearMuscleFilter": "Clear muscle filter",
-  "timerReady": "Ready",
   "countdown": "Get ready",
   "work": "Training",
   "rest": "Rest between sets",
@@ -84,18 +83,14 @@
   "abandoned": "Session ended",
   "paused": "Paused",
   "start": "Start",
-  "completeRep": "Complete 1 rep",
   "completeSet": "Complete set",
   "skipRest": "End rest",
   "addRest": "+15 sec rest",
-  "painStop": "Stop if you feel discomfort",
-  "painMessage": "Discomfort recorded. Stop this exercise, rest, then decide whether to continue.",
   "saved": "Saved on this device",
   "saving": "Saving…",
   "saveFailed": "Could not finish saving. This session is still available; try again.",
   "storageReadFailed": "Local records are temporarily unavailable. Your original data has been kept.",
   "done": "Done",
-  "exitTimer": "End this session",
   "manualMode": "Follow the exercise instructions, then confirm each set manually",
   "backgroundPause": "Training pauses when the app goes to the background. Tap Resume when you return.",
   "setsLabel": "Set {current} of {total}",
@@ -306,25 +301,6 @@
   "spec": "Dose",
   "moreCuesAndSafety": "More cues, common mistakes, and safety",
   "addTodayShort": "Add today",
-  "setOfTotal": "Set {current} of {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} reps",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "sec",
   "painStopShort": "Stop if you feel discomfort",
   "pathTitle": "Learning path",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "reps",
   "appearanceGroup": "Appearance",
   "appearanceLabel": "Theme",
   "themeSystem": "System",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "Watch exercise demo",
-  "hideDrillDemo": "Hide demo",
   "demoReplay": "Replay",
   "demoSeek": "Playback position",
   "demoSpeed": "Demo speed",
   "demoFailed": "Video is temporarily unavailable. Try again.",
   "demoPaused": "Training paused; demo paused too",
-  "finishedLine": "All {sets} sets complete",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "Language",
   "languageSystem": "Follow system",
   "languageTitle": "App language",
@@ -463,12 +429,8 @@
   "planAddedTo": "Added to “{name}”",
   "planNewWith": "New plan with this drill",
   "planNext": "Next",
-  "planStartDrill": "Start: {name}",
   "planSkip": "Skip",
-  "planFinish": "End session",
   "planAllDone": "Set complete",
-  "planAllDoneLine": "{done} of {total} drills done",
-  "planOf": "{index} of {total}",
   "pickerTitle": "Choose drills",
   "pickerSelected": "{count} selected",
   "planReorderHint": "Drag the handle to reorder",
@@ -492,15 +454,6 @@
     "description": "Subtitle of the Settings row in the More sheet."
   },
   "planRunEnded": "Session ended",
-  "planSkipped": "Skipped",
-  "planSkippedCount": "{count} drills skipped",
-  "@planSkippedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "trainerSoundOn": "Turn on voice and sounds",
   "trainerSoundOff": "Turn off voice and sounds",
   "filterAction": "Filter",

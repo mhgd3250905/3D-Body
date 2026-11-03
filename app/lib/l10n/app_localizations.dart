@@ -571,12 +571,6 @@ abstract class AppLocalizations {
   /// **'清除肌群筛选'**
   String get clearMuscleFilter;
 
-  /// No description provided for @timerReady.
-  ///
-  /// In zh, this message translates to:
-  /// **'准备开始'**
-  String get timerReady;
-
   /// No description provided for @countdown.
   ///
   /// In zh, this message translates to:
@@ -625,12 +619,6 @@ abstract class AppLocalizations {
   /// **'开始'**
   String get start;
 
-  /// No description provided for @completeRep.
-  ///
-  /// In zh, this message translates to:
-  /// **'完成 1 次'**
-  String get completeRep;
-
   /// No description provided for @completeSet.
   ///
   /// In zh, this message translates to:
@@ -648,18 +636,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'+15 秒休息'**
   String get addRest;
-
-  /// No description provided for @painStop.
-  ///
-  /// In zh, this message translates to:
-  /// **'不适，停止练习'**
-  String get painStop;
-
-  /// No description provided for @painMessage.
-  ///
-  /// In zh, this message translates to:
-  /// **'已记录不适。停止当前练习，休息后再决定是否继续。'**
-  String get painMessage;
 
   /// No description provided for @saved.
   ///
@@ -690,12 +666,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'完成'**
   String get done;
-
-  /// No description provided for @exitTimer.
-  ///
-  /// In zh, this message translates to:
-  /// **'结束本次练习'**
-  String get exitTimer;
 
   /// No description provided for @manualMode.
   ///
@@ -1417,18 +1387,6 @@ abstract class AppLocalizations {
   /// **'加入今日'**
   String get addTodayShort;
 
-  /// No description provided for @setOfTotal.
-  ///
-  /// In zh, this message translates to:
-  /// **'第 {current} 组 / 共 {total} 组'**
-  String setOfTotal(int current, int total);
-
-  /// No description provided for @ofReps.
-  ///
-  /// In zh, this message translates to:
-  /// **'/ {count} 次'**
-  String ofReps(int count);
-
   /// No description provided for @secondsUnit.
   ///
   /// In zh, this message translates to:
@@ -1567,12 +1525,6 @@ abstract class AppLocalizations {
   /// **'阶段 {list}'**
   String phasesShort(String list);
 
-  /// No description provided for @countUnit.
-  ///
-  /// In zh, this message translates to:
-  /// **'次'**
-  String get countUnit;
-
   /// No description provided for @appearanceGroup.
   ///
   /// In zh, this message translates to:
@@ -1669,12 +1621,6 @@ abstract class AppLocalizations {
   /// **'观看动作示范'**
   String get drillDemo;
 
-  /// No description provided for @hideDrillDemo.
-  ///
-  /// In zh, this message translates to:
-  /// **'收起示范'**
-  String get hideDrillDemo;
-
   /// No description provided for @demoReplay.
   ///
   /// In zh, this message translates to:
@@ -1704,12 +1650,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'训练已暂停，示范也已暂停'**
   String get demoPaused;
-
-  /// No description provided for @finishedLine.
-  ///
-  /// In zh, this message translates to:
-  /// **'{sets} 组全部完成'**
-  String finishedLine(int sets);
 
   /// No description provided for @languageLabel.
   ///
@@ -1921,41 +1861,17 @@ abstract class AppLocalizations {
   /// **'下一个'**
   String get planNext;
 
-  /// No description provided for @planStartDrill.
-  ///
-  /// In zh, this message translates to:
-  /// **'开始：{name}'**
-  String planStartDrill(String name);
-
   /// No description provided for @planSkip.
   ///
   /// In zh, this message translates to:
   /// **'跳过'**
   String get planSkip;
 
-  /// No description provided for @planFinish.
-  ///
-  /// In zh, this message translates to:
-  /// **'结束训练'**
-  String get planFinish;
-
   /// No description provided for @planAllDone.
   ///
   /// In zh, this message translates to:
   /// **'这一套练完了'**
   String get planAllDone;
-
-  /// No description provided for @planAllDoneLine.
-  ///
-  /// In zh, this message translates to:
-  /// **'完成 {done} / {total} 个动作'**
-  String planAllDoneLine(int done, int total);
-
-  /// No description provided for @planOf.
-  ///
-  /// In zh, this message translates to:
-  /// **'第 {index} / {total} 个'**
-  String planOf(int index, int total);
 
   /// No description provided for @pickerTitle.
   ///
@@ -2076,18 +1992,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'本轮训练已结束'**
   String get planRunEnded;
-
-  /// No description provided for @planSkipped.
-  ///
-  /// In zh, this message translates to:
-  /// **'已跳过'**
-  String get planSkipped;
-
-  /// No description provided for @planSkippedCount.
-  ///
-  /// In zh, this message translates to:
-  /// **'跳过 {count} 个动作'**
-  String planSkippedCount(int count);
 
   /// No description provided for @trainerSoundOn.
   ///

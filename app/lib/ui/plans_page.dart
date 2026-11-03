@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
-import 'app_glass.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../coach/plan_mapping.dart';
 import '../trainer/trainer_strings.dart';
@@ -10,7 +9,6 @@ import '../data/catalog.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
-import 'drill_media.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -652,7 +650,6 @@ class _NumberedDrill extends StatelessWidget {
     required this.drill,
     required this.onTap,
     this.trailing,
-    this.state,
     this.doseText,
     this.grouped = false,
   });
@@ -664,22 +661,13 @@ class _NumberedDrill extends StatelessWidget {
   final VoidCallback onTap;
   final Widget? trailing;
   final String? doseText;
-
-  /// null: plain; true: done; false: current.
-  final bool? state;
   @override
   Widget build(BuildContext context) {
-    final done = state == true;
-    final current = state == false;
     return Padding(
       padding: EdgeInsets.only(bottom: grouped ? 0 : 8),
       child: RepaintBoundary(
         child: Material(
-          color: current
-              ? FlareColors.accent.withValues(alpha: .10)
-              : grouped
-              ? Colors.transparent
-              : FlareColors.surface,
+          color: grouped ? Colors.transparent : FlareColors.surface,
           borderRadius: BorderRadius.circular(grouped ? 0 : 16),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -691,25 +679,15 @@ class _NumberedDrill extends StatelessWidget {
                   SizedBox(
                     width: 28,
                     child: Center(
-                      child: done
-                          ? Icon(
-                              Icons.check_circle_rounded,
-                              size: 20,
-                              color: FlareColors.success,
-                            )
-                          : Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: current
-                                    ? FlareColors.accentInk
-                                    : FlareColors.dim,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
-                              ),
-                            ),
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: FlareColors.dim,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -727,10 +705,9 @@ class _NumberedDrill extends StatelessWidget {
                       children: [
                         Text(
                           drill.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: done ? FlareColors.secondary : null,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -1372,248 +1349,3 @@ Future<String?> showAddToPlanSheet(
     );
   },
 );
-
-/// The run hub between drills: what is next, what is done, and one button.
-/// Historical run-hub fixture. Production entry points now push the complete
-/// plan directly into FlareTrainingPage / TrainerPlayer.
-class PlanRunPage extends StatelessWidget {
-  const PlanRunPage({
-    super.key,
-    required this.title,
-    required this.drills,
-    required this.done,
-    this.skipped = const {},
-    required this.index,
-    required this.onStart,
-    required this.onSelect,
-    required this.onSkip,
-    required this.onFinish,
-  });
-  final String title;
-  final List<Drill> drills;
-  final Set<int> done;
-  final Set<int> skipped;
-  final int index;
-  final VoidCallback onStart;
-  final ValueChanged<int> onSelect;
-  final VoidCallback onSkip;
-  final VoidCallback onFinish;
-
-  bool get ended => index >= drills.length;
-  bool get complete => ended && done.length == drills.length;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = context.strings;
-    final total = drills.length;
-    final progress = total == 0 ? 0.0 : done.length / total;
-    final endColor = complete ? FlareColors.success : FlareColors.secondary;
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
-        children: [
-          FlareNavBar(title: title, onBack: onFinish),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(3),
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(end: progress),
-                    duration: FlareMotion.of(context, FlareMotion.expand),
-                    curve: FlareMotion.settle,
-                    builder: (context, value, _) => LinearProgressIndicator(
-                      value: value,
-                      minHeight: 5,
-                      backgroundColor: FlareColors.track,
-                      color: FlareColors.accent,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  s.planAllDoneLine(done.length, total),
-                  style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                ),
-                if (skipped.isNotEmpty)
-                  Text(
-                    s.planSkippedCount(skipped.length),
-                    style: TextStyle(fontSize: 12, color: FlareColors.dim),
-                  ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ScrollEdge(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                children: [
-                  if (ended)
-                    FadeSlideIn(
-                      key: const ValueKey('run-complete'),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 28),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 72,
-                              height: 72,
-                              decoration: BoxDecoration(
-                                color: endColor.withValues(alpha: .14),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                complete
-                                    ? Icons.check_rounded
-                                    : Icons.flag_outlined,
-                                size: 38,
-                                color: endColor,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              complete ? s.planAllDone : s.planRunEnded,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    FadeSlideIn(
-                      key: ValueKey('run-next-$index'),
-                      offset: 10,
-                      child: _NextCard(
-                        drill: drills[index],
-                        label: s.planOf(index + 1, total),
-                      ),
-                    ),
-                  const SizedBox(height: 18),
-                  Eyebrow(s.planDrillCount(total)),
-                  const SizedBox(height: 10),
-                  for (final (i, drill) in drills.indexed)
-                    _NumberedDrill(
-                      key: ValueKey('run-row-$i'),
-                      index: i,
-                      drill: drill,
-                      state: done.contains(i)
-                          ? true
-                          : i == index
-                          ? false
-                          : null,
-                      trailing: skipped.contains(i)
-                          ? Padding(
-                              padding: const EdgeInsets.only(right: 4),
-                              child: Text(
-                                s.planSkipped,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: FlareColors.dim,
-                                ),
-                              ),
-                            )
-                          : const SizedBox(width: 8),
-                      onTap: () => onSelect(i),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-            child: PrimaryAction(
-              key: const ValueKey('run-start'),
-              icon: ended ? Icons.check_rounded : Icons.play_arrow_rounded,
-              label: ended ? s.done : s.planStartDrill(drills[index].name),
-              onPressed: ended ? onFinish : onStart,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: ended
-                ? const SizedBox(height: 48)
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        key: const ValueKey('run-skip'),
-                        onPressed: onSkip,
-                        child: Text(
-                          s.planSkip,
-                          style: TextStyle(color: FlareColors.secondary),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      TextButton(
-                        key: const ValueKey('run-end'),
-                        onPressed: onFinish,
-                        child: Text(
-                          s.planFinish,
-                          style: TextStyle(color: FlareColors.secondary),
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NextCard extends StatelessWidget {
-  const _NextCard({required this.drill, required this.label});
-  final Drill drill;
-  final String label;
-  @override
-  Widget build(BuildContext context) => RepaintBoundary(
-    child: FlareStaticSurface(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AspectRatio(
-              aspectRatio: 16 / 10,
-              child: DrillMediaCard(
-                key: ValueKey('run-media-${drill.id}'),
-                drillId: drill.id,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Eyebrow(label, color: FlareColors.accentInk),
-                  const SizedBox(height: 4),
-                  Text(
-                    drill.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      height: 1.25,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${drill.prescription} · ${drill.equipment}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.4,
-                      color: FlareColors.secondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}

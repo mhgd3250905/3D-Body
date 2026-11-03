@@ -237,9 +237,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get clearMuscleFilter => 'मांसपेशी फ़िल्टर हटाएँ';
 
   @override
-  String get timerReady => 'तैयार';
-
-  @override
   String get countdown => 'तैयार हो जाएँ';
 
   @override
@@ -264,9 +261,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get start => 'शुरू करें';
 
   @override
-  String get completeRep => '1 दोहराव पूरा करें';
-
-  @override
   String get completeSet => 'सेट पूरा करें';
 
   @override
@@ -274,13 +268,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get addRest => '+15 सेकंड आराम';
-
-  @override
-  String get painStop => 'असहज लगे तो रुकें';
-
-  @override
-  String get painMessage =>
-      'असहजता दर्ज की गई। यह अभ्यास रोकें और आराम करें, फिर तय करें कि जारी रखना है या नहीं।';
 
   @override
   String get saved => 'इस डिवाइस पर सहेजा गया';
@@ -298,9 +285,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get done => 'हो गया';
-
-  @override
-  String get exitTimer => 'यह सत्र समाप्त करें';
 
   @override
   String get manualMode =>
@@ -704,16 +688,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get addTodayShort => 'आज जोड़ें';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'सेट $current / $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count दोहराव';
-  }
-
-  @override
   String get secondsUnit => 'सेकंड';
 
   @override
@@ -789,9 +763,6 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'दोहराव';
-
-  @override
   String get appearanceGroup => 'दिखावट';
 
   @override
@@ -845,9 +816,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get drillDemo => 'अभ्यास का प्रदर्शन देखें';
 
   @override
-  String get hideDrillDemo => 'प्रदर्शन छिपाएँ';
-
-  @override
   String get demoReplay => 'फिर चलाएँ';
 
   @override
@@ -861,11 +829,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get demoPaused => 'अभ्यास रुका है; प्रदर्शन भी रुका है';
-
-  @override
-  String finishedLine(int sets) {
-    return 'सभी $sets सेट पूरे';
-  }
 
   @override
   String get languageLabel => 'भाषा';
@@ -985,28 +948,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get planNext => 'अगला';
 
   @override
-  String planStartDrill(String name) {
-    return 'शुरू: $name';
-  }
-
-  @override
   String get planSkip => 'छोड़ें';
 
   @override
-  String get planFinish => 'सत्र समाप्त करें';
-
-  @override
   String get planAllDone => 'सेट पूरा हुआ';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$total में से $done अभ्यास पूरे';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$total में $index';
-  }
 
   @override
   String get pickerTitle => 'अभ्यास चुनें';
@@ -1072,14 +1017,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get planRunEnded => 'सत्र समाप्त';
-
-  @override
-  String get planSkipped => 'छोड़ दिया';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count अभ्यास छोड़ दिए गए';
-  }
 
   @override
   String get trainerSoundOn => 'आवाज़ और ध्वनियाँ चालू करें';

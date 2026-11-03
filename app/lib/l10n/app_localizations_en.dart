@@ -238,9 +238,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearMuscleFilter => 'Clear muscle filter';
 
   @override
-  String get timerReady => 'Ready';
-
-  @override
   String get countdown => 'Get ready';
 
   @override
@@ -265,9 +262,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get start => 'Start';
 
   @override
-  String get completeRep => 'Complete 1 rep';
-
-  @override
   String get completeSet => 'Complete set';
 
   @override
@@ -275,13 +269,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addRest => '+15 sec rest';
-
-  @override
-  String get painStop => 'Stop if you feel discomfort';
-
-  @override
-  String get painMessage =>
-      'Discomfort recorded. Stop this exercise, rest, then decide whether to continue.';
 
   @override
   String get saved => 'Saved on this device';
@@ -299,9 +286,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get done => 'Done';
-
-  @override
-  String get exitTimer => 'End this session';
 
   @override
   String get manualMode =>
@@ -703,16 +687,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTodayShort => 'Add today';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'Set $current of $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count reps';
-  }
-
-  @override
   String get secondsUnit => 'sec';
 
   @override
@@ -788,9 +762,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'reps';
-
-  @override
   String get appearanceGroup => 'Appearance';
 
   @override
@@ -844,9 +815,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drillDemo => 'Watch exercise demo';
 
   @override
-  String get hideDrillDemo => 'Hide demo';
-
-  @override
   String get demoReplay => 'Replay';
 
   @override
@@ -860,11 +828,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoPaused => 'Training paused; demo paused too';
-
-  @override
-  String finishedLine(int sets) {
-    return 'All $sets sets complete';
-  }
 
   @override
   String get languageLabel => 'Language';
@@ -984,28 +947,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planNext => 'Next';
 
   @override
-  String planStartDrill(String name) {
-    return 'Start: $name';
-  }
-
-  @override
   String get planSkip => 'Skip';
 
   @override
-  String get planFinish => 'End session';
-
-  @override
   String get planAllDone => 'Set complete';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$done of $total drills done';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index of $total';
-  }
 
   @override
   String get pickerTitle => 'Choose drills';
@@ -1072,14 +1017,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planRunEnded => 'Session ended';
-
-  @override
-  String get planSkipped => 'Skipped';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count drills skipped';
-  }
 
   @override
   String get trainerSoundOn => 'Turn on voice and sounds';

@@ -239,9 +239,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get clearMuscleFilter => 'Сбросить фильтр мышц';
 
   @override
-  String get timerReady => 'Готово';
-
-  @override
   String get countdown => 'Приготовьтесь';
 
   @override
@@ -266,9 +263,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get start => 'Начать';
 
   @override
-  String get completeRep => 'Выполнить 1 повторение';
-
-  @override
   String get completeSet => 'Завершить подход';
 
   @override
@@ -276,13 +270,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get addRest => '+15 с отдыха';
-
-  @override
-  String get painStop => 'При дискомфорте остановитесь';
-
-  @override
-  String get painMessage =>
-      'Дискомфорт записан. Остановите упражнение, отдохните, затем решите, продолжать ли.';
 
   @override
   String get saved => 'Сохранено на этом устройстве';
@@ -300,9 +287,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get done => 'Готово';
-
-  @override
-  String get exitTimer => 'Завершить это занятие';
 
   @override
   String get manualMode =>
@@ -708,16 +692,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addTodayShort => 'Добавить сегодня';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'Подход $current из $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count повторений';
-  }
-
-  @override
   String get secondsUnit => 'с';
 
   @override
@@ -793,9 +767,6 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'повторений';
-
-  @override
   String get appearanceGroup => 'Внешний вид';
 
   @override
@@ -849,9 +820,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get drillDemo => 'Посмотреть демонстрацию упражнения';
 
   @override
-  String get hideDrillDemo => 'Скрыть демонстрацию';
-
-  @override
   String get demoReplay => 'Повторить';
 
   @override
@@ -865,11 +833,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get demoPaused => 'Тренировка приостановлена; демонстрация тоже';
-
-  @override
-  String finishedLine(int sets) {
-    return 'Все подходы завершены: $sets';
-  }
 
   @override
   String get languageLabel => 'Язык';
@@ -989,28 +952,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get planNext => 'Далее';
 
   @override
-  String planStartDrill(String name) {
-    return 'Начать: $name';
-  }
-
-  @override
   String get planSkip => 'Пропустить';
 
   @override
-  String get planFinish => 'Завершить тренировку';
-
-  @override
   String get planAllDone => 'Комплекс выполнен';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return 'Выполнено $done из $total';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index из $total';
-  }
 
   @override
   String get pickerTitle => 'Выбор упражнений';
@@ -1078,14 +1023,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get planRunEnded => 'Тренировка завершена';
-
-  @override
-  String get planSkipped => 'Пропущено';
-
-  @override
-  String planSkippedCount(int count) {
-    return 'Пропущено упражнений: $count';
-  }
 
   @override
   String get trainerSoundOn => 'Включить голос и звуки';

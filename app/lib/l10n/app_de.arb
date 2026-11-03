@@ -75,7 +75,6 @@
   "todayEmpty": "Füge über die Muskeldetails oder die Bibliothek Übungen für das heutige Training hinzu",
   "remove": "Aus dem heutigen Training entfernen",
   "clearMuscleFilter": "Muskelfilter löschen",
-  "timerReady": "Bereit",
   "countdown": "Mach dich bereit",
   "work": "Training",
   "rest": "Pause zwischen den Sätzen",
@@ -84,18 +83,14 @@
   "abandoned": "Training beendet",
   "paused": "Pausiert",
   "start": "Starten",
-  "completeRep": "1 Wiederholung abschließen",
   "completeSet": "Satz abschließen",
   "skipRest": "Pause beenden",
   "addRest": "+15 Sek. Pause",
-  "painStop": "Bei Beschwerden Training beenden",
-  "painMessage": "Beschwerden erfasst. Beende diese Übung, erhole dich und entscheide danach, ob du fortfahren möchtest.",
   "saved": "Auf diesem Gerät gespeichert",
   "saving": "Wird gespeichert…",
   "saveFailed": "Speichern nicht abgeschlossen. Diese Einheit ist noch verfügbar. Versuche es erneut.",
   "storageReadFailed": "Lokale Einträge sind vorübergehend nicht verfügbar. Deine ursprünglichen Daten bleiben erhalten.",
   "done": "Fertig",
-  "exitTimer": "Diese Einheit beenden",
   "manualMode": "Folge der Übungsanleitung und bestätige jeden Satz manuell",
   "backgroundPause": "Das Training pausiert, wenn die App im Hintergrund ist. Tippe nach deiner Rückkehr auf Fortsetzen.",
   "setsLabel": "Satz {current} von {total}",
@@ -306,25 +301,6 @@
   "spec": "Dosierung",
   "moreCuesAndSafety": "Weitere Hinweise, häufige Fehler und Sicherheit",
   "addTodayShort": "Heute hinzufügen",
-  "setOfTotal": "Satz {current} von {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} Wiederholungen",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "Sek.",
   "painStopShort": "Bei Beschwerden Training beenden",
   "pathTitle": "Lernpfad",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "Wiederholungen",
   "appearanceGroup": "Darstellung",
   "appearanceLabel": "Design",
   "themeSystem": "System",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "Übungsdemo ansehen",
-  "hideDrillDemo": "Demo ausblenden",
   "demoReplay": "Erneut abspielen",
   "demoSeek": "Wiedergabeposition",
   "demoSpeed": "Demogeschwindigkeit",
   "demoFailed": "Das Video ist vorübergehend nicht verfügbar. Versuche es erneut.",
   "demoPaused": "Training pausiert; Demo ebenfalls pausiert",
-  "finishedLine": "Alle {sets} Sätze abgeschlossen",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "Sprache",
   "languageSystem": "Systemeinstellung",
   "languageTitle": "App-Sprache",
@@ -463,12 +429,8 @@
   "planAddedTo": "Zu „{name}“ hinzugefügt",
   "planNewWith": "Neuer Plan mit dieser Übung",
   "planNext": "Weiter",
-  "planStartDrill": "Starten: {name}",
   "planSkip": "Überspringen",
-  "planFinish": "Einheit beenden",
   "planAllDone": "Einheit geschafft",
-  "planAllDoneLine": "{done} von {total} Übungen erledigt",
-  "planOf": "{index} von {total}",
   "pickerTitle": "Übungen wählen",
   "pickerSelected": "{count} ausgewählt",
   "planReorderHint": "Zum Sortieren am Griff ziehen",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} Übungen",
   "settingsHint": "Darstellung, Wiedergabe, Qualität",
   "planRunEnded": "Einheit beendet",
-  "planSkipped": "Übersprungen",
-  "planSkippedCount": "{count} Übungen übersprungen",
   "trainerSoundOn": "Sprache und Töne einschalten",
   "trainerSoundOff": "Sprache und Töne ausschalten",
   "filterAction": "Filter",

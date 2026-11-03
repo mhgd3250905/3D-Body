@@ -237,9 +237,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get clearMuscleFilter => 'Hapus filter otot';
 
   @override
-  String get timerReady => 'Siap';
-
-  @override
   String get countdown => 'Bersiap';
 
   @override
@@ -264,9 +261,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get start => 'Mulai';
 
   @override
-  String get completeRep => 'Selesaikan 1 repetisi';
-
-  @override
   String get completeSet => 'Selesaikan set';
 
   @override
@@ -274,13 +268,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get addRest => '+15 detik istirahat';
-
-  @override
-  String get painStop => 'Berhenti jika terasa tidak nyaman';
-
-  @override
-  String get painMessage =>
-      'Rasa tidak nyaman dicatat. Hentikan latihan ini, istirahat, lalu putuskan apakah akan melanjutkan.';
 
   @override
   String get saved => 'Tersimpan di perangkat ini';
@@ -298,9 +285,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get done => 'Selesai';
-
-  @override
-  String get exitTimer => 'Akhiri sesi ini';
 
   @override
   String get manualMode =>
@@ -709,16 +693,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get addTodayShort => 'Tambah hari ini';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'Set $current dari $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count repetisi';
-  }
-
-  @override
   String get secondsUnit => 'dtk';
 
   @override
@@ -794,9 +768,6 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'repetisi';
-
-  @override
   String get appearanceGroup => 'Tampilan';
 
   @override
@@ -850,9 +821,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get drillDemo => 'Tonton contoh latihan';
 
   @override
-  String get hideDrillDemo => 'Sembunyikan contoh';
-
-  @override
   String get demoReplay => 'Putar ulang';
 
   @override
@@ -866,11 +834,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get demoPaused => 'Latihan dijeda; contoh juga dijeda';
-
-  @override
-  String finishedLine(int sets) {
-    return 'Semua $sets set selesai';
-  }
 
   @override
   String get languageLabel => 'Bahasa';
@@ -990,28 +953,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get planNext => 'Berikutnya';
 
   @override
-  String planStartDrill(String name) {
-    return 'Mulai: $name';
-  }
-
-  @override
   String get planSkip => 'Lewati';
 
   @override
-  String get planFinish => 'Akhiri sesi';
-
-  @override
   String get planAllDone => 'Set selesai';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$done dari $total latihan selesai';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index dari $total';
-  }
 
   @override
   String get pickerTitle => 'Pilih latihan';
@@ -1079,14 +1024,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get planRunEnded => 'Sesi berakhir';
-
-  @override
-  String get planSkipped => 'Dilewati';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count latihan dilewati';
-  }
 
   @override
   String get trainerSoundOn => 'Aktifkan suara dan bunyi';

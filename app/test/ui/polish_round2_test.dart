@@ -209,16 +209,6 @@ void main() {
           onBack: () {},
           onSaved: (_) {},
         ),
-        PlanRunPage(
-          title: '托马斯全链',
-          drills: PresetPlan.all.last.drills(catalog, 'A'),
-          done: const {0},
-          index: 1,
-          onStart: () {},
-          onSelect: (_) {},
-          onSkip: () {},
-          onFinish: () {},
-        ),
         ProgressPage(
           catalog: catalog,
           store: store,
@@ -247,7 +237,9 @@ void main() {
     });
   }
 
-  testWidgets('empty history shows the empty-state slot and one sentence', (tester) async {
+  testWidgets('empty history shows the empty-state slot and one sentence', (
+    tester,
+  ) async {
     final store = LearningStore(catalog: catalog, storage: _Memory());
     await store.initialize();
     addTearDown(store.dispose);

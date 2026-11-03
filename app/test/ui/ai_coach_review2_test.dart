@@ -12,7 +12,6 @@ import 'package:flare/domain/drill_timer.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
-import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
@@ -117,77 +116,6 @@ void main() {
       expect(again.dose.sets, 4);
       expect(await store.logSession(run(again, 's-again')), isTrue);
       expect(store.sessions.map((s) => s.id), ['s-done', 's-quit', 's-again']);
-    });
-
-    Future<bool> openTimer(
-      WidgetTester tester,
-      LearningStore store,
-      Drill drill,
-    ) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      var closed = false;
-      var now = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: flareTheme(),
-          locale: const Locale('zh'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: SafeArea(
-              child: TrainingTimerPage(
-                drill: drill,
-                store: store,
-                now: () => now += 200,
-                onClose: () => closed = true,
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.tap(find.widgetWithText(FilledButton, '开始'));
-      for (var i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-      await tester.tap(find.byTooltip('结束本次练习'));
-      for (var i = 0; i < 6; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-      await tester.tap(find.text('结束并保存'));
-      for (var i = 0; i < 6; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-      return closed;
-    }
-
-    testWidgets('跟练页：AI 四组开始后结束并保存 → 记录并关闭', (tester) async {
-      final store = LearningStore(
-        catalog: catalog,
-        storage: helpers.MemoryStateStorage(),
-      );
-      await store.initialize();
-      addTearDown(store.dispose);
-      expect(await openTimer(tester, store, aiTriceps()), isTrue);
-      expect(store.sessions.single.plannedSets, 4);
-      expect(find.text('正在保存…'), findsNothing);
-      await tester.pumpWidget(const SizedBox());
-    });
-
-    testWidgets('跟练页：保存抛异常 → 不卡在「正在保存」，可重试', (tester) async {
-      final store = _ThrowOnceStore(catalog);
-      await store.initialize();
-      addTearDown(store.dispose);
-      expect(await openTimer(tester, store, aiTriceps()), isFalse);
-      expect(find.text('正在保存…'), findsNothing);
-      expect(find.text('重试'), findsOneWidget);
-      await tester.tap(find.text('重试'));
-      for (var i = 0; i < 4; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-      expect(store.sessions, hasLength(1));
-      await tester.pumpWidget(const SizedBox());
     });
   });
 
@@ -433,18 +361,4 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
     });
   });
-}
-
-class _ThrowOnceStore extends LearningStore {
-  _ThrowOnceStore(Catalog catalog)
-    : super(catalog: catalog, storage: helpers.MemoryStateStorage());
-  var _thrown = false;
-  @override
-  Future<bool> logSession(TrainingSession session) {
-    if (!_thrown) {
-      _thrown = true;
-      throw ArgumentError('Invalid training session');
-    }
-    return super.logSession(session);
-  }
 }

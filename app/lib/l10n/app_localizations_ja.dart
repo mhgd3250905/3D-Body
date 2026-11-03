@@ -234,9 +234,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get clearMuscleFilter => '筋肉の絞り込みを解除';
 
   @override
-  String get timerReady => '準備完了';
-
-  @override
   String get countdown => '準備してください';
 
   @override
@@ -261,9 +258,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get start => '開始';
 
   @override
-  String get completeRep => '1回完了';
-
-  @override
   String get completeSet => 'セット完了';
 
   @override
@@ -271,12 +265,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get addRest => '+15秒休憩';
-
-  @override
-  String get painStop => '違和感があれば中止';
-
-  @override
-  String get painMessage => '違和感を記録しました。この種目を中止して休み、続けるかどうかを判断してください。';
 
   @override
   String get saved => 'この端末に保存しました';
@@ -292,9 +280,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get done => '完了';
-
-  @override
-  String get exitTimer => 'このセッションを終了';
 
   @override
   String get manualMode => '種目の説明に沿って行い、各セットを手動で完了にしてください';
@@ -690,16 +675,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addTodayShort => '今日に追加';
 
   @override
-  String setOfTotal(int current, int total) {
-    return '$current / $total セット';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count回';
-  }
-
-  @override
   String get secondsUnit => '秒';
 
   @override
@@ -775,9 +750,6 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get countUnit => '回';
-
-  @override
   String get appearanceGroup => '表示';
 
   @override
@@ -830,9 +802,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get drillDemo => '種目の見本を見る';
 
   @override
-  String get hideDrillDemo => '見本を閉じる';
-
-  @override
   String get demoReplay => 'もう一度見る';
 
   @override
@@ -846,11 +815,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get demoPaused => 'トレーニングと見本を一時停止しました';
-
-  @override
-  String finishedLine(int sets) {
-    return '全$setsセット完了';
-  }
 
   @override
   String get languageLabel => '言語';
@@ -967,28 +931,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get planNext => '次へ';
 
   @override
-  String planStartDrill(String name) {
-    return '開始：$name';
-  }
-
-  @override
   String get planSkip => 'スキップ';
 
   @override
-  String get planFinish => 'トレーニング終了';
-
-  @override
   String get planAllDone => 'このセットが完了しました';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$total 種目中 $done 完了';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index / $total';
-  }
 
   @override
   String get pickerTitle => '種目を選ぶ';
@@ -1053,14 +999,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get planRunEnded => '今回のトレーニングは終了しました';
-
-  @override
-  String get planSkipped => 'スキップ済み';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count 種目をスキップ';
-  }
 
   @override
   String get trainerSoundOn => '音声と効果音をオン';

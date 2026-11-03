@@ -75,7 +75,6 @@
   "todayEmpty": "从肌群详解或训练库加入，组成今天的练习",
   "remove": "移出今日训练",
   "clearMuscleFilter": "清除肌群筛选",
-  "timerReady": "准备开始",
   "countdown": "准备",
   "work": "练习中",
   "rest": "组间休息",
@@ -84,18 +83,14 @@
   "abandoned": "本次已结束",
   "paused": "已暂停",
   "start": "开始",
-  "completeRep": "完成 1 次",
   "completeSet": "本组完成",
   "skipRest": "结束休息",
   "addRest": "+15 秒休息",
-  "painStop": "不适，停止练习",
-  "painMessage": "已记录不适。停止当前练习，休息后再决定是否继续。",
   "saved": "已保存在本机",
   "saving": "正在保存…",
   "saveFailed": "保存未完成，记录仍在本次会话中，请重试",
   "storageReadFailed": "本地记录暂时无法读取，原数据已保留",
   "done": "完成",
-  "exitTimer": "结束本次练习",
   "manualMode": "按原训练说明完成，再手动确认本组",
   "backgroundPause": "切到后台时练习会暂停；回来后点继续",
   "setsLabel": "第 {current} / {total} 组",
@@ -306,25 +301,6 @@
   "spec": "剂量",
   "moreCuesAndSafety": "更多要点、常见错误与安全",
   "addTodayShort": "加入今日",
-  "setOfTotal": "第 {current} 组 / 共 {total} 组",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} 次",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "秒",
   "painStopShort": "不适，停止练习",
   "pathTitle": "学习路径",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "次",
   "appearanceGroup": "外观",
   "appearanceLabel": "主题",
   "themeSystem": "跟随系统",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "观看动作示范",
-  "hideDrillDemo": "收起示范",
   "demoReplay": "重播",
   "demoSeek": "播放进度",
   "demoSpeed": "示范速度",
   "demoFailed": "视频暂时无法播放，请重试",
   "demoPaused": "训练已暂停，示范也已暂停",
-  "finishedLine": "{sets} 组全部完成",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "语言",
   "languageSystem": "跟随系统",
   "languageTitle": "App 语言",
@@ -480,39 +446,8 @@
   },
   "planNewWith": "新建计划并加入",
   "planNext": "下一个",
-  "planStartDrill": "开始：{name}",
-  "@planStartDrill": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "planSkip": "跳过",
-  "planFinish": "结束训练",
   "planAllDone": "这一套练完了",
-  "planAllDoneLine": "完成 {done} / {total} 个动作",
-  "@planAllDoneLine": {
-    "placeholders": {
-      "done": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "planOf": "第 {index} / {total} 个",
-  "@planOf": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
   "pickerTitle": "选择动作",
   "pickerSelected": "已选 {count} 个",
   "@pickerSelected": {
@@ -547,15 +482,6 @@
   },
   "settingsHint": "外观、播放与画质",
   "planRunEnded": "本轮训练已结束",
-  "planSkipped": "已跳过",
-  "planSkippedCount": "跳过 {count} 个动作",
-  "@planSkippedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "trainerSoundOn": "开启语音和提示音",
   "trainerSoundOff": "关闭语音和提示音",
   "filterAction": "筛选",

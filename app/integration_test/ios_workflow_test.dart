@@ -1,5 +1,5 @@
 // Run on a simulator created for Flare. This exercises the real bootstrap,
-// timer and SharedPreferences plugin; it temporarily replaces only this app's
+// SDK trainer entry and SharedPreferences plugin; it temporarily replaces only this app's
 // learning key and restores its previous value after the test.
 import 'dart:convert';
 
@@ -9,7 +9,7 @@ import 'package:flare/platform/scene/scene_view_native.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/components.dart';
-import 'package:flare/ui/timer_page.dart';
+import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -28,18 +28,6 @@ Future<void> _until(
     await tester.pump(const Duration(milliseconds: 100));
   }
 }
-
-List<String> _timerCounts() => find
-    .descendant(
-      of: find.byType(TrainingTimerPage),
-      matching: find.byWidgetPredicate(
-        (widget) =>
-            widget is Text && RegExp(r'^\d+$').hasMatch(widget.data ?? ''),
-      ),
-    )
-    .evaluate()
-    .map((element) => (element.widget as Text).data!)
-    .toList();
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -184,43 +172,14 @@ void main() {
     await tester.ensureVisible(startTraining);
     await tester.tap(startTraining);
     await tester.pumpAndSettle();
-    final drill = tester
-        .widget<TrainingTimerPage>(find.byType(TrainingTimerPage))
-        .drill;
-    expect(store.todayIds, contains(drill.id));
-    await screenshot(tester, '05-timer-$screenshotTheme');
-    await tester.tap(find.text('开始'));
-    await _until(
-      tester,
-      () => find.textContaining('练习中').evaluate().isNotEmpty,
-      'real countdown reaches work',
-    );
-    await tester.pump(const Duration(seconds: 2));
-    await tester.tap(find.byTooltip('暂停'));
+    // Training now runs in the SDK whole-plan player (FlareTrainingPage);
+    // the legacy native timer and its countdown/pause checks were removed.
+    expect(find.byType(FlareTrainingPage), findsOneWidget);
+    expect(store.todayIds, isNotEmpty);
+    final drill = shell.catalog.drillById(store.todayIds.last)!;
+    await screenshot(tester, '05-trainer-$screenshotTheme');
+    Navigator.of(tester.element(find.byType(FlareTrainingPage))).pop();
     await tester.pumpAndSettle();
-    expect(find.textContaining('已暂停'), findsWidgets);
-    final pausedCounts = _timerCounts();
-    expect(pausedCounts, isNotEmpty);
-    await tester.pump(const Duration(seconds: 2));
-    expect(_timerCounts(), pausedCounts);
-    await tester.tap(find.text('继续'));
-    await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.byIcon(Icons.close_rounded));
-    await tester.pumpAndSettle();
-    expect(find.text('结束这次练习？'), findsOneWidget);
-    await tester.tap(find.text('结束并保存'));
-    await _until(
-      tester,
-      () => find.byType(TrainingTimerPage).evaluate().isEmpty,
-      'timer closes after native save',
-    );
-    expect(store.sessions, hasLength(1));
-    final session = store.sessions.single;
-    expect(session.completed, false);
-    expect(session.pain, false);
-    expect(session.activeSeconds, greaterThanOrEqualTo(1));
-    expect(store.completedTodayIds, isEmpty);
-    expect(store.completedLessonIds, isEmpty);
 
     await preferences.reload();
     final restored = LearningStore(catalog: shell.catalog);
@@ -230,15 +189,11 @@ void main() {
     expect(restored.safetyAccepted, true);
     expect(restored.settings.themeMode, screenshotTheme);
     expect(restored.todayIds, contains(drill.id));
-    expect(restored.sessions.single.toJson(), session.toJson());
     expect(tester.takeException(), isNull);
     final report = {
       'firstLaunchSafetyOk': true,
       'darkAndLightThemesOk': true,
-      'realCountdownAndPauseOk': true,
-      'abandonedRecordIsNotCompletion': true,
       'nativePreferencesRoundTripOk': true,
-      'activeSeconds': session.activeSeconds,
       'systemReduceMotion': systemReduceMotion,
       'appDisableAnimations': appDisableAnimations,
       'webReduceMotion': diagnostics['reduceMotion'],

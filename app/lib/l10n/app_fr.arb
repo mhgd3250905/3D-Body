@@ -75,7 +75,6 @@
   "todayEmpty": "Ajoutez des exercices depuis les détails d’un muscle ou la bibliothèque pour préparer la séance du jour",
   "remove": "Retirer de l’entraînement du jour",
   "clearMuscleFilter": "Effacer le filtre musculaire",
-  "timerReady": "Prêt",
   "countdown": "Préparez-vous",
   "work": "Entraînement",
   "rest": "Repos entre les séries",
@@ -84,18 +83,14 @@
   "abandoned": "Séance terminée",
   "paused": "En pause",
   "start": "Commencer",
-  "completeRep": "Effectuer 1 répétition",
   "completeSet": "Terminer la série",
   "skipRest": "Terminer le repos",
   "addRest": "+15 s de repos",
-  "painStop": "Arrêtez en cas de gêne",
-  "painMessage": "Gêne enregistrée. Arrêtez cet exercice, reposez-vous, puis décidez si vous souhaitez continuer.",
   "saved": "Enregistré sur cet appareil",
   "saving": "Enregistrement…",
   "saveFailed": "L’enregistrement n’a pas abouti. Cette séance est toujours disponible ; réessayez.",
   "storageReadFailed": "Les données locales sont temporairement indisponibles. Les données d’origine ont été conservées.",
   "done": "Terminé",
-  "exitTimer": "Terminer cette séance",
   "manualMode": "Suivez les consignes de l’exercice, puis confirmez chaque série manuellement",
   "backgroundPause": "L’entraînement se met en pause lorsque l’app passe en arrière-plan. Touchez Reprendre à votre retour.",
   "setsLabel": "Série {current} sur {total}",
@@ -306,25 +301,6 @@
   "spec": "Dose",
   "moreCuesAndSafety": "Plus de conseils, d’erreurs fréquentes et de consignes de sécurité",
   "addTodayShort": "Ajouter aujourd’hui",
-  "setOfTotal": "Série {current} sur {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} répétitions",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "s",
   "painStopShort": "Arrêtez en cas de gêne",
   "pathTitle": "Parcours d’apprentissage",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "répétitions",
   "appearanceGroup": "Apparence",
   "appearanceLabel": "Thème",
   "themeSystem": "Système",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "Voir la démonstration de l’exercice",
-  "hideDrillDemo": "Masquer la démonstration",
   "demoReplay": "Rejouer",
   "demoSeek": "Position de lecture",
   "demoSpeed": "Vitesse de la démonstration",
   "demoFailed": "La vidéo est temporairement indisponible. Réessayez.",
   "demoPaused": "Entraînement en pause ; démonstration également en pause",
-  "finishedLine": "Les {sets} séries sont terminées",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "Langue",
   "languageSystem": "Suivre le système",
   "languageTitle": "Langue de l’app",
@@ -463,12 +429,8 @@
   "planAddedTo": "Ajouté à « {name} »",
   "planNewWith": "Nouveau plan avec cet exercice",
   "planNext": "Suivant",
-  "planStartDrill": "Commencer : {name}",
   "planSkip": "Passer",
-  "planFinish": "Terminer la séance",
   "planAllDone": "Séance terminée",
-  "planAllDoneLine": "{done} sur {total} exercices faits",
-  "planOf": "{index} sur {total}",
   "pickerTitle": "Choisir des exercices",
   "pickerSelected": "{count} sélectionnés",
   "planReorderHint": "Faites glisser la poignée pour réordonner",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} exercices",
   "settingsHint": "Apparence, lecture, qualité",
   "planRunEnded": "Séance terminée",
-  "planSkipped": "Ignoré",
-  "planSkippedCount": "{count} exercices ignorés",
   "trainerSoundOn": "Activer la voix et les sons",
   "trainerSoundOff": "Désactiver la voix et les sons",
   "filterAction": "Filtrer",

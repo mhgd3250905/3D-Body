@@ -13,11 +13,9 @@ import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/theme_fade.dart';
-import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ugk_trainer/engine.dart' show MutedVoiceOutput;
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 
 import '../domain/fixtures.dart';
@@ -1170,74 +1168,6 @@ void main() {
         [2.375],
       );
       expect((jsonDecode(storage.value!) as Map)['lastTime'], 2.375);
-      assertNoFlutterError(tester);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'legacy timer: real rep drill completes three sets and saves one local record',
-    (tester) async {
-      await phoneSize(tester);
-      final storage = MemoryStateStorage();
-      final store = LearningStore(catalog: catalog, storage: storage);
-      await store.initialize();
-      final drill = catalog.drillById('triceps-A')!;
-      var closed = false;
-      addTearDown(store.dispose);
-      await tester.pumpWidget(
-        testApp(
-          Scaffold(
-            body: SafeArea(
-              child: TrainingTimerPage(
-                drill: drill,
-                store: store,
-                voiceOutput: const MutedVoiceOutput(),
-                onClose: () => closed = true,
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pump();
-      await tapVisible(tester, find.widgetWithText(FilledButton, '开始'));
-      for (var set = 1; set <= 3; set++) {
-        // Stopwatch intentionally uses real monotonic time, unlike WidgetTester's
-        // fake Timer clock. Wait one bounded countdown, then drive the UI poll.
-        await tester.runAsync(() async {
-          await Future<void>.delayed(const Duration(milliseconds: 3100));
-        });
-        await tester.pump(const Duration(milliseconds: 150));
-        expect(find.text('第 $set 组 / 共 3 组'), findsOneWidget);
-        for (var rep = 0; rep < drill.dose.min; rep++) {
-          await tapVisible(tester, find.widgetWithText(FilledButton, '完成 1 次'));
-        }
-        await tester.pump(const Duration(milliseconds: 150));
-        assertNoFlutterError(tester);
-        if (set < 3) {
-          expect(find.text('秒 · 组间休息'), findsOneWidget);
-          await tapVisible(tester, find.text('结束休息'));
-        }
-      }
-      await tester.pump(const Duration(milliseconds: 150));
-      expect(store.sessions, hasLength(1));
-      expect(store.sessions.single.drillId, 'triceps-A');
-      expect(store.sessions.single.completedSets, 3);
-      expect(store.sessions.single.completed, isTrue);
-      expect(store.sessions.single.pain, isFalse);
-      expect(find.text('已保存在本机'), findsOneWidget);
-      await tester.pump(const Duration(milliseconds: 450));
-      expect(
-        store.sessions,
-        hasLength(1),
-        reason: 'Periodic finish polls must not append another session',
-      );
-      await tapVisible(tester, find.widgetWithText(FilledButton, '完成'));
-      expect(closed, isTrue);
-      final restored = LearningStore(catalog: catalog, storage: storage);
-      await restored.initialize();
-      expect(restored.sessions.single.completedSets, 3);
-      restored.dispose();
       assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
     },

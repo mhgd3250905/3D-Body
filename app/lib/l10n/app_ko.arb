@@ -75,7 +75,6 @@
   "todayEmpty": "근육 상세 정보나 운동 목록에서 추가해 오늘의 훈련을 구성하세요",
   "remove": "오늘의 훈련에서 삭제",
   "clearMuscleFilter": "근육 필터 지우기",
-  "timerReady": "준비 완료",
   "countdown": "준비하세요",
   "work": "훈련 중",
   "rest": "세트 간 휴식",
@@ -84,18 +83,14 @@
   "abandoned": "세션 종료",
   "paused": "일시정지됨",
   "start": "시작",
-  "completeRep": "1회 완료",
   "completeSet": "세트 완료",
   "skipRest": "휴식 종료",
   "addRest": "+15초 휴식",
-  "painStop": "불편하면 운동을 멈추세요",
-  "painMessage": "불편함이 기록되었습니다. 현재 운동을 멈추고 쉬었다가 계속할지 결정하세요.",
   "saved": "이 기기에 저장됨",
   "saving": "저장 중…",
   "saveFailed": "저장을 완료하지 못했습니다. 현재 세션은 남아 있으니 다시 시도하세요.",
   "storageReadFailed": "로컬 기록을 일시적으로 읽을 수 없습니다. 기존 데이터는 보존되었습니다.",
   "done": "완료",
-  "exitTimer": "이 세션 종료",
   "manualMode": "운동 안내에 따라 진행한 뒤 세트를 직접 완료 처리하세요",
   "backgroundPause": "앱이 백그라운드로 이동하면 훈련이 일시정지됩니다. 돌아와서 계속하기를 누르세요.",
   "setsLabel": "{current}/{total}세트",
@@ -306,25 +301,6 @@
   "spec": "운동량",
   "moreCuesAndSafety": "추가 팁, 자주 하는 실수, 안전 안내",
   "addTodayShort": "오늘 추가",
-  "setOfTotal": "{current}/{total}세트",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count}회",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "초",
   "painStopShort": "불편하면 운동을 멈추세요",
   "pathTitle": "학습 경로",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "회",
   "appearanceGroup": "화면",
   "appearanceLabel": "테마",
   "themeSystem": "시스템",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "운동 시범 보기",
-  "hideDrillDemo": "시범 숨기기",
   "demoReplay": "다시 재생",
   "demoSeek": "재생 위치",
   "demoSpeed": "시범 속도",
   "demoFailed": "동영상을 일시적으로 재생할 수 없습니다. 다시 시도하세요.",
   "demoPaused": "훈련이 일시정지되어 시범도 멈췄습니다",
-  "finishedLine": "{sets}세트를 모두 완료했습니다",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "언어",
   "languageSystem": "시스템 설정 따르기",
   "languageTitle": "앱 언어",
@@ -463,12 +429,8 @@
   "planAddedTo": "“{name}”에 추가했어요",
   "planNewWith": "새 플랜에 추가",
   "planNext": "다음",
-  "planStartDrill": "시작: {name}",
   "planSkip": "건너뛰기",
-  "planFinish": "운동 종료",
   "planAllDone": "이 세트를 끝냈어요",
-  "planAllDoneLine": "{total}개 중 {done}개 완료",
-  "planOf": "{index} / {total}",
   "pickerTitle": "동작 선택",
   "pickerSelected": "{count}개 선택됨",
   "planReorderHint": "핸들을 끌어 순서 변경",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count}개 동작",
   "settingsHint": "화면, 재생, 화질",
   "planRunEnded": "이번 운동이 종료되었습니다",
-  "planSkipped": "건너뜀",
-  "planSkippedCount": "{count}개 운동을 건너뜀",
   "trainerSoundOn": "음성 및 효과음 켜기",
   "trainerSoundOff": "음성 및 효과음 끄기",
   "filterAction": "필터",

@@ -18,7 +18,6 @@ import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/theme_fade.dart';
-import 'package:flare/ui/timer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -306,35 +305,6 @@ void main() {
     await shot(tester, '08-library');
   });
 
-  testWidgets('11 timer', (tester) async {
-    final (store, _) = await setup(tester);
-    await tester.pumpWidget(
-      app(
-        Scaffold(
-          body: SafeArea(
-            child: TrainingTimerPage(
-              drill: catalog.drillById('obliques-A')!,
-              store: store,
-              onClose: () {},
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pump();
-    await shot(tester, '11-timer-ready');
-    await tester.tap(find.widgetWithText(FilledButton, '开始'));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 3200)),
-    );
-    await tester.pump(const Duration(milliseconds: 160));
-    await tester.tap(find.widgetWithText(FilledButton, '完成 1 次'));
-    await tester.tap(find.widgetWithText(FilledButton, '完成 1 次'));
-    await tester.pump(const Duration(milliseconds: 160));
-    await shot(tester, '12-timer-work');
-    await tester.pumpWidget(const SizedBox());
-  });
-
   testWidgets('13 plans, 14 plan detail, 15 progress, 16 settings, 17 about', (
     tester,
   ) async {
@@ -407,70 +377,6 @@ void main() {
     await tester.tap(find.text('关于 Flare'));
     await tester.pumpAndSettle();
     await shot(tester, '17-about');
-  });
-
-  testWidgets('19 timer confirm, 20 timer finished', (tester) async {
-    final (store, _) = await setup(tester);
-    var now = 0;
-    final drill = catalog.drillById('triceps-A')!;
-    await tester.pumpWidget(
-      app(
-        Scaffold(
-          body: SafeArea(
-            child: TrainingTimerPage(
-              drill: drill,
-              store: store,
-              now: () => now,
-              onClose: () {},
-            ),
-          ),
-        ),
-      ),
-    );
-    Future<void> advance(int ms) async {
-      for (var left = ms; left > 0; left -= 1000) {
-        now += left.clamp(1, 1000);
-        await tester.pump(const Duration(milliseconds: 150));
-      }
-    }
-
-    Future<void> tapText(String label) async {
-      await tester.tap(find.widgetWithText(FilledButton, label));
-      await tester.pump();
-    }
-
-    await tapText('开始');
-    await advance(3000);
-    await tapText('完成 1 次');
-    await tester.tap(find.byTooltip('结束本次练习'));
-    for (var i = 0; i < 8; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-    await shot(tester, '19-timer-confirm');
-    await tester.tap(find.text('继续练'));
-    for (var i = 0; i < 8; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-    for (var set = 1; set <= drill.dose.sets; set++) {
-      if (set > 1) await advance(3000);
-      final reps = set == 1 ? drill.dose.min - 1 : drill.dose.min;
-      for (var rep = 0; rep < reps; rep++) {
-        await tapText('完成 1 次');
-      }
-      await tester.pump(const Duration(milliseconds: 150));
-      if (set < drill.dose.sets) {
-        await tester.tap(find.text('结束休息'));
-        await tester.pump();
-      }
-    }
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 50)),
-    );
-    for (var i = 0; i < 12; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-    await shot(tester, '20-timer-finished');
-    await tester.pumpWidget(const SizedBox());
   });
 
   testWidgets('21 scene loading', (tester) async {

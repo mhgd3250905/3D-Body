@@ -235,9 +235,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get clearMuscleFilter => '근육 필터 지우기';
 
   @override
-  String get timerReady => '준비 완료';
-
-  @override
   String get countdown => '준비하세요';
 
   @override
@@ -262,9 +259,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get start => '시작';
 
   @override
-  String get completeRep => '1회 완료';
-
-  @override
   String get completeSet => '세트 완료';
 
   @override
@@ -272,12 +266,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get addRest => '+15초 휴식';
-
-  @override
-  String get painStop => '불편하면 운동을 멈추세요';
-
-  @override
-  String get painMessage => '불편함이 기록되었습니다. 현재 운동을 멈추고 쉬었다가 계속할지 결정하세요.';
 
   @override
   String get saved => '이 기기에 저장됨';
@@ -293,9 +281,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get done => '완료';
-
-  @override
-  String get exitTimer => '이 세션 종료';
 
   @override
   String get manualMode => '운동 안내에 따라 진행한 뒤 세트를 직접 완료 처리하세요';
@@ -690,16 +675,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get addTodayShort => '오늘 추가';
 
   @override
-  String setOfTotal(int current, int total) {
-    return '$current/$total세트';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count회';
-  }
-
-  @override
   String get secondsUnit => '초';
 
   @override
@@ -775,9 +750,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get countUnit => '회';
-
-  @override
   String get appearanceGroup => '화면';
 
   @override
@@ -830,9 +802,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get drillDemo => '운동 시범 보기';
 
   @override
-  String get hideDrillDemo => '시범 숨기기';
-
-  @override
   String get demoReplay => '다시 재생';
 
   @override
@@ -846,11 +815,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get demoPaused => '훈련이 일시정지되어 시범도 멈췄습니다';
-
-  @override
-  String finishedLine(int sets) {
-    return '$sets세트를 모두 완료했습니다';
-  }
 
   @override
   String get languageLabel => '언어';
@@ -968,28 +932,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get planNext => '다음';
 
   @override
-  String planStartDrill(String name) {
-    return '시작: $name';
-  }
-
-  @override
   String get planSkip => '건너뛰기';
 
   @override
-  String get planFinish => '운동 종료';
-
-  @override
   String get planAllDone => '이 세트를 끝냈어요';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$total개 중 $done개 완료';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index / $total';
-  }
 
   @override
   String get pickerTitle => '동작 선택';
@@ -1054,14 +1000,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get planRunEnded => '이번 운동이 종료되었습니다';
-
-  @override
-  String get planSkipped => '건너뜀';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count개 운동을 건너뜀';
-  }
 
   @override
   String get trainerSoundOn => '음성 및 효과음 켜기';

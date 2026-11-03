@@ -75,7 +75,6 @@
   "todayEmpty": "Добавьте упражнения из описания мышц или библиотеки, чтобы составить тренировку на сегодня",
   "remove": "Убрать из сегодняшней тренировки",
   "clearMuscleFilter": "Сбросить фильтр мышц",
-  "timerReady": "Готово",
   "countdown": "Приготовьтесь",
   "work": "Тренировка",
   "rest": "Отдых между подходами",
@@ -84,18 +83,14 @@
   "abandoned": "Занятие завершено",
   "paused": "На паузе",
   "start": "Начать",
-  "completeRep": "Выполнить 1 повторение",
   "completeSet": "Завершить подход",
   "skipRest": "Закончить отдых",
   "addRest": "+15 с отдыха",
-  "painStop": "При дискомфорте остановитесь",
-  "painMessage": "Дискомфорт записан. Остановите упражнение, отдохните, затем решите, продолжать ли.",
   "saved": "Сохранено на этом устройстве",
   "saving": "Сохранение…",
   "saveFailed": "Не удалось завершить сохранение. Занятие пока доступно; попробуйте ещё раз.",
   "storageReadFailed": "Локальные записи временно недоступны. Исходные данные сохранены.",
   "done": "Готово",
-  "exitTimer": "Завершить это занятие",
   "manualMode": "Выполняйте упражнение по инструкции и вручную отмечайте завершение каждого подхода",
   "backgroundPause": "При переходе приложения в фон тренировка приостанавливается. Нажмите «Продолжить», когда вернётесь.",
   "setsLabel": "Подход {current} из {total}",
@@ -306,25 +301,6 @@
   "spec": "Дозировка",
   "moreCuesAndSafety": "Дополнительные подсказки, ошибки и безопасность",
   "addTodayShort": "Добавить сегодня",
-  "setOfTotal": "Подход {current} из {total}",
-  "@setOfTotal": {
-    "placeholders": {
-      "current": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "ofReps": "/ {count} повторений",
-  "@ofReps": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "secondsUnit": "с",
   "painStopShort": "При дискомфорте остановитесь",
   "pathTitle": "Учебный план",
@@ -369,7 +345,6 @@
       }
     }
   },
-  "countUnit": "повторений",
   "appearanceGroup": "Внешний вид",
   "appearanceLabel": "Тема",
   "themeSystem": "Системная",
@@ -400,20 +375,11 @@
     }
   },
   "drillDemo": "Посмотреть демонстрацию упражнения",
-  "hideDrillDemo": "Скрыть демонстрацию",
   "demoReplay": "Повторить",
   "demoSeek": "Позиция воспроизведения",
   "demoSpeed": "Скорость демонстрации",
   "demoFailed": "Видео временно недоступно. Попробуйте ещё раз.",
   "demoPaused": "Тренировка приостановлена; демонстрация тоже",
-  "finishedLine": "Все подходы завершены: {sets}",
-  "@finishedLine": {
-    "placeholders": {
-      "sets": {
-        "type": "int"
-      }
-    }
-  },
   "languageLabel": "Язык",
   "languageSystem": "Как в системе",
   "languageTitle": "Язык приложения",
@@ -463,12 +429,8 @@
   "planAddedTo": "Добавлено в «{name}»",
   "planNewWith": "Новый план с этим упражнением",
   "planNext": "Далее",
-  "planStartDrill": "Начать: {name}",
   "planSkip": "Пропустить",
-  "planFinish": "Завершить тренировку",
   "planAllDone": "Комплекс выполнен",
-  "planAllDoneLine": "Выполнено {done} из {total}",
-  "planOf": "{index} из {total}",
   "pickerTitle": "Выбор упражнений",
   "pickerSelected": "Выбрано: {count}",
   "planReorderHint": "Перетащите за ручку, чтобы изменить порядок",
@@ -489,8 +451,6 @@
   "planDrillCount": "{count} упражн.",
   "settingsHint": "Оформление, воспроизведение, качество",
   "planRunEnded": "Тренировка завершена",
-  "planSkipped": "Пропущено",
-  "planSkippedCount": "Пропущено упражнений: {count}",
   "trainerSoundOn": "Включить голос и звуки",
   "trainerSoundOff": "Выключить голос и звуки",
   "filterAction": "Фильтр",

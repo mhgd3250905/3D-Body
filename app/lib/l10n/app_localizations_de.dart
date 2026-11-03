@@ -239,9 +239,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get clearMuscleFilter => 'Muskelfilter löschen';
 
   @override
-  String get timerReady => 'Bereit';
-
-  @override
   String get countdown => 'Mach dich bereit';
 
   @override
@@ -266,9 +263,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get start => 'Starten';
 
   @override
-  String get completeRep => '1 Wiederholung abschließen';
-
-  @override
   String get completeSet => 'Satz abschließen';
 
   @override
@@ -276,13 +270,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addRest => '+15 Sek. Pause';
-
-  @override
-  String get painStop => 'Bei Beschwerden Training beenden';
-
-  @override
-  String get painMessage =>
-      'Beschwerden erfasst. Beende diese Übung, erhole dich und entscheide danach, ob du fortfahren möchtest.';
 
   @override
   String get saved => 'Auf diesem Gerät gespeichert';
@@ -300,9 +287,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get done => 'Fertig';
-
-  @override
-  String get exitTimer => 'Diese Einheit beenden';
 
   @override
   String get manualMode =>
@@ -712,16 +696,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addTodayShort => 'Heute hinzufügen';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'Satz $current von $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count Wiederholungen';
-  }
-
-  @override
   String get secondsUnit => 'Sek.';
 
   @override
@@ -797,9 +771,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'Wiederholungen';
-
-  @override
   String get appearanceGroup => 'Darstellung';
 
   @override
@@ -853,9 +824,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get drillDemo => 'Übungsdemo ansehen';
 
   @override
-  String get hideDrillDemo => 'Demo ausblenden';
-
-  @override
   String get demoReplay => 'Erneut abspielen';
 
   @override
@@ -870,11 +838,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get demoPaused => 'Training pausiert; Demo ebenfalls pausiert';
-
-  @override
-  String finishedLine(int sets) {
-    return 'Alle $sets Sätze abgeschlossen';
-  }
 
   @override
   String get languageLabel => 'Sprache';
@@ -994,28 +957,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planNext => 'Weiter';
 
   @override
-  String planStartDrill(String name) {
-    return 'Starten: $name';
-  }
-
-  @override
   String get planSkip => 'Überspringen';
 
   @override
-  String get planFinish => 'Einheit beenden';
-
-  @override
   String get planAllDone => 'Einheit geschafft';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return '$done von $total Übungen erledigt';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index von $total';
-  }
 
   @override
   String get pickerTitle => 'Übungen wählen';
@@ -1083,14 +1028,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planRunEnded => 'Einheit beendet';
-
-  @override
-  String get planSkipped => 'Übersprungen';
-
-  @override
-  String planSkippedCount(int count) {
-    return '$count Übungen übersprungen';
-  }
 
   @override
   String get trainerSoundOn => 'Sprache und Töne einschalten';

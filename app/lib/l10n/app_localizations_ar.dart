@@ -237,9 +237,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clearMuscleFilter => 'مسح تصفية العضلات';
 
   @override
-  String get timerReady => 'جاهز';
-
-  @override
   String get countdown => 'استعد';
 
   @override
@@ -264,9 +261,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get start => 'ابدأ';
 
   @override
-  String get completeRep => 'أكمل تكرارًا واحدًا';
-
-  @override
   String get completeSet => 'أكمل المجموعة';
 
   @override
@@ -274,13 +268,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get addRest => '+15 ثانية راحة';
-
-  @override
-  String get painStop => 'توقف عند الشعور بعدم الارتياح';
-
-  @override
-  String get painMessage =>
-      'سُجّل الشعور بعدم الارتياح. أوقف هذا التمرين واسترح، ثم قرر إن كنت ستتابع.';
 
   @override
   String get saved => 'حُفظ على هذا الجهاز';
@@ -298,9 +285,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get done => 'تم';
-
-  @override
-  String get exitTimer => 'إنهاء هذه الجلسة';
 
   @override
   String get manualMode =>
@@ -700,16 +684,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addTodayShort => 'أضف اليوم';
 
   @override
-  String setOfTotal(int current, int total) {
-    return 'المجموعة $current من $total';
-  }
-
-  @override
-  String ofReps(int count) {
-    return '/ $count تكرارًا';
-  }
-
-  @override
   String get secondsUnit => 'ث';
 
   @override
@@ -785,9 +759,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get countUnit => 'تكرار';
-
-  @override
   String get appearanceGroup => 'المظهر';
 
   @override
@@ -840,9 +811,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get drillDemo => 'مشاهدة عرض التمرين';
 
   @override
-  String get hideDrillDemo => 'إخفاء العرض';
-
-  @override
   String get demoReplay => 'إعادة التشغيل';
 
   @override
@@ -856,11 +824,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoPaused => 'توقف التدريب والعرض مؤقتًا';
-
-  @override
-  String finishedLine(int sets) {
-    return 'اكتملت المجموعات كلها: $sets';
-  }
 
   @override
   String get languageLabel => 'اللغة';
@@ -979,28 +942,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planNext => 'التالي';
 
   @override
-  String planStartDrill(String name) {
-    return 'ابدأ: $name';
-  }
-
-  @override
   String get planSkip => 'تخطٍّ';
 
   @override
-  String get planFinish => 'إنهاء الحصة';
-
-  @override
   String get planAllDone => 'اكتملت المجموعة';
-
-  @override
-  String planAllDoneLine(int done, int total) {
-    return 'أُنجز $done من $total تمارين';
-  }
-
-  @override
-  String planOf(int index, int total) {
-    return '$index من $total';
-  }
 
   @override
   String get pickerTitle => 'اختر التمارين';
@@ -1066,14 +1011,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planRunEnded => 'انتهت الجلسة';
-
-  @override
-  String get planSkipped => 'تم التخطي';
-
-  @override
-  String planSkippedCount(int count) {
-    return 'تم تخطي $count تمارين';
-  }
 
   @override
   String get trainerSoundOn => 'تشغيل الصوت والتنبيهات';
