@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.10+15
+version: 1.0.12+18
 
 environment:
   sdk: ^3.12.2
@@ -23,25 +23,25 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
-  # Shared SDK packages are pinned to one reviewed commit (2026-11-02).
+  # Shared SDK packages are pinned to ugk_trainer-v0.7.1 / 9dd9316 (2026-11-04).
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: 9dd93163e9f355665e5c923f374c64f03bf65a86
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: 9dd93163e9f355665e5c923f374c64f03bf65a86
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: 9dd93163e9f355665e5c923f374c64f03bf65a86
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: 9dd93163e9f355665e5c923f374c64f03bf65a86
       path: packages/ugk_coach_chat
 
 # Keep SDK transitive dependencies on the same reviewed commit.
@@ -49,7 +49,7 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: 9dd93163e9f355665e5c923f374c64f03bf65a86
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +70,8 @@ flutter:
     - assets/data/drills.json
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
+    # Pose-Hub PR #26: unreviewed AI tag drafts, kept separate from source data.
+    - assets/ai_tags/actions.json
     - assets/coach/
     - assets/trainer_voice/
     - assets/trainer_voice/_common/
