@@ -111,8 +111,26 @@ class _MotionTimelineState extends State<MotionTimeline> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final width = constraints.maxWidth;
-              void seek(double x) =>
-                  widget.onSeek(_timeAtFraction((x / width).clamp(0, 1)));
+              // 8 equal segments with 4pt gaps; numbers centred under them.
+              const gap = 4.0, count = 8;
+              final seg = ((width - gap * (count - 1)) / count)
+                  .clamp(1, double.infinity)
+                  .toDouble();
+              double xAt(double f) {
+                final pos = (f * count).clamp(0, count).toDouble();
+                final i = pos.floor().clamp(0, count - 1);
+                return i * (seg + gap) + (pos - i) * seg;
+              }
+
+              double fractionAt(double x) {
+                final i = (x / (seg + gap)).floor().clamp(0, count - 1);
+                final within = ((x - i * (seg + gap)) / seg).clamp(0, 1);
+                return (i + within) / count;
+              }
+
+              void seek(double x) => widget.onSeek(
+                _timeAtFraction(fractionAt(x.clamp(0, width).toDouble())),
+              );
               final fraction = _fractionAtTime(value);
               return GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -125,26 +143,26 @@ class _MotionTimelineState extends State<MotionTimeline> {
                 onHorizontalDragEnd: (_) => _setDragging(false),
                 onHorizontalDragCancel: () => _setDragging(false),
                 child: SizedBox(
-                  height: 40,
+                  height: 32,
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
                       Positioned(
                         left: 0,
                         right: 0,
-                        top: 15,
+                        top: 9,
                         child: Row(
                           children: [
-                            for (var i = 0; i < 8; i++) ...[
-                              if (i != 0) const SizedBox(width: 3),
+                            for (var i = 0; i < count; i++) ...[
+                              if (i != 0) const SizedBox(width: gap),
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(2),
                                   child: LinearProgressIndicator(
                                     minHeight: 3,
-                                    value: (fraction * 8 - i).clamp(0, 1),
+                                    value: (fraction * count - i).clamp(0, 1),
                                     backgroundColor: FlareColors.track,
-                                    color: i < fraction * 8 - 1
+                                    color: i < fraction * count - 1
                                         ? FlareColors.accent.withValues(
                                             alpha: .55,
                                           )
@@ -157,8 +175,8 @@ class _MotionTimelineState extends State<MotionTimeline> {
                         ),
                       ),
                       Positioned(
-                        left: (width - 12) * fraction,
-                        top: 10.5,
+                        left: xAt(fraction) - 6,
+                        top: 4.5,
                         // The thumb swells under the finger while scrubbing.
                         child: AnimatedScale(
                           scale: _dragging ? 1.35 : 1,
@@ -193,10 +211,14 @@ class _MotionTimelineState extends State<MotionTimeline> {
                       Positioned(
                         left: 0,
                         right: 0,
-                        top: 25,
+                        top: 17,
                         child: Row(
                           children: [
-                            for (final phase in widget.catalog.phases)
+                            for (final (i, phase)
+                                in widget.catalog.phases
+                                    .take(count)
+                                    .indexed) ...[
+                              if (i != 0) const SizedBox(width: gap),
                               Expanded(
                                 child: Text(
                                   phase.source.toString().padLeft(2, '0'),
@@ -211,6 +233,7 @@ class _MotionTimelineState extends State<MotionTimeline> {
                                   ),
                                 ),
                               ),
+                            ],
                           ],
                         ),
                       ),

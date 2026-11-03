@@ -951,15 +951,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
+          // 48pt targets with their 40pt squares on the 20pt content margin.
           padding: EdgeInsets.fromLTRB(
-            12,
+            16,
             (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
-            12,
+            16,
             10,
           ),
           child: Row(
             children: [
-              FlareGlassIconButton(
+              FlareGlassSquareButton(
                 label: detail == null ? s.plans : s.returnToMotion,
                 icon: detail == null
                     ? Icons.playlist_play_rounded
@@ -996,13 +997,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 ),
               ),
               if (detail == null)
-                FlareGlassIconButton(
+                FlareGlassSquareButton(
                   label: s.more,
                   icon: Icons.more_horiz_rounded,
                   onPressed: _showMore,
                 )
               else
-                const SizedBox(width: 44),
+                const SizedBox(width: 48),
             ],
           ),
         ),
@@ -1418,8 +1419,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
+  // ~72pt: 12pt padding around one 48pt row (phase line + compact timeline).
   double _transportHeightFor(BuildContext context) =>
-      (MediaQuery.textScalerOf(context).scale(13) * 1.15 * 2 + 42)
+      (MediaQuery.textScalerOf(context).scale(13) * 1.25 + 32 + 24)
           .clamp(72, double.infinity)
           .toDouble();
 
@@ -1427,86 +1429,61 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        16,
+        20,
         0,
-        16,
+        20,
         (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
       ),
       child: FlareGlassBar(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.all(12),
         child: SizedBox(
-          height: _transportHeightFor(context),
+          height: _transportHeightFor(context) - 24,
           child: Row(
             children: [
-              SizedBox(
-                width: 75,
+              _roundControl(
+                label: _scene.playing ? s.pause : s.play,
+                icon: _scene.playing
+                    ? Icons.pause_rounded
+                    : Icons.play_arrow_rounded,
+                diameter: 48,
+                solid: !_scene.playing,
+                onTap: () {
+                  FlareHaptics.light();
+                  _scene.playing ? _scene.pause() : _scene.play();
+                },
+              ),
+              const SizedBox(width: 16),
+              Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _roundControl(
-                      label: _scene.playing ? s.pause : s.play,
-                      icon: _scene.playing
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      diameter: 48,
-                      solid: !_scene.playing,
-                      onTap: () {
-                        FlareHaptics.light();
-                        _scene.playing ? _scene.pause() : _scene.play();
-                      },
-                    ),
-                    const SizedBox(height: 4),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 75,
-                        maxHeight: 22,
-                      ),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          '${_scene.time.toStringAsFixed(1)} / ${catalog.period.toStringAsFixed(1)} s',
+                    Row(
+                      children: [
+                        Text(
+                          phase.source.toString().padLeft(2, '0'),
                           style: TextStyle(
-                            fontSize: 11,
-                            color: FlareColors.dim,
+                            color: FlareColors.accentInk,
+                            fontSize: 13,
+                            height: 1.25,
+                            fontWeight: FontWeight.w600,
                             fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Row(
-                        children: [
-                          Text(
-                            phase.source.toString().padLeft(2, '0'),
-                            style: TextStyle(
-                              color: FlareColors.accentInk,
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            phase.name,
+                            key: const ValueKey('home-phase-name'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
                               fontSize: 13,
+                              height: 1.25,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              phase.name,
-                              key: const ValueKey('home-phase-name'),
-                              maxLines: 2,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                height: 1.15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     Expanded(
                       child: MotionTimeline(
@@ -2365,7 +2342,8 @@ class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
   );
 }
 
-/// A compact wordmark with one accessible name and a teal brand accent.
+/// Plain two-line title: "Flare" 17 semibold over the subtitle in 12 grey
+/// with a small teal dot. One accessible name.
 class _HomeWordmark extends StatelessWidget {
   const _HomeWordmark({required this.label});
 
@@ -2377,47 +2355,54 @@ class _HomeWordmark extends StatelessWidget {
     final teal = Theme.of(context).brightness == Brightness.dark
         ? const Color(0xff75dfd0)
         : const Color(0xff16776f);
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: parts.first,
-            style: TextStyle(
-              fontSize: 23,
-              fontWeight: FontWeight.w800,
-              fontStyle: FontStyle.italic,
-              letterSpacing: .3,
-              color: FlareColors.text,
-              decoration: TextDecoration.underline,
-              decorationColor: teal.withValues(alpha: .65),
-              decorationThickness: 2,
-            ),
-          ),
-          if (parts.length > 1) ...[
-            TextSpan(
-              text: ' · ',
+    final subtitle = parts.skip(1).join(' · ');
+    return Semantics(
+      label: label,
+      header: true,
+      child: ExcludeSemantics(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              parts.first,
+              maxLines: 1,
+              softWrap: false,
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: teal,
-              ),
-            ),
-            TextSpan(
-              text: parts.skip(1).join(' · '),
-              style: TextStyle(
-                fontSize: 12,
+                fontSize: 17,
+                height: 1.25,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 1,
-                color: FlareColors.secondary,
+                color: FlareColors.text,
               ),
             ),
+            if (subtitle.isNotEmpty)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 5,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: teal,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.3,
+                      fontWeight: FontWeight.w500,
+                      color: FlareColors.secondary,
+                    ),
+                  ),
+                ],
+              ),
           ],
-        ],
+        ),
       ),
-      semanticsLabel: label,
-      maxLines: 1,
-      softWrap: false,
-      textAlign: TextAlign.center,
     );
   }
 }
