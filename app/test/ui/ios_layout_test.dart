@@ -111,7 +111,7 @@ void main() {
             expect(tester.takeException(), isNull, reason: 'muscle detail');
             if (name.contains('landscape')) {
               expect(
-                find.byKey(const ValueKey('compact-detail-scroll')),
+                find.byKey(const ValueKey('muscle-panel-scroll')),
                 findsOneWidget,
               );
               await tester.ensureVisible(

@@ -1,20 +1,22 @@
+// Uses the pinned SDK media path; unsupported platforms must retain a real
+// bundled poster. A poster-only result is never reported as video decoding.
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flare/data/drill_media.dart';
-import 'package:flare/platform/drill_media/media_controller.dart';
-import 'package:flare/platform/drill_media/media_view.dart';
+import 'package:flare/data/flare_public_media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 
 Future<void> _until(
   WidgetTester tester,
-  bool Function() done,
-  String what,
-) async {
-  final end = DateTime.now().add(const Duration(seconds: 30));
-  while (!done()) {
+  Future<bool> Function() done,
+  String what, {
+  Duration timeout = const Duration(seconds: 30),
+}) async {
+  final end = DateTime.now().add(timeout);
+  while (!await done()) {
     if (DateTime.now().isAfter(end)) fail('Timed out waiting for $what');
     await tester.pump(const Duration(milliseconds: 100));
   }
@@ -22,23 +24,35 @@ Future<void> _until(
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  testWidgets('offline video decodes, advances and stops in WKWebView', (
+  testWidgets('shared media poster and native decoder capability', (
     tester,
   ) async {
-    final media = (await DrillMedia.load()).values.first;
-    final controller = DrillMediaController();
-    addTearDown(controller.dispose);
+    final cache = await Directory.systemTemp.createTemp('flare-ios-media-');
+    final policy = await FlarePublicMedia.load(
+      rootDirectory: cache.path,
+      prefetchBeforeTraining: false,
+    );
+    final handle = sdk.DrillMediaPlaybackHandle();
+    final paused = ValueNotifier(false);
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox());
+      handle.dispose();
+      paused.dispose();
+      await cache.delete(recursive: true);
+    });
+    const id = 'abs-A';
+    expect(policy.actionFor(id), isNotNull);
+    expect(policy.posterAssetFor(id), 'assets/public_posters/$id.webp');
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: Center(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: DrillMediaPlatformView(
-                media: media,
-                controller: controller,
-                labels: const {},
-              ),
+          body: ValueListenableBuilder<bool>(
+            valueListenable: paused,
+            builder: (_, value, _) => sdk.TrainingActionMedia(
+              actionId: id,
+              policy: policy,
+              paused: value,
+              playbackHandle: handle,
             ),
           ),
         ),
@@ -46,50 +60,52 @@ void main() {
     );
     await _until(
       tester,
-      () => controller.ready || controller.failed,
-      'metadata',
+      () async => find
+          .descendant(
+            of: find.byKey(const ValueKey('public-action-poster')),
+            matching: find.byWidgetPredicate(
+              (widget) => widget is RawImage && widget.image != null,
+            ),
+          )
+          .evaluate()
+          .isNotEmpty,
+      'bundled WebP poster decode',
     );
-    expect(controller.failed, isFalse);
-    final web = tester.widget<WebViewWidget>(find.byType(WebViewWidget));
-    Future<Map<String, dynamic>> snapshot() async {
-      final result = await web.platform.params.controller
-          .runJavaScriptReturningResult('''JSON.stringify((() => {
-          const v = document.querySelector('video');
-          return {time:v.currentTime, paused:v.paused, width:v.videoWidth,
-            readyState:v.readyState, error:v.error?.code ?? null,
-            host:location.hostname};
-        })())''');
-      var value = jsonDecode(result.toString());
-      if (value is String) value = jsonDecode(value);
-      return Map<String, dynamic>.from(value as Map);
+    final supported = sdk.UgkPackedAlphaVideo.isSupported;
+    final report = <String, Object?>{
+      'actionId': id,
+      'bundledPosterDecoded': true,
+      'nativeVideoBackendSupported': supported,
+      'videoDecodeVerified': false,
+    };
+    if (supported) {
+      await _until(
+        tester,
+        () async => (await handle.capture())?.ready == true,
+        'downloaded shared video first frame',
+        timeout: const Duration(seconds: 90),
+      );
+      final before = (await handle.capture())!.videoSeconds!;
+      await tester.pump(const Duration(milliseconds: 600));
+      final after = (await handle.capture())!.videoSeconds!;
+      expect(after, greaterThan(before + .1));
+      paused.value = true;
+      await tester.pump(const Duration(milliseconds: 300));
+      final stopped = (await handle.capture())!.videoSeconds!;
+      await tester.pump(const Duration(milliseconds: 400));
+      expect((await handle.capture())!.videoSeconds!, closeTo(stopped, .05));
+      report['videoDecodeVerified'] = true;
+      report['nativePauseVerified'] = true;
+    } else {
+      expect((await handle.capture())?.ready, false);
+      expect(
+        find.byKey(const ValueKey('public-action-progress')),
+        findsNothing,
+      );
+      report['limitation'] = 'Pinned SDK has no iOS packed-alpha backend';
     }
-
-    final before = await snapshot();
-    expect(before['host'], '127.0.0.1');
-    controller.toggle();
-    await _until(
-      tester,
-      () => (controller.playing && controller.hasFrame) || controller.failed,
-      'decoded first frame',
-    );
-    expect(controller.failed, isFalse);
-    await tester.pump(const Duration(milliseconds: 600));
-    final playing = await snapshot();
-    expect(playing['width'], greaterThan(0));
-    expect(playing['readyState'], greaterThanOrEqualTo(2));
-    expect(playing['error'], isNull);
-    expect((playing['time'] as num) - (before['time'] as num), greaterThan(.1));
-    controller.pause();
-    await _until(tester, () => !controller.playing, 'pause acknowledgement');
-    final paused = await snapshot();
-    await tester.pump(const Duration(milliseconds: 350));
-    expect((await snapshot())['time'], paused['time']);
-    controller.toggle();
-    await _until(tester, () => controller.playing, 'resume acknowledgement');
-    controller.setActive(false);
-    await _until(tester, () => !controller.playing, 'inactive pause');
-    expect((await snapshot())['paused'], isTrue);
-    binding.reportData = {'mediaId': media.id, 'video': playing};
-    await tester.pumpWidget(const SizedBox());
+    expect(tester.takeException(), isNull);
+    binding.reportData = report;
+    debugPrint('FLARE_IOS_SHARED_MEDIA_REPORT ${jsonEncode(report)}');
   });
 }

@@ -9,9 +9,10 @@ import 'package:flare/platform/scene/scene_view_native.dart';
 import 'package:flare/platform/training_display.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
-import 'package:flare/ui/components.dart';
 import 'package:flare/ui/trainer_page.dart';
-import 'package:flare/ui/plans_page.dart';
+import 'package:flare/data/flare_shared_library.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -43,7 +44,7 @@ void main() {
     await binding.takeScreenshot(name);
   }
 
-  testWidgets('first launch, appearance, timer and native local records', (
+  testWidgets('SDK library, plan, timer and native local records', (
     tester,
   ) async {
     final preferences = await SharedPreferences.getInstance();
@@ -167,39 +168,105 @@ void main() {
     await screenshot(tester, '03-muscle-detail-$screenshotTheme');
     await tester.tap(find.byKey(const ValueKey('train-group')));
     await tester.pumpAndSettle();
-    expect(find.byType(LibraryPage), findsOneWidget);
-    final selectedDrill = tester
-        .widget<DrillCard>(find.byType(DrillCard).first)
-        .drill;
-    await tester.tap(find.text(selectedDrill.name));
+    expect(find.byType(sdk.TrainingLibraryPage), findsOneWidget);
+    expect(FlareShared.current!.allowedActionIds, hasLength(211));
+    await screenshot(tester, '04-shared-library-$screenshotTheme');
+
+    // Seed a short plan through the real native store, then launch it through
+    // the production plan route. No API token or live AI request is required.
+    final plan = uc.TrainingPlan(
+      id: 'ios-native-sdk',
+      source: 'template',
+      title: 'iOS SDK 验证',
+      goal: 'strength',
+      scene: 'home',
+      level: 1,
+      targetMinutes: 1,
+      blocks: const [
+        uc.PlanBlock(
+          id: 'native',
+          name: 'Main',
+          type: uc.BlockType.main,
+          items: [
+            uc.PlanItem(
+              exerciseId: 'abs-A',
+              mode: uc.DoseMode.time,
+              sets: 1,
+              workSeconds: 30,
+              perSide: false,
+              restSeconds: 0,
+            ),
+          ],
+        ),
+      ],
+    );
+    final routine = await store.createRoutine(plan.title, const [
+      'abs-A',
+    ], sdkPlan: plan);
+    expect(routine, isNotNull);
+    await tester.tap(find.text('计划').last);
     await tester.pumpAndSettle();
-    await screenshot(tester, '04-drill-$screenshotTheme');
-    await tester.tap(find.byTooltip('加入计划'));
+    final savedPlan = find.byKey(ValueKey('routine-${routine!.id}'));
+    await tester.ensureVisible(savedPlan);
+    await tester.tap(savedPlan);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('新建计划并加入'));
-    await tester.pumpAndSettle();
-    expect(find.byType(RoutineEditorPage), findsOneWidget);
-    final savePlan = find.byKey(const ValueKey('routine-save'));
-    await tester.ensureVisible(savePlan);
-    await tester.tap(savePlan);
-    await tester.pumpAndSettle();
-    expect(store.routines.single.drillIds, [selectedDrill.id]);
-    ScaffoldMessenger.of(
-      tester.element(find.byType(DrillDetailPage)),
-    ).removeCurrentSnackBar();
-    await tester.pumpAndSettle();
-    final startTraining = find.text('开始训练');
-    await tester.ensureVisible(startTraining);
-    await tester.tap(startTraining);
-    await tester.pumpAndSettle();
-    // Training now runs in the SDK whole-plan player (FlareTrainingPage);
-    // the legacy native timer and its countdown/pause checks were removed.
+    await tester.tap(find.byKey(const ValueKey('plan-start')));
+    await _until(
+      tester,
+      () => find.byType(sdk.TrainerPlayer).evaluate().isNotEmpty,
+      'shared SDK player',
+      timeout: const Duration(seconds: 45),
+    );
     expect(find.byType(FlareTrainingPage), findsOneWidget);
-    expect(store.todayIds, isNotEmpty);
-    final drill = shell.catalog.drillById(store.todayIds.last)!;
-    await screenshot(tester, '05-trainer-$screenshotTheme');
-    Navigator.of(tester.element(find.byType(FlareTrainingPage))).pop();
+    await _until(
+      tester,
+      () => find
+          .byKey(const ValueKey('pause'))
+          .hitTestable()
+          .evaluate()
+          .isNotEmpty,
+      'SDK training starts',
+      timeout: const Duration(seconds: 45),
+    );
+    await tester.pump(const Duration(seconds: 12));
+    expect(
+      await TrainingDisplay.channel.invokeMethod<bool>('isKeepAwake'),
+      true,
+    );
+    await tester.tap(find.byKey(const ValueKey('pause')));
+    await tester.pump(const Duration(milliseconds: 300));
+    String counter() => find
+        .descendant(
+          of: find.byKey(const ValueKey('counter')),
+          matching: find.byType(Text),
+        )
+        .evaluate()
+        .map((element) => (element.widget as Text).data)
+        .join('|');
+    final pausedCount = counter();
+    expect(pausedCount, isNotEmpty);
+    await tester.pump(const Duration(seconds: 2));
+    expect(counter(), pausedCount);
+    await screenshot(tester, '05-sdk-paused-$screenshotTheme');
+    await tester.tap(find.byKey(const ValueKey('pause')));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.byKey(const ValueKey('close')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('close-confirm')));
+    await _until(
+      tester,
+      () => find.byType(FlareTrainingPage).evaluate().isEmpty,
+      'SDK save and close',
+      timeout: const Duration(seconds: 30),
+    );
+    expect(store.trainerSessions, hasLength(1));
+    final session = store.trainerSessions.single;
+    expect(session.activeSeconds, greaterThan(0));
+    expect(store.sessions.every((row) => !row.completed), isTrue);
+    expect(
+      await TrainingDisplay.channel.invokeMethod<bool>('isKeepAwake'),
+      false,
+    );
 
     await preferences.reload();
     final restored = LearningStore(catalog: shell.catalog);
@@ -208,12 +275,18 @@ void main() {
     expect(restored.storageError, isNull);
     expect(restored.safetyAccepted, true);
     expect(restored.settings.themeMode, screenshotTheme);
-    expect(restored.todayIds, contains(drill.id));
+    expect(restored.routines.single.toJson(), store.routines.single.toJson());
+    expect(restored.trainerSessions.single.toJson(), session.toJson());
     expect(tester.takeException(), isNull);
     final report = {
       'firstLaunchSafetyOk': true,
       'darkAndLightThemesOk': true,
       'nativePreferencesRoundTripOk': true,
+      'sharedLibraryScope': 211,
+      'nativePlanPersistenceOk': true,
+      'sdkCountdownPauseAndPartialSaveOk': true,
+      'sdkScreenAwakeReleasedOnExit': true,
+      'nativeVideoBackendSupported': sdk.UgkPackedAlphaVideo.isSupported,
       'systemReduceMotion': systemReduceMotion,
       'appDisableAnimations': appDisableAnimations,
       'webReduceMotion': diagnostics['reduceMotion'],
