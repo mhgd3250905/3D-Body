@@ -85,7 +85,7 @@ Finder labeledControl(String label) =>
     find.bySemanticsLabel(RegExp('^${RegExp.escape(label)}')).first;
 
 void assertLeanHome(WidgetTester tester) {
-  expect(find.text('Flare · 托马斯助手'), findsOneWidget);
+  expect(find.bySemanticsLabel('Flare · 托马斯助手'), findsOneWidget);
   expect(find.text('FLARE · 托马斯全旋'), findsNothing);
   expect(find.text('完整循环 · 8 个阶段'), findsNothing);
   expect(find.byType(NavigationBar), findsNothing);
@@ -179,7 +179,7 @@ void main() {
     );
     scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
     await tester.pumpAndSettle();
-    expect(find.text('Flare · 托马斯助手'), findsOneWidget);
+    expect(find.bySemanticsLabel('Flare · 托马斯助手'), findsOneWidget);
     expect(tester.getSize(find.byKey(const ValueKey('home'))).height, 44);
     final stage = find.byWidgetPredicate(
       (widget) =>

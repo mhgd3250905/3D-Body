@@ -1420,10 +1420,65 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   // ~72pt: 12pt padding around one 48pt row (phase line + compact timeline).
-  double _transportHeightFor(BuildContext context) =>
-      (MediaQuery.textScalerOf(context).scale(13) * 1.25 + 32 + 24)
-          .clamp(72, double.infinity)
-          .toDouble();
+  // A locale whose longest phase name wraps at this width gets a second
+  // line for every phase, so the bar (and the 3D inset) stays put while
+  // playing.
+  double _transportHeightFor(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final lines = _transportNameLines(context);
+    return (scaler.scale(13) * 1.25 * lines + 32 + 24)
+        .clamp(72, double.infinity)
+        .toDouble();
+  }
+
+  String? _nameLinesKey;
+  int _nameLines = 1;
+
+  TextStyle _phaseTextStyle(BuildContext context) =>
+      DefaultTextStyle.of(context).style.merge(
+        const TextStyle(
+          fontSize: 13,
+          height: 1.25,
+          fontWeight: FontWeight.w600,
+        ),
+      );
+
+  int _transportNameLines(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final style = _phaseTextStyle(context);
+    final names = [for (final p in catalog.phases) p.name];
+    final key =
+        '$width|${scaler.scale(13)}|${style.fontFamily}|${names.join('|')}';
+    if (key == _nameLinesKey) return _nameLines;
+    final number = TextPainter(
+      text: TextSpan(
+        text: '00',
+        style: style.copyWith(
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+      ),
+      textScaler: scaler,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    // 20 margins, 12 padding, 48 play, 16 gap, number, 6 gap.
+    final available = width - 40 - 24 - 48 - 16 - number.width - 6;
+    number.dispose();
+    var lines = 1;
+    for (final name in names) {
+      final painter = TextPainter(
+        text: TextSpan(text: name, style: style),
+        textScaler: scaler,
+        textDirection: Directionality.of(context),
+        maxLines: 2,
+      )..layout(maxWidth: available.clamp(1, double.infinity).toDouble());
+      if (painter.computeLineMetrics().length > 1) lines = 2;
+      painter.dispose();
+      if (lines == 2) break;
+    }
+    _nameLinesKey = key;
+    return _nameLines = lines;
+  }
 
   Widget _transport(BuildContext context, Phase phase) {
     final s = context.strings;
@@ -1458,6 +1513,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           phase.source.toString().padLeft(2, '0'),
@@ -1474,8 +1530,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           child: Text(
                             phase.name,
                             key: const ValueKey('home-phase-name'),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style: const TextStyle(
                               fontSize: 13,
                               height: 1.25,
