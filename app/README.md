@@ -1,5 +1,7 @@
 # Flare 托马斯 · Flutter App
 
+2026-11-04 QA v2 内测候选：`codex/sdk-pin-v0.7.0` 固定 SDK `ugk_trainer-v0.7.1` / `9dd93163e9f355665e5c923f374c64f03bf65a86`；原 SDK 聊天页通过 `agentMode: CoachChatAgentMode.qaV2`、`aiTags: appAiTags` 启用新版。默认模型 `deepseek-v4.1-flash`，SDK 每轮思考 max；标签为未审 AI 草稿。1.0.12+18 / arm64 2018 为本批候选，当前已发现计划交付问题；[实测、原文与包记录](docs/coach-qa-v071-2026-11-04.md)。尚未合入 master，下面主线基线不变。
+
 ## 当前检查点（2026-11-04）
 
 最新功能源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含共享聊天、公共动作库与训练接入、PR #124 页面优化和 PR #125 SDK 固定更新。四个 SDK 包均固定 `693cbc02cdf284163409868e117e438515c6a8d8`（`ugk_trainer-v0.6.0` 发行检查点）：`ugk_coach 0.8.0`、`ugk_coach_chat 0.1.0`、`ugk_coach_ui 0.4.0`、`ugk_trainer_runtime 0.1.0`。App 源码版本仍为 `1.0.10+15`。

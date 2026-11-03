@@ -1,0 +1,722 @@
+{
+  "startedAtUtc": "2026-11-03T23:42:00.062136Z",
+  "model": "deepseek-v4.1-flash",
+  "thinking": {
+    "type": "enabled"
+  },
+  "reasoningEffort": "max",
+  "sdkCommit": "9dd93163e9f355665e5c923f374c64f03bf65a86",
+  "tagCommit": "5d17c24af859d905dbbdee4b1d623b99881ac618",
+  "tagStatus": "ai-draft; not human reviewed",
+  "scenarios": [
+    {
+      "id": "support-arm-choices-and-second-card",
+      "turns": [
+        {
+          "number": 1,
+          "user": "推荐几个托马斯支撑臂的动作。",
+          "observations": [
+            "Expected place single choice; actual askStep=place, multiple=false"
+          ],
+          "resultStatus": "ok",
+          "displayedSdkText": "练托马斯支撑臂的话，你在哪练？",
+          "reply": {
+            "kind": "ask",
+            "text": "练托马斯支撑臂的话，你在哪练？",
+            "language": "zh",
+            "cards": [],
+            "chips": [],
+            "conditions": {
+              "place": null,
+              "placeSource": "none",
+              "assumed": true
+            },
+            "question": {
+              "question": "练托马斯支撑臂的话，你在哪练？",
+              "mode": "choice",
+              "options": [
+                "居家",
+                "健身房",
+                "办公室",
+                "直接推荐"
+              ],
+              "multiple": false
+            },
+            "askStep": "place",
+            "llmCalls": 2,
+            "ms": 5894,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 4038
+              },
+              {
+                "step": "ask",
+                "ms": 1850
+              }
+            ],
+            "numberedCards": [],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 2,
+          "user": "居家",
+          "observations": [
+            "Expected equipment multiple choice; actual askStep=equipment, multiple=true"
+          ],
+          "scriptPrompt": "居家",
+          "selectedOptions": [
+            "居家"
+          ],
+          "answerApi": "CoachChatController.answerChoices",
+          "resultStatus": "ok",
+          "displayedSdkText": "在居家练支撑臂，手边有哪些器械？可以多选。",
+          "reply": {
+            "kind": "ask",
+            "text": "在居家练支撑臂，手边有哪些器械？可以多选。",
+            "language": "zh",
+            "cards": [],
+            "chips": [],
+            "conditions": {
+              "place": "home",
+              "placeWord": "居家",
+              "placeSource": "answered",
+              "equipment": null,
+              "equipmentSource": "none",
+              "assumed": true
+            },
+            "question": {
+              "question": "在居家练支撑臂，手边有哪些器械？可以多选。",
+              "mode": "choice",
+              "options": [
+                "哑铃",
+                "瑜伽垫",
+                "椅子",
+                "弹力带",
+                "都没有（徒手）",
+                "直接推荐"
+              ],
+              "multiple": true
+            },
+            "askStep": "equipment",
+            "llmCalls": 2,
+            "ms": 4006,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 2446
+              },
+              {
+                "step": "ask",
+                "ms": 1559
+              }
+            ],
+            "numberedCards": [],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 3,
+          "user": "瑜伽垫、弹力带",
+          "observations": [],
+          "scriptPrompt": "瑜伽垫、弹力带",
+          "selectedOptions": [
+            "瑜伽垫",
+            "弹力带"
+          ],
+          "answerApi": "CoachChatController.answerChoices",
+          "resultStatus": "ok",
+          "displayedSdkText": "托马斯支撑臂靠的是肩胛顶住加手臂锁直，所以先练前锯肌把肩胛推出去，再用弹力带补肩后束和上背，最后用直臂侧板练单臂承重的稳定。撑地和侧板这类动作手腕会吃力，练前先把手腕活动开，撑的时候肩胛主动推地、别塌腰。弹力带面拉需要高处固定点，门框或门顶都可以。",
+          "reply": {
+            "kind": "recommend",
+            "text": "托马斯支撑臂靠的是肩胛顶住加手臂锁直，所以先练前锯肌把肩胛推出去，再用弹力带补肩后束和上背，最后用直臂侧板练单臂承重的稳定。撑地和侧板这类动作手腕会吃力，练前先把手腕活动开，撑的时候肩胛主动推地、别塌腰。弹力带面拉需要高处固定点，门框或门顶都可以。",
+            "language": "zh",
+            "cards": [
+              {
+                "id": "serratus-A",
+                "name": "俯撑肩胛前伸",
+                "why": "撑类动作的肩胛基础，直接服务支撑臂"
+              },
+              {
+                "id": "h-band-face-pull",
+                "name": "站姿弹力带面拉",
+                "why": "练后束和上背，撑住时不耸肩"
+              },
+              {
+                "id": "h-band-pull-apart",
+                "name": "弹力带水平拉开",
+                "why": "不需固定点，随时补肩后侧"
+              },
+              {
+                "id": "h-band-triceps-pressdown",
+                "name": "站姿单臂弹力带下压",
+                "why": "练锁肘力量，撑地时手臂不软"
+              },
+              {
+                "id": "deltoids-A",
+                "name": "直臂侧平板支撑",
+                "why": "单臂承重稳定，最接近支撑臂发力"
+              }
+            ],
+            "chips": [
+              "排成一套 20 分钟",
+              "再加几个核心动作",
+              "换一批动作"
+            ],
+            "conditions": {
+              "place": "home",
+              "placeWord": "居家",
+              "placeSource": "answered",
+              "equipment": [
+                "mat",
+                "band"
+              ],
+              "equipmentSource": "answered",
+              "assumed": false
+            },
+            "llmCalls": 2,
+            "ms": 10529,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 3015
+              },
+              {
+                "step": "answer",
+                "ms": 7499
+              }
+            ],
+            "numberedCards": [
+              {
+                "number": 1,
+                "id": "serratus-A",
+                "name": "俯撑肩胛前伸",
+                "why": "撑类动作的肩胛基础，直接服务支撑臂"
+              },
+              {
+                "number": 2,
+                "id": "h-band-face-pull",
+                "name": "站姿弹力带面拉",
+                "why": "练后束和上背，撑住时不耸肩"
+              },
+              {
+                "number": 3,
+                "id": "h-band-pull-apart",
+                "name": "弹力带水平拉开",
+                "why": "不需固定点，随时补肩后侧"
+              },
+              {
+                "number": 4,
+                "id": "h-band-triceps-pressdown",
+                "name": "站姿单臂弹力带下压",
+                "why": "练锁肘力量，撑地时手臂不软"
+              },
+              {
+                "number": 5,
+                "id": "deltoids-A",
+                "name": "直臂侧平板支撑",
+                "why": "单臂承重稳定，最接近支撑臂发力"
+              }
+            ],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 4,
+          "user": "换第2个动作，其他动作不变。",
+          "observations": [
+            "Requested displayed card 2; beforeCount=5, afterCount=5, changedPositions=[2]. No-change replies may correctly explain that no replacement is available."
+          ],
+          "resultStatus": "ok",
+          "displayedSdkText": "第 2 个换成了俯卧 Y-T-W 举，其余四个动作不动。原来的面拉要靠高处固定点，Y-T-W 只要一张垫子趴着就能做，练的还是肩胛和后束这一片，对支撑臂的肩稳定同样有用。趴着做时下巴微收、肋骨别塌，抬到不耸肩的高度就够。（按你在家、有瑜伽垫和弹力带）",
+          "reply": {
+            "kind": "replace",
+            "text": "第 2 个换成了俯卧 Y-T-W 举，其余四个动作不动。原来的面拉要靠高处固定点，Y-T-W 只要一张垫子趴着就能做，练的还是肩胛和后束这一片，对支撑臂的肩稳定同样有用。趴着做时下巴微收、肋骨别塌，抬到不耸肩的高度就够。（按你在家、有瑜伽垫和弹力带）",
+            "language": "zh",
+            "cards": [
+              {
+                "id": "serratus-A",
+                "name": "俯撑肩胛前伸",
+                "why": "撑类动作的肩胛基础，直接服务支撑臂"
+              },
+              {
+                "id": "scapular-A",
+                "name": "俯卧 Y-T-W 举",
+                "why": "同样练肩胛和后束，只需垫子不用固定点"
+              },
+              {
+                "id": "h-band-pull-apart",
+                "name": "弹力带水平拉开",
+                "why": "不需固定点，随时补肩后侧"
+              },
+              {
+                "id": "h-band-triceps-pressdown",
+                "name": "站姿单臂弹力带下压",
+                "why": "练锁肘力量，撑地时手臂不软"
+              },
+              {
+                "id": "deltoids-A",
+                "name": "直臂侧平板支撑",
+                "why": "单臂承重稳定，最接近支撑臂发力"
+              }
+            ],
+            "chips": [
+              "换成弹力带坐姿划船",
+              "第 1 个也换掉",
+              "再来一套支撑臂动作"
+            ],
+            "conditions": {
+              "place": "home",
+              "placeWord": "居家",
+              "placeSource": "answered",
+              "equipment": [
+                "mat",
+                "band"
+              ],
+              "equipmentSource": "answered",
+              "assumed": true
+            },
+            "llmCalls": 2,
+            "ms": 9190,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 3131
+              },
+              {
+                "step": "answer",
+                "ms": 5967
+              }
+            ],
+            "numberedCards": [
+              {
+                "number": 1,
+                "id": "serratus-A",
+                "name": "俯撑肩胛前伸",
+                "why": "撑类动作的肩胛基础，直接服务支撑臂"
+              },
+              {
+                "number": 2,
+                "id": "scapular-A",
+                "name": "俯卧 Y-T-W 举",
+                "why": "同样练肩胛和后束，只需垫子不用固定点"
+              },
+              {
+                "number": 3,
+                "id": "h-band-pull-apart",
+                "name": "弹力带水平拉开",
+                "why": "不需固定点，随时补肩后侧"
+              },
+              {
+                "number": 4,
+                "id": "h-band-triceps-pressdown",
+                "name": "站姿单臂弹力带下压",
+                "why": "练锁肘力量，撑地时手臂不软"
+              },
+              {
+                "number": 5,
+                "id": "deltoids-A",
+                "name": "直臂侧平板支撑",
+                "why": "单臂承重稳定，最接近支撑臂发力"
+              }
+            ],
+            "planOrderedIds": []
+          }
+        }
+      ],
+      "simulatedSdkSafetyAnswers": [
+        {
+          "question": "开始之前，先花 10 秒确认安全。\n\n智能健身助手提供的是通用健身与拉伸建议，不是医疗诊断或康复处方。训练中如出现疼痛、麻木、头晕、胸闷或呼吸困难，请立即停止并及时就医。有慢性病、伤病或正在康复期，请先咨询医生。动作示范中的肌肉高亮仅为教学示意。",
+          "answer": "我已了解"
+        },
+        {
+          "question": "1/4　孕期或产后 6 个月内？",
+          "answer": "否"
+        },
+        {
+          "question": "2/4　近期做过手术，或医生让你限制运动？",
+          "answer": "否"
+        },
+        {
+          "question": "3/4　最近摔伤、扭伤，或关节、腰背正在疼痛肿胀？",
+          "answer": "否"
+        },
+        {
+          "question": "4/4　有心脏病、未控制的高血压，或运动时出现过胸痛、晕厥？",
+          "answer": "否"
+        }
+      ],
+      "tagCoverage": "209/211",
+      "thinking": {
+        "thinking": {
+          "type": "enabled"
+        },
+        "reasoning_effort": "max"
+      }
+    },
+    {
+      "id": "core-plan-first-card-and-duration",
+      "turns": [
+        {
+          "number": 1,
+          "user": "在家徒手，帮我排一套10分钟的核心训练。",
+          "observations": [],
+          "resultStatus": "error",
+          "failureType": "no new delivered QA reply",
+          "appErrorType": "StateError"
+        },
+        {
+          "number": 2,
+          "user": "换第1个动作，其他动作不变。",
+          "observations": [
+            "Plan numbering includes warmup/cooldown; kind=answer, planSeconds=null, orderedItems=0"
+          ],
+          "resultStatus": "ok",
+          "displayedSdkText": "现在卡片上还没有动作，所以没有「第 1 个」可以换。你先说说想练哪个部位、大概多少分钟，我直接排一套给你，之后就能按编号换了。",
+          "reply": {
+            "kind": "answer",
+            "text": "现在卡片上还没有动作，所以没有「第 1 个」可以换。你先说说想练哪个部位、大概多少分钟，我直接排一套给你，之后就能按编号换了。",
+            "language": "zh",
+            "cards": [],
+            "chips": [
+              "换场地",
+              "帮我排一套 15 分钟",
+              "先给我几个动作"
+            ],
+            "conditions": {
+              "place": null,
+              "placeSource": "none",
+              "assumed": true
+            },
+            "llmCalls": 2,
+            "ms": 9548,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 2184
+              },
+              {
+                "step": "answer",
+                "ms": 7356
+              }
+            ],
+            "numberedCards": [],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 3,
+          "user": "改成15分钟，动作不变。",
+          "observations": [],
+          "resultStatus": "error",
+          "failureType": "no new delivered QA reply",
+          "appErrorType": "StateError"
+        }
+      ],
+      "simulatedSdkSafetyAnswers": [
+        {
+          "question": "开始之前，先花 10 秒确认安全。\n\n智能健身助手提供的是通用健身与拉伸建议，不是医疗诊断或康复处方。训练中如出现疼痛、麻木、头晕、胸闷或呼吸困难，请立即停止并及时就医。有慢性病、伤病或正在康复期，请先咨询医生。动作示范中的肌肉高亮仅为教学示意。",
+          "answer": "我已了解"
+        },
+        {
+          "question": "1/4　孕期或产后 6 个月内？",
+          "answer": "否"
+        },
+        {
+          "question": "2/4　近期做过手术，或医生让你限制运动？",
+          "answer": "否"
+        },
+        {
+          "question": "3/4　最近摔伤、扭伤，或关节、腰背正在疼痛肿胀？",
+          "answer": "否"
+        },
+        {
+          "question": "4/4　有心脏病、未控制的高血压，或运动时出现过胸痛、晕厥？",
+          "answer": "否"
+        }
+      ],
+      "tagCoverage": "209/211",
+      "thinking": {
+        "thinking": {
+          "type": "enabled"
+        },
+        "reasoning_effort": "max"
+      }
+    },
+    {
+      "id": "office-standing-legs-and-place",
+      "turns": [
+        {
+          "number": 1,
+          "user": "在办公室练腿，不躺地，不用哑铃，推荐几个动作。",
+          "observations": [],
+          "resultStatus": "ok",
+          "displayedSdkText": "在办公室练腿，这几个动作全部不躺地、不用哑铃，只借一把椅子或者直接徒手。先用普通椅坐站和坐姿伸膝练大腿前侧，再用扶椅单腿髋铰链、扶椅后踢腿补臀和大腿后侧，最后用徒手深蹲把整条腿串起来。单腿动作都扶着椅背做，重心放稳，起身和坐下时放慢，别砸到椅子。",
+          "reply": {
+            "kind": "recommend",
+            "text": "在办公室练腿，这几个动作全部不躺地、不用哑铃，只借一把椅子或者直接徒手。先用普通椅坐站和坐姿伸膝练大腿前侧，再用扶椅单腿髋铰链、扶椅后踢腿补臀和大腿后侧，最后用徒手深蹲把整条腿串起来。单腿动作都扶着椅背做，重心放稳，起身和坐下时放慢，别砸到椅子。",
+            "language": "zh",
+            "cards": [
+              {
+                "id": "h-chair-sit-to-stand",
+                "name": "普通椅双脚坐站",
+                "why": "从椅子上起身就能练，工位最方便"
+              },
+              {
+                "id": "o-chair-knee-extension",
+                "name": "坐椅徒手伸膝",
+                "why": "坐着练大腿前侧，膝盖负担小"
+              },
+              {
+                "id": "o-supported-single-leg-rdl",
+                "name": "扶椅单腿髋铰链",
+                "why": "扶椅练臀和大腿后侧，还练平衡"
+              },
+              {
+                "id": "h-chair-kickback",
+                "name": "扶椅站姿后踢腿",
+                "why": "扶椅就能激活臀部，不用趴地"
+              },
+              {
+                "id": "h-squat",
+                "name": "徒手深蹲",
+                "why": "零器械，把腿前侧后侧一起练"
+              }
+            ],
+            "chips": [
+              "排成一套练腿的",
+              "换一批动作",
+              "难度低一点"
+            ],
+            "conditions": {
+              "place": "office",
+              "placeWord": "办公室",
+              "placeSource": "user",
+              "assumed": false
+            },
+            "llmCalls": 2,
+            "ms": 16449,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 5780
+              },
+              {
+                "step": "answer",
+                "ms": 10663
+              }
+            ],
+            "numberedCards": [
+              {
+                "number": 1,
+                "id": "h-chair-sit-to-stand",
+                "name": "普通椅双脚坐站",
+                "why": "从椅子上起身就能练，工位最方便"
+              },
+              {
+                "number": 2,
+                "id": "o-chair-knee-extension",
+                "name": "坐椅徒手伸膝",
+                "why": "坐着练大腿前侧，膝盖负担小"
+              },
+              {
+                "number": 3,
+                "id": "o-supported-single-leg-rdl",
+                "name": "扶椅单腿髋铰链",
+                "why": "扶椅练臀和大腿后侧，还练平衡"
+              },
+              {
+                "number": 4,
+                "id": "h-chair-kickback",
+                "name": "扶椅站姿后踢腿",
+                "why": "扶椅就能激活臀部，不用趴地"
+              },
+              {
+                "number": 5,
+                "id": "h-squat",
+                "name": "徒手深蹲",
+                "why": "零器械，把腿前侧后侧一起练"
+              }
+            ],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 2,
+          "user": "太难了，简单一点。",
+          "observations": [],
+          "resultStatus": "ok",
+          "displayedSdkText": "第 3 个扶椅单腿髋铰链换成了扶椅站姿徒手屈膝——同样练大腿后侧，但双脚站着扶椅，不用单腿找平衡，难度从 2 降到 1。其余四个在你「办公室、不躺地、只有椅子」的条件里已经是最入门的一档，没有更简单的替换：坐站和伸膝可以扶稳椅面、放慢起身，深蹲改成小幅浅蹲，后踢腿幅度小一点、次数减少就行。",
+          "reply": {
+            "kind": "easier",
+            "text": "第 3 个扶椅单腿髋铰链换成了扶椅站姿徒手屈膝——同样练大腿后侧，但双脚站着扶椅，不用单腿找平衡，难度从 2 降到 1。其余四个在你「办公室、不躺地、只有椅子」的条件里已经是最入门的一档，没有更简单的替换：坐站和伸膝可以扶稳椅面、放慢起身，深蹲改成小幅浅蹲，后踢腿幅度小一点、次数减少就行。",
+            "language": "zh",
+            "cards": [
+              {
+                "id": "h-chair-sit-to-stand",
+                "name": "普通椅双脚坐站",
+                "why": "从椅子上起身就能练，工位最方便"
+              },
+              {
+                "id": "o-chair-knee-extension",
+                "name": "坐椅徒手伸膝",
+                "why": "坐着练大腿前侧，膝盖负担小"
+              },
+              {
+                "id": "o-supported-knee-curl",
+                "name": "扶椅站姿徒手屈膝",
+                "why": "同为练大腿后侧，双脚扶椅不用单腿平衡，难度更低"
+              },
+              {
+                "id": "h-chair-kickback",
+                "name": "扶椅站姿后踢腿",
+                "why": "扶椅就能激活臀部，不用趴地"
+              },
+              {
+                "id": "h-squat",
+                "name": "徒手深蹲",
+                "why": "零器械，把腿前侧后侧一起练"
+              }
+            ],
+            "chips": [
+              "再简单一点",
+              "就这样练",
+              "换场地"
+            ],
+            "conditions": {
+              "place": "office",
+              "placeWord": "办公室",
+              "placeSource": "user",
+              "assumed": true
+            },
+            "llmCalls": 2,
+            "ms": 11316,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 6660
+              },
+              {
+                "step": "answer",
+                "ms": 4651
+              }
+            ],
+            "numberedCards": [
+              {
+                "number": 1,
+                "id": "h-chair-sit-to-stand",
+                "name": "普通椅双脚坐站",
+                "why": "从椅子上起身就能练，工位最方便"
+              },
+              {
+                "number": 2,
+                "id": "o-chair-knee-extension",
+                "name": "坐椅徒手伸膝",
+                "why": "坐着练大腿前侧，膝盖负担小"
+              },
+              {
+                "number": 3,
+                "id": "o-supported-knee-curl",
+                "name": "扶椅站姿徒手屈膝",
+                "why": "同为练大腿后侧，双脚扶椅不用单腿平衡，难度更低"
+              },
+              {
+                "number": 4,
+                "id": "h-chair-kickback",
+                "name": "扶椅站姿后踢腿",
+                "why": "扶椅就能激活臀部，不用趴地"
+              },
+              {
+                "number": 5,
+                "id": "h-squat",
+                "name": "徒手深蹲",
+                "why": "零器械，把腿前侧后侧一起练"
+              }
+            ],
+            "planOrderedIds": []
+          }
+        },
+        {
+          "number": 3,
+          "user": "换场地",
+          "observations": [],
+          "resultStatus": "ok",
+          "displayedSdkText": "练腿的话，你想换到哪练？",
+          "reply": {
+            "kind": "ask",
+            "text": "练腿的话，你想换到哪练？",
+            "language": "zh",
+            "cards": [],
+            "chips": [],
+            "conditions": {
+              "place": null,
+              "placeSource": "none",
+              "assumed": true
+            },
+            "question": {
+              "question": "练腿的话，你想换到哪练？",
+              "mode": "choice",
+              "options": [
+                "居家",
+                "健身房",
+                "办公室",
+                "直接推荐"
+              ],
+              "multiple": false
+            },
+            "askStep": "place",
+            "llmCalls": 2,
+            "ms": 7635,
+            "steps": [
+              {
+                "step": "understand",
+                "ms": 5734
+              },
+              {
+                "step": "ask",
+                "ms": 1900
+              }
+            ],
+            "numberedCards": [],
+            "planOrderedIds": []
+          }
+        }
+      ],
+      "simulatedSdkSafetyAnswers": [
+        {
+          "question": "开始之前，先花 10 秒确认安全。\n\n智能健身助手提供的是通用健身与拉伸建议，不是医疗诊断或康复处方。训练中如出现疼痛、麻木、头晕、胸闷或呼吸困难，请立即停止并及时就医。有慢性病、伤病或正在康复期，请先咨询医生。动作示范中的肌肉高亮仅为教学示意。",
+          "answer": "我已了解"
+        },
+        {
+          "question": "1/4　孕期或产后 6 个月内？",
+          "answer": "否"
+        },
+        {
+          "question": "2/4　近期做过手术，或医生让你限制运动？",
+          "answer": "否"
+        },
+        {
+          "question": "3/4　最近摔伤、扭伤，或关节、腰背正在疼痛肿胀？",
+          "answer": "否"
+        },
+        {
+          "question": "4/4　有心脏病、未控制的高血压，或运动时出现过胸痛、晕厥？",
+          "answer": "否"
+        }
+      ],
+      "tagCoverage": "209/211",
+      "thinking": {
+        "thinking": {
+          "type": "enabled"
+        },
+        "reasoning_effort": "max"
+      }
+    }
+  ],
+  "failures": [
+    "core-plan-first-card-and-duration turn 1: no new QA reply",
+    "core-plan-first-card-and-duration turn 3: no new QA reply"
+  ],
+  "finishedAtUtc": "2026-11-03T23:43:45.381259Z"
+}

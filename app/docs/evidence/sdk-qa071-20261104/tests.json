@@ -1,0 +1,21 @@
+{
+  "command": "flutter test --no-pub --concurrency=1 --reporter json",
+  "sourceCommit": "f0ef5d60e8472d7f53f031cadc238bcb1be4cdd8",
+  "counts": {
+    "success": 324,
+    "skipped": 1,
+    "error": 5
+  },
+  "failures": [
+    "Flare SDK plan numbers include warmup/main/cooldown order",
+    "SDK player ar light at 1.5x has no layout errors",
+    "SDK player ar dark at 1.5x has no layout errors",
+    "SDK player hi light at 1.5x has no layout errors",
+    "SDK player hi dark at 1.5x has no layout errors"
+  ],
+  "finished": {
+    "success": false,
+    "type": "done",
+    "time": 188206
+  }
+}
