@@ -1,5 +1,12 @@
 import os, json, requests, mimetypes, gzip
-A = '36f7672020cfc6c515e198c5786d99da'; N = os.environ.get('WORKER', 'flarelab')
+import sys
+A = '36f7672020cfc6c515e198c5786d99da'
+# Worker name: --worker NAME or WORKER env; default is the live worker 'flarelab' (flare.uuugk.win).
+# Preview: python3 deploy.py --preview   (= --worker flarelab-preview, workers.dev only, no custom domain)
+N = os.environ.get('WORKER', 'flarelab')
+if '--preview' in sys.argv: N = 'flarelab-preview'
+if '--worker' in sys.argv: N = sys.argv[sys.argv.index('--worker') + 1]
+print('deploying worker', N)
 B = f'https://api.cloudflare.com/client/v4/accounts/{A}'
 H = {'User-Agent': 'curl/8.5.0'}
 if os.environ.get('CLOUDFLARE_API_TOKEN'): H['Authorization'] = 'Bearer ' + os.environ['CLOUDFLARE_API_TOKEN']
@@ -26,7 +33,7 @@ for i, (url, p) in enumerate(files):
 worker = '\n'.join(imports) + '\nconst F={' + ','.join(table) + '''};
 export default{async fetch(req){const u=new URL(req.url);let p=decodeURIComponent(u.pathname);if(p==="/"||p==="")p="/index.html";
 const e=F[p]||(p.endsWith("/")?F[p+"index.html"]:null);
-if(!e){if(!p.includes("."))return new Response(null,{status:302,headers:{location:"/"}});return new Response("Not found",{status:404,headers:{"content-type":"text/plain"}});}
+if(!e){if(F[p+"/index.html"])return new Response(null,{status:301,headers:{location:p+"/"}});if(!p.includes("."))return new Response(null,{status:302,headers:{location:"/"}});return new Response("Not found",{status:404,headers:{"content-type":"text/plain"}});}
 const h={"content-type":e[1],"cache-control":e[2],"access-control-allow-origin":"*","x-content-type-options":"nosniff"};
 if(req.method==="HEAD")return new Response(null,{headers:h});
 return new Response(e[0],{headers:h});}};
