@@ -3,6 +3,7 @@
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import 'flare_public_catalog.dart';
+import 'posehub_catalog_updates.dart';
 
 abstract final class FlarePublicMedia {
   static const posterRoot = 'assets/public_posters/';
@@ -17,10 +18,9 @@ abstract final class FlarePublicMedia {
     final catalog = await loadFlarePublicCatalog();
     final repository = await trainer.TrainingMediaRepository.fromCatalog(
       catalog: catalog,
-      catalogRevision: trainer.PoseHubActionLibrary.catalogSha256,
-      mediaBaseUrls: [
-        Uri.parse(trainer.PoseHubActionLibrary.mediaReleaseBaseUri),
-      ],
+      catalogRevision: poseHubCatalogRevisionOf(catalog),
+      // The pack follows the catalogue in use (r2-v1 baseline or hot update).
+      mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
       rootDirectory: rootDirectory,
     );
     return trainer.TrainingMediaPolicy(

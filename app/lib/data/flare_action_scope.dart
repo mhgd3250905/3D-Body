@@ -5,9 +5,10 @@ import 'package:ugk_coach/ugk_coach.dart' as coach;
 const flareAppId = 'flarelab';
 
 /// The one editable Flare action scope (2026-11-02): the 211 complete public
-/// definitions of SDK d4502f3, identical to SF/HipLab. The eight partial
-/// definitions are excluded from both browsing and Coach; a future catalog
-/// cannot silently expand this list.
+/// definitions of SDK d4502f3, minus scapular-C and h-sleeper-stretch (deleted
+/// before the r2-v1 baseline, 2026-11-04): 209. This explicit list is the
+/// built-in offline baseline (spec §7); a future catalog cannot silently
+/// expand it. TODO: remote `pack/<pack>/scopes/flare.json` allow/deny override.
 const flareAuthorizedActionIds = <String>{
   'abs-A',
   'abs-B',
@@ -110,7 +111,6 @@ const flareAuthorizedActionIds = <String>{
   'h-short-side-plank',
   'h-side-er',
   'h-side-leg-raise',
-  'h-sleeper-stretch',
   'h-slider-body-saw',
   'h-squat',
   'h-standing-forearm-rotation',
@@ -204,7 +204,6 @@ const flareAuthorizedActionIds = <String>{
   's-seated-fold',
   'scapular-A',
   'scapular-B',
-  'scapular-C',
   'serratus-A',
   'serratus-B',
   'serratus-C',

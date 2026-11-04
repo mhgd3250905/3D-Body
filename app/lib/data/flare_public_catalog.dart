@@ -3,12 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
+import 'posehub_catalog_updates.dart';
+
 const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
 
+/// The catalogue in use: the SDK-verified hot-update cache when present, else
+/// Flare's bundled baseline copy (SDK r2-v1, identical bytes and SHA).
 Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
   AssetBundle? bundle,
+  trainer.PoseHubCatalogStore? verifiedCache,
 }) async {
+  final store = verifiedCache ?? PoseHubCatalogUpdates.activeStore;
+  if (store != null) {
+    final cached = await trainer.readVerifiedPoseHubCatalog(store);
+    if (cached != null) return cached;
+  }
   final assets = bundle ?? rootBundle;
   // Large loadString assets decode in an isolate outside widget fake clocks.
   // Read exact bytes; the SDK verifies the canonical semantics descriptor.
