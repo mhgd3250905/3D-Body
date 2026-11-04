@@ -491,7 +491,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       return;
     }
     final name = store.routineById(choice)?.name ?? '';
-    final success = await store.addToRoutine(choice, drill.id);
+    final success = await store.addToRoutine(
+      choice,
+      drill.id,
+      sourceCatalog: FlareShared.current?.catalog,
+    );
     if (!mounted) return;
     FlareHaptics.light();
     ScaffoldMessenger.of(context)

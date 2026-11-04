@@ -477,7 +477,12 @@ class LearningStore extends ChangeNotifier {
   }
 
   /// Adds one drill to the end of a set; already present is a no-op.
-  Future<bool> addToRoutine(String id, String drillId) {
+  /// [sourceCatalog] is the shared SDK catalog; it decides per-side.
+  Future<bool> addToRoutine(
+    String id,
+    String drillId, {
+    uc.Catalog? sourceCatalog,
+  }) {
     final routine = routineById(id);
     if (routine == null) throw ArgumentError.value(id, 'id');
     if (routine.sdkPlan case final plan?) {
@@ -491,6 +496,7 @@ class LearningStore extends ChangeNotifier {
       final item = trainingPlanFromDrills(
         title: drill.name,
         drills: [drill],
+        sourceCatalog: sourceCatalog,
       ).items.single;
       final blockIds = plan.blocks.map((block) => block.id).toSet();
       var blockId = 'added-$drillId';
