@@ -2,9 +2,9 @@
 
 ## 当前执行基线（2026-11-04 文档对齐）
 
-产品源码 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`。SDK 负责共享聊天、动作库、详情、媒体和播放器；App 保留 scope、业务回调及本地保存。依赖版本以 pubspec/lock 为准，`ugk_trainer-v0.6.0` 是发行标签。当前范围 211 项，封面随包，视频按需下载缓存；首次视频使用需网络，完整离线体验不能由封面随包推定。公共目录为测试包，`releaseEligible=false`；旧 51 媒体记录不再是当前 APK 清单，不删除历史来源。
+产品源码 `master 4b32607ed24c98af22ba4879909544729a3c3213` 已含PR #126，版本1.0.12+21；四项SDK固定 `f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`（问答v3/v0.7.2内容，以SHA为准）。App沿用SDK聊天页，通过qaV2开关和App传入aiTags启用新版，保留scope、业务回调及本地保存，不增加宿主问答适配。实际包版本以pubspec/lock为准。当前范围211项、封面随包、视频按需下载缓存；完整离线不能由封面推定。公共目录仍为测试包、标签仍为未审AI草稿，旧51媒体与历史来源保持。
 
-最新内部包 1.0.12 / 实际 versionCode 2017，11 月 3 日仅出包未安装；11 月 2 日已装的旧 SDK 2017 与 10 月 +16 分列。源码 pubspec 仍 1.0.10+15，R17/七形象保持。用户负责后续真机验收，不自动操作设备。当前事实入口为 `README.md`、`docs/version-ledger.md`、`docs/verification.md`、`docs/development-roadmap.md`、`docs/asset-sources.md`；本次只对齐文档并提交 push。
+最新包1.0.12+21 / arm64实际2021，源4ea55a7与主线4b32607 tree一致；分析通过，全量325通过/4失败/1默认live跳过，用户确认保留字体失败出包。包未安装，用户确认手机仍为+18；+19未出包、+20从未出包。后续真机/真实对话/恢复/计划/iOS等由用户安排，不自动操作设备；R17/七形象保持。当前入口为 `README.md`、`docs/version-ledger.md`、`docs/verification.md`、`docs/development-roadmap.md`、`docs/asset-sources.md`。本次只做版本文档及锁定注释对齐并提交push，不操作ios/main或PR #127。
 
 ## 历史阶段与保留约定
 

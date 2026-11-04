@@ -2,9 +2,9 @@
 
 ## 当前执行基线（2026-11-04 文档对齐）
 
-产品源码检查点 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`；四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`。共享聊天、动作库、详情、媒体与训练已接入；实际依赖版本以 `app/pubspec.yaml` / `app/pubspec.lock` 为准，`ugk_trainer-v0.6.0` 是发行标签。当前训练范围 211 项，WebP 封面随包，视频由 SDK 按需下载缓存；公共目录属于测试包（`releaseEligible=false`），不得写成全部动作 QA 或发布通过。旧 51 本地媒体的冻结约定保留历史，不再描述当前 APK 内容；不因此授权重制或删除历史素材。
+产品源码检查点 `master 4b32607ed24c98af22ba4879909544729a3c3213`，已包含PR #126；源码版本1.0.12+21，四项SDK固定 `f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`（问答v3，用户指定的v0.7.2内容，以SHA为准）。App沿用SDK聊天页、`agentMode: CoachChatAgentMode.qaV2`及App传入的aiTags，不增加宿主问答适配层。实际包版本以pubspec/lock为准，不把SDK发行称呼当作各包版本。当前训练范围211项，WebP封面随包，视频按需下载缓存；公共目录仍为测试包（`releaseEligible=false`），AI标签仍未审，不得写成全部动作QA或发布通过。旧51媒体/制作来源和冻结批次保留，不因此授权重制或删除素材。
 
-最新内部包 1.0.12 / 实际 versionCode 2017 对应上述源码，11 月 3 日仅出包、未安装。11 月 2 日旧 SDK 2017 安装与 10 月 +16 安装分别保留历史；当前源码 pubspec 仍 1.0.10+15。用户真机验收仍待反馈，不自动安装或操作设备。版本/包见 `app/docs/version-ledger.md`，验证见 `app/docs/verification.md`，待验见 `app/docs/development-roadmap.md`；R17 与七形象保持。本次授权仅文档整理、提交和普通 push。
+最新内部包1.0.12+21 / arm64实际versionCode 2021，出包源 `4ea55a7db323145c0c952d3ae5974c9aea986074` 与主线4b32607 tree一致。325通过/4项字体布局失败/1项live默认跳过；用户明确保留失败继续出包，包未安装。用户确认手机为+18，+20从未出包；+19测试后停止未出包。不得把上述结果补记为真机对话、恢复、计划或iOS验收，不自动安装/操作设备。版本与包以 `app/docs/version-ledger.md`、验证以 `app/docs/verification.md`、待验以 `app/docs/development-roadmap.md` 为准；R17及七形象保持。本次只对齐版本文档/锁定说明并按用户授权提交和普通push，不操作ios/main或PR #127。
 
 ## 历史阶段与保留约定
 

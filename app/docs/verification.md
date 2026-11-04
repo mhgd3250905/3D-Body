@@ -1,12 +1,58 @@
 # App 验证记录
 
-## SDK 0.7.1 QA v2 内测候选（2026-11-04）
+## 当前：QA v3 / +21 与主线文档收束（2026-11-04）
+
+### Preflight 与来源
+
+| 字段 | 实际核对 |
+| --- | --- |
+| 收束 scope | QA071 保存点之后的 SDK 修复锁定、+19/+20/+21 源码与出包状态、PR #126 合入及问答测试变化；有限修正当前入口/版本/验证/待验记录和 pubspec 注释，不升级依赖、不改运行代码、不操作设备或发布 |
+| baseline | `293d23a9482c74e44344f57b3355800f07168b3c`；本会话已保存的 QA071 源码/证据收束点，ref 为该完整 SHA |
+| HEAD / 工作副本 | `4b32607ed24c98af22ba4879909544729a3c3213` / master；`git rev-parse --show-toplevel` 为 `E:/AII-3D/3D-Body` |
+| 基线证明 | `git rev-parse --verify '<baseline>^{commit}'` 返回上述基线，`git merge-base --is-ancestor <baseline> HEAD` 退出 0 |
+| stage delta | `git log --oneline <baseline>..HEAD`、`git diff --name-status <baseline>..HEAD`：4 提交（a524792、d416213、4ea55a7、4b32607），4 路径：`app/pubspec.yaml`、`app/pubspec.lock`、`app/test/live/coach_qa_live_test.dart`、`app/test/ui/coach_qa_sdk_test.dart`；2 配置、2 测试，App lib/assets/原生目录无增量 |
+| 完整工作区与归属 | Preflight 的 `git status --porcelain=v1 --untracked-files=all` 完整输出为空；staged / unstaged / deleted / renamed / untracked 均 0。本次后续文档/注释归本 Agent，3 份文档由明确委派的文档 Agent 修改，均逐路径纳入 |
+| 验证复用证明 | +21 实测源为 `4ea55a7db323145c0c952d3ae5974c9aea986074`；`git diff --exit-code <该SHA> HEAD` 整树为空、退出 0。合入后的主线与已测/已构建源一致；本次新增 Markdown 与 pubspec 注释不改变运行、依赖或测试语义 |
+| alignment findings | 当前身份仍停在 7eaccf7 / 2017 或 QA071 未合入；未登记 +19/+20/+21 分账及 4 项失败例外交付；待验台账混用 +18 实模与新版状态；pubspec SDK 注释仍写旧 pin。按配置、提交差异及本会话已观察结果修正，历史保留 |
+
+从适用的根/App AGENTS 与根 README“当前文档与历史记录”一跳发现并实际核对的 current 来源：`AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`（约定/入口）、`app/docs/version-ledger.md`（版本与包）、本文（验证）、`app/docs/development-roadmap.md`（实施与待验）、`app/docs/motion-v42.md`（动作契约）、`app/docs/asset-sources.md`（来源）。实际配置来源为 `app/pubspec.yaml` / `app/pubspec.lock`；本阶段 delta 的问答行为由两份变更测试与现有 SDK 宿主配置核对。`app/docs/coach-qa-v071-2026-11-04.md` 是 archive/history，仅保留 +18 阶段结果；不能当作新版验收。
+
+### +21 原始执行结果（本会话 2026-11-04）
+
+以下均来自本会话早先执行及工具回执，工程在 `app/`，Flutter 为 `E:\DevCaches\flutter-3.44.7-hiplab\bin\flutter.bat`、TEMP/TMP 在 E 盘；本次收束不重新读取日志、APK、私有配置或跨仓库交付目录。
+
+| 命令 / source state | 实际结果与适用边界 |
+| --- | --- |
+| `flutter pub get` / `4ea55a7db323145c0c952d3ae5974c9aea986074` | 成功；最终 pubspec.lock 与指定提交一致，四项 SDK resolved-ref 均为 f7b8a8e；hosted 使用 pub.dev |
+| `flutter analyze --no-pub` / 同源 | **No issues found，退出 0** |
+| `flutter test --no-pub --concurrency=1 --reporter json` / 同源 | 未过滤全量，**325 通过 / 4 失败 / 1 跳过，退出 1**；test/live 为默认 opt-in 跳过。未删除、放宽或过滤失败用例；不是全量通过 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.12 --build-number=21 --dart-define-from-file=<本机私有配置>` / 同源 | 退出 0，arm64 release；用户先明确允许保留 4 失败继续出包。随后既有内测签名、对齐与包身份检查通过，实际 vc2021；详见[版本台账](version-ledger.md) |
+| `flutter pub get` / `master 4b32607ed24c98af22ba4879909544729a3c3213` | 用户要求切回主线后执行成功，lock 未变，工作区干净；主线与上述构建源整树一致，不是另做一次构建 |
+
+4 项失败原名如下，均是 SDK 播放器 1.5 倍字体布局：
+
+- `SDK player ar light at 1.5x has no layout errors`
+- `SDK player ar dark at 1.5x has no layout errors`
+- `SDK player hi light at 1.5x has no layout errors`
+- `SDK player hi dark at 1.5x has no layout errors`
+
+ar 底部 RenderFlex 溢出约 0.963px，hi 为 2.0px。用户批准“保留 4 项失败记录，继续出测试包”，不等于失败已修复。问答 v3 的 App 单选、多选及推荐/计划编号测试通过；这些组件测试不证明真实模型或真机恢复/发送已修复。本批 +21 **没有真实模型对话或设备执行证据**，+18 的 3 段 10 轮结果仅保留历史。
+
+构建不带 `--no-pub`，由 Flutter 标准 release 流程重新生成测试后可能残留的开发插件登记；没有手改生成代码或在 App 绕过 SDK。APK 的 SHA-256、实际证书、目录与源状态见[版本台账](version-ledger.md)；交付 `REPORT.md` 和本机日志不纳入本仓库。本次没有安装、清数据、商店发布或 iOS 验证。
+
+### 本次对齐检查
+
+本次仅检查文档事实、UTF-8、新改本地链接、`git diff --check`、完整工作区归属、pubspec 非注释内容与锁定不变、运行/测试/资产/原生目录无改动及提交前后 HEAD/远端回执。历史测试结果保留其原 source state；不因文档收束重复 Flutter 全量、模型调用或构建。确定的 alignment findings 修正完毕后按明确路径暂存、提交及普通 push master，Git 回执另行汇报；ios/main 与 PR #127 不操作。
+
+本次内联 Python 检查实际通过：HEAD 保持 4b32607、基线祖先关系及 4ea55a7 整树适用性成立；完整 porcelain 只有 10 份已归属 Markdown 与 1 份 pubspec 注释修改，staged / untracked 均 0。UTF-8 与新增/修改行的 24 个本地链接文件目标通过，`git diff --check` 退出 0；pubspec 非注释内容完全相同、5 处 SDK ref 与 4 项 resolved-ref 均为 f7b8a8e。lib、assets、lock、测试/集成测试、原生与场景目录 diff 为空。委派只读复核未发现当前/历史身份或验收范围混用；这些检查是文档对齐证明，不是新一轮产品测试。
+
+## 历史：SDK 0.7.1 QA v2 / +18 内测候选（2026-11-04）
 
 分支 `codex/sdk-pin-v0.7.0`，最终产品/测试源 `f0ef5d60e8472d7f53f031cadc238bcb1be4cdd8`，SDK固定 `9dd93163e9f355665e5c923f374c64f03bf65a86`。App沿用SDK聊天页，通过qaV2开关及App标签启用；没有App问答适配层。`flutter analyze --no-pub`退出0、无问题；未过滤全量 `flutter test --no-pub --concurrency=1 --reporter json` 为 **324通过 / 5失败 / 1跳过**，退出1。
 
 失败包括计划交付检查1项、ar/hi浅深1.5倍字号布局4项（分别底部溢出0.963px/2.0px）；既有断言保留。普通测试中跳过的真实模型检查已另行opt-in运行，3段10轮中2轮未交付核心计划，不能记为全通过。单选/多选、推荐编号及只替换第2张已实际跑通。原文、源适用性证明、独立器械冲突复现、完整命令及包身份统一见[本批记录](coach-qa-v071-2026-11-04.md)。本批只出Android测试包供远程安装，未做真机/iOS/发布验收。
 
-## 当前阶段：文档收束与证据边界（2026-11-04）
+## 历史：SDK 0.6 主线文档收束与证据边界（2026-11-04）
 
 ### Preflight
 

@@ -1,14 +1,24 @@
 # Flare 托马斯 · Flutter App
 
+## 当前主线与内测交付（2026-11-04 版本收束）
+
+当前主线为 `master 4b32607ed24c98af22ba4879909544729a3c3213`，PR #126 已合入；源码版本为 **1.0.12+21**。四个 SDK 包及传递覆盖固定 **`f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`**，按此提交记录 SDK 问答 v3 内容。App 继续使用 SDK `CoachChatController` / `CoachChatPage`，配置开关仍名为 `CoachChatAgentMode.qaV2`，通过 `aiTags: appAiTags` 传入 App 持有的未审标签。
+
+最新 Android 内测包为 **1.0.12+21 / 实际 versionCode 2021**，产品源码 `4ea55a7db323145c0c952d3ae5974c9aea986074`，已出包、**未安装**，交用户远程验收。用户确认手机目前使用 +18，+20 从未出包；+19 本轮停在测试阶段，未出包。这些身份和旧包分别保留，R17 与七种形象来源保持。
+
++21 源的分析通过，全量测试为 **325 通过、4 项字体布局失败、1 项 live 默认跳过**；用户明确允许保留4项失败出包。问答 v3 的真实模型及真机效果仍待验收，旧 QA071 的10轮真实对话仅代表其历史源码。版本/包身份见[版本台账](docs/version-ledger.md)，证据及 source state 见[验证记录](docs/verification.md)，后续验收见[待验收台账](docs/development-roadmap.md)。
+
+## 历史：QA071 / +18 候选阶段
+
 2026-11-04 QA v2 内测候选：`codex/sdk-pin-v0.7.0` 固定 SDK `ugk_trainer-v0.7.1` / `9dd93163e9f355665e5c923f374c64f03bf65a86`；原 SDK 聊天页通过 `agentMode: CoachChatAgentMode.qaV2`、`aiTags: appAiTags` 启用新版。默认模型 `deepseek-v4.1-flash`，SDK 每轮思考 max；标签为未审 AI 草稿。1.0.12+18 / arm64 2018 为本批候选，当前已发现计划交付问题；[实测、原文与包记录](docs/coach-qa-v071-2026-11-04.md)。尚未合入 master，下面主线基线不变。
 
-## 当前检查点（2026-11-04）
+## 历史：11月3日主线与包检查点
 
 最新功能源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含共享聊天、公共动作库与训练接入、PR #124 页面优化和 PR #125 SDK 固定更新。四个 SDK 包均固定 `693cbc02cdf284163409868e117e438515c6a8d8`（`ugk_trainer-v0.6.0` 发行检查点）：`ugk_coach 0.8.0`、`ugk_coach_chat 0.1.0`、`ugk_coach_ui 0.4.0`、`ugk_trainer_runtime 0.1.0`。App 源码版本仍为 `1.0.10+15`。
 
 11 月 3 日最新内部包为 **1.0.12 / Android versionCode 2017**，仅出包，未安装；11 月 2 日曾安装的同版本号 2017 包来自更早的共享 SDK 源码，不能混为最新源码的真机结果。当前功能、包身份和历史安装分账见[版本台账](docs/version-ledger.md)，验证及排除范围见[验证记录](docs/verification.md)，真机、iOS 和长期 QA 见[待验收台账](docs/development-roadmap.md)。R17 动作与七种形象的来源保持，最近 UI / SDK 更新没有新增用户验收结论。
 
-## 历史检查点
+## 更早检查点
 
 以下日期段保留当时的源码、包和验收边界；其中旧 SDK、“待合入”及 +16 / 51 媒体描述不替代上面的当前检查点。
 
@@ -114,7 +124,7 @@ npm run build
 
 ## AI 定制（共享 SDK Chat）
 
-计划页「AI 定制」支持描述需求、问题气泡与多轮补充，计划卡可保存或开始训练。入口仅在中文界面且配置有效时显示。当前由 `ugk_coach_chat` 的 `CoachChatController` / `CoachChatPage` 管理会话、问题、卡片与输入区；Flare 负责路由、生命周期、安全上下文、持久化端口和训练 / 保存回调。SDK 版本与源码绑定见顶部检查点和[版本台账](docs/version-ledger.md)；旧 `CoachConversationController` 接入保留为[历史阶段](docs/coach-conversation-controller-2026-10-24.md)。
+计划页「AI 定制」支持描述需求、问题气泡与多轮补充，计划卡可保存或开始训练。入口仅在中文界面且配置有效时显示。当前由 `ugk_coach_chat` 的 `CoachChatController` / `CoachChatPage` 管理会话、问题、卡片与输入区；Flare 负责路由、生命周期、安全上下文、持久化端口和训练 / 保存回调。SDK 问答 v3 沿用 `agentMode: CoachChatAgentMode.qaV2` 与 `aiTags: appAiTags` 的公开配置，App 不另建问答适配层。SDK 版本与源码绑定见顶部检查点和[版本台账](docs/version-ledger.md)；旧 `CoachConversationController` 接入保留为[历史阶段](docs/coach-conversation-controller-2026-10-24.md)。
 
 默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。无有效 Key/relay token 时全部 AI 入口隐藏；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
 

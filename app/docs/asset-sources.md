@@ -2,7 +2,9 @@
 
 ## 当前消费来源（2026-11-04）
 
-功能源码 `7eaccf7cf87cf7468b9df838680dab9edf515d27` 的首页 / 肌群详情仍消费原 Snow 同源 R17 烘焙模型，七形象、署名和历史冻结批次保持。训练库、AI 和训练播放器已改为共享公共目录与 SDK 媒体，四个 SDK 包固定 `693cbc02cdf284163409868e117e438515c6a8d8`。包版本与安装分账见[版本台账](version-ledger.md)，验证及设备限制见[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+当前主线 `4b32607ed24c98af22ba4879909544729a3c3213` 的首页 / 肌群详情仍消费原 Snow 同源 R17 烘焙模型，七形象、署名和历史冻结批次保持。源码版本为 **1.0.12+21**；训练库、AI 和训练播放器消费共享公共目录与 SDK 媒体，四个 SDK 包固定 `f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`（问答 v3 内容），沿用 SDK 聊天页及 App 传入的 `aiTags`。最新 APK 产品源码为 `4ea55a7db323145c0c952d3ae5974c9aea986074`，实际 versionCode 2021，已出包未安装；未因此完成素材、真实模型或真机验收。包版本与安装分账见[版本台账](version-ledger.md)，验证及设备限制见[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+
+旧主线 `7eaccf7` / SDK `693cbc0` 保留历史检查点；本阶段没有重制、替换或重新审核 R17 模型、媒体或下述来源数据。
 
 公共交付目录为 `assets/public_media/catalog.json`（219条、`readyCount=219`），语义目录为 `assets/public_media/catalog/catalog.json`（0.3.0、142条）；来源 commit 为 `1fdd117d8e29bb0efcc8c57cb23dc1d9dc7422dd`，由 `lib/data/flare_public_catalog.dart` 交 SDK 适配器校验。`lib/data/flare_action_scope.dart` 固定211个授权 ID，排除8项partial；授权范围、交付条数、语义定义条数和随包211张 WebP 封面分别计数，不能互换。公共素材仍标记 `ready-test-unreviewed`、`releaseEligible=false`，不是全部动作已通过最终 QA 或具备发布资格。
 
