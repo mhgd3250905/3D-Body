@@ -55,9 +55,12 @@ const flareCoachProfile = coach.CoachProfile(
 CoachAppProfile flareCoachAppProfile({
   required FlareShared shared,
   required coach.PlanExecutionTimingCallback executionTiming,
+  Map<String, Map<String, Object?>> appAiTags = const {},
 }) => CoachAppProfile(
   appId: flareAppId,
-  revision: 'chat-sdk-shared-1',
+  revision: 'chat-sdk-qa-v2-1',
+  agentMode: CoachChatAgentMode.qaV2,
+  aiTags: appAiTags,
   scopeManifest: shared.scope,
   library: shared.library,
   mediaPolicy: FlarePublicMedia.current,

@@ -3,7 +3,7 @@
 /// ```
 /// flutter run --dart-define=UGK_COACH_API_KEY=<UGK 中转站为本 App 发的令牌> \
 ///   [--dart-define=UGK_COACH_BASE_URL=https://ai.uuugk.win/v1] \
-///   [--dart-define=UGK_COACH_MODEL=deepseek-v4.1-flash-1017] \
+///   [--dart-define=UGK_COACH_MODEL=deepseek-v4.1-flash] \
 ///   [--dart-define=UGK_COACH_CATALOG_URL=https://…/manifest.json]
 /// ```
 ///
@@ -19,7 +19,7 @@ class CoachConfig {
   });
 
   static const defaultBaseUrl = 'https://ai.uuugk.win/v1';
-  static const defaultModel = 'deepseek-v4.1-flash-1017';
+  static const defaultModel = 'deepseek-v4.1-flash';
 
   /// 开发 / 内测直连用的 key。
   final String apiKey;

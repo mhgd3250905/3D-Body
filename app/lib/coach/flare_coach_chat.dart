@@ -9,6 +9,7 @@ import 'package:ugk_trainer_runtime/engine.dart'
 import '../control/learning_store.dart';
 import '../data/flare_action_scope.dart';
 import '../data/flare_shared_library.dart';
+import 'ai_tags.dart';
 import 'coach_config.dart';
 import 'flare_coach_chat_storage.dart';
 import 'flare_coach_profile.dart';
@@ -66,9 +67,11 @@ class FlareCoachChat {
       FlareShared.current ??= shared;
       if (_closed) throw StateError('Coach host is closed');
       final builder = shared.sessionBuilder();
+      final appAiTags = await loadAppAiTags();
       final profile = flareCoachAppProfile(
         shared: shared,
         executionTiming: builder.executionTiming,
+        appAiTags: appAiTags,
       );
       final history = FlareCoachChatHistoryStore(store, storage: storage);
       final preferences = FlareCoachChatPreferenceStore(
