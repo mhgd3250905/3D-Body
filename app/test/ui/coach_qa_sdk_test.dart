@@ -27,7 +27,7 @@ class _Storage implements LocalStateStorage {
 }
 
 typedef _ToolReply =
-    Map<String, Object?> Function(String tool, String context, int count);
+    (String, Map<String, Object?>) Function(int count, String context);
 
 class _Model implements coach.LlmClient {
   _Model(this.reply);
@@ -47,12 +47,11 @@ class _Model implements coach.LlmClient {
     coach.CancelToken? cancel,
   }) async {
     requests.add(request);
-    final tool = request.tools.single.name;
+    final (tool, arguments) = reply(
+      requests.length,
+      request.messages.last.content,
+    );
     final count = counts[tool] = (counts[tool] ?? 0) + 1;
-    final context = request.messages
-        .lastWhere((message) => message.role == coach.LlmRole.user)
-        .content;
-    final arguments = reply(tool, context, count);
     replies.add({'tool': tool, 'arguments': arguments});
     return coach.LlmResponse(
       content: '',
@@ -68,31 +67,12 @@ class _Model implements coach.LlmClient {
   }
 }
 
-Map<String, Object?> _form({
-  String intent = 'actions',
-  String place = 'home',
-  String next = 'answer',
-  String status = 'none',
-  bool equipmentKnown = true,
-}) => {
-  'language': 'zh',
-  'intent': intent,
-  'place': place,
-  'equipment_known': equipmentKnown,
-  'equipment': ['mat', 'chair'],
-  'answer_status': status,
-  'next': next,
-};
-
-// The fake selects only IDs actually supplied by the SDK candidate tool. It
+// The fake selects only IDs the SDK actually returned (search results). It
 // never injects a separate catalogue or bypasses production scope/admission.
-List<String> _candidateIds(String context) {
-  final candidates = context.split('[候选动作]').last.split('[用户这句话]').first;
-  return RegExp(
-    r'^([A-Za-z0-9_-]+) \|',
-    multiLine: true,
-  ).allMatches(candidates).map((match) => match.group(1)!).toList();
-}
+List<String> _candidateIds(String context) => RegExp(
+  r'^([A-Za-z0-9_-]+) \|',
+  multiLine: true,
+).allMatches(context).map((match) => match.group(1)!).toList();
 
 class _Harness {
   _Harness(this.host, this.controller, this.store);
@@ -242,46 +222,47 @@ void main() {
   testWidgets('Flare SDK QA page submits single/multiple choices once', (
     tester,
   ) async {
-    final model = _Model((tool, context, count) {
-      if (tool == 'fill_form') {
-        return switch (count) {
-          1 => _form(
-            place: 'unknown',
-            equipmentKnown: false,
-            next: 'ask_place',
-          ),
-          2 => _form(
-            intent: 'answer_pending',
-            equipmentKnown: false,
-            status: 'answered',
-            next: 'ask_equipment',
-          ),
-          _ => _form(intent: 'answer_pending', status: 'answered'),
-        };
-      }
-      if (tool == 'ask_user') {
-        return count == 1
-            ? {
-                'question': '你想在哪里练？',
-                'options': ['居家', '健身房', '办公室', '直接推荐'],
-              }
-            : {
-                'question': '手边有哪些器械？',
-                'options': ['瑜伽垫', '椅子', '哑铃', '弹力带', '徒手', '直接推荐'],
-              };
-      }
-      if (tool == 'respond') {
-        final ids = _candidateIds(context);
-        expect(ids.length, greaterThanOrEqualTo(2));
-        return {
-          'text': '先试试这两个动作。',
-          'items': [
-            for (final id in ids.take(2)) {'id': id, 'why': '适合当前条件'},
-          ],
-          'chips': ['换场地'],
-        };
-      }
-      throw StateError('Unexpected fake tool $tool');
+    final model = _Model((count, context) {
+      return switch (count) {
+        1 => (
+          'ask_user',
+          {
+            'step': 'place',
+            'question': '你想在哪里练？',
+            'options': ['居家', '健身房', '办公室', '直接推荐'],
+          },
+        ),
+        2 => ('set_conditions', {'language': 'zh', 'place': 'home'}),
+        3 => (
+          'ask_user',
+          {
+            'step': 'equipment',
+            'question': '手边有哪些器械？',
+            'options': ['瑜伽垫', '椅子', '哑铃', '弹力带', '徒手', '直接推荐'],
+            'multi': true,
+          },
+        ),
+        4 => (
+          'set_conditions',
+          {
+            'equipment_known': true,
+            'equipment': ['mat', 'chair'],
+          },
+        ),
+        5 => ('search_actions', {'types': ['static-stretch']}),
+        6 => (
+          'show_actions',
+          {
+            'text': '先试试这几个动作。',
+            'items': [
+              for (final id in _candidateIds(context).take(3))
+                {'id': id, 'why': '适合当前条件'},
+            ],
+            'chips': ['换场地'],
+          },
+        ),
+        _ => throw StateError('Unexpected fake call $count'),
+      };
     });
     final harness = await _Harness.open(tester, model);
     final controller = harness.controller;
@@ -314,7 +295,7 @@ void main() {
     final equipment = controller.messages.last;
     expect(equipment.question!.multiple, isTrue);
     expect(controller.canAnswerQuestion(place), isFalse);
-    expect(model.requests, hasLength(4));
+    expect(model.requests, hasLength(3));
 
     for (final option in [0, 1]) {
       final finder = find.byKey(
@@ -324,7 +305,7 @@ void main() {
       await tester.tap(finder);
       await _pump(tester);
     }
-    expect(model.requests, hasLength(4), reason: 'Multi-select awaits Submit');
+    expect(model.requests, hasLength(3), reason: 'Multi-select awaits Submit');
     final submit = find.byKey(ValueKey('question-submit-${equipment.id}'));
     await tester.ensureVisible(submit);
     await tester.tap(submit);
@@ -342,39 +323,50 @@ void main() {
           .map((message) => message.text),
       ['想练几个动作', '居家', '瑜伽垫、椅子'],
     );
-    expect(model.requests[4].messages.last.content, contains('瑜伽垫、椅子'));
+    expect(model.requests[3].messages.last.content, contains('瑜伽垫、椅子'));
     expect(controller.canAnswerQuestion(equipment), isFalse);
     expect(find.byKey(const ValueKey('recommend-number-1')), findsOneWidget);
     expect(find.byKey(const ValueKey('recommend-number-2')), findsOneWidget);
-    expect(find.byKey(const ValueKey('recommend-number-3')), findsNothing);
+    expect(find.byKey(const ValueKey('recommend-number-3')), findsOneWidget);
+    expect(find.byKey(const ValueKey('recommend-number-4')), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('Flare SDK plan numbers include warmup/main/cooldown order', (
     tester,
   ) async {
-    final model = _Model((tool, context, _) {
-      if (tool == 'fill_form') {
-        return {
-          ..._form(intent: 'plan', place: 'gym'),
-          'minutes': 15,
-          'types': ['strength'],
-          'goals': ['strength'],
-        };
-      }
-      if (tool == 'build_plan') {
-        final ids = _candidateIds(context);
-        expect(ids.length, greaterThanOrEqualTo(3));
-        return {
-          'text': '这套按十五分钟安排。',
-          'title': '基础力量训练',
-          'minutes': 15,
-          'main_ids': ids.take(3).toList(),
-          'block_names': {'warmup': '热身', 'main': '主训练', 'cooldown': '收操'},
-        };
-      }
-      if (tool == 'rewrite') return {'text': '这套按你的条件安排。'};
-      throw StateError('Unexpected fake tool $tool');
+    var main = <String>[];
+    var warm = <String>[];
+    final model = _Model((count, context) {
+      return switch (count) {
+        1 => (
+          'set_conditions',
+          {'language': 'zh', 'place': 'gym', 'place_word': '健身房', 'minutes': 15},
+        ),
+        2 => ('search_actions', {'types': ['strength']}),
+        3 => () {
+          main = _candidateIds(context).take(3).toList();
+          return ('search_actions', <String, Object?>{'roles': ['warmup'], 'limit': 3});
+        }(),
+        4 => () {
+          warm = _candidateIds(context).take(1).toList();
+          return ('search_actions', <String, Object?>{'roles': ['cooldown'], 'limit': 3});
+        }(),
+        5 => (
+          'build_plan',
+          {
+            'mode': 'new',
+            'text': '这套按十五分钟安排。',
+            'title': '基础力量训练',
+            'minutes': 15,
+            'warmup_ids': warm,
+            'main_ids': main,
+            'cooldown_ids': _candidateIds(context).take(1).toList(),
+            'block_names': {'warmup': '热身', 'main': '主训练', 'cooldown': '收操'},
+          },
+        ),
+        _ => throw StateError('Unexpected fake call $count'),
+      };
     });
     final harness = await _Harness.open(tester, model);
     await harness.mount(tester);
