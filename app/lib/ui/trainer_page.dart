@@ -55,10 +55,16 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final shared = FlareShared.current ?? await FlareShared.load();
     bool known(String id) => shared.catalog[id] != null;
     validateTrainingPlan(widget.plan, widget.catalog, known: known);
-    final voice = await loadTrainerVoiceSource(
-      language: language,
-      // TrainerPlayer uses its default right-first side sequence.
-      leftFirst: false,
+    // SDK: the active Pose-Hub catalogue's recorded name / key point behind
+    // Flare's shared prompts (downloaded + verified on demand); the player
+    // prefetches the plan's lines and sizes the prep phase to the intro.
+    final voice = await sdk.withPoseHubCatalogVoice(
+      await loadTrainerVoiceSource(
+        language: language,
+        // TrainerPlayer uses its default right-first side sequence.
+        leftFirst: false,
+      ),
+      catalog: shared.pack,
     );
     return _PlayerData(
       plan: expandSegmentedTrainingPlan(
