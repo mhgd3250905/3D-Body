@@ -74,6 +74,21 @@ Future<void> _advance(WidgetTester tester, int seconds) async {
   }
 }
 
+/// Whole session length as the SDK player itself schedules it: the same
+/// builder inputs [sdk.TrainerPlayer] uses, including the delivery rhythms.
+/// r2-v1 rows (`ai-reviewed-r2-needs-user-review`) carry counted cadences,
+/// so a counted drill such as chest-A plays its catalog reps (6 × 4 s + 1 s
+/// lead = 25 s) even when the item asks for a 1 s timed set.
+double _sessionSeconds(sdk.TrainerPlayer player) => sdk.SessionBuilder(
+  rhythms: player.rhythms,
+  rhythmDefaults: player.rhythmDefaults,
+  prepSeconds: player.prepSeconds,
+  transitionSeconds: player.transitionSeconds,
+).phases(player.plan).fold(0.0, (total, phase) => total + phase.seconds);
+
+sdk.TrainerPlayer _player(WidgetTester tester) =>
+    tester.widget<sdk.TrainerPlayer>(find.byType(sdk.TrainerPlayer));
+
 Future<void> _expectPoster(WidgetTester tester, String id) async {
   final media = find.byWidgetPredicate(
     (widget) => widget is sdk.DrillMediaView && widget.media.id == id,
@@ -301,16 +316,13 @@ void main() {
           } else {
             expect(received.single.toJson(), plan.toJson());
           }
-          final player = tester.widget<sdk.TrainerPlayer>(
-            find.byType(sdk.TrainerPlayer),
-          );
-          await _advance(
-            tester,
-            // SDK estimates exclude the lead-in; advance its public prep too.
-            sdk.SessionBuilder().planSeconds(received.single).ceil() +
-                player.prepSeconds +
-                2,
-          );
+          final player = _player(tester);
+          // Prep included; chest-A runs its r2 counted cadence (25 s/round).
+          final total = _sessionSeconds(player);
+          await _advance(tester, total.ceil() - 3);
+          expect(find.byKey(const ValueKey('finish')), findsNothing);
+          expect(store.trainerSessions, isEmpty);
+          await _advance(tester, 5);
           expect(find.byKey(const ValueKey('finish')), findsOneWidget);
           expect(store.trainerSessions, hasLength(1));
           final result = store.trainerSessions.single;
@@ -345,7 +357,13 @@ void main() {
   ) async {
     final popped = <sdk.SessionResult>[];
     final store = await _open(tester, popped: popped);
-    await _advance(tester, 28);
+    final total = _sessionSeconds(_player(tester));
+    // 10 s prep + abs-A 1 s + 15 s transition + chest-A r2 cadence 25 s.
+    expect(total, 51);
+    await _advance(tester, total.ceil() - 3);
+    expect(find.byKey(const ValueKey('finish')), findsNothing);
+    expect(store.trainerSessions, isEmpty);
+    await _advance(tester, 5);
     expect(find.byKey(const ValueKey('finish')), findsOneWidget);
     expect(store.trainerSessions, hasLength(1));
     expect(store.trainerSessions.single.full, isTrue);
@@ -364,7 +382,7 @@ void main() {
       final storage = _Storage();
       final store = await _open(tester, storage: storage);
       storage.failNext = true;
-      await _advance(tester, 28);
+      await _advance(tester, _sessionSeconds(_player(tester)).ceil() + 2);
       expect(find.byKey(const ValueKey('save-retry')), findsOneWidget);
       final id = store.trainerSessions.single.sessionId;
       await tester.tap(find.byKey(const ValueKey('save-retry')));
@@ -383,23 +401,25 @@ void main() {
     },
   );
 
-  testWidgets('unreviewed public rep cadence stays manual until completed', (
+  testWidgets('r2 needs-review rep cadence is counted on the SDK clock', (
     tester,
   ) async {
     final store = await _open(tester, reps: true);
-    await _advance(tester, 28);
-    expect(find.byKey(const ValueKey('complete-set-button')), findsOneWidget);
-    expect(store.trainerSessions, isEmpty);
-    final player = tester.widget<sdk.TrainerPlayer>(
-      find.byType(sdk.TrainerPlayer),
-    );
+    final player = _player(tester);
     expect(player.rhythms.containsKey('glute-max-A'), isTrue);
-    expect(player.rhythms['chest-A']!.selfPaced, isTrue);
-    await _advance(tester, 7);
+    // ai-reviewed-r2-needs-user-review rows play as the SDK delivers them.
+    final chest = player.rhythms['chest-A']!;
+    expect(chest.selfPaced, isFalse);
+    expect(chest.counted, isTrue);
+    expect(chest.phases.map((phase) => phase.id), ['go', 'hold', 'back']);
+    expect(chest.cycleFor(), 4);
+    // 10 s prep + abs-A 1 s + 15 s transition + 2 reps × 4 s + 1 s lead.
+    final total = _sessionSeconds(player);
+    expect(total, 35);
+    await _advance(tester, total.ceil() - 3);
+    expect(find.byKey(const ValueKey('complete-set-button')), findsNothing);
     expect(store.trainerSessions, isEmpty);
-    await tester.tap(find.byKey(const ValueKey('complete-set-button')));
-    await tester.pump();
-    await tester.pump();
+    await _advance(tester, 5);
     expect(store.trainerSessions.single.full, isTrue);
     expect(store.trainerSessions.single.items.last.completedSets, 1);
     await tester.pumpWidget(const SizedBox());
@@ -442,7 +462,10 @@ void main() {
       await _advance(tester, 16);
       expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
       expect(store.trainerSessions, isEmpty);
+      // chest-A then plays its r2 counted cadence (25 s), not the 1 s timer.
       await _advance(tester, 16);
+      expect(store.trainerSessions, isEmpty);
+      await _advance(tester, 25);
       expect(store.trainerSessions.single.full, isTrue);
       expect(store.sessions, hasLength(2));
       await tester.pumpWidget(const SizedBox());
@@ -503,7 +526,8 @@ void main() {
     await _advance(tester, 3);
     await _expectPoster(tester, 'chest-A');
     expect(store.trainerSessions, isEmpty);
-    await _advance(tester, 4);
+    // Segment B (chest-A) runs its r2 counted cadence to the session end.
+    await _advance(tester, (_sessionSeconds(_player(tester)) - 14).ceil() + 2);
     expect(store.trainerSessions.single.items, hasLength(1));
     expect(store.trainerSessions.single.items.single.completedSets, 1);
     expect(store.sessions.single.drillId, 'scapular-A');

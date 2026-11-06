@@ -7,8 +7,10 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import 'control/learning_store.dart';
 import 'data/catalog.dart';
 import 'data/content_translations.dart';
+import 'data/flare_public_catalog.dart';
 import 'data/flare_public_media.dart';
 import 'data/flare_shared_library.dart';
+import 'data/posehub_catalog_updates.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/languages.dart';
 import 'platform/scene/scene_controller.dart';
@@ -25,6 +27,9 @@ SemanticsHandle? _webSemantics;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFlareGlass();
+  // Action-library hot update: open the verified cache before the first
+  // catalogue load, then check the channel pointer (launch + daily on resume).
+  await PoseHubCatalogUpdates.start(loadLocal: loadFlarePublicCatalog);
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
       ('Snow Rig', 'Snow-ATTRIBUTION.md'),

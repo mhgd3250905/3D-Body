@@ -249,7 +249,12 @@ void main() {
             'equipment': ['mat', 'chair'],
           },
         ),
-        5 => ('search_actions', {'types': ['static-stretch']}),
+        5 => (
+          'search_actions',
+          {
+            'types': ['static-stretch'],
+          },
+        ),
         6 => (
           'show_actions',
           {
@@ -341,16 +346,42 @@ void main() {
       return switch (count) {
         1 => (
           'set_conditions',
-          {'language': 'zh', 'place': 'gym', 'place_word': '健身房', 'minutes': 15},
+          {
+            'language': 'zh',
+            'place': 'gym',
+            'place_word': '健身房',
+            'minutes': 15,
+          },
         ),
-        2 => ('search_actions', {'types': ['strength']}),
+        2 => (
+          'search_actions',
+          {
+            'types': ['strength'],
+          },
+        ),
         3 => () {
           main = _candidateIds(context).take(3).toList();
-          return ('search_actions', <String, Object?>{'roles': ['warmup'], 'limit': 3});
+          return (
+            'search_actions',
+            <String, Object?>{
+              'roles': ['warmup'],
+              'limit': 3,
+            },
+          );
         }(),
         4 => () {
-          warm = _candidateIds(context).take(1).toList();
-          return ('search_actions', <String, Object?>{'roles': ['cooldown'], 'limit': 3});
+          // r2-v1: one move can be both a strength and a warmup candidate;
+          // a real model never repeats a move across blocks (SDK rejects it).
+          warm = _candidateIds(
+            context,
+          ).where((id) => !main.contains(id)).take(1).toList();
+          return (
+            'search_actions',
+            <String, Object?>{
+              'roles': ['cooldown'],
+              'limit': 3,
+            },
+          );
         }(),
         5 => (
           'build_plan',
@@ -361,7 +392,10 @@ void main() {
             'minutes': 15,
             'warmup_ids': warm,
             'main_ids': main,
-            'cooldown_ids': _candidateIds(context).take(1).toList(),
+            'cooldown_ids': _candidateIds(context)
+                .where((id) => !main.contains(id) && !warm.contains(id))
+                .take(1)
+                .toList(),
             'block_names': {'warmup': '热身', 'main': '主训练', 'cooldown': '收操'},
           },
         ),

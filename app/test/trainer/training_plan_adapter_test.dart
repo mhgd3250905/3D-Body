@@ -21,6 +21,33 @@ void main() {
     sourceCatalog: published,
   );
 
+  test('per-side follows the SDK r2-v1 definition, not prescription text', () {
+    // The app starts drills with the shared SDK catalog (r2-v1), where
+    // e.g. forearms-B became unilateral while its text still reads 各 15 次.
+    final shared = uc.Catalog.fromJson(
+      jsonDecode(
+        File('assets/public_media/catalog/catalog.json').readAsStringSync(),
+      ),
+    );
+    final drills = [
+      for (final d in catalog.drills)
+        if (d.dose.mode != DoseMode.manual && shared[d.id] != null) d,
+    ];
+    expect(drills.map((d) => d.id), contains('forearms-B'));
+    final raw = trainingPlanFromDrills(
+      title: 'All',
+      drills: drills,
+      sourceCatalog: shared,
+    );
+    for (final item in raw.items) {
+      expect(
+        item.perSide,
+        shared[item.exerciseId]!.unilateral,
+        reason: item.exerciseId,
+      );
+    }
+  });
+
   test(
     '51 catalog drills guide automatically without placeholder repetitions',
     () {

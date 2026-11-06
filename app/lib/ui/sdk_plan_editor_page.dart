@@ -67,6 +67,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
       final added = trainingPlanFromDrills(
         title: widget.plan.title,
         drills: [for (final id in ids) widget.catalog.drillById(id)!],
+        sourceCatalog: FlareShared.current?.catalog,
       ).items.toList();
       setState(() => _items[blockIndex].addAll(added));
     } on Object {
