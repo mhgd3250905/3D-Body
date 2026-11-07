@@ -261,6 +261,7 @@ class FlareStage extends StatefulWidget {
     this.onSwipeBack,
     this.backChip = false,
     this.backChipBuilder,
+    this.pinSwipeBack = false,
   });
 
   /// The current page carries the standard [FlareNavBar] back chip. When a
@@ -269,6 +270,10 @@ class FlareStage extends StatefulWidget {
   /// rides with its page (HipLab `pinLeading: false`).
   final bool backChip;
   final WidgetBuilder? backChipBuilder;
+
+  /// The swipe's destination also has a standard back chip. Pin from the
+  /// first drag frame, including a cancelled swipe's return to rest.
+  final bool pinSwipeBack;
   final Object pageKey;
   final int depth;
   final Widget? child;
@@ -297,6 +302,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
   bool _pinned = false;
+  bool _swipePinned = false;
+
+  bool get _showPinnedBack => _pinned || _swipePinned;
 
   bool get animating => _previousKey != null;
 
@@ -331,6 +339,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     });
     // A pop released from a swipe carries on from the finger's position.
     _popFrom = kind == _Kind.pop ? _swipe.value : 0;
+    _swipePinned = false;
     _swipe.value = 0;
     _swiping = false;
     if (duration == Duration.zero) {
@@ -361,7 +370,13 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   void _dragStart(DragStartDetails _) {
     if (animating) return;
     _swipe.stop();
-    _swiping = true;
+    setState(() {
+      _swiping = true;
+      _swipePinned =
+          widget.pinSwipeBack &&
+          widget.backChip &&
+          widget.backChipBuilder != null;
+    });
   }
 
   void _dragUpdate(DragUpdateDetails details) {
@@ -379,21 +394,39 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       widget.onSwipeBack!();
       // If the shell refused to go back, settle the page home again.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !animating && _swipe.value > 0) _settleSwipe();
+        if (mounted && !animating && (_swipe.value > 0 || _swipePinned)) {
+          _settleSwipe();
+        }
       });
     } else {
       _settleSwipe();
     }
   }
 
-  void _settleSwipe() => _swipe.animateBack(
-    0,
-    duration: FlareMotion.of(
-      context,
-      Duration(milliseconds: (320 * _swipe.value).round().clamp(120, 320)),
-    ),
-    curve: FlareMotion.settle,
-  );
+  void _settleSwipe() {
+    unawaited(
+      _swipe
+          .animateBack(
+            0,
+            duration: FlareMotion.of(
+              context,
+              Duration(
+                milliseconds: (320 * _swipe.value).round().clamp(120, 320),
+              ),
+            ),
+            curve: FlareMotion.settle,
+          )
+          .then<void>((_) {
+            if (mounted &&
+                !animating &&
+                !_swiping &&
+                _swipe.value == 0 &&
+                _swipePinned) {
+              setState(() => _swipePinned = false);
+            }
+          }),
+    );
+  }
 
   @override
   void dispose() {
@@ -448,7 +481,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         current,
         if (previous != null && previousOnTop) previous,
         // One still back chip on the control rail while both pages go back.
-        if (_pinned && animating)
+        if (_showPinnedBack)
           PositionedDirectional(
             key: const ValueKey('_pinned-back'),
             start: 16,
@@ -495,7 +528,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
           animation: _motion,
           child: RepaintBoundary(
             child: FlareBackPin(
-              hidden: _pinned && animating,
+              hidden: _showPinnedBack,
               child: FlarePageActivity(active: incoming, child: child),
             ),
           ),
