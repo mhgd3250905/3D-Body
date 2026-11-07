@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../l10n/app_localizations.dart';
+import 'drill_decoder_pool.dart';
+import 'motion.dart';
 
 /// Only one inline demonstration plays at a time across Flare's pages.
 ///
@@ -16,6 +19,7 @@ class DrillPlaybackCoordinator extends ChangeNotifier {
   static final shared = DrillPlaybackCoordinator();
   Object? _owner;
   Object? _held;
+  bool _notificationPending = false;
   Object? get owner => _owner;
 
   /// The last card paused on its frame (decoder kept, not playing).
@@ -26,7 +30,7 @@ class DrillPlaybackCoordinator extends ChangeNotifier {
     if (_owner != null) _held = _owner;
     if (identical(_held, owner)) _held = null;
     _owner = owner;
-    notifyListeners();
+    _notify();
   }
 
   /// Pause [owner] where it is.
@@ -34,7 +38,7 @@ class DrillPlaybackCoordinator extends ChangeNotifier {
     if (!identical(_owner, owner)) return;
     _owner = null;
     _held = owner;
-    notifyListeners();
+    _notify();
   }
 
   /// [owner] is gone: free its slot entirely.
@@ -42,14 +46,30 @@ class DrillPlaybackCoordinator extends ChangeNotifier {
     final changed = identical(_owner, owner) || identical(_held, owner);
     if (identical(_owner, owner)) _owner = null;
     if (identical(_held, owner)) _held = null;
-    if (changed) notifyListeners();
+    if (changed) _notify();
   }
 
   void pauseAll() {
     if (_owner == null) return;
     _held = _owner;
     _owner = null;
-    notifyListeners();
+    _notify();
+  }
+
+  void _notify() {
+    // A leaving card releases its slot during dependency updates/unmount.
+    // Other cards may be siblings in the same build, so notify after it ends.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (_notificationPending) return;
+      _notificationPending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _notificationPending = false;
+        notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
   }
 }
 
@@ -75,17 +95,37 @@ class DrillMediaCard extends StatefulWidget {
   State<DrillMediaCard> createState() => _DrillMediaCardState();
 }
 
-class _DrillMediaCardState extends State<DrillMediaCard> {
+class _DrillMediaCardState extends State<DrillMediaCard>
+    with WidgetsBindingObserver {
   final _coordinator = DrillPlaybackCoordinator.shared;
+  bool _pageActive = true;
+  bool _foreground = true;
+  bool _autoRequested = false;
+  trainer.TrainingMediaPolicy? _sourcePolicy;
+  trainer.TrainingMediaPolicy? _decoderPolicy;
 
   @override
   void initState() {
     super.initState();
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    _foreground = lifecycle == null || lifecycle == AppLifecycleState.resumed;
+    WidgetsBinding.instance.addObserver(this);
     _coordinator.addListener(_changed);
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _pageActive =
+        FlarePageActivity.of(context) &&
+        TickerMode.valuesOf(context).enabled &&
+        (ModalRoute.isCurrentOf(context) ?? true);
+    _syncActivity();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _coordinator
       ..removeListener(_changed)
       ..forget(this);
@@ -96,19 +136,56 @@ class _DrillMediaCardState extends State<DrillMediaCard> {
     if (mounted) setState(() {});
   }
 
-  bool get _playing =>
-      widget.active && (widget.autoPlay || identical(_coordinator.owner, this));
+  bool get _active => widget.active && _pageActive && _foreground;
+
+  bool get _playing => _active && identical(_coordinator.owner, this);
 
   /// The decoder exists: playing, or paused on the frame it reached.
   bool get _started =>
-      _playing || (widget.active && identical(_coordinator.held, this));
+      _playing || (_active && identical(_coordinator.held, this));
 
   @override
   void didUpdateWidget(DrillMediaCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // A card that leaves the screen frees its slot; its next start begins
-    // from the poster again.
-    if (oldWidget.active && !widget.active) _coordinator.forget(this);
+    if (oldWidget.drillId != widget.drillId) {
+      _coordinator.forget(this);
+      _autoRequested = false;
+    }
+    if (!widget.autoPlay) _autoRequested = false;
+    _syncActivity();
+  }
+
+  void _syncActivity() {
+    if (!_active) {
+      _autoRequested = false;
+      _coordinator.forget(this);
+    } else if (widget.autoPlay && !_autoRequested) {
+      _autoRequested = true;
+      // Auto-play uses the same two-slot pool and never bypasses its owner.
+      _coordinator.play(this);
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final foreground = state == AppLifecycleState.resumed;
+    if (foreground == _foreground) return;
+    setState(() => _foreground = foreground);
+    _syncActivity();
+  }
+
+  trainer.TrainingMediaPolicy _boundedPolicy(
+    trainer.TrainingMediaPolicy source,
+  ) {
+    if (!identical(source, _sourcePolicy)) {
+      _sourcePolicy = source;
+      _decoderPolicy = trainer.TrainingMediaPolicy(
+        repository: DrillDecoderRepository(source.repository),
+        posterAssetRoot: source.posterAssetRoot,
+        prefetchBeforeTraining: source.prefetchBeforeTraining,
+      );
+    }
+    return _decoderPolicy!;
   }
 
   void _toggle() => identical(_coordinator.owner, this)
@@ -132,7 +209,7 @@ class _DrillMediaCardState extends State<DrillMediaCard> {
     return trainer.TrainingActionMedia(
       key: ValueKey('flare-action-media-${widget.drillId}'),
       actionId: widget.drillId,
-      policy: policy,
+      policy: _boundedPolicy(policy),
       playing: _started,
       paused: !_playing,
       mirrored: widget.mirrored,
@@ -161,7 +238,7 @@ class _DrillMediaCardState extends State<DrillMediaCard> {
         label: _playing ? s.pause : s.play,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: widget.active && !widget.autoPlay ? _toggle : null,
+          onTap: _active && !widget.autoPlay ? _toggle : null,
           child: art,
         ),
       ),
