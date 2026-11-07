@@ -499,9 +499,21 @@ ThemeData flareTheme([Brightness brightness = Brightness.dark]) {
       indicatorColor: p.navigationIndicator,
       height: 72,
     ),
-    sliderTheme: const SliderThemeData(
-      trackHeight: 3,
-      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 7),
+    // HipLab slider: 4pt track, 26pt white knob with a hairline, accent
+    // active track, switch-grey inactive; no value bubble, ticks or ripple.
+    sliderTheme: SliderThemeData(
+      trackHeight: 4,
+      activeTrackColor: p.accent,
+      inactiveTrackColor: p.switchOff,
+      thumbColor: Colors.white,
+      overlayShape: SliderComponentShape.noOverlay,
+      showValueIndicator: ShowValueIndicator.never,
+      tickMarkShape: SliderTickMarkShape.noTickMark,
+      thumbShape: const RoundSliderThumbShape(
+        enabledThumbRadius: 13,
+        elevation: 1.5,
+        pressedElevation: 2,
+      ),
     ),
     dividerColor: p.hairline,
     dividerTheme: DividerThemeData(color: p.hairline, space: 1, thickness: .6),

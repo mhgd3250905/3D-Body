@@ -76,8 +76,9 @@ abstract final class FlareMotion {
   static const Curve spring = Curves.easeOutBack;
 
   // Durations. Reduced motion collapses each to zero through [of].
-  static const Duration push = Duration(milliseconds: 420);
-  static const Duration pop = Duration(milliseconds: 360);
+  /// Stage push / pop on the HipLab page timing (400 / 340).
+  static const Duration push = page;
+  static const Duration pop = pageReverse;
   static const Duration modal = Duration(milliseconds: 460);
   static const Duration sheet = Duration(milliseconds: 420);
   static const Duration sheetClose = Duration(milliseconds: 260);
@@ -234,6 +235,21 @@ class FlarePageActivity extends InheritedWidget {
       active != oldWidget.active;
 }
 
+/// Tells a page's [FlareNavBar] that the stage is drawing the one back
+/// chip for it while two back-able pages slide past each other, so the
+/// bar leaves its slot empty and the chip stays still (HipLab pinLeading).
+class FlareBackPin extends InheritedWidget {
+  const FlareBackPin({super.key, required this.hidden, required super.child});
+  final bool hidden;
+
+  static bool hiddenOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<FlareBackPin>()?.hidden ??
+      false;
+
+  @override
+  bool updateShouldNotify(FlareBackPin oldWidget) => oldWidget.hidden != hidden;
+}
+
 class FlareStage extends StatefulWidget {
   const FlareStage({
     super.key,
@@ -243,7 +259,16 @@ class FlareStage extends StatefulWidget {
     this.modal = false,
     this.onSettled,
     this.onSwipeBack,
+    this.backChip = false,
+    this.backChipBuilder,
   });
+
+  /// The current page carries the standard [FlareNavBar] back chip. When a
+  /// push or pop runs between two such pages the stage draws one still
+  /// chip with [backChipBuilder]; from or to a page without one, the chip
+  /// rides with its page (HipLab `pinLeading: false`).
+  final bool backChip;
+  final WidgetBuilder? backChipBuilder;
   final Object pageKey;
   final int depth;
   final Widget? child;
@@ -271,6 +296,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   Widget? _previous;
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
+  bool _pinned = false;
 
   bool get animating => _previousKey != null;
 
@@ -279,6 +305,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     setState(() {
       _previous = null;
       _previousKey = null;
+      _pinned = false;
     });
     widget.onSettled?.call();
   }
@@ -307,8 +334,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     _swipe.value = 0;
     _swiping = false;
     if (duration == Duration.zero) {
+      // Reduced motion: land on the end state with nothing left on top.
       _previous = null;
       _previousKey = null;
+      _pinned = false;
       _controller.value = 1;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onSettled?.call();
@@ -316,6 +345,11 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       return;
     }
     _kind = kind;
+    _pinned =
+        (kind == _Kind.push || kind == _Kind.pop) &&
+        old.backChip &&
+        widget.backChip &&
+        widget.backChipBuilder != null;
     _previous = old.child;
     _previousKey = old.pageKey;
     _controller.duration = _popFrom > 0
@@ -413,6 +447,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         if (previous != null && !previousOnTop) previous,
         current,
         if (previous != null && previousOnTop) previous,
+        // One still back chip on the control rail while both pages go back.
+        if (_pinned && animating)
+          PositionedDirectional(
+            key: const ValueKey('_pinned-back'),
+            start: 16,
+            top: MediaQuery.paddingOf(context).top,
+            child: IgnorePointer(child: widget.backChipBuilder!(context)),
+          ),
         if (canSwipe && !animating)
           Positioned(
             key: const ValueKey('_swipe-edge'),
@@ -452,11 +494,20 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         child: AnimatedBuilder(
           animation: _motion,
           child: RepaintBoundary(
-            child: FlarePageActivity(active: incoming, child: child),
+            child: FlareBackPin(
+              hidden: _pinned && animating,
+              child: FlarePageActivity(active: incoming, child: child),
+            ),
           ),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
-            final t = FlareMotion.settle.transform(v);
+            // Pages move on the HipLab enter curve; other kinds keep the
+            // Thomas settle.
+            final t =
+                (_kind == _Kind.push || _kind == _Kind.pop
+                        ? FlareMotion.pageEnter
+                        : FlareMotion.settle)
+                    .transform(v);
             final width = MediaQuery.sizeOf(context).width;
             var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0, dim = 0.0;
             var shadow = false;

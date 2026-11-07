@@ -696,7 +696,20 @@ class FlareSegmented<T> extends StatefulWidget {
     required this.onChanged,
     this.expand = false,
     this.semanticLabels,
+    this.height = 34,
+    this.radius = 10,
+    this.inset = 2,
+    this.ios = false,
   });
+
+  /// Settings use the HipLab system control and pass all four explicitly:
+  /// `height: 32, radius: 9, inset: 2, ios: true` (system-grey track, a
+  /// concentric thumb with one light shadow, 380ms slide). The defaults
+  /// keep the existing Thomas control elsewhere.
+  final double height;
+  final double radius;
+  final double inset;
+  final bool ios;
   final List<(T, String)> segments;
   final T selected;
   final ValueChanged<T> onChanged;
@@ -711,6 +724,20 @@ class FlareSegmented<T> extends StatefulWidget {
 
 class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
   int? _dragIndex;
+
+  Color get _track => !widget.ios
+      ? FlareColors.palette.segmentTrack
+      : FlareColors.isDark
+      ? const Color(0x3d767680)
+      : const Color(0x1f767680);
+
+  Color get _thumb => !widget.ios
+      ? FlareColors.palette.segmentThumb
+      : FlareColors.isDark
+      ? const Color(0xff636366)
+      : Colors.white;
+
+  Duration get _slide => widget.ios ? FlareMotion.segment : FlareMotion.fade;
 
   int get _selectedIndex {
     final index = widget.segments.indexWhere((s) => s.$1 == widget.selected);
@@ -759,7 +786,10 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Center(
                     child: AnimatedDefaultTextStyle(
-                      duration: FlareMotion.of(context, FlareMotion.quick),
+                      duration: FlareMotion.of(
+                        context,
+                        widget.ios ? _slide : FlareMotion.quick,
+                      ),
                       style: TextStyle(
                         fontFamily: flareFontFamily,
                         fontFamilyFallback: flareFontFallback,
@@ -771,6 +801,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                             : FlareColors.palette.muted,
                         fontWeight: i == shown
                             ? FontWeight.w600
+                            : widget.ios
+                            ? FontWeight.w400
                             : FontWeight.w500,
                       ),
                       child: FittedBox(
@@ -791,11 +823,11 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
       ],
     );
     final control = Container(
-      height: 34,
-      padding: const EdgeInsets.all(2),
+      height: widget.height,
+      padding: EdgeInsets.all(widget.inset),
       decoration: BoxDecoration(
-        color: FlareColors.palette.segmentTrack,
-        borderRadius: BorderRadius.circular(10),
+        color: _track,
+        borderRadius: BorderRadius.circular(widget.radius),
       ),
       child: Builder(
         builder: (context) => GestureDetector(
@@ -826,26 +858,47 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                     count == 1 ? 0 : -1 + 2 * shown / (count - 1),
                     0,
                   ),
-                  duration: FlareMotion.of(context, FlareMotion.fade),
-                  curve: FlareMotion.settle,
+                  duration: FlareMotion.of(context, _slide),
+                  curve: widget.ios
+                      ? const Cubic(.32, 1.28, .52, 1)
+                      : FlareMotion.settle,
                   child: FractionallySizedBox(
                     widthFactor: 1 / count,
                     heightFactor: 1,
                     child: AnimatedScale(
-                      scale: _dragIndex != null ? .96 : 1,
+                      scale: _dragIndex != null && !FlareMotion.reduced(context)
+                          ? .96
+                          : 1,
                       duration: FlareMotion.of(context, FlareMotion.quick),
                       child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: FlareColors.palette.segmentThumb,
-                          borderRadius: BorderRadius.circular(8),
-                          // Light: hairline rim only, no drop shadow.
-                          border: dark
-                              ? null
-                              : Border.all(
-                                  color: const Color(0x14000000),
-                                  width: .5,
+                        decoration: widget.ios
+                            // Concentric with the track; one light shadow.
+                            ? BoxDecoration(
+                                color: _thumb,
+                                borderRadius: BorderRadius.circular(
+                                  widget.radius - widget.inset,
                                 ),
-                        ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(
+                                      alpha: dark ? .30 : .10,
+                                    ),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              )
+                            : BoxDecoration(
+                                color: _thumb,
+                                borderRadius: BorderRadius.circular(8),
+                                // Light: hairline rim only, no drop shadow.
+                                border: dark
+                                    ? null
+                                    : Border.all(
+                                        color: const Color(0x14000000),
+                                        width: .5,
+                                      ),
+                              ),
                       ),
                     ),
                   ),
@@ -915,10 +968,10 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
     return Container(
       key: const ValueKey('flare-segmented-stacked'),
       width: double.infinity,
-      padding: const EdgeInsets.all(2),
+      padding: EdgeInsets.all(widget.inset),
       decoration: BoxDecoration(
-        color: FlareColors.palette.segmentTrack,
-        borderRadius: BorderRadius.circular(10),
+        color: _track,
+        borderRadius: BorderRadius.circular(widget.radius),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -943,9 +996,7 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: i == _selectedIndex
-                        ? FlareColors.palette.segmentThumb
-                        : null,
+                    color: i == _selectedIndex ? _thumb : null,
                     borderRadius: BorderRadius.circular(8),
                     border: i == _selectedIndex && !dark
                         ? Border.all(color: const Color(0x14000000), width: .5)
