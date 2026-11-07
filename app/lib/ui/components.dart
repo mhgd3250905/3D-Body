@@ -48,7 +48,10 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => FlareSection(text);
 }
 
-/// The one primary action of a page. Full width, accent, generous height.
+/// The one primary action of a page: the HipLab primary button. A flat
+/// accent fill, 50 high with a 14 radius, 17/w600 label; held it scales to
+/// .97 and dips 10 % toward black (theme). No gradient, shadow or glow.
+/// Disabled reads as a quiet surfaceHigh fill with muted text.
 class PrimaryAction extends StatelessWidget {
   const PrimaryAction({
     super.key,
@@ -56,7 +59,7 @@ class PrimaryAction extends StatelessWidget {
     required this.onPressed,
     this.arrow = false,
     this.icon,
-    this.height = 50,
+    this.height = FlareGeometry.buttonHeight,
     this.semanticsLabel,
   });
   final String label;
@@ -67,43 +70,90 @@ class PrimaryAction extends StatelessWidget {
   final String? semanticsLabel;
   @override
   Widget build(BuildContext context) => Pressable(
-    scale: .975,
     child: SizedBox(
       width: double.infinity,
       height: height,
       child: FilledButton(
-        style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          // Disabled stays on-brand and legible: a soft accent wash with
-          // accent ink, not Material's flat grey-on-grey.
-          disabledBackgroundColor: FlareColors.accent.withValues(alpha: .16),
-          disabledForegroundColor: FlareColors.accentInk.withValues(alpha: .78),
-        ),
         onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 20),
-              const SizedBox(width: 8),
-            ],
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(label, semanticsLabel: semanticsLabel, maxLines: 1),
-              ),
-            ),
-            if (arrow) ...[
-              const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward_rounded, size: 19),
-            ],
-          ],
+        style: const ButtonStyle(
+          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20)),
+        ),
+        child: _ButtonLabel(
+          label: label,
+          semanticsLabel: semanticsLabel,
+          icon: icon,
+          arrow: arrow,
         ),
       ),
     ),
+  );
+}
+
+/// Medium-emphasis partner of [PrimaryAction] (HipLab secondary): a fill
+/// with no outline, 50 / 14, 17/w500; held it dips toward surfaceHigh.
+class FlareSecondaryButton extends StatelessWidget {
+  const FlareSecondaryButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.icon,
+    this.expand = true,
+    this.semanticsLabel,
+  });
+  final String label;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+
+  /// Fill the width (a stacked pair); false sizes to the label.
+  final bool expand;
+  final String? semanticsLabel;
+  @override
+  Widget build(BuildContext context) => Pressable(
+    child: SizedBox(
+      width: expand ? double.infinity : null,
+      height: FlareGeometry.buttonHeight,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        child: _ButtonLabel(
+          label: label,
+          semanticsLabel: semanticsLabel,
+          icon: icon,
+        ),
+      ),
+    ),
+  );
+}
+
+/// Button content that shrinks a long translation to fit instead of
+/// clipping or wrapping (14 UI languages share one control width).
+class _ButtonLabel extends StatelessWidget {
+  const _ButtonLabel({
+    required this.label,
+    this.semanticsLabel,
+    this.icon,
+    this.arrow = false,
+  });
+  final String label;
+  final String? semanticsLabel;
+  final IconData? icon;
+  final bool arrow;
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+      Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(label, semanticsLabel: semanticsLabel, maxLines: 1),
+        ),
+      ),
+      if (arrow) ...[
+        const SizedBox(width: 8),
+        const Icon(Icons.arrow_forward_rounded, size: 19),
+      ],
+    ],
   );
 }
 
@@ -711,12 +761,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                     child: AnimatedDefaultTextStyle(
                       duration: FlareMotion.of(context, FlareMotion.quick),
                       style: TextStyle(
-                        fontFamily: 'FlareSans',
-                        fontFamilyFallback: const [
-                          'NotoSansKR',
-                          'NotoSansArabic',
-                          'NotoSansDevanagari',
-                        ],
+                        fontFamily: flareFontFamily,
+                        fontFamilyFallback: flareFontFallback,
                         fontSize: 13,
                         height: 1.2,
                         letterSpacing: .2,
@@ -845,12 +891,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
         text: TextSpan(
           text: label,
           style: const TextStyle(
-            fontFamily: 'FlareSans',
-            fontFamilyFallback: [
-              'NotoSansKR',
-              'NotoSansArabic',
-              'NotoSansDevanagari',
-            ],
+            fontFamily: flareFontFamily,
+            fontFamilyFallback: flareFontFallback,
             fontSize: 13,
             height: 1.2,
             letterSpacing: .2,
@@ -916,12 +958,8 @@ class _FlareSegmentedState<T> extends State<FlareSegmented<T>> {
                           widget.segments[i].$2,
                           maxLines: 2,
                           style: TextStyle(
-                            fontFamily: 'FlareSans',
-                            fontFamilyFallback: const [
-                              'NotoSansKR',
-                              'NotoSansArabic',
-                              'NotoSansDevanagari',
-                            ],
+                            fontFamily: flareFontFamily,
+                            fontFamilyFallback: flareFontFallback,
                             fontSize: 14,
                             height: 1.2,
                             color: i == _selectedIndex
