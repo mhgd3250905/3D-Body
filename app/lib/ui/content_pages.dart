@@ -546,7 +546,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                 final label = TextPainter(
                   text: TextSpan(
                     text: s.planAddTo,
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: FlareType.secondaryButton,
                   ),
                   textScaler: MediaQuery.textScalerOf(context),
                   textDirection: Directionality.of(context),
@@ -563,10 +563,13 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                           key: const ValueKey('drill-add-to-plan'),
                           tooltip: s.planAddTo,
                           style: IconButton.styleFrom(
-                            backgroundColor: FlareColors.accent.withValues(
-                              alpha: .14,
+                            backgroundColor: FlareColors.secondaryFill,
+                            foregroundColor: FlareColors.text,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(FlareGeometry.buttonRadius),
+                              ),
                             ),
-                            foregroundColor: FlareColors.accentInk,
                           ),
                           onPressed: () {
                             FlareHaptics.light();
@@ -585,35 +588,15 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                         constraints: BoxConstraints(
                           maxWidth: box.maxWidth * .46,
                         ),
-                        child: SizedBox(
-                          height: FlareBottomAction.buttonHeight,
-                          child: FilledButton.tonalIcon(
-                            key: const ValueKey('drill-add-to-plan'),
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                              ),
-                              backgroundColor: FlareColors.accent.withValues(
-                                alpha: .14,
-                              ),
-                              foregroundColor: FlareColors.accentInk,
-                            ),
-                            onPressed: () {
-                              FlareHaptics.light();
-                              widget.onAddToPlan();
-                            },
-                            icon: const Icon(
-                              Icons.playlist_add_rounded,
-                              size: 20,
-                            ),
-                            label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(s.planAddTo, maxLines: 1),
-                            ),
-                          ),
+                        child: FlareSecondaryButton(
+                          key: const ValueKey('drill-add-to-plan'),
+                          expand: false,
+                          icon: Icons.playlist_add_rounded,
+                          label: s.planAddTo,
+                          onPressed: () {
+                            FlareHaptics.light();
+                            widget.onAddToPlan();
+                          },
                         ),
                       ),
                     const SizedBox(width: 10),

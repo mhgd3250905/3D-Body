@@ -76,8 +76,9 @@ abstract final class FlareMotion {
   static const Curve spring = Curves.easeOutBack;
 
   // Durations. Reduced motion collapses each to zero through [of].
-  static const Duration push = Duration(milliseconds: 420);
-  static const Duration pop = Duration(milliseconds: 360);
+  /// Stage push / pop on the HipLab page timing (400 / 340).
+  static const Duration push = page;
+  static const Duration pop = pageReverse;
   static const Duration modal = Duration(milliseconds: 460);
   static const Duration sheet = Duration(milliseconds: 420);
   static const Duration sheetClose = Duration(milliseconds: 260);
@@ -94,9 +95,34 @@ abstract final class FlareMotion {
   static const Duration fade = Duration(milliseconds: 260);
   static const Duration quick = Duration(milliseconds: 180);
 
-  /// Press feedback: sink fast, spring back slower.
-  static const Duration press = Duration(milliseconds: 110);
-  static const Duration release = Duration(milliseconds: 320);
+  /// Press feedback (HipLab): sink in 100 ms, return in 180 ms, no
+  /// overshoot, so a press reads as "pushed in" rather than a bounce.
+  static const Duration press = Duration(milliseconds: 100);
+  static const Duration release = Duration(milliseconds: 180);
+
+  /// Press scale for pressable surfaces; 1 under reduced motion.
+  static const double pressScale = .97;
+
+  // HipLab interaction timings. Routes, controls and media adopt these in
+  // later rounds (docs/ui-hiplab-adoption-plan.md).
+
+  /// Page push / pop and its quicker reverse.
+  static const Duration page = Duration(milliseconds: 400);
+  static const Duration pageReverse = Duration(milliseconds: 340);
+
+  /// Container transform (a card or button growing into a page).
+  static const Duration container = Duration(milliseconds: 500);
+  static const Duration containerReverse = Duration(milliseconds: 420);
+
+  /// Segmented thumb slide and switch toggle.
+  static const Duration segment = Duration(milliseconds: 380);
+  static const Duration toggle = Duration(milliseconds: 200);
+
+  /// A page arriving: gentle first frame, long soft landing.
+  static const Curve pageEnter = Cubic(.2, 0, 0, 1);
+
+  /// Container bounds, both ways.
+  static const Curve containerCurve = Curves.fastOutSlowIn;
 
   /// One-off celebrations (the finish check) and their afterglow.
   static const Duration celebrate = Duration(milliseconds: 620);
@@ -209,6 +235,21 @@ class FlarePageActivity extends InheritedWidget {
       active != oldWidget.active;
 }
 
+/// Tells a page's [FlareNavBar] that the stage is drawing the one back
+/// chip for it while two back-able pages slide past each other, so the
+/// bar leaves its slot empty and the chip stays still (HipLab pinLeading).
+class FlareBackPin extends InheritedWidget {
+  const FlareBackPin({super.key, required this.hidden, required super.child});
+  final bool hidden;
+
+  static bool hiddenOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<FlareBackPin>()?.hidden ??
+      false;
+
+  @override
+  bool updateShouldNotify(FlareBackPin oldWidget) => oldWidget.hidden != hidden;
+}
+
 class FlareStage extends StatefulWidget {
   const FlareStage({
     super.key,
@@ -218,7 +259,21 @@ class FlareStage extends StatefulWidget {
     this.modal = false,
     this.onSettled,
     this.onSwipeBack,
+    this.backChip = false,
+    this.backChipBuilder,
+    this.pinSwipeBack = false,
   });
+
+  /// The current page carries the standard [FlareNavBar] back chip. When a
+  /// push or pop runs between two such pages the stage draws one still
+  /// chip with [backChipBuilder]; from or to a page without one, the chip
+  /// rides with its page (HipLab `pinLeading: false`).
+  final bool backChip;
+  final WidgetBuilder? backChipBuilder;
+
+  /// The swipe's destination also has a standard back chip. Pin from the
+  /// first drag frame, including a cancelled swipe's return to rest.
+  final bool pinSwipeBack;
   final Object pageKey;
   final int depth;
   final Widget? child;
@@ -246,6 +301,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   Widget? _previous;
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
+  bool _pinned = false;
+  bool _swipePinned = false;
+
+  bool get _showPinnedBack => _pinned || _swipePinned;
 
   bool get animating => _previousKey != null;
 
@@ -254,6 +313,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     setState(() {
       _previous = null;
       _previousKey = null;
+      _pinned = false;
     });
     widget.onSettled?.call();
   }
@@ -279,11 +339,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     });
     // A pop released from a swipe carries on from the finger's position.
     _popFrom = kind == _Kind.pop ? _swipe.value : 0;
+    _swipePinned = false;
     _swipe.value = 0;
     _swiping = false;
     if (duration == Duration.zero) {
+      // Reduced motion: land on the end state with nothing left on top.
       _previous = null;
       _previousKey = null;
+      _pinned = false;
       _controller.value = 1;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onSettled?.call();
@@ -291,6 +354,11 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       return;
     }
     _kind = kind;
+    _pinned =
+        (kind == _Kind.push || kind == _Kind.pop) &&
+        old.backChip &&
+        widget.backChip &&
+        widget.backChipBuilder != null;
     _previous = old.child;
     _previousKey = old.pageKey;
     _controller.duration = _popFrom > 0
@@ -302,7 +370,13 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   void _dragStart(DragStartDetails _) {
     if (animating) return;
     _swipe.stop();
-    _swiping = true;
+    setState(() {
+      _swiping = true;
+      _swipePinned =
+          widget.pinSwipeBack &&
+          widget.backChip &&
+          widget.backChipBuilder != null;
+    });
   }
 
   void _dragUpdate(DragUpdateDetails details) {
@@ -320,21 +394,39 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       widget.onSwipeBack!();
       // If the shell refused to go back, settle the page home again.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !animating && _swipe.value > 0) _settleSwipe();
+        if (mounted && !animating && (_swipe.value > 0 || _swipePinned)) {
+          _settleSwipe();
+        }
       });
     } else {
       _settleSwipe();
     }
   }
 
-  void _settleSwipe() => _swipe.animateBack(
-    0,
-    duration: FlareMotion.of(
-      context,
-      Duration(milliseconds: (320 * _swipe.value).round().clamp(120, 320)),
-    ),
-    curve: FlareMotion.settle,
-  );
+  void _settleSwipe() {
+    unawaited(
+      _swipe
+          .animateBack(
+            0,
+            duration: FlareMotion.of(
+              context,
+              Duration(
+                milliseconds: (320 * _swipe.value).round().clamp(120, 320),
+              ),
+            ),
+            curve: FlareMotion.settle,
+          )
+          .then<void>((_) {
+            if (mounted &&
+                !animating &&
+                !_swiping &&
+                _swipe.value == 0 &&
+                _swipePinned) {
+              setState(() => _swipePinned = false);
+            }
+          }),
+    );
+  }
 
   @override
   void dispose() {
@@ -388,6 +480,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         if (previous != null && !previousOnTop) previous,
         current,
         if (previous != null && previousOnTop) previous,
+        // One still back chip on the control rail while both pages go back.
+        if (_showPinnedBack)
+          PositionedDirectional(
+            key: const ValueKey('_pinned-back'),
+            start: 16,
+            top: MediaQuery.paddingOf(context).top,
+            child: IgnorePointer(child: widget.backChipBuilder!(context)),
+          ),
         if (canSwipe && !animating)
           Positioned(
             key: const ValueKey('_swipe-edge'),
@@ -427,11 +527,20 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         child: AnimatedBuilder(
           animation: _motion,
           child: RepaintBoundary(
-            child: FlarePageActivity(active: incoming, child: child),
+            child: FlareBackPin(
+              hidden: _showPinnedBack,
+              child: FlarePageActivity(active: incoming, child: child),
+            ),
           ),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
-            final t = FlareMotion.settle.transform(v);
+            // Pages move on the HipLab enter curve; other kinds keep the
+            // Thomas settle.
+            final t =
+                (_kind == _Kind.push || _kind == _Kind.pop
+                        ? FlareMotion.pageEnter
+                        : FlareMotion.settle)
+                    .transform(v);
             final width = MediaQuery.sizeOf(context).width;
             var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0, dim = 0.0;
             var shadow = false;
@@ -601,13 +710,42 @@ class _FadeSlideInState extends State<FadeSlideIn>
   );
 }
 
+/// Whether the enclosing [FlarePressable] (or [Pressable]) is held, so a
+/// face painted inside it can dip its fill without its own gesture.
+class FlarePressedScope extends InheritedWidget {
+  const FlarePressedScope({
+    super.key,
+    required this.pressed,
+    required super.child,
+  });
+  final bool pressed;
+
+  static bool of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<FlarePressedScope>()
+          ?.pressed ??
+      false;
+
+  @override
+  bool updateShouldNotify(FlarePressedScope oldWidget) =>
+      oldWidget.pressed != pressed;
+}
+
 /// Press feedback without stealing the tap: the child sinks slightly while a
-/// finger rests on it and springs back on release. A drag (scrolling) cancels
-/// the press so lists never wobble while scrolling.
+/// finger rests on it and returns on release. A drag (scrolling) cancels
+/// the press so lists never wobble while scrolling. Use it around a widget
+/// that already owns its tap (a Material button); own the tap with
+/// [FlarePressable] instead.
 class Pressable extends StatefulWidget {
-  const Pressable({super.key, required this.child, this.scale = .965});
+  const Pressable({
+    super.key,
+    required this.child,
+    this.scale = FlareMotion.pressScale,
+    this.enabled = true,
+  });
   final Widget child;
   final double scale;
+  final bool enabled;
   @override
   State<Pressable> createState() => _PressableState();
 }
@@ -616,31 +754,160 @@ class _PressableState extends State<Pressable> {
   bool _down = false;
   Offset? _origin;
 
+  @override
+  void didUpdateWidget(Pressable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.enabled) {
+      _down = false;
+      _origin = null;
+    }
+  }
+
   void _set(bool value) {
     if (_down != value) setState(() => _down = value);
   }
 
   @override
-  Widget build(BuildContext context) => Listener(
-    onPointerDown: (event) {
-      _origin = event.position;
-      _set(true);
-    },
-    onPointerMove: (event) {
-      if (_origin != null && (event.position - _origin!).distance > 8) {
-        _set(false);
-      }
-    },
-    onPointerUp: (_) => _set(false),
-    onPointerCancel: (_) => _set(false),
-    child: AnimatedScale(
-      scale: _down ? widget.scale : 1,
-      duration: FlareMotion.of(
-        context,
-        _down ? FlareMotion.press : FlareMotion.release,
+  Widget build(BuildContext context) {
+    final reduced = FlareMotion.reduced(context);
+    return Listener(
+      onPointerDown: widget.enabled
+          ? (event) {
+              _origin = event.position;
+              _set(true);
+            }
+          : null,
+      onPointerMove: widget.enabled
+          ? (event) {
+              if (_origin != null && (event.position - _origin!).distance > 8) {
+                _set(false);
+              }
+            }
+          : null,
+      onPointerUp: (_) => _set(false),
+      onPointerCancel: (_) => _set(false),
+      child: AnimatedScale(
+        scale: widget.enabled && _down && !reduced ? widget.scale : 1,
+        duration: reduced || !widget.enabled
+            ? Duration.zero
+            : _down
+            ? FlareMotion.press
+            : FlareMotion.release,
+        curve: _down ? Curves.easeOut : Curves.easeOutCubic,
+        child: FlarePressedScope(
+          pressed: widget.enabled && _down,
+          child: widget.child,
+        ),
       ),
-      curve: _down ? Curves.easeOut : FlareMotion.spring,
-      child: widget.child,
-    ),
-  );
+    );
+  }
+}
+
+/// The HipLab pressable: owns the tap, keyboard activation (Enter/Space)
+/// and one merged button node for accessibility, and publishes its held
+/// state through [FlarePressedScope]. Reduced motion keeps the tap and the
+/// pressed fill but drops the scale.
+class FlarePressable extends StatefulWidget {
+  const FlarePressable({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.scale = FlareMotion.pressScale,
+    this.focusNode,
+    this.semanticLabel,
+    this.preserveChildSemantics = false,
+    this.selected,
+    this.inMutuallyExclusiveGroup = false,
+    this.onPressChanged,
+  });
+  final Widget child;
+  final VoidCallback? onTap;
+  final double scale;
+  final FocusNode? focusNode;
+
+  /// Spoken name in the current language; the child's own text is then
+  /// excluded so the node is not read twice.
+  final String? semanticLabel;
+
+  /// Keep independently actionable children visible to accessibility.
+  final bool preserveChildSemantics;
+  final bool? selected;
+  final bool inMutuallyExclusiveGroup;
+
+  /// Reports press changes when a shared face is painted outside this
+  /// widget (a segmented control's sliding thumb).
+  final ValueChanged<bool>? onPressChanged;
+
+  @override
+  State<FlarePressable> createState() => _FlarePressableState();
+}
+
+class _FlarePressableState extends State<FlarePressable> {
+  bool _down = false;
+
+  void _set(bool value) {
+    if (_down != value && mounted) {
+      setState(() => _down = value);
+      widget.onPressChanged?.call(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduced = FlareMotion.reduced(context);
+    final enabled = widget.onTap != null;
+    final semantics = Semantics(
+      container: true,
+      explicitChildNodes: widget.preserveChildSemantics,
+      button: true,
+      enabled: enabled,
+      label: widget.semanticLabel,
+      selected: widget.selected,
+      inMutuallyExclusiveGroup: widget.inMutuallyExclusiveGroup,
+      onTap: widget.onTap,
+      child: FocusableActionDetector(
+        focusNode: widget.focusNode,
+        enabled: enabled,
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              widget.onTap?.call();
+              return null;
+            },
+          ),
+        },
+        child: GestureDetector(
+          excludeFromSemantics: true,
+          behavior: HitTestBehavior.opaque,
+          onTapDown: enabled ? (_) => _set(true) : null,
+          onTapUp: enabled ? (_) => _set(false) : null,
+          onTapCancel: () => _set(false),
+          onTap: widget.onTap,
+          child: AnimatedScale(
+            scale: _down && !reduced ? widget.scale : 1,
+            duration: reduced
+                ? Duration.zero
+                : _down
+                ? FlareMotion.press
+                : FlareMotion.release,
+            curve: _down ? Curves.easeOut : Curves.easeOutCubic,
+            child: FlarePressedScope(
+              pressed: _down,
+              child:
+                  widget.semanticLabel == null || widget.preserveChildSemantics
+                  ? widget.child
+                  : ExcludeSemantics(child: widget.child),
+            ),
+          ),
+        ),
+      ),
+    );
+    return widget.preserveChildSemantics
+        ? semantics
+        : MergeSemantics(child: semantics);
+  }
 }
