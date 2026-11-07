@@ -657,9 +657,11 @@ class Pressable extends StatefulWidget {
     super.key,
     required this.child,
     this.scale = FlareMotion.pressScale,
+    this.enabled = true,
   });
   final Widget child;
   final double scale;
+  final bool enabled;
   @override
   State<Pressable> createState() => _PressableState();
 }
@@ -667,6 +669,15 @@ class Pressable extends StatefulWidget {
 class _PressableState extends State<Pressable> {
   bool _down = false;
   Offset? _origin;
+
+  @override
+  void didUpdateWidget(Pressable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.enabled) {
+      _down = false;
+      _origin = null;
+    }
+  }
 
   void _set(bool value) {
     if (_down != value) setState(() => _down = value);
@@ -676,26 +687,33 @@ class _PressableState extends State<Pressable> {
   Widget build(BuildContext context) {
     final reduced = FlareMotion.reduced(context);
     return Listener(
-      onPointerDown: (event) {
-        _origin = event.position;
-        _set(true);
-      },
-      onPointerMove: (event) {
-        if (_origin != null && (event.position - _origin!).distance > 8) {
-          _set(false);
-        }
-      },
+      onPointerDown: widget.enabled
+          ? (event) {
+              _origin = event.position;
+              _set(true);
+            }
+          : null,
+      onPointerMove: widget.enabled
+          ? (event) {
+              if (_origin != null && (event.position - _origin!).distance > 8) {
+                _set(false);
+              }
+            }
+          : null,
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
       child: AnimatedScale(
-        scale: _down && !reduced ? widget.scale : 1,
-        duration: reduced
+        scale: widget.enabled && _down && !reduced ? widget.scale : 1,
+        duration: reduced || !widget.enabled
             ? Duration.zero
             : _down
             ? FlareMotion.press
             : FlareMotion.release,
         curve: _down ? Curves.easeOut : Curves.easeOutCubic,
-        child: FlarePressedScope(pressed: _down, child: widget.child),
+        child: FlarePressedScope(
+          pressed: widget.enabled && _down,
+          child: widget.child,
+        ),
       ),
     );
   }
