@@ -70,6 +70,7 @@ class PrimaryAction extends StatelessWidget {
   final String? semanticsLabel;
   @override
   Widget build(BuildContext context) => Pressable(
+    enabled: onPressed != null,
     child: SizedBox(
       width: double.infinity,
       height: height,
@@ -109,6 +110,7 @@ class FlareSecondaryButton extends StatelessWidget {
   final String? semanticsLabel;
   @override
   Widget build(BuildContext context) => Pressable(
+    enabled: onPressed != null,
     child: SizedBox(
       width: expand ? double.infinity : null,
       height: FlareGeometry.buttonHeight,
