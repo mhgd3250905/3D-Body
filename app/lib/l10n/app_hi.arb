@@ -475,5 +475,7 @@
   "recordsEmptyAction": "पहला अभ्यास करें",
   "heatLess": "कम",
   "heatMore": "ज़्यादा",
-  "pickerAddCount": "{count} अभ्यास जोड़ें"
+  "pickerAddCount": "{count} अभ्यास जोड़ें",
+  "libraryDose": "{sets} सेट × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

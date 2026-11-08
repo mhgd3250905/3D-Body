@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.12+21
+version: 1.0.12+26
 
 environment:
   sdk: ^3.12.2
@@ -23,25 +23,25 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
-  # Shared SDK packages are pinned to f7b8a8e (QA v3 / v0.7.2 content).
+  # Shared SDK packages are pinned to 536b4c5 (tag ugk_trainer-v0.8.0: HipLab sync r1, PR #26).
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f7b8a8e4853e9f50fc93888e1768ec1dbc75b588
+      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f7b8a8e4853e9f50fc93888e1768ec1dbc75b588
+      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f7b8a8e4853e9f50fc93888e1768ec1dbc75b588
+      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f7b8a8e4853e9f50fc93888e1768ec1dbc75b588
+      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
       path: packages/ugk_coach_chat
 
 # Keep SDK transitive dependencies on the same reviewed commit.
@@ -49,7 +49,7 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f7b8a8e4853e9f50fc93888e1768ec1dbc75b588
+      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
 
 dev_dependencies:
   flutter_test:

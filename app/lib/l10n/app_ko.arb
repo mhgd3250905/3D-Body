@@ -475,5 +475,7 @@
   "recordsEmptyAction": "첫 동작 해 보기",
   "heatLess": "적음",
   "heatMore": "많음",
-  "pickerAddCount": "동작 {count}개 추가"
+  "pickerAddCount": "동작 {count}개 추가",
+  "libraryDose": "{sets} 세트 × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

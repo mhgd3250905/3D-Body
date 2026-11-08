@@ -73,8 +73,7 @@ void main() {
           'phase': {'source': 9},
         });
         await tester.pumpAndSettle();
-        await tester.tap(helpers.labeledControl('计划'));
-        await tester.pumpAndSettle();
+        await helpers.openPlansFromHome(tester);
         final plans = tester.widget<PlansPage>(find.byType(PlansPage));
         expect(plans.onAiCoach != null, configured);
         expect(

@@ -67,6 +67,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
       final added = trainingPlanFromDrills(
         title: widget.plan.title,
         drills: [for (final id in ids) widget.catalog.drillById(id)!],
+        sourceCatalog: FlareShared.current?.catalog,
       ).items.toList();
       setState(() => _items[blockIndex].addAll(added));
     } on Object {
@@ -194,12 +195,8 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                               end: 4,
                             ),
                             subtitleTextStyle: TextStyle(
-                              fontFamily: 'FlareSans',
-                              fontFamilyFallback: const [
-                                'NotoSansKR',
-                                'NotoSansArabic',
-                                'NotoSansDevanagari',
-                              ],
+                              fontFamily: flareFontFamily,
+                              fontFamilyFallback: flareFontFallback,
                               fontSize: 13,
                               color: FlareColors.dim,
                             ),

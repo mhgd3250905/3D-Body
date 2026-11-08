@@ -78,6 +78,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double? _recoveryTime;
   late String _actorBody;
   bool _settings = false;
+  bool _about = false;
   bool _trainingOpen = false;
   Drill? _drill;
   PresetPlan? _preset;
@@ -292,6 +293,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _drill = null;
       _clearPlan();
       _settings = false;
+      _about = false;
       _libraryGroup = null;
       _libraryQuery = '';
     });
@@ -346,6 +348,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _drill = null;
       _clearPlan();
       _settings = false;
+      _about = false;
     });
     _syncSceneVisibility();
   }
@@ -419,9 +422,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 FlareShared.openDetail(context, request.actionId),
             onOpenLibrary: (context, request) => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => Scaffold(
-                  appBar: AppBar(title: Text(context.strings.library)),
-                  body: const FlareSharedLibraryPage(),
+                builder: (libraryContext) => Scaffold(
+                  body: FlareSharedLibraryPage(
+                    presentationCatalog: catalog,
+                    onBack: () => Navigator.pop(libraryContext),
+                  ),
                 ),
               ),
             ),
@@ -429,11 +434,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _clearPlan();
               _drill = null;
               _settings = false;
+              _about = false;
               _tab = 2;
             }),
             onOpenCustomPlan: (_) async => leaveChat(() {
               _drill = null;
               _settings = false;
+              _about = false;
               _tab = 2;
               _editing = const _RoutineEdit();
             }),
@@ -441,6 +448,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _clearPlan();
               _drill = null;
               _settings = true;
+              _about = false;
             }),
           ),
         ),
@@ -491,7 +499,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       return;
     }
     final name = store.routineById(choice)?.name ?? '';
-    final success = await store.addToRoutine(choice, drill.id);
+    final success = await store.addToRoutine(
+      choice,
+      drill.id,
+      sourceCatalog: FlareShared.current?.catalog,
+    );
     if (!mounted) return;
     FlareHaptics.light();
     ScaffoldMessenger.of(context)
@@ -552,7 +564,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       return;
     }
     setState(() {
-      if (_editing != null) {
+      if (_about) {
+        _about = false;
+      } else if (_editing != null) {
         _editing = null;
       } else if (_drill != null) {
         _drill = null;
@@ -562,6 +576,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _preset = null;
       } else if (_settings) {
         _settings = false;
+        _about = false;
       } else {
         _tab = 0;
         _libraryGroup = null;
@@ -685,7 +700,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       action: store.corruptState ? s.settings : s.retry,
                       onAction: store.corruptState
                           ? () {
-                              setState(() => _settings = true);
+                              setState(() {
+                                _settings = true;
+                                _about = false;
+                              });
                               _syncSceneVisibility();
                             }
                           : () => _result(store.retrySave()),
@@ -719,7 +737,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               canBack && !_trainingOpen && route.$4 != null
                               ? _back
                               : null,
-                          child: route.$4 == null
+                          // App-owned routes share the fixed back rail;
+                          // the library keeps SDK data, artwork and details.
+                          backChip: route.$4 != null,
+                          pinSwipeBack:
+                              route.$2 > 1 &&
+                              !(drill != null &&
+                                  !_inPlan &&
+                                  _tab == 1 &&
+                                  FlareShared.current != null &&
+                                  FlarePublicMedia.current != null),
+                          backChipBuilder: (_) =>
+                              const FlareBackChip(onPressed: _noop),
+                          child:
+                              route.$4 == null ||
+                                  route.$4 is PlansPage ||
+                                  route.$4 is FlareSharedLibraryPage
                               ? route.$4
                               : SafeArea(bottom: false, child: route.$4!),
                         ),
@@ -755,8 +788,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  /// The page the shell shows now: its key, depth, whether it is modal, and
-  /// the page itself (null is the 3D stage underneath).
+  static void _noop() {}
+
+  /// The current surface key, depth, modal flag and page (null is the stage).
   (String, int, bool, Widget?) _route(BuildContext context) {
     final s = context.strings;
     final drill = _drill;
@@ -884,6 +918,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       );
     }
+    if (_settings && _about) {
+      return ('about', 2, false, _aboutPage(context));
+    }
     if (_settings) return ('settings', 1, false, _settingsPage(context));
     return switch (_tab) {
       0 => ('watch', 0, false, null),
@@ -892,7 +929,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         1,
         false,
         FlareShared.current != null && FlarePublicMedia.current != null
-            ? const FlareSharedLibraryPage()
+            ? FlareSharedLibraryPage(
+                onBack: _back,
+                initialMuscle: _libraryGroup?.id,
+                presentationCatalog: catalog,
+              )
             : LibraryPage(
                 catalog: catalog,
                 store: store,
@@ -951,7 +992,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          // 48pt targets with their 40pt squares on the 20pt content margin.
+          // Equal control slots keep the wordmark centered around one menu.
           padding: EdgeInsets.fromLTRB(
             16,
             (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
@@ -960,14 +1001,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
           child: Row(
             children: [
-              FlareGlassSquareButton(
-                label: detail == null ? s.plans : s.returnToMotion,
-                icon: detail == null
-                    ? Icons.playlist_play_rounded
-                    : Icons.arrow_back_ios_new_rounded,
-                onPressed: detail == null
-                    ? () => _changeTab(2)
-                    : _returnToMotion,
+              SizedBox(
+                width: FlareGeometry.homeControlSlot,
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: FlareNavChip(
+                    key: const ValueKey('home-menu-chip'),
+                    label: detail == null ? s.more : s.returnToMotion,
+                    icon: detail == null
+                        ? Icons.menu_rounded
+                        : FlareNavBar.backIcon,
+                    onPressed: detail == null ? _showMore : _returnToMotion,
+                  ),
+                ),
               ),
               Expanded(
                 child: AnimatedSwitcher(
@@ -996,14 +1042,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ),
                 ),
               ),
-              if (detail == null)
-                FlareGlassSquareButton(
-                  label: s.more,
-                  icon: Icons.more_horiz_rounded,
-                  onPressed: _showMore,
-                )
-              else
-                const SizedBox(width: 48),
+              const SizedBox.square(dimension: FlareGeometry.homeControlSlot),
             ],
           ),
         ),
@@ -1669,7 +1708,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheet) => SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            padding: const EdgeInsets.fromLTRB(
+              FlareGeometry.pageInset,
+              0,
+              FlareGeometry.pageInset,
+              FlareGeometry.rowSideInset,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -1714,27 +1758,45 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       ),
                   ],
                 ),
-                FlareSection(s.playbackSpeed),
+                const SizedBox(height: FlareGeometry.groupGap),
                 FlareListGroup(
+                  key: const ValueKey('more-playback-speed'),
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: FlareSegmented<double>(
-                        expand: true,
-                        segments: const [
-                          (.25, '0.25×'),
-                          (.5, '0.5×'),
-                          (1.0, '1×'),
-                        ],
-                        selected: _scene.speed,
-                        // Speed applies in place; the sheet stays so the
-                        // new choice is visible, and play resumes on close.
-                        onChanged: (value) {
-                          _scene.setSpeed(value);
-                          unawaited(store.updateSettings(speed: value));
-                          setSheet(() {});
-                        },
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FlareListRow(
+                          leading: const FlareRowIcon(Icons.speed_rounded),
+                          title: s.playbackSpeed,
+                        ),
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            start: FlareGeometry.rowTextStart,
+                            end: FlareGeometry.rowSideInset,
+                            bottom: FlareGeometry.rowControlBottom,
+                          ),
+                          child: FlareSegmented<double>(
+                            expand: true,
+                            height: FlareGeometry.settingsSegmentHeight,
+                            radius: FlareGeometry.settingsSegmentRadius,
+                            inset: FlareGeometry.settingsSegmentInset,
+                            ios: true,
+                            segments: const [
+                              (.25, '0.25×'),
+                              (.5, '0.5×'),
+                              (1.0, '1×'),
+                            ],
+                            selected: _scene.speed,
+                            // Speed applies in place; the sheet stays so the
+                            // new choice is visible, and play resumes on close.
+                            onChanged: (value) {
+                              _scene.setSpeed(value);
+                              unawaited(store.updateSettings(speed: value));
+                              setSheet(() {});
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1757,7 +1819,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       case 'progress':
         _changeTab(3);
       case 'settings':
-        setState(() => _settings = true);
+        setState(() {
+          _settings = true;
+          _about = false;
+        });
         _syncSceneVisibility();
     }
   }
@@ -1893,35 +1958,41 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   Widget _settingsPage(BuildContext context) {
     final s = context.strings;
-    // Title row with icon, then the control on its own line under the
-    // title (aligned with the title, not the icon). One control height (34).
+    // HipLab settings choice: the title row (30 icon slot, 17/w400), then
+    // the control on its own line on the 58 text column, right 16, bottom
+    // 12, so long translations keep the full label and a readable control.
     Widget line(String label, IconData icon, Widget control) => Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 14),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              FlareRowIcon(icon),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 32),
+            child: Row(
+              children: [
+                FlareRowIcon(icon),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: FlareType.rowTitle.copyWith(
+                      height: 1.25,
+                      color: FlareColors.text,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           // On a narrow phone the control takes the full row width (no
-          // 44 pt title indent) so long labels stay at a readable size.
+          // text-column indent) so long labels stay at a readable size.
           LayoutBuilder(
             builder: (context, box) => Padding(
               padding: EdgeInsetsDirectional.only(
-                start: box.maxWidth >= 300 ? 44 : 0,
+                start: box.maxWidth >= 300
+                    ? FlareGeometry.rowTextStart - 16
+                    : 0,
               ),
               child: control,
             ),
@@ -1935,9 +2006,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         Expanded(
           child: ScrollEdge(
             child: ListView(
+              key: const PageStorageKey('flare-settings-scroll'),
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               children: [
-                FlareSection(s.appearanceGroup),
+                // Groups sit 28 apart without repeated headings (HipLab).
                 FlareListGroup(
                   children: [
                     Semantics(
@@ -1962,6 +2034,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       Icons.contrast_rounded,
                       FlareSegmented<String>(
                         expand: true,
+                        height: 32,
+                        radius: 9,
+                        inset: 2,
+                        ios: true,
                         segments: [
                           ('system', s.themeSystem),
                           ('dark', s.themeDark),
@@ -1983,7 +2059,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                FlareSection(s.playbackGroup),
+                const SizedBox(height: FlareGeometry.groupGap),
                 FlareListGroup(
                   children: [
                     line(
@@ -1991,6 +2067,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       Icons.speed_rounded,
                       FlareSegmented<double>(
                         expand: true,
+                        height: 32,
+                        radius: 9,
+                        inset: 2,
+                        ios: true,
                         segments: const [
                           (.25, '0.25×'),
                           (.5, '0.5×'),
@@ -2008,6 +2088,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       Icons.high_quality_outlined,
                       FlareSegmented<String>(
                         expand: true,
+                        height: 32,
+                        radius: 9,
+                        inset: 2,
+                        ios: true,
                         segments: [
                           ('battery', s.battery),
                           ('balanced', s.balanced),
@@ -2022,7 +2106,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                FlareSection(s.otherGroup),
+                const SizedBox(height: FlareGeometry.groupGap),
                 FlareListGroup(
                   children: [
                     FlareListRow(
@@ -2039,13 +2123,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       leading: const FlareRowIcon(Icons.info_outline_rounded),
                       title: s.aboutFlare,
                       subtitle: s.aboutHint,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => Scaffold(
-                            body: SafeArea(child: _aboutPage(context)),
-                          ),
-                        ),
-                      ),
+                      onTap: () => setState(() => _about = true),
                     ),
                   ],
                 ),
@@ -2127,10 +2205,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         color: FlareColors.background,
         child: Column(
           children: [
-            FlareNavBar(
-              title: s.aboutFlare,
-              onBack: () => Navigator.of(context).pop(),
-            ),
+            FlareNavBar(title: s.aboutFlare, onBack: _back),
             Expanded(
               child: ScrollEdge(
                 child: ListView(

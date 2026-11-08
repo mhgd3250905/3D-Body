@@ -300,86 +300,83 @@ class PlansPage extends StatelessWidget {
     final s = context.strings;
     final tier = store.settings.tier;
     final routines = store.routines;
-    return Column(
-      children: [
-        FlareNavBar(title: s.plans, onBack: onBack),
-        Expanded(
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList.list(
+    return FlareNavPage(
+      title: s.plans,
+      onBack: onBack,
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              FlareGeometry.pageInset,
+              flareNavInset(context),
+              FlareGeometry.pageInset,
+              0,
+            ),
+            sliver: SliverList.list(
+              children: [
+                _SectionHeader(s.plansMine),
+                FlareListGroup(
                   children: [
-                    _SectionHeader(s.plansMine),
-                    FlareListGroup(
-                      children: [
-                        for (final routine in routines)
-                          _routineRow(context, routine),
-                        _newRow(context, first: routines.isEmpty),
-                        if (onAiCoach != null) _aiRow(context),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    _SectionHeader(s.plansReady),
-                    _SceneSwitch(store: store, preview: true),
-                    const SizedBox(height: 14),
+                    for (final routine in routines)
+                      _routineRow(context, routine),
+                    _newRow(context, first: routines.isEmpty),
+                    if (onAiCoach != null) _aiRow(context),
                   ],
                 ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverLayoutBuilder(
-                  builder: (context, box) {
-                    final textScale =
-                        MediaQuery.textScalerOf(context).scale(14) / 14;
-                    final columns =
-                        box.crossAxisExtent < 330 || textScale > 1.35 ? 1 : 2;
-                    final presets = PresetPlan.all;
-                    return SliverList.builder(
-                      itemCount: (presets.length / columns).ceil(),
-                      itemBuilder: (context, row) => Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (
-                              var column = 0;
-                              column < columns;
-                              column++
-                            ) ...[
-                              if (column > 0) const SizedBox(width: 14),
-                              Expanded(
-                                child: row * columns + column >= presets.length
-                                    ? const SizedBox.shrink()
-                                    : RepaintBoundary(
-                                        key: ValueKey(
-                                          'preset-$tier-${presets[row * columns + column].id}',
-                                        ),
-                                        child: _PresetCard(
-                                          preset:
-                                              presets[row * columns + column],
-                                          drills:
-                                              presets[row * columns + column]
-                                                  .drills(catalog, tier),
-                                          onTap: () => onPreset(
-                                            presets[row * columns + column],
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 28)),
-            ],
+                const SizedBox(height: 10),
+                _SectionHeader(s.plansReady),
+                _SceneSwitch(store: store, preview: true),
+                const SizedBox(height: 14),
+              ],
+            ),
           ),
-        ),
-      ],
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverLayoutBuilder(
+              builder: (context, box) {
+                final textScale =
+                    MediaQuery.textScalerOf(context).scale(14) / 14;
+                final columns = box.crossAxisExtent < 330 || textScale > 1.35
+                    ? 1
+                    : 2;
+                final presets = PresetPlan.all;
+                return SliverList.builder(
+                  itemCount: (presets.length / columns).ceil(),
+                  itemBuilder: (context, row) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (var column = 0; column < columns; column++) ...[
+                          if (column > 0) const SizedBox(width: 14),
+                          Expanded(
+                            child: row * columns + column >= presets.length
+                                ? const SizedBox.shrink()
+                                : RepaintBoundary(
+                                    key: ValueKey(
+                                      'preset-$tier-${presets[row * columns + column].id}',
+                                    ),
+                                    child: _PresetCard(
+                                      preset: presets[row * columns + column],
+                                      drills: presets[row * columns + column]
+                                          .drills(catalog, tier),
+                                      onTap: () => onPreset(
+                                        presets[row * columns + column],
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 28)),
+        ],
+      ),
     );
   }
 }

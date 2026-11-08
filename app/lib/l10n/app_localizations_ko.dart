@@ -1087,4 +1087,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String pickerAddCount(int count) {
     return '동작 $count개 추가';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets 세트 × $amount';
+  }
 }

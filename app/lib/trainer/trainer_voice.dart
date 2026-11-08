@@ -81,12 +81,17 @@ class _LeftFirstVoiceSource extends VoiceSource {
   @override
   List<String> repsPhrase(int n) =>
       language == 'en' && n == 1 ? ['n.1', 'u.reps_one'] : source.repsPhrase(n);
+  // Flare's English pack records "Set number" / "Round number" rather than
+  // the SDK's `p.set` / `p.round`, so English keeps the app's own phrase;
+  // other languages pass the spoken [lang] through to the SDK grammar.
   @override
-  List<String> ordinalSet(int n) => language == 'en'
+  List<String> ordinalSet(int n, {String lang = 'zh'}) =>
+      language == 'en' || lang == 'en'
       ? _englishOrdinal('p.set_number', n)
-      : source.ordinalSet(n);
+      : source.ordinalSet(n, lang: lang);
   @override
-  List<String> ordinalRound(int n) => language == 'en'
+  List<String> ordinalRound(int n, {String lang = 'zh'}) =>
+      language == 'en' || lang == 'en'
       ? _englishOrdinal('p.round_number', n)
-      : source.ordinalRound(n);
+      : source.ordinalRound(n, lang: lang);
 }

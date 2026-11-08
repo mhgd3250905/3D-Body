@@ -6,6 +6,110 @@ import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import 'motion.dart';
 import 'theme.dart';
 
+/// Material parameters shared by the navigation chip and floating top bar.
+abstract final class FlareNavigationGlass {
+  static const double chipSigma = 12;
+  static const int samples = 12;
+  static const double knee = .6;
+  static const double kneeAlpha = .86;
+  static const double highContrastAlpha = .96;
+  static const barBlurLayers = [(34.0, .78), (20.0, .90), (9.0, 1.0)];
+
+  static Color chipFill({required bool dark, required bool high}) => high
+      ? (dark ? const Color(0xff1c1c1e) : Colors.white)
+      : Colors.white.withValues(alpha: dark ? .12 : .38);
+
+  static Color chipRim({required bool dark, required bool high}) => dark
+      ? Colors.white.withValues(alpha: high ? .45 : .16)
+      : Colors.black.withValues(alpha: high ? .35 : .10);
+
+  static double chipRimWidth({required bool high}) => high ? 1 : .75;
+
+  static double fade(double position, {double reach = 1}) {
+    if (position >= reach) return 0;
+    final bend = reach * knee;
+    if (position <= bend) {
+      final t = position / bend;
+      return 1 - (1 - kneeAlpha) * t * t;
+    }
+    final t = ((position - bend) / (reach - bend)).clamp(0.0, 1.0);
+    return kneeAlpha * (1 - t * t);
+  }
+}
+
+/// The system status area and title row share one progressive material band.
+/// Only the navigation controls receive input; this layer never blocks scroll.
+class FlareNavFrost extends StatelessWidget {
+  const FlareNavFrost({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final high = MediaQuery.maybeHighContrastOf(context) ?? false;
+    final stops = [
+      for (var i = 0; i <= FlareNavigationGlass.samples; i++)
+        i / FlareNavigationGlass.samples,
+    ];
+    return RepaintBoundary(
+      child: ClipRect(
+        key: const ValueKey('flare-nav-frost-clip'),
+        child: IgnorePointer(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (!high)
+                for (final (sigma, reach) in FlareNavigationGlass.barBlurLayers)
+                  ShaderMask(
+                    blendMode: BlendMode.dstIn,
+                    shaderCallback: (bounds) => LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: stops,
+                      colors: [
+                        for (final position in stops)
+                          Colors.white.withValues(
+                            alpha: FlareNavigationGlass.fade(
+                              position,
+                              reach: reach,
+                            ),
+                          ),
+                      ],
+                    ).createShader(bounds),
+                    child: BackdropFilter(
+                      filter: ui.ImageFilter.blur(
+                        sigmaX: sigma,
+                        sigmaY: sigma,
+                        tileMode: TileMode.mirror,
+                      ),
+                      child: const ColoredBox(color: Colors.transparent),
+                    ),
+                  ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: stops,
+                    colors: [
+                      for (final position in stops)
+                        FlareColors.background.withValues(
+                          alpha:
+                              FlareNavigationGlass.fade(position) *
+                              (high
+                                  ? FlareNavigationGlass.highContrastAlpha
+                                  : 1),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 Future<void> initializeFlareGlass() => LiquidGlassWidgets.initialize(
   enablePerformanceMonitor: false,
   warmUpMode: GlassWarmUpMode.auto,

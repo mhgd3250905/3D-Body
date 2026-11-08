@@ -1111,4 +1111,9 @@ class AppLocalizationsId extends AppLocalizations {
   String pickerAddCount(int count) {
     return 'Tambah $count latihan';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets set × $amount';
+  }
 }

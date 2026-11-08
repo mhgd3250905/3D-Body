@@ -4,10 +4,8 @@ import 'package:ugk_coach/ugk_coach.dart' as coach;
 /// Coach profile id, scope manifest appId and chat storage namespace.
 const flareAppId = 'flarelab';
 
-/// The one editable Flare action scope (2026-11-02): the 211 complete public
-/// definitions of SDK d4502f3, identical to SF/HipLab. The eight partial
-/// definitions are excluded from both browsing and Coach; a future catalog
-/// cannot silently expand this list.
+/// User-approved r2-v1 baseline: 249 actions shared by library and Coach.
+/// Kept explicit so a future hot-update catalogue cannot expand product scope.
 const flareAuthorizedActionIds = <String>{
   'abs-A',
   'abs-B',
@@ -110,7 +108,6 @@ const flareAuthorizedActionIds = <String>{
   'h-short-side-plank',
   'h-side-er',
   'h-side-leg-raise',
-  'h-sleeper-stretch',
   'h-slider-body-saw',
   'h-squat',
   'h-standing-forearm-rotation',
@@ -204,7 +201,6 @@ const flareAuthorizedActionIds = <String>{
   's-seated-fold',
   'scapular-A',
   'scapular-B',
-  'scapular-C',
   'serratus-A',
   'serratus-B',
   'serratus-C',
@@ -220,6 +216,47 @@ const flareAuthorizedActionIds = <String>{
   'w-fire-hydrant',
   'w-prone-swimmer',
   'w-wall-sit',
+  // User-approved r2-v1 scope expansion, 2026-11-08.
+  'h-band-biceps-curl',
+  'h-bear-plank',
+  'h-biceps-self',
+  'h-bilateral-farmer-hold-native',
+  'h-bridge-overhead',
+  'h-chair-elbow-triceps-stretch',
+  'h-crossbody',
+  'h-db-overhead-shrug',
+  'h-db-reverse-curl',
+  'h-db-shrug',
+  'h-db-zottman-curl',
+  'h-floor-nordic-hand-reset',
+  'h-half-kneeling-quad-stretch',
+  'h-inner-thigh',
+  'h-kb-swing',
+  'h-kneeling-thread-needle',
+  'h-mountain-climber',
+  'h-open-book',
+  'h-pike-pushup',
+  'h-pike-scapular-elevation',
+  'h-reverse-lunge',
+  'h-standing-arm-extension-stretch',
+  'h-supine-cactus-chest',
+  'h-towel-behind',
+  'h-towel-isometric-curl',
+  'h-towel-pass',
+  'h-towel-pulldown',
+  'h-wall-palm-lift',
+  'h-wall-pec',
+  'o-supported-ankle-eversion',
+  't-flare-side-hold',
+  't-lsit-open-close',
+  't-lsit-tuck',
+  't-lsit-vsit-circles',
+  't-lsit-wide',
+  't-seated-straddle-ext',
+  't-seated-straddle-lifts',
+  't-straddle-hold',
+  't-tuck-planche',
+  't-vsit',
 };
 
 coach.CoachActionScopeManifest flareActionScope(coach.Catalog catalog) =>

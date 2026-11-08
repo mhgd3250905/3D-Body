@@ -475,5 +475,7 @@
   "recordsEmptyAction": "Coba latihan pertama",
   "heatLess": "Sedikit",
   "heatMore": "Banyak",
-  "pickerAddCount": "Tambah {count} latihan"
+  "pickerAddCount": "Tambah {count} latihan",
+  "libraryDose": "{sets} set × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

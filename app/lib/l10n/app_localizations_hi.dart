@@ -1104,4 +1104,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String pickerAddCount(int count) {
     return '$count अभ्यास जोड़ें';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets सेट × $amount';
+  }
 }

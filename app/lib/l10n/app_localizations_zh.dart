@@ -1079,6 +1079,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String pickerAddCount(int count) {
     return '添加 $count 个动作';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets 组 × $amount';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2156,5 +2161,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String pickerAddCount(int count) {
     return '新增 $count 個動作';
+  }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets 組 × $amount';
   }
 }

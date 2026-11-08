@@ -478,5 +478,7 @@
   "recordsEmptyAction": "Try your first drill",
   "heatLess": "Less",
   "heatMore": "More",
-  "pickerAddCount": "{count, plural, =1{Add 1 drill} other{Add {count} drills}}"
+  "pickerAddCount": "{count, plural, =1{Add 1 drill} other{Add {count} drills}}",
+  "libraryDose": "{sets} sets × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

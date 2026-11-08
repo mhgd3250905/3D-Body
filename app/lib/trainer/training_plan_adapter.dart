@@ -64,7 +64,9 @@ uc.TrainingPlan trainingPlanFromDrills({
           sets: d.sets,
           reps: d.mode == DoseMode.reps ? d.min : null,
           workSeconds: d.mode == DoseMode.time ? d.min : null,
-          perSide: d.perSide,
+          // The SDK definition owns per-side; the prescription text only
+          // suggests it (r2-v1 made forearms-B unilateral).
+          perSide: sourceCatalog?[drill.id]?.unilateral ?? d.perSide,
           restSeconds: d.restSec,
           note: drill.prescription,
         ),

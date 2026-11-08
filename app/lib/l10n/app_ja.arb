@@ -475,5 +475,7 @@
   "recordsEmptyAction": "最初の種目をやってみる",
   "heatLess": "少",
   "heatMore": "多",
-  "pickerAddCount": "{count} 種目を追加"
+  "pickerAddCount": "{count} 種目を追加",
+  "libraryDose": "{sets} セット × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

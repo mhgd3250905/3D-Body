@@ -1,6 +1,12 @@
 # Flare Anatomy Studio
 
-## 当前主线与内测交付（2026-11-04 收束）
+## 当前已验收版本（2026-11-08，+26主线推进）
+
+用户已验收手机当前 **1.0.12+26 / arm64 versionCode2026**，明确授权推进仓库默认主线 `master`。运行源码检查点为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`，同时保留已确认的HipLab UI、249项动作库/AI范围、等高与滑动优化，以及SDK `536b4c52c0f665203e7feb82dfde4d76f4815ad8`（ugk_coach0.8.0）和目录语音接入。后续出包以这一整合基线为准，不能再用缺少UI的SDK单独分支替换产品版本。
+
+本轮分析通过、406项测试通过/4项已知ar/hi大字体失败/1项默认跳过；同签名从实际+25更新，安装包哈希一致。用户版本验收与主线授权不扩写为全部动作QA、完整语言/设备/iOS或商店发布验收，既有细项继续分账。包、签名、验收与整合来源见[版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)、[UI恢复记录](app/docs/hiplab-sdk080-restoration-2026-11-08.md)。旧包、原UI工作树和R17资产保留，本轮不打tag或发版。
+
+## 历史主线与内测交付（2026-11-04 收束）
 
 当前产品主线为 **`master 4b32607ed24c98af22ba4879909544729a3c3213`**，已包含 PR #126；源码版本 **1.0.12+21**，四项 SDK 固定 **`f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`**（问答 v3，用户指定的 v0.7.2 内容）。仍使用 SDK 聊天页及 `agentMode: CoachChatAgentMode.qaV2` / `aiTags` 配置，App 不另建问答适配层。
 
