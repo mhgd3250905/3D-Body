@@ -1,6 +1,26 @@
 # App 验证记录
 
-## +26用户验收及主线推进（2026-11-08）
+## +26文档收束与证据绑定（2026-11-08）
+
+本次在主目录master收束，基线为PR #133合入前主线 `6a2d816a55735b267a9989a228bb90066ec32569`，收束前HEAD为合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`。`git rev-parse --verify <baseline>^{commit}` 及 `git merge-base --is-ancestor <baseline> HEAD` 核对通过；阶段差异11提交/130路径（根文档2、App文档12、资产42、源码53、测试18、配置/工具3），完整 `git status --porcelain=v1 --untracked-files=all` 为空，staged/unstaged/deleted/renamed/untracked均0。GitHub只读核对PR #133已于22:41:27（UTC+8）合入master。
+
+证据来源为本页及整合记录中11月8日的实际执行结果，源状态为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`。本次不读取本机私有配置、旧日志或构建产物，不重复设备操作；只复用与当前运行树相同的证据：
+
+| 命令/观察 | 11月8日既有结果与适用范围 |
+| --- | --- |
+| `flutter pub get`、`flutter analyze`（app/） | 依赖解析成功，分析No issues found；四项SDK仍固定536b4c52，coach0.8.0 |
+| `flutter test --reporter json`（app/） | 406通过、4项既有ar/hi浅深1.5倍字号失败、1项opt-in跳过；没有将失败过滤或销项 |
+| `python tools/ui_token_scan.py`（app/） | owner外color=8/font=0/radius=5/height50=0，无新增 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.12 --build-number=26 --dart-define-from-file=<既有私有配置>` | APK来自b96b570，实际vc2026；包哈希和签名身份见下方整合记录，未因此获得发布资格 |
+| 同签名覆盖安装与设备回读 | 实际+25→+26，安装APK哈希一致，有限首页/菜单/249库/返回观察；用户随后认可此版，完整数据/媒体/语音/iOS/长期验收继续分账 |
+
+适用性已用 `git diff --exit-code b96b5705f8e1e0e5cfd57a0de95eedca6c39b564 1effaf31a0930627f4595b2bda74e156052964c2 -- app/lib app/assets app/test app/tools app/pubspec.yaml app/pubspec.lock app/android app/ios` 证明：退出0、无差异；两点间全部差异仅7份Markdown文档。因此上述运行验证可用于合入检查点；本次后续也仅改文档，不把早先APK当作新文档提交重新构建的产物。
+
+本轮现行入口为根AGENTS/README/CONTRIBUTING、app/AGENTS/README，以及docs下version-ledger、verification、development-roadmap、asset-sources、motion-v42、hiplab-sdk080-restoration-2026-11-08。确定修正：补实际合入回执、更新旧版本/授权数/按钮说明和AI锚点，将旧阶段入口标历史；原R17/七形象来源及历史验收保留。
+
+本次文档检查（2026-11-08）：`git diff --check`通过；内联Python核对11份确定路径、18个新增行内本地链接及AI锚点通过，授权/交付目录/语义目录的ID集合均为同一249项，251张封面覆盖全部授权项。重新运行 `python tools/ui_token_scan.py`，仍为owner外color=8/font=0/radius=5/height50=0。完整status只有这11份Markdown修改，均为本次Agent对齐、无新增/删除/重命名/untracked；与收束前HEAD相比运行源码、资产、测试、配置无变化，因此不重复Flutter全量测试或出包。
+
+## +26用户验收及主线合入（2026-11-08）
 
 用户明确验收当前手机+26/vc2026并授权合入主线，候选与运行源b96b570的运行文件898/898 SHA一致，安装包/设备哈希一致。默认主线实际为master，合入完整UI+249+SDK536b4c52整合版。既有406通过/4已知字体失败/1跳过证据适用于同一运行树；本批仅追加验收和基线文档，不重复出包、安装或扩写语音细项/iOS/长期QA为通过。来源、授权原话及范围见[整合记录](hiplab-sdk080-restoration-2026-11-08.md)。
 
