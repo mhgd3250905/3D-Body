@@ -1,6 +1,12 @@
 # Flare 托马斯 · Flutter App
 
-## 当前主线与内测交付（2026-11-04 版本收束）
+## 当前已验收版本（2026-11-08，+26主线推进）
+
+当前用户认可版本为 **1.0.12+26 / arm64实际vc2026**，运行源码 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`；用户明确授权将已装手机的完整整合版本推进默认主线master。该版包括HipLab UI、单左圆形菜单、新分组条目与图标、249动作库和AI授权、等高/滑动优化，并保留SDK536b4c52及+25目录语音/语言适配；四个SDK包实际版本以pubspec.lock为准，ugk_coach为0.8.0。
+
+分析通过，406通过/4项既有字体失败/1跳过；+25同签名更新到+26，APK回读一致，用户随后确认验收。完整设备、语音细节、动作媒体QA和iOS待验边界不自动销项；本次只合入源码，不打tag或上传商店。后续升级须保留该整合版UI，版本、签名、用户认可和限制见[台账](docs/version-ledger.md)、[验证](docs/verification.md)、[整合来源](docs/hiplab-sdk080-restoration-2026-11-08.md)。
+
+## 历史主线与内测交付（2026-11-04 版本收束）
 
 当前主线为 `master 4b32607ed24c98af22ba4879909544729a3c3213`，PR #126 已合入；源码版本为 **1.0.12+21**。四个 SDK 包及传递覆盖固定 **`f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`**，按此提交记录 SDK 问答 v3 内容。App 继续使用 SDK `CoachChatController` / `CoachChatPage`，配置开关仍名为 `CoachChatAgentMode.qaV2`，通过 `aiTags: appAiTags` 传入 App 持有的未审标签。
 
