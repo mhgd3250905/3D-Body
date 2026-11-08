@@ -475,5 +475,7 @@
   "recordsEmptyAction": "Haz tu primer ejercicio",
   "heatLess": "Menos",
   "heatMore": "Más",
-  "pickerAddCount": "{count, plural, =1{Añadir 1 ejercicio} other{Añadir {count} ejercicios}}"
+  "pickerAddCount": "{count, plural, =1{Añadir 1 ejercicio} other{Añadir {count} ejercicios}}",
+  "libraryDose": "{sets} series × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

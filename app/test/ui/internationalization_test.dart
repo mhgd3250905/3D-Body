@@ -58,13 +58,12 @@ void main() {
         TextDirection.rtl,
       );
       final more = find.bySemanticsLabel(strings.more);
-      final path = find.bySemanticsLabel(strings.plans);
       expect(more, findsOneWidget);
-      expect(path, findsOneWidget);
+      expect(find.bySemanticsLabel(strings.plans), findsNothing);
       expect(
         tester.getCenter(more).dx,
-        lessThan(tester.getCenter(path).dx),
-        reason: 'The trailing header action moves to the left in RTL.',
+        greaterThan(390 / 2),
+        reason: 'The single menu uses the leading edge in RTL.',
       );
       expect(tester.takeException(), isNull);
       semantics.dispose();

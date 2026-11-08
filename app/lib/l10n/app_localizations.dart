@@ -2142,6 +2142,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'添加 {count} 个动作'**
   String pickerAddCount(int count);
+
+  /// No description provided for @libraryDose.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sets} 组 × {amount}'**
+  String libraryDose(int sets, String amount);
 }
 
 class _AppLocalizationsDelegate

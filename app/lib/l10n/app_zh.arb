@@ -548,5 +548,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "libraryDose": "{sets} 组 × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

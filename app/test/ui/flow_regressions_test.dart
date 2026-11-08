@@ -84,6 +84,14 @@ void expectMuscleKnowledge(WidgetTester tester, String groupId) {
 Finder labeledControl(String label) =>
     find.bySemanticsLabel(RegExp('^${RegExp.escape(label)}')).first;
 
+Future<void> openPlansFromHome(WidgetTester tester) async {
+  final strings = tester.element(find.byType(FlareShell)).strings;
+  await tester.tap(labeledControl(strings.more));
+  await tester.pumpAndSettle();
+  await tester.tap(find.widgetWithText(FlareListRow, strings.plans));
+  await tester.pumpAndSettle();
+}
+
 void assertLeanHome(WidgetTester tester) {
   expect(find.bySemanticsLabel('Flare · 托马斯助手'), findsOneWidget);
   expect(find.text('FLARE · 托马斯全旋'), findsNothing);
@@ -940,8 +948,7 @@ void main() {
           'phase': {'source': 9},
         });
         await tester.pumpAndSettle();
-        await tester.tap(labeledControl('计划'));
-        await tester.pumpAndSettle();
+        await openPlansFromHome(tester);
         expect(find.byType(PlansPage), findsOneWidget);
         await tester.tap(find.text('居家'));
         await tester.pumpAndSettle();
@@ -1054,8 +1061,7 @@ void main() {
         await tester.pumpAndSettle();
         assertLeanHome(tester);
 
-        await tester.tap(labeledControl('计划'));
-        await tester.pumpAndSettle();
+        await openPlansFromHome(tester);
         expect(find.byType(PlansPage), findsOneWidget);
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);

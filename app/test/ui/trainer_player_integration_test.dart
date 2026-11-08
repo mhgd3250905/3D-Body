@@ -284,8 +284,7 @@ void main() {
             'phase': {'source': 9},
           });
           await tester.pumpAndSettle();
-          await tester.tap(flow.labeledControl('计划'));
-          await tester.pumpAndSettle();
+          await flow.openPlansFromHome(tester);
           await tester.tap(find.byKey(ValueKey('routine-${routine!.id}')));
           await tester.pumpAndSettle();
           if (singleDrill) {

@@ -105,8 +105,7 @@ void main() {
   }
 
   Future<void> startPlan(WidgetTester tester) async {
-    await tester.tap(helpers.labeledControl('计划'));
-    await tester.pumpAndSettle();
+    await helpers.openPlansFromHome(tester);
     await tester.tap(find.text('Audit routine'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('plan-start')));

@@ -3,6 +3,7 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,14 +53,33 @@ void main() {
     return (store, scene);
   }
 
-  testWidgets('a double tap on More opens exactly one sheet', (tester) async {
+  testWidgets('the single left menu opens one sheet with all entries', (
+    tester,
+  ) async {
     await home(tester);
+    expect(find.byIcon(Icons.menu_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.more_horiz_rounded), findsNothing);
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('home-menu-chip'))).dx,
+      lessThan(390 / 2),
+    );
+    expect(
+      tester.getCenter(find.byKey(const ValueKey('home'))).dx,
+      closeTo(390 / 2, .5),
+    );
     // Both taps land before the sheet route exists.
     final more = tester.getCenter(labeledControl('更多'));
     await tester.tapAt(more);
     await tester.tapAt(more);
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.byType(PlansPage), findsNothing);
+    for (final label in ['训练', '计划', '记录', '设置']) {
+      expect(find.widgetWithText(FlareListRow, label), findsOneWidget);
+    }
+    await tester.tap(find.widgetWithText(FlareListRow, '计划'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PlansPage), findsOneWidget);
   });
 
   testWidgets('speed changes in place and the sheet stays open', (

@@ -475,5 +475,7 @@
   "recordsEmptyAction": "جرّب تمرينك الأول",
   "heatLess": "أقل",
   "heatMore": "أكثر",
-  "pickerAddCount": "{count, plural, =1{إضافة تمرين واحد} =2{إضافة تمرينين} few{إضافة {count} تمارين} other{إضافة {count} تمرينًا}}"
+  "pickerAddCount": "{count, plural, =1{إضافة تمرين واحد} =2{إضافة تمرينين} few{إضافة {count} تمارين} other{إضافة {count} تمرينًا}}",
+  "libraryDose": "{sets} مجموعات × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

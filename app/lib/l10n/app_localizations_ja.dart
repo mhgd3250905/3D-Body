@@ -1086,4 +1086,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String pickerAddCount(int count) {
     return '$count 種目を追加';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets セット × $amount';
+  }
 }

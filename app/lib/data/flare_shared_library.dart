@@ -1,10 +1,16 @@
-// Flare scope, theme and business callbacks; the SDK owns browsing, details,
-// media and training entry. Nothing here caches, prefetches or masks media.
+// Flare scope, theme and library presentation; SDK owns catalogue semantics,
+// media, details and training entry. Browsing only requests bundled posters.
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import '../ui/theme.dart';
+import '../ui/components.dart';
+import '../ui/page_kit.dart';
+import '../ui/public_library_filter.dart';
+import '../trainer/trainer_strings.dart';
+import 'catalog.dart' as flare;
+import 'flare_drill_resolver.dart';
 import 'flare_action_scope.dart';
 import 'flare_public_catalog.dart';
 import 'flare_public_media.dart';
@@ -118,14 +124,238 @@ class FlareShared {
   }
 }
 
-/// The SDK action library embedded in Flare's shell tab.
-class FlareSharedLibraryPage extends StatelessWidget {
-  const FlareSharedLibraryPage({super.key});
+/// App presentation over exactly the SDK-scoped actions, using the shared
+/// posters and SDK details. The old local-library fallback stays separate.
+class FlareSharedLibraryPage extends StatefulWidget {
+  const FlareSharedLibraryPage({
+    super.key,
+    this.onBack,
+    this.initialMuscle,
+    this.presentationCatalog,
+  });
+  final VoidCallback? onBack;
+  final String? initialMuscle;
+  final flare.Catalog? presentationCatalog;
   @override
-  Widget build(BuildContext context) => trainer.TrainingLibraryPage(
-    config: FlareShared.current!.libraryFor(context),
-    mediaPolicy: FlarePublicMedia.current!,
-    theme: FlareShared.theme(context),
-    embedded: true,
+  State<FlareSharedLibraryPage> createState() => _FlareSharedLibraryPageState();
+}
+
+class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
+  late trainer.TrainingLibraryFilter _filter = trainer.TrainingLibraryFilter(
+    muscle: widget.initialMuscle,
   );
+  final _search = TextEditingController();
+  final _cardHeights = <Object, double>{};
+  Object? _textMetricsKey;
+
+  @override
+  void didUpdateWidget(FlareSharedLibraryPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialMuscle != widget.initialMuscle) {
+      _search.clear();
+      _filter = trainer.TrainingLibraryFilter(muscle: widget.initialMuscle);
+    }
+  }
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  String _label(String value) {
+    final group = widget.presentationCatalog?.groupById(value);
+    if (group != null) return group.shortLabel;
+    final source = trainer.poseHubMuscleLabels[value] ?? value;
+    return widget.presentationCatalog?.translate(source) ?? source;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = FlareShared.current!;
+    final policy = FlarePublicMedia.current!;
+    final config = shared.libraryFor(context);
+    final s = context.strings;
+    final language = Localizations.localeOf(context).toLanguageTag();
+    final all = config.actions(policy.catalog).toList(growable: false);
+    final shown = all
+        .where(
+          (action) => trainer.PoseHubActionFacets.matchesFilter(
+            action,
+            _filter,
+            extraNames: config.searchNames?.call(action.id) ?? const [],
+          ),
+        )
+        .toList(growable: false);
+    final strings = trainerStrings(s);
+    final textMetricsKey = (
+      Localizations.localeOf(context),
+      MediaQuery.textScalerOf(context),
+      MediaQuery.boldTextOf(context),
+      MediaQuery.maybeLineHeightScaleFactorOverrideOf(context),
+      MediaQuery.maybeLetterSpacingOverrideOf(context),
+      MediaQuery.maybeWordSpacingOverrideOf(context),
+      Directionality.of(context),
+      DefaultTextStyle.of(context).style,
+      DefaultTextStyle.of(context).textAlign,
+      DefaultTextStyle.of(context).softWrap,
+      DefaultTextStyle.of(context).overflow,
+      DefaultTextStyle.of(context).maxLines,
+      DefaultTextStyle.of(context).textWidthBasis,
+      DefaultTextStyle.of(context).textHeightBehavior,
+      DefaultTextHeightBehavior.maybeOf(context),
+    );
+    if (_textMetricsKey != textMetricsKey) {
+      _cardHeights.clear();
+      _textMetricsKey = textMetricsKey;
+    }
+    String doseFor(String id) {
+      final definition = shared.catalog[id]!;
+      final dose = definition.defaultDose;
+      final reps = dose.mode == coach.DoseMode.reps;
+      return s.libraryDose(
+        dose.sets,
+        strings.dose(
+          reps: reps,
+          amount: (reps ? dose.reps : dose.seconds) ?? 0,
+          perSide: definition.unilateral,
+        ),
+      );
+    }
+
+    return FlareNavPage(
+      title: config.strings.title,
+      onBack: widget.onBack ?? () => Navigator.maybePop(context),
+      body: CustomScrollView(
+        key: const PageStorageKey('public-library-scroll'),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        slivers: [
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              FlareGeometry.pageInset,
+              flareNavInset(context) + FlareGeometry.libraryTop,
+              FlareGeometry.pageInset,
+              FlareGeometry.libraryCardInset,
+            ),
+            sliver: SliverList.list(
+              children: [
+                PublicLibraryFilter(
+                  actions: all,
+                  filter: _filter,
+                  controller: _search,
+                  strings: config.strings,
+                  label: _label,
+                  onChanged: (value) => setState(() => _filter = value),
+                ),
+                const SizedBox(height: FlareGeometry.libraryFieldGap),
+                Text(
+                  s.planDrillCount(shown.length),
+                  key: const ValueKey('actions-count'),
+                  style: FlareType.rowSubtitle.copyWith(
+                    color: FlareColors.muted,
+                  ),
+                ),
+                if (shown.isEmpty) ...[
+                  EmptyNote(
+                    icon: Icons.search_off_rounded,
+                    text: config.strings.emptyTitle,
+                  ),
+                  TextButton(
+                    onPressed: () => setState(() {
+                      _search.clear();
+                      _filter = const trainer.TrainingLibraryFilter();
+                    }),
+                    child: Text(config.strings.clearFilters),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              FlareGeometry.pageInset,
+              0,
+              FlareGeometry.pageInset,
+              FlareGeometry.libraryBottom,
+            ),
+            sliver: SliverCardRows(
+              itemCount: shown.length,
+              itemHeightBuilder: (context, width, index) {
+                final id = shown[index].id;
+                final title = shared.catalog[id]!.name.of(language);
+                final subtitle = doseFor(id);
+                return _cardHeights.putIfAbsent(
+                  (id, width, title, subtitle),
+                  () => DrillCard.measureLibraryHeight(
+                    context,
+                    width: width,
+                    title: title,
+                    subtitle: subtitle,
+                  ),
+                );
+              },
+              itemBuilder: (context, index) {
+                final action = shown[index];
+                final definition = shared.catalog[action.id]!;
+                final drill = sharedDisplayDrill(shared.catalog, action.id)!;
+                final muscles =
+                    (action.raw['muscleGroups'] as List?)
+                        ?.whereType<String>()
+                        .toList() ??
+                    const <String>[];
+                final badge =
+                    _filter.muscle != null && muscles.contains(_filter.muscle)
+                    ? _filter.muscle!
+                    : muscles.firstOrNull;
+                final group = badge == null
+                    ? null
+                    : widget.presentationCatalog?.groupById(badge);
+                final dose = doseFor(action.id);
+                return DrillCard(
+                  key: ValueKey('public-action-${action.id}'),
+                  drill: drill,
+                  libraryPresentation: true,
+                  title: definition.name.of(language),
+                  subtitle: dose,
+                  groupLabel: badge == null
+                      ? _label(
+                          trainer.PoseHubActionFacets.bodyParts(
+                                action,
+                              ).firstOrNull ??
+                              '',
+                        )
+                      : _filter.muscle != null
+                      ? _label(badge)
+                      : _label(
+                          trainer.PoseHubActionFacets.bodyParts(
+                                action,
+                              ).firstOrNull ??
+                              badge,
+                        ),
+                  color: group == null
+                      ? FlareColors.accent
+                      : Color(group.colorValue),
+                  artwork: LayoutBuilder(
+                    builder: (context, box) => trainer.TrainerPoster(
+                      key: ValueKey('library-poster-${action.id}'),
+                      asset: policy.posterAssetFor(action.id)!,
+                      bundle: trainer.TrainerExperienceScope.maybeOf(
+                        context,
+                      )?.bundle,
+                      decodeWidth:
+                          (box.maxWidth *
+                                  MediaQuery.devicePixelRatioOf(context))
+                              .ceil(),
+                      stageColor: FlareColors.mediaBackdrop,
+                    ),
+                  ),
+                  onTap: () => FlareShared.openDetail(context, action.id),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

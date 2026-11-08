@@ -475,5 +475,7 @@
   "recordsEmptyAction": "去練第一個動作",
   "heatLess": "少",
   "heatMore": "多",
-  "pickerAddCount": "新增 {count} 個動作"
+  "pickerAddCount": "新增 {count} 個動作",
+  "libraryDose": "{sets} 組 × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

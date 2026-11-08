@@ -475,5 +475,7 @@
   "recordsEmptyAction": "Начать первое упражнение",
   "heatLess": "Меньше",
   "heatMore": "Больше",
-  "pickerAddCount": "{count, plural, one{Добавить {count} упражнение} few{Добавить {count} упражнения} many{Добавить {count} упражнений} other{Добавить {count} упражнения}}"
+  "pickerAddCount": "{count, plural, one{Добавить {count} упражнение} few{Добавить {count} упражнения} many{Добавить {count} упражнений} other{Добавить {count} упражнения}}",
+  "libraryDose": "{sets} подхода × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
 }

@@ -194,6 +194,7 @@ class FlareFilterChip extends StatelessWidget {
     this.icon,
     this.count = 0,
     this.trailingGap = true,
+    this.flat = false,
   });
   final String label;
   final bool selected;
@@ -202,8 +203,13 @@ class FlareFilterChip extends StatelessWidget {
   final int count;
   final bool trailingGap;
 
+  /// Compact library chip: a 30pt face inside a 44pt keyboard/touch target.
+  /// Existing scene and plan filters keep the pill treatment by default.
+  final bool flat;
+
   @override
   Widget build(BuildContext context) {
+    if (flat) return _flat(context);
     final ink = selected ? FlareColors.accentInk : FlareColors.secondary;
     return Padding(
       padding: EdgeInsets.only(right: trailingGap ? 8 : 0),
@@ -281,6 +287,76 @@ class FlareFilterChip extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _flat(BuildContext context) {
+    final ink = selected ? FlareColors.accentText : FlareColors.text;
+    return Padding(
+      padding: EdgeInsetsDirectional.only(
+        end: trailingGap ? FlareGeometry.libraryChipGap : 0,
+      ),
+      child: FlarePressable(
+        selected: selected,
+        semanticLabel: count > 0 ? '$label, $count' : label,
+        onTap: () {
+          FlareHaptics.selection();
+          onTap();
+        },
+        child: SizedBox(
+          height: FlareGeometry.hitTarget,
+          child: Center(
+            widthFactor: 1,
+            child: AnimatedContainer(
+              duration: FlareMotion.of(context, FlareMotion.fade),
+              curve: FlareMotion.standard,
+              constraints: const BoxConstraints(
+                minHeight: FlareGeometry.libraryChipHeight,
+                minWidth: FlareGeometry.hitTarget,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: FlareGeometry.rowIconGap,
+              ),
+              decoration: BoxDecoration(
+                color: selected
+                    ? FlareColors.accent.withValues(alpha: .14)
+                    : FlareColors.libraryChipFill,
+                borderRadius: BorderRadius.circular(
+                  FlareGeometry.libraryChipRadius,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, size: FlareGeometry.rowSideInset, color: ink),
+                    const SizedBox(width: FlareGeometry.libraryChipGap),
+                  ],
+                  Text(
+                    label,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: FlareType.rowSubtitle.copyWith(
+                      color: ink,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                  if (count > 0) ...[
+                    const SizedBox(width: FlareGeometry.libraryChipGap),
+                    Text(
+                      '$count',
+                      style: FlareType.rowSubtitle.copyWith(
+                        color: ink,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
