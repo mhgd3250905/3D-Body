@@ -14,3 +14,13 @@
 整合后pub get成功，SDK仍全部536b4c52、ugk_coach0.8.0；分析No issues found，token owner外仍color=8/font=0/radius=5/height50=0，无新增。首轮全量405通过/1跳过/5失败，其中4项是已知SDK ar/hi大字问题；另一项records_page_test通过旧Icon finder定位自绘加号而失败，尚未进入picker业务断言。仅改用已有routine-add稳定键，三项records测试通过，原添加/已加入/编号断言不变。
 
 最终全量406通过/1项opt-in跳过/仅4项已知SDK ar/hi大字号失败，首页菜单到249动作库的真实流程测试通过，没有其它失败。源码会在该统一分支本地保存；APK与真机身份在本轮结束时补充到回执。尚未推送远端、未合master/任何PR、未打tag或发布。
+
+## 本地保存、出包与安装完成
+
+统一源码本地保存为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`（作者mhgd3250905 <mhgd3250905@gmail.com>）。+26 release arm64 split由该提交构建，实际versionCode2026；沿用已确认私有配置，密钥未输出/提交。最终APK93,193,873字节，SHA-256 `b0e577459accbf63272bca3e80aac855537ef0c985da2872820a2fbdb309c53e`，证书SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`，v2/v3、ZIP完整性及16KiB ZIP/ELF检查通过。251张封面包含249授权项和2张保留的历史封面，不扩大为251动作。
+
+已备份手机实际+25/vc2025包，`adb install -r --no-incremental`同签名覆盖至+26/vc2026，无卸载或清数据；设备APK哈希与交付包一致。冷启动后原生中文浅色确认首页左侧圆形三横线打开底部菜单、右侧更多按钮移除、分组条目与原创图标、249动作库及固定返回均恢复；回看截图，同行卡片底边一致。原有1个计划与本周1天计数仍可见，不将有限计数观察扩大为全部私有数据或视频缓存已逐项验收。
+
+手机最终停在恢复后的首页。图像/XML证据为本工作树output/ui-sdk080-restore-20261108中的restored-home-ready、restored-menu、restored-library249、restored-home-final；安装前版本/旧包、源文件冻结指纹、APK/配置去敏回执及日志同目录保存。+25阶段的语音细节与用户后续验收边界保持，本轮不重做完整设备/深色/语言/性能矩阵。
+
+后续App出包应以同时包含UI和SDK的该统一分支为基线，并核对UI源码指纹、首页菜单和249动作库流程测试；不能把仅有SDK更新、缺少UI的9d35b11直接当成当前产品源码覆盖手机。原UI工作树完整保留，恢复整合只在新工作树进行。
