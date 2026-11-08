@@ -23,7 +23,7 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
-  # Shared SDK packages are pinned to 97eb66d (main: r2-v1 hot update + text execution.phases).
+  # Shared SDK packages are pinned to 536b4c5 (tag ugk_trainer-v0.8.0: HipLab sync r1, PR #26).
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
