@@ -155,17 +155,27 @@ void main() {
   Future<void> mountLibrary(
     WidgetTester tester, {
     String? initialMuscle,
+    Locale? locale,
   }) async {
     await phoneSize(tester);
+    final page = Scaffold(
+      body: FlareSharedLibraryPage(
+        initialMuscle: initialMuscle,
+        // Used only for translated presentation labels, never actions.
+        presentationCatalog: loadCatalogFixture(),
+      ),
+    );
     await tester.pumpWidget(
       testApp(
-        Scaffold(
-          body: FlareSharedLibraryPage(
-            initialMuscle: initialMuscle,
-            // Used only for translated presentation labels, never actions.
-            presentationCatalog: loadCatalogFixture(),
-          ),
-        ),
+        locale == null
+            ? page
+            : Builder(
+                builder: (context) => Localizations.override(
+                  context: context,
+                  locale: locale,
+                  child: page,
+                ),
+              ),
       ),
     );
     await _settleLocalAssets(tester);
@@ -324,14 +334,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a public action card opens the real SDK detail poster first', (
-    tester,
+  Future<sdk.TrainingLibraryDetail> openLibraryDetail(
+    WidgetTester tester,
+    String id,
   ) async {
-    await mountLibrary(tester);
-    final poster = tester.widget<sdk.TrainerPoster>(
-      find.byType(sdk.TrainerPoster).first,
-    );
-    final id = _posterId(poster);
     final card = _key('public-action-$id');
     await tester.ensureVisible(card);
     await tester.tap(card);
@@ -347,11 +353,23 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     await _settleLocalAssets(tester);
-    final detail = tester.widget<sdk.TrainingLibraryDetail>(
+    return tester.widget<sdk.TrainingLibraryDetail>(
       find.byType(sdk.TrainingLibraryDetail),
     );
+  }
+
+  testWidgets('a public action card opens the real SDK detail poster first', (
+    tester,
+  ) async {
+    await mountLibrary(tester);
+    final poster = tester.widget<sdk.TrainerPoster>(
+      find.byType(sdk.TrainerPoster).first,
+    );
+    final id = _posterId(poster);
+    final detail = await openLibraryDetail(tester, id);
     expect(detail.action.id, id);
     expect(detail.mediaPolicy, same(policy));
+    expect(detail.config.displayText, isNull);
     final detailArt = tester.widget<sdk.TrainingLibraryActionArt>(
       find.descendant(
         of: find.byType(sdk.TrainingLibraryDetail),
@@ -362,6 +380,67 @@ void main() {
     expect(detailArt.playing, isFalse);
     expect(policy.posterAssetFor(detailArt.actionId), poster.asset);
     expect(_key('library-detail-$id'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('English SDK detail copy covers all 248 actions', (tester) async {
+    await mountLibrary(tester, locale: const Locale('en', 'US'));
+    final id = _posterId(
+      tester.widget<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster).first),
+    );
+    final detail = await openLibraryDetail(tester, id);
+    final displayText = detail.config.displayText!;
+    final han = RegExp(r'[\u4e00-\u9fff]');
+    final excluded = RegExp(
+      r'\b(?:rehab|rehabilitation|therapy|treatment|medical)\b',
+      caseSensitive: false,
+    );
+    var names = 0;
+    var cues = 0;
+    var cautions = 0;
+    var hanMatches = 0;
+    var excludedMatches = 0;
+    for (final action in detail.config.actions(policy.catalog)) {
+      final copy = displayText(action.id)!;
+      final sourceCautions = (action.raw['cautionsEn'] as List).cast<String>();
+      final contraindications = action.raw['contraindications'] as List;
+      expect(copy.name, action.raw['nameEn'], reason: action.id);
+      expect(copy.cues, action.raw['cuesEn'], reason: action.id);
+      expect(
+        copy.cautions,
+        hasLength(sourceCautions.length + contraindications.length),
+      );
+      expect(copy.cautions!.take(sourceCautions.length), sourceCautions);
+      names++;
+      cues += copy.cues!.length;
+      cautions += copy.cautions!.length;
+      for (final text in [copy.name!, ...copy.cues!, ...copy.cautions!]) {
+        hanMatches += han.allMatches(text).length;
+        excludedMatches += excluded.allMatches(text).length;
+      }
+    }
+    expect((names, cues, cautions), (248, 811, 594));
+    expect(hanMatches, 0);
+    expect(excludedMatches, 0);
+    final displayed = displayText(id)!;
+    final sheet = find.byType(sdk.TrainingLibraryDetail);
+    for (final text in [
+      displayed.name!,
+      displayed.cues!.join('\n'),
+      [
+        ...displayed.cautions!,
+        detail.config.strings.cautionSuffix.substring(2),
+      ].join('\n'),
+    ]) {
+      expect(
+        find.descendant(of: sheet, matching: find.text(text)),
+        findsOneWidget,
+      );
+    }
+    debugPrint(
+      'English SDK details: $names names, $cues cues, $cautions cautions; '
+      'Chinese characters: $hanMatches; excluded terms: $excludedMatches.',
+    );
     expect(tester.takeException(), isNull);
   });
 

@@ -1,5 +1,13 @@
 # App 验证记录
 
+## r2-v11 英文详情（1.0.13+28，2026-11-10）
+
+英文 locale 的 SDK 详情使用 Flare 提供的 `displayText`，直接读取目录的 `nameEn`、`cuesEn`、`cautionsEn`。目录没有英文禁忌提示，Flare 在展示层翻译 7 种标签，对应 251 条提示。目录原始字节与 SDK 锁定保持一致。
+
+测试从英文动作卡打开 SDK 详情，并遍历详情配置的 248 项动作。回读 248 个名称、811 条提示、594 条安全事项，`[\u4e00-\u9fff]` 和禁用词均为 0 个匹配。静态分析 0 问题。全量 408 通过、4 项已知失败、1 项原有默认跳过；四项失败名称及溢出量与下文的 +26、+27 记录一致。
+
+APK 与 AAB 从同一提交构建，Android 版本均为 1.0.13 / versionCode 2028。AAB 使用商店上传证书，arm64 APK 使用 +26 内测证书。更新说明见 [Flare 1.0.13 更新说明](release-notes-1.0.13.md)。
+
 ## r2-v11 出厂目录候选（1.0.13+27，2026-11-10）
 
 Flare 随包交付 [Pose-Hub r2-v11 原始目录](https://media.uuugk.win/pack/r2-v11/catalog.json)，SHA-256 为 `6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0`。目录保留全部 249 条，动作库和 AI 的授权范围排除自测演示 `n-thomas-test`，共 248 项。每项的 WebP 封面和缩略图均按目录校验字节数和 SHA-256 后随包交付，视频由 SDK 按需下载。四个 SDK 包仍固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`，目录更新使用 stable。
