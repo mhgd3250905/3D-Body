@@ -76,9 +76,9 @@ Future<void> _advance(WidgetTester tester, int seconds) async {
 
 /// Whole session length as the SDK player itself schedules it: the same
 /// builder inputs [sdk.TrainerPlayer] uses, including the delivery rhythms.
-/// r2-v1 rows (`ai-reviewed-r2-needs-user-review`) carry counted cadences,
-/// so a counted drill such as chest-A plays its catalog reps (6 × 4 s + 1 s
-/// lead = 25 s) even when the item asks for a 1 s timed set.
+/// r2-v11 rows carry counted cadences, so a counted drill such as chest-A
+/// plays its catalog reps (6 left/right pairs × 8 s + 1 s
+/// lead = 49 s) even when the item asks for a 1 s timed set.
 double _sessionSeconds(sdk.TrainerPlayer player) => sdk.SessionBuilder(
   rhythms: player.rhythms,
   rhythmDefaults: player.rhythmDefaults,
@@ -96,7 +96,7 @@ Future<void> _expectPoster(WidgetTester tester, String id) async {
   expect(media, findsOneWidget);
   expect(
     tester.widget<sdk.DrillMediaView>(media).media.posterAsset,
-    'assets/public_posters/$id.webp',
+    'assets/public_posters/r2-v11/cover/$id.webp',
   );
   final decoded = find.descendant(
     of: media,
@@ -357,8 +357,8 @@ void main() {
     final popped = <sdk.SessionResult>[];
     final store = await _open(tester, popped: popped);
     final total = _sessionSeconds(_player(tester));
-    // 10 s prep + abs-A 1 s + 15 s transition + chest-A r2 cadence 25 s.
-    expect(total, 51);
+    // 10 s prep + abs-A 1 s + 15 s transition + chest-A r2-v11 cadence 49 s.
+    expect(total, 75);
     await _advance(tester, total.ceil() - 3);
     expect(find.byKey(const ValueKey('finish')), findsNothing);
     expect(store.trainerSessions, isEmpty);
@@ -411,10 +411,10 @@ void main() {
     expect(chest.selfPaced, isFalse);
     expect(chest.counted, isTrue);
     expect(chest.phases.map((phase) => phase.id), ['go', 'hold', 'back']);
-    expect(chest.cycleFor(), 4);
-    // 10 s prep + abs-A 1 s + 15 s transition + 2 reps × 4 s + 1 s lead.
+    expect(chest.cycleFor(), 8);
+    // 10 s prep + abs-A 1 s + 15 s transition + 2 pairs × 8 s + 1 s lead.
     final total = _sessionSeconds(player);
-    expect(total, 35);
+    expect(total, 43);
     await _advance(tester, total.ceil() - 3);
     expect(find.byKey(const ValueKey('complete-set-button')), findsNothing);
     expect(store.trainerSessions, isEmpty);
@@ -461,10 +461,10 @@ void main() {
       await _advance(tester, 16);
       expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
       expect(store.trainerSessions, isEmpty);
-      // chest-A then plays its r2 counted cadence (25 s), not the 1 s timer.
+      // chest-A then plays its r2-v11 counted cadence (49 s).
       await _advance(tester, 16);
       expect(store.trainerSessions, isEmpty);
-      await _advance(tester, 25);
+      await _advance(tester, 49);
       expect(store.trainerSessions.single.full, isTrue);
       expect(store.sessions, hasLength(2));
       await tester.pumpWidget(const SizedBox());

@@ -7,6 +7,10 @@ import 'posehub_catalog_updates.dart';
 
 abstract final class FlarePublicMedia {
   static const posterRoot = 'assets/public_posters/';
+  static const coverRoot =
+      '$posterRoot${PoseHubCatalogUpdates.bundledPackVersion}/cover/';
+  static const thumbnailRoot =
+      '$posterRoot${PoseHubCatalogUpdates.bundledPackVersion}/thumbnail/';
 
   /// Set once at startup; null in bare widget tests (SDK media then disabled).
   static trainer.TrainingMediaPolicy? current;
@@ -19,13 +23,13 @@ abstract final class FlarePublicMedia {
     final repository = await trainer.TrainingMediaRepository.fromCatalog(
       catalog: catalog,
       catalogRevision: poseHubCatalogRevisionOf(catalog),
-      // The pack follows the catalogue in use (r2-v1 baseline or hot update).
+      // The SDK resolves the media root from the catalogue in use.
       mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
       rootDirectory: rootDirectory,
     );
     return trainer.TrainingMediaPolicy(
       repository: repository,
-      posterAssetRoot: posterRoot,
+      posterAssetRoot: coverRoot,
       prefetchBeforeTraining: prefetchBeforeTraining,
     );
   }

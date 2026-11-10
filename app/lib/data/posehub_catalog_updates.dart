@@ -22,21 +22,27 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
 /// Checks the channel pointer once per launch and again on resume once a day
 /// has passed. A verified new catalogue is stored and takes effect on the next
 /// launch; [PoseHubActionLibrary.load] always opens the verified cache first,
-/// then the bundled r2-v1 baseline.
+/// then Flare's bundled r2-v11 baseline if the cache is absent or older.
 ///
 /// The channel is fixed at build time: `--dart-define=POSEHUB_CATALOG_CHANNEL=
 /// dev|beta|stable`, defaulting to `stable`.
 class PoseHubCatalogUpdates with WidgetsBindingObserver {
   PoseHubCatalogUpdates._(this.updater);
 
+  static const bundledPackVersion = 'r2-v11';
+  static const bundledCatalogSha256 =
+      '6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0';
+
   static const channelName = String.fromEnvironment(
     'POSEHUB_CATALOG_CHANNEL',
     defaultValue: 'stable',
   );
 
-  static PoseHubCatalogChannel get channel => PoseHubCatalogChannel.values
-      .firstWhere((c) => c.name == channelName,
-          orElse: () => PoseHubCatalogChannel.stable);
+  static PoseHubCatalogChannel get channel =>
+      PoseHubCatalogChannel.values.firstWhere(
+        (c) => c.name == channelName,
+        orElse: () => PoseHubCatalogChannel.stable,
+      );
 
   static PoseHubCatalogUpdateConfig get buildConfig =>
       PoseHubCatalogUpdateConfig(channel: channel);
@@ -98,11 +104,12 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
   void dispose() => WidgetsBinding.instance.removeObserver(this);
 }
 
-/// A 64-hex revision for the catalogue in use: the SDK's audited SHA for the
+/// A 64-hex revision for the catalogue in use: the audited SHA for Flare's
 /// bundled baseline, else a content digest of the verified cached catalogue.
 String poseHubCatalogRevisionOf(coach.PoseHubAppTestCatalog catalog) {
-  if (poseHubPackVersionOf(catalog) == PoseHubActionLibrary.packVersion) {
-    return PoseHubActionLibrary.catalogSha256;
+  if (poseHubPackVersionOf(catalog) ==
+      PoseHubCatalogUpdates.bundledPackVersion) {
+    return PoseHubCatalogUpdates.bundledCatalogSha256;
   }
   return coach.sha256Hex(utf8.encode(jsonEncode(catalog.raw)));
 }
