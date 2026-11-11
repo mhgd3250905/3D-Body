@@ -476,6 +476,7 @@ class PlanDetailPage extends StatelessWidget {
     this.line,
     this.store,
     this.onSaveAsMine,
+    this.onCopy,
     this.onEdit,
     this.sdkPlan,
     this.catalog,
@@ -492,6 +493,7 @@ class PlanDetailPage extends StatelessWidget {
   /// Given for presets: shows the scene switch.
   final LearningStore? store;
   final VoidCallback? onSaveAsMine;
+  final VoidCallback? onCopy;
   final VoidCallback? onEdit;
 
   /// Consecutive entries of one block, keeping their global index.
@@ -632,6 +634,15 @@ class PlanDetailPage extends StatelessWidget {
                         label: Text(s.planSaveAsMine),
                       ),
                     ),
+                  if (onCopy != null)
+                    Center(
+                      child: TextButton.icon(
+                        key: const ValueKey('plan-copy'),
+                        onPressed: onCopy,
+                        icon: const Icon(Icons.copy_outlined, size: 18),
+                        label: Text(s.premiumCopyRoutine),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -768,6 +779,7 @@ class RoutineEditorPage extends StatefulWidget {
     this.seedName,
     this.seedDrillIds = const [],
     this.onDeleted,
+    this.allowSave,
   });
   final Catalog catalog;
   final LearningStore store;
@@ -777,6 +789,7 @@ class RoutineEditorPage extends StatefulWidget {
   final String? seedName;
   final List<String> seedDrillIds;
   final VoidCallback? onDeleted;
+  final Future<bool> Function()? allowSave;
   @override
   State<RoutineEditorPage> createState() => _RoutineEditorPageState();
 }
@@ -809,6 +822,12 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
   }
 
   Future<void> _save() async {
+    if (_busy ||
+        !(await widget.allowSave?.call() ?? true) ||
+        !mounted ||
+        _busy) {
+      return;
+    }
     final s = context.strings;
     var name = _name.text.trim();
     if (name.isEmpty) name = s.planDefaultName;

@@ -9,6 +9,87 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String get premiumTitle => 'Flare Premium を利用する';
+
+  @override
+  String get premiumSubtitle => '自分だけのトレーニングを作ろう';
+
+  @override
+  String get premiumAiCoach => 'いつでも AI コーチに質問';
+
+  @override
+  String get premiumAiPlans => 'AI が作成するトレーニングプラン';
+
+  @override
+  String get premiumCustomWorkouts => 'カスタムワークアウトを無制限に作成';
+
+  @override
+  String get premiumMonthly => '月額';
+
+  @override
+  String get premiumYearly => '年額';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return '月あたり約 $price';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent% お得';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days 日間の無料トライアルを開始';
+  }
+
+  @override
+  String get premiumSubscribe => '登録する';
+
+  @override
+  String get premiumDisclosure =>
+      'サブスクリプションは自動更新されます。Google Play でいつでも解約できます。トライアル終了前に解約すれば料金はかかりません。';
+
+  @override
+  String get premiumRestore => '購入を復元';
+
+  @override
+  String get premiumTerms => '利用規約';
+
+  @override
+  String get premiumPrivacy => 'プライバシーポリシー';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'メンバーシップは有効です';
+
+  @override
+  String get premiumInactive => '有効なメンバーシップはありません';
+
+  @override
+  String get premiumManage => 'サブスクリプションを管理';
+
+  @override
+  String get premiumUnavailable => 'ストアに接続できません。もう一度お試しください。';
+
+  @override
+  String get premiumRestoreEmpty => '有効なサブスクリプションが見つかりませんでした。';
+
+  @override
+  String premiumQuota(int limit) {
+    return '本日の AI 利用上限（$limit 回）に達しました。明日またお試しください。';
+  }
+
+  @override
+  String get premiumRateLimit => 'リクエストが多すぎます。少し待ってからお試しください。';
+
+  @override
+  String get premiumAiDisclaimer => 'AI の提案は参考情報であり、医学的な助言ではありません。';
+
+  @override
   String get actorBodyLabel => 'トーマスのモデル';
 
   @override
@@ -888,6 +969,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'マイプランに保存';
+
+  @override
+  String get premiumCopyRoutine => 'プランをコピー';
 
   @override
   String get planSaved => 'マイプランに保存しました';

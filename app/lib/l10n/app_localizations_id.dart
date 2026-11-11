@@ -9,6 +9,89 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get premiumTitle => 'Buka Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Buat latihan sesuai keinginanmu';
+
+  @override
+  String get premiumAiCoach => 'Pelatih AI kapan pun dibutuhkan';
+
+  @override
+  String get premiumAiPlans => 'Rencana latihan buatan AI';
+
+  @override
+  String get premiumCustomWorkouts => 'Latihan kustom tanpa batas';
+
+  @override
+  String get premiumMonthly => 'Bulanan';
+
+  @override
+  String get premiumYearly => 'Tahunan';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Sekitar $price/bulan';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Hemat $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Mulai uji coba gratis $days hari';
+  }
+
+  @override
+  String get premiumSubscribe => 'Berlangganan';
+
+  @override
+  String get premiumDisclosure =>
+      'Langganan diperpanjang otomatis. Batalkan kapan saja di Google Play. Jika dibatalkan sebelum uji coba berakhir, kamu tidak akan dikenai biaya.';
+
+  @override
+  String get premiumRestore => 'Pulihkan pembelian';
+
+  @override
+  String get premiumTerms => 'Ketentuan layanan';
+
+  @override
+  String get premiumPrivacy => 'Kebijakan privasi';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Keanggotaan aktif';
+
+  @override
+  String get premiumInactive => 'Tidak ada keanggotaan aktif';
+
+  @override
+  String get premiumManage => 'Kelola langganan';
+
+  @override
+  String get premiumUnavailable => 'Toko tidak tersedia. Coba lagi.';
+
+  @override
+  String get premiumRestoreEmpty => 'Tidak ditemukan langganan aktif.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Kamu sudah memakai semua $limit permintaan AI hari ini. Kembali besok.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Terlalu banyak permintaan. Coba lagi sebentar lagi.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'Saran AI hanya untuk referensi dan bukan nasihat medis.';
+
+  @override
   String get actorBodyLabel => 'Karakter Thomas';
 
   @override
@@ -910,6 +993,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Simpan sebagai rencanaku';
+
+  @override
+  String get premiumCopyRoutine => 'Salin rencana';
 
   @override
   String get planSaved => 'Tersimpan di Rencanaku';

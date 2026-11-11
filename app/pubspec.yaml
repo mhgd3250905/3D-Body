@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.13+28
+version: 1.0.14+29
 
 environment:
   sdk: ^3.12.2
@@ -23,6 +23,9 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
+  http: ^1.6.0
+  purchases_flutter: 10.4.1
+  url_launcher: 6.3.2
   # Shared SDK packages use iOS packed-alpha r3 on the v0.8.0 baseline.
   ugk_coach:
     git:
@@ -57,7 +60,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  http: ^1.6.0
 
 flutter:
   generate: true

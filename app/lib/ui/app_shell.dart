@@ -9,6 +9,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_coach_chat/ugk_coach_chat.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import '../control/learning_store.dart';
+import '../control/flare_membership.dart';
 import '../data/catalog.dart';
 import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
@@ -30,6 +31,7 @@ import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
+import 'flare_membership_page.dart';
 import '../coach/flare_coach_chat.dart';
 import '../coach/usage_store.dart';
 import 'startup_splash.dart';
@@ -47,12 +49,14 @@ class FlareShell extends StatefulWidget {
     this.sceneRevision = 0,
     this.startupCovered = false,
     this.coach,
+    this.membership,
     this.trainingPageBuilder,
   });
   final Catalog catalog;
 
-  /// SDK chat host; without a configured Key/token, all AI entries stay hidden.
+  /// Optional SDK chat host used by embedding and test flows.
   final FlareCoachChat? coach;
+  final FlareMembership? membership;
   final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
   final LearningStore store;
   final SceneController? sceneController;
@@ -85,8 +89,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
   FlareCoachChat? _coach;
-  FlareCoachChat get coach =>
-      _coach ??= widget.coach ?? FlareCoachChat(store: store);
+  FlareCoachChat get coach => _coach ??=
+      widget.coach ??
+      FlareCoachChat(store: store, membership: widget.membership);
+  bool _membershipOpen = false;
   late final _usage = CoachUsageStore.device();
   MuscleGroup? _detail;
   MuscleGroup? _libraryGroup;
@@ -397,8 +403,41 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  /// The SDK chat is its own route; Flare supplies only navigation targets.
+  Future<void> _openMembership() async {
+    final membership = widget.membership;
+    if (membership == null || _membershipOpen || !mounted) return;
+    _membershipOpen = true;
+    try {
+      await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          settings: const RouteSettings(name: '/membership'),
+          builder: (_) => FlareMembershipPage(membership: membership),
+        ),
+      );
+    } finally {
+      _membershipOpen = false;
+    }
+  }
+
+  Future<bool> _requirePremium() async {
+    final membership = widget.membership;
+    if (membership == null || membership.isPremium) return true;
+    await _openMembership();
+    return mounted && membership.isPremium;
+  }
+
+  Future<void> _editRoutine(_RoutineEdit edit) async {
+    if (!await _requirePremium() || !mounted) return;
+    setState(() => _editing = edit);
+  }
+
+  /// The SDK chat is its own route; Flare supplies navigation and access.
   Future<void> _openCoach() async {
+    if (!await _requirePremium() || !mounted) return;
+    if (!coach.configured) {
+      showMembershipMessage(context, context.strings.premiumUnavailable);
+      return;
+    }
     _scene.pause();
     final navigator = Navigator.of(context);
     void leaveChat(VoidCallback change) {
@@ -411,13 +450,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         settings: const RouteSettings(name: '/coach'),
         builder: (_) => FlareCoachChatPage(
           coach: coach,
+          onPremiumRequired: widget.membership == null ? null : _openMembership,
           actions: CoachChatHostActions(
-            onStartTraining: (context, request) => _launchTraining(
-              context,
-              request.plan.plan,
-              onStarting: request.onStarting,
-              holdTransition: request.holdTransition,
-            ),
+            onStartTraining: (context, request) async {
+              if (!await _requirePremium() || !context.mounted) return null;
+              return _launchTraining(
+                context,
+                request.plan.plan,
+                onStarting: request.onStarting,
+                holdTransition: request.holdTransition,
+              );
+            },
             onOpenAction: (context, request) =>
                 FlareShared.openDetail(context, request.actionId),
             onOpenLibrary: (context, request) => Navigator.of(context).push(
@@ -437,13 +480,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _about = false;
               _tab = 2;
             }),
-            onOpenCustomPlan: (_) async => leaveChat(() {
-              _drill = null;
-              _settings = false;
-              _about = false;
-              _tab = 2;
-              _editing = const _RoutineEdit();
-            }),
+            onOpenCustomPlan: (_) async {
+              if (!await _requirePremium() || !mounted) return;
+              leaveChat(() {
+                _drill = null;
+                _settings = false;
+                _about = false;
+                _tab = 2;
+                _editing = const _RoutineEdit();
+              });
+            },
             onOpenSettings: (_) async => leaveChat(() {
               _clearPlan();
               _drill = null;
@@ -479,6 +525,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   Future<void> _addToPlan(Drill drill) async {
     if (_sheetOpen) return;
+    if (!await _requirePremium() || !mounted || _sheetOpen) return;
     _sheetOpen = true;
     final String? choice;
     try {
@@ -492,6 +539,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _sheetOpen = false;
     }
     if (!mounted || choice == null) return;
+    if (!await _requirePremium() || !mounted) return;
     if (choice == 'new') {
       setState(
         () => _editing = _RoutineEdit(seedIds: [drill.id], fromDrill: true),
@@ -517,6 +565,26 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         ),
       );
+  }
+
+  Future<void> _copyRoutine(TrainingRoutine routine) async {
+    if (!await _requirePremium() || !mounted) return;
+    final plan = routine.sdkPlan;
+    final copied = await store.createRoutine(
+      routine.name,
+      routine.drillIds,
+      doses: routine.doses,
+      source: routine.source,
+      sdkPlan: plan?.copyWith(
+        id: '${plan.id}-copy-${DateTime.now().microsecondsSinceEpoch}',
+      ),
+    );
+    if (!mounted) return;
+    if (copied != null) {
+      setState(() => _routine = copied);
+    } else {
+      await _result(Future.value(false));
+    }
   }
 
   void _deleteRoutine(TrainingRoutine routine) {
@@ -604,6 +672,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       }
     } else {
       store.refreshDate();
+      unawaited(widget.membership?.refresh());
       _syncSceneVisibility();
     }
   }
@@ -809,6 +878,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             initialTier: store.settings.tier,
             onBack: _back,
             onSaved: (updated) async {
+              if (!await _requirePremium() || !mounted) return false;
               final saved = await store.updateRoutine(
                 routine.id,
                 name: TrainingRoutine.truncateName(updated.title),
@@ -838,6 +908,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           seedName: edit.seedName,
           seedDrillIds: edit.seedIds,
           onBack: _back,
+          allowSave: _requirePremium,
           onSaved: (saved) {
             setState(() {
               _editing = null;
@@ -886,11 +957,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onDrill: _openDrill,
           sdkPlan: routine.sdkPlan,
           catalog: catalog,
-          onStart: () => routine.sdkPlan != null
-              ? _startPlan(routine.sdkPlan!)
-              : _startDrills(routine.name, drills),
-          onEdit: () =>
-              setState(() => _editing = _RoutineEdit(routineId: routine.id)),
+          onStart: () async {
+            if (routine.sdkPlan case final plan?) {
+              await _startPlan(plan);
+            } else {
+              await _startDrills(routine.name, drills);
+            }
+          },
+          onEdit: () => _editRoutine(_RoutineEdit(routineId: routine.id)),
+          onCopy: widget.membership == null
+              ? null
+              : () => _copyRoutine(routine),
         ),
       );
     }
@@ -909,8 +986,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onBack: _back,
           onDrill: _openDrill,
           onStart: () => _startDrills(title, drills),
-          onSaveAsMine: () => setState(
-            () => _editing = _RoutineEdit(
+          onSaveAsMine: () => _editRoutine(
+            _RoutineEdit(
               seedName: title,
               seedIds: [for (final drill in drills) drill.id],
             ),
@@ -954,8 +1031,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onBack: _back,
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
-          onNewRoutine: () => setState(() => _editing = const _RoutineEdit()),
-          onAiCoach: coach.configured && aiCoachAvailable(context)
+          onNewRoutine: () => _editRoutine(const _RoutineEdit()),
+          onAiCoach:
+              (coach.configured || widget.membership != null) &&
+                  aiCoachAvailable(context)
               ? _openCoach
               : null,
           aiCoachConfigured: coach.configured,
@@ -2107,6 +2186,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   ],
                 ),
                 const SizedBox(height: FlareGeometry.groupGap),
+                if (widget.membership case final membership?)
+                  _membershipSettings(membership),
                 FlareListGroup(
                   children: [
                     FlareListRow(
@@ -2117,7 +2198,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
-                    if (coach.configured && aiCoachAvailable(context))
+                    if (coach.configured &&
+                        aiCoachAvailable(context) &&
+                        (widget.membership?.isPremium ?? true))
                       _aiUsageRow(),
                     FlareListRow(
                       leading: const FlareRowIcon(Icons.info_outline_rounded),
@@ -2134,6 +2217,51 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       ],
     );
   }
+
+  Widget _membershipSettings(FlareMembership membership) => ListenableBuilder(
+    listenable: membership,
+    builder: (context, _) {
+      final s = context.strings;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: FlareGeometry.groupGap),
+        child: FlareListGroup(
+          children: [
+            FlareListRow(
+              key: const ValueKey('settings-membership'),
+              leading: const FlareRowIcon(Icons.workspace_premium_outlined),
+              title: s.premiumStatus,
+              subtitle: membership.isPremium
+                  ? s.premiumActive
+                  : s.premiumInactive,
+              onTap: membership.isPremium ? null : _openMembership,
+            ),
+            FlareListRow(
+              key: const ValueKey('settings-restore-purchases'),
+              leading: const FlareRowIcon(Icons.restore_rounded),
+              title: s.premiumRestore,
+              onTap: membership.busy
+                  ? null
+                  : () async {
+                      final restored = await restoreFlareSubscription(
+                        context,
+                        membership,
+                      );
+                      if (restored && context.mounted) {
+                        showMembershipMessage(context, s.premiumActive);
+                      }
+                    },
+            ),
+            FlareListRow(
+              key: const ValueKey('settings-manage-subscription'),
+              leading: const FlareRowIcon(Icons.receipt_long_outlined),
+              title: s.premiumManage,
+              onTap: () => manageFlareSubscription(context),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 
   /// 设置 → AI 定制用量：本机累计模型调用次数与 token（来自本地 JSONL 记录）。
   Widget _aiUsageRow() => FutureBuilder<void>(

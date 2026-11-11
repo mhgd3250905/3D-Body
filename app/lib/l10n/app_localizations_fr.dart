@@ -9,6 +9,88 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get premiumTitle => 'Débloquez Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Créez un entraînement qui vous ressemble';
+
+  @override
+  String get premiumAiCoach => 'Coach IA à la demande';
+
+  @override
+  String get premiumAiPlans => 'Plans d’entraînement créés par l’IA';
+
+  @override
+  String get premiumCustomWorkouts => 'Entraînements personnalisés illimités';
+
+  @override
+  String get premiumMonthly => 'Mensuel';
+
+  @override
+  String get premiumYearly => 'Annuel';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Environ $price/mois';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Économisez $percent %';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Essai gratuit de $days jours';
+  }
+
+  @override
+  String get premiumSubscribe => 'S’abonner';
+
+  @override
+  String get premiumDisclosure =>
+      'L’abonnement se renouvelle automatiquement. Vous pouvez le résilier à tout moment dans Google Play. Résiliez avant la fin de l’essai pour éviter la facturation.';
+
+  @override
+  String get premiumRestore => 'Restaurer les achats';
+
+  @override
+  String get premiumTerms => 'Conditions d’utilisation';
+
+  @override
+  String get premiumPrivacy => 'Politique de confidentialité';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Abonnement actif';
+
+  @override
+  String get premiumInactive => 'Aucun abonnement actif';
+
+  @override
+  String get premiumManage => 'Gérer l’abonnement';
+
+  @override
+  String get premiumUnavailable => 'La boutique est indisponible. Réessayez.';
+
+  @override
+  String get premiumRestoreEmpty => 'Aucun abonnement actif n’a été trouvé.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Vous avez utilisé les $limit requêtes IA du jour. Revenez demain.';
+  }
+
+  @override
+  String get premiumRateLimit => 'Trop de requêtes. Réessayez dans un instant.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'Les suggestions de l’IA sont données à titre indicatif et ne constituent pas un avis médical.';
+
+  @override
   String get actorBodyLabel => 'Personnage de Thomas';
 
   @override
@@ -918,6 +1000,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Enregistrer comme mon plan';
+
+  @override
+  String get premiumCopyRoutine => 'Copier le plan';
 
   @override
   String get planSaved => 'Enregistré dans Mes plans';
