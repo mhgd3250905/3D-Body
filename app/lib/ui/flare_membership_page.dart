@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +12,15 @@ const _terms =
 const _privacy = 'https://flare-privacy.294851575.workers.dev/';
 const _playSubscriptions =
     'https://play.google.com/store/account/subscriptions?sku=flare_premium&package=dev.mhgd.flare';
+const _appStoreSubscriptions = 'https://apps.apple.com/account/subscriptions';
+const _appleDisclosureZh =
+    '订阅将自动续订，除非在当前周期结束前至少 24 小时取消；可在 App Store 账户设置中管理和取消。';
+const _appleDisclosureEn =
+    'Subscription renews automatically unless canceled at least 24 hours before '
+    'the end of the current period. Manage or cancel in your App Store account settings.';
+
+bool get _usesAppStore =>
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
 Future<void> openMembershipLink(BuildContext context, String url) async {
   try {
@@ -31,7 +41,17 @@ void showMembershipMessage(BuildContext context, String message) =>
       ..showSnackBar(SnackBar(content: Text(message)));
 
 Future<void> manageFlareSubscription(BuildContext context) =>
-    openMembershipLink(context, _playSubscriptions);
+    openMembershipLink(
+      context,
+      _usesAppStore ? _appStoreSubscriptions : _playSubscriptions,
+    );
+
+String _subscriptionDisclosure(BuildContext context) {
+  if (!_usesAppStore) return context.strings.premiumDisclosure;
+  return Localizations.localeOf(context).languageCode == 'zh'
+      ? _appleDisclosureZh
+      : _appleDisclosureEn;
+}
 
 Future<bool> restoreFlareSubscription(
   BuildContext context,
@@ -310,7 +330,7 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            s.premiumDisclosure,
+                            _subscriptionDisclosure(context),
                             style: TextStyle(
                               fontSize: 12,
                               height: 1.4,

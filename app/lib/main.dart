@@ -68,14 +68,20 @@ class FlareBootstrap extends StatefulWidget {
 }
 
 class _FlareBootstrapState extends State<FlareBootstrap> {
-  late final FlareMembership? _membership =
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-      ? FlareMembership(
-          FlareRevenueCat(
-            const String.fromEnvironment('FLARE_REVENUECAT_ANDROID_KEY'),
-          ),
-        )
-      : null;
+  late final FlareMembership? _membership = switch ((
+    kIsWeb,
+    defaultTargetPlatform,
+  )) {
+    (false, TargetPlatform.android) => FlareMembership(
+      FlareRevenueCat(
+        const String.fromEnvironment('FLARE_REVENUECAT_ANDROID_KEY'),
+      ),
+    ),
+    (false, TargetPlatform.iOS) => FlareMembership(
+      FlareRevenueCat(const String.fromEnvironment('FLARE_REVENUECAT_IOS_KEY')),
+    ),
+    _ => null,
+  };
   late Future<(Catalog, LearningStore)> _loading;
   LearningStore? _store;
   String _themeMode = 'system';

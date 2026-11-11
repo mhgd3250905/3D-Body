@@ -7,10 +7,12 @@
 #   bash app/tools/ios/build.sh ipa          # 需签名；EXPORT_OPTIONS_PLIST 指向本机导出配置
 # 可用 FLUTTER_BIN 指定独立 SDK，不改变系统默认 Flutter。
 # COACH_CONFIG_FILE 指向本机私有 JSON；ipa 默认要求 AI，专用无 AI 包须显式 IOS_REQUIRE_AI=0。
+# FLARE_REVENUECAT_IOS_CONFIG_FILE 指向含 FLARE_REVENUECAT_IOS_KEY 的本机 JSON。
 set -euo pipefail
 cd "$(dirname "$0")/../.."   # -> app/
 flutter_bin="${FLUTTER_BIN:-flutter}"
 coach_config="${COACH_CONFIG_FILE:-}"
+revenuecat_config="${FLARE_REVENUECAT_IOS_CONFIG_FILE:-}"
 default_require_ai=0
 [[ "${1:-}" != ipa ]] || default_require_ai=1
 require_ai="${IOS_REQUIRE_AI:-$default_require_ai}"
@@ -39,12 +41,32 @@ elif [[ "$require_ai" == 1 ]]; then
   exit 1
 fi
 
+if [[ -n "$revenuecat_config" ]]; then
+  python3 - "$revenuecat_config" <<'RC_CONFIG'
+import json
+import re
+import sys
+
+try:
+    with open(sys.argv[1], encoding='utf-8') as source:
+        config = json.load(source)
+    key = config.get('FLARE_REVENUECAT_IOS_KEY') if isinstance(config, dict) else None
+    valid = isinstance(key, str) and re.fullmatch(r'appl_[A-Za-z0-9]+', key)
+except (OSError, ValueError):
+    valid = False
+if not valid:
+    sys.exit('RevenueCat iOS 配置必须包含有效的 FLARE_REVENUECAT_IOS_KEY。')
+RC_CONFIG
+fi
+
 build_flutter() {
   if [[ -n "$coach_config" ]]; then
-    "$flutter_bin" "$@" "--dart-define-from-file=$coach_config"
-  else
-    "$flutter_bin" "$@"
+    set -- "$@" "--dart-define-from-file=$coach_config"
   fi
+  if [[ -n "$revenuecat_config" ]]; then
+    set -- "$@" "--dart-define-from-file=$revenuecat_config"
+  fi
+  "$flutter_bin" "$@"
 }
 case "${1:-}" in
   check)

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' as rc;
 
@@ -46,19 +47,28 @@ class FlareRevenueCat implements MembershipStore {
     final offering = (await rc.Purchases.getOfferings()).current;
     _packages.clear();
     if (offering?.identifier != 'default') return const [];
-    final result = <MembershipOffer>[];
-    for (final (term, package, expectedTrial) in [
+    final plans = [
       (MembershipTerm.monthly, offering?.monthly, 3),
       (MembershipTerm.annual, offering?.annual, 7),
-    ]) {
+    ];
+    final usesAppStore = defaultTargetPlatform == TargetPlatform.iOS;
+    final eligible = usesAppStore
+        ? await _eligibleIosTrials([
+            for (final (_, package, days) in plans)
+              if (package != null && _isIosTrial(package.storeProduct, days))
+                package.storeProduct.identifier,
+          ])
+        : const <String>{};
+    final result = <MembershipOffer>[];
+    for (final (term, package, expectedTrial) in plans) {
       if (package == null) continue;
       final product = package.storeProduct;
       final phase = product.defaultOption?.freePhase;
       final period = phase?.billingPeriod?.iso8601;
-      final hasTrial =
-          phase?.price.amountMicros == 0 &&
-          (period == 'P${expectedTrial}D' ||
-              (expectedTrial == 7 && period == 'P1W'));
+      final hasTrial = usesAppStore
+          ? eligible.contains(product.identifier)
+          : phase?.price.amountMicros == 0 &&
+                _matchesTrialPeriod(period, expectedTrial);
       _packages[term] = package;
       result.add(
         MembershipOffer(
@@ -72,6 +82,33 @@ class FlareRevenueCat implements MembershipStore {
       );
     }
     return result;
+  }
+
+  bool _isIosTrial(rc.StoreProduct product, int days) {
+    final intro = product.introductoryPrice;
+    return intro != null &&
+        intro.price == 0 &&
+        intro.cycles == 1 &&
+        _matchesTrialPeriod(intro.period, days);
+  }
+
+  bool _matchesTrialPeriod(String? period, int days) =>
+      period == 'P${days}D' || (days == 7 && period == 'P1W');
+
+  Future<Set<String>> _eligibleIosTrials(List<String> ids) async {
+    if (ids.isEmpty) return const {};
+    try {
+      final eligibility =
+          await rc.Purchases.checkTrialOrIntroductoryPriceEligibility(ids);
+      return {
+        for (final entry in eligibility.entries)
+          if (entry.value.status ==
+              rc.IntroEligibilityStatus.introEligibilityStatusEligible)
+            entry.key,
+      };
+    } on Exception {
+      return const {};
+    }
   }
 
   @override
