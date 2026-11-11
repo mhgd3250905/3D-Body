@@ -17,7 +17,7 @@ const dirty = 'include: package:flutter_lints/flutter.yaml\n# Local, uncommitted
 function run(command, args, env = {}) {
   return spawnSync(command, args, {
     cwd: fixture, encoding: 'utf8',
-    env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, FLUTTER_BIN: join(bin, 'project-flutter'), IOS_TOOL_CALLS: calls, ...env },
+    env: { ...process.env, COACH_CONFIG_FILE: '', IOS_REQUIRE_AI: '', PATH: `${bin}:${process.env.PATH}`, FLUTTER_BIN: join(bin, 'project-flutter'), IOS_TOOL_CALLS: calls, ...env },
   });
 }
 function executable(name, body) {
@@ -41,7 +41,7 @@ try {
   writeFileSync(join(app, 'analysis_options.yaml'), dirty);
   writeFileSync(calls, '');
   executable('project-flutter', `printf '%s\\n' "$*" >> "$IOS_TOOL_CALLS"
-if [[ "$1" == "--version" ]]; then echo 'Flutter 3.47.6 • channel stable'; fi
+if [[ "$1" == "--version" ]]; then echo 'Flutter 3.44.7 • channel stable'; fi
 if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi`);
   executable('uname', "echo Darwin");
   executable('sw_vers', "echo 26.6");
@@ -71,8 +71,47 @@ if [[ "$1 $2" == "pub get" && "\${IOS_TOOL_FAIL:-0}" == "1" ]]; then exit 75; fi
   assert.equal(run('bash', ['app/tools/ios/build.sh', 'sim']).status, 0);
   assert.match(readFileSync(calls, 'utf8'), /build ios --simulator --debug --target=lib\/main\.dart/);
   assert.notEqual(run('bash', ['app/tools/ios/build.sh', 'ipa']).status, 0);
+  const exportOptions = join(app, 'fixture-export.plist');
+  writeFileSync(exportOptions, '<plist><dict/></plist>');
+  const beforeIpa = readFileSync(calls, 'utf8');
+  assert.equal(run('bash', ['app/tools/ios/build.sh', 'ipa'], {
+    EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '8', IOS_REQUIRE_AI: '0',
+  }).status, 1);
+  assert.equal(readFileSync(calls, 'utf8'), beforeIpa);
+  mkdirSync(join(app, 'build/ios/ipa'), { recursive: true });
+  assert.equal(run('bash', ['app/tools/ios/build.sh', 'ipa'], {
+    EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '11', IOS_REQUIRE_AI: '0',
+  }).status, 0);
+  assert.match(readFileSync(calls, 'utf8'), /build ipa --release --target=lib\/main\.dart --build-number=11/);
   preserved();
-  console.log('PASS: configuration changes survive success, dependency failure, and invalid usage; explicit SDK and device selection work; placeholder signing is refused.');
+
+  // A release build must not silently hide AI after a missed private config.
+  const beforeAi = readFileSync(calls, 'utf8');
+  const missingAi = run('bash', ['app/tools/ios/build.sh', 'ipa'], {
+    EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '11',
+  });
+  assert.equal(missingAi.status, 1);
+  assert.match(missingAi.stdout, /COACH_CONFIG_FILE/);
+  assert.equal(readFileSync(calls, 'utf8'), beforeAi);
+  const privateConfig = join(app, 'fixture coach.local.json');
+  for (const contents of ['not json', '[]', '{}', '{"UGK_COACH_API_KEY":"  "}', '{"UGK_COACH_API_KEY":true}']) {
+    writeFileSync(privateConfig, contents, { mode: 0o600 });
+    assert.equal(run('bash', ['app/tools/ios/build.sh', 'sim'], { COACH_CONFIG_FILE: privateConfig }).status, 1);
+    assert.equal(readFileSync(calls, 'utf8'), beforeAi);
+  }
+  writeFileSync(privateConfig, '{"UGK_COACH_API_KEY":"fixture-only-not-a-credential"}', { mode: 0o600 });
+  for (const args of [['sim'], ['smoke', 'fixture-device'], ['device', 'fixture-device'], ['ipa']]) {
+    const result = run('bash', ['app/tools/ios/build.sh', ...args], {
+      COACH_CONFIG_FILE: privateConfig, IOS_REQUIRE_AI: '1',
+      EXPORT_OPTIONS_PLIST: exportOptions, IOS_BUILD_NUMBER: '11',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.doesNotMatch(result.stdout + result.stderr, /fixture-only-not-a-credential/);
+  }
+  assert.equal(readFileSync(calls, 'utf8').split(`--dart-define-from-file=${privateConfig}`).length - 1, 4);
+  assert.doesNotMatch(readFileSync(calls, 'utf8'), /fixture-only-not-a-credential/);
+  preserved();
+  console.log('PASS: existing iOS build checks; AI release config required, validated and forwarded without printing values; explicit no-AI builds remain available.');
 } finally {
   rmSync(fixture, { recursive: true, force: true });
 }
