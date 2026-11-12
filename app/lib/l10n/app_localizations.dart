@@ -1192,8 +1192,86 @@ abstract class AppLocalizations {
   /// No description provided for @privacyBody.
   ///
   /// In zh, this message translates to:
-  /// **'设置、我的计划、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。'**
+  /// **'设置、我的计划、自评与训练记录只保存在当前设备。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。'**
   String get privacyBody;
+
+  /// No description provided for @aiConsentTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用 AI 前请确认'**
+  String get aiConsentTitle;
+
+  /// No description provided for @aiConsentIntroduction.
+  ///
+  /// In zh, this message translates to:
+  /// **'为了生成回答，Flare 会把以下内容发送给第三方大语言模型服务商（当前使用 DeepSeek 模型）处理：'**
+  String get aiConsentIntroduction;
+
+  /// No description provided for @aiConsentConversation.
+  ///
+  /// In zh, this message translates to:
+  /// **'你输入的文字和本次对话内容'**
+  String get aiConsentConversation;
+
+  /// No description provided for @aiConsentTrainingContext.
+  ///
+  /// In zh, this message translates to:
+  /// **'你提到的练习目标、器材、身体限制或不适'**
+  String get aiConsentTrainingContext;
+
+  /// No description provided for @aiConsentLocalData.
+  ///
+  /// In zh, this message translates to:
+  /// **'不会发送：本机训练记录、自测结果。'**
+  String get aiConsentLocalData;
+
+  /// No description provided for @aiConsentPrivacyLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看隐私政策'**
+  String get aiConsentPrivacyLink;
+
+  /// No description provided for @aiConsentAgree.
+  ///
+  /// In zh, this message translates to:
+  /// **'同意并继续'**
+  String get aiConsentAgree;
+
+  /// No description provided for @aiConsentDecline.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂不使用'**
+  String get aiConsentDecline;
+
+  /// No description provided for @aiConsentPrivacyTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 定制与设备标识'**
+  String get aiConsentPrivacyTitle;
+
+  /// No description provided for @aiConsentPrivacyGateway.
+  ///
+  /// In zh, this message translates to:
+  /// **'Cloudflare 网关使用 RevenueCat 匿名应用用户 ID 校验会员资格，并记录请求次数以执行额度和防滥用限制。网关不会向模型服务商转发该标识。'**
+  String get aiConsentPrivacyGateway;
+
+  /// No description provided for @aiConsentWithdraw.
+  ///
+  /// In zh, this message translates to:
+  /// **'撤回 AI 数据共享同意'**
+  String get aiConsentWithdraw;
+
+  /// No description provided for @aiConsentWithdrawn.
+  ///
+  /// In zh, this message translates to:
+  /// **'已撤回，下次使用 AI 时会再次询问'**
+  String get aiConsentWithdrawn;
+
+  /// No description provided for @aiConsentSaveFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法保存你的 AI 数据共享选择，请重试。'**
+  String get aiConsentSaveFailed;
 
   /// No description provided for @creditsTitle.
   ///

@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_coach_chat/ugk_coach_chat.dart';
 import 'package:ugk_trainer_runtime/engine.dart'
     show SessionBuilderPlanExecutionTiming;
 
+import '../control/flare_ai_consent.dart';
 import '../control/learning_store.dart';
 import '../control/flare_membership.dart';
 import '../data/flare_action_scope.dart';
@@ -35,6 +37,7 @@ class FlareCoachChat {
                : const CoachConfig());
 
   final LearningStore store;
+  final aiConsent = FlareAiConsent();
   final CoachConfig config;
   final FlareMembership? membership;
   final CoachGatewayBinding? gateway;
@@ -67,22 +70,27 @@ class FlareCoachChat {
   CoachChatController get controller =>
       _controller ?? (throw StateError('Open the coach first'));
 
-  static uc.OpenAiCompatibleClient createClient(CoachConfig c) =>
-      uc.OpenAiCompatibleClient(
-        config: uc.LlmConfig.deepSeekOpenCsg.copyWith(
-          baseUrl: c.baseUrl,
-          model: c.model,
-          jsonMode: false,
-          maxRetries: 0,
-        ),
-        auth: c.usesRelay
-            ? uc.RelayAuth(appToken: () async => c.relayToken)
-            : uc.ApiKeyAuth(c.apiKey),
-      );
+  static uc.OpenAiCompatibleClient createClient(
+    CoachConfig c, {
+    http.Client? httpClient,
+  }) => uc.OpenAiCompatibleClient(
+    config: uc.LlmConfig.deepSeekOpenCsg.copyWith(
+      baseUrl: c.baseUrl,
+      model: c.model,
+      jsonMode: false,
+      maxRetries: 0,
+    ),
+    httpClient: httpClient,
+    auth: c.usesRelay
+        ? uc.RelayAuth(appToken: () async => c.relayToken)
+        : uc.ApiKeyAuth(c.apiKey),
+  );
 
   uc.OpenAiCompatibleClient _createRuntimeClient() {
     final member = membership;
-    if (member == null) return createClient(config);
+    if (member == null) {
+      return createClient(config, httpClient: _ConsentClient(aiConsent));
+    }
     final baseUrl = MembershipGateway.baseUrl;
     if (baseUrl == null) throw StateError('AI gateway is not configured');
     return uc.OpenAiCompatibleClient(
@@ -94,6 +102,7 @@ class FlareCoachChat {
       ),
       httpClient: MembershipGateway(
         readUserId: () => member.activeAppUserId,
+        readConsent: aiConsent.read,
         onNotice: _notifyGateway,
       ),
     );
@@ -179,8 +188,31 @@ class FlareCoachChat {
 
   Future<void> close() async {
     _closed = true;
+    aiConsent.dispose();
     await _controller?.close();
     await _preferences?.dispose();
     gatewayNotice.dispose();
+  }
+}
+
+/// The optional local/development transport is subject to the same consent.
+class _ConsentClient extends http.BaseClient {
+  _ConsentClient(this.consent);
+
+  final FlareAiConsent consent;
+  final http.Client _client = http.Client();
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    if (!await consent.read()) {
+      throw http.ClientException('AI data sharing consent is required.');
+    }
+    return _client.send(request);
+  }
+
+  @override
+  void close() {
+    _client.close();
+    super.close();
   }
 }

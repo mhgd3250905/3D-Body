@@ -30,6 +30,7 @@ import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
 import 'drill_media.dart';
+import 'flare_ai_consent_sheet.dart';
 import 'flare_coach_chat_page.dart';
 import 'flare_membership_page.dart';
 import '../coach/flare_coach_chat.dart';
@@ -93,6 +94,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       widget.coach ??
       FlareCoachChat(store: store, membership: widget.membership);
   bool _membershipOpen = false;
+  bool _openingCoach = false;
   late final _usage = CoachUsageStore.device();
   MuscleGroup? _detail;
   MuscleGroup? _libraryGroup;
@@ -444,11 +446,32 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   /// The SDK chat is its own route; Flare supplies navigation and access.
   Future<void> _openCoach() async {
-    if (!await _requirePremium() || !mounted) return;
-    if (!coach.configured) {
-      showMembershipMessage(context, context.strings.premiumUnavailable);
-      return;
+    if (_openingCoach) return;
+    _openingCoach = true;
+    try {
+      if (!await _requirePremium() || !mounted) return;
+      if (!coach.configured) {
+        showMembershipMessage(context, context.strings.premiumUnavailable);
+        return;
+      }
+      final consent = coach.aiConsent;
+      if (!await consent.read()) {
+        if (!mounted) return;
+        final agreed = await showFlareAiConsentSheet(
+          context,
+          onAgree: consent.grant,
+          onOpenPrivacy: () => unawaited(_openAiPrivacy()),
+        );
+        if (!agreed || !consent.granted) return;
+      }
+      if (!mounted) return;
+      await _openCoachRoute();
+    } finally {
+      _openingCoach = false;
     }
+  }
+
+  Future<void> _openCoachRoute() async {
     _scene.pause();
     final navigator = Navigator.of(context);
     void leaveChat(VoidCallback change) {
@@ -2336,6 +2359,51 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _openAiPrivacy() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      settings: const RouteSettings(name: '/privacy'),
+      builder: (context) {
+        final s = context.strings;
+        return Scaffold(
+          backgroundColor: FlareColors.background,
+          body: SafeArea(
+            child: Column(
+              children: [
+                FlareNavBar(
+                  title: s.privacyTitle,
+                  onBack: () => Navigator.of(context).pop(),
+                ),
+                Expanded(
+                  child: ScrollEdge(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      children: [
+                        BodyText(s.privacyBody, color: FlareColors.secondary),
+                        _aiPrivacySection(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
+
+  Widget _aiPrivacySection() {
+    final consent = coach.aiConsent;
+    unawaited(consent.read());
+    return ListenableBuilder(
+      listenable: consent,
+      builder: (context, child) => FlareAiPrivacySection(
+        granted: consent.granted,
+        onWithdraw: consent.withdraw,
+      ),
+    );
+  }
+
   Widget _aboutPage(BuildContext outer) => Builder(
     builder: (context) {
       final s = context.strings;
@@ -2357,6 +2425,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     BodyText(s.contentDraftNote, color: FlareColors.secondary),
                     SectionTitle(s.privacyTitle),
                     BodyText(s.privacyBody, color: FlareColors.secondary),
+                    _aiPrivacySection(),
                     SectionTitle(s.creditsTitle),
                     BodyText(s.creditsBody, color: FlareColors.secondary),
                     const SizedBox(height: 22),

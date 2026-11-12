@@ -209,7 +209,7 @@
   "aboutTitle": "Tentang Flare",
   "aboutBody": "Versi pengembangan lokal 1.0.0. Tonton Thomas flare, pelajari peran otot pada setiap tahap, pilih latihan yang sesuai, dan catat latihan Anda. Gerakan, media, dan catatan latihan dapat digunakan offline.",
   "privacyTitle": "Data lokal dan privasi",
-  "privacyBody": "Pengaturan, rencana Anda, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Model dan media disertakan dalam aplikasi; tidak ada data yang diunggah ke server. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.",
+  "privacyBody": "Pengaturan, rencana Anda, penilaian mandiri, dan catatan latihan hanya disimpan di perangkat ini. Data pratinjau browser tersimpan di browser tersebut. Ekspor cadangan sebelum memindahkan data atau memasang ulang aplikasi.",
   "creditsTitle": "Sumber model dan media",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; pakaian, material, dan animasi telah diubah. Human Base Meshes · Blender Studio dan kontributor komunitas · CC0. Three.js · MIT. Area berwarna pada manekin adalah panel pembelajaran dan bukan pengganti mesh anatomi BodyParts3D yang tidak tersedia. Gambar latihan dan merek diberikan oleh pengguna; lisensinya masih perlu diperiksa sebelum dirilis.",
   "speedLabel": "Kecepatan bawaan",

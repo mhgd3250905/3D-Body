@@ -10,12 +10,14 @@ typedef GatewayNotice = ({GatewayRejection kind, int? limit});
 class MembershipGateway extends http.BaseClient {
   MembershipGateway({
     required this.readUserId,
+    required this.readConsent,
     required this.onNotice,
     http.Client? client,
   }) : _client = client ?? http.Client();
 
   static const configuredUrl = String.fromEnvironment('FLARE_AI_GATEWAY_URL');
   final String? Function() readUserId;
+  final Future<bool> Function() readConsent;
   final void Function(GatewayNotice) onNotice;
   final http.Client _client;
 
@@ -35,6 +37,9 @@ class MembershipGateway extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    if (!await readConsent()) {
+      throw http.ClientException('AI data sharing consent is required.');
+    }
     final appUserId = readUserId();
     if (appUserId == null) {
       onNotice((kind: GatewayRejection.premiumRequired, limit: null));

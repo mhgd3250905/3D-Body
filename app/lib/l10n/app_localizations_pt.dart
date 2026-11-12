@@ -578,7 +578,48 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.';
+      'Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.';
+
+  @override
+  String get aiConsentTitle => '使用 AI 前请确认';
+
+  @override
+  String get aiConsentIntroduction =>
+      '为了生成回答，Flare 会把以下内容发送给第三方大语言模型服务商（当前使用 DeepSeek 模型）处理：';
+
+  @override
+  String get aiConsentConversation => '你输入的文字和本次对话内容';
+
+  @override
+  String get aiConsentTrainingContext => '你提到的练习目标、器材、身体限制或不适';
+
+  @override
+  String get aiConsentLocalData => '不会发送：本机训练记录、自测结果。';
+
+  @override
+  String get aiConsentPrivacyLink => '查看隐私政策';
+
+  @override
+  String get aiConsentAgree => '同意并继续';
+
+  @override
+  String get aiConsentDecline => '暂不使用';
+
+  @override
+  String get aiConsentPrivacyTitle => 'AI 定制与设备标识';
+
+  @override
+  String get aiConsentPrivacyGateway =>
+      'Cloudflare 网关使用 RevenueCat 匿名应用用户 ID 校验会员资格，并记录请求次数以执行额度和防滥用限制。网关不会向模型服务商转发该标识。';
+
+  @override
+  String get aiConsentWithdraw => '撤回 AI 数据共享同意';
+
+  @override
+  String get aiConsentWithdrawn => '已撤回，下次使用 AI 时会再次询问';
+
+  @override
+  String get aiConsentSaveFailed => '无法保存你的 AI 数据共享选择，请重试。';
 
   @override
   String get creditsTitle => 'Fontes de modelos e mídia';

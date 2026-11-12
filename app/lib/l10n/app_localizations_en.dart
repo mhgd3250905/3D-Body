@@ -576,7 +576,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Settings, your plans, self-assessments, and training records are stored only on this device. Models and media come with the app; nothing is uploaded to a server. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
+      'Settings, your plans, self-assessments, and training records are stored only on this device. Browser preview data belongs to that browser. Export a backup before moving or reinstalling.';
+
+  @override
+  String get aiConsentTitle => 'Before using AI';
+
+  @override
+  String get aiConsentIntroduction =>
+      'To generate answers, Flare sends the following to a third-party large language model provider (currently using a DeepSeek model):';
+
+  @override
+  String get aiConsentConversation =>
+      'The text you enter and this conversation';
+
+  @override
+  String get aiConsentTrainingContext =>
+      'Goals, equipment, physical limitations or discomfort you mention';
+
+  @override
+  String get aiConsentLocalData =>
+      'Not sent: your on-device training records or self-check results.';
+
+  @override
+  String get aiConsentPrivacyLink => 'View Privacy Policy';
+
+  @override
+  String get aiConsentAgree => 'Agree and continue';
+
+  @override
+  String get aiConsentDecline => 'Not now';
+
+  @override
+  String get aiConsentPrivacyTitle =>
+      'AI personalization and device identifiers';
+
+  @override
+  String get aiConsentPrivacyGateway =>
+      'The Cloudflare gateway uses a RevenueCat anonymous app user ID to verify membership and counts requests to enforce quotas and prevent abuse. The gateway does not forward this ID to the model provider.';
+
+  @override
+  String get aiConsentWithdraw => 'Withdraw AI data sharing consent';
+
+  @override
+  String get aiConsentWithdrawn =>
+      'Consent withdrawn. Flare will ask again the next time you use AI.';
+
+  @override
+  String get aiConsentSaveFailed =>
+      'Could not update your AI data sharing choice. Try again.';
 
   @override
   String get creditsTitle => 'Model and media sources';

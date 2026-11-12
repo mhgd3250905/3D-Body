@@ -561,7 +561,48 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      '设置、我的计划、自评与训练记录只保存在当前设备。模型与素材来自 App 安装包；不向服务器上传。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。';
+      '设置、我的计划、自评与训练记录只保存在当前设备。浏览器预览的数据属于当前浏览器，迁移或重装前请导出备份。';
+
+  @override
+  String get aiConsentTitle => '使用 AI 前请确认';
+
+  @override
+  String get aiConsentIntroduction =>
+      '为了生成回答，Flare 会把以下内容发送给第三方大语言模型服务商（当前使用 DeepSeek 模型）处理：';
+
+  @override
+  String get aiConsentConversation => '你输入的文字和本次对话内容';
+
+  @override
+  String get aiConsentTrainingContext => '你提到的练习目标、器材、身体限制或不适';
+
+  @override
+  String get aiConsentLocalData => '不会发送：本机训练记录、自测结果。';
+
+  @override
+  String get aiConsentPrivacyLink => '查看隐私政策';
+
+  @override
+  String get aiConsentAgree => '同意并继续';
+
+  @override
+  String get aiConsentDecline => '暂不使用';
+
+  @override
+  String get aiConsentPrivacyTitle => 'AI 定制与设备标识';
+
+  @override
+  String get aiConsentPrivacyGateway =>
+      'Cloudflare 网关使用 RevenueCat 匿名应用用户 ID 校验会员资格，并记录请求次数以执行额度和防滥用限制。网关不会向模型服务商转发该标识。';
+
+  @override
+  String get aiConsentWithdraw => '撤回 AI 数据共享同意';
+
+  @override
+  String get aiConsentWithdrawn => '已撤回，下次使用 AI 时会再次询问';
+
+  @override
+  String get aiConsentSaveFailed => '无法保存你的 AI 数据共享选择，请重试。';
 
   @override
   String get creditsTitle => '模型与素材来源';
@@ -1730,7 +1771,48 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get privacyBody =>
-      '設置、我的計劃、自評與訓練記錄只保存在當前設備。模型與素材來自 App 安裝包；不向服務器上傳。瀏覽器預覽的數據屬于當前瀏覽器，遷移或重裝前請導出備份。';
+      '設置、我的計劃、自評與訓練記錄只保存在當前設備。瀏覽器預覽的數據屬于當前瀏覽器，遷移或重裝前請導出備份。';
+
+  @override
+  String get aiConsentTitle => '使用 AI 前請確認';
+
+  @override
+  String get aiConsentIntroduction =>
+      '為了產生回答，Flare 會把以下內容傳送給第三方大型語言模型服務商（目前使用 DeepSeek 模型）處理：';
+
+  @override
+  String get aiConsentConversation => '你輸入的文字和這次對話內容';
+
+  @override
+  String get aiConsentTrainingContext => '你提到的練習目標、器材、身體限制或不適';
+
+  @override
+  String get aiConsentLocalData => '不會傳送：裝置上的訓練紀錄、自我評估結果。';
+
+  @override
+  String get aiConsentPrivacyLink => '查看隱私權政策';
+
+  @override
+  String get aiConsentAgree => '同意並繼續';
+
+  @override
+  String get aiConsentDecline => '暫不使用';
+
+  @override
+  String get aiConsentPrivacyTitle => 'AI 自訂與裝置識別碼';
+
+  @override
+  String get aiConsentPrivacyGateway =>
+      'Cloudflare 閘道使用 RevenueCat 匿名應用程式使用者 ID 驗證會員資格，並記錄請求次數以執行用量配額與防濫用限制。閘道不會將該識別碼轉送給模型服務商。';
+
+  @override
+  String get aiConsentWithdraw => '撤回 AI 資料分享同意';
+
+  @override
+  String get aiConsentWithdrawn => '已撤回，下次使用 AI 時會再詢問';
+
+  @override
+  String get aiConsentSaveFailed => '無法儲存你的 AI 資料分享選擇，請重試。';
 
   @override
   String get creditsTitle => '模型與素材來源';

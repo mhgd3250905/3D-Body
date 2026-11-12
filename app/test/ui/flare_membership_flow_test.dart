@@ -96,6 +96,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('plan-ai-coach')));
       await tester.pumpAndSettle();
       expect(find.byType(FlareMembershipPage), findsOneWidget);
+      expect(find.text('使用 AI 前请确认'), findsNothing);
       expect(find.text('免费试用 7 天'), findsOneWidget);
       expect(find.text('最划算 · 省 44%'), findsOneWidget);
       await tester.tap(find.byIcon(Icons.close_rounded));

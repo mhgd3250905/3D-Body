@@ -209,7 +209,7 @@
   "aboutTitle": "Sobre o Flare",
   "aboutBody": "Versão local de desenvolvimento 1.0.0. Assista a um Thomas flare, conheça a função dos músculos em cada fase, escolha exercícios adequados e registre sua prática. Movimento, mídia e registros funcionam offline.",
   "privacyTitle": "Dados locais e privacidade",
-  "privacyBody": "Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Modelos e mídia vêm com o app; nada é enviado a um servidor. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.",
+  "privacyBody": "Configurações, seus planos, autoavaliações e registros ficam somente neste dispositivo. Os dados da prévia no navegador pertencem àquele navegador. Exporte um backup antes de trocar de dispositivo ou reinstalar.",
   "creditsTitle": "Fontes de modelos e mídia",
   "creditsBody": "Snow Rig © Blender Foundation · CC BY 4.0; roupas, materiais e animação modificados. Human Base Meshes · Blender Studio e colaboradores da comunidade · CC0. Three.js · MIT. As áreas coloridas do manequim são painéis didáticos e não substituem malhas anatômicas ausentes do BodyParts3D. As imagens de exercícios e da marca foram fornecidas pelo usuário; as licenças ainda precisam ser verificadas antes da publicação.",
   "speedLabel": "Velocidade padrão",
