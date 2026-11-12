@@ -73,8 +73,16 @@ class _FlareCoachChatPageState extends State<FlareCoachChatPage> {
         final page = CoachChatPage(controller: chat);
         if (widget.onPremiumRequired == null) return page;
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: page),
+            Expanded(
+              // The footer already reserves the system navigation inset.
+              child: MediaQuery.removeViewPadding(
+                context: context,
+                removeBottom: true,
+                child: page,
+              ),
+            ),
             Material(
               color: FlareColors.background,
               child: SafeArea(
