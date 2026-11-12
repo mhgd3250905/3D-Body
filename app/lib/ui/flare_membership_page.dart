@@ -329,21 +329,46 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
   Widget _memberCard(MembershipSnapshot subscription) {
     final s = context.strings;
     final term = switch (subscription.term) {
-      MembershipTerm.annual => s.premiumYearly,
+      MembershipTerm.annual => _copy('年付', 'Annual', fallback: s.premiumYearly),
       MembershipTerm.monthly => s.premiumMonthly,
       null => null,
     };
-    final expiration = subscription.expiresAt?.toLocal();
-    final date = expiration == null
-        ? null
-        : DateFormat('yyyy-MM-dd').format(expiration);
-    final detail = date == null
-        ? null
-        : subscription.isTrial && subscription.willRenew == true
-        ? _copy('$date 起扣费', 'Billing starts $date')
-        : subscription.willRenew == true
-        ? _copy('$date 自动续订', 'Renews $date')
-        : _copy('$date 到期', 'Expires $date');
+    final start = subscription.startsAt?.toLocal();
+    final end = subscription.expiresAt?.toLocal();
+    final validStart = start != null && end != null && !start.isAfter(end)
+        ? start
+        : null;
+    final shortPeriod =
+        validStart != null &&
+        end != null &&
+        end.difference(validStart) < const Duration(hours: 48);
+    final format = DateFormat(shortPeriod ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd');
+    final endLabel = end == null ? null : format.format(end);
+    final dates = switch ((validStart, endLabel)) {
+      (final DateTime first, final String last) => _copy(
+        '${format.format(first)} 至 $last',
+        '${format.format(first)} – $last',
+      ),
+      (_, final String last) => _copy('截至 $last', 'Until $last'),
+      _ => null,
+    };
+    final period = [?term, ?dates].join(' · ');
+    final renewal = switch ((
+      subscription.willRenew,
+      subscription.isTrial,
+      endLabel,
+    )) {
+      (false, _, final String last) => _copy(
+        '已取消续订，到期后失效',
+        'Cancelled, ends on $last',
+      ),
+      (true, true, final String last) => _copy(
+        '免费试用中 · $last 起扣费',
+        'Free trial · billing starts $last',
+      ),
+      (true, false, _) => _copy('到期自动续订', 'Renews automatically'),
+      _ => null,
+    };
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
@@ -416,14 +441,24 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
                             height: 1,
                           ),
                         ),
-                        if (term != null || detail != null) ...[
+                        if (period.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Text(
-                            [?term, ?detail].join(' · '),
+                            period,
                             style: const TextStyle(
                               color: _white82,
                               fontSize: 14,
                               height: 1.15,
+                            ),
+                          ),
+                        ],
+                        if (renewal != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            renewal,
+                            style: const TextStyle(
+                              color: Color(0x99ffffff),
+                              fontSize: 12,
                             ),
                           ),
                         ],

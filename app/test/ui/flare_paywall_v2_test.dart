@@ -58,13 +58,17 @@ FlareMembership _member({
   bool active = false,
   bool trial = false,
   bool renew = true,
+  MembershipTerm term = MembershipTerm.annual,
+  DateTime? start,
+  DateTime? end,
 }) {
   const uid = 'paywall-v2-fixture';
   final snapshot = active
       ? MembershipSnapshot(
           uid,
-          DateTime(2026, 11, 19, 12),
-          term: MembershipTerm.annual,
+          end ?? DateTime(2026, 11, 19, 12),
+          startsAt: start ?? DateTime(2026, 11, 12, 12),
+          term: term,
           isTrial: trial,
           willRenew: renew,
         )
@@ -190,21 +194,92 @@ void main() {
     });
   }
 
-  for (final (label, trial, renew, status, detail) in [
-    ('trial', true, true, '试用中', '起扣费'),
-    ('renewing', false, true, '生效中', '自动续订'),
-    ('canceled', false, false, '生效中', '到期'),
-  ]) {
+  for (final (label, term, trial, renew, short, locale, status, period, detail)
+      in [
+        (
+          'annual',
+          MembershipTerm.annual,
+          false,
+          true,
+          false,
+          'zh',
+          '生效中',
+          '年付 · 2026-11-12 至 2026-11-19',
+          '到期自动续订',
+        ),
+        (
+          'monthly',
+          MembershipTerm.monthly,
+          false,
+          true,
+          false,
+          'zh',
+          '生效中',
+          '月付 · 2026-11-12 至 2026-11-19',
+          '到期自动续订',
+        ),
+        (
+          'trial',
+          MembershipTerm.annual,
+          true,
+          true,
+          false,
+          'zh',
+          '试用中',
+          '年付 · 2026-11-12 至 2026-11-19',
+          '免费试用中 · 2026-11-19 起扣费',
+        ),
+        (
+          'canceled',
+          MembershipTerm.annual,
+          false,
+          false,
+          false,
+          'zh',
+          '生效中',
+          '年付 · 2026-11-12 至 2026-11-19',
+          '已取消续订，到期后失效',
+        ),
+        (
+          'accelerated trial',
+          MembershipTerm.annual,
+          true,
+          true,
+          true,
+          'en',
+          'Trial',
+          'Annual · 2026-11-12 12:00 – 2026-11-13 09:30',
+          'Free trial · billing starts 2026-11-13 09:30',
+        ),
+        (
+          'canceled trial',
+          MembershipTerm.annual,
+          true,
+          false,
+          false,
+          'en',
+          'Trial',
+          'Annual · 2026-11-12 – 2026-11-19',
+          'Cancelled, ends on 2026-11-19',
+        ),
+      ]) {
     testWidgets('$label member fits at 360dp/1.5x and explains billing', (
       tester,
     ) async {
-      final membership = _member(active: true, trial: trial, renew: renew);
+      final membership = _member(
+        active: true,
+        term: term,
+        trial: trial,
+        renew: renew,
+        end: short ? DateTime(2026, 11, 13, 9, 30) : null,
+      );
       try {
-        await _openPaywall(tester, membership);
+        await _openPaywall(tester, membership, locale: Locale(locale));
         expect(find.text(status), findsOneWidget);
-        expect(find.text('年付 · 2026-11-19 $detail'), findsOneWidget);
+        expect(find.text(period), findsOneWidget);
+        expect(find.text(detail), findsOneWidget);
         expect(find.byKey(_manage).hitTestable(), findsOneWidget);
-        _expectAppFont(tester, '管理订阅');
+        _expectAppFont(tester, locale == 'zh' ? '管理订阅' : 'Manage subscription');
         expect(find.byKey(_subscribe), findsNothing);
         expect(tester.takeException(), isNull);
       } finally {

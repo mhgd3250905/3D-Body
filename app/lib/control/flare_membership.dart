@@ -26,6 +26,7 @@ class MembershipSnapshot {
   const MembershipSnapshot(
     this.appUserId,
     this.expiresAt, {
+    this.startsAt,
     this.term,
     this.isTrial = false,
     this.willRenew,
@@ -33,6 +34,7 @@ class MembershipSnapshot {
 
   final String appUserId;
   final DateTime? expiresAt;
+  final DateTime? startsAt;
   final MembershipTerm? term;
   final bool isTrial;
   final bool? willRenew;

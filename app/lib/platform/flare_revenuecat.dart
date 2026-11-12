@@ -27,6 +27,7 @@ class FlareRevenueCat implements MembershipStore {
   Future<MembershipSnapshot> _snapshot(rc.CustomerInfo info) async {
     final uid = await rc.Purchases.appUserID;
     final entitlement = info.entitlements.active['premium'];
+    final latestPurchase = entitlement?.latestPurchaseDate;
     final expiration = entitlement?.expirationDate;
     final term = switch (entitlement?.productPlanIdentifier ??
         entitlement?.productIdentifier) {
@@ -41,6 +42,9 @@ class FlareRevenueCat implements MembershipStore {
     return MembershipSnapshot(
       uid,
       expiration == null ? null : DateTime.tryParse(expiration),
+      startsAt: latestPurchase == null
+          ? null
+          : DateTime.tryParse(latestPurchase),
       term: term,
       isTrial: entitlement?.periodType == rc.PeriodType.trial,
       willRenew: entitlement?.willRenew,
