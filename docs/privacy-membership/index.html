@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flare 托马斯全旋 隐私政策 / Privacy Policy</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; font: 16px/1.75 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; background: #fff; color: #24272c; }
+    main { max-width: 720px; margin: auto; padding: 32px 20px 56px; overflow-wrap: anywhere; }
+    h1, h2, h3 { line-height: 1.35; }
+    h1 { font-size: 1.65rem; }
+    h2 { font-size: 1.35rem; }
+    h3 { font-size: 1.1rem; margin-top: 1.8rem; }
+    a { color: #8d2f18; }
+    nav { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    section { scroll-margin-top: 1rem; }
+    section + section { border-top: 1px solid #cbd0d6; margin-top: 2.5rem; padding-top: 1rem; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #131316; color: #e4e6eb; }
+      a { color: #ffab93; }
+      section + section { border-color: #52545c; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Flare 托马斯全旋 隐私政策</h1>
+  <nav aria-label="政策语言 / Policy language"><a href="#zh-policy">中文</a><a href="#en-policy" lang="en">English</a></nav>
+
+  <section id="zh-policy" aria-labelledby="zh-title">
+    <h2 id="zh-title">中文隐私政策</h2>
+    <p>更新日期为 <time datetime="2026-11-12">2026 年 11 月 12 日</time>。本政策适用于 Bboy Ug1yk 提供的 Flare 托马斯全旋-3D动作分解，Android 和 iOS 的应用标识均为 dev.mhgd.flare。会员与 AI 条款适用于提供相应功能的版本。</p>
+
+    <h3>设备上的训练数据</h3>
+    <p>Flare 无需注册应用账号。训练计划、进度、自测、会话记录和偏好保存在设备的应用存储中，用于练习与查看进度。Flare 不会自动把这些记录上传给开发者、订阅服务或 AI 服务。你主动在 AI 对话中输入的相关信息会按下文处理。</p>
+
+    <h3>会员订阅和恢复购买</h3>
+    <p>Android 的付款与续订由 Google Play 处理，iOS 由 Apple App Store 处理。Flare 不接收支付卡资料。已配置订阅服务的版本会在启动和返回应用时检查会员权益，包括未购买时。RevenueCat SDK 会生成随机的匿名应用用户 ID，用于识别订阅、核验会员权益、恢复购买和统计订阅情况。RevenueCat 随交易凭证处理购买记录，例如订阅商品、购买日期、试用或续订状态和有效期。该标识可关联同一会员记录，无需提供姓名或邮箱。你可在原购买商店管理或取消订阅。</p>
+
+    <h3>AI 教练及你的选择</h3>
+    <p>你使用 AI 教练提问或定制训练时，应用会通过 HTTPS 把你的输入、相关对话及生成回答所需的上下文发送到 Cloudflare Workers 上的 Flare AI 网关。上下文可包括语言、动作候选，以及你主动提供的练习目标、器材、身体限制或不适。如果你在对话中描述疼痛、受伤或恢复情况，这些内容也会随请求发送。基础训练无需使用 AI。请仅提供回答所需的信息，避免输入姓名、联系方式或详细医疗记录。</p>
+    <p>从 Android 1.0.14（构建号 34）起，支持该功能的版本会在首次使用 AI 前询问是否同意数据共享。同意状态和同意时间保存在设备上。你可从「关于 Flare」中的「本地数据与隐私」撤回同意。撤回会阻止新的 AI 请求，再次使用 AI 时会重新询问。</p>
+    <p>网关通过 RevenueCat 的匿名应用用户 ID 核验会员和试用或付费权益，再通过 HTTPS 把回答所需的内容转发给第三方大语言模型服务商。当前使用 DeepSeek 模型。网关转发的字段和请求头不包含应用发送给网关的会员标识或客户端 IP。Flare 网关的应用日志和数据库不保存聊天正文或模型回复。设备可能保存聊天记录，后续提问可能再次发送相关上下文。模型服务商按其适用条款及服务设置处理请求和回复，其中可能包括留存。</p>
+
+    <h3>权益缓存、额度和诊断</h3>
+    <p>网关缓存有效会员权益最多 5 分钟，并且不会超过权益到期时间。网关从会员标识和 IP 通过带密钥的哈希派生计数键，保存最近时间窗口和请求次数，用于每日额度和分钟级防滥用限制。后续时间窗口的请求会覆盖上一窗口的计数，当前实现没有为闲置计数设定固定删除期限。计数及权益缓存不保存原始会员标识或原始 IP。Cloudflare 可能为网络传输、安全和故障诊断处理连接或错误元数据。</p>
+
+    <h3>素材下载</h3>
+    <p>应用可检查公共动作目录更新，按需下载并在本机缓存视频等素材。素材服务器会处理网络交付所需的 IP 地址和请求资源路径。应用也可以通过只在设备内运行的媒体服务加载本地素材。</p>
+
+    <h3>保留、删除和联系</h3>
+    <p>训练、设置和聊天数据保留在应用存储中，直到你删除相应记录或应用数据。你可通过 Android 清除应用存储或卸载应用，也可在 iOS 选择「删除 App」移除本机应用数据。iOS 的「卸载 App」可保留文稿与数据。系统或设备可能按你的设置备份和恢复应用数据，相应备份由系统或备份服务管理。</p>
+    <p>移除应用不会取消商店订阅，也不会自动删除服务器端的购买记录。商店及 RevenueCat 按各自适用条款和留存要求处理购买记录。账单、退款和取消订阅请联系购买所用商店。你可以通过下方邮箱查询隐私事项或请求删除由 Flare 管理的服务端数据。主动来信的内容由邮件服务及接收方处理。数据处理方式变更时，本页会更新。</p>
+    <p><a href="mailto:mhgd3250905@gmail.com">联系开发者 Bboy Ug1yk</a></p>
+  </section>
+
+  <section id="en-policy" lang="en" aria-labelledby="en-title">
+    <h2 id="en-title">Privacy policy</h2>
+    <p>Updated <time datetime="2026-11-12">November 12, 2026</time>. This policy covers Flare, the 3D Thomas Flare training app from Bboy Ug1yk. Its Android and iOS app identifier is dev.mhgd.flare. The membership and AI sections apply to versions that offer those features.</p>
+
+    <h3>Training data on your device</h3>
+    <p>Flare does not require an app account. Training plans, progress, self-checks, session records and preferences stay in app storage on your device. They support practice and progress tracking. Flare does not automatically upload these records to the developer, subscription services or AI services. If you enter related information in an AI conversation, the service processes it as described below.</p>
+
+    <h3>Membership and restoring purchases</h3>
+    <p>Google Play handles Android payments and renewals. Apple’s App Store handles them on iOS. Flare does not receive payment card details. Versions configured for subscriptions check membership when you launch or return to the app, including before you buy anything. The RevenueCat SDK generates a random anonymous app user ID to identify subscriptions, verify membership, restore purchases and measure subscription activity. RevenueCat processes purchase information with the store receipt, such as the subscription product, purchase date, trial or renewal status and expiry. This ID can link records for the same membership without your name or email. Manage or cancel the subscription in the store where you bought it.</p>
+
+    <h3>AI Coach and your choices</h3>
+    <p>When you ask the AI Coach a question or request a personalized routine, the app sends your input, the relevant conversation and context needed to answer over HTTPS to the Flare AI gateway on Cloudflare Workers. Context can include language, exercise candidates and any goals, equipment, physical limitations or discomfort you mention. If you describe pain, an injury or recovery in the conversation, that information goes with the request. Basic training works without AI. Provide only the details needed to answer and avoid including names, contact information or detailed medical records.</p>
+    <p>Starting with Android 1.0.14 (build 34), versions with this feature ask whether you agree to share data before you first use AI. The app stores your consent status and consent time on your device. You can withdraw consent in the Local Data and Privacy section of About Flare. Withdrawal blocks new AI requests. The app asks again the next time you use AI.</p>
+    <p>The gateway uses the anonymous RevenueCat app user ID to verify membership and trial or paid access. It forwards the information needed to answer over HTTPS to a third-party large language model provider. The service currently uses a DeepSeek model. The forwarded fields and headers omit the membership identifier and client IP received by the gateway. The gateway does not store chat text or model replies in its own application logs or database. The app can keep chat history on your device and send relevant context again when you ask a follow-up question. The model provider handles requests and replies under its terms and service settings, which may include retention.</p>
+
+    <h3>Membership cache, quotas and diagnostics</h3>
+    <p>The gateway caches active membership for up to five minutes and never past the entitlement’s expiry. It uses a keyed hash of the membership identifier and IP address to derive counter keys. It stores the latest time window and request count for daily quotas and per-minute abuse prevention. A request in a later window replaces the previous window’s count. Inactive counters currently have no fixed deletion deadline. The counters and membership cache do not store raw membership identifiers or IP addresses. Cloudflare may process connection or error metadata for delivery, security and troubleshooting.</p>
+
+    <h3>Media downloads</h3>
+    <p>The app can check for public exercise catalog updates and download and cache videos and other assets as needed. The media host processes the IP address and requested resource path needed for delivery. The app can also use an on-device media service to load local assets.</p>
+
+    <h3>Retention, deletion and contact</h3>
+    <p>Training data, settings and chat history remain in app storage until you remove the relevant records or app data. On Android, you can clear app storage or uninstall. On iOS, you can choose Delete App to remove local app data. Offload App may keep documents and data. Your system or device may back up and restore app data according to your settings. The system or backup provider manages those backups.</p>
+    <p>Removing the app does not cancel your subscription or automatically delete purchase records held by a service. The store and RevenueCat handle purchase records according to their applicable terms and retention requirements. For billing, refunds and cancellations, contact the store where you bought the subscription. For privacy inquiries or requests to delete data that Flare manages on its servers, use the email below. The mail service and recipient handle anything you choose to include. We update this page when our data practices change.</p>
+    <p><a href="mailto:mhgd3250905@gmail.com">Email the developer, Bboy Ug1yk</a></p>
+  </section>
+</main>
+</body>
+</html>
