@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flare/coach/flare_coach_profile.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/flare_action_scope.dart';
+import 'package:flare/data/flare_public_catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
 import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/data/posehub_catalog_updates.dart';
@@ -11,6 +13,7 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/drill_media.dart';
 import 'package:flare/ui/public_library_filter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
@@ -152,17 +155,27 @@ void main() {
   Future<void> mountLibrary(
     WidgetTester tester, {
     String? initialMuscle,
+    Locale? locale,
   }) async {
     await phoneSize(tester);
+    final page = Scaffold(
+      body: FlareSharedLibraryPage(
+        initialMuscle: initialMuscle,
+        // Used only for translated presentation labels, never actions.
+        presentationCatalog: loadCatalogFixture(),
+      ),
+    );
     await tester.pumpWidget(
       testApp(
-        Scaffold(
-          body: FlareSharedLibraryPage(
-            initialMuscle: initialMuscle,
-            // Used only for translated presentation labels, never actions.
-            presentationCatalog: loadCatalogFixture(),
-          ),
-        ),
+        locale == null
+            ? page
+            : Builder(
+                builder: (context) => Localizations.override(
+                  context: context,
+                  locale: locale,
+                  child: page,
+                ),
+              ),
       ),
     );
     await _settleLocalAssets(tester);
@@ -205,8 +218,9 @@ void main() {
     return scene;
   }
 
-  test('bundled 249 actions, library and AI scope contain the same IDs', () {
+  test('the intact r2-v11 pack exposes 248 actions to library and AI', () {
     final packIds = shared.pack.toAiCatalog().drills.map((d) => d.id).toSet();
+    final scopedIds = {...packIds}..remove('n-thomas-test');
     final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
     final libraryIds = shared.library
         .actions(policy.catalog)
@@ -217,53 +231,74 @@ void main() {
       executionTiming: shared.sessionBuilder().executionTiming,
     );
     expect(packIds, hasLength(249));
+    expect(packIds, contains('n-thomas-test'));
+    expect(scopedIds, hasLength(248));
     expect(aiIds, unorderedEquals(packIds));
-    expect(libraryIds, unorderedEquals(packIds));
-    expect(shared.allowedActionIds, unorderedEquals(packIds));
+    expect(libraryIds, unorderedEquals(scopedIds));
+    expect(shared.allowedActionIds, unorderedEquals(scopedIds));
     expect(profile.scopeManifest.allowedActionIds, unorderedEquals(libraryIds));
-    expect(flareAuthorizedActionIds, unorderedEquals(packIds));
+    expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
     expect(_newR2V1Actions, hasLength(40));
     expect(packIds, containsAll(_newR2V1Actions));
     expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
   });
 
   test(
-    'every scoped action has a bundled WebP and repaired covers match source',
-    () {
-      expect(shared.allowedActionIds, hasLength(249));
+    'every scoped action has both verified WebP files in the asset bundle',
+    () async {
+      expect(shared.allowedActionIds, hasLength(248));
       for (final id in shared.allowedActionIds) {
-        final asset = policy.posterAssetFor(id);
-        expect(asset, isNotNull, reason: id);
-        final file = File(asset!);
-        expect(
-          file.existsSync(),
-          isTrue,
-          reason: '$id must browse without a missing-asset fallback',
-        );
-        final bytes = file.readAsBytesSync();
-        expect(bytes.length, greaterThanOrEqualTo(12), reason: id);
-        expect(
-          bytes.sublist(0, 4),
-          orderedEquals([0x52, 0x49, 0x46, 0x46]),
-          reason: '$id RIFF',
-        );
-        expect(
-          bytes.sublist(8, 12),
-          orderedEquals([0x57, 0x45, 0x42, 0x50]),
-          reason: '$id WEBP',
-        );
-        // The original 211 assets are preserved. Only the newly repaired set
-        // must match the current published cover descriptor byte for byte.
-        if (_newR2V1Actions.contains(id)) {
-          final cover = policy.actionFor(id)!.cover;
-          expect(bytes.length, cover.bytes, reason: id);
-          expect(coach.sha256Hex(bytes), cover.sha256, reason: id);
+        final action = policy.actionFor(id)!;
+        final assets = {
+          policy.posterAssetFor(id)!: action.cover,
+          '${FlarePublicMedia.thumbnailRoot}$id.webp': action.thumbnail,
+        };
+        for (final entry in assets.entries) {
+          final data = await rootBundle.load(entry.key);
+          final bytes = data.buffer.asUint8List(
+            data.offsetInBytes,
+            data.lengthInBytes,
+          );
+          expect(bytes.length, entry.value.bytes, reason: entry.key);
+          expect(coach.sha256Hex(bytes), entry.value.sha256, reason: entry.key);
         }
       }
     },
   );
 
-  testWidgets('home menu opens all 249 actions with SDK poster artwork', (
+  test(
+    'an older verified cache cannot shadow the bundled r2-v11 pack',
+    () async {
+      const olderPack = 'r2-v10';
+      final store = sdk.MemoryPoseHubCatalogStore();
+      final olderBytes = utf8.encode(
+        jsonEncode({...shared.pack.raw, 'pack': olderPack}),
+      );
+      final semanticBytes = File(flarePublicSemanticsAsset).readAsBytesSync();
+      await store.writeAtomic('packs/$olderPack/catalog.json', olderBytes);
+      await store.writeAtomic('packs/$olderPack/semantic.json', semanticBytes);
+      await store.writeAtomic(
+        'current.json',
+        utf8.encode(
+          jsonEncode({
+            'pack': olderPack,
+            'catalog_bytes': olderBytes.length,
+            'catalog_sha256': coach.sha256Hex(olderBytes),
+          }),
+        ),
+      );
+      final cached = await sdk.readVerifiedPoseHubCatalog(store);
+      expect(sdk.poseHubPackVersionOf(cached!), olderPack);
+      final pack = await loadFlarePublicCatalog(verifiedCache: store);
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v11');
+      expect(
+        poseHubCatalogRevisionOf(pack),
+        PoseHubCatalogUpdates.bundledCatalogSha256,
+      );
+    },
+  );
+
+  testWidgets('home menu opens all 248 actions with SDK poster artwork', (
     tester,
   ) async {
     final scene = await mountShell(tester);
@@ -273,7 +308,7 @@ void main() {
     await _settleLocalAssets(tester);
     expect(find.byType(FlareSharedLibraryPage), findsOneWidget);
     expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
-    _expectCount(tester, 249);
+    _expectCount(tester, 248);
     final artwork = tester
         .widgetList<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster))
         .toList();
@@ -282,7 +317,7 @@ void main() {
       final id = _posterId(art);
       expect(shared.allowedActionIds, contains(id));
       expect(art.asset, policy.posterAssetFor(id));
-      expect(art.asset, 'assets/public_posters/$id.webp');
+      expect(art.asset, '${FlarePublicMedia.coverRoot}$id.webp');
       final poster = _key('library-poster-$id');
       final context = tester.element(poster);
       expect(
@@ -299,14 +334,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a public action card opens the real SDK detail poster first', (
-    tester,
+  Future<sdk.TrainingLibraryDetail> openLibraryDetail(
+    WidgetTester tester,
+    String id,
   ) async {
-    await mountLibrary(tester);
-    final poster = tester.widget<sdk.TrainerPoster>(
-      find.byType(sdk.TrainerPoster).first,
-    );
-    final id = _posterId(poster);
     final card = _key('public-action-$id');
     await tester.ensureVisible(card);
     await tester.tap(card);
@@ -322,11 +353,23 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     await _settleLocalAssets(tester);
-    final detail = tester.widget<sdk.TrainingLibraryDetail>(
+    return tester.widget<sdk.TrainingLibraryDetail>(
       find.byType(sdk.TrainingLibraryDetail),
     );
+  }
+
+  testWidgets('a public action card opens the real SDK detail poster first', (
+    tester,
+  ) async {
+    await mountLibrary(tester);
+    final poster = tester.widget<sdk.TrainerPoster>(
+      find.byType(sdk.TrainerPoster).first,
+    );
+    final id = _posterId(poster);
+    final detail = await openLibraryDetail(tester, id);
     expect(detail.action.id, id);
     expect(detail.mediaPolicy, same(policy));
+    expect(detail.config.displayText, isNull);
     final detailArt = tester.widget<sdk.TrainingLibraryActionArt>(
       find.descendant(
         of: find.byType(sdk.TrainingLibraryDetail),
@@ -337,6 +380,67 @@ void main() {
     expect(detailArt.playing, isFalse);
     expect(policy.posterAssetFor(detailArt.actionId), poster.asset);
     expect(_key('library-detail-$id'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('English SDK detail copy covers all 248 actions', (tester) async {
+    await mountLibrary(tester, locale: const Locale('en', 'US'));
+    final id = _posterId(
+      tester.widget<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster).first),
+    );
+    final detail = await openLibraryDetail(tester, id);
+    final displayText = detail.config.displayText!;
+    final han = RegExp(r'[\u4e00-\u9fff]');
+    final excluded = RegExp(
+      r'\b(?:rehab|rehabilitation|therapy|treatment|medical)\b',
+      caseSensitive: false,
+    );
+    var names = 0;
+    var cues = 0;
+    var cautions = 0;
+    var hanMatches = 0;
+    var excludedMatches = 0;
+    for (final action in detail.config.actions(policy.catalog)) {
+      final copy = displayText(action.id)!;
+      final sourceCautions = (action.raw['cautionsEn'] as List).cast<String>();
+      final contraindications = action.raw['contraindications'] as List;
+      expect(copy.name, action.raw['nameEn'], reason: action.id);
+      expect(copy.cues, action.raw['cuesEn'], reason: action.id);
+      expect(
+        copy.cautions,
+        hasLength(sourceCautions.length + contraindications.length),
+      );
+      expect(copy.cautions!.take(sourceCautions.length), sourceCautions);
+      names++;
+      cues += copy.cues!.length;
+      cautions += copy.cautions!.length;
+      for (final text in [copy.name!, ...copy.cues!, ...copy.cautions!]) {
+        hanMatches += han.allMatches(text).length;
+        excludedMatches += excluded.allMatches(text).length;
+      }
+    }
+    expect((names, cues, cautions), (248, 811, 594));
+    expect(hanMatches, 0);
+    expect(excludedMatches, 0);
+    final displayed = displayText(id)!;
+    final sheet = find.byType(sdk.TrainingLibraryDetail);
+    for (final text in [
+      displayed.name!,
+      displayed.cues!.join('\n'),
+      [
+        ...displayed.cautions!,
+        detail.config.strings.cautionSuffix.substring(2),
+      ].join('\n'),
+    ]) {
+      expect(
+        find.descendant(of: sheet, matching: find.text(text)),
+        findsOneWidget,
+      );
+    }
+    debugPrint(
+      'English SDK details: $names names, $cues cues, $cautions cautions; '
+      'Chinese characters: $hanMatches; excluded terms: $excludedMatches.',
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -365,7 +469,7 @@ void main() {
       const sdk.TrainingLibraryFilter(muscle: 'deltoids'),
     );
     expect(expected, greaterThan(0));
-    expect(expected, lessThan(249));
+    expect(expected, lessThan(248));
     expect(_filter(tester).filter.muscle, 'deltoids');
     expect(_filter(tester).controller.text, isEmpty);
     _expectCount(tester, expected);
@@ -421,7 +525,7 @@ void main() {
       await tester.binding.handlePopRoute();
       await _settleLocalAssets(tester);
       expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
-      _expectCount(tester, 249);
+      _expectCount(tester, 248);
       await _openFilter(tester);
       await _chooseDraft(tester, 'public-library-body-肩');
       await tester.tap(_key('public-library-filter-apply'));

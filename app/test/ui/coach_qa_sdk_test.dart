@@ -5,6 +5,8 @@ import 'package:flare/coach/flare_coach_chat.dart';
 import 'package:flare/coach/flare_coach_chat_storage.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/flare_shared_library.dart';
+import 'package:flare/l10n/app_localizations.dart';
+import 'package:flare/ui/flare_coach_chat_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,6 +81,14 @@ class _Harness {
   final FlareCoachChat host;
   final CoachChatController controller;
   final LearningStore store;
+  static final actions = CoachChatHostActions(
+    onStartTraining: (_, _) async => null,
+    onOpenAction: (_, _) async {},
+    onOpenLibrary: (_, _) async {},
+    onOpenSavedPlans: (_) async {},
+    onOpenCustomPlan: (_) async {},
+    onOpenSettings: (_) async {},
+  );
 
   static Future<_Harness> open(WidgetTester tester, _Model model) async {
     final sharedBefore = FlareShared.current;
@@ -102,16 +112,7 @@ class _Harness {
         replyDelay: Duration.zero,
       );
       final controller = await host
-          .load(
-            actions: CoachChatHostActions(
-              onStartTraining: (_, _) async => null,
-              onOpenAction: (_, _) async {},
-              onOpenLibrary: (_, _) async {},
-              onOpenSavedPlans: (_) async {},
-              onOpenCustomPlan: (_) async {},
-              onOpenSettings: (_) async {},
-            ),
-          )
+          .load(actions: actions)
           .timeout(
             const Duration(seconds: 15),
             onTimeout: () =>
@@ -219,6 +220,49 @@ String _diagnostics(CoachChatController controller, _Model model) =>
     });
 
 void main() {
+  testWidgets('Flare AI disclaimer paints the full navigation inset', (
+    tester,
+  ) async {
+    final harness = await _Harness.open(
+      tester,
+      _Model((_, _) => throw StateError('No model request expected')),
+    );
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
+    tester.view.padding = const FakeViewPadding(bottom: 24);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPadding);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: flareTheme(),
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: FlareCoachChatPage(
+          coach: harness.host,
+          actions: _Harness.actions,
+          onPremiumRequired: () async {},
+        ),
+      ),
+    );
+    await _pump(tester);
+
+    final disclaimer = find.text('AI 建议仅供参考，非医疗建议。');
+    final footer = find.ancestor(
+      of: disclaimer,
+      matching: find.byWidgetPredicate(
+        (w) => w is Material && w.child is SafeArea,
+      ),
+    );
+    final footerBounds = tester.getRect(footer);
+    expect(footerBounds.left, 0);
+    expect(footerBounds.right, 430);
+    expect(footerBounds.bottom, 900);
+    expect(tester.getRect(disclaimer).bottom, lessThanOrEqualTo(876));
+  });
+
   testWidgets('Flare SDK QA page submits single/multiple choices once', (
     tester,
   ) async {

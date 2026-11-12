@@ -9,6 +9,90 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get premiumTitle => 'Flare Premium freischalten';
+
+  @override
+  String get premiumSubtitle => 'Gestalte dein eigenes Training';
+
+  @override
+  String get premiumAiCoach => 'KI-Coach auf Abruf';
+
+  @override
+  String get premiumAiPlans => 'Trainingspläne von der KI';
+
+  @override
+  String get premiumCustomWorkouts => 'Unbegrenzt eigene Workouts';
+
+  @override
+  String get premiumMonthly => 'Monatlich';
+
+  @override
+  String get premiumYearly => 'Jährlich';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Ca. $price/Monat';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent % sparen';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days Tage kostenlos testen';
+  }
+
+  @override
+  String get premiumSubscribe => 'Abonnieren';
+
+  @override
+  String get premiumDisclosure =>
+      'Das Abo verlängert sich automatisch. Du kannst es jederzeit in Google Play kündigen. Kündigst du vor Ende der Testphase, entstehen keine Kosten.';
+
+  @override
+  String get premiumRestore => 'Käufe wiederherstellen';
+
+  @override
+  String get premiumTerms => 'Nutzungsbedingungen';
+
+  @override
+  String get premiumPrivacy => 'Datenschutzerklärung';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Mitgliedschaft aktiv';
+
+  @override
+  String get premiumInactive => 'Keine aktive Mitgliedschaft';
+
+  @override
+  String get premiumManage => 'Abo verwalten';
+
+  @override
+  String get premiumUnavailable =>
+      'Der Store ist nicht erreichbar. Versuche es erneut.';
+
+  @override
+  String get premiumRestoreEmpty => 'Kein aktives Abo gefunden.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Du hast heute alle $limit KI-Anfragen verbraucht. Versuche es morgen erneut.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Zu viele Anfragen. Versuche es gleich noch einmal.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'KI-Vorschläge dienen nur zur Orientierung und sind kein ärztlicher Rat.';
+
+  @override
   String get actorBodyLabel => 'Thomas-Figur';
 
   @override
@@ -914,6 +998,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Als meinen Plan speichern';
+
+  @override
+  String get premiumCopyRoutine => 'Plan kopieren';
 
   @override
   String get planSaved => 'In Meine Pläne gespeichert';

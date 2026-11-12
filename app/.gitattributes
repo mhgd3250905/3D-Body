@@ -14,4 +14,5 @@ scene/tools/muscle-thumbnails.js -text
 # Keep installed asset bytes intact: authoring metadata uses Windows CRLF,
 # and the generated Three.js bundle retains spaces inside vendor GLSL strings.
 assets/brand/flare-loading.json whitespace=cr-at-eol
+assets/public_media/catalog.json whitespace=cr-at-eol
 assets/scene/assets/*.js whitespace=-blank-at-eol

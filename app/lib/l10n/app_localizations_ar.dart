@@ -9,6 +9,88 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get premiumTitle => 'افتح Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'صمّم تدريبك بطريقتك';
+
+  @override
+  String get premiumAiCoach => 'مدرب ذكاء اصطناعي عند الطلب';
+
+  @override
+  String get premiumAiPlans => 'خطط تدريب يعدّها الذكاء الاصطناعي';
+
+  @override
+  String get premiumCustomWorkouts => 'تمارين مخصصة بلا حدود';
+
+  @override
+  String get premiumMonthly => 'شهري';
+
+  @override
+  String get premiumYearly => 'سنوي';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'حوالي $price شهريًا';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'وفّر $percent٪';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'ابدأ تجربة مجانية لمدة $days أيام';
+  }
+
+  @override
+  String get premiumSubscribe => 'اشترك';
+
+  @override
+  String get premiumDisclosure =>
+      'يتجدد الاشتراك تلقائيًا. يمكنك إلغاؤه في أي وقت عبر Google Play. ألغِ الاشتراك قبل انتهاء التجربة لتجنب أي رسوم.';
+
+  @override
+  String get premiumRestore => 'استعادة المشتريات';
+
+  @override
+  String get premiumTerms => 'شروط الخدمة';
+
+  @override
+  String get premiumPrivacy => 'سياسة الخصوصية';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'العضوية نشطة';
+
+  @override
+  String get premiumInactive => 'لا توجد عضوية نشطة';
+
+  @override
+  String get premiumManage => 'إدارة الاشتراك';
+
+  @override
+  String get premiumUnavailable => 'المتجر غير متاح. حاول مرة أخرى.';
+
+  @override
+  String get premiumRestoreEmpty => 'لم يتم العثور على اشتراك نشط.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'استخدمت جميع طلبات الذكاء الاصطناعي اليوم ($limit). عُد غدًا.';
+  }
+
+  @override
+  String get premiumRateLimit => 'طلبات كثيرة جدًا. حاول بعد قليل.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'اقتراحات الذكاء الاصطناعي للرجوع إليها فقط وليست نصيحة طبية.';
+
+  @override
   String get actorBodyLabel => 'شخصية توماس';
 
   @override
@@ -899,6 +981,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'حفظ كخطتي';
+
+  @override
+  String get premiumCopyRoutine => 'نسخ الخطة';
 
   @override
   String get planSaved => 'حُفظت في خططي';

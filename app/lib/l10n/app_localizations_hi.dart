@@ -9,6 +9,89 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get premiumTitle => 'Flare Premium अनलॉक करें';
+
+  @override
+  String get premiumSubtitle => 'अपनी पसंद की ट्रेनिंग बनाएँ';
+
+  @override
+  String get premiumAiCoach => 'जब चाहें AI कोच से पूछें';
+
+  @override
+  String get premiumAiPlans => 'AI से बने ट्रेनिंग प्लान';
+
+  @override
+  String get premiumCustomWorkouts => 'अनलिमिटेड कस्टम वर्कआउट';
+
+  @override
+  String get premiumMonthly => 'मासिक';
+
+  @override
+  String get premiumYearly => 'वार्षिक';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'लगभग $price/महीना';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent% बचाएँ';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days दिनों की मुफ़्त आज़माइश शुरू करें';
+  }
+
+  @override
+  String get premiumSubscribe => 'सदस्यता लें';
+
+  @override
+  String get premiumDisclosure =>
+      'सदस्यता अपने आप नवीनीकृत होती है। Google Play में कभी भी रद्द करें। आज़माइश खत्म होने से पहले रद्द करने पर कोई शुल्क नहीं लगेगा।';
+
+  @override
+  String get premiumRestore => 'खरीदारी बहाल करें';
+
+  @override
+  String get premiumTerms => 'सेवा की शर्तें';
+
+  @override
+  String get premiumPrivacy => 'निजता नीति';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'सदस्यता सक्रिय है';
+
+  @override
+  String get premiumInactive => 'कोई सक्रिय सदस्यता नहीं';
+
+  @override
+  String get premiumManage => 'सदस्यता प्रबंधित करें';
+
+  @override
+  String get premiumUnavailable => 'स्टोर उपलब्ध नहीं है। फिर कोशिश करें।';
+
+  @override
+  String get premiumRestoreEmpty => 'कोई सक्रिय सदस्यता नहीं मिली।';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'आज के सभी $limit AI अनुरोध इस्तेमाल हो गए हैं। कल फिर आएँ।';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'बहुत ज़्यादा अनुरोध हैं। थोड़ी देर बाद कोशिश करें।';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'AI के सुझाव केवल संदर्भ के लिए हैं, चिकित्सीय सलाह नहीं।';
+
+  @override
   String get actorBodyLabel => 'थॉमस पात्र';
 
   @override
@@ -905,6 +988,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'मेरे प्लान में सहेजें';
+
+  @override
+  String get premiumCopyRoutine => 'प्लान कॉपी करें';
 
   @override
   String get planSaved => 'मेरे प्लान में सहेजा गया';

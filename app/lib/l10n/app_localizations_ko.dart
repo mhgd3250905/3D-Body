@@ -9,6 +9,87 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get premiumTitle => 'Flare Premium 이용하기';
+
+  @override
+  String get premiumSubtitle => '나만의 운동을 만들어 보세요';
+
+  @override
+  String get premiumAiCoach => '언제든 AI 코치에게 질문';
+
+  @override
+  String get premiumAiPlans => 'AI 맞춤 운동 계획';
+
+  @override
+  String get premiumCustomWorkouts => '맞춤 운동 무제한 생성';
+
+  @override
+  String get premiumMonthly => '월간';
+
+  @override
+  String get premiumYearly => '연간';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return '월 약 $price';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent% 절약';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days일 무료 체험 시작';
+  }
+
+  @override
+  String get premiumSubscribe => '구독하기';
+
+  @override
+  String get premiumDisclosure =>
+      '구독은 자동으로 갱신됩니다. Google Play에서 언제든 취소할 수 있습니다. 체험이 끝나기 전에 취소하면 요금이 청구되지 않습니다.';
+
+  @override
+  String get premiumRestore => '구매 복원';
+
+  @override
+  String get premiumTerms => '서비스 약관';
+
+  @override
+  String get premiumPrivacy => '개인정보 처리방침';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => '멤버십 활성화됨';
+
+  @override
+  String get premiumInactive => '활성 멤버십 없음';
+
+  @override
+  String get premiumManage => '구독 관리';
+
+  @override
+  String get premiumUnavailable => '스토어에 연결할 수 없습니다. 다시 시도하세요.';
+
+  @override
+  String get premiumRestoreEmpty => '활성 구독을 찾을 수 없습니다.';
+
+  @override
+  String premiumQuota(int limit) {
+    return '오늘의 AI 요청 $limit회를 모두 사용했습니다. 내일 다시 이용하세요.';
+  }
+
+  @override
+  String get premiumRateLimit => '요청이 너무 많습니다. 잠시 후 다시 시도하세요.';
+
+  @override
+  String get premiumAiDisclaimer => 'AI 제안은 참고용이며 의학적 조언이 아닙니다.';
+
+  @override
   String get actorBodyLabel => '토마스 캐릭터';
 
   @override
@@ -889,6 +970,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get planSaveAsMine => '내 플랜으로 저장';
+
+  @override
+  String get premiumCopyRoutine => '플랜 복사';
 
   @override
   String get planSaved => '내 플랜에 저장했어요';

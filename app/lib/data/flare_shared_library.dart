@@ -26,13 +26,15 @@ class FlareShared {
 
   static trainer.TrainingLibraryConfig _libraryConfig(
     coach.CoachActionScopeManifest scope,
-    String languageTag,
-  ) => trainer.TrainingLibraryConfig(
+    String languageTag, {
+    trainer.TrainingLibraryActionText? Function(String)? displayText,
+  }) => trainer.TrainingLibraryConfig(
     scopeManifest: scope,
     brand: 'Flare',
     // SF-style defaults: strength first; no start button in details.
     categoryOrder: const ['力量', '拉伸放松'],
     strings: trainer.TrainingLibraryStrings.forLanguage(languageTag),
+    displayText: displayText,
   );
 
   /// Set at startup (main.dart); tests may install their own.
@@ -46,9 +48,50 @@ class FlareShared {
   final coach.CoachActionScopeManifest scope;
   final trainer.TrainingLibraryConfig library;
 
-  /// [library] with SDK library strings for the current app locale.
-  trainer.TrainingLibraryConfig libraryFor(BuildContext context) =>
-      _libraryConfig(scope, Localizations.localeOf(context).toLanguageTag());
+  /// SDK library strings and action details for the current app locale.
+  trainer.TrainingLibraryConfig libraryFor(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    return _libraryConfig(
+      scope,
+      locale.toLanguageTag(),
+      displayText: locale.languageCode == 'en' ? _englishActionText : null,
+    );
+  }
+
+  trainer.TrainingLibraryActionText? _englishActionText(String id) {
+    final action = pack.tryGet(id);
+    if (action == null) return null;
+    final raw = action.raw;
+    final name = raw['nameEn'];
+    final contraindications = _textRows(raw['contraindications']) ?? const [];
+    return trainer.TrainingLibraryActionText(
+      name: name is String && name.trim().isNotEmpty ? name : null,
+      cues: _textRows(raw['cuesEn']),
+      cautions: [
+        ...?_textRows(raw['cautionsEn'] ?? raw['cautions']),
+        for (final area in contraindications)
+          if (_englishCautionAreas[area] case final String english)
+            'Avoid this move if you have $english problems.'
+          else
+            area,
+      ],
+    );
+  }
+
+  static List<String>? _textRows(Object? value) =>
+      value is List ? value.whereType<String>().toList() : null;
+
+  // r2-v11 supplies English cues and cautions, but its contraindication tags
+  // are Chinese. Keep the meaning of each tag, including any unknown one.
+  static const _englishCautionAreas = {
+    '肩': 'shoulder',
+    '腰': 'lower back',
+    '手腕': 'wrist',
+    '膝': 'knee',
+    '髋': 'hip',
+    '大腿内侧': 'inner thigh',
+    '颈': 'neck',
+  };
 
   Set<String> get allowedActionIds => scope.allowedActionIds;
 
@@ -109,7 +152,7 @@ class FlareShared {
     );
   }
 
-  /// SDK action details; no App detail page, cache or overlay.
+  /// SDK action details with the host's localized presentation.
   static Future<void> openDetail(BuildContext context, String id) async {
     final shared = current;
     final policy = FlarePublicMedia.current;

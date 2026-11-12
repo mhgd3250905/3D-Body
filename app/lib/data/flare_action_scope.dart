@@ -4,7 +4,7 @@ import 'package:ugk_coach/ugk_coach.dart' as coach;
 /// Coach profile id, scope manifest appId and chat storage namespace.
 const flareAppId = 'flarelab';
 
-/// User-approved r2-v1 baseline: 249 actions shared by library and Coach.
+/// 用户 2026-11-10 批准，r2-v11 基线 248。
 /// Kept explicit so a future hot-update catalogue cannot expand product scope.
 const flareAuthorizedActionIds = <String>{
   'abs-A',
@@ -155,7 +155,6 @@ const flareAuthorizedActionIds = <String>{
   'n-slider-lateral',
   'n-squat-shift',
   'n-straddle-fold',
-  'n-thomas-test',
   'n-wide-fold',
   'n-windshield',
   'o-chair-knee-extension',
@@ -216,7 +215,6 @@ const flareAuthorizedActionIds = <String>{
   'w-fire-hydrant',
   'w-prone-swimmer',
   'w-wall-sit',
-  // User-approved r2-v1 scope expansion, 2026-11-08.
   'h-band-biceps-curl',
   'h-bear-plank',
   'h-biceps-self',

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import 'control/learning_store.dart';
+import 'control/flare_membership.dart';
 import 'data/catalog.dart';
 import 'data/content_translations.dart';
 import 'data/flare_public_catalog.dart';
@@ -14,6 +17,7 @@ import 'data/posehub_catalog_updates.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/languages.dart';
 import 'platform/scene/scene_controller.dart';
+import 'platform/flare_revenuecat.dart';
 import 'ui/app_shell.dart';
 import 'ui/app_glass.dart';
 import 'ui/components.dart';
@@ -64,6 +68,20 @@ class FlareBootstrap extends StatefulWidget {
 }
 
 class _FlareBootstrapState extends State<FlareBootstrap> {
+  late final FlareMembership? _membership = switch ((
+    kIsWeb,
+    defaultTargetPlatform,
+  )) {
+    (false, TargetPlatform.android) => FlareMembership(
+      FlareRevenueCat(
+        const String.fromEnvironment('FLARE_REVENUECAT_ANDROID_KEY'),
+      ),
+    ),
+    (false, TargetPlatform.iOS) => FlareMembership(
+      FlareRevenueCat(const String.fromEnvironment('FLARE_REVENUECAT_IOS_KEY')),
+    ),
+    _ => null,
+  };
   late Future<(Catalog, LearningStore)> _loading;
   LearningStore? _store;
   String _themeMode = 'system';
@@ -136,6 +154,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   @override
   void initState() {
     super.initState();
+    unawaited(_membership?.refresh());
     _scene.addListener(_sceneChanged);
     _loading = _load();
   }
@@ -211,6 +230,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                     : FlareShell(
                         catalog: localized!,
                         store: data.$2,
+                        membership: _membership,
                         sceneController: _scene,
                         sceneRevision: _sceneRevision,
                         startupCovered: !_launchComplete,
@@ -247,6 +267,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
 
   @override
   void dispose() {
+    _membership?.dispose();
     _store?.removeListener(_storeChanged);
     _scene.removeListener(_sceneChanged);
     _scene.dispose();

@@ -1,5 +1,30 @@
 # App 验证记录
 
+## r2-v11 英文详情（1.0.13+28，2026-11-10）
+
+英文 locale 的 SDK 详情使用 Flare 提供的 `displayText`，直接读取目录的 `nameEn`、`cuesEn`、`cautionsEn`。目录没有英文禁忌提示，Flare 在展示层翻译 7 种标签，对应 251 条提示。目录原始字节与 SDK 锁定保持一致。
+
+测试从英文动作卡打开 SDK 详情，并遍历详情配置的 248 项动作。回读 248 个名称、811 条提示、594 条安全事项，`[\u4e00-\u9fff]` 和禁用词均为 0 个匹配。静态分析 0 问题。全量 408 通过、4 项已知失败、1 项原有默认跳过；四项失败名称及溢出量与下文的 +26、+27 记录一致。
+
+APK 与 AAB 从同一提交构建，Android 版本均为 1.0.13 / versionCode 2028。AAB 使用商店上传证书，arm64 APK 使用 +26 内测证书。更新说明见 [Flare 1.0.13 更新说明](release-notes-1.0.13.md)。
+
+## r2-v11 出厂目录候选（1.0.13+27，2026-11-10）
+
+Flare 随包交付 [Pose-Hub r2-v11 原始目录](https://media.uuugk.win/pack/r2-v11/catalog.json)，SHA-256 为 `6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0`。目录保留全部 249 条，动作库和 AI 的授权范围排除自测演示 `n-thomas-test`，共 248 项。每项的 WebP 封面和缩略图均按目录校验字节数和 SHA-256 后随包交付，视频由 SDK 按需下载。四个 SDK 包仍固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`，目录更新使用 stable。
+
+播放器集成测试采用 r2-v11 的 `chest-A` 左右一对 8 秒、默认 6 对加 1 秒引导共 49 秒，以及新目录的随包封面路径。
+
+`flutter analyze --no-pub` 无问题。全量 `flutter test --no-pub --reporter json` 为 407 通过、4 项已知失败、1 项原有 live 测试默认跳过。随包资源测试已逐一回读 496 张 WebP，覆盖动作库和 AI 共用的 248 项授权范围。手机断网冷启动、联网视频下载与播放、覆盖 +26 后的数据和 AI 会话保留分别由真机验收。
+
+以下四项测试仍实际执行。对照 +26 运行源 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564` 的 `output/ui-sdk080-restore-20261108/tests-summary.json` 和 `full-tests-final.jsonl`，两次结果的测试名与溢出量相同。+26 的总结果为 406 通过、4 失败、1 项默认跳过，见 [整合验证记录](hiplab-sdk080-restoration-2026-11-08.md)。
+
+| 已知失败的测试全名 | +26 与 +27 观察 |
+| --- | --- |
+| `SDK player ar light at 1.5x has no layout errors` | 底部 RenderFlex 溢出 0.963 px |
+| `SDK player ar dark at 1.5x has no layout errors` | 底部 RenderFlex 溢出 0.963 px |
+| `SDK player hi light at 1.5x has no layout errors` | 底部 RenderFlex 溢出 2.0 px |
+| `SDK player hi dark at 1.5x has no layout errors` | 底部 RenderFlex 溢出 2.0 px |
+
 ## +26文档收束与证据绑定（2026-11-08）
 
 本次在主目录master收束，基线为PR #133合入前主线 `6a2d816a55735b267a9989a228bb90066ec32569`，收束前HEAD为合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`。`git rev-parse --verify <baseline>^{commit}` 及 `git merge-base --is-ancestor <baseline> HEAD` 核对通过；阶段差异11提交/130路径（根文档2、App文档12、资产42、源码53、测试18、配置/工具3），完整 `git status --porcelain=v1 --untracked-files=all` 为空，staged/unstaged/deleted/renamed/untracked均0。GitHub只读核对PR #133已于22:41:27（UTC+8）合入master。

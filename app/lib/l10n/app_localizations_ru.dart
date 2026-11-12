@@ -9,6 +9,89 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get premiumTitle => 'Откройте Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Создайте свою тренировку';
+
+  @override
+  String get premiumAiCoach => 'ИИ-тренер в любое время';
+
+  @override
+  String get premiumAiPlans => 'Планы тренировок от ИИ';
+
+  @override
+  String get premiumCustomWorkouts => 'Неограниченное число своих тренировок';
+
+  @override
+  String get premiumMonthly => 'На месяц';
+
+  @override
+  String get premiumYearly => 'На год';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Около $price в месяц';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Экономия $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Бесплатная пробная версия на $days дн.';
+  }
+
+  @override
+  String get premiumSubscribe => 'Подписаться';
+
+  @override
+  String get premiumDisclosure =>
+      'Подписка продлевается автоматически. Её можно отменить в Google Play в любое время. Если отменить подписку до конца пробного периода, плата не будет списана.';
+
+  @override
+  String get premiumRestore => 'Восстановить покупки';
+
+  @override
+  String get premiumTerms => 'Условия использования';
+
+  @override
+  String get premiumPrivacy => 'Политика конфиденциальности';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Подписка активна';
+
+  @override
+  String get premiumInactive => 'Нет активной подписки';
+
+  @override
+  String get premiumManage => 'Управлять подпиской';
+
+  @override
+  String get premiumUnavailable => 'Магазин недоступен. Попробуйте ещё раз.';
+
+  @override
+  String get premiumRestoreEmpty => 'Активная подписка не найдена.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Лимит запросов к ИИ на сегодня исчерпан ($limit). Возвращайтесь завтра.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Слишком много запросов. Повторите попытку чуть позже.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'Рекомендации ИИ носят справочный характер и не являются медицинской консультацией.';
+
+  @override
   String get actorBodyLabel => 'Персонаж Томаса';
 
   @override
@@ -909,6 +992,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Сохранить как мой план';
+
+  @override
+  String get premiumCopyRoutine => 'Скопировать план';
 
   @override
   String get planSaved => 'Сохранено в «Мои планы»';

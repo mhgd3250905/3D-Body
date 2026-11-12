@@ -8,8 +8,8 @@ import 'posehub_catalog_updates.dart';
 const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
 
-/// The catalogue in use: the SDK-verified hot-update cache when present, else
-/// Flare's bundled baseline copy (SDK r2-v1, identical bytes and SHA).
+/// Prefer the SDK-verified hot-update cache unless it predates Flare's
+/// bundled r2-v11 baseline (for example after an offline app upgrade).
 Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
   AssetBundle? bundle,
   trainer.PoseHubCatalogStore? verifiedCache,
@@ -17,7 +17,13 @@ Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
   final store = verifiedCache ?? PoseHubCatalogUpdates.activeStore;
   if (store != null) {
     final cached = await trainer.readVerifiedPoseHubCatalog(store);
-    if (cached != null) return cached;
+    if (cached != null) {
+      final order = trainer.comparePoseHubPacks(
+        trainer.poseHubPackVersionOf(cached),
+        PoseHubCatalogUpdates.bundledPackVersion,
+      );
+      if (order != null && order >= 0) return cached;
+    }
   }
   final assets = bundle ?? rootBundle;
   // Large loadString assets decode in an isolate outside widget fake clocks.

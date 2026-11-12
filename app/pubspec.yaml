@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.12+26
+version: 1.0.14+30
 
 environment:
   sdk: ^3.12.2
@@ -23,25 +23,28 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
-  # Shared SDK packages are pinned to 536b4c5 (tag ugk_trainer-v0.8.0: HipLab sync r1, PR #26).
+  http: ^1.6.0
+  purchases_flutter: 10.4.1
+  url_launcher: 6.3.2
+  # Shared SDK packages use iOS packed-alpha r3 on the v0.8.0 baseline.
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
+      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
+      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
+      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
+      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
       path: packages/ugk_coach_chat
 
 # Keep SDK transitive dependencies on the same reviewed commit.
@@ -49,7 +52,7 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 536b4c52c0f665203e7feb82dfde4d76f4815ad8
+      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
 
 dev_dependencies:
   flutter_test:
@@ -57,7 +60,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  http: ^1.6.0
 
 flutter:
   generate: true
@@ -85,6 +87,8 @@ flutter:
     - assets/public_media/
     - assets/public_media/catalog/
     - assets/public_posters/
+    - assets/public_posters/r2-v11/cover/
+    - assets/public_posters/r2-v11/thumbnail/
     - assets/muscles/
     - assets/scene/
     - assets/scene/assets/

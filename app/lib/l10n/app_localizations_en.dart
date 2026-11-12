@@ -9,6 +9,88 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get premiumTitle => 'Unlock Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Build training that\'s yours';
+
+  @override
+  String get premiumAiCoach => 'AI coach on demand';
+
+  @override
+  String get premiumAiPlans => 'AI-built training plans';
+
+  @override
+  String get premiumCustomWorkouts => 'Unlimited custom workouts';
+
+  @override
+  String get premiumMonthly => 'Monthly';
+
+  @override
+  String get premiumYearly => 'Yearly';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'About $price/month';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Save $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Start $days-day free trial';
+  }
+
+  @override
+  String get premiumSubscribe => 'Subscribe';
+
+  @override
+  String get premiumDisclosure =>
+      'Subscription renews automatically. Cancel anytime in Google Play. Cancel before the trial ends and you won\'t be charged.';
+
+  @override
+  String get premiumRestore => 'Restore purchases';
+
+  @override
+  String get premiumTerms => 'Terms of service';
+
+  @override
+  String get premiumPrivacy => 'Privacy policy';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Membership active';
+
+  @override
+  String get premiumInactive => 'No active membership';
+
+  @override
+  String get premiumManage => 'Manage subscription';
+
+  @override
+  String get premiumUnavailable => 'The store is unavailable. Try again.';
+
+  @override
+  String get premiumRestoreEmpty => 'No active subscription was found.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'You\'ve used all $limit AI requests for today. Come back tomorrow.';
+  }
+
+  @override
+  String get premiumRateLimit => 'Too many requests. Try again shortly.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'AI suggestions are for reference only, not medical advice.';
+
+  @override
   String get actorBodyLabel => 'Thomas character';
 
   @override
@@ -904,6 +986,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Save as my plan';
+
+  @override
+  String get premiumCopyRoutine => 'Copy plan';
 
   @override
   String get planSaved => 'Saved to My plans';

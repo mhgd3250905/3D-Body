@@ -121,6 +121,150 @@ abstract class AppLocalizations {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
+  /// No description provided for @premiumTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁 Flare 会员'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'打造属于你的训练'**
+  String get premiumSubtitle;
+
+  /// No description provided for @premiumAiCoach.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 教练随时问答'**
+  String get premiumAiCoach;
+
+  /// No description provided for @premiumAiPlans.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 定制训练计划'**
+  String get premiumAiPlans;
+
+  /// No description provided for @premiumCustomWorkouts.
+  ///
+  /// In zh, this message translates to:
+  /// **'无限自定义训练组'**
+  String get premiumCustomWorkouts;
+
+  /// No description provided for @premiumMonthly.
+  ///
+  /// In zh, this message translates to:
+  /// **'月付'**
+  String get premiumMonthly;
+
+  /// No description provided for @premiumYearly.
+  ///
+  /// In zh, this message translates to:
+  /// **'年付'**
+  String get premiumYearly;
+
+  /// No description provided for @premiumMonthlyEstimate.
+  ///
+  /// In zh, this message translates to:
+  /// **'约 {price}/月'**
+  String premiumMonthlyEstimate(String price);
+
+  /// No description provided for @premiumSavings.
+  ///
+  /// In zh, this message translates to:
+  /// **'省 {percent}%'**
+  String premiumSavings(int percent);
+
+  /// No description provided for @premiumTrial.
+  ///
+  /// In zh, this message translates to:
+  /// **'免费试用 {days} 天'**
+  String premiumTrial(int days);
+
+  /// No description provided for @premiumSubscribe.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅'**
+  String get premiumSubscribe;
+
+  /// No description provided for @premiumDisclosure.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅将自动续订，可随时在 Google Play 取消。在试用结束前取消则不会扣费。'**
+  String get premiumDisclosure;
+
+  /// No description provided for @premiumRestore.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复购买'**
+  String get premiumRestore;
+
+  /// No description provided for @premiumTerms.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务条款'**
+  String get premiumTerms;
+
+  /// No description provided for @premiumPrivacy.
+  ///
+  /// In zh, this message translates to:
+  /// **'隐私政策'**
+  String get premiumPrivacy;
+
+  /// No description provided for @premiumStatus.
+  ///
+  /// In zh, this message translates to:
+  /// **'Flare 会员'**
+  String get premiumStatus;
+
+  /// No description provided for @premiumActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员有效'**
+  String get premiumActive;
+
+  /// No description provided for @premiumInactive.
+  ///
+  /// In zh, this message translates to:
+  /// **'未开通会员'**
+  String get premiumInactive;
+
+  /// No description provided for @premiumManage.
+  ///
+  /// In zh, this message translates to:
+  /// **'管理订阅'**
+  String get premiumManage;
+
+  /// No description provided for @premiumUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂时无法连接商店，请重试。'**
+  String get premiumUnavailable;
+
+  /// No description provided for @premiumRestoreEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'未找到有效订阅。'**
+  String get premiumRestoreEmpty;
+
+  /// No description provided for @premiumQuota.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日 AI 次数已用完（{limit} 次），明天再来。'**
+  String premiumQuota(int limit);
+
+  /// No description provided for @premiumRateLimit.
+  ///
+  /// In zh, this message translates to:
+  /// **'请求过于频繁，请稍后再试。'**
+  String get premiumRateLimit;
+
+  /// No description provided for @premiumAiDisclaimer.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 建议仅供参考，非医疗建议。'**
+  String get premiumAiDisclaimer;
+
   /// No description provided for @actorBodyLabel.
   ///
   /// In zh, this message translates to:
@@ -1782,6 +1926,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'存为我的计划'**
   String get planSaveAsMine;
+
+  /// No description provided for @premiumCopyRoutine.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制计划'**
+  String get premiumCopyRoutine;
 
   /// No description provided for @planSaved.
   ///

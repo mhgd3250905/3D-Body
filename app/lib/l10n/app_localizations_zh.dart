@@ -9,6 +9,86 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get premiumTitle => '解锁 Flare 会员';
+
+  @override
+  String get premiumSubtitle => '打造属于你的训练';
+
+  @override
+  String get premiumAiCoach => 'AI 教练随时问答';
+
+  @override
+  String get premiumAiPlans => 'AI 定制训练计划';
+
+  @override
+  String get premiumCustomWorkouts => '无限自定义训练组';
+
+  @override
+  String get premiumMonthly => '月付';
+
+  @override
+  String get premiumYearly => '年付';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return '约 $price/月';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '省 $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '免费试用 $days 天';
+  }
+
+  @override
+  String get premiumSubscribe => '订阅';
+
+  @override
+  String get premiumDisclosure => '订阅将自动续订，可随时在 Google Play 取消。在试用结束前取消则不会扣费。';
+
+  @override
+  String get premiumRestore => '恢复购买';
+
+  @override
+  String get premiumTerms => '服务条款';
+
+  @override
+  String get premiumPrivacy => '隐私政策';
+
+  @override
+  String get premiumStatus => 'Flare 会员';
+
+  @override
+  String get premiumActive => '会员有效';
+
+  @override
+  String get premiumInactive => '未开通会员';
+
+  @override
+  String get premiumManage => '管理订阅';
+
+  @override
+  String get premiumUnavailable => '暂时无法连接商店，请重试。';
+
+  @override
+  String get premiumRestoreEmpty => '未找到有效订阅。';
+
+  @override
+  String premiumQuota(int limit) {
+    return '今日 AI 次数已用完（$limit 次），明天再来。';
+  }
+
+  @override
+  String get premiumRateLimit => '请求过于频繁，请稍后再试。';
+
+  @override
+  String get premiumAiDisclaimer => 'AI 建议仅供参考，非医疗建议。';
+
+  @override
   String get actorBodyLabel => '托马斯形象';
 
   @override
@@ -883,6 +963,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get planSaveAsMine => '存为我的计划';
 
   @override
+  String get premiumCopyRoutine => '复制计划';
+
+  @override
   String get planSaved => '已存到我的计划';
 
   @override
@@ -1089,6 +1172,86 @@ class AppLocalizationsZh extends AppLocalizations {
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
+
+  @override
+  String get premiumTitle => '解鎖 Flare 會員';
+
+  @override
+  String get premiumSubtitle => '打造屬於你的訓練';
+
+  @override
+  String get premiumAiCoach => 'AI 教練隨時問答';
+
+  @override
+  String get premiumAiPlans => 'AI 自訂訓練計畫';
+
+  @override
+  String get premiumCustomWorkouts => '無限自訂訓練組';
+
+  @override
+  String get premiumMonthly => '月付';
+
+  @override
+  String get premiumYearly => '年付';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return '約 $price/月';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '省 $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '免費試用 $days 天';
+  }
+
+  @override
+  String get premiumSubscribe => '訂閱';
+
+  @override
+  String get premiumDisclosure => '訂閱會自動續訂，可隨時在 Google Play 取消。在試用結束前取消就不會扣費。';
+
+  @override
+  String get premiumRestore => '恢復購買';
+
+  @override
+  String get premiumTerms => '服務條款';
+
+  @override
+  String get premiumPrivacy => '隱私權政策';
+
+  @override
+  String get premiumStatus => 'Flare 會員';
+
+  @override
+  String get premiumActive => '會員有效';
+
+  @override
+  String get premiumInactive => '未開通會員';
+
+  @override
+  String get premiumManage => '管理訂閱';
+
+  @override
+  String get premiumUnavailable => '暫時無法連線至商店，請再試一次。';
+
+  @override
+  String get premiumRestoreEmpty => '找不到有效的訂閱。';
+
+  @override
+  String premiumQuota(int limit) {
+    return '今日 AI 次數已用完（$limit 次），明天再來。';
+  }
+
+  @override
+  String get premiumRateLimit => '請求過於頻繁，請稍後再試。';
+
+  @override
+  String get premiumAiDisclaimer => 'AI 建議僅供參考，非醫療建議。';
 
   @override
   String get actorBodyLabel => '托馬斯形象';
@@ -1964,6 +2127,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get planSaveAsMine => '存為我的計畫';
+
+  @override
+  String get premiumCopyRoutine => '複製計畫';
 
   @override
   String get planSaved => '已存到我的計畫';
