@@ -48,6 +48,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get premiumSubscribe => 'S’abonner';
 
   @override
+  String get premiumPurchaseInProgress => 'Confirmation de l’achat…';
+
+  @override
   String get premiumDisclosure =>
       'L’abonnement se renouvelle automatiquement. Vous pouvez le résilier à tout moment dans Google Play. Résiliez avant la fin de l’essai pour éviter la facturation.';
 

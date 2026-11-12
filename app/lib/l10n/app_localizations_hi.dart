@@ -48,6 +48,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get premiumSubscribe => 'सदस्यता लें';
 
   @override
+  String get premiumPurchaseInProgress => 'खरीद की पुष्टि हो रही है…';
+
+  @override
   String get premiumDisclosure =>
       'सदस्यता अपने आप नवीनीकृत होती है। Google Play में कभी भी रद्द करें। आज़माइश खत्म होने से पहले रद्द करने पर कोई शुल्क नहीं लगेगा।';
 

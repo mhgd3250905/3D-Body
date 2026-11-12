@@ -48,6 +48,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumSubscribe => 'Subscribe';
 
   @override
+  String get premiumPurchaseInProgress => 'Confirming purchase…';
+
+  @override
   String get premiumDisclosure =>
       'Subscription renews automatically. Cancel anytime in Google Play. Cancel before the trial ends and you won\'t be charged.';
 

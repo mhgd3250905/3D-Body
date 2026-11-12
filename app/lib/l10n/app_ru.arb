@@ -10,6 +10,7 @@
   "premiumSavings": "Экономия {percent}%",
   "premiumTrial": "Бесплатная пробная версия на {days} дн.",
   "premiumSubscribe": "Подписаться",
+  "premiumPurchaseInProgress": "Подтверждаем покупку…",
   "premiumDisclosure": "Подписка продлевается автоматически. Её можно отменить в Google Play в любое время. Если отменить подписку до конца пробного периода, плата не будет списана.",
   "premiumRestore": "Восстановить покупки",
   "premiumTerms": "Условия использования",

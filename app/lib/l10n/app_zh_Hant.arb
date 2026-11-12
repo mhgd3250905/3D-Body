@@ -10,6 +10,7 @@
   "premiumSavings": "省 {percent}%",
   "premiumTrial": "免費試用 {days} 天",
   "premiumSubscribe": "訂閱",
+  "premiumPurchaseInProgress": "正在確認購買…",
   "premiumDisclosure": "訂閱會自動續訂，可隨時在 Google Play 取消。在試用結束前取消就不會扣費。",
   "premiumRestore": "恢復購買",
   "premiumTerms": "服務條款",

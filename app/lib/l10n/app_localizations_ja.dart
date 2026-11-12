@@ -48,6 +48,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get premiumSubscribe => '登録する';
 
   @override
+  String get premiumPurchaseInProgress => '購入を確認中…';
+
+  @override
   String get premiumDisclosure =>
       'サブスクリプションは自動更新されます。Google Play でいつでも解約できます。トライアル終了前に解約すれば料金はかかりません。';
 

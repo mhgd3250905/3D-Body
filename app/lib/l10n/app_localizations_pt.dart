@@ -48,6 +48,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get premiumSubscribe => 'Assinar';
 
   @override
+  String get premiumPurchaseInProgress => 'A confirmar a compra…';
+
+  @override
   String get premiumDisclosure =>
       'A assinatura é renovada automaticamente. Cancele quando quiser no Google Play. Se cancelar antes do fim do teste, você não será cobrado.';
 

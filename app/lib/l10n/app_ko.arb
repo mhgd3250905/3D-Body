@@ -10,6 +10,7 @@
   "premiumSavings": "{percent}% 절약",
   "premiumTrial": "{days}일 무료 체험 시작",
   "premiumSubscribe": "구독하기",
+  "premiumPurchaseInProgress": "구매 확인 중…",
   "premiumDisclosure": "구독은 자동으로 갱신됩니다. Google Play에서 언제든 취소할 수 있습니다. 체험이 끝나기 전에 취소하면 요금이 청구되지 않습니다.",
   "premiumRestore": "구매 복원",
   "premiumTerms": "서비스 약관",

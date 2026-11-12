@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flare/control/flare_membership.dart';
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
@@ -12,6 +14,7 @@ import 'flow_regressions_test.dart' as helpers;
 
 class _TestStore implements MembershipStore {
   MembershipTerm? purchased;
+  Completer<MembershipSnapshot?> pendingPurchase = Completer();
   static const offersForTest = [
     MembershipOffer(
       term: MembershipTerm.monthly,
@@ -38,9 +41,9 @@ class _TestStore implements MembershipStore {
       const MembershipSnapshot('tester', null);
 
   @override
-  Future<MembershipSnapshot> purchase(MembershipTerm term) async {
+  Future<MembershipSnapshot?> purchase(MembershipTerm term) {
     purchased = term;
-    return restore();
+    return pendingPurchase.future;
   }
 
   @override
@@ -125,10 +128,30 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('免费试用 3 天'), findsOneWidget);
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('premium-subscribe')),
+      final subscribe = find.byKey(const ValueKey('premium-subscribe'));
+      await helpers.tapVisible(tester, subscribe);
+      await tester.pump();
+      expect(find.text('正在确认购买…'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: subscribe,
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
       );
+      expect(tester.widget<FilledButton>(subscribe).onPressed, isNull);
+
+      purchases.pendingPurchase.complete(null);
+      await tester.pumpAndSettle();
+      expect(find.text('免费试用 3 天'), findsOneWidget);
+      expect(tester.widget<FilledButton>(subscribe).onPressed, isNotNull);
+      expect(find.byType(FlareMembershipPage), findsOneWidget);
+
+      purchases.pendingPurchase = Completer();
+      await helpers.tapVisible(tester, subscribe);
+      await tester.pump();
+      expect(find.text('正在确认购买…'), findsOneWidget);
+      purchases.pendingPurchase.complete(await purchases.restore());
       await tester.pumpAndSettle();
       expect(purchases.purchased, MembershipTerm.monthly);
       expect(find.byType(FlareMembershipPage), findsNothing);

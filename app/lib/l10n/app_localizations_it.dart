@@ -48,6 +48,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get premiumSubscribe => 'Abbonati';
 
   @override
+  String get premiumPurchaseInProgress => 'Conferma dell’acquisto in corso…';
+
+  @override
   String get premiumDisclosure =>
       'L’abbonamento si rinnova automaticamente. Puoi annullarlo in qualsiasi momento su Google Play. Annulla prima della fine della prova per evitare l’addebito.';
 

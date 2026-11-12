@@ -10,6 +10,7 @@
   "premiumSavings": "وفّر {percent}٪",
   "premiumTrial": "ابدأ تجربة مجانية لمدة {days} أيام",
   "premiumSubscribe": "اشترك",
+  "premiumPurchaseInProgress": "جارٍ تأكيد الشراء…",
   "premiumDisclosure": "يتجدد الاشتراك تلقائيًا. يمكنك إلغاؤه في أي وقت عبر Google Play. ألغِ الاشتراك قبل انتهاء التجربة لتجنب أي رسوم.",
   "premiumRestore": "استعادة المشتريات",
   "premiumTerms": "شروط الخدمة",

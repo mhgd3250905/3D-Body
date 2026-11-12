@@ -48,6 +48,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumSubscribe => 'Подписаться';
 
   @override
+  String get premiumPurchaseInProgress => 'Подтверждаем покупку…';
+
+  @override
   String get premiumDisclosure =>
       'Подписка продлевается автоматически. Её можно отменить в Google Play в любое время. Если отменить подписку до конца пробного периода, плата не будет списана.';
 
