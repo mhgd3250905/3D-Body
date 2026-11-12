@@ -187,6 +187,12 @@ abstract class AppLocalizations {
   /// **'订阅'**
   String get premiumSubscribe;
 
+  /// No description provided for @premiumPurchaseInProgress.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在确认购买…'**
+  String get premiumPurchaseInProgress;
+
   /// No description provided for @premiumDisclosure.
   ///
   /// In zh, this message translates to:

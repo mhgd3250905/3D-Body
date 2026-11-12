@@ -99,15 +99,22 @@ class FlareMembershipPage extends StatefulWidget {
 class _FlareMembershipPageState extends State<FlareMembershipPage> {
   MembershipTerm _selected = MembershipTerm.annual;
   late Future<List<MembershipOffer>> _offers = widget.membership.offers();
+  bool _purchasing = false;
 
   Future<void> _purchase() async {
+    if (_purchasing || widget.membership.busy) return;
+    setState(() => _purchasing = true);
     try {
       final active = await widget.membership.purchase(_selected);
-      if (active && mounted) Navigator.pop(context, true);
+      if (active && mounted && ModalRoute.of(context)?.isCurrent == true) {
+        Navigator.pop(context, true);
+      }
     } on Exception {
-      if (mounted) {
+      if (mounted && ModalRoute.of(context)?.isCurrent == true) {
         showMembershipMessage(context, context.strings.premiumUnavailable);
       }
+    } finally {
+      if (mounted) setState(() => _purchasing = false);
     }
   }
 
@@ -752,7 +759,7 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
             if (subscription == null) ...[
               _primaryAction(
                 subscribeText,
-                busy || offer == null ? null : _purchase,
+                _purchasing || busy || offer == null ? null : _purchase,
               ),
               const SizedBox(height: 10),
               if (price != null && trial != null)
@@ -855,7 +862,32 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        child: Text(label, textAlign: TextAlign.center),
+        child: _purchasing
+            ? Semantics(
+                liveRegion: true,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const ExcludeSemantics(
+                      child: SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: _secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        context.strings.premiumPurchaseInProgress,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Text(label, textAlign: TextAlign.center),
       ),
     );
   }

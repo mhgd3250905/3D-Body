@@ -10,6 +10,7 @@
   "premiumSavings": "Économisez {percent} %",
   "premiumTrial": "Essai gratuit de {days} jours",
   "premiumSubscribe": "S’abonner",
+  "premiumPurchaseInProgress": "Confirmation de l’achat…",
   "premiumDisclosure": "L’abonnement se renouvelle automatiquement. Vous pouvez le résilier à tout moment dans Google Play. Résiliez avant la fin de l’essai pour éviter la facturation.",
   "premiumRestore": "Restaurer les achats",
   "premiumTerms": "Conditions d’utilisation",

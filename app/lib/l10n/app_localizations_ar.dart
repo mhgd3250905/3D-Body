@@ -48,6 +48,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get premiumSubscribe => 'اشترك';
 
   @override
+  String get premiumPurchaseInProgress => 'جارٍ تأكيد الشراء…';
+
+  @override
   String get premiumDisclosure =>
       'يتجدد الاشتراك تلقائيًا. يمكنك إلغاؤه في أي وقت عبر Google Play. ألغِ الاشتراك قبل انتهاء التجربة لتجنب أي رسوم.';
 

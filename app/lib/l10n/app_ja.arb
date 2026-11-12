@@ -10,6 +10,7 @@
   "premiumSavings": "{percent}% お得",
   "premiumTrial": "{days} 日間の無料トライアルを開始",
   "premiumSubscribe": "登録する",
+  "premiumPurchaseInProgress": "購入を確認中…",
   "premiumDisclosure": "サブスクリプションは自動更新されます。Google Play でいつでも解約できます。トライアル終了前に解約すれば料金はかかりません。",
   "premiumRestore": "購入を復元",
   "premiumTerms": "利用規約",

@@ -48,6 +48,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get premiumSubscribe => 'Berlangganan';
 
   @override
+  String get premiumPurchaseInProgress => 'Mengonfirmasi pembelian…';
+
+  @override
   String get premiumDisclosure =>
       'Langganan diperpanjang otomatis. Batalkan kapan saja di Google Play. Jika dibatalkan sebelum uji coba berakhir, kamu tidak akan dikenai biaya.';
 

@@ -48,6 +48,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get premiumSubscribe => '订阅';
 
   @override
+  String get premiumPurchaseInProgress => '正在确认购买…';
+
+  @override
   String get premiumDisclosure => '订阅将自动续订，可随时在 Google Play 取消。在试用结束前取消则不会扣费。';
 
   @override
@@ -1211,6 +1214,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get premiumSubscribe => '訂閱';
+
+  @override
+  String get premiumPurchaseInProgress => '正在確認購買…';
 
   @override
   String get premiumDisclosure => '訂閱會自動續訂，可隨時在 Google Play 取消。在試用結束前取消就不會扣費。';

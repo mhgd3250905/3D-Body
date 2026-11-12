@@ -48,6 +48,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premiumSubscribe => 'Abonnieren';
 
   @override
+  String get premiumPurchaseInProgress => 'Kauf wird bestätigt…';
+
+  @override
   String get premiumDisclosure =>
       'Das Abo verlängert sich automatisch. Du kannst es jederzeit in Google Play kündigen. Kündigst du vor Ende der Testphase, entstehen keine Kosten.';
 

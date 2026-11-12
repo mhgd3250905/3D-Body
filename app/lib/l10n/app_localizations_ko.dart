@@ -48,6 +48,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get premiumSubscribe => '구독하기';
 
   @override
+  String get premiumPurchaseInProgress => '구매 확인 중…';
+
+  @override
   String get premiumDisclosure =>
       '구독은 자동으로 갱신됩니다. Google Play에서 언제든 취소할 수 있습니다. 체험이 끝나기 전에 취소하면 요금이 청구되지 않습니다.';
 

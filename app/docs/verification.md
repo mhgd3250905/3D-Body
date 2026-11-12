@@ -1,5 +1,11 @@
 # App 验证记录
 
+## 会员页 v2 购买进度（2026-11-12）
+
+新版付费墙主按钮在购买结果返回前显示「正在确认购买…」和进度圈，并禁用重复提交。iOS 继续使用 App Store 的续订披露及系统订阅管理入口。Build 29 年付购买已由用户在 iPhone 上验收，新版等待提示待后续真机回验。
+
+`flutter analyze --no-pub` 无问题。运行 `flutter test --no-pub`，覆盖 `flare_paywall_v2_test.dart`、`flare_membership_flow_test.dart`、`coach_entry_visibility_test.dart`、`membership_gateway_test.dart` 的 11 项测试通过，验证等待提示、取消后恢复、成功后继续建组，以及新版布局。
+
 ## r2-v11 英文详情（1.0.13+28，2026-11-10）
 
 英文 locale 的 SDK 详情使用 Flare 提供的 `displayText`，直接读取目录的 `nameEn`、`cuesEn`、`cautionsEn`。目录没有英文禁忌提示，Flare 在展示层翻译 7 种标签，对应 251 条提示。目录原始字节与 SDK 锁定保持一致。
