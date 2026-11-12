@@ -28,9 +28,22 @@ class FlareRevenueCat implements MembershipStore {
     final uid = await rc.Purchases.appUserID;
     final entitlement = info.entitlements.active['premium'];
     final expiration = entitlement?.expirationDate;
+    final term = switch (entitlement?.productPlanIdentifier ??
+        entitlement?.productIdentifier) {
+      'monthly' ||
+      'flare_premium:monthly' ||
+      'dev.mhgd.flare.premium.monthly' => MembershipTerm.monthly,
+      'annual' ||
+      'flare_premium:annual' ||
+      'dev.mhgd.flare.premium.annual' => MembershipTerm.annual,
+      _ => null,
+    };
     return MembershipSnapshot(
       uid,
       expiration == null ? null : DateTime.tryParse(expiration),
+      term: term,
+      isTrial: entitlement?.periodType == rc.PeriodType.trial,
+      willRenew: entitlement?.willRenew,
     );
   }
 

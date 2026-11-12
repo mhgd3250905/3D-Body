@@ -23,10 +23,19 @@ class MembershipOffer {
 }
 
 class MembershipSnapshot {
-  const MembershipSnapshot(this.appUserId, this.expiresAt);
+  const MembershipSnapshot(
+    this.appUserId,
+    this.expiresAt, {
+    this.term,
+    this.isTrial = false,
+    this.willRenew,
+  });
 
   final String appUserId;
   final DateTime? expiresAt;
+  final MembershipTerm? term;
+  final bool isTrial;
+  final bool? willRenew;
 
   bool isActiveAt(DateTime time) =>
       appUserId.isNotEmpty && (expiresAt?.isAfter(time) ?? false);
@@ -55,6 +64,7 @@ class FlareMembership extends ChangeNotifier {
 
   bool get busy => _busy;
   bool get isPremium => _snapshot?.isActiveAt(_now()) ?? false;
+  MembershipSnapshot? get activeSubscription => isPremium ? _snapshot : null;
   String? get activeAppUserId => isPremium ? _snapshot?.appUserId : null;
 
   Future<List<MembershipOffer>> offers() => _store.offers();

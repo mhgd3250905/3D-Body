@@ -94,7 +94,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(FlareMembershipPage), findsOneWidget);
       expect(find.text('免费试用 7 天'), findsOneWidget);
-      expect(find.text('省 44%'), findsOneWidget);
+      expect(find.text('最划算 · 省 44%'), findsOneWidget);
       await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pumpAndSettle();
 

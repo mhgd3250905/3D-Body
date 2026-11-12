@@ -407,8 +407,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final membership = widget.membership;
     if (membership == null || _membershipOpen || !mounted) return;
     _membershipOpen = true;
+    final Object? destination;
     try {
-      await Navigator.of(context).push<bool>(
+      destination = await Navigator.of(context).push<Object>(
         MaterialPageRoute(
           settings: const RouteSettings(name: '/membership'),
           builder: (_) => FlareMembershipPage(membership: membership),
@@ -416,6 +417,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       );
     } finally {
       _membershipOpen = false;
+    }
+    if (!mounted || destination is! MembershipDestination) return;
+    switch (destination) {
+      case MembershipDestination.askCoach:
+      case MembershipDestination.customPlan:
+        // Flare uses one coach conversation for questions and plan requests.
+        await _openCoach();
+      case MembershipDestination.newWorkout:
+        _changeTab(2);
+        await _editRoutine(const _RoutineEdit());
     }
   }
 
@@ -2233,7 +2244,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               subtitle: membership.isPremium
                   ? s.premiumActive
                   : s.premiumInactive,
-              onTap: membership.isPremium ? null : _openMembership,
+              onTap: _openMembership,
             ),
             FlareListRow(
               key: const ValueKey('settings-restore-purchases'),
