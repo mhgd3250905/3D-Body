@@ -1,12 +1,10 @@
 # Flare 托马斯 · Flutter App
 
-## 当前已验收版本（2026-11-08，+26已合入主线）
+## 当前版本（2026-11-12）
 
-当前用户认可版本为 **1.0.12+26 / arm64实际vc2026**，运行源码 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`；用户明确授权将已装手机的完整整合版本推进默认主线master。该版包括HipLab UI、单左圆形菜单、新分组条目与图标、249动作库和AI授权、等高/滑动优化，并保留SDK536b4c52及+25目录语音/语言适配；四个SDK包实际版本以pubspec.lock为准，ugk_coach为0.8.0。
+源码版本 **1.0.14+33** 归档于 `feat/paywall-v2`，Tag 为 `app-v1.0.14-build33`。Android 真机验收的是 **1.0.14+32 / versionCode 2032**。Play 内测的 **versionCode 32** 同时包含有效期显示与购买进度提示。源码、包和验收各自的来源见 [版本台账](docs/version-ledger.md)。
 
-已通过 [PR #133](https://github.com/mhgd3250905/3D-Body/pull/133) 合入 `master`，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`；其运行源码、资产、测试及构建配置与上述 APK 运行源一致，后续差异仅为文档。
-
-分析通过，406通过/4项既有字体失败/1跳过；+25同签名更新到+26，APK回读一致，用户随后确认验收。完整设备、语音细节、动作媒体QA和iOS待验边界不自动销项；本次只合入源码，不打tag或上传商店。后续升级须保留该整合版UI，版本、签名、用户认可和限制见[台账](docs/version-ledger.md)、[验证](docs/verification.md)、[整合来源](docs/hiplab-sdk080-restoration-2026-11-08.md)。
+从设置进入「Flare 会员」。未订阅页可选月付和年付；已订阅页显示本期起止时间、试用、续订或到期状态，并提供管理订阅、恢复购买和权益入口。短于 48 小时的周期显示本地时分。测试与待验见 [验证记录](docs/verification.md) 和 [实施路线](docs/development-roadmap.md)。
 
 ## 历史主线与内测交付（2026-11-04 版本收束）
 
@@ -113,11 +111,9 @@ flutter run -d chrome
 
 浏览器数据按浏览器与网址保存；需要稳定预览地址时可加 `--web-port 8840`。依赖首次安装需要网络。3D 场景、公共目录与封面随包提供；训练视频由 SDK 首次按需下载，需要网络，缓存命中后可复用，不能据此宣称全部训练媒体离线可用。
 
-当前源码 `pubspec.yaml` 为 **1.0.12+26**，已安装包为同版 arm64 vc2026；运行源与主线合入身份分别以顶部检查点及[版本台账](docs/version-ledger.md)为准。历史 **Liquid Glass / 1.0.11+16 / v42-R17** 来自 `52ee561`（SDK `8b60032`），当时通过构建参数覆盖版本、源码仍为 `1.0.10+15`；同签名保留数据安装和当时验证边界保留在[10 月 24 日记录](docs/liquid-glass-android-test-2026-10-24.md)。
+源码、真机 APK 和 Play AAB 的版本与签名各自见 [版本台账](docs/version-ledger.md)。识别本地构建时以具名产物与 SHA-256 为准。
 
-此前 **L52 / 1.0.9+11 / v42-R17** 的有限初步用户认可见[L52记录](docs/l52-plan-skip-2026-10-17.md)，不自动覆盖后续包。L50/R17的动作认可与冻结身份见[此前认可记录](docs/l50-r17-acceptance-2026-10-17.md)，L51及更早具名包保留历史；通用 `build/app/outputs/flutter-apk/app-release.apk` 的身份按[版本台账](docs/version-ledger.md)和哈希判定。Google Play P01 AAB及Apple S4保持历史包，本轮未上传或发布。
-
-安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 标识 `dev.mhgd.flare` 已作为 Google Play 正式包名使用；上传密钥 `keys/flare-upload.jks`（根项目E盘、gitignored）与 Play App Signing 均已注册，正式版发布仍需先满足封闭测试12名测试者14天的平台门槛。
+安卓模拟器或已连接手机可执行 `flutter devices`，再运行 `flutter run -d <设备ID>`。原生 3D 通过 App 内的 `127.0.0.1` 动态端口读取打包资产，不需要在电脑上运行 Vite。iOS 构建需要在 macOS/Xcode 环境继续验证。Android 应用 ID 为 `dev.mhgd.flare`，Play 使用已注册的上传签名。内测状态见 [版本台账](docs/version-ledger.md)。
 
 只修改 Dart 页面无需重新制作 3D 包；修改场景代码或模型后，先在 `app/scene` 执行：
 
@@ -130,13 +126,9 @@ npm run build
 
 <a id="ai-coach"></a>
 
-<a id="ai-coach"></a>
-
 ## AI 定制（共享 SDK Chat）
 
-计划页「AI 定制」支持描述需求、问题气泡与多轮补充，计划卡可保存或开始训练。入口仅在中文界面且配置有效时显示。当前由 `ugk_coach_chat` 的 `CoachChatController` / `CoachChatPage` 管理会话、问题、卡片与输入区；Flare 负责路由、生命周期、安全上下文、持久化端口和训练 / 保存回调。SDK 问答 v3 沿用 `agentMode: CoachChatAgentMode.qaV2` 与 `aiTags: appAiTags` 的公开配置，App 不另建问答适配层。SDK 版本与源码绑定见顶部检查点和[版本台账](docs/version-ledger.md)；旧 `CoachConversationController` 接入保留为[历史阶段](docs/coach-conversation-controller-2026-10-24.md)。
-
-默认使用 UGK New API 中转站，`UGK_COACH_API_KEY` 承载中转站给本 App 发的独立令牌；令牌保存在本机配置，开发运行使用 `flutter run --dart-define-from-file=coach.local.json`。无有效 Key/relay token 时全部 AI 入口隐藏；`UGK_COACH_RELAY_TOKEN` 仅用于可选的自写 Worker 接口，当前 New API 路线不需要它。配置、剂量与安全边界见 [AI 定制说明](docs/ai-coach.md)。
+计划页的「AI 定制」和会员权益入口使用同一教练对话。SDK 管理会话、追问、计划卡与输入区，Flare 负责会员检查、动作范围、导航与本机保存。原生会员版由 `FLARE_AI_GATEWAY_URL` 指定网关，权益由 RevenueCat 校验。配置和运行方式见 [AI 定制说明](docs/ai-coach.md)。
 
 ## 当前体验
 
@@ -148,9 +140,9 @@ npm run build
 
 详情默认大动作模特、小直立肌群人台。小卡独立高清采样并完整展示全身，人台保留精细分界线及当前选区，其余阶段色收起。点小卡交换两者再切回，部位和暂停时刻保持一致；动作表面色区与静态人台均是教学位置提示，不宣称精确解剖配准。
 
-主力列表、其他参与及详情协同肌群条目使用17张离线拍摄的银色人台图，每张以合适镜头高亮对应肌群；这项历史外观认可保持。动作库由 App 复用现有 UI 与 SDK 目录、媒体和详情能力，浏览与 AI 共用249个授权 ID，公共交付目录与语义目录均为249项；肌群入口预筛选、同行卡片等高、文案测高缓存和静态海报已接入，筛选栏设计按用户要求暂不调整。`assets/public_posters/` 共251张封面（249授权项及2张历史保留），不能写成251项训练授权或全部媒体已验收。视频由 SDK 按需下载和播放，计划卡与计划行引用公共 WebP 封面。计划保真、训练和结果保存继续使用共享 SDK 接入，个人计划仍可命名、排序与复用。
+肌群条目沿用 17 张银色人台图。动作库与 AI 共用 248 个授权动作，r2-v11 原始目录有 249 条，其中 `n-thomas-test` 为自测条目。248 个授权动作的封面和缩略图随包提供，视频由 SDK 按需下载和缓存。计划卡和计划行使用公共封面。素材的来源和审核状态见 [资产来源](docs/asset-sources.md)。
 
-全部训练档位按免费开发版提供。个人计划、训练会话与进度存在本机；原课程、自评、关卡与今日清单的数据及 Store 接口保留，相关旧界面已由计划替代。原教学草稿未因本轮更改完成教练审核。当前没有相机 AI、订阅、账号或云同步。颜色表示教学重点，深层位置为示意，不能当作肌电、内部解剖边界或能力诊断。公共目录仍为 `status=test-unreviewed` / `reviewed=false` / `releaseEligible=false`，不因共享接入或本机测试变为素材 QA 完成。原51媒体与23ready/28待核对属于历史选版记录，保留其版本和验收边界。
+动作浏览、默认训练组及单动作训练可免费使用。会员可新建、编辑或复制自定义训练组，并使用 AI 教练。已有自定义训练组仍可继续训练。个人计划、训练会话和进度保存在本机，购买与恢复走系统商店及 RevenueCat。见 [本地数据说明](docs/privacy-local.md)。
 
 设置中的“复制本地备份”把部分状态复制为 JSON，需自行保存到文件；当前没有备份导入入口，它还不是完整的迁移方案。
 

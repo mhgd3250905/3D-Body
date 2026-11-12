@@ -1,6 +1,8 @@
 # v42：App 与网页动作展示
 
-截至2026-11-08，**1.0.12+26 / arm64 vc2026** 已安装并获用户本轮认可，完整UI与SDK整合版已由PR #133合入master，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`，APK运行源 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`；SDK四包固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`。本阶段没有改动R17动作、七形象或其来源；UI/SDK和版本验收不扩大为新的动作制作或完整动作QA。4项SDK字体失败、语音细项、完整设备/iOS/长期待验仍分账，见[版本台账](version-ledger.md)、[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+本文描述 R17 与七种形象的展示合约。当前 App 版本和包身份见 [版本台账](version-ledger.md)。
+
+历史 2026-11-08，**1.0.12+26 / arm64 vc2026** 已安装并获用户本轮认可，完整UI与SDK整合版已由PR #133合入master，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`，APK运行源 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`；SDK四包固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`。本阶段没有改动R17动作、七形象或其来源；UI/SDK和版本验收不扩大为新的动作制作或完整动作QA。4项SDK字体失败、语音细项、完整设备/iOS/长期待验仍分账，见[版本台账](version-ledger.md)、[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
 
 历史2026-11-04：主线为 `4b32607ed24c98af22ba4879909544729a3c3213`，源码 **1.0.12+21**，SDK `f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`；当时APK来自 `4ea55a7db323145c0c952d3ae5974c9aea986074`，vc2021，已出包未安装，用户确认手机+18、+20从未出包、+19未出包。保留当时记录，不作为当前安装状态。
 

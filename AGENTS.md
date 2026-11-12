@@ -1,10 +1,10 @@
 # 项目约定
 
-## 当前执行基线（2026-11-08，+26用户验收）
+## 当前执行基线（2026-11-12，会员页 v2）
 
-整合版已由PR #133合入默认主线master，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`；与下述APK运行源b96b570之间仅有文档变化。后续文档提交不改变本轮已验收运行版本。
+`feat/paywall-v2` 保存会员页 v2 的收束源码 **1.0.14+33**，对应 Tag `app-v1.0.14-build33`。本阶段从 `master` 的 `122de97a7e40d1472ce3da0643d06a2d66f95e44` 开始。实际设备与 Play 包以 [app/docs/version-ledger.md](app/docs/version-ledger.md) 为准，验证以 [app/docs/verification.md](app/docs/verification.md) 为准，待验以 [app/docs/development-roadmap.md](app/docs/development-roadmap.md) 为准。
 
-用户已认可手机1.0.12+26（arm64实际vc2026），并明确授权推进默认主线master。产品运行源码检查点b96b570，SDK四项固定536b4c52c0f665203e7feb82dfde4d76f4815ad8、ugk_coach0.8.0；必须同时保留HipLab UI、249动作库/AI范围、等高和滑动优化及目录语音接入。不能仅切到旧UI的SDK分支再次出包覆盖已认可界面。406通过/4项既有SDK字体失败/1跳过、包/签名/用户认可及待验边界见app/docs/version-ledger.md、verification.md和hiplab-sdk080-restoration-2026-11-08.md。用户认可本次安装版本不代表全部素材、设备、长期、语音细项或iOS验收；不因此打tag或发布，ios/main与PR127保持，SDK/Pose-Hub只消费不改源。原工作树、旧包与R17资产保留。
+App 消费 Pose-Hub r2-v11，动作库与 AI 共用 248 项授权；SDK 锁定以 `app/pubspec.lock` 为准。会员权益由 RevenueCat 提供，商店包 AI 通过会员网关。旧版 +26 及更早的验收、素材和设计按原时点查阅版本台账。
 
 ## 历史执行基线（2026-11-04 文档对齐）
 

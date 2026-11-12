@@ -1,12 +1,10 @@
 # Flare Anatomy Studio
 
-## 当前已验收版本（2026-11-08，+26已合入主线）
+## Flare App 当前版本（2026-11-12）
 
-用户已验收手机当前 **1.0.12+26 / arm64 versionCode2026**，明确授权推进仓库默认主线 `master`。运行源码检查点为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`，同时保留已确认的HipLab UI、249项动作库/AI范围、等高与滑动优化，以及SDK `536b4c52c0f665203e7feb82dfde4d76f4815ad8`（ugk_coach0.8.0）和目录语音接入。后续出包以这一整合基线为准，不能再用缺少UI的SDK单独分支替换产品版本。
+会员页 v2 的源码收束版本为 **1.0.14+33**（`feat/paywall-v2`、Tag `app-v1.0.14-build33`）。Play 内测已回读 **1.0.14+32**，Android 真机验收包的实际版本码为 **2032**。两个包各自的源码、签名和 SHA-256 见 [版本台账](app/docs/version-ledger.md)。
 
-上述整合版已通过 [PR #133](https://github.com/mhgd3250905/3D-Body/pull/133) 合入 `master`，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`（2026-11-08 22:41:27，UTC+8）。该检查点与 APK 运行源之间仅有文档差异；本次收束继续只更新文档，不改变已验收的运行版本。
-
-本轮分析通过、406项测试通过/4项已知ar/hi大字体失败/1项默认跳过；同签名从实际+25更新，安装包哈希一致。用户版本验收与主线授权不扩写为全部动作QA、完整语言/设备/iOS或商店发布验收，既有细项继续分账。包、签名、验收与整合来源见[版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)、[UI恢复记录](app/docs/hiplab-sdk080-restoration-2026-11-08.md)。旧包、原UI工作树和R17资产保留，本轮不打tag或发版。
+Flare 提供 248 个动作，采用 Pose-Hub r2-v11 出厂目录。订阅通过系统商店完成，Flare 无需注册账号。会员页显示本期起止时间及续订状态，购买等待期间显示进度并限制重复提交。参见 [App 使用说明](app/README.md)、[验证记录](app/docs/verification.md) 和 [实施路线](app/docs/development-roadmap.md)。
 
 ## 历史主线与内测交付（2026-11-04 收束）
 

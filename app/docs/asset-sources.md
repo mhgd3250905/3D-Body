@@ -1,12 +1,16 @@
 # 资产来源与复现
 
-## 249项动作库缺失封面补齐（2026-11-08）
+## 当前公共动作目录（r2-v11）
+
+出厂目录为 `assets/public_media/catalog.json`，内容来自 Pose-Hub r2-v11，SHA-256 `6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0`。原始目录含 249 条，`lib/data/flare_action_scope.dart` 排除 `n-thomas-test` 后向动作库与 AI 授权 248 条。授权动作各有一张随包封面和缩略图，视频由 SDK 按需下载，目录更新默认 `stable`。版本与验证见 [版本台账](version-ledger.md) 和 [验证记录](verification.md)。
+
+## 历史：249 项动作库封面补齐（r2-v1，2026-11-08）
 
 沿用当前 r2-v1 公共目录，给已授权的249项动作补齐缺少的40张封面。只读来源为本机 `F:/PoseHub-v3/app-pack/r2-v1/` 中目录各项 `files.cover.path`，目标为 `assets/public_posters/{id}.webp`；每张的字节数和 SHA-256 均与当前 App 目录及源文件一致。40张共626,008字节，640×640 WebP；没有重渲、生成、下载或上传素材，也未修改 Pose-Hub/SDK。
 
 原211张逐项核验保持原字节。目录现在保留251张，其中249张属于当前授权动作，另2张历史封面不删除、不据此扩大授权。逐项来源/目标/哈希留存在补图时的原UI工作树 `output/library-scroll-perf-20261108/poster-repair.json`，该路径相对于原UI工作树；回执 SHA-256 为 `711a762f57df1a3e49af2eeb3fb6d9a806350e551a7eed981d90fdee5ad977d1`。沿用既有来源、许可和 QA 状态；封面齐全不代表全部动作或视频已验收。
 
-## 当前消费来源（2026-11-08）
+## 历史消费来源（r2-v1，2026-11-08）
 
 本轮主线合入检查点为 PR #133 合并提交 `1effaf31a0930627f4595b2bda74e156052964c2`（`master`，`2026-11-08T14:41:27Z`）。源码及已安装内测版本为 **1.0.12+26 / arm64 实际 versionCode 2026**，APK 运行源码为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`；四项 SDK 固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`，`ugk_coach` 为0.8.0，其余包版本以锁文件为准。用户已认可本轮 +26 界面；本次没有重制或重新审核 R17 烘焙模型、七形象及其来源许可，也不据此完成全部素材或设备验收。包与安装分账见 [版本台账](version-ledger.md)，验证和待验范围见 [验证记录](verification.md) 与 [待验收台账](development-roadmap.md)。
 

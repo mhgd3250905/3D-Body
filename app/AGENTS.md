@@ -1,10 +1,10 @@
 # Flutter App 工作约定
 
-## 当前执行基线（2026-11-08，+26用户验收）
+## 当前执行基线（2026-11-12，会员页 v2）
 
-PR #133已合入master，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`；与下述APK运行源b96b570之间仅有文档变化。后续文档提交不改变本轮已验收运行版本。
+`feat/paywall-v2` 保存会员页 v2 的收束源码 **1.0.14+33**，对应 Tag `app-v1.0.14-build33`。本阶段从 `master` 的 `122de97a7e40d1472ce3da0643d06a2d66f95e44` 开始。实际设备与 Play 包以 [docs/version-ledger.md](docs/version-ledger.md) 为准，验证以 [docs/verification.md](docs/verification.md) 为准，待验以 [docs/development-roadmap.md](docs/development-roadmap.md) 为准。
 
-用户已验收手机1.0.12+26/arm64 vc2026，并授权将完整整合版推进默认主线master。运行源码检查点b96b570，四项SDK固定536b4c52c0f665203e7feb82dfde4d76f4815ad8（ugk_coach0.8.0），同时保留已认可HipLab UI、单左菜单、249动作库与AI授权、等高和滑动优化。不要以缺少UI的SDK分支重新出包。406通过/4项既有字体失败/1跳过；版本、验收和完整设备/媒体/语音细项的待验边界以docs/version-ledger.md、verification.md及hiplab-sdk080-restoration-2026-11-08.md为准。此次授权只推进源码主线，不增加tag、商店发布或iOS/PR127操作，SDK/Pose-Hub源与原工作树/旧包保持。
+App 消费 Pose-Hub r2-v11，动作库与 AI 共用 248 项授权；SDK 锁定以 `pubspec.lock` 为准。会员权益由 RevenueCat 提供，商店包 AI 通过会员网关。旧版 +26 及更早的验收、素材和设计按原时点查阅版本台账。
 
 ## 历史执行基线（2026-11-04 文档对齐）
 

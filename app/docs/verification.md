@@ -1,5 +1,19 @@
 # App 验证记录
 
+## 会员页 v2 与 +32 交付验证（2026-11-12）
+
+阶段基线为 `master` 的 `122de97a7e40d1472ce3da0643d06a2d66f95e44`，收束前运行源为 `cc0497a6a516ceda908ac72adc851b68696a1954`。Git 核对基线为祖先，差异为 4 个提交、36 个路径（会员源码 4、本地化 28、测试 2、版本配置 1、文档 1）。收束前完整 `git status --porcelain=v1 --untracked-files=all` 为空。
+
+| 验证 | 结果与源码 |
+| --- | --- |
+| `flutter analyze --no-pub`，2026-11-12 | `cc0497a`，0 问题。 |
+| `flutter test --no-pub --reporter expanded test/ui/flare_paywall_v2_test.dart test/ui/flare_membership_flow_test.dart test/domain/membership_gateway_test.dart`，2026-11-12 | `cc0497a`，11 项通过。覆盖 360 dp/1.5 倍字号、有效期和续订状态、购买等待与取消、门禁及网关提示。 |
+| `flutter test --no-pub --concurrency=2 --reporter expanded`，2026-11-12 | 会员页 v2 初版 `05fce7a`，417 通过、1 跳过、4 项既有 SDK 播放器字号失败。后续有效期与购买进度改动由上项定向测试覆盖。 |
+| Android APK 覆盖安装与用户验收，2026-11-12 | `9077eb6` / vc2032。用 `adb install -r` 覆盖，包哈希与安装身份回读一致。会员卡的本期起止时间和续订状态经用户验收。 |
+| `flutter build appbundle --release --build-name=1.0.14 --build-number=32 --dart-define-from-file=<本机配置>`，2026-11-12 | `cc0497a`，AAB 构建、上传证书及应用清单校验通过。Play 内测回读为有效，受众为 `wrist-test` 两位。包和证据边界见 [版本台账](version-ledger.md)。 |
+
+收束工作树在 `cc0497a` 上只更新 Markdown 和 `app/pubspec.yaml` 的版本行至 `1.0.14+33`。该工作树重新执行上表的 `flutter analyze --no-pub` 和三份定向测试，结果为 0 问题、11 项通过。+32 的安装和 Play 回执分别绑定原始出包提交。
+
 ## 会员页 v2 购买进度（2026-11-12）
 
 新版付费墙主按钮在购买结果返回前显示「正在确认购买…」和进度圈，并禁用重复提交。iOS 继续使用 App Store 的续订披露及系统订阅管理入口。Build 29 年付购买已由用户在 iPhone 上验收，新版等待提示待后续真机回验。

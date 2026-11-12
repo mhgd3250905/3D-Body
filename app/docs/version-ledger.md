@@ -1,12 +1,24 @@
 # Flare 版本管理台账
 
-## Android 会员 +30 真机购买验收（2026-11-12）
+## 会员页 v2 收束（2026-11-12）
+
+源码归档版本为 **1.0.14+33**，分支 `feat/paywall-v2`，Tag `app-v1.0.14-build33` 指向本次版本与文档提交。运行代码源为 `cc0497a6a516ceda908ac72adc851b68696a1954`，包含已验收的有效期显示 `9077eb6e6536c47695e3da599e9b3a4efce75324` 和购买进度提示 `09f1dc42cdffe882c01c4277d76aac26c9233fb0`。四个 SDK 包及传递覆盖固定 `7cd1c4392dc4114729f8f4301d3df2848524e6a3`，实际依赖版本以 `app/pubspec.lock` 为准。`master` 的本阶段起点是 `122de97a7e40d1472ce3da0643d06a2d66f95e44`。
+
+| 交付 | 版本与来源 | 回执 |
+| --- | --- | --- |
+| Android 真机验收 APK | `1.0.14+32`，实际 vc2032，`9077eb6e6536c47695e3da599e9b3a4efce75324` | `Flare-1.0.14-vc2032-membership-period-9077eb6.apk`，SHA-256 `02f67bf76d12218835fe9f405645a0da8f9adc4640f82426c6e4c77586b04764`。沿用本机签名覆盖安装，设备回读一致，用户确认会员卡起止时间与续订状态通过。 |
+| Google Play 内测 AAB | `1.0.14+32`，实际 vc32，`cc0497a6a516ceda908ac72adc851b68696a1954` | `Flare-1.0.14-vc32-play-internal-cc0497a.aab`，143,502,029 字节，SHA-256 `f4006d3c1a78965c667342a9e47a5acbeeb51771c49cb66f861e22aece7e56cd`。11 月 12 日 11:42（UTC+8）回读为有效，受众为 `wrist-test` 两人。[内测链接](https://play.google.com/apps/internaltest/4701711365084391592) |
+| iOS | 已记录 Build 29 的年付购买验收 | 后续 Build 31 的构建与分发以 Mac 的独立回执为准。 |
+
+Android 本机验收证书 SHA-256 为 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`，Play AAB 上传证书 SHA-256 为 `193b71f151267dbf3025b43db11839dfa83a40bd2e0f3c7fc4dd7a52a9a81423`。Tag 为源码检查点，当前可追溯的设备和内测产物仍为 +32。验证与待验分别见 [验证记录](verification.md) 和 [实施路线](development-roadmap.md)。
+
+## 历史：Android 会员 +30 真机购买验收（2026-11-12）
 
 用户在 Android 真机用 Google Play 测试卡购买年卡，确认付费测试通过。首次付款返回时曾出现整屏黑屏，Flare 进程仍在运行。重开后界面恢复，设置页显示「会员有效」。黑屏原因待定位。月付实购、重装后恢复、到期回锁和 AI 额度仍待真机验收。
 
 本机验收版为 `1.0.14+30`，Android 实际 `versionCode 2030`。APK 从 `cbdf14323f6f819b719b897bbd01996fe025bb29` 加上本检查点的 AI 对话底栏修复构建，沿用原签名覆盖安装。提示背景已铺满手势区，输入框下方的重复留白已移除。真机量得输入框到提示的间距从 117 像素降到 52 像素，相关 4 项测试及静态分析通过。
 
-APK 文件名 `Flare-1.0.14-vc2030-ai-footer-spacing.apk`，大小 100,725,129 字节，SHA-256 `d9c405d55f45c72d0316b3d248160fb82316e19110b0d1d5873c398eede13b1f`。Play 内测版为 `1.0.14`、`versionCode 30`，来源是 `cbdf14323f6f819b719b897bbd01996fe025bb29`，早于本次底栏修复。
+APK 文件名 `Flare-1.0.14-vc2030-ai-footer-spacing.apk`，大小 100,725,129 字节，SHA-256 `d9c405d55f45c72d0316b3d248160fb82316e19110b0d1d5873c398eede13b1f`。当时的 Play 内测版为 `1.0.14`、`versionCode 30`，来源是 `cbdf14323f6f819b719b897bbd01996fe025bb29`，早于该底栏修复。
 
 ## +26用户认可检查点（2026-11-08，已合入master）
 
