@@ -1,4 +1,8 @@
-import json, os, re, shutil, subprocess, html, sys
+import json, os, shutil, subprocess, html, sys
+from pathlib import Path
+from site_content import (
+    COPY, LABELS_EN, SITE, render_badges, render_faq, render_seo, render_sitemap,
+)
 B = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(B, '..', '..'))
 S = B + '/src'; D = B + '/dist'
@@ -7,25 +11,74 @@ data = json.load(open(S + '/flare-data.json', encoding='utf-8'))
 drills = json.load(open(S + '/drills.json', encoding='utf-8'))
 PH_EN = ['Rear support', 'First transfer', 'First side support', 'First leg pass', 'Front support', 'Second transfer', 'Second side support', 'Second leg pass']
 
-rail = ''.join(f'<div class="tick{" on" if i==0 else ""}"><b>{i+1:02d}</b>{p["name"]}</div>' for i, p in enumerate(data['phases']))
-secs = [('support', '支撑', 'Support'), ('core', '核心', 'Core'), ('legs', '腿部', 'Legs')]
-legend = ''
-for key, zh, en in secs:
-    items = ''.join(f'<li data-g="{g["id"]}">{g["label"]}</li>' for g in data['groups'] if g['sec'] == key)
-    legend += f'<div><h4><b>{zh}</b>{en}</h4><ul>{items}</ul></div>'
-cards = []
-for gid, tiers in drills['drills'].items():
-    for t in ('A', 'B', 'C'):
-        d = tiers.get(t)
-        if not d: continue
-        img = f'd-{gid}-{t}.webp'
-        if not os.path.exists(S + '/img/' + img): continue
-        cards.append(f'<div class="dcard"><img loading="lazy" src="/img/{img}" alt="{html.escape(d["name"])}"><p><i>{t}</i>{html.escape(d["name"])}<span>{html.escape(d.get("nameEn",""))}</span></p></div>')
-# interleave so neighbouring cards differ
-row1 = cards[0::2]; row2 = cards[1::2]
-tpl = open(S + '/index.tpl.html', encoding='utf-8').read()
-out = tpl.replace('{{RAIL}}', rail).replace('{{LEGEND}}', legend).replace('{{ROW1}}', ''.join(row1 * 2)).replace('{{ROW2}}', ''.join(row2 * 2))
-open(D + '/index.html', 'w', encoding='utf-8').write(out)
+sections = [('support', '支撑', 'Support'), ('core', '核心', 'Core'), ('legs', '腿部', 'Legs')]
+
+
+def render_page(lang, template_name):
+    english = lang == 'en'
+    rail = ''.join(
+        f'<div class="tick{" on" if i == 0 else ""}"><b>{i + 1:02d}</b>'
+        f'{html.escape(PH_EN[i] if english else phase["name"])}</div>'
+        for i, phase in enumerate(data['phases'])
+    )
+    legend = []
+    for key, zh, en in sections:
+        items = ''.join(
+            f'<li data-g="{group["id"]}">'
+            f'{html.escape(LABELS_EN[group["id"]] if english else group["label"])}</li>'
+            for group in data['groups'] if group['sec'] == key
+        )
+        heading = en if english else f'<b>{zh}</b>{en}'
+        legend.append(f'<div><h4>{heading}</h4><ul>{items}</ul></div>')
+
+    cards = []
+    for group_id, tiers in drills['drills'].items():
+        for tier in ('A', 'B', 'C'):
+            drill = tiers.get(tier)
+            image = f'd-{group_id}-{tier}.webp'
+            if not drill or not Path(S, 'img', image).is_file():
+                continue
+            english_name = drill.get('nameEn') or drill['name']
+            name = english_name if english else drill['name']
+            subtitle = '' if english else f'<span>{html.escape(english_name)}</span>'
+            cards.append(
+                f'<div class="dcard"><img loading="lazy" src="/img/{image}" '
+                f'alt="{html.escape(name)}"><p><i>{tier}</i>{html.escape(name)}{subtitle}</p></div>'
+            )
+
+    language_suffix = 'en' if english else 'zh-cn'
+    replacements = {
+        'STYLES': Path(S, 'styles.css').read_text(encoding='utf-8'),
+        'SEO': render_seo(lang),
+        'BADGES': render_badges(lang, (
+            f'app-store-{language_suffix}.svg', f'google-play-{language_suffix}.svg',
+        )),
+        'INTRO': f'<p class="faq-intro">{html.escape(COPY[lang]["intro"])}</p>',
+        'FAQ': render_faq(lang),
+        'RAIL': rail,
+        'LEGEND': ''.join(legend),
+        'ROW1': ''.join(cards[0::2] * 2),
+        'ROW2': ''.join(cards[1::2] * 2),
+    }
+    output = Path(S, template_name).read_text(encoding='utf-8')
+    for key, value in replacements.items():
+        marker = '{{' + key + '}}'
+        if marker not in output:
+            raise ValueError(f'Missing {marker} in {template_name}')
+        output = output.replace(marker, value)
+    return output
+
+
+out = render_page('zh-CN', 'index.tpl.html')
+en = render_page('en', 'index.en.tpl.html')
+Path(D, 'index.html').write_text(out, encoding='utf-8')
+Path(D, 'en').mkdir(exist_ok=True)
+Path(D, 'en', 'index.html').write_text(en, encoding='utf-8')
+Path(D, 'robots.txt').write_text(
+    f'User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n', encoding='utf-8'
+)
+Path(D, 'sitemap.xml').write_text(render_sitemap(), encoding='utf-8')
+shutil.copy(Path(S, 'llms.txt'), Path(D, 'llms.txt'))
 
 # bundle js
 esb = os.environ.get('ESBUILD')
@@ -33,7 +86,7 @@ cmd = [esb] if esb else [shutil.which('node') or 'node', os.path.join(ROOT, 'nod
 subprocess.run(cmd + [S + '/main.js', '--bundle', '--minify', '--format=iife', '--target=es2019', '--legal-comments=none', '--outfile=' + D + '/app.js'], check=True)
 
 # fonts
-chars = set(out) | set(json.dumps(data, ensure_ascii=False)) | set(open(S + '/main.js', encoding='utf-8').read())
+chars = set(out + en) | set(json.dumps(data, ensure_ascii=False)) | set(open(S + '/main.js', encoding='utf-8').read())
 chars |= set('0123456789°·—→×✓●◐/%.:-+ ')
 txt = ''.join(sorted(c for c in chars if ord(c) >= 32))
 open(B + '/chars.txt', 'w', encoding='utf-8').write(txt)
@@ -56,7 +109,7 @@ else:
 
 # assets
 for f in os.listdir(S + '/img'):
-    used = f in out or f in ('icon.png', 'og.jpg', 'flare-loop.webp')
+    used = f in out or f in en or f in ('icon.png', 'og.jpg', 'flare-loop.webp')
     if used: shutil.copy(S + '/img/' + f, D + '/img/' + f)
 shutil.copy(B + '/coach.glb', D + '/coach.glb')
 shutil.copytree(S + '/fonts/licenses', D + '/fonts/licenses', dirs_exist_ok=True)

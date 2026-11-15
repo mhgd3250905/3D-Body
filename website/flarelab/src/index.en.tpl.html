@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+{{SEO}}
+<meta name="theme-color" content="#08080a">
+<link rel="icon" href="/img/icon.png">
+<link rel="apple-touch-icon" href="/img/icon.png">
+<link rel="preload" href="/coach.glb" as="fetch" crossorigin>
+<link rel="preload" href="/fonts/nsc-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+{{STYLES}}
+</style>
+</head>
+<body>
+<div id="loader" aria-hidden="true">
+  <div class="lmark mono"><i></i>FlareLab – Thomas Flare Trainer</div>
+  <div id="loader-pct">000</div>
+  <div class="lbar"><div id="loader-bar"></div></div>
+  <div class="lcap">Loading the 3D coach</div>
+</div>
+
+<canvas id="gl" aria-label="Live 3D flare demo"></canvas>
+<div id="poster"><img src="/img/flare-loop.webp" alt="3D flare loop"></div>
+<div class="vignette"></div>
+<svg id="annot" aria-hidden="true">
+  <path id="a-kl"/><text id="t-kl"></text>
+  <path id="a-kr"/><text id="t-kr"></text>
+  <path id="a-el" class="e"/><text id="t-el" class="e"></text>
+  <path id="a-hip"/><text id="t-hip"></text>
+</svg>
+<div class="grain"></div>
+
+<nav id="nav">
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b><span>Thomas Flare Trainer</span></div></a>
+  <div class="navlinks">
+    <a class="l" href="#phases">Phases</a>
+    <a class="l" href="#muscle">Muscles</a>
+    <a class="l" href="#rules">Rules</a>
+    <a class="l" href="#loop">Training</a>
+    <a class="l" href="#faq">FAQ</a>
+    <a class="pill" href="#join">Get the app</a>
+    <div class="lang-switch mono" aria-label="Language">
+      <a href="/" lang="zh-CN" hreflang="zh-CN" aria-label="Simplified Chinese">中</a>
+      <span aria-hidden="true">/</span>
+      <a href="/en/" lang="en" hreflang="en" aria-label="English" aria-current="page">EN</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+<section id="hero" data-drag>
+  <div class="hero-word" aria-hidden="true">FL<span>A</span>RE</div>
+  <div class="hero-scrim"></div>
+  <div class="hero-copy">
+    <div class="kicker mono"><span class="dot"></span>FlareLab – Thomas Flare Trainer</div>
+    <h1>See it. Understand it.<em>Land your flare.</em></h1>
+
+    <p class="hero-p">See each phase in 3D, understand which muscles are working and build up with targeted drills.</p>
+    <div class="hero-cta">
+      {{BADGES}}
+      <a class="ghost" href="#phases">Explore the 8 phases ↓</a>
+    </div>
+  </div>
+  <div class="hero-side mono">
+    <div class="live"><span class="dot"></span>Live 3D · 0.5×</div>
+    <div id="hero-live">01/08 · Rear support</div>
+    <div class="hint"><svg viewBox="0 0 34 14" fill="none" stroke="currentColor"><path d="M1 7h32M5 3L1 7l4 4M29 3l4 4-4 4"/></svg>Drag to rotate</div>
+  </div>
+  <div class="scrollcue mono">Scroll<i></i></div>
+</section>
+
+<section id="phases" class="pin">
+  <div class="sticky">
+    <div class="scrim-l"></div>
+    <div class="ph-wrap">
+      <div class="sec-k mono"><b>01</b> Eight phases <span class="scrub-hint" style="color:var(--dim)">— Scroll to scrub</span></div>
+      <div id="ph-text">
+        <span id="ph-num">01</span>
+        <div id="ph-zh">Rear support</div>
+        <div id="ph-en">Rear support</div>
+        <span id="ph-detail">Long leg sweeps forward</span>
+        <p id="ph-cap"></p>
+      </div>
+    </div>
+    <div class="ph-side mono">One loop<div class="big">9.0<span style="font-size:.4em;color:var(--mute)">s</span></div>0.25–1× speed</div>
+    <div id="ph-rail">
+      <div class="track"></div><div id="ph-fill"></div>
+      {{RAIL}}
+    </div>
+  </div>
+</section>
+
+<section id="muscle" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-r"></div>
+    <div class="mu-left mono"><div class="big">17</div>Muscle groups, synced per phase</div>
+    <div class="mu-wrap">
+      <div>
+        <div class="sec-k mono"><b>02</b> Muscle sync</div>
+        <h2>See which muscles<br>carry each phase.</h2>
+
+      </div>
+      <div>
+        <div class="readout"><span id="mus-phase">02 · First transfer</span><span id="mus-phase-en">First transfer</span><span id="mus-support">Right-hand support</span></div>
+        <div id="legend">{{LEGEND}}</div>
+        <div class="mu-note"><span>● Primary &nbsp; ◐ Secondary</span><span>Sides follow the supporting hand</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rules" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-l"></div>
+    <div class="ru-wrap">
+      <div>
+        <div class="sec-k mono"><b>03</b> Technique rules</div>
+        <h2>Clean technique,<br>measured in motion.</h2>
+
+      </div>
+      <div>
+        <div class="rules">
+          <div class="rule"><div class="t">Straight legs</div><div class="v live" id="live-knee">178°</div><div class="s">Knee angle ≥ 176°</div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Hip fold</div><div class="v live" id="live-hip">50°</div><div class="s">Hip fold ≥ 50° · loop peak <span id="hip-peak" class="em">—</span></div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Straight support arm</div><div class="v live" id="live-elbow">179°</div><div class="s">Supporting elbow</div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Even rhythm</div><div class="v">✓</div><div class="s">Steady tempo · seamless loop</div><div class="s2">8 segments</div>
+            <div class="rhythm"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span id="rhythm-head"></span></div></div>
+        </div>
+        <div class="sparkcard">
+          <svg id="spark" viewBox="0 0 300 70"><line id="spark-th" x1="0" x2="300" y1="30" y2="30"/><path id="spark-path"/><circle id="spark-dot" r="3.5" cx="0" cy="0"/></svg>
+          <p>Minimum knee angle<br>across the loop<b id="spark-min">—</b>Dashed line = 176° minimum</p>
+        </div>
+      </div>
+    </div>
+    <div class="ru-right mono">Current phase<div id="live-phase">—</div><div style="margin-top:14px">Flexed feet ✓<br>Level hips on hand changes ✓</div></div>
+  </div>
+</section>
+
+<section id="loop" class="sec first">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>04</b> The learning loop</div>
+      <h2>Watch → Understand → Train → Ask → Progress</h2>
+
+    </div>
+    <p data-reveal data-d="1">From observing the move in 3D to planning your practice, use technique cues to guide each step.</p>
+  </div>
+  <div class="loop">
+    <div class="step" data-reveal><span class="arrow">→</span><div class="n">01</div><div class="ch">Watch</div><h3>Full-screen 3D flare loop</h3><p>Loop any of the eight phases, slow it to 0.25–1× speed and rotate the view.</p><div class="chips"><span class="chip">8 phases</span><span class="chip">0.25–1×</span></div></div>
+    <div class="step" data-reveal data-d="1"><span class="arrow">→</span><div class="n">02</div><div class="ch">Understand</div><h3>Pause and tap a muscle</h3><p>See what it does in that instant, with three key cues and common mistakes.</p><div class="chips"><span class="chip">Key cues</span><span class="chip">Common mistakes</span></div></div>
+    <div class="step" data-reveal data-d="2"><span class="arrow">→</span><div class="n">03</div><div class="ch">Train</div><h3>Drills for that muscle</h3><p>Three levels with timers or rep counters: A bodyweight, B home equipment, C gym.</p><div class="chips"><span class="chip">A Bodyweight</span><span class="chip">B Home equipment</span><span class="chip">C Gym</span></div></div>
+    <div class="step" data-reveal data-d="3"><span class="arrow">→</span><div class="n">04</div><div class="ch">Ask</div><h3>Ask the AI coach</h3><p>Ask about technique and plan practice around your training goals.</p><div class="chips"><span class="chip em">AI coach</span></div></div>
+    <div class="step" data-reveal data-d="4"><div class="n">05</div><div class="ch">Progress</div><h3>Build up gradually</h3><p>Use each phase's cues as you work through the move at your own pace.</p></div>
+  </div>
+</section>
+
+<section id="screens" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>05</b> The app</div>
+      <h2>Four screens,<br>one path.</h2>
+
+    </div>
+    <p data-reveal data-d="1">Available for iOS and Android. The movement breakdown works offline. Drill videos may need a connection on first play.</p>
+  </div>
+  <div class="screens" data-par>
+    <div class="glow"></div>
+    <figure class="phone" style="--x:-420;--y:40;--py:140;--ry:24;--rz:-4"><img loading="lazy" src="/img/ph-01-watch.webp" alt="Watch each frame"><figcaption><b>Watch</b></figcaption></figure>
+    <figure class="phone" style="--x:-140;--y:-20;--py:-90;--ry:10;--rz:-1.5"><img loading="lazy" src="/img/ph-03-understand.webp" alt="Understand the muscles at work"><figcaption><b>Understand</b></figcaption></figure>
+    <figure class="phone" style="--x:140;--y:20;--py:110;--ry:-10;--rz:1.5"><img loading="lazy" src="/img/ph-04-train.webp" alt="Targeted drills"><figcaption><b>Train</b></figcaption></figure>
+    <figure class="phone" style="--x:420;--y:-30;--py:-130;--ry:-24;--rz:4"><img loading="lazy" src="/img/ph-05-path.webp" alt="Training path"><figcaption><b>Training path</b></figcaption></figure>
+  </div>
+  <p class="disclaim">Screens show design previews.</p>
+</section>
+
+<section id="drills" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>06</b> Drill library</div>
+      <h2>51 drills for<br>the muscles you use.</h2>
+
+    </div>
+    <div data-reveal data-d="1" style="justify-self:end;max-width:440px">
+      <p style="justify-self:auto">Every working muscle gets three tiers of drills with sets, cues, mistakes and safety notes.</p>
+      <div class="tiers"><span class="chip em">A Bodyweight</span><span class="chip">B Home equipment</span><span class="chip">C Gym</span></div>
+    </div>
+  </div>
+  <div class="marquee" data-reveal>
+    <div class="mrow">{{ROW1}}</div>
+    <div class="mrow rev">{{ROW2}}</div>
+  </div>
+</section>
+
+<section id="numbers" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>07</b> The numbers</div>
+      <h2>The flare,<br>by the numbers.</h2>
+    </div>
+  </div>
+  <div class="nums">
+    <div class="num" data-reveal><div class="v" data-count="8">8</div><h3>Phases in the 3D loop</h3></div>
+    <div class="num" data-reveal data-d="1"><div class="v" data-count="17">17</div><h3>Muscle groups synced per phase</h3></div>
+    <div class="num" data-reveal data-d="2"><div class="v" data-count="51">51</div><h3>Illustrated drills across three levels</h3></div>
+    <div class="num" data-reveal data-d="3"><div class="v"><span data-count="40">40</span><sup>+</sup></div><h3>Motion refinements</h3></div>
+  </div>
+  <p class="nums-note" data-reveal>Muscles are grouped into support, core and legs. Sides follow the supporting hand.</p>
+</section>
+
+<section id="who" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>08</b> Who it's for</div>
+      <h2>For anyone stuck on the flare.</h2>
+
+    </div>
+  </div>
+  <div class="who">
+    <div class="card" data-reveal><div class="i">01</div><h3>Beginner to intermediate breakers</h3><ul><li>See what your body does in each phase</li><li>Know which muscles to train</li><li>Spot what you need to work on</li></ul></div>
+    <div class="card" data-reveal data-d="1"><div class="i">02</div><h3>Street workout and gymnastics enthusiasts</h3><ul><li>Break down the technique</li><li>Follow a progressive training path</li></ul></div>
+    <div class="card" data-reveal data-d="2"><div class="i">03</div><h3>Coaches and breaking studios</h3><ul><li>Visual tools for teaching are planned.</li></ul></div>
+  </div>
+</section>
+
+<section id="faq" class="sec">
+  {{INTRO}}
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>09</b> FAQ</div>
+      <h2>Frequently asked questions</h2>
+    </div>
+  </div>
+  <div class="faq">
+    {{FAQ}}
+  </div>
+</section>
+
+<section id="join">
+  <div class="sec-k mono" data-reveal><b>10</b> Get the app</div>
+  <h2 class="join-big" data-reveal>Download FlareLab</h2>
+  <div class="join-grid">
+    <div data-reveal><p>Download FlareLab for iOS or Android, or try it in your browser.</p></div>
+    <div data-reveal data-d="1">{{BADGES}}</div>
+  </div>
+</section>
+</main>
+<footer>
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b></div></a>
+  <div>© 2026 FlareLab · Developer Bboy Ug1yk</div>
+  <div class="mono" style="font-size:10px">Thomas Flare Trainer</div>
+</footer>
+<script src="/app.js" defer></script>
+</body>
+</html>

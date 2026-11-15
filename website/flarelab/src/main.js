@@ -14,6 +14,19 @@ const isMobile = () => innerWidth < 820;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const PH_EN = ['Rear support', 'First transfer', 'First side support', 'First leg pass', 'Front support', 'Second transfer', 'Second side support', 'Second leg pass'];
+const PH_NOTES_EN = [
+  ['Long leg sweeps forward', 'Push into the floor with both hands. Fold at the hips to lift the straight, separated legs in front. Tighten the abdominals and keep the legs wide with the gluteus medius.'],
+  ['Transfer to one hand', 'Shift your weight onto one hand. The supporting deltoid, triceps and serratus anterior carry the load. The wrist flexors stabilize the palm and the obliques turn the pelvis sideways.'],
+  ['Open to a high V', 'Lift the body sideways on one hand. The supporting shoulder takes most of the load, with the rotator cuff stabilizing it. The obliques hold the hips high and the gluteus medius opens the legs into a high V.'],
+  ['Prepare to plant the free hand', 'Turn to face forward and scissor the legs in front. The hip flexors and rectus abdominis bring the legs forward, the adductors control the crossover and the free hand prepares to plant.'],
+  ['Sweep the legs behind', 'With both hands on the floor behind you and your chest up, support your weight with the triceps, deltoids and chest, as in a dip. Keep the legs wide as they prepare to sweep behind you.'],
+  ['Transfer to the other hand', 'Shift your weight to the other hand. The supporting shoulder, arm and serratus anterior carry the load. The wrist flexors steady the palm and the gluteus maximus sweeps the straight leg from front to back.'],
+  ['Open to a high V', 'Support yourself on the other hand. The shoulder and rotator cuff take the load, the obliques hold the pelvis high and the gluteus medius keeps the legs open in a high V.'],
+  ['Prepare for the next loop', 'Turn to face down as the legs sweep behind you. The gluteus maximus extends the hip, the spinal erectors keep the hips high and the obliques rotate the body back. Plant the free hand to start the next loop.'],
+];
+const SUPPORT_EN = { both: 'Both hands', left: 'Left-hand support', right: 'Right-hand support' };
+const english = root.lang === 'en';
+const phaseName = (i) => english ? PH_EN[i] : DATA.phases[i].name;
 const DUR = DATA.dur;
 
 /* ---------------- loader UI ---------------- */
@@ -71,7 +84,11 @@ function setPhaseText(i) {
   const box = $('#ph-text');
   box.classList.remove('swap'); void box.offsetWidth; box.classList.add('swap');
   phaseNum.textContent = String(i + 1).padStart(2, '0');
-  phaseZh.textContent = p.name; phaseEn.textContent = PH_EN[i]; phaseDetail.textContent = p.detail; phaseCap.textContent = p.cap;
+  const [detail, caption] = english ? PH_NOTES_EN[i] : [p.detail, p.cap];
+  phaseZh.textContent = phaseName(i);
+  phaseEn.textContent = PH_EN[i];
+  phaseDetail.textContent = detail;
+  phaseCap.textContent = caption;
   phaseTicks.forEach((t, k) => t.classList.toggle('on', k === i));
 }
 function phaseAt(t) {
@@ -92,9 +109,12 @@ function setMuscleUI(st) {
     legendItems[id].classList.toggle('p', prim.has(id));
     legendItems[id].classList.toggle('s', !prim.has(id) && sec.has(id));
   }
-  musPhase.textContent = `${String(st[0] + 1).padStart(2, '0')} · ${DATA.phases[st[0]].name}`;
+  musPhase.textContent = `${String(st[0] + 1).padStart(2, '0')} · ${phaseName(st[0])}`;
   musPhaseEn.textContent = PH_EN[st[0]];
-  musSupport.textContent = st[1] === 'both' ? '双手支撑 · Both hands' : st[1] === 'left' ? '左手支撑 · Left hand' : '右手支撑 · Right hand';
+  musSupport.textContent = english ? SUPPORT_EN[st[1]]
+    : st[1] === 'both' ? '双手支撑 · Both hands'
+    : st[1] === 'left' ? '左手支撑 · Left hand'
+    : '右手支撑 · Right hand';
 }
 
 /* parallax + fallback scroll */
@@ -249,7 +269,7 @@ function initGL() {
 
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
-  loader.load('coach.glb', (gltf) => {
+  loader.load('/coach.glb', (gltf) => {
     coach = gltf.scene;
     coach.traverse((o) => {
       if (o.isSkinnedMesh || o.isMesh) {
@@ -449,7 +469,7 @@ function initGL() {
 
       const st = phaseAt(t);
       if (scene_ === 'phases') { setPhaseText(st[0]); if (phaseFill) phaseFill.style.transform = `scaleX(${t / DUR})`; }
-      if (heroLive) heroLive.textContent = `${String(st[0] + 1).padStart(2, '0')}/08 · ${DATA.phases[st[0]].name}`;
+      if (heroLive) heroLive.textContent = `${String(st[0] + 1).padStart(2, '0')}/08 · ${phaseName(st[0])}`;
       setGlowTargets(st, clamp(S.xray * 1.2));
       if (scene_ === 'muscle') setMuscleUI(st);
       for (let j = 0; j < 22; j++) jointGlow[j] = lerp(jointGlow[j], jointTarget[j], 1 - Math.pow(0.004, dt));
@@ -485,7 +505,7 @@ function initGL() {
         liveKnee.textContent = Math.min(kL, kR).toFixed(1) + '°';
         liveElbow.textContent = eS.toFixed(1) + '°';
         liveHip.textContent = Math.max(hL, hR).toFixed(1) + '°';
-        livePhase.textContent = `${String(st[0] + 1).padStart(2, '0')} ${DATA.phases[st[0]].name}`;
+        livePhase.textContent = `${String(st[0] + 1).padStart(2, '0')} ${phaseName(st[0])}`;
         sparkDot.setAttribute('cx', ((t / DUR) * 300).toFixed(1)); sparkDot.setAttribute('cy', (70 - ((Math.min(kL, kR) - 170) / 11) * 70).toFixed(1));
         rhythmHead.style.left = ((t / DUR) * 100).toFixed(2) + '%';
       } else svgA.style.opacity = 0;
