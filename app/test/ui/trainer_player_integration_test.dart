@@ -607,6 +607,12 @@ void main() {
               find.byType(sdk.TrainerPlayer),
             );
             expect(player.theme.usePlayerV1, isTrue);
+            final labels = AppLocalizations.of(
+              tester.element(find.byType(sdk.TrainerPlayer)),
+            );
+            expect(player.strings.upcomingLabel, labels.planUpNext);
+            expect(player.strings.instructionsLabel, labels.cues);
+            expect(player.strings.restLabel, labels.rest);
             expect(player.strings.pause, isNotEmpty);
             expect(
               player.voice!.settings.language,

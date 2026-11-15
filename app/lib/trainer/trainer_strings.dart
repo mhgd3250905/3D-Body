@@ -402,6 +402,9 @@ List<String> trainerWristDirections(AppLocalizations s) =>
 
 sdk.TrainerStrings trainerStrings(AppLocalizations s) {
   final w = _for(s);
+  final playerCopy = s.localeName.startsWith('zh')
+      ? sdk.TrainerStrings.zh()
+      : sdk.TrainerStrings.en();
   return sdk.TrainerStrings(
     extendRest: s.addRest,
     completeTimedPhase:
@@ -429,6 +432,15 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     paused: s.paused,
     next: s.planNext,
     nextUp: s.planUpNext,
+    upcomingLabel: s.planUpNext,
+    restLabel: s.rest,
+    demonstration: s.drillDemo,
+    startTraining: s.startTimer,
+    playerStart: s.start,
+    howTo: s.cues,
+    instructionsLabel: s.cues,
+    precautions: s.safety,
+    closeInstructions: playerCopy.closeInstructions,
     discomfort: w[3],
     discomfortTitle: w[4],
     discomfortBody: '${s.safetyRule2}. ${s.safetyRule2Note}.',
@@ -437,6 +449,8 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     discomfortEnd: s.endSessionConfirm,
     close: s.close,
     closeTitle: s.endSessionTitle,
+    closeSheetTitle: s.endSessionTitle,
+    closeSheetProgress: playerCopy.closeSheetProgress,
     closeBody: s.endSessionBody,
     closeConfirm: s.endSessionConfirm,
     closeCancel: s.keepTraining,
@@ -449,9 +463,25 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     minutes: w[7],
     exercisesDone: w[8],
     finish: s.done,
+    feelingPrompt: playerCopy.feelingPrompt,
+    feelingLabels: playerCopy.feelingLabels,
+    actualDuration: playerCopy.actualDuration,
+    totalReps: playerCopy.totalReps,
+    totalWorkTime: playerCopy.totalWorkTime,
+    streak: s.streak,
+    trainedAreasLabel: playerCopy.trainedAreasLabel,
+    skipped: playerCopy.skipped,
+    replay: playerCopy.replay,
+    durationLabel: playerCopy.durationLabel,
     saveFailed: s.saveFailed,
     saveRetry: s.retry,
     mediaUnavailable: s.demoFailed,
+    mediaDownloading: playerCopy.mediaDownloading,
+    mediaDownloadingSemantics: playerCopy.mediaDownloadingSemantics,
+    mediaDownloadFailed: playerCopy.mediaDownloadFailed,
+    mediaDownloadFailedSemantics: playerCopy.mediaDownloadFailedSemantics,
+    mediaDownloadVerifying: playerCopy.mediaDownloadVerifying,
+    mediaDownloadReady: playerCopy.mediaDownloadReady,
     notificationChannel: s.library,
     notificationChannelDescription: s.library,
     notificationTitle: s.appName,
