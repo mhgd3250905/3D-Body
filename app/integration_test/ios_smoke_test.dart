@@ -112,7 +112,7 @@ void main() {
       what: 'seek acknowledged by the real scene',
     );
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
-    await tester.tap(find.text('点选肌群查看详解'));
+    await tester.tap(find.byKey(const ValueKey('home-muscle-hint')));
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
     final group = catalog.groups.firstWhere(
       (g) => find.text(g.label).evaluate().isNotEmpty,
@@ -211,7 +211,7 @@ void main() {
           'error: ${scene.errorCode}; state: ${scene.lastState}',
     );
     revision = scene.stateRevision;
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await tester.tap(find.byKey(const ValueKey('home-menu-chip')));
     await _until(
       tester,
       () => scene.confirmsPausedFrame(

@@ -18,6 +18,7 @@ import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/trainer_theme.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'actor_body_selector.dart';
@@ -382,7 +383,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       posterAssets: [for (final id in ids) ?posterFor(id)],
       mediaPolicy: policy,
       planActionIds: ids,
-      theme: FlareShared.theme(context),
+      theme: trainerTheme(context),
       onStarting: onStarting,
       holdTransition: holdTransition,
       settings: const RouteSettings(name: '/training'),
@@ -2419,6 +2420,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                   children: [
                     BodyText(s.aboutBody),
+                    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+                      BodyText('SDK 63e2481', color: FlareColors.secondary),
                     SectionTitle(s.teachingTitle),
                     BodyText(s.teachingNote, color: FlareColors.secondary),
                     const SizedBox(height: 6),

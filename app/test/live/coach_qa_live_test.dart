@@ -220,7 +220,7 @@ void main() {
         'model': 'deepseek-v4.1-flash',
         'thinking': {'type': 'enabled'},
         'reasoningEffort': 'max',
-        'sdkCommit': 'f7b8a8e4853e9f50fc93888e1768ec1dbc75b588',
+        'sdkCommit': '63e24819406d843d6eabd5f95df98bbfdecc36f0',
         'tagCommit': '5d17c24af859d905dbbdee4b1d623b99881ac618',
         'tagStatus': 'ai-draft; not human reviewed',
         'scenarios': scenarios,
