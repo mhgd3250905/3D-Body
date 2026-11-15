@@ -2420,6 +2420,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                   children: [
                     BodyText(s.aboutBody),
+                    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+                      BodyText('SDK 036b5fc', color: FlareColors.secondary),
                     SectionTitle(s.teachingTitle),
                     BodyText(s.teachingNote, color: FlareColors.secondary),
                     const SizedBox(height: 6),

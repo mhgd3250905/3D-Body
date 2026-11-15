@@ -4,16 +4,18 @@
 import 'dart:convert';
 
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/main.dart' as app;
 import 'package:flare/platform/scene/scene_view_native.dart';
 import 'package:flare/ui/app_shell.dart';
-import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/components.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 import 'package:webview_flutter/webview_flutter.dart';
 
 Future<void> _until(
@@ -41,7 +43,7 @@ void main() {
     await binding.takeScreenshot(name);
   }
 
-  testWidgets('first launch, appearance, timer and native local records', (
+  testWidgets('first launch, appearance, shared library and native player', (
     tester,
   ) async {
     final preferences = await SharedPreferences.getInstance();
@@ -57,12 +59,14 @@ void main() {
     });
     expect(await preferences.remove(LearningStore.storageKey), true);
     app.main();
+    final start = find.widgetWithText(FilledButton, '开始').hitTestable();
     await _until(
       tester,
-      () => find.byType(WelcomePage).evaluate().isNotEmpty,
-      'first-launch page',
+      () => start.evaluate().isNotEmpty,
+      'first-launch splash to reveal the Start button',
+      timeout: const Duration(seconds: 60),
     );
-    await tester.tap(find.text('开始'));
+    await tester.tap(start);
     await tester.pumpAndSettle();
     expect(find.text('三件事'), findsOneWidget);
     await tester.tap(find.text('我知道了'));
@@ -121,7 +125,8 @@ void main() {
     }
 
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.more_horiz_rounded));
+    const menuKey = ValueKey('home-menu-chip');
+    await tester.tap(find.byKey(menuKey));
     await tester.pumpAndSettle();
     await tester.tap(find.text('设置'));
     await tester.pumpAndSettle();
@@ -137,7 +142,13 @@ void main() {
         brightness,
       );
     }
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    final settingsBar = find.widgetWithText(FlareNavBar, '设置').last;
+    await tester.tap(
+      find.descendant(
+        of: settingsBar,
+        matching: find.byIcon(FlareNavBar.backIcon),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(['light', 'dark'], contains(screenshotTheme));
     expect(await store.updateSettings(themeMode: screenshotTheme), true);
@@ -145,39 +156,71 @@ void main() {
     scene.setTime(2.375);
     await tester.pump(const Duration(milliseconds: 500));
     await screenshot(tester, '01-home-$screenshotTheme');
-    await tester.tap(find.text('点选肌群查看详解'));
+    await tester.tap(find.byKey(menuKey));
     await tester.pumpAndSettle();
-    final group = shell.catalog.groups.firstWhere(
-      (group) => find.text(group.label).evaluate().isNotEmpty,
+    await tester.tap(find.widgetWithText(FlareListRow, '训练'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FlareSharedLibraryPage), findsOneWidget);
+    await screenshot(tester, '04-library-$screenshotTheme');
+    final drill = find.byType(DrillCard).first;
+    await tester.ensureVisible(drill);
+    await tester.tap(drill);
+    await _until(
+      tester,
+      () => find.byType(sdk.TrainingLibraryDetail).evaluate().isNotEmpty,
+      'shared action detail',
     );
-    await tester.tap(find.text(group.label).last);
     await tester.pumpAndSettle();
-    await screenshot(tester, '02-motion-detail-$screenshotTheme');
-    await tester.tap(find.byKey(const ValueKey('detail-card')));
+    await screenshot(tester, '05-drill-$screenshotTheme');
+    Navigator.of(tester.element(find.byType(sdk.TrainingLibraryDetail))).pop();
     await tester.pumpAndSettle();
-    await screenshot(tester, '03-muscle-detail-$screenshotTheme');
-    await tester.tap(find.byKey(const ValueKey('train-group')));
+    final library = find.byType(FlareSharedLibraryPage);
+    tester.widget<FlareSharedLibraryPage>(library).onBack!();
     await tester.pumpAndSettle();
-    expect(find.byType(LibraryPage), findsOneWidget);
-    final selectedDrill = tester
-        .widget<DrillCard>(find.byType(DrillCard).first)
-        .drill;
-    await tester.tap(find.text(selectedDrill.name));
+    await tester.tap(find.byKey(menuKey));
     await tester.pumpAndSettle();
-    await screenshot(tester, '04-drill-$screenshotTheme');
-    final addToday = find.byTooltip('加入今日训练');
-    await tester.ensureVisible(addToday);
-    await tester.tap(addToday);
-    final startTraining = find.text('开始训练');
+    await tester.tap(find.widgetWithText(FlareListRow, '计划'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('居家').hitTestable().last);
+    await tester.pumpAndSettle();
+    final preset = find.byKey(const ValueKey('preset-core'));
+    await tester.ensureVisible(preset);
+    await tester.tap(preset);
+    await tester.pumpAndSettle();
+    final startTraining = find.byKey(const ValueKey('plan-start'));
     await tester.ensureVisible(startTraining);
     await tester.tap(startTraining);
-    await tester.pumpAndSettle();
-    // Training now runs in the SDK whole-plan player (FlareTrainingPage);
-    // the legacy native timer and its countdown/pause checks were removed.
+    await _until(
+      tester,
+      () => find.byKey(const ValueKey('player-v1-dock')).evaluate().isNotEmpty,
+      'Player V1 controls',
+      timeout: const Duration(seconds: 60),
+    );
     expect(find.byType(FlareTrainingPage), findsOneWidget);
-    expect(store.todayIds, isNotEmpty);
-    final drill = shell.catalog.drillById(store.todayIds.last)!;
-    await screenshot(tester, '05-trainer-$screenshotTheme');
+    await screenshot(tester, '06-trainer-$screenshotTheme');
+    await tester.tap(find.byKey(const ValueKey('pause')));
+    final feedback = find.byType(sdk.TrainerRestFeedbackPanel);
+    await _until(
+      tester,
+      () => feedback.evaluate().isNotEmpty,
+      'rest feedback after the first set',
+      timeout: const Duration(seconds: 90),
+    );
+    final comfortable = find
+        .byKey(const ValueKey('player-v1-rest-comfortable'))
+        .hitTestable();
+    await _until(
+      tester,
+      () => comfortable.evaluate().isNotEmpty,
+      'rest feedback controls to become visible',
+    );
+    await tester.tap(comfortable);
+    await tester.pump();
+    expect(
+      tester.widget<sdk.TrainerRestFeedbackPanel>(feedback).selected,
+      sdk.TrainerRestFeedbackChoice.comfortable,
+    );
+    await screenshot(tester, '07-rest-feedback-$screenshotTheme');
     Navigator.of(tester.element(find.byType(FlareTrainingPage))).pop();
     await tester.pumpAndSettle();
 
@@ -188,7 +231,6 @@ void main() {
     expect(restored.storageError, isNull);
     expect(restored.safetyAccepted, true);
     expect(restored.settings.themeMode, screenshotTheme);
-    expect(restored.todayIds, contains(drill.id));
     expect(tester.takeException(), isNull);
     final report = {
       'firstLaunchSafetyOk': true,
