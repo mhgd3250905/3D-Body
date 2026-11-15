@@ -26,25 +26,25 @@ dependencies:
   http: ^1.6.0
   purchases_flutter: 10.4.1
   url_launcher: 6.3.2
-  # Shared SDK packages use iOS packed-alpha r3 on the v0.8.0 baseline.
+  # Shared SDK packages are pinned together to Player V1 and voice guide.
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
+      ref: 036b5fcdc8bbe3e7ed13e629accf2287c3004ad8
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
+      ref: 036b5fcdc8bbe3e7ed13e629accf2287c3004ad8
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
+      ref: 036b5fcdc8bbe3e7ed13e629accf2287c3004ad8
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
+      ref: 036b5fcdc8bbe3e7ed13e629accf2287c3004ad8
       path: packages/ugk_coach_chat
 
 # Keep SDK transitive dependencies on the same reviewed commit.
@@ -52,7 +52,7 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7cd1c4392dc4114729f8f4301d3df2848524e6a3
+      ref: 036b5fcdc8bbe3e7ed13e629accf2287c3004ad8
 
 dev_dependencies:
   flutter_test:

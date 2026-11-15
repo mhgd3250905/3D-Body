@@ -18,6 +18,7 @@ import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/trainer_theme.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'actor_body_selector.dart';
@@ -380,7 +381,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       posterAssets: [for (final id in ids) ?posterFor(id)],
       mediaPolicy: policy,
       planActionIds: ids,
-      theme: FlareShared.theme(context),
+      theme: trainerTheme(context),
       onStarting: onStarting,
       holdTransition: holdTransition,
       settings: const RouteSettings(name: '/training'),

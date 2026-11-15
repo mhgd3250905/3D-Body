@@ -213,6 +213,102 @@ List<String> _for(AppLocalizations s) =>
 String trainerLoadFailed(AppLocalizations s) => _for(s)[9];
 String trainerMoveUnavailable(AppLocalizations s) => _for(s)[10];
 
+// Rest feedback belongs to the player and uses the app's locale.
+const _restFeedback =
+    <String, (String, String, String, String, String, String)>{
+      'zh': ('刚才感觉怎么样？', '选择刚才的感受', '已选择', '舒服', '有点紧', '疼'),
+      'zh_Hant': ('剛才感覺如何？', '選擇剛才的感受', '已選擇', '舒服', '有點緊', '痛'),
+      'en': (
+        'How did that feel?',
+        'Choose how the last set felt',
+        'Selected',
+        'Good',
+        'Tight',
+        'Pain',
+      ),
+      'es': (
+        '¿Cómo te sentiste?',
+        'Elige cómo sentiste la serie',
+        'Seleccionado',
+        'Bien',
+        'Tensión',
+        'Dolor',
+      ),
+      'pt': (
+        'Como te sentiste?',
+        'Escolhe como foi a série',
+        'Selecionado',
+        'Bem',
+        'Tensão',
+        'Dor',
+      ),
+      'fr': (
+        'Comment te sens-tu ?',
+        'Évalue ta dernière série',
+        'Sélectionné',
+        'Bien',
+        'Tension',
+        'Douleur',
+      ),
+      'de': (
+        'Wie hat es sich angefühlt?',
+        'Bewerte den letzten Satz',
+        'Ausgewählt',
+        'Gut',
+        'Spannung',
+        'Schmerz',
+      ),
+      'it': (
+        'Come ti sei sentito?',
+        'Valuta l’ultima serie',
+        'Selezionato',
+        'Bene',
+        'Tensione',
+        'Dolore',
+      ),
+      'ru': (
+        'Как ощущения?',
+        'Оцени последний подход',
+        'Выбрано',
+        'Хорошо',
+        'Напряжение',
+        'Боль',
+      ),
+      'ja': ('どんな感じでしたか？', '直前のセットの感覚を選択', '選択済み', '快適', '張り', '痛み'),
+      'ko': ('어떤 느낌이었나요?', '직전 세트의 느낌을 선택하세요', '선택됨', '편안함', '뻐근함', '통증'),
+      'ar': (
+        'كيف شعرت؟',
+        'اختر شعورك في المجموعة الأخيرة',
+        'تم الاختيار',
+        'جيد',
+        'شدّ',
+        'ألم',
+      ),
+      'hi': (
+        'कैसा लगा?',
+        'पिछले सेट का अनुभव चुनें',
+        'चुन लिया',
+        'अच्छा',
+        'खिंचाव',
+        'दर्द',
+      ),
+      'id': (
+        'Bagaimana rasanya?',
+        'Pilih rasanya pada set terakhir',
+        'Dipilih',
+        'Nyaman',
+        'Tegang',
+        'Nyeri',
+      ),
+    };
+
+(String, String, String, String, String, String) trainerRestFeedbackLabels(
+  AppLocalizations s,
+) =>
+    _restFeedback[s.localeName] ??
+    _restFeedback[s.localeName.split('_').first] ??
+    _restFeedback['en']!;
+
 const _completeTimed = <String, String>{
   'zh': '提前完成本段',
   'zh_Hant': '提前完成本段',
