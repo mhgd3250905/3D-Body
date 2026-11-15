@@ -41,6 +41,8 @@ class FlareTrainingPage extends StatefulWidget {
 class _FlareTrainingPageState extends State<FlareTrainingPage> {
   Future<_PlayerData>? _loading;
   sdk.VoiceOutput? _output;
+  sdk.SessionPhase? _feedbackPhase;
+  sdk.TrainerRestFeedbackChoice? _feedbackChoice;
 
   @override
   void didChangeDependencies() {
@@ -55,9 +57,9 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final shared = FlareShared.current ?? await FlareShared.load();
     bool known(String id) => shared.catalog[id] != null;
     validateTrainingPlan(widget.plan, widget.catalog, known: known);
-    // SDK: the active Pose-Hub catalogue's recorded name / key point behind
-    // Flare's shared prompts (downloaded + verified on demand); the player
-    // prefetches the plan's lines and sizes the prep phase to the intro.
+    // Layer the active Pose-Hub catalog's recorded prompts and structured
+    // voice guides behind Flare's shared prompts. The SDK prefetches and
+    // verifies the needed clips and retains the bundled fallback.
     final voice = await sdk.withPoseHubCatalogVoice(
       await loadTrainerVoiceSource(
         language: language,
@@ -91,6 +93,40 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     }
     final s = AppLocalizations.of(context);
     return '${s.secondsLabel(item.workSeconds!)} · ${item.note ?? widget.catalog.drillById(item.exerciseId)!.prescription}';
+  }
+
+  Widget _restFeedback(
+    BuildContext context,
+    sdk.TrainerRestFeedback feedback,
+    sdk.TrainerTheme theme,
+  ) {
+    final (title, description, recorded, comfortable, tight, pain) =
+        trainerRestFeedbackLabels(AppLocalizations.of(context));
+    void select(sdk.TrainerRestFeedbackChoice choice) {
+      setState(() {
+        _feedbackPhase = feedback.completedPhase;
+        _feedbackChoice = choice;
+      });
+    }
+
+    return sdk.TrainerRestFeedbackPanel(
+      theme: theme,
+      title: title,
+      description: description,
+      recordedTitle: recorded,
+      selected: identical(_feedbackPhase, feedback.completedPhase)
+          ? _feedbackChoice
+          : null,
+      comfortableLabel: comfortable,
+      onComfortable: () => select(sdk.TrainerRestFeedbackChoice.comfortable),
+      tightLabel: tight,
+      onTight: () => select(sdk.TrainerRestFeedbackChoice.tight),
+      painLabel: pain,
+      onPain: () async {
+        select(sdk.TrainerRestFeedbackChoice.pain);
+        await feedback.reportDiscomfort();
+      },
+    );
   }
 
   @override
@@ -137,6 +173,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           );
         }
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
+        final theme = trainerTheme(context);
         return sdk.TrainerPlayer(
           plan: data.plan,
           rhythms: data.rhythms,
@@ -170,7 +207,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             );
           },
           strings: trainerStrings(s),
-          theme: trainerTheme(context),
+          theme: theme,
           voice: sdk.TrainerVoice(
             source: data.source,
             output: _output!,
@@ -181,6 +218,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             ),
           ),
           onFinished: widget.store.saveTrainerSession,
+          restFeedbackBuilder: (context, feedback) =>
+              _restFeedback(context, feedback, theme),
           keepAlive: widget.keepAlive,
           showExtendRest: true,
           showCompleteTimedPhase: true,

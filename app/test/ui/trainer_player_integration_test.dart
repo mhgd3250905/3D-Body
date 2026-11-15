@@ -337,6 +337,7 @@ void main() {
           expect(restored.trainerSessions.single.toJson(), result.toJson());
           expect(restored.sessions, hasLength(singleDrill ? 1 : 2));
           restored.dispose();
+          await tester.pumpAndSettle();
           await tester.tap(find.byKey(const ValueKey('finish')));
           await tester.pumpAndSettle();
           expect(find.byType(FlareTrainingPage), findsNothing);
@@ -424,6 +425,62 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  testWidgets(
+    'Player V1 shows rest feedback between sets and resets it per set',
+    (tester) async {
+      final base = _plan();
+      final plan = base.copyWith(
+        blocks: [
+          uc.PlanBlock(
+            id: 'main',
+            name: 'Main',
+            type: uc.BlockType.main,
+            items: [
+              base.items.first.copyWith(
+                sets: 3,
+                workSeconds: 2,
+                restSeconds: 20,
+              ),
+            ],
+          ),
+        ],
+      );
+      await _open(tester, sdkPlan: plan);
+      expect(_player(tester).theme.usePlayerV1, isTrue);
+      final panel = find.byType(sdk.TrainerRestFeedbackPanel);
+      await _advance(tester, 16);
+      expect(panel, findsOneWidget);
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        isNull,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('player-v1-rest-comfortable')).hitTestable(),
+      );
+      await tester.pump();
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        sdk.TrainerRestFeedbackChoice.comfortable,
+      );
+
+      await _advance(tester, 22);
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        isNull,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('player-v1-rest-pain')).hitTestable(),
+      );
+      await _advance(tester, 1);
+      expect(
+        find.text(_player(tester).strings.discomfortTitle),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    },
+  );
 
   testWidgets(
     'optional SDK controls extend rest, complete timer and toggle sound',
@@ -549,6 +606,13 @@ void main() {
             final player = tester.widget<sdk.TrainerPlayer>(
               find.byType(sdk.TrainerPlayer),
             );
+            expect(player.theme.usePlayerV1, isTrue);
+            final labels = AppLocalizations.of(
+              tester.element(find.byType(sdk.TrainerPlayer)),
+            );
+            expect(player.strings.upcomingLabel, labels.planUpNext);
+            expect(player.strings.instructionsLabel, labels.cues);
+            expect(player.strings.restLabel, labels.rest);
             expect(player.strings.pause, isNotEmpty);
             expect(
               player.voice!.settings.language,
