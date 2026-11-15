@@ -1,5 +1,18 @@
 # App 验证记录
 
+## iOS 1.0.15（34）透明示范与讲解验证（2026-11-15）
+
+本候选固定 Pose SDK `63e24819406d843d6eabd5f95df98bbfdecc36f0`，包含 SDK PR #29 的 iOS packed-alpha 后端。
+
+| 验证 | 结果 |
+| --- | --- |
+| `flutter analyze --no-pub` | 通过。 |
+| `flutter test --no-pub -r expanded` | 427 项通过，1 项可选 Live AI 测试跳过。 |
+| iOS 26.5 模拟器集成测试 | 「核心折叠 → 平行杆团身 L 撑」实际播放透明示范，首帧出现后隐藏封面。Player V1 可用，休息反馈「舒适」可选。 |
+| iOS 26.5 模拟器讲解音频 | 通过正式 `r2-v16` 目录解析「平行杆团身 L 撑」简中讲解 `g.set.1`，由原生音频输出确认起播。 |
+
+本轮验证覆盖模拟器，真机听感及安装仍待验收。Build 34 只用于 TestFlight 内部测试。
+
 ## 会员页 v2 与 +32 交付验证（2026-11-12）
 
 阶段基线为 `master` 的 `122de97a7e40d1472ce3da0643d06a2d66f95e44`，收束前运行源为 `cc0497a6a516ceda908ac72adc851b68696a1954`。Git 核对基线为祖先，差异为 4 个提交、36 个路径（会员源码 4、本地化 28、测试 2、版本配置 1、文档 1）。收束前完整 `git status --porcelain=v1 --untracked-files=all` 为空。

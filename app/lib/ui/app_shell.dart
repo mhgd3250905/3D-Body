@@ -2421,7 +2421,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   children: [
                     BodyText(s.aboutBody),
                     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
-                      BodyText('SDK 036b5fc', color: FlareColors.secondary),
+                      BodyText('SDK 63e2481', color: FlareColors.secondary),
                     SectionTitle(s.teachingTitle),
                     BodyText(s.teachingNote, color: FlareColors.secondary),
                     const SizedBox(height: 6),
