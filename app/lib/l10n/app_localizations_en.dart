@@ -1037,10 +1037,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Support on one hand and open your legs into a high V.';
+      'Support your whole body sideways on one hand. That shoulder works hardest.';
 
   @override
-  String get hubPhase12Caption => 'Turn to face forward and scissor your legs.';
+  String get hubPhase12Caption =>
+      'Turn to face forward and scissor your legs past the front.';
 
   @override
   String get hubPhase13Caption =>

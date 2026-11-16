@@ -1049,11 +1049,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Stütze dich auf eine Hand und öffne die Beine zu einem hohen V.';
+      'Stütze den ganzen Körper seitlich auf einer Hand. Die Stützschulter arbeitet am meisten.';
 
   @override
   String get hubPhase12Caption =>
-      'Dreh dich nach vorn und wechsle die Beinposition wie bei einer Schere.';
+      'Dreh dich nach vorn und führe die Beine im Scherenwechsel nach vorn.';
 
   @override
   String get hubPhase13Caption =>

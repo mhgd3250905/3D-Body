@@ -1036,10 +1036,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get hubPhase10Caption => 'दोनों हाथों से भार एक हाथ पर ले जाएँ।';
 
   @override
-  String get hubPhase11Caption => 'एक हाथ पर टिककर पैर ऊँचे V में फैलाएँ।';
+  String get hubPhase11Caption =>
+      'एक हाथ पर पूरे शरीर को बगल की ओर टिकाएँ। सबसे ज़्यादा भार उसी कंधे पर पड़ता है।';
 
   @override
-  String get hubPhase12Caption => 'सामने मुड़कर पैर कैंची की तरह बदलें।';
+  String get hubPhase12Caption =>
+      'शरीर को सामने की ओर मोड़ें और आगे से पैरों की जगह कैंची की तरह बदलें।';
 
   @override
   String get hubPhase13Caption =>

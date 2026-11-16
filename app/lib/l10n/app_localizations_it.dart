@@ -1047,11 +1047,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Appoggiati su una mano e apri le gambe in una V alta.';
+      'Sostieni tutto il corpo di lato su una mano. La spalla d’appoggio lavora di più.';
 
   @override
   String get hubPhase12Caption =>
-      'Ruota in avanti e incrocia le gambe a forbice.';
+      'Ruota in avanti e scambia la posizione delle gambe a forbice davanti a te.';
 
   @override
   String get hubPhase13Caption =>

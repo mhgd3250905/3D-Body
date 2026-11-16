@@ -1053,11 +1053,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Prends appui sur une main et ouvre les jambes en V haut.';
+      'Soutiens tout ton corps de côté sur une main. L’épaule d’appui travaille le plus.';
 
   @override
   String get hubPhase12Caption =>
-      'Tourne-toi vers l’avant et inverse tes jambes en ciseaux.';
+      'Tourne-toi vers l’avant et inverse tes jambes en ciseaux devant toi.';
 
   @override
   String get hubPhase13Caption =>

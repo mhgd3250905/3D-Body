@@ -1017,10 +1017,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hubPhase10Caption => '양손에서 한 손으로 체중을 옮기세요.';
 
   @override
-  String get hubPhase11Caption => '한 손을 짚고 다리를 높은 V자로 벌리세요.';
+  String get hubPhase11Caption =>
+      '한 손으로 몸 전체를 옆으로 지탱하세요. 지지하는 어깨에 가장 큰 힘이 듭니다.';
 
   @override
-  String get hubPhase12Caption => '정면으로 돌아 다리를 가위처럼 교차하세요.';
+  String get hubPhase12Caption => '몸을 정면으로 돌리고, 두 다리를 앞에서 가위처럼 교차해 바꾸세요.';
 
   @override
   String get hubPhase13Caption => '양손을 뒤에 짚고 벌린 다리를 뒤로 휘두르세요.';

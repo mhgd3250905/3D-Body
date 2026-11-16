@@ -2014,13 +2014,13 @@ abstract class AppLocalizations {
   /// No description provided for @hubPhase11Caption.
   ///
   /// In zh, this message translates to:
-  /// **'单手撑地，双腿打开成高 V'**
+  /// **'单手撑起全身侧立，支撑肩最吃力。'**
   String get hubPhase11Caption;
 
   /// No description provided for @hubPhase12Caption.
   ///
   /// In zh, this message translates to:
-  /// **'转向正面，双腿交错换位'**
+  /// **'身体转向正面，双腿剪刀式换位过前。'**
   String get hubPhase12Caption;
 
   /// No description provided for @hubPhase13Caption.

@@ -1044,11 +1044,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Bertumpu pada satu tangan dan buka kaki membentuk V tinggi.';
+      'Topang seluruh tubuh menyamping dengan satu tangan. Bahu penopang bekerja paling berat.';
 
   @override
   String get hubPhase12Caption =>
-      'Putar badan ke depan dan silangkan kaki seperti gunting.';
+      'Putar badan menghadap ke depan dan tukar posisi kaki seperti gunting di depan tubuh.';
 
   @override
   String get hubPhase13Caption =>

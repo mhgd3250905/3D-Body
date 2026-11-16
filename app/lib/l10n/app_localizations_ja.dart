@@ -1015,10 +1015,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hubPhase10Caption => '両手から片手に体重を移す';
 
   @override
-  String get hubPhase11Caption => '片手で支え、脚を高いV字に開く';
+  String get hubPhase11Caption => '片手で全身を横向きに支える。支える側の肩に最も負担がかかる。';
 
   @override
-  String get hubPhase12Caption => '正面に向き、脚を交差して入れ替える';
+  String get hubPhase12Caption => '正面に向き、脚をはさみのように前で入れ替える。';
 
   @override
   String get hubPhase13Caption => '後ろに両手をつき、開脚したまま後方へ振る';

@@ -1043,11 +1043,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Обопритесь на одну руку и высоко разведите ноги буквой V.';
+      'Удерживайте тело боком на одной руке. Больше всего работает опорное плечо.';
 
   @override
   String get hubPhase12Caption =>
-      'Повернитесь вперёд и поменяйте ноги движением «ножницы».';
+      'Повернитесь вперёд и поменяйте положение ног перед собой движением «ножницы».';
 
   @override
   String get hubPhase13Caption =>

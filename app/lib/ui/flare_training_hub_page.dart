@@ -656,7 +656,7 @@ class _PrimaryMusclePill extends StatelessWidget {
           ),
           Flexible(
             child: Text(
-              group.shortLabel,
+              group.id == 'abs' ? group.shortLabel : group.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: p.secondary, fontSize: 12),

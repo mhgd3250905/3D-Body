@@ -1007,10 +1007,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hubPhase10Caption => '从双手移重到单手';
 
   @override
-  String get hubPhase11Caption => '单手撑地，双腿打开成高 V';
+  String get hubPhase11Caption => '单手撑起全身侧立，支撑肩最吃力。';
 
   @override
-  String get hubPhase12Caption => '转向正面，双腿交错换位';
+  String get hubPhase12Caption => '身体转向正面，双腿剪刀式换位过前。';
 
   @override
   String get hubPhase13Caption => '双手在身后撑地，开腿后扫';
@@ -2287,10 +2287,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hubPhase10Caption => '從雙手移重到單手';
 
   @override
-  String get hubPhase11Caption => '單手撐地，雙腿打開成高 V';
+  String get hubPhase11Caption => '單手撐起全身側立，支撐肩最吃力。';
 
   @override
-  String get hubPhase12Caption => '轉向正面，雙腿交錯換位';
+  String get hubPhase12Caption => '身體轉向正面，雙腿剪刀式換位過前。';
 
   @override
   String get hubPhase13Caption => '雙手在身後撐地，開腿後掃';

@@ -1052,11 +1052,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'Apóyate en una mano y abre las piernas en una V alta.';
+      'Sostén el cuerpo de lado con una mano. El hombro de apoyo trabaja más.';
 
   @override
   String get hubPhase12Caption =>
-      'Gira hacia delante y cruza las piernas en tijera.';
+      'Gira hacia delante y cambia las piernas en tijera por delante.';
 
   @override
   String get hubPhase13Caption =>

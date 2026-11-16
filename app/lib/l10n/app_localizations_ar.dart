@@ -1032,11 +1032,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get hubPhase11Caption =>
-      'ارتكز على يد واحدة وافتح ساقيك عاليًا على شكل V.';
+      'اسند جسمك بالكامل على يد واحدة وأنت على جانبك. كتف الارتكاز يتحمل العبء الأكبر.';
 
   @override
   String get hubPhase12Caption =>
-      'استدر إلى الأمام وبدّل موضع ساقيك بحركة مقصية.';
+      'استدر لتواجه الأمام وبدّل موضع ساقيك أمام الجسم بحركة مقصية.';
 
   @override
   String get hubPhase13Caption =>
