@@ -195,9 +195,9 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     _render(animate: !FlareMotion.reduced(context));
   }
 
-  void _selectMuscle(String id) {
+  void _selectMuscle(String id, {bool haptic = true}) {
     if (id == _muscleId && _muscleFocused) return;
-    FlareHaptics.selection();
+    if (haptic) FlareHaptics.selection();
     setState(() {
       _muscleId = id;
       _muscleFocused = true;
@@ -213,6 +213,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
           widget.catalog.groups
               .firstWhere((group) => group.section == section)
               .id,
+      haptic: false,
     );
   }
 
@@ -606,7 +607,6 @@ class _HubMuscles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = FlareColors.palette;
     final s = context.strings;
     final groups = <String, List<MuscleGroup>>{
       for (final section in catalog.sections)
@@ -615,33 +615,31 @@ class _HubMuscles extends StatelessWidget {
             .toList(),
     };
     final current = groups[selected.section]!;
+    final segments = catalog.sections.map((section) {
+      final label = switch (section.id) {
+        'support' => s.hubSupportTab,
+        'core' => s.hubCoreTab,
+        'legs' => s.hubLegsTab,
+        _ => section.short,
+      };
+      return (section.id, '$label  ${groups[section.id]!.length}');
+    }).toList();
     return Padding(
       padding: const EdgeInsets.fromLTRB(_gutter, 12, _gutter, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            spacing: 22,
-            children: [
-              for (final section in catalog.sections)
-                Flexible(
-                  child: _SectionTab(
-                    id: section.id,
-                    label: switch (section.id) {
-                      'support' => s.hubSupportTab,
-                      'core' => s.hubCoreTab,
-                      'legs' => s.hubLegsTab,
-                      _ => section.short,
-                    },
-                    count: groups[section.id]!.length,
-                    selected: section.id == selected.section,
-                    onTap: () => onSection(section.id),
-                  ),
-                ),
-            ],
+          FlareSegmented<String>(
+            key: const ValueKey('hub-sections'),
+            segments: segments,
+            selected: selected.section,
+            onChanged: onSection,
+            expand: true,
+            height: 36,
+            radius: 18,
+            inset: 3,
+            ios: true,
           ),
-          SizedBox(height: 1, child: ColoredBox(color: p.hairline)),
-          const SizedBox(height: 2),
           Expanded(
             child: ShaderMask(
               blendMode: BlendMode.dstIn,
@@ -695,79 +693,6 @@ class _HubMuscles extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _SectionTab extends StatelessWidget {
-  const _SectionTab({
-    required this.id,
-    required this.label,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String id;
-  final String label;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = FlareColors.palette;
-    return FlarePressable(
-      key: ValueKey('hub-section-$id'),
-      selected: selected,
-      inMutuallyExclusiveGroup: true,
-      scale: 1,
-      onTap: onTap,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: AlignmentDirectional.centerStart,
-        child: IntrinsicWidth(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: selected ? p.text : p.dim,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      count.toString(),
-                      style: TextStyle(color: p.dim, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 2,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: selected ? p.text : Colors.transparent,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                  child: const SizedBox.expand(),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

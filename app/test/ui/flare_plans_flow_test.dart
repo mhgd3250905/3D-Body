@@ -8,6 +8,7 @@ import 'package:flare/data/posehub_catalog_updates.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/components.dart' show FlareSegmented;
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
 import 'package:flare/ui/flare_training_hub_page.dart';
@@ -484,8 +485,13 @@ void main() {
       expect(third.top - first.bottom, 8);
     }
 
+    final control = tester.widget<FlareSegmented<String>>(_key('hub-sections'));
+    Finder sectionTab(String section) => find.bySemanticsLabel(
+      control.segments.firstWhere((segment) => segment.$1 == section).$2,
+    );
+
     Future<void> switchSection(String section) async {
-      await tester.tap(_key('hub-section-$section'));
+      await tester.tap(sectionTab(section));
       await tester.pumpAndSettle();
     }
 
@@ -502,9 +508,8 @@ void main() {
       ('core', strings.hubCoreTab, '4'),
       ('legs', strings.hubLegsTab, '5'),
     ]) {
-      final tab = _key('hub-section-$section');
-      expect(_rowText(tab, label), findsOneWidget);
-      expect(_rowText(tab, count), findsOneWidget);
+      final tab = sectionTab(section);
+      expect(find.text('$label  $count'), findsOneWidget);
       expect(selected(tab), section == 'support');
     }
     expectOnlySection('support', 8);
@@ -525,7 +530,7 @@ void main() {
 
     await switchSection('core');
     expectOnlySection('core', 4);
-    expect(selected(_key('hub-section-core')), isTrue);
+    expect(selected(sectionTab('core')), isTrue);
     final firstCore = catalog.groups.firstWhere(
       (group) => group.section == 'core',
     );

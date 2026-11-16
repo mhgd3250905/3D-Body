@@ -87,11 +87,13 @@ export function resolveHubMuscleCamera(camera, frame, raw, width, height, focuse
   // the lens than the pivot. The silhouette bound covers every orbit yaw.
   const zoomLimit = nearestProfile + (overviewDistance - nearestProfile) / maximumMuscleZoom;
   const silhouetteLimit = nearestProfile * Math.hypot(1, 1 / (.94 * tangent * width / height));
-  const regionLimit = nearest + Math.max(halfWidth, halfHeight) * height /
-    (maximumFocusSpan * Math.min(width, standingStageHeight) * tangent);
+  const span = maximumFocusSpan * Math.min(width, standingStageHeight);
+  // Widely separated forearms can use more of the horizontal viewport.
+  const horizontalSpan = (raw.widthFraction > 0 && raw.widthFraction < 1) ? width * raw.widthFraction : span;
+  const regionLimit = nearest + Math.max(halfWidth / horizontalSpan, halfHeight / span) * height / tangent;
   const distance = Math.max(zoomLimit, silhouetteLimit, regionLimit);
   return { ...raw, position: [0, raw.target[1], Math.sign(raw.position[2]) * distance],
-    fov: camera.fov, cutoff: -.065 };
+    fov: camera.fov, cutoff: Number.isFinite(raw.cutoff) ? raw.cutoff : -.065 };
 }
 
 // Three's regular framebuffer tone-maps and converts to sRGB. Its offscreen

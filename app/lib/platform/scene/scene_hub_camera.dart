@@ -9,7 +9,15 @@ abstract final class SceneHubCamera {
     'deltoids': _MuscleFocus(1, 1.319, .274, .087, .095),
     'rotator-cuff': _MuscleFocus(-1, 1.296, .179, .071, .123),
     'triceps': _MuscleFocus(-1, 1.176, .339, .143, .091),
-    'forearms': _MuscleFocus(1, .984, .410, .127, .103),
+    'forearms': _MuscleFocus(
+      1,
+      1.24,
+      .410,
+      .127,
+      .103,
+      widthFraction: .65,
+      cutoff: .62,
+    ),
     'serratus': _MuscleFocus(1, 1.185, .177, .067, .139),
     'scapular': _MuscleFocus(-1, 1.254, .103, .133, .120),
     'chest': _MuscleFocus(1, 1.279, .183, .109, .156),
@@ -36,6 +44,9 @@ abstract final class SceneHubCamera {
       'overviewHeight': standingHeight,
       if (focused)
         'region': <double>[preset.halfWidth, preset.halfHeight, preset.depth],
+      if (focused && preset.widthFraction != null)
+        'widthFraction': preset.widthFraction,
+      if (focused && preset.cutoff != null) 'cutoff': preset.cutoff,
     };
   }
 }
@@ -46,12 +57,16 @@ final class _MuscleFocus {
     this.centerY,
     this.halfWidth,
     this.halfHeight,
-    this.depth,
-  );
+    this.depth, {
+    this.widthFraction,
+    this.cutoff,
+  });
 
   final int side;
   final double centerY;
   final double halfWidth;
   final double halfHeight;
   final double depth;
+  final double? widthFraction;
+  final double? cutoff;
 }

@@ -27,12 +27,16 @@ const referenceDirection = CAMERA_PRESETS.standard;
 const standingHeight = number('standingHeight'), standingDistance = number('standingDistance');
 const standing = Object.fromEntries([...preset.matchAll(/'([^']+)':\s*_MuscleFocus\(([^)]+)\),/g)].map(([, group, values]) => {
   const [side, center, ...region] = values.split(',').slice(0, 5).map(Number);
-  return [group, { side, center, region }];
+  const field = name => {
+    const match = values.match(new RegExp(name + ':\\s*(-?[.\\d]+)'));
+    return match ? Number(match[1]) : undefined;
+  };
+  return [group, { side, center, region, widthFraction: field('widthFraction'), cutoff: field('cutoff') }];
 }));
-function standingShot({ side, center, region }, focus = false) {
+function standingShot({ side, center, region, widthFraction, cutoff }, focus = false) {
   const y = focus ? center : standingHeight;
   return { position: [0, y, side * standingDistance], target: [0, y, 0], fov: 26, overviewHeight: standingHeight,
-    ...(focus ? { region } : {}) };
+    ...(focus ? { region, widthFraction, cutoff } : {}) };
 }
 assert.deepEqual(Object.keys(standing), Object.keys(GROUPS));
 assert.ok(frameCount > 500);
@@ -283,7 +287,8 @@ for (const [id, group] of Object.entries(GROUPS)) {
       stageHeight: Number(vertical.toFixed(3)), sideMargin: Number(sides.toFixed(3)) });
 
     const shot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(standing[id], true), width, height, true);
-    assert.ok(shot && shot.cutoff < bounds.min.y);
+    const widthFraction = standing[id].widthFraction;
+    assert.ok(shot && (widthFraction ? shot.cutoff < Math.min(...focused.map(vertex => vertex.y)) - .05 : shot.cutoff < bounds.min.y));
     setCamera(new THREE.Vector3(...shot.position), new THREE.Vector3(...shot.target), shot.fov, width / height);
     const region = new THREE.Box2();
     for (const vertex of focused) {
@@ -294,15 +299,26 @@ for (const [id, group] of Object.entries(GROUPS)) {
     const span = Math.max(size.x, size.y) / Math.min(width, standingStage);
     const center = region.getCenter(new THREE.Vector2());
     const centerOffset = center.length() / Math.min(width, standingStage);
-    assert.ok(span <= .25, id + ' fits within the bilateral 25% cap');
-    assert.ok(centerOffset < .02, id + ' stays centered');
-    let focusSideMargin = 1, realZoom = 0;
+    if (widthFraction) {
+      assert.ok(size.x / width <= widthFraction && size.y / Math.min(width, standingStage) <= .25,
+        id + ' fits both forearms in the available width');
+      assert.ok(Math.abs(shot.position[2]) <= standingDistance, id + ' does not zoom out');
+      assert.ok(Math.abs(center.x) / width < .02 && region.min.y > -height * .48,
+        id + ' keeps both forearms comfortably in frame');
+    } else {
+      assert.ok(span <= .25, id + ' fits within the bilateral 25% cap');
+      assert.ok(centerOffset < .02, id + ' stays centered');
+    }
+    let focusSideMargin = 1, realZoom = 0, top = -Infinity;
     for (const vertex of body) {
       project.copy(vertex).project(camera);
+      top = Math.max(top, project.y);
       focusSideMargin = Math.min(focusSideMargin, (1 - Math.abs(project.x)) / 2);
       const depthTowardCamera = standing[id].side * vertex.z;
       realZoom = Math.max(realZoom, (standingDistance - depthTowardCamera) / (Math.abs(shot.position[2]) - depthTowardCamera));
     }
+    if (widthFraction) assert.ok(top < .98,
+      id + ' keeps the head in frame at ' + width + '×' + height + ': top=' + top);
     assert.ok(focusSideMargin > .03, id + ' keeps the full visible outline inside both sides');
     assert.ok(realZoom <= 1.35, id + ' respects the magnification cap');
     minimumFocusSideMargin = Math.min(minimumFocusSideMargin, focusSideMargin);
