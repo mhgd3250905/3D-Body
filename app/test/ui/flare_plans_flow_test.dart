@@ -8,8 +8,10 @@ import 'package:flare/data/posehub_catalog_updates.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/components.dart' show FlarePressable;
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
+import 'package:flare/ui/flare_training_hub_page.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/trainer_page.dart';
@@ -247,6 +249,46 @@ void main() {
     expect(tester.getTopLeft(hub).dx, 0);
     await tester.pumpAndSettle();
     expect(detail, findsNothing);
+  });
+
+  testWidgets('the muscle tab accepts an early tap and keeps the canvas size', (
+    tester,
+  ) async {
+    final sceneBounds = GlobalKey();
+    Widget hub(bool locked) => helpers.testApp(
+      Scaffold(
+        body: FlareTrainingHubPage(
+          catalog: catalog,
+          actorBody: 'original',
+          quality: 'balanced',
+          enableScene: false,
+          initialTime: catalog.phaseTime(9),
+          visible: true,
+          interactionLocked: locked,
+          sceneBoundsKey: sceneBounds,
+          onBack: () {},
+          onAngle: (_) {},
+          onMuscle: (_) {},
+        ),
+      ),
+    );
+    await helpers.phoneSize(tester);
+    await tester.pumpWidget(hub(true));
+    await tester.pumpAndSettle();
+    final bounds = tester.getRect(find.byKey(sceneBounds));
+    final muscle = _key('hub-muscle-mode');
+    await tester.tap(muscle);
+    await tester.pumpAndSettle();
+    expect(tester.widget<FlarePressable>(muscle).selected, isTrue);
+    expect(_key('hub-timeline'), findsOneWidget);
+    await tester.pumpWidget(hub(false));
+    await tester.pumpAndSettle();
+    expect(_key('hub-timeline'), findsNothing);
+    expect(tester.getRect(find.byKey(sceneBounds)), bounds);
+    await tester.tap(_key('hub-angle-mode'));
+    await tester.pumpAndSettle();
+    expect(_key('hub-timeline'), findsOneWidget);
+    expect(tester.getRect(find.byKey(sceneBounds)), bounds);
   });
 
   testWidgets('training starts on the paused home frame and its phase', (

@@ -14,13 +14,12 @@ const angleStageHeight = 452;
 const maximumMuscleZoom = 1.35;
 const maximumFocusSpan = .25;
 
-function placeCamera(camera, shot, aspect, scale) {
+function placeCamera(camera, shot, width, height, viewHeight) {
   camera.position.setFromSpherical(shot.orbit).add(shot.target);
   camera.lookAt(shot.target);
-  camera.aspect = aspect;
   camera.fov = shot.fov;
-  camera.zoom = scale;
-  camera.updateProjectionMatrix();
+  // The anatomy view keeps its shorter framing inside the same canvas.
+  camera.setViewOffset(width, viewHeight, 0, 0, width, height);
   camera.updateMatrixWorld(true);
 }
 
@@ -125,6 +124,8 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   const size = new THREE.Vector2();
   const clearColor = new THREE.Color();
   let target = null, muscleTarget = null;
+  const modeTargets = [];
+  let modeCaptureKey = '', modeCaptures = 0;
   let lastGroup = null;
   let lastInput = null, muscleShot = null, muscleShotKey = '';
   let angleFit = null, angleFitKey = '';
@@ -164,7 +165,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function currentMuscleShot(input) {
     const width = player.container.clientWidth || 390;
     const sceneHeight = player.container.clientHeight || angleStageHeight - 54;
-    const height = Math.max(120, sceneHeight - (input.showMuscles ? 0 : angleStageHeight - standingStageHeight));
+    const height = Math.max(120, sceneHeight - (angleStageHeight - standingStageHeight));
     const key = JSON.stringify([width, height, input.focusMuscle, input.muscleCamera]);
     if (muscleShotKey !== key) {
       muscleShot = resolveHubMuscleCamera(overviewCamera, muscleFrame, input.muscleCamera, width, height, input.focusMuscle === true);
@@ -173,15 +174,12 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     return muscleShot;
   }
 
-  function frameAngleCamera(width, height, inMuscleMode) {
-    // The crossfade can render into the shorter muscle view. Keep the angle
-    // shot fitted for its own stage when it comes back into view.
-    const angleHeight = height + (inMuscleMode ? angleStageHeight - standingStageHeight : 0);
-    const key = `${width}:${angleHeight}`;
+  function frameAngleCamera(width, height) {
+    const key = `${width}:${height}`;
     const needsFit = key !== angleFitKey;
     if (needsFit) {
       angleFit = resolveHubAngleCamera(angleBounds, {
-        referenceDirection: CAMERA_PRESETS.standard, fov: angleCamera.fov, aspect: width / angleHeight,
+        referenceDirection: CAMERA_PRESETS.standard, fov: angleCamera.fov, aspect: width / height,
       });
       angleTarget.fromArray(angleFit.target);
       angleFitKey = key;
@@ -225,7 +223,8 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       if (player.time !== time) player.setTime(time);
       player.dirty = true;
     }
-    return transitions.moving;
+    const frame = transitions.frame;
+    return frame && (frame.poseMoving || frame.muscleMoving || frame.groups.size > 1);
   }
 
   function select(groupId) {
@@ -234,10 +233,15 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     lastGroup = groupId;
   }
 
-  function draw(layer, capture) {
+  function draw(layer, capture, width, height, muscleHeight) {
     if (layer.groupId != null) {
       select(layer.groupId);
-      r.render(phaseMap.scene, muscleCamera);
+      r.setScissorTest(false);
+      r.clear();
+      r.setScissor(0, height - muscleHeight, width, muscleHeight);
+      r.setScissorTest(true);
+      try { r.render(phaseMap.scene, muscleCamera); }
+      finally { r.setScissorTest(false); }
       return;
     }
     player.floor.visible = true;
@@ -264,51 +268,69 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function render() {
     const width = player.container.clientWidth, height = player.container.clientHeight;
     if (!lastInput || !(width > 0 && height > 0)) return false;
-    frameAngleCamera(width, height, lastInput.showMuscles);
+    frameAngleCamera(width, height);
     const previous = muscleShot;
     const current = currentMuscleShot(lastInput);
     if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
     const frame = transitions.frame;
-    const aspect = width / height;
     muscleTarget = frame.muscle.target;
     onAngleFrame?.({ camera: angleCamera, time: frame.time, phase: frame.targetPhase,
-      showMuscles: frame.targetMode === 1, scrubbing: frame.scrubbing, moving: frame.poseMoving });
-    placeCamera(muscleCamera, frame.muscle, aspect, frame.muscleScale);
+      showMuscles: frame.targetMode === 1 || frame.modeMoving, scrubbing: frame.scrubbing, moving: frame.poseMoving });
+    const muscleHeight = Math.max(120, height - (angleStageHeight - standingStageHeight));
+    placeCamera(muscleCamera, frame.muscle, width, height, muscleHeight);
     phaseMap.setHubCrop(frame.muscle.cutoff);
     const layers = [{ weight: 1 - frame.mode }, ...[...frame.groups].map(([groupId, weight]) =>
       ({ groupId, weight: weight * frame.mode }))].filter(({ weight }) => weight > 1 / 255);
     for (const prop of player.stageProps) prop.visible = false;
     if (layers.length === 1) {
-      draw(layers[0], false);
+      draw(layers[0], false, width, height, muscleHeight);
       return true;
     }
 
     r.getDrawingBufferSize(size);
-    if (!target) {
-      target = new THREE.WebGLRenderTarget(size.x, size.y, { samples: Math.min(2, r.capabilities.maxSamples), stencilBuffer: false });
-    } else if (target.width !== size.x || target.height !== size.y) {
-      target.setSize(size.x, size.y);
-    }
     const clearAlpha = r.getClearAlpha();
     const autoClear = r.autoClear;
     const shadowEnabled = r.shadowMap.enabled;
+    // The pose and anatomy do not move during a tab change. Blend their
+    // cached images at full resolution instead of shading both every frame.
+    const cacheable = frame.modeMoving && !frame.poseMoving && !frame.muscleMoving &&
+      !frame.scrubbing && frame.groups.size === 1;
+    const captureKey = cacheable ? JSON.stringify([
+      size.x, size.y, width, height, frame.time, angleYaw, muscleShotKey,
+      frame.targetMuscle, shadowEnabled,
+    ]) : '';
+    const captureNeeded = !cacheable || captureKey !== modeCaptureKey;
     r.getClearColor(clearColor);
     try {
       r.setClearColor(transparent, 0);
       r.setRenderTarget(null);
       r.clear();
-      for (const layer of layers) {
-        r.shadowMap.enabled = layer.groupId == null && shadowEnabled;
-        r.autoClear = true;
-        r.setRenderTarget(target);
-        draw(layer, true);
+      for (const [index, layer] of layers.entries()) {
+        let buffer = cacheable ? modeTargets[index] : target;
+        if (!buffer) {
+          buffer = new THREE.WebGLRenderTarget(size.x, size.y, {
+            samples: r.getPixelRatio() <= 1.5 ? Math.min(2, r.capabilities.maxSamples) : 0,
+            stencilBuffer: false,
+          });
+          if (cacheable) modeTargets[index] = buffer; else target = buffer;
+        } else if (buffer.width !== size.x || buffer.height !== size.y) {
+          buffer.setSize(size.x, size.y);
+        }
+        if (captureNeeded) {
+          r.shadowMap.enabled = layer.groupId == null && shadowEnabled;
+          r.autoClear = true;
+          r.setRenderTarget(buffer);
+          draw(layer, true, width, height, muscleHeight);
+          if (cacheable) modeCaptures++;
+        }
         r.shadowMap.enabled = false;
         r.setRenderTarget(null);
         r.autoClear = false;
-        material.uniforms.layer.value = target.texture;
+        material.uniforms.layer.value = buffer.texture;
         material.uniforms.weight.value = layer.weight;
         r.render(composite, compositeCamera);
       }
+      if (cacheable) modeCaptureKey = captureKey;
     } finally {
       r.setRenderTarget(null);
       r.setClearColor(clearColor, clearAlpha);
@@ -321,6 +343,9 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function releaseGpu() {
     target?.dispose();
     target = null;
+    for (const buffer of modeTargets) buffer.dispose();
+    modeTargets.length = 0;
+    modeCaptureKey = '';
     lastGroup = null;
     for (const material of materials.values()) material.dispose();
     materials.clear();
@@ -340,7 +365,8 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       scrubbing: frame.scrubbing,
       moving: transitions.moving,
       angleMoving: frame.poseMoving,
-      muscleScale: frame.muscleScale,
+      modeMoving: frame.modeMoving,
+      modeCaptures,
       angle: angleFit && { position: angleCamera.position.toArray(), target: [...angleFit.target],
         fov: angleCamera.fov, distance: angleFit.distance },
       muscle: { position: muscleCamera.position.toArray(), target: muscleTarget?.toArray(), fov: muscleCamera.fov,

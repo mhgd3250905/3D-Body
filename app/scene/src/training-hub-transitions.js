@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const hubDuration = { pose: 600, camera: 700, highlight: 300, mode: 280 };
+export const hubDuration = { pose: 600, camera: 700, highlight: 300, mode: 360 };
 const clamp = THREE.MathUtils.clamp;
 const lerp = THREE.MathUtils.lerp;
 
@@ -47,7 +47,7 @@ function mixGroups(from, to, t) {
   return result;
 }
 
-function makeTrack(value, interpolate, duration) {
+function makeTrack(value, interpolate, duration, ease = easeHub) {
   let current = value, motion = null;
   return {
     get value() { return current; },
@@ -56,7 +56,7 @@ function makeTrack(value, interpolate, duration) {
       if (!motion) return false;
       const { from, to, start } = motion;
       const t = clamp((now - start) / duration, 0, 1);
-      current = t === 1 ? to : interpolate(from, to, easeHub(t));
+      current = t === 1 ? to : interpolate(from, to, ease(t));
       if (t === 1) motion = null;
       return true;
     },
@@ -89,8 +89,7 @@ export function createHubTransitions(period) {
         pose: makeTrack(time, (from, to, t) => THREE.MathUtils.euclideanModulo(from + around(from, to, period) * t, period), hubDuration.pose),
         muscle: makeTrack(muscle, mixCamera, hubDuration.camera),
         groups: makeTrack(groups, mixGroups, hubDuration.highlight),
-        mode: makeTrack(mode, lerp, hubDuration.mode),
-        muscleScale: makeTrack(1, lerp, hubDuration.mode),
+        mode: makeTrack(mode, lerp, hubDuration.mode, t => t * t * (3 - 2 * t)),
       };
     } else {
       sample(now);
@@ -101,13 +100,7 @@ export function createHubTransitions(period) {
       }
       if (!sameCamera(config.muscle, muscle)) tracks.muscle.set(muscle, now, animate);
       if (config.muscleId !== next.muscleId) tracks.groups.set(groups, now, animate);
-      if (config.mode !== mode) {
-        if (mode) {
-          if (animate && tracks.mode.value === 0) tracks.muscleScale.set(.96, now, false);
-          tracks.muscleScale.set(1, now, animate);
-        }
-        tracks.mode.set(mode, now, animate);
-      }
+      if (config.mode !== mode) tracks.mode.set(mode, now, animate);
     }
     scrubbing = input.scrubbing === true;
     config = next;
@@ -126,7 +119,8 @@ export function createHubTransitions(period) {
         groups: tracks.groups.value,
         poseMoving: tracks.pose.moving,
         mode: tracks.mode.value,
-        muscleScale: tracks.muscleScale.value,
+        modeMoving: tracks.mode.moving,
+        muscleMoving: tracks.muscle.moving,
         targetPhase: config.phase,
         targetMuscle: config.muscleId,
         targetMode: config.mode,

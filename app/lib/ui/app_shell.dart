@@ -1050,10 +1050,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           transparentUnderlay: hasHub,
                           underlay: hasHub
                               ? ExcludeSemantics(
-                                  excluding:
-                                      !hubInFront || _trainingActorFlight,
+                                  excluding: !hubInFront || _returningToWatch,
                                   child: IgnorePointer(
-                                    ignoring: _trainingActorFlight,
+                                    ignoring: !hubInFront || _returningToWatch,
                                     child: KeyedSubtree(
                                       key: const ValueKey('training-hub'),
                                       child: FlareTrainingHubPage(
@@ -1068,6 +1067,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                             _returningToWatch ||
                                             _trainingFlightLanded,
                                         actorHandoff: _showHomeActor,
+                                        interactionLocked: _trainingActorFlight,
                                         leaving: _returnFlightExposed,
                                         sceneBoundsKey: _hubSceneBounds,
                                         onScenePresented:

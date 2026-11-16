@@ -208,17 +208,17 @@ test('scrub previews stages 12 and 13 immediately before snapping to the selecte
   assert.equal(hub.frame.poseMoving, false);
 });
 
-test('mode crossfade captures opposing live cameras and retains both after reversal', () => {
+test('the mode crossfade reverses from its current opacity without moving the cameras', () => {
   const hub = createHubTransitions(9);
   hub.configure(base, 0);
   hub.configure(muscle, 10);
-  assert.equal(hub.frame.muscleScale, .96);
-  hub.sample(150);
+  assert.equal(hub.frame.modeMoving, true);
+  hub.sample(190);
   assert.equal(hub.frame.mode, .5);
-  assert.equal(hub.frame.muscleScale, .98);
-  hub.configure(base, 150);
+  assert.equal(hub.frame.muscleMoving, false);
+  hub.configure(base, 190);
   assert.equal(hub.frame.mode, .5);
-  hub.sample(430);
+  hub.sample(550);
   assert.equal(hub.frame.mode, 0);
   assert.ok(shot(hub.frame.muscle).distanceTo(new THREE.Vector3(...front.position)) < 1e-10);
 });

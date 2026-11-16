@@ -17,6 +17,7 @@ import 'theme.dart';
 const _gutter = 22.0;
 const _planButtonHeight = 52.0;
 const _planFooterHeight = 16.0 + 10 + _planButtonHeight;
+const _angleStageHeight = 452.0;
 
 Color _hubSurface(FlarePalette p) =>
     p.isDark ? const Color(0xff141418) : p.surface;
@@ -35,6 +36,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.onAngle,
     required this.onMuscle,
     this.actorHandoff = false,
+    this.interactionLocked = false,
     this.leaving = false,
     this.sceneBoundsKey,
     this.onScenePresented,
@@ -51,6 +53,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   final ValueChanged<Phase> onAngle;
   final ValueChanged<MuscleGroup> onMuscle;
   final bool actorHandoff;
+  final bool interactionLocked;
   final bool leaving;
   final GlobalKey? sceneBoundsKey;
   final VoidCallback? onScenePresented;
@@ -63,6 +66,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   final _stage = SceneController();
   late double _time = widget.initialTime;
   bool _muscles = false;
+  bool? _pendingMode;
   String _muscleId = 'deltoids';
   bool _muscleFocused = false;
   bool _reportedPresentation = false;
@@ -83,7 +87,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     _render(animate: wasMuscles, scrubbing: true);
     if (wasMuscles) {
       // Give the standing anatomy view time to reveal its matching pose.
-      await Future<void>.delayed(const Duration(milliseconds: 320));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
     }
     return mounted ? (time: _time, yaw: _stage.trainingHubYaw) : null;
   }
@@ -128,6 +132,14 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
     if (oldWidget.catalog != widget.catalog) _localizeScene();
     if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
+    if (oldWidget.interactionLocked && !widget.interactionLocked) {
+      final pending = _pendingMode;
+      _pendingMode = null;
+      if (pending != null && pending != _muscles) {
+        _muscles = pending;
+        _render(animate: !FlareMotion.reduced(context));
+      }
+    }
   }
 
   void _localizeScene() {
@@ -161,8 +173,12 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   }
 
   void _selectMode(bool muscles) {
-    if (_muscles == muscles) return;
+    if ((_pendingMode ?? _muscles) == muscles) return;
     FlareHaptics.selection();
+    if (widget.interactionLocked) {
+      setState(() => _pendingMode = muscles);
+      return;
+    }
     setState(() => _muscles = muscles);
     _render(animate: !FlareMotion.reduced(context));
   }
@@ -214,7 +230,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     final selectedKey = ValueKey(
       _muscles ? muscle.id : 'phase-${phase.source}',
     );
-    final stageHeight = _muscles ? 400.0 : 452.0;
+    final stageHeight = _muscles ? 400.0 : _angleStageHeight;
     final footerBottom = safe.bottom + 34;
     final controlsBottom =
         footerBottom + _planFooterHeight + (_muscles ? 12 : 4);
@@ -238,11 +254,14 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                   _HubStage(
                     height: stageHeight,
                     safeTop: safe.top,
-                    muscles: _muscles,
+                    muscles: _pendingMode ?? _muscles,
                     sceneBoundsKey: widget.sceneBoundsKey,
-                    onBack: widget.onBack,
+                    onBack: widget.interactionLocked ? null : widget.onBack,
                     onMode: _selectMode,
-                    onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
+                    onHorizontalDragUpdate:
+                        widget.interactionLocked ||
+                            _muscles ||
+                            box.maxWidth <= 0
                         ? null
                         : (details) => _stage.rotateTrainingHubAngle(
                             -2 * math.pi * details.delta.dx / box.maxWidth,
@@ -258,14 +277,17 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                         : const SizedBox.expand(),
                   ),
                   Expanded(
-                    child: _muscles
-                        ? _HubMuscles(
-                            catalog: catalog,
-                            selected: muscle,
-                            onSelected: _selectMuscle,
-                            onSection: _selectMuscleSection,
-                          )
-                        : _angleControls(context, phase),
+                    child: IgnorePointer(
+                      ignoring: widget.interactionLocked,
+                      child: _muscles
+                          ? _HubMuscles(
+                              catalog: catalog,
+                              selected: muscle,
+                              onSelected: _selectMuscle,
+                              onSection: _selectMuscleSection,
+                            )
+                          : _angleControls(context, phase),
+                    ),
                   ),
                 ],
               ),
@@ -282,13 +304,16 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                   start: _gutter,
                   end: _gutter,
                   bottom: footerBottom,
-                  child: _HubPlanFooter(
-                    selection: selectedKey,
-                    title: _muscles ? muscle.label : phase.name,
-                    plan: beginner,
-                    onOpen: _muscles
-                        ? () => widget.onMuscle(muscle)
-                        : () => widget.onAngle(phase),
+                  child: IgnorePointer(
+                    ignoring: widget.interactionLocked,
+                    child: _HubPlanFooter(
+                      selection: selectedKey,
+                      title: _muscles ? muscle.label : phase.name,
+                      plan: beginner,
+                      onOpen: _muscles
+                          ? () => widget.onMuscle(muscle)
+                          : () => widget.onAngle(phase),
+                    ),
                   ),
                 ),
               ],
@@ -428,7 +453,7 @@ class _HubStage extends StatelessWidget {
   final double safeTop;
   final bool muscles;
   final GlobalKey? sceneBoundsKey;
-  final VoidCallback onBack;
+  final VoidCallback? onBack;
   final ValueChanged<bool> onMode;
   final GestureDragUpdateCallback? onHorizontalDragUpdate;
   final Widget scene;
@@ -439,12 +464,13 @@ class _HubStage extends StatelessWidget {
       height: height,
       child: Stack(
         fit: StackFit.expand,
+        clipBehavior: Clip.none,
         children: [
           Positioned(
             left: 0,
             right: 0,
             top: safeTop + 54,
-            bottom: 0,
+            height: math.max(1, _angleStageHeight - safeTop - 54),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onHorizontalDragUpdate: onHorizontalDragUpdate,
@@ -457,7 +483,10 @@ class _HubStage extends StatelessWidget {
           Positioned(
             left: 16,
             top: safeTop + 10,
-            child: FlarePlanBackButton(onTap: onBack),
+            child: IgnorePointer(
+              ignoring: onBack == null,
+              child: FlarePlanBackButton(onTap: onBack ?? () {}),
+            ),
           ),
           Positioned(
             left: 0,
