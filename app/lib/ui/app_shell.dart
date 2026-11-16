@@ -361,8 +361,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       );
       if (!mounted ||
           !_trainingActorFlight ||
-          _trainingFlightDeadline != deadline)
+          _trainingFlightDeadline != deadline) {
         return;
+      }
       _trainingFlightLanded = true;
       if (_trainingHubPresented) _finishTrainingFlight();
     });
