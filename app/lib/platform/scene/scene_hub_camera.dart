@@ -1,29 +1,5 @@
-/// The Hub's animation camera orbits one fixed target on a horizontal circle.
+/// Camera presets for the Hub's standing anatomy reference.
 abstract final class SceneHubCamera {
-  static const angleFov = 32.0;
-  static const angleYaw = <int, double>{
-    9: -.22,
-    10: .34,
-    11: .22,
-    12: .48,
-    13: -.14,
-    14: -.34,
-    15: -.24,
-    16: -.48,
-  };
-  static final _angleYaws = List<double>.unmodifiable(angleYaw.values);
-
-  static Map<String, Object?>? angle(int phase) {
-    final yaw = angleYaw[phase];
-    return yaw == null
-        ? null
-        : {
-            'yaw': yaw,
-            'yaws': _angleYaws,
-            'fov': angleFov,
-          };
-  }
-
   static const standingHeight = 1.155;
   static const standingDistance = 3.4;
 

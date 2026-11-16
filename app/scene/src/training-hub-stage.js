@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GROUPS, phaseTicks } from './phase.js';
 import angleBounds from './training-hub-angle-bounds.json' with { type: 'json' };
+import { CAMERA_PRESETS } from './player.js';
 import { fitHubAngle } from './training-hub-angle-fit.js';
 import { createHubTransitions } from './training-hub-transitions.js';
 
@@ -116,14 +117,15 @@ function captureMaterial(source) {
 export function createTrainingHub(player, phaseMap, onAngleFrame) {
   const transitions = createHubTransitions(player.period);
   const r = player.renderer;
-  const angleCamera = new THREE.PerspectiveCamera(32, 1, .02, 40);
+  const angleCamera = new THREE.PerspectiveCamera(player.baseFov, 1, .02, 40);
+  const angleDirection = CAMERA_PRESETS.standard.clone().normalize();
   const muscleCamera = new THREE.PerspectiveCamera(26, 1, .02, 20);
   const muscleFrame = getHubMuscleFrame(phaseMap.scene, phaseMap.getFullBounds());
   const overviewCamera = new THREE.PerspectiveCamera();
   const materials = new Map();
   const size = new THREE.Vector2();
   const clearColor = new THREE.Color();
-  let target = null, angleTarget = null, muscleTarget = null;
+  let target = null, muscleTarget = null;
   let lastGroup = null;
   let lastInput = null, muscleShot = null, muscleShotKey = '';
   let angleFit = null, angleFitKey = '';
@@ -168,34 +170,32 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     return muscleShot;
   }
 
-  function currentAngleFit(raw, inMuscleMode) {
-    const width = player.container.clientWidth || 390;
-    const sceneHeight = player.container.clientHeight;
-    const height = sceneHeight > 0
-      ? sceneHeight + (inMuscleMode ? angleStageHeight - standingStageHeight : 0)
-      : angleStageHeight - 54;
-    const key = `${width}:${height}:${raw.fov}:${raw.yaws}`;
+  function frameAngleCamera(width, height, inMuscleMode) {
+    // The crossfade can render into the shorter muscle view. Keep the angle
+    // shot fitted for its own stage when it comes back into view.
+    const angleHeight = height + (inMuscleMode ? angleStageHeight - standingStageHeight : 0);
+    const key = `${width}:${angleHeight}`;
     if (key !== angleFitKey) {
-      angleFit = fitHubAngle(angleBounds, { ...raw, aspect: width / height });
+      angleFit = fitHubAngle(angleBounds, {
+        direction: angleDirection, fov: angleCamera.fov, aspect: width / angleHeight,
+      });
+      const lookAt = new THREE.Vector3(...angleFit.target);
+      angleCamera.position.copy(lookAt).addScaledVector(angleDirection, angleFit.distance);
+      angleCamera.lookAt(lookAt);
+      angleCamera.updateMatrixWorld(true);
       angleFitKey = key;
     }
-    return angleFit;
+    const aspect = width / height;
+    if (angleCamera.aspect !== aspect) {
+      angleCamera.aspect = aspect;
+      angleCamera.updateProjectionMatrix();
+    }
   }
 
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
-    const raw = input.angleCamera;
-    if (!raw || !Number.isFinite(raw.fov) || raw.fov < 10 || raw.fov > 70 ||
-        !Array.isArray(raw.yaws) || raw.yaws.length !== angleSources.size ||
-        !raw.yaws.every(Number.isFinite) || !raw.yaws.includes(raw.yaw)) return false;
-    const previous = lastInput?.angleCamera;
-    if (previous && (previous.fov !== raw.fov || previous.yaws.some((yaw, index) => yaw !== raw.yaws[index]))) return false;
-    const fit = currentAngleFit(raw, lastInput?.showMuscles ?? false);
-    const angleCamera = { ...fit, yaw: raw.yaw, fov: raw.fov };
     const muscleCamera = currentMuscleShot(input);
-    if (!muscleCamera || !Number.isFinite(input.phaseTime)) return false;
-    transitions.resizeAngle(fit.distance);
-    if (!transitions.configure({ ...input, angleCamera, muscleCamera }, now)) return false;
+    if (!transitions.configure({ ...input, muscleCamera }, now)) return false;
     lastInput = input;
     if (player.time !== transitions.frame.time) player.setTime(transitions.frame.time);
     player.dirty = true;
@@ -246,22 +246,15 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function render() {
     const width = player.container.clientWidth, height = player.container.clientHeight;
     if (!lastInput || !(width > 0 && height > 0)) return false;
-    const raw = lastInput.angleCamera;
-    const fit = currentAngleFit(raw, lastInput.showMuscles);
-    transitions.resizeAngle(fit.distance);
+    frameAngleCamera(width, height, lastInput.showMuscles);
     const previous = muscleShot;
     const current = currentMuscleShot(lastInput);
-    if (previous !== current) {
-      const angleCamera = { ...fit, yaw: raw.yaw, fov: raw.fov };
-      transitions.configure({ ...lastInput, angleCamera, muscleCamera: current }, performance.now());
-    }
+    if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
     const frame = transitions.frame;
     const aspect = width / height;
-    angleTarget = frame.angle.target;
     muscleTarget = frame.muscle.target;
-    placeCamera(angleCamera, frame.angle, aspect, 1);
     onAngleFrame?.({ camera: angleCamera, time: frame.time, phase: frame.targetPhase,
-      showMuscles: frame.targetMode === 1, scrubbing: frame.scrubbing, moving: frame.angleMoving });
+      showMuscles: frame.targetMode === 1, scrubbing: frame.scrubbing, moving: frame.poseMoving });
     placeCamera(muscleCamera, frame.muscle, aspect, frame.muscleScale);
     phaseMap.setHubCrop(frame.muscle.cutoff);
     const layers = [{ weight: 1 - frame.mode }, ...[...frame.groups].map(([groupId, weight]) =>
@@ -327,10 +320,10 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       muscleWeights: Object.fromEntries(frame.groups),
       scrubbing: frame.scrubbing,
       moving: transitions.moving,
-      angleMoving: frame.angleMoving,
+      angleMoving: frame.poseMoving,
       muscleScale: frame.muscleScale,
-      angle: { position: angleCamera.position.toArray(), target: angleTarget?.toArray(), fov: angleCamera.fov,
-        yaw: frame.angle.orbit.theta, distance: frame.angle.orbit.radius },
+      angle: angleFit && { position: angleCamera.position.toArray(), target: [...angleFit.target],
+        fov: angleCamera.fov, distance: angleFit.distance },
       muscle: { position: muscleCamera.position.toArray(), target: muscleTarget?.toArray(), fov: muscleCamera.fov,
         cutoff: frame.muscle.cutoff, distance: frame.muscle.orbit.radius, focused: lastInput.focusMuscle === true },
     };

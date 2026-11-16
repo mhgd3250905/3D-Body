@@ -48,11 +48,7 @@ void main() {
       expect((muscleCamera['position']! as List<double>).last, lessThan(0));
       expect(muscleCamera['target'], [0, 1.176, 0]);
       expect(muscleCamera['region'], [.339, .143, .091]);
-      expect(selected['angleCamera'], {
-        'yaw': -.24,
-        'fov': 32,
-        'yaws': [-.22, .34, .22, .48, -.14, -.34, -.24, -.48],
-      });
+      expect(selected.containsKey('angleCamera'), isFalse);
 
       sent.clear();
       controller.reportError(SceneController.processTerminated);

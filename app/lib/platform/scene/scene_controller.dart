@@ -124,9 +124,12 @@ class SceneController extends ChangeNotifier {
     bool animate = true,
     bool scrubbing = false,
   }) {
-    final angle = SceneHubCamera.angle(phaseSource);
     final muscle = SceneHubCamera.muscle(muscleId, focused: focusMuscle);
-    if (_disposed || angle == null || muscle == null || !phaseTime.isFinite) {
+    if (_disposed ||
+        phaseSource < 9 ||
+        phaseSource > 16 ||
+        muscle == null ||
+        !phaseTime.isFinite) {
       return;
     }
     final configuration = <String, Object?>{
@@ -136,7 +139,6 @@ class SceneController extends ChangeNotifier {
       'muscleId': muscleId,
       'showMuscles': showMuscles,
       'focusMuscle': focusMuscle,
-      'angleCamera': angle,
       'muscleCamera': muscle,
       'animate': animate,
       'scrubbing': scrubbing,
