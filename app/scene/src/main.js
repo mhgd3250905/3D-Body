@@ -3,6 +3,7 @@ import { FlarePlayer, CAMERA_PRESETS } from './player.js';
 import { phaseAt, phaseTicks, GROUPS } from './phase.js';
 import { createHotspotCallouts } from './hotspot-callouts.js';
 import { createHotspotDepth } from './hotspot-depth.js';
+import { createHubCalloutVisibility } from './hub-callout-visibility.js';
 import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-mesh.js';
 import { createDetailView } from './detail.js';
 import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
@@ -23,6 +24,8 @@ let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx
 const character = characterFromLocation(location.search);
 const hosted = document.documentElement.dataset.hosted === 'true';
 let presented = false, statusTimer = null;
+const hubCallouts = createHubCalloutVisibility();
+let hubCalloutFrame = null, animateHubCallouts = true;
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
     && stage.clientWidth > 0 && stage.clientHeight > 0 && !player.glide && !player.projectionGlide && !themeSettling(),
@@ -63,7 +66,7 @@ function emitState(force = false) {
   lastState = now; post(state());
 }
 function showError(code, recoverable = false) {
-  callouts?.clear(); hotspots = [];
+  clearHotspots();
   presented = false; presentation.cancel(); clearTimeout(statusTimer);
   errorCode = code; status.classList.remove('leaving'); status.hidden = false; status.dataset.error = 'true';
   statusText.textContent = sceneStrings.sceneFailed ?? (recoverable ? '三维画面暂时中断，正在等待图形恢复。也可重新载入。' : '三维动作暂时无法载入，请重新载入。');
@@ -81,12 +84,29 @@ function dismissStatus() {
     status.classList.remove('leaving');
   }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 340);
 }
+function clearHotspots() {
+  callouts?.clear(); hotspots = [];
+  hubCallouts.clear(); hubCalloutFrame = null;
+}
 function refreshHotspots(rendered = false) {
-  if (!ready || player.trainingHub || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+  if (!ready || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
-    hotspots = []; callouts?.clear(); return;
+    clearHotspots(); return;
   }
-  if (rendered) hotspots = callouts?.update(phaseAt(player.time).items, selected) ?? [];
+  if (rendered && !player.trainingHub) hotspots = callouts?.update(phaseAt(player.time).items) ?? [];
+}
+function renderHubCallouts(frame) {
+  hubCalloutFrame = hubCallouts.update(frame, performance.now(), animateHubCallouts &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (!hubCalloutFrame) {
+    if (hotspots.length) callouts?.clear();
+    hotspots = [];
+    return;
+  }
+  if (hubCalloutFrame.redrawing) player.requestRedraw();
+  hotspots = callouts?.update(phaseAt(hubCalloutFrame.time).items, {
+    camera: frame.camera, opacity: hubCalloutFrame.opacity, reservedBottom: 32, homeOverlays: false,
+  }) ?? [];
 }
 function closeDetail() {
   detailView?.close(); detailed = false;
@@ -160,12 +180,14 @@ function command(value) {
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
       presentation.request(input.requestId); return;
     case 'hub_scene': {
-      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap);
+      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap, renderHubCallouts);
       if (!hub.configure(input, performance.now())) {
         if (!player.trainingHub) hub.releaseGpu();
         return;
       }
+      animateHubCallouts = input.animate !== false;
       if (!player.trainingHub) {
+        clearHotspots();
         player.trainingHub = hub;
         player.playing = false;
         player.loopRange = null;
@@ -307,6 +329,7 @@ async function boot() {
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
       getTrainingHub: () => player.trainingHub?.getState() ?? null,
+      getHubCalloutState: () => hubCalloutFrame && { ...hubCalloutFrame },
       getPerf: () => perfSnapshot(player),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },

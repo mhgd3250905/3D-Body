@@ -30,6 +30,7 @@ void main() {
         phaseTime: 6,
         muscleId: 'triceps',
         showMuscles: true,
+        focusMuscle: true,
       );
       controller.requestPresentation();
       controller.receiveEvent(_ready);
@@ -40,11 +41,19 @@ void main() {
       expect(selected['phaseSource'], 15);
       expect(selected['phaseTime'], 6);
       expect(selected['showMuscles'], isTrue);
+      expect(selected['focusMuscle'], isTrue);
       expect(selected['scrubbing'], isFalse);
       expect(selected['muscleId'], 'triceps');
       final muscleCamera = selected['muscleCamera']! as Map<String, Object?>;
       expect((muscleCamera['position']! as List<double>).last, lessThan(0));
-      expect((selected['angleCamera']! as Map<String, Object?>)['fov'], 32);
+      expect(muscleCamera['target'], [0, 1.176, 0]);
+      expect(muscleCamera['region'], [.339, .143, .091]);
+      expect(selected['angleCamera'], {
+        'yaw': -.24,
+        'distance': 6.48,
+        'targetHeight': .71,
+        'fov': 32,
+      });
 
       sent.clear();
       controller.reportError(SceneController.processTerminated);

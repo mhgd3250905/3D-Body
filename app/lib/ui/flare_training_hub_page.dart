@@ -11,10 +11,12 @@ import 'flare_plan_detail_page.dart' show flarePlanMinutes;
 import 'flare_plan_visuals.dart';
 import 'motion.dart';
 import 'motion_controls.dart';
+import 'scene_localization.dart';
 import 'theme.dart';
 
 const _gutter = 22.0;
-const _planCardHeight = 76.0;
+const _planButtonHeight = 52.0;
+const _planFooterHeight = 16.0 + 10 + _planButtonHeight;
 
 Color _hubSurface(FlarePalette p) =>
     p.isDark ? const Color(0xff141418) : p.surface;
@@ -48,6 +50,8 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   late double _time = widget.catalog.phaseTime(11);
   bool _muscles = false;
   String _muscleId = 'deltoids';
+  bool _muscleFocused = false;
+  final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
   MuscleGroup get _muscle => widget.catalog.groupById(_muscleId)!;
@@ -66,12 +70,24 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     _stage.setTheme(
       Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light',
     );
+    _localizeScene();
   }
 
   @override
   void didUpdateWidget(FlareTrainingHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
+    if (oldWidget.catalog != widget.catalog) _localizeScene();
+  }
+
+  void _localizeScene() {
+    _stage.setLocalization(
+      sceneLocalization(
+        context.strings,
+        widget.catalog.groups,
+        rtl: Directionality.of(context) == TextDirection.rtl,
+      ),
+    );
   }
 
   @override
@@ -87,6 +103,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       phaseTime: _time,
       muscleId: _muscleId,
       showMuscles: _muscles,
+      focusMuscle: _muscleFocused,
       animate: animate,
       scrubbing: scrubbing,
     );
@@ -112,10 +129,24 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   }
 
   void _selectMuscle(String id) {
-    if (id == _muscleId) return;
+    if (id == _muscleId && _muscleFocused) return;
     FlareHaptics.selection();
-    setState(() => _muscleId = id);
+    setState(() {
+      _muscleId = id;
+      _muscleFocused = true;
+      _lastMuscleInSection[_muscle.section] = id;
+    });
     _render(animate: !FlareMotion.reduced(context));
+  }
+
+  void _selectMuscleSection(String section) {
+    if (section == _muscle.section) return;
+    _selectMuscle(
+      _lastMuscleInSection[section] ??
+          widget.catalog.groups
+              .firstWhere((group) => group.section == section)
+              .id,
+    );
   }
 
   @override
@@ -133,8 +164,9 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       _muscles ? muscle.id : 'phase-${phase.source}',
     );
     final stageHeight = _muscles ? 400.0 : 452.0;
-    final cardBottom = safe.bottom + 30;
-    final controlsBottom = cardBottom + _planCardHeight + 12;
+    final footerBottom = safe.bottom + 34;
+    final controlsBottom =
+        footerBottom + _planFooterHeight + (_muscles ? 12 : 4);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(statusBarColor: Colors.transparent),
@@ -167,8 +199,9 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                     child: _muscles
                         ? _HubMuscles(
                             catalog: catalog,
-                            selected: _muscleId,
+                            selected: muscle,
                             onSelected: _selectMuscle,
+                            onSection: _selectMuscleSection,
                           )
                         : _angleControls(context, phase),
                   ),
@@ -184,10 +217,10 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                       : SingleChildScrollView(child: page),
                 ),
                 PositionedDirectional(
-                  start: 16,
-                  end: 16,
-                  bottom: cardBottom,
-                  child: _HubPlanCard(
+                  start: _gutter,
+                  end: _gutter,
+                  bottom: footerBottom,
+                  child: _HubPlanFooter(
                     selection: selectedKey,
                     title: _muscles ? muscle.label : phase.name,
                     plan: beginner,
@@ -380,24 +413,28 @@ class _HubStage extends StatelessWidget {
               bottom: 0,
               child: ClipRect(child: IgnorePointer(child: scene)),
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 120,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [p.background.withValues(alpha: 0), p.background],
-                      stops: const [0, .78],
+            if (!muscles)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 32,
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          p.background.withValues(alpha: 0),
+                          p.background,
+                        ],
+                        stops: const [0, .78],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             Positioned(
               left: 16,
               top: safeTop + 10,
@@ -512,109 +549,239 @@ class _HubMuscles extends StatelessWidget {
     required this.catalog,
     required this.selected,
     required this.onSelected,
+    required this.onSection,
   });
+
   final Catalog catalog;
-  final String selected;
+  final MuscleGroup selected;
   final ValueChanged<String> onSelected;
+  final ValueChanged<String> onSection;
 
   @override
   Widget build(BuildContext context) {
     final p = FlareColors.palette;
-    return ShaderMask(
-      blendMode: BlendMode.dstIn,
-      shaderCallback: (bounds) => LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: const [
-          Colors.transparent,
-          Colors.white,
-          Colors.white,
-          Colors.transparent,
-        ],
-        stops: [
-          0,
-          (12 / math.max(1, bounds.height)).clamp(0.0, .5),
-          (1 - 16 / math.max(1, bounds.height)).clamp(.5, 1.0),
-          1,
-        ],
-      ).createShader(bounds),
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: SingleChildScrollView(
-          key: const PageStorageKey('hub-muscle-groups'),
-          padding: const EdgeInsets.fromLTRB(_gutter, 0, _gutter, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final s = context.strings;
+    final groups = <String, List<MuscleGroup>>{
+      for (final section in catalog.sections)
+        section.id: catalog.groups
+            .where((group) => group.section == section.id)
+            .toList(),
+    };
+    final current = groups[selected.section]!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(_gutter, 12, _gutter, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            spacing: 22,
             children: [
-              for (final section in catalog.sections) ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 8),
-                  child: Semantics(
-                    header: true,
-                    child: Text(
-                      section.label,
-                      style: TextStyle(
-                        color: p.dim,
-                        fontSize: 11,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+              for (final section in catalog.sections)
+                Flexible(
+                  child: _SectionTab(
+                    id: section.id,
+                    label: switch (section.id) {
+                      'support' => s.hubSupportTab,
+                      'core' => s.hubCoreTab,
+                      'legs' => s.hubLegsTab,
+                      _ => section.short,
+                    },
+                    count: groups[section.id]!.length,
+                    selected: section.id == selected.section,
+                    onTap: () => onSection(section.id),
                   ),
                 ),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+            ],
+          ),
+          SizedBox(height: 1, child: ColoredBox(color: p.hairline)),
+          const SizedBox(height: 2),
+          Expanded(
+            child: ShaderMask(
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (bounds) {
+                final fade = (12 / math.max(1, bounds.height)).clamp(0.0, .5);
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: const [
+                    Colors.transparent,
+                    Colors.white,
+                    Colors.white,
+                    Colors.transparent,
+                  ],
+                  stops: [0, fade, 1 - fade, 1],
+                ).createShader(bounds);
+              },
+              child: AnimatedSwitcher(
+                duration: FlareMotion.reduced(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 200),
+                layoutBuilder: (current, previous) => Stack(
+                  fit: StackFit.expand,
                   children: [
-                    for (final group in catalog.groups.where(
-                      (group) => group.section == section.id,
-                    ))
-                      _chip(context, group, p),
+                    for (final old in previous)
+                      IgnorePointer(child: ExcludeSemantics(child: old)),
+                    ?current,
                   ],
                 ),
-              ],
+                child: GridView.builder(
+                  key: PageStorageKey(selected.section),
+                  primary: false,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent: 44,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: current.length,
+                  itemBuilder: (context, index) {
+                    final group = current[index];
+                    return _MuscleGridCell(
+                      group: group,
+                      selected: selected.id == group.id,
+                      onTap: () => onSelected(group.id),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionTab extends StatelessWidget {
+  const _SectionTab({
+    required this.id,
+    required this.label,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String id;
+  final String label;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    return FlarePressable(
+      key: ValueKey('hub-section-$id'),
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      scale: 1,
+      onTap: onTap,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: AlignmentDirectional.centerStart,
+        child: IntrinsicWidth(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  spacing: 6,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: selected ? p.text : p.dim,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    Text(
+                      count.toString(),
+                      style: TextStyle(color: p.dim, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 2,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: selected ? p.text : Colors.transparent,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                  child: const SizedBox.expand(),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _chip(BuildContext context, MuscleGroup group, FlarePalette p) {
-    final active = selected == group.id;
+class _MuscleGridCell extends StatelessWidget {
+  const _MuscleGridCell({
+    required this.group,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final MuscleGroup group;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
     return FlarePressable(
       key: ValueKey('hub-muscle-${group.id}'),
-      onTap: () => onSelected(group.id),
-      selected: active,
+      onTap: onTap,
+      selected: selected,
       inMutuallyExclusiveGroup: true,
       scale: 1,
       child: AnimatedContainer(
         duration: FlareMotion.reduced(context)
             ? Duration.zero
             : const Duration(milliseconds: 180),
-        height: 32,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: active ? p.accent.withValues(alpha: .12) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          color: selected
+              ? Color.alphaBlend(p.accent.withValues(alpha: .06), p.surface)
+              : p.surface,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: active ? p.accent.withValues(alpha: .55) : p.hairline,
+            color: selected ? p.accent : p.hairline,
+            width: selected ? 1.5 : 1,
           ),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          spacing: 10,
           children: [
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  group.label,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: active ? p.text : p.secondary,
-                  ),
+            SizedBox.square(
+              dimension: 8,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Color(group.colorValue),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                group.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: p.text,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),
@@ -668,15 +835,14 @@ class _PrimaryMusclePill extends StatelessWidget {
   }
 }
 
-class _HubPlanCard extends StatelessWidget {
-  const _HubPlanCard({
+class _HubPlanFooter extends StatelessWidget {
+  const _HubPlanFooter({
     required this.selection,
     required this.title,
     required this.plan,
     required this.onOpen,
   });
 
-  static const _radius = BorderRadius.all(Radius.circular(20));
   final Key selection;
   final String title;
   final FlarePlan? plan;
@@ -688,205 +854,141 @@ class _HubPlanCard extends StatelessWidget {
     final s = context.strings;
     final selectedPlan = plan;
     final planned = selectedPlan != null;
-    final reduced = FlareMotion.reduced(context);
-    final duration = reduced
-        ? Duration.zero
-        : const Duration(milliseconds: 240);
+    final label = planned ? s.hubViewNamedPlan(title) : s.hubPlanComingSoon;
     final subtitle = selectedPlan == null
-        ? s.hubStageBeingPlanned
+        ? s.hubStillPlanning
         : [
             s.hubMinutesFrom(flarePlanMinutes(selectedPlan)),
             s.planDrillCount(selectedPlan.items.length),
             s.hubThreeTiers,
           ].join(' · ');
-    final pending = p.isDark ? const Color(0xff111114) : p.surface;
-
-    return FlarePressable(
-      onTap: planned ? onOpen : null,
-      scale: .98,
-      pressDuration: const Duration(milliseconds: 120),
-      semanticLabel: planned ? s.hubViewPlan : null,
-      preserveChildSemantics: true,
-      plainWhenDisabled: true,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(end: planned ? 1 : 0),
-        duration: duration,
-        curve: Curves.easeOutCubic,
-        builder: (context, progress, child) {
-          final base = Color.lerp(pending, _hubSurface(p), progress)!;
-          final tint = Color.alphaBlend(
-            p.accent.withValues(alpha: .22 * progress),
-            base,
-          );
-          return CustomPaint(
-            foregroundPainter: _PlanCardOutline(
-              dashed: (p.isDark ? p.selectedSegment : p.controlBorder)
-                  .withValues(alpha: 1 - progress),
-              solid: p.accent.withValues(alpha: .35 * progress),
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: _radius,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [tint, base, base],
-                  stops: const [0, .7, 1],
+    final duration = FlareMotion.reduced(context)
+        ? Duration.zero
+        : const Duration(milliseconds: 200);
+    final foreground = p.isDark ? Colors.black : Colors.white;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: 16,
+          child: Row(
+            spacing: 10,
+            children: [
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    s.hubSpecializedPlan,
+                    style: TextStyle(
+                      color: p.dim,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
                 ),
               ),
-              child: child,
-            ),
-          );
-        },
-        child: SizedBox(
-          height: _planCardHeight,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (planned)
-                const IgnorePointer(
-                  child: SizedBox(key: ValueKey('hub-view-plan')),
-                ),
-              Padding(
-                padding: const EdgeInsetsDirectional.only(start: 18, end: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        duration: reduced
-                            ? Duration.zero
-                            : const Duration(milliseconds: 200),
-                        layoutBuilder: (current, previous) => Stack(
-                          alignment: AlignmentDirectional.centerStart,
-                          children: [
-                            for (final old in previous)
-                              ExcludeSemantics(child: old),
-                            ?current,
-                          ],
-                        ),
-                        child: Column(
-                          key: selection,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _line(
-                              s.hubSpecializedPlan,
-                              15,
-                              TextStyle(
-                                color: planned ? p.accentInk : p.dim,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            _line(
-                              planned ? title : s.hubPlanInPreparation,
-                              22,
-                              TextStyle(
-                                color: planned ? p.text : p.secondary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            _line(
-                              subtitle,
-                              17,
-                              TextStyle(color: p.secondary, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
+              Expanded(
+                flex: 2,
+                child: _switchText(
+                  duration: duration,
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: FittedBox(
+                    key: selection,
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: Text(
+                      subtitle,
+                      style: TextStyle(color: p.secondary, fontSize: 12),
                     ),
-                    AnimatedSwitcher(
-                      duration: duration,
-                      child: planned
-                          ? const Padding(
-                              padding: EdgeInsetsDirectional.only(start: 8),
-                              child: _PlanCardArrow(),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _line(String label, double height, TextStyle style) => SizedBox(
-    height: height,
-    child: FittedBox(
-      fit: BoxFit.scaleDown,
-      alignment: AlignmentDirectional.centerStart,
-      child: Text(label, style: style, maxLines: 1),
-    ),
-  );
-}
-
-class _PlanCardOutline extends CustomPainter {
-  const _PlanCardOutline({required this.dashed, required this.solid});
-
-  final Color dashed;
-  final Color solid;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bounds = (Offset.zero & size).deflate(.5);
-    final outline = RRect.fromRectAndRadius(
-      bounds,
-      const Radius.circular(19.5),
-    );
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    if (solid.a > 0) canvas.drawRRect(outline, paint..color = solid);
-    if (dashed.a == 0) return;
-    final track = (Path()..addRRect(outline)).computeMetrics().single;
-    paint.color = dashed;
-    for (var distance = 0.0; distance < track.length; distance += 8) {
-      canvas.drawPath(
-        track.extractPath(distance, math.min(distance + 4, track.length)),
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_PlanCardOutline old) =>
-      old.dashed != dashed || old.solid != solid;
-}
-
-class _PlanCardArrow extends StatelessWidget {
-  const _PlanCardArrow();
-
-  @override
-  Widget build(BuildContext context) {
-    final p = FlareColors.palette;
-    return SizedBox.square(
-      dimension: 52,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color.lerp(p.accent, Colors.white, .15)!, p.accent],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: p.accent,
-              blurRadius: 22,
-              spreadRadius: -8,
-              offset: const Offset(0, 8),
+        const SizedBox(height: 10),
+        FlarePressable(
+          onTap: planned ? onOpen : null,
+          scale: .98,
+          pressDuration: const Duration(milliseconds: 120),
+          semanticLabel: planned ? label : null,
+          plainWhenDisabled: true,
+          child: Container(
+            height: _planButtonHeight,
+            decoration: BoxDecoration(
+              color: planned
+                  ? p.isDark
+                        ? Colors.white
+                        : const Color(0xff1b1b1f)
+                  : Colors.transparent,
+              border: planned ? null : Border.all(color: p.hairline),
+              borderRadius: BorderRadius.circular(26),
             ),
-          ],
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (planned)
+                  const IgnorePointer(
+                    child: SizedBox(key: ValueKey('hub-view-plan')),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: _switchText(
+                    duration: duration,
+                    alignment: AlignmentDirectional.center,
+                    child: FittedBox(
+                      key: selection,
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        children: [
+                          Text(
+                            label,
+                            style: TextStyle(
+                              color: planned ? foreground : p.dim,
+                              fontSize: 15,
+                              fontWeight: planned
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                          if (planned)
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              color: foreground,
+                              size: 16,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        child: Icon(Icons.arrow_forward_rounded, color: p.onAccent, size: 20),
-      ),
+      ],
     );
   }
+
+  Widget _switchText({
+    required Duration duration,
+    required AlignmentGeometry alignment,
+    required Widget child,
+  }) => AnimatedSwitcher(
+    duration: duration,
+    layoutBuilder: (current, previous) => Stack(
+      alignment: alignment,
+      fit: StackFit.expand,
+      children: [
+        for (final old in previous) ExcludeSemantics(child: old),
+        ?current,
+      ],
+    ),
+    child: child,
+  );
 }

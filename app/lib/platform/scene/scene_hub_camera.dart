@@ -1,49 +1,83 @@
-/// Training Hub camera coordinates in the existing Three.js model space.
-/// Angle presets frame the R17 anchors. Standing presets use the authored
-/// side and keep each muscle group above the stage's lower fade.
-final class SceneHubCamera {
-  const SceneHubCamera(this.position, this.target, this.fov);
-
-  final List<double> position;
-  final List<double> target;
-  final double fov;
-
-  Map<String, Object?> toJson() => {
-    'position': position,
-    'target': target,
-    'fov': fov,
+/// The Hub's animation camera orbits one fixed target on a horizontal circle.
+abstract final class SceneHubCamera {
+  static const angleDistance = 6.48;
+  static const angleTargetHeight = .71;
+  static const angleFov = 32.0;
+  static const angleYaw = <int, double>{
+    9: -.22,
+    10: .34,
+    11: .22,
+    12: .48,
+    13: -.14,
+    14: -.34,
+    15: -.24,
+    16: -.48,
   };
 
-  static const angles = <int, SceneHubCamera>{
-    9: SceneHubCamera([.398, 1.405, 2.259], [-.040, .481, -.173], 32),
-    10: SceneHubCamera([.790, 1.707, 2.869], [.261, .591, -.067], 32),
-    11: SceneHubCamera([.719, 1.853, 3.323], [.179, .713, .322], 32),
-    12: SceneHubCamera([.482, 1.748, 3.134], [-.025, .677, .317], 32),
-    13: SceneHubCamera([.682, 1.880, 4.025], [.013, .468, .311], 32),
-    14: SceneHubCamera([.604, 1.785, 3.161], [.079, .678, .247], 32),
-    15: SceneHubCamera([.374, 1.878, 3.290], [-.178, .712, .221], 32),
-    16: SceneHubCamera([.228, 1.630, 2.589], [-.270, .579, -.178], 32),
+  static Map<String, Object?>? angle(int phase) {
+    final yaw = angleYaw[phase];
+    return yaw == null
+        ? null
+        : {
+            'yaw': yaw,
+            'distance': angleDistance,
+            'targetHeight': angleTargetHeight,
+            'fov': angleFov,
+          };
+  }
+
+  static const standingHeight = 1.155;
+  static const standingDistance = 3.4;
+
+  // Bilateral region bounds measured on the standing reference mesh. Each
+  // preset includes a small tolerance for the shader feather and fitted edge.
+  static const _muscles = <String, _MuscleFocus>{
+    'deltoids': _MuscleFocus(1, 1.319, .274, .087, .095),
+    'rotator-cuff': _MuscleFocus(-1, 1.296, .179, .071, .123),
+    'triceps': _MuscleFocus(-1, 1.176, .339, .143, .091),
+    'forearms': _MuscleFocus(1, .984, .410, .127, .103),
+    'serratus': _MuscleFocus(1, 1.185, .177, .067, .139),
+    'scapular': _MuscleFocus(-1, 1.254, .103, .133, .120),
+    'chest': _MuscleFocus(1, 1.279, .183, .109, .156),
+    'lats': _MuscleFocus(-1, 1.111, .225, .156, .114),
+    'abs': _MuscleFocus(1, 1.028, .095, .206, .156),
+    'obliques': _MuscleFocus(1, 1.024, .168, .125, .132),
+    'erectors': _MuscleFocus(-1, 1.008, .095, .129, .103),
+    'hip-flexors': _MuscleFocus(1, .874, .174, .076, .116),
+    'glute-max': _MuscleFocus(-1, .843, .165, .109, .112),
+    'hip-abductors': _MuscleFocus(-1, .906, .163, .079, .075),
+    'adductors': _MuscleFocus(1, .667, .091, .187, .086),
+    'quadriceps': _MuscleFocus(1, .650, .203, .179, .121),
+    'hamstrings': _MuscleFocus(-1, .606, .202, .202, .084),
   };
 
-  // Fit each bilateral atlas region to about 45% of the stage's shorter edge.
-  // The initial deltoid view also retains the head-to-mid-thigh overview.
-  static const muscles = <String, SceneHubCamera>{
-    'deltoids': SceneHubCamera([0, 1.164, 2.520], [0, 1.164, 0], 26),
-    'rotator-cuff': SceneHubCamera([0, 1.205, -1.708], [0, 1.205, 0], 26),
-    'triceps': SceneHubCamera([0, 1.000, -3.175], [0, 1.000, 0], 26),
-    'forearms': SceneHubCamera([0, .769, 3.878], [0, .769, 0], 26),
-    'serratus': SceneHubCamera([0, 1.096, 1.658], [0, 1.096, 0], 26),
-    'scapular': SceneHubCamera([0, 1.179, -1.249], [0, 1.179, 0], 26),
-    'chest': SceneHubCamera([0, 1.185, 1.726], [0, 1.185, 0], 26),
-    'lats': SceneHubCamera([0, .999, -2.083], [0, .999, 0], 26),
-    'abs': SceneHubCamera([0, .910, 1.986], [0, .910, 0], 26),
-    'obliques': SceneHubCamera([0, .947, 1.508], [0, .947, 0], 26),
-    'erectors': SceneHubCamera([0, .935, -1.203], [0, .935, 0], 26),
-    'hip-flexors': SceneHubCamera([0, .790, 1.586], [0, .790, 0], 26),
-    'glute-max': SceneHubCamera([0, .763, -1.483], [0, .763, 0], 26),
-    'hip-abductors': SceneHubCamera([0, .826, -1.443], [0, .826, 0], 26),
-    'adductors': SceneHubCamera([0, .570, 1.675], [0, .570, 0], 26),
-    'quadriceps': SceneHubCamera([0, .551, 1.860], [0, .551, 0], 26),
-    'hamstrings': SceneHubCamera([0, .488, -1.842], [0, .488, 0], 26),
-  };
+  static Map<String, Object?>? muscle(String id, {bool focused = false}) {
+    final preset = _muscles[id];
+    if (preset == null) return null;
+    final targetHeight = focused ? preset.centerY : standingHeight;
+    return {
+      'position': <double>[0, targetHeight, standingDistance * preset.side],
+      'target': <double>[0, targetHeight, 0],
+      'fov': 26,
+      'overviewHeight': standingHeight,
+      if (focused)
+        'region': <double>[preset.halfWidth, preset.halfHeight, preset.depth],
+    };
+  }
+}
+
+final class _MuscleFocus {
+  const _MuscleFocus(
+    this.side,
+    this.centerY,
+    this.halfWidth,
+    this.halfHeight,
+    this.depth,
+  );
+
+  final int side;
+  final double centerY;
+  final double halfWidth;
+  final double halfHeight;
+  final double depth;
 }

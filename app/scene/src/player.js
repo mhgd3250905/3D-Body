@@ -368,8 +368,8 @@ export class FlarePlayer {
     const position = center.clone().addScaledVector(dir, distance * padding);
     if (glide) this.glideTo(position, center); else this.setCameraView(position, center);
   }
-  project(point) {
-    const v = point.clone().project(this.camera), rect = this.renderer.domElement.getBoundingClientRect();
+  project(point, camera = this.camera) {
+    const v = point.clone().project(camera), rect = this.renderer.domElement.getBoundingClientRect();
     return { x: (v.x + 1) * 0.5 * rect.width, y: (1 - v.y) * 0.5 * rect.height, behind: v.z > 1 || v.z < -1 };
   }
   dispose() {

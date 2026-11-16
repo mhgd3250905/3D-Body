@@ -475,11 +475,22 @@
   "hubMuscle": "肌群",
   "hubMinutesFrom": "{count} 分钟起",
   "hubThreeTiers": "三档",
-  "hubViewPlan": "查看计划",
-  "hubStageBeingPlanned": "这个阶段的计划还在编排",
   "hubPrimaryMuscles": "这一刻的主力",
   "hubSpecializedPlan": "专项计划",
-  "hubPlanInPreparation": "准备中",
+  "hubSupportTab": "支撑",
+  "hubCoreTab": "核心",
+  "hubLegsTab": "腿部",
+  "hubStillPlanning": "还在编排",
+  "hubPlanComingSoon": "专项计划准备中",
+  "hubViewNamedPlan": "查看「{name}」计划",
+  "@hubViewNamedPlan": {
+    "description": "Call to action for the currently selected training plan.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "hubPhase09Caption": "双手撑地，开腿抬过前方",
   "hubPhase10Caption": "从双手移重到单手",
   "hubPhase11Caption": "单手撑起全身侧立，支撑肩最吃力。",

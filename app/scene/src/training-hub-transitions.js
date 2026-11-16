@@ -14,7 +14,15 @@ function readCamera(raw) {
     !Number.isFinite(raw.fov) || raw.fov < 10 || raw.fov > 70) return null;
   const target = new THREE.Vector3(...raw.target);
   const offset = new THREE.Vector3(...raw.position).sub(target);
-  return offset.length() > .1 ? { target, orbit: new THREE.Spherical().setFromVector3(offset), fov: raw.fov } : null;
+  return offset.length() > .1 ? { target, orbit: new THREE.Spherical().setFromVector3(offset), fov: raw.fov,
+    cutoff: Number.isFinite(raw.cutoff) ? raw.cutoff : .62 } : null;
+}
+
+function readAngleCamera(raw) {
+  if (!raw || ![raw.yaw, raw.distance, raw.targetHeight, raw.fov].every(Number.isFinite) ||
+    raw.distance <= .1 || raw.fov < 10 || raw.fov > 70) return null;
+  return { target: new THREE.Vector3(0, raw.targetHeight, 0),
+    orbit: new THREE.Spherical(raw.distance, Math.PI / 2, raw.yaw), fov: raw.fov };
 }
 
 function around(from, to, loop) {
@@ -31,11 +39,18 @@ function mixCamera(from, to, t) {
     orbit: new THREE.Spherical(lerp(a.radius, b.radius, t), lerp(a.phi, b.phi, t),
       a.theta + around(a.theta, b.theta, Math.PI * 2) * t),
     fov: lerp(from.fov, to.fov, t),
+    cutoff: lerp(from.cutoff, to.cutoff, t),
   };
 }
 
+function mixAngle(from, to, t) {
+  const orbit = from.orbit.clone();
+  orbit.theta += around(orbit.theta, to.orbit.theta, Math.PI * 2) * t;
+  return { ...from, orbit };
+}
+
 function sameCamera(a, b) {
-  return a.target.equals(b.target) && a.orbit.radius === b.orbit.radius &&
+  return a.target.equals(b.target) && a.orbit.radius === b.orbit.radius && a.cutoff === b.cutoff &&
     a.orbit.phi === b.orbit.phi && a.orbit.theta === b.orbit.theta && a.fov === b.fov;
 }
 
@@ -75,9 +90,11 @@ export function createHubTransitions(period) {
     return changed;
   }
 
-  function configure(input, now, currentAngleCamera) {
-    const angle = readCamera(input.angleCamera), muscle = readCamera(input.muscleCamera);
+  function configure(input, now) {
+    const angle = readAngleCamera(input.angleCamera), muscle = readCamera(input.muscleCamera);
     if (!angle || !muscle || !Number.isFinite(input.phaseTime)) return false;
+    if (config && (angle.orbit.radius !== config.angle.orbit.radius ||
+      angle.fov !== config.angle.fov || !angle.target.equals(config.angle.target))) return false;
     const time = clamp(input.phaseTime, 0, period), mode = input.showMuscles === true ? 1 : 0;
     const groups = new Map([[input.muscleId, 1]]);
     const next = { angle, muscle, time, mode, muscleId: input.muscleId, phase: input.phaseSource };
@@ -85,18 +102,17 @@ export function createHubTransitions(period) {
     if (!tracks) {
       tracks = {
         pose: makeTrack(time, (from, to, t) => THREE.MathUtils.euclideanModulo(from + around(from, to, period) * t, period), hubDuration.pose),
-        angle: makeTrack(angle, mixCamera, hubDuration.camera),
+        angle: makeTrack(angle, mixAngle, hubDuration.camera),
         muscle: makeTrack(muscle, mixCamera, hubDuration.camera),
         groups: makeTrack(groups, mixGroups, hubDuration.highlight),
         mode: makeTrack(mode, lerp, hubDuration.mode),
-        angleScale: makeTrack(1, lerp, hubDuration.mode),
         muscleScale: makeTrack(1, lerp, hubDuration.mode),
       };
     } else {
       sample(now);
       if (input.scrubbing === true) {
         tracks.pose.set(time, now, false);
-        if (!scrubbing) tracks.angle.set(currentAngleCamera ?? tracks.angle.value, now, false);
+        if (!scrubbing) tracks.angle.set(tracks.angle.value, now, false);
       } else {
         if (scrubbing || config.time !== time) tracks.pose.set(time, now, animate && tracks.pose.value !== time);
         if (scrubbing || !sameCamera(config.angle, angle)) tracks.angle.set(angle, now, animate);
@@ -104,9 +120,10 @@ export function createHubTransitions(period) {
       if (!sameCamera(config.muscle, muscle)) tracks.muscle.set(muscle, now, animate);
       if (config.muscleId !== next.muscleId) tracks.groups.set(groups, now, animate);
       if (config.mode !== mode) {
-        const incoming = mode ? tracks.muscleScale : tracks.angleScale;
-        if (animate && (mode ? tracks.mode.value === 0 : tracks.mode.value === 1)) incoming.set(.96, now, false);
-        incoming.set(1, now, animate);
+        if (mode) {
+          if (animate && tracks.mode.value === 0) tracks.muscleScale.set(.96, now, false);
+          tracks.muscleScale.set(1, now, animate);
+        }
         tracks.mode.set(mode, now, animate);
       }
     }
@@ -125,8 +142,8 @@ export function createHubTransitions(period) {
         angle: tracks.angle.value,
         muscle: tracks.muscle.value,
         groups: tracks.groups.value,
+        angleMoving: tracks.pose.moving || tracks.angle.moving,
         mode: tracks.mode.value,
-        angleScale: tracks.angleScale.value,
         muscleScale: tracks.muscleScale.value,
         targetPhase: config.phase,
         targetMuscle: config.muscleId,

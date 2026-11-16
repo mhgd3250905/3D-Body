@@ -1009,19 +1009,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hubThreeTiers => 'ثلاثة مستويات';
 
   @override
-  String get hubViewPlan => 'عرض الخطة';
-
-  @override
-  String get hubStageBeingPlanned => 'يجري إعداد خطة هذه المرحلة';
-
-  @override
   String get hubPrimaryMuscles => 'العضلات الرئيسية في هذه المرحلة';
 
   @override
   String get hubSpecializedPlan => 'خطة مخصصة';
 
   @override
-  String get hubPlanInPreparation => 'قيد الإعداد';
+  String get hubSupportTab => 'الارتكاز';
+
+  @override
+  String get hubCoreTab => 'الجذع';
+
+  @override
+  String get hubLegsTab => 'الساقان';
+
+  @override
+  String get hubStillPlanning => 'قيد الإعداد';
+
+  @override
+  String get hubPlanComingSoon => 'الخطة المخصصة قيد الإعداد';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'عرض خطة «$name»';
+  }
 
   @override
   String get hubPhase09Caption =>

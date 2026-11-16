@@ -1969,18 +1969,6 @@ abstract class AppLocalizations {
   /// **'三档'**
   String get hubThreeTiers;
 
-  /// No description provided for @hubViewPlan.
-  ///
-  /// In zh, this message translates to:
-  /// **'查看计划'**
-  String get hubViewPlan;
-
-  /// No description provided for @hubStageBeingPlanned.
-  ///
-  /// In zh, this message translates to:
-  /// **'这个阶段的计划还在编排'**
-  String get hubStageBeingPlanned;
-
   /// No description provided for @hubPrimaryMuscles.
   ///
   /// In zh, this message translates to:
@@ -1993,11 +1981,41 @@ abstract class AppLocalizations {
   /// **'专项计划'**
   String get hubSpecializedPlan;
 
-  /// No description provided for @hubPlanInPreparation.
+  /// No description provided for @hubSupportTab.
   ///
   /// In zh, this message translates to:
-  /// **'准备中'**
-  String get hubPlanInPreparation;
+  /// **'支撑'**
+  String get hubSupportTab;
+
+  /// No description provided for @hubCoreTab.
+  ///
+  /// In zh, this message translates to:
+  /// **'核心'**
+  String get hubCoreTab;
+
+  /// No description provided for @hubLegsTab.
+  ///
+  /// In zh, this message translates to:
+  /// **'腿部'**
+  String get hubLegsTab;
+
+  /// No description provided for @hubStillPlanning.
+  ///
+  /// In zh, this message translates to:
+  /// **'还在编排'**
+  String get hubStillPlanning;
+
+  /// No description provided for @hubPlanComingSoon.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划准备中'**
+  String get hubPlanComingSoon;
+
+  /// Call to action for the currently selected training plan.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看「{name}」计划'**
+  String hubViewNamedPlan(String name);
 
   /// No description provided for @hubPhase09Caption.
   ///

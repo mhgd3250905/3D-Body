@@ -26,22 +26,22 @@ export const ANCHORS = {
 
 const shortNames = { 'hip-abductors': '臀中肌', 'hip-flexors': '髋屈肌群', abs: '腹直肌', 'rotator-cuff': '肩袖肌群', forearms: '前臂肌群', scapular: '肩胛肌群', adductors: '内收肌群' };
 
-export function computeHotspots(player, items, previous = [], depthSampler = null) {
+export function computeHotspots(player, items, previous = [], depthSampler = null, camera = player.camera) {
   const joints = player.getMetrics().joints, j = name => new Vector3().fromArray(joints[name] ?? joints.pelvis), output = [];
   // Share the miniature's priority selection so both views name the same groups.
   for (const item of phaseEmphasisItems(items)) {
     const anchor = ANCHORS[item.groupId]; if (!anchor) continue;
     const sides = item.side === 'both' ? ['left', 'right'] : [item.side];
     const candidates = sides.map(side => ({ side, point: anchor(j, side) }));
-    candidates.sort((a, b) => a.point.distanceToSquared(player.camera.position) - b.point.distanceToSquared(player.camera.position));
+    candidates.sort((a, b) => a.point.distanceToSquared(camera.position) - b.point.distanceToSquared(camera.position));
     // Keep the chosen side through small camera movements near the midline.
     // A clearly nearer side can take over; the label still names the group.
     const last = previous.find(value => value.groupId === item.groupId);
     const retained = candidates.find(value => value.side === last?.side);
-    const fallback = retained && retained.point.distanceTo(player.camera.position) < candidates[0].point.distanceTo(player.camera.position) + .10 ? retained : candidates[0];
-    const sample = depthSampler?.sampleFacing(item.groupId, item.side, last);
+    const fallback = retained && retained.point.distanceTo(camera.position) < candidates[0].point.distanceTo(camera.position) + .10 ? retained : candidates[0];
+    const sample = depthSampler?.sampleFacing(item.groupId, item.side, last, camera);
     const candidate = sample ?? fallback;
-    const projected = player.project(candidate.point);
+    const projected = player.project(candidate.point, camera);
     output.push({ ...projected, groupId: item.groupId, label: item.label, name: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label),
       colour: item.colour, side: candidate.side, world: candidate.point.toArray(),
       normal: sample?.normal.toArray() ?? [0, 0, 1], candidateKey: sample?.candidateKey,

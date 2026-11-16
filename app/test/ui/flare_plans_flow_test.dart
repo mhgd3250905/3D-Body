@@ -10,7 +10,6 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
-import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/trainer_page.dart';
@@ -22,9 +21,9 @@ import 'flow_regressions_test.dart' as helpers;
 
 Finder _key(String value) => find.byKey(ValueKey(value));
 
-Finder _hubPlanAction(WidgetTester tester) {
+Finder _hubPlanAction(WidgetTester tester, String name) {
   final strings = AppLocalizations.of(tester.element(_key('training-hub')));
-  return find.bySemanticsLabel(strings.hubViewPlan);
+  return find.bySemanticsLabel(strings.hubViewNamedPlan(name));
 }
 
 Finder _detailScroll() => find.descendant(
@@ -210,6 +209,8 @@ void main() {
   ) async {
     await mountShell(tester);
     tester.view.physicalSize = const Size(360, 800);
+    tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+    addTearDown(tester.view.resetViewPadding);
     await tester.pumpAndSettle();
     await openHub(tester);
     final hub = _key('training-hub');
@@ -254,10 +255,19 @@ void main() {
           .hasAction(ui.SemanticsAction.tap),
       isFalse,
     );
-    expect(_hubPlanAction(tester).hitTestable(), findsOneWidget);
+    final planAction = _hubPlanAction(tester, phase.name);
+    expect(planAction.hitTestable(), findsOneWidget);
     expect(_rowText(hub, strings.hubSpecializedPlan), findsOneWidget);
-    final planAction = _hubPlanAction(tester);
-    expect(planAction, findsOneWidget);
+    final planMinutes = find.text(
+      '${strings.hubMinutesFrom(20)} · '
+      '${strings.planDrillCount(catalog.plansForAngle(11).first.items.length)} · '
+      '${strings.hubThreeTiers}',
+    );
+    expect(planMinutes, findsOneWidget);
+    expect(
+      tester.getTopRight(planMinutes).dx,
+      closeTo(tester.getTopRight(viewPlan).dx, .1),
+    );
     expect(
       tester
           .getSemantics(planAction)
@@ -277,31 +287,45 @@ void main() {
     expect(currentTimeline().time, catalog.phaseTime(12));
     expect(viewPlan, findsNothing);
     expect(find.text(strings.hubPhase12Caption), findsOneWidget);
-    expect(find.text(strings.hubStageBeingPlanned), findsOneWidget);
-    expect(find.text(strings.hubPlanInPreparation), findsOneWidget);
-    expect(find.text('专项计划准备中'), findsNothing);
+    final stillPlanning = find.text(strings.hubStillPlanning);
+    expect(stillPlanning, findsOneWidget);
+    final unavailable = find.text(strings.hubPlanComingSoon);
+    expect(unavailable, findsOneWidget);
+    expect(tester.getTopRight(stillPlanning).dx, closeTo(338, .1));
+    expect(
+      tester
+          .getSemantics(unavailable)
+          .getSemanticsData()
+          .hasAction(ui.SemanticsAction.tap),
+      isFalse,
+    );
     expect(planAction, findsNothing);
 
     await tester.tapAt(positionInStage(15, towardNext: .22));
     await tester.pumpAndSettle();
     expect(currentTimeline().phase, 15);
     expect(currentTimeline().time, catalog.phaseTime(15));
-    final planCard = tester.getRect(viewPlan);
-    expect(planCard.height, 76);
-    expect(800 - planCard.bottom, 30);
-    await tester.tapAt(Offset(planCard.left + 16, planCard.center.dy));
+    final button = tester.getRect(viewPlan);
+    expect(button.height, 52);
+    expect(button.left, 22);
+    expect(360 - button.right, 22);
+    expect(800 - button.bottom, 34 + 24);
+    final oppositePhase = catalog.phaseBySource(15)!;
+    final oppositePlanAction = _hubPlanAction(tester, oppositePhase.name);
+    expect(oppositePlanAction.hitTestable(), findsOneWidget);
+    await tester.tapAt(Offset(button.left + 16, button.center.dy));
     await tester.pumpAndSettle();
     final detail = find.byType(FlarePlanDetailPage);
     expect(
       tester.widget<FlarePlanDetailPage>(detail).title,
-      catalog.phaseBySource(15)!.name,
+      oppositePhase.name,
     );
     expect(_key('flare-plan-angle-hero-15'), findsOneWidget);
 
     await back(tester);
     expect(hub, findsOneWidget);
     expect(currentTimeline().phase, 15);
-    expect(_hubPlanAction(tester).hitTestable(), findsOneWidget);
+    expect(oppositePlanAction.hitTestable(), findsOneWidget);
 
     await tester.tap(_key('hub-muscle-mode'));
     await tester.pumpAndSettle();
@@ -317,61 +341,125 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets(
-    'muscle mode lists every group and distinguishes plan availability',
-    (tester) async {
-      await mountShell(tester);
-      tester.view.physicalSize = const Size(360, 800);
-      await tester.pumpAndSettle();
-      await openHub(tester);
-      final hub = _key('training-hub');
-      final viewPlan = _key('hub-view-plan');
-      final strings = AppLocalizations.of(tester.element(hub));
-      await tester.tap(_key('hub-muscle-mode'));
-      await tester.pumpAndSettle();
+  testWidgets('muscle mode switches grids and keeps selections by section', (
+    tester,
+  ) async {
+    await mountShell(tester);
+    tester.view.physicalSize = const Size(360, 800);
+    await tester.pumpAndSettle();
+    await openHub(tester);
+    final hub = _key('training-hub');
+    final viewPlan = _key('hub-view-plan');
+    final strings = AppLocalizations.of(tester.element(hub));
+    await tester.tap(_key('hub-muscle-mode'));
+    await tester.pumpAndSettle();
 
-      expect(catalog.groups, hasLength(17));
-      for (final section in catalog.sections) {
-        expect(find.text(section.label), findsOneWidget);
+    void expectOnlySection(String section, int count) {
+      final groups = catalog.groups.where((group) => group.section == section);
+      expect(groups, hasLength(count));
+      for (final group in catalog.groups) {
+        expect(
+          _key('hub-muscle-${group.id}'),
+          group.section == section ? findsOneWidget : findsNothing,
+        );
       }
-      for (final muscle in catalog.groups) {
-        expect(_key('hub-muscle-${muscle.id}'), findsOneWidget);
-      }
-      expect(_hubPlanAction(tester).hitTestable(), findsOneWidget);
-      await tester.tap(_key('hub-muscle-triceps'));
-      await tester.pumpAndSettle();
-      expect(viewPlan, findsNothing);
-      expect(find.text(strings.hubPlanInPreparation), findsOneWidget);
-      expect(find.text('专项计划准备中'), findsNothing);
+      final first = tester.getRect(_key('hub-muscle-${groups.first.id}'));
+      final second = tester.getRect(
+        _key('hub-muscle-${groups.elementAt(1).id}'),
+      );
+      final third = tester.getRect(
+        _key('hub-muscle-${groups.elementAt(2).id}'),
+      );
+      expect(first.height, 44);
+      expect(first.width, second.width);
+      expect(second.top, first.top);
+      expect(second.left - first.right, 8);
+      expect(third.top - first.bottom, 8);
+    }
 
-      final lastMuscle = catalog.groups.last;
-      final lastChip = _key('hub-muscle-${lastMuscle.id}');
-      await tester.ensureVisible(lastChip);
+    Future<void> switchSection(String section) async {
+      await tester.tap(_key('hub-section-$section'));
       await tester.pumpAndSettle();
-      expect(lastChip.hitTestable(), findsOneWidget);
-      await tester.tap(lastChip);
-      await tester.pumpAndSettle();
-      expect(tester.widget<FlarePressable>(lastChip).selected, isTrue);
-      expect(viewPlan, findsNothing);
+    }
 
-      final deltoids = _key('hub-muscle-deltoids');
-      await tester.ensureVisible(deltoids);
-      await tester.pumpAndSettle();
-      await tester.tap(deltoids);
-      await tester.pumpAndSettle();
-      await tester.tap(_hubPlanAction(tester));
-      await tester.pumpAndSettle();
-      expect(find.byType(FlarePlanDetailPage), findsOneWidget);
+    bool selected(Finder tile) =>
+        tester
+            .getSemantics(tile)
+            .getSemanticsData()
+            .flagsCollection
+            .isSelected ==
+        ui.Tristate.isTrue;
 
-      await back(tester);
-      expect(hub, findsOneWidget);
-      expect(_key('hub-timeline'), findsNothing);
-      expect(tester.widget<FlarePressable>(deltoids).selected, isTrue);
-      expect(_hubPlanAction(tester).hitTestable(), findsOneWidget);
-      helpers.assertNoFlutterError(tester);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
+    for (final (section, label, count) in [
+      ('support', strings.hubSupportTab, '8'),
+      ('core', strings.hubCoreTab, '4'),
+      ('legs', strings.hubLegsTab, '5'),
+    ]) {
+      final tab = _key('hub-section-$section');
+      expect(_rowText(tab, label), findsOneWidget);
+      expect(_rowText(tab, count), findsOneWidget);
+      expect(selected(tab), section == 'support');
+    }
+    expectOnlySection('support', 8);
+    final deltoids = _key('hub-muscle-deltoids');
+    final deltoidsAction = _hubPlanAction(
+      tester,
+      catalog.groupById('deltoids')!.label,
+    );
+    expect(selected(deltoids), isTrue);
+    expect(deltoidsAction.hitTestable(), findsOneWidget);
+    final triceps = _key('hub-muscle-triceps');
+    await tester.tap(triceps);
+    await tester.pumpAndSettle();
+    expect(selected(triceps), isTrue);
+    expect(viewPlan, findsNothing);
+    expect(find.text(strings.hubStillPlanning), findsOneWidget);
+    expect(find.text(strings.hubPlanComingSoon), findsOneWidget);
+
+    await switchSection('core');
+    expectOnlySection('core', 4);
+    expect(selected(_key('hub-section-core')), isTrue);
+    final firstCore = catalog.groups.firstWhere(
+      (group) => group.section == 'core',
+    );
+    expect(selected(_key('hub-muscle-${firstCore.id}')), isTrue);
+
+    await switchSection('legs');
+    expectOnlySection('legs', 5);
+    final lastMuscle = catalog.groups.lastWhere(
+      (group) => group.section == 'legs',
+    );
+    final lastChip = _key('hub-muscle-${lastMuscle.id}');
+    await tester.ensureVisible(lastChip);
+    await tester.pumpAndSettle();
+    expect(lastChip.hitTestable(), findsOneWidget);
+    await tester.tap(lastChip);
+    await tester.pumpAndSettle();
+    expect(selected(lastChip), isTrue);
+    expect(viewPlan, findsNothing);
+
+    await switchSection('support');
+    expect(selected(triceps), isTrue);
+    await switchSection('legs');
+    expect(selected(lastChip), isTrue);
+    await switchSection('support');
+    await tester.ensureVisible(deltoids);
+    await tester.pumpAndSettle();
+    await tester.tap(deltoids);
+    await tester.pumpAndSettle();
+    await tester.tap(deltoidsAction);
+    await tester.pumpAndSettle();
+    expect(find.byType(FlarePlanDetailPage), findsOneWidget);
+
+    await back(tester);
+    expect(hub, findsOneWidget);
+    expect(_key('hub-timeline'), findsNothing);
+    expectOnlySection('support', 8);
+    expect(selected(deltoids), isTrue);
+    expect(deltoidsAction.hitTestable(), findsOneWidget);
+    helpers.assertNoFlutterError(tester);
+    await tester.pumpWidget(const SizedBox());
+  });
 
   testWidgets('both paused support phases open the same three plan tiers', (
     tester,
@@ -482,7 +570,7 @@ void main() {
       tester.view.physicalSize = const Size(360, 800);
       await tester.pumpAndSettle();
       await openHub(tester);
-      await tester.tap(_hubPlanAction(tester));
+      await tester.tap(_hubPlanAction(tester, catalog.phaseBySource(11)!.name));
       await tester.pumpAndSettle();
       final header = _key('flare-plan-scrolled-header');
       final scroll = tester.state<ScrollableState>(_detailScroll()).position;
@@ -600,7 +688,9 @@ void main() {
       await openHub(tester);
       await tester.tap(_key('hub-muscle-mode'));
       await tester.pumpAndSettle();
-      await tester.tap(_hubPlanAction(tester));
+      await tester.tap(
+        _hubPlanAction(tester, catalog.groupById('deltoids')!.label),
+      );
       await tester.pumpAndSettle();
       await tester.tap(_key('flare-plan-start'));
       final playerFinder = find.byType(sdk.TrainerPlayer);

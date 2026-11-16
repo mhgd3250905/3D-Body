@@ -1020,19 +1020,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hubThreeTiers => 'Три уровня';
 
   @override
-  String get hubViewPlan => 'Посмотреть план';
-
-  @override
-  String get hubStageBeingPlanned => 'План для этой фазы ещё составляется';
-
-  @override
   String get hubPrimaryMuscles => 'Основные мышцы на этой фазе';
 
   @override
   String get hubSpecializedPlan => 'Целевой план';
 
   @override
-  String get hubPlanInPreparation => 'Готовится';
+  String get hubSupportTab => 'Опора';
+
+  @override
+  String get hubCoreTab => 'Кор';
+
+  @override
+  String get hubLegsTab => 'Ноги';
+
+  @override
+  String get hubStillPlanning => 'В разработке';
+
+  @override
+  String get hubPlanComingSoon => 'Целевой план в разработке';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Посмотреть план «$name»';
+  }
 
   @override
   String get hubPhase09Caption =>

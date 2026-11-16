@@ -31,6 +31,7 @@ import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
 import 'flare_training_hub_page.dart';
+import 'scene_localization.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
 import 'flare_membership_page.dart';
@@ -778,27 +779,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     if (_sceneLanguage != s.localeName) {
       _sceneLanguage = s.localeName;
-      _scene.setLocalization({
-        'locale': s.localeName,
-        'rtl': Directionality.of(context) == TextDirection.rtl,
-        'groups': {for (final group in catalog.groups) group.id: group.label},
-        'shortGroups': {
-          for (final group in catalog.groups) group.id: group.shortLabel,
-        },
-        'viewLabels': {
-          for (final group in catalog.groups)
-            group.id: s.viewGroup(group.label),
-        },
-        'syncEffort': s.syncEffort,
-        'muscleMap': s.muscleMap,
-        'motion': s.watch,
-        'mapAccessibility': s.phaseMapAccessibility,
-        'sceneAccessibility': s.sceneAccessibleTitle,
-        'switchToMuscles': s.switchToMuscles,
-        'switchToMotion': s.switchToMotion,
-        'sceneFailed': s.sceneFailed,
-        'retry': s.retry,
-      });
+      _scene.setLocalization(
+        sceneLocalization(
+          s,
+          catalog.groups,
+          rtl: Directionality.of(context) == TextDirection.rtl,
+        ),
+      );
     }
     final drill = _drill;
     final canBack =

@@ -994,19 +994,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hubThreeTiers => '3段階';
 
   @override
-  String get hubViewPlan => 'プランを見る';
-
-  @override
-  String get hubStageBeingPlanned => 'このフェーズのプランは作成中です';
-
-  @override
   String get hubPrimaryMuscles => 'この局面の主働筋';
 
   @override
   String get hubSpecializedPlan => '部位別プラン';
 
   @override
-  String get hubPlanInPreparation => '準備中';
+  String get hubSupportTab => '支持';
+
+  @override
+  String get hubCoreTab => '体幹';
+
+  @override
+  String get hubLegsTab => '脚';
+
+  @override
+  String get hubStillPlanning => '準備中';
+
+  @override
+  String get hubPlanComingSoon => '部位別プランを準備中';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '「$name」のプランを見る';
+  }
 
   @override
   String get hubPhase09Caption => '両手で支え、開いた脚を前に持ち上げる';

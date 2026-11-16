@@ -1015,19 +1015,30 @@ class AppLocalizationsHi extends AppLocalizations {
   String get hubThreeTiers => 'तीन स्तर';
 
   @override
-  String get hubViewPlan => 'योजना देखें';
-
-  @override
-  String get hubStageBeingPlanned => 'इस चरण की योजना अभी तैयार की जा रही है';
-
-  @override
   String get hubPrimaryMuscles => 'इस चरण की मुख्य मांसपेशियाँ';
 
   @override
   String get hubSpecializedPlan => 'लक्षित योजना';
 
   @override
-  String get hubPlanInPreparation => 'तैयारी जारी है';
+  String get hubSupportTab => 'सहारा';
+
+  @override
+  String get hubCoreTab => 'कोर';
+
+  @override
+  String get hubLegsTab => 'पैर';
+
+  @override
+  String get hubStillPlanning => 'तैयारी में';
+
+  @override
+  String get hubPlanComingSoon => 'लक्षित योजना की तैयारी जारी है';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '“$name” की योजना देखें';
+  }
 
   @override
   String get hubPhase09Caption => 'दोनों हाथों पर टिककर फैले पैर सामने उठाएँ।';

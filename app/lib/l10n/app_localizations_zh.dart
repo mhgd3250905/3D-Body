@@ -986,19 +986,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hubThreeTiers => '三档';
 
   @override
-  String get hubViewPlan => '查看计划';
-
-  @override
-  String get hubStageBeingPlanned => '这个阶段的计划还在编排';
-
-  @override
   String get hubPrimaryMuscles => '这一刻的主力';
 
   @override
   String get hubSpecializedPlan => '专项计划';
 
   @override
-  String get hubPlanInPreparation => '准备中';
+  String get hubSupportTab => '支撑';
+
+  @override
+  String get hubCoreTab => '核心';
+
+  @override
+  String get hubLegsTab => '腿部';
+
+  @override
+  String get hubStillPlanning => '还在编排';
+
+  @override
+  String get hubPlanComingSoon => '专项计划准备中';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '查看「$name」计划';
+  }
 
   @override
   String get hubPhase09Caption => '双手撑地，开腿抬过前方';
@@ -2266,19 +2277,30 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get hubThreeTiers => '三檔';
 
   @override
-  String get hubViewPlan => '查看計畫';
-
-  @override
-  String get hubStageBeingPlanned => '這個階段的計畫還在編排';
-
-  @override
   String get hubPrimaryMuscles => '這一刻的主力';
 
   @override
   String get hubSpecializedPlan => '專項計畫';
 
   @override
-  String get hubPlanInPreparation => '準備中';
+  String get hubSupportTab => '支撐';
+
+  @override
+  String get hubCoreTab => '核心';
+
+  @override
+  String get hubLegsTab => '腿部';
+
+  @override
+  String get hubStillPlanning => '仍在編排';
+
+  @override
+  String get hubPlanComingSoon => '專項計畫準備中';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '查看「$name」計畫';
+  }
 
   @override
   String get hubPhase09Caption => '雙手撐地，開腿抬過前方';

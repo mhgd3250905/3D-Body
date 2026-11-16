@@ -70,21 +70,22 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     if (moveFrame != null) cancelAnimationFrame(moveFrame); moveFrame = null;
     for (const record of records.values()) remove(record); records.clear(); anchors = [];
   }
-  function update(items) {
-    anchors = computeHotspots(player, items, anchors, depthSampler);
+  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true } = {}) {
+    const project = point => player.project(point, camera);
+    anchors = computeHotspots(player, items, anchors, depthSampler, camera);
     const active = new Set(anchors.map(p => p.groupId));
     for (const [id, record] of records) if (!active.has(id)) { remove(record); records.delete(id); }
     const joints = player.getMetrics().joints;
-    const cameraRight = new THREE.Vector3().setFromMatrixColumn(player.camera.matrixWorld, 0);
-    const cameraUp = new THREE.Vector3().setFromMatrixColumn(player.camera.matrixWorld, 1);
-    const centreX = player.project(new THREE.Vector3().fromArray(joints.pelvis)).x;
+    const cameraRight = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+    const cameraUp = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    const centreX = project(new THREE.Vector3().fromArray(joints.pelvis)).x;
     const viewWidth = player.container.clientWidth;
     const canvasHeight = player.container.clientHeight;
-    const viewHeight = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget));
+    const viewHeight = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget, reservedBottom));
     let clearance;
     const placed = [];
     function cardRect(position, scale) {
-      const corners = [-1, 1].flatMap(x => [-1, 1].map(y => player.project(position.clone()
+      const corners = [-1, 1].flatMap(x => [-1, 1].map(y => project(position.clone()
         .addScaledVector(cameraRight, x * scale.x / 2).addScaledVector(cameraUp, y * scale.y / 2))));
       const left = Math.min(...corners.map(p => p.x)), top = Math.min(...corners.map(p => p.y));
       return { left, top, width: Math.max(...corners.map(p => p.x)) - left, height: Math.max(...corners.map(p => p.y)) - top };
@@ -99,21 +100,20 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         const dx = rect.left < 8 ? 8 - rect.left : rect.left + rect.width > viewWidth - 8 ? viewWidth - 8 - rect.left - rect.width : 0;
         const dy = rect.top < 8 ? 8 - rect.top : rect.top + rect.height > viewHeight - 8 ? viewHeight - 8 - rect.top - rect.height : 0;
         if (dx || dy) {
-          const ndc = position.clone().project(player.camera);
+          const ndc = position.clone().project(camera);
           ndc.x += 2 * dx / viewWidth; ndc.y -= 2 * dy / canvasHeight;
-          position.copy(ndc.unproject(player.camera));
+          position.copy(ndc.unproject(camera));
         }
       }
     }
     function getClearance() {
       if (clearance) return clearance;
       const rect = player.container.getBoundingClientRect(), obstacles = [];
-      const map = player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
+      const map = homeOverlays && player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
       if (map) obstacles.push({ left: map.left - rect.left, top: map.top - rect.top, width: map.width, height: map.height });
-      const height = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget));
-      if (hosted) obstacles.push({ left: Math.max(0, rect.width - 208), top: height - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
-      clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(p => player.project(p))),
-        { width: rect.width, height, obstacles, gap: 8 });
+      if (hosted && homeOverlays) obstacles.push({ left: Math.max(0, rect.width - 208), top: viewHeight - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
+      clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(project)),
+        { width: rect.width, height: viewHeight, obstacles, gap: 8 });
       return clearance;
     }
     for (const [index, point] of anchors.entries()) {
@@ -124,6 +124,9 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         records.set(point.groupId, record);
       }
       const surface = new THREE.Vector3().fromArray(point.world), normal = new THREE.Vector3().fromArray(point.normal);
+      record.card.material.opacity = record.dot.material.opacity = opacity;
+      record.guide.halo.material.opacity = .48 * opacity;
+      record.guide.stroke.material.opacity = .85 * opacity;
       record.dot.position.copy(surface).addScaledVector(normal, .014);
       // Follow the currently visible body side. The small dead band prevents
       // a central muscle from repeatedly swapping labels across the athlete.
@@ -173,10 +176,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       record.card.updateMatrixWorld(); record.dot.updateMatrixWorld();
       // Use the actual perspective direction to reach the card border, rather
       // than the closest 3D point (which can put a diagonal guide in its text).
-      const projected = player.project(record.card.position);
-      const dotProjected = player.project(record.dot.position);
-      const rightProjected = player.project(record.card.position.clone().add(cameraRight));
-      const upProjected = player.project(record.card.position.clone().add(cameraUp));
+      const projected = project(record.card.position);
+      const dotProjected = project(record.dot.position);
+      const rightProjected = project(record.card.position.clone().add(cameraRight));
+      const upProjected = project(record.card.position.clone().add(cameraUp));
       const halfWidth = record.card.scale.x / 2, halfHeight = record.card.scale.y / 2;
       const x = (dotProjected.x - projected.x) / (rightProjected.x - projected.x);
       const y = (projected.y - dotProjected.y) / (projected.y - upProjected.y);
@@ -191,6 +194,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         line.visible = Math.abs(x) > halfWidth || Math.abs(y) > halfHeight;
         line.material.resolution.set(player.container.clientWidth, player.container.clientHeight);
       }
+      const rect = cardRect(record.card.position, record.card.scale), dotRect = cardRect(record.dot.position, record.dot.scale);
+      const guideStart = project(start), guideEnd = project(end);
+      const inside = bounds => bounds.left >= 0 && bounds.top >= 0 && bounds.left + bounds.width <= viewWidth && bounds.top + bounds.height <= viewHeight;
+      const insidePoint = p => !p.behind && p.x >= 0 && p.y >= 0 && p.x <= viewWidth && p.y <= viewHeight;
       point.callout = { ...projected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
         label: record.card.userData.label, fontSize: record.card.userData.fontSize,
@@ -200,7 +207,8 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         screenSide,
         moving, targetWorld: position.toArray(), opacity: record.card.material.opacity,
         minWorldY: record.card.position.y - floorHeight(record.card.scale) + .03,
-        rect: cardRect(record.card.position, record.card.scale), viewWidth, viewHeight,
+        rect, viewWidth, viewHeight,
+        fitsStage: inside(rect) && inside(dotRect) && (!record.guide.stroke.visible || (insidePoint(guideStart) && insidePoint(guideEnd))),
         guide: { start: start.toArray(), end: end.toArray(), width: record.guide.stroke.material.linewidth,
           visible: record.guide.stroke.visible, colour: point.colour } };
     }

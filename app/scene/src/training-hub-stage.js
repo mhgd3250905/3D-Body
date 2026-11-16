@@ -5,6 +5,11 @@ import { createHubTransitions } from './training-hub-transitions.js';
 const noPhase = { items: [] };
 const angleSources = new Set(phaseTicks.map(tick => tick.phase));
 const transparent = new THREE.Color(0);
+export const hubMuscleCutoff = .62;
+const standingStageHeight = 400;
+const angleStageHeight = 452;
+const maximumMuscleZoom = 1.35;
+const maximumFocusSpan = .25;
 
 function placeCamera(camera, shot, aspect, scale) {
   camera.position.setFromSpherical(shot.orbit).add(shot.target);
@@ -16,34 +21,75 @@ function placeCamera(camera, shot, aspect, scale) {
   camera.updateMatrixWorld(true);
 }
 
-// Follow the camera preset unless a limb would be cropped by a narrow stage
-// or an intermediate R17 pose. The existing bone envelope covers the actor
-// without skinning its full vertex buffer on each animation frame.
-export function fitHubAngle(camera, target, envelope) {
-  if (!envelope?.length) return;
-  const view = new THREE.Vector3().subVectors(camera.position, target).normalize();
-  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
-  const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
-  const vertical = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / camera.zoom * .97;
-  const horizontal = vertical * camera.aspect;
-  const point = new THREE.Vector3();
-  let distance = camera.position.distanceTo(target);
-  for (const vertex of envelope) {
-    point.subVectors(vertex, target);
-    distance = Math.max(distance, point.dot(view) + Math.max(
-      Math.abs(point.dot(right)) / horizontal,
-      Math.abs(point.dot(up)) / vertical,
-      camera.near * 2,
-    ));
-  }
-  camera.position.copy(target).addScaledVector(view, distance);
-  camera.updateMatrixWorld(true);
+export function getHubMuscleFrame(scene, bounds) {
+  const silhouette = [], vertex = new THREE.Vector3();
+  scene.traverse(mesh => {
+    if (!mesh.isMesh) return;
+    const position = mesh.geometry.attributes.position;
+    for (let index = 0; index < position.count; index++) {
+      vertex.fromBufferAttribute(position, index).applyMatrix4(mesh.matrixWorld);
+      if (vertex.y >= bounds.max.y - .065 || (vertex.y >= hubMuscleCutoff && vertex.y <= hubMuscleCutoff + .02)) {
+        silhouette.push(vertex.clone());
+      }
+    }
+  });
+  return { bounds, silhouette };
 }
 
-function snapshot(camera, target) {
-  if (!target) return null;
-  const offset = new THREE.Vector3().subVectors(camera.position, target);
-  return { target: target.clone(), orbit: new THREE.Spherical().setFromVector3(offset), fov: camera.fov };
+export function fitHubMuscle(camera, { bounds, silhouette }, height) {
+  // Set vertical size from the full stage, including its controls. Reduce
+  // further only when required by the lateral margins of a narrow screen.
+  const point = new THREE.Vector3();
+  let horizontal = 0;
+  for (const x of [bounds.min.x, bounds.max.x]) for (const y of [hubMuscleCutoff, bounds.max.y]) {
+    for (const z of [bounds.min.z, bounds.max.z]) {
+      point.set(x, y, z).applyMatrix4(camera.matrixWorldInverse);
+      horizontal = Math.max(horizontal, Math.abs(point.x / point.z));
+    }
+  }
+  let top = 0, bottom = 0;
+  for (const vertex of silhouette) {
+    point.copy(vertex).applyMatrix4(camera.matrixWorldInverse);
+    const y = -point.y / point.z;
+    top = Math.max(top, y);
+    bottom = Math.max(bottom, -y);
+  }
+  const vertical = (top + bottom) * .5;
+  const tangent = Math.max(horizontal / (.70 * camera.aspect), vertical * height / (.70 * standingStageHeight),
+    top / .985, bottom / .985);
+  camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(tangent));
+  camera.updateProjectionMatrix();
+}
+
+export function resolveHubMuscleCamera(camera, frame, raw, width, height, focused) {
+  if (!raw || ![raw.position, raw.target].every(value =>
+    Array.isArray(value) && value.length === 3 && value.every(Number.isFinite)) ||
+    !(width > 0 && height > 0) || !Number.isFinite(raw.overviewHeight)) return null;
+  const overviewDistance = Math.abs(raw.position[2]);
+  if (overviewDistance <= .1) return null;
+  camera.position.set(0, raw.overviewHeight, overviewDistance);
+  camera.lookAt(0, raw.overviewHeight, 0);
+  camera.aspect = width / height;
+  camera.zoom = 1;
+  camera.updateMatrixWorld(true);
+  fitHubMuscle(camera, frame, height);
+  if (!focused) return { ...raw, fov: camera.fov, cutoff: hubMuscleCutoff };
+
+  const region = raw.region;
+  if (!Array.isArray(region) || region.length !== 3 || !region.every(value => Number.isFinite(value) && value > 0)) return null;
+  const [halfWidth, halfHeight, nearest] = region;
+  const tangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const { min, max } = frame.bounds;
+  const nearestProfile = Math.hypot(Math.max(Math.abs(min.x), Math.abs(max.x)), Math.max(Math.abs(min.z), Math.abs(max.z)));
+  // Enforce magnification in projected space, including surfaces nearer to
+  // the lens than the pivot. The silhouette bound covers every orbit yaw.
+  const zoomLimit = nearestProfile + (overviewDistance - nearestProfile) / maximumMuscleZoom;
+  const silhouetteLimit = nearestProfile * Math.hypot(1, 1 / (.94 * tangent * width / height));
+  const regionLimit = nearest + Math.max(halfWidth, halfHeight) * height /
+    (maximumFocusSpan * Math.min(width, standingStageHeight) * tangent);
+  const distance = Math.max(zoomLimit, silhouetteLimit, regionLimit);
+  return { ...raw, position: [0, raw.target[1], Math.sign(raw.position[2]) * distance],
+    fov: camera.fov, cutoff: -.065 };
 }
 
 // Three's regular framebuffer tone-maps and converts to sRGB. Its offscreen
@@ -65,16 +111,19 @@ function captureMaterial(source) {
   return converted;
 }
 
-export function createTrainingHub(player, phaseMap) {
+export function createTrainingHub(player, phaseMap, onAngleFrame) {
   const transitions = createHubTransitions(player.period);
   const r = player.renderer;
   const angleCamera = new THREE.PerspectiveCamera(32, 1, .02, 40);
   const muscleCamera = new THREE.PerspectiveCamera(26, 1, .02, 20);
+  const muscleFrame = getHubMuscleFrame(phaseMap.scene, phaseMap.getFullBounds());
+  const overviewCamera = new THREE.PerspectiveCamera();
   const materials = new Map();
   const size = new THREE.Vector2();
   const clearColor = new THREE.Color();
   let target = null, angleTarget = null, muscleTarget = null;
   let lastGroup = null;
+  let lastInput = null, muscleShot = null, muscleShotKey = '';
   const composite = new THREE.Scene();
   const compositeCamera = new THREE.Camera();
   const material = new THREE.RawShaderMaterial({
@@ -104,9 +153,22 @@ export function createTrainingHub(player, phaseMap) {
   quad.frustumCulled = false;
   composite.add(quad);
 
+  function currentMuscleShot(input) {
+    const width = player.container.clientWidth || 390;
+    const sceneHeight = player.container.clientHeight || angleStageHeight - 54;
+    const height = Math.max(120, sceneHeight - (input.showMuscles ? 0 : angleStageHeight - standingStageHeight));
+    const key = JSON.stringify([width, height, input.focusMuscle, input.muscleCamera]);
+    if (muscleShotKey !== key) {
+      muscleShot = resolveHubMuscleCamera(overviewCamera, muscleFrame, input.muscleCamera, width, height, input.focusMuscle === true);
+      muscleShotKey = key;
+    }
+    return muscleShot;
+  }
+
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
-    if (!transitions.configure(input, now, snapshot(angleCamera, angleTarget))) return false;
+    if (!transitions.configure({ ...input, muscleCamera: currentMuscleShot(input) }, now)) return false;
+    lastInput = input;
     if (player.time !== transitions.frame.time) player.setTime(transitions.frame.time);
     player.dirty = true;
     player.start();
@@ -154,15 +216,20 @@ export function createTrainingHub(player, phaseMap) {
   }
 
   function render() {
-    const frame = transitions.frame;
     const width = player.container.clientWidth, height = player.container.clientHeight;
-    if (!frame || !(width > 0 && height > 0)) return false;
+    if (!lastInput || !(width > 0 && height > 0)) return false;
+    const previous = muscleShot;
+    const current = currentMuscleShot(lastInput);
+    if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
+    const frame = transitions.frame;
     const aspect = width / height;
     angleTarget = frame.angle.target;
     muscleTarget = frame.muscle.target;
-    placeCamera(angleCamera, frame.angle, aspect, frame.angleScale);
-    if (!frame.scrubbing) fitHubAngle(angleCamera, angleTarget, player.motion.getBodyEnvelope());
+    placeCamera(angleCamera, frame.angle, aspect, 1);
+    onAngleFrame?.({ camera: angleCamera, time: frame.time, phase: frame.targetPhase,
+      showMuscles: frame.targetMode === 1, scrubbing: frame.scrubbing, moving: frame.angleMoving });
     placeCamera(muscleCamera, frame.muscle, aspect, frame.muscleScale);
+    phaseMap.setHubCrop(frame.muscle.cutoff);
     const layers = [{ weight: 1 - frame.mode }, ...[...frame.groups].map(([groupId, weight]) =>
       ({ groupId, weight: weight * frame.mode }))].filter(({ weight }) => weight > 1 / 255);
     for (const prop of player.stageProps) prop.visible = false;
@@ -226,10 +293,12 @@ export function createTrainingHub(player, phaseMap) {
       muscleWeights: Object.fromEntries(frame.groups),
       scrubbing: frame.scrubbing,
       moving: transitions.moving,
-      angleScale: frame.angleScale,
+      angleMoving: frame.angleMoving,
       muscleScale: frame.muscleScale,
-      angle: { position: angleCamera.position.toArray(), target: angleTarget?.toArray(), fov: angleCamera.fov },
-      muscle: { position: muscleCamera.position.toArray(), target: muscleTarget?.toArray(), fov: muscleCamera.fov },
+      angle: { position: angleCamera.position.toArray(), target: angleTarget?.toArray(), fov: angleCamera.fov,
+        yaw: frame.angle.orbit.theta, distance: frame.angle.orbit.radius },
+      muscle: { position: muscleCamera.position.toArray(), target: muscleTarget?.toArray(), fov: muscleCamera.fov,
+        cutoff: frame.muscle.cutoff, distance: frame.muscle.orbit.radius, focused: lastInput.focusMuscle === true },
     };
   }
 

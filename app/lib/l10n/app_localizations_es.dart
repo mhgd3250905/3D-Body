@@ -1028,20 +1028,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hubThreeTiers => 'Tres niveles';
 
   @override
-  String get hubViewPlan => 'Ver plan';
-
-  @override
-  String get hubStageBeingPlanned =>
-      'El plan para esta fase se está preparando';
-
-  @override
   String get hubPrimaryMuscles => 'Músculos principales de esta fase';
 
   @override
   String get hubSpecializedPlan => 'Plan específico';
 
   @override
-  String get hubPlanInPreparation => 'En preparación';
+  String get hubSupportTab => 'Apoyo';
+
+  @override
+  String get hubCoreTab => 'Zona media';
+
+  @override
+  String get hubLegsTab => 'Piernas';
+
+  @override
+  String get hubStillPlanning => 'En preparación';
+
+  @override
+  String get hubPlanComingSoon => 'Plan específico en preparación';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Ver el plan «$name»';
+  }
 
   @override
   String get hubPhase09Caption =>

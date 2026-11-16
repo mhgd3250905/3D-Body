@@ -1020,19 +1020,30 @@ class AppLocalizationsId extends AppLocalizations {
   String get hubThreeTiers => 'Tiga tingkat';
 
   @override
-  String get hubViewPlan => 'Lihat rencana';
-
-  @override
-  String get hubStageBeingPlanned => 'Rencana untuk fase ini masih disusun';
-
-  @override
   String get hubPrimaryMuscles => 'Otot utama pada fase ini';
 
   @override
   String get hubSpecializedPlan => 'Rencana khusus';
 
   @override
-  String get hubPlanInPreparation => 'Sedang disiapkan';
+  String get hubSupportTab => 'Tumpuan';
+
+  @override
+  String get hubCoreTab => 'Inti';
+
+  @override
+  String get hubLegsTab => 'Kaki';
+
+  @override
+  String get hubStillPlanning => 'Dalam persiapan';
+
+  @override
+  String get hubPlanComingSoon => 'Rencana khusus sedang disiapkan';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Lihat rencana “$name”';
+  }
 
   @override
   String get hubPhase09Caption =>

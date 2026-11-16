@@ -18,6 +18,8 @@ export async function createPhaseMap(player, onSelect) {
   const uniforms = MM.createMuscleUniforms(); uniforms.mmMulti.value = 1; uniforms.mmReveal.value = 1; uniforms.mmTime.value = 0.654;
   uniforms.mmBase.value.set('#818b99'); uniforms.mmSkin.value.copy(uniforms.mmBase.value); uniforms.mmGroove.value.set('#596273');
   uniforms.mmHomeEmphasis = { value: 1 }; uniforms.mmEffort = { value: 0 };
+  uniforms.mmHubBottom = { value: 0 };
+  uniforms.mmHubFraming = { value: 0 };
   const strokeDensity = { value: 2 };
   const meshes = [], materials = new Set();
   model.traverse(mesh => {
@@ -90,6 +92,15 @@ export async function createPhaseMap(player, onSelect) {
     setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], groupId ? 'both' : undefined);
   }
   function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); renderKey = null; refreshEnvironment(); }
+  function setHubCrop(bottom) {
+    uniforms.mmHubBottom.value = bottom;
+    if (uniforms.mmHubFraming.value === 1) return;
+    uniforms.mmHubFraming.value = 1;
+    for (const material of materials) {
+      material.transparent = true;
+      material.needsUpdate = true;
+    }
+  }
   function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }
   function refreshEnvironment() { scene.environment = player.scene.environment; }
   function withThumbnailDensity(density, render) {
@@ -185,7 +196,7 @@ export async function createPhaseMap(player, onSelect) {
     source = null; player.dirty = true;
   }
   function releaseGpu() { target?.dispose(); target = null; renderKey = null; for (const mesh of meshes) mesh.geometry.dispose(); for (const material of materials) material.dispose(); }
-  return { render, setHidden, setLocalization, releaseGpu, scene, setDetail, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
+  return { render, setHidden, setLocalization, releaseGpu, scene, setDetail, setHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
     getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
     dispose() { releaseGpu(); view.removeEventListener('click', select); panel.remove(); } };

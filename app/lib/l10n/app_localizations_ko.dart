@@ -996,19 +996,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hubThreeTiers => '세 단계';
 
   @override
-  String get hubViewPlan => '계획 보기';
-
-  @override
-  String get hubStageBeingPlanned => '이 단계의 계획은 아직 준비 중입니다';
-
-  @override
   String get hubPrimaryMuscles => '이 단계의 주요 근육';
 
   @override
   String get hubSpecializedPlan => '집중 훈련 계획';
 
   @override
-  String get hubPlanInPreparation => '준비 중';
+  String get hubSupportTab => '지지';
+
+  @override
+  String get hubCoreTab => '코어';
+
+  @override
+  String get hubLegsTab => '다리';
+
+  @override
+  String get hubStillPlanning => '준비 중';
+
+  @override
+  String get hubPlanComingSoon => '집중 훈련 계획 준비 중';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '‘$name’ 계획 보기';
+  }
 
   @override
   String get hubPhase09Caption => '두 손을 짚고 벌린 다리를 앞으로 들어 올리세요.';
