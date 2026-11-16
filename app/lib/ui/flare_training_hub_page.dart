@@ -27,12 +27,14 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.catalog,
     required this.actorBody,
     required this.enableScene,
+    required this.initialTime,
     this.mountScene = true,
     required this.visible,
     required this.onBack,
     required this.onAngle,
     required this.onMuscle,
     this.actorHandoff = false,
+    this.leaving = false,
     this.sceneBoundsKey,
     this.onScenePresented,
   });
@@ -40,31 +42,49 @@ class FlareTrainingHubPage extends StatefulWidget {
   final Catalog catalog;
   final String actorBody;
   final bool enableScene;
+  final double initialTime;
   final bool mountScene;
   final bool visible;
   final VoidCallback onBack;
   final ValueChanged<Phase> onAngle;
   final ValueChanged<MuscleGroup> onMuscle;
   final bool actorHandoff;
+  final bool leaving;
   final GlobalKey? sceneBoundsKey;
   final VoidCallback? onScenePresented;
 
   @override
-  State<FlareTrainingHubPage> createState() => _FlareTrainingHubPageState();
+  State<FlareTrainingHubPage> createState() => FlareTrainingHubPageState();
 }
 
-class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
+class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   final _stage = SceneController();
-  late double _time = widget.catalog.phaseTime(11);
+  late double _time = widget.initialTime;
   bool _muscles = false;
   String _muscleId = 'deltoids';
   bool _muscleFocused = false;
   bool _reportedPresentation = false;
   bool _requestedPresentation = false;
+  bool _returning = false;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
   MuscleGroup get _muscle => widget.catalog.groupById(_muscleId)!;
+
+  Future<({double time, double yaw})?> prepareReturn() async {
+    if (!_stage.presented) return null;
+    final wasMuscles = _muscles;
+    setState(() {
+      _returning = true;
+      _muscles = false;
+    });
+    _render(animate: wasMuscles, scrubbing: true);
+    if (wasMuscles) {
+      // Give the standing anatomy view time to reveal its matching pose.
+      await Future<void>.delayed(const Duration(milliseconds: 320));
+    }
+    return mounted ? (time: _time, yaw: _stage.trainingHubYaw) : null;
+  }
 
   @override
   void initState() {
@@ -103,7 +123,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
     if (oldWidget.catalog != widget.catalog) _localizeScene();
-    if (oldWidget.actorHandoff != widget.actorHandoff) _render();
+    if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
   }
 
   void _localizeScene() {
@@ -132,7 +152,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       focusMuscle: _muscleFocused,
       animate: animate,
       scrubbing: scrubbing,
-      showCallouts: !widget.actorHandoff,
+      showCallouts: widget.mountScene && !_returning,
     );
   }
 
@@ -194,80 +214,86 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     final footerBottom = safe.bottom + 34;
     final controlsBottom =
         footerBottom + _planFooterHeight + (_muscles ? 12 : 4);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
-          .copyWith(statusBarColor: Colors.transparent),
-      child: ColoredBox(
-        color: widget.actorHandoff ? Colors.transparent : p.background,
-        child: LayoutBuilder(
-          builder: (context, box) {
-            final available = math.max(0.0, box.maxHeight - controlsBottom);
-            final height = math.max(stageHeight + 116, available);
-            final page = SizedBox(
-              height: height,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AnimatedSlide(
+      offset: widget.leaving ? const Offset(1, 0) : Offset.zero,
+      duration: FlareMotion.of(context, FlareMotion.pop),
+      curve: FlareMotion.pageEnter,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value:
+            (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+                .copyWith(statusBarColor: Colors.transparent),
+        child: ColoredBox(
+          color: widget.actorHandoff ? Colors.transparent : p.background,
+          child: LayoutBuilder(
+            builder: (context, box) {
+              final available = math.max(0.0, box.maxHeight - controlsBottom);
+              final height = math.max(stageHeight + 116, available);
+              final page = SizedBox(
+                height: height,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _HubStage(
+                      height: stageHeight,
+                      safeTop: safe.top,
+                      muscles: _muscles,
+                      actorHandoff: widget.actorHandoff,
+                      sceneBoundsKey: widget.sceneBoundsKey,
+                      onBack: widget.onBack,
+                      onMode: _selectMode,
+                      onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
+                          ? null
+                          : (details) => _stage.rotateTrainingHubAngle(
+                              -2 * math.pi * details.delta.dx / box.maxWidth,
+                            ),
+                      scene: widget.enableScene && widget.mountScene
+                          ? SceneView(
+                              key: ValueKey(widget.actorBody),
+                              controller: _stage,
+                              body: widget.actorBody,
+                              interactive: false,
+                              concealed: widget.actorHandoff,
+                            )
+                          : const SizedBox.expand(),
+                    ),
+                    Expanded(
+                      child: _muscles
+                          ? _HubMuscles(
+                              catalog: catalog,
+                              selected: muscle,
+                              onSelected: _selectMuscle,
+                              onSection: _selectMuscleSection,
+                            )
+                          : _angleControls(context, phase),
+                    ),
+                  ],
+                ),
+              );
+              return Stack(
                 children: [
-                  _HubStage(
-                    height: stageHeight,
-                    safeTop: safe.top,
-                    muscles: _muscles,
-                    actorHandoff: widget.actorHandoff,
-                    sceneBoundsKey: widget.sceneBoundsKey,
-                    onBack: widget.onBack,
-                    onMode: _selectMode,
-                    onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
-                        ? null
-                        : (details) => _stage.rotateTrainingHubAngle(
-                            -2 * math.pi * details.delta.dx / box.maxWidth,
-                          ),
-                    scene: widget.enableScene && widget.mountScene
-                        ? SceneView(
-                            key: ValueKey(widget.actorBody),
-                            controller: _stage,
-                            body: widget.actorBody,
-                            interactive: false,
-                            concealed: widget.actorHandoff,
-                          )
-                        : const SizedBox.expand(),
+                  Positioned.fill(
+                    bottom: controlsBottom,
+                    child: height == available
+                        ? page
+                        : SingleChildScrollView(child: page),
                   ),
-                  Expanded(
-                    child: _muscles
-                        ? _HubMuscles(
-                            catalog: catalog,
-                            selected: muscle,
-                            onSelected: _selectMuscle,
-                            onSection: _selectMuscleSection,
-                          )
-                        : _angleControls(context, phase),
+                  PositionedDirectional(
+                    start: _gutter,
+                    end: _gutter,
+                    bottom: footerBottom,
+                    child: _HubPlanFooter(
+                      selection: selectedKey,
+                      title: _muscles ? muscle.label : phase.name,
+                      plan: beginner,
+                      onOpen: _muscles
+                          ? () => widget.onMuscle(muscle)
+                          : () => widget.onAngle(phase),
+                    ),
                   ),
                 ],
-              ),
-            );
-            return Stack(
-              children: [
-                Positioned.fill(
-                  bottom: controlsBottom,
-                  child: height == available
-                      ? page
-                      : SingleChildScrollView(child: page),
-                ),
-                PositionedDirectional(
-                  start: _gutter,
-                  end: _gutter,
-                  bottom: footerBottom,
-                  child: _HubPlanFooter(
-                    selection: selectedKey,
-                    title: _muscles ? muscle.label : phase.name,
-                    plan: beginner,
-                    onOpen: _muscles
-                        ? () => widget.onMuscle(muscle)
-                        : () => widget.onAngle(phase),
-                  ),
-                ),
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -114,6 +114,29 @@ test('hub entry starts at the home shot and lands at the same pixels as the hub 
   flight.restore();
   assert.equal(times.at(-1), 0);
   assert.equal(player.shadowCatcher.material.opacity, .28);
+
+  let prepared = 0;
+  const yaw = -1.2;
+  const back = createHubFlight(player, {
+    top: destinationTop, height: destinationHeight, time: 2.7,
+    duration: 650, returning: true, yaw,
+  }, CAMERA_PRESETS.standard, () => landings++, () => prepared++);
+  back.sample(0);
+  const expected = fit.direction.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+  assert.ok(back.camera.position.distanceTo(new THREE.Vector3(...fit.target).addScaledVector(expected, fit.distance)) < 1e-10);
+  back.rendered();
+  assert.equal(prepared, 1);
+  assert.equal(back.sample(250), false);
+  assert.equal(times.at(-1), 2.7);
+  back.resume();
+  back.sample(300);
+  back.sample(950);
+  assert.equal(times.at(-1), 0);
+  for (const point of boxCorners) {
+    assert.ok(point.clone().project(home).distanceTo(point.clone().project(back.camera)) < 1e-10);
+  }
+  back.rendered();
+  assert.equal(landings, 2);
 });
 
 test('phase retargeting preserves the current pose and the latest destination wins', () => {

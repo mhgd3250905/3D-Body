@@ -148,12 +148,16 @@ export class FlarePlayer {
     const hubMoving = this.trainingHub?.tick(now);
     const flightMoving = this.hubFlight?.sample(now);
     if (flightMoving) this.dirty = true;
-    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving || flightMoving;
+    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
     // A frame requested only by the orbit keeps the pose and the shadow map.
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
     const density = this.adaptive.update(now, moving, interval);
-    const ratio = this.hubFlight ? Math.min(this.fullPixelRatio, 1) : density.ratio;
+    const ratio = this.hubFlight
+      ? this.hubFlight.landed || this.hubFlight.holding
+        ? this.fullPixelRatio
+        : Math.min(this.fullPixelRatio, 1)
+      : density.ratio;
     if (ratio !== this.renderer.getPixelRatio()) { this.applyPixelRatio(ratio); this.dirty = true; }
     this.perf.ticks++;
     if (this.dirty) {

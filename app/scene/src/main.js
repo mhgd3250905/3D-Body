@@ -28,6 +28,7 @@ let presented = false, statusTimer = null;
 const hubCallouts = createHubCalloutVisibility();
 let hubCalloutFrame = null, animateHubCallouts = true;
 let showHubCallouts = true;
+let homeCalloutRevealAt = null;
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
     && stage.clientWidth > 0 && stage.clientHeight > 0 && !player.glide && !player.projectionGlide && !themeSettling(),
@@ -95,7 +96,14 @@ function refreshHotspots(rendered = false) {
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     clearHotspots(); return;
   }
-  if (rendered && !player.trainingHub) hotspots = callouts?.update(phaseAt(player.time).items) ?? [];
+  if (rendered && !player.trainingHub) {
+    let opacity = 1;
+    if (homeCalloutRevealAt !== null) {
+      opacity = Math.min(1, (performance.now() - homeCalloutRevealAt) / 200);
+      if (opacity < 1) player.requestRedraw(); else homeCalloutRevealAt = null;
+    }
+    hotspots = callouts?.update(phaseAt(player.time).items, { opacity }) ?? [];
+  }
 }
 function renderHubCallouts(frame) {
   if (!showHubCallouts) return;
@@ -205,8 +213,10 @@ function command(value) {
       break;
     }
     case 'hub_flight': {
+      const returned = player.hubFlight?.returning && player.hubFlight.landed;
       player.hubFlight?.restore();
       player.hubFlight = null;
+      homeCalloutRevealAt = input.id === 0 && returned ? performance.now() : null;
       if (input.id > 0) {
         player.playing = false;
         if (fx) fx.root.visible = false;
@@ -215,6 +225,9 @@ function command(value) {
           () => {
             player.stop();
             post({ type: 'hub_flight_done', id: input.id });
+          }, () => {
+            player.stop();
+            post({ type: 'hub_flight_ready', id: input.id });
           });
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
@@ -222,6 +235,10 @@ function command(value) {
       player.start();
       break;
     }
+    case 'hub_flight_resume':
+      player.hubFlight?.resume();
+      player.start();
+      break;
     case 'hub_angle':
       player.trainingHub?.setAngleYaw(input.yaw);
       return;
@@ -287,7 +304,16 @@ async function boot() {
     player = new FlarePlayer(stage, { character,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
       onBeforeRender: () => {
-        if (player.hubFlight) return;
+        if (player.hubFlight) {
+          const flight = player.hubFlight;
+          if (flight.landed && !flight.returning) {
+            // The sharp landing frame owns its labels while the hub prepares.
+            hotspots = callouts?.update(phaseAt(flight.landingTime).items, {
+              camera: flight.camera, reservedBottom: flight.landingBottomInset, homeOverlays: false,
+            }) ?? [];
+          }
+          return;
+        }
         fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true);
       },
       onRender: hubCompleted => {

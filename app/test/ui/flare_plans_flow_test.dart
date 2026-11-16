@@ -207,7 +207,8 @@ void main() {
   testWidgets('training and plan detail cover the page without a dim layer', (
     tester,
   ) async {
-    await mountShell(tester);
+    final mounted = await mountShell(tester);
+    await showPhase(tester, mounted.scene, 11);
     final hub = _key('training-hub');
     final detail = find.byType(FlarePlanDetailPage);
     final menu = _key('more-library');
@@ -248,10 +249,30 @@ void main() {
     expect(detail, findsNothing);
   });
 
+  testWidgets('training starts on the paused home frame and its phase', (
+    tester,
+  ) async {
+    final mounted = await mountShell(tester);
+    final time = catalog.phaseTime(12) + .1;
+    mounted.scene.receiveEvent({
+      'source': 'flare-scene',
+      'type': 'state',
+      'time': time,
+      'playing': false,
+      'phase': {'source': 12},
+    });
+    await tester.pumpAndSettle();
+    await openHub(tester);
+    final timeline = tester.widget<MotionTimeline>(_key('hub-timeline'));
+    expect(timeline.phase, 12);
+    expect(timeline.time, time);
+  });
+
   testWidgets('angle mode snaps on release and retains its selection', (
     tester,
   ) async {
-    await mountShell(tester);
+    final mounted = await mountShell(tester);
+    await showPhase(tester, mounted.scene, 11);
     tester.view.physicalSize = const Size(360, 800);
     tester.view.viewPadding = const FakeViewPadding(bottom: 24);
     addTearDown(tester.view.resetViewPadding);
@@ -610,7 +631,8 @@ void main() {
     final semantics = tester.ensureSemantics();
     final membership = FlareMembership(_MembershipStore());
     try {
-      await mountShell(tester, membership: membership);
+      final mounted = await mountShell(tester, membership: membership);
+      await showPhase(tester, mounted.scene, 11);
       tester.view.physicalSize = const Size(360, 800);
       await tester.pumpAndSettle();
       await openHub(tester);

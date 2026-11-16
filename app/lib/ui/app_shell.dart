@@ -114,10 +114,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   final _stageBackdropKey = GlobalKey();
   final _homeSceneBounds = GlobalKey();
   final _hubSceneBounds = GlobalKey();
+  final _trainingHubState = GlobalKey<FlareTrainingHubPageState>();
   Timer? _trainingFlightDeadline;
+  double _trainingEntryTime = 0;
   bool _trainingActorFlight = false;
   bool _trainingFlightLanded = false;
   bool _trainingHubPresented = false;
+  bool _returningToWatch = false;
+  bool _returnFlightExposed = false;
+
+  bool get _showHomeActor =>
+      _trainingActorFlight && (!_returningToWatch || _returnFlightExposed);
 
   /// One sheet at a time: a quick double tap must not stack two sheets.
   bool _sheetOpen = false;
@@ -325,6 +332,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _enterTrainingHub() {
+    _trainingEntryTime = _scene.time;
     _trainingActorFlight =
         widget.enableScene &&
         _scene.presented &&
@@ -340,23 +348,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !_trainingActorFlight) return;
-      final home = _homeSceneBounds.currentContext?.findRenderObject();
-      final hub = _hubSceneBounds.currentContext?.findRenderObject();
-      if (home is! RenderBox ||
-          hub is! RenderBox ||
-          !home.hasSize ||
-          !hub.hasSize ||
-          hub.size.isEmpty) {
+      final geometry = _trainingStageGeometry();
+      if (geometry == null) {
         _finishTrainingFlight();
         return;
       }
       final deadline = _trainingFlightDeadline;
-      await _scene.flyToTrainingHub(
-        time: catalog.phaseTime(11),
-        top:
-            hub.localToGlobal(Offset.zero).dy -
-            home.localToGlobal(Offset.zero).dy,
-        height: hub.size.height,
+      await _scene.flyTrainingActor(
+        time: _trainingEntryTime,
+        top: geometry.top,
+        height: geometry.height,
         duration: const Duration(milliseconds: 650),
       );
       if (!mounted ||
@@ -371,6 +372,73 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     });
   }
 
+  ({double top, double height})? _trainingStageGeometry() {
+    final home = _homeSceneBounds.currentContext?.findRenderObject();
+    final hub = _hubSceneBounds.currentContext?.findRenderObject();
+    if (home is! RenderBox ||
+        hub is! RenderBox ||
+        !home.hasSize ||
+        !hub.hasSize ||
+        hub.size.isEmpty) {
+      return null;
+    }
+    return (
+      top:
+          hub.localToGlobal(Offset.zero).dy -
+          home.localToGlobal(Offset.zero).dy,
+      height: hub.size.height,
+    );
+  }
+
+  Future<void> _returnFromTrainingHub() async {
+    final hub = _trainingHubState.currentState;
+    if (hub == null) {
+      _changeTab(0);
+      return;
+    }
+    setState(() {
+      _trainingActorFlight = true;
+      _returningToWatch = true;
+      _returnFlightExposed = false;
+    });
+    final deadline = _trainingFlightDeadline = Timer(
+      const Duration(seconds: 3),
+      _finishTrainingFlight,
+    );
+    final shot = await hub.prepareReturn();
+    if (!mounted || _trainingFlightDeadline != deadline) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _trainingFlightDeadline != deadline) return;
+      final geometry = _trainingStageGeometry();
+      if (shot == null || geometry == null) {
+        _finishTrainingFlight();
+        return;
+      }
+      _scene.setVisible(_appVisible);
+      await _scene.flyTrainingActor(
+        time: shot.time,
+        yaw: shot.yaw,
+        top: geometry.top,
+        height: geometry.height,
+        duration: const Duration(milliseconds: 650),
+        returning: true,
+        onPrepared: () {
+          if (!mounted || _trainingFlightDeadline != deadline) return;
+          setState(() => _returnFlightExposed = true);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _trainingFlightDeadline == deadline) {
+              _scene.resumeTrainingFlight();
+            }
+          });
+        },
+      );
+      if (mounted && _trainingFlightDeadline == deadline) {
+        _finishTrainingFlight();
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
   void _onTrainingHubPresented() {
     _trainingHubPresented = true;
     if (_trainingFlightLanded) _finishTrainingFlight();
@@ -380,7 +448,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (!_trainingActorFlight || !mounted) return;
     _trainingFlightDeadline?.cancel();
     _trainingFlightDeadline = null;
-    setState(() => _trainingActorFlight = false);
+    setState(() {
+      _trainingActorFlight = false;
+      if (_returningToWatch) {
+        _tab = 0;
+        _returningToWatch = false;
+        _returnFlightExposed = false;
+      }
+    });
     // Keep the landing frame until the destination canvas has been unveiled.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _trainingActorFlight) return;
@@ -767,7 +842,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _back() {
     if (_trainingOpen) return;
-    if (_trainingActorFlight) _finishTrainingFlight();
+    if (_returningToWatch) return;
+    if (_trainingActorFlight) {
+      _finishTrainingFlight();
+    } else if (_tab == _trainingHubTab &&
+        !_inPlan &&
+        _drill == null &&
+        !_settings &&
+        widget.enableScene &&
+        _scene.presented &&
+        _scene.errorCode == null &&
+        !FlareMotion.reduced(context)) {
+      unawaited(_returnFromTrainingHub());
+      return;
+    }
     if (_tab == 0 &&
         _drill == null &&
         !_inPlan &&
@@ -950,31 +1038,39 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           depth: route.$2,
                           modal: route.$3,
                           cover: hubInFront || edgeToEdgePlan,
-                          transparentUnderlay: _trainingActorFlight,
+                          transparentUnderlay: _showHomeActor,
                           underlay: hasHub
                               ? ExcludeSemantics(
                                   excluding:
                                       !hubInFront || _trainingActorFlight,
                                   child: IgnorePointer(
                                     ignoring: _trainingActorFlight,
-                                    child: FlareTrainingHubPage(
+                                    child: KeyedSubtree(
                                       key: const ValueKey('training-hub'),
-                                      catalog: catalog,
-                                      actorBody: _actorBody,
-                                      enableScene: widget.enableScene,
-                                      mountScene:
-                                          !_trainingActorFlight ||
-                                          _trainingFlightLanded,
-                                      actorHandoff: _trainingActorFlight,
-                                      sceneBoundsKey: _hubSceneBounds,
-                                      onScenePresented: _onTrainingHubPresented,
-                                      visible:
-                                          hubInFront &&
-                                          _appVisible &&
-                                          _appActive,
-                                      onBack: _back,
-                                      onAngle: _openAnglePlan,
-                                      onMuscle: _openMusclePlan,
+                                      child: FlareTrainingHubPage(
+                                        key: _trainingHubState,
+                                        catalog: catalog,
+                                        actorBody: _actorBody,
+                                        enableScene: widget.enableScene,
+                                        initialTime: _trainingEntryTime,
+                                        mountScene:
+                                            !_trainingActorFlight ||
+                                            _returningToWatch ||
+                                            _trainingFlightLanded,
+                                        actorHandoff: _showHomeActor,
+                                        leaving: _returnFlightExposed,
+                                        sceneBoundsKey: _hubSceneBounds,
+                                        onScenePresented:
+                                            _onTrainingHubPresented,
+                                        visible:
+                                            hubInFront &&
+                                            !_returnFlightExposed &&
+                                            _appVisible &&
+                                            _appActive,
+                                        onBack: _back,
+                                        onAngle: _openAnglePlan,
+                                        onMuscle: _openMusclePlan,
+                                      ),
                                     ),
                                   ),
                                 )

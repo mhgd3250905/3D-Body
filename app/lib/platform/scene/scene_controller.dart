@@ -22,6 +22,7 @@ class SceneController extends ChangeNotifier {
   Map<String, Object?>? _trainingHubCommand;
   double _trainingHubYaw = 0;
   Completer<void>? _trainingFlight;
+  VoidCallback? _onTrainingFlightPrepared;
   int _trainingFlightId = 0;
 
   double _time = 0;
@@ -60,6 +61,7 @@ class SceneController extends ChangeNotifier {
 
   /// Advances only for an actual scene hit, never a command acknowledgement.
   int get selectionGeneration => _selectionGeneration;
+  double get trainingHubYaw => _trainingHubYaw;
 
   /// Replacing a view never sends its queued commands to the previous view.
   void attachCommandSink(SceneCommandSink sink) {
@@ -172,14 +174,18 @@ class SceneController extends ChangeNotifier {
     command({'type': 'hub_angle', 'yaw': _trainingHubYaw});
   }
 
-  Future<void> flyToTrainingHub({
+  Future<void> flyTrainingActor({
     required double time,
     required double top,
     required double height,
     required Duration duration,
+    bool returning = false,
+    double yaw = 0,
+    VoidCallback? onPrepared,
   }) {
     _trainingFlight?.complete();
     final flight = _trainingFlight = Completer<void>();
+    _onTrainingFlightPrepared = onPrepared;
     command({
       'type': 'hub_flight',
       'id': ++_trainingFlightId,
@@ -187,13 +193,18 @@ class SceneController extends ChangeNotifier {
       'top': top,
       'height': height,
       'duration': duration.inMilliseconds,
+      'returning': returning,
+      'yaw': yaw,
     });
     return flight.future;
   }
 
+  void resumeTrainingFlight() => command({'type': 'hub_flight_resume'});
+
   void finishTrainingFlight() {
     _trainingFlight?.complete();
     _trainingFlight = null;
+    _onTrainingFlightPrepared = null;
     command({'type': 'hub_flight', 'id': 0});
   }
 
@@ -354,6 +365,15 @@ class SceneController extends ChangeNotifier {
   bool receiveEvent(Map<Object?, Object?> event) {
     if (_disposed || event['source'] != 'flare-scene') return false;
     final type = event['type'];
+    if (type == 'hub_flight_ready') {
+      if (event['id'] != _trainingFlightId || _trainingFlight == null) {
+        return false;
+      }
+      final callback = _onTrainingFlightPrepared;
+      _onTrainingFlightPrepared = null;
+      callback?.call();
+      return true;
+    }
     if (type == 'hub_flight_done') {
       if (event['id'] != _trainingFlightId || _trainingFlight == null) {
         return false;
