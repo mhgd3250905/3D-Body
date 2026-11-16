@@ -3,8 +3,8 @@ import 'package:flare/data/catalog.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
-import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_plan_detail_page.dart';
 import 'package:flare/ui/flare_training_hub_page.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/theme.dart';
@@ -106,7 +106,7 @@ void main() {
               'source': 'flare-scene',
               'type': 'select',
               'time': 2.375,
-              'groupId': 'obliques',
+              'groupId': 'triceps',
             });
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull, reason: 'muscle detail');
@@ -123,20 +123,36 @@ void main() {
               isNull,
               reason: 'training scene choices',
             );
-            expect(find.byType(LibraryPage), findsOneWidget);
-            final drill = tester
-                .widget<DrillCard>(find.byType(DrillCard).first)
-                .drill;
-            final drillName = find.text(drill.name);
-            await tester.ensureVisible(drillName);
+            final plan = find.byType(FlarePlanDetailPage);
+            expect(plan, findsOneWidget);
+            expect(
+              tester.widget<FlarePlanDetailPage>(plan).plans.first.id,
+              'muscle-triceps-t1',
+            );
+            final exercise = find.byKey(
+              const ValueKey('flare-plan-item-0-forearms-A'),
+            );
+            final planScroll = find.descendant(
+              of: plan,
+              matching: find.byType(Scrollable),
+            );
+            await tester.scrollUntilVisible(
+              exercise,
+              180,
+              scrollable: planScroll,
+            );
+            await Scrollable.ensureVisible(
+              tester.element(exercise),
+              alignment: .35,
+            );
             await tester.pumpAndSettle();
-            expect(drillName.hitTestable(), findsOneWidget);
-            await tester.tap(drillName);
+            expect(exercise.hitTestable(), findsOneWidget);
+            await tester.tap(exercise);
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull, reason: 'drill detail');
             expect(find.byType(DrillDetailPage), findsOneWidget);
 
-            // Return through the library and muscle detail to the home menu.
+            // Return through the muscle plan and detail to the home menu.
             for (var page = 0; page < 3; page++) {
               await tester.binding.handlePopRoute();
               await tester.pumpAndSettle();

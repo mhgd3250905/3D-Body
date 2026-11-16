@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flare/control/flare_membership.dart';
@@ -17,6 +18,7 @@ import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
@@ -97,6 +99,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late Catalog catalog;
+  late Catalog pilotCatalog;
   final previousShared = FlareShared.current;
   final previousUpdateStore = PoseHubCatalogUpdates.activeStore;
 
@@ -104,6 +107,21 @@ void main() {
     PoseHubCatalogUpdates.activeStore = null;
     FlareShared.current = await FlareShared.load();
     catalog = await Catalog.load();
+    Future<Map<String, dynamic>> loadData(String name) async =>
+        jsonDecode(await rootBundle.loadString('assets/data/$name.json'))
+            as Map<String, dynamic>;
+    final planData = await loadData('flare-plans');
+    final pilotPlans = (planData['plans'] as List).where((plan) {
+      final target = (plan as Map)['target'];
+      return target == 11 || target == 'deltoids';
+    }).toList();
+    pilotCatalog = Catalog.fromJson(
+      phaseMuscles: await loadData('phase-muscles'),
+      drillLibrary: await loadData('drills'),
+      curriculum: await loadData('course-stages'),
+      manifest: await loadData('source-manifest'),
+      flarePlans: {'version': 1, 'plans': pilotPlans},
+    );
   });
 
   tearDownAll(() {
@@ -115,10 +133,12 @@ void main() {
     WidgetTester tester, {
     FlareMembership? membership,
     bool realPlayer = false,
+    Catalog? testCatalog,
   }) async {
+    final shellCatalog = testCatalog ?? catalog;
     await helpers.phoneSize(tester);
     final store = LearningStore(
-      catalog: catalog,
+      catalog: shellCatalog,
       storage: helpers.MemoryStateStorage(),
     );
     await store.initialize();
@@ -130,7 +150,7 @@ void main() {
     await tester.pumpWidget(
       helpers.testApp(
         FlareShell(
-          catalog: catalog,
+          catalog: shellCatalog,
           store: store,
           sceneController: scene,
           enableScene: false,
@@ -138,7 +158,7 @@ void main() {
           trainingPageBuilder: realPlayer
               ? (plan) => FlareTrainingPage(
                   plan: plan,
-                  catalog: catalog,
+                  catalog: shellCatalog,
                   store: store,
                   voiceOutput: sdk.MutedVoiceOutput(),
                   keepAlive: false,
@@ -151,7 +171,7 @@ void main() {
       'source': 'flare-scene',
       'type': 'ready',
       'time': 0.0,
-      'period': catalog.period,
+      'period': shellCatalog.period,
       'phase': {'source': 9},
     });
     await tester.pumpAndSettle();
@@ -393,21 +413,16 @@ void main() {
     await scrub.up();
     await tester.pumpAndSettle();
     expect(currentTimeline().time, catalog.phaseTime(12));
-    expect(viewPlan, findsNothing);
     expect(find.text(strings.hubPhase12Caption), findsOneWidget);
-    final stillPlanning = find.text(strings.hubStillPlanning);
-    expect(stillPlanning, findsOneWidget);
-    final unavailable = find.text(strings.hubPlanComingSoon);
-    expect(unavailable, findsOneWidget);
-    expect(tester.getTopRight(stillPlanning).dx, closeTo(338, .1));
-    expect(
-      tester
-          .getSemantics(unavailable)
-          .getSemanticsData()
-          .hasAction(ui.SemanticsAction.tap),
-      isFalse,
-    );
     expect(planAction, findsNothing);
+
+    for (final phase in catalog.phases) {
+      await tester.tapAt(positionInStage(phase.source));
+      await tester.pumpAndSettle();
+      expect(currentTimeline().phase, phase.source);
+      expect(_hubPlanAction(tester, phase.name).hitTestable(), findsOneWidget);
+      expect(find.text(strings.hubPlanComingSoon), findsNothing);
+    }
 
     await tester.tapAt(positionInStage(15, towardNext: .22));
     await tester.pumpAndSettle();
@@ -457,7 +472,6 @@ void main() {
     await tester.pumpAndSettle();
     await openHub(tester);
     final hub = _key('training-hub');
-    final viewPlan = _key('hub-view-plan');
     final strings = AppLocalizations.of(tester.element(hub));
     await tester.tap(_key('hub-muscle-mode'));
     await tester.pumpAndSettle();
@@ -524,9 +538,11 @@ void main() {
     await tester.tap(triceps);
     await tester.pumpAndSettle();
     expect(selected(triceps), isTrue);
-    expect(viewPlan, findsNothing);
-    expect(find.text(strings.hubStillPlanning), findsOneWidget);
-    expect(find.text(strings.hubPlanComingSoon), findsOneWidget);
+    final tricepsAction = _hubPlanAction(
+      tester,
+      catalog.groupById('triceps')!.label,
+    );
+    expect(tricepsAction.hitTestable(), findsOneWidget);
 
     await switchSection('core');
     expectOnlySection('core', 4);
@@ -548,12 +564,33 @@ void main() {
     await tester.tap(lastChip);
     await tester.pumpAndSettle();
     expect(selected(lastChip), isTrue);
-    expect(viewPlan, findsNothing);
+    expect(
+      _hubPlanAction(tester, lastMuscle.label).hitTestable(),
+      findsOneWidget,
+    );
 
     await switchSection('support');
     expect(selected(triceps), isTrue);
     await switchSection('legs');
     expect(selected(lastChip), isTrue);
+    for (final section in catalog.sections) {
+      await switchSection(section.id);
+      for (final group in catalog.groups.where(
+        (g) => g.section == section.id,
+      )) {
+        final tile = _key('hub-muscle-${group.id}');
+        await tester.ensureVisible(tile);
+        await tester.pumpAndSettle();
+        await tester.tap(tile);
+        await tester.pumpAndSettle();
+        expect(selected(tile), isTrue);
+        expect(
+          _hubPlanAction(tester, group.label).hitTestable(),
+          findsOneWidget,
+        );
+        expect(find.text(strings.hubPlanComingSoon), findsNothing);
+      }
+    }
     await switchSection('support');
     await tester.ensureVisible(deltoids);
     await tester.pumpAndSettle();
@@ -579,7 +616,7 @@ void main() {
     final scene = (await mountShell(tester)).scene;
     await showPhase(tester, scene, 9);
     expect(_key('home-phase-name'), findsOneWidget);
-    expect(_key('home-plan-angle'), findsNothing);
+    expect(_key('home-plan-angle'), findsOneWidget);
 
     await showPhase(tester, scene, 11, playing: true);
     expect(_key('home-plan-angle'), findsNothing);
@@ -607,10 +644,10 @@ void main() {
       ]);
       expect(find.text('发力肌群'), findsOneWidget);
       final plannedMuscle = _key('flare-plan-muscle-deltoids');
-      final fallbackMuscle = _key('flare-plan-muscle-triceps');
+      final triceps = _key('flare-plan-muscle-triceps');
       await _revealPlanContent(tester, plannedMuscle);
       expect(_rowText(plannedMuscle, '专项计划'), findsOneWidget);
-      expect(_rowText(fallbackMuscle, '专项计划'), findsNothing);
+      expect(_rowText(triceps, '专项计划'), findsOneWidget);
       await tester.tap(plannedMuscle);
       await tester.pumpAndSettle();
       final muscle = tester.widget<FlarePlanDetailPage>(
@@ -631,7 +668,23 @@ void main() {
   testWidgets('train muscle opens a plan when present and library otherwise', (
     tester,
   ) async {
-    final scene = (await mountShell(tester)).scene;
+    final scene = (await mountShell(tester, testCatalog: pilotCatalog)).scene;
+    await showPhase(tester, scene, 12);
+    expect(_key('home-plan-angle'), findsNothing);
+    await openHub(tester);
+    final strings = AppLocalizations.of(tester.element(_key('training-hub')));
+    expect(_key('hub-view-plan'), findsNothing);
+    expect(find.text(strings.hubStillPlanning), findsOneWidget);
+    final unavailable = find.text(strings.hubPlanComingSoon);
+    expect(unavailable, findsOneWidget);
+    expect(
+      tester
+          .getSemantics(unavailable)
+          .getSemanticsData()
+          .hasAction(ui.SemanticsAction.tap),
+      isFalse,
+    );
+    await back(tester);
     await showPhase(tester, scene, 11);
 
     for (final group in ['deltoids', 'triceps']) {

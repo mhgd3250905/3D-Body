@@ -458,7 +458,7 @@ class Catalog {
   ) {
     if (json == null) return const [];
     final rows = json['plans'];
-    if (json['version'] != 1 || rows is! List) {
+    if ((json['version'] != 1 && json['version'] != 2) || rows is! List) {
       throw const FormatException('Unknown Flare plan data version');
     }
     final plans = <FlarePlan>[];

@@ -36,16 +36,29 @@ void main() {
         rhythms: rhythms,
       );
 
-  test('bundled catalog keeps sorted tiers and the same mirrored plan', () {
-    expect(catalog.flarePlanAngles, [11]);
-    expect(catalog.flarePlanMuscles, ['deltoids']);
+  test('bundled plans cover every phase and muscle in all three tiers', () {
+    expect(catalog.flarePlanAngles, [9, 10, 11, 12, 13, 14, 16]);
+    expect(
+      catalog.flarePlanMuscles,
+      unorderedEquals(catalog.groups.map((group) => group.id)),
+    );
+    for (final phase in catalog.phases) {
+      expect(
+        catalog.plansForAngle(phase.source).map((plan) => plan.tier),
+        [1, 2, 3],
+        reason: '${phase.source}',
+      );
+    }
+    for (final group in catalog.groups) {
+      expect(catalog.plansForMuscle(group.id).map((plan) => plan.tier), [
+        1,
+        2,
+        3,
+      ], reason: group.id);
+    }
     final angle = catalog.plansForAngle(11);
-    expect(angle.map((plan) => plan.tier), [1, 2, 3]);
-    expect(catalog.plansForAngle(15), angle);
-    expect(catalog.plansForAngle(10), isEmpty);
     final muscle = catalog.plansForMuscle('deltoids');
-    expect(muscle.map((plan) => plan.tier), [1, 2, 3]);
-    expect(catalog.plansForMuscle('triceps'), isEmpty);
+    expect(catalog.plansForAngle(15), angle);
     final localized = catalog.localized(const {'三角肌': 'Deltoids'});
     expect(localized.plansForAngle(15), angle);
     expect(localized.plansForMuscle('deltoids'), muscle);
@@ -53,9 +66,10 @@ void main() {
 
   test('every scene uses an available, scoped drill and exact dose', () {
     final plans = [
-      ...catalog.plansForAngle(11),
-      ...catalog.plansForMuscle('deltoids'),
+      ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
+      ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
     ];
+    expect(plans, hasLength(72));
     for (final plan in plans) {
       for (final scene in ['A', 'B', 'C']) {
         final converted = training(plan, scene);
