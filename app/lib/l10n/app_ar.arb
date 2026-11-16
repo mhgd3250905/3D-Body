@@ -1,8 +1,8 @@
 {
   "premiumTitle": "افتح Flare Premium",
   "premiumSubtitle": "صمّم تدريبك بطريقتك",
-  "premiumAiCoach": "مدرب ذكاء اصطناعي عند الطلب",
-  "premiumAiPlans": "خطط تدريب يعدّها الذكاء الاصطناعي",
+  "premiumAiCoach": "ابدأ أي خطة تدريب في أي وقت",
+  "premiumAiPlans": "خطط حسب الزاوية والمجموعة العضلية بثلاثة مستويات",
   "premiumCustomWorkouts": "تمارين مخصصة بلا حدود",
   "premiumMonthly": "شهري",
   "premiumYearly": "سنوي",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "حسب الزاوية",
+  "plansByMuscle": "حسب المجموعة العضلية",
+  "planTierBeginner": "مبتدئ",
+  "planTierIntermediate": "متوسط",
+  "planTierAdvanced": "متقدم",
+  "planActiveMuscles": "العضلات المستخدمة",
+  "planExercises": "التمارين",
+  "planDosePerSide": "{dose} · لكل جانب",
+  "planTierSummary": "مبتدئ · متوسط · متقدم",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "الخطط",
   "plansHint": "مجموعات جاهزة وخططك",
   "plansReady": "مجموعات جاهزة",

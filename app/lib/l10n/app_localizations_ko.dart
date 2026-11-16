@@ -15,10 +15,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get premiumSubtitle => '나만의 운동을 만들어 보세요';
 
   @override
-  String get premiumAiCoach => '언제든 AI 코치에게 질문';
+  String get premiumAiCoach => '모든 운동 계획을 언제든 시작';
 
   @override
-  String get premiumAiPlans => 'AI 맞춤 운동 계획';
+  String get premiumAiPlans => '각도별·근육군별 3단계 운동 계획';
 
   @override
   String get premiumCustomWorkouts => '맞춤 운동 무제한 생성';
@@ -941,6 +941,35 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get wristExtension => '손목 신전';
+
+  @override
+  String get plansByAngle => '각도별';
+
+  @override
+  String get plansByMuscle => '근육군별';
+
+  @override
+  String get planTierBeginner => '초급';
+
+  @override
+  String get planTierIntermediate => '중급';
+
+  @override
+  String get planTierAdvanced => '고급';
+
+  @override
+  String get planActiveMuscles => '사용하는 근육';
+
+  @override
+  String get planExercises => '운동 동작';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · 한쪽당';
+  }
+
+  @override
+  String get planTierSummary => '초급 · 중급 · 고급';
 
   @override
   String get plans => '플랜';

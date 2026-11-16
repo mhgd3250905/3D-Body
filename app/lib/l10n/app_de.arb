@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Flare Premium freischalten",
   "premiumSubtitle": "Gestalte dein eigenes Training",
-  "premiumAiCoach": "KI-Coach auf Abruf",
-  "premiumAiPlans": "Trainingspläne von der KI",
+  "premiumAiCoach": "Jeden Trainingsplan jederzeit starten",
+  "premiumAiPlans": "Pläne nach Winkel und Muskelgruppe in drei Schwierigkeitsstufen",
   "premiumCustomWorkouts": "Unbegrenzt eigene Workouts",
   "premiumMonthly": "Monatlich",
   "premiumYearly": "Jährlich",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "Nach Winkel",
+  "plansByMuscle": "Nach Muskelgruppe",
+  "planTierBeginner": "Einsteiger",
+  "planTierIntermediate": "Mittelstufe",
+  "planTierAdvanced": "Fortgeschritten",
+  "planActiveMuscles": "Beanspruchte Muskeln",
+  "planExercises": "Übungen",
+  "planDosePerSide": "{dose} · pro Seite",
+  "planTierSummary": "Einsteiger · Mittelstufe · Fortgeschritten",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "Pläne",
   "plansHint": "Fertige Einheiten und deine eigenen",
   "plansReady": "Fertige Einheiten",

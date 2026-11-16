@@ -15,10 +15,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get premiumSubtitle => '自分だけのトレーニングを作ろう';
 
   @override
-  String get premiumAiCoach => 'いつでも AI コーチに質問';
+  String get premiumAiCoach => 'すべてのトレーニングプランをいつでも開始';
 
   @override
-  String get premiumAiPlans => 'AI が作成するトレーニングプラン';
+  String get premiumAiPlans => '角度・筋群別に初級から上級までの3段階のプラン';
 
   @override
   String get premiumCustomWorkouts => 'カスタムワークアウトを無制限に作成';
@@ -940,6 +940,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get wristExtension => '手首の伸展';
+
+  @override
+  String get plansByAngle => '角度別';
+
+  @override
+  String get plansByMuscle => '筋群別';
+
+  @override
+  String get planTierBeginner => '初級';
+
+  @override
+  String get planTierIntermediate => '中級';
+
+  @override
+  String get planTierAdvanced => '上級';
+
+  @override
+  String get planActiveMuscles => '使う筋肉';
+
+  @override
+  String get planExercises => '種目';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · 左右それぞれ';
+  }
+
+  @override
+  String get planTierSummary => '初級 · 中級 · 上級';
 
   @override
   String get plans => 'プラン';

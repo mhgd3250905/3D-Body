@@ -136,13 +136,13 @@ abstract class AppLocalizations {
   /// No description provided for @premiumAiCoach.
   ///
   /// In zh, this message translates to:
-  /// **'AI 教练随时问答'**
+  /// **'全部训练计划随时开练'**
   String get premiumAiCoach;
 
   /// No description provided for @premiumAiPlans.
   ///
   /// In zh, this message translates to:
-  /// **'AI 定制训练计划'**
+  /// **'按角度、按肌群的初中高三档计划'**
   String get premiumAiPlans;
 
   /// No description provided for @premiumCustomWorkouts.
@@ -1872,6 +1872,60 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'腕伸'**
   String get wristExtension;
+
+  /// No description provided for @plansByAngle.
+  ///
+  /// In zh, this message translates to:
+  /// **'按角度'**
+  String get plansByAngle;
+
+  /// No description provided for @plansByMuscle.
+  ///
+  /// In zh, this message translates to:
+  /// **'按肌群'**
+  String get plansByMuscle;
+
+  /// No description provided for @planTierBeginner.
+  ///
+  /// In zh, this message translates to:
+  /// **'初级'**
+  String get planTierBeginner;
+
+  /// No description provided for @planTierIntermediate.
+  ///
+  /// In zh, this message translates to:
+  /// **'中级'**
+  String get planTierIntermediate;
+
+  /// No description provided for @planTierAdvanced.
+  ///
+  /// In zh, this message translates to:
+  /// **'高级'**
+  String get planTierAdvanced;
+
+  /// No description provided for @planActiveMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'发力肌群'**
+  String get planActiveMuscles;
+
+  /// No description provided for @planExercises.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作'**
+  String get planExercises;
+
+  /// No description provided for @planDosePerSide.
+  ///
+  /// In zh, this message translates to:
+  /// **'{dose} · 每侧'**
+  String planDosePerSide(String dose);
+
+  /// No description provided for @planTierSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'初级 · 中级 · 高级'**
+  String get planTierSummary;
 
   /// No description provided for @plans.
   ///

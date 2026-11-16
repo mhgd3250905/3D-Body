@@ -49,95 +49,100 @@ class _TestStore implements MembershipStore {
 }
 
 void main() {
-  testWidgets('free plan starts, AI and copying ask for membership', (
-    tester,
-  ) async {
-    await helpers.phoneSize(tester);
-    final semantics = tester.ensureSemantics();
-    final purchases = _TestStore();
-    final membership = FlareMembership(purchases);
-    try {
-      final catalog = loadCatalogFixture();
-      final store = LearningStore(
-        catalog: catalog,
-        storage: helpers.MemoryStateStorage(),
-      );
-      await store.initialize();
-      await store.acknowledgeSafety();
-      final scene = SceneController(commandSink: (_) {});
-      addTearDown(store.dispose);
-      addTearDown(scene.dispose);
-      await tester.pumpWidget(
-        helpers.testApp(
-          FlareShell(
-            catalog: catalog,
-            store: store,
-            sceneController: scene,
-            enableScene: false,
-            membership: membership,
-            trainingPageBuilder: helpers.TrainingRouteProbe.new,
+  testWidgets(
+    'preset training, saved routine training and copying ask for membership',
+    (tester) async {
+      await helpers.phoneSize(tester);
+      final semantics = tester.ensureSemantics();
+      final purchases = _TestStore();
+      final membership = FlareMembership(purchases);
+      try {
+        final catalog = loadCatalogFixture();
+        final store = LearningStore(
+          catalog: catalog,
+          storage: helpers.MemoryStateStorage(),
+        );
+        await store.initialize();
+        await store.acknowledgeSafety();
+        await store.createRoutine('Audit routine', const ['abs-A']);
+        final scene = SceneController(commandSink: (_) {});
+        addTearDown(store.dispose);
+        addTearDown(scene.dispose);
+        await tester.pumpWidget(
+          helpers.testApp(
+            FlareShell(
+              catalog: catalog,
+              store: store,
+              sceneController: scene,
+              enableScene: false,
+              membership: membership,
+              trainingPageBuilder: helpers.TrainingRouteProbe.new,
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'ready',
-        'time': 0.0,
-        'period': 9.0,
-        'phase': {'source': 9},
-      });
-      await tester.pumpAndSettle();
-      await helpers.openPlansFromHome(tester);
+        );
+        await tester.pumpAndSettle();
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'ready',
+          'time': 0.0,
+          'period': 9.0,
+          'phase': {'source': 9},
+        });
+        await tester.pumpAndSettle();
+        await helpers.openPlansFromHome(tester);
 
-      await tester.tap(find.byKey(const ValueKey('plan-ai-coach')));
-      await tester.pumpAndSettle();
-      expect(find.byType(FlareMembershipPage), findsOneWidget);
-      expect(find.text('免费试用 7 天'), findsOneWidget);
-      expect(find.text('省 44%'), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.close_rounded));
-      await tester.pumpAndSettle();
+        await helpers.tapVisible(tester, find.text('Audit routine'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('plan-start')));
+        await tester.pumpAndSettle();
+        expect(find.byType(FlareMembershipPage), findsOneWidget);
+        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+        expect(find.text('免费试用 7 天'), findsOneWidget);
+        expect(find.text('省 44%'), findsOneWidget);
+        await tester.tap(find.byIcon(Icons.close_rounded));
+        await tester.pumpAndSettle();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
 
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('preset-core')),
-      );
-      await tester.pumpAndSettle();
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('plan-start')),
-      );
-      await helpers.waitForTrainingRoute(tester);
-      expect(find.byType(helpers.TrainingRouteProbe), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('training-probe-close')));
-      await tester.pumpAndSettle();
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('preset-core')),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('plan-start')));
+        await tester.pumpAndSettle();
+        expect(find.byType(FlareMembershipPage), findsOneWidget);
+        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+        await tester.tap(find.byIcon(Icons.close_rounded));
+        await tester.pumpAndSettle();
 
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('plan-save-as-mine')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(FlareMembershipPage), findsOneWidget);
-      expect(find.byType(RoutineEditorPage), findsNothing);
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('premium-monthly')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('免费试用 3 天'), findsOneWidget);
-      await helpers.tapVisible(
-        tester,
-        find.byKey(const ValueKey('premium-subscribe')),
-      );
-      await tester.pumpAndSettle();
-      expect(purchases.purchased, MembershipTerm.monthly);
-      expect(find.byType(FlareMembershipPage), findsNothing);
-      expect(find.byType(RoutineEditorPage), findsOneWidget);
-      helpers.assertNoFlutterError(tester);
-      await tester.pumpWidget(const SizedBox());
-    } finally {
-      membership.dispose();
-      semantics.dispose();
-    }
-  });
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('plan-save-as-mine')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(FlareMembershipPage), findsOneWidget);
+        expect(find.byType(RoutineEditorPage), findsNothing);
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('premium-monthly')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('免费试用 3 天'), findsOneWidget);
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('premium-subscribe')),
+        );
+        await tester.pumpAndSettle();
+        expect(purchases.purchased, MembershipTerm.monthly);
+        expect(find.byType(FlareMembershipPage), findsNothing);
+        expect(find.byType(RoutineEditorPage), findsOneWidget);
+        helpers.assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        membership.dispose();
+        semantics.dispose();
+      }
+    },
+  );
 }

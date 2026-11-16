@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../domain/catalog_models.dart';
+import '../domain/flare_plan.dart';
 
 export '../domain/catalog_models.dart';
 export '../domain/dose.dart';
+export '../domain/flare_plan.dart';
 
 class PhaseKey {
   const PhaseKey({
@@ -27,6 +29,7 @@ class Catalog {
     required List<Phase> phases,
     required List<Drill> drills,
     required List<CourseStage> stages,
+    required List<FlarePlan> flarePlans,
     required List<PhaseKey> phaseKeys,
     required Map<String, String> tiers,
     required this.note,
@@ -38,6 +41,7 @@ class Catalog {
        phases = List.unmodifiable(phases),
        drills = List.unmodifiable(drills),
        stages = List.unmodifiable(stages),
+       _flarePlans = List.unmodifiable(flarePlans),
        phaseKeys = List.unmodifiable(phaseKeys),
        tiers = Map.unmodifiable(tiers),
        _groups = {for (final value in groups) value.groupId: value},
@@ -58,6 +62,7 @@ class Catalog {
   final List<Phase> phases;
   final List<Drill> drills;
   final List<CourseStage> stages;
+  final List<FlarePlan> _flarePlans;
   final List<PhaseKey> phaseKeys;
   final Map<String, String> tiers;
   final String note;
@@ -192,6 +197,7 @@ class Catalog {
           )
           .toList(),
       phaseKeys: phaseKeys,
+      flarePlans: _flarePlans,
       tiers: tiers.map((key, value) => MapEntry(key, t(value))),
       note: t(note),
       drillNote: t(drillNote),
@@ -209,6 +215,27 @@ class Catalog {
   CourseStage? stageByNumber(int n) => _stages[n];
   Lesson? lessonById(String id) => _lessons[id];
   CourseGate? gateById(String id) => _gates[id];
+
+  /// Canonical angle targets for the list. Mirrored phases remain reachable
+  /// directly from their home phase, without duplicating the list rows.
+  List<int> get flarePlanAngles => List.unmodifiable(
+    (_flarePlans.map((plan) => plan.phaseSource).nonNulls.toSet().toList()
+      ..sort()),
+  );
+
+  List<String> get flarePlanMuscles => List.unmodifiable(
+    _flarePlans.map((plan) => plan.groupId).nonNulls.toSet(),
+  );
+
+  List<FlarePlan> plansForAngle(int phaseSource) => List.unmodifiable(
+    _flarePlans.where(
+      (plan) =>
+          plan.phaseSource == phaseSource || plan.mirrors.contains(phaseSource),
+    ),
+  );
+
+  List<FlarePlan> plansForMuscle(String groupId) =>
+      List.unmodifiable(_flarePlans.where((plan) => plan.groupId == groupId));
 
   List<Drill> drillsFor(String groupId, {String? tier}) => List.unmodifiable(
     drills.where(
@@ -313,12 +340,14 @@ class Catalog {
       source.loadString('assets/data/drills.json'),
       source.loadString('assets/data/course-stages.json'),
       source.loadString('assets/data/source-manifest.json'),
+      source.loadString('assets/data/flare-plans.json'),
     ]);
     return Catalog.fromJson(
       phaseMuscles: jsonDecode(strings[0]) as Map<String, dynamic>,
       drillLibrary: jsonDecode(strings[1]) as Map<String, dynamic>,
       curriculum: jsonDecode(strings[2]) as Map<String, dynamic>,
       manifest: jsonDecode(strings[3]) as Map<String, dynamic>,
+      flarePlans: jsonDecode(strings[4]) as Map<String, dynamic>,
     );
   }
 
@@ -327,6 +356,7 @@ class Catalog {
     required Map<String, dynamic> drillLibrary,
     required Map<String, dynamic> curriculum,
     required Map<String, dynamic> manifest,
+    Map<String, dynamic>? flarePlans,
   }) {
     final sections = (phaseMuscles['sections'] as List)
         .map(
@@ -410,6 +440,7 @@ class Catalog {
       drills: drills,
       stages: stages,
       phaseKeys: keys,
+      flarePlans: _readFlarePlans(flarePlans, sources, ids),
       tiers: Map<String, String>.from(
         (drillLibrary['meta'] as Map)['tiers'] as Map,
       ),
@@ -418,5 +449,39 @@ class Catalog {
       curriculumNote: (curriculum['meta'] as Map)['note'] as String,
       period: period,
     );
+  }
+
+  static List<FlarePlan> _readFlarePlans(
+    Map<String, dynamic>? json,
+    Set<int> phaseSources,
+    Set<String> groupIds,
+  ) {
+    if (json == null) return const [];
+    final rows = json['plans'];
+    if (json['version'] != 1 || rows is! List) {
+      throw const FormatException('Unknown Flare plan data version');
+    }
+    final plans = <FlarePlan>[];
+    final ids = <String>{};
+    final tierSlots = <(Object, int)>{};
+    for (final row in rows) {
+      final plan = FlarePlan.fromJson(Map<String, dynamic>.from(row as Map));
+      final validTarget = switch (plan.kind) {
+        FlarePlanKind.angle =>
+          phaseSources.contains(plan.phaseSource) &&
+              plan.mirrors.every(phaseSources.contains),
+        FlarePlanKind.muscle => groupIds.contains(plan.groupId),
+      };
+      if (!validTarget ||
+          !ids.add(plan.id) ||
+          ![
+            plan.target,
+            ...plan.mirrors,
+          ].every((target) => tierSlots.add((target, plan.tier)))) {
+        throw FormatException('Invalid or duplicate target: ${plan.id}');
+      }
+      plans.add(plan);
+    }
+    return plans..sort((a, b) => a.tier.compareTo(b.tier));
   }
 }

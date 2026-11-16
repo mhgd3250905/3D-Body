@@ -15,10 +15,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumSubtitle => 'Build training that\'s yours';
 
   @override
-  String get premiumAiCoach => 'AI coach on demand';
+  String get premiumAiCoach => 'Start any training plan anytime';
 
   @override
-  String get premiumAiPlans => 'AI-built training plans';
+  String get premiumAiPlans =>
+      'Three levels of plans by angle and muscle group';
 
   @override
   String get premiumCustomWorkouts => 'Unlimited custom workouts';
@@ -956,6 +957,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wristExtension => 'Wrist extension';
+
+  @override
+  String get plansByAngle => 'By angle';
+
+  @override
+  String get plansByMuscle => 'By muscle group';
+
+  @override
+  String get planTierBeginner => 'Beginner';
+
+  @override
+  String get planTierIntermediate => 'Intermediate';
+
+  @override
+  String get planTierAdvanced => 'Advanced';
+
+  @override
+  String get planActiveMuscles => 'Muscles worked';
+
+  @override
+  String get planExercises => 'Exercises';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · per side';
+  }
+
+  @override
+  String get planTierSummary => 'Beginner · Intermediate · Advanced';
 
   @override
   String get plans => 'Plans';

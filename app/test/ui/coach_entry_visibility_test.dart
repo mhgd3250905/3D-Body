@@ -24,86 +24,81 @@ void main() {
   });
 
   for (final configured in [false, true]) {
-    testWidgets('All AI entry points respect Key presence: $configured', (
-      tester,
-    ) async {
-      await helpers.phoneSize(tester);
-      final semantics = tester.ensureSemantics();
-      try {
-        final catalog = loadCatalogFixture();
-        final store = LearningStore(
-          catalog: catalog,
-          storage: helpers.MemoryStateStorage(),
-        );
-        await store.initialize();
-        await store.acknowledgeSafety();
-        final scene = SceneController(commandSink: (_) {});
-        final fake = AgentFakeLlmClient(const []);
-        final coach = FlareCoachChat(
-          store: store,
-          config: configured
-              ? const CoachConfig(apiKey: 'test-key')
-              : const CoachConfig(),
-          gateway: configured ? CoachGatewayBinding.shared(fake) : null,
-          storage: helpers.MemoryStateStorage(),
-        );
-        addTearDown(store.dispose);
-        addTearDown(scene.dispose);
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: flareTheme(),
-            locale: const Locale('zh'),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: FlareShell(
-              catalog: catalog,
-              store: store,
-              sceneController: scene,
-              enableScene: false,
-              coach: coach,
+    testWidgets(
+      'Plans and settings hide AI entries when configured is $configured',
+      (tester) async {
+        await helpers.phoneSize(tester);
+        final semantics = tester.ensureSemantics();
+        try {
+          final catalog = loadCatalogFixture();
+          final store = LearningStore(
+            catalog: catalog,
+            storage: helpers.MemoryStateStorage(),
+          );
+          await store.initialize();
+          await store.acknowledgeSafety();
+          final scene = SceneController(commandSink: (_) {});
+          final fake = AgentFakeLlmClient(const []);
+          final coach = FlareCoachChat(
+            store: store,
+            config: configured
+                ? const CoachConfig(apiKey: 'test-key')
+                : const CoachConfig(),
+            gateway: configured ? CoachGatewayBinding.shared(fake) : null,
+            storage: helpers.MemoryStateStorage(),
+          );
+          addTearDown(store.dispose);
+          addTearDown(scene.dispose);
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: flareTheme(),
+              locale: const Locale('zh'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: FlareShell(
+                catalog: catalog,
+                store: store,
+                sceneController: scene,
+                enableScene: false,
+                coach: coach,
+              ),
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'ready',
-          'time': 0.0,
-          'period': 9.0,
-          'phase': {'source': 9},
-        });
-        await tester.pumpAndSettle();
-        await helpers.openPlansFromHome(tester);
-        final plans = tester.widget<PlansPage>(find.byType(PlansPage));
-        expect(plans.onAiCoach != null, configured);
-        expect(
-          find.byKey(const ValueKey('plan-ai-coach')),
-          configured ? findsOneWidget : findsNothing,
-        );
-        expect(
-          find.byKey(const ValueKey('plan-ai-unconfigured')),
-          findsNothing,
-        );
+          );
+          await tester.pumpAndSettle();
+          scene.receiveEvent({
+            'source': 'flare-scene',
+            'type': 'ready',
+            'time': 0.0,
+            'period': 9.0,
+            'phase': {'source': 9},
+          });
+          await tester.pumpAndSettle();
+          await helpers.openPlansFromHome(tester);
+          final plans = tester.widget<PlansPage>(find.byType(PlansPage));
+          expect(plans.onAiCoach, isNull);
+          expect(find.byKey(const ValueKey('plan-ai-coach')), findsNothing);
+          expect(
+            find.byKey(const ValueKey('plan-ai-unconfigured')),
+            findsNothing,
+          );
 
-        await tester.tap(find.byTooltip('返回').first);
-        await tester.pumpAndSettle();
-        await tester.tap(helpers.labeledControl('更多'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('设置').last);
-        await tester.pumpAndSettle();
-        // Settings builds its rows in a scrollable Column; checking the actual
-        // row also covers offscreen entry points, not only the first viewport.
-        expect(
-          find.byKey(const ValueKey('settings-ai-usage')),
-          configured ? findsOneWidget : findsNothing,
-        );
-        expect(fake.requests, isEmpty);
-        expect(tester.takeException(), isNull);
-        await tester.pumpWidget(const SizedBox());
-        await tester.pumpAndSettle();
-      } finally {
-        semantics.dispose();
-      }
-    });
+          await tester.tap(find.byTooltip('返回').first);
+          await tester.pumpAndSettle();
+          await tester.tap(helpers.labeledControl('更多'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('设置').last);
+          await tester.pumpAndSettle();
+          // Settings builds its rows in a scrollable Column; checking the actual
+          // row also covers offscreen entry points, not only the first viewport.
+          expect(find.byKey(const ValueKey('settings-ai-usage')), findsNothing);
+          expect(fake.requests, isEmpty);
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+          await tester.pumpAndSettle();
+        } finally {
+          semantics.dispose();
+        }
+      },
+    );
   }
 }

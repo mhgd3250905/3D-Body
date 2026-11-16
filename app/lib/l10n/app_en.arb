@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Unlock Flare Premium",
   "premiumSubtitle": "Build training that's yours",
-  "premiumAiCoach": "AI coach on demand",
-  "premiumAiPlans": "AI-built training plans",
+  "premiumAiCoach": "Start any training plan anytime",
+  "premiumAiPlans": "Three levels of plans by angle and muscle group",
   "premiumCustomWorkouts": "Unlimited custom workouts",
   "premiumMonthly": "Monthly",
   "premiumYearly": "Yearly",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "By angle",
+  "plansByMuscle": "By muscle group",
+  "planTierBeginner": "Beginner",
+  "planTierIntermediate": "Intermediate",
+  "planTierAdvanced": "Advanced",
+  "planActiveMuscles": "Muscles worked",
+  "planExercises": "Exercises",
+  "planDosePerSide": "{dose} · per side",
+  "planTierSummary": "Beginner · Intermediate · Advanced",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "Plans",
   "plansHint": "Ready-made sets and your own",
   "plansReady": "Ready-made sets",

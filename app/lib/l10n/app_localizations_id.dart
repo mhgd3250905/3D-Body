@@ -15,10 +15,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get premiumSubtitle => 'Buat latihan sesuai keinginanmu';
 
   @override
-  String get premiumAiCoach => 'Pelatih AI kapan pun dibutuhkan';
+  String get premiumAiCoach => 'Mulai rencana latihan apa pun kapan saja';
 
   @override
-  String get premiumAiPlans => 'Rencana latihan buatan AI';
+  String get premiumAiPlans =>
+      'Tiga tingkat rencana menurut sudut dan kelompok otot';
 
   @override
   String get premiumCustomWorkouts => 'Latihan kustom tanpa batas';
@@ -963,6 +964,35 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get wristExtension => 'Ekstensi pergelangan tangan';
+
+  @override
+  String get plansByAngle => 'Menurut sudut';
+
+  @override
+  String get plansByMuscle => 'Menurut kelompok otot';
+
+  @override
+  String get planTierBeginner => 'Pemula';
+
+  @override
+  String get planTierIntermediate => 'Menengah';
+
+  @override
+  String get planTierAdvanced => 'Lanjutan';
+
+  @override
+  String get planActiveMuscles => 'Otot yang bekerja';
+
+  @override
+  String get planExercises => 'Gerakan';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · tiap sisi';
+  }
+
+  @override
+  String get planTierSummary => 'Pemula · Menengah · Lanjutan';
 
   @override
   String get plans => 'Rencana';

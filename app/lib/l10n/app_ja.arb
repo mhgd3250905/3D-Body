@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Flare Premium を利用する",
   "premiumSubtitle": "自分だけのトレーニングを作ろう",
-  "premiumAiCoach": "いつでも AI コーチに質問",
-  "premiumAiPlans": "AI が作成するトレーニングプラン",
+  "premiumAiCoach": "すべてのトレーニングプランをいつでも開始",
+  "premiumAiPlans": "角度・筋群別に初級から上級までの3段階のプラン",
   "premiumCustomWorkouts": "カスタムワークアウトを無制限に作成",
   "premiumMonthly": "月額",
   "premiumYearly": "年額",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "角度別",
+  "plansByMuscle": "筋群別",
+  "planTierBeginner": "初級",
+  "planTierIntermediate": "中級",
+  "planTierAdvanced": "上級",
+  "planActiveMuscles": "使う筋肉",
+  "planExercises": "種目",
+  "planDosePerSide": "{dose} · 左右それぞれ",
+  "planTierSummary": "初級 · 中級 · 上級",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "プラン",
   "plansHint": "セットとマイプラン",
   "plansReady": "おすすめセット",

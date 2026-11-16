@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Откройте Flare Premium",
   "premiumSubtitle": "Создайте свою тренировку",
-  "premiumAiCoach": "ИИ-тренер в любое время",
-  "premiumAiPlans": "Планы тренировок от ИИ",
+  "premiumAiCoach": "Начинайте любую тренировку по плану в любое время",
+  "premiumAiPlans": "Планы по углу и группе мышц на трёх уровнях сложности",
   "premiumCustomWorkouts": "Неограниченное число своих тренировок",
   "premiumMonthly": "На месяц",
   "premiumYearly": "На год",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "По углу",
+  "plansByMuscle": "По группе мышц",
+  "planTierBeginner": "Начальный",
+  "planTierIntermediate": "Средний",
+  "planTierAdvanced": "Продвинутый",
+  "planActiveMuscles": "Работающие мышцы",
+  "planExercises": "Упражнения",
+  "planDosePerSide": "{dose} · на каждую сторону",
+  "planTierSummary": "Начальный · Средний · Продвинутый",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "Планы",
   "plansHint": "Готовые комплексы и ваши",
   "plansReady": "Готовые комплексы",

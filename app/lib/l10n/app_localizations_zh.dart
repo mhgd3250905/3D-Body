@@ -15,10 +15,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get premiumSubtitle => '打造属于你的训练';
 
   @override
-  String get premiumAiCoach => 'AI 教练随时问答';
+  String get premiumAiCoach => '全部训练计划随时开练';
 
   @override
-  String get premiumAiPlans => 'AI 定制训练计划';
+  String get premiumAiPlans => '按角度、按肌群的初中高三档计划';
 
   @override
   String get premiumCustomWorkouts => '无限自定义训练组';
@@ -934,6 +934,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wristExtension => '腕伸';
 
   @override
+  String get plansByAngle => '按角度';
+
+  @override
+  String get plansByMuscle => '按肌群';
+
+  @override
+  String get planTierBeginner => '初级';
+
+  @override
+  String get planTierIntermediate => '中级';
+
+  @override
+  String get planTierAdvanced => '高级';
+
+  @override
+  String get planActiveMuscles => '发力肌群';
+
+  @override
+  String get planExercises => '动作';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · 每侧';
+  }
+
+  @override
+  String get planTierSummary => '初级 · 中级 · 高级';
+
+  @override
   String get plans => '计划';
 
   @override
@@ -1180,10 +1209,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get premiumSubtitle => '打造屬於你的訓練';
 
   @override
-  String get premiumAiCoach => 'AI 教練隨時問答';
+  String get premiumAiCoach => '全部訓練計畫隨時開練';
 
   @override
-  String get premiumAiPlans => 'AI 自訂訓練計畫';
+  String get premiumAiPlans => '按角度、按肌群的初、中、高階計畫';
 
   @override
   String get premiumCustomWorkouts => '無限自訂訓練組';
@@ -2098,6 +2127,35 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get wristExtension => '腕伸';
+
+  @override
+  String get plansByAngle => '按角度';
+
+  @override
+  String get plansByMuscle => '按肌群';
+
+  @override
+  String get planTierBeginner => '初級';
+
+  @override
+  String get planTierIntermediate => '中級';
+
+  @override
+  String get planTierAdvanced => '高級';
+
+  @override
+  String get planActiveMuscles => '發力肌群';
+
+  @override
+  String get planExercises => '動作';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · 每側';
+  }
+
+  @override
+  String get planTierSummary => '初級 · 中級 · 高級';
 
   @override
   String get plans => '計畫';

@@ -6,6 +6,7 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../l10n/languages.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_public_media.dart';
 import 'components.dart';
@@ -216,6 +217,8 @@ class PlansPage extends StatelessWidget {
     required this.onRoutine,
     required this.onNewRoutine,
     this.onBack,
+    this.onAngle,
+    this.onMuscle,
     this.onAiCoach,
     this.aiCoachConfigured = true,
   });
@@ -225,6 +228,8 @@ class PlansPage extends StatelessWidget {
   final ValueChanged<TrainingRoutine> onRoutine;
   final VoidCallback onNewRoutine;
   final VoidCallback? onBack;
+  final ValueChanged<Phase>? onAngle;
+  final ValueChanged<MuscleGroup>? onMuscle;
 
   /// AI 定制入口（中文界面才给）；null 不显示。
   final VoidCallback? onAiCoach;
@@ -300,6 +305,13 @@ class PlansPage extends StatelessWidget {
     final s = context.strings;
     final tier = store.settings.tier;
     final routines = store.routines;
+    final angles = [
+      for (final source in catalog.flarePlanAngles)
+        ?catalog.phaseBySource(source),
+    ];
+    final muscles = [
+      for (final id in catalog.flarePlanMuscles) ?catalog.groupById(id),
+    ];
     return FlareNavPage(
       title: s.plans,
       onBack: onBack,
@@ -314,6 +326,34 @@ class PlansPage extends StatelessWidget {
             ),
             sliver: SliverList.list(
               children: [
+                if (onAngle != null && angles.isNotEmpty) ...[
+                  FlareSection(s.plansByAngle),
+                  FlareListGroup(
+                    children: [
+                      for (final phase in angles)
+                        FlareListRow(
+                          key: ValueKey('plans-angle-${phase.source}'),
+                          title: phase.name,
+                          subtitle: s.planTierSummary,
+                          onTap: () => onAngle!(phase),
+                        ),
+                    ],
+                  ),
+                ],
+                if (onMuscle != null && muscles.isNotEmpty) ...[
+                  FlareSection(s.plansByMuscle),
+                  FlareListGroup(
+                    children: [
+                      for (final group in muscles)
+                        FlareListRow(
+                          key: ValueKey('plans-muscle-${group.id}'),
+                          title: group.label,
+                          subtitle: s.planTierSummary,
+                          onTap: () => onMuscle!(group),
+                        ),
+                    ],
+                  ),
+                ],
                 _SectionHeader(s.plansMine),
                 FlareListGroup(
                   children: [
@@ -377,6 +417,138 @@ class PlansPage extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 28)),
         ],
       ),
+    );
+  }
+}
+
+/// Details shared by the angle and muscle entry points.
+class FlarePlanDetailPage extends StatelessWidget {
+  const FlarePlanDetailPage({
+    super.key,
+    required this.title,
+    required this.plans,
+    required this.selectedTier,
+    required this.catalog,
+    required this.store,
+    required this.onTierChanged,
+    required this.onMuscle,
+    required this.onDrill,
+    required this.onBack,
+    required this.onStart,
+    this.phase,
+  });
+
+  final String title;
+  final Phase? phase;
+  final List<FlarePlan> plans;
+  final int selectedTier;
+  final Catalog catalog;
+  final LearningStore store;
+  final ValueChanged<int> onTierChanged;
+  final ValueChanged<MuscleGroup> onMuscle;
+  final ValueChanged<String> onDrill;
+  final VoidCallback onBack;
+  final ValueChanged<FlarePlan> onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    final plan = plans.firstWhere(
+      (plan) => plan.tier == selectedTier,
+      orElse: () => plans.first,
+    );
+    final scene = store.settings.tier;
+    final activeMuscles = phase?.primary;
+    final shared = FlareShared.current;
+    final labels = [
+      s.planTierBeginner,
+      s.planTierIntermediate,
+      s.planTierAdvanced,
+    ];
+
+    return FlareNavPage(
+      title: title,
+      onBack: onBack,
+      bodyScrollsUnderBar: false,
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(
+          FlareGeometry.pageInset,
+          12,
+          FlareGeometry.pageInset,
+          20,
+        ),
+        children: [
+          FlareSegmented<int>(
+            key: const ValueKey('flare-plan-tier'),
+            expand: true,
+            segments: [
+              for (final option in plans)
+                (option.tier, labels[option.tier - 1]),
+            ],
+            selected: plan.tier,
+            onChanged: onTierChanged,
+          ),
+          const SizedBox(height: 12),
+          _SceneSwitch(store: store),
+          if (activeMuscles != null && activeMuscles.isNotEmpty) ...[
+            FlareSection(s.planActiveMuscles),
+            FlareListGroup(
+              children: [
+                for (final muscle in activeMuscles)
+                  if (catalog.groupById(muscle.id) case final group?)
+                    FlareListRow(
+                      key: ValueKey('flare-plan-muscle-${group.id}'),
+                      title: group.label,
+                      subtitle: muscle.why,
+                      onTap: catalog.plansForMuscle(group.id).isEmpty
+                          ? null
+                          : () => onMuscle(group),
+                    ),
+              ],
+            ),
+          ],
+          FlareSection(s.planExercises),
+          FlareListGroup(
+            children: [
+              for (final (index, item) in plan.items.indexed)
+                _itemRow(context, index, item, scene, shared),
+            ],
+          ),
+        ],
+      ),
+      bottomBar: FlareBottomAction(
+        child: PrimaryAction(
+          key: const ValueKey('flare-plan-start'),
+          label: s.planStart,
+          icon: Icons.play_arrow_rounded,
+          onPressed: () => onStart(plan),
+        ),
+      ),
+    );
+  }
+
+  Widget _itemRow(
+    BuildContext context,
+    int index,
+    FlarePlanItem item,
+    String scene,
+    FlareShared? shared,
+  ) {
+    final s = context.strings;
+    final id = item.drillForScene(scene);
+    final name =
+        catalog.drillById(id)?.name ??
+        shared?.nameOf(id, languageForLocale(Localizations.localeOf(context)));
+    final amount = switch (item.reps) {
+      final reps? => s.countLabel(reps),
+      null => s.secondsLabel(item.seconds!),
+    };
+    final dose = s.libraryDose(item.sets, amount);
+    return FlareListRow(
+      key: ValueKey('flare-plan-item-$index-$id'),
+      title: name ?? id,
+      subtitle: item.perSide ? s.planDosePerSide(dose) : dose,
+      onTap: name == null ? null : () => onDrill(id),
     );
   }
 }

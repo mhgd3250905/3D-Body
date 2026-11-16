@@ -70,6 +70,7 @@ flutter:
     - assets/data/phase-muscles.schema.json
     - assets/data/course-stages.json
     - assets/data/drills.json
+    - assets/data/flare-plans.json
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
     # Pose-Hub PR #26: unreviewed AI tag drafts, kept separate from source data.

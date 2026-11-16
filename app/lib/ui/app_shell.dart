@@ -89,6 +89,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   PresetPlan? _preset;
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
+  final _flarePlanTrail = <_FlarePlanTarget>[];
   FlareCoachChat? _coach;
   FlareCoachChat get coach => _coach ??=
       widget.coach ??
@@ -274,12 +275,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       !_settings &&
       !_trainingOpen;
 
-  bool get _inPlan => _preset != null || _routine != null || _editing != null;
+  bool get _inPlan =>
+      _preset != null ||
+      _routine != null ||
+      _editing != null ||
+      _flarePlanTrail.isNotEmpty;
 
   void _clearPlan() {
     _preset = null;
     _routine = null;
     _editing = null;
+    _flarePlanTrail.clear();
   }
 
   bool get _preparingScene => widget.enableScene && !_scene.presented;
@@ -347,6 +353,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _openGroupTraining(MuscleGroup group) {
+    if (catalog.plansForMuscle(group.id).isNotEmpty) {
+      _openMusclePlan(group);
+      return;
+    }
     _scene.pause();
     setState(() {
       _tab = 1;
@@ -358,6 +368,27 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _about = false;
     });
     _syncSceneVisibility();
+  }
+
+  void _openAnglePlan(Phase phase) {
+    _openFlarePlan(_FlarePlanTarget.angle(phase.source));
+  }
+
+  void _openMusclePlan(MuscleGroup group) {
+    _openFlarePlan(_FlarePlanTarget.muscle(group.id));
+  }
+
+  void _openFlarePlan(_FlarePlanTarget target) {
+    setState(() => _flarePlanTrail.add(target));
+    _syncSceneVisibility();
+  }
+
+  void _openFlarePlanDrill(String id) {
+    if (catalog.drillById(id) case final drill?) {
+      _openDrill(drill);
+    } else {
+      unawaited(FlareShared.openDetail(context, id));
+    }
   }
 
   /// Content, dose and saving stay with Flare; the SDK launcher owns poster
@@ -388,8 +419,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _startPlan(uc.TrainingPlan plan) async {
+  Future<void> _startPlan(
+    uc.TrainingPlan plan, {
+    bool premiumRequired = true,
+  }) async {
     if (_trainingOpen || plan.items.isEmpty) return;
+    if (premiumRequired && !await _requirePremium()) return;
+    if (!mounted || _trainingOpen) return;
     FlareHaptics.light();
     DrillPlaybackCoordinator.shared.pauseAll();
     setState(() => _trainingOpen = true);
@@ -433,6 +469,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   /// The SDK chat is its own route; Flare supplies navigation and access.
+  // ignore: unused_element — kept for the disabled AI entry points.
   Future<void> _openCoach() async {
     if (!await _requirePremium() || !mounted) return;
     if (!coach.configured) {
@@ -504,7 +541,36 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (mounted) _syncSceneVisibility();
   }
 
-  Future<void> _startDrills(String title, List<Drill> drills) async {
+  Future<void> _startFlarePlan(String title, FlarePlan plan) async {
+    if (_trainingOpen) return;
+    final sceneTier = store.settings.tier;
+    try {
+      final shared = FlareShared.current ?? await FlareShared.load();
+      if (!mounted) return;
+      await _startPlan(
+        trainingPlanFromFlarePlan(
+          plan: plan,
+          title: title,
+          sceneTier: sceneTier,
+          catalog: catalog,
+          sourceCatalog: shared.catalog,
+          rhythms: shared.rhythms,
+          wristDirections: trainerWristDirections(context.strings),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(trainerLoadFailed(context.strings))),
+      );
+    }
+  }
+
+  Future<void> _startDrills(
+    String title,
+    List<Drill> drills, {
+    bool premiumRequired = false,
+  }) async {
     if (_trainingOpen || drills.isEmpty) return;
     try {
       final source = (FlareShared.current ?? await FlareShared.load()).catalog;
@@ -515,6 +581,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           drills: drills,
           sourceCatalog: source,
         ),
+        premiumRequired: premiumRequired,
       );
     } catch (_) {
       if (!mounted) return;
@@ -639,6 +706,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _editing = null;
       } else if (_drill != null) {
         _drill = null;
+      } else if (_flarePlanTrail.isNotEmpty) {
+        _flarePlanTrail.removeLast();
       } else if (_routine != null) {
         _routine = null;
       } else if (_preset != null) {
@@ -944,6 +1013,37 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ),
       );
     }
+    if (_flarePlanTrail.lastOrNull case final target?) {
+      final phaseSource = target.phaseSource;
+      final phase = phaseSource == null
+          ? null
+          : catalog.phaseBySource(phaseSource);
+      final group = target.groupId == null
+          ? null
+          : catalog.groupById(target.groupId!);
+      final plans = phaseSource != null
+          ? catalog.plansForAngle(phaseSource)
+          : catalog.plansForMuscle(target.groupId!);
+      final title = phase?.name ?? group!.label;
+      return (
+        'flare-plan:${phaseSource ?? target.groupId}',
+        _flarePlanTrail.length + 1,
+        false,
+        FlarePlanDetailPage(
+          title: title,
+          phase: phase,
+          plans: plans,
+          selectedTier: target.selectedTier,
+          catalog: catalog,
+          store: store,
+          onTierChanged: (value) => setState(() => target.selectedTier = value),
+          onMuscle: _openMusclePlan,
+          onDrill: _openFlarePlanDrill,
+          onBack: _back,
+          onStart: (plan) => _startFlarePlan(title, plan),
+        ),
+      );
+    }
     if (_routine case final viewed?) {
       final routine = store.routineById(viewed.id) ?? viewed;
       final drills = routine.drills(catalog);
@@ -962,7 +1062,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             if (routine.sdkPlan case final plan?) {
               await _startPlan(plan);
             } else {
-              await _startDrills(routine.name, drills);
+              await _startDrills(routine.name, drills, premiumRequired: true);
             }
           },
           onEdit: () => _editRoutine(_RoutineEdit(routineId: routine.id)),
@@ -986,7 +1086,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           store: store,
           onBack: _back,
           onDrill: _openDrill,
-          onStart: () => _startDrills(title, drills),
+          onStart: () => _startDrills(title, drills, premiumRequired: true),
           onSaveAsMine: () => _editRoutine(
             _RoutineEdit(
               seedName: title,
@@ -1033,12 +1133,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
           onNewRoutine: () => _editRoutine(const _RoutineEdit()),
-          onAiCoach:
-              (coach.configured || widget.membership != null) &&
-                  aiCoachAvailable(context)
-              ? _openCoach
-              : null,
-          aiCoachConfigured: coach.configured,
+          onAngle: _openAnglePlan,
+          onMuscle: _openMusclePlan,
         ),
       ),
       _ => (
@@ -1284,7 +1380,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     final muscle = phase.muscle(detail.id);
     final together = catalog.synergists(phase, detail.id, limit: 99);
-    final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
+    final canTrain =
+        catalog.plansForMuscle(detail.id).isNotEmpty ||
+        catalog.drillsFor(detail.id).isNotEmpty;
     final color = Color(detail.colorValue);
     return Expanded(
       flex: 1,
@@ -1493,7 +1591,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     label: s.trainGroup(detail.shortLabel),
                     semanticsLabel: s.trainGroup(detail.label),
                     arrow: true,
-                    onPressed: hasDrills
+                    onPressed: canTrain
                         ? () => _openGroupTraining(detail)
                         : null,
                   ),
@@ -1534,9 +1632,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final scaler = MediaQuery.textScalerOf(context);
     final width = MediaQuery.sizeOf(context).width;
     final style = _phaseTextStyle(context);
-    final names = [for (final p in catalog.phases) p.name];
+    final phases = catalog.phases;
+    final anglePlans = [
+      for (final p in phases)
+        if (catalog.plansForAngle(p.source).isNotEmpty) p.source,
+    ];
     final key =
-        '$width|${scaler.scale(13)}|${style.fontFamily}|${names.join('|')}';
+        '$width|${scaler.scale(13)}|${style.fontFamily}|${phases.map((p) => p.name).join('|')}|$anglePlans';
     if (key == _nameLinesKey) return _nameLines;
     final number = TextPainter(
       text: TextSpan(
@@ -1552,19 +1654,73 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final available = width - 40 - 24 - 48 - 16 - number.width - 6;
     number.dispose();
     var lines = 1;
-    for (final name in names) {
+    for (final phase in phases) {
+      final width = anglePlans.contains(phase.source)
+          ? available - FlareGeometry.rowChevron - 4
+          : available;
       final painter = TextPainter(
-        text: TextSpan(text: name, style: style),
+        text: TextSpan(text: phase.name, style: style),
         textScaler: scaler,
         textDirection: Directionality.of(context),
         maxLines: 2,
-      )..layout(maxWidth: available.clamp(1, double.infinity).toDouble());
+      )..layout(maxWidth: width.clamp(1, double.infinity).toDouble());
       if (painter.computeLineMetrics().length > 1) lines = 2;
       painter.dispose();
       if (lines == 2) break;
     }
     _nameLinesKey = key;
     return _nameLines = lines;
+  }
+
+  Widget _phaseTitle(Phase phase) {
+    final canOpen =
+        !_scene.playing && catalog.plansForAngle(phase.source).isNotEmpty;
+    final row = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          phase.source.toString().padLeft(2, '0'),
+          style: TextStyle(
+            color: FlareColors.accentInk,
+            fontSize: 13,
+            height: 1.25,
+            fontWeight: FontWeight.w600,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            phase.name,
+            key: const ValueKey('home-phase-name'),
+            maxLines: 2,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.25,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        if (canOpen) ...[
+          const SizedBox(width: 4),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: FlareGeometry.rowChevron,
+            color: FlareColors.faint,
+          ),
+        ],
+      ],
+    );
+    if (!canOpen) return row;
+    return FlarePressable(
+      key: const ValueKey('home-plan-angle'),
+      scale: .99,
+      onTap: () {
+        FlareHaptics.light();
+        _openAnglePlan(phase);
+      },
+      child: row,
+    );
   }
 
   Widget _transport(BuildContext context, Phase phase) {
@@ -1599,34 +1755,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          phase.source.toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            color: FlareColors.accentInk,
-                            fontSize: 13,
-                            height: 1.25,
-                            fontWeight: FontWeight.w600,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            phase.name,
-                            key: const ValueKey('home-phase-name'),
-                            maxLines: 2,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              height: 1.25,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    _phaseTitle(phase),
                     Expanded(
                       child: MotionTimeline(
                         catalog: catalog,
@@ -2199,10 +2328,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       subtitle: s.safetyHint,
                       onTap: () => showSafetySheet(context),
                     ),
-                    if (coach.configured &&
-                        aiCoachAvailable(context) &&
-                        (widget.membership?.isPremium ?? true))
-                      _aiUsageRow(),
                     FlareListRow(
                       leading: const FlareRowIcon(Icons.info_outline_rounded),
                       title: s.aboutFlare,
@@ -2265,6 +2390,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   );
 
   /// 设置 → AI 定制用量：本机累计模型调用次数与 token（来自本地 JSONL 记录）。
+  // ignore: unused_element — kept for the disabled AI entry points.
   Widget _aiUsageRow() => FutureBuilder<void>(
     future: _usage.load(),
     builder: (context, snapshot) {
@@ -2994,6 +3120,15 @@ class _SceneError extends StatelessWidget {
 }
 
 /// An open set editor: an existing set, or a new one seeded with drills.
+class _FlarePlanTarget {
+  _FlarePlanTarget.angle(this.phaseSource) : groupId = null;
+  _FlarePlanTarget.muscle(this.groupId) : phaseSource = null;
+
+  final int? phaseSource;
+  final String? groupId;
+  int selectedTier = 1;
+}
+
 class _RoutineEdit {
   const _RoutineEdit({
     this.routineId,

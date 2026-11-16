@@ -118,6 +118,103 @@ uc.TrainingPlan trainingPlanFromDrills({
   );
 }
 
+/// Authored Flare plans retain their exact dose when a scene swaps a drill.
+uc.TrainingPlan trainingPlanFromFlarePlan({
+  required FlarePlan plan,
+  required String title,
+  required String sceneTier,
+  required Catalog catalog,
+  required uc.Catalog sourceCatalog,
+  Map<String, sdk.Rhythm> rhythms = const {},
+  List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+}) {
+  if (wristDirections.length != 4) {
+    throw ArgumentError('Four wrist directions required');
+  }
+  final unknown = plan.items
+      .map((item) => item.drillForScene(sceneTier))
+      .where((id) => sourceCatalog[id] == null)
+      .toSet();
+  if (unknown.isNotEmpty) throw UnknownTrainingDrills(unknown);
+
+  final items = <uc.PlanItem>[];
+  for (final dose in plan.items) {
+    final id = dose.drillForScene(sceneTier);
+    final workSeconds = dose.seconds;
+    final item = uc.PlanItem(
+      exerciseId: id,
+      mode: workSeconds == null ? uc.DoseMode.reps : uc.DoseMode.time,
+      sets: dose.sets,
+      reps: dose.reps,
+      workSeconds: workSeconds,
+      perSide: dose.perSide,
+      restSeconds: dose.restSeconds,
+      replacedFrom: id == dose.drill ? null : dose.drill,
+    );
+
+    // A counted catalog rhythm can stretch a time budget to fit its default
+    // reps. These prescribed holds use elapsed time, including substitutions
+    // whose catalog entries normally count reps.
+    final usesTimedHold =
+        workSeconds != null &&
+        (rhythms[id]?.counted == true ||
+            sourceCatalog[id]!.defaultDose.mode == uc.DoseMode.reps);
+    final drill = catalog.drillById(id);
+    final segmented = drill == null
+        ? item
+        : _withSegments(
+            item,
+            drill,
+            wristDirections,
+            splitWorkSeconds: true,
+            forceTimedHold: usesTimedHold,
+          );
+    items.add(
+      usesTimedHold && segmented.segments.isEmpty
+          ? item.copyWith(
+              segments: [
+                uc.PlanSegment(
+                  id: 'timed-dose',
+                  exerciseId: id,
+                  mode: item.mode,
+                  workSeconds: workSeconds,
+                  rhythm: const {'kind': 'hold'},
+                ),
+              ],
+            )
+          : segmented,
+    );
+  }
+
+  final result = uc.TrainingPlan(
+    id: plan.id,
+    source: 'template',
+    templateId: plan.id,
+    title: title,
+    goal: 'flare',
+    scene: sceneTier == 'C' ? 'gym' : 'home',
+    level: plan.tier,
+    targetMinutes: 1,
+    blocks: [
+      uc.PlanBlock(
+        id: plan.id,
+        name: title,
+        type: uc.BlockType.main,
+        items: items,
+      ),
+    ],
+  );
+  validateTrainingPlan(
+    result,
+    catalog,
+    known: (id) => sourceCatalog[id] != null,
+  );
+  final estimate = sdk.SessionBuilder(rhythms: rhythms).planSeconds(result);
+  return result.copyWith(
+    targetMinutes: (estimate / 60).ceil().clamp(1, 1000000),
+  );
+}
+
 /// [known] admits the shared public scope in addition to Flare's own drills.
 void validateTrainingPlan(
   uc.TrainingPlan plan,
@@ -217,8 +314,10 @@ uc.TrainingPlan expandSegmentedTrainingPlan(
 uc.PlanItem _withSegments(
   uc.PlanItem item,
   Drill drill,
-  List<String> wristDirections,
-) {
+  List<String> wristDirections, {
+  bool splitWorkSeconds = false,
+  bool forceTimedHold = false,
+}) {
   if (item.segments.isNotEmpty) return item;
   final labels = switch (item.exerciseId) {
     'forearms-A' => wristDirections,
@@ -237,6 +336,11 @@ uc.PlanItem _withSegments(
     'scapular-A' => const ['y', 't', 'w'],
     _ => const ['wrist-flexion', 'wrist-extension'],
   };
+  final seconds = item.workSeconds;
+  // Keep the authored total work budget when breaking a hold into positions.
+  if (splitWorkSeconds && seconds != null && seconds < labels.length) {
+    return item;
+  }
   return item.copyWith(
     segments: [
       for (final (index, label) in labels.indexed)
@@ -246,7 +350,11 @@ uc.PlanItem _withSegments(
           label: label,
           mode: item.mode,
           reps: item.reps,
-          workSeconds: item.workSeconds,
+          workSeconds: splitWorkSeconds && seconds != null
+              ? seconds ~/ labels.length +
+                    (index < seconds % labels.length ? 1 : 0)
+              : seconds,
+          rhythm: forceTimedHold ? const {'kind': 'hold'} : null,
         ),
     ],
   );

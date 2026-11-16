@@ -15,10 +15,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get premiumSubtitle => 'Créez un entraînement qui vous ressemble';
 
   @override
-  String get premiumAiCoach => 'Coach IA à la demande';
+  String get premiumAiCoach =>
+      'Commencez n’importe quel plan d’entraînement à tout moment';
 
   @override
-  String get premiumAiPlans => 'Plans d’entraînement créés par l’IA';
+  String get premiumAiPlans =>
+      'Plans par angle et groupe musculaire sur trois niveaux';
 
   @override
   String get premiumCustomWorkouts => 'Entraînements personnalisés illimités';
@@ -970,6 +972,35 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get wristExtension => 'Extension du poignet';
+
+  @override
+  String get plansByAngle => 'Par angle';
+
+  @override
+  String get plansByMuscle => 'Par groupe musculaire';
+
+  @override
+  String get planTierBeginner => 'Débutant';
+
+  @override
+  String get planTierIntermediate => 'Intermédiaire';
+
+  @override
+  String get planTierAdvanced => 'Avancé';
+
+  @override
+  String get planActiveMuscles => 'Muscles sollicités';
+
+  @override
+  String get planExercises => 'Exercices';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · par côté';
+  }
+
+  @override
+  String get planTierSummary => 'Débutant · Intermédiaire · Avancé';
 
   @override
   String get plans => 'Plans';

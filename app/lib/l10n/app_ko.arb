@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Flare Premium 이용하기",
   "premiumSubtitle": "나만의 운동을 만들어 보세요",
-  "premiumAiCoach": "언제든 AI 코치에게 질문",
-  "premiumAiPlans": "AI 맞춤 운동 계획",
+  "premiumAiCoach": "모든 운동 계획을 언제든 시작",
+  "premiumAiPlans": "각도별·근육군별 3단계 운동 계획",
   "premiumCustomWorkouts": "맞춤 운동 무제한 생성",
   "premiumMonthly": "월간",
   "premiumYearly": "연간",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "각도별",
+  "plansByMuscle": "근육군별",
+  "planTierBeginner": "초급",
+  "planTierIntermediate": "중급",
+  "planTierAdvanced": "고급",
+  "planActiveMuscles": "사용하는 근육",
+  "planExercises": "운동 동작",
+  "planDosePerSide": "{dose} · 한쪽당",
+  "planTierSummary": "초급 · 중급 · 고급",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "플랜",
   "plansHint": "추천 세트와 내 플랜",
   "plansReady": "추천 세트",

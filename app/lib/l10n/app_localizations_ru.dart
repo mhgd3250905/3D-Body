@@ -15,10 +15,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumSubtitle => 'Создайте свою тренировку';
 
   @override
-  String get premiumAiCoach => 'ИИ-тренер в любое время';
+  String get premiumAiCoach =>
+      'Начинайте любую тренировку по плану в любое время';
 
   @override
-  String get premiumAiPlans => 'Планы тренировок от ИИ';
+  String get premiumAiPlans =>
+      'Планы по углу и группе мышц на трёх уровнях сложности';
 
   @override
   String get premiumCustomWorkouts => 'Неограниченное число своих тренировок';
@@ -962,6 +964,35 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get wristExtension => 'Разгибание запястья';
+
+  @override
+  String get plansByAngle => 'По углу';
+
+  @override
+  String get plansByMuscle => 'По группе мышц';
+
+  @override
+  String get planTierBeginner => 'Начальный';
+
+  @override
+  String get planTierIntermediate => 'Средний';
+
+  @override
+  String get planTierAdvanced => 'Продвинутый';
+
+  @override
+  String get planActiveMuscles => 'Работающие мышцы';
+
+  @override
+  String get planExercises => 'Упражнения';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · на каждую сторону';
+  }
+
+  @override
+  String get planTierSummary => 'Начальный · Средний · Продвинутый';
 
   @override
   String get plans => 'Планы';

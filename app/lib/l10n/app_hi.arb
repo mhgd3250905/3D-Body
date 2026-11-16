@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Flare Premium अनलॉक करें",
   "premiumSubtitle": "अपनी पसंद की ट्रेनिंग बनाएँ",
-  "premiumAiCoach": "जब चाहें AI कोच से पूछें",
-  "premiumAiPlans": "AI से बने ट्रेनिंग प्लान",
+  "premiumAiCoach": "कोई भी ट्रेनिंग प्लान कभी भी शुरू करें",
+  "premiumAiPlans": "कोण और मांसपेशी समूह के अनुसार तीन स्तरों के प्लान",
   "premiumCustomWorkouts": "अनलिमिटेड कस्टम वर्कआउट",
   "premiumMonthly": "मासिक",
   "premiumYearly": "वार्षिक",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "कोण के अनुसार",
+  "plansByMuscle": "मांसपेशी समूह के अनुसार",
+  "planTierBeginner": "शुरुआती",
+  "planTierIntermediate": "मध्यम",
+  "planTierAdvanced": "उन्नत",
+  "planActiveMuscles": "सक्रिय मांसपेशियाँ",
+  "planExercises": "व्यायाम",
+  "planDosePerSide": "{dose} · हर तरफ़",
+  "planTierSummary": "शुरुआती · मध्यम · उन्नत",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "प्लान",
   "plansHint": "तैयार सेट और आपके अपने",
   "plansReady": "तैयार सेट",

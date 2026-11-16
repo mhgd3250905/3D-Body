@@ -1,8 +1,8 @@
 {
   "premiumTitle": "解鎖 Flare 會員",
   "premiumSubtitle": "打造屬於你的訓練",
-  "premiumAiCoach": "AI 教練隨時問答",
-  "premiumAiPlans": "AI 自訂訓練計畫",
+  "premiumAiCoach": "全部訓練計畫隨時開練",
+  "premiumAiPlans": "按角度、按肌群的初、中、高階計畫",
   "premiumCustomWorkouts": "無限自訂訓練組",
   "premiumMonthly": "月付",
   "premiumYearly": "年付",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "按角度",
+  "plansByMuscle": "按肌群",
+  "planTierBeginner": "初級",
+  "planTierIntermediate": "中級",
+  "planTierAdvanced": "高級",
+  "planActiveMuscles": "發力肌群",
+  "planExercises": "動作",
+  "planDosePerSide": "{dose} · 每側",
+  "planTierSummary": "初級 · 中級 · 高級",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "計畫",
   "plansHint": "成套訓練與我的計畫",
   "plansReady": "成套訓練",

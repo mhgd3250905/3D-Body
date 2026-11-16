@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Buka Flare Premium",
   "premiumSubtitle": "Buat latihan sesuai keinginanmu",
-  "premiumAiCoach": "Pelatih AI kapan pun dibutuhkan",
-  "premiumAiPlans": "Rencana latihan buatan AI",
+  "premiumAiCoach": "Mulai rencana latihan apa pun kapan saja",
+  "premiumAiPlans": "Tiga tingkat rencana menurut sudut dan kelompok otot",
   "premiumCustomWorkouts": "Latihan kustom tanpa batas",
   "premiumMonthly": "Bulanan",
   "premiumYearly": "Tahunan",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "Menurut sudut",
+  "plansByMuscle": "Menurut kelompok otot",
+  "planTierBeginner": "Pemula",
+  "planTierIntermediate": "Menengah",
+  "planTierAdvanced": "Lanjutan",
+  "planActiveMuscles": "Otot yang bekerja",
+  "planExercises": "Gerakan",
+  "planDosePerSide": "{dose} · tiap sisi",
+  "planTierSummary": "Pemula · Menengah · Lanjutan",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "Rencana",
   "plansHint": "Set siap pakai dan milikmu",
   "plansReady": "Set siap pakai",

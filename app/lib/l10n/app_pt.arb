@@ -1,8 +1,8 @@
 {
   "premiumTitle": "Desbloqueie o Flare Premium",
   "premiumSubtitle": "Monte um treino do seu jeito",
-  "premiumAiCoach": "Treinador de IA quando precisar",
-  "premiumAiPlans": "Planos de treino criados por IA",
+  "premiumAiCoach": "Comece qualquer plano de treino quando quiser",
+  "premiumAiPlans": "Planos por ângulo e grupo muscular em três níveis",
   "premiumCustomWorkouts": "Treinos personalizados ilimitados",
   "premiumMonthly": "Mensal",
   "premiumYearly": "Anual",
@@ -431,6 +431,16 @@
       }
     }
   },
+  "plansByAngle": "Por ângulo",
+  "plansByMuscle": "Por grupo muscular",
+  "planTierBeginner": "Iniciante",
+  "planTierIntermediate": "Intermediário",
+  "planTierAdvanced": "Avançado",
+  "planActiveMuscles": "Músculos trabalhados",
+  "planExercises": "Exercícios",
+  "planDosePerSide": "{dose} · por lado",
+  "planTierSummary": "Iniciante · Intermediário · Avançado",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "Planos",
   "plansHint": "Séries prontas e as suas",
   "plansReady": "Séries prontas",
