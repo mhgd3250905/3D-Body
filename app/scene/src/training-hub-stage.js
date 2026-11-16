@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GROUPS, phaseTicks } from './phase.js';
 import angleBounds from './training-hub-angle-bounds.json' with { type: 'json' };
 import { CAMERA_PRESETS } from './player.js';
-import { fitHubAngle } from './training-hub-angle-fit.js';
+import { resolveHubAngleCamera } from './training-hub-angle-fit.js';
 import { createHubTransitions } from './training-hub-transitions.js';
 
 const noPhase = { items: [] };
@@ -118,7 +118,6 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   const transitions = createHubTransitions(player.period);
   const r = player.renderer;
   const angleCamera = new THREE.PerspectiveCamera(player.baseFov, 1, .02, 40);
-  const angleDirection = CAMERA_PRESETS.standard.clone().normalize();
   const muscleCamera = new THREE.PerspectiveCamera(26, 1, .02, 20);
   const muscleFrame = getHubMuscleFrame(phaseMap.scene, phaseMap.getFullBounds());
   const overviewCamera = new THREE.PerspectiveCamera();
@@ -176,11 +175,11 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     const angleHeight = height + (inMuscleMode ? angleStageHeight - standingStageHeight : 0);
     const key = `${width}:${angleHeight}`;
     if (key !== angleFitKey) {
-      angleFit = fitHubAngle(angleBounds, {
-        direction: angleDirection, fov: angleCamera.fov, aspect: width / angleHeight,
+      angleFit = resolveHubAngleCamera(angleBounds, {
+        referenceDirection: CAMERA_PRESETS.standard, fov: angleCamera.fov, aspect: width / angleHeight,
       });
       const lookAt = new THREE.Vector3(...angleFit.target);
-      angleCamera.position.copy(lookAt).addScaledVector(angleDirection, angleFit.distance);
+      angleCamera.position.copy(lookAt).addScaledVector(angleFit.direction, angleFit.distance);
       angleCamera.lookAt(lookAt);
       angleCamera.updateMatrixWorld(true);
       angleFitKey = key;

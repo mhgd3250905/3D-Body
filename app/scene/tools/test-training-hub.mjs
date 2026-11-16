@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { createMuscleUniforms } from '../src/legacy/muscle-map.js';
 import { applyFunctionalSurface } from '../src/muscle-material.js';
 import { CAMERA_PRESETS } from '../src/player.js';
-import { fitHubAngle } from '../src/training-hub-angle-fit.js';
+import { fitHubAngle, resolveHubAngleCamera } from '../src/training-hub-angle-fit.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
 
 const front = { position: [0, 1.155, 3.4], target: [0, 1.155, 0], fov: 26 };
@@ -45,6 +45,23 @@ test('the full motion fits the tightest 4% margin along the elevated home direct
   });
   assert.ok(distances[0] > distances[1] && distances[1] > distances[2]);
   assert.ok(normalized.y > 0);
+});
+
+test('the angle camera stays level and moves to two thirds of the previous distance', () => {
+  const referenceDirection = CAMERA_PRESETS.standard;
+  const oldDirection = referenceDirection.clone();
+  const fov = 32;
+  for (const aspect of [320 / 398, 390 / 374, 430 / 366]) {
+    const previous = fitHubAngle(fitBounds, { direction: referenceDirection, fov, aspect });
+    const { target, direction, distance } = resolveHubAngleCamera(fitBounds, {
+      referenceDirection, fov, aspect,
+    });
+    assert.deepEqual(target, previous.target);
+    assert.equal(direction.y, 0);
+    assert.ok(direction.distanceTo(oldDirection.clone().setY(0).normalize()) < 1e-10);
+    assert.ok(Math.abs(distance * 1.5 - previous.distance) < 1e-10);
+  }
+  assert.deepEqual(referenceDirection.toArray(), oldDirection.toArray());
 });
 
 test('phase retargeting preserves the current pose and the latest destination wins', () => {

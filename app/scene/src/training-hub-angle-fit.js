@@ -1,6 +1,6 @@
 const framingLimit = 1 - 2 * .04;
 
-// Fit the entire motion box from the same viewing direction as the home scene.
+// Fit the entire motion box for a reference viewing direction.
 export function fitHubAngle({ min, max }, { direction, fov, aspect }) {
   const target = min.map((value, axis) => (value + max[axis]) / 2);
   const vertical = Math.tan(fov * Math.PI / 360) * framingLimit;
@@ -21,4 +21,10 @@ export function fitHubAngle({ min, max }, { direction, fov, aspect }) {
     }
   }
   return { target, distance };
+}
+
+export function resolveHubAngleCamera(bounds, { referenceDirection, fov, aspect }) {
+  const { target, distance } = fitHubAngle(bounds, { direction: referenceDirection, fov, aspect });
+  const direction = referenceDirection.clone().setY(0).normalize();
+  return { target, direction, distance: distance / 1.5 };
 }

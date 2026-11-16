@@ -10,7 +10,7 @@ import { GROUPS, phaseAt, phaseTicks } from '../src/phase.js';
 import { muscleAt, resolveGroup } from '../src/legacy/muscle-map.js';
 import { fitHubMuscle, getHubMuscleFrame, hubMuscleCutoff, resolveHubMuscleCamera } from '../src/training-hub-stage.js';
 import { CAMERA_PRESETS } from '../src/player.js';
-import { fitHubAngle } from '../src/training-hub-angle-fit.js';
+import { fitHubAngle, resolveHubAngleCamera } from '../src/training-hub-angle-fit.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
 
 globalThis.ProgressEvent ??= class { constructor(type, fields) { Object.assign(this, { type }, fields); } };
@@ -23,9 +23,7 @@ const catalog = readJson('../../assets/data/phase-muscles.json');
 const preset = fs.readFileSync(fixture('../../lib/platform/scene/scene_hub_camera.dart'), 'utf8');
 const number = key => Number(preset.match(new RegExp(key + ' = (-?[.\\d]+);'))[1]);
 const fov = 32;
-const homeDirection = CAMERA_PRESETS.standard.clone().normalize();
-const viewRight = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), homeDirection).normalize();
-const viewUp = new THREE.Vector3().crossVectors(homeDirection, viewRight);
+const referenceDirection = CAMERA_PRESETS.standard;
 const standingHeight = number('standingHeight'), standingDistance = number('standingDistance');
 const standing = Object.fromEntries([...preset.matchAll(/'([^']+)':\s*_MuscleFocus\(([^)]+)\),/g)].map(([, group, values]) => {
   const [side, center, ...region] = values.split(',').slice(0, 5).map(Number);
@@ -349,83 +347,89 @@ const round = value => Number(value.toFixed(4));
 const measured = await measureAngleActors();
 assert.deepEqual(angleBounds, measured.bounds, 'precomputed angle bounds match current assets and sampled cycle');
 
-function projection(x, y, z, { target, distance }) {
-  x -= target[0]; y -= target[1]; z -= target[2];
-  return [
-    x * viewRight.x + y * viewRight.y + z * viewRight.z,
-    x * viewUp.x + y * viewUp.y + z * viewUp.z,
-    distance - (x * homeDirection.x + y * homeDirection.y + z * homeDirection.z),
-  ];
-}
-
 const tangent = Math.tan(THREE.MathUtils.degToRad(fov / 2));
-let minimumDepth = Infinity;
-function angleMargins(fit, aspect) {
-  const { min, max } = angleBounds;
-  const margins = { lateral: 1, top: 1, bottom: 1 };
-  for (const x of [min[0], max[0]]) {
-    for (const y of [min[1], max[1]]) for (const z of [min[2], max[2]]) {
-      const [right, up, depth] = projection(x, y, z, fit);
-      minimumDepth = Math.min(minimumDepth, depth);
-      margins.lateral = Math.min(margins.lateral, (1 - Math.abs(right / depth / tangent / aspect)) / 2);
-      margins.top = Math.min(margins.top, (1 - up / depth / tangent) / 2);
-      margins.bottom = Math.min(margins.bottom, (1 + up / depth / tangent) / 2);
-    }
-  }
-  return margins;
-}
-
 const profiles = anglePhones.map(([width, statusInset]) => {
   const height = angleStage - navigation - statusInset;
   const aspect = width / height;
-  const fit = fitHubAngle(angleBounds, { direction: homeDirection, fov, aspect });
-  const { min, max } = angleBounds;
-  assert.deepEqual(fit.target, min.map((value, axis) => (value + max[axis]) / 2), 'fixed center is the full-cycle box midpoint');
-  const margins = angleMargins(fit, aspect);
-  const minimumMargin = Math.min(...Object.values(margins));
-  assert.ok(minimumMargin >= .04 - 1e-10, 'box clears 4% at the home direction at width ' + width);
-  assert.ok(minimumMargin < .0401, 'no unnecessary extra zoom reserve at width ' + width);
-  return { width, statusInset, height, fit, margins };
+  const fit = resolveHubAngleCamera(angleBounds, { referenceDirection, fov, aspect });
+  const previous = fitHubAngle(angleBounds, { direction: referenceDirection, fov, aspect });
+  assert.deepEqual(fit.target, previous.target, 'the motion center stays fixed');
+  assert.equal(fit.direction.y, 0, 'the viewing axis stays parallel to the ground');
+  assert.ok(Math.abs(fit.distance * 1.5 - previous.distance) < 1e-10, 'distance is reduced to two thirds');
+  return { width, statusInset, height, fit, aspect, previousDistance: previous.distance };
 });
 const angleFits = Object.fromEntries(angleActors.map(id =>
-  [id, profiles.map(profile => ({ ...profile, phases: {} }))]));
+  [id, profiles.map(profile => ({
+    ...profile, phases: {}, minimumMargins: { left: 1, right: 1, top: 1, bottom: 1 },
+    clippedSamples: 0,
+  }))]));
+const { direction: level, target } = profiles[0].fit;
+const emptyProjection = () => ({ left: Infinity, right: -Infinity, bottom: Infinity, top: -Infinity });
+let minimumDepth = Infinity, anglePoseSamples = 0;
+
+function measure(vertices, ranges) {
+  const accept = (x, y, z) => {
+    x -= target[0]; y -= target[1]; z -= target[2];
+    const across = (x * level.z - z * level.x) / tangent;
+    const up = y / tangent;
+    const towardCamera = x * level.x + z * level.z;
+    for (let i = 0; i < profiles.length; i++) {
+      const { fit, aspect } = profiles[i];
+      const depth = fit.distance - towardCamera;
+      minimumDepth = Math.min(minimumDepth, depth);
+      const horizontal = across / (depth * aspect), vertical = up / depth;
+      const range = ranges[i];
+      range.left = Math.min(range.left, horizontal);
+      range.right = Math.max(range.right, horizontal);
+      range.bottom = Math.min(range.bottom, vertical);
+      range.top = Math.max(range.top, vertical);
+    }
+  };
+  for (const visit of vertices) visit(accept);
+}
 
 for await (const { ids, motion, base, accessories } of angleSurfaces()) {
-  for (const { phase, time } of phaseTicks) {
+  const anchors = new Map(phaseTicks.map(({ phase, time }) => [time, phase]));
+  const times = [...new Set([
+    ...anchors.keys(),
+    ...Array.from({ length: 145 }, (_, i) => motion.clock.period * i / 144),
+  ])].sort((a, b) => a - b);
+  for (const time of times) {
     motion.update(time);
+    const shared = profiles.map(emptyProjection);
+    measure(base, shared);
     for (const id of ids) {
-      for (const { width, height, fit, phases } of angleFits[id]) {
-        let left = Infinity, right = -Infinity, bottom = Infinity, top = -Infinity;
-        function accept(x, y, z) {
-          const [across, up, depth] = projection(x, y, z, fit);
-          const horizontal = across / depth / tangent;
-          const vertical = up / depth / tangent;
-          left = Math.min(left, horizontal);
-          right = Math.max(right, horizontal);
-          bottom = Math.min(bottom, vertical);
-          top = Math.max(top, vertical);
-        }
-        for (const visit of base) visit(accept);
-        for (const visit of accessories[id]) visit(accept);
-        const widthDp = (right - left) * height / 2;
+      const ranges = shared.map(range => ({ ...range }));
+      measure(accessories[id], ranges);
+      anglePoseSamples++;
+      for (const [i, { left, right, bottom, top }] of ranges.entries()) {
+        const profile = angleFits[id][i];
+        const { width, height, phases, minimumMargins } = profile;
+        const margins = { left: (1 + left) / 2, right: (1 - right) / 2, top: (1 - top) / 2, bottom: (1 + bottom) / 2 };
+        for (const side of Object.keys(margins)) minimumMargins[side] = Math.min(minimumMargins[side], margins[side]);
+        if (Math.min(...Object.values(margins)) < 0) profile.clippedSamples++;
+        const phase = anchors.get(time);
+        if (phase === undefined) continue;
+        const widthDp = (right - left) * width / 2;
         const heightDp = (top - bottom) * height / 2;
         const horizontal = widthDp >= heightDp;
         phases[phase] = {
           widthDp: round(widthDp), heightDp: round(heightDp),
           longSide: horizontal ? 'width' : 'height',
           longSideRatio: round(horizontal ? widthDp / width : heightDp / angleStage),
+          margins: Object.fromEntries(Object.entries(margins).map(([side, value]) => [side, round(value)])),
         };
       }
     }
   }
 }
-
-const minimumMargins = Object.fromEntries(['lateral', 'top', 'bottom'].map(side =>
-  [side, round(Math.min(...profiles.map(profile => profile.margins[side])))]));
-console.log(JSON.stringify({ angleCornerProjections: anglePhones.length * 8,
-  anglePoseSamples: measured.samples, actors: angleActors.length,
+assert.ok(minimumDepth > camera.near, 'the model stays in front of the near plane');
+const allProfiles = Object.values(angleFits).flat();
+const minimumMargins = Object.fromEntries(['left', 'right', 'top', 'bottom'].map(side =>
+  [side, round(Math.min(...allProfiles.map(profile => profile.minimumMargins[side])))]));
+console.log(JSON.stringify({ anglePoseSamples, sourceBoundsPoseSamples: measured.samples, actors: angleActors.length,
   angleStage, navigation, angleViewportProfiles: anglePhones, anchorCount: phaseTicks.length,
-  fixedCamera: { fov, direction: homeDirection.toArray(), center: profiles[0].fit.target },
+  fixedCamera: { fov, direction: level.toArray(), center: target },
   minimumAngleMargins: minimumMargins,
   minCameraDepthM: round(minimumDepth), angleFits, orbitFrames, minOrbitClearanceM: round(minOrbitClearance),
   minimumOrbitSideMargin: round(minimumOrbitSideMargin),
