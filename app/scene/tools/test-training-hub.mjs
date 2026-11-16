@@ -26,40 +26,47 @@ function assertFixedAngle(camera, distance = angleCamera.distance) {
   assert.ok(Math.abs(Math.hypot(position.x - angleCamera.target[0], position.z - angleCamera.target[2]) - distance) < 1e-10);
 }
 
-test('the full motion box fits the 4% margin throughout the yaw arc', () => {
-  const center = new THREE.Vector3(...angleCamera.target);
-  const bounds = new THREE.Box3().setFromCenterAndSize(center, new THREE.Vector3(2.4, 1.3, 1.4));
-  const corners = [bounds.min.x, bounds.max.x].flatMap(x => [bounds.min.y, bounds.max.y]
-    .flatMap(y => [bounds.min.z, bounds.max.z].map(z => new THREE.Vector3(x, y, z))));
-  const limits = { minimumYaw: -.48, maximumYaw: .48, fov: 32 };
-  const fit = aspect => {
-    const { target, distance } = fitHubAngle({
-      min: bounds.min.toArray(), max: bounds.max.toArray(),
-    }, { ...limits, aspect });
-    assert.ok(new THREE.Vector3(...target).distanceTo(center) < 1e-10);
-    const camera = new THREE.PerspectiveCamera(limits.fov, aspect, .02, 40);
-    const projected = new THREE.Vector3();
-    let maxProjection = 0, worstYaw = limits.minimumYaw;
-    for (let i = 0; i <= 1000; i++) {
-      const yaw = THREE.MathUtils.lerp(limits.minimumYaw, limits.maximumYaw, i / 1000);
-      camera.position.set(Math.sin(yaw) * distance, 0, Math.cos(yaw) * distance).add(center);
-      camera.lookAt(center);
-      camera.updateMatrixWorld();
-      for (const corner of corners) {
-        projected.copy(corner).project(camera);
-        assert.ok(projected.z > -1 && projected.z < 1);
-        const marginLimit = Math.max(Math.abs(projected.x), Math.abs(projected.y));
-        if (marginLimit > maxProjection) {
-          maxProjection = marginLimit;
-          worstYaw = yaw;
-        }
-      }
-    }
-    assert.ok(maxProjection <= .920001 && maxProjection > .919, `largest projection: ${maxProjection}`);
-    assert.ok(worstYaw > limits.minimumYaw && worstYaw < limits.maximumYaw, `worst yaw: ${worstYaw}`);
+const boxCenter = new THREE.Vector3(...angleCamera.target);
+const box = new THREE.Box3().setFromCenterAndSize(boxCenter, new THREE.Vector3(2.4, 1.3, 1.4));
+const fitBounds = { min: box.min.toArray(), max: box.max.toArray() };
+const boxCorners = [box.min.x, box.max.x].flatMap(x => [box.min.y, box.max.y]
+  .flatMap(y => [box.min.z, box.max.z].map(z => new THREE.Vector3(x, y, z))));
+
+function maxBoxProjection(camera, center, distance, yaw) {
+  camera.position.set(Math.sin(yaw) * distance, 0, Math.cos(yaw) * distance).add(center);
+  camera.lookAt(center);
+  camera.updateMatrixWorld();
+  return Math.max(...boxCorners.map(corner => {
+    const { x, y, z } = corner.clone().project(camera);
+    assert.ok(z > -1 && z < 1);
+    return Math.max(Math.abs(x), Math.abs(y));
+  }));
+}
+
+test('all eight stage yaws fit the motion box at the tightest shared 4% margin', () => {
+  const yaws = [-.22, .34, .22, .48, -.14, -.34, -.24, -.48];
+  const fov = angleCamera.fov;
+  const distances = [320 / 398, 430 / 374, 1600 / 400].map(aspect => {
+    const { target, distance } = fitHubAngle(fitBounds, { yaws, fov, aspect });
+    const center = new THREE.Vector3(...target);
+    assert.ok(center.distanceTo(boxCenter) < 1e-10);
+    const camera = new THREE.PerspectiveCamera(fov, aspect, .02, 40);
+    const projections = yaws.map(yaw => maxBoxProjection(camera, center, distance, yaw));
+    const largest = Math.max(...projections);
+    assert.ok(Math.abs(largest - .92) < 1e-9, `largest projection: ${largest}`);
     return distance;
-  };
-  assert.ok(fit(320 / 398) > fit(430 / 374));
+  });
+  assert.ok(distances[0] > distances[1] && distances[1] > distances[2]);
+});
+
+test('the fit uses phase yaws even when the orbit between two poses has a wider projection', () => {
+  const yaws = [-.48, .15, .12, -.08, .06, -.1, -.14, .48];
+  const fov = angleCamera.fov, aspect = 320 / 398;
+  const { target, distance } = fitHubAngle(fitBounds, { yaws, fov, aspect });
+  const camera = new THREE.PerspectiveCamera(fov, aspect, .02, 40);
+  const center = new THREE.Vector3(...target);
+  assert.ok(Math.abs(Math.max(...yaws.map(yaw => maxBoxProjection(camera, center, distance, yaw))) - .92) < 1e-9);
+  assert.ok(maxBoxProjection(camera, center, distance, -.32) > .925);
 });
 
 test('phase retargeting preserves the current pose and camera and any latest destination wins', () => {

@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 /// The Hub's animation camera orbits one fixed target on a horizontal circle.
 abstract final class SceneHubCamera {
   static const angleFov = 32.0;
@@ -13,8 +11,7 @@ abstract final class SceneHubCamera {
     15: -.24,
     16: -.48,
   };
-  static final _minimumYaw = angleYaw.values.reduce(math.min);
-  static final _maximumYaw = angleYaw.values.reduce(math.max);
+  static final _angleYaws = List<double>.unmodifiable(angleYaw.values);
 
   static Map<String, Object?>? angle(int phase) {
     final yaw = angleYaw[phase];
@@ -22,8 +19,7 @@ abstract final class SceneHubCamera {
         ? null
         : {
             'yaw': yaw,
-            'minimumYaw': _minimumYaw,
-            'maximumYaw': _maximumYaw,
+            'yaws': _angleYaws,
             'fov': angleFov,
           };
   }

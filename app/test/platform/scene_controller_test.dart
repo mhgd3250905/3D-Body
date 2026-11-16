@@ -51,8 +51,7 @@ void main() {
       expect(selected['angleCamera'], {
         'yaw': -.24,
         'fov': 32,
-        'minimumYaw': -.48,
-        'maximumYaw': .48,
+        'yaws': [-.22, .34, .22, .48, -.14, -.34, -.24, -.48],
       });
 
       sent.clear();

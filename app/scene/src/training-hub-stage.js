@@ -174,7 +174,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     const height = sceneHeight > 0
       ? sceneHeight + (inMuscleMode ? angleStageHeight - standingStageHeight : 0)
       : angleStageHeight - 54;
-    const key = `${width}:${height}:${raw.fov}:${raw.minimumYaw}:${raw.maximumYaw}`;
+    const key = `${width}:${height}:${raw.fov}:${raw.yaws}`;
     if (key !== angleFitKey) {
       angleFit = fitHubAngle(angleBounds, { ...raw, aspect: width / height });
       angleFitKey = key;
@@ -185,10 +185,11 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
     const raw = input.angleCamera;
-    if (!raw || ![raw.yaw, raw.fov, raw.minimumYaw, raw.maximumYaw].every(Number.isFinite) ||
-        raw.fov < 10 || raw.fov > 70 || raw.yaw < raw.minimumYaw || raw.yaw > raw.maximumYaw ||
-        raw.maximumYaw - raw.minimumYaw > Math.PI) return false;
-    if (lastInput && ['fov', 'minimumYaw', 'maximumYaw'].some(key => lastInput.angleCamera[key] !== raw[key])) return false;
+    if (!raw || !Number.isFinite(raw.fov) || raw.fov < 10 || raw.fov > 70 ||
+        !Array.isArray(raw.yaws) || raw.yaws.length !== angleSources.size ||
+        !raw.yaws.every(Number.isFinite) || !raw.yaws.includes(raw.yaw)) return false;
+    const previous = lastInput?.angleCamera;
+    if (previous && (previous.fov !== raw.fov || previous.yaws.some((yaw, index) => yaw !== raw.yaws[index]))) return false;
     const fit = currentAngleFit(raw, lastInput?.showMuscles ?? false);
     const angleCamera = { ...fit, yaw: raw.yaw, fov: raw.fov };
     const muscleCamera = currentMuscleShot(input);

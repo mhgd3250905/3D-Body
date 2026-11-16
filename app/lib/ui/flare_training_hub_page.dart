@@ -387,7 +387,8 @@ class _HubStage extends StatelessWidget {
             Positioned(
               left: 0,
               right: 0,
-              top: 392,
+              top: muscles ? 392 : null,
+              bottom: muscles ? null : height * .06,
               child: Center(
                 child: Transform.scale(
                   scaleX: 240 / 28,

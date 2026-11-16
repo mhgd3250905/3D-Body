@@ -316,7 +316,7 @@ for (const [id, group] of Object.entries(GROUPS)) {
   }
 }
 
-const angleFixture = fitHubAngle(angleBounds, { minimumYaw, maximumYaw, fov, aspect: 390 / 374 });
+const angleFixture = fitHubAngle(angleBounds, { yaws, fov, aspect: 390 / 374 });
 const base = { phaseSource: 9, phaseTime: 0, angleCamera: { yaw: angles[9], ...angleFixture, fov },
   muscleId: 'deltoids', muscleCamera: standingShot(standing.deltoids), showMuscles: true };
 let orbitFrames = 0, minOrbitClearance = Infinity, minimumOrbitSideMargin = 1;
@@ -345,8 +345,9 @@ for (const [fromId, from] of Object.entries(standing)) for (const [toId, to] of 
   }
 }
 
-const views = Array.from({ length: 721 }, (_, i) => THREE.MathUtils.lerp(minimumYaw, maximumYaw, i / 720))
-  .concat(yaws).map(yaw => ({ cos: Math.cos(yaw), sin: Math.sin(yaw) }));
+const viewFor = yaw => ({ cos: Math.cos(yaw), sin: Math.sin(yaw) });
+const anchorViews = yaws.map(viewFor);
+const orbitViews = Array.from({ length: 721 }, (_, i) => viewFor(THREE.MathUtils.lerp(minimumYaw, maximumYaw, i / 720)));
 const anglePhones = [...phones, [372, 0], [390, 0]];
 const round = value => Number(value.toFixed(4));
 const measured = await measureAngleActors();
@@ -358,65 +359,78 @@ function projection(x, y, z, { cos, sin }, { target, distance }) {
 }
 
 const tangent = Math.tan(THREE.MathUtils.degToRad(fov / 2));
-let frames = 0, minimumDepth = Infinity, angleSideMargin = 1, angleTopMargin = 1, angleBottomMargin = 1;
+let minimumDepth = Infinity;
+function angleMargins(views, fit, aspect) {
+  const { min, max } = angleBounds;
+  const margins = { lateral: 1, top: 1, bottom: 1 };
+  for (const view of views) for (const x of [min[0], max[0]]) {
+    for (const y of [min[1], max[1]]) for (const z of [min[2], max[2]]) {
+      const [right, up, depth] = projection(x, y, z, view, fit);
+      minimumDepth = Math.min(minimumDepth, depth);
+      margins.lateral = Math.min(margins.lateral, (1 - Math.abs(right / depth / tangent / aspect)) / 2);
+      margins.top = Math.min(margins.top, (1 - up / depth / tangent) / 2);
+      margins.bottom = Math.min(margins.bottom, (1 + up / depth / tangent) / 2);
+    }
+  }
+  return margins;
+}
+
 const profiles = anglePhones.map(([width, statusInset]) => {
   const height = angleStage - navigation - statusInset;
   const aspect = width / height;
-  const fit = fitHubAngle(angleBounds, { minimumYaw, maximumYaw, fov, aspect });
+  const fit = fitHubAngle(angleBounds, { yaws, fov, aspect });
   const { min, max } = angleBounds;
   assert.deepEqual(fit.target, min.map((value, axis) => (value + max[axis]) / 2), 'fixed center is the full-cycle box midpoint');
-  let minimumMargin = 1;
-  for (const view of views) {
-    for (const x of [min[0], max[0]]) {
-      for (const y of [min[1], max[1]]) {
-        for (const z of [min[2], max[2]]) {
-          const [right, up, depth] = projection(x, y, z, view, fit);
-          minimumDepth = Math.min(minimumDepth, depth);
-          const lateral = (1 - Math.abs(right / depth / tangent / aspect)) / 2;
-          const top = (1 - up / depth / tangent) / 2;
-          const bottom = (1 + up / depth / tangent) / 2;
-          angleSideMargin = Math.min(angleSideMargin, lateral);
-          angleTopMargin = Math.min(angleTopMargin, top);
-          angleBottomMargin = Math.min(angleBottomMargin, bottom);
-          minimumMargin = Math.min(minimumMargin, lateral, top, bottom);
-          frames++;
-        }
-      }
-    }
-  }
-  assert.ok(minimumMargin >= .04 - 1e-10, 'box clears 4% on the full yaw arc at width ' + width);
+  const anchorMargins = angleMargins(anchorViews, fit, aspect);
+  const sampledOrbitMargins = angleMargins(orbitViews, fit, aspect);
+  const minimumMargin = Math.min(...Object.values(anchorMargins));
+  assert.ok(minimumMargin >= .04 - 1e-10, 'box clears 4% at every phase yaw at width ' + width);
   assert.ok(minimumMargin < .0401, 'no unnecessary extra zoom reserve at width ' + width);
-  return { width, statusInset, height, fit };
+  assert.ok(Math.min(...Object.values(sampledOrbitMargins)) >= 0, 'box stays in-frame while rotating at width ' + width);
+  return { width, statusInset, height, fit, anchorMargins, sampledOrbitMargins };
 });
 const angleFits = Object.fromEntries(angleActors.map(id =>
-  [id, profiles.map(profile => ({ ...profile, phaseHeights: {} }))]));
+  [id, profiles.map(profile => ({ ...profile, phases: {} }))]));
 
 for await (const { ids, motion, base, accessories } of angleSurfaces()) {
   for (const { phase, time } of phaseTicks) {
     motion.update(time);
     const yaw = angles[phase], cos = Math.cos(yaw), sin = Math.sin(yaw);
     for (const id of ids) {
-      for (const { height, fit, phaseHeights } of angleFits[id]) {
-        let bottom = Infinity, top = -Infinity;
+      for (const { width, height, fit, phases } of angleFits[id]) {
+        let left = Infinity, right = -Infinity, bottom = Infinity, top = -Infinity;
         const [cx, cy, cz] = fit.target;
         function accept(x, y, z) {
           const depth = fit.distance - (x - cx) * sin - (z - cz) * cos;
-          const projected = (y - cy) / depth / tangent;
-          bottom = Math.min(bottom, projected);
-          top = Math.max(top, projected);
+          const horizontal = ((x - cx) * cos - (z - cz) * sin) / depth / tangent;
+          const vertical = (y - cy) / depth / tangent;
+          left = Math.min(left, horizontal);
+          right = Math.max(right, horizontal);
+          bottom = Math.min(bottom, vertical);
+          top = Math.max(top, vertical);
         }
         for (const visit of base) visit(accept);
         for (const visit of accessories[id]) visit(accept);
-        phaseHeights[phase] = round((top - bottom) * height / (2 * angleStage));
+        const widthDp = (right - left) * height / 2;
+        const heightDp = (top - bottom) * height / 2;
+        const horizontal = widthDp >= heightDp;
+        phases[phase] = {
+          widthDp: round(widthDp), heightDp: round(heightDp),
+          longSide: horizontal ? 'width' : 'height',
+          longSideRatio: round(horizontal ? widthDp / width : heightDp / angleStage),
+        };
       }
     }
   }
 }
 
-console.log(JSON.stringify({ angleCornerProjections: frames, anglePoseSamples: measured.samples, actors: angleActors.length,
+const minimumMargins = field => Object.fromEntries(['lateral', 'top', 'bottom'].map(side =>
+  [side, round(Math.min(...profiles.map(profile => profile[field][side])))]));
+console.log(JSON.stringify({ angleAnchorCornerProjections: anglePhones.length * anchorViews.length * 8,
+  angleOrbitCornerProjections: anglePhones.length * orbitViews.length * 8, anglePoseSamples: measured.samples, actors: angleActors.length,
   angleStage, navigation, angleViewportProfiles: anglePhones, anchorCount: phaseTicks.length,
   fixedCamera: { fov, yawRange: [minimumYaw, maximumYaw], center: profiles[0].fit.target },
-  minimumAngleMargins: { lateral: round(angleSideMargin), top: round(angleTopMargin), bottom: round(angleBottomMargin) },
+  minimumAngleMargins: minimumMargins('anchorMargins'), minimumSampledAngleOrbitMargins: minimumMargins('sampledOrbitMargins'),
   minCameraDepthM: round(minimumDepth), angleFits, orbitFrames, minOrbitClearanceM: round(minOrbitClearance),
   minimumOrbitSideMargin: round(minimumOrbitSideMargin),
   minimumStandingSideMargin: round(minimumSideMargin), standingStageHeightRange: [round(minimumHeight), round(maximumHeight)],
