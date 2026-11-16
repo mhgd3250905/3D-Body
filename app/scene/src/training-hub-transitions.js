@@ -19,9 +19,10 @@ function readCamera(raw) {
 }
 
 function readAngleCamera(raw) {
-  if (!raw || ![raw.yaw, raw.distance, raw.targetHeight, raw.fov].every(Number.isFinite) ||
+  if (!raw || ![raw.yaw, raw.distance, raw.fov].every(Number.isFinite) ||
+    !Array.isArray(raw.target) || raw.target.length !== 3 || !raw.target.every(Number.isFinite) ||
     raw.distance <= .1 || raw.fov < 10 || raw.fov > 70) return null;
-  return { target: new THREE.Vector3(0, raw.targetHeight, 0),
+  return { target: new THREE.Vector3(...raw.target),
     orbit: new THREE.Spherical(raw.distance, Math.PI / 2, raw.yaw), fov: raw.fov };
 }
 
@@ -41,12 +42,6 @@ function mixCamera(from, to, t) {
     fov: lerp(from.fov, to.fov, t),
     cutoff: lerp(from.cutoff, to.cutoff, t),
   };
-}
-
-function mixAngle(from, to, t) {
-  const orbit = from.orbit.clone();
-  orbit.theta += around(orbit.theta, to.orbit.theta, Math.PI * 2) * t;
-  return { ...from, orbit };
 }
 
 function sameCamera(a, b) {
@@ -102,7 +97,8 @@ export function createHubTransitions(period) {
     if (!tracks) {
       tracks = {
         pose: makeTrack(time, (from, to, t) => THREE.MathUtils.euclideanModulo(from + around(from, to, period) * t, period), hubDuration.pose),
-        angle: makeTrack(angle, mixAngle, hubDuration.camera),
+        angle: makeTrack(angle.orbit.theta,
+          (from, to, t) => from + around(from, to, Math.PI * 2) * t, hubDuration.camera),
         muscle: makeTrack(muscle, mixCamera, hubDuration.camera),
         groups: makeTrack(groups, mixGroups, hubDuration.highlight),
         mode: makeTrack(mode, lerp, hubDuration.mode),
@@ -115,7 +111,7 @@ export function createHubTransitions(period) {
         if (!scrubbing) tracks.angle.set(tracks.angle.value, now, false);
       } else {
         if (scrubbing || config.time !== time) tracks.pose.set(time, now, animate && tracks.pose.value !== time);
-        if (scrubbing || !sameCamera(config.angle, angle)) tracks.angle.set(angle, now, animate);
+        if (scrubbing || config.angle.orbit.theta !== angle.orbit.theta) tracks.angle.set(angle.orbit.theta, now, animate);
       }
       if (!sameCamera(config.muscle, muscle)) tracks.muscle.set(muscle, now, animate);
       if (config.muscleId !== next.muscleId) tracks.groups.set(groups, now, animate);
@@ -135,11 +131,18 @@ export function createHubTransitions(period) {
   return {
     configure,
     sample,
+    // A layout resize reframes the fixed orbit without retargeting its yaw.
+    resizeAngle(distance) {
+      if (config && Number.isFinite(distance) && distance > .1) config.angle.orbit.radius = distance;
+    },
     get moving() { return !!tracks && Object.values(tracks).some(track => track.moving); },
     get frame() {
-      return tracks && {
+      if (!tracks) return null;
+      const orbit = config.angle.orbit.clone();
+      orbit.theta = tracks.angle.value;
+      return {
         time: tracks.pose.value,
-        angle: tracks.angle.value,
+        angle: { ...config.angle, orbit },
         muscle: tracks.muscle.value,
         groups: tracks.groups.value,
         angleMoving: tracks.pose.moving || tracks.angle.moving,

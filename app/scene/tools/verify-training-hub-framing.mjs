@@ -9,6 +9,7 @@ import { characterFromLocation, characterAsset, applyCharacter } from '../src/ch
 import { GROUPS, phaseAt, phaseTicks } from '../src/phase.js';
 import { muscleAt, resolveGroup } from '../src/legacy/muscle-map.js';
 import { fitHubMuscle, getHubMuscleFrame, hubMuscleCutoff, resolveHubMuscleCamera } from '../src/training-hub-stage.js';
+import { fitHubAngle } from '../src/training-hub-angle-fit.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
 
 globalThis.ProgressEvent ??= class { constructor(type, fields) { Object.assign(this, { type }, fields); } };
@@ -20,7 +21,7 @@ const { frameCount } = readJson('../src/v42-r17-phases.json');
 const catalog = readJson('../../assets/data/phase-muscles.json');
 const preset = fs.readFileSync(fixture('../../lib/platform/scene/scene_hub_camera.dart'), 'utf8');
 const number = key => Number(preset.match(new RegExp(key + ' = (-?[.\\d]+);'))[1]);
-const distance = number('angleDistance'), targetHeight = number('angleTargetHeight'), fov = number('angleFov');
+const fov = number('angleFov');
 const angles = Object.fromEntries([...preset.matchAll(/^\s+(\d+): (-?[.\d]+),/gm)].map(([, key, yaw]) => [key, Number(yaw)]));
 const standingHeight = number('standingHeight'), standingDistance = number('standingDistance');
 const standing = Object.fromEntries([...preset.matchAll(/'([^']+)':\s*_MuscleFocus\(([^)]+)\),/g)].map(([, group, values]) => {
@@ -32,7 +33,6 @@ function standingShot({ side, center, region }, focus = false) {
   return { position: [0, y, side * standingDistance], target: [0, y, 0], fov: 26, overviewHeight: standingHeight,
     ...(focus ? { region } : {}) };
 }
-const angle = yaw => ({ yaw, distance, targetHeight, fov });
 assert.deepEqual(Object.keys(angles), phaseTicks.map(({ phase }) => String(phase)));
 assert.deepEqual(Object.keys(standing), Object.keys(GROUPS));
 assert.ok(frameCount > 500);
@@ -56,6 +56,159 @@ const readModel = async path => {
   return new GLTFLoader().setMeshoptDecoder(MeshoptDecoder)
     .parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 };
+
+const angleActors = ['original', 'training', 'shadow', 'chrome', 'street', 'robot', 'cyber'];
+const angleBoundsFile = fixture('../src/training-hub-angle-bounds.json');
+
+// Precompute the bind-space source points and pack each bone's affine
+// transform once per mesh per sample. This gives the same weighted skinned
+// points as getVertexPosition without doing matrix products for every vertex.
+function prepareSurface(mesh) {
+  const { position, skinIndex, skinWeight } = mesh.geometry.attributes;
+  const source = new Float64Array(position.count * 3);
+  const weights = new Float64Array(position.count * 4);
+  const indices = new Uint32Array(position.count * 4);
+  const point = new THREE.Vector3();
+  const skin = mesh.isSkinnedMesh;
+  assert.ok(!(mesh.geometry.morphAttributes.position?.length), mesh.name + ' has no position morph targets');
+  for (let vertex = 0; vertex < position.count; vertex++) {
+    point.fromBufferAttribute(position, vertex);
+    if (skin) point.applyMatrix4(mesh.bindMatrix);
+    point.toArray(source, vertex * 3);
+    if (!skin) continue;
+    for (let k = 0; k < 4; k++) {
+      weights[vertex * 4 + k] = skinWeight.getComponent(vertex, k);
+      indices[vertex * 4 + k] = skinIndex.getComponent(vertex, k) * 12;
+    }
+  }
+  const toWorld = new THREE.Matrix4();
+  const boneMatrix = new THREE.Matrix4();
+  const transform = new Float64Array(skin ? mesh.skeleton.bones.length * 12 : 12);
+  function pack(matrix, offset) {
+    const e = matrix.elements;
+    for (let axis = 0; axis < 3; axis++) {
+      transform[offset++] = e[axis];
+      transform[offset++] = e[4 + axis];
+      transform[offset++] = e[8 + axis];
+      transform[offset++] = e[12 + axis];
+    }
+  }
+  return function visit(accept) {
+    if (skin) {
+      toWorld.multiplyMatrices(mesh.matrixWorld, mesh.bindMatrixInverse);
+      for (let bone = 0; bone < mesh.skeleton.bones.length; bone++) {
+        boneMatrix.multiplyMatrices(mesh.skeleton.bones[bone].matrixWorld, mesh.skeleton.boneInverses[bone]);
+        boneMatrix.premultiply(toWorld);
+        pack(boneMatrix, bone * 12);
+      }
+    } else pack(mesh.matrixWorld, 0);
+    const n = skin ? 4 : 1;
+    for (let i = 0, base = 0; i < source.length; i += 3, base += 4) {
+      const x = source[i], y = source[i + 1], z = source[i + 2];
+      let px = 0, py = 0, pz = 0;
+      for (let k = 0; k < n; k++) {
+        const w = skin ? weights[base + k] : 1;
+        if (w === 0) continue;
+        const b = indices[base + k];
+        px += w * (transform[b] * x + transform[b + 1] * y + transform[b + 2] * z + transform[b + 3]);
+        py += w * (transform[b + 4] * x + transform[b + 5] * y + transform[b + 6] * z + transform[b + 7]);
+        pz += w * (transform[b + 8] * x + transform[b + 9] * y + transform[b + 10] * z + transform[b + 11]);
+      }
+      accept(px, py, pz);
+    }
+  };
+}
+
+async function* angleSurfaces() {
+  for (const ids of [['original', 'street'], ['training', 'shadow', 'chrome', 'robot', 'cyber']]) {
+    const modelFor = id => id === 'training' ? characterFromLocation('?body=training') : characterFromLocation('?character=' + id);
+    const gltf = await readModel(characterAsset(modelFor(ids[0])));
+    const known = new Set();
+    function collectSurface() {
+      const meshes = [];
+      gltf.scene.traverseVisible(mesh => {
+        if (!mesh.isMesh || known.has(mesh)) return;
+        known.add(mesh);
+        meshes.push(mesh);
+      });
+      return meshes;
+    }
+    const baseMeshes = collectSurface();
+    const base = baseMeshes.map(prepareSurface);
+    const accessories = Object.fromEntries(ids.map(id => {
+      applyCharacter(gltf.scene, modelFor(id));
+      return [id, collectSurface().map(prepareSurface)];
+    }));
+    const motion = createBakedMotion(gltf, rig);
+    const clip = gltf.animations.find(clip => clip.name === 'flare_v42_candidate_loop');
+    try {
+      yield { ids, motion, clip, baseMeshes, base, accessories };
+    } finally {
+      motion.dispose();
+    }
+  }
+}
+
+async function measureAngleActors() {
+  const boxes = {};
+  let samples = 0;
+  for await (const { ids, motion, clip, baseMeshes, base, accessories } of angleSurfaces()) {
+    const keys = [...new Set(clip.tracks.flatMap(track => [...track.times]))].sort((a, b) => a - b);
+    const times = keys.flatMap((time, i) => i + 1 === keys.length ? [time] :
+      [0, .25, .5, .75].map(fraction => THREE.MathUtils.lerp(time, keys[i + 1], fraction)));
+    for (const id of ids) boxes[id] = new THREE.Box3();
+    const box = new THREE.Box3(), vertex = new THREE.Vector3();
+    const grow = (x, y, z) => box.expandByPoint(vertex.set(x, y, z));
+    for (const time of times) {
+      motion.update(motion.clock.toSequence(time));
+      box.makeEmpty();
+      for (const visit of base) visit(grow);
+      for (const id of ids) boxes[id].union(box);
+      for (const id of ids) {
+        box.makeEmpty();
+        for (const visit of accessories[id]) visit(grow);
+        boxes[id].union(box);
+      }
+      samples += ids.length;
+    }
+    // Cross-check the packed evaluator against the scene's own skin API at
+    // each stage anchor before using these samples to verify the camera.
+    for (const { time } of phaseTicks) {
+      motion.update(time);
+      for (const [index, mesh] of baseMeshes.entries()) {
+        let vertexIndex = 0;
+        const exact = new THREE.Vector3();
+        const vertexPoint = new THREE.Vector3();
+        base[index]((x, y, z) => {
+          const vertex = vertexIndex++;
+          if (vertex % 307 !== 0) return;
+          mesh.getVertexPosition(vertex, exact).applyMatrix4(mesh.matrixWorld);
+          assert.ok(exact.distanceToSquared(vertexPoint.set(x, y, z)) < 1e-10, mesh.name + ' agrees with Three.js world skinning');
+        });
+      }
+    }
+  }
+  // One fixed pivot serves all costumes. Round each face outward to 1mm
+  // and leave 1mm more between quarter-key samples and for CPU/GPU rounding.
+  const union = new THREE.Box3();
+  for (const box of Object.values(boxes)) union.union(box);
+  const bounds = {
+    min: union.min.toArray().map(value => (Math.floor(value * 1000) - 1) / 1000),
+    max: union.max.toArray().map(value => (Math.ceil(value * 1000) + 1) / 1000),
+  };
+  return { bounds, samples };
+}
+
+if (process.argv.includes('--write-angle-bounds')) {
+  const { bounds, samples } = await measureAngleActors();
+  fs.writeFileSync(angleBoundsFile, JSON.stringify(bounds, null, 2) + '\n');
+  console.log(JSON.stringify({ bounds, samples }, null, 2));
+  process.exit(0);
+}
+
+const angleBounds = JSON.parse(fs.readFileSync(angleBoundsFile, 'utf8'));
+const yaws = Object.values(angles);
+const minimumYaw = Math.min(...yaws), maximumYaw = Math.max(...yaws);
 const mannequin = await readModel('./anatomy/mannequin-reference.meshopt.glb.gz');
 const bounds = new THREE.Box3().setFromObject(mannequin.scene);
 const surfaces = { front: new Map(), back: new Map() };
@@ -163,7 +316,8 @@ for (const [id, group] of Object.entries(GROUPS)) {
   }
 }
 
-const base = { phaseSource: 9, phaseTime: 0, angleCamera: angle(angles[9]),
+const angleFixture = fitHubAngle(angleBounds, { minimumYaw, maximumYaw, fov, aspect: 390 / 374 });
+const base = { phaseSource: 9, phaseTime: 0, angleCamera: { yaw: angles[9], ...angleFixture, fov },
   muscleId: 'deltoids', muscleCamera: standingShot(standing.deltoids), showMuscles: true };
 let orbitFrames = 0, minOrbitClearance = Infinity, minimumOrbitSideMargin = 1;
 for (const [fromId, from] of Object.entries(standing)) for (const [toId, to] of Object.entries(standing)) {
@@ -191,56 +345,79 @@ for (const [fromId, from] of Object.entries(standing)) for (const [toId, to] of 
   }
 }
 
-const yaws = Object.values(angles);
-const panRange = { start: Math.min(...yaws), end: Math.max(...yaws) };
-const views = Array.from({ length: 51 }, (_, i) => THREE.MathUtils.lerp(panRange.start, panRange.end, i / 50))
+const views = Array.from({ length: 721 }, (_, i) => THREE.MathUtils.lerp(minimumYaw, maximumYaw, i / 720))
   .concat(yaws).map(yaw => ({ cos: Math.cos(yaw), sin: Math.sin(yaw) }));
+const anglePhones = [...phones, [372, 0], [390, 0]];
+const round = value => Number(value.toFixed(4));
+const measured = await measureAngleActors();
+assert.deepEqual(angleBounds, measured.bounds, 'precomputed angle bounds match current assets and sampled cycle');
+
+function projection(x, y, z, { cos, sin }, { target, distance }) {
+  x -= target[0]; y -= target[1]; z -= target[2];
+  return [x * cos - z * sin, y, distance - x * sin - z * cos];
+}
+
 const tangent = Math.tan(THREE.MathUtils.degToRad(fov / 2));
 let frames = 0, minimumDepth = Infinity, angleSideMargin = 1, angleTopMargin = 1, angleBottomMargin = 1;
-const actors = ['original', 'training', 'shadow', 'chrome', 'street', 'robot', 'cyber'];
-for (const body of actors) {
-  const character = characterFromLocation('?character=' + body);
-  const gltf = await readModel(characterAsset(character)); applyCharacter(gltf.scene, character);
-  const motion = createBakedMotion(gltf, rig);
-  // Scrubbing can leave any stored yaw over any pose, including in-between
-  // frames. Cover the full time/yaw product rather than just phase jumps.
-  for (let frame = 0; frame <= frameCount; frame++) {
-    motion.update(motion.clock.toSequence(motion.clock.duration * frame / frameCount));
-    const envelope = motion.getBodyEnvelope();
-    for (const { cos, sin } of views) {
-      let right = 0, top = 0, bottom = 0;
-      for (const world of envelope) {
-        const depth = distance - world.x * sin - world.z * cos;
-        minimumDepth = Math.min(minimumDepth, depth);
-        right = Math.max(right, Math.abs(world.x * cos - world.z * sin) / (depth * tangent));
-        const y = (world.y - targetHeight) / (depth * tangent);
-        top = Math.max(top, y);
-        bottom = Math.max(bottom, -y);
-      }
-      for (const [width, statusInset] of phones) {
-        const toolbar = navigation + statusInset;
-        const height = angleStage - toolbar;
-        const side = (1 - right * height / width) / 2;
-        const topMargin = (toolbar + (1 - top) * height / 2) / angleStage;
-        const bottomMargin = (1 - bottom) * height / (2 * angleStage);
-        angleSideMargin = Math.min(angleSideMargin, side);
-        angleTopMargin = Math.min(angleTopMargin, topMargin);
-        angleBottomMargin = Math.min(angleBottomMargin, bottomMargin);
-        assert.ok(Math.min(side, topMargin, bottomMargin) >= .1,
-          body + ': incomplete angle at frame ' + frame + ' on width ' + width);
-        assert.ok(top <= .8, 'leaves space between the athlete and the toolbar');
-        frames++;
+const profiles = anglePhones.map(([width, statusInset]) => {
+  const height = angleStage - navigation - statusInset;
+  const aspect = width / height;
+  const fit = fitHubAngle(angleBounds, { minimumYaw, maximumYaw, fov, aspect });
+  const { min, max } = angleBounds;
+  assert.deepEqual(fit.target, min.map((value, axis) => (value + max[axis]) / 2), 'fixed center is the full-cycle box midpoint');
+  let minimumMargin = 1;
+  for (const view of views) {
+    for (const x of [min[0], max[0]]) {
+      for (const y of [min[1], max[1]]) {
+        for (const z of [min[2], max[2]]) {
+          const [right, up, depth] = projection(x, y, z, view, fit);
+          minimumDepth = Math.min(minimumDepth, depth);
+          const lateral = (1 - Math.abs(right / depth / tangent / aspect)) / 2;
+          const top = (1 - up / depth / tangent) / 2;
+          const bottom = (1 + up / depth / tangent) / 2;
+          angleSideMargin = Math.min(angleSideMargin, lateral);
+          angleTopMargin = Math.min(angleTopMargin, top);
+          angleBottomMargin = Math.min(angleBottomMargin, bottom);
+          minimumMargin = Math.min(minimumMargin, lateral, top, bottom);
+          frames++;
+        }
       }
     }
   }
-  motion.dispose();
+  assert.ok(minimumMargin >= .04 - 1e-10, 'box clears 4% on the full yaw arc at width ' + width);
+  assert.ok(minimumMargin < .0401, 'no unnecessary extra zoom reserve at width ' + width);
+  return { width, statusInset, height, fit };
+});
+const angleFits = Object.fromEntries(angleActors.map(id =>
+  [id, profiles.map(profile => ({ ...profile, phaseHeights: {} }))]));
+
+for await (const { ids, motion, base, accessories } of angleSurfaces()) {
+  for (const { phase, time } of phaseTicks) {
+    motion.update(time);
+    const yaw = angles[phase], cos = Math.cos(yaw), sin = Math.sin(yaw);
+    for (const id of ids) {
+      for (const { height, fit, phaseHeights } of angleFits[id]) {
+        let bottom = Infinity, top = -Infinity;
+        const [cx, cy, cz] = fit.target;
+        function accept(x, y, z) {
+          const depth = fit.distance - (x - cx) * sin - (z - cz) * cos;
+          const projected = (y - cy) / depth / tangent;
+          bottom = Math.min(bottom, projected);
+          top = Math.max(top, projected);
+        }
+        for (const visit of base) visit(accept);
+        for (const visit of accessories[id]) visit(accept);
+        phaseHeights[phase] = round((top - bottom) * height / (2 * angleStage));
+      }
+    }
+  }
 }
 
-const round = value => Number(value.toFixed(4));
-console.log(JSON.stringify({ frames, actors: actors.length, angleStage, navigation, phones, anchorCount: phaseTicks.length,
-  fixedCamera: { distance, targetHeight, fov }, minimumAngleMargins: {
-    lateral: round(angleSideMargin), top: round(angleTopMargin), bottom: round(angleBottomMargin),
-  }, minCameraDepthM: round(minimumDepth), orbitFrames, minOrbitClearanceM: round(minOrbitClearance),
+console.log(JSON.stringify({ angleCornerProjections: frames, anglePoseSamples: measured.samples, actors: angleActors.length,
+  angleStage, navigation, angleViewportProfiles: anglePhones, anchorCount: phaseTicks.length,
+  fixedCamera: { fov, yawRange: [minimumYaw, maximumYaw], center: profiles[0].fit.target },
+  minimumAngleMargins: { lateral: round(angleSideMargin), top: round(angleTopMargin), bottom: round(angleBottomMargin) },
+  minCameraDepthM: round(minimumDepth), angleFits, orbitFrames, minOrbitClearanceM: round(minOrbitClearance),
   minimumOrbitSideMargin: round(minimumOrbitSideMargin),
   minimumStandingSideMargin: round(minimumSideMargin), standingStageHeightRange: [round(minimumHeight), round(maximumHeight)],
   standingCoverage, focused: { minimumSideMargin: round(minimumFocusSideMargin), maximumSize: round(maximumFocusSize),

@@ -50,9 +50,9 @@ void main() {
       expect(muscleCamera['region'], [.339, .143, .091]);
       expect(selected['angleCamera'], {
         'yaw': -.24,
-        'distance': 6.48,
-        'targetHeight': .71,
         'fov': 32,
+        'minimumYaw': -.48,
+        'maximumYaw': .48,
       });
 
       sent.clear();

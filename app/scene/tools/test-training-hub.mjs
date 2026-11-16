@@ -3,9 +3,10 @@ import { test } from 'node:test';
 import * as THREE from 'three';
 import { createMuscleUniforms } from '../src/legacy/muscle-map.js';
 import { applyFunctionalSurface } from '../src/muscle-material.js';
+import { fitHubAngle } from '../src/training-hub-angle-fit.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
 
-const angleCamera = { yaw: -.22, distance: 6.48, targetHeight: .71, fov: 32 };
+const angleCamera = { yaw: -.22, distance: 4.75, target: [.14, .76, -.18], fov: 32 };
 const secondAngle = { ...angleCamera, yaw: -.48 };
 const front = { position: [0, 1.155, 3.4], target: [0, 1.155, 0], fov: 26 };
 const back = { ...front, position: [0, 1.155, -3.4] };
@@ -16,22 +17,69 @@ const posterior = { ...muscle, muscleId: 'triceps', muscleCamera: back };
 
 function shot(camera) { return new THREE.Vector3().setFromSpherical(camera.orbit).add(camera.target); }
 
+function assertFixedAngle(camera, distance = angleCamera.distance) {
+  assert.deepEqual(camera.target.toArray(), angleCamera.target);
+  assert.equal(camera.fov, angleCamera.fov);
+  assert.equal(camera.orbit.radius, distance);
+  const position = shot(camera);
+  assert.ok(Math.abs(position.y - angleCamera.target[1]) < 1e-10);
+  assert.ok(Math.abs(Math.hypot(position.x - angleCamera.target[0], position.z - angleCamera.target[2]) - distance) < 1e-10);
+}
+
+test('the full motion box fits the 4% margin throughout the yaw arc', () => {
+  const center = new THREE.Vector3(...angleCamera.target);
+  const bounds = new THREE.Box3().setFromCenterAndSize(center, new THREE.Vector3(2.4, 1.3, 1.4));
+  const corners = [bounds.min.x, bounds.max.x].flatMap(x => [bounds.min.y, bounds.max.y]
+    .flatMap(y => [bounds.min.z, bounds.max.z].map(z => new THREE.Vector3(x, y, z))));
+  const limits = { minimumYaw: -.48, maximumYaw: .48, fov: 32 };
+  const fit = aspect => {
+    const { target, distance } = fitHubAngle({
+      min: bounds.min.toArray(), max: bounds.max.toArray(),
+    }, { ...limits, aspect });
+    assert.ok(new THREE.Vector3(...target).distanceTo(center) < 1e-10);
+    const camera = new THREE.PerspectiveCamera(limits.fov, aspect, .02, 40);
+    const projected = new THREE.Vector3();
+    let maxProjection = 0, worstYaw = limits.minimumYaw;
+    for (let i = 0; i <= 1000; i++) {
+      const yaw = THREE.MathUtils.lerp(limits.minimumYaw, limits.maximumYaw, i / 1000);
+      camera.position.set(Math.sin(yaw) * distance, 0, Math.cos(yaw) * distance).add(center);
+      camera.lookAt(center);
+      camera.updateMatrixWorld();
+      for (const corner of corners) {
+        projected.copy(corner).project(camera);
+        assert.ok(projected.z > -1 && projected.z < 1);
+        const marginLimit = Math.max(Math.abs(projected.x), Math.abs(projected.y));
+        if (marginLimit > maxProjection) {
+          maxProjection = marginLimit;
+          worstYaw = yaw;
+        }
+      }
+    }
+    assert.ok(maxProjection <= .920001 && maxProjection > .919, `largest projection: ${maxProjection}`);
+    assert.ok(worstYaw > limits.minimumYaw && worstYaw < limits.maximumYaw, `worst yaw: ${worstYaw}`);
+    return distance;
+  };
+  assert.ok(fit(320 / 398) > fit(430 / 374));
+});
+
 test('phase retargeting preserves the current pose and camera and any latest destination wins', () => {
   const hub = createHubTransitions(9);
-  hub.configure(base, 0);
-  hub.configure(toward, 50);
+  assert.equal(hub.configure(base, 0), true);
+  assertFixedAngle(hub.frame.angle);
+  assert.equal(hub.configure(toward, 50), true);
   hub.sample(200);
   const before = hub.frame;
   assert.ok(before.time > 0 && before.time < 9);
   assert.ok(before.angle.orbit.theta < angleCamera.yaw && before.angle.orbit.theta > secondAngle.yaw);
-  assert.equal(before.angle.fov, angleCamera.fov);
-  assert.equal(before.angle.orbit.radius, angleCamera.distance);
-  assert.deepEqual(before.angle.target.toArray(), [0, angleCamera.targetHeight, 0]);
+  assertFixedAngle(before.angle);
   hub.configure(base, 200);
   assert.equal(hub.frame.time, before.time);
   assert.ok(shot(hub.frame.angle).distanceTo(shot(before.angle)) < 1e-10);
 
-  for (let i = 0; i < 5; i++) hub.configure(i % 2 === 0 ? toward : base, 210 + 80 * i);
+  for (let i = 0; i < 5; i++) {
+    assert.equal(hub.configure(i % 2 === 0 ? toward : base, 210 + 80 * i), true);
+    assertFixedAngle(hub.frame.angle);
+  }
   hub.sample(530 + 599);
   assert.notEqual(hub.frame.time, 6);
   hub.sample(530 + 600);
@@ -39,7 +87,7 @@ test('phase retargeting preserves the current pose and camera and any latest des
   assert.ok(hub.frame.angle.orbit.theta > secondAngle.yaw);
   hub.sample(530 + 700);
   assert.equal(hub.frame.targetPhase, 15);
-  assert.equal(hub.frame.angle.fov, angleCamera.fov);
+  assertFixedAngle(hub.frame.angle);
   assert.equal(hub.frame.angle.orbit.theta, secondAngle.yaw);
   assert.equal(hub.moving, false);
 });
@@ -52,6 +100,7 @@ test('scrub previews supplied time immediately and holds the actual camera befor
   hub.configure({ ...base, phaseTime: 2.73, scrubbing: true }, 201);
   const realCamera = hub.frame.angle;
   assert.equal(hub.frame.time, 2.73);
+  assertFixedAngle(realCamera);
   hub.sample(300);
   assert.ok(shot(hub.frame.angle).distanceTo(shot(realCamera)) < 1e-10);
   hub.configure({ ...toward, phaseTime: 5.70, scrubbing: true }, 302);
@@ -64,6 +113,28 @@ test('scrub previews supplied time immediately and holds the actual camera befor
   assert.equal(hub.frame.time, 6);
   hub.sample(1050);
   assert.equal(hub.frame.angle.orbit.theta, secondAngle.yaw);
+  assertFixedAngle(hub.frame.angle);
+});
+
+test('resizing refits the orbit without restarting its active phase transition', () => {
+  const hub = createHubTransitions(9);
+  assert.equal(hub.configure(base, 0), true);
+  assert.equal(hub.configure(toward, 50), true);
+  hub.sample(250);
+  const before = hub.frame;
+  const distance = 5.4;
+  hub.resizeAngle(distance);
+  assert.equal(hub.frame.time, before.time);
+  assert.equal(hub.frame.angle.orbit.theta, before.angle.orbit.theta);
+  assertFixedAngle(hub.frame.angle, distance);
+  assert.equal(hub.configure({ ...toward, angleCamera: { ...secondAngle, distance } }, 250), true);
+  hub.sample(650);
+  assert.equal(hub.frame.time, 6);
+  assert.ok(hub.frame.angle.orbit.theta > secondAngle.yaw);
+  assertFixedAngle(hub.frame.angle, distance);
+  hub.sample(750);
+  assert.equal(hub.frame.angle.orbit.theta, secondAngle.yaw);
+  assertFixedAngle(hub.frame.angle, distance);
 });
 
 test('mode crossfade captures opposing live cameras and retains both after reversal', () => {

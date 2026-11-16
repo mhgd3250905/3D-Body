@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { GROUPS, phaseTicks } from './phase.js';
+import angleBounds from './training-hub-angle-bounds.json' with { type: 'json' };
+import { fitHubAngle } from './training-hub-angle-fit.js';
 import { createHubTransitions } from './training-hub-transitions.js';
 
 const noPhase = { items: [] };
@@ -124,6 +126,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   let target = null, angleTarget = null, muscleTarget = null;
   let lastGroup = null;
   let lastInput = null, muscleShot = null, muscleShotKey = '';
+  let angleFit = null, angleFitKey = '';
   const composite = new THREE.Scene();
   const compositeCamera = new THREE.Camera();
   const material = new THREE.RawShaderMaterial({
@@ -165,9 +168,33 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     return muscleShot;
   }
 
+  function currentAngleFit(raw, inMuscleMode) {
+    const width = player.container.clientWidth || 390;
+    const sceneHeight = player.container.clientHeight;
+    const height = sceneHeight > 0
+      ? sceneHeight + (inMuscleMode ? angleStageHeight - standingStageHeight : 0)
+      : angleStageHeight - 54;
+    const key = `${width}:${height}:${raw.fov}:${raw.minimumYaw}:${raw.maximumYaw}`;
+    if (key !== angleFitKey) {
+      angleFit = fitHubAngle(angleBounds, { ...raw, aspect: width / height });
+      angleFitKey = key;
+    }
+    return angleFit;
+  }
+
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
-    if (!transitions.configure({ ...input, muscleCamera: currentMuscleShot(input) }, now)) return false;
+    const raw = input.angleCamera;
+    if (!raw || ![raw.yaw, raw.fov, raw.minimumYaw, raw.maximumYaw].every(Number.isFinite) ||
+        raw.fov < 10 || raw.fov > 70 || raw.yaw < raw.minimumYaw || raw.yaw > raw.maximumYaw ||
+        raw.maximumYaw - raw.minimumYaw > Math.PI) return false;
+    if (lastInput && ['fov', 'minimumYaw', 'maximumYaw'].some(key => lastInput.angleCamera[key] !== raw[key])) return false;
+    const fit = currentAngleFit(raw, lastInput?.showMuscles ?? false);
+    const angleCamera = { ...fit, yaw: raw.yaw, fov: raw.fov };
+    const muscleCamera = currentMuscleShot(input);
+    if (!muscleCamera || !Number.isFinite(input.phaseTime)) return false;
+    transitions.resizeAngle(fit.distance);
+    if (!transitions.configure({ ...input, angleCamera, muscleCamera }, now)) return false;
     lastInput = input;
     if (player.time !== transitions.frame.time) player.setTime(transitions.frame.time);
     player.dirty = true;
@@ -218,9 +245,15 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function render() {
     const width = player.container.clientWidth, height = player.container.clientHeight;
     if (!lastInput || !(width > 0 && height > 0)) return false;
+    const raw = lastInput.angleCamera;
+    const fit = currentAngleFit(raw, lastInput.showMuscles);
+    transitions.resizeAngle(fit.distance);
     const previous = muscleShot;
     const current = currentMuscleShot(lastInput);
-    if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
+    if (previous !== current) {
+      const angleCamera = { ...fit, yaw: raw.yaw, fov: raw.fov };
+      transitions.configure({ ...lastInput, angleCamera, muscleCamera: current }, performance.now());
+    }
     const frame = transitions.frame;
     const aspect = width / height;
     angleTarget = frame.angle.target;
