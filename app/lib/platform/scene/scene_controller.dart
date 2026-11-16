@@ -127,6 +127,7 @@ class SceneController extends ChangeNotifier {
     bool focusMuscle = false,
     bool animate = true,
     bool scrubbing = false,
+    bool showCallouts = true,
   }) {
     final muscle = SceneHubCamera.muscle(muscleId, focused: focusMuscle);
     if (_disposed ||
@@ -147,6 +148,7 @@ class SceneController extends ChangeNotifier {
       'muscleCamera': muscle,
       'animate': animate,
       'scrubbing': scrubbing,
+      'showCallouts': showCallouts,
     };
     _trainingHubCommand = configuration;
     command(configuration);

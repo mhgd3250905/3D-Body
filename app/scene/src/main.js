@@ -27,6 +27,7 @@ const hosted = document.documentElement.dataset.hosted === 'true';
 let presented = false, statusTimer = null;
 const hubCallouts = createHubCalloutVisibility();
 let hubCalloutFrame = null, animateHubCallouts = true;
+let showHubCallouts = true;
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
     && stage.clientWidth > 0 && stage.clientHeight > 0 && !player.glide && !player.projectionGlide && !themeSettling(),
@@ -97,6 +98,7 @@ function refreshHotspots(rendered = false) {
   if (rendered && !player.trainingHub) hotspots = callouts?.update(phaseAt(player.time).items) ?? [];
 }
 function renderHubCallouts(frame) {
+  if (!showHubCallouts) return;
   hubCalloutFrame = hubCallouts.update(frame, performance.now(), animateHubCallouts &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   if (!hubCalloutFrame) {
@@ -187,6 +189,8 @@ function command(value) {
         return;
       }
       animateHubCallouts = input.animate !== false;
+      showHubCallouts = input.showCallouts !== false;
+      if (!showHubCallouts) clearHotspots();
       if (!player.trainingHub) {
         clearHotspots();
         player.trainingHub = hub;
@@ -205,8 +209,13 @@ function command(value) {
       player.hubFlight = null;
       if (input.id > 0) {
         player.playing = false;
+        if (fx) fx.root.visible = false;
+        clearHotspots();
         player.hubFlight = createHubFlight(player, input, CAMERA_PRESETS.standard,
-          () => post({ type: 'hub_flight_done', id: input.id }));
+          () => {
+            player.stop();
+            post({ type: 'hub_flight_done', id: input.id });
+          });
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
       phaseMap?.setHidden(detailed || !!player.hubFlight);
@@ -277,8 +286,12 @@ async function boot() {
   try {
     player = new FlarePlayer(stage, { character,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
-      onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected && !player.hubFlight); refreshHotspots(true); },
+      onBeforeRender: () => {
+        if (player.hubFlight) return;
+        fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true);
+      },
       onRender: hubCompleted => {
+        if (player.hubFlight) return;
         const complete = player.trainingHub ? hubCompleted : detailed ? detailView?.renderMini() : phaseMap?.render();
         presentation.rendered(complete === true);
       },

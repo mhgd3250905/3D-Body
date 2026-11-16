@@ -364,7 +364,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           _trainingFlightDeadline != deadline) {
         return;
       }
-      _trainingFlightLanded = true;
+      // Loading another WebView, GLB and WebGL context during the flight
+      // competes with the live home model for the same device resources.
+      setState(() => _trainingFlightLanded = true);
       if (_trainingHubPresented) _finishTrainingFlight();
     });
   }
@@ -960,6 +962,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                       catalog: catalog,
                                       actorBody: _actorBody,
                                       enableScene: widget.enableScene,
+                                      mountScene:
+                                          !_trainingActorFlight ||
+                                          _trainingFlightLanded,
                                       actorHandoff: _trainingActorFlight,
                                       sceneBoundsKey: _hubSceneBounds,
                                       onScenePresented: _onTrainingHubPresented,

@@ -27,6 +27,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.catalog,
     required this.actorBody,
     required this.enableScene,
+    this.mountScene = true,
     required this.visible,
     required this.onBack,
     required this.onAngle,
@@ -39,6 +40,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   final Catalog catalog;
   final String actorBody;
   final bool enableScene;
+  final bool mountScene;
   final bool visible;
   final VoidCallback onBack;
   final ValueChanged<Phase> onAngle;
@@ -101,6 +103,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
     if (oldWidget.catalog != widget.catalog) _localizeScene();
+    if (oldWidget.actorHandoff != widget.actorHandoff) _render();
   }
 
   void _localizeScene() {
@@ -129,6 +132,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       focusMuscle: _muscleFocused,
       animate: animate,
       scrubbing: scrubbing,
+      showCallouts: !widget.actorHandoff,
     );
   }
 
@@ -217,7 +221,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                         : (details) => _stage.rotateTrainingHubAngle(
                             -2 * math.pi * details.delta.dx / box.maxWidth,
                           ),
-                    scene: widget.enableScene
+                    scene: widget.enableScene && widget.mountScene
                         ? SceneView(
                             key: ValueKey(widget.actorBody),
                             controller: _stage,

@@ -62,7 +62,7 @@ export function createHubFlight(player, input, referenceDirection, onLanded) {
       camera.setViewOffset(width, height, lerp(sourceX, projection.x, t), lerp(sourceY, projection.y, t), width, height);
       camera.updateMatrixWorld(true);
       player.motion.update(elapsed === 1 ? input.time : THREE.MathUtils.euclideanModulo(homeTime + path * t, period));
-      shadow.opacity = shadowOpacity * (1 - t);
+      shadow.opacity = shadowOpacity * Math.max(0, 1 - elapsed * 4);
       landed = elapsed === 1;
       return true;
     },

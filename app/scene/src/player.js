@@ -153,7 +153,8 @@ export class FlarePlayer {
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
     const density = this.adaptive.update(now, moving, interval);
-    if (density.changed) { this.applyPixelRatio(density.ratio); this.dirty = true; }
+    const ratio = this.hubFlight ? Math.min(this.fullPixelRatio, 1) : density.ratio;
+    if (ratio !== this.renderer.getPixelRatio()) { this.applyPixelRatio(ratio); this.dirty = true; }
     this.perf.ticks++;
     if (this.dirty) {
       // Render hooks may request another frame while an effect settles.
@@ -173,7 +174,8 @@ export class FlarePlayer {
     // The key light's shadow depends on the pose, not on the camera. While
     // only the orbit moves, the previous shadow map stays valid.
     const shadows = r.shadowMap.enabled && this.keyLight.castShadow;
-    const reuseShadow = this.adaptive.enabled && this.cameraOnly && shadows && this.shadowFresh && !!this.keyLight.shadow.map;
+    const reuseShadow = (this.hubFlight || (this.adaptive.enabled && this.cameraOnly)) &&
+      shadows && this.shadowFresh && !!this.keyLight.shadow.map;
     if (reuseShadow) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
     try {
       if (inset > 0 && inset < height) {
