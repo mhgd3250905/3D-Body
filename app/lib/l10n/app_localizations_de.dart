@@ -1011,6 +1011,67 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planBodyweightScene => 'Ohne Geräte';
 
   @override
+  String get hubAngle => 'Winkel';
+
+  @override
+  String get hubMuscle => 'Muskeln';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Ab $count Min.';
+  }
+
+  @override
+  String get hubThreeTiers => 'Drei Stufen';
+
+  @override
+  String get hubViewPlan => 'Plan ansehen';
+
+  @override
+  String get hubStageBeingPlanned => 'Der Plan für diese Phase ist in Arbeit';
+
+  @override
+  String get hubPrimaryMuscles => 'Hauptmuskeln dieser Phase';
+
+  @override
+  String get hubSpecializedPlan => 'Gezielter Trainingsplan';
+
+  @override
+  String get hubPlanInPreparation => 'In Vorbereitung';
+
+  @override
+  String get hubPhase09Caption =>
+      'Stütze dich auf beide Hände und hebe die gespreizten Beine nach vorn.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Verlagere dein Gewicht von beiden Händen auf eine.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Stütze dich auf eine Hand und öffne die Beine zu einem hohen V.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Dreh dich nach vorn und wechsle die Beinposition wie bei einer Schere.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Stütze dich hinter dem Körper ab und schwinge die gespreizten Beine zurück.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Wechsle die Stützhand und schwinge die gestreckten Beine zurück.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Stütze dich auf die andere Hand und halte das hohe V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Dreh dich mit dem Gesicht nach unten und schwinge die Beine nach hinten.';
+
+  @override
   String get planTierBeginner => 'Einsteiger';
 
   @override

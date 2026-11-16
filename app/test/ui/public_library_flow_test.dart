@@ -298,13 +298,15 @@ void main() {
     },
   );
 
-  testWidgets('home menu opens all 248 actions with SDK poster artwork', (
+  testWidgets('empty logs open all 248 actions with SDK poster artwork', (
     tester,
   ) async {
     final scene = await mountShell(tester);
     await tester.tap(_key('home-menu-chip'));
     await tester.pumpAndSettle();
-    await tester.tap(_key('more-library'));
+    await tester.tap(_key('more-progress'));
+    await tester.pumpAndSettle();
+    await tester.tap(_key('records-start'));
     await _settleLocalAssets(tester);
     expect(find.byType(FlareSharedLibraryPage), findsOneWidget);
     expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());

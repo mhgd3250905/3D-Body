@@ -145,7 +145,8 @@ export class FlarePlayer {
     }
     this.stepGlide(now);
     this.controls.update();
-    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved;
+    const hubMoving = this.trainingHub?.tick(now);
+    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
     // A frame requested only by the orbit keeps the pose and the shadow map.
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
@@ -155,13 +156,14 @@ export class FlarePlayer {
     if (this.dirty) {
       // Render hooks may request another frame while an effect settles.
       // Consume this frame's request before running those hooks.
-      this.redraw = false; this.sceneDirty = false; this.render(); this.callbacks.onRender?.();
+      this.redraw = false; this.sceneDirty = false; const complete = this.render(); this.callbacks.onRender?.(complete);
       const perf = this.perf;
       if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
       perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
     }
   }
   render() {
+    if (this.trainingHub) return this.trainingHub.render();
     this.callbacks.onBeforeRender?.();
     const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
     // The key light's shadow depends on the pose, not on the camera. While
@@ -376,6 +378,7 @@ export class FlarePlayer {
     this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
     this.renderer.domElement.removeEventListener('webglcontextrestored', this.onContextRestored);
     this.controls.removeEventListener('change', this.onControlsChange); this.controls.dispose();
+    this.trainingHub?.releaseGpu();
     this.motion?.dispose();
     disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
   }

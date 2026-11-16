@@ -1945,6 +1945,108 @@ abstract class AppLocalizations {
   /// **'徒手'**
   String get planBodyweightScene;
 
+  /// No description provided for @hubAngle.
+  ///
+  /// In zh, this message translates to:
+  /// **'角度'**
+  String get hubAngle;
+
+  /// No description provided for @hubMuscle.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群'**
+  String get hubMuscle;
+
+  /// Starting duration of a beginner training plan, in minutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 分钟起'**
+  String hubMinutesFrom(int count);
+
+  /// No description provided for @hubThreeTiers.
+  ///
+  /// In zh, this message translates to:
+  /// **'三档'**
+  String get hubThreeTiers;
+
+  /// No description provided for @hubViewPlan.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看计划'**
+  String get hubViewPlan;
+
+  /// No description provided for @hubStageBeingPlanned.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个阶段的计划还在编排'**
+  String get hubStageBeingPlanned;
+
+  /// No description provided for @hubPrimaryMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'这一刻的主力'**
+  String get hubPrimaryMuscles;
+
+  /// No description provided for @hubSpecializedPlan.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划'**
+  String get hubSpecializedPlan;
+
+  /// No description provided for @hubPlanInPreparation.
+  ///
+  /// In zh, this message translates to:
+  /// **'准备中'**
+  String get hubPlanInPreparation;
+
+  /// No description provided for @hubPhase09Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手撑地，开腿抬过前方'**
+  String get hubPhase09Caption;
+
+  /// No description provided for @hubPhase10Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'从双手移重到单手'**
+  String get hubPhase10Caption;
+
+  /// No description provided for @hubPhase11Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手撑地，双腿打开成高 V'**
+  String get hubPhase11Caption;
+
+  /// No description provided for @hubPhase12Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'转向正面，双腿交错换位'**
+  String get hubPhase12Caption;
+
+  /// No description provided for @hubPhase13Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手在身后撑地，开腿后扫'**
+  String get hubPhase13Caption;
+
+  /// No description provided for @hubPhase14Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'换手接重，长腿向后扫'**
+  String get hubPhase14Caption;
+
+  /// No description provided for @hubPhase15Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'换侧单手撑地，保持高 V'**
+  String get hubPhase15Caption;
+
+  /// No description provided for @hubPhase16Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'转身朝下，双腿扫过后方'**
+  String get hubPhase16Caption;
+
   /// No description provided for @planTierBeginner.
   ///
   /// In zh, this message translates to:

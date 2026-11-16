@@ -1014,6 +1014,66 @@ class AppLocalizationsEs extends AppLocalizations {
   String get planBodyweightScene => 'Sin equipo';
 
   @override
+  String get hubAngle => 'Ángulo';
+
+  @override
+  String get hubMuscle => 'Músculos';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Desde $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Tres niveles';
+
+  @override
+  String get hubViewPlan => 'Ver plan';
+
+  @override
+  String get hubStageBeingPlanned =>
+      'El plan para esta fase se está preparando';
+
+  @override
+  String get hubPrimaryMuscles => 'Músculos principales de esta fase';
+
+  @override
+  String get hubSpecializedPlan => 'Plan específico';
+
+  @override
+  String get hubPlanInPreparation => 'En preparación';
+
+  @override
+  String get hubPhase09Caption =>
+      'Apoya ambas manos y eleva las piernas abiertas hacia delante.';
+
+  @override
+  String get hubPhase10Caption => 'Pasa el peso de las dos manos a una sola.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Apóyate en una mano y abre las piernas en una V alta.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Gira hacia delante y cruza las piernas en tijera.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Apoya las manos detrás y lleva las piernas abiertas hacia atrás.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Cambia de mano y lleva las piernas extendidas hacia atrás.';
+
+  @override
+  String get hubPhase15Caption => 'Apóyate en la otra mano y mantén la V alta.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Gira boca abajo y barre con las piernas hacia atrás.';
+
+  @override
   String get planTierBeginner => 'Principiante';
 
   @override

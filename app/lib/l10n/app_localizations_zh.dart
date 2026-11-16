@@ -972,6 +972,59 @@ class AppLocalizationsZh extends AppLocalizations {
   String get planBodyweightScene => '徒手';
 
   @override
+  String get hubAngle => '角度';
+
+  @override
+  String get hubMuscle => '肌群';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count 分钟起';
+  }
+
+  @override
+  String get hubThreeTiers => '三档';
+
+  @override
+  String get hubViewPlan => '查看计划';
+
+  @override
+  String get hubStageBeingPlanned => '这个阶段的计划还在编排';
+
+  @override
+  String get hubPrimaryMuscles => '这一刻的主力';
+
+  @override
+  String get hubSpecializedPlan => '专项计划';
+
+  @override
+  String get hubPlanInPreparation => '准备中';
+
+  @override
+  String get hubPhase09Caption => '双手撑地，开腿抬过前方';
+
+  @override
+  String get hubPhase10Caption => '从双手移重到单手';
+
+  @override
+  String get hubPhase11Caption => '单手撑地，双腿打开成高 V';
+
+  @override
+  String get hubPhase12Caption => '转向正面，双腿交错换位';
+
+  @override
+  String get hubPhase13Caption => '双手在身后撑地，开腿后扫';
+
+  @override
+  String get hubPhase14Caption => '换手接重，长腿向后扫';
+
+  @override
+  String get hubPhase15Caption => '换侧单手撑地，保持高 V';
+
+  @override
+  String get hubPhase16Caption => '转身朝下，双腿扫过后方';
+
+  @override
   String get planTierBeginner => '初级';
 
   @override
@@ -2197,6 +2250,59 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get planBodyweightScene => '徒手';
+
+  @override
+  String get hubAngle => '角度';
+
+  @override
+  String get hubMuscle => '肌群';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count 分鐘起';
+  }
+
+  @override
+  String get hubThreeTiers => '三檔';
+
+  @override
+  String get hubViewPlan => '查看計畫';
+
+  @override
+  String get hubStageBeingPlanned => '這個階段的計畫還在編排';
+
+  @override
+  String get hubPrimaryMuscles => '這一刻的主力';
+
+  @override
+  String get hubSpecializedPlan => '專項計畫';
+
+  @override
+  String get hubPlanInPreparation => '準備中';
+
+  @override
+  String get hubPhase09Caption => '雙手撐地，開腿抬過前方';
+
+  @override
+  String get hubPhase10Caption => '從雙手移重到單手';
+
+  @override
+  String get hubPhase11Caption => '單手撐地，雙腿打開成高 V';
+
+  @override
+  String get hubPhase12Caption => '轉向正面，雙腿交錯換位';
+
+  @override
+  String get hubPhase13Caption => '雙手在身後撐地，開腿後掃';
+
+  @override
+  String get hubPhase14Caption => '換手接重，長腿向後掃';
+
+  @override
+  String get hubPhase15Caption => '換側單手撐地，保持高 V';
+
+  @override
+  String get hubPhase16Caption => '轉身朝下，雙腿掃過後方';
 
   @override
   String get planTierBeginner => '初級';

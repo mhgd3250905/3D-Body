@@ -2,7 +2,6 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/catalog.dart';
 import 'package:flare/data/muscle_knowledge.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
-import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
@@ -226,7 +225,7 @@ void main() {
   }
 
   testWidgets(
-    'editing and clearing muscle search keeps context and More opens all groups',
+    'muscle search keeps context and logs reopen the unfiltered fallback library',
     (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
@@ -310,6 +309,8 @@ void main() {
         tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
         17,
       );
+      await tester.enterText(find.byType(TextField), '三角肌');
+      await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('返回'));
       await tester.pumpAndSettle();
       expect(find.byType(LibraryPage), findsNothing);
@@ -322,7 +323,9 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(labeledControl('更多'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FlareListRow, '训练'));
+      await tester.tap(find.byKey(const ValueKey('more-progress')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('records-start')));
       await tester.pumpAndSettle();
       expect(
         tester.widget<LibraryPage>(find.byType(LibraryPage)).initialGroup,

@@ -95,7 +95,6 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     );
     final minutes = flarePlanMinutes(plan);
     final scene = widget.store.settings.tier;
-    final change = ValueKey((plan.id, scene));
     final safe = MediaQuery.viewPaddingOf(context);
     final phase = widget.phase;
     final catalog = widget.catalog;
@@ -137,12 +136,9 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                       groupId: plan.groupId,
                       safeTop: safe.top,
                       onBack: widget.onBack,
-                      info: _PlanSwap(
-                        child: _PlanInfo(
-                          key: change,
-                          minutes: minutes,
-                          count: plan.items.length,
-                        ),
+                      info: _PlanInfo(
+                        minutes: minutes,
+                        count: plan.items.length,
                       ),
                     ),
                     Padding(
@@ -203,20 +199,10 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: _gutter),
-                      child: _PlanSwap(
-                        child: Column(
-                          key: change,
-                          children: [
-                            for (final (index, item) in plan.items.indexed)
-                              _row(
-                                context,
-                                index,
-                                item,
-                                scene,
-                                index + 1 < plan.items.length,
-                              ),
-                          ],
-                        ),
+                      child: _PlanRows(
+                        plan: plan,
+                        scene: scene,
+                        buildRow: _row,
                       ),
                     ),
                   ],
@@ -386,7 +372,7 @@ class _PlanHero extends StatelessWidget {
             Positioned(
               left: 16,
               top: safeTop + 10,
-              child: _PlanBack(onTap: onBack),
+              child: FlarePlanBackButton(onTap: onBack),
             ),
             PositionedDirectional(
               start: _gutter,
@@ -448,33 +434,6 @@ LinearGradient _bottomFade(FlarePalette palette, double stop) => LinearGradient(
   stops: [0, stop],
 );
 
-class _PlanBack extends StatelessWidget {
-  const _PlanBack({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => FlarePressable(
-    semanticLabel: context.strings.goBack,
-    onTap: onTap,
-    child: ClipOval(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: ColoredBox(
-          color: const Color(0x2e7f7f87),
-          child: SizedBox.square(
-            dimension: 36,
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 16,
-              color: FlareColors.palette.text,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
 class _PlanScrolledHeader extends StatelessWidget {
   const _PlanScrolledHeader({
     required this.title,
@@ -514,7 +473,11 @@ class _PlanScrolledHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(left: 16, top: 5, child: _PlanBack(onTap: onBack)),
+              Positioned(
+                left: 16,
+                top: 5,
+                child: FlarePlanBackButton(onTap: onBack),
+              ),
             ],
           ),
         ),
@@ -524,7 +487,7 @@ class _PlanScrolledHeader extends StatelessWidget {
 }
 
 class _PlanInfo extends StatelessWidget {
-  const _PlanInfo({super.key, required this.minutes, required this.count});
+  const _PlanInfo({required this.minutes, required this.count});
   final int minutes;
   final int count;
 
@@ -545,6 +508,7 @@ class _PlanInfo extends StatelessWidget {
               minutes,
               s.minutesShort(minutes),
               p,
+              context,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -563,6 +527,7 @@ class _PlanInfo extends StatelessWidget {
               count,
               s.planDrillCount(count),
               p,
+              context,
             ),
           ],
         ),
@@ -570,7 +535,13 @@ class _PlanInfo extends StatelessWidget {
     );
   }
 
-  Widget _metric(IconData icon, int value, String label, FlarePalette p) {
+  Widget _metric(
+    IconData icon,
+    int value,
+    String label,
+    FlarePalette p,
+    BuildContext context,
+  ) {
     final number = '$value';
     final index = label.indexOf(number);
     return Row(
@@ -578,25 +549,41 @@ class _PlanInfo extends StatelessWidget {
       spacing: 6,
       children: [
         Icon(icon, size: 14, color: p.accentInk),
-        Text.rich(
-          TextSpan(
-            style: TextStyle(fontSize: 13, color: p.secondary),
-            children: [
-              if (index < 0)
-                TextSpan(text: label)
-              else ...[
-                TextSpan(text: label.substring(0, index)),
-                TextSpan(
-                  text: number,
-                  style: TextStyle(
-                    color: p.text,
-                    fontWeight: FontWeight.w600,
-                    fontFeatures: _figures,
+        Semantics(
+          label: label,
+          excludeSemantics: true,
+          child: Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: 13, color: p.secondary),
+              children: [
+                if (index < 0)
+                  TextSpan(text: label)
+                else ...[
+                  TextSpan(text: label.substring(0, index)),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: AnimatedSwitcher(
+                      duration: FlareMotion.of(
+                        context,
+                        const Duration(milliseconds: 180),
+                      ),
+                      child: Text(
+                        number,
+                        key: ValueKey(value),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: p.text,
+                          fontWeight: FontWeight.w600,
+                          fontFeatures: _figures,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                TextSpan(text: label.substring(index + number.length)),
+                  TextSpan(text: label.substring(index + number.length)),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],
@@ -1128,30 +1115,161 @@ class _PlanBottomState extends State<_PlanBottom> {
   }
 }
 
-class _PlanSwap extends StatelessWidget {
-  const _PlanSwap({required this.child});
-  final Widget child;
+class _PlanRows extends StatefulWidget {
+  const _PlanRows({
+    required this.plan,
+    required this.scene,
+    required this.buildRow,
+  });
+
+  final FlarePlan plan;
+  final String scene;
+  final Widget Function(
+    BuildContext context,
+    int index,
+    FlarePlanItem item,
+    String scene,
+    bool separator,
+  )
+  buildRow;
 
   @override
-  Widget build(BuildContext context) => AnimatedSwitcher(
-    duration: FlareMotion.reduced(context) ? Duration.zero : _switchTime,
-    switchInCurve: Curves.easeOutCubic,
-    switchOutCurve: Curves.easeOutCubic,
-    layoutBuilder: (current, old) => Stack(
-      alignment: AlignmentDirectional.topStart,
-      children: [...old, ?current],
-    ),
-    transitionBuilder: (child, animation) => FadeTransition(
-      opacity: animation,
+  State<_PlanRows> createState() => _PlanRowsState();
+}
+
+class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
+  static const _leaveTime = Duration(milliseconds: 120);
+  static const _rowTime = Duration(milliseconds: 240);
+  static const _rowDelay = Duration(milliseconds: 40);
+  static const _sizeTime = Duration(milliseconds: 260);
+
+  late FlarePlan _visiblePlan = widget.plan;
+  late String _visibleScene = widget.scene;
+  late final _leave = AnimationController(vsync: this, duration: _leaveTime)
+    ..addStatusListener(_showLatest);
+  late final _enter = AnimationController(
+    vsync: this,
+    duration: _rowTime,
+    value: 1,
+  );
+  bool _reducedMotion = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reducedMotion = FlareMotion.reduced(context);
+    if (_reducedMotion) {
+      _useLatest();
+      _leave.reset();
+      _enter.value = 1;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _PlanRows oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_reducedMotion ||
+        (widget.plan.id == _visiblePlan.id && widget.scene == _visibleScene)) {
+      _useLatest();
+    } else if (!_leave.isAnimating) {
+      // Preserve the current per-row progress if a selection interrupts entry.
+      _enter.stop();
+      _leave.forward(from: 0);
+    }
+  }
+
+  void _useLatest() {
+    _visiblePlan = widget.plan;
+    _visibleScene = widget.scene;
+  }
+
+  void _showLatest(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+    // Swap data only after the current list has faded out; intermediate
+    // selections are never queued or mounted as overlapping lists.
+    setState(_useLatest);
+    _leave.reset();
+    _enter.duration = _rowTime + _rowDelay * (_visiblePlan.items.length - 1);
+    _enter.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _leave.dispose();
+    _enter.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = Column(
+      children: [
+        for (final (index, item) in _visiblePlan.items.indexed)
+          _enterRow(
+            index,
+            widget.buildRow(
+              context,
+              index,
+              item,
+              _visibleScene,
+              index + 1 < _visiblePlan.items.length,
+            ),
+          ),
+      ],
+    );
+    if (_reducedMotion) return rows;
+
+    return AnimatedSize(
+      alignment: Alignment.topCenter,
+      duration: _sizeTime,
+      curve: Curves.easeOutCubic,
       child: AnimatedBuilder(
-        animation: animation,
-        child: child,
-        builder: (_, child) => Transform.translate(
-          offset: Offset(0, 8 * (1 - animation.value)),
-          child: child,
-        ),
+        animation: _leave,
+        child: rows,
+        builder: (_, child) {
+          final progress = Curves.easeIn.transform(_leave.value);
+          final leaving = _leave.isAnimating;
+          return IgnorePointer(
+            ignoring: leaving,
+            child: ExcludeSemantics(
+              excluding: leaving,
+              child: Opacity(
+                opacity: 1 - progress,
+                child: Transform.translate(
+                  offset: Offset(0, -6 * progress),
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
       ),
-    ),
+    );
+  }
+
+  Widget _enterRow(int index, Widget child) => AnimatedBuilder(
+    animation: _enter,
     child: child,
+    builder: (_, child) {
+      final elapsed = _enter.value * _enter.duration!.inMilliseconds;
+      final delay = _rowDelay.inMilliseconds * index;
+      final progress = _enter.isCompleted
+          ? 1.0
+          : ((elapsed - delay) / _rowTime.inMilliseconds).clamp(0.0, 1.0);
+      final eased = Curves.easeOutCubic.transform(progress);
+      return IgnorePointer(
+        ignoring: progress == 0,
+        child: ExcludeSemantics(
+          excluding: progress == 0,
+          child: Opacity(
+            opacity: eased,
+            child: Transform.translate(
+              offset: Offset(0, 10 * (1 - eased)),
+              child: child,
+            ),
+          ),
+        ),
+      );
+    },
   );
 }

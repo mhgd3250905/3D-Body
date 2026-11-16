@@ -1006,6 +1006,67 @@ class AppLocalizationsId extends AppLocalizations {
   String get planBodyweightScene => 'Tanpa alat';
 
   @override
+  String get hubAngle => 'Sudut';
+
+  @override
+  String get hubMuscle => 'Otot';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Mulai $count mnt';
+  }
+
+  @override
+  String get hubThreeTiers => 'Tiga tingkat';
+
+  @override
+  String get hubViewPlan => 'Lihat rencana';
+
+  @override
+  String get hubStageBeingPlanned => 'Rencana untuk fase ini masih disusun';
+
+  @override
+  String get hubPrimaryMuscles => 'Otot utama pada fase ini';
+
+  @override
+  String get hubSpecializedPlan => 'Rencana khusus';
+
+  @override
+  String get hubPlanInPreparation => 'Sedang disiapkan';
+
+  @override
+  String get hubPhase09Caption =>
+      'Bertumpu pada kedua tangan dan angkat kaki terbuka ke depan.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Alihkan berat badan dari dua tangan ke satu tangan.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Bertumpu pada satu tangan dan buka kaki membentuk V tinggi.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Putar badan ke depan dan silangkan kaki seperti gunting.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Letakkan kedua tangan di belakang dan ayunkan kaki terbuka ke belakang.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Ganti tangan tumpuan dan ayunkan kaki lurus ke belakang.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Bertumpu pada tangan satunya dan pertahankan V tinggi.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Putar badan menghadap lantai dan ayunkan kaki ke belakang.';
+
+  @override
   String get planTierBeginner => 'Pemula';
 
   @override

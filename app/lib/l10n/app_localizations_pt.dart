@@ -1005,6 +1005,66 @@ class AppLocalizationsPt extends AppLocalizations {
   String get planBodyweightScene => 'Sem equipamento';
 
   @override
+  String get hubAngle => 'Ângulo';
+
+  @override
+  String get hubMuscle => 'Músculos';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'A partir de $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Três níveis';
+
+  @override
+  String get hubViewPlan => 'Ver plano';
+
+  @override
+  String get hubStageBeingPlanned =>
+      'O plano para esta fase está sendo preparado';
+
+  @override
+  String get hubPrimaryMuscles => 'Principais músculos desta fase';
+
+  @override
+  String get hubSpecializedPlan => 'Plano direcionado';
+
+  @override
+  String get hubPlanInPreparation => 'Em preparação';
+
+  @override
+  String get hubPhase09Caption =>
+      'Apoie-se nas duas mãos e eleve as pernas abertas à frente.';
+
+  @override
+  String get hubPhase10Caption => 'Transfira o peso das duas mãos para uma só.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Apoie-se em uma mão e abra as pernas em V alto.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Gire para a frente e alterne as pernas em tesoura.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Apoie as mãos atrás do corpo e varra para trás com as pernas abertas.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Troque a mão de apoio e varra para trás com as pernas estendidas.';
+
+  @override
+  String get hubPhase15Caption => 'Apoie-se na outra mão e mantenha o V alto.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Vire-se para baixo e passe as pernas por trás.';
+
+  @override
   String get planTierBeginner => 'Iniciante';
 
   @override

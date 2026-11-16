@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'scene_hub_camera.dart';
+
 typedef SceneCommandSink =
     FutureOr<void> Function(Map<String, Object?> command);
 
@@ -16,6 +18,7 @@ class SceneController extends ChangeNotifier {
   bool _dispatching = false;
   bool _disposed = false;
   int _connection = 0;
+  Map<String, Object?>? _trainingHubCommand;
 
   double _time = 0;
   double _period = 9;
@@ -108,6 +111,36 @@ class SceneController extends ChangeNotifier {
     _speed = value;
     command({'type': 'speed', 'value': value});
     notifyListeners();
+  }
+
+  /// Render a paused training stage on a dedicated SceneView. Retaining the
+  /// two selected frames in one command also restores them after reloading.
+  void configureTrainingHub({
+    required int phaseSource,
+    required double phaseTime,
+    required String muscleId,
+    required bool showMuscles,
+    bool animate = true,
+    bool scrubbing = false,
+  }) {
+    final angle = SceneHubCamera.angles[phaseSource];
+    final muscle = SceneHubCamera.muscles[muscleId];
+    if (_disposed || angle == null || muscle == null || !phaseTime.isFinite) {
+      return;
+    }
+    final configuration = <String, Object?>{
+      'type': 'hub_scene',
+      'phaseSource': phaseSource,
+      'phaseTime': phaseTime,
+      'muscleId': muscleId,
+      'showMuscles': showMuscles,
+      'angleCamera': angle.toJson(),
+      'muscleCamera': muscle.toJson(),
+      'animate': animate,
+      'scrubbing': scrubbing,
+    };
+    _trainingHubCommand = configuration;
+    command(configuration);
   }
 
   void setCamera(String view) => command({'type': 'camera', 'view': view});
@@ -339,6 +372,12 @@ class SceneController extends ChangeNotifier {
       _presented = true;
     }
     if (type == 'ready') {
+      final hub = _trainingHubCommand;
+      if (hub != null && !_pending.containsKey('hub_scene')) {
+        final presentation = _pending.remove('present');
+        _pending['hub_scene'] = {...hub, 'animate': false};
+        if (presentation != null) _pending['present'] = presentation;
+      }
       _ready = true;
       _errorCode = null;
     } else {

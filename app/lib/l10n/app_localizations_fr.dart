@@ -1014,6 +1014,68 @@ class AppLocalizationsFr extends AppLocalizations {
   String get planBodyweightScene => 'Sans matériel';
 
   @override
+  String get hubAngle => 'Angle';
+
+  @override
+  String get hubMuscle => 'Muscles';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'À partir de $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Trois niveaux';
+
+  @override
+  String get hubViewPlan => 'Voir le plan';
+
+  @override
+  String get hubStageBeingPlanned =>
+      'Le plan de cette phase est en préparation';
+
+  @override
+  String get hubPrimaryMuscles => 'Muscles principaux de cette phase';
+
+  @override
+  String get hubSpecializedPlan => 'Programme ciblé';
+
+  @override
+  String get hubPlanInPreparation => 'En préparation';
+
+  @override
+  String get hubPhase09Caption =>
+      'Prends appui sur les deux mains et lève les jambes écartées vers l’avant.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Transfère ton poids des deux mains à une seule.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Prends appui sur une main et ouvre les jambes en V haut.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Tourne-toi vers l’avant et inverse tes jambes en ciseaux.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Prends appui derrière toi et balaie vers l’arrière, jambes écartées.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Change de main d’appui et balaie vers l’arrière, jambes tendues.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Prends appui sur l’autre main et maintiens le V haut.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Pivote face au sol et balaie l’arrière avec les jambes.';
+
+  @override
   String get planTierBeginner => 'Débutant';
 
   @override

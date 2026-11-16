@@ -11,7 +11,6 @@ import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
-import 'flare_plan_visuals.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -219,8 +218,6 @@ class PlansPage extends StatelessWidget {
     required this.onRoutine,
     required this.onNewRoutine,
     this.onBack,
-    this.onAngle,
-    this.onMuscle,
     this.onAiCoach,
     this.aiCoachConfigured = true,
   });
@@ -230,8 +227,6 @@ class PlansPage extends StatelessWidget {
   final ValueChanged<TrainingRoutine> onRoutine;
   final VoidCallback onNewRoutine;
   final VoidCallback? onBack;
-  final ValueChanged<Phase>? onAngle;
-  final ValueChanged<MuscleGroup>? onMuscle;
 
   /// AI 定制入口（中文界面才给）；null 不显示。
   final VoidCallback? onAiCoach;
@@ -307,56 +302,17 @@ class PlansPage extends StatelessWidget {
     final s = context.strings;
     final tier = store.settings.tier;
     final routines = store.routines;
-    final angles = [
-      for (final source in catalog.flarePlanAngles)
-        ?catalog.phaseBySource(source),
-    ];
-    final muscles = [
-      for (final id in catalog.flarePlanMuscles) ?catalog.groupById(id),
-    ];
     return FlareNavPage(
       title: s.plans,
       onBack: onBack,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: SizedBox(height: flareNavInset(context))),
-          if (onAngle != null && angles.isNotEmpty)
-            SliverToBoxAdapter(
-              child: _PlanEntrySection(
-                title: s.plansByAngle,
-                cards: [
-                  for (final phase in angles)
-                    _PlanEntryCard.angle(
-                      key: ValueKey('plans-angle-${phase.source}'),
-                      title: phase.name,
-                      kicker: s.anglePlanLabel,
-                      tiers: s.planTierSummary,
-                      source: phase.source,
-                      onTap: () => onAngle!(phase),
-                    ),
-                ],
-              ),
-            ),
-          if (onMuscle != null && muscles.isNotEmpty)
-            SliverToBoxAdapter(
-              child: _PlanEntrySection(
-                title: s.plansByMuscle,
-                cards: [
-                  for (final group in muscles)
-                    _PlanEntryCard.muscle(
-                      key: ValueKey('plans-muscle-${group.id}'),
-                      title: group.label,
-                      kicker: s.musclePlanLabel,
-                      tiers: s.planTierSummary,
-                      groupId: group.id,
-                      onTap: () => onMuscle!(group),
-                    ),
-                ],
-              ),
-            ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FlareGeometry.pageInset,
+            padding: EdgeInsets.fromLTRB(
+              FlareGeometry.pageInset,
+              flareNavInset(context),
+              FlareGeometry.pageInset,
+              0,
             ),
             sliver: SliverList.list(
               children: [
@@ -422,150 +378,6 @@ class PlansPage extends StatelessWidget {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 28)),
         ],
-      ),
-    );
-  }
-}
-
-class _PlanEntrySection extends StatelessWidget {
-  const _PlanEntrySection({required this.title, required this.cards});
-
-  final String title;
-  final List<Widget> cards;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Padding(
-        padding: const EdgeInsets.fromLTRB(22, 30, 22, 14),
-        child: FlarePlanSectionHeading(title: title),
-      ),
-      SizedBox(
-        height: 150,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final width = (constraints.maxWidth - 44).clamp(0.0, 320.0);
-            return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 22),
-              primary: false,
-              scrollDirection: Axis.horizontal,
-              itemCount: cards.length,
-              itemBuilder: (_, index) =>
-                  SizedBox(width: width, child: cards[index]),
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
-            );
-          },
-        ),
-      ),
-    ],
-  );
-}
-
-class _PlanEntryCard extends StatelessWidget {
-  const _PlanEntryCard.angle({
-    super.key,
-    required this.title,
-    required this.kicker,
-    required this.tiers,
-    required this.onTap,
-    required int source,
-  }) : asset = 'assets/angles/phase-$source.webp',
-       isMuscle = false;
-
-  const _PlanEntryCard.muscle({
-    super.key,
-    required this.title,
-    required this.kicker,
-    required this.tiers,
-    required this.onTap,
-    required String groupId,
-  }) : asset = 'assets/muscles/$groupId.webp',
-       isMuscle = true;
-
-  final String title;
-  final String kicker;
-  final String tiers;
-  final String asset;
-  final bool isMuscle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = FlareColors.palette;
-    final image = Image.asset(
-      asset,
-      height: isMuscle ? 140 : 136,
-      fit: BoxFit.contain,
-      excludeFromSemantics: true,
-    );
-    return FlarePressable(
-      onTap: () {
-        FlareHaptics.light();
-        onTap();
-      },
-      child: DecoratedBox(
-        position: DecorationPosition.foreground,
-        decoration: BoxDecoration(
-          border: Border.all(color: palette.hairline),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: DecoratedBox(
-            decoration: BoxDecoration(gradient: flarePlanArtGradient(palette)),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                const Positioned(
-                  right: -30,
-                  top: -15,
-                  child: FlarePlanGlow(diameter: 180),
-                ),
-                if (isMuscle)
-                  Positioned(
-                    right: -6,
-                    top: 14,
-                    child: FlarePlanMuscleFade(child: image),
-                  )
-                else
-                  Positioned(right: -4, bottom: 4, child: image),
-                Positioned(
-                  left: 18,
-                  right: 18,
-                  bottom: 18,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FlarePlanKicker(label: kicker),
-                      const SizedBox(height: 6),
-                      Text(
-                        title,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: palette.text,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -.3,
-                          height: 1.1,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tiers,
-                        style: TextStyle(
-                          color: palette.secondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

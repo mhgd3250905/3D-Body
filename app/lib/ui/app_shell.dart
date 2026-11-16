@@ -30,6 +30,7 @@ import 'motion.dart';
 import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
+import 'flare_training_hub_page.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
 import 'flare_membership_page.dart';
@@ -69,6 +70,7 @@ class FlareShell extends StatefulWidget {
 }
 
 class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
+  static const _trainingHubTab = 4;
   late final SceneController _scene;
   int _tab = 0;
   bool _configured = false;
@@ -803,6 +805,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         drill != null || _inPlan || _settings || _detail != null || _tab != 0;
     final route = _route(context);
     final edgeToEdgePlan = route.$4 is FlarePlanDetailPage;
+    final hasHub = _tab == _trainingHubTab;
+    final hubInFront = route.$1 == 'training-hub' && !_trainingOpen;
     if (route.$1 != _stageKey) {
       // Keep the live stage on screen while a page slides over or off it.
       if (_stageKey != null && (_stageKey == 'watch' || route.$1 == 'watch')) {
@@ -828,7 +832,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           // its own inset.
           body: SafeArea(
             top: false,
-            bottom: !edgeToEdgePlan,
+            bottom: !edgeToEdgePlan && !hasHub,
             child: Column(
               children: [
                 if (store.storageError != null)
@@ -869,13 +873,31 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           pageKey: route.$1,
                           depth: route.$2,
                           modal: route.$3,
+                          underlay: hasHub
+                              ? ExcludeSemantics(
+                                  excluding: !hubInFront,
+                                  child: FlareTrainingHubPage(
+                                    key: const ValueKey('training-hub'),
+                                    catalog: catalog,
+                                    actorBody: _actorBody,
+                                    enableScene: widget.enableScene,
+                                    visible:
+                                        hubInFront && _appVisible && _appActive,
+                                    onBack: _back,
+                                    onAngle: _openAnglePlan,
+                                    onMuscle: _openMusclePlan,
+                                  ),
+                                )
+                              : null,
                           onSettled: () {
                             if (mounted && _holdWatch) {
                               setState(() => _holdWatch = false);
                             }
                           },
                           onSwipeBack:
-                              canBack && !_trainingOpen && route.$4 != null
+                              canBack &&
+                                  !_trainingOpen &&
+                                  (route.$4 != null || hubInFront)
                               ? _back
                               : null,
                           // App-owned routes share the fixed back rail;
@@ -1106,6 +1128,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (_settings) return ('settings', 1, false, _settingsPage(context));
     return switch (_tab) {
       0 => ('watch', 0, false, null),
+      _trainingHubTab => ('training-hub', 1, false, null),
       1 => (
         'tab1',
         1,
@@ -1137,8 +1160,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onPreset: (preset) => setState(() => _preset = preset),
           onRoutine: (routine) => setState(() => _routine = routine),
           onNewRoutine: () => _editRoutine(const _RoutineEdit()),
-          onAngle: _openAnglePlan,
-          onMuscle: _openMusclePlan,
         ),
       ),
       _ => (
@@ -2026,7 +2047,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
     switch (value) {
       case 'library':
-        _changeTab(1);
+        _changeTab(_trainingHubTab);
       case 'plans':
         _changeTab(2);
       case 'progress':

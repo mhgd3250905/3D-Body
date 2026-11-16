@@ -2,7 +2,7 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
-import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_training_hub_page.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,7 +95,7 @@ void main() {
     expect(store.settings.speed, 1.0);
   });
 
-  testWidgets('edge swipe goes back from the library to the stage', (
+  testWidgets('edge swipe goes back from the training hub to the stage', (
     tester,
   ) async {
     await home(tester);
@@ -103,7 +103,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FlareListRow, '训练'));
     await tester.pumpAndSettle();
-    expect(find.byType(LibraryPage), findsOneWidget);
+    expect(find.byType(FlareTrainingHubPage), findsOneWidget);
     final gesture = await tester.startGesture(const Offset(4, 400));
     for (var i = 0; i < 12; i++) {
       await gesture.moveBy(const Offset(24, 0));
@@ -111,7 +111,7 @@ void main() {
     }
     await gesture.up();
     await tester.pumpAndSettle();
-    expect(find.byType(LibraryPage), findsNothing);
+    expect(find.byType(FlareTrainingHubPage), findsNothing);
     expect(labeledControl('更多'), findsOneWidget);
   });
 }

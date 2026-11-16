@@ -13,6 +13,7 @@ import { sceneStrings, setSceneStrings } from './localization.js';
 import { createFlareFx } from './fx.js';
 import { characterFromLocation } from './characters.js';
 import { createPerfHud, perfEnabled, perfSnapshot } from './perf-hud.js';
+import { createTrainingHub } from './training-hub-stage.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
@@ -81,7 +82,7 @@ function dismissStatus() {
   }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 340);
 }
 function refreshHotspots(rendered = false) {
-  if (!ready || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+  if (!ready || player.trainingHub || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     hotspots = []; callouts?.clear(); return;
   }
@@ -158,6 +159,24 @@ function command(value) {
     case 'present':
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
       presentation.request(input.requestId); return;
+    case 'hub_scene': {
+      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap);
+      if (!hub.configure(input, performance.now())) {
+        if (!player.trainingHub) hub.releaseGpu();
+        return;
+      }
+      if (!player.trainingHub) {
+        player.trainingHub = hub;
+        player.playing = false;
+        player.loopRange = null;
+        player.autoFrame = false;
+        player.glide = player.projectionGlide = null;
+        player.controls.enabled = false;
+        phaseMap.setHidden(true);
+        if (fx) { fx.setEnabled(false); fx.root.visible = false; }
+      }
+      break;
+    }
     case 'play':
       closeDetail(); selected = null; surface.restore();
       if (player.time >= player.period) player.setTime(0);
@@ -220,8 +239,8 @@ async function boot() {
     player = new FlarePlayer(stage, { character,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
       onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true); },
-      onRender: () => {
-        const complete = detailed ? detailView?.renderMini() : phaseMap?.render();
+      onRender: hubCompleted => {
+        const complete = player.trainingHub ? hubCompleted : detailed ? detailView?.renderMini() : phaseMap?.render();
         presentation.rendered(complete === true);
       },
       onResize: () => { presentation.invalidate(); if (detailed) detailView?.refit(phaseAt(player.time)); },
@@ -233,7 +252,7 @@ async function boot() {
           post({ type: 'ready', period: player.period });
           if (!hosted) presentation.request(0);
         }
-        else { surface?.releaseGpu(); phaseMap?.releaseGpu(); detailView?.releaseGpu(); showError('graphics_context_lost', true); }
+        else { player.trainingHub?.releaseGpu(); surface?.releaseGpu(); phaseMap?.releaseGpu(); detailView?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
     player.setViewInset(viewInset, false);
@@ -251,7 +270,7 @@ async function boot() {
     canvas.addEventListener('pointercancel', () => { pointerDown = null; });
     canvas.addEventListener('pointerup', event => {
       const down = pointerDown; pointerDown = null;
-      if (!down || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
+      if (!down || player.trainingHub || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
       const hit = (!detailed && callouts?.pick(event.clientX, event.clientY)) || (detailed && detailView.getModel() === 'muscles'
         ? phaseMap.pickSurface(event.clientX, event.clientY, player.camera, canvas.getBoundingClientRect())
         : hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items));
@@ -287,6 +306,7 @@ async function boot() {
         projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
+      getTrainingHub: () => player.trainingHub?.getState() ?? null,
       getPerf: () => perfSnapshot(player),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },

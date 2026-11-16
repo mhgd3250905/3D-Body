@@ -980,6 +980,59 @@ class AppLocalizationsJa extends AppLocalizations {
   String get planBodyweightScene => '自重';
 
   @override
+  String get hubAngle => '角度';
+
+  @override
+  String get hubMuscle => '筋群';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count分から';
+  }
+
+  @override
+  String get hubThreeTiers => '3段階';
+
+  @override
+  String get hubViewPlan => 'プランを見る';
+
+  @override
+  String get hubStageBeingPlanned => 'このフェーズのプランは作成中です';
+
+  @override
+  String get hubPrimaryMuscles => 'この局面の主働筋';
+
+  @override
+  String get hubSpecializedPlan => '部位別プラン';
+
+  @override
+  String get hubPlanInPreparation => '準備中';
+
+  @override
+  String get hubPhase09Caption => '両手で支え、開いた脚を前に持ち上げる';
+
+  @override
+  String get hubPhase10Caption => '両手から片手に体重を移す';
+
+  @override
+  String get hubPhase11Caption => '片手で支え、脚を高いV字に開く';
+
+  @override
+  String get hubPhase12Caption => '正面に向き、脚を交差して入れ替える';
+
+  @override
+  String get hubPhase13Caption => '後ろに両手をつき、開脚したまま後方へ振る';
+
+  @override
+  String get hubPhase14Caption => '支持する手を替え、伸ばした脚を後方へ振る';
+
+  @override
+  String get hubPhase15Caption => '反対の手で支え、高いV字を保つ';
+
+  @override
+  String get hubPhase16Caption => 'うつ伏せに回り、脚を後方へ振る';
+
+  @override
   String get planTierBeginner => '初級';
 
   @override

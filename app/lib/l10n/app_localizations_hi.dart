@@ -1001,6 +1001,62 @@ class AppLocalizationsHi extends AppLocalizations {
   String get planBodyweightScene => 'बिना उपकरण';
 
   @override
+  String get hubAngle => 'कोण';
+
+  @override
+  String get hubMuscle => 'मांसपेशियाँ';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count मिनट से';
+  }
+
+  @override
+  String get hubThreeTiers => 'तीन स्तर';
+
+  @override
+  String get hubViewPlan => 'योजना देखें';
+
+  @override
+  String get hubStageBeingPlanned => 'इस चरण की योजना अभी तैयार की जा रही है';
+
+  @override
+  String get hubPrimaryMuscles => 'इस चरण की मुख्य मांसपेशियाँ';
+
+  @override
+  String get hubSpecializedPlan => 'लक्षित योजना';
+
+  @override
+  String get hubPlanInPreparation => 'तैयारी जारी है';
+
+  @override
+  String get hubPhase09Caption => 'दोनों हाथों पर टिककर फैले पैर सामने उठाएँ।';
+
+  @override
+  String get hubPhase10Caption => 'दोनों हाथों से भार एक हाथ पर ले जाएँ।';
+
+  @override
+  String get hubPhase11Caption => 'एक हाथ पर टिककर पैर ऊँचे V में फैलाएँ।';
+
+  @override
+  String get hubPhase12Caption => 'सामने मुड़कर पैर कैंची की तरह बदलें।';
+
+  @override
+  String get hubPhase13Caption =>
+      'दोनों हाथ पीछे टिकाएँ और फैले पैर पीछे घुमाएँ।';
+
+  @override
+  String get hubPhase14Caption =>
+      'सहारा देने वाला हाथ बदलें और सीधे पैर पीछे घुमाएँ।';
+
+  @override
+  String get hubPhase15Caption =>
+      'दूसरे हाथ पर टिककर पैरों का ऊँचा V बनाए रखें।';
+
+  @override
+  String get hubPhase16Caption => 'मुँह नीचे की ओर घुमाएँ और पैर पीछे ले जाएँ।';
+
+  @override
   String get planTierBeginner => 'शुरुआती';
 
   @override

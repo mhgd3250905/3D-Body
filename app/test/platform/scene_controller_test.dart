@@ -12,6 +12,51 @@ const _ready = {
 };
 
 void main() {
+  test(
+    'training hub sends the latest complete selection and restores it',
+    () async {
+      final sent = <Map<String, Object?>>[];
+      final controller = SceneController(commandSink: sent.add);
+      addTearDown(controller.dispose);
+      controller.configureTrainingHub(
+        phaseSource: 9,
+        phaseTime: 2.73,
+        muscleId: 'deltoids',
+        showMuscles: false,
+        scrubbing: true,
+      );
+      controller.configureTrainingHub(
+        phaseSource: 15,
+        phaseTime: 6,
+        muscleId: 'triceps',
+        showMuscles: true,
+      );
+      controller.requestPresentation();
+      controller.receiveEvent(_ready);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(sent.map((value) => value['type']), ['hub_scene', 'present']);
+      final selected = sent.first;
+      expect(selected['phaseSource'], 15);
+      expect(selected['phaseTime'], 6);
+      expect(selected['showMuscles'], isTrue);
+      expect(selected['scrubbing'], isFalse);
+      expect(selected['muscleId'], 'triceps');
+      final muscleCamera = selected['muscleCamera']! as Map<String, Object?>;
+      expect((muscleCamera['position']! as List<double>).last, lessThan(0));
+      expect((selected['angleCamera']! as Map<String, Object?>)['fov'], 32);
+
+      sent.clear();
+      controller.reportError(SceneController.processTerminated);
+      controller.requestPresentation();
+      controller.receiveEvent(_ready);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(sent.map((value) => value['type']), ['hub_scene', 'present']);
+      expect(sent.first, {...selected, 'animate': false});
+    },
+  );
+
   test('bridge readiness waits for the matching presented frame', () async {
     final sent = <Map<String, Object?>>[];
     final controller = SceneController(commandSink: sent.add);

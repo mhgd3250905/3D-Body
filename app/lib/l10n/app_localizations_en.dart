@@ -999,6 +999,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planBodyweightScene => 'Bodyweight';
 
   @override
+  String get hubAngle => 'Angle';
+
+  @override
+  String get hubMuscle => 'Muscles';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'From $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Three levels';
+
+  @override
+  String get hubViewPlan => 'View plan';
+
+  @override
+  String get hubStageBeingPlanned =>
+      'The plan for this phase is in preparation';
+
+  @override
+  String get hubPrimaryMuscles => 'Main muscles in this phase';
+
+  @override
+  String get hubSpecializedPlan => 'Targeted plan';
+
+  @override
+  String get hubPlanInPreparation => 'In preparation';
+
+  @override
+  String get hubPhase09Caption =>
+      'Plant both hands and lift your spread legs forward.';
+
+  @override
+  String get hubPhase10Caption => 'Shift your weight from both hands to one.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Support on one hand and open your legs into a high V.';
+
+  @override
+  String get hubPhase12Caption => 'Turn to face forward and scissor your legs.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Plant both hands behind you and sweep your legs back.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Switch hands and sweep your straight legs back.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Support on the other hand and hold a high V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Turn face down and sweep your legs behind you.';
+
+  @override
   String get planTierBeginner => 'Beginner';
 
   @override

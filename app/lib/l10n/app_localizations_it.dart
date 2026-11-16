@@ -1008,6 +1008,68 @@ class AppLocalizationsIt extends AppLocalizations {
   String get planBodyweightScene => 'Corpo libero';
 
   @override
+  String get hubAngle => 'Angolo';
+
+  @override
+  String get hubMuscle => 'Muscoli';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Da $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Tre livelli';
+
+  @override
+  String get hubViewPlan => 'Vedi piano';
+
+  @override
+  String get hubStageBeingPlanned =>
+      'Il piano per questa fase è in preparazione';
+
+  @override
+  String get hubPrimaryMuscles => 'Muscoli principali di questa fase';
+
+  @override
+  String get hubSpecializedPlan => 'Piano mirato';
+
+  @override
+  String get hubPlanInPreparation => 'In preparazione';
+
+  @override
+  String get hubPhase09Caption =>
+      'Appoggia entrambe le mani e solleva in avanti le gambe divaricate.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Sposta il peso da entrambe le mani a una sola.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Appoggiati su una mano e apri le gambe in una V alta.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Ruota in avanti e incrocia le gambe a forbice.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Appoggia entrambe le mani dietro di te e porta indietro le gambe divaricate.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Cambia mano d’appoggio e slancia indietro le gambe distese.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Appoggiati sull’altra mano e mantieni la V alta.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Ruota con il busto verso il pavimento e porta indietro le gambe.';
+
+  @override
   String get planTierBeginner => 'Principiante';
 
   @override

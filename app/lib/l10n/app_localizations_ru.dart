@@ -1006,6 +1006,66 @@ class AppLocalizationsRu extends AppLocalizations {
   String get planBodyweightScene => 'Без инвентаря';
 
   @override
+  String get hubAngle => 'Угол';
+
+  @override
+  String get hubMuscle => 'Мышцы';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'От $count мин';
+  }
+
+  @override
+  String get hubThreeTiers => 'Три уровня';
+
+  @override
+  String get hubViewPlan => 'Посмотреть план';
+
+  @override
+  String get hubStageBeingPlanned => 'План для этой фазы ещё составляется';
+
+  @override
+  String get hubPrimaryMuscles => 'Основные мышцы на этой фазе';
+
+  @override
+  String get hubSpecializedPlan => 'Целевой план';
+
+  @override
+  String get hubPlanInPreparation => 'Готовится';
+
+  @override
+  String get hubPhase09Caption =>
+      'Обопритесь на обе руки и поднимите разведённые ноги перед собой.';
+
+  @override
+  String get hubPhase10Caption => 'Перенесите вес с обеих рук на одну.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Обопритесь на одну руку и высоко разведите ноги буквой V.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Повернитесь вперёд и поменяйте ноги движением «ножницы».';
+
+  @override
+  String get hubPhase13Caption =>
+      'Поставьте руки за корпусом и махните разведёнными ногами назад.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Смените опорную руку и махните прямыми ногами назад.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Обопритесь на другую руку, удерживая ноги высоко буквой V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Повернитесь лицом вниз и проведите ноги сзади.';
+
+  @override
   String get planTierBeginner => 'Начальный';
 
   @override

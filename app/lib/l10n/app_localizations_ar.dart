@@ -995,6 +995,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planBodyweightScene => 'بوزن الجسم';
 
   @override
+  String get hubAngle => 'الزاوية';
+
+  @override
+  String get hubMuscle => 'العضلات';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'من $count د';
+  }
+
+  @override
+  String get hubThreeTiers => 'ثلاثة مستويات';
+
+  @override
+  String get hubViewPlan => 'عرض الخطة';
+
+  @override
+  String get hubStageBeingPlanned => 'يجري إعداد خطة هذه المرحلة';
+
+  @override
+  String get hubPrimaryMuscles => 'العضلات الرئيسية في هذه المرحلة';
+
+  @override
+  String get hubSpecializedPlan => 'خطة مخصصة';
+
+  @override
+  String get hubPlanInPreparation => 'قيد الإعداد';
+
+  @override
+  String get hubPhase09Caption =>
+      'ارتكز على كلتا يديك وارفع ساقيك المتباعدتين إلى الأمام.';
+
+  @override
+  String get hubPhase10Caption => 'انقل وزنك من كلتا يديك إلى يد واحدة.';
+
+  @override
+  String get hubPhase11Caption =>
+      'ارتكز على يد واحدة وافتح ساقيك عاليًا على شكل V.';
+
+  @override
+  String get hubPhase12Caption =>
+      'استدر إلى الأمام وبدّل موضع ساقيك بحركة مقصية.';
+
+  @override
+  String get hubPhase13Caption =>
+      'ضع كفيك خلفك وأرجح ساقيك المتباعدتين إلى الخلف.';
+
+  @override
+  String get hubPhase14Caption =>
+      'بدّل يد الارتكاز وأرجح ساقيك الممدودتين إلى الخلف.';
+
+  @override
+  String get hubPhase15Caption =>
+      'ارتكز على اليد الأخرى وأبق ساقيك على شكل V مرتفع.';
+
+  @override
+  String get hubPhase16Caption => 'استدر لتواجه الأرض وأرجح ساقيك خلفك.';
+
+  @override
   String get planTierBeginner => 'مبتدئ';
 
   @override

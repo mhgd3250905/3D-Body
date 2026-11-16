@@ -257,6 +257,7 @@ class FlareStage extends StatefulWidget {
     required this.pageKey,
     required this.depth,
     required this.child,
+    this.underlay,
     this.modal = false,
     this.onSettled,
     this.onSwipeBack,
@@ -278,6 +279,9 @@ class FlareStage extends StatefulWidget {
   final Object pageKey;
   final int depth;
   final Widget? child;
+
+  /// A page that stays mounted while another route covers it.
+  final Widget? underlay;
   final bool modal;
   final VoidCallback? onSettled;
 
@@ -442,6 +446,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final underlay = widget.underlay;
     final current = _layer(
       key: widget.pageKey,
       incoming: true,
@@ -459,7 +464,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
     final canSwipe =
-        widget.onSwipeBack != null && widget.child != null && !widget.modal;
+        widget.onSwipeBack != null &&
+        (widget.child != null || underlay != null) &&
+        !widget.modal;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -478,6 +485,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                   ),
                 ),
         ),
+        if (underlay != null)
+          _layer(
+            key: const ValueKey('_underlay'),
+            incoming: widget.child == null,
+            empty: widget.child != null,
+            stationary: widget.child != null,
+            child: _page(underlay),
+          ),
         if (previous != null && !previousOnTop) previous,
         current,
         if (previous != null && previousOnTop) previous,
@@ -517,6 +532,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     required Object key,
     required bool incoming,
     required bool empty,
+    bool stationary = false,
     required Widget child,
   }) {
     return KeyedSubtree(
@@ -592,6 +608,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             if (!animating && incoming && _swipe.value > 0) {
               dx = _swipe.value * width;
               shadow = true;
+            }
+            if (stationary) {
+              dx = 0;
+              dy = 0;
+              scale = 1;
+              opacity = 1;
+              dim = 0;
+              shadow = false;
             }
             // Keep one widget shape at rest and in flight: changing the
             // wrappers would remount the page and drop its state.
@@ -814,6 +838,8 @@ class FlarePressable extends StatefulWidget {
     required this.child,
     this.onTap,
     this.scale = FlareMotion.pressScale,
+    this.pressDuration = FlareMotion.press,
+    this.plainWhenDisabled = false,
     this.focusNode,
     this.semanticLabel,
     this.preserveChildSemantics = false,
@@ -824,6 +850,8 @@ class FlarePressable extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final double scale;
+  final Duration pressDuration;
+  final bool plainWhenDisabled;
   final FocusNode? focusNode;
 
   /// Spoken name in the current language; the child's own text is then
@@ -860,8 +888,8 @@ class _FlarePressableState extends State<FlarePressable> {
     final semantics = Semantics(
       container: true,
       explicitChildNodes: widget.preserveChildSemantics,
-      button: true,
-      enabled: enabled,
+      button: enabled || !widget.plainWhenDisabled,
+      enabled: enabled || !widget.plainWhenDisabled ? enabled : null,
       label: widget.semanticLabel,
       selected: widget.selected,
       inMutuallyExclusiveGroup: widget.inMutuallyExclusiveGroup,
@@ -893,7 +921,7 @@ class _FlarePressableState extends State<FlarePressable> {
             duration: reduced
                 ? Duration.zero
                 : _down
-                ? FlareMotion.press
+                ? widget.pressDuration
                 : FlareMotion.release,
             curve: _down ? Curves.easeOut : Curves.easeOutCubic,
             child: FlarePressedScope(
