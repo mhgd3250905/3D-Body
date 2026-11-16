@@ -21,6 +21,8 @@ class SceneController extends ChangeNotifier {
   int _connection = 0;
   Map<String, Object?>? _trainingHubCommand;
   double _trainingHubYaw = 0;
+  Completer<void>? _trainingFlight;
+  int _trainingFlightId = 0;
 
   double _time = 0;
   double _period = 9;
@@ -166,6 +168,31 @@ class SceneController extends ChangeNotifier {
       return;
     }
     command({'type': 'hub_angle', 'yaw': _trainingHubYaw});
+  }
+
+  Future<void> flyToTrainingHub({
+    required double time,
+    required double top,
+    required double height,
+    required Duration duration,
+  }) {
+    _trainingFlight?.complete();
+    final flight = _trainingFlight = Completer<void>();
+    command({
+      'type': 'hub_flight',
+      'id': ++_trainingFlightId,
+      'time': time,
+      'top': top,
+      'height': height,
+      'duration': duration.inMilliseconds,
+    });
+    return flight.future;
+  }
+
+  void finishTrainingFlight() {
+    _trainingFlight?.complete();
+    _trainingFlight = null;
+    command({'type': 'hub_flight', 'id': 0});
   }
 
   void setCamera(String view) => command({'type': 'camera', 'view': view});
@@ -325,6 +352,14 @@ class SceneController extends ChangeNotifier {
   bool receiveEvent(Map<Object?, Object?> event) {
     if (_disposed || event['source'] != 'flare-scene') return false;
     final type = event['type'];
+    if (type == 'hub_flight_done') {
+      if (event['id'] != _trainingFlightId || _trainingFlight == null) {
+        return false;
+      }
+      _trainingFlight!.complete();
+      _trainingFlight = null;
+      return true;
+    }
     if (!const {
       'ready',
       'presented',

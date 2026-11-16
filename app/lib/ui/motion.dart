@@ -258,6 +258,7 @@ class FlareStage extends StatefulWidget {
     required this.depth,
     required this.child,
     this.underlay,
+    this.transparentUnderlay = false,
     this.modal = false,
     this.cover = false,
     this.onSettled,
@@ -283,6 +284,7 @@ class FlareStage extends StatefulWidget {
 
   /// A page that stays mounted while another route covers it.
   final Widget? underlay;
+  final bool transparentUnderlay;
   final bool modal;
 
   /// Slide over the previous page while keeping it stationary and undimmed.
@@ -450,9 +452,12 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Widget _page(Widget? child) => child == null
+  Widget _page(Widget? child, {bool transparent = false}) => child == null
       ? const SizedBox.expand()
-      : Material(color: FlareColors.background, child: child);
+      : Material(
+          color: transparent ? Colors.transparent : FlareColors.background,
+          child: child,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -504,7 +509,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             incoming: widget.child == null,
             empty: widget.child != null,
             stationary: widget.child != null,
-            child: _page(underlay),
+            child: _page(underlay, transparent: widget.transparentUnderlay),
           ),
         if (previous != null && !previousOnTop && !incomingUnderlay) previous,
         current,

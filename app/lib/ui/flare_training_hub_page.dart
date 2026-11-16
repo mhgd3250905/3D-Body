@@ -31,6 +31,9 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.onBack,
     required this.onAngle,
     required this.onMuscle,
+    this.actorHandoff = false,
+    this.sceneBoundsKey,
+    this.onScenePresented,
   });
 
   final Catalog catalog;
@@ -40,6 +43,9 @@ class FlareTrainingHubPage extends StatefulWidget {
   final VoidCallback onBack;
   final ValueChanged<Phase> onAngle;
   final ValueChanged<MuscleGroup> onMuscle;
+  final bool actorHandoff;
+  final GlobalKey? sceneBoundsKey;
+  final VoidCallback? onScenePresented;
 
   @override
   State<FlareTrainingHubPage> createState() => _FlareTrainingHubPageState();
@@ -51,6 +57,8 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   bool _muscles = false;
   String _muscleId = 'deltoids';
   bool _muscleFocused = false;
+  bool _reportedPresentation = false;
+  bool _requestedPresentation = false;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
@@ -59,9 +67,24 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   @override
   void initState() {
     super.initState();
+    _stage.addListener(_sceneChanged);
     _render(animate: false);
     _stage.setVisible(widget.visible);
-    _stage.requestPresentation();
+  }
+
+  void _sceneChanged() {
+    if (!_stage.ready) {
+      _requestedPresentation = _reportedPresentation = false;
+      return;
+    }
+    if (!_requestedPresentation) {
+      _requestedPresentation = true;
+      _stage.requestPresentation();
+    }
+    if (_stage.presented && !_reportedPresentation) {
+      _reportedPresentation = true;
+      widget.onScenePresented?.call();
+    }
   }
 
   @override
@@ -171,7 +194,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       value: (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
           .copyWith(statusBarColor: Colors.transparent),
       child: ColoredBox(
-        color: p.background,
+        color: widget.actorHandoff ? Colors.transparent : p.background,
         child: LayoutBuilder(
           builder: (context, box) {
             final available = math.max(0.0, box.maxHeight - controlsBottom);
@@ -185,6 +208,8 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                     height: stageHeight,
                     safeTop: safe.top,
                     muscles: _muscles,
+                    actorHandoff: widget.actorHandoff,
+                    sceneBoundsKey: widget.sceneBoundsKey,
                     onBack: widget.onBack,
                     onMode: _selectMode,
                     onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
@@ -198,6 +223,7 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                             controller: _stage,
                             body: widget.actorBody,
                             interactive: false,
+                            concealed: widget.actorHandoff,
                           )
                         : const SizedBox.expand(),
                   ),
@@ -362,6 +388,8 @@ class _HubStage extends StatelessWidget {
     required this.height,
     required this.safeTop,
     required this.muscles,
+    required this.actorHandoff,
+    required this.sceneBoundsKey,
     required this.onBack,
     required this.onMode,
     required this.onHorizontalDragUpdate,
@@ -370,6 +398,8 @@ class _HubStage extends StatelessWidget {
   final double height;
   final double safeTop;
   final bool muscles;
+  final bool actorHandoff;
+  final GlobalKey? sceneBoundsKey;
   final VoidCallback onBack;
   final ValueChanged<bool> onMode;
   final GestureDragUpdateCallback? onHorizontalDragUpdate;
@@ -382,39 +412,43 @@ class _HubStage extends StatelessWidget {
     return SizedBox(
       height: height,
       child: DecoratedBox(
-        decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
+        decoration: BoxDecoration(
+          gradient: actorHandoff ? null : flarePlanArtGradient(p),
+        ),
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const Positioned(
-              left: 0,
-              right: 0,
-              top: 90,
-              child: Center(child: FlarePlanGlow(diameter: 320)),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              top: muscles ? 392 : null,
-              bottom: muscles ? null : height * .06,
-              child: Center(
-                child: Transform.scale(
-                  scaleX: 240 / 28,
-                  child: SizedBox.square(
-                    dimension: 28,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [shadow, shadow.withValues(alpha: 0)],
-                          stops: const [0, .7],
+            if (!actorHandoff)
+              const Positioned(
+                left: 0,
+                right: 0,
+                top: 90,
+                child: Center(child: FlarePlanGlow(diameter: 320)),
+              ),
+            if (!actorHandoff)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: muscles ? 392 : null,
+                bottom: muscles ? null : height * .06,
+                child: Center(
+                  child: Transform.scale(
+                    scaleX: 240 / 28,
+                    child: SizedBox.square(
+                      dimension: 28,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [shadow, shadow.withValues(alpha: 0)],
+                            stops: const [0, .7],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
             Positioned(
               left: 0,
               right: 0,
@@ -423,10 +457,13 @@ class _HubStage extends StatelessWidget {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onHorizontalDragUpdate: onHorizontalDragUpdate,
-                child: ClipRect(child: IgnorePointer(child: scene)),
+                child: ClipRect(
+                  key: sceneBoundsKey,
+                  child: IgnorePointer(child: scene),
+                ),
               ),
             ),
-            if (!muscles)
+            if (!muscles && !actorHandoff)
               Positioned(
                 left: 0,
                 right: 0,

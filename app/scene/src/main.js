@@ -2,6 +2,7 @@ import './style.css';
 import { FlarePlayer, CAMERA_PRESETS } from './player.js';
 import { phaseAt, phaseTicks, GROUPS } from './phase.js';
 import { createHotspotCallouts } from './hotspot-callouts.js';
+import { createHubFlight } from './training-hub-flight.js';
 import { createHotspotDepth } from './hotspot-depth.js';
 import { createHubCalloutVisibility } from './hub-callout-visibility.js';
 import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-mesh.js';
@@ -89,7 +90,7 @@ function clearHotspots() {
   hubCallouts.clear(); hubCalloutFrame = null;
 }
 function refreshHotspots(rendered = false) {
-  if (!ready || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+  if (!ready || previewing || player.playing || detailed || player.hubFlight || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     clearHotspots(); return;
   }
@@ -199,6 +200,19 @@ function command(value) {
       }
       break;
     }
+    case 'hub_flight': {
+      player.hubFlight?.restore();
+      player.hubFlight = null;
+      if (input.id > 0) {
+        player.playing = false;
+        player.hubFlight = createHubFlight(player, input, CAMERA_PRESETS.standard,
+          () => post({ type: 'hub_flight_done', id: input.id }));
+        if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
+      }
+      phaseMap?.setHidden(detailed || !!player.hubFlight);
+      player.start();
+      break;
+    }
     case 'hub_angle':
       player.trainingHub?.setAngleYaw(input.yaw);
       return;
@@ -263,7 +277,7 @@ async function boot() {
   try {
     player = new FlarePlayer(stage, { character,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
-      onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true); },
+      onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected && !player.hubFlight); refreshHotspots(true); },
       onRender: hubCompleted => {
         const complete = player.trainingHub ? hubCompleted : detailed ? detailView?.renderMini() : phaseMap?.render();
         presentation.rendered(complete === true);
@@ -332,6 +346,9 @@ async function boot() {
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
       getTrainingHub: () => player.trainingHub?.getState() ?? null,
+      getTrainingFlight: () => player.hubFlight && {
+        position: player.hubFlight.camera.position.toArray(), landed: player.hubFlight.landed,
+      },
       getHubCalloutState: () => hubCalloutFrame && { ...hubCalloutFrame },
       getPerf: () => perfSnapshot(player),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),

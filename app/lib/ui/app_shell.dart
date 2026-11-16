@@ -112,6 +112,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool _insetSent = false;
   bool _holdWatch = false;
   final _stageBackdropKey = GlobalKey();
+  final _homeSceneBounds = GlobalKey();
+  final _hubSceneBounds = GlobalKey();
+  Timer? _trainingFlightDeadline;
+  bool _trainingActorFlight = false;
+  bool _trainingFlightLanded = false;
+  bool _trainingHubPresented = false;
 
   /// One sheet at a time: a quick double tap must not stack two sheets.
   bool _sheetOpen = false;
@@ -294,7 +300,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool get _preparingScene => widget.enableScene && !_scene.presented;
 
   void _syncSceneVisibility() {
-    _scene.setVisible(_appVisible && (_watchVisible || _preparingScene));
+    _scene.setVisible(
+      _appVisible && (_watchVisible || _preparingScene || _trainingActorFlight),
+    );
     if (!_watchVisible) {
       _scene.pause();
       if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
@@ -314,6 +322,68 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _libraryQuery = '';
     });
     _syncSceneVisibility();
+  }
+
+  void _enterTrainingHub() {
+    _trainingActorFlight =
+        widget.enableScene &&
+        _scene.presented &&
+        _scene.errorCode == null &&
+        !FlareMotion.reduced(context);
+    _trainingFlightLanded = false;
+    _trainingHubPresented = false;
+    _changeTab(_trainingHubTab);
+    if (!_trainingActorFlight) return;
+    _trainingFlightDeadline = Timer(
+      const Duration(seconds: 3),
+      _finishTrainingFlight,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !_trainingActorFlight) return;
+      final home = _homeSceneBounds.currentContext?.findRenderObject();
+      final hub = _hubSceneBounds.currentContext?.findRenderObject();
+      if (home is! RenderBox ||
+          hub is! RenderBox ||
+          !home.hasSize ||
+          !hub.hasSize ||
+          hub.size.isEmpty) {
+        _finishTrainingFlight();
+        return;
+      }
+      final deadline = _trainingFlightDeadline;
+      await _scene.flyToTrainingHub(
+        time: catalog.phaseTime(11),
+        top:
+            hub.localToGlobal(Offset.zero).dy -
+            home.localToGlobal(Offset.zero).dy,
+        height: hub.size.height,
+        duration: const Duration(milliseconds: 650),
+      );
+      if (!mounted ||
+          !_trainingActorFlight ||
+          _trainingFlightDeadline != deadline)
+        return;
+      _trainingFlightLanded = true;
+      if (_trainingHubPresented) _finishTrainingFlight();
+    });
+  }
+
+  void _onTrainingHubPresented() {
+    _trainingHubPresented = true;
+    if (_trainingFlightLanded) _finishTrainingFlight();
+  }
+
+  void _finishTrainingFlight() {
+    if (!_trainingActorFlight || !mounted) return;
+    _trainingFlightDeadline?.cancel();
+    _trainingFlightDeadline = null;
+    setState(() => _trainingActorFlight = false);
+    // Keep the landing frame until the destination canvas has been unveiled.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _trainingActorFlight) return;
+      _syncSceneVisibility();
+      _scene.finishTrainingFlight();
+    });
   }
 
   void _openGroup(MuscleGroup group) {
@@ -694,6 +764,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _back() {
     if (_trainingOpen) return;
+    if (_trainingActorFlight) _finishTrainingFlight();
     if (_tab == 0 &&
         _drill == null &&
         !_inPlan &&
@@ -752,6 +823,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _trainingFlightDeadline?.cancel();
+    if (_trainingActorFlight) _scene.finishTrainingFlight();
     _scene.removeListener(_sceneChanged);
     store.removeListener(_storeChanged);
     if (widget.coach == null) unawaited(_coach?.close());
@@ -812,7 +885,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         // floating header, transparent 3D view and compact transport.
         decoration: BoxDecoration(gradient: _stageGradient()),
         child: Scaffold(
-          backgroundColor: _watchVisible || _holdWatch
+          backgroundColor: _watchVisible || _holdWatch || _trainingActorFlight
               ? Colors.transparent
               : FlareColors.background,
           // Titled pages sit below the status bar; the shared 3D stage owns
@@ -850,10 +923,23 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       children: [
                         Offstage(
                           offstage:
-                              !_watchVisible && !_holdWatch && !_preparingScene,
+                              !_watchVisible &&
+                              !_holdWatch &&
+                              !_preparingScene &&
+                              !_trainingActorFlight,
                           child: SafeArea(
                             bottom: false,
-                            child: _watchPage(context),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: _trainingActorFlight
+                                    ? MediaQuery.viewPaddingOf(context).bottom
+                                    : 0,
+                              ),
+                              child: IgnorePointer(
+                                ignoring: _trainingActorFlight,
+                                child: _watchPage(context),
+                              ),
+                            ),
                           ),
                         ),
                         FlareStage(
@@ -861,19 +947,29 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           depth: route.$2,
                           modal: route.$3,
                           cover: hubInFront || edgeToEdgePlan,
+                          transparentUnderlay: _trainingActorFlight,
                           underlay: hasHub
                               ? ExcludeSemantics(
-                                  excluding: !hubInFront,
-                                  child: FlareTrainingHubPage(
-                                    key: const ValueKey('training-hub'),
-                                    catalog: catalog,
-                                    actorBody: _actorBody,
-                                    enableScene: widget.enableScene,
-                                    visible:
-                                        hubInFront && _appVisible && _appActive,
-                                    onBack: _back,
-                                    onAngle: _openAnglePlan,
-                                    onMuscle: _openMusclePlan,
+                                  excluding:
+                                      !hubInFront || _trainingActorFlight,
+                                  child: IgnorePointer(
+                                    ignoring: _trainingActorFlight,
+                                    child: FlareTrainingHubPage(
+                                      key: const ValueKey('training-hub'),
+                                      catalog: catalog,
+                                      actorBody: _actorBody,
+                                      enableScene: widget.enableScene,
+                                      actorHandoff: _trainingActorFlight,
+                                      sceneBoundsKey: _hubSceneBounds,
+                                      onScenePresented: _onTrainingHubPresented,
+                                      visible:
+                                          hubInFront &&
+                                          _appVisible &&
+                                          _appActive,
+                                      onBack: _back,
+                                      onAngle: _openAnglePlan,
+                                      onMuscle: _openMusclePlan,
+                                    ),
                                   ),
                                 )
                               : null,
@@ -1180,59 +1276,62 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          // Equal control slots keep the wordmark centered around one menu.
-          padding: EdgeInsets.fromLTRB(
-            16,
-            (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
-            16,
-            10,
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: FlareGeometry.homeControlSlot,
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: FlareNavChip(
-                    key: const ValueKey('home-menu-chip'),
-                    label: detail == null ? s.more : s.returnToMotion,
-                    icon: detail == null
-                        ? Icons.menu_rounded
-                        : FlareNavBar.backIcon,
-                    onPressed: detail == null ? _showMore : _returnToMotion,
+        Opacity(
+          opacity: _trainingActorFlight ? 0 : 1,
+          child: Padding(
+            // Equal control slots keep the wordmark centered around one menu.
+            padding: EdgeInsets.fromLTRB(
+              16,
+              (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
+              16,
+              10,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: FlareGeometry.homeControlSlot,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FlareNavChip(
+                      key: const ValueKey('home-menu-chip'),
+                      label: detail == null ? s.more : s.returnToMotion,
+                      icon: detail == null
+                          ? Icons.menu_rounded
+                          : FlareNavBar.backIcon,
+                      onPressed: detail == null ? _showMore : _returnToMotion,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: FlareMotion.of(context, FlareMotion.fade),
-                  switchInCurve: FlareMotion.settle,
-                  child: detail == null
-                      ? SizedBox(
-                          key: const ValueKey('home'),
-                          height: headingHeight,
-                          child: Center(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: _HomeWordmark(label: s.motionBrand),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: FlareMotion.of(context, FlareMotion.fade),
+                    switchInCurve: FlareMotion.settle,
+                    child: detail == null
+                        ? SizedBox(
+                            key: const ValueKey('home'),
+                            height: headingHeight,
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: _HomeWordmark(label: s.motionBrand),
+                              ),
+                            ),
+                          )
+                        // The panel below carries the large muscle title; the
+                        // bar keeps its height (stage framing) but no title,
+                        // so the name is not shown twice.
+                        : SizedBox(
+                            key: ValueKey(detail.id),
+                            height: headingHeight,
+                            child: const SizedBox.expand(
+                              key: ValueKey('muscle-detail-title'),
                             ),
                           ),
-                        )
-                      // The panel below carries the large muscle title; the
-                      // bar keeps its height (stage framing) but no title,
-                      // so the name is not shown twice.
-                      : SizedBox(
-                          key: ValueKey(detail.id),
-                          height: headingHeight,
-                          child: const SizedBox.expand(
-                            key: ValueKey('muscle-detail-title'),
-                          ),
-                        ),
+                  ),
                 ),
-              ),
-              const SizedBox.square(dimension: FlareGeometry.homeControlSlot),
-            ],
+                const SizedBox.square(dimension: FlareGeometry.homeControlSlot),
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -1259,17 +1358,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       enabled: widget.enableScene && _watchVisible,
                     ),
                   ),
-                  widget.enableScene
-                      ? SceneView(
-                          key: ValueKey((
-                            _sceneGeneration,
-                            widget.sceneRevision,
-                            _actorBody,
-                          )),
-                          controller: _scene,
-                          body: _actorBody,
-                        )
-                      : ColoredBox(color: FlareColors.background),
+                  SizedBox.expand(
+                    key: _homeSceneBounds,
+                    child: widget.enableScene
+                        ? SceneView(
+                            key: ValueKey((
+                              _sceneGeneration,
+                              widget.sceneRevision,
+                              _actorBody,
+                            )),
+                            controller: _scene,
+                            body: _actorBody,
+                          )
+                        : ColoredBox(color: FlareColors.background),
+                  ),
                   SceneRevealLayer(
                     enabled: widget.enableScene && !widget.startupCovered,
                     presented: _scene.presented,
@@ -1288,73 +1390,77 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             onRetry: _restartScene,
                           ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: detail == null ? 5 : 1,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            if (detail != null)
-                              Positioned(
-                                left: 12,
-                                bottom: 31,
-                                width: 86,
-                                height: 136,
-                                child: Semantics(
-                                  label: _scene.detailModel == 'motion'
-                                      ? s.switchToMuscles
-                                      : s.switchToMotion,
-                                  button: true,
-                                  onTap: _swapDetailCard,
-                                  child: ExcludeSemantics(
-                                    child: TextButton(
-                                      key: const ValueKey('detail-card'),
-                                      onPressed: _swapDetailCard,
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(86, 136),
-                                        backgroundColor: FlareColors.background
-                                            .withValues(alpha: .004),
-                                        overlayColor: FlareColors.text
-                                            .withValues(alpha: .13),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
+                  Opacity(
+                    opacity: _trainingActorFlight ? 0 : 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: detail == null ? 5 : 1,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              if (detail != null)
+                                Positioned(
+                                  left: 12,
+                                  bottom: 31,
+                                  width: 86,
+                                  height: 136,
+                                  child: Semantics(
+                                    label: _scene.detailModel == 'motion'
+                                        ? s.switchToMuscles
+                                        : s.switchToMotion,
+                                    button: true,
+                                    onTap: _swapDetailCard,
+                                    child: ExcludeSemantics(
+                                      child: TextButton(
+                                        key: const ValueKey('detail-card'),
+                                        onPressed: _swapDetailCard,
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: const Size(86, 136),
+                                          backgroundColor: FlareColors
+                                              .background
+                                              .withValues(alpha: .004),
+                                          overlayColor: FlareColors.text
+                                              .withValues(alpha: .13),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                         ),
+                                        child: const SizedBox.expand(),
                                       ),
-                                      child: const SizedBox.expand(),
                                     ),
                                   ),
                                 ),
-                              ),
-                            if (detail == null)
-                              Positioned(
-                                right: 20,
-                                bottom: box.maxWidth < 380 ? 228 : 18,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: box.maxWidth < 380
-                                        ? box.maxWidth * .46
-                                        : box.maxWidth - 218,
+                              if (detail == null)
+                                Positioned(
+                                  right: 20,
+                                  bottom: box.maxWidth < 380 ? 228 : 18,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: box.maxWidth < 380
+                                          ? box.maxWidth * .46
+                                          : box.maxWidth - 218,
+                                    ),
+                                    child: _homeHint(context),
                                   ),
-                                  child: _homeHint(context),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      if (detail == null) ...[
-                        FadeSlideIn(
-                          key: const ValueKey('transport'),
-                          offset: 10,
-                          child: _transport(context, phase),
-                        ),
-                      ] else
-                        _detailPanel(context, phase, detail),
-                    ],
+                        if (detail == null) ...[
+                          FadeSlideIn(
+                            key: const ValueKey('transport'),
+                            offset: 10,
+                            child: _transport(context, phase),
+                          ),
+                        ] else
+                          _detailPanel(context, phase, detail),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -2047,7 +2153,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
     switch (value) {
       case 'library':
-        _changeTab(_trainingHubTab);
+        _enterTrainingHub();
       case 'plans':
         _changeTab(2);
       case 'progress':

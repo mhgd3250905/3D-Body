@@ -17,11 +17,13 @@ class ScenePlatformView extends StatefulWidget {
     required this.controller,
     this.body = 'original',
     this.interactive = true,
+    this.concealed = false,
   });
 
   final SceneController controller;
   final String body;
   final bool interactive;
+  final bool concealed;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();
@@ -158,17 +160,25 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
   Widget build(BuildContext context) {
     final webView = _webView;
     if (webView == null) {
-      return const ColoredBox(
-        color: Color(0xff08080a),
-        child: SizedBox.expand(),
+      return ColoredBox(
+        color: widget.concealed
+            ? const Color(0x00000000)
+            : const Color(0xff08080a),
+        child: const SizedBox.expand(),
       );
     }
-    return WebViewWidget(
-      controller: webView,
-      gestureRecognizers: {
-        if (widget.interactive)
-          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-      },
+    return Opacity(
+      // Keep the viewport in composition while it prepares a landing frame.
+      opacity: widget.concealed ? 1 / 255 : 1,
+      child: WebViewWidget(
+        controller: webView,
+        gestureRecognizers: {
+          if (widget.interactive)
+            Factory<OneSequenceGestureRecognizer>(
+              () => EagerGestureRecognizer(),
+            ),
+        },
+      ),
     );
   }
 

@@ -146,7 +146,9 @@ export class FlarePlayer {
     this.stepGlide(now);
     this.controls.update();
     const hubMoving = this.trainingHub?.tick(now);
-    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
+    const flightMoving = this.hubFlight?.sample(now);
+    if (flightMoving) this.dirty = true;
+    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving || flightMoving;
     // A frame requested only by the orbit keeps the pose and the shadow map.
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
@@ -157,6 +159,7 @@ export class FlarePlayer {
       // Render hooks may request another frame while an effect settles.
       // Consume this frame's request before running those hooks.
       this.redraw = false; this.sceneDirty = false; const complete = this.render(); this.callbacks.onRender?.(complete);
+      this.hubFlight?.rendered();
       const perf = this.perf;
       if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
       perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
@@ -166,6 +169,7 @@ export class FlarePlayer {
     if (this.trainingHub) return this.trainingHub.render();
     this.callbacks.onBeforeRender?.();
     const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
+    const camera = this.hubFlight?.camera ?? this.camera;
     // The key light's shadow depends on the pose, not on the camera. While
     // only the orbit moves, the previous shadow map stays valid.
     const shadows = r.shadowMap.enabled && this.keyLight.castShadow;
@@ -176,8 +180,8 @@ export class FlarePlayer {
         // Nothing is drawn under the host's chrome: clear all, draw above it.
         r.setScissorTest(false); r.clear();
         r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
-        r.render(this.displayScene ?? this.scene, this.camera); r.setScissorTest(false);
-      } else r.render(this.displayScene ?? this.scene, this.camera);
+        r.render(this.displayScene ?? this.scene, camera); r.setScissorTest(false);
+      } else r.render(this.displayScene ?? this.scene, camera);
     } finally { r.shadowMap.autoUpdate = true; }
     this.cameraOnly = false;
     const perf = this.perf, canvas = r.domElement;

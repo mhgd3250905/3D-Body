@@ -5,7 +5,9 @@ import { createMuscleUniforms } from '../src/legacy/muscle-map.js';
 import { applyFunctionalSurface } from '../src/muscle-material.js';
 import { CAMERA_PRESETS } from '../src/player.js';
 import { fitHubAngle, resolveHubAngleCamera } from '../src/training-hub-angle-fit.js';
+import { createHubFlight } from '../src/training-hub-flight.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
+import angleBounds from '../src/training-hub-angle-bounds.json' with { type: 'json' };
 
 const front = { position: [0, 1.155, 3.4], target: [0, 1.155, 0], fov: 26 };
 const back = { ...front, position: [0, 1.155, -3.4] };
@@ -62,6 +64,56 @@ test('the angle camera stays level and moves to two thirds of the previous dista
     assert.ok(Math.abs(distance * 1.5 - previous.distance) < 1e-10);
   }
   assert.deepEqual(referenceDirection.toArray(), oldDirection.toArray());
+});
+
+test('hub entry starts at the home shot and lands at the same pixels as the hub camera', () => {
+  const width = 390, height = 690, destinationTop = -30, destinationHeight = 374;
+  const home = new THREE.PerspectiveCamera(39, width / height, .02, 40);
+  const target = new THREE.Vector3(0, .8, 0);
+  home.position.set(1, 3, 5);
+  home.lookAt(target);
+  home.setViewOffset(width, height, 10, 148, width, height);
+  home.updateMatrixWorld(true);
+  const times = [];
+  let landings = 0;
+  const player = {
+    container: { clientHeight: height, clientWidth: width },
+    camera: home, controls: { target }, time: 0, period: 9, baseFov: 32,
+    motion: { update: time => times.push(time) },
+    shadowCatcher: { material: { opacity: .28 } },
+  };
+  const flight = createHubFlight(player, {
+    top: destinationTop, height: destinationHeight, time: 2.7, duration: 650,
+  }, CAMERA_PRESETS.standard, () => landings++);
+  flight.sample(0);
+  for (const point of boxCorners) {
+    assert.ok(point.clone().project(home).distanceTo(point.clone().project(flight.camera)) < 1e-10);
+  }
+  flight.sample(325);
+  assert.ok(times.at(-1) > 0 && times.at(-1) < 2.7);
+  assert.equal(landings, 0);
+  flight.sample(650);
+  const fit = resolveHubAngleCamera(angleBounds, {
+    referenceDirection: CAMERA_PRESETS.standard, fov: 32, aspect: width / destinationHeight,
+  });
+  const landing = new THREE.PerspectiveCamera(32, width / destinationHeight, .02, 40);
+  landing.position.fromArray(fit.target).addScaledVector(fit.direction, fit.distance);
+  landing.lookAt(new THREE.Vector3(...fit.target));
+  landing.updateMatrixWorld(true);
+  for (const point of boxCorners) {
+    const a = point.clone().project(flight.camera);
+    const b = point.clone().project(landing);
+    assert.ok(Math.abs(a.x - b.x) < 1e-10);
+    assert.ok(Math.abs((1 - a.y) * height / 2 - (destinationTop + (1 - b.y) * destinationHeight / 2)) < 1e-8);
+  }
+  assert.equal(times.at(-1), 2.7);
+  assert.equal(landings, 0);
+  flight.rendered();
+  flight.rendered();
+  assert.equal(landings, 1);
+  flight.restore();
+  assert.equal(times.at(-1), 0);
+  assert.equal(player.shadowCatcher.material.opacity, .28);
 });
 
 test('phase retargeting preserves the current pose and the latest destination wins', () => {

@@ -13,11 +13,13 @@ class ScenePlatformView extends StatefulWidget {
     required this.controller,
     this.body = 'original',
     this.interactive = true,
+    this.concealed = false,
   });
 
   final SceneController controller;
   final String body;
   final bool interactive;
+  final bool concealed;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();
@@ -57,6 +59,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
       ..display = 'block'
       ..backgroundColor = 'transparent'
       ..pointerEvents = widget.interactive ? 'auto' : 'none'
+      ..opacity = widget.concealed ? '0' : '1'
       ..touchAction = 'none'
       ..overscrollBehavior = 'none';
   }
@@ -93,6 +96,7 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
   void didUpdateWidget(covariant ScenePlatformView oldWidget) {
     super.didUpdateWidget(oldWidget);
     _frame?.style.pointerEvents = widget.interactive ? 'auto' : 'none';
+    _frame?.style.opacity = widget.concealed ? '0' : '1';
     if (oldWidget.controller == widget.controller) return;
     final wasReady = oldWidget.controller.ready;
     final wasPresented = oldWidget.controller.presented;
