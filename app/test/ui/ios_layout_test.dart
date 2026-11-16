@@ -1,16 +1,15 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/catalog.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_training_hub_page.dart';
+import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../domain/fixtures.dart';
-import 'flow_regressions_test.dart'
-    show TrainingRouteProbe, waitForTrainingRoute;
 
 class _MemoryStorage implements LocalStateStorage {
   String? value;
@@ -21,7 +20,10 @@ class _MemoryStorage implements LocalStateStorage {
 }
 
 void main() {
-  final catalog = loadCatalogFixture();
+  late Catalog catalog;
+  setUpAll(() async {
+    catalog = await Catalog.load();
+  });
   for (final (name, size, top, bottom, side) in [
     ('SE3', const Size(375, 667), 20.0, 0.0, 0.0),
     ('iPhone13', const Size(390, 844), 47.0, 34.0, 0.0),
@@ -83,7 +85,6 @@ void main() {
                   store: store,
                   sceneController: scene,
                   enableScene: false,
-                  trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
                 ),
               ),
             );
@@ -133,28 +134,31 @@ void main() {
             await tester.tap(drillName);
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull, reason: 'drill detail');
-            final start = find.text('开始训练');
-            await tester.ensureVisible(start);
-            await tester.tap(start);
-            await waitForTrainingRoute(tester);
-            expect(find.byType(TrainingRouteProbe), findsOneWidget);
-            expect(
-              tester
-                  .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
-                  .plan
-                  .exerciseIds,
-              {drill.id},
-            );
-            expect(
-              tester.takeException(),
-              isNull,
-              reason: 'SDK route handoff (player layout covered separately)',
-            );
-            await tester.tap(
-              find.byKey(const ValueKey('training-probe-close')),
-            );
-            await tester.pumpAndSettle();
             expect(find.byType(DrillDetailPage), findsOneWidget);
+
+            // Return through the library and muscle detail to the home menu.
+            for (var page = 0; page < 3; page++) {
+              await tester.binding.handlePopRoute();
+              await tester.pumpAndSettle();
+            }
+            await tester.tap(find.byKey(const ValueKey('home-menu-chip')));
+            await tester.pumpAndSettle();
+            await tester.tap(find.byKey(const ValueKey('more-library')));
+            await tester.pumpAndSettle();
+
+            expect(find.byType(FlareTrainingHubPage), findsOneWidget);
+            final timeline = tester.widget<MotionTimeline>(
+              find.byKey(const ValueKey('hub-timeline')),
+            );
+            expect(timeline.phase, 11);
+            expect(timeline.time, 2.375);
+            final viewPlan = find.byKey(const ValueKey('hub-view-plan'));
+            expect(viewPlan, findsOneWidget);
+            expect(
+              tester.getRect(viewPlan).bottom,
+              lessThanOrEqualTo(size.height - bottom),
+            );
+            expect(tester.takeException(), isNull, reason: 'training hub');
             await tester.pumpWidget(const SizedBox());
           },
           tags: name.contains('landscape') ? ['landscape'] : ['portrait'],
