@@ -860,6 +860,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           pageKey: route.$1,
                           depth: route.$2,
                           modal: route.$3,
+                          cover: hubInFront || edgeToEdgePlan,
                           underlay: hasHub
                               ? ExcludeSemantics(
                                   excluding: !hubInFront,
@@ -1975,7 +1976,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         leading: FlareRowIcon(entry.$4),
                         title: entry.$2,
                         subtitle: entry.$3,
-                        onTap: () => Navigator.pop(sheetContext, entry.$1),
+                        onTap: () {
+                          final navigator = Navigator.of(sheetContext);
+                          if (entry.$1 == 'library') {
+                            // Remove the sheet and its barrier together before
+                            // the training page starts covering the home stage.
+                            final sheet = ModalRoute.of<String>(sheetContext);
+                            if (sheet != null && sheet.isCurrent) {
+                              navigator.removeRoute(sheet, entry.$1);
+                            }
+                          } else {
+                            navigator.pop(entry.$1);
+                          }
+                        },
                       ),
                   ],
                 ),

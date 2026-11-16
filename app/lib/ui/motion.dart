@@ -259,6 +259,7 @@ class FlareStage extends StatefulWidget {
     required this.child,
     this.underlay,
     this.modal = false,
+    this.cover = false,
     this.onSettled,
     this.onSwipeBack,
     this.backChip = false,
@@ -283,6 +284,9 @@ class FlareStage extends StatefulWidget {
   /// A page that stays mounted while another route covers it.
   final Widget? underlay;
   final bool modal;
+
+  /// Slide over the previous page while keeping it stationary and undimmed.
+  final bool cover;
   final VoidCallback? onSettled;
 
   /// When set, a drag from the left edge carries the page with the finger
@@ -308,6 +312,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   _Kind _kind = _Kind.fade;
   bool _pinned = false;
   bool _swipePinned = false;
+  bool _cover = false;
 
   bool get _showPinnedBack => _pinned || _swipePinned;
 
@@ -359,6 +364,11 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       return;
     }
     _kind = kind;
+    _cover = switch (kind) {
+      _Kind.push => widget.cover,
+      _Kind.pop => old.cover,
+      _ => false,
+    };
     _pinned =
         (kind == _Kind.push || kind == _Kind.pop) &&
         old.backChip &&
@@ -463,6 +473,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         : null;
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
+    final incomingUnderlay = underlay != null && widget.child == null;
     final canSwipe =
         widget.onSwipeBack != null &&
         (widget.child != null || underlay != null) &&
@@ -474,7 +485,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         AnimatedBuilder(
           key: const ValueKey('_swipe-underlay'),
           animation: _swipe,
-          builder: (context, _) => _swipe.value == 0 || animating
+          builder: (context, _) =>
+              _swipe.value == 0 || animating || widget.cover
               ? const SizedBox.shrink()
               : IgnorePointer(
                   child: ColoredBox(
@@ -485,6 +497,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                   ),
                 ),
         ),
+        if (previous != null && !previousOnTop && incomingUnderlay) previous,
         if (underlay != null)
           _layer(
             key: const ValueKey('_underlay'),
@@ -493,7 +506,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             stationary: widget.child != null,
             child: _page(underlay),
           ),
-        if (previous != null && !previousOnTop) previous,
+        if (previous != null && !previousOnTop && !incomingUnderlay) previous,
         current,
         if (previous != null && previousOnTop) previous,
         // One still back chip on the control rail while both pages go back.
@@ -561,23 +574,26 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             final width = MediaQuery.sizeOf(context).width;
             var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0, dim = 0.0;
             var shadow = false;
+            final cover = animating && _cover;
             switch (_kind) {
               case _Kind.push:
                 if (incoming) {
                   dx = (1 - t) * width;
-                  shadow = true;
-                } else {
+                  shadow = !cover;
+                } else if (!cover) {
                   dx = -.28 * t * width;
                   dim = .22 * t;
                 }
               case _Kind.pop:
                 final from = _popFrom;
                 if (incoming) {
-                  dx = -.28 * (1 - from) * (1 - t) * width;
-                  dim = .22 * (1 - from) * (1 - t);
+                  if (!cover) {
+                    dx = -.28 * (1 - from) * (1 - t) * width;
+                    dim = .22 * (1 - from) * (1 - t);
+                  }
                 } else {
                   dx = (from + (1 - from) * t) * width;
-                  shadow = true;
+                  shadow = !cover;
                 }
               case _Kind.modalIn:
                 final height = MediaQuery.sizeOf(context).height;
@@ -607,7 +623,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             }
             if (!animating && incoming && _swipe.value > 0) {
               dx = _swipe.value * width;
-              shadow = true;
+              shadow = !widget.cover;
             }
             if (stationary) {
               dx = 0;

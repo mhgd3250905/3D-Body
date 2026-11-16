@@ -204,6 +204,50 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('training and plan detail cover the page without a dim layer', (
+    tester,
+  ) async {
+    await mountShell(tester);
+    final hub = _key('training-hub');
+    final detail = find.byType(FlarePlanDetailPage);
+    final menu = _key('more-library');
+    final barrier = find.byType(AnimatedModalBarrier);
+
+    await tester.tap(_key('home-menu-chip'));
+    await tester.pumpAndSettle();
+    expect(barrier, findsOneWidget);
+    await tester.tap(menu);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+    expect(menu, findsNothing);
+    expect(barrier, findsNothing);
+    expect(tester.getTopLeft(hub).dx, greaterThan(0));
+    final homeLayer = find.byKey(const ValueKey<Object>('watch'));
+    expect(tester.getTopLeft(homeLayer).dx, 0);
+    final homeShade = find.descendant(
+      of: homeLayer,
+      matching: find.byType(ColoredBox),
+    );
+    expect(tester.widget<ColoredBox>(homeShade).color, Colors.transparent);
+    await tester.pumpAndSettle();
+
+    final button = tester.getRect(_key('hub-view-plan'));
+    await tester.tapAt(Offset(button.left + 16, button.center.dy));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+    expect(tester.getTopLeft(detail).dx, greaterThan(0));
+    expect(tester.getTopLeft(hub).dx, 0);
+    await tester.pumpAndSettle();
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+    expect(tester.getTopLeft(detail).dx, greaterThan(0));
+    expect(tester.getTopLeft(hub).dx, 0);
+    await tester.pumpAndSettle();
+    expect(detail, findsNothing);
+  });
+
   testWidgets('angle mode snaps on release and retains its selection', (
     tester,
   ) async {
