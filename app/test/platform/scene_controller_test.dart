@@ -25,6 +25,7 @@ void main() {
         showMuscles: false,
         scrubbing: true,
       );
+      controller.rotateTrainingHubAngle(0.25);
       controller.configureTrainingHub(
         phaseSource: 15,
         phaseTime: 6,
@@ -32,6 +33,7 @@ void main() {
         showMuscles: true,
         focusMuscle: true,
       );
+      controller.rotateTrainingHubAngle(0.5);
       controller.requestPresentation();
       controller.receiveEvent(_ready);
       await Future<void>.delayed(Duration.zero);
@@ -40,6 +42,7 @@ void main() {
       final selected = sent.first;
       expect(selected['phaseSource'], 15);
       expect(selected['phaseTime'], 6);
+      expect(selected['angleYaw'], 0.75);
       expect(selected['showMuscles'], isTrue);
       expect(selected['focusMuscle'], isTrue);
       expect(selected['scrubbing'], isFalse);
@@ -51,13 +54,20 @@ void main() {
       expect(selected.containsKey('angleCamera'), isFalse);
 
       sent.clear();
+      controller.rotateTrainingHubAngle(0.25);
+      await Future<void>.delayed(Duration.zero);
+      expect(sent, [
+        {'type': 'hub_angle', 'yaw': 1.0},
+      ]);
+
+      sent.clear();
       controller.reportError(SceneController.processTerminated);
       controller.requestPresentation();
       controller.receiveEvent(_ready);
       await Future<void>.delayed(Duration.zero);
 
       expect(sent.map((value) => value['type']), ['hub_scene', 'present']);
-      expect(sent.first, {...selected, 'animate': false});
+      expect(sent.first, {...selected, 'animate': false, 'angleYaw': 1.0});
     },
   );
 

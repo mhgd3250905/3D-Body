@@ -128,6 +128,10 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   let lastGroup = null;
   let lastInput = null, muscleShot = null, muscleShotKey = '';
   let angleFit = null, angleFitKey = '';
+  let angleYaw = 0, appliedAngleYaw;
+  const angleTarget = new THREE.Vector3();
+  const angleDirection = new THREE.Vector3();
+  const worldUp = new THREE.Vector3(0, 1, 0);
   const composite = new THREE.Scene();
   const compositeCamera = new THREE.Camera();
   const material = new THREE.RawShaderMaterial({
@@ -174,15 +178,20 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     // shot fitted for its own stage when it comes back into view.
     const angleHeight = height + (inMuscleMode ? angleStageHeight - standingStageHeight : 0);
     const key = `${width}:${angleHeight}`;
-    if (key !== angleFitKey) {
+    const needsFit = key !== angleFitKey;
+    if (needsFit) {
       angleFit = resolveHubAngleCamera(angleBounds, {
         referenceDirection: CAMERA_PRESETS.standard, fov: angleCamera.fov, aspect: width / angleHeight,
       });
-      const lookAt = new THREE.Vector3(...angleFit.target);
-      angleCamera.position.copy(lookAt).addScaledVector(angleFit.direction, angleFit.distance);
-      angleCamera.lookAt(lookAt);
-      angleCamera.updateMatrixWorld(true);
+      angleTarget.fromArray(angleFit.target);
       angleFitKey = key;
+    }
+    if (needsFit || appliedAngleYaw !== angleYaw) {
+      angleDirection.copy(angleFit.direction).applyAxisAngle(worldUp, angleYaw);
+      angleCamera.position.copy(angleTarget).addScaledVector(angleDirection, angleFit.distance);
+      angleCamera.lookAt(angleTarget);
+      angleCamera.updateMatrixWorld(true);
+      appliedAngleYaw = angleYaw;
     }
     const aspect = width / height;
     if (angleCamera.aspect !== aspect) {
@@ -191,10 +200,18 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     }
   }
 
+  function setAngleYaw(yaw) {
+    if (!Number.isFinite(yaw) || yaw === angleYaw) return;
+    angleYaw = yaw;
+    player.requestRedraw();
+    player.start();
+  }
+
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
     const muscleCamera = currentMuscleShot(input);
     if (!transitions.configure({ ...input, muscleCamera }, now)) return false;
+    setAngleYaw(input.angleYaw);
     lastInput = input;
     if (player.time !== transitions.frame.time) player.setTime(transitions.frame.time);
     player.dirty = true;
@@ -328,5 +345,5 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     };
   }
 
-  return { configure, tick, render, releaseGpu, getState };
+  return { configure, setAngleYaw, tick, render, releaseGpu, getState };
 }

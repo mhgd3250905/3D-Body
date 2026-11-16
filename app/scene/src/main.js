@@ -199,6 +199,9 @@ function command(value) {
       }
       break;
     }
+    case 'hub_angle':
+      player.trainingHub?.setAngleYaw(input.yaw);
+      return;
     case 'play':
       closeDetail(); selected = null; surface.restore();
       if (player.time >= player.period) player.setTime(0);

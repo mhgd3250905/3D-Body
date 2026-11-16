@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,7 @@ class SceneController extends ChangeNotifier {
   bool _disposed = false;
   int _connection = 0;
   Map<String, Object?>? _trainingHubCommand;
+  double _trainingHubYaw = 0;
 
   double _time = 0;
   double _period = 9;
@@ -136,6 +138,7 @@ class SceneController extends ChangeNotifier {
       'type': 'hub_scene',
       'phaseSource': phaseSource,
       'phaseTime': phaseTime,
+      'angleYaw': _trainingHubYaw,
       'muscleId': muscleId,
       'showMuscles': showMuscles,
       'focusMuscle': focusMuscle,
@@ -145,6 +148,24 @@ class SceneController extends ChangeNotifier {
     };
     _trainingHubCommand = configuration;
     command(configuration);
+  }
+
+  void rotateTrainingHubAngle(double radians) {
+    final hub = _trainingHubCommand;
+    if (_disposed || hub == null || !radians.isFinite || radians == 0) return;
+    _trainingHubYaw = (_trainingHubYaw + radians) % (2 * math.pi);
+    final configuration = {...hub, 'angleYaw': _trainingHubYaw};
+    _trainingHubCommand = configuration;
+    if (_pending.containsKey('hub_scene')) {
+      _pending['hub_scene'] = Map<String, Object?>.unmodifiable({
+        ..._pending['hub_scene']!,
+        'angleYaw': _trainingHubYaw,
+      });
+      // A queued configuration already carries the latest angle.
+      _pending.remove('hub_angle');
+      return;
+    }
+    command({'type': 'hub_angle', 'yaw': _trainingHubYaw});
   }
 
   void setCamera(String view) => command({'type': 'camera', 'view': view});

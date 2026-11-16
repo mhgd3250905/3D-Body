@@ -16,10 +16,12 @@ class ScenePlatformView extends StatefulWidget {
     super.key,
     required this.controller,
     this.body = 'original',
+    this.interactive = true,
   });
 
   final SceneController controller;
   final String body;
+  final bool interactive;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();
@@ -164,7 +166,8 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     return WebViewWidget(
       controller: webView,
       gestureRecognizers: {
-        Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
+        if (widget.interactive)
+          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
       },
     );
   }

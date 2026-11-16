@@ -187,11 +187,17 @@ class _FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                     muscles: _muscles,
                     onBack: widget.onBack,
                     onMode: _selectMode,
+                    onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
+                        ? null
+                        : (details) => _stage.rotateTrainingHubAngle(
+                            -2 * math.pi * details.delta.dx / box.maxWidth,
+                          ),
                     scene: widget.enableScene
                         ? SceneView(
                             key: ValueKey(widget.actorBody),
                             controller: _stage,
                             body: widget.actorBody,
+                            interactive: false,
                           )
                         : const SizedBox.expand(),
                   ),
@@ -358,6 +364,7 @@ class _HubStage extends StatelessWidget {
     required this.muscles,
     required this.onBack,
     required this.onMode,
+    required this.onHorizontalDragUpdate,
     required this.scene,
   });
   final double height;
@@ -365,6 +372,7 @@ class _HubStage extends StatelessWidget {
   final bool muscles;
   final VoidCallback onBack;
   final ValueChanged<bool> onMode;
+  final GestureDragUpdateCallback? onHorizontalDragUpdate;
   final Widget scene;
 
   @override
@@ -412,7 +420,11 @@ class _HubStage extends StatelessWidget {
               right: 0,
               top: safeTop + 54,
               bottom: 0,
-              child: ClipRect(child: IgnorePointer(child: scene)),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragUpdate: onHorizontalDragUpdate,
+                child: ClipRect(child: IgnorePointer(child: scene)),
+              ),
             ),
             if (!muscles)
               Positioned(
