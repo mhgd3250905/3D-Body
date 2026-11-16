@@ -34,8 +34,6 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   const sourceY = camera.view?.enabled ? camera.view.offsetY : 0;
   const projection = hubFlightProjection(player.baseFov, height, input.top, input.height);
   const target = new THREE.Vector3(), orbit = new THREE.Spherical();
-  const shadow = player.shadowCatcher.material;
-  const shadowOpacity = shadow.opacity;
   const homeTime = player.time;
   const period = player.period;
   const path = THREE.MathUtils.euclideanModulo(input.time - homeTime + period / 2, period) - period / 2;
@@ -44,12 +42,18 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   const returning = input.returning === true;
   let holding = returning, prepared = false;
   let start = null, landed = false, reported = false;
+  let poseTime = homeTime, positionInHub = 0;
+  const hubTop = Math.max(0, input.top);
+  const hubBottomInset = Math.max(0, height - input.top - input.height);
 
   return {
     camera,
     returning,
     landingTime: input.time,
     landingBottomInset: Math.max(32, height - input.top - input.height + 32),
+    get poseTime() { return poseTime; },
+    get topInset() { return positionInHub * hubTop; },
+    get bottomInset() { return lerp(player.viewInset ?? 0, hubBottomInset, positionInHub); },
     get holding() { return holding; },
     get landed() { return landed; },
     resume() { holding = false; },
@@ -59,6 +63,7 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       const elapsed = holding ? 0 : Math.min(1, (now - start) / duration);
       const progress = returning ? 1 - elapsed : elapsed;
       const t = easeHub(progress);
+      positionInHub = t;
       target.copy(startTarget).lerp(destTarget, t);
       orbit.set(
         lerp(startOrbit.radius, destOrbit.radius, t),
@@ -70,10 +75,9 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(lerp(sourceTangent, projection.tangent, t)));
       camera.setViewOffset(width, height, lerp(sourceX, projection.x, t), lerp(sourceY, projection.y, t), width, height);
       camera.updateMatrixWorld(true);
-      const time = t === 0 ? homeTime : t === 1 ? input.time
+      poseTime = t === 0 || path === 0 ? homeTime : t === 1 ? input.time
         : THREE.MathUtils.euclideanModulo(homeTime + path * t, period);
-      player.motion.update(time);
-      shadow.opacity = shadowOpacity * Math.max(0, 1 - progress * 4);
+      player.motion.update(poseTime);
       landed = elapsed === 1;
       return true;
     },
@@ -87,7 +91,6 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       onLanded();
     },
     restore() {
-      shadow.opacity = shadowOpacity;
       player.motion.update(player.time);
     },
   };

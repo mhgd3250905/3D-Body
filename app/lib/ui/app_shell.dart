@@ -976,7 +976,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         // floating header, transparent 3D view and compact transport.
         decoration: BoxDecoration(gradient: _stageGradient()),
         child: Scaffold(
-          backgroundColor: _watchVisible || _holdWatch || _trainingActorFlight
+          backgroundColor:
+              _watchVisible || _holdWatch || _trainingActorFlight || hasHub
               ? Colors.transparent
               : FlareColors.background,
           // Titled pages sit below the status bar; the shared 3D stage owns
@@ -1033,12 +1034,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
+                        if (_returningToWatch && !_returnFlightExposed)
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: _StageBackdropCover(
+                                ancestor: _stageBackdropKey,
+                              ),
+                            ),
+                          ),
                         FlareStage(
                           pageKey: route.$1,
                           depth: route.$2,
                           modal: route.$3,
                           cover: hubInFront || edgeToEdgePlan,
-                          transparentUnderlay: _showHomeActor,
+                          transparentUnderlay: hasHub,
                           underlay: hasHub
                               ? ExcludeSemantics(
                                   excluding:
@@ -1051,6 +1060,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         key: _trainingHubState,
                                         catalog: catalog,
                                         actorBody: _actorBody,
+                                        quality: _quality,
                                         enableScene: widget.enableScene,
                                         initialTime: _trainingEntryTime,
                                         mountScene:

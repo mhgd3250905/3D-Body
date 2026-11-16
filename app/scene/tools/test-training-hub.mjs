@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import * as THREE from 'three';
 import { createMuscleUniforms } from '../src/legacy/muscle-map.js';
 import { applyFunctionalSurface } from '../src/muscle-material.js';
-import { CAMERA_PRESETS } from '../src/player.js';
+import { CAMERA_PRESETS, FlarePlayer } from '../src/player.js';
 import { fitHubAngle, resolveHubAngleCamera } from '../src/training-hub-angle-fit.js';
 import { createHubFlight } from '../src/training-hub-flight.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
@@ -137,6 +137,28 @@ test('hub entry starts at the home shot and lands at the same pixels as the hub 
   }
   back.rendered();
   assert.equal(landings, 2);
+});
+
+test('a camera move keeps the same ground projection until the pose changes', () => {
+  const scene = {};
+  const shadowMap = { enabled: true, autoUpdate: true, needsUpdate: false };
+  const drawUpdates = [];
+  const player = {
+    time: 1.123, scene, renderer: { shadowMap, render: () => drawUpdates.push(shadowMap.autoUpdate) },
+    keyLight: { castShadow: true, shadow: { map: {}, mapSize: { x: 1024, y: 1024 } } },
+    perf: { shadowPasses: 0, shadowPixels: 0, skippedShadows: 0 },
+  };
+  const draw = () => FlarePlayer.prototype.renderActor.call(player, scene, {}, true);
+  draw();
+  player.hubFlight = { poseTime: 1.123 };
+  draw();
+  player.hubFlight.poseTime = 1.35;
+  draw();
+  draw();
+  assert.deepEqual(drawUpdates, [true, false, true, false]);
+  assert.equal(shadowMap.autoUpdate, true);
+  assert.equal(player.perf.shadowPasses, 2);
+  assert.equal(player.perf.skippedShadows, 2);
 });
 
 test('phase retargeting preserves the current pose and the latest destination wins', () => {

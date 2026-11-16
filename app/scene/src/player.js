@@ -173,30 +173,45 @@ export class FlarePlayer {
   render() {
     if (this.trainingHub) return this.trainingHub.render();
     this.callbacks.onBeforeRender?.();
-    const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
-    const camera = this.hubFlight?.camera ?? this.camera;
-    // The key light's shadow depends on the pose, not on the camera. While
-    // only the orbit moves, the previous shadow map stays valid.
-    const shadows = r.shadowMap.enabled && this.keyLight.castShadow;
-    const reuseShadow = (this.hubFlight || (this.adaptive.enabled && this.cameraOnly)) &&
-      shadows && this.shadowFresh && !!this.keyLight.shadow.map;
-    if (reuseShadow) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
+    const r = this.renderer, height = this.container.clientHeight;
+    const flight = this.hubFlight;
+    const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
+    const top = Math.round(flight?.topInset ?? 0);
+    const clipped = top + bottom > 0 && top + bottom < height;
+    if (clipped) {
+      // Match the destination viewport at the handoff, including its shadow.
+      r.setScissorTest(false); r.clear();
+      r.setScissor(0, bottom, this.container.clientWidth, height - bottom - top);
+      r.setScissorTest(true);
+    }
     try {
-      if (inset > 0 && inset < height) {
-        // Nothing is drawn under the host's chrome: clear all, draw above it.
-        r.setScissorTest(false); r.clear();
-        r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
-        r.render(this.displayScene ?? this.scene, camera); r.setScissorTest(false);
-      } else r.render(this.displayScene ?? this.scene, camera);
-    } finally { r.shadowMap.autoUpdate = true; }
+      this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
+        !!flight || (this.adaptive.enabled && this.cameraOnly));
+    } finally {
+      if (clipped) r.setScissorTest(false);
+    }
     this.cameraOnly = false;
     const perf = this.perf, canvas = r.domElement;
     perf.renders++; perf.colorPixels += canvas.width * canvas.height;
     perf.calls = r.info.render.calls; perf.triangles = r.info.render.triangles;
-    if (reuseShadow) perf.skippedShadows++;
-    else if (shadows && (!this.displayScene || this.displayScene === this.scene)) {
-      const size = this.keyLight.shadow.mapSize; perf.shadowPasses++; perf.shadowPixels += size.x * size.y;
+  }
+  renderActor(scene, camera, reusePoseShadow) {
+    const r = this.renderer;
+    const time = this.hubFlight?.poseTime ?? this.time;
+    const shadows = r.shadowMap.enabled && this.keyLight.castShadow && scene === this.scene;
+    // While the rig is paused, the light-space shadow follows the camera
+    // from the existing map. A new pose gets its own projection.
+    const reuse = reusePoseShadow && shadows && this.shadowFresh && this.shadowPoseTime === time;
+    const autoUpdate = r.shadowMap.autoUpdate;
+    if (reuse) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
+    try { r.render(scene, camera); }
+    finally { r.shadowMap.autoUpdate = autoUpdate; }
+    if (reuse) this.perf.skippedShadows++;
+    else if (shadows) {
+      const size = this.keyLight.shadow.mapSize;
+      this.perf.shadowPasses++; this.perf.shadowPixels += size.x * size.y;
       this.shadowFresh = !!this.keyLight.shadow.map;
+      this.shadowPoseTime = time;
     }
   }
   /** Bottom px of the stage hidden under host chrome. A running glide carries

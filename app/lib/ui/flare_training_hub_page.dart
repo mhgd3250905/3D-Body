@@ -26,6 +26,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     super.key,
     required this.catalog,
     required this.actorBody,
+    required this.quality,
     required this.enableScene,
     required this.initialTime,
     this.mountScene = true,
@@ -41,6 +42,7 @@ class FlareTrainingHubPage extends StatefulWidget {
 
   final Catalog catalog;
   final String actorBody;
+  final String quality;
   final bool enableScene;
   final double initialTime;
   final bool mountScene;
@@ -91,6 +93,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     super.initState();
     _stage.addListener(_sceneChanged);
     _render(animate: false);
+    _stage.setQuality(widget.quality);
     _stage.setVisible(widget.visible);
   }
 
@@ -121,6 +124,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   @override
   void didUpdateWidget(FlareTrainingHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.quality != widget.quality) _stage.setQuality(widget.quality);
     if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
     if (oldWidget.catalog != widget.catalog) _localizeScene();
     if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
@@ -222,78 +226,74 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
         value:
             (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
                 .copyWith(statusBarColor: Colors.transparent),
-        child: ColoredBox(
-          color: widget.actorHandoff ? Colors.transparent : p.background,
-          child: LayoutBuilder(
-            builder: (context, box) {
-              final available = math.max(0.0, box.maxHeight - controlsBottom);
-              final height = math.max(stageHeight + 116, available);
-              final page = SizedBox(
-                height: height,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _HubStage(
-                      height: stageHeight,
-                      safeTop: safe.top,
-                      muscles: _muscles,
-                      actorHandoff: widget.actorHandoff,
-                      sceneBoundsKey: widget.sceneBoundsKey,
-                      onBack: widget.onBack,
-                      onMode: _selectMode,
-                      onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
-                          ? null
-                          : (details) => _stage.rotateTrainingHubAngle(
-                              -2 * math.pi * details.delta.dx / box.maxWidth,
-                            ),
-                      scene: widget.enableScene && widget.mountScene
-                          ? SceneView(
-                              key: ValueKey(widget.actorBody),
-                              controller: _stage,
-                              body: widget.actorBody,
-                              interactive: false,
-                              concealed: widget.actorHandoff,
-                            )
-                          : const SizedBox.expand(),
-                    ),
-                    Expanded(
-                      child: _muscles
-                          ? _HubMuscles(
-                              catalog: catalog,
-                              selected: muscle,
-                              onSelected: _selectMuscle,
-                              onSection: _selectMuscleSection,
-                            )
-                          : _angleControls(context, phase),
-                    ),
-                  ],
-                ),
-              );
-              return Stack(
+        child: LayoutBuilder(
+          builder: (context, box) {
+            final available = math.max(0.0, box.maxHeight - controlsBottom);
+            final height = math.max(stageHeight + 116, available);
+            final page = SizedBox(
+              height: height,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Positioned.fill(
-                    bottom: controlsBottom,
-                    child: height == available
-                        ? page
-                        : SingleChildScrollView(child: page),
+                  _HubStage(
+                    height: stageHeight,
+                    safeTop: safe.top,
+                    muscles: _muscles,
+                    sceneBoundsKey: widget.sceneBoundsKey,
+                    onBack: widget.onBack,
+                    onMode: _selectMode,
+                    onHorizontalDragUpdate: _muscles || box.maxWidth <= 0
+                        ? null
+                        : (details) => _stage.rotateTrainingHubAngle(
+                            -2 * math.pi * details.delta.dx / box.maxWidth,
+                          ),
+                    scene: widget.enableScene && widget.mountScene
+                        ? SceneView(
+                            key: ValueKey(widget.actorBody),
+                            controller: _stage,
+                            body: widget.actorBody,
+                            interactive: false,
+                            concealed: widget.actorHandoff,
+                          )
+                        : const SizedBox.expand(),
                   ),
-                  PositionedDirectional(
-                    start: _gutter,
-                    end: _gutter,
-                    bottom: footerBottom,
-                    child: _HubPlanFooter(
-                      selection: selectedKey,
-                      title: _muscles ? muscle.label : phase.name,
-                      plan: beginner,
-                      onOpen: _muscles
-                          ? () => widget.onMuscle(muscle)
-                          : () => widget.onAngle(phase),
-                    ),
+                  Expanded(
+                    child: _muscles
+                        ? _HubMuscles(
+                            catalog: catalog,
+                            selected: muscle,
+                            onSelected: _selectMuscle,
+                            onSection: _selectMuscleSection,
+                          )
+                        : _angleControls(context, phase),
                   ),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+            return Stack(
+              children: [
+                Positioned.fill(
+                  bottom: controlsBottom,
+                  child: height == available
+                      ? page
+                      : SingleChildScrollView(child: page),
+                ),
+                PositionedDirectional(
+                  start: _gutter,
+                  end: _gutter,
+                  bottom: footerBottom,
+                  child: _HubPlanFooter(
+                    selection: selectedKey,
+                    title: _muscles ? muscle.label : phase.name,
+                    plan: beginner,
+                    onOpen: _muscles
+                        ? () => widget.onMuscle(muscle)
+                        : () => widget.onAngle(phase),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -418,7 +418,6 @@ class _HubStage extends StatelessWidget {
     required this.height,
     required this.safeTop,
     required this.muscles,
-    required this.actorHandoff,
     required this.sceneBoundsKey,
     required this.onBack,
     required this.onMode,
@@ -428,7 +427,6 @@ class _HubStage extends StatelessWidget {
   final double height;
   final double safeTop;
   final bool muscles;
-  final bool actorHandoff;
   final GlobalKey? sceneBoundsKey;
   final VoidCallback onBack;
   final ValueChanged<bool> onMode;
@@ -437,99 +435,39 @@ class _HubStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = FlareColors.palette;
-    final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
     return SizedBox(
       height: height,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: actorHandoff ? null : flarePlanArtGradient(p),
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (!actorHandoff)
-              const Positioned(
-                left: 0,
-                right: 0,
-                top: 90,
-                child: Center(child: FlarePlanGlow(diameter: 320)),
-              ),
-            if (!actorHandoff)
-              Positioned(
-                left: 0,
-                right: 0,
-                top: muscles ? 392 : null,
-                bottom: muscles ? null : height * .06,
-                child: Center(
-                  child: Transform.scale(
-                    scaleX: 240 / 28,
-                    child: SizedBox.square(
-                      dimension: 28,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(
-                            colors: [shadow, shadow.withValues(alpha: 0)],
-                            stops: const [0, .7],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            Positioned(
-              left: 0,
-              right: 0,
-              top: safeTop + 54,
-              bottom: 0,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onHorizontalDragUpdate: onHorizontalDragUpdate,
-                child: ClipRect(
-                  key: sceneBoundsKey,
-                  child: IgnorePointer(child: scene),
-                ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            top: safeTop + 54,
+            bottom: 0,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragUpdate: onHorizontalDragUpdate,
+              child: ClipRect(
+                key: sceneBoundsKey,
+                child: IgnorePointer(child: scene),
               ),
             ),
-            if (!muscles && !actorHandoff)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 32,
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          p.background.withValues(alpha: 0),
-                          p.background,
-                        ],
-                        stops: const [0, .78],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            Positioned(
-              left: 16,
-              top: safeTop + 10,
-              child: FlarePlanBackButton(onTap: onBack),
+          ),
+          Positioned(
+            left: 16,
+            top: safeTop + 10,
+            child: FlarePlanBackButton(onTap: onBack),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: safeTop + 10,
+            child: Center(
+              child: _HubModeControl(muscles: muscles, onMode: onMode),
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              top: safeTop + 10,
-              child: Center(
-                child: _HubModeControl(muscles: muscles, onMode: onMode),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -240,8 +240,10 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       r.render(phaseMap.scene, muscleCamera);
       return;
     }
+    player.floor.visible = true;
+    player.shadowCatcher.visible = r.shadowMap.enabled && player.keyLight.castShadow;
     if (!capture) {
-      r.render(player.scene, angleCamera);
+      player.renderActor(player.scene, angleCamera, true);
       return;
     }
     const replaced = [];
@@ -255,7 +257,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       replaced.push([mesh, original]);
       mesh.material = Array.isArray(original) ? original.map(encoded) : encoded(original);
     });
-    try { r.render(player.scene, angleCamera); }
+    try { player.renderActor(player.scene, angleCamera, true); }
     finally { for (const [mesh, original] of replaced) mesh.material = original; }
   }
 
@@ -292,14 +294,15 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     const shadowEnabled = r.shadowMap.enabled;
     r.getClearColor(clearColor);
     try {
-      r.shadowMap.enabled = false;
       r.setClearColor(transparent, 0);
       r.setRenderTarget(null);
       r.clear();
       for (const layer of layers) {
+        r.shadowMap.enabled = layer.groupId == null && shadowEnabled;
         r.autoClear = true;
         r.setRenderTarget(target);
         draw(layer, true);
+        r.shadowMap.enabled = false;
         r.setRenderTarget(null);
         r.autoClear = false;
         material.uniforms.layer.value = target.texture;
