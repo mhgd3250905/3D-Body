@@ -949,6 +949,39 @@ class AppLocalizationsKo extends AppLocalizations {
   String get plansByMuscle => '근육군별';
 
   @override
+  String get anglePlanLabel => '각도별 계획';
+
+  @override
+  String get musclePlanLabel => '근육군별 계획';
+
+  @override
+  String get angleSupportPlanIntro =>
+      '한 손을 짚고 다리를 높은 V자로 벌려요. 이 자세를 버틸 힘을 길러요.';
+
+  @override
+  String get deltoidsPlanIntro => '한쪽 팔로 손 위에 몸을 지탱해요. 플레어의 매 회전마다 삼각근이 움직여요.';
+
+  @override
+  String get planTrainingContent => '운동 구성';
+
+  @override
+  String get planMuscleLinkHint => '근육을 눌러 맞춤 계획 보기';
+
+  @override
+  String get planSpecialized => '집중 계획';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '$seconds초 휴식';
+  }
+
+  @override
+  String get planBodyweightSubstitution => '맨몸 대체 동작';
+
+  @override
+  String get planBodyweightScene => '맨몸';
+
+  @override
   String get planTierBeginner => '초급';
 
   @override

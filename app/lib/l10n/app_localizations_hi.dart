@@ -967,6 +967,40 @@ class AppLocalizationsHi extends AppLocalizations {
   String get plansByMuscle => 'मांसपेशी समूह के अनुसार';
 
   @override
+  String get anglePlanLabel => 'कोण की योजना';
+
+  @override
+  String get musclePlanLabel => 'मांसपेशी की योजना';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'एक हाथ ज़मीन पर रखकर पैरों को ऊँचे V में खोलें। इस सहारे को मज़बूत करें।';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'एक हाथ पर शरीर को थामें। हर फ्लेयर चक्कर में डेल्टॉइड काम करते हैं।';
+
+  @override
+  String get planTrainingContent => 'प्रशिक्षण क्रम';
+
+  @override
+  String get planMuscleLinkHint => 'योजना देखने के लिए मांसपेशी पर टैप करें';
+
+  @override
+  String get planSpecialized => 'लक्षित योजना';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '$seconds सेकंड आराम';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'बिना उपकरण वाला विकल्प';
+
+  @override
+  String get planBodyweightScene => 'बिना उपकरण';
+
+  @override
   String get planTierBeginner => 'शुरुआती';
 
   @override

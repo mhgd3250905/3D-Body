@@ -86,11 +86,15 @@ class DrillMediaCard extends StatefulWidget {
     this.active = true,
     this.mirrored = false,
     this.autoPlay = false,
+    this.thumbnail = false,
   });
   final String drillId;
   final bool active;
   final bool mirrored;
   final bool autoPlay;
+
+  /// Use only the bundled thumbnail, without starting a media decoder.
+  final bool thumbnail;
   @override
   State<DrillMediaCard> createState() => _DrillMediaCardState();
 }
@@ -220,6 +224,18 @@ class _DrillMediaCardState extends State<DrillMediaCard>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.thumbnail) {
+      return Image.asset(
+        '${FlarePublicMedia.thumbnailRoot}${widget.drillId}.webp',
+        fit: BoxFit.contain,
+        excludeFromSemantics: true,
+        errorBuilder: (_, _, _) => Image.asset(
+          'assets/public_posters/${widget.drillId}.webp',
+          fit: BoxFit.contain,
+          excludeFromSemantics: true,
+        ),
+      );
+    }
     final s = AppLocalizations.of(context);
     final shared = FlareShared.current;
     final policy = FlarePublicMedia.current;

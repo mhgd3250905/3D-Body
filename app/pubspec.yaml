@@ -91,6 +91,7 @@ flutter:
     - assets/public_posters/r2-v11/cover/
     - assets/public_posters/r2-v11/thumbnail/
     - assets/muscles/
+    - assets/angles/
     - assets/scene/
     - assets/scene/assets/
     - assets/scene/coach/

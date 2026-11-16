@@ -8,7 +8,6 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
-import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +17,50 @@ import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 import 'flow_regressions_test.dart' as helpers;
 
 Finder _key(String value) => find.byKey(ValueKey(value));
+
+Finder _detailScroll() => find.descendant(
+  of: find.byType(FlarePlanDetailPage),
+  matching: find.byWidgetPredicate(
+    (widget) =>
+        widget is Scrollable &&
+        axisDirectionToAxis(widget.axisDirection) == Axis.vertical,
+  ),
+);
+
+Future<void> _revealPlanContent(WidgetTester tester, Finder finder) async {
+  if (finder.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(finder, 200, scrollable: _detailScroll());
+  }
+  await Scrollable.ensureVisible(tester.element(finder), alignment: .25);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _showPlanTop(WidgetTester tester) async {
+  final position = tester.state<ScrollableState>(_detailScroll()).position;
+  position.jumpTo(position.minScrollExtent);
+  await tester.pumpAndSettle();
+}
+
+Finder _tier(String label) =>
+    find.descendant(of: _key('flare-plan-tier'), matching: find.text(label));
+
+Finder _rowText(Finder row, String text) =>
+    find.descendant(of: row, matching: find.text(text, findRichText: true));
+
+void _expectPlanMinutes(WidgetTester tester, int minutes) {
+  final start = _key('flare-plan-start');
+  final strings = AppLocalizations.of(tester.element(start));
+  expect(
+    find.descendant(
+      of: start,
+      matching: find.textContaining(
+        strings.minutesShort(minutes),
+        findRichText: true,
+      ),
+    ),
+    findsWidgets,
+  );
+}
 
 class _MembershipStore implements MembershipStore {
   DateTime? expiresAt;
@@ -150,6 +193,13 @@ void main() {
         find.byType(FlarePlanDetailPage),
       );
       expect(detail.title, catalog.phaseBySource(source)!.name);
+      expect(find.bySemanticsLabel('返回'), findsOneWidget);
+      final hero = tester.widget<Image>(_key('flare-plan-angle-hero-$source'));
+      expect(
+        (hero.image as AssetImage).assetName,
+        'assets/angles/phase-$source.webp',
+      );
+      _expectPlanMinutes(tester, 20);
       expect(detail.plans.map((plan) => plan.id), [
         'angle-11-t1',
         'angle-11-t2',
@@ -158,8 +208,9 @@ void main() {
       expect(find.text('发力肌群'), findsOneWidget);
       final plannedMuscle = _key('flare-plan-muscle-deltoids');
       final fallbackMuscle = _key('flare-plan-muscle-triceps');
-      expect(tester.widget<FlareListRow>(plannedMuscle).onTap, isNotNull);
-      expect(tester.widget<FlareListRow>(fallbackMuscle).onTap, isNull);
+      await _revealPlanContent(tester, plannedMuscle);
+      expect(_rowText(plannedMuscle, '专项计划'), findsOneWidget);
+      expect(_rowText(fallbackMuscle, '专项计划'), findsNothing);
       await tester.tap(plannedMuscle);
       await tester.pumpAndSettle();
       final muscle = tester.widget<FlarePlanDetailPage>(
@@ -201,6 +252,12 @@ void main() {
         );
         expect(detail.plans.first.id, 'muscle-deltoids-t1');
         expect(find.text('发力肌群'), findsNothing);
+        _expectPlanMinutes(tester, 17);
+        for (final label in ['中级', '高级']) {
+          await tester.tap(_tier(label));
+          await tester.pumpAndSettle();
+          _expectPlanMinutes(tester, 18);
+        }
       } else {
         final library = tester.widget<LibraryPage>(find.byType(LibraryPage));
         expect(library.initialGroup?.id, group);
@@ -222,6 +279,8 @@ void main() {
     final membership = FlareMembership(_MembershipStore());
     try {
       await mountShell(tester, membership: membership);
+      tester.view.physicalSize = const Size(360, 800);
+      await tester.pumpAndSettle();
       await helpers.openPlansFromHome(tester);
       expect(_key('plans-angle-11'), findsOneWidget);
       expect(_key('plans-angle-15'), findsNothing);
@@ -229,42 +288,73 @@ void main() {
 
       await tester.tap(_key('plans-angle-11'));
       await tester.pumpAndSettle();
-      final tiers = _key('flare-plan-tier');
-      Finder tier(String text) =>
-          find.descendant(of: tiers, matching: find.text(text));
-      await tester.tap(tier('高级'));
+      final header = _key('flare-plan-scrolled-header');
+      final scroll = tester.state<ScrollableState>(_detailScroll()).position;
+      scroll.jumpTo(330);
       await tester.pumpAndSettle();
-      expect(_key('flare-plan-item-1-t-flare-side-hold'), findsOneWidget);
-      await tester.tap(tier('初级'));
+      expect(tester.widget<AnimatedOpacity>(header).opacity, 0);
+      scroll.jumpTo(331);
       await tester.pumpAndSettle();
-      expect(_key('flare-plan-item-1-h-short-side-plank'), findsOneWidget);
-      await tester.tap(tier('中级'));
+      expect(tester.widget<AnimatedOpacity>(header).opacity, 1);
+      await _showPlanTop(tester);
+      final strings = AppLocalizations.of(
+        tester.element(_key('flare-plan-tier')),
+      );
+      await tester.tap(_tier('高级'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('健身房'));
+      _expectPlanMinutes(tester, 23);
+      await _revealPlanContent(
+        tester,
+        _key('flare-plan-item-1-t-flare-side-hold'),
+      );
+      await _showPlanTop(tester);
+      await tester.tap(_tier('初级'));
+      await tester.pumpAndSettle();
+      _expectPlanMinutes(tester, 20);
+      await _revealPlanContent(
+        tester,
+        _key('flare-plan-item-1-h-short-side-plank'),
+      );
+      await _showPlanTop(tester);
+      await tester.tap(_tier('中级'));
+      await tester.pumpAndSettle();
+      _expectPlanMinutes(tester, 23);
+      await tester.tap(find.text(strings.sceneGym));
       await tester.pumpAndSettle();
       final parallelBars = _key('flare-plan-item-3-triceps-B');
-      expect(tester.widget<FlareListRow>(parallelBars).subtitle, '4 组 × 15 秒');
-      final strings = AppLocalizations.of(tester.element(tiers));
-      await tester.tap(find.text(strings.sceneNone));
+      final dosage =
+          '4 × ${strings.secondsLabel(15)} · ${strings.planRestSeconds(60)}';
+      await _revealPlanContent(tester, parallelBars);
+      expect(_rowText(parallelBars, dosage), findsOneWidget);
+      await _showPlanTop(tester);
+      await tester.tap(find.text(strings.planBodyweightScene));
       await tester.pumpAndSettle();
-      expect(parallelBars, findsNothing);
-      final replacement = _key('flare-plan-item-3-triceps-A');
-      expect(tester.widget<FlareListRow>(replacement).subtitle, '4 组 × 15 秒');
+      final deltoids = _key('flare-plan-item-1-deltoids-A');
+      await _revealPlanContent(tester, deltoids);
       expect(
-        tester
-            .widget<FlareListRow>(_key('flare-plan-item-1-deltoids-A'))
-            .subtitle,
-        '3 组 × 10 次 · 每侧',
+        _rowText(
+          deltoids,
+          '${strings.planDosePerSide('3 × ${strings.countLabel(10)}')} · ${strings.planRestSeconds(45)}',
+        ),
+        findsOneWidget,
+      );
+      final replacement = _key('flare-plan-item-3-triceps-A');
+      await _revealPlanContent(tester, replacement);
+      expect(parallelBars, findsNothing);
+      expect(_rowText(replacement, dosage), findsOneWidget);
+      expect(
+        _rowText(replacement, strings.planBodyweightSubstitution),
+        findsOneWidget,
       );
 
-      await helpers.tapVisible(tester, replacement);
+      await tester.tap(replacement);
       await tester.pumpAndSettle();
       final drill = tester
           .widget<DrillDetailPage>(find.byType(DrillDetailPage))
           .drill;
       expect(drill.id, 'triceps-A');
       await back(tester);
-      expect(replacement, findsOneWidget);
+      await _revealPlanContent(tester, replacement);
 
       await tester.tap(_key('flare-plan-start'));
       await tester.pumpAndSettle();

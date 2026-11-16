@@ -965,6 +965,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plansByMuscle => 'By muscle group';
 
   @override
+  String get anglePlanLabel => 'Angle plan';
+
+  @override
+  String get musclePlanLabel => 'Muscle plan';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'One hand down, legs in a high V. Build strength for a steady hold.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Hold your body over one hand. Your delts drive every flare.';
+
+  @override
+  String get planTrainingContent => 'Workout';
+
+  @override
+  String get planMuscleLinkHint => 'Tap a muscle for its plan';
+
+  @override
+  String get planSpecialized => 'Focused plan';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Rest $seconds sec';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Bodyweight swap';
+
+  @override
+  String get planBodyweightScene => 'Bodyweight';
+
+  @override
   String get planTierBeginner => 'Beginner';
 
   @override

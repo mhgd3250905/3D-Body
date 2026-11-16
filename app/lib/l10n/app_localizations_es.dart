@@ -980,6 +980,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String get plansByMuscle => 'Por grupo muscular';
 
   @override
+  String get anglePlanLabel => 'Plan por ángulo';
+
+  @override
+  String get musclePlanLabel => 'Plan muscular';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Apoya una mano y abre las piernas en V alta. Refuerza el apoyo.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Sostén el cuerpo sobre una mano. Los deltoides impulsan cada flare.';
+
+  @override
+  String get planTrainingContent => 'Entrenamiento';
+
+  @override
+  String get planMuscleLinkHint => 'Toca un músculo para ver su plan';
+
+  @override
+  String get planSpecialized => 'Plan específico';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Descansa $seconds s';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Alternativa sin equipo';
+
+  @override
+  String get planBodyweightScene => 'Sin equipo';
+
+  @override
   String get planTierBeginner => 'Principiante';
 
   @override

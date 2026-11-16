@@ -940,6 +940,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String get plansByMuscle => '按肌群';
 
   @override
+  String get anglePlanLabel => '角度计划';
+
+  @override
+  String get musclePlanLabel => '肌群计划';
+
+  @override
+  String get angleSupportPlanIntro => '单手撑地、双腿打开成高 V，练稳这一下的支撑力量';
+
+  @override
+  String get deltoidsPlanIntro => '单臂承重、把身体顶在手上方，托马斯每一圈都靠它';
+
+  @override
+  String get planTrainingContent => '训练内容';
+
+  @override
+  String get planMuscleLinkHint => '点肌群看专项计划';
+
+  @override
+  String get planSpecialized => '专项计划';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '休息 $seconds 秒';
+  }
+
+  @override
+  String get planBodyweightSubstitution => '徒手替换';
+
+  @override
+  String get planBodyweightScene => '徒手';
+
+  @override
   String get planTierBeginner => '初级';
 
   @override
@@ -2133,6 +2165,38 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get plansByMuscle => '按肌群';
+
+  @override
+  String get anglePlanLabel => '角度計畫';
+
+  @override
+  String get musclePlanLabel => '肌群計畫';
+
+  @override
+  String get angleSupportPlanIntro => '單手撐地、雙腿打開成高 V，練穩這一下的支撐力量';
+
+  @override
+  String get deltoidsPlanIntro => '單臂承重、把身體頂在手上方，托馬斯每一圈都靠它';
+
+  @override
+  String get planTrainingContent => '訓練內容';
+
+  @override
+  String get planMuscleLinkHint => '點肌群看專項計畫';
+
+  @override
+  String get planSpecialized => '專項計畫';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '休息 $seconds 秒';
+  }
+
+  @override
+  String get planBodyweightSubstitution => '徒手替換';
+
+  @override
+  String get planBodyweightScene => '徒手';
 
   @override
   String get planTierBeginner => '初級';

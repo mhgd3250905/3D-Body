@@ -972,6 +972,40 @@ class AppLocalizationsId extends AppLocalizations {
   String get plansByMuscle => 'Menurut kelompok otot';
 
   @override
+  String get anglePlanLabel => 'Rencana sudut';
+
+  @override
+  String get musclePlanLabel => 'Rencana otot';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Bertumpu pada satu tangan dan buka kaki membentuk V tinggi. Kuatkan tumpuan ini.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Tahan tubuh di atas satu tangan. Otot deltoid bekerja di setiap putaran flare.';
+
+  @override
+  String get planTrainingContent => 'Isi latihan';
+
+  @override
+  String get planMuscleLinkHint => 'Ketuk otot untuk melihat rencananya';
+
+  @override
+  String get planSpecialized => 'Rencana khusus';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Istirahat $seconds dtk';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Pengganti tanpa alat';
+
+  @override
+  String get planBodyweightScene => 'Tanpa alat';
+
+  @override
   String get planTierBeginner => 'Pemula';
 
   @override

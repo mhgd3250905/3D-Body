@@ -961,6 +961,40 @@ class AppLocalizationsAr extends AppLocalizations {
   String get plansByMuscle => 'حسب المجموعة العضلية';
 
   @override
+  String get anglePlanLabel => 'خطة الزاوية';
+
+  @override
+  String get musclePlanLabel => 'خطة العضلات';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'ارتكز على يد وافتح ساقيك على شكل V مرتفع. قوِّ ثباتك هنا.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'اسند جسمك فوق يد واحدة. تعمل عضلات الكتف في كل دورة فلير.';
+
+  @override
+  String get planTrainingContent => 'محتوى التمرين';
+
+  @override
+  String get planMuscleLinkHint => 'اضغط على العضلة لعرض خطتها';
+
+  @override
+  String get planSpecialized => 'خطة مخصّصة';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'راحة $seconds ث';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'بديل بوزن الجسم';
+
+  @override
+  String get planBodyweightScene => 'بوزن الجسم';
+
+  @override
   String get planTierBeginner => 'مبتدئ';
 
   @override

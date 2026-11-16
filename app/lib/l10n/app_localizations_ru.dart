@@ -972,6 +972,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get plansByMuscle => 'По группе мышц';
 
   @override
+  String get anglePlanLabel => 'План по углу';
+
+  @override
+  String get musclePlanLabel => 'План на мышцы';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Одна рука на полу, ноги высоко буквой V. Укрепляй эту опору.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Держи корпус над одной рукой. Дельты работают в каждом обороте флэра.';
+
+  @override
+  String get planTrainingContent => 'Тренировка';
+
+  @override
+  String get planMuscleLinkHint => 'Нажми на мышцу, чтобы открыть план';
+
+  @override
+  String get planSpecialized => 'Целевой план';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Отдых $seconds с';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Замена без инвентаря';
+
+  @override
+  String get planBodyweightScene => 'Без инвентаря';
+
+  @override
   String get planTierBeginner => 'Начальный';
 
   @override

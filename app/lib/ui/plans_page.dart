@@ -6,14 +6,16 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
-import '../l10n/languages.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
+import 'flare_plan_visuals.dart';
 import 'motion.dart';
 import 'theme.dart';
+
+export 'flare_plan_detail_page.dart';
 
 bool _routineHasItem(TrainingRoutine routine, String drillId) =>
     routine.sdkPlan?.items.any((item) => item.exerciseId == drillId) ??
@@ -317,43 +319,47 @@ class PlansPage extends StatelessWidget {
       onBack: onBack,
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(child: SizedBox(height: flareNavInset(context))),
+          if (onAngle != null && angles.isNotEmpty)
+            SliverToBoxAdapter(
+              child: _PlanEntrySection(
+                title: s.plansByAngle,
+                cards: [
+                  for (final phase in angles)
+                    _PlanEntryCard.angle(
+                      key: ValueKey('plans-angle-${phase.source}'),
+                      title: phase.name,
+                      kicker: s.anglePlanLabel,
+                      tiers: s.planTierSummary,
+                      source: phase.source,
+                      onTap: () => onAngle!(phase),
+                    ),
+                ],
+              ),
+            ),
+          if (onMuscle != null && muscles.isNotEmpty)
+            SliverToBoxAdapter(
+              child: _PlanEntrySection(
+                title: s.plansByMuscle,
+                cards: [
+                  for (final group in muscles)
+                    _PlanEntryCard.muscle(
+                      key: ValueKey('plans-muscle-${group.id}'),
+                      title: group.label,
+                      kicker: s.musclePlanLabel,
+                      tiers: s.planTierSummary,
+                      groupId: group.id,
+                      onTap: () => onMuscle!(group),
+                    ),
+                ],
+              ),
+            ),
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(
-              FlareGeometry.pageInset,
-              flareNavInset(context),
-              FlareGeometry.pageInset,
-              0,
+            padding: const EdgeInsets.symmetric(
+              horizontal: FlareGeometry.pageInset,
             ),
             sliver: SliverList.list(
               children: [
-                if (onAngle != null && angles.isNotEmpty) ...[
-                  FlareSection(s.plansByAngle),
-                  FlareListGroup(
-                    children: [
-                      for (final phase in angles)
-                        FlareListRow(
-                          key: ValueKey('plans-angle-${phase.source}'),
-                          title: phase.name,
-                          subtitle: s.planTierSummary,
-                          onTap: () => onAngle!(phase),
-                        ),
-                    ],
-                  ),
-                ],
-                if (onMuscle != null && muscles.isNotEmpty) ...[
-                  FlareSection(s.plansByMuscle),
-                  FlareListGroup(
-                    children: [
-                      for (final group in muscles)
-                        FlareListRow(
-                          key: ValueKey('plans-muscle-${group.id}'),
-                          title: group.label,
-                          subtitle: s.planTierSummary,
-                          onTap: () => onMuscle!(group),
-                        ),
-                    ],
-                  ),
-                ],
                 _SectionHeader(s.plansMine),
                 FlareListGroup(
                   children: [
@@ -421,134 +427,146 @@ class PlansPage extends StatelessWidget {
   }
 }
 
-/// Details shared by the angle and muscle entry points.
-class FlarePlanDetailPage extends StatelessWidget {
-  const FlarePlanDetailPage({
-    super.key,
-    required this.title,
-    required this.plans,
-    required this.selectedTier,
-    required this.catalog,
-    required this.store,
-    required this.onTierChanged,
-    required this.onMuscle,
-    required this.onDrill,
-    required this.onBack,
-    required this.onStart,
-    this.phase,
-  });
+class _PlanEntrySection extends StatelessWidget {
+  const _PlanEntrySection({required this.title, required this.cards});
 
   final String title;
-  final Phase? phase;
-  final List<FlarePlan> plans;
-  final int selectedTier;
-  final Catalog catalog;
-  final LearningStore store;
-  final ValueChanged<int> onTierChanged;
-  final ValueChanged<MuscleGroup> onMuscle;
-  final ValueChanged<String> onDrill;
-  final VoidCallback onBack;
-  final ValueChanged<FlarePlan> onStart;
+  final List<Widget> cards;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(22, 30, 22, 14),
+        child: FlarePlanSectionHeading(title: title),
+      ),
+      SizedBox(
+        height: 150,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = (constraints.maxWidth - 44).clamp(0.0, 320.0);
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              primary: false,
+              scrollDirection: Axis.horizontal,
+              itemCount: cards.length,
+              itemBuilder: (_, index) =>
+                  SizedBox(width: width, child: cards[index]),
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+class _PlanEntryCard extends StatelessWidget {
+  const _PlanEntryCard.angle({
+    super.key,
+    required this.title,
+    required this.kicker,
+    required this.tiers,
+    required this.onTap,
+    required int source,
+  }) : asset = 'assets/angles/phase-$source.webp',
+       isMuscle = false;
+
+  const _PlanEntryCard.muscle({
+    super.key,
+    required this.title,
+    required this.kicker,
+    required this.tiers,
+    required this.onTap,
+    required String groupId,
+  }) : asset = 'assets/muscles/$groupId.webp',
+       isMuscle = true;
+
+  final String title;
+  final String kicker;
+  final String tiers;
+  final String asset;
+  final bool isMuscle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final s = context.strings;
-    final plan = plans.firstWhere(
-      (plan) => plan.tier == selectedTier,
-      orElse: () => plans.first,
+    final palette = FlareColors.palette;
+    final image = Image.asset(
+      asset,
+      height: isMuscle ? 140 : 136,
+      fit: BoxFit.contain,
+      excludeFromSemantics: true,
     );
-    final scene = store.settings.tier;
-    final activeMuscles = phase?.primary;
-    final shared = FlareShared.current;
-    final labels = [
-      s.planTierBeginner,
-      s.planTierIntermediate,
-      s.planTierAdvanced,
-    ];
-
-    return FlareNavPage(
-      title: title,
-      onBack: onBack,
-      bodyScrollsUnderBar: false,
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          FlareGeometry.pageInset,
-          12,
-          FlareGeometry.pageInset,
-          20,
+    return FlarePressable(
+      onTap: () {
+        FlareHaptics.light();
+        onTap();
+      },
+      child: DecoratedBox(
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          border: Border.all(color: palette.hairline),
+          borderRadius: BorderRadius.circular(20),
         ),
-        children: [
-          FlareSegmented<int>(
-            key: const ValueKey('flare-plan-tier'),
-            expand: true,
-            segments: [
-              for (final option in plans)
-                (option.tier, labels[option.tier - 1]),
-            ],
-            selected: plan.tier,
-            onChanged: onTierChanged,
-          ),
-          const SizedBox(height: 12),
-          _SceneSwitch(store: store),
-          if (activeMuscles != null && activeMuscles.isNotEmpty) ...[
-            FlareSection(s.planActiveMuscles),
-            FlareListGroup(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(gradient: flarePlanArtGradient(palette)),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                for (final muscle in activeMuscles)
-                  if (catalog.groupById(muscle.id) case final group?)
-                    FlareListRow(
-                      key: ValueKey('flare-plan-muscle-${group.id}'),
-                      title: group.label,
-                      subtitle: muscle.why,
-                      onTap: catalog.plansForMuscle(group.id).isEmpty
-                          ? null
-                          : () => onMuscle(group),
-                    ),
+                const Positioned(
+                  right: -30,
+                  top: -15,
+                  child: FlarePlanGlow(diameter: 180),
+                ),
+                if (isMuscle)
+                  Positioned(
+                    right: -6,
+                    top: 14,
+                    child: FlarePlanMuscleFade(child: image),
+                  )
+                else
+                  Positioned(right: -4, bottom: 4, child: image),
+                Positioned(
+                  left: 18,
+                  right: 18,
+                  bottom: 18,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FlarePlanKicker(label: kicker),
+                      const SizedBox(height: 6),
+                      Text(
+                        title,
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: palette.text,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -.3,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        tiers,
+                        style: TextStyle(
+                          color: palette.secondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ],
-          FlareSection(s.planExercises),
-          FlareListGroup(
-            children: [
-              for (final (index, item) in plan.items.indexed)
-                _itemRow(context, index, item, scene, shared),
-            ],
           ),
-        ],
-      ),
-      bottomBar: FlareBottomAction(
-        child: PrimaryAction(
-          key: const ValueKey('flare-plan-start'),
-          label: s.planStart,
-          icon: Icons.play_arrow_rounded,
-          onPressed: () => onStart(plan),
         ),
       ),
-    );
-  }
-
-  Widget _itemRow(
-    BuildContext context,
-    int index,
-    FlarePlanItem item,
-    String scene,
-    FlareShared? shared,
-  ) {
-    final s = context.strings;
-    final id = item.drillForScene(scene);
-    final name =
-        catalog.drillById(id)?.name ??
-        shared?.nameOf(id, languageForLocale(Localizations.localeOf(context)));
-    final amount = switch (item.reps) {
-      final reps? => s.countLabel(reps),
-      null => s.secondsLabel(item.seconds!),
-    };
-    final dose = s.libraryDose(item.sets, amount);
-    return FlareListRow(
-      key: ValueKey('flare-plan-item-$index-$id'),
-      title: name ?? id,
-      subtitle: item.perSide ? s.planDosePerSide(dose) : dose,
-      onTap: name == null ? null : () => onDrill(id),
     );
   }
 }

@@ -802,6 +802,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final canBack =
         drill != null || _inPlan || _settings || _detail != null || _tab != 0;
     final route = _route(context);
+    final edgeToEdgePlan = route.$4 is FlarePlanDetailPage;
     if (route.$1 != _stageKey) {
       // Keep the live stage on screen while a page slides over or off it.
       if (_stageKey != null && (_stageKey == 'watch' || route.$1 == 'watch')) {
@@ -827,6 +828,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           // its own inset.
           body: SafeArea(
             top: false,
+            bottom: !edgeToEdgePlan,
             child: Column(
               children: [
                 if (store.storageError != null)
@@ -878,7 +880,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               : null,
                           // App-owned routes share the fixed back rail;
                           // the library keeps SDK data, artwork and details.
-                          backChip: route.$4 != null,
+                          backChip: route.$4 != null && !edgeToEdgePlan,
                           pinSwipeBack:
                               route.$2 > 1 &&
                               !(drill != null &&
@@ -890,6 +892,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               const FlareBackChip(onPressed: _noop),
                           child:
                               route.$4 == null ||
+                                  edgeToEdgePlan ||
                                   route.$4 is PlansPage ||
                                   route.$4 is FlareSharedLibraryPage
                               ? route.$4
@@ -1031,6 +1034,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         false,
         FlarePlanDetailPage(
           title: title,
+          membership: widget.membership,
           phase: phase,
           plans: plans,
           selectedTier: target.selectedTier,

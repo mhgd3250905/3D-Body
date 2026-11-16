@@ -1885,6 +1885,66 @@ abstract class AppLocalizations {
   /// **'按肌群'**
   String get plansByMuscle;
 
+  /// No description provided for @anglePlanLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'角度计划'**
+  String get anglePlanLabel;
+
+  /// No description provided for @musclePlanLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群计划'**
+  String get musclePlanLabel;
+
+  /// No description provided for @angleSupportPlanIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手撑地、双腿打开成高 V，练稳这一下的支撑力量'**
+  String get angleSupportPlanIntro;
+
+  /// No description provided for @deltoidsPlanIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'单臂承重、把身体顶在手上方，托马斯每一圈都靠它'**
+  String get deltoidsPlanIntro;
+
+  /// No description provided for @planTrainingContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练内容'**
+  String get planTrainingContent;
+
+  /// No description provided for @planMuscleLinkHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'点肌群看专项计划'**
+  String get planMuscleLinkHint;
+
+  /// No description provided for @planSpecialized.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划'**
+  String get planSpecialized;
+
+  /// No description provided for @planRestSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'休息 {seconds} 秒'**
+  String planRestSeconds(int seconds);
+
+  /// No description provided for @planBodyweightSubstitution.
+  ///
+  /// In zh, this message translates to:
+  /// **'徒手替换'**
+  String get planBodyweightSubstitution;
+
+  /// No description provided for @planBodyweightScene.
+  ///
+  /// In zh, this message translates to:
+  /// **'徒手'**
+  String get planBodyweightScene;
+
   /// No description provided for @planTierBeginner.
   ///
   /// In zh, this message translates to:

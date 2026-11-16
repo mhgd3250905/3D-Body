@@ -948,6 +948,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String get plansByMuscle => '筋群別';
 
   @override
+  String get anglePlanLabel => '角度別プラン';
+
+  @override
+  String get musclePlanLabel => '筋群別プラン';
+
+  @override
+  String get angleSupportPlanIntro => '片手をつき、脚を高いV字に開く。この姿勢を安定させる支持力を鍛える';
+
+  @override
+  String get deltoidsPlanIntro => '片腕に体重を乗せ、手の上に体を支える。三角筋はフレアの一周ごとに働く';
+
+  @override
+  String get planTrainingContent => 'トレーニング内容';
+
+  @override
+  String get planMuscleLinkHint => '筋群をタップして専用プランへ';
+
+  @override
+  String get planSpecialized => '専用プラン';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '休憩$seconds秒';
+  }
+
+  @override
+  String get planBodyweightSubstitution => '自重の代替種目';
+
+  @override
+  String get planBodyweightScene => '自重';
+
+  @override
   String get planTierBeginner => '初級';
 
   @override
