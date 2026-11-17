@@ -60,7 +60,7 @@ R1 核对的是计划处方与已固定目录。动作差异及组次仍应通�
 | `muscle-lats-t2` | B | `scapular-B` | `h-towel-pulldown` | 3 × 8 次 / 45 秒 | 保留双侧下拉及肩胛下沉，避免重复计划已有撑地抬臀与弹力带下拉 |
 | `muscle-lats-t2` | B | `triceps-B` | `triceps-A` | 3 × 8 次 / 75 秒 | 保留双侧肱三头肌和胸部闭链承重及伸直停顿；脚留地并改为可控动态 |
 | `muscle-lats-t3` | B | `lats-C` | `lats-A` | 3 × 10 次 / 60 秒 | 保留闭链直臂肩胛下压，利用双脚着地降低体重负荷 |
-| `muscle-lats-t3` | B | `h-fixed-bar-vertical-pull` | `h-towel-pulldown` | 3 × 5 次 / 90 秒 | 保留屈肘竖直下拉及肩胛下沉，毛巾替代引体轨迹、降低负荷 |
+| `muscle-lats-t3` | B | `h-fixed-bar-vertical-pull` | `h-towel-pulldown` | 3 × 10 次 / 60 秒 | 保留屈肘竖直下拉及肩胛下沉，毛巾替代引体轨迹、降低负荷 |
 | `muscle-lats-t3` | B | `scapular-B` | `lats-B` | 3 × 10 次 / 45 秒 | 保留俯拉方向的直臂肩胛下沉并改为可控弹力带负荷 |
 | `muscle-lats-t3` | B | `abs-C` | `h-supine-bilateral-leg-raise` | 3 × 8 次 / 60 秒 | 保留双侧主动举腿和腹部控制，减少上肢支撑要求 |
 | `muscle-scapular-t3` | B | `scapular-B` | `lats-A` | 3 × 10 次 / 60 秒 | 保留闭链直臂肩胛下沉，改双脚触地辅助 |
