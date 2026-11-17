@@ -171,6 +171,65 @@ void main() {
     },
   );
 
+  test('an old home result with a replaced drill can restart cleanly', () {
+    final updated = angle(11, 3, 'B');
+    final currentItems = updated.items.toList();
+    final changedIndex = currentItems.indexWhere(
+      (item) => item.replacedFrom != null,
+    );
+    expect(changedIndex, isNonNegative);
+    final after = currentItems[changedIndex];
+    final before = uc.PlanItem(
+      exerciseId: after.replacedFrom!,
+      mode: uc.DoseMode.reps,
+      sets: 3,
+      reps: 8,
+      restSeconds: 45,
+      perSide: false,
+    );
+    final block = updated.blocks.single;
+    final old = updated.copyWith(
+      blocks: [
+        uc.PlanBlock(
+          id: block.id,
+          name: block.name,
+          type: block.type,
+          items: [
+            ...currentItems.take(changedIndex),
+            before,
+            ...currentItems.skip(changedIndex + 1),
+          ],
+        ),
+      ],
+    );
+    final oldRun = _result(
+      FlarePlanResume.recordAuthored(old, sceneTier: 'B', phaseSource: 11),
+      completed: {(0, changedIndex)},
+    );
+    final history = resolve(sessions: [oldRun])!;
+    expect(history.completed, 1);
+    expect(history.total, currentItems.length);
+    expect(history.canContinue, isFalse);
+    expect(history.continueFrom(updated), isNull);
+
+    final fullRun = FlarePlanResume.recordAuthored(
+      updated,
+      sceneTier: 'B',
+      phaseSource: 11,
+    );
+    expect(fullRun.items, currentItems);
+    expect(fullRun.items.elementAt(changedIndex).exerciseId, after.exerciseId);
+    final restarted = resolve(
+      sessions: [
+        _result(fullRun, attempt: 1, completed: {(0, 0)}),
+        oldRun,
+      ],
+    )!;
+    expect(restarted.sceneTier, 'B');
+    expect(restarted.canContinue, isTrue);
+    expect(restarted.continueFrom(updated)!.items, currentItems.skip(1));
+  });
+
   test('saved SDK plan can skip a finished block and retain its circuit', () {
     final original = angle(9, 1, 'A');
     final three = original.items.take(3).toList();

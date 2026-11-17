@@ -63,58 +63,114 @@ class FlarePlan {
   }
 }
 
-/// A plan's dose is independent of the drill's default and survives substitution.
+/// An authored exercise and its optional scene-specific substitutions.
 class FlarePlanItem {
   const FlarePlanItem._({
     required this.drill,
+    required this.dose,
+    this.bodyweight,
+    this.bodyweightDose,
+    this.home,
+    this.homeDose,
+  });
+
+  final String drill;
+  final FlarePlanDose dose;
+  final String? bodyweight;
+  final FlarePlanDose? bodyweightDose;
+  final String? home;
+  final FlarePlanDose? homeDose;
+
+  int get sets => dose.sets;
+  int? get reps => dose.reps;
+  int? get seconds => dose.seconds;
+  int get restSeconds => dose.restSeconds;
+  bool get perSide => dose.perSide;
+
+  String drillForScene(String tier) => switch (tier) {
+    'A' => bodyweight ?? drill,
+    'B' => home ?? drill,
+    _ => drill,
+  };
+
+  FlarePlanDose doseForScene(String tier) => switch (tier) {
+    'A' => bodyweightDose ?? dose,
+    'B' => homeDose ?? dose,
+    _ => dose,
+  };
+
+  factory FlarePlanItem.fromJson(Map<String, dynamic> json) {
+    final drill = json['drill'];
+    if (drill is! String || drill.isEmpty) {
+      throw FormatException('Invalid Flare plan item: $drill');
+    }
+
+    String? substitution(String key) {
+      final value = json[key];
+      if (value == null || (value is String && value.isNotEmpty)) {
+        return value as String?;
+      }
+      throw FormatException('Invalid $key for Flare plan item: $drill');
+    }
+
+    FlarePlanDose? override(String key) {
+      final value = json[key];
+      if (value == null) return null;
+      if (value is! Map<String, dynamic>) {
+        throw FormatException('Invalid $key for Flare plan item: $drill');
+      }
+      return FlarePlanDose._fromJson(value, '$drill/$key');
+    }
+
+    return FlarePlanItem._(
+      drill: drill,
+      dose: FlarePlanDose._fromJson(json, drill),
+      bodyweight: substitution('bodyweight'),
+      bodyweightDose: override('bodyweightDose'),
+      home: substitution('home'),
+      homeDose: override('homeDose'),
+    );
+  }
+}
+
+/// A complete dose, independent of the drill's catalog defaults.
+class FlarePlanDose {
+  const FlarePlanDose._({
     required this.sets,
     this.reps,
     this.seconds,
     required this.restSeconds,
     required this.perSide,
-    this.bodyweight,
   });
 
-  final String drill;
   final int sets;
   final int? reps;
   final int? seconds;
   final int restSeconds;
   final bool perSide;
-  final String? bodyweight;
 
-  String drillForScene(String tier) =>
-      tier == 'A' ? bodyweight ?? drill : drill;
-
-  factory FlarePlanItem.fromJson(Map<String, dynamic> json) {
-    final drill = json['drill'];
+  factory FlarePlanDose._fromJson(Map<String, dynamic> json, String label) {
     final sets = json['sets'];
     final reps = json['reps'];
     final seconds = json['seconds'];
     final restSeconds = json['restSeconds'];
     final perSide = json['perSide'] ?? false;
-    final bodyweight = json['bodyweight'];
-    if (drill is! String ||
-        drill.isEmpty ||
-        sets is! int ||
+    if (sets is! int ||
         sets < 1 ||
         (reps == null) == (seconds == null) ||
         (reps != null && (reps is! int || reps < 1)) ||
         (seconds != null && (seconds is! int || seconds < 1)) ||
         restSeconds is! int ||
         restSeconds < 0 ||
-        perSide is! bool ||
-        (bodyweight != null && (bodyweight is! String || bodyweight.isEmpty))) {
-      throw FormatException('Invalid Flare plan item: $drill');
+        perSide is! bool) {
+      throw FormatException('Invalid Flare plan dose: $label');
     }
-    return FlarePlanItem._(
-      drill: drill,
+    return FlarePlanDose._(
       sets: sets,
       reps: reps as int?,
       seconds: seconds as int?,
       restSeconds: restSeconds,
       perSide: perSide,
-      bodyweight: bodyweight as String?,
     );
   }
 }

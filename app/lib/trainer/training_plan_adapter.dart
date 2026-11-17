@@ -118,7 +118,7 @@ uc.TrainingPlan trainingPlanFromDrills({
   );
 }
 
-/// Authored Flare plans retain their exact dose when a scene swaps a drill.
+/// Resolve the authored drill and dose for the chosen scene before scheduling.
 uc.TrainingPlan trainingPlanFromFlarePlan({
   required FlarePlan plan,
   required String title,
@@ -138,8 +138,9 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
   if (unknown.isNotEmpty) throw UnknownTrainingDrills(unknown);
 
   final items = <uc.PlanItem>[];
-  for (final dose in plan.items) {
-    final id = dose.drillForScene(sceneTier);
+  for (final authored in plan.items) {
+    final id = authored.drillForScene(sceneTier);
+    final dose = authored.doseForScene(sceneTier);
     final workSeconds = dose.seconds;
     final item = uc.PlanItem(
       exerciseId: id,
@@ -149,7 +150,7 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       workSeconds: workSeconds,
       perSide: dose.perSide,
       restSeconds: dose.restSeconds,
-      replacedFrom: id == dose.drill ? null : dose.drill,
+      replacedFrom: id == authored.drill ? null : authored.drill,
     );
 
     // A counted catalog rhythm can stretch a time budget to fit its default

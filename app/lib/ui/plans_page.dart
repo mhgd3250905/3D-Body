@@ -13,7 +13,6 @@ import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
-import 'flare_plan_detail_page.dart' show flarePlanMinutes;
 import 'flare_plan_visuals.dart' show FlarePlanGlow;
 import 'motion.dart';
 import 'theme.dart';
@@ -178,11 +177,20 @@ class PlansPage extends StatelessWidget {
               case final beginner?)
             (phase, beginner),
     ];
+    final shared = FlareShared.current;
+    final scene = store.settings.tier;
+    int? minutesFor(FlarePlan plan) =>
+        shared?.authoredPlanMinutes(plan, catalog, scene);
+    int? shortestPlan(Iterable<FlarePlan> plans) {
+      final minutes = plans.map(minutesFor).whereType<int>();
+      return minutes.isEmpty ? null : minutes.reduce(math.min);
+    }
+
     final muscles = [
       for (final id in {..._featuredMuscles, ...catalog.flarePlanMuscles})
         if (catalog.groupById(id) case final group?)
           if (catalog.plansForMuscle(id) case final plans when plans.isNotEmpty)
-            (group, plans.map(flarePlanMinutes).reduce(math.min)),
+            (group, shortestPlan(plans)),
     ];
 
     return ColoredBox(
@@ -288,6 +296,7 @@ class PlansPage extends StatelessWidget {
                         return _AnglePlanCard(
                           phase: phase,
                           beginner: beginner,
+                          minutes: minutesFor(beginner),
                           usesBothHands:
                               catalog.supportFor(phase.source) == 'both',
                           onTap: () => onOpenAngle(phase),
@@ -802,12 +811,14 @@ class _AnglePlanCard extends StatelessWidget {
   const _AnglePlanCard({
     required this.phase,
     required this.beginner,
+    required this.minutes,
     required this.usesBothHands,
     required this.onTap,
   });
 
   final Phase phase;
   final FlarePlan beginner;
+  final int? minutes;
   final bool usesBothHands;
   final VoidCallback onTap;
 
@@ -890,7 +901,7 @@ class _AnglePlanCard extends StatelessWidget {
                       Text(
                         [
                           s.planTierBeginner,
-                          s.minutesShort(flarePlanMinutes(beginner)),
+                          if (minutes case final value?) s.minutesShort(value),
                           s.planDrillCount(beginner.items.length),
                         ].join(' · '),
                         style: TextStyle(color: p.dim, fontSize: 11),
@@ -915,7 +926,7 @@ class _MusclePlanCard extends StatelessWidget {
   });
 
   final MuscleGroup group;
-  final int minutes;
+  final int? minutes;
   final VoidCallback onTap;
 
   @override
@@ -965,7 +976,10 @@ class _MusclePlanCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${s.plansThreeLevels} · ${s.hubMinutesFrom(minutes)}',
+                      [
+                        s.plansThreeLevels,
+                        if (minutes case final value?) s.hubMinutesFrom(value),
+                      ].join(' · '),
                       style: TextStyle(color: p.dim, fontSize: 11),
                     ),
                   ],

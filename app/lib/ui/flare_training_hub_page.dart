@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/catalog.dart';
+import '../data/flare_shared_library.dart';
 import '../platform/scene/scene.dart';
 import 'components.dart';
-import 'flare_plan_detail_page.dart' show flarePlanMinutes;
 import 'flare_plan_visuals.dart';
 import 'motion.dart';
 import 'motion_controls.dart';
@@ -27,6 +27,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   const FlareTrainingHubPage({
     super.key,
     required this.catalog,
+    this.sceneTier = 'A',
     required this.actorBody,
     required this.quality,
     required this.enableScene,
@@ -45,6 +46,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   });
 
   final Catalog catalog;
+  final String sceneTier;
   final String actorBody;
   final String quality;
   final bool enableScene;
@@ -311,6 +313,13 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                       selection: selectedKey,
                       title: _muscles ? muscle.shortLabel : phase.name,
                       plan: beginner,
+                      minutes: beginner == null
+                          ? null
+                          : FlareShared.current?.authoredPlanMinutes(
+                              beginner,
+                              catalog,
+                              widget.sceneTier,
+                            ),
                       onOpen: _muscles
                           ? () => widget.onMuscle(muscle)
                           : () => widget.onAngle(phase),
@@ -806,12 +815,14 @@ class _HubPlanFooter extends StatelessWidget {
     required this.selection,
     required this.title,
     required this.plan,
+    required this.minutes,
     required this.onOpen,
   });
 
   final Key selection;
   final String title;
   final FlarePlan? plan;
+  final int? minutes;
   final VoidCallback onOpen;
 
   @override
@@ -824,7 +835,7 @@ class _HubPlanFooter extends StatelessWidget {
     final subtitle = selectedPlan == null
         ? s.hubStillPlanning
         : [
-            s.hubMinutesFrom(flarePlanMinutes(selectedPlan)),
+            if (minutes case final value?) s.hubMinutesFrom(value),
             s.planDrillCount(selectedPlan.items.length),
             s.hubThreeTiers,
           ].join(' · ');

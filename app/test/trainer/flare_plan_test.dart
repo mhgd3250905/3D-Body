@@ -85,15 +85,14 @@ void main() {
         expect(converted.targetMinutes, greaterThan(0));
         for (final (index, item) in converted.items.indexed) {
           final authored = plan.items[index];
-          final id = scene == 'A'
-              ? authored.bodyweight ?? authored.drill
-              : authored.drill;
+          final id = authored.drillForScene(scene);
+          final dose = authored.doseForScene(scene);
           expect(item.exerciseId, id);
-          expect(item.sets, authored.sets);
-          expect(item.reps, authored.reps);
-          expect(item.workSeconds, authored.seconds);
-          expect(item.perSide, authored.perSide);
-          expect(item.restSeconds, authored.restSeconds);
+          expect(item.sets, dose.sets);
+          expect(item.reps, dose.reps);
+          expect(item.workSeconds, dose.seconds);
+          expect(item.perSide, dose.perSide);
+          expect(item.restSeconds, dose.restSeconds);
           expect(flareAuthorizedActionIds, contains(id));
           expect(pack.tryGet(id)?.availableForTraining, isTrue, reason: id);
           expect(
@@ -109,6 +108,114 @@ void main() {
         }
       }
     }
+  });
+
+  test('scene overrides replace the whole dose before SDK scheduling', () {
+    final plan = FlarePlan.fromJson({
+      'id': 'scene-doses',
+      'kind': 'angle',
+      'target': 11,
+      'tier': 3,
+      'items': [
+        {
+          'drill': 'triceps-B',
+          'sets': 4,
+          'seconds': 20,
+          'restSeconds': 75,
+          'bodyweight': 'chest-A',
+          'bodyweightDose': {'sets': 3, 'reps': 4, 'restSeconds': 45},
+          'home': 'h-side-er',
+          'homeDose': {
+            'sets': 2,
+            'reps': 12,
+            'restSeconds': 30,
+            'perSide': true,
+          },
+        },
+        {
+          'drill': 'abs-C',
+          'sets': 2,
+          'reps': 8,
+          'restSeconds': 45,
+          'bodyweight': 'abs-A',
+        },
+      ],
+    });
+
+    final a = training(plan, 'A');
+    final b = training(plan, 'B');
+    final c = training(plan, 'C');
+    (String, int, int?, int?, int, bool) dose(uc.PlanItem item) => (
+      item.exerciseId,
+      item.sets,
+      item.reps,
+      item.workSeconds,
+      item.restSeconds,
+      item.perSide,
+    );
+    expect(dose(a.items.first), ('chest-A', 3, 4, null, 45, false));
+    expect(dose(b.items.first), ('h-side-er', 2, 12, null, 30, true));
+    expect(dose(c.items.first), ('triceps-B', 4, null, 20, 75, false));
+    expect(dose(a.items.last), ('abs-A', 2, 8, null, 45, false));
+    expect(dose(b.items.last), ('abs-C', 2, 8, null, 45, false));
+    expect(a.items.first.replacedFrom, 'triceps-B');
+    expect(b.items.first.replacedFrom, 'triceps-B');
+    expect(c.items.first.replacedFrom, isNull);
+
+    final builder = sdk.SessionBuilder(rhythms: rhythms);
+    Iterable<sdk.SessionPhase> work(uc.TrainingPlan plan, String id) =>
+        builder.phases(plan).where((p) => p.isWork && p.exerciseId == id);
+    final pairs = work(a, 'chest-A');
+    expect(pairs, hasLength(3));
+    expect(pairs.map((p) => p.side), everyElement(isNull));
+    expect(pairs.map((p) => p.reps), everyElement(4));
+    expect(pairs.map((p) => p.rhythm?.alternatePair), everyElement(isTrue));
+    final singleSide = work(b, 'h-side-er');
+    expect(singleSide.map((p) => p.side), [
+      sdk.Side.right,
+      sdk.Side.left,
+      sdk.Side.right,
+      sdk.Side.left,
+    ]);
+    expect(singleSide.map((p) => p.reps), everyElement(12));
+    expect(work(c, 'triceps-B').map((p) => p.seconds), [20, 20, 20, 20]);
+    for (final scenario in [a, b, c]) {
+      expect(
+        scenario.targetMinutes,
+        (builder.planSeconds(scenario) / 60).ceil(),
+      );
+    }
+  });
+
+  test('bundled prescriptions preserve timed holds and simultaneous reps', () {
+    final abs = catalog.plansForMuscle('abs').singleWhere((p) => p.tier == 3);
+    final bodyweight = training(abs, 'A');
+    final holds = bodyweight.items.where(
+      (item) => const ['abs-A', 'h-bear-plank'].contains(item.exerciseId),
+    );
+    expect(holds.map((item) => item.sets), [3, 3]);
+    expect(holds.map((item) => item.workSeconds), [20, 20]);
+    expect(holds.map((item) => item.restSeconds), [60, 45]);
+    final builder = sdk.SessionBuilder(rhythms: rhythms);
+    final phases = builder.phases(bodyweight);
+    for (final hold in holds) {
+      final work = phases.where(
+        (p) => p.isWork && p.exerciseId == hold.exerciseId,
+      );
+      expect(work.map((p) => p.seconds), [20, 20, 20]);
+    }
+
+    final angle = catalog.plansForAngle(12).singleWhere((p) => p.tier == 2);
+    final plan = training(angle, 'C');
+    final hipFlexors = plan.items.singleWhere(
+      (i) => i.exerciseId == 'hip-flexors-A',
+    );
+    expect(hipFlexors.perSide, isFalse);
+    final work = builder
+        .phases(plan)
+        .where((p) => p.isWork && p.exerciseId == 'hip-flexors-A');
+    expect(work, hasLength(hipFlexors.sets));
+    expect(work.map((p) => p.side), everyElement(isNull));
   });
 
   test('every scene resolves unique drills in each of the 72 plans', () {
@@ -141,7 +248,7 @@ void main() {
     final wristWork = work.where((phase) => phase.exerciseId == 'forearms-A');
     expect(wristWork.map((phase) => phase.seconds), [15, 15, 15, 15]);
     final pushups = work.where((phase) => phase.exerciseId == 'triceps-A');
-    expect(pushups.map((phase) => phase.seconds), [15, 15, 15, 15]);
+    expect(pushups.map((phase) => phase.reps), [8, 8, 8, 8]);
     final unilateral = work.where(
       (phase) => phase.exerciseId == 'hip-abductors-A',
     );
@@ -159,6 +266,28 @@ void main() {
     expect(() => FlarePlanItem.fromJson(json), throwsFormatException);
     expect(
       () => FlarePlanItem.fromJson({...json, 'reps': 8, 'seconds': 15}),
+      throwsFormatException,
+    );
+    expect(
+      () => FlarePlanItem.fromJson({
+        ...json,
+        'reps': 8,
+        'home': 'triceps-C',
+        'homeDose': {'sets': 3, 'restSeconds': 30},
+      }),
+      throwsFormatException,
+    );
+    expect(
+      () => FlarePlanItem.fromJson({
+        ...json,
+        'reps': 8,
+        'bodyweightDose': {
+          'sets': 3,
+          'reps': 4,
+          'seconds': 8,
+          'restSeconds': 0,
+        },
+      }),
       throwsFormatException,
     );
   });
