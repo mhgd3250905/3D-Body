@@ -1,5 +1,11 @@
 # Flare 版本管理台账
 
+## Android 测试包 vc2056（2026-11-17）
+
+`feat/flare-plans-full` 构建源码 `ce7ec04e986975b9d71a4000365c973225135bdc`，源码版本 `1.0.15+56`，arm64 release 实际为 `1.0.15 (2056)`。包含独立的训练前器材行、14 语器材名称，以及高级背阔肌徒手和居家统一的毛巾下拉处方。
+
+`Flare-1.0.15-vc2056-arm64-release.apk` 在主工作区的 `output/release-checkpoints/app-v1.0.15-build2056/`。APK SHA-256 为 `982dc798ea48c37ff82addae07a83fc70c7919166e23573e86902dce6aa33e64`，测试证书与 vc2055 一致。
+
 ## Android 测试包 vc2055（2026-11-17）
 
 功能分支 `feat/flare-plans-full`，源码版本 `1.0.15+55`，Android arm64 release 测试包实际 versionCode `2055`。会员页重做，断线展示参考价格和有条件的试用说明，订阅前重新获取套餐。两类专项计划详情的模型区铺到屏幕顶部，角度姿势完整显示手脚并随页面原尺寸滚动。[iOS 交接](changes-for-ios-2026-11-17.md)。

@@ -1,5 +1,11 @@
 # App 验证记录
 
+## Android vc2056 安装与启动（2026-11-17）
+
+Flutter 3.44.7 使用 `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=56` 构建通过。首次 `--no-pub` 使用了含集成测试插件的生成登记，标准 release 流程重新生成登记后通过。核对了包名、版本、测试证书、16 KiB ZIP 对齐和随包计划 JSON。APK 身份及回执见[版本台账](version-ledger.md#android-测试包-vc20562026-11-17)。
+
+USB 真机从 vc2054 通过 `adb install -r` 覆盖到 vc2056。发起一次启动，4 秒后 Flare 主界面对应的 Activity 在前台，进程仍在运行。本次真机验证限于安装和启动。
+
 ## 训练前器材显示复核（2026-11-17）
 
 Chrome 390 × 920 核对高级背阔肌同一计划的徒手与居家场景。器材行在训练内容标题下方，居家按整项显示弹力带。两场景的站姿毛巾下拉均为 3 组 × 10 次、休 60 秒。核对随包目录 25 个器材 ID 及 App 的夹垫别名，均覆盖 14 种语言。
