@@ -9,6 +9,77 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'Prova gratuita di $days giorni se idoneo';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Abbonati a $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Prova gratuita di $days giorni';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count piani per ogni fase del Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Angoli chiave';
+
+  @override
+  String get premiumMuscleCount => 'Gruppi muscolari';
+
+  @override
+  String get premiumLevelCount => 'Livelli';
+
+  @override
+  String get premiumVoiceTitle => 'Guida vocale e demo in 3D';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Indicazioni per ripetizioni, cambi di lato e pause';
+
+  @override
+  String get premiumCustomDescription =>
+      'Crea un piano con gli esercizi che fai di solito';
+
+  @override
+  String get premiumPerYear => '/anno';
+
+  @override
+  String get premiumPerMonth => '/mese';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Connessione a $store non riuscita. Si applicano i prezzi dello store.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'La connessione a $store non è ancora disponibile. Riprova più tardi.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Dopo la prova, rinnovo a $price. Annulla in qualsiasi momento su $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Rinnovo a $price. Annulla in qualsiasi momento su $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Rinnovo automatico. Annulla su $store.';
+  }
+
+  @override
   String get premiumTitle => 'Sblocca Flare Premium';
 
   @override

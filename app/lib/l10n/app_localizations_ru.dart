@@ -9,6 +9,77 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'При наличии права — $days дн. бесплатно';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Подписаться за $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Бесплатный пробный период: $days дн.';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count трен. планов для всех фаз флэра';
+  }
+
+  @override
+  String get premiumAngleCount => 'Ключевые углы';
+
+  @override
+  String get premiumMuscleCount => 'Группы мышц';
+
+  @override
+  String get premiumLevelCount => 'Уровни';
+
+  @override
+  String get premiumVoiceTitle => 'Голосовые подсказки и 3D-демонстрации';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Подсказки о повторах, смене стороны и отдыхе';
+
+  @override
+  String get premiumCustomDescription =>
+      'Составьте план из привычных упражнений';
+
+  @override
+  String get premiumPerYear => '/год';
+
+  @override
+  String get premiumPerMonth => '/мес.';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Не удалось подключиться к $store. Действуют цены магазина.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Подключиться к $store по-прежнему не удаётся. Повторите попытку позже.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'После пробного периода подписка продлится за $price. Отменить можно в любое время в $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Подписка продлится за $price. Отменить можно в любое время в $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Подписка продлевается автоматически. Отменить можно в $store.';
+  }
+
+  @override
   String get premiumTitle => 'Откройте Flare Premium';
 
   @override

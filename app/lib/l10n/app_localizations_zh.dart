@@ -9,6 +9,75 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return '符合资格可免费试用 $days 天';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '订阅 $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days 天免费试用';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count 套计划，托马斯每个难点都有专项练法';
+  }
+
+  @override
+  String get premiumAngleCount => '难点角度';
+
+  @override
+  String get premiumMuscleCount => '肌群专项';
+
+  @override
+  String get premiumLevelCount => '难度档位';
+
+  @override
+  String get premiumVoiceTitle => '跟练语音与 3D 示范';
+
+  @override
+  String get premiumVoiceDescription => '计数、换边、休息全程提示';
+
+  @override
+  String get premiumCustomDescription => '把常练动作组合成自己的计划';
+
+  @override
+  String get premiumPerYear => '/年';
+
+  @override
+  String get premiumPerMonth => '/月';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '暂未连上 $store，价格以商店显示为准';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return '仍未连上 $store，请稍后重试';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return '试用结束后 $price 自动续订，可随时在 $store 取消';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return '$price 自动续订，可随时在 $store 取消';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return '订阅将自动续订，可在 $store 取消';
+  }
+
+  @override
   String get premiumTitle => '解锁 Flare 会员';
 
   @override
@@ -18,7 +87,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get premiumAiCoach => '全部训练计划随时开练';
 
   @override
-  String get premiumAiPlans => '按角度、按肌群的初中高三档计划';
+  String get premiumAiPlans => '角度计划与肌群计划，初中高三档';
 
   @override
   String get premiumCustomWorkouts => '无限自定义训练组';
@@ -1354,6 +1423,75 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
 
   @override
+  String premiumConditionalTrial(int days) {
+    return '符合資格可免費試用 $days 天';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '訂閱 $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days 天免費試用';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count 套計畫，托馬斯每個難點都有專項練法';
+  }
+
+  @override
+  String get premiumAngleCount => '難點角度';
+
+  @override
+  String get premiumMuscleCount => '肌群專項';
+
+  @override
+  String get premiumLevelCount => '難度級別';
+
+  @override
+  String get premiumVoiceTitle => '跟練語音與 3D 示範';
+
+  @override
+  String get premiumVoiceDescription => '全程提示次數、換邊與休息';
+
+  @override
+  String get premiumCustomDescription => '把常練動作組合成自己的計畫';
+
+  @override
+  String get premiumPerYear => '/年';
+
+  @override
+  String get premiumPerMonth => '/月';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '暫未連上 $store，價格以商店顯示為準';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return '仍未連上 $store，請稍後重試';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return '試用結束後 $price 自動續訂，可隨時在 $store 取消';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return '$price 自動續訂，可隨時在 $store 取消';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return '訂閱將自動續訂，可在 $store 取消';
+  }
+
+  @override
   String get premiumTitle => '解鎖 Flare 會員';
 
   @override
@@ -1363,7 +1501,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get premiumAiCoach => '全部訓練計畫隨時開練';
 
   @override
-  String get premiumAiPlans => '按角度、按肌群的初、中、高階計畫';
+  String get premiumAiPlans => '角度計畫與肌群計畫，初中高三級';
 
   @override
   String get premiumCustomWorkouts => '無限自訂訓練組';

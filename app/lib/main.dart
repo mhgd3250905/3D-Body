@@ -76,9 +76,11 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
       FlareRevenueCat(
         const String.fromEnvironment('FLARE_REVENUECAT_ANDROID_KEY'),
       ),
+      offerStorage: SharedPreferencesLocalStateStorage(),
     ),
     (false, TargetPlatform.iOS) => FlareMembership(
       FlareRevenueCat(const String.fromEnvironment('FLARE_REVENUECAT_IOS_KEY')),
+      offerStorage: SharedPreferencesLocalStateStorage(),
     ),
     _ => null,
   };

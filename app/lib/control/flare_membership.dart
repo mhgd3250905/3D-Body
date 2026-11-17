@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+
+import '../data/local_state_storage.dart';
 
 enum MembershipTerm { monthly, annual }
 
@@ -41,11 +44,34 @@ abstract interface class MembershipStore {
 
 /// One lifetime owner for subscription operations and the current RC identity.
 class FlareMembership extends ChangeNotifier {
-  FlareMembership(this._store, {DateTime Function()? now})
+  FlareMembership(this._store, {DateTime Function()? now, this._offerStorage})
     : _now = now ?? DateTime.now;
+
+  /// US reference prices, matching the StoreKit configuration. The store
+  /// supplies the actual localized prices and trial eligibility before purchase.
+  static const referenceOffers = [
+    MembershipOffer(
+      term: MembershipTerm.monthly,
+      price: 2.99,
+      currency: 'USD',
+      localizedPrice: r'$2.99',
+    ),
+    MembershipOffer(
+      term: MembershipTerm.annual,
+      price: 19.99,
+      currency: 'USD',
+      localizedPrice: r'$19.99',
+      localizedMonthlyPrice: r'$1.67',
+    ),
+  ];
+
+  static const _offerCacheKey = 'flare.membership.offer-prices.v1';
 
   final MembershipStore _store;
   final DateTime Function() _now;
+  final LocalStateStorage? _offerStorage;
+  List<MembershipOffer>? _cachedOffers;
+  Future<List<MembershipOffer>>? _offersRequest;
   MembershipSnapshot? _snapshot;
   Future<bool>? _refresh;
   Timer? _expiryTimer;
@@ -54,10 +80,91 @@ class FlareMembership extends ChangeNotifier {
   bool _busy = false;
 
   bool get busy => _busy;
+  List<MembershipOffer> get fallbackOffers => referenceOffers;
   bool get isPremium => _snapshot?.isActiveAt(_now()) ?? false;
   String? get activeAppUserId => isPremium ? _snapshot?.appUserId : null;
 
-  Future<List<MembershipOffer>> offers() => _store.offers();
+  Future<List<MembershipOffer>> offers() => _offersRequest ??= _loadOffers()
+      .whenComplete(() => _offersRequest = null);
+
+  Future<List<MembershipOffer>> _loadOffers() async {
+    final offers = await _store.offers();
+    if (offers.isEmpty) return offers;
+
+    // Cached prices are display estimates. Trials depend on live eligibility.
+    final prices = [
+      for (final offer in offers)
+        MembershipOffer(
+          term: offer.term,
+          price: offer.price,
+          currency: offer.currency,
+          localizedPrice: offer.localizedPrice,
+          localizedMonthlyPrice: offer.localizedMonthlyPrice,
+        ),
+    ];
+    _cachedOffers = List.unmodifiable(prices);
+    try {
+      await _offerStorage?.write(
+        _offerCacheKey,
+        jsonEncode([
+          for (final offer in prices)
+            {
+              'term': offer.term.name,
+              'price': offer.price,
+              'currency': offer.currency,
+              'localizedPrice': offer.localizedPrice,
+              'localizedMonthlyPrice': offer.localizedMonthlyPrice,
+            },
+        ]),
+      );
+    } on Object {
+      // A local cache failure cannot block a live purchase.
+    }
+    return offers;
+  }
+
+  Future<List<MembershipOffer>> cachedOffers() async {
+    if (_cachedOffers case final prices?) return prices;
+    try {
+      final encoded = await _offerStorage?.read(_offerCacheKey);
+      final decoded = encoded == null ? null : jsonDecode(encoded);
+      final prices = [
+        if (decoded case final List<Object?> entries)
+          for (final entry in entries) ?_readOffer(entry),
+      ];
+      // A live request may finish while the storage read is in progress.
+      return _cachedOffers ??= List.unmodifiable(prices);
+    } on Object {
+      return _cachedOffers ?? const [];
+    }
+  }
+
+  MembershipOffer? _readOffer(Object? entry) {
+    if (entry
+        case {
+          'term': final String name,
+          'price': final num price,
+          'currency': final String currency,
+          'localizedPrice': final String localizedPrice,
+          'localizedMonthlyPrice': final String? monthlyPrice,
+        }
+        when price.isFinite &&
+            price > 0 &&
+            currency.isNotEmpty &&
+            localizedPrice.isNotEmpty) {
+      for (final term in MembershipTerm.values) {
+        if (term.name != name) continue;
+        return MembershipOffer(
+          term: term,
+          price: price.toDouble(),
+          currency: currency,
+          localizedPrice: localizedPrice,
+          localizedMonthlyPrice: monthlyPrice,
+        );
+      }
+    }
+    return null;
+  }
 
   Future<bool> refresh() {
     if (_busy) return Future.value(isPremium);

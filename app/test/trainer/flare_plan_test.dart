@@ -42,6 +42,12 @@ void main() {
   ];
 
   test('bundled plans cover every phase and muscle in all three tiers', () {
+    expect(catalog.flarePlanCounts, (
+      plans: 72,
+      angles: 8,
+      muscles: 17,
+      tiers: 3,
+    ));
     expect(catalog.flarePlanAngles, [9, 10, 11, 12, 13, 14, 16]);
     expect(
       catalog.flarePlanMuscles,

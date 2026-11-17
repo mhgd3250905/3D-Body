@@ -9,6 +9,76 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'पात्र होने पर $days दिनों की मुफ़्त आज़माइश';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '$price में सदस्यता लें';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days दिनों की मुफ़्त आज़माइश';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return 'फ़्लेयर के हर चरण के लिए $count प्लान';
+  }
+
+  @override
+  String get premiumAngleCount => 'मुख्य कोण';
+
+  @override
+  String get premiumMuscleCount => 'मांसपेशी समूह';
+
+  @override
+  String get premiumLevelCount => 'कठिनाई स्तर';
+
+  @override
+  String get premiumVoiceTitle => 'आवाज़ में निर्देश और 3D डेमो';
+
+  @override
+  String get premiumVoiceDescription =>
+      'दोहराव, करवट बदलने और आराम के लिए संकेत';
+
+  @override
+  String get premiumCustomDescription => 'अपने नियमित व्यायामों का प्लान बनाएँ';
+
+  @override
+  String get premiumPerYear => '/साल';
+
+  @override
+  String get premiumPerMonth => '/महीना';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store से कनेक्ट नहीं हो सका। स्टोर की कीमतें लागू होंगी।';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'अब भी $store से कनेक्ट नहीं हो सका। बाद में फिर कोशिश करें।';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'आज़माइश के बाद $price पर सदस्यता रिन्यू होगी। $store में कभी भी रद्द करें।';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'सदस्यता $price पर रिन्यू होगी। $store में कभी भी रद्द करें।';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'सदस्यता अपने आप रिन्यू होगी। $store में रद्द करें।';
+  }
+
+  @override
   String get premiumTitle => 'Flare Premium अनलॉक करें';
 
   @override

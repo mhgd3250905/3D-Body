@@ -121,6 +121,108 @@ abstract class AppLocalizations {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
+  /// No description provided for @premiumConditionalTrial.
+  ///
+  /// In zh, this message translates to:
+  /// **'符合资格可免费试用 {days} 天'**
+  String premiumConditionalTrial(int days);
+
+  /// No description provided for @premiumSubscribeAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅 {price}'**
+  String premiumSubscribeAt(String price);
+
+  /// No description provided for @premiumTrialOffer.
+  ///
+  /// In zh, this message translates to:
+  /// **'{days} 天免费试用'**
+  String premiumTrialOffer(int days);
+
+  /// No description provided for @premiumPlanSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 套计划，托马斯每个难点都有专项练法'**
+  String premiumPlanSummary(int count);
+
+  /// No description provided for @premiumAngleCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'难点角度'**
+  String get premiumAngleCount;
+
+  /// No description provided for @premiumMuscleCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群专项'**
+  String get premiumMuscleCount;
+
+  /// No description provided for @premiumLevelCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'难度档位'**
+  String get premiumLevelCount;
+
+  /// No description provided for @premiumVoiceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟练语音与 3D 示范'**
+  String get premiumVoiceTitle;
+
+  /// No description provided for @premiumVoiceDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'计数、换边、休息全程提示'**
+  String get premiumVoiceDescription;
+
+  /// No description provided for @premiumCustomDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'把常练动作组合成自己的计划'**
+  String get premiumCustomDescription;
+
+  /// No description provided for @premiumPerYear.
+  ///
+  /// In zh, this message translates to:
+  /// **'/年'**
+  String get premiumPerYear;
+
+  /// No description provided for @premiumPerMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'/月'**
+  String get premiumPerMonth;
+
+  /// No description provided for @premiumStoreOffline.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂未连上 {store}，价格以商店显示为准'**
+  String premiumStoreOffline(String store);
+
+  /// No description provided for @premiumStoreRetryFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'仍未连上 {store}，请稍后重试'**
+  String premiumStoreRetryFailed(String store);
+
+  /// No description provided for @premiumTrialRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'试用结束后 {price} 自动续订，可随时在 {store} 取消'**
+  String premiumTrialRenewal(String price, String store);
+
+  /// No description provided for @premiumPaidRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'{price} 自动续订，可随时在 {store} 取消'**
+  String premiumPaidRenewal(String price, String store);
+
+  /// No description provided for @premiumStoreRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅将自动续订，可在 {store} 取消'**
+  String premiumStoreRenewal(String store);
+
   /// No description provided for @premiumTitle.
   ///
   /// In zh, this message translates to:
@@ -142,7 +244,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumAiPlans.
   ///
   /// In zh, this message translates to:
-  /// **'按角度、按肌群的初中高三档计划'**
+  /// **'角度计划与肌群计划，初中高三档'**
   String get premiumAiPlans;
 
   /// No description provided for @premiumCustomWorkouts.

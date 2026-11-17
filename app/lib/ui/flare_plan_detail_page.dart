@@ -14,6 +14,9 @@ import 'page_kit.dart';
 import 'theme.dart';
 
 const _gutter = 22.0;
+const _heroHeight = 300.0;
+const _heroTitleOverlap = 24.0;
+const _heroArtTop = 64.0;
 const _switchTime = Duration(milliseconds: 220);
 const _figures = [FontFeature.tabularFigures()];
 const _startButtonHeight = 56.0;
@@ -33,7 +36,7 @@ int flarePlanMinutes(FlarePlan plan) {
   return (seconds / 60).ceil();
 }
 
-class FlarePlanDetailPage extends StatelessWidget {
+class FlarePlanDetailPage extends StatefulWidget {
   const FlarePlanDetailPage({
     super.key,
     required this.title,
@@ -64,15 +67,31 @@ class FlarePlanDetailPage extends StatelessWidget {
   final FlareMembership? membership;
 
   @override
+  State<FlarePlanDetailPage> createState() => _FlarePlanDetailPageState();
+}
+
+class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final p = FlareColors.palette;
+    final plans = widget.plans;
+    final catalog = widget.catalog;
+    final phase = widget.phase;
     final plan = plans.firstWhere(
-      (plan) => plan.tier == selectedTier,
+      (plan) => plan.tier == widget.selectedTier,
       orElse: () => plans.first,
     );
     final minutes = flarePlanMinutes(plan);
-    final scene = store.settings.tier;
+    final scene = widget.store.settings.tier;
     final safe = MediaQuery.viewPaddingOf(context);
     final muscles = [
       for (final muscle in phase?.primary ?? const <PhaseMuscle>[])
@@ -101,7 +120,8 @@ class FlarePlanDetailPage extends StatelessWidget {
       child: ColoredBox(
         color: p.background,
         child: FlareScrollNav(
-          onBack: onBack,
+          onBack: widget.onBack,
+          scrollFadeController: _scroll,
           child: Stack(
             children: [
               Positioned.fill(
@@ -111,16 +131,17 @@ class FlarePlanDetailPage extends StatelessWidget {
                     context,
                   ).copyWith(scrollbars: false),
                   child: ListView(
+                    controller: _scroll,
                     padding: const EdgeInsets.only(
                       bottom: _startButtonHeight + _lastExerciseGap,
                     ),
                     children: [
                       _PlanHero(
-                        title: title,
+                        title: widget.title,
                         intro: intro,
                         phaseSource: phase?.source ?? plan.phaseSource,
                         groupId: plan.groupId,
-                        safeTop: safe.top,
+                        safeTop: FlareGeometry.navSafeTop(context),
                         info: _PlanInfo(
                           minutes: minutes,
                           count: plan.items.length,
@@ -132,12 +153,12 @@ class FlarePlanDetailPage extends StatelessWidget {
                           onTapFor: (group) =>
                               catalog.plansForMuscle(group.id).isEmpty
                               ? null
-                              : () => onMuscle(group),
+                              : () => widget.onMuscle(group),
                         ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(
                           _gutter,
-                          muscles.isEmpty ? 18 : 12,
+                          muscles.isEmpty ? 12 : 8,
                           _gutter,
                           0,
                         ),
@@ -148,20 +169,20 @@ class FlarePlanDetailPage extends StatelessWidget {
                             for (final option in plans)
                               (option.tier, tiers[option.tier - 1]),
                           ],
-                          onChanged: onTierChanged,
+                          onChanged: widget.onTierChanged,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
                           _gutter,
-                          12,
+                          8,
                           _gutter,
                           0,
                         ),
                         child: _PlanScenes(
                           selected: scene,
                           onChanged: (value) =>
-                              store.updateSettings(tier: value),
+                              widget.store.updateSettings(tier: value),
                         ),
                       ),
                       _heading(
@@ -187,10 +208,10 @@ class FlarePlanDetailPage extends StatelessWidget {
                 start: 0,
                 end: 0,
                 child: _PlanBottom(
-                  membership: membership,
+                  membership: widget.membership,
                   minutes: minutes,
                   safeBottom: safe.bottom,
-                  onStart: () => onStart(plan),
+                  onStart: () => widget.onStart(plan),
                 ),
               ),
             ],
@@ -201,7 +222,7 @@ class FlarePlanDetailPage extends StatelessWidget {
   }
 
   Widget _heading(String title, String hint) => Padding(
-    padding: const EdgeInsets.fromLTRB(_gutter, 30, _gutter, 14),
+    padding: const EdgeInsets.fromLTRB(_gutter, 16, _gutter, 8),
     child: FlarePlanSectionHeading(title: title, hint: hint),
   );
 
@@ -214,7 +235,7 @@ class FlarePlanDetailPage extends StatelessWidget {
   ) {
     final id = item.drillForScene(scene);
     final name =
-        catalog.drillById(id)?.name ??
+        widget.catalog.drillById(id)?.name ??
         FlareShared.current?.nameOf(
           id,
           languageForLocale(Localizations.localeOf(context)),
@@ -226,7 +247,7 @@ class FlarePlanDetailPage extends StatelessWidget {
       index: index,
       item: item,
       separator: separator,
-      onTap: name == null ? null : () => onDrill(id),
+      onTap: name == null ? null : () => widget.onDrill(id),
     );
   }
 }
@@ -255,126 +276,205 @@ class _PlanHero extends StatelessWidget {
     final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
     final isAngle = phaseSource != null;
     final width = MediaQuery.sizeOf(context).width;
-    final artHeight = (width * (isAngle ? .60 : .69)).clamp(185.0, 285.0);
-    final artTop = safeTop + FlareGeometry.navRow + FlareGeometry.navFade;
-    return DecoratedBox(
-      decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -40,
-            top: artTop,
-            child: const FlarePlanGlow(diameter: 300),
-          ),
-          Positioned(
-            right: 30,
-            top: artTop + artHeight - 20,
-            width: 220,
-            height: 26,
-            child: Center(
-              child: Transform.scale(
-                scaleX: 220 / 26,
-                child: SizedBox.square(
-                  dimension: 26,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [shadow, shadow.withValues(alpha: 0)],
-                        stops: const [0, .7],
+    final viewportHeight = safeTop + _heroHeight;
+    final artHeight = (width * .70).clamp(0.0, 236.0);
+    final artTop = safeTop + _heroArtTop - .01 * artHeight;
+    return Stack(
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          height: viewportHeight,
+          child: DecoratedBox(
+            key: const ValueKey('flare-plan-hero-viewport'),
+            decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -40,
+                  top: safeTop - 24,
+                  child: const FlarePlanGlow(diameter: 300),
+                ),
+                if (!isAngle)
+                  Positioned(
+                    right: 24,
+                    top: artTop + artHeight - 18,
+                    width: 220,
+                    height: 26,
+                    child: _PlanArtShadow(shadow),
+                  ),
+                if (groupId case final id?)
+                  Positioned(
+                    right: 20,
+                    top: artTop,
+                    height: artHeight,
+                    child: FlarePlanMuscleFade(
+                      child: Image.asset(
+                        'assets/plan_resume_muscles/$id.webp',
+                        key: ValueKey('flare-plan-muscle-hero-$id'),
+                        excludeFromSemantics: true,
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          ),
-          if (phaseSource case final source?)
-            Positioned(
-              right: -4,
-              top: artTop,
-              height: artHeight,
-              child: Image.asset(
-                'assets/angles/phase-$source.webp',
-                key: ValueKey('flare-plan-angle-hero-$source'),
-                excludeFromSemantics: true,
-              ),
-            )
-          else if (groupId case final id?)
-            Positioned(
-              right: -10,
-              top: artTop + 8,
-              height: artHeight,
-              child: FlarePlanMuscleFade(
-                child: Image.asset(
-                  'assets/muscles/$id.webp',
-                  key: ValueKey('flare-plan-muscle-hero-$id'),
-                  excludeFromSemantics: true,
-                ),
-              ),
-            ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 155,
-            child: DecoratedBox(
-              decoration: BoxDecoration(gradient: _bottomFade(p, .78)),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              _gutter,
-              artTop + artHeight - 48,
-              _gutter,
-              0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FlarePlanKicker(
-                  label: phaseSource == null
-                      ? s.musclePlanLabel
-                      : s.anglePlanLabel,
-                ),
-                const SizedBox(height: 8),
-                Semantics(
-                  header: true,
-                  child: Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w700,
-                      color: p.text,
-                      letterSpacing: -.5,
-                      height: 1.1,
-                    ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 104,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(gradient: _bottomFade(p, .82)),
                   ),
                 ),
-                if (intro case final line?) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    line,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.5,
-                      color: p.secondary,
+                if (phaseSource case final source?)
+                  Positioned.fill(
+                    child: _AnglePlanArt(
+                      source: source,
+                      safeTop: safeTop,
+                      width: width,
+                      shadow: shadow,
                     ),
                   ),
-                ],
-                const SizedBox(height: 12),
-                info,
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            _gutter,
+            viewportHeight - _heroTitleOverlap,
+            _gutter,
+            0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FlarePlanKicker(
+                label: isAngle ? s.anglePlanLabel : s.musclePlanLabel,
+              ),
+              const SizedBox(height: 4),
+              Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                    color: p.text,
+                    letterSpacing: -.5,
+                    height: 1.1,
+                  ),
+                ),
+              ),
+              if (intro case final line?) ...[
+                const SizedBox(height: 4),
+                Text(
+                  line,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: p.secondary,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              info,
+            ],
+          ),
+        ),
+      ],
     );
   }
+}
+
+class _AnglePlanArt extends StatelessWidget {
+  const _AnglePlanArt({
+    required this.source,
+    required this.safeTop,
+    required this.width,
+    required this.shadow,
+  });
+
+  final int source;
+  final double safeTop;
+  final double width;
+  final Color shadow;
+
+  // The pose renders retain their original transparent canvas. Use the
+  // silhouette bounds to align the visible figure instead of the canvas edge.
+  static const _angleBounds = {
+    9: (.150, .849),
+    10: (.180, .820),
+    11: (.070, .929),
+    12: (.060, .940),
+    13: (.279, .720),
+    14: (.060, .940),
+    15: (.115, .884),
+    16: (.120, .880),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final (topInset, bottomInset) = _angleBounds[source]!;
+    final artHeight = (width * .70).clamp(0.0, 268.0);
+    final artTop = safeTop + _heroArtTop - artHeight * topInset;
+
+    return Stack(
+      children: [
+        Positioned(
+          right: 20,
+          top: artTop + artHeight * bottomInset - 14,
+          width: artHeight * .72,
+          height: 24,
+          child: _PlanArtShadow(shadow),
+        ),
+        Positioned(
+          right: 12,
+          top: artTop,
+          height: artHeight,
+          child: Image.asset(
+            'assets/angles/phase-$source.webp',
+            key: ValueKey('flare-plan-angle-hero-$source'),
+            excludeFromSemantics: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlanArtShadow extends StatelessWidget {
+  const _PlanArtShadow(this.color);
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final height = constraints.maxHeight;
+      return Center(
+        child: Transform.scale(
+          scaleX: constraints.maxWidth / height,
+          child: SizedBox.square(
+            dimension: height,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [color, color.withValues(alpha: 0)],
+                  stops: const [0, .7],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 LinearGradient _bottomFade(FlarePalette palette, double stop) => LinearGradient(
@@ -674,7 +774,7 @@ class _PlanMuscleStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = FlareColors.palette;
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: _gutter, top: 16),
+      padding: const EdgeInsetsDirectional.only(start: _gutter, top: 8),
       child: Row(
         children: [
           Flexible(

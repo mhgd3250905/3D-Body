@@ -48,27 +48,27 @@ class FlareRevenueCat implements MembershipStore {
     _packages.clear();
     if (offering?.identifier != 'default') return const [];
     final plans = [
-      (MembershipTerm.monthly, offering?.monthly, 3),
-      (MembershipTerm.annual, offering?.annual, 7),
+      (MembershipTerm.monthly, offering?.monthly),
+      (MembershipTerm.annual, offering?.annual),
     ];
     final usesAppStore = defaultTargetPlatform == TargetPlatform.iOS;
     final eligible = usesAppStore
         ? await _eligibleIosTrials([
-            for (final (_, package, days) in plans)
-              if (package != null && _isIosTrial(package.storeProduct, days))
+            for (final (_, package) in plans)
+              if (package != null &&
+                  _iosTrialDays(package.storeProduct) != null)
                 package.storeProduct.identifier,
           ])
         : const <String>{};
     final result = <MembershipOffer>[];
-    for (final (term, package, expectedTrial) in plans) {
+    for (final (term, package) in plans) {
       if (package == null) continue;
       final product = package.storeProduct;
-      final phase = product.defaultOption?.freePhase;
-      final period = phase?.billingPeriod?.iso8601;
-      final hasTrial = usesAppStore
-          ? eligible.contains(product.identifier)
-          : phase?.price.amountMicros == 0 &&
-                _matchesTrialPeriod(period, expectedTrial);
+      final trialDays = usesAppStore
+          ? (eligible.contains(product.identifier)
+                ? _iosTrialDays(product)
+                : null)
+          : _playTrialDays(product);
       _packages[term] = package;
       result.add(
         MembershipOffer(
@@ -77,23 +77,44 @@ class FlareRevenueCat implements MembershipStore {
           currency: product.currencyCode,
           localizedPrice: product.priceString,
           localizedMonthlyPrice: product.pricePerMonthString,
-          trialDays: hasTrial ? expectedTrial : null,
+          trialDays: trialDays,
         ),
       );
     }
     return result;
   }
 
-  bool _isIosTrial(rc.StoreProduct product, int days) {
+  int? _iosTrialDays(rc.StoreProduct product) {
     final intro = product.introductoryPrice;
-    return intro != null &&
-        intro.price == 0 &&
-        intro.cycles == 1 &&
-        _matchesTrialPeriod(intro.period, days);
+    if (intro == null || intro.price != 0) return null;
+    return _trialDays(
+      intro.periodUnit,
+      intro.periodNumberOfUnits,
+      intro.cycles,
+    );
   }
 
-  bool _matchesTrialPeriod(String? period, int days) =>
-      period == 'P${days}D' || (days == 7 && period == 'P1W');
+  int? _playTrialDays(rc.StoreProduct product) {
+    final phase = product.defaultOption?.freePhase;
+    final period = phase?.billingPeriod;
+    if (period == null || phase?.price.amountMicros != 0) return null;
+    final cycles = phase?.billingCycleCount;
+    return _trialDays(
+      period.unit,
+      period.value,
+      cycles != null && cycles > 0 ? cycles : 1,
+    );
+  }
+
+  int? _trialDays(rc.PeriodUnit unit, int value, int cycles) {
+    if (value <= 0 || cycles <= 0) return null;
+    return switch (unit) {
+      rc.PeriodUnit.day => value * cycles,
+      rc.PeriodUnit.week => value * cycles * 7,
+      // Calendar months and years do not have fixed lengths in days.
+      _ => null,
+    };
+  }
 
   Future<Set<String>> _eligibleIosTrials(List<String> ids) async {
     if (ids.isEmpty) return const {};

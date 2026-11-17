@@ -9,6 +9,76 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'Free trial for $days days if eligible';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Subscribe $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days-day free trial';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count plans for every phase of the Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Key angles';
+
+  @override
+  String get premiumMuscleCount => 'Muscle groups';
+
+  @override
+  String get premiumLevelCount => 'Levels';
+
+  @override
+  String get premiumVoiceTitle => 'Voice guidance and 3D demos';
+
+  @override
+  String get premiumVoiceDescription => 'Prompts for reps, sides and rests';
+
+  @override
+  String get premiumCustomDescription =>
+      'Build a plan from your go-to exercises';
+
+  @override
+  String get premiumPerYear => '/yr';
+
+  @override
+  String get premiumPerMonth => '/mo';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Can’t reach $store. Store prices apply.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Still can’t reach $store. Try again later.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'After the trial, renews at $price. Cancel anytime in $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Renews at $price. Cancel anytime in $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Renews automatically. Cancel in $store.';
+  }
+
+  @override
   String get premiumTitle => 'Unlock Flare Premium';
 
   @override

@@ -1,5 +1,11 @@
 # Flare 版本管理台账
 
+## Android 测试包 vc2055（2026-11-17）
+
+功能分支 `feat/flare-plans-full`，源码版本 `1.0.15+55`，Android arm64 release 测试包实际 versionCode `2055`。会员页重做，断线展示参考价格和有条件的试用说明，订阅前重新获取套餐。两类专项计划详情的模型区铺到屏幕顶部，角度姿势完整显示手脚并随页面原尺寸滚动。[iOS 交接](changes-for-ios-2026-11-17.md)。
+
+构建提交、包体和签名 SHA-256 回执归档于主工作区 `output/release-checkpoints/app-v1.0.15-build2055/`。用户自行覆盖安装。
+
 ## Android 测试包 vc2054（2026-11-17）
 
 `feat/flare-plans-full` 源码声明 `1.0.15+54`。Android 测试包为 `dev.mhgd.flare`、`1.0.15`、arm64-v8a release、实际 versionCode `2054`。界面基线包含训练走查修复、计划页改版、r2、顶栏统一与转场对齐至 `caf06aa`。[iOS 按页面对照说明](changes-for-ios-2026-11-17.md)。

@@ -58,6 +58,11 @@ Future<void> _showPlanTop(WidgetTester tester) async {
 }
 
 Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
+  final viewport = find.descendant(
+    of: page,
+    matching: _key('flare-plan-hero-viewport'),
+  );
+  final nav = find.descendant(of: page, matching: find.byType(FlareNavBar));
   final mask = find.descendant(
     of: page,
     matching: _key('flare-nav-frost-clip'),
@@ -78,10 +83,36 @@ Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
   final safeTop = MediaQuery.viewPaddingOf(tester.element(mask)).top;
   final backRect = tester.getRect(backChip);
   final maskRect = tester.getRect(mask);
+  final hasHero = viewport.evaluate().isNotEmpty;
+  double tint() => tester.widget<FlareNavBar>(nav).frostTintOpacity;
 
   expect(maskRect.top, 0);
   expect(maskRect.height, safeTop + 44 + 24);
   expect(backRect.top, safeTop);
+  expect(tint(), hasHero ? 0 : 1);
+  if (hasHero) {
+    final viewportRect = tester.getRect(viewport);
+    expect(viewportRect.top, 0);
+    expect(viewportRect.height, safeTop + 300);
+    final kicker = find.descendant(
+      of: page,
+      matching: find.text(
+        AppLocalizations.of(tester.element(nav)).anglePlanLabel,
+      ),
+    );
+    final label = kicker.evaluate().isNotEmpty
+        ? kicker
+        : find.descendant(
+            of: page,
+            matching: find.text(
+              AppLocalizations.of(tester.element(nav)).musclePlanLabel,
+            ),
+          );
+    expect(tester.getTopLeft(label).dy, viewportRect.bottom - 24);
+    scroll.jumpTo(20);
+    await tester.pump();
+    expect(tint(), .5);
+  }
   expect(
     find.descendant(of: mask, matching: find.byType(BackdropFilter)),
     findsNothing,
@@ -89,6 +120,7 @@ Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
   await tester.dragFrom(Offset(300, safeTop + 8), const Offset(0, -120));
   await tester.pumpAndSettle();
   expect(scroll.pixels, greaterThan(8));
+  expect(tint(), 1);
   expect(tester.getRect(mask), maskRect);
   expect(tester.getRect(backChip), backRect);
   expect(backChip.hitTestable(), findsOneWidget);
@@ -96,6 +128,7 @@ Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
   scroll.jumpTo(0);
   await tester.pumpAndSettle();
   expect(tester.getRect(mask), maskRect);
+  expect(tint(), hasHero ? 0 : 1);
 }
 
 Finder _tier(String label) =>
@@ -976,6 +1009,20 @@ void main() {
       );
       await _expectScrollNavFade(tester, find.byType(FlarePlanDetailPage));
       final scroll = tester.state<ScrollableState>(_detailScroll()).position;
+      final pose = _key('flare-plan-angle-hero-11');
+      final viewport = _key('flare-plan-hero-viewport');
+      final initialPose = tester.getRect(pose);
+      expect(initialPose.height, 268);
+      expect(initialPose.top + initialPose.height * .070, closeTo(24 + 64, .5));
+      expect(
+        initialPose.top + initialPose.height * .929,
+        lessThan(tester.getRect(viewport).bottom),
+      );
+      scroll.jumpTo(135);
+      await tester.pumpAndSettle();
+      final scrolledPose = tester.getRect(pose);
+      expect(scrolledPose.size, initialPose.size);
+      expect(scrolledPose.top, closeTo(initialPose.top - 135, .5));
       scroll.jumpTo(331);
       await tester.pumpAndSettle();
       expect(tester.getRect(backChip), backRect);

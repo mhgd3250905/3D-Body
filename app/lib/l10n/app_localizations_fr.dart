@@ -9,6 +9,77 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return '$days jours d’essai gratuit si vous êtes éligible';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'S’abonner pour $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Essai gratuit de $days jours';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count programmes pour chaque phase du Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Angles clés';
+
+  @override
+  String get premiumMuscleCount => 'Groupes musculaires';
+
+  @override
+  String get premiumLevelCount => 'Niveaux';
+
+  @override
+  String get premiumVoiceTitle => 'Guidage vocal et démos 3D';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Indications pour les répétitions, les changements de côté et les pauses';
+
+  @override
+  String get premiumCustomDescription =>
+      'Créez votre programme avec vos exercices habituels';
+
+  @override
+  String get premiumPerYear => '/an';
+
+  @override
+  String get premiumPerMonth => '/mois';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Connexion à $store impossible. Les tarifs du magasin s’appliquent.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'La connexion à $store a de nouveau échoué. Réessayez plus tard.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Après l’essai, renouvellement à $price. Annulez à tout moment dans $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Renouvellement à $price. Annulez à tout moment dans $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Renouvellement automatique. Résiliez dans $store.';
+  }
+
+  @override
   String get premiumTitle => 'Débloquez Flare Premium';
 
   @override

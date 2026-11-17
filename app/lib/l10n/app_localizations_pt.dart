@@ -9,6 +9,77 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'Teste grátis por $days dias se elegível';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Assinar por $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Teste grátis por $days dias';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count planos para cada fase do Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Ângulos principais';
+
+  @override
+  String get premiumMuscleCount => 'Grupos musculares';
+
+  @override
+  String get premiumLevelCount => 'Níveis';
+
+  @override
+  String get premiumVoiceTitle => 'Orientação por voz e demonstrações 3D';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Avisos de repetições, troca de lado e descanso';
+
+  @override
+  String get premiumCustomDescription =>
+      'Monte um plano com seus exercícios de sempre';
+
+  @override
+  String get premiumPerYear => '/ano';
+
+  @override
+  String get premiumPerMonth => '/mês';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Não foi possível conectar à $store. Valem os preços da loja.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Ainda não foi possível conectar à $store. Tente de novo mais tarde.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Após o teste, a assinatura é renovada por $price. Cancele quando quiser na $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'A assinatura é renovada por $price. Cancele quando quiser na $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'A assinatura é renovada automaticamente. Cancele na $store.';
+  }
+
+  @override
   String get premiumTitle => 'Desbloqueie o Flare Premium';
 
   @override

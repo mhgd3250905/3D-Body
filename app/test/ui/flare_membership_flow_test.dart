@@ -14,6 +14,8 @@ import 'flow_regressions_test.dart' as helpers;
 
 class _TestStore implements MembershipStore {
   MembershipTerm? purchased;
+  bool offline = false;
+  int offerRequests = 0;
   static const offersForTest = [
     MembershipOffer(
       term: MembershipTerm.monthly,
@@ -33,7 +35,11 @@ class _TestStore implements MembershipStore {
   ];
 
   @override
-  Future<List<MembershipOffer>> offers() async => offersForTest;
+  Future<List<MembershipOffer>> offers() async {
+    offerRequests++;
+    if (offline) throw Exception('Store is offline');
+    return offersForTest;
+  }
 
   @override
   Future<MembershipSnapshot> refresh() async =>
@@ -55,6 +61,54 @@ void main() {
   final previousShared = FlareShared.current;
   setUpAll(() async => FlareShared.current = await FlareShared.load());
   tearDownAll(() => FlareShared.current = previousShared);
+
+  testWidgets('offline prices stay visible and subscribe retries the store', (
+    tester,
+  ) async {
+    await helpers.phoneSize(tester);
+    final store = _TestStore()..offline = true;
+    final membership = FlareMembership(store);
+    await tester.pumpWidget(
+      helpers.testApp(
+        FlareMembershipPage(
+          membership: membership,
+          catalog: loadCatalogFixture(includeFlarePlans: true),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final annual = find.byKey(const ValueKey('premium-annual'));
+    final monthly = find.byKey(const ValueKey('premium-monthly'));
+    final subscribe = find.byKey(const ValueKey('premium-subscribe'));
+    expect(
+      tester.getTopLeft(annual).dy,
+      lessThan(tester.getTopLeft(monthly).dy),
+    );
+    expect(find.text(r'$19.99/年', findRichText: true), findsOneWidget);
+    expect(find.text('免费试用 7 天'), findsNothing);
+    expect(find.textContaining('符合资格可免费试用 7 天'), findsOneWidget);
+    expect(find.text('符合资格可免费试用 3 天'), findsOneWidget);
+    expect(find.text(r'订阅 $19.99/年'), findsOneWidget);
+    expect(find.text('暂未连上 Google Play，价格以商店显示为准'), findsOneWidget);
+    await helpers.tapVisible(tester, subscribe);
+    await tester.pumpAndSettle();
+    expect(find.text('仍未连上 Google Play，请稍后重试'), findsOneWidget);
+    expect(store.offerRequests, 2);
+    expect(store.purchased, isNull);
+
+    await helpers.tapVisible(tester, monthly);
+    await tester.pumpAndSettle();
+    expect(find.text(r'订阅 $2.99/月'), findsOneWidget);
+    store.offline = false;
+    await helpers.tapVisible(tester, subscribe);
+    await tester.pumpAndSettle();
+    expect(store.offerRequests, 3);
+    expect(store.purchased, MembershipTerm.monthly);
+    helpers.assertNoFlutterError(tester);
+    await tester.pumpWidget(const SizedBox());
+    membership.dispose();
+  });
 
   testWidgets(
     'angle training, saved routine training and copying ask for membership',

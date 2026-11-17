@@ -9,6 +9,75 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return '対象の方は $days 日間無料でお試し';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '$price で登録する';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days 日間の無料トライアル';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return 'フレアの各局面を鍛える $count 種類のプラン';
+  }
+
+  @override
+  String get premiumAngleCount => '難所の角度';
+
+  @override
+  String get premiumMuscleCount => '筋群';
+
+  @override
+  String get premiumLevelCount => '難易度';
+
+  @override
+  String get premiumVoiceTitle => '音声ガイドと 3D 実演';
+
+  @override
+  String get premiumVoiceDescription => '回数・左右の切り替え・休憩を案内';
+
+  @override
+  String get premiumCustomDescription => 'よく行う種目を組み合わせて自分のプランに';
+
+  @override
+  String get premiumPerYear => '/年';
+
+  @override
+  String get premiumPerMonth => '/月';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store に接続できません。ストアの表示価格が適用されます。';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'まだ $store に接続できません。しばらくしてからお試しください。';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return '無料期間終了後は $price で自動更新されます。$store でいつでも解約できます。';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return '$price で自動更新されます。$store でいつでも解約できます。';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'サブスクリプションは自動更新されます。$store で解約できます。';
+  }
+
+  @override
   String get premiumTitle => 'Flare Premium を利用する';
 
   @override

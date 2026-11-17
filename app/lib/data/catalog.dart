@@ -227,6 +227,16 @@ class Catalog {
     _flarePlans.map((plan) => plan.groupId).nonNulls.toSet(),
   );
 
+  ({int plans, int angles, int muscles, int tiers}) get flarePlanCounts => (
+    plans: _flarePlans.length,
+    angles: {
+      for (final plan in _flarePlans)
+        if (plan.phaseSource case final source?) ...[source, ...plan.mirrors],
+    }.length,
+    muscles: flarePlanMuscles.length,
+    tiers: _flarePlans.map((plan) => plan.tier).toSet().length,
+  );
+
   List<FlarePlan> plansForAngle(int phaseSource) => List.unmodifiable(
     _flarePlans.where(
       (plan) =>

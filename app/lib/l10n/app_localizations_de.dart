@@ -9,6 +9,77 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'Bei Berechtigung $days Tage gratis testen';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Abonnieren für $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days Tage gratis testen';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count Pläne für jede Phase des Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Wichtige Winkel';
+
+  @override
+  String get premiumMuscleCount => 'Muskelgruppen';
+
+  @override
+  String get premiumLevelCount => 'Stufen';
+
+  @override
+  String get premiumVoiceTitle => 'Sprachführung und 3D-Demos';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Hinweise zu Wiederholungen, Seitenwechsel und Pausen';
+
+  @override
+  String get premiumCustomDescription =>
+      'Erstelle einen Plan aus deinen Lieblingsübungen';
+
+  @override
+  String get premiumPerYear => '/Jahr';
+
+  @override
+  String get premiumPerMonth => '/Monat';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store ist nicht erreichbar. Es gelten die Preise im Store.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return '$store ist weiterhin nicht erreichbar. Versuche es später erneut.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Nach der Testphase verlängert sich das Abo für $price. Jederzeit in $store kündbar.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Das Abo verlängert sich für $price. Jederzeit in $store kündbar.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Das Abo verlängert sich automatisch. Kündigung in $store.';
+  }
+
+  @override
   String get premiumTitle => 'Flare Premium freischalten';
 
   @override

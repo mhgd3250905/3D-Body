@@ -9,6 +9,77 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return 'Uji coba gratis $days hari jika memenuhi syarat';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Berlangganan seharga $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Uji coba gratis $days hari';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count rencana untuk setiap fase Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Sudut utama';
+
+  @override
+  String get premiumMuscleCount => 'Kelompok otot';
+
+  @override
+  String get premiumLevelCount => 'Tingkat kesulitan';
+
+  @override
+  String get premiumVoiceTitle => 'Panduan suara dan demo 3D';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Petunjuk repetisi, pergantian sisi, dan istirahat';
+
+  @override
+  String get premiumCustomDescription =>
+      'Buat rencana dari latihan andalan Anda';
+
+  @override
+  String get premiumPerYear => '/tahun';
+
+  @override
+  String get premiumPerMonth => '/bulan';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Tidak dapat terhubung ke $store. Harga di toko berlaku.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Masih tidak dapat terhubung ke $store. Coba lagi nanti.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Setelah uji coba, langganan diperpanjang dengan biaya $price. Batalkan kapan saja di $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Langganan diperpanjang dengan biaya $price. Batalkan kapan saja di $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Langganan diperpanjang otomatis. Batalkan di $store.';
+  }
+
+  @override
   String get premiumTitle => 'Buka Flare Premium';
 
   @override

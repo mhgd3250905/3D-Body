@@ -9,6 +9,75 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String premiumConditionalTrial(int days) {
+    return '자격 충족 시 $days일 무료 체험';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '$price에 구독하기';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days일 무료 체험';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '토마스 플레어의 모든 구간을 위한 운동 계획 $count개';
+  }
+
+  @override
+  String get premiumAngleCount => '주요 각도';
+
+  @override
+  String get premiumMuscleCount => '근육군';
+
+  @override
+  String get premiumLevelCount => '난이도';
+
+  @override
+  String get premiumVoiceTitle => '음성 안내 및 3D 시범';
+
+  @override
+  String get premiumVoiceDescription => '반복 횟수, 방향 전환, 휴식 안내';
+
+  @override
+  String get premiumCustomDescription => '자주 하는 동작으로 나만의 계획 만들기';
+
+  @override
+  String get premiumPerYear => '/년';
+
+  @override
+  String get premiumPerMonth => '/월';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store에 연결할 수 없습니다. 스토어에 표시된 가격이 적용됩니다.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return '아직 $store에 연결할 수 없습니다. 잠시 후 다시 시도하세요.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return '무료 체험 종료 후 $price에 자동 갱신됩니다. $store에서 언제든지 해지할 수 있습니다.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return '$price에 자동 갱신됩니다. $store에서 언제든지 해지할 수 있습니다.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return '구독은 자동 갱신됩니다. $store에서 해지할 수 있습니다.';
+  }
+
+  @override
   String get premiumTitle => 'Flare Premium 이용하기';
 
   @override

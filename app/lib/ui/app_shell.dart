@@ -600,7 +600,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       await Navigator.of(context).push<bool>(
         MaterialPageRoute(
           settings: const RouteSettings(name: '/membership'),
-          builder: (_) => FlareMembershipPage(membership: membership),
+          builder: (_) =>
+              FlareMembershipPage(membership: membership, catalog: catalog),
         ),
       );
     } finally {

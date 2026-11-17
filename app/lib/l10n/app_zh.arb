@@ -1,8 +1,94 @@
 {
+  "premiumConditionalTrial": "符合资格可免费试用 {days} 天",
+  "premiumSubscribeAt": "订阅 {price}",
+  "@premiumConditionalTrial": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@premiumSubscribeAt": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumTrialOffer": "{days} 天免费试用",
+  "@premiumTrialOffer": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumPlanSummary": "{count} 套计划，托马斯每个难点都有专项练法",
+  "@premiumPlanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumAngleCount": "难点角度",
+  "premiumMuscleCount": "肌群专项",
+  "premiumLevelCount": "难度档位",
+  "premiumVoiceTitle": "跟练语音与 3D 示范",
+  "premiumVoiceDescription": "计数、换边、休息全程提示",
+  "premiumCustomDescription": "把常练动作组合成自己的计划",
+  "premiumPerYear": "/年",
+  "premiumPerMonth": "/月",
+  "premiumStoreOffline": "暂未连上 {store}，价格以商店显示为准",
+  "@premiumStoreOffline": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumStoreRetryFailed": "仍未连上 {store}，请稍后重试",
+  "@premiumStoreRetryFailed": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumTrialRenewal": "试用结束后 {price} 自动续订，可随时在 {store} 取消",
+  "@premiumTrialRenewal": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumPaidRenewal": "{price} 自动续订，可随时在 {store} 取消",
+  "@premiumPaidRenewal": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumStoreRenewal": "订阅将自动续订，可在 {store} 取消",
+  "@premiumStoreRenewal": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
   "premiumTitle": "解锁 Flare 会员",
   "premiumSubtitle": "打造属于你的训练",
   "premiumAiCoach": "全部训练计划随时开练",
-  "premiumAiPlans": "按角度、按肌群的初中高三档计划",
+  "premiumAiPlans": "角度计划与肌群计划，初中高三档",
   "premiumCustomWorkouts": "无限自定义训练组",
   "premiumMonthly": "月付",
   "premiumYearly": "年付",

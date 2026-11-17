@@ -187,6 +187,7 @@ class FlareNavBar extends StatelessWidget {
     this.fade = FlareGeometry.navFade,
     this.glass = false,
     this.blurBackdrop = true,
+    this.frostTintOpacity = 1,
   }) : assert(title == null || center == null),
        assert(onBack == null || leading == null);
   final String? title;
@@ -201,6 +202,7 @@ class FlareNavBar extends StatelessWidget {
   final double fade;
   final bool glass;
   final bool blurBackdrop;
+  final double frostTintOpacity;
 
   static const IconData backIcon = Icons.chevron_left_rounded;
   static const double titleSize = 17;
@@ -219,7 +221,12 @@ class FlareNavBar extends StatelessWidget {
       child: Stack(
         children: [
           if (glass)
-            Positioned.fill(child: FlareNavFrost(blurBackdrop: blurBackdrop)),
+            Positioned.fill(
+              child: FlareNavFrost(
+                blurBackdrop: blurBackdrop,
+                tintOpacity: frostTintOpacity,
+              ),
+            ),
           if (center != null)
             Positioned(
               top: topInset,
@@ -299,30 +306,53 @@ class FlareNavBar extends StatelessWidget {
 
 /// The titleless navigation overlay shared by the three plan pages.
 class FlareScrollNav extends StatelessWidget {
-  const FlareScrollNav({super.key, required this.onBack, required this.child});
+  const FlareScrollNav({
+    super.key,
+    required this.onBack,
+    required this.child,
+    this.scrollFadeController,
+  });
 
   final VoidCallback? onBack;
   final Widget child;
+  final ScrollController? scrollFadeController;
 
   @override
-  Widget build(BuildContext context) => Stack(
-    fit: StackFit.expand,
-    children: [
-      child,
-      if (onBack != null)
-        PositionedDirectional(
-          top: 0,
-          start: 0,
-          end: 0,
-          child: FlareNavBar(
-            onBack: onBack,
-            topInset: FlareGeometry.navSafeTop(context),
-            glass: true,
-            blurBackdrop: false,
+  Widget build(BuildContext context) {
+    final topInset = FlareGeometry.navSafeTop(context);
+    final controller = scrollFadeController;
+    Widget navBar(double tintOpacity) => FlareNavBar(
+      onBack: onBack,
+      topInset: topInset,
+      glass: true,
+      blurBackdrop: false,
+      frostTintOpacity: tintOpacity,
+    );
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        child,
+        if (onBack != null)
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            child: controller == null
+                ? navBar(1)
+                : ListenableBuilder(
+                    listenable: controller,
+                    builder: (_, _) {
+                      final offset = controller.hasClients
+                          ? controller.offset
+                          : 0.0;
+                      return navBar((offset / 40).clamp(0.0, 1.0));
+                    },
+                  ),
           ),
-        ),
-    ],
-  );
+      ],
+    );
+  }
 }
 
 /// The material band includes the system status area, not just the fade tail.
