@@ -1,5 +1,11 @@
 # App 验证记录
 
+## 首页更多弹窗（2026-11-17）
+
+首页菜单的底部弹窗在把手下方 12 pt 显示训练、计划、记录和设置。播放速度三段等宽，控件使用卡片左右各 16 pt 的内边距，左侧与图标列对齐。
+
+`flutter test --no-pub --concurrency=1 test/ui/interaction_polish_test.dart` 共 3 项通过，覆盖弹窗间距、速度选择、下滑和点遮罩关闭及入口跳转。静态分析和离线 Web 构建通过。Chrome 390 × 844 截图已回飞书，等待用户确认。
+
 ## Android vc2056 安装与启动（2026-11-17）
 
 Flutter 3.44.7 使用 `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=56` 构建通过。首次 `--no-pub` 使用了含集成测试插件的生成登记，标准 release 流程重新生成登记后通过。核对了包名、版本、测试证书、16 KiB ZIP 对齐和随包计划 JSON。APK 身份及回执见[版本台账](version-ledger.md#android-测试包-vc20562026-11-17)。

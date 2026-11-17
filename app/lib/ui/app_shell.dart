@@ -2192,129 +2192,146 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       context: context,
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
+      showDragHandle: false,
       builder: (sheetContext) => StatefulBuilder(
         builder: (sheetContext, setSheet) => SafeArea(
-          child: Stack(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  FlareGeometry.pageInset,
-                  FlareGeometry.navRow + FlareGeometry.navFade,
-                  FlareGeometry.pageInset,
-                  FlareGeometry.rowSideInset,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    FlareListGroup(
-                      children: [
-                        for (final entry in [
-                          (
-                            'library',
-                            s.library,
-                            s.libraryHint,
-                            Icons.fitness_center_outlined,
-                          ),
-                          (
-                            'plans',
-                            s.plans,
-                            store.routines.isEmpty
-                                ? s.plansHint
-                                : '${s.plansMine} · ${store.routines.length}',
-                            Icons.playlist_play_rounded,
-                          ),
-                          (
-                            'progress',
-                            s.progress,
-                            store.weekTrainingDays == 0
-                                ? s.recordsEmptyAction
-                                : s.moreProgressHint(store.weekTrainingDays),
-                            Icons.insights_outlined,
-                          ),
-                          (
-                            'settings',
-                            s.settings,
-                            s.settingsHint,
-                            Icons.tune_outlined,
-                          ),
-                        ])
-                          FlareListRow(
-                            key: ValueKey('more-${entry.$1}'),
-                            leading: FlareRowIcon(entry.$4),
-                            title: entry.$2,
-                            subtitle: entry.$3,
-                            onTap: () {
-                              final navigator = Navigator.of(sheetContext);
-                              if (entry.$1 == 'library') {
-                                // Remove the sheet and its barrier together before
-                                // the training page starts covering the home stage.
-                                final sheet = ModalRoute.of<String>(
-                                  sheetContext,
-                                );
-                                if (sheet != null && sheet.isCurrent) {
-                                  navigator.removeRoute(sheet, entry.$1);
-                                }
-                              } else {
-                                navigator.pop(entry.$1);
-                              }
-                            },
-                          ),
-                      ],
+              Semantics(
+                label: MaterialLocalizations.of(
+                  sheetContext,
+                ).modalBarrierDismissLabel,
+                button: true,
+                onTap: () => Navigator.of(sheetContext).pop(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Container(
+                    key: const ValueKey('more-drag-handle'),
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: FlareColors.palette.dragHandle,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    const SizedBox(height: FlareGeometry.groupGap),
-                    FlareListGroup(
-                      key: const ValueKey('more-playback-speed'),
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            FlareListRow(
-                              leading: const FlareRowIcon(Icons.speed_rounded),
-                              title: s.playbackSpeed,
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.only(
-                                start: FlareGeometry.rowTextStart,
-                                end: FlareGeometry.rowSideInset,
-                                bottom: FlareGeometry.rowControlBottom,
-                              ),
-                              child: FlareSegmented<double>(
-                                expand: true,
-                                height: FlareGeometry.settingsSegmentHeight,
-                                radius: FlareGeometry.settingsSegmentRadius,
-                                inset: FlareGeometry.settingsSegmentInset,
-                                ios: true,
-                                segments: const [
-                                  (.25, '0.25×'),
-                                  (.5, '0.5×'),
-                                  (1.0, '1×'),
-                                ],
-                                selected: _scene.speed,
-                                // Speed applies in place; the sheet stays so the
-                                // new choice is visible, and play resumes on close.
-                                onChanged: (value) {
-                                  _scene.setSpeed(value);
-                                  unawaited(store.updateSettings(speed: value));
-                                  setSheet(() {});
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              PositionedDirectional(
-                top: 0,
-                start: 0,
-                end: 0,
-                child: FlareNavBar(
-                  title: s.more,
-                  onBack: () => Navigator.of(sheetContext).pop(),
-                  glass: true,
-                  blurBackdrop: false,
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    FlareGeometry.pageInset,
+                    0,
+                    FlareGeometry.pageInset,
+                    FlareGeometry.rowSideInset,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FlareListGroup(
+                        children: [
+                          for (final entry in [
+                            (
+                              'library',
+                              s.library,
+                              s.libraryHint,
+                              Icons.fitness_center_outlined,
+                            ),
+                            (
+                              'plans',
+                              s.plans,
+                              store.routines.isEmpty
+                                  ? s.plansHint
+                                  : '${s.plansMine} · ${store.routines.length}',
+                              Icons.playlist_play_rounded,
+                            ),
+                            (
+                              'progress',
+                              s.progress,
+                              store.weekTrainingDays == 0
+                                  ? s.recordsEmptyAction
+                                  : s.moreProgressHint(store.weekTrainingDays),
+                              Icons.insights_outlined,
+                            ),
+                            (
+                              'settings',
+                              s.settings,
+                              s.settingsHint,
+                              Icons.tune_outlined,
+                            ),
+                          ])
+                            FlareListRow(
+                              key: ValueKey('more-${entry.$1}'),
+                              leading: FlareRowIcon(entry.$4),
+                              title: entry.$2,
+                              subtitle: entry.$3,
+                              onTap: () {
+                                final navigator = Navigator.of(sheetContext);
+                                if (entry.$1 == 'library') {
+                                  // Remove the sheet and its barrier together before
+                                  // the training page starts covering the home stage.
+                                  final sheet = ModalRoute.of<String>(
+                                    sheetContext,
+                                  );
+                                  if (sheet != null && sheet.isCurrent) {
+                                    navigator.removeRoute(sheet, entry.$1);
+                                  }
+                                } else {
+                                  navigator.pop(entry.$1);
+                                }
+                              },
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: FlareGeometry.groupGap),
+                      FlareListGroup(
+                        key: const ValueKey('more-playback-speed'),
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              FlareListRow(
+                                leading: const FlareRowIcon(
+                                  Icons.speed_rounded,
+                                ),
+                                title: s.playbackSpeed,
+                              ),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.only(
+                                  start: FlareGeometry.rowSideInset,
+                                  end: FlareGeometry.rowSideInset,
+                                  bottom: FlareGeometry.rowControlBottom,
+                                ),
+                                child: FlareSegmented<double>(
+                                  expand: true,
+                                  height: FlareGeometry.settingsSegmentHeight,
+                                  radius: FlareGeometry.settingsSegmentRadius,
+                                  inset: FlareGeometry.settingsSegmentInset,
+                                  ios: true,
+                                  segments: const [
+                                    (.25, '0.25×'),
+                                    (.5, '0.5×'),
+                                    (1.0, '1×'),
+                                  ],
+                                  selected: _scene.speed,
+                                  // Speed applies in place; the sheet stays so the
+                                  // new choice is visible, and play resumes on close.
+                                  onChanged: (value) {
+                                    _scene.setSpeed(value);
+                                    unawaited(
+                                      store.updateSettings(speed: value),
+                                    );
+                                    setSheet(() {});
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
