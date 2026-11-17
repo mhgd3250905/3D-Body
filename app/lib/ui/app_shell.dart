@@ -1100,7 +1100,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           pageKey: route.$1,
                           depth: route.$2,
                           modal: route.$3,
-                          cover: hubInFront || edgeToEdgePlan,
+                          cover: hubInFront && _trainingHubOrigin == 0,
                           transparentUnderlay: hasHub,
                           underlay: hasHub
                               ? ExcludeSemantics(
@@ -1152,16 +1152,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                   (route.$4 != null || hubInFront)
                               ? _back
                               : null,
-                          // App-owned routes share the fixed back rail;
-                          // the library keeps SDK data, artwork and details.
-                          backChip: route.$4 != null && !edgeToEdgePlan,
+                          backChip:
+                              route.$4 != null ||
+                              hubInFront ||
+                              (route.$1 == 'watch' && _detail != null),
                           pinSwipeBack:
-                              route.$2 > 1 &&
-                              !(drill != null &&
-                                  !_inPlan &&
-                                  _tab == 1 &&
-                                  FlareShared.current != null &&
-                                  FlarePublicMedia.current != null),
+                              route.$2 > 1 ||
+                              (route.$4 != null &&
+                                  _tab == 0 &&
+                                  _detail != null),
                           backChipBuilder: (_) =>
                               const FlareBackChip(onPressed: _noop),
                           child: route.$4,
@@ -1199,6 +1198,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   static void _noop() {}
+
+  int get _hubDepth => _trainingHubOrigin == 0 ? 1 : 2;
+
+  int get _planDepth {
+    final parent = _tab == _trainingHubTab ? _hubDepth : (_tab == 0 ? 0 : 1);
+    return parent + _flarePlanTrail.length;
+  }
+
+  int get _drillDepth => _flarePlanTrail.isNotEmpty
+      ? _planDepth + 1
+      : _routine != null
+      ? 3
+      : _tab == 0 && _detail == null
+      ? 1
+      : 2;
 
   /// The current surface key, depth, modal flag and page (null is the stage).
   (String, int, bool, Widget?) _route(BuildContext context) {
@@ -1239,7 +1253,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       }
       return (
         'edit:${edit.routineId ?? 'new'}',
-        drill != null ? 5 : 3,
+        drill != null ? _drillDepth + 1 : 3,
         false,
         RoutineEditorPage(
           key: ValueKey('editor:${edit.routineId ?? edit.seedIds.join(',')}'),
@@ -1271,7 +1285,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (drill != null) {
       return (
         'drill:${drill.id}',
-        _inPlan ? 4 : 2,
+        _drillDepth,
         false,
         DrillDetailPage(
           drill: drill,
@@ -1296,7 +1310,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       final title = phase?.name ?? group!.shortLabel;
       return (
         'flare-plan:${phaseSource ?? target.groupId}',
-        _flarePlanTrail.length + 1,
+        _planDepth,
         false,
         FlarePlanDetailPage(
           title: title,
@@ -1354,7 +1368,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (_settings) return ('settings', 1, false, _settingsPage(context));
     return switch (_tab) {
       0 => ('watch', 0, false, null),
-      _trainingHubTab => ('training-hub', 1, false, null),
+      _trainingHubTab => ('training-hub', _hubDepth, false, null),
       1 => (
         'tab1',
         1,
@@ -1430,7 +1444,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: Opacity(
             opacity: _trainingActorFlight ? 0 : 1,
             child: FlareNavBar(
-              onBack: detail == null ? null : _returnToMotion,
+              onBack:
+                  detail == null ||
+                      (_holdWatch && !FlareMotion.reduced(context))
+                  ? null
+                  : _returnToMotion,
               backLabel: s.returnToMotion,
               leading: detail == null
                   ? FlareNavChip(
@@ -1446,14 +1464,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   switchInCurve: FlareMotion.settle,
                   child: detail == null
                       ? FittedBox(
-                          key: const ValueKey('home'),
+                          key: const ValueKey('home-wordmark'),
                           fit: BoxFit.scaleDown,
                           child: _HomeWordmark(label: s.motionBrand),
                         )
                       : const SizedBox.shrink(),
                 ),
               ),
-              topInset: MediaQuery.paddingOf(context).top,
+              topInset: FlareGeometry.navSafeTop(context),
               glass: true,
               blurBackdrop: false,
             ),
@@ -1487,6 +1505,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             10,
           ),
           child: SizedBox(
+            key: ValueKey(detail?.id ?? 'home'),
             height: headingHeight,
             child: detail == null
                 ? null

@@ -328,7 +328,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                       muscles: _pendingMode ?? _muscles,
                       onMode: _selectMode,
                     ),
-                    topInset: safe.top,
+                    topInset: FlareGeometry.navSafeTop(context),
                     glass: true,
                     blurBackdrop: false,
                   ),

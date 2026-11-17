@@ -316,7 +316,7 @@ class FlareScrollNav extends StatelessWidget {
           end: 0,
           child: FlareNavBar(
             onBack: onBack,
-            topInset: MediaQuery.viewPaddingOf(context).top,
+            topInset: FlareGeometry.navSafeTop(context),
             glass: true,
             blurBackdrop: false,
           ),
@@ -327,7 +327,7 @@ class FlareScrollNav extends StatelessWidget {
 
 /// The material band includes the system status area, not just the fade tail.
 double flareNavInset(BuildContext context, {bool hasSubtitle = false}) =>
-    MediaQuery.paddingOf(context).top +
+    FlareGeometry.navSafeTop(context) +
     (hasSubtitle ? FlareGeometry.navRowWithSubtitle : FlareGeometry.navRow) +
     FlareGeometry.navFade;
 
@@ -357,7 +357,7 @@ class FlareNavPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final safeTop = MediaQuery.paddingOf(context).top;
+    final safeTop = FlareGeometry.navSafeTop(context);
     final row = subtitle == null
         ? FlareGeometry.navRow
         : FlareGeometry.navRowWithSubtitle;

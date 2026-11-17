@@ -280,11 +280,22 @@ void main() {
               widget.axisDirection == AxisDirection.down,
         ),
       );
+      final rail = tester.getRect(find.byType(FlareBackChip));
       await tester.tap(_key(link));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 80));
+      expect(_key('_pinned-back'), findsOneWidget);
+      expect(tester.getRect(find.byType(FlareBackChip)), rail);
+      expect(tester.getTopLeft(hub).dx, greaterThan(0));
       await tester.pumpAndSettle();
       expect(hub, findsOneWidget);
       expect(tester.widget<FlarePressable>(_key(mode)).selected, isTrue);
-      await back(tester);
+      await tester.tap(find.byType(FlareBackChip));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 80));
+      expect(_key('_pinned-back'), findsOneWidget);
+      expect(tester.getRect(find.byType(FlareBackChip)), rail);
+      await tester.pumpAndSettle();
       expect(hub, findsNothing);
       expect(root, findsOneWidget);
     }
@@ -373,7 +384,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('training and plan detail cover the page without a dim layer', (
+  testWidgets('home handoff stays stationary and plan detail uses parallax', (
     tester,
   ) async {
     final mounted = await mountShell(tester);
@@ -406,14 +417,14 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 60));
     expect(tester.getTopLeft(detail).dx, greaterThan(0));
-    expect(tester.getTopLeft(hub).dx, 0);
+    expect(tester.getTopLeft(hub).dx, lessThan(0));
     await tester.pumpAndSettle();
 
     await tester.binding.handlePopRoute();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 60));
     expect(tester.getTopLeft(detail).dx, greaterThan(0));
-    expect(tester.getTopLeft(hub).dx, 0);
+    expect(tester.getTopLeft(hub).dx, lessThan(0));
     await tester.pumpAndSettle();
     expect(detail, findsNothing);
   });
@@ -930,6 +941,13 @@ void main() {
       await tester.pumpAndSettle();
       await openHub(tester);
       await tester.tap(_hubPlanAction(tester, catalog.phaseBySource(11)!.name));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 80));
+      expect(_key('_pinned-back'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byType(FlarePlanDetailPage)).dx,
+        greaterThan(0),
+      );
       await tester.pumpAndSettle();
       final header = find.descendant(
         of: find.byType(FlarePlanDetailPage),

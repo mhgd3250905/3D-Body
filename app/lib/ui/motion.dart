@@ -121,6 +121,9 @@ abstract final class FlareMotion {
 
   /// A page arriving: gentle first frame, long soft landing.
   static const Curve pageEnter = Cubic(.2, 0, 0, 1);
+  // A pop tracks distance travelled (0→1), so this is the counterpart to
+  // fastOutSlowIn.flipped on a reverse route clock (1→0).
+  static const Curve pageExit = Curves.fastOutSlowIn;
 
   /// Container bounds, both ways.
   static const Curve containerCurve = Curves.fastOutSlowIn;
@@ -309,7 +312,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   late final Listenable _motion = Listenable.merge([_controller, _swipe]);
   double _popFrom = 0;
   bool _swiping = false;
+  final _parents = <({Object key, int depth, Widget? child})>[];
   Widget? _previous;
+  bool _previousTransparent = false;
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
   bool _pinned = false;
@@ -343,6 +348,12 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         : widget.depth < old.depth
         ? _Kind.pop
         : _Kind.fade;
+    if (kind == _Kind.push) {
+      _parents.removeWhere((parent) => parent.depth >= old.depth);
+      _parents.add((key: old.pageKey, depth: old.depth, child: old.child));
+    } else if (kind == _Kind.pop || kind == _Kind.fade) {
+      _parents.removeWhere((parent) => parent.depth >= widget.depth);
+    }
     final duration = FlareMotion.of(context, switch (kind) {
       _Kind.push => FlareMotion.push,
       _Kind.pop => FlareMotion.pop,
@@ -376,10 +387,17 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         old.backChip &&
         widget.backChip &&
         widget.backChipBuilder != null;
-    _previous = old.child;
+    final outgoingHub =
+        old.child == null && widget.underlay == null && !old.cover;
+    _previous = old.child ?? (outgoingHub ? old.underlay : null);
+    _previousTransparent = outgoingHub && old.transparentUnderlay;
     _previousKey = old.pageKey;
     _controller.duration = _popFrom > 0
-        ? duration * (1 - _popFrom).clamp(.35, 1)
+        ? Duration(
+            milliseconds: (duration.inMilliseconds * (1 - _popFrom))
+                .round()
+                .clamp(120, duration.inMilliseconds),
+          )
         : duration;
     _controller.forward(from: 0);
   }
@@ -390,6 +408,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     setState(() {
       _swiping = true;
       _swipePinned =
+          !FlareMotion.reduced(context) &&
           widget.pinSwipeBack &&
           widget.backChip &&
           widget.backChipBuilder != null;
@@ -405,8 +424,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   void _dragEnd(DragEndDetails details) {
     if (!_swiping) return;
     _swiping = false;
-    final velocity = details.primaryVelocity ?? 0;
-    final commit = velocity > 700 || (_swipe.value > .4 && velocity > -300);
+    final width = MediaQuery.sizeOf(context).width;
+    final velocity = (details.primaryVelocity ?? 0) / width;
+    final commit = velocity.abs() >= 1 ? velocity > 0 : _swipe.value >= .5;
     if (commit && widget.onSwipeBack != null) {
       widget.onSwipeBack!();
       // If the shell refused to go back, settle the page home again.
@@ -431,14 +451,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                 milliseconds: (320 * _swipe.value).round().clamp(120, 320),
               ),
             ),
-            curve: FlareMotion.settle,
+            curve: Curves.fastEaseInToSlowEaseOut,
           )
           .then<void>((_) {
-            if (mounted &&
-                !animating &&
-                !_swiping &&
-                _swipe.value == 0 &&
-                _swipePinned) {
+            if (mounted && !animating && !_swiping && _swipe.value == 0) {
               setState(() => _swipePinned = false);
             }
           }),
@@ -473,12 +489,23 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             key: _previousKey!,
             incoming: false,
             empty: _previous == null,
-            child: _page(_previous),
+            child: _page(_previous, transparent: _previousTransparent),
           )
         : null;
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
     final incomingUnderlay = underlay != null && widget.child == null;
+    final outgoingUnderlay = underlay != null && animating && _previous == null;
+    final reduced = FlareMotion.reduced(context);
+    final swipeParent = !animating && !reduced && (_swiping || _swipe.value > 0)
+        ? _parents.lastOrNull
+        : null;
+    final previewHub =
+        swipeParent != null &&
+        swipeParent.child == null &&
+        underlay != null &&
+        widget.child != null;
+    final dimStrength = FlareColors.isDark ? .32 : .14;
     final canSwipe =
         widget.onSwipeBack != null &&
         (widget.child != null || underlay != null) &&
@@ -491,24 +518,41 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
           key: const ValueKey('_swipe-underlay'),
           animation: _swipe,
           builder: (context, _) =>
-              _swipe.value == 0 || animating || widget.cover
+              reduced ||
+                  _swipe.value == 0 ||
+                  animating ||
+                  widget.cover ||
+                  swipeParent?.child != null ||
+                  previewHub
               ? const SizedBox.shrink()
               : IgnorePointer(
                   child: ColoredBox(
                     color: Color.alphaBlend(
-                      Colors.black.withValues(alpha: .22 * (1 - _swipe.value)),
+                      Colors.black.withValues(
+                        alpha: dimStrength * (1 - _swipe.value),
+                      ),
                       FlareColors.background,
                     ),
                   ),
                 ),
         ),
+        if (swipeParent?.child case final backPage?)
+          _layer(
+            key: swipeParent!.key,
+            incoming: false,
+            empty: false,
+            swipeBackdrop: true,
+            child: _page(backPage),
+          ),
         if (previous != null && !previousOnTop && incomingUnderlay) previous,
         if (underlay != null)
           _layer(
             key: const ValueKey('_underlay'),
             incoming: widget.child == null,
             empty: widget.child != null,
-            stationary: widget.child != null,
+            stationary:
+                widget.child != null && !outgoingUnderlay && !previewHub,
+            swipeBackdrop: previewHub,
             child: _page(underlay, transparent: widget.transparentUnderlay),
           ),
         if (previous != null && !previousOnTop && !incomingUnderlay) previous,
@@ -519,7 +563,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
           PositionedDirectional(
             key: const ValueKey('_pinned-back'),
             start: 16,
-            top: MediaQuery.paddingOf(context).top,
+            top: FlareGeometry.navSafeTop(context),
             child: IgnorePointer(child: widget.backChipBuilder!(context)),
           ),
         if (canSwipe && !animating)
@@ -528,7 +572,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             left: 0,
             top: 0,
             bottom: 0,
-            width: 18,
+            width: MediaQuery.viewPaddingOf(
+              context,
+            ).left.clamp(20, double.infinity),
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onHorizontalDragStart: _dragStart,
@@ -551,6 +597,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     required bool incoming,
     required bool empty,
     bool stationary = false,
+    bool swipeBackdrop = false,
     required Widget child,
   }) {
     return KeyedSubtree(
@@ -569,14 +616,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
           ),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
-            // Pages move on the HipLab enter curve; other kinds keep the
-            // Thomas settle.
-            final t =
-                (_kind == _Kind.push || _kind == _Kind.pop
-                        ? FlareMotion.pageEnter
-                        : FlareMotion.settle)
-                    .transform(v);
+            final curve = switch (_kind) {
+              _Kind.push => FlareMotion.pageEnter,
+              _Kind.pop => FlareMotion.pageExit,
+              _ => FlareMotion.settle,
+            };
+            final t = curve.transform(v);
             final width = MediaQuery.sizeOf(context).width;
+            final dimStrength = FlareColors.isDark ? .32 : .14;
             var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0, dim = 0.0;
             var shadow = false;
             final cover = animating && _cover;
@@ -587,14 +634,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                   shadow = !cover;
                 } else if (!cover) {
                   dx = -.28 * t * width;
-                  dim = .22 * t;
+                  dim = dimStrength * t;
                 }
               case _Kind.pop:
                 final from = _popFrom;
                 if (incoming) {
                   if (!cover) {
                     dx = -.28 * (1 - from) * (1 - t) * width;
-                    dim = .22 * (1 - from) * (1 - t);
+                    dim = dimStrength * (1 - from) * (1 - t);
                   }
                 } else {
                   dx = (from + (1 - from) * t) * width;
@@ -626,9 +673,16 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                   opacity = 1 - Curves.easeIn.transform(v);
                 }
             }
-            if (!animating && incoming && _swipe.value > 0) {
+            if (!FlareMotion.reduced(context) &&
+                !animating &&
+                incoming &&
+                _swipe.value > 0) {
               dx = _swipe.value * width;
               shadow = !widget.cover;
+            }
+            if (!animating && swipeBackdrop) {
+              dx = -.28 * (1 - _swipe.value) * width;
+              dim = dimStrength * (1 - _swipe.value);
             }
             if (stationary) {
               dx = 0;
