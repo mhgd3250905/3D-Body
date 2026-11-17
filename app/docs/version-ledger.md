@@ -1,5 +1,11 @@
 # Flare 版本管理台账
 
+## Android 测试包 vc2054（2026-11-17）
+
+`feat/flare-plans-full` 源码声明 `1.0.15+54`。Android 测试包为 `dev.mhgd.flare`、`1.0.15`、arm64-v8a release、实际 versionCode `2054`。界面基线包含训练走查修复、计划页改版、r2、顶栏统一与转场对齐至 `caf06aa`。[iOS 按页面对照说明](changes-for-ios-2026-11-17.md)。
+
+APK 与构建提交、完整性、签名和 SHA-256 回执归档在主工作区 `output/release-checkpoints/app-v1.0.15-build2054/`。本轮由用户自行覆盖安装并验收。
+
 ## Android 本地验收包 vc2051
 
 2026-11-17，专项计划目录 `app/assets/data/flare-plans.json` 升级为 version 2。原 6 套计划保留，共 72 套，覆盖 8 个角度及 17 个肌群的三档计划。角度 15 复用 11 的三档计划。运行源码为本地 `feat/flare-plans-full` 的 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。远端默认分支 `master` 核对为 `6d14f29f7c901a709ae7608cde22a2718c2f3ef4`，该点包含已认可的 vc2050 运行源码及版本记录、布局测试。vc2051 的计划数据提交留在本地功能分支。

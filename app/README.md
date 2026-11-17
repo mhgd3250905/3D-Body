@@ -111,7 +111,7 @@ flutter run -d chrome
 
 浏览器数据按浏览器与网址保存；需要稳定预览地址时可加 `--web-port 8840`。依赖首次安装需要网络。3D 场景、公共目录与封面随包提供；训练视频由 SDK 首次按需下载，需要网络，缓存命中后可复用，不能据此宣称全部训练媒体离线可用。
 
-本分支的 `pubspec.yaml` 声明 **1.0.15+35**。本机验收包由构建参数指定为 **1.0.15 / arm64 vc2051**，包与源码按[版本台账](docs/version-ledger.md)核对。
+本分支的 `pubspec.yaml` 声明 **1.0.15+54**，对应 Android arm64 测试包 **1.0.15 / vc2054**。包与源码见[版本台账](docs/version-ledger.md)，界面对照见 [iOS 同步说明](docs/changes-for-ios-2026-11-17.md)。
 
 此前 **L52 / 1.0.9+11 / v42-R17** 的有限初步用户认可见[L52记录](docs/l52-plan-skip-2026-10-17.md)，不自动覆盖后续包。L50/R17的动作认可与冻结身份见[此前认可记录](docs/l50-r17-acceptance-2026-10-17.md)，L51及更早具名包保留历史；通用 `build/app/outputs/flutter-apk/app-release.apk` 的身份按[版本台账](docs/version-ledger.md)和哈希判定。Google Play P01 AAB及Apple S4保持历史包，本轮未上传或发布。
 
