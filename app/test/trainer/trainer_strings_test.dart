@@ -30,6 +30,7 @@ void main() {
         s.soundOn,
         s.soundOff,
         ...trainerWristDirections(app),
+        trainerTimedWristCue(app),
         s.dose(reps: true, amount: 12, perSide: true),
         trainerLoadFailed(app),
         trainerMoveUnavailable(app),
@@ -41,6 +42,7 @@ void main() {
       expect(trainerWristDirections(app), hasLength(4));
       if (app.localeName == 'zh') {
         expect(trainerWristDirections(app), ['手指朝前', '手指朝侧', '手指朝后', '手背撑地']);
+        expect(trainerTimedWristCue(app), '每个手位轻摇约 15 秒');
       }
       if (app.localeName == 'en') {
         expect(trainerWristDirections(app), [

@@ -699,13 +699,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     String title,
     String sceneTier,
     FlareShared shared,
-  ) => trainingPlanFromFlarePlan(
-    plan: plan,
+  ) => shared.authoredPlan(
+    plan,
+    catalog,
+    sceneTier,
     title: title,
-    sceneTier: sceneTier,
-    catalog: catalog,
-    sourceCatalog: shared.catalog,
-    rhythms: shared.rhythms,
     wristDirections: trainerWristDirections(context.strings),
   );
 
@@ -1113,6 +1111,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                       child: FlareTrainingHubPage(
                                         key: _trainingHubState,
                                         catalog: catalog,
+                                        sceneTier: store.settings.tier,
                                         actorBody: _actorBody,
                                         quality: _quality,
                                         enableScene: widget.enableScene,

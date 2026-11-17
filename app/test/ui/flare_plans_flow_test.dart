@@ -137,9 +137,18 @@ Finder _tier(String label) =>
 Finder _rowText(Finder row, String text) =>
     find.descendant(of: row, matching: find.text(text, findRichText: true));
 
-void _expectPlanMinutes(WidgetTester tester, int minutes) {
+void _expectPlanMinutes(WidgetTester tester) {
   final start = _key('flare-plan-start');
   final strings = AppLocalizations.of(tester.element(start));
+  final detail = tester.widget<FlarePlanDetailPage>(
+    find.byType(FlarePlanDetailPage),
+  );
+  final plan = detail.plans.singleWhere(
+    (plan) => plan.tier == detail.selectedTier,
+  );
+  final minutes = FlareShared.current!
+      .authoredPlan(plan, detail.catalog, detail.store.settings.tier)
+      .targetMinutes;
   expect(
     find.descendant(
       of: start,
@@ -594,8 +603,11 @@ void main() {
     final planAction = _hubPlanAction(tester, phase.name);
     expect(planAction.hitTestable(), findsOneWidget);
     expect(_rowText(hub, strings.hubSpecializedPlan), findsOneWidget);
+    final expectedMinutes = FlareShared.current!
+        .authoredPlan(catalog.plansForAngle(11).first, catalog, 'A')
+        .targetMinutes;
     final planMinutes = find.text(
-      '${strings.hubMinutesFrom(20)} · '
+      '${strings.hubMinutesFrom(expectedMinutes)} · '
       '${strings.planDrillCount(catalog.plansForAngle(11).first.items.length)} · '
       '${strings.hubThreeTiers}',
     );
@@ -852,7 +864,7 @@ void main() {
           (hero.image as AssetImage).assetName,
           'assets/angles/phase-$source.webp',
         );
-        _expectPlanMinutes(tester, 20);
+        _expectPlanMinutes(tester);
         expect(detail.plans.map((plan) => plan.id), [
           'angle-11-t1',
           'angle-11-t2',
@@ -941,11 +953,11 @@ void main() {
         );
         expect(detail.plans.first.id, 'muscle-deltoids-t1');
         expect(find.text('发力肌群'), findsNothing);
-        _expectPlanMinutes(tester, 17);
+        _expectPlanMinutes(tester);
         for (final label in ['中级', '高级']) {
           await tester.tap(_tier(label));
           await tester.pumpAndSettle();
-          _expectPlanMinutes(tester, 18);
+          _expectPlanMinutes(tester);
         }
       } else {
         final library = tester.widget<LibraryPage>(find.byType(LibraryPage));
@@ -961,9 +973,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('plan tiers keep doses across a scene switch and gate start', (
-    tester,
-  ) async {
+  testWidgets('plan tiers show scene doses and gate start', (tester) async {
     final semantics = tester.ensureSemantics();
     final membership = FlareMembership(_MembershipStore());
     try {
@@ -1032,7 +1042,7 @@ void main() {
       );
       await tester.tap(_tier('高级'));
       await tester.pumpAndSettle();
-      _expectPlanMinutes(tester, 23);
+      _expectPlanMinutes(tester);
       await _revealPlanContent(
         tester,
         _key('flare-plan-item-1-t-flare-side-hold'),
@@ -1040,7 +1050,7 @@ void main() {
       await _showPlanTop(tester);
       await tester.tap(_tier('初级'));
       await tester.pumpAndSettle();
-      _expectPlanMinutes(tester, 20);
+      _expectPlanMinutes(tester);
       await _revealPlanContent(
         tester,
         _key('flare-plan-item-1-h-short-side-plank'),
@@ -1048,17 +1058,21 @@ void main() {
       await _showPlanTop(tester);
       await tester.tap(_tier('中级'));
       await tester.pumpAndSettle();
-      _expectPlanMinutes(tester, 23);
+      _expectPlanMinutes(tester);
       await tester.tap(find.text(strings.sceneGym));
       await tester.pumpAndSettle();
       final parallelBars = _key('flare-plan-item-3-triceps-B');
-      final dosage =
-          '4 × ${strings.secondsLabel(15)} · ${strings.planRestSeconds(60)}';
+      _expectPlanMinutes(tester);
+      final gymDose =
+          '4 × ${strings.secondsLabel(15)} · ${strings.planRestSeconds(75)}';
+      expect(find.textContaining('俯卧撑架'), findsOneWidget);
       await _revealPlanContent(tester, parallelBars);
-      expect(_rowText(parallelBars, dosage), findsOneWidget);
+      expect(_rowText(parallelBars, gymDose), findsOneWidget);
       await _showPlanTop(tester);
       await tester.tap(find.text(strings.planBodyweightScene));
       await tester.pumpAndSettle();
+      _expectPlanMinutes(tester);
+      expect(find.textContaining('俯卧撑架'), findsNothing);
       final deltoids = _key('flare-plan-item-1-deltoids-A');
       await _revealPlanContent(tester, deltoids);
       expect(
@@ -1071,7 +1085,9 @@ void main() {
       final replacement = _key('flare-plan-item-3-triceps-A');
       await _revealPlanContent(tester, replacement);
       expect(parallelBars, findsNothing);
-      expect(_rowText(replacement, dosage), findsOneWidget);
+      final bodyweightDose =
+          '4 × ${strings.countLabel(8)} · ${strings.planRestSeconds(60)}';
+      expect(_rowText(replacement, bodyweightDose), findsOneWidget);
       expect(
         _rowText(replacement, strings.planBodyweightSubstitution),
         findsOneWidget,
@@ -1110,7 +1126,7 @@ void main() {
         (item) => item.exerciseId == 'triceps-A',
       );
       expect(substitute.sets, 4);
-      expect(substitute.workSeconds, 15);
+      expect(substitute.reps, 8);
       expect(substitute.restSeconds, 60);
       await tester.tap(_key('training-probe-close'));
       await tester.pumpAndSettle();
@@ -1160,7 +1176,7 @@ void main() {
       final authored = catalog.plansForMuscle('deltoids').first;
       expect(
         player.plan.items.map((item) => item.exerciseId),
-        authored.items.map((item) => item.drill),
+        authored.items.map((item) => item.drillForScene('A')),
       );
 
       final estimate = sdk.SessionBuilder(
@@ -1186,7 +1202,7 @@ void main() {
       expect(saved.full, isTrue);
       expect(
         saved.items.map((item) => item.completedSets),
-        authored.items.map((item) => item.sets),
+        authored.items.map((item) => item.doseForScene('A').sets),
       );
       expect(store.sessions.every((row) => row.completed), isTrue);
       await tester.pumpAndSettle();

@@ -1,5 +1,13 @@
 # App 验证记录
 
+## 训练计划修订 R1（2026-11-17）
+
+以 `feat/flare-plans-full @ b461a0d` 为基线。定向测试覆盖 72 套计划的 216 个场景排程、徒手和居家器材清单、场景切换后的处方与预计时长、左右计次、腕部四段计时、旧训练记录兼容以及计划到训练播放器的入口。
+
+Flutter 3.44.7 下，8 个定向测试文件共 44 项通过（`flutter test --no-pub --concurrency=1`），`flutter analyze --no-pub` 无问题。首次并发测试遇到本机内存不足，串行复跑通过。验证范围为本地解析、SDK 排程和组件流程，代表性替代动作仍待真人试训。
+
+[侧别裁决](audits/training-plan-fix-r1/side-review.md) · [场景器材及替换](audits/training-plan-fix-r1/equipment-review.md) · [72 套计划时长对照](audits/training-plan-fix-r1/duration-comparison.md)
+
 ## 顶栏与整页转场对齐（2026-11-17）
 
 按 HipLab `docs/ui-design-standard.md` §1.5「路由过渡」和 `docs/ui-kit/02-navigation.md` §4–5。Flare 壳内从计划进入汇总、角度及肌群详情均使用 400 ms 水平进入、340 ms 水平返回，分别采用规范的进入与反向缓动。下层页面使用 28% 视差及浅色 .14、深色 .32 的压暗上限。两页同时有返回键时，只固定同一个安全区控制轨上的返回键。首页与训练汇总之间的实时 3D 交接沿用现有流程。

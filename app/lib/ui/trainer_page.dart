@@ -285,6 +285,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
         final strings = trainerStrings(s, result: _result);
+        final timedWristRocks = data.plan.items.any(
+          (item) =>
+              item.exerciseId == 'forearms-A' &&
+              item.mode == uc.DoseMode.time &&
+              item.segments.length == 4 &&
+              item.segments.every((segment) => segment.workSeconds == 15),
+        );
         sdk.TrainerDrill? drillOf(String id) {
           final language = Localizations.localeOf(context).languageCode;
           final drill = widget.catalog.drillById(id);
@@ -292,11 +299,18 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           final name = drill?.name ?? data.shared.nameOf(id, language);
           if (name == null) return null;
           final poster = FlarePublicMedia.current?.posterAssetFor(id);
+          final timedWrist = timedWristRocks && id == 'forearms-A';
           return sdk.TrainerDrill(
             id: id,
             name: name,
-            cue: drill == null || drill.cues.isEmpty ? null : drill.cues.first,
-            cues: drill == null ? public?.cues['zh'] ?? const [] : const [],
+            cue: timedWrist
+                ? trainerTimedWristCue(s)
+                : drill == null || drill.cues.isEmpty
+                ? null
+                : drill.cues.first,
+            cues: !timedWrist && drill == null
+                ? public?.cues['zh'] ?? const []
+                : const [],
             precautions: [...?public?.cautions, ...?public?.contraindications],
             media: poster == null
                 ? null

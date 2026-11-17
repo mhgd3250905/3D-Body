@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
+    show poseHubEquipmentLabels;
 
 import '../control/flare_membership.dart';
 import '../control/learning_store.dart';
@@ -23,18 +25,6 @@ const _startButtonHeight = 56.0;
 const _startButtonBottomInset = 12.0;
 const _lastExerciseGap = 24.0;
 const _startButtonFadeHeight = 48.0;
-
-/// The display estimate uses the authored dose, independently of SDK pace.
-int flarePlanMinutes(FlarePlan plan) {
-  final seconds = plan.items.fold(0, (total, item) {
-    final work = item.seconds ?? item.reps! * 3;
-    return total +
-        item.sets * work * (item.perSide ? 2 : 1) +
-        (item.sets - 1) * item.restSeconds +
-        20;
-  });
-  return (seconds / 60).ceil();
-}
 
 class FlarePlanDetailPage extends StatefulWidget {
   const FlarePlanDetailPage({
@@ -90,8 +80,21 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       (plan) => plan.tier == widget.selectedTier,
       orElse: () => plans.first,
     );
-    final minutes = flarePlanMinutes(plan);
     final scene = widget.store.settings.tier;
+    final shared = FlareShared.current;
+    final minutes = shared?.authoredPlanMinutes(plan, catalog, scene);
+    final equipment = shared?.authoredPlanEquipment(plan, scene);
+    final language = Localizations.localeOf(context).languageCode;
+    final equipmentNames = equipment
+        ?.map((tool) {
+          if (tool == 'clamp-pad') return language == 'zh' ? '夹垫' : 'Small pad';
+          final label = poseHubEquipmentLabels[tool] ?? tool;
+          final translated = catalog.translate(label);
+          return translated == label && language != 'zh'
+              ? tool.replaceAll('-', ' ')
+              : translated;
+        })
+        .join(' · ');
     final safe = MediaQuery.viewPaddingOf(context);
     final muscles = [
       for (final muscle in phase?.primary ?? const <PhaseMuscle>[])
@@ -187,7 +190,13 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                       ),
                       _heading(
                         s.planTrainingContent,
-                        s.planDrillCount(plan.items.length),
+                        [
+                          s.planDrillCount(plan.items.length),
+                          if (equipmentNames case final names?)
+                            names.isEmpty
+                                ? s.sceneNone
+                                : '${s.equipment} · $names',
+                        ].join('\n'),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -245,7 +254,8 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       id: id,
       name: name ?? id,
       index: index,
-      item: item,
+      dose: item.doseForScene(scene),
+      bodyweightSubstitution: scene == 'A' && id != item.drill,
       separator: separator,
       onTap: name == null ? null : () => widget.onDrill(id),
     );
@@ -486,7 +496,7 @@ LinearGradient _bottomFade(FlarePalette palette, double stop) => LinearGradient(
 
 class _PlanInfo extends StatelessWidget {
   const _PlanInfo({required this.minutes, required this.count});
-  final int minutes;
+  final int? minutes;
   final int count;
 
   @override
@@ -501,25 +511,27 @@ class _PlanInfo extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _metric(
-              Icons.schedule_rounded,
-              minutes,
-              s.minutesShort(minutes),
-              p,
-              context,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: SizedBox.square(
-                dimension: 3,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: p.dim,
-                    shape: BoxShape.circle,
+            if (minutes case final value?) ...[
+              _metric(
+                Icons.schedule_rounded,
+                value,
+                s.minutesShort(value),
+                p,
+                context,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox.square(
+                  dimension: 3,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: p.dim,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
             _metric(
               Icons.format_list_bulleted_rounded,
               count,
@@ -902,14 +914,16 @@ class _PlanExercise extends StatelessWidget {
     required this.id,
     required this.name,
     required this.index,
-    required this.item,
+    required this.dose,
+    required this.bodyweightSubstitution,
     required this.separator,
     required this.onTap,
   });
   final String id;
   final String name;
   final int index;
-  final FlarePlanItem item;
+  final FlarePlanDose dose;
+  final bool bodyweightSubstitution;
   final bool separator;
   final VoidCallback? onTap;
 
@@ -917,13 +931,13 @@ class _PlanExercise extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final p = FlareColors.palette;
-    final amount = item.reps == null
-        ? s.secondsLabel(item.seconds!)
-        : s.countLabel(item.reps!);
-    final dose = item.sets == 1 ? amount : '${item.sets} × $amount';
-    final side = item.perSide ? s.planDosePerSide('') : '';
-    final rest = item.sets > 1
-        ? ' · ${s.planRestSeconds(item.restSeconds)}'
+    final amount = dose.reps == null
+        ? s.secondsLabel(dose.seconds!)
+        : s.countLabel(dose.reps!);
+    final volume = dose.sets == 1 ? amount : '${dose.sets} × $amount';
+    final side = dose.perSide ? s.planDosePerSide('') : '';
+    final rest = dose.sets > 1
+        ? ' · ${s.planRestSeconds(dose.restSeconds)}'
         : '';
     final title = Text(
       name,
@@ -986,14 +1000,14 @@ class _PlanExercise extends StatelessWidget {
                               style: TextStyle(fontSize: 12, color: p.dim),
                               children: [
                                 TextSpan(
-                                  text: dose,
+                                  text: volume,
                                   style: TextStyle(color: p.secondary),
                                 ),
                                 TextSpan(text: '$side$rest'),
                               ],
                             ),
                           ),
-                          if (id != item.drill)
+                          if (bodyweightSubstitution)
                             Container(
                               constraints: const BoxConstraints(minHeight: 18),
                               padding: const EdgeInsets.symmetric(
@@ -1053,7 +1067,7 @@ class _PlanBottom extends StatefulWidget {
     required this.onStart,
   });
   final FlareMembership? membership;
-  final int minutes;
+  final int? minutes;
   final double safeBottom;
   final VoidCallback onStart;
 
@@ -1090,10 +1104,12 @@ class _PlanBottomState extends State<_PlanBottom> {
               color: p.onAccent,
             ),
           ),
-          const SizedBox(width: 6),
-          Text('·', style: detail),
-          const SizedBox(width: 4),
-          Text(s.minutesShort(widget.minutes), style: detail),
+          if (widget.minutes case final minutes?) ...[
+            const SizedBox(width: 6),
+            Text('·', style: detail),
+            const SizedBox(width: 4),
+            Text(s.minutesShort(minutes), style: detail),
+          ],
         ],
       ),
     );

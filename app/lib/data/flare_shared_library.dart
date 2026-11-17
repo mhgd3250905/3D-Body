@@ -9,6 +9,7 @@ import '../ui/components.dart';
 import '../ui/page_kit.dart';
 import '../ui/public_library_filter.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/training_plan_adapter.dart';
 import 'catalog.dart' as flare;
 import 'flare_drill_resolver.dart';
 import 'flare_action_scope.dart';
@@ -94,6 +95,45 @@ class FlareShared {
   };
 
   Set<String> get allowedActionIds => scope.allowedActionIds;
+
+  coach.TrainingPlan authoredPlan(
+    flare.FlarePlan plan,
+    flare.Catalog presentation,
+    String scene, {
+    String? title,
+    List<String>? wristDirections,
+  }) => trainingPlanFromFlarePlan(
+    plan: plan,
+    title: title ?? plan.id,
+    sceneTier: scene,
+    catalog: presentation,
+    sourceCatalog: catalog,
+    rhythms: rhythms,
+    wristDirections: wristDirections ?? const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+  );
+
+  int? authoredPlanMinutes(
+    flare.FlarePlan plan,
+    flare.Catalog presentation,
+    String scene,
+  ) {
+    try {
+      return authoredPlan(plan, presentation, scene).targetMinutes;
+    } on UnknownTrainingDrills {
+      return null;
+    }
+  }
+
+  Set<String> authoredPlanEquipment(flare.FlarePlan plan, String scene) => {
+    for (final item in plan.items)
+      for (final tool
+          in catalog[item.drillForScene(scene)]?.equipment ?? const <String>[])
+        switch ((item.drillForScene(scene), tool, scene)) {
+          ('forearms-B', 'bench', 'B') => 'chair',
+          ('rotator-cuff-B', 'block', _) => 'clamp-pad',
+          _ => tool,
+        },
+  };
 
   static Future<FlareShared> load({AssetBundle? bundle}) async {
     final pack = await loadFlarePublicCatalog(bundle: bundle);

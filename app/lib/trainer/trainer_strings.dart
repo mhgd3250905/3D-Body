@@ -400,6 +400,28 @@ List<String> trainerWristDirections(AppLocalizations s) =>
     _wristDirections[s.localeName.split('_').first] ??
     _wristDirections['en']!;
 
+const _timedWristCue = <String, String>{
+  'zh': '每个手位轻摇约 15 秒',
+  'zh_Hant': '每個手位輕搖約 15 秒',
+  'en': 'Rock gently for about 15 seconds in each position',
+  'es': 'Balancéate suavemente unos 15 segundos en cada posición',
+  'pt': 'Balance-se suavemente por cerca de 15 segundos em cada posição',
+  'fr': 'Balancez-vous doucement environ 15 secondes dans chaque position',
+  'de': 'In jeder Handposition etwa 15 Sekunden sanft vor und zurück wippen',
+  'it': 'Dondola delicatamente per circa 15 secondi in ogni posizione',
+  'ru': 'Мягко покачивайтесь около 15 секунд в каждом положении рук',
+  'ja': '手の向きごとに約15秒、やさしく体を揺らす',
+  'ko': '손 위치마다 약 15초 동안 가볍게 몸을 흔드세요',
+  'ar': 'تأرجح برفق لنحو ١٥ ثانية في كل وضعية لليدين',
+  'hi': 'हाथों की हर स्थिति में लगभग 15 सेकंड हल्के से झूलें',
+  'id': 'Goyangkan tubuh perlahan sekitar 15 detik di setiap posisi',
+};
+
+String trainerTimedWristCue(AppLocalizations s) =>
+    _timedWristCue[s.localeName] ??
+    _timedWristCue[s.localeName.split('_').first] ??
+    _timedWristCue['en']!;
+
 String? _completionTitle(AppLocalizations s, sdk.SessionResult? result) {
   if (result == null ||
       result.completedExercises == 0 ||
