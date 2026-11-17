@@ -367,12 +367,7 @@ void main() {
         assertLeanHome(tester);
         assertNoFlutterError(tester);
 
-        final muscleHint = find.byKey(const ValueKey('home-muscle-hint'));
-        expect(
-          find.descendant(of: muscleHint, matching: find.text('暂停后查看')),
-          findsOneWidget,
-        );
-        await tester.tap(muscleHint);
+        await tester.tap(labeledControl('暂停'));
         await tester.pumpAndSettle();
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
@@ -390,16 +385,13 @@ void main() {
         expect(scene.playing, isFalse);
         expect(scene.time, 2.0);
         assertLeanHome(tester);
-        expect(
-          find.descendant(of: muscleHint, matching: find.text('点选肌群')),
-          findsOneWidget,
-        );
-        await tester.tap(muscleHint);
-        await tester.pumpAndSettle();
-        // The picker leads with this moment's primary groups only.
-        expect(find.text('第一侧支撑'), findsWidgets);
-        expect(find.textContaining('其他参与'), findsOneWidget);
-        await tester.tap(find.text('三角肌').last);
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'select',
+          'groupId': 'deltoids',
+          'time': 2.0,
+          'phase': {'source': 11},
+        });
         await tester.pumpAndSettle();
         expect(find.text('暂停于 2.0 秒'), findsNothing);
         expect(find.text('11 · 第一侧支撑'), findsNothing);

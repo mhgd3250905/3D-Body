@@ -192,10 +192,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get side => 'Samping';
 
   @override
-  String get pausedHint => 'Jelajahi otot';
-
-  @override
-  String get playingHint => 'Jeda lalu pilih';
+  String get homeGoToTraining => 'Ke latihan';
 
   @override
   String get loadingScene => 'Menyiapkan gerakan 3D…';

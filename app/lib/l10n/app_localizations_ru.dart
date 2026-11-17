@@ -193,10 +193,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get side => 'Сбоку';
 
   @override
-  String get pausedHint => 'Выбрать мышцы';
-
-  @override
-  String get playingHint => 'Сначала пауза';
+  String get homeGoToTraining => 'К тренировке';
 
   @override
   String get loadingScene => 'Подготовка 3D-движения…';

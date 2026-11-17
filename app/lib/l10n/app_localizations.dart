@@ -463,17 +463,11 @@ abstract class AppLocalizations {
   /// **'侧面'**
   String get side;
 
-  /// No description provided for @pausedHint.
+  /// No description provided for @homeGoToTraining.
   ///
   /// In zh, this message translates to:
-  /// **'点选肌群'**
-  String get pausedHint;
-
-  /// No description provided for @playingHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'暂停后查看'**
-  String get playingHint;
+  /// **'前往训练'**
+  String get homeGoToTraining;
 
   /// No description provided for @loadingScene.
   ///

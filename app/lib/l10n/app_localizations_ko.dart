@@ -189,10 +189,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get side => '측면';
 
   @override
-  String get pausedHint => '근육 보기';
-
-  @override
-  String get playingHint => '일시정지 후 선택';
+  String get homeGoToTraining => '훈련으로 이동';
 
   @override
   String get loadingScene => '3D 동작 준비 중…';

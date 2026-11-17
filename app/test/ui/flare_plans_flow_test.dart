@@ -17,6 +17,7 @@ import 'package:flare/ui/flare_membership_page.dart';
 import 'package:flare/ui/flare_training_hub_page.dart';
 import 'package:flare/ui/motion.dart' show FlarePressable;
 import 'package:flare/ui/motion_controls.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
@@ -713,60 +714,87 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('both paused support phases open the same three plan tiers', (
-    tester,
-  ) async {
-    final scene = (await mountShell(tester)).scene;
-    await showPhase(tester, scene, 9);
-    expect(_key('home-phase-name'), findsOneWidget);
-    expect(_key('home-plan-angle'), findsOneWidget);
+  testWidgets(
+    'home training opens the displayed support phase from play or pause',
+    (tester) async {
+      final scene = (await mountShell(tester)).scene;
+      await showPhase(tester, scene, 9);
+      expect(_key('home-phase-name'), findsOneWidget);
+      expect(_key('home-plan-angle'), findsOneWidget);
 
-    await showPhase(tester, scene, 11, playing: true);
-    expect(_key('home-plan-angle'), findsNothing);
-
-    for (final source in [11, 15]) {
-      await showPhase(tester, scene, source);
-      final time = scene.time;
+      final training = _key('home-go-to-training');
+      for (final (source, playing) in [(11, true), (15, false)]) {
+        await showPhase(tester, scene, source, playing: playing);
+        expect(
+          _key('home-plan-angle'),
+          playing ? findsNothing : findsOneWidget,
+        );
+        expect(find.widgetWithText(FlarePressable, '前往训练'), findsOneWidget);
+        expect(tester.widget<FlarePressable>(training).semanticLabel, '前往训练');
+        final time = scene.time;
+        await tester.tap(training);
+        await tester.pumpAndSettle();
+        final detail = tester.widget<FlarePlanDetailPage>(
+          find.byType(FlarePlanDetailPage),
+        );
+        expect(detail.title, catalog.phaseBySource(source)!.name);
+        expect(detail.selectedTier, 1);
+        expect(scene.playing, isFalse);
+        expect(find.bySemanticsLabel('返回'), findsOneWidget);
+        final hero = tester.widget<Image>(
+          _key('flare-plan-angle-hero-$source'),
+        );
+        expect(
+          (hero.image as AssetImage).assetName,
+          'assets/angles/phase-$source.webp',
+        );
+        _expectPlanMinutes(tester, 20);
+        expect(detail.plans.map((plan) => plan.id), [
+          'angle-11-t1',
+          'angle-11-t2',
+          'angle-11-t3',
+        ]);
+        expect(find.text('发力肌群'), findsOneWidget);
+        final plannedMuscle = _key('flare-plan-muscle-deltoids');
+        final triceps = _key('flare-plan-muscle-triceps');
+        expect(plannedMuscle.hitTestable(), findsOneWidget);
+        expect(triceps.hitTestable(), findsOneWidget);
+        expect(
+          _rowText(plannedMuscle, catalog.groupById('deltoids')!.shortLabel),
+          findsOneWidget,
+        );
+        expect(
+          _rowText(triceps, catalog.groupById('triceps')!.shortLabel),
+          findsOneWidget,
+        );
+        await tester.tap(plannedMuscle);
+        await tester.pumpAndSettle();
+        final muscle = tester.widget<FlarePlanDetailPage>(
+          find.byType(FlarePlanDetailPage),
+        );
+        expect(muscle.title, catalog.groupById('deltoids')!.label);
+        expect(muscle.plans.first.id, 'muscle-deltoids-t1');
+        await back(tester);
+        await back(tester);
+        expect(training, findsOneWidget);
+        expect(_key('home-plan-angle'), findsOneWidget);
+        expect(scene.phase, source);
+        expect(scene.time, time);
+        expect(scene.playing, isFalse);
+      }
       await tester.tap(_key('home-plan-angle'));
       await tester.pumpAndSettle();
-      final detail = tester.widget<FlarePlanDetailPage>(
-        find.byType(FlarePlanDetailPage),
-      );
-      expect(detail.title, catalog.phaseBySource(source)!.name);
-      expect(find.bySemanticsLabel('返回'), findsOneWidget);
-      final hero = tester.widget<Image>(_key('flare-plan-angle-hero-$source'));
       expect(
-        (hero.image as AssetImage).assetName,
-        'assets/angles/phase-$source.webp',
+        tester
+            .widget<FlarePlanDetailPage>(find.byType(FlarePlanDetailPage))
+            .phase
+            ?.source,
+        15,
       );
-      _expectPlanMinutes(tester, 20);
-      expect(detail.plans.map((plan) => plan.id), [
-        'angle-11-t1',
-        'angle-11-t2',
-        'angle-11-t3',
-      ]);
-      expect(find.text('发力肌群'), findsOneWidget);
-      final plannedMuscle = _key('flare-plan-muscle-deltoids');
-      final triceps = _key('flare-plan-muscle-triceps');
-      await _revealPlanContent(tester, plannedMuscle);
-      expect(_rowText(plannedMuscle, '专项计划'), findsOneWidget);
-      expect(_rowText(triceps, '专项计划'), findsOneWidget);
-      await tester.tap(plannedMuscle);
-      await tester.pumpAndSettle();
-      final muscle = tester.widget<FlarePlanDetailPage>(
-        find.byType(FlarePlanDetailPage),
-      );
-      expect(muscle.title, catalog.groupById('deltoids')!.label);
-      expect(muscle.plans.first.id, 'muscle-deltoids-t1');
-      await back(tester);
-      await back(tester);
-      expect(_key('home-plan-angle'), findsOneWidget);
-      expect(scene.time, time);
-      expect(scene.playing, isFalse);
-    }
-    helpers.assertNoFlutterError(tester);
-    await tester.pumpWidget(const SizedBox());
-  });
+      helpers.assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets('train muscle opens a plan when present and library otherwise', (
     tester,
@@ -836,19 +864,42 @@ void main() {
     try {
       final mounted = await mountShell(tester, membership: membership);
       await showPhase(tester, mounted.scene, 11);
-      tester.view.physicalSize = const Size(360, 800);
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.viewPadding = const FakeViewPadding(top: 24, bottom: 24);
       await tester.pumpAndSettle();
       await openHub(tester);
       await tester.tap(_hubPlanAction(tester, catalog.phaseBySource(11)!.name));
       await tester.pumpAndSettle();
-      final header = _key('flare-plan-scrolled-header');
+      final header = find.descendant(
+        of: find.byType(FlarePlanDetailPage),
+        matching: find.byType(FlareNavBar),
+      );
+      final backChip = find.descendant(
+        of: header,
+        matching: find.byType(FlareBackChip),
+      );
+      final nav = tester.widget<FlareNavBar>(header);
+      expect(nav.glass, isTrue);
+      expect(nav.fade, 0);
+      expect(nav.title, isNull);
+      final backRect = tester.getRect(backChip);
+      final muscles = _key('flare-plan-muscle-deltoids');
+      expect(tester.getSize(muscles).height, 32);
+      expect(
+        tester.getRect(muscles).bottom,
+        lessThan(tester.getTopLeft(_key('flare-plan-tier')).dy),
+      );
+      expect(find.text('训练内容').hitTestable(), findsOneWidget);
+      final firstRow = _key('flare-plan-item-0-forearms-A');
+      expect(firstRow.hitTestable(), findsOneWidget);
+      expect(
+        tester.getRect(firstRow).bottom,
+        lessThan(tester.getTopLeft(_key('flare-plan-start')).dy),
+      );
       final scroll = tester.state<ScrollableState>(_detailScroll()).position;
-      scroll.jumpTo(330);
-      await tester.pumpAndSettle();
-      expect(tester.widget<AnimatedOpacity>(header).opacity, 0);
       scroll.jumpTo(331);
       await tester.pumpAndSettle();
-      expect(tester.widget<AnimatedOpacity>(header).opacity, 1);
+      expect(tester.getRect(backChip), backRect);
       await _showPlanTop(tester);
       final strings = AppLocalizations.of(
         tester.element(_key('flare-plan-tier')),

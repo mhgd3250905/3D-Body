@@ -1610,7 +1610,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                           ? box.maxWidth * .46
                                           : box.maxWidth - 218,
                                     ),
-                                    child: _homeHint(context),
+                                    child: _homeTrainingButton(context, phase),
                                   ),
                                 ),
                             ],
@@ -2104,62 +2104,55 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     ),
   );
 
-  /// 「点选肌群」: the home-glass control (r12, 40pt, hairline rim, blur
-  /// over the stage), inside a 48pt tap target, matching the top bar.
-  Widget _homeHint(BuildContext context) {
-    final s = context.strings;
-    final playing = _scene.playing;
-    final onTap = playing ? _scene.pause : _showMuscles;
-    final label = playing ? s.playingHint : s.pausedHint;
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: GestureDetector(
-        key: const ValueKey('home-muscle-hint'),
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Pressable(
-          scale: .95,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48),
-            child: Center(
-              widthFactor: 1,
-              child: FlareHipGlassSurface(
-                radius: 12,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 28),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        playing
-                            ? Icons.pause_rounded
-                            : Icons.touch_app_outlined,
-                        size: 15,
+  Widget _homeTrainingButton(BuildContext context, Phase phase) {
+    final label = context.strings.homeGoToTraining;
+    final time = _scene.time;
+    final hasPlan = catalog.plansForAngle(phase.source).isNotEmpty;
+    return FlarePressable(
+      key: const ValueKey('home-go-to-training'),
+      scale: .95,
+      semanticLabel: label,
+      onTap: hasPlan
+          ? () {
+              FlareHaptics.light();
+              // Match the paused return frame to the displayed angle, even
+              // when playback crosses a phase boundary during navigation.
+              if (_scene.playing) _scene.setTime(time);
+              _openAnglePlan(phase);
+            }
+          : null,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Center(
+          widthFactor: 1,
+          child: FlareHipGlassSurface(
+            radius: 12,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 28),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 15,
+                    color: FlareColors.secondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        height: 1.25,
+                        fontWeight: FontWeight.w500,
                         color: FlareColors.secondary,
                       ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.25,
-                            fontWeight: FontWeight.w500,
-                            color: FlareColors.secondary,
-                          ),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -2173,16 +2166,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _sheetOpen = true;
     try {
       await _presentMore();
-    } finally {
-      _sheetOpen = false;
-    }
-  }
-
-  Future<void> _showMuscles() async {
-    if (_sheetOpen) return;
-    _sheetOpen = true;
-    try {
-      await _presentMuscles();
     } finally {
       _sheetOpen = false;
     }
@@ -2328,135 +2311,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         });
         _syncSceneVisibility();
     }
-  }
-
-  Future<void> _presentMuscles() async {
-    _scene.pause();
-    final s = context.strings;
-    final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
-    final primary = [
-      for (final item in phase.primary)
-        if (catalog.groupById(item.id) case final MuscleGroup group)
-          (group, item.why ?? group.role),
-    ];
-    final ids = primary.map((item) => item.$1.id).toSet();
-    final others = [
-      for (final item in phase.secondary)
-        if (!ids.contains(item.id))
-          if (catalog.groupById(item.id) case final MuscleGroup group) group,
-    ];
-    Widget row(BuildContext sheet, MuscleGroup group, String? why) =>
-        MuscleItemTile(
-          group: group,
-          subtitle: why,
-          onTap: () => Navigator.pop(sheet, group),
-        );
-    final group = await showModalBottomSheet<MuscleGroup>(
-      context: context,
-      sheetAnimationStyle: FlareMotion.sheetStyle(context),
-      isScrollControlled: true,
-      builder: (sheetContext) {
-        var expanded = false;
-        return StatefulBuilder(
-          builder: (sheetContext, setSheet) => SafeArea(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * .78,
-              ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 12),
-                // The sheet grows smoothly when the rest of the group opens.
-                child: FlareSizeTransition(
-                  duration: FlareMotion.of(context, FlareMotion.expand),
-                  curve: FlareMotion.settle,
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Eyebrow(
-                              s.phaseMoment(
-                                phase.source.toString().padLeft(2, '0'),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              phase.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      for (final item in primary)
-                        row(sheetContext, item.$1, item.$2),
-                      if (others.isNotEmpty && !expanded)
-                        InkWell(
-                          onTap: () => setSheet(() => expanded = true),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
-                            child: Row(
-                              children: [
-                                MuscleThumbnailStack(
-                                  groups: others.take(3).toList(),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    s.othersInvolved(
-                                      others
-                                              .take(2)
-                                              .map((g) => g.shortLabel)
-                                              .join('、') +
-                                          (others.length > 2
-                                              ? s.groupCount(others.length)
-                                              : ''),
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: FlareColors.secondary,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.expand_more_rounded,
-                                  size: 20,
-                                  color: FlareColors.dim,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (expanded) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Divider(height: 20),
-                        ),
-                        for (final (index, other) in others.indexed)
-                          FadeSlideIn(
-                            delay: FadeSlideIn.stagger(index, step: 26),
-                            offset: 8,
-                            child: row(sheetContext, other, null),
-                          ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    if (mounted && group != null) _openGroup(group);
   }
 
   Widget _settingsPage(BuildContext context) {

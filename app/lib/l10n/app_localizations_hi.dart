@@ -192,10 +192,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get side => 'बगल';
 
   @override
-  String get pausedHint => 'मांसपेशी चुनें';
-
-  @override
-  String get playingHint => 'पहले रोकें';
+  String get homeGoToTraining => 'ट्रेनिंग पर जाएँ';
 
   @override
   String get loadingScene => '3D गतिविधि तैयार हो रही है…';

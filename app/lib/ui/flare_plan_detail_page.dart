@@ -1,5 +1,3 @@
-import 'dart:ui' show FontFeature, ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +10,7 @@ import 'components.dart';
 import 'drill_media.dart';
 import 'flare_plan_visuals.dart';
 import 'motion.dart';
+import 'page_kit.dart';
 import 'theme.dart';
 
 const _gutter = 22.0;
@@ -34,7 +33,7 @@ int flarePlanMinutes(FlarePlan plan) {
   return (seconds / 60).ceil();
 }
 
-class FlarePlanDetailPage extends StatefulWidget {
+class FlarePlanDetailPage extends StatelessWidget {
   const FlarePlanDetailPage({
     super.key,
     required this.title,
@@ -65,43 +64,16 @@ class FlarePlanDetailPage extends StatefulWidget {
   final FlareMembership? membership;
 
   @override
-  State<FlarePlanDetailPage> createState() => _FlarePlanDetailPageState();
-}
-
-class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
-  final _scroll = ScrollController();
-  bool _showHeader = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll.addListener(_updateHeader);
-  }
-
-  void _updateHeader() {
-    final visible = _scroll.offset > 330;
-    if (visible != _showHeader) setState(() => _showHeader = visible);
-  }
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final s = context.strings;
     final p = FlareColors.palette;
-    final plan = widget.plans.firstWhere(
-      (plan) => plan.tier == widget.selectedTier,
-      orElse: () => widget.plans.first,
+    final plan = plans.firstWhere(
+      (plan) => plan.tier == selectedTier,
+      orElse: () => plans.first,
     );
     final minutes = flarePlanMinutes(plan);
-    final scene = widget.store.settings.tier;
+    final scene = store.settings.tier;
     final safe = MediaQuery.viewPaddingOf(context);
-    final phase = widget.phase;
-    final catalog = widget.catalog;
     final muscles = [
       for (final muscle in phase?.primary ?? const <PhaseMuscle>[])
         ?catalog.groupById(muscle.id),
@@ -137,27 +109,33 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                   context,
                 ).copyWith(scrollbars: false),
                 child: ListView(
-                  controller: _scroll,
                   padding: const EdgeInsets.only(
                     bottom: _startButtonHeight + _lastExerciseGap,
                   ),
                   children: [
                     _PlanHero(
-                      title: widget.title,
+                      title: title,
                       intro: intro,
                       phaseSource: phase?.source ?? plan.phaseSource,
                       groupId: plan.groupId,
                       safeTop: safe.top,
-                      onBack: widget.onBack,
                       info: _PlanInfo(
                         minutes: minutes,
                         count: plan.items.length,
                       ),
                     ),
+                    if (muscles.isNotEmpty)
+                      _PlanMuscleStrip(
+                        groups: muscles,
+                        onTapFor: (group) =>
+                            catalog.plansForMuscle(group.id).isEmpty
+                            ? null
+                            : () => onMuscle(group),
+                      ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(
+                      padding: EdgeInsets.fromLTRB(
                         _gutter,
-                        18,
+                        muscles.isEmpty ? 18 : 12,
                         _gutter,
                         0,
                       ),
@@ -165,10 +143,10 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                         key: const ValueKey('flare-plan-tier'),
                         selected: plan.tier,
                         labels: [
-                          for (final option in widget.plans)
+                          for (final option in plans)
                             (option.tier, tiers[option.tier - 1]),
                         ],
-                        onChanged: widget.onTierChanged,
+                        onChanged: onTierChanged,
                       ),
                     ),
                     Padding(
@@ -180,32 +158,9 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                       ),
                       child: _PlanScenes(
                         selected: scene,
-                        onChanged: (value) =>
-                            widget.store.updateSettings(tier: value),
+                        onChanged: (value) => store.updateSettings(tier: value),
                       ),
                     ),
-                    if (muscles.isNotEmpty) ...[
-                      _heading(s.planActiveMuscles, s.planMuscleLinkHint),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: _gutter,
-                        ),
-                        child: Row(
-                          spacing: 16,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (final group in muscles)
-                              _PlanMuscle(
-                                group: group,
-                                onTap: catalog.plansForMuscle(group.id).isEmpty
-                                    ? null
-                                    : () => widget.onMuscle(group),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
                     _heading(
                       s.planTrainingContent,
                       s.planDrillCount(plan.items.length),
@@ -227,31 +182,21 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
               start: 0,
               end: 0,
               child: _PlanBottom(
-                membership: widget.membership,
+                membership: membership,
                 minutes: minutes,
                 safeBottom: safe.bottom,
-                onStart: () => widget.onStart(plan),
+                onStart: () => onStart(plan),
               ),
             ),
             PositionedDirectional(
               top: 0,
               start: 0,
               end: 0,
-              child: IgnorePointer(
-                ignoring: !_showHeader,
-                child: ExcludeSemantics(
-                  excluding: !_showHeader,
-                  child: AnimatedOpacity(
-                    key: const ValueKey('flare-plan-scrolled-header'),
-                    opacity: _showHeader ? 1 : 0,
-                    duration: const Duration(milliseconds: 160),
-                    child: _PlanScrolledHeader(
-                      title: widget.title,
-                      safeTop: safe.top,
-                      onBack: widget.onBack,
-                    ),
-                  ),
-                ),
+              child: FlareNavBar(
+                onBack: onBack,
+                topInset: safe.top,
+                fade: 0,
+                glass: true,
               ),
             ),
           ],
@@ -274,7 +219,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
   ) {
     final id = item.drillForScene(scene);
     final name =
-        widget.catalog.drillById(id)?.name ??
+        catalog.drillById(id)?.name ??
         FlareShared.current?.nameOf(
           id,
           languageForLocale(Localizations.localeOf(context)),
@@ -286,7 +231,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       index: index,
       item: item,
       separator: separator,
-      onTap: name == null ? null : () => widget.onDrill(id),
+      onTap: name == null ? null : () => onDrill(id),
     );
   }
 }
@@ -298,7 +243,6 @@ class _PlanHero extends StatelessWidget {
     required this.phaseSource,
     required this.groupId,
     required this.safeTop,
-    required this.onBack,
     required this.info,
   });
 
@@ -307,7 +251,6 @@ class _PlanHero extends StatelessWidget {
   final int? phaseSource;
   final String? groupId;
   final double safeTop;
-  final VoidCallback onBack;
   final Widget info;
 
   @override
@@ -315,126 +258,125 @@ class _PlanHero extends StatelessWidget {
     final p = FlareColors.palette;
     final s = context.strings;
     final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
-    return SizedBox(
-      height: 430,
-      child: DecoratedBox(
-        decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
-        child: Stack(
-          children: [
-            const Positioned(
-              right: -40,
-              top: 70,
-              child: FlarePlanGlow(diameter: 300),
-            ),
-            Positioned(
-              right: 30,
-              top: 338,
-              width: 220,
-              height: 26,
-              child: Center(
-                child: Transform.scale(
-                  scaleX: 220 / 26,
-                  child: SizedBox.square(
-                    dimension: 26,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [shadow, shadow.withValues(alpha: 0)],
-                          stops: const [0, .7],
-                        ),
+    final isAngle = phaseSource != null;
+    final width = MediaQuery.sizeOf(context).width;
+    final artHeight = (width * (isAngle ? .60 : .69)).clamp(185.0, 285.0);
+    final artTop = safeTop + FlareGeometry.navRow;
+    return DecoratedBox(
+      decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -40,
+            top: artTop,
+            child: const FlarePlanGlow(diameter: 300),
+          ),
+          Positioned(
+            right: 30,
+            top: artTop + artHeight - 20,
+            width: 220,
+            height: 26,
+            child: Center(
+              child: Transform.scale(
+                scaleX: 220 / 26,
+                child: SizedBox.square(
+                  dimension: 26,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [shadow, shadow.withValues(alpha: 0)],
+                        stops: const [0, .7],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            if (phaseSource case final source?)
-              Positioned(
-                right: -4,
-                top: 72,
-                height: 290,
+          ),
+          if (phaseSource case final source?)
+            Positioned(
+              right: -4,
+              top: artTop,
+              height: artHeight,
+              child: Image.asset(
+                'assets/angles/phase-$source.webp',
+                key: ValueKey('flare-plan-angle-hero-$source'),
+                excludeFromSemantics: true,
+              ),
+            )
+          else if (groupId case final id?)
+            Positioned(
+              right: -10,
+              top: artTop + 8,
+              height: artHeight,
+              child: FlarePlanMuscleFade(
                 child: Image.asset(
-                  'assets/angles/phase-$source.webp',
-                  key: ValueKey('flare-plan-angle-hero-$source'),
+                  'assets/muscles/$id.webp',
+                  key: ValueKey('flare-plan-muscle-hero-$id'),
                   excludeFromSemantics: true,
                 ),
-              )
-            else if (groupId case final id?)
-              Positioned(
-                right: -10,
-                top: 84,
-                height: 270,
-                child: FlarePlanMuscleFade(
-                  child: Image.asset(
-                    'assets/muscles/$id.webp',
-                    key: ValueKey('flare-plan-muscle-hero-$id'),
-                    excludeFromSemantics: true,
+              ),
+            ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 155,
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: _bottomFade(p, .78)),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              _gutter,
+              artTop + artHeight - 48,
+              _gutter,
+              0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FlarePlanKicker(
+                  label: phaseSource == null
+                      ? s.musclePlanLabel
+                      : s.anglePlanLabel,
+                ),
+                const SizedBox(height: 8),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w700,
+                      color: p.text,
+                      letterSpacing: -.5,
+                      height: 1.1,
+                    ),
                   ),
                 ),
-              ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 170,
-              child: DecoratedBox(
-                decoration: BoxDecoration(gradient: _bottomFade(p, .78)),
-              ),
-            ),
-            Positioned(
-              left: 16,
-              top: safeTop + 10,
-              child: FlarePlanBackButton(onTap: onBack),
-            ),
-            PositionedDirectional(
-              start: _gutter,
-              end: _gutter,
-              bottom: 18,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FlarePlanKicker(
-                    label: phaseSource == null
-                        ? s.musclePlanLabel
-                        : s.anglePlanLabel,
-                  ),
+                if (intro case final line?) ...[
                   const SizedBox(height: 8),
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.w700,
-                        color: p.text,
-                        letterSpacing: -.5,
-                        height: 1.1,
-                      ),
+                  Text(
+                    line,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.5,
+                      color: p.secondary,
                     ),
                   ),
-                  if (intro case final line?) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      line,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.5,
-                        color: p.secondary,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 12),
-                  info,
                 ],
-              ),
+                const SizedBox(height: 12),
+                info,
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -446,58 +388,6 @@ LinearGradient _bottomFade(FlarePalette palette, double stop) => LinearGradient(
   colors: [palette.background.withValues(alpha: 0), palette.background],
   stops: [0, stop],
 );
-
-class _PlanScrolledHeader extends StatelessWidget {
-  const _PlanScrolledHeader({
-    required this.title,
-    required this.safeTop,
-    required this.onBack,
-  });
-  final String title;
-  final double safeTop;
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = FlareColors.palette;
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          height: safeTop + 46,
-          padding: EdgeInsets.only(top: safeTop),
-          decoration: BoxDecoration(
-            color: p.background.withValues(alpha: .78),
-            border: Border(bottom: BorderSide(color: p.hairline)),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 58),
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: p.text,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 16,
-                top: 5,
-                child: FlarePlanBackButton(onTap: onBack),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _PlanInfo extends StatelessWidget {
   const _PlanInfo({required this.minutes, required this.count});
@@ -778,94 +668,136 @@ class _PlanScenes extends StatelessWidget {
   }
 }
 
+class _PlanMuscleStrip extends StatelessWidget {
+  const _PlanMuscleStrip({required this.groups, required this.onTapFor});
+
+  static const _fadeWidth = 24.0;
+  final List<MuscleGroup> groups;
+  final VoidCallback? Function(MuscleGroup) onTapFor;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: _gutter, top: 16),
+      child: Row(
+        children: [
+          Flexible(
+            child: Text(
+              context.strings.planActiveMuscles,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: p.secondary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 4,
+            child: Stack(
+              alignment: AlignmentDirectional.centerStart,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsetsDirectional.only(end: _fadeWidth),
+                  child: Row(
+                    spacing: 8,
+                    children: [
+                      for (final group in groups)
+                        _PlanMuscle(group: group, onTap: onTapFor(group)),
+                    ],
+                  ),
+                ),
+                PositionedDirectional(
+                  end: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: _fadeWidth,
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: AlignmentDirectional.centerStart,
+                          end: AlignmentDirectional.centerEnd,
+                          colors: [
+                            p.background.withValues(alpha: 0),
+                            p.background,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PlanMuscle extends StatelessWidget {
   const _PlanMuscle({required this.group, required this.onTap});
+
   final MuscleGroup group;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = FlareColors.palette;
-    final linked = onTap != null;
-    final label = context.strings.planSpecialized;
-    final face = SizedBox(
-      width: 68,
-      child: Column(
-        children: [
-          SizedBox.square(
-            dimension: 64,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  center: const Alignment(0, -.3),
-                  colors: [p.raised, p.surface],
-                ),
-              ),
+    final face = DecoratedBox(
+      decoration: BoxDecoration(
+        color: p.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: p.hairline),
+      ),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(4, 4, 12, 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 6,
+          children: [
+            SizedBox.square(
+              dimension: 24,
               child: DecoratedBox(
-                position: DecorationPosition.foreground,
                 decoration: BoxDecoration(
+                  color: p.raised,
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: linked ? p.accent : p.hairline,
-                    width: linked ? 1.5 : 1,
-                  ),
                 ),
                 child: ClipOval(
-                  child: OverflowBox(
-                    alignment: Alignment.topCenter,
-                    minWidth: 96,
-                    maxWidth: 96,
-                    minHeight: 96,
-                    maxHeight: 96,
-                    child: Transform.translate(
-                      offset: const Offset(0, -4),
-                      child: Image.asset(
-                        'assets/muscles/${group.id}.webp',
-                        excludeFromSemantics: true,
-                      ),
-                    ),
+                  child: Image.asset(
+                    'assets/muscles/${group.id}.webp',
+                    fit: BoxFit.cover,
+                    excludeFromSemantics: true,
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
+            Text(
               group.shortLabel,
-              maxLines: 1,
               style: TextStyle(
-                fontSize: 12,
-                color: p.text,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          if (linked) ...[
-            const SizedBox(height: 2),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                label,
-                maxLines: 1,
-                style: TextStyle(fontSize: 10, color: p.accentInk),
+                color: p.text,
               ),
             ),
           ],
-        ],
+        ),
       ),
     );
     final key = ValueKey('flare-plan-muscle-${group.id}');
-    return linked
-        ? FlarePressable(
+    return onTap == null
+        ? KeyedSubtree(key: key, child: face)
+        : FlarePressable(
             key: key,
-            semanticLabel: '${group.shortLabel} · $label',
+            semanticLabel: group.shortLabel,
             onTap: onTap,
             child: face,
-          )
-        : KeyedSubtree(key: key, child: face);
+          );
   }
 }
 

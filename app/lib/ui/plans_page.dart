@@ -373,6 +373,11 @@ class PlansPage extends StatelessWidget {
 class _LastPlanCard extends StatelessWidget {
   const _LastPlanCard({required this.resume, required this.onContinue});
 
+  static const _height = 148.0;
+  static const _radius = 24.0;
+  static const _artTopOverflow = 28.0;
+  static const _artEndOverflow = 8.0;
+
   final FlarePlanResume resume;
   final VoidCallback onContinue;
 
@@ -398,17 +403,16 @@ class _LastPlanCard extends StatelessWidget {
         : MaterialLocalizations.of(context).formatShortDate(date);
     final art = switch ((resume.phaseSource, resume.groupId)) {
       (final int source, _) => 'assets/angles/phase-$source.png',
-      (_, final String id) => 'assets/muscles/$id.webp',
+      (_, final String id) => 'assets/plan_resume_muscles/$id.webp',
       _ => null,
     };
     final gradient = _planAccentGradient(p);
 
     return Container(
       key: const ValueKey('plan-last-session'),
-      height: 148,
+      height: _height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: p.hairline),
+        borderRadius: BorderRadius.circular(_radius),
         gradient: RadialGradient(
           center: const Alignment(.7, -.2),
           radius: .83,
@@ -423,28 +427,49 @@ class _LastPlanCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          if (art != null) ...[
-            const PositionedDirectional(
-              end: -3,
-              top: -1,
-              child: FlarePlanGlow(diameter: 150),
-            ),
-            PositionedDirectional(
-              end: -18,
-              top: -8,
-              width: 176,
-              height: 170,
-              child: Image.asset(
-                art,
-                alignment: AlignmentDirectional.centerEnd,
-                fit: BoxFit.contain,
-                excludeFromSemantics: true,
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(_radius),
+                border: Border.all(color: p.hairline),
               ),
             ),
-          ],
+          ),
+          if (art != null)
+            PositionedDirectional(
+              end: -_artEndOverflow,
+              top: -_artTopOverflow,
+              bottom: 0,
+              width: _height + _artTopOverflow,
+              child: IgnorePointer(
+                child: ClipPath(
+                  clipper: _LastPlanArtClipper(Directionality.of(context)),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      const PositionedDirectional(
+                        end: 5,
+                        top: _artTopOverflow - 1,
+                        child: FlarePlanGlow(diameter: 150),
+                      ),
+                      Image.asset(
+                        art,
+                        // The rear-support pose's head sits beside the CTA.
+                        alignment: resume.phaseSource == 9
+                            ? AlignmentDirectional.bottomStart
+                            : AlignmentDirectional.bottomEnd,
+                        fit: BoxFit.contain,
+                        excludeFromSemantics: true,
+                        errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           PositionedDirectional(
             start: 16,
-            end: art == null ? 16 : 102,
+            end: art == null ? 16 : (resume.phaseSource == null ? 122 : 135),
             top: 17,
             bottom: 55,
             child: Align(
@@ -561,6 +586,39 @@ class _LastPlanCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LastPlanArtClipper extends CustomClipper<Path> {
+  const _LastPlanArtClipper(this.direction);
+
+  final TextDirection direction;
+
+  @override
+  Path getClip(Size size) {
+    const corner = Radius.circular(_LastPlanCard._radius);
+    const bleed = _LastPlanCard._artEndOverflow;
+    final rtl = direction == TextDirection.rtl;
+    // The artwork can extend past the top and end. The bottom corner follows
+    // the card's curve and shares its exact bottom edge.
+    return Path()
+      ..addRect(Rect.fromLTRB(0, 0, size.width, size.height - corner.y))
+      ..addRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTRB(
+            rtl ? bleed : 0,
+            0,
+            rtl ? size.width : size.width - bleed,
+            size.height,
+          ),
+          bottomLeft: rtl ? corner : Radius.zero,
+          bottomRight: rtl ? Radius.zero : corner,
+        ),
+      );
+  }
+
+  @override
+  bool shouldReclip(_LastPlanArtClipper oldClipper) =>
+      oldClipper.direction != direction;
 }
 
 LinearGradient _planAccentGradient(FlarePalette p) => LinearGradient(

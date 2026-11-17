@@ -192,10 +192,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get side => 'Lado';
 
   @override
-  String get pausedHint => 'Ver músculos';
-
-  @override
-  String get playingHint => 'Pause e explore';
+  String get homeGoToTraining => 'Ir para o treino';
 
   @override
   String get loadingScene => 'Preparando o movimento 3D…';

@@ -188,10 +188,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get side => '侧面';
 
   @override
-  String get pausedHint => '点选肌群';
-
-  @override
-  String get playingHint => '暂停后查看';
+  String get homeGoToTraining => '前往训练';
 
   @override
   String get loadingScene => '正在准备 3D 动作…';
@@ -1536,10 +1533,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get side => '側面';
 
   @override
-  String get pausedHint => '點選肌群';
-
-  @override
-  String get playingHint => '暫停後查看';
+  String get homeGoToTraining => '前往訓練';
 
   @override
   String get loadingScene => '正在準備 3D 動作…';

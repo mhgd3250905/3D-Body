@@ -189,10 +189,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get side => '側面';
 
   @override
-  String get pausedHint => '筋肉を見る';
-
-  @override
-  String get playingHint => '一時停止して選ぶ';
+  String get homeGoToTraining => 'トレーニングへ';
 
   @override
   String get loadingScene => '3D動作を準備中…';

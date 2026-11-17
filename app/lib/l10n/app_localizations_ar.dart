@@ -191,10 +191,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get side => 'الجانب';
 
   @override
-  String get pausedHint => 'استكشف العضلات';
-
-  @override
-  String get playingHint => 'أوقف ثم اختر';
+  String get homeGoToTraining => 'اذهب إلى التدريب';
 
   @override
   String get loadingScene => 'جارٍ تجهيز الحركة ثلاثية الأبعاد…';

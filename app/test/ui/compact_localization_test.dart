@@ -108,7 +108,7 @@ void main() {
           final shellContext = tester.element(find.byType(FlareShell));
           final strings = AppLocalizations.of(shellContext);
           final direction = Directionality.of(shellContext);
-          final homeHint = find.byKey(const ValueKey('home-muscle-hint'));
+          final homeHint = find.byKey(const ValueKey('home-go-to-training'));
           expect(homeHint, findsOneWidget, reason: '$language at $size');
           final hintRect = tester.getRect(homeHint);
           _recordFailure(
@@ -125,6 +125,7 @@ void main() {
           );
           expect(hintText, findsOneWidget);
           final hintWidget = tester.widget<Text>(hintText);
+          expect(hintWidget.data, strings.homeGoToTraining);
           final hintParagraph = tester.renderObject<RenderParagraph>(hintText);
           final hintFits =
               hintWidget.maxLines != null &&
