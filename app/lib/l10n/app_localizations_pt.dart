@@ -706,7 +706,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get safetyRule1 => 'Aqueça os punhos primeiro';
 
   @override
-  String get safetyRule1Note => 'O plano Aquecimento guia você';
+  String get safetyRule1Note =>
+      'Movimente os punhos e as escápulas antes de treinar.';
 
   @override
   String get safetyRule2 => 'Pare em caso de dor aguda, dormência ou tontura';
@@ -1101,7 +1102,67 @@ class AppLocalizationsPt extends AppLocalizations {
   String get plans => 'Planos';
 
   @override
-  String get plansHint => 'Séries prontas e as suas';
+  String get plansHint => 'Treinos direcionados e seus planos';
+
+  @override
+  String get plansLastSession => 'Última sessão';
+
+  @override
+  String get plansContinue => 'Continuar';
+
+  @override
+  String get plansToday => 'Hoje';
+
+  @override
+  String get plansYesterday => 'Ontem';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total exercícios';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Combine seus exercícios habituais';
+
+  @override
+  String get plansNewEmptyHint => 'Agrupe os exercícios que mais pratica';
+
+  @override
+  String get plansAnglesTitle => 'Ângulos difíceis do flare';
+
+  @override
+  String get plansAnglesDescription =>
+      'Ganhe estabilidade nas fases mais exigentes da volta.';
+
+  @override
+  String get plansMusclesTitle => 'Grupos musculares a fortalecer';
+
+  @override
+  String get plansMusclesDescription =>
+      'Áreas que recebem mais carga durante o flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Ver os $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Apoio com uma mão';
+
+  @override
+  String get plansTwoHandSupport => 'Apoio com duas mãos';
+
+  @override
+  String get plansThreeLevels => '3 níveis';
+
+  @override
+  String get plansAiTitle => 'Plano com IA';
+
+  @override
+  String get plansAiHint => 'Escolha local, duração e grupo muscular.';
+
+  @override
+  String get plansAiUnavailable => 'A IA está indisponível';
 
   @override
   String get plansReady => 'Séries prontas';

@@ -30,6 +30,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.quality,
     required this.enableScene,
     required this.initialTime,
+    this.initialMuscles = false,
     this.mountScene = true,
     required this.visible,
     required this.onBack,
@@ -47,6 +48,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   final String quality;
   final bool enableScene;
   final double initialTime;
+  final bool initialMuscles;
   final bool mountScene;
   final bool visible;
   final VoidCallback onBack;
@@ -65,7 +67,7 @@ class FlareTrainingHubPage extends StatefulWidget {
 class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   final _stage = SceneController();
   late double _time = widget.initialTime;
-  bool _muscles = false;
+  late bool _muscles = widget.initialMuscles;
   bool? _pendingMode;
   String _muscleId = 'deltoids';
   bool _muscleFocused = false;

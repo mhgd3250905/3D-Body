@@ -1,5 +1,6 @@
 import 'package:flare/control/flare_membership.dart';
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/flare_membership_page.dart';
@@ -49,22 +50,30 @@ class _TestStore implements MembershipStore {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  final previousShared = FlareShared.current;
+  setUpAll(() async => FlareShared.current = await FlareShared.load());
+  tearDownAll(() => FlareShared.current = previousShared);
+
   testWidgets(
-    'preset training, saved routine training and copying ask for membership',
+    'angle training, saved routine training and copying ask for membership',
     (tester) async {
       await helpers.phoneSize(tester);
       final semantics = tester.ensureSemantics();
       final purchases = _TestStore();
       final membership = FlareMembership(purchases);
       try {
-        final catalog = loadCatalogFixture();
+        final catalog = loadCatalogFixture(includeFlarePlans: true);
         final store = LearningStore(
           catalog: catalog,
           storage: helpers.MemoryStateStorage(),
         );
         await store.initialize();
         await store.acknowledgeSafety();
-        await store.createRoutine('Audit routine', const ['abs-A']);
+        final routine = (await store.createRoutine('Audit routine', const [
+          'abs-A',
+        ]))!;
+        final routineRow = find.byKey(ValueKey('routine-${routine.id}'));
         final scene = SceneController(commandSink: (_) {});
         addTearDown(store.dispose);
         addTearDown(scene.dispose);
@@ -91,7 +100,7 @@ void main() {
         await tester.pumpAndSettle();
         await helpers.openPlansFromHome(tester);
 
-        await helpers.tapVisible(tester, find.text('Audit routine'));
+        await helpers.tapVisible(tester, routineRow);
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('plan-start')));
         await tester.pumpAndSettle();
@@ -106,23 +115,38 @@ void main() {
 
         await helpers.tapVisible(
           tester,
-          find.byKey(const ValueKey('preset-core')),
+          find.byKey(const ValueKey('plan-angle-11')),
         );
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('plan-start')));
+        await tester.tap(find.byKey(const ValueKey('flare-plan-start')));
         await tester.pumpAndSettle();
         expect(find.byType(FlareMembershipPage), findsOneWidget);
         expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
         await tester.tap(find.byIcon(Icons.close_rounded));
         await tester.pumpAndSettle();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        final plansScroll = find.descendant(
+          of: find.byKey(const PageStorageKey<String>('plans-scroll')),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Scrollable &&
+                widget.axisDirection == AxisDirection.down,
+          ),
+        );
+        final position = tester.state<ScrollableState>(plansScroll).position;
+        position.jumpTo(position.minScrollExtent);
+        await tester.pumpAndSettle();
+        await tester.tap(routineRow);
+        await tester.pumpAndSettle();
 
         await helpers.tapVisible(
           tester,
-          find.byKey(const ValueKey('plan-save-as-mine')),
+          find.byKey(const ValueKey('plan-copy')),
         );
         await tester.pumpAndSettle();
         expect(find.byType(FlareMembershipPage), findsOneWidget);
-        expect(find.byType(RoutineEditorPage), findsNothing);
+        expect(store.routines, hasLength(1));
         await helpers.tapVisible(
           tester,
           find.byKey(const ValueKey('premium-monthly')),
@@ -136,7 +160,9 @@ void main() {
         await tester.pumpAndSettle();
         expect(purchases.purchased, MembershipTerm.monthly);
         expect(find.byType(FlareMembershipPage), findsNothing);
-        expect(find.byType(RoutineEditorPage), findsOneWidget);
+        expect(find.byType(PlanDetailPage), findsOneWidget);
+        expect(store.routines, hasLength(2));
+        expect(store.routines.last.drillIds, ['abs-A']);
         helpers.assertNoFlutterError(tester);
         await tester.pumpWidget(const SizedBox());
       } finally {

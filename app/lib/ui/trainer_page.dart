@@ -65,9 +65,17 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   Future<void> _saveResult(sdk.SessionResult result) async {
     final returnEmpty = result.completedExercises == 0 && !_sdkExitStarted;
     if (_isCurrentRoute) {
+      // The SDK's training controls can have a tooltip in the route overlay
+      // when the completion view replaces the player stage.
+      Tooltip.dismissAllToolTips();
       setState(() {
         _result = result;
         _returningEmptyResult = returnEmpty;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_isCurrentRoute && _result?.sessionId == result.sessionId) {
+          Tooltip.dismissAllToolTips();
+        }
       });
     }
     try {
@@ -291,37 +299,42 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           );
         }
 
-        return Visibility(
-          visible: !_returningEmptyResult,
-          maintainState: true,
-          child: sdk.TrainerPlayer(
-            plan: data.plan,
-            rhythms: data.rhythms,
-            drillOf: drillOf,
-            strings: strings,
-            theme: theme,
-            voice: sdk.TrainerVoice(
-              source: data.source,
-              output: _output!,
-              settings: sdk.VoiceSettings(
-                language: data.language,
-                voice: widget.store.settings.sound,
-                chimes: widget.store.settings.sound,
+        return TooltipVisibility(
+          visible: _result == null,
+          child: Visibility(
+            visible: !_returningEmptyResult,
+            maintainState: true,
+            child: sdk.TrainerPlayer(
+              plan: data.plan,
+              rhythms: data.rhythms,
+              drillOf: drillOf,
+              strings: strings,
+              theme: theme,
+              voice: sdk.TrainerVoice(
+                source: data.source,
+                output: _output!,
+                settings: sdk.VoiceSettings(
+                  language: data.language,
+                  voice: widget.store.settings.sound,
+                  chimes: widget.store.settings.sound,
+                ),
               ),
+              onFinished: _saveResult,
+              onExitStarted: _onExitStarted,
+              onCompleted: (_) async {
+                // Replay runs in this route with fresh training controls.
+                if (!_sdkExitStarted && mounted) setState(() => _result = null);
+                _sdkExitStarted = false;
+              },
+              restFeedbackBuilder: (context, feedback) =>
+                  _restFeedback(context, feedback, theme, strings, drillOf),
+              keepAlive: widget.keepAlive,
+              showExtendRest: true,
+              showCompleteTimedPhase: true,
+              showSoundToggle: true,
+              notificationIcon: 'mipmap/ic_launcher',
+              doseLabel: _doseLabel,
             ),
-            onFinished: _saveResult,
-            onExitStarted: _onExitStarted,
-            onCompleted: (_) async {
-              _sdkExitStarted = false;
-            },
-            restFeedbackBuilder: (context, feedback) =>
-                _restFeedback(context, feedback, theme, strings, drillOf),
-            keepAlive: widget.keepAlive,
-            showExtendRest: true,
-            showCompleteTimedPhase: true,
-            showSoundToggle: true,
-            notificationIcon: 'mipmap/ic_launcher',
-            doseLabel: _doseLabel,
           ),
         );
       },

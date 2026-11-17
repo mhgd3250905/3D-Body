@@ -313,7 +313,10 @@ void main() {
             expect(received.single.items.single.exerciseId, 'abs-A');
             expect(received.single.items.single.workSeconds, 1);
           } else {
-            expect(received.single.toJson(), plan.toJson());
+            expect(
+              received.single.toJson(),
+              plan.copyWith(id: routine.id).toJson(),
+            );
           }
           final player = _player(tester);
           // Prep included; chest-A runs its r2 counted cadence (25 s/round).
@@ -325,6 +328,7 @@ void main() {
           expect(find.byKey(const ValueKey('finish')), findsOneWidget);
           expect(store.trainerSessions, hasLength(1));
           final result = store.trainerSessions.single;
+          expect(result.planId, received.single.id);
           expect(result.full, isTrue);
           expect(result.items, hasLength(singleDrill ? 1 : 2));
           expect(
@@ -404,6 +408,7 @@ void main() {
     final store = await _open(tester, popped: popped);
     await _advance(tester, 12);
     final skip = find.byKey(const ValueKey('skip'));
+    expect(TooltipVisibility.of(tester.element(skip)), isTrue);
     await tester.tap(skip);
     await tester.pump(const Duration(milliseconds: 150));
     await tester.tap(skip);
@@ -412,7 +417,10 @@ void main() {
     expect(find.text('今天先练到这里\n完成 1/2 个动作'), findsOneWidget);
     expect(find.text('这一套练完了'), findsNothing);
     expect(store.trainerSessions.single.completedExercises, 1);
-    await tester.tap(find.byKey(const ValueKey('finish')));
+    final finish = find.byKey(const ValueKey('finish'));
+    expect(TooltipVisibility.of(tester.element(finish)), isFalse);
+    expect(find.text('跳过'), findsNothing);
+    await tester.tap(finish);
     await tester.pumpAndSettle();
     expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
     expect(find.byType(FlareTrainingPage), findsNothing);

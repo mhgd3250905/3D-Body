@@ -8,6 +8,8 @@ import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/data/posehub_catalog_updates.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/trainer/flare_plan_resume.dart';
+import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart' show FlareSegmented;
 import 'package:flare/ui/content_pages.dart';
@@ -212,7 +214,7 @@ void main() {
     expect(_key('training-hub'), findsOneWidget);
   }
 
-  testWidgets('plans page keeps the original plans and preset sections', (
+  testWidgets('plans opens both hub modes and returns to the plans page', (
     tester,
   ) async {
     await mountShell(tester);
@@ -220,9 +222,110 @@ void main() {
     final root = find.byType(PlansPage);
     final strings = AppLocalizations.of(tester.element(root));
     expect(find.text(strings.plansMine), findsOneWidget);
-    expect(find.text(strings.plansReady), findsOneWidget);
-    expect(find.text(strings.plansByAngle), findsNothing);
-    expect(find.text(strings.plansByMuscle), findsNothing);
+    expect(find.text(strings.plansReady), findsNothing);
+    final hub = find.byType(FlareTrainingHubPage);
+    for (final (link, mode) in [
+      ('plan-all-angles', 'hub-angle-mode'),
+      ('plan-all-muscles', 'hub-muscle-mode'),
+    ]) {
+      await tester.scrollUntilVisible(
+        _key(link),
+        250,
+        scrollable: find.byWidgetPredicate(
+          (widget) =>
+              widget is Scrollable &&
+              widget.axisDirection == AxisDirection.down,
+        ),
+      );
+      await tester.tap(_key(link));
+      await tester.pumpAndSettle();
+      expect(hub, findsOneWidget);
+      expect(tester.widget<FlarePressable>(_key(mode)).selected, isTrue);
+      await back(tester);
+      expect(hub, findsNothing);
+      expect(root, findsOneWidget);
+    }
+    helpers.assertNoFlutterError(tester);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('plans continues the recorded angle and scene at the next move', (
+    tester,
+  ) async {
+    final mounted = await mountShell(tester);
+    const phaseSource = 15;
+    final phase = catalog.phaseBySource(phaseSource)!;
+    final authored = catalog
+        .plansForAngle(phaseSource)
+        .singleWhere((plan) => plan.tier == 2);
+    final shared = FlareShared.current!;
+    final original = trainingPlanFromFlarePlan(
+      plan: authored,
+      title: phase.name,
+      sceneTier: 'A',
+      catalog: catalog,
+      sourceCatalog: shared.catalog,
+      rhythms: shared.rhythms,
+    );
+    final recorded = FlarePlanResume.recordAuthored(
+      original,
+      phaseSource: phaseSource,
+      sceneTier: 'A',
+    );
+    final begin = DateTime.utc(2026, 11, 16, 12);
+    await mounted.store.saveTrainerSession(
+      sdk.SessionResult(
+        sessionId: 'angle-progress',
+        planId: recorded.id,
+        planTitle: phase.name,
+        startedAt: begin,
+        endedAt: begin.add(const Duration(minutes: 1)),
+        activeSeconds: 60,
+        endedEarly: true,
+        completedExercises: 1,
+        totalExercises: original.items.length,
+        items: [
+          for (final (index, item) in original.items.indexed)
+            sdk.ItemResult(
+              exerciseId: item.exerciseId,
+              replacedFrom: item.replacedFrom,
+              blockIndex: 0,
+              itemInBlock: index,
+              plannedSets: item.sets,
+              completedSets: index == 0 ? item.sets : 0,
+              activeSeconds: index == 0 ? 60 : 0,
+              status: index == 0
+                  ? sdk.ItemStatus.completed
+                  : sdk.ItemStatus.notReached,
+            ),
+        ],
+      ),
+    );
+    await mounted.store.updateSettings(tier: 'C');
+    await helpers.openPlansFromHome(tester);
+    final art = tester.widget<Image>(
+      find.descendant(
+        of: _key('plan-last-session'),
+        matching: find.byType(Image),
+      ),
+    );
+    expect((art.image as AssetImage).assetName, 'assets/angles/phase-15.png');
+    await tester.tap(_key('plan-continue'));
+    await helpers.waitForTrainingRoute(tester);
+    final delivered = tester
+        .widget<helpers.TrainingRouteProbe>(
+          find.byType(helpers.TrainingRouteProbe),
+        )
+        .plan;
+    expect(
+      delivered.items.map((item) => item.exerciseId),
+      original.items.skip(1).map((item) => item.exerciseId),
+    );
+    expect(delivered.items.first.sets, original.items.elementAt(1).sets);
+    expect(mounted.store.settings.tier, 'C');
+    await tester.tap(_key('training-probe-close'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PlansPage), findsOneWidget);
     helpers.assertNoFlutterError(tester);
     await tester.pumpWidget(const SizedBox());
   });

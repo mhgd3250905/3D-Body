@@ -1,7 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../coach/plan_mapping.dart';
+import '../trainer/flare_plan_resume.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../control/learning_store.dart';
@@ -11,6 +13,8 @@ import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
+import 'flare_plan_detail_page.dart' show flarePlanMinutes;
+import 'flare_plan_visuals.dart' show FlarePlanGlow;
 import 'motion.dart';
 import 'theme.dart';
 
@@ -19,51 +23,6 @@ export 'flare_plan_detail_page.dart';
 bool _routineHasItem(TrainingRoutine routine, String drillId) =>
     routine.sdkPlan?.items.any((item) => item.exerciseId == drillId) ??
     routine.drillIds.contains(drillId);
-
-/// Titles and one-line purposes for the ready-made directions.
-extension PresetText on PresetPlan {
-  String title(BuildContext context) {
-    final s = context.strings;
-    return switch (id) {
-      'warmup' => s.presetWarmup,
-      'support' => s.presetSupport,
-      'core' => s.presetCore,
-      'legs' => s.presetLegs,
-      'side' => s.presetSide,
-      _ => s.presetFlare,
-    };
-  }
-
-  String line(BuildContext context) {
-    final s = context.strings;
-    return switch (id) {
-      'warmup' => s.presetWarmupLine,
-      'support' => s.presetSupportLine,
-      'core' => s.presetCoreLine,
-      'legs' => s.presetLegsLine,
-      'side' => s.presetSideLine,
-      _ => s.presetFlareLine,
-    };
-  }
-
-  IconData get icon => switch (id) {
-    'warmup' => Icons.local_fire_department_outlined,
-    'support' => Icons.front_hand_outlined,
-    'core' => Icons.fitness_center_rounded,
-    'legs' => Icons.directions_run_rounded,
-    'side' => Icons.swap_horiz_rounded,
-    _ => Icons.all_inclusive_rounded,
-  };
-}
-
-String sceneLabel(BuildContext context, String tier) {
-  final s = context.strings;
-  return switch (tier) {
-    'B' => s.sceneHome,
-    'C' => s.sceneGym,
-    _ => s.sceneNone,
-  };
-}
 
 /// Bundled poster for a plan row or card. Every drill — Flare's own catalog
 /// and the SDK shared scope — has one under `assets/public_posters/`; the old
@@ -130,332 +89,763 @@ class _Stack extends StatelessWidget {
   }
 }
 
-class _SceneSwitch extends StatelessWidget {
-  const _SceneSwitch({required this.store, this.preview = false});
-  final LearningStore store;
-  final bool preview;
-  @override
-  Widget build(BuildContext context) {
-    final s = context.strings;
-    if (preview) {
-      return SizedBox(
-        width: double.infinity,
-        child: CupertinoSlidingSegmentedControl<String>(
-          groupValue: store.settings.tier,
-          backgroundColor: FlareColors.palette.segmentTrack,
-          thumbColor: FlareColors.palette.segmentThumb,
-          padding: const EdgeInsets.all(4),
-          children: {
-            for (final entry in [
-              ('A', s.sceneNone),
-              ('B', s.sceneHome),
-              ('C', s.sceneGym),
-            ])
-              entry.$1: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 10,
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    entry.$2,
-                    maxLines: 1,
-                    softWrap: false,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: FlareColors.text,
-                      fontSize: 13,
-                      height: 1.25,
-                      fontWeight: entry.$1 == store.settings.tier
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-          },
-          onValueChanged: (tier) {
-            if (tier == null || tier == store.settings.tier) {
-              return;
-            }
-            FlareHaptics.selection();
-            store.updateSettings(tier: tier);
-          },
-        ),
-      );
-    }
-    return FlareSegmented<String>(
-      expand: true,
-      segments: [('A', s.sceneNone), ('B', s.sceneHome), ('C', s.sceneGym)],
-      selected: store.settings.tier,
-      onChanged: (tier) {
-        if (tier == store.settings.tier) return;
-        FlareHaptics.selection();
-        store.updateSettings(tier: tier);
-      },
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.text);
-  final String text;
-  @override
-  // The kit's one section header, so plans read like settings and records.
-  Widget build(BuildContext context) => FlareSection(text);
-}
-
-/// The plans tab: the user's own sets, then six ready-made directions with
-/// one scene switch that turns every preset into its bodyweight, home or gym
-/// version.
+/// Training entry points shared with the angle and muscle hub.
 class PlansPage extends StatelessWidget {
   const PlansPage({
     super.key,
     required this.catalog,
     required this.store,
-    required this.onPreset,
     required this.onRoutine,
     required this.onNewRoutine,
+    required this.onOpenAngle,
+    required this.onOpenMuscle,
+    required this.onAllAngles,
+    required this.onAllMuscles,
+    required this.onContinue,
+    this.resume,
     this.onBack,
     this.onAiCoach,
     this.aiCoachConfigured = true,
   });
+
   final Catalog catalog;
   final LearningStore store;
-  final ValueChanged<PresetPlan> onPreset;
   final ValueChanged<TrainingRoutine> onRoutine;
   final VoidCallback onNewRoutine;
+  final ValueChanged<Phase> onOpenAngle;
+  final ValueChanged<MuscleGroup> onOpenMuscle;
+  final VoidCallback onAllAngles;
+  final VoidCallback onAllMuscles;
+  final VoidCallback onContinue;
+  final FlarePlanResume? resume;
   final VoidCallback? onBack;
-
-  /// AI 定制入口（中文界面才给）；null 不显示。
   final VoidCallback? onAiCoach;
   final bool aiCoachConfigured;
 
-  Widget _aiRow(BuildContext context) => FlareListRow(
-    key: const ValueKey('plan-ai-coach'),
-    leading: const FlareRowIcon(Icons.auto_awesome_rounded),
-    title: 'AI 定制',
-    subtitle: aiCoachConfigured
-        ? '说出场地、时长和想练的部位，排一份专项计划'
-        : '暂未接入 AI，会按你的描述推荐一套预设方案',
-    trailing: aiCoachConfigured
-        ? null
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '未配置',
-                key: const ValueKey('plan-ai-unconfigured'),
-                style: TextStyle(fontSize: 13, color: FlareColors.dim),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: FlareColors.dim,
-              ),
-            ],
-          ),
-    onTap: onAiCoach,
-  );
-
-  Widget _newRow(BuildContext context, {required bool first}) => FlareListRow(
-    key: ValueKey(first ? 'plan-new' : 'plan-new-small'),
-    leading: const FlareRowIcon(Icons.add_rounded),
-    title: context.strings.planNew,
-    subtitle: first ? context.strings.planNewHint : null,
-    onTap: onNewRoutine,
-  );
+  static const _pageInset = 22.0;
+  static const _bottomFade = 84.0;
+  static const _featuredAngles = [11, 9, 15];
+  static const _featuredMuscles = [
+    'deltoids',
+    'triceps',
+    'forearms',
+    'rotator-cuff',
+  ];
 
   Widget _routineRow(BuildContext context, TrainingRoutine routine) {
     final s = context.strings;
     final plan = routine.sdkPlan;
+    final mapper = CoachPlanMapper(
+      catalog,
+      shared: FlareShared.current?.catalog,
+    );
     final drills = plan == null
         ? routine.drills(catalog)
-        : [
-            for (final item in plan.items)
-              ?CoachPlanMapper(
-                catalog,
-                shared: FlareShared.current?.catalog,
-              ).drillById(item.exerciseId),
-          ];
-    final count = plan?.items.length ?? drills.length;
+        : [for (final item in plan.items) ?mapper.drillById(item.exerciseId)];
     final minutes = plan == null
         ? estimateMinutes(drills)
         : (estimateTrainingPlanSeconds(plan, catalog) / 60).ceil().clamp(
             1,
             999,
           );
-    return RepaintBoundary(
-      child: FlareListRow(
-        key: ValueKey('routine-${routine.id}'),
-        leading: _Stack(drills),
-        title: routine.name,
-        subtitle: s.planMeta(count, minutes),
-        onTap: () => onRoutine(routine),
-      ),
+    return FlareListRow(
+      key: ValueKey('routine-${routine.id}'),
+      leading: _Stack(drills),
+      title: routine.name,
+      subtitle: s.planMeta(plan?.items.length ?? drills.length, minutes),
+      onTap: () => onRoutine(routine),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Theme.of(context);
+    final p = FlareColors.palette;
     final s = context.strings;
-    final tier = store.settings.tier;
+    final safe = MediaQuery.viewPaddingOf(context);
+    final resume = this.resume;
     final routines = store.routines;
-    return FlareNavPage(
-      title: s.plans,
-      onBack: onBack,
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(
-              FlareGeometry.pageInset,
-              flareNavInset(context),
-              FlareGeometry.pageInset,
-              0,
-            ),
-            sliver: SliverList.list(
-              children: [
-                _SectionHeader(s.plansMine),
-                FlareListGroup(
+    final angles = [
+      for (final source in {
+        ..._featuredAngles,
+        ...catalog.phases.map((phase) => phase.source),
+      })
+        if (catalog.phaseBySource(source) case final phase?)
+          if (catalog
+                  .plansForAngle(source)
+                  .where((plan) => plan.tier == 1)
+                  .firstOrNull
+              case final beginner?)
+            (phase, beginner),
+    ];
+    final muscles = [
+      for (final id in {..._featuredMuscles, ...catalog.flarePlanMuscles})
+        if (catalog.groupById(id) case final group?)
+          if (catalog.plansForMuscle(id) case final plans when plans.isNotEmpty)
+            (group, plans.map(flarePlanMinutes).reduce(math.min)),
+    ];
+
+    return ColoredBox(
+      color: p.background,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomScrollView(
+            key: const PageStorageKey<String>('plans-scroll'),
+            slivers: [
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  _pageInset,
+                  safe.top + 56,
+                  _pageInset,
+                  0,
+                ),
+                sliver: SliverList.list(
                   children: [
-                    for (final routine in routines)
-                      _routineRow(context, routine),
-                    _newRow(context, first: routines.isEmpty),
-                    if (onAiCoach != null) _aiRow(context),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        s.plans,
+                        style: TextStyle(
+                          color: p.text,
+                          fontSize: 30,
+                          height: 1.2,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -.4,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        s.plansMine,
+                        style: TextStyle(
+                          color: p.dim,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (resume != null) ...[
+                      _LastPlanCard(resume: resume, onContinue: onContinue),
+                      const SizedBox(height: 12),
+                    ],
+                    _NewPlanRow(
+                      withHistory: resume != null,
+                      onTap: onNewRoutine,
+                    ),
+                    if (routines.isNotEmpty || onAiCoach != null) ...[
+                      const SizedBox(height: 12),
+                      FlareListGroup(
+                        children: [
+                          for (final routine in routines)
+                            _routineRow(context, routine),
+                          if (onAiCoach != null)
+                            FlareListRow(
+                              key: const ValueKey('plan-ai-coach'),
+                              leading: const FlareRowIcon(
+                                Icons.auto_awesome_rounded,
+                              ),
+                              title: s.plansAiTitle,
+                              subtitle: aiCoachConfigured
+                                  ? s.plansAiHint
+                                  : s.plansAiUnavailable,
+                              onTap: onAiCoach,
+                            ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    _PlansSection(
+                      title: s.plansAnglesTitle,
+                      description: s.plansAnglesDescription,
+                      count: angles.length,
+                      actionKey: const ValueKey('plan-all-angles'),
+                      onAll: onAllAngles,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                _SectionHeader(s.plansReady),
-                _SceneSwitch(store: store, preview: true),
-                const SizedBox(height: 14),
-              ],
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: SliverLayoutBuilder(
-              builder: (context, box) {
-                final textScale =
-                    MediaQuery.textScalerOf(context).scale(14) / 14;
-                final columns = box.crossAxisExtent < 330 || textScale > 1.35
-                    ? 1
-                    : 2;
-                final presets = PresetPlan.all;
-                return SliverList.builder(
-                  itemCount: (presets.length / columns).ceil(),
-                  itemBuilder: (context, row) => Padding(
-                    padding: const EdgeInsets.only(bottom: 14),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var column = 0; column < columns; column++) ...[
-                          if (column > 0) const SizedBox(width: 14),
-                          Expanded(
-                            child: row * columns + column >= presets.length
-                                ? const SizedBox.shrink()
-                                : RepaintBoundary(
-                                    key: ValueKey(
-                                      'preset-$tier-${presets[row * columns + column].id}',
-                                    ),
-                                    child: _PresetCard(
-                                      preset: presets[row * columns + column],
-                                      drills: presets[row * columns + column]
-                                          .drills(catalog, tier),
-                                      onTap: () => onPreset(
-                                        presets[row * columns + column],
-                                      ),
-                                    ),
-                                  ),
-                          ),
-                        ],
-                      ],
-                    ),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 212,
+                  child: ListView.separated(
+                    key: const PageStorageKey<String>('plan-angle-carousel'),
+                    scrollDirection: Axis.horizontal,
+                    primary: false,
+                    padding: const EdgeInsets.symmetric(horizontal: _pageInset),
+                    itemCount: angles.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 12),
+                    itemBuilder: (context, index) {
+                      final (phase, beginner) = angles[index];
+                      return _AnglePlanCard(
+                        phase: phase,
+                        beginner: beginner,
+                        usesBothHands:
+                            catalog.supportFor(phase.source) == 'both',
+                        onTap: () => onOpenAngle(phase),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  _pageInset,
+                  24,
+                  _pageInset,
+                  0,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: _PlansSection(
+                    title: s.plansMusclesTitle,
+                    description: s.plansMusclesDescription,
+                    count: muscles.length,
+                    actionKey: const ValueKey('plan-all-muscles'),
+                    onAll: onAllMuscles,
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: _pageInset),
+                sliver: SliverGrid.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent: 64,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  itemCount: muscles.length,
+                  itemBuilder: (context, index) {
+                    final (group, minutes) = muscles[index];
+                    return _MusclePlanCard(
+                      group: group,
+                      minutes: minutes,
+                      onTap: () => onOpenMuscle(group),
+                    );
+                  },
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: _bottomFade + safe.bottom),
+              ),
+            ],
+          ),
+          PositionedDirectional(
+            start: 0,
+            end: 0,
+            bottom: 0,
+            height: _bottomFade + safe.bottom,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [p.background.withValues(alpha: 0), p.background],
+                    stops: [0, _bottomFade / (_bottomFade + safe.bottom)],
+                  ),
+                ),
+              ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 28)),
+          if (onBack != null)
+            PositionedDirectional(
+              top: 0,
+              start: 0,
+              end: 0,
+              child: FlareNavBar(
+                onBack: onBack,
+                topInset: safe.top,
+                fade: 0,
+                glass: true,
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-class _PresetCard extends StatelessWidget {
-  const _PresetCard({
-    required this.preset,
-    required this.drills,
-    required this.onTap,
-  });
-  final PresetPlan preset;
-  final List<Drill> drills;
+class _LastPlanCard extends StatelessWidget {
+  const _LastPlanCard({required this.resume, required this.onContinue});
+
+  final FlarePlanResume resume;
+  final VoidCallback onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    final s = context.strings;
+    final progress = resume.total == 0
+        ? 0.0
+        : (resume.completed / resume.total).clamp(0.0, 1.0);
+    final tier = switch (resume.tier) {
+      1 => s.planTierBeginner,
+      2 => s.planTierIntermediate,
+      3 => s.planTierAdvanced,
+      _ => null,
+    };
+    final date = resume.endedAt.toLocal();
+    final now = DateTime.now();
+    final dateLabel = DateUtils.isSameDay(date, now)
+        ? s.plansToday
+        : DateUtils.isSameDay(date, DateTime(now.year, now.month, now.day - 1))
+        ? s.plansYesterday
+        : MaterialLocalizations.of(context).formatShortDate(date);
+    final art = switch ((resume.phaseSource, resume.groupId)) {
+      (final int source, _) => 'assets/angles/phase-$source.png',
+      (_, final String id) => 'assets/muscles/$id.webp',
+      _ => null,
+    };
+    final gradient = _planAccentGradient(p);
+
+    return Container(
+      key: const ValueKey('plan-last-session'),
+      height: 148,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: p.hairline),
+        gradient: RadialGradient(
+          center: const Alignment(.7, -.2),
+          radius: .83,
+          colors: [
+            p.isDark
+                ? const Color(0xff2a1a14)
+                : Color.alphaBlend(p.accent.withValues(alpha: .12), p.surface),
+            p.surface,
+          ],
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (art != null) ...[
+            const PositionedDirectional(
+              end: -3,
+              top: -1,
+              child: FlarePlanGlow(diameter: 150),
+            ),
+            PositionedDirectional(
+              end: -18,
+              top: -8,
+              width: 176,
+              height: 170,
+              child: Image.asset(
+                art,
+                alignment: AlignmentDirectional.centerEnd,
+                fit: BoxFit.contain,
+                excludeFromSemantics: true,
+              ),
+            ),
+          ],
+          PositionedDirectional(
+            start: 16,
+            end: art == null ? 16 : 102,
+            top: 17,
+            bottom: 55,
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.topStart,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.plansLastSession,
+                      style: TextStyle(
+                        color: p.accentInk,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      resume.title,
+                      style: TextStyle(
+                        color: p.text,
+                        fontSize: 21,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      [
+                        ?tier,
+                        s.plansFinishedCount(resume.completed, resume.total),
+                        dateLabel,
+                      ].join(' · '),
+                      style: TextStyle(color: p.dim, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          PositionedDirectional(
+            start: 16,
+            bottom: 22,
+            width: 110,
+            height: 4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: ColoredBox(
+                color: p.isDark ? const Color(0x1affffff) : p.track,
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: FractionallySizedBox(
+                    widthFactor: progress,
+                    heightFactor: 1,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(gradient: gradient),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (resume.canContinue)
+            PositionedDirectional(
+              end: 16,
+              bottom: 12,
+              child: FlarePressable(
+                key: const ValueKey('plan-continue'),
+                onTap: onContinue,
+                child: Container(
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    gradient: gradient,
+                    boxShadow: [
+                      BoxShadow(
+                        color: p.accent.withValues(alpha: .36),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MediaQuery.withClampedTextScaling(
+                        maxScaleFactor: 1.35,
+                        child: Text(
+                          s.plansContinue,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_back_rounded
+                            : Icons.arrow_forward_rounded,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+LinearGradient _planAccentGradient(FlarePalette p) => LinearGradient(
+  colors: [p.accent, Color.alphaBlend(const Color(0x22000000), p.accent)],
+);
+
+class _NewPlanRow extends StatelessWidget {
+  const _NewPlanRow({required this.withHistory, required this.onTap});
+
+  final bool withHistory;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final p = FlareColors.palette;
     final s = context.strings;
-    return Material(
-      color: FlareColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: FlareColors.hairline, width: .5),
+    final hint = withHistory ? s.plansNewCompactHint : s.plansNewEmptyHint;
+    return FlarePressable(
+      key: const ValueKey('plan-new'),
+      onTap: onTap,
+      child: CustomPaint(
+        painter: _PlansDashedOutline(
+          p.isDark ? const Color(0x24ffffff) : const Color(0x24000000),
+        ),
+        child: SizedBox(
+          height: withHistory ? 52 : 72,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: p.accent.withValues(alpha: .14),
+                    shape: BoxShape.circle,
+                  ),
+                  child: SizedBox.square(
+                    dimension: 26,
+                    child: Icon(
+                      Icons.add_rounded,
+                      size: 19,
+                      color: p.accentInk,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: FittedBox(
+                    alignment: AlignmentDirectional.centerStart,
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      s.planNew,
+                      style: TextStyle(
+                        color: p.text,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FittedBox(
+                    alignment: AlignmentDirectional.centerEnd,
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      hint,
+                      style: TextStyle(color: p.dim, fontSize: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        key: ValueKey('preset-${preset.id}'),
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
+    );
+  }
+}
+
+class _PlansDashedOutline extends CustomPainter {
+  const _PlansDashedOutline(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outline = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          (Offset.zero & size).deflate(.5),
+          const Radius.circular(16),
+        ),
+      );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (final metric in outline.computeMetrics()) {
+      for (var start = 0.0; start < metric.length; start += 8) {
+        canvas.drawPath(
+          metric.extractPath(start, math.min(start + 4, metric.length)),
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _PlansDashedOutline oldDelegate) =>
+      oldDelegate.color != color;
+}
+
+class _PlansSection extends StatelessWidget {
+  const _PlansSection({
+    required this.title,
+    required this.description,
+    required this.count,
+    required this.actionKey,
+    required this.onAll,
+  });
+
+  final String title;
+  final String description;
+  final int count;
+  final Key actionKey;
+  final VoidCallback onAll;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.zero,
-              child: AspectRatio(
-                aspectRatio: 4 / 3,
-                child: RepaintBoundary(
-                  child: drills.isEmpty
-                      ? ColoredBox(
-                          color: FlareColors.raised,
-                          child: Icon(preset.icon, color: FlareColors.dim),
-                        )
-                      : DrillPoster(drills.first),
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: p.text,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 13, 14, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    preset.title(context),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.3,
-                      fontWeight: FontWeight.w600,
+            const SizedBox(width: 8),
+            FlarePressable(
+              key: actionKey,
+              onTap: onAll,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 32),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MediaQuery.withClampedTextScaling(
+                      maxScaleFactor: 1.35,
+                      child: Text(
+                        context.strings.plansSeeAll(count),
+                        style: TextStyle(color: p.dim, fontSize: 12),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    preset.line(context),
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.45,
-                      color: FlareColors.secondary,
+                    const SizedBox(width: 2),
+                    Icon(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.chevron_left_rounded
+                          : Icons.chevron_right_rounded,
+                      size: 16,
+                      color: p.dim,
                     ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Text(description, style: TextStyle(color: p.dim, fontSize: 12)),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+}
+
+class _AnglePlanCard extends StatelessWidget {
+  const _AnglePlanCard({
+    required this.phase,
+    required this.beginner,
+    required this.usesBothHands,
+    required this.onTap,
+  });
+
+  final Phase phase;
+  final FlarePlan beginner;
+  final bool usesBothHands;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    final s = context.strings;
+    return FlarePressable(
+      key: ValueKey('plan-angle-${phase.source}'),
+      onTap: onTap,
+      child: Container(
+        width: 168,
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: p.hairline),
+        ),
+        child: Stack(
+          children: [
+            PositionedDirectional(
+              top: 4,
+              start: 0,
+              end: 0,
+              height: 132,
+              child: Image.asset(
+                'assets/angles/phase-${phase.source}.webp',
+                fit: BoxFit.contain,
+                excludeFromSemantics: true,
+              ),
+            ),
+            PositionedDirectional(
+              top: 76,
+              start: 0,
+              end: 0,
+              height: 60,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [p.surface.withValues(alpha: 0), p.surface],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '${s.planDrillCount(drills.length)} · ≈ ${s.minutesShort(estimateMinutes(drills))}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      height: 1.4,
-                      color: FlareColors.secondary,
-                    ),
+                ),
+              ),
+            ),
+            PositionedDirectional(
+              start: 14,
+              end: 14,
+              top: 130,
+              bottom: 12,
+              child: Align(
+                alignment: AlignmentDirectional.bottomStart,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.bottomStart,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        usesBothHands
+                            ? s.plansTwoHandSupport
+                            : s.plansOneHandSupport,
+                        style: TextStyle(
+                          color: p.accentInk,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        phase.name,
+                        style: TextStyle(
+                          color: p.text,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        [
+                          s.planTierBeginner,
+                          s.minutesShort(flarePlanMinutes(beginner)),
+                          s.planDrillCount(beginner.items.length),
+                        ].join(' · '),
+                        style: TextStyle(color: p.dim, fontSize: 11),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ],
@@ -465,8 +855,79 @@ class _PresetCard extends StatelessWidget {
   }
 }
 
-/// One set, ready to run: what it is for, the scene, and its drills in order.
-/// Presets follow the shared scene switch; the user's own sets are fixed.
+class _MusclePlanCard extends StatelessWidget {
+  const _MusclePlanCard({
+    required this.group,
+    required this.minutes,
+    required this.onTap,
+  });
+
+  final MuscleGroup group;
+  final int minutes;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    final s = context.strings;
+    return FlarePressable(
+      key: ValueKey('plan-muscle-${group.id}'),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: p.hairline),
+        ),
+        child: Row(
+          children: [
+            SizedBox.square(
+              dimension: 42,
+              child: ClipOval(
+                child: ColoredBox(
+                  color: p.raised,
+                  child: Image.asset(
+                    'assets/muscles/${group.id}.webp',
+                    fit: BoxFit.cover,
+                    excludeFromSemantics: true,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      group.shortLabel,
+                      style: TextStyle(
+                        color: p.text,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${s.plansThreeLevels} · ${s.hubMinutesFrom(minutes)}',
+                      style: TextStyle(color: p.dim, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A saved personal plan, with its actions in training order.
 class PlanDetailPage extends StatelessWidget {
   const PlanDetailPage({
     super.key,
@@ -475,16 +936,12 @@ class PlanDetailPage extends StatelessWidget {
     required this.onBack,
     required this.onStart,
     required this.onDrill,
-    this.line,
-    this.store,
-    this.onSaveAsMine,
     this.onCopy,
     this.onEdit,
     this.sdkPlan,
     this.catalog,
   });
   final String title;
-  final String? line;
   final List<Drill> drills;
   final VoidCallback onBack;
   final VoidCallback onStart;
@@ -492,9 +949,6 @@ class PlanDetailPage extends StatelessWidget {
   final uc.TrainingPlan? sdkPlan;
   final Catalog? catalog;
 
-  /// Given for presets: shows the scene switch.
-  final LearningStore? store;
-  final VoidCallback? onSaveAsMine;
   final VoidCallback? onCopy;
   final VoidCallback? onEdit;
 
@@ -552,22 +1006,6 @@ class PlanDetailPage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                 children: [
-                  if (line != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
-                      child: Text(
-                        line!,
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.45,
-                          color: FlareColors.secondary,
-                        ),
-                      ),
-                    ),
-                  if (store case final store?) ...[
-                    const SizedBox(height: 16),
-                    _SceneSwitch(store: store),
-                  ],
                   if (!available)
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
@@ -627,15 +1065,6 @@ class PlanDetailPage extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 12),
-                  if (onSaveAsMine != null)
-                    Center(
-                      child: TextButton.icon(
-                        key: const ValueKey('plan-save-as-mine'),
-                        onPressed: onSaveAsMine,
-                        icon: const Icon(Icons.bookmark_add_outlined, size: 18),
-                        label: Text(s.planSaveAsMine),
-                      ),
-                    ),
                   if (onCopy != null)
                     Center(
                       child: TextButton.icon(

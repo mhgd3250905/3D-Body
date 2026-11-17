@@ -705,7 +705,8 @@ class AppLocalizationsId extends AppLocalizations {
       'Lakukan pemanasan pergelangan tangan terlebih dahulu';
 
   @override
-  String get safetyRule1Note => 'Rencana Pemanasan memandu Anda';
+  String get safetyRule1Note =>
+      'Gerakkan pergelangan tangan dan tulang belikat sebelum berlatih.';
 
   @override
   String get safetyRule2 =>
@@ -1104,7 +1105,68 @@ class AppLocalizationsId extends AppLocalizations {
   String get plans => 'Rencana';
 
   @override
-  String get plansHint => 'Set siap pakai dan milikmu';
+  String get plansHint => 'Latihan terarah dan rencana sendiri';
+
+  @override
+  String get plansLastSession => 'Sesi terakhir';
+
+  @override
+  String get plansContinue => 'Lanjutkan';
+
+  @override
+  String get plansToday => 'Hari ini';
+
+  @override
+  String get plansYesterday => 'Kemarin';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total latihan';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Gabungkan latihan rutin';
+
+  @override
+  String get plansNewEmptyHint =>
+      'Kelompokkan latihan yang paling sering dilakukan';
+
+  @override
+  String get plansAnglesTitle => 'Sudut flare yang menantang';
+
+  @override
+  String get plansAnglesDescription =>
+      'Latih kestabilan pada fase tersulit dalam satu putaran.';
+
+  @override
+  String get plansMusclesTitle => 'Kelompok otot yang perlu diperkuat';
+
+  @override
+  String get plansMusclesDescription =>
+      'Bagian tubuh dengan beban terbesar saat flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Semua $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Tumpuan satu tangan';
+
+  @override
+  String get plansTwoHandSupport => 'Tumpuan dua tangan';
+
+  @override
+  String get plansThreeLevels => '3 tingkat';
+
+  @override
+  String get plansAiTitle => 'Rencana AI';
+
+  @override
+  String get plansAiHint => 'Pilih tempat, durasi, dan kelompok otot.';
+
+  @override
+  String get plansAiUnavailable => 'AI tidak tersedia';
 
   @override
   String get plansReady => 'Set siap pakai';

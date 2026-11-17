@@ -698,7 +698,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get safetyRule1 => 'أحمِ معصميك أولًا';
 
   @override
-  String get safetyRule1Note => 'خطة الإحماء ترشدك خطوة بخطوة';
+  String get safetyRule1Note => 'حرّك معصميك ولوحي كتفيك قبل أن تبدأ التدريب.';
 
   @override
   String get safetyRule2 => 'توقف عند الألم الحاد أو الخدر أو الدوار';
@@ -1091,7 +1091,67 @@ class AppLocalizationsAr extends AppLocalizations {
   String get plans => 'الخطط';
 
   @override
-  String get plansHint => 'مجموعات جاهزة وخططك';
+  String get plansHint => 'تمارين موجهة وخططك الخاصة';
+
+  @override
+  String get plansLastSession => 'آخر جلسة';
+
+  @override
+  String get plansContinue => 'متابعة';
+
+  @override
+  String get plansToday => 'اليوم';
+
+  @override
+  String get plansYesterday => 'أمس';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total تمارين';
+  }
+
+  @override
+  String get plansNewCompactHint => 'اجمع تمارينك المعتادة';
+
+  @override
+  String get plansNewEmptyHint => 'اجمع التمارين التي تؤديها كثيرًا';
+
+  @override
+  String get plansAnglesTitle => 'زوايا الفلير الصعبة';
+
+  @override
+  String get plansAnglesDescription =>
+      'حسّن ثباتك في أصعب لحظات الدورة الكاملة.';
+
+  @override
+  String get plansMusclesTitle => 'مجموعات العضلات التي تحتاج إلى تقوية';
+
+  @override
+  String get plansMusclesDescription =>
+      'المناطق الأكثر تحمّلًا للضغط أثناء الفلير.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'الكل ($count)';
+  }
+
+  @override
+  String get plansOneHandSupport => 'ارتكاز على يد واحدة';
+
+  @override
+  String get plansTwoHandSupport => 'ارتكاز على اليدين';
+
+  @override
+  String get plansThreeLevels => '3 مستويات';
+
+  @override
+  String get plansAiTitle => 'خطة بالذكاء الاصطناعي';
+
+  @override
+  String get plansAiHint => 'اختر المكان والمدة ومجموعة العضلات.';
+
+  @override
+  String get plansAiUnavailable => 'الذكاء الاصطناعي غير متاح';
 
   @override
   String get plansReady => 'مجموعات جاهزة';

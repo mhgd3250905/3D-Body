@@ -900,7 +900,7 @@ class _PlanExercise extends StatelessWidget {
         : '';
     final title = Text(
       name,
-      maxLines: 2,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontSize: 16,
@@ -947,29 +947,49 @@ class _PlanExercise extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 3),
-                      if (id != item.drill)
-                        Wrap(
-                          spacing: 6,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            title,
-                            DotTag(label: s.planBodyweightSubstitution),
-                          ],
-                        )
-                      else
-                        title,
+                      title,
                       const SizedBox(height: 4),
-                      Text.rich(
-                        TextSpan(
-                          style: TextStyle(fontSize: 12, color: p.dim),
-                          children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text.rich(
                             TextSpan(
-                              text: dose,
-                              style: TextStyle(color: p.secondary),
+                              style: TextStyle(fontSize: 12, color: p.dim),
+                              children: [
+                                TextSpan(
+                                  text: dose,
+                                  style: TextStyle(color: p.secondary),
+                                ),
+                                TextSpan(text: '$side$rest'),
+                              ],
                             ),
-                            TextSpan(text: '$side$rest'),
-                          ],
-                        ),
+                          ),
+                          if (id != item.drill)
+                            Container(
+                              constraints: const BoxConstraints(minHeight: 18),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: p.accent.withValues(alpha: .14),
+                                borderRadius: BorderRadius.circular(9),
+                              ),
+                              child: Center(
+                                widthFactor: 1,
+                                heightFactor: 1,
+                                child: Text(
+                                  s.planBodyweightSubstitution,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: p.accentInk,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),

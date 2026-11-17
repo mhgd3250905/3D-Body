@@ -706,7 +706,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get safetyRule1 => 'Сначала разогрейте запястья';
 
   @override
-  String get safetyRule1Note => 'План «Разминка» проведёт вас по шагам';
+  String get safetyRule1Note =>
+      'Разомните запястья и лопатки перед тренировкой.';
 
   @override
   String get safetyRule2 =>
@@ -1103,7 +1104,68 @@ class AppLocalizationsRu extends AppLocalizations {
   String get plans => 'Планы';
 
   @override
-  String get plansHint => 'Готовые комплексы и ваши';
+  String get plansHint => 'Целевые тренировки и ваши планы';
+
+  @override
+  String get plansLastSession => 'Последняя тренировка';
+
+  @override
+  String get plansContinue => 'Продолжить';
+
+  @override
+  String get plansToday => 'Сегодня';
+
+  @override
+  String get plansYesterday => 'Вчера';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total упражнений';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Объединяйте привычные упражнения';
+
+  @override
+  String get plansNewEmptyHint =>
+      'Соберите упражнения, которые делаете чаще всего';
+
+  @override
+  String get plansAnglesTitle => 'Сложные положения во флэре';
+
+  @override
+  String get plansAnglesDescription =>
+      'Укрепляйте опору в самых трудных фазах оборота.';
+
+  @override
+  String get plansMusclesTitle => 'Группы мышц для укрепления';
+
+  @override
+  String get plansMusclesDescription =>
+      'Участки с наибольшей нагрузкой при флэре.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Все $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Опора на одну руку';
+
+  @override
+  String get plansTwoHandSupport => 'Опора на две руки';
+
+  @override
+  String get plansThreeLevels => '3 уровня';
+
+  @override
+  String get plansAiTitle => 'План с ИИ';
+
+  @override
+  String get plansAiHint => 'Выберите место, длительность и группу мышц.';
+
+  @override
+  String get plansAiUnavailable => 'ИИ недоступен';
 
   @override
   String get plansReady => 'Готовые комплексы';

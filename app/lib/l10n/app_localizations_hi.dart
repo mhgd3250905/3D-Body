@@ -703,7 +703,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get safetyRule1 => 'पहले कलाई को गर्म करें';
 
   @override
-  String get safetyRule1Note => 'वार्म-अप योजना आपको पूरा करवाती है';
+  String get safetyRule1Note =>
+      'अभ्यास शुरू करने से पहले कलाइयों और कंधे की हड्डियों को हिलाएँ।';
 
   @override
   String get safetyRule2 => 'तेज़ दर्द, सुन्नपन या चक्कर आने पर रुकें';
@@ -1096,7 +1097,67 @@ class AppLocalizationsHi extends AppLocalizations {
   String get plans => 'प्लान';
 
   @override
-  String get plansHint => 'तैयार सेट और आपके अपने';
+  String get plansHint => 'लक्षित अभ्यास और आपकी योजनाएँ';
+
+  @override
+  String get plansLastSession => 'पिछला सत्र';
+
+  @override
+  String get plansContinue => 'जारी रखें';
+
+  @override
+  String get plansToday => 'आज';
+
+  @override
+  String get plansYesterday => 'कल';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total अभ्यास';
+  }
+
+  @override
+  String get plansNewCompactHint => 'नियमित अभ्यास जोड़ें';
+
+  @override
+  String get plansNewEmptyHint => 'अपने सबसे आम अभ्यासों को साथ रखें';
+
+  @override
+  String get plansAnglesTitle => 'फ़्लेयर के कठिन कोण';
+
+  @override
+  String get plansAnglesDescription =>
+      'एक पूरे चक्कर के सबसे कठिन हिस्सों में स्थिरता बनाएँ।';
+
+  @override
+  String get plansMusclesTitle => 'मज़बूत करने वाले मांसपेशी समूह';
+
+  @override
+  String get plansMusclesDescription =>
+      'फ़्लेयर के दौरान सबसे अधिक भार वाले हिस्से।';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'सभी $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'एक हाथ का सहारा';
+
+  @override
+  String get plansTwoHandSupport => 'दो हाथों का सहारा';
+
+  @override
+  String get plansThreeLevels => '3 स्तर';
+
+  @override
+  String get plansAiTitle => 'AI योजना';
+
+  @override
+  String get plansAiHint => 'जगह, समय और मांसपेशी समूह चुनें।';
+
+  @override
+  String get plansAiUnavailable => 'AI उपलब्ध नहीं है';
 
   @override
   String get plansReady => 'तैयार सेट';

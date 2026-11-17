@@ -706,7 +706,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get safetyRule1 => 'Riscalda prima i polsi';
 
   @override
-  String get safetyRule1Note => 'Il piano Riscaldamento ti guida';
+  String get safetyRule1Note =>
+      'Mobilizza i polsi e le scapole prima di iniziare.';
 
   @override
   String get safetyRule2 =>
@@ -1106,7 +1107,67 @@ class AppLocalizationsIt extends AppLocalizations {
   String get plans => 'Piani';
 
   @override
-  String get plansHint => 'Serie pronte e le tue';
+  String get plansHint => 'Allenamenti mirati e i tuoi programmi';
+
+  @override
+  String get plansLastSession => 'Ultima sessione';
+
+  @override
+  String get plansContinue => 'Continua';
+
+  @override
+  String get plansToday => 'Oggi';
+
+  @override
+  String get plansYesterday => 'Ieri';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total esercizi';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Combina gli esercizi abituali';
+
+  @override
+  String get plansNewEmptyHint => 'Raggruppa gli esercizi che fai più spesso';
+
+  @override
+  String get plansAnglesTitle => 'Angoli difficili del flare';
+
+  @override
+  String get plansAnglesDescription =>
+      'Migliora la stabilità nelle fasi più impegnative.';
+
+  @override
+  String get plansMusclesTitle => 'Gruppi muscolari da rinforzare';
+
+  @override
+  String get plansMusclesDescription =>
+      'Zone sottoposte al carico maggiore nel flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Tutti e $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Appoggio su una mano';
+
+  @override
+  String get plansTwoHandSupport => 'Appoggio su due mani';
+
+  @override
+  String get plansThreeLevels => '3 livelli';
+
+  @override
+  String get plansAiTitle => 'Programma con IA';
+
+  @override
+  String get plansAiHint => 'Scegli luogo, durata e gruppo muscolare.';
+
+  @override
+  String get plansAiUnavailable => 'IA non disponibile';
 
   @override
   String get plansReady => 'Serie pronte';

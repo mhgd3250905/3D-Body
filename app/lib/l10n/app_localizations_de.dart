@@ -709,7 +709,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get safetyRule1 => 'Wärme zuerst deine Handgelenke auf';
 
   @override
-  String get safetyRule1Note => 'Der Plan „Aufwärmen“ führt dich durch';
+  String get safetyRule1Note =>
+      'Bewege vor dem Training deine Handgelenke und Schulterblätter.';
 
   @override
   String get safetyRule2 =>
@@ -1109,7 +1110,68 @@ class AppLocalizationsDe extends AppLocalizations {
   String get plans => 'Pläne';
 
   @override
-  String get plansHint => 'Fertige Einheiten und deine eigenen';
+  String get plansHint => 'Gezieltes Training und eigene Pläne';
+
+  @override
+  String get plansLastSession => 'Letztes Training';
+
+  @override
+  String get plansContinue => 'Weiter';
+
+  @override
+  String get plansToday => 'Heute';
+
+  @override
+  String get plansYesterday => 'Gestern';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total Übungen';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Häufige Übungen kombinieren';
+
+  @override
+  String get plansNewEmptyHint => 'Kombiniere deine häufigsten Übungen';
+
+  @override
+  String get plansAnglesTitle => 'Anspruchsvolle Flare-Positionen';
+
+  @override
+  String get plansAnglesDescription =>
+      'Trainiere Stabilität in den schwierigsten Phasen.';
+
+  @override
+  String get plansMusclesTitle => 'Zu stärkende Muskelgruppen';
+
+  @override
+  String get plansMusclesDescription =>
+      'Beim Flare besonders belastete Bereiche.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Alle $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Einarmstütz';
+
+  @override
+  String get plansTwoHandSupport => 'Zweiarmstütz';
+
+  @override
+  String get plansThreeLevels => '3 Stufen';
+
+  @override
+  String get plansAiTitle => 'KI-Trainingsplan';
+
+  @override
+  String get plansAiHint =>
+      'Wähle Umgebung, Dauer und Muskelgruppe für einen gezielten Plan.';
+
+  @override
+  String get plansAiUnavailable => 'KI ist nicht verfügbar';
 
   @override
   String get plansReady => 'Fertige Einheiten';

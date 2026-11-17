@@ -687,7 +687,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get safetyRule1 => 'まず手首を温める';
 
   @override
-  String get safetyRule1Note => 'プランの「ウォームアップ」で一通りできます';
+  String get safetyRule1Note => '練習を始める前に手首と肩甲骨を動かしましょう。';
 
   @override
   String get safetyRule2 => '鋭い痛み、しびれ、めまいがあれば中止する';
@@ -1070,7 +1070,65 @@ class AppLocalizationsJa extends AppLocalizations {
   String get plans => 'プラン';
 
   @override
-  String get plansHint => 'セットとマイプラン';
+  String get plansHint => '部位別の練習とマイプラン';
+
+  @override
+  String get plansLastSession => '前回の練習';
+
+  @override
+  String get plansContinue => '続ける';
+
+  @override
+  String get plansToday => '今日';
+
+  @override
+  String get plansYesterday => '昨日';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total 種目';
+  }
+
+  @override
+  String get plansNewCompactHint => 'よく行う種目を組み合わせる';
+
+  @override
+  String get plansNewEmptyHint => 'よく行う種目をまとめる';
+
+  @override
+  String get plansAnglesTitle => 'フレアの難しい角度';
+
+  @override
+  String get plansAnglesDescription => '一周で最も負荷のかかる局面から安定させましょう。';
+
+  @override
+  String get plansMusclesTitle => '鍛えたい筋肉';
+
+  @override
+  String get plansMusclesDescription => 'フレアで負荷が集中する部位。';
+
+  @override
+  String plansSeeAll(int count) {
+    return '全 $count 件';
+  }
+
+  @override
+  String get plansOneHandSupport => '片手支持';
+
+  @override
+  String get plansTwoHandSupport => '両手支持';
+
+  @override
+  String get plansThreeLevels => '3 段階';
+
+  @override
+  String get plansAiTitle => 'AI プラン';
+
+  @override
+  String get plansAiHint => '場所、時間、鍛えたい筋肉を選んでください。';
+
+  @override
+  String get plansAiUnavailable => 'AI は利用できません';
 
   @override
   String get plansReady => 'おすすめセット';

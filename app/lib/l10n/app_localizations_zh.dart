@@ -681,7 +681,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get safetyRule1 => '每次先热身手腕';
 
   @override
-  String get safetyRule1Note => '计划里的「热身激活」会带你做一遍';
+  String get safetyRule1Note => '先把手腕和肩胛活动开，再开始训练';
 
   @override
   String get safetyRule2 => '刺痛、麻木、头晕就停';
@@ -1062,7 +1062,65 @@ class AppLocalizationsZh extends AppLocalizations {
   String get plans => '计划';
 
   @override
-  String get plansHint => '成套训练与我的计划';
+  String get plansHint => '专项练习与我的计划';
+
+  @override
+  String get plansLastSession => '上次练到';
+
+  @override
+  String get plansContinue => '继续';
+
+  @override
+  String get plansToday => '今天';
+
+  @override
+  String get plansYesterday => '昨天';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total 个动作';
+  }
+
+  @override
+  String get plansNewCompactHint => '组合常练动作';
+
+  @override
+  String get plansNewEmptyHint => '把常练的动作组合起来';
+
+  @override
+  String get plansAnglesTitle => '托马斯难点角度';
+
+  @override
+  String get plansAnglesDescription => '一圈里最吃力的几下，先把它们练稳';
+
+  @override
+  String get plansMusclesTitle => '补短板肌群';
+
+  @override
+  String get plansMusclesDescription => '托马斯里负荷最大、最容易受伤的部位';
+
+  @override
+  String plansSeeAll(int count) {
+    return '全部 $count 个';
+  }
+
+  @override
+  String get plansOneHandSupport => '单手支撑';
+
+  @override
+  String get plansTwoHandSupport => '双手支撑';
+
+  @override
+  String get plansThreeLevels => '3 档';
+
+  @override
+  String get plansAiTitle => 'AI 定制';
+
+  @override
+  String get plansAiHint => '说出场地、时长和想练的部位，排一份专项计划';
+
+  @override
+  String get plansAiUnavailable => '暂未接入 AI';
 
   @override
   String get plansReady => '成套训练';
@@ -1972,7 +2030,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get safetyRule1 => '每次先熱身手腕';
 
   @override
-  String get safetyRule1Note => '計劃裡的「熱身啟動」會帶你做一遍';
+  String get safetyRule1Note => '先活動手腕和肩胛，再開始訓練';
 
   @override
   String get safetyRule2 => '刺痛、麻木、頭暈就停';
@@ -2353,7 +2411,65 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get plans => '計畫';
 
   @override
-  String get plansHint => '成套訓練與我的計畫';
+  String get plansHint => '專項練習與我的計畫';
+
+  @override
+  String get plansLastSession => '上次練到';
+
+  @override
+  String get plansContinue => '繼續';
+
+  @override
+  String get plansToday => '今天';
+
+  @override
+  String get plansYesterday => '昨天';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total 個動作';
+  }
+
+  @override
+  String get plansNewCompactHint => '組合常練動作';
+
+  @override
+  String get plansNewEmptyHint => '把常練的動作組合起來';
+
+  @override
+  String get plansAnglesTitle => '托馬斯難點角度';
+
+  @override
+  String get plansAnglesDescription => '一圈裡最吃力的幾下，先把它們練穩';
+
+  @override
+  String get plansMusclesTitle => '補短板肌群';
+
+  @override
+  String get plansMusclesDescription => '托馬斯裡負荷最大、最容易受傷的部位';
+
+  @override
+  String plansSeeAll(int count) {
+    return '全部 $count 個';
+  }
+
+  @override
+  String get plansOneHandSupport => '單手支撐';
+
+  @override
+  String get plansTwoHandSupport => '雙手支撐';
+
+  @override
+  String get plansThreeLevels => '3 檔';
+
+  @override
+  String get plansAiTitle => 'AI 自訂';
+
+  @override
+  String get plansAiHint => '說出場地、時長和想練的部位，安排一份專項計畫';
+
+  @override
+  String get plansAiUnavailable => '尚未接入 AI';
 
   @override
   String get plansReady => '成套訓練';

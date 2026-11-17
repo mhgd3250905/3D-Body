@@ -711,7 +711,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get safetyRule1 => 'Échauffez d’abord vos poignets';
 
   @override
-  String get safetyRule1Note => 'Le plan Échauffement vous guide';
+  String get safetyRule1Note =>
+      'Mobilisez vos poignets et vos omoplates avant de vous entraîner.';
 
   @override
   String get safetyRule2 =>
@@ -1112,7 +1113,69 @@ class AppLocalizationsFr extends AppLocalizations {
   String get plans => 'Plans';
 
   @override
-  String get plansHint => 'Séances prêtes et les vôtres';
+  String get plansHint => 'Entraînements ciblés et vos programmes';
+
+  @override
+  String get plansLastSession => 'Dernière séance';
+
+  @override
+  String get plansContinue => 'Continuer';
+
+  @override
+  String get plansToday => 'Aujourd’hui';
+
+  @override
+  String get plansYesterday => 'Hier';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total exercices';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Combinez vos exercices réguliers';
+
+  @override
+  String get plansNewEmptyHint =>
+      'Regroupez les exercices que vous pratiquez le plus';
+
+  @override
+  String get plansAnglesTitle => 'Angles difficiles du flare';
+
+  @override
+  String get plansAnglesDescription =>
+      'Gagnez en stabilité dans les phases les plus exigeantes.';
+
+  @override
+  String get plansMusclesTitle => 'Groupes musculaires à renforcer';
+
+  @override
+  String get plansMusclesDescription =>
+      'Zones les plus sollicitées pendant un flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Voir les $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Appui sur une main';
+
+  @override
+  String get plansTwoHandSupport => 'Appui sur deux mains';
+
+  @override
+  String get plansThreeLevels => '3 niveaux';
+
+  @override
+  String get plansAiTitle => 'Programme IA';
+
+  @override
+  String get plansAiHint =>
+      'Choisissez le lieu, la durée et le groupe musculaire.';
+
+  @override
+  String get plansAiUnavailable => 'IA indisponible';
 
   @override
   String get plansReady => 'Séances prêtes';

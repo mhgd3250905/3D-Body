@@ -1414,7 +1414,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyRule1Note.
   ///
   /// In zh, this message translates to:
-  /// **'计划里的「热身激活」会带你做一遍'**
+  /// **'先把手腕和肩胛活动开，再开始训练'**
   String get safetyRule1Note;
 
   /// No description provided for @safetyRule2.
@@ -2116,8 +2116,116 @@ abstract class AppLocalizations {
   /// No description provided for @plansHint.
   ///
   /// In zh, this message translates to:
-  /// **'成套训练与我的计划'**
+  /// **'专项练习与我的计划'**
   String get plansHint;
+
+  /// No description provided for @plansLastSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次练到'**
+  String get plansLastSession;
+
+  /// No description provided for @plansContinue.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续'**
+  String get plansContinue;
+
+  /// No description provided for @plansToday.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天'**
+  String get plansToday;
+
+  /// No description provided for @plansYesterday.
+  ///
+  /// In zh, this message translates to:
+  /// **'昨天'**
+  String get plansYesterday;
+
+  /// No description provided for @plansFinishedCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{completed}/{total} 个动作'**
+  String plansFinishedCount(int completed, int total);
+
+  /// No description provided for @plansNewCompactHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'组合常练动作'**
+  String get plansNewCompactHint;
+
+  /// No description provided for @plansNewEmptyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'把常练的动作组合起来'**
+  String get plansNewEmptyHint;
+
+  /// No description provided for @plansAnglesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯难点角度'**
+  String get plansAnglesTitle;
+
+  /// No description provided for @plansAnglesDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'一圈里最吃力的几下，先把它们练稳'**
+  String get plansAnglesDescription;
+
+  /// No description provided for @plansMusclesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'补短板肌群'**
+  String get plansMusclesTitle;
+
+  /// No description provided for @plansMusclesDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯里负荷最大、最容易受伤的部位'**
+  String get plansMusclesDescription;
+
+  /// No description provided for @plansSeeAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部 {count} 个'**
+  String plansSeeAll(int count);
+
+  /// No description provided for @plansOneHandSupport.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手支撑'**
+  String get plansOneHandSupport;
+
+  /// No description provided for @plansTwoHandSupport.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手支撑'**
+  String get plansTwoHandSupport;
+
+  /// No description provided for @plansThreeLevels.
+  ///
+  /// In zh, this message translates to:
+  /// **'3 档'**
+  String get plansThreeLevels;
+
+  /// No description provided for @plansAiTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 定制'**
+  String get plansAiTitle;
+
+  /// No description provided for @plansAiHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'说出场地、时长和想练的部位，排一份专项计划'**
+  String get plansAiHint;
+
+  /// No description provided for @plansAiUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂未接入 AI'**
+  String get plansAiUnavailable;
 
   /// No description provided for @plansReady.
   ///

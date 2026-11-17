@@ -687,7 +687,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get safetyRule1 => '먼저 손목을 준비운동하세요';
 
   @override
-  String get safetyRule1Note => '플랜의 ‘워밍업’이 차례로 안내합니다';
+  String get safetyRule1Note => '훈련을 시작하기 전에 손목과 견갑골을 움직여 주세요.';
 
   @override
   String get safetyRule2 => '찌르는 통증, 저림, 어지럼증이 있으면 멈추세요';
@@ -1073,7 +1073,65 @@ class AppLocalizationsKo extends AppLocalizations {
   String get plans => '플랜';
 
   @override
-  String get plansHint => '추천 세트와 내 플랜';
+  String get plansHint => '집중 훈련과 내 계획';
+
+  @override
+  String get plansLastSession => '마지막 훈련';
+
+  @override
+  String get plansContinue => '계속하기';
+
+  @override
+  String get plansToday => '오늘';
+
+  @override
+  String get plansYesterday => '어제';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total개 동작';
+  }
+
+  @override
+  String get plansNewCompactHint => '자주 하는 동작 조합';
+
+  @override
+  String get plansNewEmptyHint => '자주 하는 동작을 묶어 보세요';
+
+  @override
+  String get plansAnglesTitle => '플레어의 어려운 각도';
+
+  @override
+  String get plansAnglesDescription => '한 바퀴에서 가장 힘든 구간을 안정적으로 연습하세요.';
+
+  @override
+  String get plansMusclesTitle => '강화할 근육';
+
+  @override
+  String get plansMusclesDescription => '플레어 중 가장 큰 부하를 받는 부위입니다.';
+
+  @override
+  String plansSeeAll(int count) {
+    return '전체 $count개';
+  }
+
+  @override
+  String get plansOneHandSupport => '한 손 지지';
+
+  @override
+  String get plansTwoHandSupport => '두 손 지지';
+
+  @override
+  String get plansThreeLevels => '3단계';
+
+  @override
+  String get plansAiTitle => 'AI 계획';
+
+  @override
+  String get plansAiHint => '장소, 시간, 강화할 근육을 선택하세요.';
+
+  @override
+  String get plansAiUnavailable => 'AI를 사용할 수 없습니다';
 
   @override
   String get plansReady => '추천 세트';

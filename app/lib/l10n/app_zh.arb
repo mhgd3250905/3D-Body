@@ -305,7 +305,7 @@
   "safetySheetEyebrow": "练之前",
   "safetySheetTitle": "三件事",
   "safetyRule1": "每次先热身手腕",
-  "safetyRule1Note": "计划里的「热身激活」会带你做一遍",
+  "safetyRule1Note": "先把手腕和肩胛活动开，再开始训练",
   "safetyRule2": "刺痛、麻木、头晕就停",
   "safetyRule2Note": "酸可以，痛不行",
   "safetyRule3": "这是动作教学",
@@ -510,7 +510,42 @@
   "planTierSummary": "初级 · 中级 · 高级",
   "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "计划",
-  "plansHint": "成套训练与我的计划",
+  "plansHint": "专项练习与我的计划",
+  "plansLastSession": "上次练到",
+  "plansContinue": "继续",
+  "plansToday": "今天",
+  "plansYesterday": "昨天",
+  "plansFinishedCount": "{completed}/{total} 个动作",
+  "@plansFinishedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "plansNewCompactHint": "组合常练动作",
+  "plansNewEmptyHint": "把常练的动作组合起来",
+  "plansAnglesTitle": "托马斯难点角度",
+  "plansAnglesDescription": "一圈里最吃力的几下，先把它们练稳",
+  "plansMusclesTitle": "补短板肌群",
+  "plansMusclesDescription": "托马斯里负荷最大、最容易受伤的部位",
+  "plansSeeAll": "全部 {count} 个",
+  "@plansSeeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plansOneHandSupport": "单手支撑",
+  "plansTwoHandSupport": "双手支撑",
+  "plansThreeLevels": "3 档",
+  "plansAiTitle": "AI 定制",
+  "plansAiHint": "说出场地、时长和想练的部位，排一份专项计划",
+  "plansAiUnavailable": "暂未接入 AI",
   "plansReady": "成套训练",
   "plansMine": "我的计划",
   "planNew": "新建计划",

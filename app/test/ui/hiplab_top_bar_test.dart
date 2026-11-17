@@ -150,7 +150,7 @@ void main() {
         'Plans top remains readable and usable $language/$brightness',
         (tester) async {
           await phoneSize(tester);
-          final catalog = loadCatalogFixture();
+          final catalog = loadCatalogFixture(includeFlarePlans: true);
           final store = LearningStore(
             catalog: catalog,
             storage: MemoryStateStorage(),
@@ -160,7 +160,7 @@ void main() {
           addTearDown(store.dispose);
           var created = 0;
           var backs = 0;
-          PresetPlan? opened;
+          int? openedAngle;
           await tester.pumpWidget(
             _app(
               AnimatedBuilder(
@@ -171,7 +171,11 @@ void main() {
                   onBack: () => backs++,
                   onNewRoutine: () => created++,
                   onRoutine: (_) {},
-                  onPreset: (preset) => opened = preset,
+                  onOpenAngle: (phase) => openedAngle = phase.source,
+                  onOpenMuscle: (_) {},
+                  onAllAngles: () {},
+                  onAllMuscles: () {},
+                  onContinue: () {},
                 ),
               ),
               language: language,
@@ -181,9 +185,7 @@ void main() {
           );
           await tester.pumpAndSettle();
           final s = AppLocalizations.of(tester.element(find.byType(PlansPage)));
-          final bar = tester.getRect(find.byType(FlareNavBar));
-          expect(bar.top, 0);
-          expect(tester.getTopLeft(find.byType(Viewport)).dy, 0);
+          final title = tester.getRect(find.text(s.plans));
           expect(find.text(s.plansMine).hitTestable(), findsOneWidget);
           expect(
             find.byKey(const ValueKey('plan-new')).hitTestable(),
@@ -191,29 +193,20 @@ void main() {
           );
           expect(
             tester.getTopLeft(find.text(s.plansMine)).dy,
-            greaterThanOrEqualTo(bar.bottom),
+            greaterThanOrEqualTo(title.bottom),
           );
           await tester.tap(find.byKey(const ValueKey('plan-new')));
           await tester.pumpAndSettle();
           expect(created, 1);
-          await tester.tap(find.text(s.sceneGym));
+          final angle = find.byKey(const ValueKey('plan-angle-11'));
+          await tester.ensureVisible(angle);
           await tester.pumpAndSettle();
-          expect(store.settings.tier, 'C');
-          final warmup = find.byKey(const ValueKey('preset-warmup'));
-          await tester.ensureVisible(warmup);
+          await tester.tap(angle);
           await tester.pumpAndSettle();
-          await tester.tap(warmup);
-          await tester.pumpAndSettle();
-          expect(opened?.id, 'warmup');
-          expect(
-            opened!
-                .drills(catalog, store.settings.tier)
-                .every((d) => d.tier == 'C'),
-            isTrue,
-          );
+          expect(openedAngle, 11);
           final rail = tester.getRect(find.byType(FlareBackChip));
           await tester.drag(
-            find.byType(CustomScrollView),
+            find.byKey(const PageStorageKey<String>('plans-scroll')),
             const Offset(0, -180),
           );
           await tester.pumpAndSettle();

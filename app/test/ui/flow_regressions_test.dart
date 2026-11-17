@@ -914,7 +914,7 @@ void main() {
   );
 
   testWidgets(
-    'plans: preset → complete SDK plan route → return, save as mine, edit and delete with undo',
+    'plans: create a custom set, train, return, edit and delete with undo',
     (tester) async {
       await phoneSize(tester);
       final semantics = tester.ensureSemantics();
@@ -950,15 +950,33 @@ void main() {
         await tester.pumpAndSettle();
         await openPlansFromHome(tester);
         expect(find.byType(PlansPage), findsOneWidget);
-        await tester.tap(find.text('居家'));
+        await tester.tap(find.byKey(const ValueKey('plan-new')));
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('preset-core')));
+        expect(find.byType(RoutineEditorPage), findsOneWidget);
+        await tester.enterText(
+          find.byKey(const ValueKey('routine-name')),
+          '我的核心',
+        );
+        await tester.tap(find.byKey(const ValueKey('routine-add')));
         await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const ValueKey('picker-search')),
+          catalog.drillById('abs-A')!.name,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('pick-abs-A')));
+        await tester.pump();
+        await tester.tap(find.byKey(const ValueKey('picker-done')));
+        await tester.pumpAndSettle();
+        await tapVisible(tester, find.byKey(const ValueKey('routine-save')));
+        await tester.pumpAndSettle();
+        expect(store.routines.single.name, '我的核心');
+        expect(store.routines.single.drillIds, ['abs-A']);
         final detail = tester.widget<PlanDetailPage>(
           find.byType(PlanDetailPage),
         );
-        expect(detail.title, '核心折叠');
-        expect(detail.drills.every((drill) => drill.tier == 'B'), isTrue);
+        expect(detail.title, '我的核心');
+        expect(detail.onEdit, isNotNull);
 
         await tapVisible(tester, find.byKey(const ValueKey('plan-start')));
         await waitForTrainingRoute(tester);
@@ -977,26 +995,6 @@ void main() {
         expect(store.sessions, isEmpty);
         assertNoFlutterError(tester);
 
-        // Save a preset as an editable set of one's own.
-        expect(find.byType(PlanDetailPage), findsOneWidget);
-        await tapVisible(
-          tester,
-          find.byKey(const ValueKey('plan-save-as-mine')),
-        );
-        await tester.pumpAndSettle();
-        expect(find.byType(RoutineEditorPage), findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('routine-save')));
-        await tester.pumpAndSettle();
-        expect(store.routines.single.name, '核心折叠');
-        expect(
-          store.routines.single.drillIds,
-          detail.drills.map((drill) => drill.id).toList(),
-        );
-        expect(
-          tester.widget<PlanDetailPage>(find.byType(PlanDetailPage)).onEdit,
-          isNotNull,
-        );
-
         await tester.tap(find.byKey(const ValueKey('plan-edit')));
         await tester.pumpAndSettle();
         await tapVisible(tester, find.byKey(const ValueKey('routine-delete')));
@@ -1005,8 +1003,8 @@ void main() {
         expect(find.byType(PlansPage), findsOneWidget);
         await tester.tap(find.text('撤销'));
         await tester.pumpAndSettle();
-        expect(store.routines.single.name, '核心折叠');
-        expect(find.text('核心折叠'), findsWidgets);
+        expect(store.routines.single.name, '我的核心');
+        expect(find.text('我的核心'), findsWidgets);
         assertNoFlutterError(tester);
         await tester.pumpWidget(const SizedBox());
       } finally {

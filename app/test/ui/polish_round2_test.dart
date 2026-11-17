@@ -171,6 +171,7 @@ void main() {
     testWidgets('small phone + large text: key pages do not overflow '
         '(${brightness.name})', (tester) async {
       _size(tester, const Size(320, 640), top: 20);
+      final catalog = loadCatalogFixture(includeFlarePlans: true);
       final store = LearningStore(catalog: catalog, storage: _Memory());
       await store.initialize();
       await store.acknowledgeSafety();
@@ -187,20 +188,24 @@ void main() {
         PlansPage(
           catalog: catalog,
           store: store,
-          onPreset: (_) {},
+          onOpenAngle: (_) {},
+          onOpenMuscle: (_) {},
+          onAllAngles: () {},
+          onAllMuscles: () {},
+          onContinue: () {},
           onRoutine: (_) {},
           onNewRoutine: () {},
           onBack: () {},
         ),
         PlanDetailPage(
-          title: '托马斯全链',
-          line: '一次练到托马斯的主力肌群',
-          drills: PresetPlan.all.last.drills(catalog, 'A'),
-          store: store,
+          title: '托马斯自建计划',
+          drills: [
+            catalog.drillById('abs-A')!,
+            catalog.drillById('deltoids-A')!,
+          ],
           onBack: () {},
           onStart: () {},
           onDrill: (_) {},
-          onSaveAsMine: () {},
         ),
         RoutineEditorPage(
           catalog: catalog,

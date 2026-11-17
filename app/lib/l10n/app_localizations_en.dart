@@ -701,7 +701,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyRule1 => 'Warm up your wrists first';
 
   @override
-  String get safetyRule1Note => 'The Warm-up plan walks you through it';
+  String get safetyRule1Note =>
+      'Move your wrists and shoulder blades before you start training.';
 
   @override
   String get safetyRule2 => 'Stop for sharp pain, numbness, or dizziness';
@@ -1096,7 +1097,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plans => 'Plans';
 
   @override
-  String get plansHint => 'Ready-made sets and your own';
+  String get plansHint => 'Targeted workouts and your plans';
+
+  @override
+  String get plansLastSession => 'Last session';
+
+  @override
+  String get plansContinue => 'Continue';
+
+  @override
+  String get plansToday => 'Today';
+
+  @override
+  String get plansYesterday => 'Yesterday';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total exercises';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Combine your regular exercises';
+
+  @override
+  String get plansNewEmptyHint => 'Group the exercises you do most';
+
+  @override
+  String get plansAnglesTitle => 'Challenging flare angles';
+
+  @override
+  String get plansAnglesDescription =>
+      'Build stability in the toughest moments of a full flare.';
+
+  @override
+  String get plansMusclesTitle => 'Muscle groups to strengthen';
+
+  @override
+  String get plansMusclesDescription =>
+      'Areas under the most strain during a flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'One-hand support';
+
+  @override
+  String get plansTwoHandSupport => 'Two-hand support';
+
+  @override
+  String get plansThreeLevels => '3 levels';
+
+  @override
+  String get plansAiTitle => 'AI plan';
+
+  @override
+  String get plansAiHint =>
+      'Choose a setting, duration and muscle group for a targeted plan.';
+
+  @override
+  String get plansAiUnavailable => 'AI is unavailable';
 
   @override
   String get plansReady => 'Ready-made sets';
