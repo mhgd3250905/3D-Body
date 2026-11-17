@@ -36,6 +36,11 @@ void main() {
         rhythms: rhythms,
       );
 
+  Iterable<FlarePlan> allPlans() => [
+    ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
+    ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
+  ];
+
   test('bundled plans cover every phase and muscle in all three tiers', () {
     expect(catalog.flarePlanAngles, [9, 10, 11, 12, 13, 14, 16]);
     expect(
@@ -65,10 +70,7 @@ void main() {
   });
 
   test('every scene uses an available, scoped drill and exact dose', () {
-    final plans = [
-      ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
-      ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
-    ];
+    final plans = allPlans();
     expect(plans, hasLength(72));
     for (final plan in plans) {
       for (final scene in ['A', 'B', 'C']) {
@@ -99,6 +101,24 @@ void main() {
             reason: id,
           );
         }
+      }
+    }
+  });
+
+  test('every scene resolves unique drills in each of the 72 plans', () {
+    final plans = allPlans();
+    expect(plans, hasLength(72));
+    for (final plan in plans) {
+      for (final scene in ['A', 'B', 'C']) {
+        final actionIds = training(
+          plan,
+          scene,
+        ).items.map((item) => item.exerciseId);
+        expect(
+          actionIds.toSet(),
+          hasLength(actionIds.length),
+          reason: '${plan.id} scene $scene resolved to $actionIds',
+        );
       }
     }
   });

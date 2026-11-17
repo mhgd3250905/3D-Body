@@ -11,7 +11,7 @@ Map<String, Object?> sceneLocalization(
   'groups': {for (final group in groups) group.id: group.label},
   'shortGroups': {for (final group in groups) group.id: group.shortLabel},
   'viewLabels': {
-    for (final group in groups) group.id: strings.viewGroup(group.label),
+    for (final group in groups) group.id: strings.viewGroup(group.shortLabel),
   },
   'syncEffort': strings.syncEffort,
   'muscleMap': strings.muscleMap,

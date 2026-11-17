@@ -1245,7 +1245,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       final plans = phaseSource != null
           ? catalog.plansForAngle(phaseSource)
           : catalog.plansForMuscle(target.groupId!);
-      final title = phase?.name ?? group!.label;
+      final title = phase?.name ?? group!.shortLabel;
       return (
         'flare-plan:${phaseSource ?? target.groupId}',
         _flarePlanTrail.length + 1,
@@ -1697,7 +1697,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               alignment: AlignmentDirectional.centerStart,
                               child: Text(
                                 detail.shortLabel,
-                                semanticsLabel: detail.label,
                                 key: const ValueKey('muscle-panel-title'),
                                 style: TextStyle(
                                   fontSize: 30,
@@ -1820,7 +1819,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     key: const ValueKey('train-group'),
                     height: compact ? 46 : 50,
                     label: s.trainGroup(detail.shortLabel),
-                    semanticsLabel: s.trainGroup(detail.label),
                     arrow: true,
                     onPressed: canTrain
                         ? () => _openGroupTraining(detail)
@@ -2361,7 +2359,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                     s.othersInvolved(
                                       others
                                               .take(2)
-                                              .map((g) => g.label)
+                                              .map((g) => g.shortLabel)
                                               .join('、') +
                                           (others.length > 2
                                               ? s.groupCount(others.length)

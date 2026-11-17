@@ -559,7 +559,7 @@ void main() {
           expect(scene.playing, isFalse);
           assertNoFlutterError(tester);
         }
-        await tester.tap(find.text('无器械'));
+        await tester.tap(find.text('徒手'));
         await tester.pumpAndSettle();
         expect(
           tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,

@@ -254,7 +254,7 @@ class _LibraryPageState extends State<LibraryPage> {
     super.initState();
     _section = widget.initialGroup?.section;
     _searchController = TextEditingController(
-      text: widget.initialQuery ?? widget.initialGroup?.label ?? '',
+      text: widget.initialQuery ?? widget.initialGroup?.shortLabel ?? '',
     );
   }
 
@@ -266,7 +266,7 @@ class _LibraryPageState extends State<LibraryPage> {
     }
     if (oldWidget.initialQuery != widget.initialQuery ||
         oldWidget.initialGroup != widget.initialGroup) {
-      final query = widget.initialQuery ?? widget.initialGroup?.label ?? '';
+      final query = widget.initialQuery ?? widget.initialGroup?.shortLabel ?? '';
       if (_query != query) {
         _searchController.value = TextEditingValue(
           text: query,
@@ -484,7 +484,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                           Expanded(
                             child: Eyebrow(
                               [
-                                if (group != null) group!.label,
+                                if (group != null) group!.shortLabel,
                                 // Same words as the library's scene filter.
                                 switch (drill.tier) {
                                   'B' => s.sceneHome,

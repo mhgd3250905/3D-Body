@@ -1,5 +1,18 @@
 # App 验证记录
 
+## 走查修复 r1 Web 预览（2026-11-17）
+
+在 `feat/flare-plans-full` 的 `3c046a0` 运行源码上修改。用 Flutter 3.44.7 和原锁定依赖构建本机 Web 预览，Chrome 视口为 390 × 844。
+
+| 核对 | 结果 |
+| --- | --- |
+| `flutter test --no-pub --reporter expanded` | 440 通过、1 跳过。72 套 × 3 场景解析出的动作均无重复，训练用例覆盖休息提示、全部及部分完成、零完成返回和保存重试。组件测试确认滚到底时最后一条与开始按钮间隔 24 px，点击可达。 |
+| `flutter analyze --no-pub` | 无问题 |
+| `npm run build`、`npm run verify`、`node tools/verify-training-hub-framing.mjs` | 通过。5 个腿部肌群、7 种手机尺寸的最小头顶留白为舞台高度的 6%。 |
+| `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` | 通过。Chrome 核对了臀大肌初级徒手替换、核心肌群短名、下一动作与剂量、2/6 结果及零完成返回。 |
+
+固定的 SDK 结果页将计划名用作副标题，部分完成的数量显示在主标题第二行。休息页顶部保留刚才的动作和休息时间，独立卡片提示下一个动作及其剂量。此轮在 Web 验证，Android 包及设备仍按 vc2051 记录。
+
 ## 专项计划 vc2051（2026-11-17）
 
 测试、分析与 Android 构建在 `feat/flare-plans-full` 的同一源码状态完成，提交为 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。本次文档收束使用该提交的既有工具回执和真机回读。

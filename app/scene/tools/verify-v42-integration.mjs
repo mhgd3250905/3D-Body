@@ -92,10 +92,12 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
   selection.show(group, selected.items, true);
   assert.deepEqual(motion.getMetrics().joints, frozen.joints, 'selection preserves the exact frame');
   const player = Object.create(FlarePlayer.prototype);
+  let pixelRatio = 1;
   Object.assign(player, { coach: model, motion, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(32, 1, 0.02, 40),
     container: { clientWidth: 390, clientHeight: 844, append() {} },
     renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390, width: 390, height: 844 },
-      shadowMap: { enabled: false }, info: { render: { calls: 0, triangles: 0 } }, setSize() {}, render() {} },
+      shadowMap: { enabled: false }, info: { render: { calls: 0, triangles: 0 } },
+      getPixelRatio: () => pixelRatio, setPixelRatio(value) { pixelRatio = value; }, setSize() {}, render() {} },
     adaptive: createAdaptiveResolution(), keyLight: { castShadow: false },
     perf: { renders: 0, colorPixels: 0, shadowPasses: 0, shadowPixels: 0, skippedShadows: 0,
       calls: 0, triangles: 0, intervals: [], renderTimes: [], lastRenderTick: -1, ticks: 0, resizes: 0 },

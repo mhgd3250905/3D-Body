@@ -17,6 +17,10 @@ import 'theme.dart';
 const _gutter = 22.0;
 const _switchTime = Duration(milliseconds: 220);
 const _figures = [FontFeature.tabularFigures()];
+const _startButtonHeight = 56.0;
+const _startButtonBottomInset = 12.0;
+const _lastExerciseGap = 24.0;
+const _startButtonFadeHeight = 48.0;
 
 /// The display estimate uses the authored dose, independently of SDK pace.
 int flarePlanMinutes(FlarePlan plan) {
@@ -107,9 +111,15 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       s.planTierIntermediate,
       s.planTierAdvanced,
     ];
+    final groupId = plan.groupId;
+    final targetGroup = groupId == null ? null : catalog.groupById(groupId);
     final intro = switch ((plan.phaseSource, plan.groupId)) {
       (11, _) => s.angleSupportPlanIntro,
       (_, 'deltoids') => s.deltoidsPlanIntro,
+      _
+          when targetGroup != null &&
+              targetGroup.label != targetGroup.shortLabel =>
+        targetGroup.label,
       _ => null,
     };
 
@@ -121,13 +131,16 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
         child: Stack(
           children: [
             Positioned.fill(
+              bottom: safe.bottom + _startButtonBottomInset,
               child: ScrollConfiguration(
                 behavior: ScrollConfiguration.of(
                   context,
                 ).copyWith(scrollbars: false),
                 child: ListView(
                   controller: _scroll,
-                  padding: EdgeInsets.only(bottom: safe.bottom + 90),
+                  padding: const EdgeInsets.only(
+                    bottom: _startButtonHeight + _lastExerciseGap,
+                  ),
                   children: [
                     _PlanHero(
                       title: widget.title,
@@ -848,7 +861,7 @@ class _PlanMuscle extends StatelessWidget {
     return linked
         ? FlarePressable(
             key: key,
-            semanticLabel: '${group.label} · $label',
+            semanticLabel: '${group.shortLabel} · $label',
             onTap: onTap,
             child: face,
           )
@@ -1043,9 +1056,15 @@ class _PlanBottomState extends State<_PlanBottom> {
         IgnorePointer(
           child: SizedBox(
             width: double.infinity,
-            height: 22,
+            height: _startButtonFadeHeight,
             child: DecoratedBox(
-              decoration: BoxDecoration(gradient: _bottomFade(p, .4)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [p.background.withValues(alpha: 0), p.background],
+                ),
+              ),
             ),
           ),
         ),
@@ -1056,7 +1075,7 @@ class _PlanBottomState extends State<_PlanBottom> {
               _gutter,
               0,
               _gutter,
-              widget.safeBottom + 12,
+              widget.safeBottom + _startButtonBottomInset,
             ),
             child: FlarePressable(
               key: const ValueKey('flare-plan-start'),
@@ -1068,7 +1087,7 @@ class _PlanBottomState extends State<_PlanBottom> {
                 duration: const Duration(milliseconds: 100),
                 child: Container(
                   width: double.infinity,
-                  height: 56,
+                  height: _startButtonHeight,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
@@ -1096,7 +1115,7 @@ class _PlanBottomState extends State<_PlanBottom> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [Color(0x40ffffff), Color(0x00ffffff)],
-                      stops: [0, 1 / 56],
+                      stops: [0, 1 / _startButtonHeight],
                     ),
                   ),
                   child: widget.membership == null

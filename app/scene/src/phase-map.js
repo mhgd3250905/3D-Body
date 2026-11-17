@@ -51,7 +51,7 @@ export async function createPhaseMap(player, onSelect) {
   let source = null, hidden = false, legendItems = [], target = null, renderKey = null, renderCount = 0, focus = null;
   let paintKey = null, paintEffort = 0;
   const fullBounds = new THREE.Box3().setFromObject(model);
-  const shortNames = { 'hip-abductors': '臀中肌', abs: '腹直肌', 'rotator-cuff': '肩袖', forearms: '前臂', scapular: '肩胛肌群', adductors: '内收肌' };
+  const shortNames = { 'hip-abductors': '臀中肌', abs: '腹直肌', 'rotator-cuff': '肩袖', forearms: '前臂', scapular: '中下斜方 · 菱形', adductors: '内收肌' };
   function pickSurface(x, y, camera, rect) {
     ndc.set((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1);
     ray.setFromCamera(ndc, camera);
@@ -117,12 +117,13 @@ export async function createPhaseMap(player, onSelect) {
       legendItems = emphasisItems(phase);
       legend.replaceChildren();
       for (const item of legendItems) {
+        const name = groupLabel(item.groupId, shortNames[item.groupId] ?? item.label);
         const button = document.createElement('button'); button.type = 'button';
-        button.dataset.groupId = item.groupId; button.setAttribute('aria-label', sceneStrings.viewLabels?.[item.groupId] ?? '查看' + item.label);
+        button.dataset.groupId = item.groupId; button.setAttribute('aria-label', sceneStrings.viewLabels?.[item.groupId] ?? '查看' + name);
         const dot = document.createElement('i'); dot.style.background = item.colour;
         const text = document.createElement('span');
-        text.textContent = groupLabel(item.groupId, shortNames[item.groupId] ?? item.label);
-        button.title = GROUPS[item.groupId]?.label ?? item.label;
+        text.textContent = name;
+        button.title = name;
         button.append(dot, text); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
       }
     }

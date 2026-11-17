@@ -168,7 +168,7 @@ void main() {
         _expectResults(tester, catalog, tier: 'B', section: 'core');
         expect(store.settings.tier, 'B');
 
-        await _tapLabel(tester, '无器械');
+        await _tapLabel(tester, '徒手');
         _expectResults(tester, catalog, tier: 'A', section: 'core');
         await _tapLabel(tester, '腿部');
         _expectResults(tester, catalog, tier: 'A', section: 'legs');

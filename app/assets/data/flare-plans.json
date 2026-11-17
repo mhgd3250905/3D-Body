@@ -28,7 +28,7 @@
         {"drill":"hip-abductors-A","sets":3,"reps":8,"restSeconds":45,"perSide":true},
         {"drill":"triceps-B","sets":4,"seconds":15,"restSeconds":60,"bodyweight":"triceps-A"},
         {"drill":"rotator-cuff-A","sets":3,"reps":10,"restSeconds":45,"perSide":true},
-        {"drill":"deltoids-B","sets":3,"reps":3,"restSeconds":60,"perSide":true,"bodyweight":"deltoids-A"}
+        {"drill":"deltoids-B","sets":3,"reps":3,"restSeconds":60,"perSide":true,"bodyweight":"chest-A"}
       ]
     },
     {
@@ -69,7 +69,7 @@
         {"drill":"h-pike-pushup","sets":3,"reps":8,"restSeconds":60},
         {"drill":"deltoids-A","sets":3,"reps":10,"restSeconds":45,"perSide":true},
         {"drill":"h-tabletop","sets":3,"reps":12,"restSeconds":30},
-        {"drill":"h-db-press","sets":3,"reps":10,"restSeconds":60,"bodyweight":"h-pike-pushup"}
+        {"drill":"h-db-press","sets":3,"reps":10,"restSeconds":60,"bodyweight":"chest-A"}
       ]
     },
     {
@@ -107,7 +107,7 @@
       "items": [
         {"drill":"forearms-A","sets":1,"seconds":60,"restSeconds":15},
         {"drill":"lats-A","sets":3,"reps":8,"restSeconds":45},
-        {"drill":"abs-B","sets":4,"seconds":10,"restSeconds":60,"bodyweight":"lats-A"},
+        {"drill":"abs-B","sets":4,"seconds":10,"restSeconds":60,"bodyweight":"abs-A"},
         {"drill":"t-seated-straddle-ext","sets":3,"reps":10,"restSeconds":45},
         {"drill":"h-chair-dip","sets":3,"reps":12,"restSeconds":45},
         {"drill":"hip-abductors-B","sets":3,"reps":15,"restSeconds":45,"bodyweight":"w-clamshell"}
@@ -360,7 +360,7 @@
         {"drill":"forearms-A","sets":1,"seconds":60,"restSeconds":15},
         {"drill":"triceps-A","sets":3,"reps":10,"restSeconds":45},
         {"drill":"h-chair-dip","sets":3,"reps":12,"restSeconds":45},
-        {"drill":"triceps-B","sets":4,"seconds":20,"restSeconds":60,"bodyweight":"triceps-A"},
+        {"drill":"triceps-B","sets":4,"seconds":20,"restSeconds":60,"bodyweight":"h-tabletop"},
         {"drill":"h-pike-pushup","sets":3,"reps":8,"restSeconds":60},
         {"drill":"lats-A","sets":3,"reps":8,"restSeconds":45}
       ]
@@ -373,7 +373,7 @@
       "items": [
         {"drill":"forearms-A","sets":1,"seconds":60,"restSeconds":15},
         {"drill":"triceps-C","sets":4,"reps":8,"restSeconds":75,"bodyweight":"h-chair-dip"},
-        {"drill":"triceps-B","sets":4,"seconds":30,"restSeconds":60,"bodyweight":"h-pike-pushup"},
+        {"drill":"triceps-B","sets":4,"seconds":30,"restSeconds":60,"bodyweight":"lats-A"},
         {"drill":"t-straddle-hold","sets":3,"seconds":10,"restSeconds":90},
         {"drill":"serratus-C","sets":3,"reps":6,"restSeconds":75,"bodyweight":"triceps-A"},
         {"drill":"h-pike-pushup","sets":3,"reps":10,"restSeconds":60}
@@ -431,7 +431,7 @@
         {"drill":"h-wall-palm-lift","sets":3,"reps":10,"restSeconds":30},
         {"drill":"h-standing-wrist-deviation","sets":2,"reps":10,"restSeconds":15},
         {"drill":"h-standing-forearm-rotation","sets":2,"reps":10,"restSeconds":15},
-        {"drill":"forearms-B","sets":3,"reps":15,"restSeconds":45,"bodyweight":"h-wall-palm-lift"},
+        {"drill":"forearms-B","sets":3,"reps":15,"restSeconds":45,"bodyweight":"h-biceps-self"},
         {"drill":"h-wall-wrist-flexor-stretch","sets":1,"seconds":30,"restSeconds":15,"perSide":true}
       ]
     },
@@ -460,7 +460,7 @@
         {"drill":"h-db-zottman-curl","sets":3,"reps":10,"restSeconds":45,"bodyweight":"h-standing-forearm-rotation"},
         {"drill":"deltoids-A","sets":3,"reps":10,"restSeconds":45,"perSide":true},
         {"drill":"triceps-B","sets":3,"seconds":30,"restSeconds":60,"bodyweight":"triceps-A"},
-        {"drill":"h-straight-arm-hang-native","sets":3,"seconds":30,"restSeconds":60,"bodyweight":"h-wall-palm-lift"}
+        {"drill":"h-straight-arm-hang-native","sets":3,"seconds":30,"restSeconds":60,"bodyweight":"h-towel-isometric-curl"}
       ]
     },
     {
@@ -471,7 +471,7 @@
       "items": [
         {"drill":"h-wall-angel","sets":2,"reps":10,"restSeconds":30},
         {"drill":"h-side-er","sets":3,"reps":12,"restSeconds":30,"perSide":true},
-        {"drill":"rotator-cuff-B","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"h-side-er"},
+        {"drill":"rotator-cuff-B","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"w-prone-swimmer"},
         {"drill":"scapular-A","sets":3,"reps":8,"restSeconds":30},
         {"drill":"rotator-cuff-A","sets":3,"reps":8,"restSeconds":45,"perSide":true}
       ]
@@ -484,7 +484,7 @@
       "items": [
         {"drill":"h-wall-angel","sets":2,"reps":10,"restSeconds":30},
         {"drill":"rotator-cuff-B","sets":3,"reps":15,"restSeconds":30,"perSide":true,"bodyweight":"h-side-er"},
-        {"drill":"h-band-shoulder-ir","sets":3,"reps":15,"restSeconds":30,"perSide":true,"bodyweight":"rotator-cuff-A"},
+        {"drill":"h-band-shoulder-ir","sets":3,"reps":15,"restSeconds":30,"perSide":true,"bodyweight":"h-towel-behind"},
         {"drill":"w-prone-swimmer","sets":3,"reps":8,"restSeconds":45},
         {"drill":"rotator-cuff-A","sets":3,"reps":10,"restSeconds":45,"perSide":true},
         {"drill":"deltoids-B","sets":3,"reps":3,"restSeconds":60,"perSide":true,"bodyweight":"deltoids-A"}
@@ -515,7 +515,7 @@
         {"drill":"h-incline-pushup","sets":3,"reps":10,"restSeconds":30},
         {"drill":"h-kneeling-pushup","sets":3,"reps":10,"restSeconds":45},
         {"drill":"h-chair-dip","sets":3,"reps":8,"restSeconds":45},
-        {"drill":"h-band-chest-fly","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"h-kneeling-pushup"}
+        {"drill":"h-band-chest-fly","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"serratus-A"}
       ]
     },
     {
@@ -542,7 +542,7 @@
         {"drill":"h-seated-reachback","sets":1,"seconds":45,"restSeconds":15},
         {"drill":"chest-B","sets":4,"reps":10,"restSeconds":60,"bodyweight":"chest-A"},
         {"drill":"triceps-C","sets":3,"reps":8,"restSeconds":75,"bodyweight":"h-chair-dip"},
-        {"drill":"serratus-C","sets":3,"reps":6,"restSeconds":75,"bodyweight":"chest-A"},
+        {"drill":"serratus-C","sets":3,"reps":6,"restSeconds":75,"bodyweight":"serratus-A"},
         {"drill":"t-tuck-planche","sets":3,"seconds":8,"restSeconds":90}
       ]
     },
@@ -554,9 +554,9 @@
       "items": [
         {"drill":"h-chair-lat","sets":1,"seconds":30,"restSeconds":15,"perSide":true},
         {"drill":"h-towel-pulldown","sets":3,"reps":12,"restSeconds":30},
-        {"drill":"lats-B","sets":3,"reps":12,"restSeconds":30,"bodyweight":"h-towel-pulldown"},
+        {"drill":"lats-B","sets":3,"reps":12,"restSeconds":30,"bodyweight":"w-prone-swimmer"},
         {"drill":"lats-A","sets":3,"reps":6,"restSeconds":45},
-        {"drill":"h-db-row","sets":3,"reps":10,"restSeconds":45,"perSide":true,"bodyweight":"h-towel-pulldown"}
+        {"drill":"h-db-row","sets":3,"reps":10,"restSeconds":45,"perSide":true,"bodyweight":"scapular-A"}
       ]
     },
     {
@@ -568,9 +568,9 @@
         {"drill":"h-dd-shoulder","sets":1,"seconds":30,"restSeconds":15},
         {"drill":"lats-A","sets":3,"reps":10,"restSeconds":45},
         {"drill":"lats-B","sets":3,"reps":15,"restSeconds":30,"bodyweight":"h-towel-pulldown"},
-        {"drill":"scapular-B","sets":3,"reps":8,"restSeconds":45,"bodyweight":"lats-A"},
-        {"drill":"triceps-B","sets":3,"seconds":20,"restSeconds":60,"bodyweight":"lats-A"},
-        {"drill":"h-db-row","sets":3,"reps":12,"restSeconds":45,"perSide":true,"bodyweight":"h-towel-pulldown"}
+        {"drill":"scapular-B","sets":3,"reps":8,"restSeconds":45,"bodyweight":"scapular-A"},
+        {"drill":"triceps-B","sets":3,"seconds":20,"restSeconds":60,"bodyweight":"h-chair-dip"},
+        {"drill":"h-db-row","sets":3,"reps":12,"restSeconds":45,"perSide":true,"bodyweight":"w-prone-swimmer"}
       ]
     },
     {
@@ -581,8 +581,8 @@
       "items": [
         {"drill":"h-dd-shoulder","sets":1,"seconds":30,"restSeconds":15},
         {"drill":"lats-C","sets":3,"reps":10,"restSeconds":60,"bodyweight":"lats-A"},
-        {"drill":"h-fixed-bar-vertical-pull","sets":3,"reps":5,"restSeconds":90,"bodyweight":"lats-A"},
-        {"drill":"scapular-B","sets":3,"reps":10,"restSeconds":45,"bodyweight":"lats-A"},
+        {"drill":"h-fixed-bar-vertical-pull","sets":3,"reps":5,"restSeconds":90,"bodyweight":"h-towel-pulldown"},
+        {"drill":"scapular-B","sets":3,"reps":10,"restSeconds":45,"bodyweight":"scapular-A"},
         {"drill":"t-straddle-hold","sets":3,"seconds":8,"restSeconds":90},
         {"drill":"abs-C","sets":3,"reps":8,"restSeconds":60,"bodyweight":"t-lsit-tuck"}
       ]
@@ -595,7 +595,7 @@
       "items": [
         {"drill":"h-wall-angel","sets":2,"reps":10,"restSeconds":30},
         {"drill":"scapular-A","sets":3,"reps":8,"restSeconds":30},
-        {"drill":"h-band-pull-apart","sets":3,"reps":15,"restSeconds":30,"bodyweight":"scapular-A"},
+        {"drill":"h-band-pull-apart","sets":3,"reps":15,"restSeconds":30,"bodyweight":"w-prone-swimmer"},
         {"drill":"h-quadruped-open","sets":1,"reps":8,"restSeconds":15,"perSide":true},
         {"drill":"h-towel-pulldown","sets":3,"reps":12,"restSeconds":30}
       ]
@@ -609,9 +609,9 @@
         {"drill":"h-kneeling-thread-needle","sets":1,"reps":8,"restSeconds":15,"perSide":true},
         {"drill":"scapular-A","sets":3,"reps":10,"restSeconds":30},
         {"drill":"w-prone-swimmer","sets":3,"reps":8,"restSeconds":45},
-        {"drill":"h-band-row","sets":3,"reps":12,"restSeconds":45,"bodyweight":"w-prone-swimmer"},
+        {"drill":"h-band-row","sets":3,"reps":12,"restSeconds":45,"bodyweight":"h-towel-pulldown"},
         {"drill":"h-pike-scapular-elevation","sets":3,"reps":8,"restSeconds":45},
-        {"drill":"h-band-face-pull","sets":3,"reps":15,"restSeconds":30,"bodyweight":"scapular-A"}
+        {"drill":"h-band-face-pull","sets":3,"reps":15,"restSeconds":30,"bodyweight":"h-wall-angel"}
       ]
     },
     {
@@ -621,11 +621,11 @@
       "tier": 3,
       "items": [
         {"drill":"h-open-book","sets":1,"reps":8,"restSeconds":15,"perSide":true},
-        {"drill":"scapular-B","sets":3,"reps":10,"restSeconds":60,"bodyweight":"h-pike-scapular-elevation"},
+        {"drill":"scapular-B","sets":3,"reps":10,"restSeconds":60,"bodyweight":"scapular-A"},
         {"drill":"h-pike-scapular-elevation","sets":3,"reps":10,"restSeconds":45},
         {"drill":"w-prone-swimmer","sets":3,"reps":12,"restSeconds":45},
-        {"drill":"h-db-reverse-fly","sets":3,"reps":12,"restSeconds":45,"bodyweight":"scapular-A"},
-        {"drill":"h-db-overhead-shrug","sets":3,"reps":10,"restSeconds":45,"bodyweight":"h-pike-scapular-elevation"}
+        {"drill":"h-db-reverse-fly","sets":3,"reps":12,"restSeconds":45,"bodyweight":"h-quadruped-open"},
+        {"drill":"h-db-overhead-shrug","sets":3,"reps":10,"restSeconds":45,"bodyweight":"h-wall-angel"}
       ]
     },
     {
@@ -664,8 +664,8 @@
         {"drill":"h-catcow-quad","sets":1,"reps":8,"restSeconds":15},
         {"drill":"t-vsit","sets":3,"seconds":10,"restSeconds":75},
         {"drill":"t-lsit-tuck","sets":3,"reps":6,"restSeconds":60},
-        {"drill":"abs-C","sets":3,"reps":8,"restSeconds":60,"bodyweight":"t-lsit-tuck"},
-        {"drill":"h-slider-body-saw","sets":3,"reps":8,"restSeconds":60,"bodyweight":"abs-A"},
+        {"drill":"abs-C","sets":3,"reps":8,"restSeconds":60,"bodyweight":"abs-A"},
+        {"drill":"h-slider-body-saw","sets":3,"reps":8,"restSeconds":60,"bodyweight":"h-bear-plank"},
         {"drill":"t-lsit-vsit-circles","sets":3,"reps":4,"restSeconds":75}
       ]
     },
@@ -678,7 +678,7 @@
         {"drill":"h-banana","sets":1,"seconds":30,"restSeconds":15,"perSide":true},
         {"drill":"h-short-side-plank","sets":3,"seconds":20,"restSeconds":30,"perSide":true},
         {"drill":"h-russian-twist","sets":3,"reps":12,"restSeconds":30},
-        {"drill":"obliques-B","sets":3,"reps":10,"restSeconds":30,"perSide":true,"bodyweight":"h-short-side-plank"},
+        {"drill":"obliques-B","sets":3,"reps":10,"restSeconds":30,"perSide":true,"bodyweight":"obliques-A"},
         {"drill":"n-windshield","sets":3,"reps":8,"restSeconds":30,"perSide":true}
       ]
     },
@@ -802,7 +802,7 @@
         {"drill":"w-clamshell","sets":3,"reps":15,"restSeconds":30,"perSide":true},
         {"drill":"w-fire-hydrant","sets":3,"reps":10,"restSeconds":30,"perSide":true},
         {"drill":"h-side-leg-raise","sets":3,"reps":12,"restSeconds":30,"perSide":true},
-        {"drill":"hip-abductors-B","sets":3,"reps":15,"restSeconds":30,"bodyweight":"w-clamshell"}
+        {"drill":"hip-abductors-B","sets":3,"reps":15,"restSeconds":30,"bodyweight":"h-reverse-clam"}
       ]
     },
     {
@@ -870,7 +870,7 @@
         {"drill":"adductors-A","sets":3,"reps":10,"restSeconds":60,"perSide":true},
         {"drill":"adductors-B","sets":3,"seconds":30,"restSeconds":60,"perSide":true,"bodyweight":"h-inner-thigh"},
         {"drill":"t-lsit-open-close","sets":3,"reps":8,"restSeconds":60},
-        {"drill":"n-slider-lateral","sets":3,"reps":8,"restSeconds":45,"perSide":true,"bodyweight":"adductors-A"},
+        {"drill":"n-slider-lateral","sets":3,"reps":8,"restSeconds":45,"perSide":true,"bodyweight":"h-lateral-step-lunge"},
         {"drill":"s-frog","sets":1,"seconds":60,"restSeconds":15}
       ]
     },
@@ -883,7 +883,7 @@
         {"drill":"h-quadruped-rockback","sets":2,"reps":8,"restSeconds":15},
         {"drill":"h-bridge-overhead","sets":3,"reps":10,"restSeconds":30},
         {"drill":"h-donkey-kick","sets":3,"reps":12,"restSeconds":30,"perSide":true},
-        {"drill":"glute-max-B","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"h-donkey-kick"},
+        {"drill":"glute-max-B","sets":3,"reps":12,"restSeconds":30,"perSide":true,"bodyweight":"h-chair-kickback"},
         {"drill":"erectors-A","sets":3,"reps":8,"restSeconds":45}
       ]
     },
@@ -935,7 +935,7 @@
       "tier": 2,
       "items": [
         {"drill":"n-half-split","sets":1,"seconds":45,"restSeconds":15,"perSide":true},
-        {"drill":"hamstrings-B","sets":3,"reps":8,"restSeconds":60,"bodyweight":"h-bridge-march"},
+        {"drill":"hamstrings-B","sets":3,"reps":8,"restSeconds":60,"bodyweight":"h-good-morning"},
         {"drill":"h-bridge-march","sets":3,"reps":8,"restSeconds":45,"perSide":true},
         {"drill":"hamstrings-A","sets":3,"reps":10,"restSeconds":45,"perSide":true},
         {"drill":"erectors-A","sets":3,"reps":12,"restSeconds":45},
@@ -950,7 +950,7 @@
       "items": [
         {"drill":"h-chair-progressive-front-split-native","sets":1,"seconds":60,"restSeconds":15,"perSide":true},
         {"drill":"h-floor-nordic-hand-reset","sets":3,"reps":5,"restSeconds":90},
-        {"drill":"hamstrings-B","sets":3,"reps":12,"restSeconds":60,"bodyweight":"h-chair-single-leg-hip-thrust"},
+        {"drill":"hamstrings-B","sets":3,"reps":12,"restSeconds":60,"bodyweight":"h-good-morning"},
         {"drill":"h-db-rdl","sets":3,"reps":10,"restSeconds":60,"bodyweight":"hamstrings-A"},
         {"drill":"h-chair-single-leg-hip-thrust","sets":3,"reps":10,"restSeconds":60,"perSide":true},
         {"drill":"n-straddle-fold","sets":1,"seconds":60,"restSeconds":15}

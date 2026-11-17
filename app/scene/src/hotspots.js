@@ -24,7 +24,7 @@ export const ANCHORS = {
   hamstrings: (j, s) => lerp(j(s + 'Hip'), j(s + 'Knee'), 0.6),
 };
 
-const shortNames = { 'hip-abductors': '臀中肌', 'hip-flexors': '髋屈肌群', abs: '腹直肌', 'rotator-cuff': '肩袖肌群', forearms: '前臂肌群', scapular: '肩胛肌群', adductors: '内收肌群' };
+const shortNames = { 'hip-abductors': '臀中肌', 'hip-flexors': '髋屈肌群', abs: '腹直肌', 'rotator-cuff': '肩袖肌群', forearms: '前臂', scapular: '中下斜方 · 菱形', adductors: '内收肌群' };
 
 export function computeHotspots(player, items, previous = [], depthSampler = null, camera = player.camera) {
   const joints = player.getMetrics().joints, j = name => new Vector3().fromArray(joints[name] ?? joints.pelvis), output = [];

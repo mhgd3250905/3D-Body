@@ -257,6 +257,7 @@ function setCamera(position, target, fov, aspect) {
 
 let minimumSideMargin = 1, minimumHeight = 1, maximumHeight = 0;
 let minimumFocusSideMargin = 1, maximumFocusSize = 0, maximumFocusZoom = 0, maximumFocusCenterOffset = 0;
+let minimumLegHeadroom = 1;
 const standingCoverage = [];
 const focusedCoverage = [];
 for (const [id, group] of Object.entries(GROUPS)) {
@@ -286,7 +287,8 @@ for (const [id, group] of Object.entries(GROUPS)) {
     if (width === 390) standingCoverage.push({ id, visibleAtlasVertices: vertices.length,
       stageHeight: Number(vertical.toFixed(3)), sideMargin: Number(sides.toFixed(3)) });
 
-    const shot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(standing[id], true), width, height, true);
+    const showHead = group.section === 'legs';
+    const shot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(standing[id], true), width, height, true, showHead);
     const widthFraction = standing[id].widthFraction;
     assert.ok(shot && (widthFraction ? shot.cutoff < Math.min(...focused.map(vertex => vertex.y)) - .05 : shot.cutoff < bounds.min.y));
     setCamera(new THREE.Vector3(...shot.position), new THREE.Vector3(...shot.target), shot.fov, width / height);
@@ -319,6 +321,11 @@ for (const [id, group] of Object.entries(GROUPS)) {
     }
     if (widthFraction) assert.ok(top < .98,
       id + ' keeps the head in frame at ' + width + '×' + height + ': top=' + top);
+    if (showHead) {
+      const headroom = (1 - top) * height / (2 * standingStage);
+      assert.ok(headroom >= .06 - 1e-9, id + ' preserves 6% headroom at ' + width + '×' + height);
+      minimumLegHeadroom = Math.min(minimumLegHeadroom, headroom);
+    }
     assert.ok(focusSideMargin > .03, id + ' keeps the full visible outline inside both sides');
     assert.ok(realZoom <= 1.35, id + ' respects the magnification cap');
     minimumFocusSideMargin = Math.min(minimumFocusSideMargin, focusSideMargin);
@@ -335,8 +342,10 @@ const base = { phaseSource: 9, phaseTime: 0, muscleId: 'deltoids',
 let orbitFrames = 0, minOrbitClearance = Infinity, minimumOrbitSideMargin = 1;
 for (const [fromId, from] of Object.entries(standing)) for (const [toId, to] of Object.entries(standing)) {
   if (fromId === toId) continue;
-  const fromShot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(from, true), 390, 322, true);
-  const toShot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(to, true), 390, 322, true);
+  const fromShot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(from, true), 390, 322, true,
+    GROUPS[fromId].section === 'legs');
+  const toShot = resolveHubMuscleCamera(camera, muscleFrame, standingShot(to, true), 390, 322, true,
+    GROUPS[toId].section === 'legs');
   const orbit = createHubTransitions(9);
   orbit.configure({ ...base, muscleId: fromId, muscleCamera: fromShot }, 0);
   orbit.configure({ ...base, muscleId: toId, muscleCamera: toShot }, 1);
@@ -451,4 +460,5 @@ console.log(JSON.stringify({ anglePoseSamples, sourceBoundsPoseSamples: measured
   minimumOrbitSideMargin: round(minimumOrbitSideMargin),
   minimumStandingSideMargin: round(minimumSideMargin), standingStageHeightRange: [round(minimumHeight), round(maximumHeight)],
   standingCoverage, focused: { minimumSideMargin: round(minimumFocusSideMargin), maximumSize: round(maximumFocusSize),
-    maximumZoom: round(maximumFocusZoom), maximumCenterOffset: round(maximumFocusCenterOffset), groups: focusedCoverage } }, null, 2));
+    maximumZoom: round(maximumFocusZoom), maximumCenterOffset: round(maximumFocusCenterOffset),
+    minimumLegHeadroom: round(minimumLegHeadroom), groups: focusedCoverage } }, null, 2));

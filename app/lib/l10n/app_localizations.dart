@@ -1294,7 +1294,7 @@ abstract class AppLocalizations {
   /// No description provided for @sceneNone.
   ///
   /// In zh, this message translates to:
-  /// **'无器械'**
+  /// **'徒手'**
   String get sceneNone;
 
   /// No description provided for @sceneHome.

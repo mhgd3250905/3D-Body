@@ -65,7 +65,7 @@ class MuscleItemTile extends StatelessWidget {
     final hasDescription = description != null && description.isNotEmpty;
     return Semantics(
       button: true,
-      label: [group.label, if (hasDescription) description].join('。'),
+      label: [group.shortLabel, if (hasDescription) description].join('。'),
       onTap: onTap,
       excludeSemantics: true,
       child: Material(
@@ -85,7 +85,7 @@ class MuscleItemTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        group.label,
+                        group.shortLabel,
                         style: TextStyle(
                           fontSize: 16,
                           height: 1.3,
@@ -136,7 +136,7 @@ class MuscleItemChip extends StatelessWidget {
     Theme.of(context);
     return Semantics(
       button: true,
-      label: group.label,
+      label: group.shortLabel,
       onTap: onTap,
       excludeSemantics: true,
       child: Material(
@@ -193,7 +193,7 @@ class MuscleAssistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: group.label,
+    label: group.shortLabel,
     onTap: onTap,
     excludeSemantics: true,
     child: SizedBox(

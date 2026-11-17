@@ -170,4 +170,24 @@ void main() {
     expect(_resizingList(), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('last exercise clears the fixed start button at the scroll end', (
+    tester,
+  ) async {
+    await mountDetail(tester);
+    tester.view.physicalSize = const Size(390, 760);
+    tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+    addTearDown(tester.view.resetViewPadding);
+    await tester.pumpAndSettle();
+
+    final scroll = tester.state<ScrollableState>(find.byType(Scrollable));
+    expect(scroll.position.maxScrollExtent, greaterThan(0));
+    scroll.position.jumpTo(scroll.position.maxScrollExtent);
+    await tester.pumpAndSettle();
+
+    final row = _row(1, 'deltoids-B');
+    final button = find.byKey(const ValueKey('flare-plan-start'));
+    expect(tester.getTopLeft(button).dy - tester.getBottomLeft(row).dy, 24);
+    expect(row.hitTestable(), findsOneWidget);
+  });
 }

@@ -309,7 +309,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                     ignoring: widget.interactionLocked,
                     child: _HubPlanFooter(
                       selection: selectedKey,
-                      title: _muscles ? muscle.label : phase.name,
+                      title: _muscles ? muscle.shortLabel : phase.name,
                       plan: beginner,
                       onOpen: _muscles
                           ? () => widget.onMuscle(muscle)
@@ -747,9 +747,9 @@ class _MuscleGridCell extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                group.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                group.shortLabel,
+                maxLines: 2,
+                overflow: TextOverflow.clip,
                 style: TextStyle(
                   fontSize: 13,
                   color: p.text,
@@ -795,7 +795,7 @@ class _PrimaryMusclePill extends StatelessWidget {
           ),
           Flexible(
             child: Text(
-              group.id == 'abs' ? group.shortLabel : group.label,
+              group.shortLabel,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: p.secondary, fontSize: 12),

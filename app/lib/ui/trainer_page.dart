@@ -43,11 +43,51 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   sdk.VoiceOutput? _output;
   sdk.SessionPhase? _feedbackPhase;
   sdk.TrainerRestFeedbackChoice? _feedbackChoice;
+  ModalRoute<dynamic>? _route;
+  sdk.SessionResult? _result;
+  bool _sdkExitStarted = false;
+  bool _returningEmptyResult = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _route = ModalRoute.of(context);
     _loading ??= _load(Localizations.localeOf(context).languageCode);
+  }
+
+  bool get _isCurrentRoute => mounted && _route?.isCurrent == true;
+
+  void _onExitStarted() {
+    _sdkExitStarted = true;
+    sdk.TrainerExperienceScope.read(context)?.control.beginExit();
+  }
+
+  Future<void> _saveResult(sdk.SessionResult result) async {
+    final returnEmpty = result.completedExercises == 0 && !_sdkExitStarted;
+    if (_isCurrentRoute) {
+      setState(() {
+        _result = result;
+        _returningEmptyResult = returnEmpty;
+      });
+    }
+    try {
+      await widget.store.saveTrainerSession(result);
+    } catch (_) {
+      // Re-expose the SDK's save retry if the direct return must wait.
+      if (mounted && _returningEmptyResult) {
+        setState(() => _returningEmptyResult = false);
+      }
+      rethrow;
+    }
+    if (!returnEmpty ||
+        _sdkExitStarted ||
+        !mounted ||
+        _route?.isCurrent != true) {
+      return;
+    }
+    final experience = sdk.TrainerExperienceScope.read(context);
+    await experience?.control.beforeExitPop();
+    if (_isCurrentRoute && !_sdkExitStarted) _route?.navigator?.pop(result);
   }
 
   Future<_PlayerData> _load(String language) async {
@@ -83,6 +123,14 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   }
 
   String? _doseLabel(sdk.SessionPhase phase) {
+    final s = AppLocalizations.of(context);
+    // The SDK V1 header retains the just-finished move during a transition.
+    // Show the rest length there; the dock pairs the next move with its dose.
+    if (phase.nextItem != null &&
+        (phase.kind == sdk.PhaseKind.rest ||
+            phase.kind == sdk.PhaseKind.roundRest)) {
+      return s.secondsLabel(phase.seconds.ceil());
+    }
     final item = phase.item;
     if (item == null) return null;
     // Let SDK 0.2 display the current segment's own dose/label and resolve its
@@ -91,7 +139,6 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     if (item.exerciseId != 'forearms-C' || item.mode != uc.DoseMode.time) {
       return null;
     }
-    final s = AppLocalizations.of(context);
     return '${s.secondsLabel(item.workSeconds!)} · ${item.note ?? widget.catalog.drillById(item.exerciseId)!.prescription}';
   }
 
@@ -99,9 +146,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     BuildContext context,
     sdk.TrainerRestFeedback feedback,
     sdk.TrainerTheme theme,
+    sdk.TrainerStrings strings,
+    sdk.TrainerDrill? Function(String) drillOf,
   ) {
+    final s = AppLocalizations.of(context);
     final (title, description, recorded, comfortable, tight, pain) =
-        trainerRestFeedbackLabels(AppLocalizations.of(context));
+        trainerRestFeedbackLabels(s);
     void select(sdk.TrainerRestFeedbackChoice choice) {
       setState(() {
         _feedbackPhase = feedback.completedPhase;
@@ -109,7 +159,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       });
     }
 
-    return sdk.TrainerRestFeedbackPanel(
+    final panel = sdk.TrainerRestFeedbackPanel(
       theme: theme,
       title: title,
       description: description,
@@ -126,6 +176,47 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         select(sdk.TrainerRestFeedbackChoice.pain);
         await feedback.reportDiscomfort();
       },
+    );
+    final next = feedback.phase.nextItem;
+    if (next == null) return panel;
+    final move = drillOf(next.exerciseId);
+    if (move == null) return panel;
+    final reps = next.mode == uc.DoseMode.reps;
+    final dose = strings.dose(
+      reps: reps,
+      amount: reps ? (next.reps ?? 10) : (next.workSeconds ?? 30),
+      perSide: next.perSide,
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        sdk.TrainerSurface(
+          key: const ValueKey('flare-rest-next'),
+          theme: theme,
+          level: sdk.TrainerSurfaceLevel.control,
+          radius: 14,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Text.rich(
+            TextSpan(
+              text: '${s.planNext} · ',
+              children: [
+                TextSpan(
+                  text: move.name,
+                  style: theme.callout.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: theme.text,
+                  ),
+                ),
+                TextSpan(text: ' · $dose'),
+              ],
+            ),
+            style: theme.callout.copyWith(color: theme.sub),
+          ),
+        ),
+        const SizedBox(height: 10),
+        panel,
+      ],
     );
   }
 
@@ -174,58 +265,64 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         }
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
-        return sdk.TrainerPlayer(
-          plan: data.plan,
-          rhythms: data.rhythms,
-          drillOf: (id) {
-            final language = Localizations.localeOf(context).languageCode;
-            final drill = widget.catalog.drillById(id);
-            final public = data.shared.catalog[id];
-            final name = drill?.name ?? data.shared.nameOf(id, language);
-            if (name == null) return null;
-            final poster = FlarePublicMedia.current?.posterAssetFor(id);
-            return sdk.TrainerDrill(
-              id: id,
-              name: name,
-              cue: drill == null || drill.cues.isEmpty
-                  ? null
-                  : drill.cues.first,
-              cues: drill == null ? public?.cues['zh'] ?? const [] : const [],
-              precautions: [
-                ...?public?.cautions,
-                ...?public?.contraindications,
-              ],
-              media: poster == null
-                  ? null
-                  : sdk.DrillMedia(
-                      id: id,
-                      actionId: id,
-                      videoAsset: '',
-                      posterAsset: poster,
-                      duration: 0,
-                    ),
-            );
-          },
-          strings: trainerStrings(s),
-          theme: theme,
-          voice: sdk.TrainerVoice(
-            source: data.source,
-            output: _output!,
-            settings: sdk.VoiceSettings(
-              language: data.language,
-              voice: widget.store.settings.sound,
-              chimes: widget.store.settings.sound,
+        final strings = trainerStrings(s, result: _result);
+        sdk.TrainerDrill? drillOf(String id) {
+          final language = Localizations.localeOf(context).languageCode;
+          final drill = widget.catalog.drillById(id);
+          final public = data.shared.catalog[id];
+          final name = drill?.name ?? data.shared.nameOf(id, language);
+          if (name == null) return null;
+          final poster = FlarePublicMedia.current?.posterAssetFor(id);
+          return sdk.TrainerDrill(
+            id: id,
+            name: name,
+            cue: drill == null || drill.cues.isEmpty ? null : drill.cues.first,
+            cues: drill == null ? public?.cues['zh'] ?? const [] : const [],
+            precautions: [...?public?.cautions, ...?public?.contraindications],
+            media: poster == null
+                ? null
+                : sdk.DrillMedia(
+                    id: id,
+                    actionId: id,
+                    videoAsset: '',
+                    posterAsset: poster,
+                    duration: 0,
+                  ),
+          );
+        }
+
+        return Visibility(
+          visible: !_returningEmptyResult,
+          maintainState: true,
+          child: sdk.TrainerPlayer(
+            plan: data.plan,
+            rhythms: data.rhythms,
+            drillOf: drillOf,
+            strings: strings,
+            theme: theme,
+            voice: sdk.TrainerVoice(
+              source: data.source,
+              output: _output!,
+              settings: sdk.VoiceSettings(
+                language: data.language,
+                voice: widget.store.settings.sound,
+                chimes: widget.store.settings.sound,
+              ),
             ),
+            onFinished: _saveResult,
+            onExitStarted: _onExitStarted,
+            onCompleted: (_) async {
+              _sdkExitStarted = false;
+            },
+            restFeedbackBuilder: (context, feedback) =>
+                _restFeedback(context, feedback, theme, strings, drillOf),
+            keepAlive: widget.keepAlive,
+            showExtendRest: true,
+            showCompleteTimedPhase: true,
+            showSoundToggle: true,
+            notificationIcon: 'mipmap/ic_launcher',
+            doseLabel: _doseLabel,
           ),
-          onFinished: widget.store.saveTrainerSession,
-          restFeedbackBuilder: (context, feedback) =>
-              _restFeedback(context, feedback, theme),
-          keepAlive: widget.keepAlive,
-          showExtendRest: true,
-          showCompleteTimedPhase: true,
-          showSoundToggle: true,
-          notificationIcon: 'mipmap/ic_launcher',
-          doseLabel: _doseLabel,
         );
       },
     );

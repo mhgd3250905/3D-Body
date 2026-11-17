@@ -13,6 +13,7 @@ const standingStageHeight = 400;
 const angleStageHeight = 452;
 const maximumMuscleZoom = 1.35;
 const maximumFocusSpan = .25;
+const minimumLegHeadroom = .06;
 
 function placeCamera(camera, shot, width, height, viewHeight) {
   camera.position.setFromSpherical(shot.orbit).add(shot.target);
@@ -63,7 +64,7 @@ export function fitHubMuscle(camera, { bounds, silhouette }, height) {
   camera.updateProjectionMatrix();
 }
 
-export function resolveHubMuscleCamera(camera, frame, raw, width, height, focused) {
+export function resolveHubMuscleCamera(camera, frame, raw, width, height, focused, showHead = false) {
   if (!raw || ![raw.position, raw.target].every(value =>
     Array.isArray(value) && value.length === 3 && value.every(Number.isFinite)) ||
     !(width > 0 && height > 0) || !Number.isFinite(raw.overviewHeight)) return null;
@@ -91,7 +92,14 @@ export function resolveHubMuscleCamera(camera, frame, raw, width, height, focuse
   // Widely separated forearms can use more of the horizontal viewport.
   const horizontalSpan = (raw.widthFraction > 0 && raw.widthFraction < 1) ? width * raw.widthFraction : span;
   const regionLimit = nearest + Math.max(halfWidth / horizontalSpan, halfHeight / span) * height / tangent;
-  const distance = Math.max(zoomLimit, silhouetteLimit, regionLimit);
+  let distance = Math.max(zoomLimit, silhouetteLimit, regionLimit);
+  if (showHead) {
+    const top = (1 - 2 * minimumLegHeadroom * standingStageHeight / height) * tangent;
+    for (const vertex of frame.silhouette) {
+      const closest = Math.hypot(vertex.x, vertex.z);
+      distance = Math.max(distance, closest + (vertex.y - raw.target[1]) / top);
+    }
+  }
   return { ...raw, position: [0, raw.target[1], Math.sign(raw.position[2]) * distance],
     fov: camera.fov, cutoff: Number.isFinite(raw.cutoff) ? raw.cutoff : -.065 };
 }
@@ -168,9 +176,11 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     const width = player.container.clientWidth || 390;
     const sceneHeight = player.container.clientHeight || angleStageHeight - 54;
     const height = Math.max(120, sceneHeight - (angleStageHeight - standingStageHeight));
-    const key = JSON.stringify([width, height, input.focusMuscle, input.muscleCamera]);
+    const showHead = GROUPS[input.muscleId]?.section === 'legs';
+    const key = JSON.stringify([width, height, input.focusMuscle, input.muscleCamera, showHead]);
     if (muscleShotKey !== key) {
-      muscleShot = resolveHubMuscleCamera(overviewCamera, muscleFrame, input.muscleCamera, width, height, input.focusMuscle === true);
+      muscleShot = resolveHubMuscleCamera(overviewCamera, muscleFrame, input.muscleCamera, width, height,
+        input.focusMuscle === true, showHead);
       muscleShotKey = key;
     }
     return muscleShot;

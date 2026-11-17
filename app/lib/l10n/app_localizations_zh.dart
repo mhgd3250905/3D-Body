@@ -617,7 +617,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assistMuscles => '协助发力';
 
   @override
-  String get sceneNone => '无器械';
+  String get sceneNone => '徒手';
 
   @override
   String get sceneHome => '居家';

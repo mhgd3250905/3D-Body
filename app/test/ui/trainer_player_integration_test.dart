@@ -365,6 +365,7 @@ void main() {
     expect(store.trainerSessions, isEmpty);
     await _advance(tester, 5);
     expect(find.byKey(const ValueKey('finish')), findsOneWidget);
+    expect(find.text('这一套练完了'), findsOneWidget);
     expect(store.trainerSessions, hasLength(1));
     expect(store.trainerSessions.single.full, isTrue);
     expect(store.sessions.map((row) => row.drillId), ['abs-A', 'chest-A']);
@@ -375,6 +376,78 @@ void main() {
     expect(find.byType(FlareTrainingPage), findsNothing);
     expect(store.sessions, hasLength(2));
   });
+
+  testWidgets('transition rest previews the next move with its dose', (
+    tester,
+  ) async {
+    await _open(tester, reps: true);
+    final player = _player(tester);
+    await _advance(tester, 12);
+    final card = find.byKey(const ValueKey('flare-rest-next'));
+    final preview = tester.widget<Text>(
+      find.descendant(of: card, matching: find.byType(Text)),
+    );
+    expect(
+      preview.textSpan!.toPlainText(),
+      '下一个 · ${player.drillOf('chest-A')!.name} · 2 次',
+    );
+    expect(find.text('组间休息 · 15 秒'), findsOneWidget);
+    expect(find.text('组间休息 · 2 次'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
+  testWidgets('partial completion labels the completed and total moves', (
+    tester,
+  ) async {
+    final popped = <sdk.SessionResult>[];
+    final store = await _open(tester, popped: popped);
+    await _advance(tester, 12);
+    final skip = find.byKey(const ValueKey('skip'));
+    await tester.tap(skip);
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.tap(skip);
+    await _advance(tester, 2);
+
+    expect(find.text('今天先练到这里\n完成 1/2 个动作'), findsOneWidget);
+    expect(find.text('这一套练完了'), findsNothing);
+    expect(store.trainerSessions.single.completedExercises, 1);
+    await tester.tap(find.byKey(const ValueKey('finish')));
+    await tester.pumpAndSettle();
+    expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
+    expect(find.byType(FlareTrainingPage), findsNothing);
+  });
+
+  for (final failsOnce in [false, true]) {
+    testWidgets(
+      'zero completed moves ${failsOnce ? 'retries saving before return' : 'return without a result view'}',
+      (tester) async {
+        final storage = _Storage();
+        final popped = <sdk.SessionResult>[];
+        final store = await _open(tester, storage: storage, popped: popped);
+        storage.failNext = failsOnce;
+        final skip = find.byKey(const ValueKey('skip'));
+        for (var step = 0; step < 4; step++) {
+          await tester.tap(skip);
+          await tester.pump(const Duration(milliseconds: 120));
+        }
+        await _advance(tester, 2);
+        if (failsOnce) {
+          final retry = find.byKey(const ValueKey('save-retry'));
+          expect(retry, findsOneWidget);
+          expect(popped, isEmpty);
+          await tester.tap(retry);
+        } else {
+          expect(find.byKey(const ValueKey('finish')), findsNothing);
+        }
+        await tester.pumpAndSettle();
+        expect(popped.single.completedExercises, 0);
+        expect(store.trainerSessions.single.sessionId, popped.single.sessionId);
+        expect(store.sessions.map((row) => row.completed), [false, false]);
+        expect(find.byType(FlareTrainingPage), findsNothing);
+      },
+    );
+  }
 
   testWidgets(
     'SDK save retry retains the same session without duplicate history',

@@ -400,7 +400,26 @@ List<String> trainerWristDirections(AppLocalizations s) =>
     _wristDirections[s.localeName.split('_').first] ??
     _wristDirections['en']!;
 
-sdk.TrainerStrings trainerStrings(AppLocalizations s) {
+String? _completionTitle(AppLocalizations s, sdk.SessionResult? result) {
+  if (result == null ||
+      result.completedExercises == 0 ||
+      result.completedExercises >= result.totalExercises) {
+    return null;
+  }
+  final progress = '${result.completedExercises}/${result.totalExercises}';
+  // The V1 heading takes host copy, but its subtitle is the SDK plan name.
+  // Keep the achievement immediately below the heading in the same slot.
+  return switch (s.localeName) {
+    'zh' => '今天先练到这里\n完成 $progress 个动作',
+    'zh_Hant' => '今天先練到這裡\n完成 $progress 個動作',
+    _ => '${s.planRunEnded}\n$progress ${_for(s)[8]}',
+  };
+}
+
+sdk.TrainerStrings trainerStrings(
+  AppLocalizations s, {
+  sdk.SessionResult? result,
+}) {
   final w = _for(s);
   final playerCopy = s.localeName.startsWith('zh')
       ? sdk.TrainerStrings.zh()
@@ -460,6 +479,7 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     resume: s.resume,
     doneFull: s.planAllDone,
     donePartial: s.planRunEnded,
+    completionTitle: _completionTitle(s, result),
     minutes: w[7],
     exercisesDone: w[8],
     finish: s.done,

@@ -286,9 +286,9 @@ void main() {
           );
           _recordFailure(
             failures,
-            renderedAction.semanticsLabel ==
-                strings.trainGroup(detailGroup.label),
-            '$language train action should retain its full accessible name',
+            (renderedAction.semanticsLabel ?? renderedAction.data) ==
+                strings.trainGroup(detailGroup.shortLabel),
+            '$language train action should use the same accessible short name',
           );
           _recordFailure(
             failures,
