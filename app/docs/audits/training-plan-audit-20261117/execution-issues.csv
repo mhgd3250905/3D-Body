@@ -1,0 +1,51 @@
+﻿certainty,plan,scene,slot,source,resolved,name,issues,dose,rhythm
+confirmed,angle-11-t1,A,6,hip-abductors-B,hip-abductors-B,仰卧弹力带V字开腿,徒手仍需专用器械,"{""drill"": ""hip-abductors-B"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45}",rep_hold
+confirmed,angle-11-t3,A,5,deltoids-B,deltoids-B,哑铃半程土耳其起立,徒手仍需专用器械,"{""drill"": ""deltoids-B"", ""sets"": 3, ""reps"": 3, ""restSeconds"": 60, ""perSide"": true}",rep_updown
+confirmed,angle-11-t3,A,6,rotator-cuff-B,rotator-cuff-B,弹力带夹肘向外转,徒手仍需专用器械,"{""drill"": ""rotator-cuff-B"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+confirmed,muscle-deltoids-t1,A,5,h-db-lateral,h-db-lateral,哑铃侧平举,徒手仍需专用器械,"{""drill"": ""h-db-lateral"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45}",rep_updown
+confirmed,muscle-deltoids-t3,A,5,triceps-B,triceps-B,平行杆直臂支撑,徒手仍需专用器械,"{""drill"": ""triceps-B"", ""sets"": 4, ""seconds"": 20, ""restSeconds"": 60}",hold
+review,angle-9-t2,A,6,hip-abductors-B,w-clamshell,侧卧蚌式开合,单侧目录动作未安排换侧,"{""drill"": ""hip-abductors-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 45, ""bodyweight"": ""w-clamshell""}",rep_hold
+review,angle-10-t2,A,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 12, ""restSeconds"": 30}",rep_hold
+review,angle-10-t2,B,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 12, ""restSeconds"": 30}",rep_hold
+review,angle-12-t2,A,2,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+review,angle-12-t2,B,2,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+review,angle-13-t1,A,6,hip-abductors-B,w-clamshell,侧卧蚌式开合,单侧目录动作未安排换侧,"{""drill"": ""hip-abductors-B"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45, ""bodyweight"": ""w-clamshell""}",rep_hold
+review,angle-14-t1,A,6,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 30}",rep_hold
+review,angle-14-t1,B,6,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 30}",rep_hold
+review,angle-14-t2,A,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 12, ""restSeconds"": 30}",rep_hold
+review,angle-14-t2,B,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 2, ""reps"": 12, ""restSeconds"": 30}",rep_hold
+confirmed,muscle-serratus-t3,A,4,h-slider-body-saw,h-bear-plank,熊式支撑,静态动作沿用动态计次数,"{""drill"": ""h-slider-body-saw"", ""sets"": 3, ""reps"": 8, ""restSeconds"": 60, ""bodyweight"": ""h-bear-plank""}",hold
+review,muscle-forearms-t1,A,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 30}",rep_hold
+review,muscle-forearms-t1,B,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 30}",rep_hold
+review,muscle-forearms-t1,A,3,h-standing-wrist-deviation,h-standing-wrist-deviation,站姿手腕侧摆,单侧目录动作未安排换侧,"{""drill"": ""h-standing-wrist-deviation"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 15}",rep_hold
+review,muscle-forearms-t1,B,3,h-standing-wrist-deviation,h-standing-wrist-deviation,站姿手腕侧摆,单侧目录动作未安排换侧,"{""drill"": ""h-standing-wrist-deviation"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 15}",rep_hold
+review,muscle-forearms-t1,A,4,h-standing-forearm-rotation,h-standing-forearm-rotation,站姿屈肘前臂旋转,单侧目录动作未安排换侧,"{""drill"": ""h-standing-forearm-rotation"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 15}",rep_hold
+review,muscle-forearms-t1,B,4,h-standing-forearm-rotation,h-standing-forearm-rotation,站姿屈肘前臂旋转,单侧目录动作未安排换侧,"{""drill"": ""h-standing-forearm-rotation"", ""sets"": 2, ""reps"": 10, ""restSeconds"": 15}",rep_hold
+review,muscle-forearms-t1,A,5,forearms-B,h-biceps-self,双手对抗弯举,单侧目录动作未安排换侧,"{""drill"": ""forearms-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 45, ""bodyweight"": ""h-biceps-self""}",rep_updown
+review,muscle-forearms-t1,B,5,forearms-B,forearms-B,坐姿哑铃上下卷腕,单侧目录动作未安排换侧,"{""drill"": ""forearms-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 45, ""bodyweight"": ""h-biceps-self""}",rep_updown
+review,muscle-forearms-t2,A,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 30}",rep_hold
+review,muscle-forearms-t2,B,2,h-wall-palm-lift,h-wall-palm-lift,指尖贴墙抬掌根,单侧目录动作未安排换侧,"{""drill"": ""h-wall-palm-lift"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 30}",rep_hold
+review,muscle-forearms-t2,A,3,forearms-B,h-standing-wrist-deviation,站姿手腕侧摆,单侧目录动作未安排换侧,"{""drill"": ""forearms-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 45, ""bodyweight"": ""h-standing-wrist-deviation""}",rep_hold
+review,muscle-forearms-t2,B,3,forearms-B,forearms-B,坐姿哑铃上下卷腕,单侧目录动作未安排换侧,"{""drill"": ""forearms-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 45, ""bodyweight"": ""h-standing-wrist-deviation""}",rep_updown
+review,muscle-forearms-t2,A,4,h-db-reverse-curl,h-standing-forearm-rotation,站姿屈肘前臂旋转,单侧目录动作未安排换侧,"{""drill"": ""h-db-reverse-curl"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45, ""bodyweight"": ""h-standing-forearm-rotation""}",rep_hold
+review,muscle-forearms-t3,A,3,h-db-zottman-curl,h-standing-forearm-rotation,站姿屈肘前臂旋转,单侧目录动作未安排换侧,"{""drill"": ""h-db-zottman-curl"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""bodyweight"": ""h-standing-forearm-rotation""}",rep_hold
+review,muscle-rotator-cuff-t1,A,3,rotator-cuff-B,w-prone-swimmer,俯卧游泳式,双侧目录动作却安排换侧,"{""drill"": ""rotator-cuff-B"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 30, ""perSide"": true, ""bodyweight"": ""w-prone-swimmer""}",rep_updown
+review,muscle-rotator-cuff-t2,A,3,h-band-shoulder-ir,h-towel-behind,背后握毛巾抬臂,双侧目录动作却安排换侧,"{""drill"": ""h-band-shoulder-ir"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 30, ""perSide"": true, ""bodyweight"": ""h-towel-behind""}",rep_hold
+review,muscle-chest-t1,A,6,h-band-chest-fly,serratus-A,平板撑推地拱背,双侧目录动作却安排换侧,"{""drill"": ""h-band-chest-fly"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 30, ""perSide"": true, ""bodyweight"": ""serratus-A""}",rep_updown
+review,muscle-lats-t1,A,1,h-chair-lat,h-chair-lat,扶椅侧背拉伸,双侧目录动作却安排换侧,"{""drill"": ""h-chair-lat"", ""sets"": 1, ""seconds"": 30, ""restSeconds"": 15, ""perSide"": true}",hold
+review,muscle-lats-t1,B,1,h-chair-lat,h-chair-lat,扶椅侧背拉伸,双侧目录动作却安排换侧,"{""drill"": ""h-chair-lat"", ""sets"": 1, ""seconds"": 30, ""restSeconds"": 15, ""perSide"": true}",hold
+review,muscle-lats-t1,A,5,h-db-row,scapular-A,俯卧Y-T-W举,双侧目录动作却安排换侧,"{""drill"": ""h-db-row"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true, ""bodyweight"": ""scapular-A""}",rep_updown
+review,muscle-lats-t2,A,6,h-db-row,w-prone-swimmer,俯卧游泳式,双侧目录动作却安排换侧,"{""drill"": ""h-db-row"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45, ""perSide"": true, ""bodyweight"": ""w-prone-swimmer""}",rep_updown
+review,muscle-scapular-t3,A,5,h-db-reverse-fly,h-quadruped-open,跪撑单臂开胸,单侧目录动作未安排换侧,"{""drill"": ""h-db-reverse-fly"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 45, ""bodyweight"": ""h-quadruped-open""}",rep_hold
+confirmed,muscle-abs-t3,A,4,abs-C,abs-A,空心体支撑,静态动作沿用动态计次数,"{""drill"": ""abs-C"", ""sets"": 3, ""reps"": 8, ""restSeconds"": 60, ""bodyweight"": ""abs-A""}",hold
+confirmed,muscle-abs-t3,A,5,h-slider-body-saw,h-bear-plank,熊式支撑,静态动作沿用动态计次数,"{""drill"": ""h-slider-body-saw"", ""sets"": 3, ""reps"": 8, ""restSeconds"": 60, ""bodyweight"": ""h-bear-plank""}",hold
+review,muscle-erectors-t3,A,4,h-db-rdl,hamstrings-A,徒手单腿罗马尼亚硬拉,单侧目录动作未安排换侧,"{""drill"": ""h-db-rdl"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 60, ""bodyweight"": ""hamstrings-A""}",rep_updown
+review,muscle-hip-flexors-t2,A,2,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+review,muscle-hip-flexors-t2,B,2,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+review,muscle-hip-abductors-t1,A,5,hip-abductors-B,h-reverse-clam,侧卧反向蚌式,单侧目录动作未安排换侧,"{""drill"": ""hip-abductors-B"", ""sets"": 3, ""reps"": 15, ""restSeconds"": 30, ""bodyweight"": ""h-reverse-clam""}",rep_hold
+review,muscle-hip-abductors-t2,A,6,hip-abductors-B,w-fire-hydrant,四足消防栓,单侧目录动作未安排换侧,"{""drill"": ""hip-abductors-B"", ""sets"": 3, ""reps"": 20, ""restSeconds"": 30, ""bodyweight"": ""w-fire-hydrant""}",rep_hold
+review,muscle-glute-max-t3,A,4,h-kb-swing,glute-max-A,单腿臀桥,单侧目录动作未安排换侧,"{""drill"": ""h-kb-swing"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 60, ""bodyweight"": ""glute-max-A""}",rep_hold
+review,muscle-glute-max-t3,B,4,h-kb-swing,h-kb-swing,单臂壶铃摆荡,单侧目录动作未安排换侧,"{""drill"": ""h-kb-swing"", ""sets"": 3, ""reps"": 12, ""restSeconds"": 60, ""bodyweight"": ""glute-max-A""}",rep_updown
+review,muscle-hamstrings-t3,A,4,h-db-rdl,hamstrings-A,徒手单腿罗马尼亚硬拉,单侧目录动作未安排换侧,"{""drill"": ""h-db-rdl"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 60, ""bodyweight"": ""hamstrings-A""}",rep_updown
+review,muscle-quadriceps-t2,A,4,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
+review,muscle-quadriceps-t2,B,4,hip-flexors-A,hip-flexors-A,坐姿直腿抬腿,双侧目录动作却安排换侧,"{""drill"": ""hip-flexors-A"", ""sets"": 3, ""reps"": 10, ""restSeconds"": 45, ""perSide"": true}",rep_hold
