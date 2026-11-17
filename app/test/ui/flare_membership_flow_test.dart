@@ -4,6 +4,7 @@ import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/flare_membership_page.dart';
+import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,6 +63,10 @@ void main() {
       final semantics = tester.ensureSemantics();
       final purchases = _TestStore();
       final membership = FlareMembership(purchases);
+      final membershipBack = find.descendant(
+        of: find.byType(FlareMembershipPage),
+        matching: find.byType(FlareBackChip),
+      );
       try {
         final catalog = loadCatalogFixture(includeFlarePlans: true);
         final store = LearningStore(
@@ -108,7 +113,7 @@ void main() {
         expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
         expect(find.text('免费试用 7 天'), findsOneWidget);
         expect(find.text('省 44%'), findsOneWidget);
-        await tester.tap(find.byIcon(Icons.close_rounded));
+        await tester.tap(membershipBack);
         await tester.pumpAndSettle();
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
@@ -122,7 +127,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(FlareMembershipPage), findsOneWidget);
         expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
-        await tester.tap(find.byIcon(Icons.close_rounded));
+        await tester.tap(membershipBack);
         await tester.pumpAndSettle();
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();

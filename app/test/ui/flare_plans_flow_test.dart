@@ -488,6 +488,24 @@ void main() {
     await tester.pumpAndSettle();
     await openHub(tester);
     final hub = _key('training-hub');
+    final bar = find.descendant(of: hub, matching: find.byType(FlareNavBar));
+    final chip = find.descendant(of: bar, matching: find.byType(FlareBackChip));
+    final mask = find.descendant(
+      of: bar,
+      matching: _key('flare-nav-frost-clip'),
+    );
+    expect(tester.getSize(mask).height, 68);
+    expect(
+      find.descendant(of: mask, matching: find.byType(BackdropFilter)),
+      findsNothing,
+    );
+    final modes = tester
+        .getRect(_key('hub-angle-mode'))
+        .expandToInclude(tester.getRect(_key('hub-muscle-mode')));
+    expect(modes.center.dx, tester.getCenter(bar).dx);
+    expect(modes.center.dy, tester.getCenter(chip).dy);
+    final control = find.byWidget(tester.widget<FlareNavBar>(bar).center!);
+    expect(tester.getSize(control), const Size(176, 36));
     final timeline = _key('hub-timeline');
     final viewPlan = _key('hub-view-plan');
     final strings = AppLocalizations.of(tester.element(hub));
@@ -1007,7 +1025,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(FlareMembershipPage), findsOneWidget);
       expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
-      await tester.tap(find.byIcon(Icons.close_rounded));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(FlareMembershipPage),
+          matching: find.byType(FlareBackChip),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(await membership.restore(), isTrue);
 

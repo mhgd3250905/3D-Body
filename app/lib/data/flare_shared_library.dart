@@ -268,6 +268,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
 
     return FlareNavPage(
       title: config.strings.title,
+      blurBackdrop: false,
       onBack: widget.onBack ?? () => Navigator.maybePop(context),
       body: CustomScrollView(
         key: const PageStorageKey('public-library-scroll'),

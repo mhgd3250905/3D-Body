@@ -1,5 +1,9 @@
 # App 验证记录
 
+## 全页顶部导航核对（2026-11-17）
+
+[改前清单、规范来源和 SDK 边界](navigation-inventory-2026-11-17.md)。主页、更多菜单、3D 肌群详情、训练汇总、两套动作库、动作详情、训练记录、设置、关于、个人计划与编辑、会员和训练载入接到共用常驻渐隐。73 项相关测试、静态分析和离线 Web 构建通过。Chrome 与测试数据渲染核对 15 个改动页。
+
 ## 计划页与训练详情顶部渐隐（2026-11-17）
 
 计划页、角度详情和肌群详情使用 [FlareScrollNav](../lib/ui/page_kit.dart) 绘制常驻渐隐。依据本文件「首页菜单胶囊与计划页浮动顶栏」的材料段与其引用的 HipLab `docs/ui-design-standard.md` §1.1–1.3、`docs/ui-kit/02-navigation.md` §2 与 §3.1。遮罩高度为安全区 + 44 pt 控制行 + 24 pt 过渡段，沿用 [FlareNavigationGlass](../lib/ui/app_glass.dart) 的页面底色、13 点采样与 60%/.86 拐点。按本次反馈，遮罩只绘制渐变，返回键沿用原有 FlareBackChip。

@@ -76,12 +76,13 @@ class FlareNavIconButton extends StatelessWidget {
 /// status bar. Flat glass: a uniform tint over a real, clipped backdrop
 /// blur and one hairline rim; no bevel and no shadow.
 class FlareBackChip extends StatelessWidget {
-  const FlareBackChip({super.key, required this.onPressed});
+  const FlareBackChip({super.key, required this.onPressed, this.label});
   final VoidCallback? onPressed;
+  final String? label;
 
   @override
   Widget build(BuildContext context) => FlareNavChip(
-    label: context.strings.goBack,
+    label: label ?? context.strings.goBack,
     icon: FlareNavBar.backIcon,
     onPressed: onPressed,
   );
@@ -175,16 +176,25 @@ class FlareNavBar extends StatelessWidget {
   const FlareNavBar({
     super.key,
     this.title,
+    this.center,
     this.onBack,
+    this.backLabel,
+    this.leading,
+    this.backEnabled = true,
     this.action,
     this.subtitle,
     this.topInset = 0,
     this.fade = FlareGeometry.navFade,
     this.glass = false,
     this.blurBackdrop = true,
-  });
+  }) : assert(title == null || center == null),
+       assert(onBack == null || leading == null);
   final String? title;
+  final Widget? center;
   final VoidCallback? onBack;
+  final String? backLabel;
+  final Widget? leading;
+  final bool backEnabled;
   final Widget? action;
   final String? subtitle;
   final double topInset;
@@ -210,6 +220,14 @@ class FlareNavBar extends StatelessWidget {
         children: [
           if (glass)
             Positioned.fill(child: FlareNavFrost(blurBackdrop: blurBackdrop)),
+          if (center != null)
+            Positioned(
+              top: topInset,
+              left: FlareGeometry.navTitleInset,
+              right: FlareGeometry.navTitleInset,
+              height: row,
+              child: Center(child: center),
+            ),
           if (title != null)
             Positioned(
               top: topInset,
@@ -255,11 +273,16 @@ class FlareNavBar extends StatelessWidget {
                 ),
               ),
             ),
-          if (onBack != null && !pinned)
+          if (leading != null || (onBack != null && !pinned))
             PositionedDirectional(
               start: chipEdge,
               top: topInset,
-              child: FlareBackChip(onPressed: onBack),
+              child:
+                  leading ??
+                  FlareBackChip(
+                    onPressed: backEnabled ? onBack : null,
+                    label: backLabel,
+                  ),
             ),
           if (action != null)
             PositionedDirectional(
@@ -319,6 +342,7 @@ class FlareNavPage extends StatelessWidget {
     this.action,
     required this.body,
     this.bodyScrollsUnderBar = true,
+    this.blurBackdrop = true,
     this.bottomBar,
   });
 
@@ -328,6 +352,7 @@ class FlareNavPage extends StatelessWidget {
   final Widget? action;
   final Widget body;
   final bool bodyScrollsUnderBar;
+  final bool blurBackdrop;
   final Widget? bottomBar;
 
   @override
@@ -366,6 +391,7 @@ class FlareNavPage extends StatelessWidget {
               topInset: safeTop,
               fade: bodyScrollsUnderBar ? FlareGeometry.navFade : 0,
               glass: true,
+              blurBackdrop: blurBackdrop,
             ),
           ),
         ],

@@ -1,9 +1,5 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 
-import 'components.dart';
-import 'motion.dart';
 import 'theme.dart';
 
 RadialGradient flarePlanArtGradient(FlarePalette palette) => RadialGradient(
@@ -135,31 +131,4 @@ class FlarePlanSectionHeading extends StatelessWidget {
       ],
     );
   }
-}
-
-class FlarePlanBackButton extends StatelessWidget {
-  const FlarePlanBackButton({super.key, required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => FlarePressable(
-    semanticLabel: context.strings.goBack,
-    onTap: onTap,
-    child: ClipOval(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: ColoredBox(
-          color: const Color(0x2e7f7f87),
-          child: SizedBox.square(
-            dimension: 36,
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 16,
-              color: FlareColors.palette.text,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
 }

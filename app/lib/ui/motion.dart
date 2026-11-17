@@ -710,6 +710,7 @@ class FadeSlideIn extends StatefulWidget {
 
 class _FadeSlideInState extends State<FadeSlideIn>
     with SingleTickerProviderStateMixin {
+  Timer? _startTimer;
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: widget.duration,
@@ -725,15 +726,14 @@ class _FadeSlideInState extends State<FadeSlideIn>
       } else if (widget.delay == Duration.zero) {
         _controller.forward();
       } else {
-        Future<void>.delayed(widget.delay, () {
-          if (mounted) _controller.forward();
-        });
+        _startTimer = Timer(widget.delay, () => _controller.forward());
       }
     });
   }
 
   @override
   void dispose() {
+    _startTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }

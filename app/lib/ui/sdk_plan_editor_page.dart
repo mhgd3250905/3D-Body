@@ -113,144 +113,131 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
   @override
   Widget build(BuildContext context) {
     final s = context.strings;
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
+    return FlareNavPage(
+      title: s.planEdit,
+      onBack: _saving ? () {} : widget.onBack,
+      blurBackdrop: false,
+      body: ListView(
+        padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 20),
         children: [
-          FlareNavBar(
-            title: s.planEdit,
-            onBack: _saving ? () {} : widget.onBack,
+          FlareFieldGroup(
+            label: s.planNameHint,
+            field: TextField(
+              key: const ValueKey('sdk-plan-name'),
+              controller: _name,
+              enabled: !_saving,
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+            ),
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+            child: Text(
+              s.planReorderHint,
+              style: TextStyle(fontSize: 13, color: FlareColors.dim),
+            ),
+          ),
+          for (final (bi, block) in widget.plan.blocks.indexed) ...[
+            FlareSection(
+              block.type == uc.BlockType.circuit
+                  ? '${block.name} · × ${block.rounds} · ${s.rest} ${s.secondsLabel(block.restBetweenRoundsSeconds)}'
+                  : block.name,
+            ),
+            FlareListGroup(
               children: [
-                FlareFieldGroup(
-                  label: s.planNameHint,
-                  field: TextField(
-                    key: const ValueKey('sdk-plan-name'),
-                    controller: _name,
-                    enabled: !_saving,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
-                  child: Text(
-                    s.planReorderHint,
-                    style: TextStyle(fontSize: 13, color: FlareColors.dim),
-                  ),
-                ),
-                for (final (bi, block) in widget.plan.blocks.indexed) ...[
-                  FlareSection(
-                    block.type == uc.BlockType.circuit
-                        ? '${block.name} · × ${block.rounds} · ${s.rest} ${s.secondsLabel(block.restBetweenRoundsSeconds)}'
-                        : block.name,
-                  ),
-                  FlareListGroup(
-                    children: [
-                      ReorderableListView.builder(
-                        key: ValueKey('sdk-plan-block-$bi'),
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        buildDefaultDragHandles: false,
-                        itemCount: _items[bi].length,
-                        onReorderItem: (from, to) {
-                          if (_saving) return;
-                          setState(() {
-                            final item = _items[bi].removeAt(from);
-                            _items[bi].insert(to, item);
-                          });
-                        },
-                        itemBuilder: (context, ii) {
-                          final item = _items[bi][ii];
-                          final mapper = CoachPlanMapper(
-                            widget.catalog,
-                            shared: FlareShared.current?.catalog,
-                          );
-                          final drill = mapper.drillById(item.exerciseId);
-                          final amount = item.segments.isNotEmpty
-                              ? [
-                                  for (final (index, segment)
-                                      in item.segments.indexed)
-                                    '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : mapper.drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
-                                        '${segment.mode == uc.DoseMode.time ? s.secondsLabel(segment.workSeconds!) : s.countLabel(segment.reps!)}'
-                                        '${segment.holdSeconds == null ? '' : ' · ⏸ ${s.secondsLabel(segment.holdSeconds!)}'}',
-                                ].join('\n')
-                              : item.mode == uc.DoseMode.time
-                              ? s.secondsLabel(item.workSeconds!)
-                              : s.countLabel(item.reps!);
-                          final sets =
-                              block.type == uc.BlockType.circuit &&
-                                  block.rounds > 1
-                              ? 1
-                              : item.sets;
-                          return ListTile(
-                            key: ObjectKey(item),
-                            contentPadding: const EdgeInsetsDirectional.only(
-                              start: 4,
-                              end: 4,
-                            ),
-                            subtitleTextStyle: TextStyle(
-                              fontFamily: flareFontFamily,
-                              fontFamilyFallback: flareFontFallback,
-                              fontSize: 13,
-                              color: FlareColors.dim,
-                            ),
-                            leading: ReorderableDragStartListener(
-                              index: ii,
-                              child: const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Icon(Icons.drag_indicator_rounded),
-                              ),
-                            ),
-                            title: Text(drill?.name ?? item.exerciseId),
-                            subtitle: Text(
-                              '× $sets${item.perSide ? ' · ${s.bothSides}' : ''} · ${s.rest} ${s.secondsLabel(item.restSeconds)}${item.segments.isEmpty ? ' · ' : '\n'}$amount',
-                            ),
-                            trailing: IconButton(
-                              key: ValueKey('sdk-plan-remove-$bi-$ii'),
-                              tooltip: s.planRemoveDrill,
-                              icon: Icon(
-                                Icons.remove_circle_outline_rounded,
-                                size: 20,
-                                color: FlareColors.dim,
-                              ),
-                              onPressed: _saving
-                                  ? null
-                                  : () =>
-                                        setState(() => _items[bi].removeAt(ii)),
-                            ),
-                          );
-                        },
+                ReorderableListView.builder(
+                  key: ValueKey('sdk-plan-block-$bi'),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  buildDefaultDragHandles: false,
+                  itemCount: _items[bi].length,
+                  onReorderItem: (from, to) {
+                    if (_saving) return;
+                    setState(() {
+                      final item = _items[bi].removeAt(from);
+                      _items[bi].insert(to, item);
+                    });
+                  },
+                  itemBuilder: (context, ii) {
+                    final item = _items[bi][ii];
+                    final mapper = CoachPlanMapper(
+                      widget.catalog,
+                      shared: FlareShared.current?.catalog,
+                    );
+                    final drill = mapper.drillById(item.exerciseId);
+                    final amount = item.segments.isNotEmpty
+                        ? [
+                            for (final (index, segment)
+                                in item.segments.indexed)
+                              '${index + 1}. ${segment.label?.trim().isNotEmpty == true ? segment.label : mapper.drillById(segment.exerciseId)?.name ?? segment.exerciseId} · '
+                                  '${segment.mode == uc.DoseMode.time ? s.secondsLabel(segment.workSeconds!) : s.countLabel(segment.reps!)}'
+                                  '${segment.holdSeconds == null ? '' : ' · ⏸ ${s.secondsLabel(segment.holdSeconds!)}'}',
+                          ].join('\n')
+                        : item.mode == uc.DoseMode.time
+                        ? s.secondsLabel(item.workSeconds!)
+                        : s.countLabel(item.reps!);
+                    final sets =
+                        block.type == uc.BlockType.circuit && block.rounds > 1
+                        ? 1
+                        : item.sets;
+                    return ListTile(
+                      key: ObjectKey(item),
+                      contentPadding: const EdgeInsetsDirectional.only(
+                        start: 4,
+                        end: 4,
                       ),
-                      FlareListRow(
-                        key: ValueKey('sdk-plan-add-$bi'),
-                        leading: const FlareRowIcon(Icons.add_rounded),
-                        title: s.planAddDrills,
-                        trailing: const SizedBox.shrink(),
-                        onTap: _saving ? null : () => _add(bi),
+                      subtitleTextStyle: TextStyle(
+                        fontFamily: flareFontFamily,
+                        fontFamilyFallback: flareFontFallback,
+                        fontSize: 13,
+                        color: FlareColors.dim,
                       ),
-                    ],
-                  ),
-                ],
+                      leading: ReorderableDragStartListener(
+                        index: ii,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Icon(Icons.drag_indicator_rounded),
+                        ),
+                      ),
+                      title: Text(drill?.name ?? item.exerciseId),
+                      subtitle: Text(
+                        '× $sets${item.perSide ? ' · ${s.bothSides}' : ''} · ${s.rest} ${s.secondsLabel(item.restSeconds)}${item.segments.isEmpty ? ' · ' : '\n'}$amount',
+                      ),
+                      trailing: IconButton(
+                        key: ValueKey('sdk-plan-remove-$bi-$ii'),
+                        tooltip: s.planRemoveDrill,
+                        icon: Icon(
+                          Icons.remove_circle_outline_rounded,
+                          size: 20,
+                          color: FlareColors.dim,
+                        ),
+                        onPressed: _saving
+                            ? null
+                            : () => setState(() => _items[bi].removeAt(ii)),
+                      ),
+                    );
+                  },
+                ),
+                FlareListRow(
+                  key: ValueKey('sdk-plan-add-$bi'),
+                  leading: const FlareRowIcon(Icons.add_rounded),
+                  title: s.planAddDrills,
+                  trailing: const SizedBox.shrink(),
+                  onTap: _saving ? null : () => _add(bi),
+                ),
               ],
             ),
-          ),
-          FlareBottomAction(
-            child: PrimaryAction(
-              key: const ValueKey('sdk-plan-save'),
-              label: s.planSave,
-              icon: Icons.check_rounded,
-              onPressed: !_saving && _items.any((items) => items.isNotEmpty)
-                  ? _save
-                  : null,
-            ),
-          ),
+          ],
         ],
+      ),
+      bottomBar: FlareBottomAction(
+        child: PrimaryAction(
+          key: const ValueKey('sdk-plan-save'),
+          label: s.planSave,
+          icon: Icons.check_rounded,
+          onPressed: !_saving && _items.any((items) => items.isNotEmpty)
+              ? _save
+              : null,
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../control/flare_membership.dart';
 import 'components.dart';
+import 'page_kit.dart';
 import 'theme.dart';
 
 const _terms =
@@ -224,151 +225,147 @@ class _FlareMembershipPageState extends State<FlareMembershipPage> {
     return Scaffold(
       backgroundColor: FlareColors.background,
       body: SafeArea(
-        child: Stack(
-          children: [
-            ListView(
-              padding: const EdgeInsetsDirectional.fromSTEB(16, 56, 16, 16),
-              children: [
-                Text(
-                  s.premiumTitle,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                  ),
+        top: false,
+        child: FlareNavPage(
+          onBack: () => Navigator.pop(context),
+          blurBackdrop: false,
+          body: ListView(
+            padding: EdgeInsetsDirectional.fromSTEB(
+              16,
+              flareNavInset(context),
+              16,
+              16,
+            ),
+            children: [
+              Text(
+                s.premiumTitle,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  s.premiumSubtitle,
-                  style: TextStyle(fontSize: 15, color: FlareColors.secondary),
-                ),
-                const SizedBox(height: 24),
-                for (final (index, benefit) in [
-                  (Icons.chat_bubble_outline_rounded, s.premiumAiCoach),
-                  (Icons.auto_awesome_rounded, s.premiumAiPlans),
-                  (Icons.playlist_add_rounded, s.premiumCustomWorkouts),
-                ].indexed) ...[
-                  if (index != 0) const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Icon(benefit.$1, size: 20, color: FlareColors.accent),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          benefit.$2,
-                          style: const TextStyle(fontSize: 15),
-                        ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                s.premiumSubtitle,
+                style: TextStyle(fontSize: 15, color: FlareColors.secondary),
+              ),
+              const SizedBox(height: 24),
+              for (final (index, benefit) in [
+                (Icons.chat_bubble_outline_rounded, s.premiumAiCoach),
+                (Icons.auto_awesome_rounded, s.premiumAiPlans),
+                (Icons.playlist_add_rounded, s.premiumCustomWorkouts),
+              ].indexed) ...[
+                if (index != 0) const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(benefit.$1, size: 20, color: FlareColors.accent),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        benefit.$2,
+                        style: const TextStyle(fontSize: 15),
                       ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 24),
-                FutureBuilder(
-                  future: _offers,
-                  builder: (context, snapshot) => ListenableBuilder(
-                    listenable: widget.membership,
-                    builder: (context, _) {
-                      final offers = {
-                        for (final offer
-                            in snapshot.data ?? const <MembershipOffer>[])
-                          offer.term: offer,
-                      };
-                      final selected = offers[_selected];
-                      final trialDays = selected?.trialDays;
-                      final busy = widget.membership.busy;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _offerCard(
-                            context,
-                            MembershipTerm.monthly,
-                            offers[MembershipTerm.monthly],
-                          ),
-                          const SizedBox(height: 12),
-                          _offerCard(
-                            context,
-                            MembershipTerm.annual,
-                            offers[MembershipTerm.annual],
-                            savings: _savings(
-                              offers[MembershipTerm.monthly],
-                              offers[MembershipTerm.annual],
-                            ),
-                          ),
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting)
-                            const Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          else if (offers.isEmpty)
-                            TextButton(
-                              onPressed: () => setState(
-                                () => _offers = widget.membership.offers(),
-                              ),
-                              child: Text(s.premiumUnavailable),
-                            ),
-                          const SizedBox(height: 20),
-                          FilledButton(
-                            key: const ValueKey('premium-subscribe'),
-                            onPressed: busy || selected == null
-                                ? null
-                                : _purchase,
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(52),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              textStyle: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            child: Text(
-                              trialDays == null
-                                  ? s.premiumSubscribe
-                                  : s.premiumTrial(trialDays),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _subscriptionDisclosure(context),
-                            style: TextStyle(
-                              fontSize: 12,
-                              height: 1.4,
-                              color: FlareColors.secondary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 16,
-                            children: [
-                              _link(s.premiumRestore, busy ? null : _restore),
-                              _link(
-                                s.premiumTerms,
-                                () => openMembershipLink(context, _terms),
-                              ),
-                              _link(
-                                s.premiumPrivacy,
-                                () => openMembershipLink(context, _privacy),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-            PositionedDirectional(
-              top: 0,
-              end: 16,
-              child: IconButton(
-                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                icon: const Icon(Icons.close_rounded, size: 24),
-                onPressed: () => Navigator.pop(context),
+              const SizedBox(height: 24),
+              FutureBuilder(
+                future: _offers,
+                builder: (context, snapshot) => ListenableBuilder(
+                  listenable: widget.membership,
+                  builder: (context, _) {
+                    final offers = {
+                      for (final offer
+                          in snapshot.data ?? const <MembershipOffer>[])
+                        offer.term: offer,
+                    };
+                    final selected = offers[_selected];
+                    final trialDays = selected?.trialDays;
+                    final busy = widget.membership.busy;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _offerCard(
+                          context,
+                          MembershipTerm.monthly,
+                          offers[MembershipTerm.monthly],
+                        ),
+                        const SizedBox(height: 12),
+                        _offerCard(
+                          context,
+                          MembershipTerm.annual,
+                          offers[MembershipTerm.annual],
+                          savings: _savings(
+                            offers[MembershipTerm.monthly],
+                            offers[MembershipTerm.annual],
+                          ),
+                        ),
+                        if (snapshot.connectionState == ConnectionState.waiting)
+                          const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else if (offers.isEmpty)
+                          TextButton(
+                            onPressed: () => setState(
+                              () => _offers = widget.membership.offers(),
+                            ),
+                            child: Text(s.premiumUnavailable),
+                          ),
+                        const SizedBox(height: 20),
+                        FilledButton(
+                          key: const ValueKey('premium-subscribe'),
+                          onPressed: busy || selected == null
+                              ? null
+                              : _purchase,
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(52),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(
+                            trialDays == null
+                                ? s.premiumSubscribe
+                                : s.premiumTrial(trialDays),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _subscriptionDisclosure(context),
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: FlareColors.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 16,
+                          children: [
+                            _link(s.premiumRestore, busy ? null : _restore),
+                            _link(
+                              s.premiumTerms,
+                              () => openMembershipLink(context, _terms),
+                            ),
+                            _link(
+                              s.premiumPrivacy,
+                              () => openMembershipLink(context, _privacy),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

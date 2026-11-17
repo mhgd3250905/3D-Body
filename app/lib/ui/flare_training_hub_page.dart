@@ -11,6 +11,7 @@ import 'flare_plan_detail_page.dart' show flarePlanMinutes;
 import 'flare_plan_visuals.dart';
 import 'motion.dart';
 import 'motion_controls.dart';
+import 'page_kit.dart';
 import 'scene_localization.dart';
 import 'theme.dart';
 
@@ -257,10 +258,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                   _HubStage(
                     height: stageHeight,
                     safeTop: safe.top,
-                    muscles: _pendingMode ?? _muscles,
                     sceneBoundsKey: widget.sceneBoundsKey,
-                    onBack: widget.interactionLocked ? null : widget.onBack,
-                    onMode: _selectMode,
                     onHorizontalDragUpdate:
                         widget.interactionLocked ||
                             _muscles ||
@@ -317,6 +315,22 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                           ? () => widget.onMuscle(muscle)
                           : () => widget.onAngle(phase),
                     ),
+                  ),
+                ),
+                PositionedDirectional(
+                  top: 0,
+                  start: 0,
+                  end: 0,
+                  child: FlareNavBar(
+                    onBack: widget.onBack,
+                    backEnabled: !widget.interactionLocked,
+                    center: _HubModeControl(
+                      muscles: _pendingMode ?? _muscles,
+                      onMode: _selectMode,
+                    ),
+                    topInset: safe.top,
+                    glass: true,
+                    blurBackdrop: false,
                   ),
                 ),
               ],
@@ -445,19 +459,13 @@ class _HubStage extends StatelessWidget {
   const _HubStage({
     required this.height,
     required this.safeTop,
-    required this.muscles,
     required this.sceneBoundsKey,
-    required this.onBack,
-    required this.onMode,
     required this.onHorizontalDragUpdate,
     required this.scene,
   });
   final double height;
   final double safeTop;
-  final bool muscles;
   final GlobalKey? sceneBoundsKey;
-  final VoidCallback? onBack;
-  final ValueChanged<bool> onMode;
   final GestureDragUpdateCallback? onHorizontalDragUpdate;
   final Widget scene;
 
@@ -481,22 +489,6 @@ class _HubStage extends StatelessWidget {
                 key: sceneBoundsKey,
                 child: IgnorePointer(child: scene),
               ),
-            ),
-          ),
-          Positioned(
-            left: 16,
-            top: safeTop + 10,
-            child: IgnorePointer(
-              ignoring: onBack == null,
-              child: FlarePlanBackButton(onTap: onBack ?? () {}),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: safeTop + 10,
-            child: Center(
-              child: _HubModeControl(muscles: muscles, onMode: onMode),
             ),
           ),
         ],

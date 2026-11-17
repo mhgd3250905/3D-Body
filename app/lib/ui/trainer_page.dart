@@ -12,6 +12,7 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
+import 'page_kit.dart';
 
 /// Opened through the SDK TrainerLauncher: TrainerPlayer owns back/finish,
 /// poster entry and on-demand public media, and returns one immutable SDK
@@ -228,6 +229,21 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     );
   }
 
+  Widget _loadPage(BuildContext context, Widget child) => Scaffold(
+    body: FlareNavPage(
+      title: widget.plan.title,
+      blurBackdrop: false,
+      onBack: () => Navigator.maybePop(context),
+      body: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(top: flareNavInset(context)),
+          child: Center(child: child),
+        ),
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
@@ -236,40 +252,35 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           final error = snapshot.error;
-          return Scaffold(
-            appBar: AppBar(title: Text(widget.plan.title)),
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(trainerLoadFailed(s)),
-                    if (error is UnknownTrainingDrills)
-                      Text(
-                        '${trainerMoveUnavailable(s)}: ${error.ids.join(', ')}',
-                      ),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () => setState(() {
-                        _loading = _load(
-                          Localizations.localeOf(context).languageCode,
-                        );
-                      }),
-                      child: Text(s.retry),
+          return _loadPage(
+            context,
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(trainerLoadFailed(s)),
+                  if (error is UnknownTrainingDrills)
+                    Text(
+                      '${trainerMoveUnavailable(s)}: ${error.ids.join(', ')}',
                     ),
-                  ],
-                ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => setState(() {
+                      _loading = _load(
+                        Localizations.localeOf(context).languageCode,
+                      );
+                    }),
+                    child: Text(s.retry),
+                  ),
+                ],
               ),
             ),
           );
         }
         final data = snapshot.data;
         if (data == null) {
-          return Scaffold(
-            appBar: AppBar(title: Text(widget.plan.title)),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+          return _loadPage(context, const CircularProgressIndicator());
         }
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);

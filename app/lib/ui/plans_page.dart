@@ -1036,113 +1036,105 @@ class PlanDetailPage extends StatelessWidget {
             999,
           );
     final ts = trainerStrings(s);
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
-        children: [
-          FlareNavBar(
-            title: title,
-            subtitle: s.planMeta(entries?.length ?? drills.length, minutes),
-            onBack: onBack,
-            action: onEdit == null
-                ? null
-                : FlareNavIconButton(
-                    key: const ValueKey('plan-edit'),
-                    icon: Icons.edit_outlined,
-                    tooltip: s.planEdit,
-                    onPressed: onEdit,
-                  ),
+    return FlareNavPage(
+      title: title,
+      subtitle: s.planMeta(entries?.length ?? drills.length, minutes),
+      onBack: onBack,
+      action: onEdit == null
+          ? null
+          : FlareNavIconButton(
+              key: const ValueKey('plan-edit'),
+              icon: Icons.edit_outlined,
+              tooltip: s.planEdit,
+              onPressed: onEdit,
+            ),
+      blurBackdrop: false,
+      body: ScrollEdge(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            flareNavInset(context, hasSubtitle: true),
+            20,
+            20,
           ),
-          Expanded(
-            child: ScrollEdge(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                children: [
-                  if (!available)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text(
-                        ts.mediaUnavailable,
-                        style: TextStyle(color: FlareColors.warning),
+          children: [
+            if (!available)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  ts.mediaUnavailable,
+                  style: TextStyle(color: FlareColors.warning),
+                ),
+              ),
+            if (entries != null)
+              for (final block in _blocks(entries)) ...[
+                FlareSection(
+                  [
+                    block.first.$2.block.name,
+                    if (block.first.$2.block.type == uc.BlockType.circuit)
+                      ts.roundOf(1, block.first.$2.block.rounds),
+                    if (block.first.$2.block.type == uc.BlockType.circuit)
+                      '${s.rest} · ${s.secondsLabel(block.first.$2.block.restBetweenRoundsSeconds)}',
+                  ].where((part) => part.isNotEmpty).join(' · '),
+                ),
+                FlareListGroup(
+                  children: [
+                    for (final (index, entry) in block)
+                      _NumberedDrill(
+                        key: ValueKey('sdk-plan-row-$index'),
+                        index: index,
+                        drill: entry.drill,
+                        doseText: entry.doseText,
+                        grouped: true,
+                        // Shared public actions open the SDK details.
+                        onTap: () => catalog!.drillById(entry.drill.id) == null
+                            ? FlareShared.openDetail(context, entry.drill.id)
+                            : onDrill(entry.drill),
                       ),
-                    ),
-                  if (entries != null)
-                    for (final block in _blocks(entries)) ...[
-                      FlareSection(
-                        [
-                          block.first.$2.block.name,
-                          if (block.first.$2.block.type == uc.BlockType.circuit)
-                            ts.roundOf(1, block.first.$2.block.rounds),
-                          if (block.first.$2.block.type == uc.BlockType.circuit)
-                            '${s.rest} · ${s.secondsLabel(block.first.$2.block.restBetweenRoundsSeconds)}',
-                        ].where((part) => part.isNotEmpty).join(' · '),
-                      ),
-                      FlareListGroup(
-                        children: [
-                          for (final (index, entry) in block)
-                            _NumberedDrill(
-                              key: ValueKey('sdk-plan-row-$index'),
-                              index: index,
-                              drill: entry.drill,
-                              doseText: entry.doseText,
-                              grouped: true,
-                              // Shared public actions open the SDK details.
-                              onTap: () =>
-                                  catalog!.drillById(entry.drill.id) == null
-                                  ? FlareShared.openDetail(
-                                      context,
-                                      entry.drill.id,
-                                    )
-                                  : onDrill(entry.drill),
-                            ),
-                        ],
-                      ),
-                    ],
-                  if (entries == null) ...[
-                    const SizedBox(height: 16),
-                    FlareListGroup(
-                      children: [
-                        for (final (index, drill) in drills.indexed)
-                          FadeSlideIn(
-                            key: ValueKey('plan-row-${drill.id}'),
-                            delay: FadeSlideIn.stagger(index),
-                            child: _NumberedDrill(
-                              index: index,
-                              drill: drill,
-                              grouped: true,
-                              onTap: () => onDrill(drill),
-                            ),
-                          ),
-                      ],
-                    ),
                   ],
-                  const SizedBox(height: 12),
-                  if (onCopy != null)
-                    Center(
-                      child: TextButton.icon(
-                        key: const ValueKey('plan-copy'),
-                        onPressed: onCopy,
-                        icon: const Icon(Icons.copy_outlined, size: 18),
-                        label: Text(s.premiumCopyRoutine),
+                ),
+              ],
+            if (entries == null) ...[
+              const SizedBox(height: 16),
+              FlareListGroup(
+                children: [
+                  for (final (index, drill) in drills.indexed)
+                    FadeSlideIn(
+                      key: ValueKey('plan-row-${drill.id}'),
+                      delay: FadeSlideIn.stagger(index),
+                      child: _NumberedDrill(
+                        index: index,
+                        drill: drill,
+                        grouped: true,
+                        onTap: () => onDrill(drill),
                       ),
                     ),
                 ],
               ),
-            ),
-          ),
-          FlareBottomAction(
-            child: PrimaryAction(
-              key: const ValueKey('plan-start'),
-              icon: Icons.play_arrow_rounded,
-              label: s.planStart,
-              onPressed:
-                  (plan == null ? drills.isEmpty : plan.items.isEmpty) ||
-                      !available
-                  ? null
-                  : onStart,
-            ),
-          ),
-        ],
+            ],
+            const SizedBox(height: 12),
+            if (onCopy != null)
+              Center(
+                child: TextButton.icon(
+                  key: const ValueKey('plan-copy'),
+                  onPressed: onCopy,
+                  icon: const Icon(Icons.copy_outlined, size: 18),
+                  label: Text(s.premiumCopyRoutine),
+                ),
+              ),
+          ],
+        ),
+      ),
+      bottomBar: FlareBottomAction(
+        child: PrimaryAction(
+          key: const ValueKey('plan-start'),
+          icon: Icons.play_arrow_rounded,
+          label: s.planStart,
+          onPressed:
+              (plan == null ? drills.isEmpty : plan.items.isEmpty) || !available
+              ? null
+              : onStart,
+        ),
       ),
     );
   }
@@ -1347,158 +1339,150 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
           },
     ];
     final full = _ids.length >= TrainingRoutine.maxDrills;
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
-        children: [
-          FlareNavBar(
-            title: widget.routine == null ? s.planNew : s.planEdit,
-            onBack: widget.onBack,
+    return FlareNavPage(
+      title: widget.routine == null ? s.planNew : s.planEdit,
+      onBack: widget.onBack,
+      blurBackdrop: false,
+      body: ScrollEdge(
+        child: ReorderableListView.builder(
+          padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 20),
+          buildDefaultDragHandles: false,
+          header: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FlareFieldGroup(
+                label: s.planNameHint,
+                field: TextField(
+                  key: const ValueKey('routine-name'),
+                  controller: _name,
+                  maxLength: TrainingRoutine.maxName,
+                  textInputAction: TextInputAction.done,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: s.planDefaultName,
+                    counterText: '',
+                  ),
+                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: Eyebrow(
+                      drills.isEmpty
+                          ? s.planEmptyDrills
+                          : '${s.planMeta(drills.length, estimateMinutes(drills))}'
+                                '${drills.length > 1 ? ' · ${s.planReorderHint}' : ''}',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+            ],
           ),
-          Expanded(
-            child: ScrollEdge(
-              child: ReorderableListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                buildDefaultDragHandles: false,
-                header: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+          footer: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FlareListGroup(
                   children: [
-                    FlareFieldGroup(
-                      label: s.planNameHint,
-                      field: TextField(
-                        key: const ValueKey('routine-name'),
-                        controller: _name,
-                        maxLength: TrainingRoutine.maxName,
-                        textInputAction: TextInputAction.done,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: s.planDefaultName,
-                          counterText: '',
-                        ),
-                        onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                      ),
+                    FlareListRow(
+                      key: const ValueKey('routine-add'),
+                      leading: const FlareRowIcon(Icons.add_rounded),
+                      title: s.planAddDrills,
+                      trailing: const SizedBox.shrink(),
+                      onTap: full ? null : _add,
                     ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Eyebrow(
-                            drills.isEmpty
-                                ? s.planEmptyDrills
-                                : '${s.planMeta(drills.length, estimateMinutes(drills))}'
-                                      '${drills.length > 1 ? ' · ${s.planReorderHint}' : ''}',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
                   ],
                 ),
-                footer: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                if (widget.onDeleted != null) ...[
+                  const SizedBox(height: 28),
+                  FlareListGroup(
                     children: [
-                      FlareListGroup(
-                        children: [
-                          FlareListRow(
-                            key: const ValueKey('routine-add'),
-                            leading: const FlareRowIcon(Icons.add_rounded),
-                            title: s.planAddDrills,
-                            trailing: const SizedBox.shrink(),
-                            onTap: full ? null : _add,
-                          ),
-                        ],
+                      FlareListRow(
+                        key: const ValueKey('routine-delete'),
+                        title: s.planDelete,
+                        destructive: true,
+                        trailing: const SizedBox.shrink(),
+                        onTap: _busy ? null : widget.onDeleted,
                       ),
-                      if (widget.onDeleted != null) ...[
-                        const SizedBox(height: 28),
-                        FlareListGroup(
-                          children: [
-                            FlareListRow(
-                              key: const ValueKey('routine-delete'),
-                              title: s.planDelete,
-                              destructive: true,
-                              trailing: const SizedBox.shrink(),
-                              onTap: _busy ? null : widget.onDeleted,
-                            ),
-                          ],
-                        ),
-                      ],
                     ],
                   ),
-                ),
-                itemCount: drills.length,
-                onReorderItem: (from, to) {
-                  FlareHaptics.selection();
-                  setState(() {
-                    final id = _ids.removeAt(from);
-                    _ids.insert(to, id);
-                  });
-                },
-                // Dark lifts the dragged row; light outlines it with a
-                // hairline instead of a drop shadow (开哥 2026-11-03).
-                proxyDecorator: (child, _, _) => Material(
-                  color: Colors.transparent,
-                  elevation: FlareColors.palette.isDark ? 6 : 0,
-                  shadowColor: Colors.black38,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: FlareColors.palette.isDark
-                        ? BorderSide.none
-                        : BorderSide(color: FlareColors.hairline, width: .5),
-                  ),
-                  child: child,
-                ),
-                itemBuilder: (context, index) {
-                  final drill = drills[index];
-                  return _NumberedDrill(
-                    key: ValueKey('edit-${drill.id}'),
-                    index: index,
-                    drill: drill,
-                    onTap: () {},
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          tooltip: s.planRemoveDrill,
-                          icon: Icon(
-                            Icons.remove_circle_outline_rounded,
-                            size: 20,
-                            color: FlareColors.dim,
-                          ),
-                          onPressed: () {
-                            FlareHaptics.light();
-                            setState(() => _ids.remove(drill.id));
-                          },
-                        ),
-                        ReorderableDragStartListener(
-                          index: index,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 12, 8, 12),
-                            child: Icon(
-                              Icons.drag_indicator_rounded,
-                              color: FlareColors.dim,
-                            ),
-                          ),
-                        ),
-                      ],
+                ],
+              ],
+            ),
+          ),
+          itemCount: drills.length,
+          onReorderItem: (from, to) {
+            FlareHaptics.selection();
+            setState(() {
+              final id = _ids.removeAt(from);
+              _ids.insert(to, id);
+            });
+          },
+          // Dark lifts the dragged row; light outlines it with a
+          // hairline instead of a drop shadow (开哥 2026-11-03).
+          proxyDecorator: (child, _, _) => Material(
+            color: Colors.transparent,
+            elevation: FlareColors.palette.isDark ? 6 : 0,
+            shadowColor: Colors.black38,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: FlareColors.palette.isDark
+                  ? BorderSide.none
+                  : BorderSide(color: FlareColors.hairline, width: .5),
+            ),
+            child: child,
+          ),
+          itemBuilder: (context, index) {
+            final drill = drills[index];
+            return _NumberedDrill(
+              key: ValueKey('edit-${drill.id}'),
+              index: index,
+              drill: drill,
+              onTap: () {},
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: s.planRemoveDrill,
+                    icon: Icon(
+                      Icons.remove_circle_outline_rounded,
+                      size: 20,
+                      color: FlareColors.dim,
                     ),
-                  );
-                },
+                    onPressed: () {
+                      FlareHaptics.light();
+                      setState(() => _ids.remove(drill.id));
+                    },
+                  ),
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 12, 8, 12),
+                      child: Icon(
+                        Icons.drag_indicator_rounded,
+                        color: FlareColors.dim,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          FlareBottomAction(
-            child: PrimaryAction(
-              key: const ValueKey('routine-save'),
-              label: s.planSave,
-              onPressed: _busy || _ids.isEmpty ? null : _save,
-            ),
-          ),
-        ],
+            );
+          },
+        ),
+      ),
+      bottomBar: FlareBottomAction(
+        child: PrimaryAction(
+          key: const ValueKey('routine-save'),
+          label: s.planSave,
+          onPressed: _busy || _ids.isEmpty ? null : _save,
+        ),
       ),
     );
   }
