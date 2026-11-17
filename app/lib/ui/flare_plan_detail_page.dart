@@ -100,106 +100,102 @@ class FlarePlanDetailPage extends StatelessWidget {
           .copyWith(statusBarColor: Colors.transparent),
       child: ColoredBox(
         color: p.background,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              bottom: safe.bottom + _startButtonBottomInset,
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(
-                  context,
-                ).copyWith(scrollbars: false),
-                child: ListView(
-                  padding: const EdgeInsets.only(
-                    bottom: _startButtonHeight + _lastExerciseGap,
+        child: FlareScrollNav(
+          onBack: onBack,
+          body: (scrollController) => Stack(
+            children: [
+              Positioned.fill(
+                bottom: safe.bottom + _startButtonBottomInset,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(
+                    context,
+                  ).copyWith(scrollbars: false),
+                  child: ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.only(
+                      bottom: _startButtonHeight + _lastExerciseGap,
+                    ),
+                    children: [
+                      _PlanHero(
+                        title: title,
+                        intro: intro,
+                        phaseSource: phase?.source ?? plan.phaseSource,
+                        groupId: plan.groupId,
+                        safeTop: safe.top,
+                        info: _PlanInfo(
+                          minutes: minutes,
+                          count: plan.items.length,
+                        ),
+                      ),
+                      if (muscles.isNotEmpty)
+                        _PlanMuscleStrip(
+                          groups: muscles,
+                          onTapFor: (group) =>
+                              catalog.plansForMuscle(group.id).isEmpty
+                              ? null
+                              : () => onMuscle(group),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          _gutter,
+                          muscles.isEmpty ? 18 : 12,
+                          _gutter,
+                          0,
+                        ),
+                        child: _PlanTiers(
+                          key: const ValueKey('flare-plan-tier'),
+                          selected: plan.tier,
+                          labels: [
+                            for (final option in plans)
+                              (option.tier, tiers[option.tier - 1]),
+                          ],
+                          onChanged: onTierChanged,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          _gutter,
+                          12,
+                          _gutter,
+                          0,
+                        ),
+                        child: _PlanScenes(
+                          selected: scene,
+                          onChanged: (value) =>
+                              store.updateSettings(tier: value),
+                        ),
+                      ),
+                      _heading(
+                        s.planTrainingContent,
+                        s.planDrillCount(plan.items.length),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: _gutter,
+                        ),
+                        child: _PlanRows(
+                          plan: plan,
+                          scene: scene,
+                          buildRow: _row,
+                        ),
+                      ),
+                    ],
                   ),
-                  children: [
-                    _PlanHero(
-                      title: title,
-                      intro: intro,
-                      phaseSource: phase?.source ?? plan.phaseSource,
-                      groupId: plan.groupId,
-                      safeTop: safe.top,
-                      info: _PlanInfo(
-                        minutes: minutes,
-                        count: plan.items.length,
-                      ),
-                    ),
-                    if (muscles.isNotEmpty)
-                      _PlanMuscleStrip(
-                        groups: muscles,
-                        onTapFor: (group) =>
-                            catalog.plansForMuscle(group.id).isEmpty
-                            ? null
-                            : () => onMuscle(group),
-                      ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        _gutter,
-                        muscles.isEmpty ? 18 : 12,
-                        _gutter,
-                        0,
-                      ),
-                      child: _PlanTiers(
-                        key: const ValueKey('flare-plan-tier'),
-                        selected: plan.tier,
-                        labels: [
-                          for (final option in plans)
-                            (option.tier, tiers[option.tier - 1]),
-                        ],
-                        onChanged: onTierChanged,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        _gutter,
-                        12,
-                        _gutter,
-                        0,
-                      ),
-                      child: _PlanScenes(
-                        selected: scene,
-                        onChanged: (value) => store.updateSettings(tier: value),
-                      ),
-                    ),
-                    _heading(
-                      s.planTrainingContent,
-                      s.planDrillCount(plan.items.length),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: _gutter),
-                      child: _PlanRows(
-                        plan: plan,
-                        scene: scene,
-                        buildRow: _row,
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
-            PositionedDirectional(
-              bottom: 0,
-              start: 0,
-              end: 0,
-              child: _PlanBottom(
-                membership: membership,
-                minutes: minutes,
-                safeBottom: safe.bottom,
-                onStart: () => onStart(plan),
+              PositionedDirectional(
+                bottom: 0,
+                start: 0,
+                end: 0,
+                child: _PlanBottom(
+                  membership: membership,
+                  minutes: minutes,
+                  safeBottom: safe.bottom,
+                  onStart: () => onStart(plan),
+                ),
               ),
-            ),
-            PositionedDirectional(
-              top: 0,
-              start: 0,
-              end: 0,
-              child: FlareNavBar(
-                onBack: onBack,
-                topInset: safe.top,
-                fade: 0,
-                glass: true,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

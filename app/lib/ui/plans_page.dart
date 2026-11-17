@@ -187,184 +187,179 @@ class PlansPage extends StatelessWidget {
 
     return ColoredBox(
       color: p.background,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          CustomScrollView(
-            key: const PageStorageKey<String>('plans-scroll'),
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  _pageInset,
-                  safe.top + 56,
-                  _pageInset,
-                  0,
-                ),
-                sliver: SliverList.list(
-                  children: [
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        s.plans,
-                        style: TextStyle(
-                          color: p.text,
-                          fontSize: 30,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -.4,
+      child: FlareScrollNav(
+        onBack: onBack,
+        body: (scrollController) => Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomScrollView(
+              controller: scrollController,
+              key: const PageStorageKey<String>('plans-scroll'),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                    _pageInset,
+                    safe.top + FlareScrollNav.plateHeight,
+                    _pageInset,
+                    0,
+                  ),
+                  sliver: SliverList.list(
+                    children: [
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          s.plans,
+                          style: TextStyle(
+                            color: p.text,
+                            fontSize: 30,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -.4,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        s.plansMine,
-                        style: TextStyle(
-                          color: p.dim,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
+                      const SizedBox(height: 24),
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          s.plansMine,
+                          style: TextStyle(
+                            color: p.dim,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    if (resume != null) ...[
-                      _LastPlanCard(resume: resume, onContinue: onContinue),
                       const SizedBox(height: 12),
-                    ],
-                    _NewPlanRow(
-                      withHistory: resume != null,
-                      onTap: onNewRoutine,
-                    ),
-                    if (routines.isNotEmpty || onAiCoach != null) ...[
-                      const SizedBox(height: 12),
-                      FlareListGroup(
-                        children: [
-                          for (final routine in routines)
-                            _routineRow(context, routine),
-                          if (onAiCoach != null)
-                            FlareListRow(
-                              key: const ValueKey('plan-ai-coach'),
-                              leading: const FlareRowIcon(
-                                Icons.auto_awesome_rounded,
+                      if (resume != null) ...[
+                        _LastPlanCard(resume: resume, onContinue: onContinue),
+                        const SizedBox(height: 12),
+                      ],
+                      _NewPlanRow(
+                        withHistory: resume != null,
+                        onTap: onNewRoutine,
+                      ),
+                      if (routines.isNotEmpty || onAiCoach != null) ...[
+                        const SizedBox(height: 12),
+                        FlareListGroup(
+                          children: [
+                            for (final routine in routines)
+                              _routineRow(context, routine),
+                            if (onAiCoach != null)
+                              FlareListRow(
+                                key: const ValueKey('plan-ai-coach'),
+                                leading: const FlareRowIcon(
+                                  Icons.auto_awesome_rounded,
+                                ),
+                                title: s.plansAiTitle,
+                                subtitle: aiCoachConfigured
+                                    ? s.plansAiHint
+                                    : s.plansAiUnavailable,
+                                onTap: onAiCoach,
                               ),
-                              title: s.plansAiTitle,
-                              subtitle: aiCoachConfigured
-                                  ? s.plansAiHint
-                                  : s.plansAiUnavailable,
-                              onTap: onAiCoach,
-                            ),
-                        ],
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 24),
+                      _PlansSection(
+                        title: s.plansAnglesTitle,
+                        description: s.plansAnglesDescription,
+                        count: angles.length,
+                        actionKey: const ValueKey('plan-all-angles'),
+                        onAll: onAllAngles,
                       ),
                     ],
-                    const SizedBox(height: 24),
-                    _PlansSection(
-                      title: s.plansAnglesTitle,
-                      description: s.plansAnglesDescription,
-                      count: angles.length,
-                      actionKey: const ValueKey('plan-all-angles'),
-                      onAll: onAllAngles,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 212,
-                  child: ListView.separated(
-                    key: const PageStorageKey<String>('plan-angle-carousel'),
-                    scrollDirection: Axis.horizontal,
-                    primary: false,
-                    padding: const EdgeInsets.symmetric(horizontal: _pageInset),
-                    itemCount: angles.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 12),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 212,
+                    child: ListView.separated(
+                      key: const PageStorageKey<String>('plan-angle-carousel'),
+                      scrollDirection: Axis.horizontal,
+                      primary: false,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: _pageInset,
+                      ),
+                      itemCount: angles.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final (phase, beginner) = angles[index];
+                        return _AnglePlanCard(
+                          phase: phase,
+                          beginner: beginner,
+                          usesBothHands:
+                              catalog.supportFor(phase.source) == 'both',
+                          onTap: () => onOpenAngle(phase),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    _pageInset,
+                    24,
+                    _pageInset,
+                    0,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: _PlansSection(
+                      title: s.plansMusclesTitle,
+                      description: s.plansMusclesDescription,
+                      count: muscles.length,
+                      actionKey: const ValueKey('plan-all-muscles'),
+                      onAll: onAllMuscles,
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: _pageInset),
+                  sliver: SliverGrid.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisExtent: 64,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                    itemCount: muscles.length,
                     itemBuilder: (context, index) {
-                      final (phase, beginner) = angles[index];
-                      return _AnglePlanCard(
-                        phase: phase,
-                        beginner: beginner,
-                        usesBothHands:
-                            catalog.supportFor(phase.source) == 'both',
-                        onTap: () => onOpenAngle(phase),
+                      final (group, minutes) = muscles[index];
+                      return _MusclePlanCard(
+                        group: group,
+                        minutes: minutes,
+                        onTap: () => onOpenMuscle(group),
                       );
                     },
                   ),
                 ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  _pageInset,
-                  24,
-                  _pageInset,
-                  0,
+                SliverToBoxAdapter(
+                  child: SizedBox(height: _bottomFade + safe.bottom),
                 ),
-                sliver: SliverToBoxAdapter(
-                  child: _PlansSection(
-                    title: s.plansMusclesTitle,
-                    description: s.plansMusclesDescription,
-                    count: muscles.length,
-                    actionKey: const ValueKey('plan-all-muscles'),
-                    onAll: onAllMuscles,
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: _pageInset),
-                sliver: SliverGrid.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisExtent: 64,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                  ),
-                  itemCount: muscles.length,
-                  itemBuilder: (context, index) {
-                    final (group, minutes) = muscles[index];
-                    return _MusclePlanCard(
-                      group: group,
-                      minutes: minutes,
-                      onTap: () => onOpenMuscle(group),
-                    );
-                  },
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: _bottomFade + safe.bottom),
-              ),
-            ],
-          ),
-          PositionedDirectional(
-            start: 0,
-            end: 0,
-            bottom: 0,
-            height: _bottomFade + safe.bottom,
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [p.background.withValues(alpha: 0), p.background],
-                    stops: [0, _bottomFade / (_bottomFade + safe.bottom)],
-                  ),
-                ),
-              ),
+              ],
             ),
-          ),
-          if (onBack != null)
             PositionedDirectional(
-              top: 0,
               start: 0,
               end: 0,
-              child: FlareNavBar(
-                onBack: onBack,
-                topInset: safe.top,
-                fade: 0,
-                glass: true,
+              bottom: 0,
+              height: _bottomFade + safe.bottom,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [p.background.withValues(alpha: 0), p.background],
+                      stops: [0, _bottomFade / (_bottomFade + safe.bottom)],
+                    ),
+                  ),
+                ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -211,6 +211,23 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.getRect(find.byType(FlareBackChip)), rail);
+          final plate = tester.widget<AnimatedOpacity>(
+            find.byKey(const ValueKey('flare-scroll-nav-plate')),
+          );
+          final decoration =
+              (plate.child as DecoratedBox).decoration as BoxDecoration;
+          expect(plate.opacity, 1);
+          expect(
+            decoration.color,
+            FlareColors.background.withValues(alpha: .94),
+          );
+          final rule = (decoration.border as Border).bottom;
+          expect(rule.width, .5);
+          expect(
+            rule.color,
+            (brightness == Brightness.dark ? Colors.white : Colors.black)
+                .withValues(alpha: .08),
+          );
           await tester.tap(find.byType(FlareBackChip));
           await tester.pumpAndSettle();
           expect(backs, 1);
