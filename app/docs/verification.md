@@ -1,5 +1,21 @@
 # App 验证记录
 
+## 专项计划 vc2051（2026-11-17）
+
+测试、分析与 Android 构建在 `feat/flare-plans-full` 的同一源码状态完成，提交为 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。本次文档收束使用该提交的既有工具回执和真机回读。
+
+| 核对 | 结果 |
+| --- | --- |
+| `flutter analyze --no-pub` | 无问题 |
+| `flutter test --no-pub --reporter expanded` | 434 通过、1 跳过、0 失败。训练汇总页验证 8 个角度、17 个肌群的入口可点；布局矩阵覆盖肌群计划到动作详情 |
+| 计划数据与动作引用 | 72 套计划，原 6 套逐项一致，角度 15 复用 11。152 个动作及替代动作 ID 全部可解析。训练适配用例验证三场景的动作、组数、次数或时长、左右侧和休息 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=51` | 构建通过。APK 实际 versionCode 为 2051，仅 arm64-v8a。签名、16 KiB zipalign 和包内计划 JSON 字节一致性通过 |
+| `adb -s <设备序列号> install -r --no-incremental <APK>`、`adb -s <设备序列号> shell am start -W -n dev.mhgd.flare/.MainActivity` | 2602BRT18C 同签名覆盖成功。设备回读 vc2051、安装 APK 哈希一致，首次安装时间与应用数据目录保持，主界面在前台 |
+
+收束前，以 vc2050 标签指向的 `5202caf508904f43aeb2b0940a778c0c37d8b917` 为基线核对到运行源码的提交和路径差异。工作树完整状态为空。另从源码回读计划 JSON 与随包交付、语义目录，确认 72 套、8 个角度、17 个肌群和 152 个动作 ID 均可解析。本次收束仅更新 Markdown 文档，运行源码、资产、构建配置及测试与上述版本一致。
+
+设备回读覆盖安装、包身份与启动。vc2050 的用户认可及 vc2051 尚待用户确认的交互见[版本台账](version-ledger.md)和[待验收台账](development-roadmap.md)。
+
 ## r2-v11 英文详情（1.0.13+28，2026-11-10）
 
 英文 locale 的 SDK 详情使用 Flare 提供的 `displayText`，直接读取目录的 `nameEn`、`cuesEn`、`cautionsEn`。目录没有英文禁忌提示，Flare 在展示层翻译 7 种标签，对应 251 条提示。目录原始字节与 SDK 锁定保持一致。

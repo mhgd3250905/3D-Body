@@ -1,16 +1,14 @@
 # Flare Anatomy Studio
 
-## 当前已验收版本（2026-11-08，+26已合入主线）
+## 当前 App 版本（2026-11-17）
 
-用户已验收手机当前 **1.0.12+26 / arm64 versionCode2026**，明确授权推进仓库默认主线 `master`。运行源码检查点为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`，同时保留已确认的HipLab UI、249项动作库/AI范围、等高与滑动优化，以及SDK `536b4c52c0f665203e7feb82dfde4d76f4815ad8`（ugk_coach0.8.0）和目录语音接入。后续出包以这一整合基线为准，不能再用缺少UI的SDK单独分支替换产品版本。
+Android 真机已覆盖安装 **Flare 1.0.15 / vc2051**。该包来自本地功能分支 `feat/flare-plans-full` 的 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`，覆盖 8 个角度、17 个肌群，共 72 套专项计划。**vc2050** 是用户已认可的训练页镜头与分段交互基线。远端默认分支检查点为 `master 6d14f29f7c901a709ae7608cde22a2718c2f3ef4`，包含 vc2050 的运行源码及后续记录、布局测试。
 
-上述整合版已通过 [PR #133](https://github.com/mhgd3250905/3D-Body/pull/133) 合入 `master`，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`（2026-11-08 22:41:27，UTC+8）。该检查点与 APK 运行源之间仅有文档差异；本次收束继续只更新文档，不改变已验收的运行版本。
-
-本轮分析通过、406项测试通过/4项已知ar/hi大字体失败/1项默认跳过；同签名从实际+25更新，安装包哈希一致。用户版本验收与主线授权不扩写为全部动作QA、完整语言/设备/iOS或商店发布验收，既有细项继续分账。包、签名、验收与整合来源见[版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)、[UI恢复记录](app/docs/hiplab-sdk080-restoration-2026-11-08.md)。旧包、原UI工作树和R17资产保留，本轮不打tag或发版。
+源码声明版本、构建号、设备验证和历史包按 [版本台账](app/docs/version-ledger.md)、[验证记录](app/docs/verification.md)和[待验收台账](app/docs/development-roadmap.md) 查阅。vc2026 的 HipLab UI 与 SDK 整合记录见 [2026-11-08 整合记录](app/docs/hiplab-sdk080-restoration-2026-11-08.md)。
 
 ## 历史主线与内测交付（2026-11-04 收束）
 
-当前产品主线为 **`master 4b32607ed24c98af22ba4879909544729a3c3213`**，已包含 PR #126；源码版本 **1.0.12+21**，四项 SDK 固定 **`f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`**（问答 v3，用户指定的 v0.7.2 内容）。仍使用 SDK 聊天页及 `agentMode: CoachChatAgentMode.qaV2` / `aiTags` 配置，App 不另建问答适配层。
+当时主线为 **`master 4b32607ed24c98af22ba4879909544729a3c3213`**，已包含 PR #126；源码版本 **1.0.12+21**，四项 SDK 固定 **`f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`**（问答 v3，用户指定的 v0.7.2 内容）。仍使用 SDK 聊天页及 `agentMode: CoachChatAgentMode.qaV2` / `aiTags` 配置，App 不另建问答适配层。
 
 最新 Android 内测包为 **1.0.12+21 / arm64 实际 versionCode 2021**，来源 `4ea55a7`；该源与主线 `4b32607` 的 tree 完全一致。分析通过，全量325通过/4项字体布局失败/1项live默认跳过；用户明确允许保留4项失败继续出包。包已交付、未安装；用户确认手机仍为+18，+20从未出包。版本、签名、APK哈希及+19/+20阶段区别见[版本台账](app/docs/version-ledger.md)，命令与证据适用性见[验证记录](app/docs/verification.md)，真机/对话恢复/计划及性能等见[待验收台账](app/docs/development-roadmap.md)。源码合入和出包不等于设备验收。
 
@@ -20,7 +18,7 @@
 
 ## 历史：11月初主线与2017内测包（原2026-11-04整理）
 
-当前产品源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含基线修复、共享 SDK 聊天/动作库/训练接入，以及 PR #124 / #125 对应的 UI 与 SDK 更新。四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`（发行标签 `ugk_trainer-v0.6.0`）；实际包版本、提交脉络和交付身份见[版本台账](app/docs/version-ledger.md)。首页与页面控件已统一，计划封面、记录与里程碑、14 语 UI 文案和浅色转场阴影已更新；这些源码事实不代表真机视觉验收。
+当时产品源码为 `master 7eaccf7cf87cf7468b9df838680dab9edf515d27`，已包含基线修复、共享 SDK 聊天/动作库/训练接入，以及 PR #124 / #125 对应的 UI 与 SDK 更新。四项 SDK 固定 `693cbc02cdf284163409868e117e438515c6a8d8`（发行标签 `ugk_trainer-v0.6.0`）；实际包版本、提交脉络和交付身份见[版本台账](app/docs/version-ledger.md)。首页与页面控件已统一，计划封面、记录与里程碑、14 语 UI 文案和浅色转场阴影已更新；这些源码事实不代表真机视觉验收。
 
 训练浏览、详情、媒体和播放器由共享 SDK 提供，固定范围 211 项、随包 WebP 封面；视频首次使用按需下载，缓存命中后复用。公共包标记为测试素材，`releaseEligible=false`，不能据素材 ready 数量宣称动作 QA 或发布完成。R17 首页动作、七形象及历史资产来源保持；旧 51 本地视频属于历史包，本阶段已从 App 打包清单移除。配置与使用见 [app/README.md](app/README.md)。
 

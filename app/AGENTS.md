@@ -1,10 +1,10 @@
 # Flutter App 工作约定
 
-## 当前执行基线（2026-11-08，+26用户验收）
+## 当前 App 阶段（2026-11-17）
 
-PR #133已合入master，合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`；与下述APK运行源b96b570之间仅有文档变化。后续文档提交不改变本轮已验收运行版本。
+训练计划完善阶段的工作分支为 `feat/flare-plans-full`，运行源为 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。手机版本为 **1.0.15 / vc2051**，训练页已获用户认可的上一检查点为 **vc2050**。源码、包、主线与用户验收各自按 [版本台账](docs/version-ledger.md)、[验证记录](docs/verification.md)和[待验收台账](docs/development-roadmap.md) 维护。2026-11-08 的 HipLab UI 与 SDK 整合为[历史检查点](docs/hiplab-sdk080-restoration-2026-11-08.md)。
 
-用户已验收手机1.0.12+26/arm64 vc2026，并授权将完整整合版推进默认主线master。运行源码检查点b96b570，四项SDK固定536b4c52c0f665203e7feb82dfde4d76f4815ad8（ugk_coach0.8.0），同时保留已认可HipLab UI、单左菜单、249动作库与AI授权、等高和滑动优化。不要以缺少UI的SDK分支重新出包。406通过/4项既有字体失败/1跳过；版本、验收和完整设备/媒体/语音细项的待验边界以docs/version-ledger.md、verification.md及hiplab-sdk080-restoration-2026-11-08.md为准。此次授权只推进源码主线，不增加tag、商店发布或iOS/PR127操作，SDK/Pose-Hub源与原工作树/旧包保持。
+保留已认可的界面、原工作树、旧包和 R17 资产。SDK 与 Pose-Hub 在本仓库按固定版本消费。
 
 ## 历史执行基线（2026-11-04 文档对齐）
 

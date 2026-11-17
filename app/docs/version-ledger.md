@@ -1,10 +1,27 @@
 # Flare 版本管理台账
 
+## Android 本地验收包 vc2051
+
+2026-11-17，专项计划目录 `app/assets/data/flare-plans.json` 升级为 version 2。原 6 套计划保留，共 72 套，覆盖 8 个角度及 17 个肌群的三档计划。角度 15 复用 11 的三档计划。运行源码为本地 `feat/flare-plans-full` 的 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。远端默认分支 `master` 核对为 `6d14f29f7c901a709ae7608cde22a2718c2f3ef4`，该点包含已认可的 vc2050 运行源码及版本记录、布局测试。vc2051 的计划数据提交留在本地功能分支。
+
+| 项目 | 本地验收包 |
+| --- | --- |
+| 源码声明 / Android 实际 | `1.0.15+35` / `dev.mhgd.flare` · `1.0.15` · versionCode `2051` |
+| SDK 固定提交 | `036b5fcdc8bbe3e7ed13e629accf2287c3004ad8`（四项依赖，以 `app/pubspec.lock` 为准） |
+| 构建 | Android release，`arm64-v8a` 单 ABI；构建号参数 `51` |
+| 本机归档 | 主工作区 `output/release-checkpoints/app-v1.0.15-build2051/Flare-training-plans-full-vc2051-arm64.apk`，100,236,509 字节 |
+| APK SHA-256 | `07f4664e54a83d7e99fe64babd23ed82e1223ff13e3d65a06b1f628003ec923a` |
+| 签名 | 与 vc2050 同一开发证书，SHA-256 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7` |
+| 真机 | 2602BRT18C 同签名覆盖安装 vc2050 → vc2051。设备 APK 哈希一致，原首次安装时间及数据目录保持，`MainActivity` 已在前台 |
+| 验收状态 | 源码验证、构建、安装和启动已完成。vc2051 的真机计划交互仍待用户验收 |
+
+命令、结果和源码绑定见[验证记录](verification.md)，剩余用户验收见[待验收台账](development-roadmap.md)。
+
 ## 训练页真机验收版 1.0.15 / vc2050（2026-11-17）
 
-用户在真机确认「前臂镜头和分段切换都挺好的」，要求保存此版。验收构建包含首页与训练页的双向 3D 过渡、暂停阶段继承、地面投影延续、角度与肌群之间的固定画布淡入淡出，以及支撑／核心／腿部的分段控件和双侧前臂的近景构图。
+用户在真机确认「前臂镜头和分段切换都挺好的」，要求保存此版。验收构建包含首页与训练页的双向 3D 过渡、暂停阶段继承、地面投影延续、角度与肌群之间的固定画布淡入淡出，以及支撑／核心／腿部的分段控件和双侧前臂的近景构图。进出场时暂隐标签并恢复首页的原姿势与视角，训练页首次点击肌群切换可响应。
 
-运行源码为 `feat/flare-plans` 上的 `5202caf508904f43aeb2b0940a778c0c37d8b917`，本地验收标签为 `app-v1.0.15-build2050`。Android 包名为 `dev.mhgd.flare`，版本为 `1.0.15`，实际 `versionCode 2050`。本机归档位于主工作区 `output/release-checkpoints/app-v1.0.15-build2050/`，文件名为 `Flare-training-forearms-local-vc2050.apk`，大小 100,472,017 字节。
+运行源码为 `feat/flare-plans` 上的 `5202caf508904f43aeb2b0940a778c0c37d8b917`，验收标签 `app-v1.0.15-build2050` 已同步远端，指向该运行源码。Android 包名为 `dev.mhgd.flare`，版本为 `1.0.15`，实际 `versionCode 2050`。本机归档位于主工作区 `output/release-checkpoints/app-v1.0.15-build2050/`，文件名为 `Flare-training-forearms-local-vc2050.apk`，大小 100,472,017 字节。
 
 APK SHA-256 为 `d1627e5e61045e542634ce25f8f939b2a37fc57dcb248c2ae7ef462170697576`，归档包与手机上同签名覆盖安装后的 APK 均与之相同。静态分析无问题，21 项 Flutter 测试及 10 项场景测试通过。取景校验和浏览器点按、拖动、分组选择恢复通过。此记录的交付状态为 Android 本地真机验收。
 
