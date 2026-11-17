@@ -2736,6 +2736,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{sets} 组 × {amount}'**
   String libraryDose(int sets, String amount);
+
+  /// No description provided for @planEquipmentNeeded.
+  ///
+  /// In zh, this message translates to:
+  /// **'需要：'**
+  String get planEquipmentNeeded;
+
+  /// Individual equipment labels by catalog ID. Keep select keys unchanged. An empty other branch hides unrecognized equipment.
+  ///
+  /// In zh, this message translates to:
+  /// **'{id, select, mat{瑜伽垫} chair{椅子} band{弹力带} dumbbell{哑铃} wall{墙} cable{绳索训练机} block{瑜伽砖} pullup_bar{单杠} parallettes{俯卧撑架} dip_bars{双杠} slider{滑盘} rings{吊环} landmine{地雷杆} swiss_ball{健身球} roman_chair{罗马椅} kettlebell{壶铃} reverse_hyper{反向挺身机} ghd{臀腿训练器} hip_abductor_machine{髋外展机} leg_extension_machine{腿屈伸机} foam_roller{泡沫轴} towel{毛巾} doorframe{门框} bench{训练凳} barbell{杠铃} clamp_pad{夹垫} other{}}'**
+  String planEquipmentNameForId(String id);
 }
 
 class _AppLocalizationsDelegate

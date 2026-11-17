@@ -1416,6 +1416,43 @@ class AppLocalizationsZh extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets 组 × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => '需要：';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': '瑜伽垫',
+      'chair': '椅子',
+      'band': '弹力带',
+      'dumbbell': '哑铃',
+      'wall': '墙',
+      'cable': '绳索训练机',
+      'block': '瑜伽砖',
+      'pullup_bar': '单杠',
+      'parallettes': '俯卧撑架',
+      'dip_bars': '双杠',
+      'slider': '滑盘',
+      'rings': '吊环',
+      'landmine': '地雷杆',
+      'swiss_ball': '健身球',
+      'roman_chair': '罗马椅',
+      'kettlebell': '壶铃',
+      'reverse_hyper': '反向挺身机',
+      'ghd': '臀腿训练器',
+      'hip_abductor_machine': '髋外展机',
+      'leg_extension_machine': '腿屈伸机',
+      'foam_roller': '泡沫轴',
+      'towel': '毛巾',
+      'doorframe': '门框',
+      'bench': '训练凳',
+      'barbell': '杠铃',
+      'clamp_pad': '夹垫',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2830,5 +2867,42 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String libraryDose(int sets, String amount) {
     return '$sets 組 × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => '需要：';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': '瑜伽墊',
+      'chair': '椅子',
+      'band': '彈力帶',
+      'dumbbell': '啞鈴',
+      'wall': '牆',
+      'cable': '滑輪訓練機',
+      'block': '瑜伽磚',
+      'pullup_bar': '單槓',
+      'parallettes': '伏地挺身架',
+      'dip_bars': '雙槓',
+      'slider': '滑盤',
+      'rings': '吊環',
+      'landmine': '地雷管',
+      'swiss_ball': '健身球',
+      'roman_chair': '羅馬椅',
+      'kettlebell': '壺鈴',
+      'reverse_hyper': '反向挺身機',
+      'ghd': '臀腿訓練器',
+      'hip_abductor_machine': '髖外展機',
+      'leg_extension_machine': '腿屈伸機',
+      'foam_roller': '滾筒',
+      'towel': '毛巾',
+      'doorframe': '門框',
+      'bench': '訓練椅',
+      'barbell': '槓鈴',
+      'clamp_pad': '夾墊',
+      'other': '',
+    });
+    return '$_temp0';
   }
 }

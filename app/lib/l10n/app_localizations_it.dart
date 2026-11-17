@@ -1485,4 +1485,41 @@ class AppLocalizationsIt extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets serie × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'Serve:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Tappetino',
+      'chair': 'Sedia',
+      'band': 'Elastico di resistenza',
+      'dumbbell': 'Manubrio',
+      'wall': 'Parete',
+      'cable': 'Macchina ai cavi',
+      'block': 'Blocco da yoga',
+      'pullup_bar': 'Sbarra per trazioni',
+      'parallettes': 'Parallele basse',
+      'dip_bars': 'Parallele per dip',
+      'slider': 'Dischi scorrevoli',
+      'rings': 'Anelli da ginnastica',
+      'landmine': 'Supporto landmine',
+      'swiss_ball': 'Palla da ginnastica',
+      'roman_chair': 'Panca romana',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Macchina per iperestensioni inverse',
+      'ghd': 'Panca per glutei e femorali',
+      'hip_abductor_machine': 'Macchina per abduttori',
+      'leg_extension_machine': 'Macchina per estensione delle gambe',
+      'foam_roller': 'Rullo in schiuma',
+      'towel': 'Asciugamano',
+      'doorframe': 'Stipite della porta',
+      'bench': 'Panca da allenamento',
+      'barbell': 'Bilanciere',
+      'clamp_pad': 'Cuscinetto piccolo',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

@@ -1468,4 +1468,41 @@ class AppLocalizationsId extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets set × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'Siapkan:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Matras latihan',
+      'chair': 'Kursi',
+      'band': 'Pita resistansi',
+      'dumbbell': 'Dumbel',
+      'wall': 'Dinding',
+      'cable': 'Mesin kabel',
+      'block': 'Balok yoga',
+      'pullup_bar': 'Palang pull-up',
+      'parallettes': 'Palang paralel rendah',
+      'dip_bars': 'Palang dip',
+      'slider': 'Cakram geser',
+      'rings': 'Cincin senam',
+      'landmine': 'Dudukan landmine',
+      'swiss_ball': 'Bola latihan',
+      'roman_chair': 'Kursi Romawi',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Mesin hiperekstensi terbalik',
+      'ghd': 'Bangku glute dan hamstring',
+      'hip_abductor_machine': 'Mesin abduksi pinggul',
+      'leg_extension_machine': 'Mesin ekstensi kaki',
+      'foam_roller': 'Rol busa',
+      'towel': 'Handuk',
+      'doorframe': 'Kusen pintu',
+      'bench': 'Bangku latihan',
+      'barbell': 'Barbel',
+      'clamp_pad': 'Bantalan kecil',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

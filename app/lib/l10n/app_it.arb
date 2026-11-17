@@ -577,5 +577,7 @@
   "heatMore": "Più",
   "pickerAddCount": "{count, plural, =1{Aggiungi 1 esercizio} other{Aggiungi {count} esercizi}}",
   "libraryDose": "{sets} serie × {amount}",
-  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
+  "planEquipmentNeeded": "Serve:",
+  "planEquipmentNameForId": "{id, select, mat{Tappetino} chair{Sedia} band{Elastico di resistenza} dumbbell{Manubrio} wall{Parete} cable{Macchina ai cavi} block{Blocco da yoga} pullup_bar{Sbarra per trazioni} parallettes{Parallele basse} dip_bars{Parallele per dip} slider{Dischi scorrevoli} rings{Anelli da ginnastica} landmine{Supporto landmine} swiss_ball{Palla da ginnastica} roman_chair{Panca romana} kettlebell{Kettlebell} reverse_hyper{Macchina per iperestensioni inverse} ghd{Panca per glutei e femorali} hip_abductor_machine{Macchina per abduttori} leg_extension_machine{Macchina per estensione delle gambe} foam_roller{Rullo in schiuma} towel{Asciugamano} doorframe{Stipite della porta} bench{Panca da allenamento} barbell{Bilanciere} clamp_pad{Cuscinetto piccolo} other{}}"
 }

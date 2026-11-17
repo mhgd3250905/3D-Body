@@ -577,5 +577,7 @@
   "heatMore": "Больше",
   "pickerAddCount": "{count, plural, one{Добавить {count} упражнение} few{Добавить {count} упражнения} many{Добавить {count} упражнений} other{Добавить {count} упражнения}}",
   "libraryDose": "{sets} подхода × {amount}",
-  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}}
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
+  "planEquipmentNeeded": "Понадобится:",
+  "planEquipmentNameForId": "{id, select, mat{Коврик} chair{Стул} band{Эластичная лента} dumbbell{Гантель} wall{Стена} cable{Блочный тренажёр} block{Блок для йоги} pullup_bar{Турник} parallettes{Низкие паралетсы} dip_bars{Брусья} slider{Диски для скольжения} rings{Гимнастические кольца} landmine{Шарнир для штанги} swiss_ball{Фитбол} roman_chair{Римский стул} kettlebell{Гиря} reverse_hyper{Тренажёр для обратной гиперэкстензии} ghd{Тренажёр для ягодиц и задней поверхности бедра} hip_abductor_machine{Тренажёр для отведения бедра} leg_extension_machine{Тренажёр для разгибания ног} foam_roller{Массажный ролик} towel{Полотенце} doorframe{Дверная рама} bench{Тренировочная скамья} barbell{Штанга} clamp_pad{Маленькая подушка} other{}}"
 }

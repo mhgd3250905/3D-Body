@@ -1482,4 +1482,41 @@ class AppLocalizationsPt extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets séries × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'Precisas de:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Tapete de treino',
+      'chair': 'Cadeira',
+      'band': 'Faixa elástica',
+      'dumbbell': 'Haltere',
+      'wall': 'Parede',
+      'cable': 'Máquina de cabos',
+      'block': 'Bloco de ioga',
+      'pullup_bar': 'Barra de elevações',
+      'parallettes': 'Paralelas baixas',
+      'dip_bars': 'Barras para fundos',
+      'slider': 'Discos deslizantes',
+      'rings': 'Argolas de ginástica',
+      'landmine': 'Suporte de barra landmine',
+      'swiss_ball': 'Bola de exercício',
+      'roman_chair': 'Banco romano',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Máquina de hiperextensão inversa',
+      'ghd': 'Banco para glúteos e isquiotibiais',
+      'hip_abductor_machine': 'Máquina abdutora',
+      'leg_extension_machine': 'Máquina de extensão de pernas',
+      'foam_roller': 'Rolo de espuma',
+      'towel': 'Toalha',
+      'doorframe': 'Batente da porta',
+      'bench': 'Banco de musculação',
+      'barbell': 'Barra de musculação',
+      'clamp_pad': 'Almofada pequena',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

@@ -1484,4 +1484,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets مجموعات × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'يلزمك:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'بساط تمرين',
+      'chair': 'كرسي',
+      'band': 'شريط مقاومة',
+      'dumbbell': 'ثقل يدوي',
+      'wall': 'جدار',
+      'cable': 'جهاز البكرات',
+      'block': 'قالب يوغا',
+      'pullup_bar': 'عارضة عقلة',
+      'parallettes': 'متوازي منخفض',
+      'dip_bars': 'عارضتا متوازي',
+      'slider': 'أقراص انزلاق',
+      'rings': 'حلقات جمباز',
+      'landmine': 'قاعدة مفصلية لقضيب الأثقال',
+      'swiss_ball': 'كرة تمرين',
+      'roman_chair': 'كرسي روماني',
+      'kettlebell': 'ثقل بمقبض',
+      'reverse_hyper': 'جهاز فرط التمديد العكسي',
+      'ghd': 'جهاز تمرين الأليتين وخلف الفخذ',
+      'hip_abductor_machine': 'جهاز إبعاد الورك',
+      'leg_extension_machine': 'جهاز مد الساقين',
+      'foam_roller': 'أسطوانة إسفنجية',
+      'towel': 'منشفة',
+      'doorframe': 'إطار باب',
+      'bench': 'مقعد تمارين الأثقال',
+      'barbell': 'قضيب أثقال',
+      'clamp_pad': 'وسادة صغيرة',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

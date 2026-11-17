@@ -1456,4 +1456,41 @@ class AppLocalizationsHi extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets सेट × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'ज़रूरी सामान:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'व्यायाम मैट',
+      'chair': 'कुर्सी',
+      'band': 'रेज़िस्टेंस बैंड',
+      'dumbbell': 'डम्बल',
+      'wall': 'दीवार',
+      'cable': 'केबल मशीन',
+      'block': 'योग ब्लॉक',
+      'pullup_bar': 'पुल-अप बार',
+      'parallettes': 'नीचे वाले समानांतर बार',
+      'dip_bars': 'डिप बार',
+      'slider': 'स्लाइडिंग डिस्क',
+      'rings': 'जिमनास्टिक रिंग',
+      'landmine': 'लैंडमाइन अटैचमेंट',
+      'swiss_ball': 'व्यायाम बॉल',
+      'roman_chair': 'रोमन चेयर',
+      'kettlebell': 'केटलबेल',
+      'reverse_hyper': 'रिवर्स हाइपर मशीन',
+      'ghd': 'ग्लूट-हैम ट्रेनर',
+      'hip_abductor_machine': 'हिप एबडक्टर मशीन',
+      'leg_extension_machine': 'लेग एक्सटेंशन मशीन',
+      'foam_roller': 'फोम रोलर',
+      'towel': 'तौलिया',
+      'doorframe': 'दरवाज़े का फ़्रेम',
+      'bench': 'व्यायाम बेंच',
+      'barbell': 'बारबेल',
+      'clamp_pad': 'छोटा पैड',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

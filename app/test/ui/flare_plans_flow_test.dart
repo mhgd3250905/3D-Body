@@ -1065,7 +1065,24 @@ void main() {
       _expectPlanMinutes(tester);
       final gymDose =
           '4 × ${strings.secondsLabel(15)} · ${strings.planRestSeconds(75)}';
-      expect(find.textContaining('俯卧撑架'), findsOneWidget);
+      final equipment = _key('flare-plan-equipment');
+      final count = find.text(strings.planDrillCount(6)).last;
+      final title = find.text(strings.planTrainingContent);
+      expect(tester.getTopLeft(equipment).dx, tester.getTopLeft(title).dx);
+      expect(
+        tester.getTopLeft(equipment).dy,
+        closeTo(tester.getBottomLeft(title).dy + 8, 2),
+      );
+      final equipmentText = find.descendant(
+        of: equipment,
+        matching: find.textContaining('俯卧撑架'),
+      );
+      expect(equipmentText, findsOneWidget);
+      expect(tester.widget<Text>(equipmentText).softWrap, isFalse);
+      expect(
+        tester.widget<Text>(equipmentText).style,
+        tester.widget<Text>(count).style,
+      );
       await _revealPlanContent(tester, parallelBars);
       expect(_rowText(parallelBars, gymDose), findsOneWidget);
       await _showPlanTop(tester);
@@ -1073,6 +1090,7 @@ void main() {
       await tester.pumpAndSettle();
       _expectPlanMinutes(tester);
       expect(find.textContaining('俯卧撑架'), findsNothing);
+      expect(find.textContaining('需要：'), findsOneWidget);
       final deltoids = _key('flare-plan-item-1-deltoids-A');
       await _revealPlanContent(tester, deltoids);
       expect(

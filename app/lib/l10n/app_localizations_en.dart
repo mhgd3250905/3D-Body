@@ -1476,4 +1476,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets sets × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'You\'ll need:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Exercise mat',
+      'chair': 'Chair',
+      'band': 'Resistance band',
+      'dumbbell': 'Dumbbell',
+      'wall': 'Wall',
+      'cable': 'Cable machine',
+      'block': 'Yoga block',
+      'pullup_bar': 'Pull-up bar',
+      'parallettes': 'Parallettes',
+      'dip_bars': 'Dip bars',
+      'slider': 'Exercise sliders',
+      'rings': 'Gymnastic rings',
+      'landmine': 'Landmine attachment',
+      'swiss_ball': 'Exercise ball',
+      'roman_chair': 'Roman chair',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Reverse hyper machine',
+      'ghd': 'Glute-ham developer',
+      'hip_abductor_machine': 'Hip abductor machine',
+      'leg_extension_machine': 'Leg extension machine',
+      'foam_roller': 'Foam roller',
+      'towel': 'Towel',
+      'doorframe': 'Doorframe',
+      'bench': 'Weight bench',
+      'barbell': 'Barbell',
+      'clamp_pad': 'Small pad',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

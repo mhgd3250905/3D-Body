@@ -1424,4 +1424,41 @@ class AppLocalizationsJa extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets セット × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => '用意するもの：';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'エクササイズマット',
+      'chair': '椅子',
+      'band': 'トレーニングバンド',
+      'dumbbell': 'ダンベル',
+      'wall': '壁',
+      'cable': 'ケーブルマシン',
+      'block': 'ヨガブロック',
+      'pullup_bar': '懸垂バー',
+      'parallettes': 'プッシュアップバー',
+      'dip_bars': 'ディップスバー',
+      'slider': 'スライダーディスク',
+      'rings': '体操リング',
+      'landmine': 'ランドマインアタッチメント',
+      'swiss_ball': 'バランスボール',
+      'roman_chair': 'ローマンチェア',
+      'kettlebell': 'ケトルベル',
+      'reverse_hyper': 'リバースハイパー台',
+      'ghd': 'グルートハム台',
+      'hip_abductor_machine': 'ヒップアブダクターマシン',
+      'leg_extension_machine': 'レッグエクステンションマシン',
+      'foam_roller': 'フォームローラー',
+      'towel': 'タオル',
+      'doorframe': 'ドア枠',
+      'bench': 'トレーニングベンチ',
+      'barbell': 'バーベル',
+      'clamp_pad': '小さなパッド',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

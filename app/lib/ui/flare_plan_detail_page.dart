@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
-    show poseHubEquipmentLabels;
 
 import '../control/flare_membership.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/flare_shared_library.dart';
 import '../l10n/languages.dart';
+import '../l10n/plan_equipment_strings.dart';
 import 'components.dart';
 import 'drill_media.dart';
 import 'flare_plan_visuals.dart';
@@ -83,18 +82,12 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     final scene = widget.store.settings.tier;
     final shared = FlareShared.current;
     final minutes = shared?.authoredPlanMinutes(plan, catalog, scene);
-    final equipment = shared?.authoredPlanEquipment(plan, scene);
-    final language = Localizations.localeOf(context).languageCode;
-    final equipmentNames = equipment
-        ?.map((tool) {
-          if (tool == 'clamp-pad') return language == 'zh' ? '夹垫' : 'Small pad';
-          final label = poseHubEquipmentLabels[tool] ?? tool;
-          final translated = catalog.translate(label);
-          return translated == label && language != 'zh'
-              ? tool.replaceAll('-', ' ')
-              : translated;
-        })
-        .join(' · ');
+    final equipment =
+        shared?.authoredPlanEquipment(plan, scene) ?? const <String>{};
+    final locale = Localizations.localeOf(context);
+    final equipmentNames = [
+      for (final id in equipment) ?planEquipmentName(id, locale),
+    ];
     final safe = MediaQuery.viewPaddingOf(context);
     final muscles = [
       for (final muscle in phase?.primary ?? const <PhaseMuscle>[])
@@ -188,15 +181,43 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                               widget.store.updateSettings(tier: value),
                         ),
                       ),
-                      _heading(
-                        s.planTrainingContent,
-                        [
-                          s.planDrillCount(plan.items.length),
-                          if (equipmentNames case final names?)
-                            names.isEmpty
-                                ? s.sceneNone
-                                : '${s.equipment} · $names',
-                        ].join('\n'),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          _gutter,
+                          16,
+                          _gutter,
+                          8,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            FlarePlanSectionHeading(
+                              title: s.planTrainingContent,
+                              hint: s.planDrillCount(plan.items.length),
+                            ),
+                            if (equipmentNames.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              Wrap(
+                                key: const ValueKey('flare-plan-equipment'),
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: [
+                                  for (final (index, name)
+                                      in equipmentNames.indexed)
+                                    Text(
+                                      '${index == 0 ? planEquipmentNeededLabel(locale) : ''}$name'
+                                      '${index < equipmentNames.length - 1 ? ' ·' : ''}',
+                                      softWrap: false,
+                                      style: TextStyle(
+                                        color: p.dim,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -229,11 +250,6 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       ),
     );
   }
-
-  Widget _heading(String title, String hint) => Padding(
-    padding: const EdgeInsets.fromLTRB(_gutter, 16, _gutter, 8),
-    child: FlarePlanSectionHeading(title: title, hint: hint),
-  );
 
   Widget _row(
     BuildContext context,

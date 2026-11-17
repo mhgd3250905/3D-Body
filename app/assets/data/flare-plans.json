@@ -581,7 +581,7 @@
       "items": [
         {"drill":"h-dd-shoulder","sets":1,"seconds":30,"restSeconds":15},
         {"drill":"lats-C","sets":3,"reps":10,"restSeconds":60,"bodyweight":"lats-A","bodyweightDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false},"home":"lats-A","homeDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false}},
-        {"drill":"h-fixed-bar-vertical-pull","sets":3,"reps":5,"restSeconds":90,"bodyweight":"h-towel-pulldown","bodyweightDose":{"sets":3,"reps":5,"restSeconds":90,"perSide":false},"home":"h-towel-pulldown","homeDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false}},
+        {"drill":"h-fixed-bar-vertical-pull","sets":3,"reps":5,"restSeconds":90,"bodyweight":"h-towel-pulldown","bodyweightDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false},"home":"h-towel-pulldown","homeDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false}},
         {"drill":"scapular-B","sets":3,"reps":10,"restSeconds":45,"bodyweight":"scapular-A","bodyweightDose":{"sets":3,"reps":10,"restSeconds":45,"perSide":false},"home":"lats-B","homeDose":{"sets":3,"reps":10,"restSeconds":45,"perSide":false}},
         {"drill":"t-straddle-hold","sets":3,"seconds":8,"restSeconds":90},
         {"drill":"abs-C","sets":3,"reps":8,"restSeconds":60,"bodyweight":"t-lsit-tuck","bodyweightDose":{"sets":3,"reps":8,"restSeconds":60,"perSide":false},"home":"h-supine-bilateral-leg-raise","homeDose":{"sets":3,"reps":8,"restSeconds":60,"perSide":false}}

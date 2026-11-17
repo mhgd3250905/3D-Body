@@ -1507,4 +1507,41 @@ class AppLocalizationsRu extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets подхода × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'Понадобится:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Коврик',
+      'chair': 'Стул',
+      'band': 'Эластичная лента',
+      'dumbbell': 'Гантель',
+      'wall': 'Стена',
+      'cable': 'Блочный тренажёр',
+      'block': 'Блок для йоги',
+      'pullup_bar': 'Турник',
+      'parallettes': 'Низкие паралетсы',
+      'dip_bars': 'Брусья',
+      'slider': 'Диски для скольжения',
+      'rings': 'Гимнастические кольца',
+      'landmine': 'Шарнир для штанги',
+      'swiss_ball': 'Фитбол',
+      'roman_chair': 'Римский стул',
+      'kettlebell': 'Гиря',
+      'reverse_hyper': 'Тренажёр для обратной гиперэкстензии',
+      'ghd': 'Тренажёр для ягодиц и задней поверхности бедра',
+      'hip_abductor_machine': 'Тренажёр для отведения бедра',
+      'leg_extension_machine': 'Тренажёр для разгибания ног',
+      'foam_roller': 'Массажный ролик',
+      'towel': 'Полотенце',
+      'doorframe': 'Дверная рама',
+      'bench': 'Тренировочная скамья',
+      'barbell': 'Штанга',
+      'clamp_pad': 'Маленькая подушка',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

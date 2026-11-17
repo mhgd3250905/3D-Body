@@ -1490,4 +1490,41 @@ class AppLocalizationsEs extends AppLocalizations {
   String libraryDose(int sets, String amount) {
     return '$sets series × $amount';
   }
+
+  @override
+  String get planEquipmentNeeded => 'Necesitas:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Esterilla',
+      'chair': 'Silla',
+      'band': 'Banda elástica',
+      'dumbbell': 'Mancuerna',
+      'wall': 'Pared',
+      'cable': 'Máquina de poleas',
+      'block': 'Bloque de yoga',
+      'pullup_bar': 'Barra de dominadas',
+      'parallettes': 'Paralelas bajas',
+      'dip_bars': 'Barras de fondos',
+      'slider': 'Discos deslizantes',
+      'rings': 'Anillas de gimnasia',
+      'landmine': 'Soporte para barra landmine',
+      'swiss_ball': 'Pelota de ejercicio',
+      'roman_chair': 'Silla romana',
+      'kettlebell': 'Pesa rusa',
+      'reverse_hyper': 'Máquina de hiperextensión inversa',
+      'ghd': 'Banco para glúteos e isquiotibiales',
+      'hip_abductor_machine': 'Máquina de abducción de cadera',
+      'leg_extension_machine': 'Máquina de extensión de piernas',
+      'foam_roller': 'Rodillo de espuma',
+      'towel': 'Toalla',
+      'doorframe': 'Marco de la puerta',
+      'bench': 'Banco de pesas',
+      'barbell': 'Barra de pesas',
+      'clamp_pad': 'Almohadilla pequeña',
+      'other': '',
+    });
+    return '$_temp0';
+  }
 }

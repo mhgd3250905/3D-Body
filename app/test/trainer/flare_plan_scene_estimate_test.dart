@@ -51,4 +51,15 @@ void main() {
     );
     expect(shared.authoredPlanEquipment(wrists, 'C'), contains('bench'));
   });
+
+  test('advanced towel pulldown has matching bodyweight and home doses', () {
+    final plan = catalog.plansForMuscle('lats').last;
+    for (final scene in ['A', 'B']) {
+      final exercise = shared
+          .authoredPlan(plan, catalog, scene)
+          .items
+          .singleWhere((item) => item.exerciseId == 'h-towel-pulldown');
+      expect((exercise.sets, exercise.reps, exercise.restSeconds), (3, 10, 60));
+    }
+  });
 }
