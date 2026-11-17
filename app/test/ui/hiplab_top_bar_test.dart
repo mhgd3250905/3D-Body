@@ -211,22 +211,29 @@ void main() {
           );
           await tester.pumpAndSettle();
           expect(tester.getRect(find.byType(FlareBackChip)), rail);
-          final plate = tester.widget<AnimatedOpacity>(
-            find.byKey(const ValueKey('flare-scroll-nav-plate')),
-          );
+          final mask = find.byKey(const ValueKey('flare-nav-frost-clip'));
           final decoration =
-              (plate.child as DecoratedBox).decoration as BoxDecoration;
-          expect(plate.opacity, 1);
+              tester
+                      .widget<DecoratedBox>(
+                        find.descendant(
+                          of: mask,
+                          matching: find.byType(DecoratedBox),
+                        ),
+                      )
+                      .decoration
+                  as BoxDecoration;
+          final gradient = decoration.gradient! as LinearGradient;
+          expect(gradient.begin, Alignment.topCenter);
+          expect(gradient.end, Alignment.bottomCenter);
+          expect(gradient.colors, hasLength(13));
+          expect(gradient.colors.first, FlareColors.background);
+          expect(gradient.colors[6].a, closeTo(.90278, .00001));
+          expect(gradient.colors.last.a, 0);
+          expect(decoration.border, isNull);
+          expect(decoration.boxShadow, isNull);
           expect(
-            decoration.color,
-            FlareColors.background.withValues(alpha: .94),
-          );
-          final rule = (decoration.border as Border).bottom;
-          expect(rule.width, .5);
-          expect(
-            rule.color,
-            (brightness == Brightness.dark ? Colors.white : Colors.black)
-                .withValues(alpha: .08),
+            find.descendant(of: mask, matching: find.byType(BackdropFilter)),
+            findsNothing,
           );
           await tester.tap(find.byType(FlareBackChip));
           await tester.pumpAndSettle();

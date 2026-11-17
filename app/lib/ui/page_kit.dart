@@ -181,6 +181,7 @@ class FlareNavBar extends StatelessWidget {
     this.topInset = 0,
     this.fade = FlareGeometry.navFade,
     this.glass = false,
+    this.blurBackdrop = true,
   });
   final String? title;
   final VoidCallback? onBack;
@@ -189,6 +190,7 @@ class FlareNavBar extends StatelessWidget {
   final double topInset;
   final double fade;
   final bool glass;
+  final bool blurBackdrop;
 
   static const IconData backIcon = Icons.chevron_left_rounded;
   static const double titleSize = 17;
@@ -206,7 +208,8 @@ class FlareNavBar extends StatelessWidget {
       height: topInset + row + fade,
       child: Stack(
         children: [
-          if (glass) const Positioned.fill(child: FlareNavFrost()),
+          if (glass)
+            Positioned.fill(child: FlareNavFrost(blurBackdrop: blurBackdrop)),
           if (title != null)
             Positioned(
               top: topInset,
@@ -271,106 +274,32 @@ class FlareNavBar extends StatelessWidget {
   }
 }
 
-/// A fixed, titleless back control over a page with one vertical scroll view.
-class FlareScrollNav extends StatefulWidget {
-  const FlareScrollNav({super.key, required this.onBack, required this.body});
+/// The titleless navigation overlay shared by the three plan pages.
+class FlareScrollNav extends StatelessWidget {
+  const FlareScrollNav({super.key, required this.onBack, required this.child});
 
-  static const plateHeight = 56.0;
   final VoidCallback? onBack;
-  final Widget Function(ScrollController) body;
+  final Widget child;
 
   @override
-  State<FlareScrollNav> createState() => _FlareScrollNavState();
-}
-
-class _FlareScrollNavState extends State<FlareScrollNav> {
-  late final ScrollController _scroll;
-  bool _scrolled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll = ScrollController(
-      onAttach: (_) {
-        // A scroll view can restore its offset as soon as it attaches.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _updatePlate();
-        });
-      },
-    )..addListener(_updatePlate);
-  }
-
-  void _updatePlate() {
-    final scrolled = _scroll.hasClients && _scroll.offset > 8;
-    if (_scrolled != scrolled) setState(() => _scrolled = scrolled);
-  }
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Theme.of(context);
-    final p = FlareColors.palette;
-    final top = MediaQuery.viewPaddingOf(context).top;
-    final fade = FlareMotion.of(context, const Duration(milliseconds: 160));
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        widget.body(_scroll),
-        if (widget.onBack != null) ...[
-          PositionedDirectional(
-            top: 0,
-            start: 0,
-            end: 0,
-            height: top + FlareGeometry.navRow,
-            child: AnimatedOpacity(
-              opacity: _scrolled ? 0 : 1,
-              duration: fade,
-              child: const FlareNavFrost(),
-            ),
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      child,
+      if (onBack != null)
+        PositionedDirectional(
+          top: 0,
+          start: 0,
+          end: 0,
+          child: FlareNavBar(
+            onBack: onBack,
+            topInset: MediaQuery.viewPaddingOf(context).top,
+            glass: true,
+            blurBackdrop: false,
           ),
-          PositionedDirectional(
-            top: 0,
-            start: 0,
-            end: 0,
-            height: top + FlareScrollNav.plateHeight,
-            child: AbsorbPointer(
-              absorbing: _scrolled,
-              child: IgnorePointer(
-                child: AnimatedOpacity(
-                  key: const ValueKey('flare-scroll-nav-plate'),
-                  opacity: _scrolled ? 1 : 0,
-                  duration: fade,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: p.background.withValues(alpha: .94),
-                      border: Border(
-                        bottom: BorderSide(
-                          width: .5,
-                          color: (p.isDark ? Colors.white : Colors.black)
-                              .withValues(alpha: .08),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          PositionedDirectional(
-            top: 0,
-            start: 0,
-            end: 0,
-            child: FlareNavBar(onBack: widget.onBack, topInset: top, fade: 0),
-          ),
-        ],
-      ],
-    );
-  }
+        ),
+    ],
+  );
 }
 
 /// The material band includes the system status area, not just the fade tail.

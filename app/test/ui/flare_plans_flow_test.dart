@@ -57,10 +57,10 @@ Future<void> _showPlanTop(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _expectScrollNavPlate(WidgetTester tester, Finder page) async {
-  final plate = find.descendant(
+Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
+  final mask = find.descendant(
     of: page,
-    matching: _key('flare-scroll-nav-plate'),
+    matching: _key('flare-nav-frost-clip'),
   );
   final backChip = find.descendant(
     of: page,
@@ -75,33 +75,27 @@ Future<void> _expectScrollNavPlate(WidgetTester tester, Finder page) async {
     ),
   );
   final scroll = tester.state<ScrollableState>(scrollView).position;
+  final safeTop = MediaQuery.viewPaddingOf(tester.element(mask)).top;
   final backRect = tester.getRect(backChip);
-  final safeTop = MediaQuery.viewPaddingOf(tester.element(plate)).top;
-  final fade = find.descendant(
-    of: plate,
-    matching: find.byType(FadeTransition),
-  );
-  double opacity() => tester.widget<FadeTransition>(fade).opacity.value;
+  final maskRect = tester.getRect(mask);
 
-  expect(tester.getSize(plate).height, safeTop + 56);
-  scroll.jumpTo(8);
+  expect(maskRect.top, 0);
+  expect(maskRect.height, safeTop + 44 + 24);
+  expect(backRect.top, safeTop);
+  expect(
+    find.descendant(of: mask, matching: find.byType(BackdropFilter)),
+    findsNothing,
+  );
+  await tester.dragFrom(Offset(300, safeTop + 8), const Offset(0, -120));
   await tester.pumpAndSettle();
-  expect(opacity(), 0);
-  scroll.jumpTo(9);
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 80));
-  expect(opacity(), closeTo(.5, .01));
-  await tester.pump(const Duration(milliseconds: 80));
-  expect(opacity(), 1);
+  expect(scroll.pixels, greaterThan(8));
+  expect(tester.getRect(mask), maskRect);
   expect(tester.getRect(backChip), backRect);
   expect(backChip.hitTestable(), findsOneWidget);
 
   scroll.jumpTo(0);
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 80));
-  expect(opacity(), closeTo(.5, .01));
   await tester.pumpAndSettle();
-  expect(opacity(), 0);
+  expect(tester.getRect(mask), maskRect);
 }
 
 Finder _tier(String label) =>
@@ -268,7 +262,7 @@ void main() {
     await mountShell(tester);
     await helpers.openPlansFromHome(tester);
     final root = find.byType(PlansPage);
-    await _expectScrollNavPlate(tester, root);
+    await _expectScrollNavFade(tester, root);
     final strings = AppLocalizations.of(tester.element(root));
     expect(find.text(strings.plansMine), findsOneWidget);
     expect(find.text(strings.plansReady), findsNothing);
@@ -822,7 +816,7 @@ void main() {
         );
         expect(muscle.title, catalog.groupById('deltoids')!.label);
         expect(muscle.plans.first.id, 'muscle-deltoids-t1');
-        await _expectScrollNavPlate(tester, find.byType(FlarePlanDetailPage));
+        await _expectScrollNavFade(tester, find.byType(FlarePlanDetailPage));
         await back(tester);
         await back(tester);
         expect(training, findsOneWidget);
@@ -928,7 +922,7 @@ void main() {
         matching: find.byType(FlareBackChip),
       );
       final nav = tester.widget<FlareNavBar>(header);
-      expect(nav.fade, 0);
+      expect(nav.fade, 24);
       expect(nav.title, isNull);
       final backRect = tester.getRect(backChip);
       final muscles = _key('flare-plan-muscle-deltoids');
@@ -944,7 +938,7 @@ void main() {
         tester.getRect(firstRow).bottom,
         lessThan(tester.getTopLeft(_key('flare-plan-start')).dy),
       );
-      await _expectScrollNavPlate(tester, find.byType(FlarePlanDetailPage));
+      await _expectScrollNavFade(tester, find.byType(FlarePlanDetailPage));
       final scroll = tester.state<ScrollableState>(_detailScroll()).position;
       scroll.jumpTo(331);
       await tester.pumpAndSettle();

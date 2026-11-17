@@ -189,17 +189,16 @@ class PlansPage extends StatelessWidget {
       color: p.background,
       child: FlareScrollNav(
         onBack: onBack,
-        body: (scrollController) => Stack(
+        child: Stack(
           fit: StackFit.expand,
           children: [
             CustomScrollView(
-              controller: scrollController,
               key: const PageStorageKey<String>('plans-scroll'),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(
                     _pageInset,
-                    safe.top + FlareScrollNav.plateHeight,
+                    safe.top + FlareGeometry.navRow + FlareGeometry.navFade,
                     _pageInset,
                     0,
                   ),

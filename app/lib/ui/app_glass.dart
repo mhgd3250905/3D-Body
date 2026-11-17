@@ -40,10 +40,13 @@ abstract final class FlareNavigationGlass {
 /// The system status area and title row share one progressive material band.
 /// Only the navigation controls receive input; this layer never blocks scroll.
 class FlareNavFrost extends StatelessWidget {
-  const FlareNavFrost({super.key});
+  const FlareNavFrost({super.key, this.blurBackdrop = true});
+
+  final bool blurBackdrop;
 
   @override
   Widget build(BuildContext context) {
+    Theme.of(context);
     final high = MediaQuery.maybeHighContrastOf(context) ?? false;
     final stops = [
       for (var i = 0; i <= FlareNavigationGlass.samples; i++)
@@ -56,7 +59,7 @@ class FlareNavFrost extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (!high)
+              if (blurBackdrop && !high)
                 for (final (sigma, reach) in FlareNavigationGlass.barBlurLayers)
                   ShaderMask(
                     blendMode: BlendMode.dstIn,

@@ -102,7 +102,7 @@ class FlarePlanDetailPage extends StatelessWidget {
         color: p.background,
         child: FlareScrollNav(
           onBack: onBack,
-          body: (scrollController) => Stack(
+          child: Stack(
             children: [
               Positioned.fill(
                 bottom: safe.bottom + _startButtonBottomInset,
@@ -111,7 +111,6 @@ class FlarePlanDetailPage extends StatelessWidget {
                     context,
                   ).copyWith(scrollbars: false),
                   child: ListView(
-                    controller: scrollController,
                     padding: const EdgeInsets.only(
                       bottom: _startButtonHeight + _lastExerciseGap,
                     ),
@@ -257,7 +256,7 @@ class _PlanHero extends StatelessWidget {
     final isAngle = phaseSource != null;
     final width = MediaQuery.sizeOf(context).width;
     final artHeight = (width * (isAngle ? .60 : .69)).clamp(185.0, 285.0);
-    final artTop = safeTop + FlareGeometry.navRow;
+    final artTop = safeTop + FlareGeometry.navRow + FlareGeometry.navFade;
     return DecoratedBox(
       decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
       child: Stack(
