@@ -26,6 +26,8 @@ class SceneController extends ChangeNotifier {
   int _trainingFlightId = 0;
 
   double _time = 0;
+  final _playhead = ValueNotifier<double>(0);
+  int _clockRevision = 0;
   double _period = 9;
   double _speed = 0.5;
   bool _playing = false;
@@ -44,6 +46,7 @@ class SceneController extends ChangeNotifier {
   int _selectionGeneration = 0;
 
   double get time => _time;
+  ValueListenable<double> get playhead => _playhead;
   double get period => _period;
   double get speed => _speed;
   bool get playing => _playing;
@@ -84,8 +87,9 @@ class SceneController extends ChangeNotifier {
   void setTime(double value) {
     if (!value.isFinite || _disposed) return;
     _time = value.clamp(0, _period).toDouble();
+    _playhead.value = _time;
     _playing = false;
-    command({'type': 'seek', 'time': _time});
+    command({'type': 'seek', 'time': _time, 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
@@ -93,14 +97,14 @@ class SceneController extends ChangeNotifier {
     if (_disposed) return;
     _playing = true;
     _selected = null;
-    command({'type': 'play'});
+    command({'type': 'play', 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
   void pause() {
     if (_disposed) return;
     _playing = false;
-    command({'type': 'pause'});
+    command({'type': 'pause', 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
@@ -150,18 +154,20 @@ class SceneController extends ChangeNotifier {
   }
 
   void leaveTrainingHub() {
+    _trainingHubYaw = 0;
     if (_trainingHubCommand == null) return;
     _trainingHubCommand = null;
-    _trainingHubYaw = 0;
     _pending.remove('hub_scene');
     _pending.remove('hub_angle');
     command({'type': 'hub_exit'});
   }
 
   void rotateTrainingHubAngle(double radians) {
-    final hub = _trainingHubCommand;
-    if (_disposed || hub == null || !radians.isFinite || radians == 0) return;
+    if (_disposed || !radians.isFinite || radians == 0) return;
+    // Buffer rotation while the shared renderer is still flying into the hub.
     _trainingHubYaw = (_trainingHubYaw + radians) % (2 * math.pi);
+    final hub = _trainingHubCommand;
+    if (hub == null) return;
     final configuration = {...hub, 'angleYaw': _trainingHubYaw};
     _trainingHubCommand = configuration;
     if (_pending.containsKey('hub_scene')) {
@@ -202,6 +208,19 @@ class SceneController extends ChangeNotifier {
   }
 
   void resumeTrainingFlight() => command({'type': 'hub_flight_resume'});
+
+  void rotateTrainingFlight(double yaw) {
+    if (!yaw.isFinite || _trainingFlightId == 0) return;
+    command({'type': 'hub_flight_angle', 'yaw': yaw});
+  }
+
+  Future<void> reverseTrainingFlight() {
+    _trainingFlight?.complete();
+    final flight = _trainingFlight = Completer<void>();
+    _onTrainingFlightPrepared = null;
+    command({'type': 'hub_flight_reverse', 'id': ++_trainingFlightId});
+    return flight.future;
+  }
 
   void finishTrainingFlight() {
     _trainingFlight?.complete();
@@ -328,6 +347,33 @@ class SceneController extends ChangeNotifier {
   bool receiveEvent(Map<Object?, Object?> event) {
     if (_disposed || event['source'] != 'flare-scene') return false;
     final type = event['type'];
+    final revision = event['clockRevision'];
+    // Native bridge messages already queued before pause, seek, or play can
+    // arrive after the tap. A frame from the previous intent must not move
+    // the transport or change its playing state while the command is in flight.
+    if ((type == 'state' || type == 'playhead') &&
+        revision is num &&
+        revision != _clockRevision) {
+      return false;
+    }
+    if (type == 'playhead') {
+      final time = event['time'];
+      if (!_ready ||
+          !_playing ||
+          _presentationRequest != null ||
+          time is! num ||
+          !time.isFinite) {
+        return false;
+      }
+      _time = time.clamp(0, _period).toDouble();
+      _playhead.value = _time;
+      final source = event['phase'];
+      if (source is num && source >= 9 && source <= 16 && source != _phase) {
+        _phase = source.toInt();
+        notifyListeners();
+      }
+      return true;
+    }
     if (type == 'hub_flight_ready') {
       if (event['id'] != _trainingFlightId || _trainingFlight == null) {
         return false;
@@ -382,6 +428,7 @@ class SceneController extends ChangeNotifier {
     final time = event['time'];
     if (time is num && time.isFinite) {
       _time = time.clamp(0, _period).toDouble();
+      _playhead.value = _time;
     }
     if (event['playing'] is bool) _playing = event['playing'] as bool;
     final speed = event['speed'];
@@ -444,6 +491,7 @@ class SceneController extends ChangeNotifier {
     _connection++;
     _sink = null;
     _pending.clear();
+    _playhead.dispose();
     super.dispose();
   }
 }

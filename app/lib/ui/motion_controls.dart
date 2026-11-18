@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,6 +18,7 @@ class MotionTimeline extends StatefulWidget {
     required this.onSeek,
     this.onSettle,
     this.connectedNodes = false,
+    this.playhead,
   });
 
   final Catalog catalog;
@@ -27,6 +29,10 @@ class MotionTimeline extends StatefulWidget {
   /// Lets a host snap a tap, keyboard step, or completed scrub to a pose.
   final ValueChanged<double>? onSettle;
   final bool connectedNodes;
+
+  /// Rendered scene time. Keeps the playhead moving without rebuilding the
+  /// enclosing scene or transport for each frame.
+  final ValueListenable<double>? playhead;
 
   @override
   State<MotionTimeline> createState() => _MotionTimelineState();
@@ -81,7 +87,8 @@ class _MotionTimelineState extends State<MotionTimeline> {
 
   double _stepTime(double delta) {
     if (widget.onSettle == null) {
-      return (widget.time + delta).clamp(0, widget.catalog.period).toDouble();
+      final time = widget.playhead?.value ?? widget.time;
+      return (time + delta).clamp(0, widget.catalog.period).toDouble();
     }
     final phases = widget.catalog.phases;
     if (delta == double.negativeInfinity) {
@@ -152,10 +159,12 @@ class _MotionTimelineState extends State<MotionTimeline> {
               final seg = ((width - gap * (count - 1)) / count)
                   .clamp(1, double.infinity)
                   .toDouble();
-              double xAt(double f) {
-                final pos = (f * count).clamp(0, count).toDouble();
-                final i = pos.floor().clamp(0, count - 1);
-                return i * (seg + gap) + (pos - i) * seg;
+              final step = seg + gap;
+              final lastTick = (count - 1) * step + seg / 2;
+              double xAt(double fraction) {
+                final position = fraction * count - .5;
+                if (position <= count - 1) return seg / 2 + position * step;
+                return lastTick + (position - (count - 1)) * seg;
               }
 
               double fractionAt(double x) {
@@ -166,15 +175,13 @@ class _MotionTimelineState extends State<MotionTimeline> {
                           .clamp(0, 1);
                   return (.5 + ratio * (count - 1)) / count;
                 }
-                final i = (x / (seg + gap)).floor().clamp(0, count - 1);
-                final within = ((x - i * (seg + gap)) / seg).clamp(0, 1);
-                return (i + within) / count;
+                if (x <= lastTick) return (.5 + (x - seg / 2) / step) / count;
+                return (count - .5 + (x - lastTick) / seg) / count;
               }
 
               double timeAt(double x) =>
                   _timeAtFraction(fractionAt(x.clamp(0, width).toDouble()));
               final settle = widget.onSettle;
-              final fraction = _fractionAtTime(value);
               return GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTapDown: settle == null
@@ -200,110 +207,119 @@ class _MotionTimelineState extends State<MotionTimeline> {
                         focused: _focused,
                         width: width,
                       )
-                    : SizedBox(
-                        height: 32,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 9,
-                              child: Row(
-                                children: [
-                                  for (var i = 0; i < count; i++) ...[
-                                    if (i != 0) const SizedBox(width: gap),
-                                    Expanded(
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(2),
-                                        child: LinearProgressIndicator(
-                                          minHeight: 3,
-                                          value: (fraction * count - i).clamp(
-                                            0,
-                                            1,
+                    : _buildPlayhead(value, (time) {
+                        final x = xAt(_fractionAtTime(time));
+                        return SizedBox(
+                          height: 32,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                top: 9,
+                                child: Row(
+                                  children: [
+                                    for (var i = 0; i < count; i++) ...[
+                                      if (i != 0) const SizedBox(width: gap),
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            2,
                                           ),
-                                          backgroundColor: FlareColors.track,
-                                          color: i < fraction * count - 1
-                                              ? FlareColors.accent.withValues(
-                                                  alpha: .55,
-                                                )
-                                              : FlareColors.accent,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              left: xAt(fraction) - 6,
-                              top: 4.5,
-                              // The thumb swells under the finger while scrubbing.
-                              child: AnimatedScale(
-                                scale: _dragging ? 1.35 : 1,
-                                duration: FlareMotion.of(
-                                  context,
-                                  FlareMotion.quick,
-                                ),
-                                curve: FlareMotion.settle,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: FlareColors.palette.isDark
-                                        ? Colors.white
-                                        : FlareColors.surface,
-                                    border: FlareColors.palette.isDark
-                                        ? null
-                                        : Border.all(
-                                            color: FlareColors.accent,
-                                            width: 2,
+                                          child: LinearProgressIndicator(
+                                            minHeight: 3,
+                                            value: ((x - i * step) / seg).clamp(
+                                              0,
+                                              1,
+                                            ),
+                                            backgroundColor: FlareColors.track,
+                                            color: x > i * step + seg
+                                                ? FlareColors.accent.withValues(
+                                                    alpha: .55,
+                                                  )
+                                                : FlareColors.accent,
                                           ),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: FlareColors.accent.withValues(
-                                          alpha: .35,
                                         ),
-                                        spreadRadius: _focused ? 5 : 3,
                                       ),
                                     ],
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                key: const ValueKey('motion-timeline-thumb'),
+                                left: x - 6,
+                                top: 4.5,
+                                // The thumb swells under the finger while scrubbing.
+                                child: AnimatedScale(
+                                  scale: _dragging ? 1.35 : 1,
+                                  duration: FlareMotion.of(
+                                    context,
+                                    FlareMotion.quick,
+                                  ),
+                                  curve: FlareMotion.settle,
+                                  child: Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      color: FlareColors.palette.isDark
+                                          ? Colors.white
+                                          : FlareColors.surface,
+                                      border: FlareColors.palette.isDark
+                                          ? null
+                                          : Border.all(
+                                              color: FlareColors.accent,
+                                              width: 2,
+                                            ),
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: FlareColors.accent.withValues(
+                                            alpha: .35,
+                                          ),
+                                          spreadRadius: _focused ? 5 : 3,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 17,
-                              child: Row(
-                                children: [
-                                  for (final (i, phase)
-                                      in widget.catalog.phases
-                                          .take(count)
-                                          .indexed) ...[
-                                    if (i != 0) const SizedBox(width: gap),
-                                    Expanded(
-                                      child: Text(
-                                        phase.source.toString().padLeft(2, '0'),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 9.5,
-                                          height: 1.2,
-                                          fontWeight: FontWeight.w600,
-                                          color: phase.source == widget.phase
-                                              ? FlareColors.accentInk
-                                              : FlareColors.dim,
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                top: 17,
+                                child: Row(
+                                  children: [
+                                    for (final (i, phase)
+                                        in widget.catalog.phases
+                                            .take(count)
+                                            .indexed) ...[
+                                      if (i != 0) const SizedBox(width: gap),
+                                      Expanded(
+                                        child: Text(
+                                          phase.source.toString().padLeft(
+                                            2,
+                                            '0',
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 9.5,
+                                            height: 1.2,
+                                            fontWeight: FontWeight.w600,
+                                            color: phase.source == widget.phase
+                                                ? FlareColors.accentInk
+                                                : FlareColors.dim,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ],
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            ],
+                          ),
+                        );
+                      }),
               );
             },
           ),
@@ -311,6 +327,44 @@ class _MotionTimelineState extends State<MotionTimeline> {
       ),
     );
   }
+
+  Widget _buildPlayhead(double time, Widget Function(double) builder) {
+    final playhead = widget.playhead;
+    if (playhead == null) return builder(time);
+    return ValueListenableBuilder<double>(
+      valueListenable: playhead,
+      builder: (_, time, _) => builder(time),
+    );
+  }
+}
+
+/// Transition only the pose title, without animating the transport geometry.
+class MotionPhaseLabel extends StatelessWidget {
+  const MotionPhaseLabel({super.key, required this.phase, required this.child});
+
+  final int phase;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+    duration: FlareMotion.of(context, const Duration(milliseconds: 180)),
+    layoutBuilder: (current, previous) => Stack(
+      alignment: AlignmentDirectional.topStart,
+      fit: StackFit.passthrough,
+      clipBehavior: Clip.none,
+      children: [
+        for (final label in previous)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            child: ExcludeSemantics(child: IgnorePointer(child: label)),
+          ),
+        ?current,
+      ],
+    ),
+    child: KeyedSubtree(key: ValueKey(phase), child: child),
+  );
 }
 
 class _MotionNodes extends StatelessWidget {

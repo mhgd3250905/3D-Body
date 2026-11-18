@@ -45,6 +45,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     this.onScenePresented,
     this.sharedController,
     this.sharedSceneView,
+    this.onAngleYawChanged,
   });
 
   final Catalog catalog;
@@ -66,6 +67,7 @@ class FlareTrainingHubPage extends StatefulWidget {
   final VoidCallback? onScenePresented;
   final SceneController? sharedController;
   final Widget? sharedSceneView;
+  final ValueChanged<double>? onAngleYawChanged;
 
   @override
   State<FlareTrainingHubPage> createState() => FlareTrainingHubPageState();
@@ -82,10 +84,12 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   bool _reportedPresentation = false;
   bool _requestedPresentation = false;
   bool _returning = false;
+  bool _presented = false;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
   MuscleGroup get _muscle => widget.catalog.groupById(_muscleId)!;
+  double get angleYaw => _stage.trainingHubYaw;
 
   Future<({double time, double yaw})?> prepareReturn() async {
     if (!_stage.presented) return null;
@@ -117,9 +121,15 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
 
   void _enterSharedScene() {
     _requestedPresentation = _reportedPresentation = false;
-    if (!widget.mountScene) return;
+    _presented = false;
+    if (!widget.enableScene || !widget.mountScene) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !widget.mountScene) return;
+      if (!mounted ||
+          !widget.enableScene ||
+          !widget.mountScene ||
+          _requestedPresentation) {
+        return;
+      }
       _requestedPresentation = true;
       _render(animate: false);
       _stage.requestPresentation();
@@ -127,9 +137,10 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   }
 
   void _sceneChanged() {
-    if (!_ownsController && !widget.mountScene) return;
+    if (!widget.enableScene || (!_ownsController && !widget.mountScene)) return;
     if (!_stage.ready) {
       _requestedPresentation = _reportedPresentation = false;
+      if (_presented) setState(() => _presented = false);
       return;
     }
     if (!_requestedPresentation) {
@@ -137,10 +148,18 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       if (!_ownsController) _render(animate: false);
       _stage.requestPresentation();
     }
+    if (_presented != _stage.presented) {
+      setState(() => _presented = _stage.presented);
+    }
     if (_stage.presented && !_reportedPresentation) {
       _reportedPresentation = true;
       widget.onScenePresented?.call();
     }
+  }
+
+  void _rotateAngle(double radians) {
+    _stage.rotateTrainingHubAngle(radians);
+    widget.onAngleYawChanged?.call(angleYaw);
   }
 
   @override
@@ -166,7 +185,8 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       }
       if (oldWidget.catalog != widget.catalog) _localizeScene();
       if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
-    } else if (oldWidget.mountScene != widget.mountScene) {
+    } else if (oldWidget.mountScene != widget.mountScene ||
+        oldWidget.enableScene != widget.enableScene) {
       _enterSharedScene();
     }
     if (oldWidget.interactionLocked && !widget.interactionLocked) {
@@ -295,22 +315,32 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                     safeTop: safe.top,
                     sceneBoundsKey: widget.sceneBoundsKey,
                     onHorizontalDragUpdate:
-                        widget.interactionLocked ||
+                        _returning ||
+                            widget.leaving ||
                             _muscles ||
                             box.maxWidth <= 0
                         ? null
-                        : (details) => _stage.rotateTrainingHubAngle(
+                        : (details) => _rotateAngle(
                             -2 * math.pi * details.delta.dx / box.maxWidth,
                           ),
-                    scene: widget.enableScene && widget.mountScene
-                        ? widget.sharedSceneView ??
-                              SceneView(
-                                key: ValueKey(widget.actorBody),
-                                controller: _stage,
-                                body: widget.actorBody,
-                                interactive: false,
-                                concealed: widget.actorHandoff,
-                              )
+                    scene: widget.enableScene
+                        ? Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              if (!_muscles &&
+                                  !_presented &&
+                                  !widget.actorHandoff)
+                                Image.asset(
+                                  'assets/angles/v5-phase-${phase.source}.webp',
+                                  key: const ValueKey(
+                                    'hub-stage-loading-frame',
+                                  ),
+                                  fit: BoxFit.contain,
+                                  excludeFromSemantics: true,
+                                ),
+                              if (widget.mountScene) _stageView(),
+                            ],
+                          )
                         : const SizedBox.expand(),
                   ),
                   Expanded(
@@ -366,7 +396,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                   end: 0,
                   child: FlareNavBar(
                     onBack: widget.onBack,
-                    backEnabled: !widget.interactionLocked,
+                    backEnabled: !widget.leaving,
                     center: _HubModeControl(
                       muscles: _pendingMode ?? _muscles,
                       onMode: _selectMode,
@@ -381,6 +411,22 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _stageView() {
+    final concealed = widget.actorHandoff || !_presented;
+    if (widget.sharedSceneView case final scene?) {
+      // Keep the same platform-view element mounted as the poster gives way
+      // to the presented frame.
+      return Opacity(opacity: concealed ? 1 / 255 : 1, child: scene);
+    }
+    return SceneView(
+      key: ValueKey(widget.actorBody),
+      controller: _stage,
+      body: widget.actorBody,
+      interactive: false,
+      concealed: concealed,
     );
   }
 
@@ -526,6 +572,7 @@ class _HubStage extends StatelessWidget {
             top: safeTop + 54,
             height: math.max(1, _angleStageHeight - safeTop - 54),
             child: GestureDetector(
+              key: const ValueKey('hub-stage-gesture'),
               behavior: HitTestBehavior.opaque,
               onHorizontalDragUpdate: onHorizontalDragUpdate,
               child: ClipRect(

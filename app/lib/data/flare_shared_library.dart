@@ -214,7 +214,7 @@ class FlareShared {
       actionId: id,
       config: shared.libraryFor(context),
       mediaPolicy: policy,
-      theme: resolvedTheme,
+      theme: resolvedTheme.copyWith(mediaStage: Colors.transparent),
       onStart: soundEnabled
           ? (actionId) async {
               final action = policy.actionFor(actionId);

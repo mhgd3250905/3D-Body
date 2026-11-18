@@ -151,6 +151,12 @@ void main() {
     'home muscle hits enter a single muscle plan and return to the same paused stage',
     (tester) async {
       await phoneSize(tester);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      addTearDown(
+        () => tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        ),
+      );
       tester.view.padding = const FakeViewPadding(bottom: 34);
       tester.view.viewPadding = const FakeViewPadding(bottom: 34);
       addTearDown(tester.view.resetPadding);
@@ -181,6 +187,19 @@ void main() {
 
       const time = 2.375;
       scene.setTime(time);
+      scene.play();
+      await tester.pumpAndSettle();
+      commands.clear();
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      expect(scene.playing, isFalse);
+      expect(scene.time, time);
+      expect(commands.any((command) => command['type'] == 'pause'), isTrue);
+      expect(
+        commands.where((command) => command['type'] == 'visibility'),
+        isEmpty,
+      );
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
       final home = find.byType(MotionTimeline, skipOffstage: false);
       final timeline = tester.element(home);
@@ -432,11 +451,18 @@ void main() {
 
         final timeline = find.byType(MotionTimeline);
         final bounds = tester.getRect(timeline);
+        double tickX(String number) => tester
+            .getCenter(
+              find.descendant(of: timeline, matching: find.text(number)),
+            )
+            .dx;
+        final startX = bounds.left + bounds.width * .25;
+        final midpointX = (tickX('14') + tickX('15')) / 2;
         scene.play();
         await tester.pump();
         await tester.dragFrom(
-          Offset(bounds.left + bounds.width * .25, bounds.center.dy),
-          Offset(bounds.width * .5, 0),
+          Offset(startX, bounds.center.dy),
+          Offset(midpointX - startX, 0),
         );
         await tester.pumpAndSettle();
         final between14And15 =

@@ -264,6 +264,7 @@ class FlareStage extends StatefulWidget {
     this.transparentUnderlay = false,
     this.modal = false,
     this.cover = false,
+    this.anchorIncomingUnderlayHitTest = false,
     this.onSettled,
     this.onSwipeBack,
     this.backChip = false,
@@ -292,6 +293,7 @@ class FlareStage extends StatefulWidget {
 
   /// Slide over the previous page while keeping it stationary and undimmed.
   final bool cover;
+  final bool anchorIncomingUnderlayHitTest;
   final VoidCallback? onSettled;
 
   /// When set, a drag from the left edge carries the page with the finger
@@ -553,6 +555,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             stationary:
                 widget.child != null && !outgoingUnderlay && !previewHub,
             swipeBackdrop: previewHub,
+            anchorHitTest:
+                incomingUnderlay && widget.anchorIncomingUnderlayHitTest,
             child: _page(underlay, transparent: widget.transparentUnderlay),
           ),
         if (previous != null && !previousOnTop && !incomingUnderlay) previous,
@@ -598,6 +602,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     required bool empty,
     bool stationary = false,
     bool swipeBackdrop = false,
+    bool anchorHitTest = false,
     required Widget child,
   }) {
     return KeyedSubtree(
@@ -696,6 +701,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             // wrappers would remount the page and drop its state.
             return Transform.translate(
               offset: Offset(dx, dy),
+              transformHitTests: !anchorHitTest,
               child: Transform.scale(
                 scale: scale,
                 child: Opacity(

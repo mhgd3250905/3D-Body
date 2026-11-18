@@ -74,7 +74,9 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
     }
     final value = message.data.dartify();
     if (value is! Map) return;
-    if (widget.controller.receiveEvent(value)) _lastEvent = value;
+    if (widget.controller.receiveEvent(value) && value['type'] != 'playhead') {
+      _lastEvent = value;
+    }
   }
 
   void _send(Map<String, Object?> command) {

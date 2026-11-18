@@ -139,6 +139,54 @@ test('hub entry starts at the home shot and lands at the same pixels as the hub 
   assert.equal(landings, 2);
 });
 
+test('an early Back reverses from the visible frame without a pose or camera jump', () => {
+  const width = 390, height = 690;
+  const home = new THREE.PerspectiveCamera(39, width / height, .02, 40);
+  const target = new THREE.Vector3(0, .8, 0);
+  home.position.set(1, 3, 5);
+  home.lookAt(target);
+  home.updateMatrixWorld(true);
+  const poses = [], completed = [];
+  const player = {
+    container: { clientHeight: height, clientWidth: width },
+    camera: home, controls: { target }, time: 0, period: 9, baseFov: 32,
+    motion: { update: time => poses.push(time) },
+  };
+  const flight = createHubFlight(player, {
+    top: 20, height: 374, time: 2.7, duration: 650,
+  }, CAMERA_PRESETS.standard, () => completed.push('entry'));
+  flight.sample(0);
+  assert.ok(flight.setAngleYaw(.7), 'the retained actor can respond before the hub boots');
+  flight.sample(325);
+  const before = flight.camera.matrixWorld.clone();
+  const pose = poses.at(-1);
+
+  assert.ok(flight.reverse(() => completed.push('return')));
+  assert.equal(flight.setAngleYaw(1), false, 'the return keeps its last visible angle');
+  assert.ok(flight.sample(340));
+  assert.deepEqual(flight.camera.matrixWorld.elements, before.elements);
+  assert.equal(poses.at(-1), pose);
+  assert.deepEqual(completed, []);
+  assert.ok(flight.sample(665));
+  assert.equal(poses.at(-1), 0);
+  assert.ok(flight.camera.position.distanceTo(home.position) < 1e-10);
+  flight.rendered();
+  assert.deepEqual(completed, ['return']);
+});
+
+test('the shared canvas keeps the quality cap in flight and adapts in the hub', () => {
+  const stageDensity = FlarePlayer.prototype.stagePixelRatio;
+  const player = { fullPixelRatio: 3 };
+  assert.equal(stageDensity.call(player, 1.25), 1.25);
+  player.hubFlight = { landed: false };
+  assert.equal(stageDensity.call(player, 1), 3);
+  player.hubFlight.landed = true;
+  assert.equal(stageDensity.call(player, 1), 3);
+  player.hubFlight = null;
+  player.trainingHub = {};
+  assert.equal(stageDensity.call(player, 1.25), 1.25);
+});
+
 test('a camera move keeps the same ground projection until the pose changes', () => {
   const scene = {};
   const shadowMap = { enabled: true, autoUpdate: true, needsUpdate: false };

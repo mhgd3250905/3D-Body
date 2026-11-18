@@ -478,6 +478,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             key: ValueKey('demo:${drill.id}'),
             drillId: drill.id,
             sceneSpeed: widget.demoSpeed,
+            stageColor: Colors.transparent,
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),

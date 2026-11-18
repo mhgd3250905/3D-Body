@@ -115,7 +115,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double _trainingEntryTime = 0;
   bool _trainingActorFlight = false;
   bool _trainingFlightLanded = false;
-  bool _trainingHubPresented = false;
   bool _returningToWatch = false;
   bool _returnFlightExposed = false;
   bool _returnFlightUsesHome = false;
@@ -339,16 +338,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _trainingHubOrigin == 0 &&
         widget.enableScene &&
         _scene.presented &&
-        _scene.errorCode == null &&
-        !FlareMotion.reduced(context);
+        _scene.errorCode == null;
     _trainingFlightLanded = false;
-    _trainingHubPresented = false;
     _changeTab(_trainingHubTab);
     if (!_trainingActorFlight) return;
-    _trainingFlightDeadline = Timer(
-      const Duration(seconds: 3),
-      _finishTrainingFlight,
-    );
+    _trainingFlightDeadline = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_returningToWatch && !_trainingFlightLanded) {
+        // Keep the existing renderer and transfer it even if the flight
+        // acknowledgement was delayed.
+        _scene.finishTrainingFlight();
+        setState(() => _trainingFlightLanded = true);
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !_trainingActorFlight) return;
       final geometry = _trainingStageGeometry();
@@ -359,9 +360,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       final deadline = _trainingFlightDeadline;
       await _scene.flyTrainingActor(
         time: _trainingEntryTime,
+        yaw: _trainingHubState.currentState?.angleYaw ?? 0,
         top: geometry.top,
         height: geometry.height,
-        duration: const Duration(milliseconds: 650),
+        duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
       );
       if (!mounted ||
           !_trainingActorFlight ||
@@ -371,7 +373,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       // Move the same platform view to the hub after the landing frame.
       _scene.finishTrainingFlight();
       setState(() => _trainingFlightLanded = true);
-      if (_trainingHubPresented) _finishTrainingFlight();
     });
   }
 
@@ -426,7 +427,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         yaw: shot.yaw,
         top: geometry.top,
         height: geometry.height,
-        duration: const Duration(milliseconds: 650),
+        duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
         returning: true,
         onPrepared: () {
           if (!mounted || _trainingFlightDeadline != deadline) return;
@@ -445,9 +446,40 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     WidgetsBinding.instance.ensureVisualUpdate();
   }
 
+  Future<void> _reverseTrainingEntry() async {
+    if (_trainingFlightLanded) {
+      await _returnFromTrainingHub();
+      return;
+    }
+    _trainingFlightDeadline?.cancel();
+    final deadline = _trainingFlightDeadline = Timer(
+      const Duration(seconds: 3),
+      _finishTrainingFlight,
+    );
+    setState(() {
+      _returningToWatch = true;
+      _returnFlightExposed = true;
+      _returnFlightUsesHome = true;
+    });
+    await _scene.reverseTrainingFlight();
+    if (mounted && _trainingFlightDeadline == deadline) {
+      _finishTrainingFlight();
+    }
+  }
+
   void _onTrainingHubPresented() {
-    _trainingHubPresented = true;
-    if (_trainingFlightLanded) _finishTrainingFlight();
+    if (!_trainingActorFlight || _returningToWatch) return;
+    final deadline = _trainingFlightDeadline;
+    // Allow the transferred platform view to composite before unlocking
+    // the destination controls.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _trainingFlightDeadline == deadline) {
+          _finishTrainingFlight();
+        }
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+    });
   }
 
   void _finishTrainingFlight() {
@@ -867,7 +899,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (_trainingOpen) return;
     if (_returningToWatch) return;
     if (_trainingActorFlight) {
-      _finishTrainingFlight();
+      unawaited(_reverseTrainingEntry());
+      return;
     } else if (_tab == _trainingHubTab &&
         !_inPlan &&
         _drill == null &&
@@ -876,10 +909,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _changeTab(_trainingHubOrigin);
         return;
       }
-      if (widget.enableScene &&
-          _scene.presented &&
-          _scene.errorCode == null &&
-          !FlareMotion.reduced(context)) {
+      if (widget.enableScene && _scene.presented && _scene.errorCode == null) {
         unawaited(_returnFromTrainingHub());
         return;
       }
@@ -1074,6 +1104,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                           depth: route.$2,
                           modal: route.$3,
                           cover: hubInFront && _trainingHubOrigin == 0,
+                          anchorIncomingUnderlayHitTest:
+                              hubInFront &&
+                              _trainingActorFlight &&
+                              !_returningToWatch,
                           transparentUnderlay: hasHub,
                           underlay: hasHub
                               ? ExcludeSemantics(
@@ -1103,6 +1137,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         sceneBoundsKey: _hubSceneBounds,
                                         onScenePresented:
                                             _onTrainingHubPresented,
+                                        onAngleYawChanged: (yaw) {
+                                          if (_trainingActorFlight &&
+                                              !_returningToWatch &&
+                                              !_trainingFlightLanded) {
+                                            _scene.rotateTrainingFlight(yaw);
+                                          }
+                                        },
                                         visible:
                                             hubInFront &&
                                             !_returnFlightExposed &&
@@ -1487,7 +1528,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         ? ColoredBox(color: FlareColors.background)
                         : _hubOwnsScene
                         ? const SizedBox.expand()
-                        : _liveScene(),
+                        : _liveScene(interactive: !_trainingActorFlight),
                   ),
                   SceneRevealLayer(
                     enabled: widget.enableScene && !widget.startupCovered,
@@ -1525,7 +1566,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         ? box.maxWidth * .46
                                         : box.maxWidth - 218,
                                   ),
-                                  child: _homeTrainingButton(context, phase),
+                                  child: _homeTrainingButton(context),
                                 ),
                               ),
                             ],
@@ -1684,7 +1725,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ],
       ],
     );
-    if (!canOpen) return row;
+    final label = MotionPhaseLabel(phase: phase.source, child: row);
+    if (!canOpen) return label;
     return FlarePressable(
       key: const ValueKey('home-plan-angle'),
       scale: .99,
@@ -1692,7 +1734,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         FlareHaptics.light();
         _openAnglePlan(phase);
       },
-      child: row,
+      child: label,
     );
   }
 
@@ -1733,6 +1775,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       child: MotionTimeline(
                         catalog: catalog,
                         time: _scene.time,
+                        playhead: _scene.playhead,
                         phase: phase.source,
                         onSeek: _seek,
                       ),
@@ -1795,23 +1838,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     ),
   );
 
-  Widget _homeTrainingButton(BuildContext context, Phase phase) {
+  Widget _homeTrainingButton(BuildContext context) {
     final label = context.strings.homeGoToTraining;
-    final time = _scene.time;
-    final hasPlan = catalog.plansForAngle(phase.source).isNotEmpty;
     return FlarePressable(
       key: const ValueKey('home-go-to-training'),
       scale: .95,
       semanticLabel: label,
-      onTap: hasPlan
-          ? () {
-              FlareHaptics.light();
-              // Match the paused return frame to the displayed angle, even
-              // when playback crosses a phase boundary during navigation.
-              if (_scene.playing) _scene.setTime(time);
-              _openAnglePlan(phase);
-            }
-          : null,
+      onTap: () {
+        FlareHaptics.light();
+        _enterTrainingHub();
+      },
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
         child: Center(

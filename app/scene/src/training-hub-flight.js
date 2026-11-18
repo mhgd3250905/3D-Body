@@ -27,8 +27,7 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   });
   const destTarget = new THREE.Vector3(...dest.target);
   const destOrbit = new THREE.Spherical().setFromVector3(dest.direction.clone().multiplyScalar(dest.distance));
-  if (Number.isFinite(input.yaw)) destOrbit.theta += input.yaw;
-  const rotation = THREE.MathUtils.euclideanModulo(destOrbit.theta - startOrbit.theta + Math.PI, Math.PI * 2) - Math.PI;
+  let yaw = Number.isFinite(input.yaw) ? input.yaw : 0;
   const sourceTangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const sourceX = camera.view?.enabled ? camera.view.offsetX : 0;
   const sourceY = camera.view?.enabled ? camera.view.offsetY : 0;
@@ -37,18 +36,20 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   const homeTime = player.time;
   const period = player.period;
   const path = THREE.MathUtils.euclideanModulo(input.time - homeTime + period / 2, period) - period / 2;
-  const duration = Math.max(1, input.duration);
   const lerp = THREE.MathUtils.lerp;
-  const returning = input.returning === true;
+  let duration = Math.max(0, input.duration);
+  let returning = input.returning === true;
+  let from = returning ? 1 : 0, to = returning ? 0 : 1, progress = from;
   let holding = returning, prepared = false;
   let start = null, landed = false, reported = false;
+  let angleDirty = false;
   let poseTime = homeTime, positionInHub = 0;
   const hubTop = Math.max(0, input.top);
   const hubBottomInset = Math.max(0, height - input.top - input.height);
 
   return {
     camera,
-    returning,
+    get returning() { return returning; },
     landingTime: input.time,
     landingBottomInset: Math.max(32, height - input.top - input.height + 32),
     get poseTime() { return poseTime; },
@@ -57,14 +58,34 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
     get holding() { return holding; },
     get landed() { return landed; },
     resume() { holding = false; },
+    setAngleYaw(value) {
+      if (returning || !Number.isFinite(value) || yaw === value) return false;
+      yaw = value;
+      angleDirty = true;
+      return true;
+    },
+    reverse(onReturned) {
+      if (returning) return false;
+      returning = true;
+      holding = false;
+      from = progress;
+      to = 0;
+      duration *= progress;
+      start = null;
+      landed = reported = false;
+      onLanded = onReturned;
+      return true;
+    },
     sample(now) {
-      if (landed || (holding && prepared)) return false;
+      if ((landed && !angleDirty) || (holding && prepared)) return false;
+      angleDirty = false;
       if (!holding) start ??= now;
-      const elapsed = holding ? 0 : Math.min(1, (now - start) / duration);
-      const progress = returning ? 1 - elapsed : elapsed;
+      const elapsed = holding ? 0 : duration === 0 ? 1 : Math.min(1, (now - start) / duration);
+      progress = lerp(from, to, elapsed);
       const t = easeHub(progress);
       positionInHub = t;
       target.copy(startTarget).lerp(destTarget, t);
+      const rotation = THREE.MathUtils.euclideanModulo(destOrbit.theta + yaw - startOrbit.theta + Math.PI, Math.PI * 2) - Math.PI;
       orbit.set(
         lerp(startOrbit.radius, destOrbit.radius, t),
         lerp(startOrbit.phi, destOrbit.phi, t),
