@@ -8,7 +8,7 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'es2020',
     rollupOptions: {
-      input: ['index.html', 'v5.html'].map(file => fileURLToPath(new URL(file, import.meta.url))),
+      input: fileURLToPath(new URL('index.html', import.meta.url)),
     },
     chunkSizeWarningLimit: 800,
   },

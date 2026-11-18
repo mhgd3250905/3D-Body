@@ -47,7 +47,7 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   const hubBottomInset = Math.max(0, height - input.top - input.height);
 
   return {
-    camera, target,
+    camera,
     returning,
     landingTime: input.time,
     landingBottomInset: Math.max(32, height - input.top - input.height + 32),

@@ -10,7 +10,6 @@ import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_public_media.dart';
-import '../data/flare_v5_drill.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
@@ -42,7 +41,7 @@ class DrillPoster extends StatelessWidget {
     color: FlareColors.raised,
     child: Image.asset(
       drillPosterAsset(drill),
-      fit: drill.id == flareV5DrillId ? BoxFit.contain : BoxFit.cover,
+      fit: BoxFit.cover,
       gaplessPlayback: true,
       excludeFromSemantics: true,
       errorBuilder: (_, _, _) => Center(
@@ -406,7 +405,7 @@ class _LastPlanCard extends StatelessWidget {
         ? s.plansYesterday
         : MaterialLocalizations.of(context).formatShortDate(date);
     final art = switch ((resume.phaseSource, resume.groupId)) {
-      (final int source, _) => 'assets/angles/v5-phase-$source.webp',
+      (final int source, _) => 'assets/angles/v5-phase-$source.png',
       (_, final String id) => 'assets/plan_resume_muscles/$id.webp',
       _ => null,
     };

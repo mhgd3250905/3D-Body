@@ -2,7 +2,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
-import '../data/flare_v5_drill.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -10,7 +9,6 @@ import 'drill_media.dart';
 import 'app_glass.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
-import 'flare_v5_playback.dart';
 
 /// The three-rule safety card. Shown once before entering, and from Settings.
 Future<bool?> showSafetySheet(BuildContext context) {
@@ -476,17 +474,11 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       body: ListView(
         padding: EdgeInsets.only(top: flareNavInset(context)),
         children: [
-          if (drill.id == flareV5DrillId)
-            AspectRatio(
-              key: ValueKey('demo:${drill.id}'),
-              aspectRatio: 1,
-              child: FlareV5Playback(initialSpeed: widget.demoSpeed),
-            )
-          else
-            DrillMediaCard(
-              key: ValueKey('demo:${drill.id}'),
-              drillId: drill.id,
-            ),
+          DrillMediaCard(
+            key: ValueKey('demo:${drill.id}'),
+            drillId: drill.id,
+            sceneSpeed: widget.demoSpeed,
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
             child: Column(

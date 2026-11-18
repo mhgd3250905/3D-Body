@@ -390,18 +390,31 @@ export function applyFx({ scene, root, bones, skinned, renderer, anim, getFrame,
   /* ---------- 每次渲染前按当前帧更新 ---------- */
   let last = null;
   const prev = scene.onBeforeRender;
-  scene.onBeforeRender = (r, sc, cam, rt) => {
+  const update = (r, sc, cam, rt) => {
     prev && prev.call(scene, r, sc, cam, rt);
     const f = getFrame();
     const fr = getFrames(); if (fr && fr !== cachedFrames && fr.length === N) precompute(fr);
     if (casters.length) { updateShadow(cam); for (const [s, o] of rigid) { s.matrix.copy(o.matrixWorld); s.matrixWorld.copy(o.matrixWorld); } }
-    const on = f != null; group.visible = on;
+    const on = f != null && f >= 0; group.visible = on;
     if (!on) return;
     const wall = f / fps;
     updateRibbons(wall, cam, r);
     for (const m of motes) m.mesh.visible = P.spark; if (P.spark) updateMotes(wall, cam);
     if (P.ring) updateRipples(wall); else ripples.forEach(m => m.visible = false);
     last = f;
+  };
+  scene.onBeforeRender = update;
+  info.dispose = () => {
+    if (scene.onBeforeRender === update) scene.onBeforeRender = prev;
+    const resources = new Set();
+    for (const effect of [group, shadowGroup]) {
+      effect.removeFromParent();
+      effect.traverse(object => {
+        if (object.geometry) resources.add(object.geometry);
+        if (object.material) resources.add(object.material);
+      });
+    }
+    for (const resource of resources) resource.dispose();
   };
   info.casters = casters.length; info.shadowTris = casters.reduce((a, c) => a + c.geometry.index.count / 3, 0); info.group = group;
   info.debug = () => ({ last, speed: { left: Array.from(speed.left), right: Array.from(speed.right) }, paths: { left: Array.from(paths.left), right: Array.from(paths.right) } });

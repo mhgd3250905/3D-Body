@@ -7,6 +7,7 @@ import '../data/flare_shared_library.dart';
 import '../data/flare_v5_drill.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_decoder_pool.dart';
+import 'flare_v5_media.dart';
 import 'motion.dart';
 
 /// Only one inline demonstration plays at a time across Flare's pages.
@@ -88,11 +89,13 @@ class DrillMediaCard extends StatefulWidget {
     this.mirrored = false,
     this.autoPlay = false,
     this.thumbnail = false,
+    this.sceneSpeed = .5,
   });
   final String drillId;
   final bool active;
   final bool mirrored;
   final bool autoPlay;
+  final double sceneSpeed;
 
   /// Use only the bundled thumbnail, without starting a media decoder.
   final bool thumbnail;
@@ -161,7 +164,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   }
 
   void _syncActivity() {
-    if (!_active || widget.drillId == flareV5DrillId) {
+    if (!_active) {
       _autoRequested = false;
       _coordinator.forget(this);
     } else if (widget.autoPlay && !_autoRequested) {
@@ -223,21 +226,35 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     );
   }
 
+  Widget _v5Art(BuildContext context) {
+    final theme = FlareShared.theme(context);
+    final poster = trainer.TrainerPoster(
+      asset: flareV5PosterAsset,
+      mirrored: widget.mirrored,
+      radius: theme.radius,
+      stageColor: theme.mediaStage,
+    );
+    if (!_started) return poster;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(theme.radius),
+      child: FlareV5Media(
+        speed: widget.sceneSpeed,
+        playing: _playing,
+        mirrored: widget.mirrored,
+        fallback: poster,
+        background: theme.mediaStage,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.drillId == flareV5DrillId) {
-      final poster = Image.asset(
-        flareV5PosterAsset,
-        fit: BoxFit.contain,
-        excludeFromSemantics: true,
-      );
-      return widget.mirrored
-          ? Transform.flip(flipX: true, child: poster)
-          : poster;
-    }
+    final isV5 = widget.drillId == flareV5DrillId;
     if (widget.thumbnail) {
       return Image.asset(
-        '${FlarePublicMedia.thumbnailRoot}${widget.drillId}.webp',
+        isV5
+            ? flareV5PosterAsset
+            : '${FlarePublicMedia.thumbnailRoot}${widget.drillId}.webp',
         fit: BoxFit.contain,
         excludeFromSemantics: true,
         errorBuilder: (_, _, _) => Image.asset(
@@ -251,7 +268,9 @@ class _DrillMediaCardState extends State<DrillMediaCard>
     final shared = FlareShared.current;
     final policy = FlarePublicMedia.current;
     final poster = 'assets/public_posters/${widget.drillId}.webp';
-    final Widget art = shared != null && policy != null
+    final Widget art = isV5
+        ? _v5Art(context)
+        : shared != null && policy != null
         ? _art(context, shared, policy)
         : Image.asset(
             poster,

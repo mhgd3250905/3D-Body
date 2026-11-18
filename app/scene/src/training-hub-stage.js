@@ -256,11 +256,6 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       finally { r.setScissorTest(false); }
       return;
     }
-    if (player.v5) {
-      player.v5.frameCamera(width, height, { yaw: angleYaw });
-      player.v5.draw(false);
-      return;
-    }
     player.floor.visible = true;
     player.shadowCatcher.visible = r.shadowMap.enabled && player.keyLight.castShadow;
     if (!capture) {
@@ -291,8 +286,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
     const frame = transitions.frame;
     muscleTarget = frame.muscle.target;
-    const calloutCamera = player.v5?.frameCamera(width, height, { yaw: angleYaw }) ?? angleCamera;
-    onAngleFrame?.({ camera: calloutCamera, time: frame.time, phase: frame.targetPhase,
+    onAngleFrame?.({ camera: angleCamera, time: frame.time, phase: frame.targetPhase,
       showMuscles: frame.targetMode === 1 || frame.modeMoving, scrubbing: frame.scrubbing, moving: frame.poseMoving });
     const muscleHeight = Math.max(120, height - (angleStageHeight - standingStageHeight));
     placeCamera(muscleCamera, frame.muscle, width, height, muscleHeight);

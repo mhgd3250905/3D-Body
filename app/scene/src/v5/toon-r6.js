@@ -36,7 +36,7 @@ const TSM = (() => { const v = QS.get('tsm'); return v != null && isFinite(+v) ?
 const qn = (k, d) => (QS.has(k) && isFinite(+QS.get(k)) ? +QS.get(k) : d);
 const OL2 = { frac: qn('olw', 0.0048), k: qn('olk', 0.5), refP11: 1 / Math.tan(15 * Math.PI / 180), refZ: 4.95, push: qn('olpush', 0.012),
   hand: 0.5, head: 0.7, shoe: 0.8, hair: 0.78, ink: '#2a1d33', hairInk: '#1a1430' };
-const LINE = '#2b2230', LINE_W = 0.0045, FACE_INK = '#231c26', BG = '#f4efe6';
+const LINE = '#2b2230', LINE_W = 0.0045, FACE_INK = '#231c26';
 const SKIN = 0, SHIRT = 1, PANTS = 2, SHOE = 3;
 
 // glb 里各 primitive 的来源（build-v3glb.mjs 的 geo.meshes 顺序）
@@ -356,12 +356,9 @@ function addFace(head, zAt) {
 }
 
 /* ---------- 入口 ---------- */
-export function applyToon({ scene, root, bones, skinned, grid, floor, renderer, camera }) {
+export function applyToon({ root, bones, skinned, renderer }) {
   root.updateMatrixWorld(true);
   const info = { prims: [], counts: [0, 0, 0, 0] };
-  scene.background = new THREE.Color(BG);
-  if (grid) grid.removeFromParent();
-  if (floor) floor.material = new THREE.MeshBasicMaterial({ color: 0xe6dccd, transparent: true, opacity: .6 });
   const head = bones.head;
   // primitive 编号按 glb 顺序（three 拆成同名多网格，按遍历顺序）
   const meshes = skinned.slice();

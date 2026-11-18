@@ -13,7 +13,7 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
-import 'flare_v5_playback.dart';
+import 'flare_v5_media.dart';
 import 'page_kit.dart';
 
 /// Opened through the SDK TrainerLauncher: TrainerPlayer owns back/finish,
@@ -263,11 +263,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
 
     if (drill.id == flareV5DrillId) {
       return request.canPlay
-          ? FlareV5Playback(
+          ? FlareV5Media(
               key: const ValueKey('flare-v5-training-media'),
-              initialSpeed: widget.store.settings.speed,
-              autoplay: true,
-              sessionPaused: request.paused,
+              speed: widget.store.settings.speed,
+              playing: !request.paused,
+              mirrored: request.mirrored,
+              fallback: poster(flareV5PosterAsset),
+              background: stage,
             )
           : poster(flareV5PosterAsset);
     }

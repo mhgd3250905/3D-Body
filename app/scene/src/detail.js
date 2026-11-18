@@ -36,7 +36,7 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     return focusDirection() ?? CAMERA_PRESETS.standard.clone();
   }
   function fullMotionBounds() {
-    const b = player.getMetrics().bounds;
+    const b = player.getMotionCameraBounds?.() ?? player.getMetrics().bounds;
     return new THREE.Box3(new THREE.Vector3().fromArray(b.min), new THREE.Vector3().fromArray(b.max)).expandByScalar(0.04);
   }
   function fit(phase, direction = null, glide = false) {
@@ -120,14 +120,9 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     const key = [alternate, selected, player.time, width, height, density, player.quality, player.renderer.toneMappingExposure, ...direction.toArray()].join(':');
     if (key === thumbnailKey && thumbnailEnvironment === player.scene.environment) return true;
     const box = alternate === 'muscles' ? phaseMap.getFullBounds() : fullMotionBounds();
+    fitThumbnailCamera(miniCamera, box, direction, width, height);
     phaseMap.refreshEnvironment();
-    if (alternate === 'motion' && player.v5) {
-      const camera = player.v5.frameCamera(width, height);
-      thumbnail.render(player.v5.scene, camera, width, height, density);
-    } else {
-      fitThumbnailCamera(miniCamera, box, direction, width, height);
-      phaseMap.withThumbnailDensity(density, () => thumbnail.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera, width, height, density, alternate === 'muscles'));
-    }
+    phaseMap.withThumbnailDensity(density, () => thumbnail.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera, width, height, density, alternate === 'muscles'));
     thumbnailKey = key; thumbnailEnvironment = player.scene.environment;
     return true;
   }

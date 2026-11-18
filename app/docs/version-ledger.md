@@ -1,5 +1,9 @@
 # Flare 版本管理台账
 
+## Android 本地候选包 vc2063（2026-11-18）
+
+`codex/flare-v5-model` 恢复 `cf654dde` 的原场景相机和各页面版式，V5 使用原时钟和帧间插值。Flutter 声明 1.0.15+63，arm64 split 实际为 1.0.15 (2063)。本地包、签名、SHA-256 和源码提交回执归档在主工作区 `output/release-checkpoints/app-v1.0.15-build2063/`。[原版对照和验证](flare-v5-model-2026-11-18.md)
+
 ## Android 本地候选包 vc2062（2026-11-18）
 
 `codex/flare-v5-model` 将 V5 接入首页教学、动作库、计划及训练播放，延续 vc2061 的 WebView 调色板修复。Flutter 声明 1.0.15+62，arm64 split 的实际版本为 1.0.15 (2062)。本地包与源码提交、SHA-256 和签名回执归档在主工作区 `output/release-checkpoints/app-v1.0.15-build2062/`。新增入口由用户真机复验。[V5 接入与验证](flare-v5-model-2026-11-18.md)

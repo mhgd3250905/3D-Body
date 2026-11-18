@@ -7,7 +7,7 @@ import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
-import 'package:flare/ui/flare_v5_playback.dart';
+import 'package:flare/ui/flare_v5_media.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
@@ -253,7 +253,7 @@ void main() {
     final store = await _open(tester, sdkPlan: plan);
     expect(policy.posterAssetFor(flareV5DrillId), flareV5PosterAsset);
     expect(policy.actionFor(flareV5DrillId), isNull);
-    expect(find.byType(FlareV5Playback), findsOneWidget);
+    expect(find.byType(FlareV5Media), findsOneWidget);
     final player = _player(tester);
     final phases = sdk.SessionBuilder(
       rhythms: player.rhythms,
@@ -265,9 +265,9 @@ void main() {
     expect(firstWork.countedOnClock, isTrue);
     await _advance(tester, phases.first.seconds.ceil() + 1);
     expect(find.byKey(const ValueKey('counter')), findsOneWidget);
-    expect(find.byType(FlareV5Playback), findsOneWidget);
+    expect(find.byType(FlareV5Media), findsOneWidget);
     await _advance(tester, firstWork.seconds.ceil() + 1);
-    expect(find.byType(FlareV5Playback), findsNothing);
+    expect(find.byType(FlareV5Media), findsNothing);
     await _expectPoster(tester, base.items.first.exerciseId);
     await _advance(tester, player.transitionSeconds + 12);
     expect(store.trainerSessions.single.full, isTrue);

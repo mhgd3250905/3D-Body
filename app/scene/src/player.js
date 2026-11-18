@@ -8,6 +8,7 @@ import { createAdaptiveResolution, adaptiveEnabled } from './adaptive-resolution
 import { applyCharacter, characterAsset } from './characters.js';
 import { loadFlareV5 } from './v5/renderer.js';
 import { createV5TeachingMotion } from './v5/teaching-motion.js';
+import { legacyLoopBounds, legacyPoseBounds } from './v5/legacy-framing.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -103,13 +104,16 @@ export class FlarePlayer {
 
   async load() {
     if (this.callbacks.v5) {
-      const stage = await loadFlareV5(this.renderer);
+      const stage = await loadFlareV5(this.renderer, { scene: this.scene });
       if (this.disposed) { stage.dispose(); return; }
       this.v5 = stage;
-      this.v5Fx = true;
       this.coach = stage.root;
       this.motion = createV5TeachingMotion(stage);
-      this.prepareMotion();
+      this.period = this.motion.clock.period;
+      this.loopBounds.min.fromArray(legacyLoopBounds.min);
+      this.loopBounds.max.fromArray(legacyLoopBounds.max);
+      this.v5.setShadowsEnabled(this.renderer.shadowMap.enabled);
+      this.setTime(0); this.resetView(); this.start();
       return;
     }
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
@@ -133,17 +137,12 @@ export class FlarePlayer {
     // available on disk and are not loaded or attached to the current actor.
     this.motion = createBakedMotion(gltf, rig);
     this.coach.traverse(object => { if (object.isMesh) object.castShadow = this.renderer.shadowMap.enabled; });
-    this.scene.add(this.coach);
-    this.prepareMotion(rig.height);
-  }
-
-  prepareMotion(height = this.motion.getMetrics().neutralHeight) {
-    this.period = this.motion.clock.period;
+    this.scene.add(this.coach); this.period = this.motion.getMetrics().period;
     for (let i = 0; i < 18; i++) {
       this.motion.update(i * this.period / 18); const bounds = this.motion.getMetrics().bounds;
       this.loopBounds.union(new THREE.Box3(new THREE.Vector3().fromArray(bounds.min), new THREE.Vector3().fromArray(bounds.max)));
     }
-    this.loopBounds.expandByScalar(height * 0.045);
+    this.loopBounds.expandByScalar(rig.height * 0.045);
     this.setTime(0); this.resetView(); this.start();
   }
 
@@ -189,25 +188,12 @@ export class FlarePlayer {
   }
   render() {
     if (this.trainingHub) return this.trainingHub.render();
+    this.callbacks.onBeforeRender?.();
     const r = this.renderer, height = this.container.clientHeight;
     const flight = this.hubFlight;
     const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
     const top = Math.round(flight?.topInset ?? 0);
     const clipped = top + bottom > 0 && top + bottom < height;
-    const showV5 = this.v5 && !this.displayScene;
-    if (showV5) {
-      const orbitCamera = flight?.camera ?? this.camera;
-      const orbitTarget = flight?.target ?? this.controls.target;
-      const orbit = orbitCamera.position.clone().sub(orbitTarget);
-      const standard = CAMERA_PRESETS.standard;
-      const yaw = Math.atan2(orbit.x, orbit.z) - Math.atan2(standard.x, standard.z);
-      const detail = this.framingMode === 'detail';
-      const pitch = detail ? Math.atan2(standard.y, Math.hypot(standard.x, standard.z)) -
-        Math.atan2(orbit.y, Math.hypot(orbit.x, orbit.z)) : 0;
-      const zoom = flight || detail ? 1 : THREE.MathUtils.clamp(this.homeOrbitDistance / orbit.length(), 0.55, 1.8);
-      this.v5Camera = this.v5.frameCamera(this.container.clientWidth, height, { top, bottom, yaw, pitch, zoom });
-    }
-    this.callbacks.onBeforeRender?.();
     if (clipped) {
       // Match the destination viewport at the handoff, including its shadow.
       r.setScissorTest(false); r.clear();
@@ -215,8 +201,7 @@ export class FlarePlayer {
       r.setScissorTest(true);
     }
     try {
-      if (showV5) this.v5.draw(this.v5Fx && !flight && this.framingMode !== 'detail');
-      else this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
+      this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
         !!flight || (this.adaptive.enabled && this.cameraOnly));
     } finally {
       if (clipped) r.setScissorTest(false);
@@ -270,6 +255,9 @@ export class FlarePlayer {
   pacingRate(time) { return (this.motion.clock.toSequence(Math.min(this.motion.clock.toWall(time) + 0.001, this.motion.clock.duration)) - time) / 0.001; }
   paceStep(delta) { return this.motion.clock.advance(this.time, delta, this.speed, this.loopRange) - this.time; }
   getMetrics() { return this.motion?.getMetrics() ?? null; }
+  getMotionCameraBounds() {
+    return this.v5 ? legacyPoseBounds(this.time) : this.getMetrics().bounds;
+  }
   setDisplayScene(scene = null) { this.displayScene = scene; this.dirty = true; }
   setVisible(visible) {
     this.visible = !!visible;
@@ -281,7 +269,8 @@ export class FlarePlayer {
     this.updatePixelRatio();
     this.renderer.shadowMap.enabled = quality.shadows; this.keyLight.castShadow = quality.shadows;
     this.shadowCatcher.visible = quality.shadows;
-    this.coach?.traverse(object => { if (object.isMesh) object.castShadow = quality.shadows; });
+    if (this.v5) this.v5.setShadowsEnabled(quality.shadows);
+    else this.coach?.traverse(object => { if (object.isMesh) object.castShadow = quality.shadows; });
     this.dirty = true; this.resize();
   }
   updatePixelRatio() {
@@ -341,7 +330,6 @@ export class FlarePlayer {
     this.autoFrame = true;
     const fullStage = this.container.clientWidth <= 600 && this.visibleHeight(this.viewInsetTarget) >= 500;
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
-    this.homeOrbitDistance = this.camera.position.distanceTo(this.controls.target);
   }
   setCameraView(position, target) {
     this.glide = null; this.projectionGlide = null;

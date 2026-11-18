@@ -405,7 +405,7 @@ void main() {
         matching: find.byType(Image),
       ),
     );
-    expect((art.image as AssetImage).assetName, 'assets/angles/v5-phase-15.webp');
+    expect((art.image as AssetImage).assetName, 'assets/angles/v5-phase-15.png');
     await tester.tap(_key('plan-continue'));
     await helpers.waitForTrainingRoute(tester);
     final delivered = tester

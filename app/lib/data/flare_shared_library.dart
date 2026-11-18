@@ -318,6 +318,18 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
     String titleFor(String id) => id == flareV5DrillId
         ? s.flareStraightLegs
         : shared.catalog[id]!.name.of(language);
+    Widget posterFor(String id) => LayoutBuilder(
+      builder: (context, box) => trainer.TrainerPoster(
+        key: ValueKey('library-poster-$id'),
+        asset: id == flareV5DrillId
+            ? flareV5PosterAsset
+            : policy.posterAssetFor(id)!,
+        bundle: trainer.TrainerExperienceScope.maybeOf(context)?.bundle,
+        decodeWidth: (box.maxWidth * MediaQuery.devicePixelRatioOf(context))
+            .ceil(),
+        stageColor: FlareColors.mediaBackdrop,
+      ),
+    );
     String doseFor(String id) {
       if (id == flareV5DrillId) {
         return s.libraryDose(flareV5Drill.dose.sets, s.countLabel(1));
@@ -422,12 +434,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                     subtitle: doseFor(id),
                     groupLabel: _label('全身'),
                     color: FlareColors.accent,
-                    artwork: Image.asset(
-                      flareV5PosterAsset,
-                      key: const ValueKey('library-poster-$flareV5DrillId'),
-                      fit: BoxFit.contain,
-                      excludeFromSemantics: true,
-                    ),
+                    artwork: posterFor(id),
                     onTap: () => widget.onOpenStraightLegFlare!(drill),
                   );
                 }
@@ -469,20 +476,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                   color: group == null
                       ? FlareColors.accent
                       : Color(group.colorValue),
-                  artwork: LayoutBuilder(
-                    builder: (context, box) => trainer.TrainerPoster(
-                      key: ValueKey('library-poster-${action.id}'),
-                      asset: policy.posterAssetFor(action.id)!,
-                      bundle: trainer.TrainerExperienceScope.maybeOf(
-                        context,
-                      )?.bundle,
-                      decodeWidth:
-                          (box.maxWidth *
-                                  MediaQuery.devicePixelRatioOf(context))
-                              .ceil(),
-                      stageColor: FlareColors.mediaBackdrop,
-                    ),
-                  ),
+                  artwork: posterFor(id),
                   onTap: () => FlareShared.openDetail(context, action.id),
                 );
               },

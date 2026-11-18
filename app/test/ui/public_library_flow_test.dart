@@ -11,6 +11,7 @@ import 'package:flare/data/posehub_catalog_updates.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/drill_media.dart';
+import 'package:flare/ui/flare_v5_media.dart';
 import 'package:flare/ui/public_library_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -312,13 +313,13 @@ void main() {
     expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
     _expectCount(tester, 249);
     expect(_key('public-action-flare-v5'), findsOneWidget);
-    final v5Poster = tester.widget<Image>(_key('library-poster-flare-v5'));
-    expect(
-      (v5Poster.image as AssetImage).assetName,
-      'assets/public_posters/flare-v5.webp',
+    final v5Poster = tester.widget<sdk.TrainerPoster>(
+      _key('library-poster-flare-v5'),
     );
+    expect(v5Poster.asset, 'assets/public_posters/flare-v5.webp');
     final artwork = tester
         .widgetList<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster))
+        .where((item) => !identical(item, v5Poster))
         .toList();
     expect(artwork, isNotEmpty);
     for (final art in artwork) {
@@ -339,6 +340,25 @@ void main() {
     expect(find.byType(sdk.TrainingLibraryActionArt), findsNothing);
     expect(find.byType(DrillMediaCard), findsNothing);
     expect(scene.playing, isFalse);
+
+    await tester.tap(_key('public-action-flare-v5'));
+    await _settleLocalAssets(tester);
+    final demo = _key('demo:flare-v5');
+    expect(demo, findsOneWidget);
+    expect(find.byType(FlareV5Media), findsNothing);
+    await tester.tap(demo);
+    await _settleLocalAssets(tester);
+    expect(find.byType(FlareV5Media), findsOneWidget);
+    expect(
+      tester.widget<FlareV5Media>(find.byType(FlareV5Media)).playing,
+      isTrue,
+    );
+    await tester.tap(demo);
+    await _settleLocalAssets(tester);
+    expect(
+      tester.widget<FlareV5Media>(find.byType(FlareV5Media)).playing,
+      isFalse,
+    );
     expect(tester.takeException(), isNull);
   });
 
