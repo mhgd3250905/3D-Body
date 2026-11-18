@@ -23,6 +23,7 @@ const statusText = document.querySelector('#status-text'), retry = document.quer
 const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
 let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
+let clockRevision = 0;
 const character = characterFromLocation(location.search);
 const options = new URLSearchParams(location.search);
 const v5 = options.get('actor') === 'flare-v5';
@@ -60,7 +61,7 @@ function post(event) {
   }
 }
 function state() {
-  return { type: 'state', time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
+  return { type: 'state', clockRevision, time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
     speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
     detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
@@ -159,7 +160,7 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
-  if (media && ['select', 'detail', 'detail_model', 'hub_scene', 'hub_flight', 'hub_flight_resume', 'hub_angle'].includes(input.type)) return;
+  if (media && ['select', 'detail', 'detail_model', 'hub_scene', 'hub_flight', 'hub_flight_resume', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
@@ -236,8 +237,14 @@ function command(value) {
             player.stop();
             post({ type: 'hub_flight_done', id: input.id });
           }, () => {
-            player.stop();
-            post({ type: 'hub_flight_ready', id: input.id });
+            const flight = player.hubFlight;
+            // As for scene presentation, let the platform view composite
+            // the held frame before the host exposes it for the return.
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+              if (player.hubFlight !== flight || !flight.holding) return;
+              player.stop();
+              post({ type: 'hub_flight_ready', id: input.id });
+            }));
           });
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
@@ -249,17 +256,30 @@ function command(value) {
       player.hubFlight?.resume();
       player.start();
       break;
+    case 'hub_flight_reverse': {
+      const done = () => post({ type: 'hub_flight_done', id: input.id });
+      if (!player.hubFlight?.reverse(done)) done();
+      else player.start();
+      break;
+    }
+    case 'hub_flight_angle':
+      if (player.hubFlight?.setAngleYaw(input.yaw)) player.start();
+      return;
     case 'hub_angle':
       player.trainingHub?.setAngleYaw(input.yaw);
       return;
     case 'play':
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
       closeDetail(); selected = null; surface?.restore();
       if (player.time >= player.period) player.setTime(0);
       player.playing = player.visible && !document.hidden && !player.contextLost;
       player.start(); break;
-    case 'pause': player.playing = false; break;
+    case 'pause':
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
+      player.playing = false; break;
     case 'seek': {
       const time = Number(input.time); if (!Number.isFinite(time)) return;
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
       closeDetail(); selected = null; surface?.restore(); player.playing = false; player.loopRange = null; player.setTime(time); break;
     }
     case 'speed': if ([0.25, 0.5, 1].includes(Number(input.value))) player.speed = Number(input.value); break;
@@ -333,6 +353,10 @@ async function boot() {
       onRender: hubCompleted => {
         if (player.hubFlight) return;
         const complete = player.trainingHub ? hubCompleted : detailed ? detailView?.renderMini() : phaseMap?.render();
+        if (hosted && !media && ready && presented && !presentation.pending && player.playing
+            && !player.trainingHub && !detailed) {
+          post({ type: 'playhead', clockRevision, time: player.time, phase: phaseAt(player.time).source });
+        }
         presentation.rendered(media || complete === true);
       },
       onResize: () => { presentation.invalidate(); if (detailed) detailView?.refit(phaseAt(player.time)); },

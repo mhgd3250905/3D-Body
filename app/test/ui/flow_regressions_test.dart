@@ -840,7 +840,7 @@ void main() {
       await tester.pump();
       expect(scene.playing, isFalse);
       expect(scene.time, 2.375);
-      expect(commands, contains(equals({'type': 'pause'})));
+      expect(commands.any((command) => command['type'] == 'pause'), isTrue);
       expect(
         commands.where((command) => command['type'] == 'visibility'),
         isEmpty,
@@ -1091,11 +1091,18 @@ void main() {
 
         final timeline = find.byType(MotionTimeline);
         final bounds = tester.getRect(timeline);
+        double tickX(String number) => tester
+            .getCenter(
+              find.descendant(of: timeline, matching: find.text(number)),
+            )
+            .dx;
+        final startX = bounds.left + bounds.width * .25;
+        final midpointX = (tickX('14') + tickX('15')) / 2;
         scene.play();
         await tester.pump();
         await tester.dragFrom(
-          Offset(bounds.left + bounds.width * .25, bounds.center.dy),
-          Offset(bounds.width * .5, 0),
+          Offset(startX, bounds.center.dy),
+          Offset(midpointX - startX, 0),
         );
         await tester.pumpAndSettle();
         final between14And15 =

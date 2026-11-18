@@ -169,11 +169,7 @@ export class FlarePlayer {
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
     const density = this.adaptive.update(now, moving, interval);
-    const ratio = this.hubFlight
-      ? this.hubFlight.landed || this.hubFlight.holding
-        ? this.fullPixelRatio
-        : Math.min(this.fullPixelRatio, 1)
-      : density.ratio;
+    const ratio = this.stagePixelRatio(density.ratio);
     if (ratio !== this.renderer.getPixelRatio()) { this.applyPixelRatio(ratio); this.dirty = true; }
     this.perf.ticks++;
     if (this.dirty) {
@@ -279,7 +275,14 @@ export class FlarePlayer {
     // Adaptive density only lowers moving frames below this full density.
     const full = renderQuality(this.quality, window.devicePixelRatio).pixelRatio;
     this.fullPixelRatio = full;
-    this.applyPixelRatio(this.adaptive.configure(full, this.quality));
+    this.applyPixelRatio(this.stagePixelRatio(this.adaptive.configure(full, this.quality)));
+  }
+  stagePixelRatio(adaptiveRatio) {
+    if (!this.hubFlight && !this.trainingHub) return adaptiveRatio;
+    // Both canvases must draw at the same physical resolution throughout
+    // flight, including the retained landing frame and the recipient frame.
+    const ratio = window.devicePixelRatio;
+    return Number.isFinite(ratio) && ratio > 0 ? ratio : this.fullPixelRatio;
   }
   applyPixelRatio(ratio) {
     // setPixelRatio reallocates the drawing buffer; only call it on a change.

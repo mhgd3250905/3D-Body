@@ -831,7 +831,7 @@ void main() {
   });
 
   testWidgets(
-    'home training opens the displayed support phase from play or pause',
+    'home training and the More menu open the same angle hub at the playhead',
     (tester) async {
       final scene = (await mountShell(tester)).scene;
       await showPhase(tester, scene, 9);
@@ -849,6 +849,22 @@ void main() {
         expect(tester.widget<FlarePressable>(training).semanticLabel, '前往训练');
         final time = scene.time;
         await tester.tap(training);
+        await tester.pumpAndSettle();
+        final hub = tester.widget<FlareTrainingHubPage>(
+          find.byType(FlareTrainingHubPage),
+        );
+        expect(hub.initialTime, time);
+        expect(hub.initialMuscles, isFalse);
+        expect(scene.playing, isFalse);
+        await back(tester);
+        expect(training, findsOneWidget);
+        await openHub(tester);
+        final fromMenu = tester.widget<FlareTrainingHubPage>(
+          find.byType(FlareTrainingHubPage),
+        );
+        expect(fromMenu.initialTime, hub.initialTime);
+        expect(fromMenu.initialMuscles, hub.initialMuscles);
+        await tester.tap(_key('hub-view-plan'));
         await tester.pumpAndSettle();
         final detail = tester.widget<FlarePlanDetailPage>(
           find.byType(FlarePlanDetailPage),
@@ -891,6 +907,7 @@ void main() {
         expect(muscle.title, catalog.groupById('deltoids')!.label);
         expect(muscle.plans.first.id, 'muscle-deltoids-t1');
         await _expectScrollNavFade(tester, find.byType(FlarePlanDetailPage));
+        await back(tester);
         await back(tester);
         await back(tester);
         expect(training, findsOneWidget);

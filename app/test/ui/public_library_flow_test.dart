@@ -345,6 +345,7 @@ void main() {
     await _settleLocalAssets(tester);
     final demo = _key('demo:flare-v5');
     expect(demo, findsOneWidget);
+    expect(tester.widget<DrillMediaCard>(demo).stageColor, Colors.transparent);
     expect(find.byType(FlareV5Media), findsNothing);
     await tester.tap(demo);
     await _settleLocalAssets(tester);
@@ -352,6 +353,10 @@ void main() {
     expect(
       tester.widget<FlareV5Media>(find.byType(FlareV5Media)).playing,
       isTrue,
+    );
+    expect(
+      tester.widget<FlareV5Media>(find.byType(FlareV5Media)).background,
+      Colors.transparent,
     );
     await tester.tap(demo);
     await _settleLocalAssets(tester);
@@ -386,14 +391,16 @@ void main() {
     );
   }
 
-  testWidgets('a public action card opens the real SDK detail poster first', (
+  testWidgets('a public action opens its transparent SDK detail poster first', (
     tester,
   ) async {
     await mountLibrary(tester);
-    final poster = tester.widget<sdk.TrainerPoster>(
-      find.byType(sdk.TrainerPoster).first,
-    );
-    final id = _posterId(poster);
+    const id = 'forearms-A';
+    await tester.enterText(_key('posehub-search'), '跪姿多方向腕部摇摆');
+    await _settleLocalAssets(tester);
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await _settleLocalAssets(tester);
+    final poster = tester.widget<sdk.TrainerPoster>(_key('library-poster-$id'));
     final detail = await openLibraryDetail(tester, id);
     expect(detail.action.id, id);
     expect(detail.mediaPolicy, same(policy));
@@ -407,6 +414,13 @@ void main() {
     expect(detailArt.actionId, id);
     expect(detailArt.playing, isFalse);
     expect(policy.posterAssetFor(detailArt.actionId), poster.asset);
+    final stage = _key('library-public-art-$id');
+    final media = tester.widget<sdk.TrainingActionMedia>(stage);
+    final size = tester.getSize(stage);
+    expect(size.width, size.height);
+    expect(size.width, 390 - 32);
+    expect(media.stage, Colors.transparent);
+    expect(media.mirrored, isFalse);
     expect(_key('library-detail-$id'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

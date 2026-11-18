@@ -224,8 +224,8 @@ void main() {
       expect(controller.receiveEvent(_ready), isTrue);
       await Future<void>.delayed(Duration.zero);
       expect(sent, [
-        {'type': 'seek', 'time': 3.0},
-        {'type': 'pause'},
+        {'type': 'seek', 'time': 3.0, 'clockRevision': 3},
+        {'type': 'pause', 'clockRevision': 4},
         {'type': 'speed', 'value': 1.0},
       ]);
       expect(controller.phase, 11);
@@ -250,13 +250,13 @@ void main() {
       controller.setTime(2);
       controller.setTime(3);
       expect(sent, [
-        {'type': 'seek', 'time': 1.0},
+        {'type': 'seek', 'time': 1.0, 'clockRevision': 1},
       ]);
       blocked.complete();
       await Future<void>.delayed(Duration.zero);
       expect(sent, [
-        {'type': 'seek', 'time': 1.0},
-        {'type': 'seek', 'time': 3.0},
+        {'type': 'seek', 'time': 1.0, 'clockRevision': 1},
+        {'type': 'seek', 'time': 3.0, 'clockRevision': 3},
       ]);
     },
   );
@@ -465,7 +465,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(sent, [
         {'type': 'viewport', 'bottom': 280.0, 'animate': false},
-        {'type': 'seek', 'time': 2.375},
+        {'type': 'seek', 'time': 2.375, 'clockRevision': 1},
         {'type': 'detail', 'groupId': 'triceps'},
         {'type': 'detail_model', 'value': 'muscles'},
       ]);

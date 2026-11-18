@@ -91,12 +91,14 @@ class DrillMediaCard extends StatefulWidget {
     this.autoPlay = false,
     this.thumbnail = false,
     this.sceneSpeed = .5,
+    this.stageColor,
   });
   final String drillId;
   final bool active;
   final bool mirrored;
   final bool autoPlay;
   final double sceneSpeed;
+  final Color? stageColor;
 
   /// Use only the catalog thumbnail, without starting a media decoder.
   final bool thumbnail;
@@ -223,17 +225,18 @@ class _DrillMediaCardState extends State<DrillMediaCard>
       paused: !_playing,
       mirrored: widget.mirrored,
       radius: theme.radius,
-      stage: theme.mediaStage,
+      stage: widget.stageColor ?? theme.mediaStage,
     );
   }
 
   Widget _v5Art(BuildContext context) {
     final theme = FlareShared.theme(context);
+    final stage = widget.stageColor ?? theme.mediaStage;
     final poster = trainer.TrainerPoster(
       asset: flareV5PosterAsset,
       mirrored: widget.mirrored,
       radius: theme.radius,
-      stageColor: theme.mediaStage,
+      stageColor: stage,
     );
     if (!_started) return poster;
     return ClipRRect(
@@ -243,7 +246,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
         playing: _playing,
         mirrored: widget.mirrored,
         fallback: poster,
-        background: theme.mediaStage,
+        background: stage,
       ),
     );
   }
