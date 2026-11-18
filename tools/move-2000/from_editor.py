@@ -3,15 +3,18 @@
 
 Accepts any JSON the 2000 editor writes: the animation backup from 动画编辑 (format flare-transition-edits, with
 `sequence` and the K mid-frames in `points`), a flare-demonstration sequence, or the 姿势编辑 step export
-(flare-pose-library). Output keys are in WORLD space with the spin yaw already baked in (th = 0), in Pose-Hub
+(flare-pose-library), or a share code from 动画编辑 → 复制分享码 ("B2K1....", pasted into a file or given inline;
+decoded against --base, default public/coach/move-2000-sequence.json). Output keys are in WORLD space with the spin yaw already baked in (th = 0), in Pose-Hub
 channel names: pelvis, pelvisQ, spine (waist rotation vector, pelvis frame), <side>Wrist, <side>Elbow (pole direction),
 <side>Ankle, <side>Knee (knee-front direction), <side>Toe/<side>Sole, <side>Fing/<side>Palm, <side>Locked.
 Legs are lengthened back to the r7 rig (planted feet keep their floor spot); planted wrists go back to r7 palm height.
-Usage: from_editor.py export.json coach-rig.json out.json [--leg-ratio 0.9223]"""
-import sys, json, math, argparse
+Usage: from_editor.py <export.json | share-code file | B2K1.code> coach-rig.json out.json [--leg-ratio 0.9223] [--base seq.json]"""
+import sys, os, json, math, argparse
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from share_code import load_any
 sys.path.insert(0, '/workspace/work/pylib')
 import numpy as np
-ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('rig'); ap.add_argument('out'); ap.add_argument('--leg-ratio', type=float)
+ap = argparse.ArgumentParser(); ap.add_argument('src'); ap.add_argument('rig'); ap.add_argument('out'); ap.add_argument('--leg-ratio', type=float); ap.add_argument('--base')
 A = ap.parse_args()
 L = {k: np.array(v, float) for k, v in json.load(open(A.rig))['landmarks'].items()}
 n = lambda v: v / np.linalg.norm(v)
@@ -28,7 +31,7 @@ SNOW_N = {}
 for sd, sg in (('left', 1), ('right', -1)):
     nr = np.array([sg * 0.06068526, -0.99777448, -0.02762938]); SNOW_N[sd] = n(nr - SNOW_F[sd] * (nr @ SNOW_F[sd]))
 WAIST = L['pelvis'] + (L['torso'] - L['pelvis']) * 0.30
-src = json.load(open(A.src))
+src = load_any(A.src, A.base)
 if src.get('format') == 'flare-transition-edits': seq = src['sequence']; points = src.get('points', [])
 elif src.get('format') == 'flare-demonstration': seq = src; points = []
 elif src.get('format') == 'flare-pose-library': seq = {'steps': src['steps'], 'period': None, 'source': {}}; points = []

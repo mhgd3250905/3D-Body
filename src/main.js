@@ -1,4 +1,4 @@
-import { IS_2000 } from './move-2000.js';
+import { IS_2000, CURRENT_MOVE, MOVES, switchMove } from './move-2000.js';
 import './tokens.css';
 import './style.css';
 import './workspace.css';
@@ -408,6 +408,15 @@ async function initialize(){
   }
 }
 if(IS_2000){for(const id of ['#use-v42-default','#use-v41-default','#phase-strip'])$(id)?.setAttribute('data-b2000-hidden','');}
+// 托马斯 / 2000 switch: reloads this tab on the other move (each move keeps its own saved data).
+function requestMoveSwitch(move){
+  if(move===CURRENT_MOVE)return;
+  const editing=['pose','transition'].includes(document.body.dataset.mode);
+  if(editing&&!confirm(`切换到「${MOVES[move]}」会重新载入页面。已保存和已暂存的调整都会保留，正在拖动但未保存的姿势会丢失。继续？`))return;
+  switchMove(move);
+}
+for(const button of $$('[data-move-switch]')){button.setAttribute('aria-pressed',String(button.dataset.moveSwitch===CURRENT_MOVE));button.addEventListener('click',()=>requestMoveSwitch(button.dataset.moveSwitch));}
+for(const item of $$('[data-menu-move]')){item.setAttribute('aria-checked',String(item.dataset.menuMove===CURRENT_MOVE));item.addEventListener('click',()=>requestMoveSwitch(item.dataset.menuMove));}
 $('#capture-button').disabled=true;
 createAppMenu({refreshIcons});
 workspaceUI=createWorkspace({viewer:()=>viewer,refreshIcons,onNotice:toast,extraInsets:()=>{muscleSync?.relayout();return muscleSync?.reserve();}});
