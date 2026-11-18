@@ -219,7 +219,7 @@ void main() {
     return scene;
   }
 
-  test('the intact r2-v11 pack exposes 248 actions to library and AI', () {
+  test('the intact r2-v18 pack exposes 248 actions to library and AI', () {
     final packIds = shared.pack.toAiCatalog().drills.map((d) => d.id).toSet();
     final scopedIds = {...packIds}..remove('n-thomas-test');
     final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
@@ -268,9 +268,9 @@ void main() {
   );
 
   test(
-    'an older verified cache cannot shadow the bundled r2-v11 pack',
+    'an older verified cache cannot shadow the bundled r2-v18 pack',
     () async {
-      const olderPack = 'r2-v10';
+      const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
       final olderBytes = utf8.encode(
         jsonEncode({...shared.pack.raw, 'pack': olderPack}),
@@ -291,7 +291,7 @@ void main() {
       final cached = await sdk.readVerifiedPoseHubCatalog(store);
       expect(sdk.poseHubPackVersionOf(cached!), olderPack);
       final pack = await loadFlarePublicCatalog(verifiedCache: store);
-      expect(sdk.poseHubPackVersionOf(pack), 'r2-v11');
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v18');
       expect(
         poseHubCatalogRevisionOf(pack),
         PoseHubCatalogUpdates.bundledCatalogSha256,
@@ -447,7 +447,7 @@ void main() {
         excludedMatches += excluded.allMatches(text).length;
       }
     }
-    expect((names, cues, cautions), (248, 811, 594));
+    expect((names, cues, cautions), (248, 821, 603));
     expect(hanMatches, 0);
     expect(excludedMatches, 0);
     final displayed = displayText(id)!;

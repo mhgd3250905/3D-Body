@@ -7,6 +7,7 @@ import '../data/flare_shared_library.dart';
 import '../data/flare_v5_drill.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_decoder_pool.dart';
+import 'flare_action_artwork.dart';
 import 'flare_v5_media.dart';
 import 'motion.dart';
 
@@ -97,7 +98,7 @@ class DrillMediaCard extends StatefulWidget {
   final bool autoPlay;
   final double sceneSpeed;
 
-  /// Use only the bundled thumbnail, without starting a media decoder.
+  /// Use only the catalog thumbnail, without starting a media decoder.
   final bool thumbnail;
   @override
   State<DrillMediaCard> createState() => _DrillMediaCardState();
@@ -251,23 +252,26 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   Widget build(BuildContext context) {
     final isV5 = widget.drillId == flareV5DrillId;
     if (widget.thumbnail) {
-      return Image.asset(
-        isV5
-            ? flareV5PosterAsset
-            : '${FlarePublicMedia.thumbnailRoot}${widget.drillId}.webp',
-        fit: BoxFit.contain,
-        excludeFromSemantics: true,
-        errorBuilder: (_, _, _) => Image.asset(
-          'assets/public_posters/${widget.drillId}.webp',
+      return FlareActionArtwork(
+        actionId: widget.drillId,
+        thumbnail: true,
+        fallback: Image.asset(
+          FlarePublicMedia.thumbnailAssetFor(widget.drillId),
           fit: BoxFit.contain,
           excludeFromSemantics: true,
+          errorBuilder: (_, _, _) => Image.asset(
+            '${FlarePublicMedia.posterRoot}${widget.drillId}.webp',
+            fit: BoxFit.contain,
+            excludeFromSemantics: true,
+            errorBuilder: (_, _, _) => const SizedBox.expand(),
+          ),
         ),
       );
     }
     final s = AppLocalizations.of(context);
     final shared = FlareShared.current;
-    final policy = FlarePublicMedia.current;
-    final poster = 'assets/public_posters/${widget.drillId}.webp';
+    final policy = FlarePublicMedia.of(context);
+    final poster = '${FlarePublicMedia.posterRoot}${widget.drillId}.webp';
     final Widget art = isV5
         ? _v5Art(context)
         : shared != null && policy != null

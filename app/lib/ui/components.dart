@@ -4,6 +4,7 @@ import '../domain/catalog_models.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_media.dart';
 import 'app_glass.dart';
+import 'flare_action_artwork.dart';
 import 'motion.dart';
 import 'page_kit.dart' show FlareSection, FlareWordSafeText;
 import 'theme.dart';
@@ -558,10 +559,14 @@ class DrillCard extends StatelessWidget {
                       color: FlareColors.mediaBackdrop,
                       child:
                           artwork ??
-                          Image.asset(
-                            drill.thumbnailAsset,
-                            fit: BoxFit.contain,
-                            excludeFromSemantics: true,
+                          FlareActionArtwork(
+                            actionId: drill.id,
+                            thumbnail: true,
+                            fallback: Image.asset(
+                              drill.thumbnailAsset,
+                              fit: BoxFit.contain,
+                              excludeFromSemantics: true,
+                            ),
                           ),
                     ),
                     PositionedDirectional(

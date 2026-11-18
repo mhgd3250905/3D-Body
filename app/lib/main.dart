@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:ugk_coach/ugk_coach.dart' as coach;
+import 'package:ugk_coach_ui/ugk_coach_ui.dart'
+    show PoseHubDisplayUpdateDialogHost;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import 'control/learning_store.dart';
 import 'control/flare_membership.dart';
@@ -32,9 +35,7 @@ SemanticsHandle? _webSemantics;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFlareGlass();
-  // Action-library hot update: open the verified cache before the first
-  // catalogue load, then check the channel pointer (launch + daily on resume).
-  await PoseHubCatalogUpdates.start(loadLocal: loadFlarePublicCatalog);
+  final catalogUpdates = await PoseHubCatalogUpdates.start();
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
       ('Snow Rig', 'Snow-ATTRIBUTION.md'),
@@ -54,7 +55,7 @@ Future<void> main() async {
     }
   });
   if (kIsWeb) _webSemantics = SemanticsBinding.instance.ensureSemantics();
-  runApp(const FlareBootstrap());
+  runApp(FlareBootstrap(catalogUpdates: catalogUpdates));
 }
 
 Widget _mediaScope(Widget child) => switch (FlarePublicMedia.current) {
@@ -63,7 +64,10 @@ Widget _mediaScope(Widget child) => switch (FlarePublicMedia.current) {
 };
 
 class FlareBootstrap extends StatefulWidget {
-  const FlareBootstrap({super.key});
+  const FlareBootstrap({super.key, this.catalogUpdates});
+
+  final PoseHubCatalogUpdates? catalogUpdates;
+
   @override
   State<FlareBootstrap> createState() => _FlareBootstrapState();
 }
@@ -96,22 +100,34 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   int _sceneRevision = 0;
   bool _scenePresented = false;
   String? _sceneError;
+  StreamSubscription<coach.PoseHubAppTestCatalog>? _catalogChanges;
+  int _catalogGeneration = 0;
+  FlareShared? _publishedShared;
+  // A player already on the Navigator keeps its original catalog and policy.
+  final _ownedMedia = <sdk.TrainingMediaPolicy>[];
 
   Future<(Catalog, LearningStore)> _load() async {
+    final pack = loadFlarePublicCatalog(
+      verifiedCache: widget.catalogUpdates?.updater.store,
+    );
     final values = await Future.wait<Object>([
       Catalog.load(),
       ContentTranslations.load(),
-      FlareShared.load(),
+      pack,
     ]);
-    FlareShared.current = values[2] as FlareShared;
+    final activeCatalog = values[2] as coach.PoseHubAppTestCatalog;
+    final shared = await FlareShared.load(activeCatalog: activeCatalog);
+    sdk.TrainingMediaPolicy? policy;
     try {
-      // Opens the shared public pack's on-demand media; no network at startup.
-      FlarePublicMedia.current ??= await FlarePublicMedia.load();
-    } on Object {
-      FlarePublicMedia.current = null;
+      policy = await _publicMediaFor(activeCatalog);
+    } on Object catch (error) {
+      debugPrint('PoseHub training media unavailable: $error');
     }
-    // Rebuild MaterialApp.builder so the media scope wraps every route.
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() => _publishCatalog(shared, policy));
+    } else {
+      policy?.repository.dispose();
+    }
     final catalog = values[0] as Catalog;
     _content = values[1] as ContentTranslations;
     _localizedCatalogs.clear();
@@ -121,6 +137,42 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     _store = store..addListener(_storeChanged);
     if (mounted) _storeChanged();
     return (catalog, store);
+  }
+
+  void _publishCatalog(FlareShared shared, sdk.TrainingMediaPolicy? policy) {
+    FlareShared.current = _publishedShared = shared;
+    FlarePublicMedia.current = policy;
+    if (policy != null) _ownedMedia.add(policy);
+  }
+
+  Future<sdk.TrainingMediaPolicy> _publicMediaFor(
+    coach.PoseHubAppTestCatalog pack,
+  ) => FlarePublicMedia.load(
+    activeCatalog: pack,
+    rootDirectory: widget.catalogUpdates?.assetRootDirectory,
+  );
+
+  Future<void> _applyCatalogUpdate(coach.PoseHubAppTestCatalog pack) async {
+    final generation = ++_catalogGeneration;
+    sdk.TrainingMediaPolicy? pending;
+    try {
+      await _loading;
+      if (!mounted ||
+          generation != _catalogGeneration ||
+          sdk.poseHubPackVersionOf(FlareShared.current!.pack) ==
+              sdk.poseHubPackVersionOf(pack)) {
+        return;
+      }
+      final shared = await FlareShared.load(activeCatalog: pack);
+      final policy = pending = await _publicMediaFor(pack);
+      if (!mounted || generation != _catalogGeneration) return;
+      setState(() => _publishCatalog(shared, policy));
+      pending = null;
+    } on Object catch (error) {
+      debugPrint('PoseHub catalog could not be applied to Flare: $error');
+    } finally {
+      pending?.repository.dispose();
+    }
   }
 
   void _storeChanged() {
@@ -159,7 +211,16 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     super.initState();
     unawaited(_membership?.refresh());
     _scene.addListener(_sceneChanged);
+    final updates = widget.catalogUpdates;
+    _catalogChanges = updates?.updater.catalogChanges.listen(
+      (pack) => unawaited(_applyCatalogUpdate(pack)),
+    );
     _loading = _load();
+    if (updates != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(updates.onAppReady());
+      });
+    }
   }
 
   @override
@@ -223,7 +284,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
               );
         // Keep one splash State while data loads and the actual, full-sized
         // WebView draws beneath it. Revealing it never recreates the scene.
-        return Stack(
+        final home = Stack(
           fit: StackFit.expand,
           children: [
             ExcludeSemantics(
@@ -266,12 +327,32 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
             ),
           ],
         );
+        final updates = widget.catalogUpdates;
+        if (updates == null) return home;
+        return PoseHubDisplayUpdateDialogHost(
+          progress: updates.updater.displayProgress,
+          onRetry: () async {
+            await updates.checkNow();
+          },
+          child: home,
+        );
       },
     ),
   );
 
   @override
   void dispose() {
+    unawaited(_catalogChanges?.cancel());
+    widget.catalogUpdates?.dispose();
+    if (_ownedMedia.contains(FlarePublicMedia.current)) {
+      FlarePublicMedia.current = null;
+    }
+    if (identical(FlareShared.current, _publishedShared)) {
+      FlareShared.current = null;
+    }
+    for (final policy in _ownedMedia) {
+      policy.repository.dispose();
+    }
     _membership?.dispose();
     _store?.removeListener(_storeChanged);
     _scene.removeListener(_sceneChanged);
