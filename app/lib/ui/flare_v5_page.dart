@@ -35,14 +35,6 @@ class _FlareV5PageState extends State<FlareV5Page> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _scene.setTheme(
-      Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light',
-    );
-  }
-
-  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) _scene.pause();
   }

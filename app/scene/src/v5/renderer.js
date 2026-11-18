@@ -4,6 +4,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { installWristFix } from './wristfix-r2.js';
 import { applyToon } from './toon-r6.js';
 import { applyFx } from './fx.js';
+import { createFraming } from './framing.js';
 
 const parents = {
   spineLower: 'pelvis', spineUpper: 'spineLower', torso: 'spineUpper',
@@ -37,16 +38,15 @@ export async function loadFlareV5(renderer) {
   ]);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 50);
-  const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(2, 48).rotateX(-Math.PI / 2),
-    new THREE.MeshBasicMaterial(),
-  );
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(2, 48).rotateX(-Math.PI / 2));
   scene.add(gltf.scene, floor);
   const root = gltf.scene, bones = {}, skinned = [];
   root.updateMatrixWorld(true);
   root.traverse(object => {
     if (object.isBone) bones[object.name] = object;
     if (object.isSkinnedMesh) {
+      if (!object.geometry.getAttribute('_region')) throw Error('V5 mesh has no material regions');
+      object.geometry.deleteAttribute('color');
       skinned.push(object);
       object.frustumCulled = false;
     }
@@ -63,19 +63,21 @@ export async function loadFlareV5(renderer) {
   const wrist = installWristFix({ bones, renderer });
   const toon = applyToon({ scene, root, bones, skinned, floor, renderer, camera });
   await toon.hairReady;
-  if (!wrist || !bones.head.getObjectByName('hair-spiky')) throw Error('V5 wrist or hair unavailable');
+  const hair = bones.head.getObjectByName('hair-spiky');
+  if (!wrist || !hair) throw Error('V5 wrist or hair unavailable');
 
   const target = new THREE.Vector3().fromArray(anim.cams.v0.t);
   const offset = new THREE.Vector3().fromArray(anim.cams.v0.p).sub(target);
   const joints = Object.keys(anim.frames[0].q);
-  let index = 0, displayedFx = true, isDark;
+  const fit = createFraming(skinned, hair, anim.cams.v0.f);
+  let index = 0, displayedFx = true;
   function pose(frame) {
     const item = anim.frames[frame];
     for (const name of joints) bones[name].quaternion.fromArray(item.q[name]).normalize();
     bones.pelvis.position.fromArray(item.p);
   }
   pose(index);
-  const fx = applyFx({
+  applyFx({
     scene, root, bones, skinned, renderer, anim, jointIds: joints,
     getFrame: () => displayedFx ? index : null,
     getFrames: () => anim.frames,
@@ -83,24 +85,15 @@ export async function loadFlareV5(renderer) {
   const size = new THREE.Vector2();
   return {
     period: anim.count / anim.fps,
-    render(progress, { fxEnabled = true, dark = false, yaw = 0 } = {}) {
+    render(progress, { fxEnabled = true, yaw = 0 } = {}) {
       index = Math.min(anim.count - 1, Math.floor(((progress % 1 + 1) % 1) * anim.count));
       displayedFx = fxEnabled;
-      if (dark !== isDark) {
-        scene.background.set(dark ? 0x222126 : 0xf4efe6);
-        floor.material.color.set(dark ? 0x3b3436 : 0xe6dccd);
-        fx.setShadowColors(dark ? 0x221a1c : 0xd9cbbd, dark ? 0x171315 : 0xc3b2a5);
-        isDark = dark;
-      }
       pose(index);
+      root.updateMatrixWorld(true);
       renderer.getSize(size);
-      const aspect = Math.max(.01, size.x / Math.max(1, size.y));
-      camera.aspect = aspect;
-      const halfLens = THREE.MathUtils.degToRad(anim.cams.v0.f) / 2;
-      camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(halfLens) / Math.min(1, aspect)));
       camera.position.copy(offset).applyAxisAngle(vertical, yaw).add(target);
       camera.lookAt(target);
-      camera.updateProjectionMatrix();
+      fit(camera, Math.max(1, size.x), Math.max(1, size.y));
       renderer.render(scene, camera);
     },
     dispose() {

@@ -123,7 +123,7 @@ void main(){
 const moteVS = /* glsl */`attribute float aAge; attribute float aSize; uniform float uScale; uniform float uStar; varying float vAge;
 void main(){ vAge = aAge; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
   gl_PointSize = aAge >= 1.0 ? 0.0 : aSize * uStar * (1.0 - 0.6 * aAge) * uScale / max(0.1, -mv.z); }`;
-const moteFS = /* glsl */`uniform float uOpacity; uniform vec3 uHead; uniform vec3 uMid; uniform vec3 uTail; uniform vec3 uCore; uniform vec3 uEdge; uniform float uSeed; varying float vAge;
+const moteFS = /* glsl */`uniform float uOpacity; uniform vec3 uCore; uniform vec3 uEdge; varying float vAge;
 vec3 toS(vec3 c){ return pow(max(c, 0.0), vec3(1.0 / 2.2)); }
 void main(){ if (vAge >= 1.0) discard; vec2 q = (gl_PointCoord - 0.5) * 2.0; float r = length(q); if (r > 1.0) discard;
   // 柔光点：高斯光斑 + 很淡的四向细芒，无描边
@@ -131,7 +131,7 @@ void main(){ if (vAge >= 1.0) discard; vec2 q = (gl_PointCoord - 0.5) * 2.0; flo
   float ray = exp(-abs(q.x) * 18.0) * exp(-abs(q.y) * 2.6) + exp(-abs(q.y) * 18.0) * exp(-abs(q.x) * 2.6);
   float k = pow(1.0 - vAge, 2.0) * uOpacity;
   float i = k * (spot + 0.35 * ray * (1.0 - r));
-  vec3 c = toS(mix(uCore, mix(uHead, uMid, vAge * 0.6), smoothstep(0.0, 0.5, r)));
+  vec3 c = toS(mix(uCore, uEdge, smoothstep(0.0, 0.5, r)));
   float aT = clamp(i * 0.45, 0.0, 0.5);
   gl_FragColor = vec4(c * aT + c * i * 0.4, aT);
 }`;
@@ -321,7 +321,7 @@ export function applyFx({ scene, root, bones, skinned, renderer, anim, getFrame,
   /* ---------- 星点（旧版：每脚 18 颗、寿命 0.8 s、固定相位、外漂） ---------- */
   const M = P.motes;
   const moteMat = new THREE.ShaderMaterial({ name: 'fx2-mote', transparent: true, depthWrite: false, ...blend(),
-    uniforms: { uOpacity: { value: P.old ? 0.9 : 0.9 * P.glow }, uScale: { value: 400 }, uStar: { value: P.old ? 1 : 2.6 }, uHead, uMid, uTail, uCore, uEdge: { value: col(PAL.head) } },
+    uniforms: { uOpacity: { value: P.old ? 0.9 : 0.9 * P.glow }, uScale: { value: 400 }, uStar: { value: P.old ? 1 : 2.6 }, uHead, uMid, uTail, uCore, uEdge: { value: col(PAL.ripple) } },
     vertexShader: moteVS, fragmentShader: P.old ? oldMoteFS : moteFS });
   const motes = ['left', 'right'].map((side, si) => {
     const geometry = new THREE.BufferGeometry();
@@ -404,10 +404,6 @@ export function applyFx({ scene, root, bones, skinned, renderer, anim, getFrame,
     last = f;
   };
   info.casters = casters.length; info.shadowTris = casters.reduce((a, c) => a + c.geometry.index.count / 3, 0); info.group = group;
-  info.setShadowColors = (first, second) => {
-    shadowUni.uC1.value.set(first);
-    shadowUni.uC2.value.set(second);
-  };
   info.debug = () => ({ last, speed: { left: Array.from(speed.left), right: Array.from(speed.right) }, paths: { left: Array.from(paths.left), right: Array.from(paths.right) } });
   return info;
 }

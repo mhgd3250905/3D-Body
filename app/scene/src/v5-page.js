@@ -5,7 +5,7 @@ const speeds = [0.25, 0.5, 1];
 let period = 1;
 let renderer, stage, frameRequest, requestId;
 let time = 0, speed = 0.5, yaw = 0, pointer = null;
-let playing = false, visible = true, dark = false, fxEnabled = true;
+let playing = false, visible = true, fxEnabled = true;
 let last = 0, lastState = -Infinity;
 
 function post(type, fields = {}) {
@@ -23,7 +23,7 @@ function render(now) {
   if (!visible || document.hidden) return;
   if (playing && last) time = (time + (now - last) * .001 * speed) % period;
   last = now;
-  stage.render(time / period, { fxEnabled, dark, yaw });
+  stage.render(time / period, { fxEnabled, yaw });
   if (requestId != null) {
     post('presented', { requestId });
     requestId = null;
@@ -45,7 +45,6 @@ function command(input) {
       time = Math.max(0, Math.min(input.time, period - 1 / 120));
       break;
     case 'speed': if (speeds.includes(input.value)) speed = input.value; break;
-    case 'theme': dark = input.value === 'dark'; break;
     case 'fx': fxEnabled = input.value === true; break;
     case 'visibility':
       visible = input.visible === true;
@@ -74,6 +73,8 @@ async function boot() {
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    const graphics = renderer.getContext();
+    if ('drawingBufferColorSpace' in graphics) graphics.drawingBufferColorSpace = 'srgb';
     const canvas = renderer.domElement;
     document.body.append(canvas);
     canvas.addEventListener('webglcontextlost', event => {
