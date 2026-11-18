@@ -190,7 +190,7 @@ export class FlarePlayer {
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
     this.stepGlide(now);
-    this.controls.update();
+    if (!this.trainingHub) this.controls.update();
     const hubMoving = this.trainingHub?.tick(now);
     const flightMoving = this.hubFlight?.sample(now);
     if (flightMoving) this.dirty = true;

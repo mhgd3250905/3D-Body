@@ -235,8 +235,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       if (player.time !== time) player.setTime(time);
       player.dirty = true;
     }
-    const frame = transitions.frame;
-    return frame && (frame.poseMoving || frame.muscleMoving || frame.groups.size > 1);
+    return transitions.moving;
   }
 
   function select(groupId) {
