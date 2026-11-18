@@ -67,4 +67,16 @@ void main() {
       isEmpty,
     );
   });
+
+  test('only the explicit straight-leg action selects its dedicated stage', () {
+    for (final base in [
+      Uri.parse('http://127.0.0.1:8821/index.html'),
+      Uri.parse('https://example.test/app/assets/scene/index.html'),
+    ]) {
+      final v5 = configuredSceneUri(base, body: flareStraightLegsScene);
+      expect(v5.path, base.resolve('v5.html').path);
+      expect(v5.origin, base.origin);
+      expect(configuredSceneUri(base, body: 'training').path, base.path);
+    }
+  });
 }

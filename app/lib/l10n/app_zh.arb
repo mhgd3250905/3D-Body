@@ -147,6 +147,10 @@
   "actorBodyRobot": "机甲",
   "actorBodyCyber": "赛博银",
   "appName": "Flare 托马斯",
+  "flareStraightLegs": "托马斯（双腿伸直）",
+  "@flareStraightLegs": {
+    "description": "Title of the Flare variant performed with both legs straight."
+  },
   "tagline": "看懂动作，练好每一步",
   "watch": "动作",
   "library": "训练",

@@ -32,6 +32,7 @@ import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
 import 'flare_training_hub_page.dart';
+import 'flare_v5_page.dart';
 import 'scene_localization.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
@@ -89,6 +90,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool _settings = false;
   bool _about = false;
   bool _trainingOpen = false;
+  bool _straightLegFlareOpen = false;
   Drill? _drill;
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
@@ -305,6 +307,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool get _preparingScene => widget.enableScene && !_scene.presented;
 
   void _syncSceneVisibility() {
+    if (_straightLegFlareOpen) {
+      _scene.setVisible(false);
+      return;
+    }
     _scene.setVisible(
       _appVisible && (_watchVisible || _preparingScene || _trainingActorFlight),
     );
@@ -1623,7 +1629,23 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                           ? box.maxWidth * .46
                                           : box.maxWidth - 218,
                                     ),
-                                    child: _homeTrainingButton(context, phase),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        if (widget.enableScene)
+                                          _homeStageLink(
+                                            key: const ValueKey(
+                                              'home-flare-straight-legs',
+                                            ),
+                                            label: s.flareStraightLegs,
+                                            icon: Icons.view_in_ar_outlined,
+                                            onTap: _openStraightLegFlare,
+                                          ),
+                                        _homeTrainingButton(context, phase),
+                                      ],
+                                    ),
                                   ),
                                 ),
                             ],
@@ -2118,13 +2140,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   );
 
   Widget _homeTrainingButton(BuildContext context, Phase phase) {
-    final label = context.strings.homeGoToTraining;
     final time = _scene.time;
     final hasPlan = catalog.plansForAngle(phase.source).isNotEmpty;
-    return FlarePressable(
+    return _homeStageLink(
       key: const ValueKey('home-go-to-training'),
-      scale: .95,
-      semanticLabel: label,
+      label: context.strings.homeGoToTraining,
+      icon: Icons.arrow_forward_rounded,
       onTap: hasPlan
           ? () {
               FlareHaptics.light();
@@ -2134,45 +2155,74 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _openAnglePlan(phase);
             }
           : null,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48),
-        child: Center(
-          widthFactor: 1,
-          child: FlareHipGlassSurface(
-            radius: 12,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 28),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 15,
-                    color: FlareColors.secondary,
-                  ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.25,
-                        fontWeight: FontWeight.w500,
-                        color: FlareColors.secondary,
-                      ),
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
+    );
+  }
+
+  Future<void> _openStraightLegFlare() async {
+    if (_straightLegFlareOpen) return;
+    FlareHaptics.light();
+    final wasPlaying = _scene.playing;
+    _straightLegFlareOpen = true;
+    _scene.setVisible(false);
+    try {
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => FlareV5Page(speed: store.settings.speed),
+        ),
+      );
+    } finally {
+      _straightLegFlareOpen = false;
+      if (mounted) {
+        _syncSceneVisibility();
+        if (wasPlaying && _appActive && _watchVisible) _scene.play();
+      }
+    }
+  }
+
+  Widget _homeStageLink({
+    required Key key,
+    required String label,
+    required IconData icon,
+    required VoidCallback? onTap,
+  }) => FlarePressable(
+    key: key,
+    scale: .95,
+    semanticLabel: label,
+    onTap: onTap,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 48),
+      child: Center(
+        widthFactor: 1,
+        child: FlareHipGlassSurface(
+          radius: 12,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 28),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 15, color: FlareColors.secondary),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.25,
+                      fontWeight: FontWeight.w500,
+                      color: FlareColors.secondary,
                     ),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 
   Future<void> _showMore() async {
     if (_sheetOpen) return;

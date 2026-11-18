@@ -185,6 +185,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => 'Flare 托马斯';
 
   @override
+  String get flareStraightLegs => '托马斯（双腿伸直）';
+
+  @override
   String get tagline => '看懂动作，练好每一步';
 
   @override
@@ -1634,6 +1637,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get appName => 'Flare 托馬斯';
+
+  @override
+  String get flareStraightLegs => '托馬斯（雙腿伸直）';
 
   @override
   String get tagline => '看懂動作，練好每一步';

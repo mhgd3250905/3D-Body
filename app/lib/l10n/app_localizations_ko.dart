@@ -186,6 +186,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appName => 'Flare 토마스';
 
   @override
+  String get flareStraightLegs => '토마스 (두 다리 펴기)';
+
+  @override
   String get tagline => '동작을 이해하고 한 단계씩 연습하세요';
 
   @override

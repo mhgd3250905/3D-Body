@@ -50,6 +50,7 @@
   "actorBodyRobot": "Mecha",
   "actorBodyCyber": "Cyber Silver",
   "appName": "Flare",
+  "flareStraightLegs": "Flare (Straight Legs)",
   "tagline": "Understand the move. Train every step.",
   "watch": "Motion",
   "library": "Training",

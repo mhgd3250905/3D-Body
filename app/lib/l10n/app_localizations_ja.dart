@@ -186,6 +186,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appName => 'Flare トーマス';
 
   @override
+  String get flareStraightLegs => 'トーマス（両脚伸ばし）';
+
+  @override
   String get tagline => '動きを理解し、一歩ずつ練習';
 
   @override

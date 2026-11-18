@@ -421,6 +421,12 @@ abstract class AppLocalizations {
   /// **'Flare 托马斯'**
   String get appName;
 
+  /// Title of the Flare variant performed with both legs straight.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯（双腿伸直）'**
+  String get flareStraightLegs;
+
   /// No description provided for @tagline.
   ///
   /// In zh, this message translates to:

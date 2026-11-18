@@ -191,6 +191,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appName => 'Flare Thomas';
 
   @override
+  String get flareStraightLegs => 'Flare (pernas estendidas)';
+
+  @override
   String get tagline => 'Entenda o movimento. Treine cada etapa.';
 
   @override

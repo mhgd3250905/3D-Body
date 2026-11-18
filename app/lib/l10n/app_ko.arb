@@ -50,6 +50,7 @@
   "actorBodyRobot": "메카",
   "actorBodyCyber": "사이버 실버",
   "appName": "Flare 토마스",
+  "flareStraightLegs": "토마스 (두 다리 펴기)",
   "tagline": "동작을 이해하고 한 단계씩 연습하세요",
   "watch": "동작",
   "library": "훈련",

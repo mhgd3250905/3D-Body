@@ -190,6 +190,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appName => 'Flare थॉमस';
 
   @override
+  String get flareStraightLegs => 'फ्लेयर (दोनों पैर सीधे)';
+
+  @override
   String get tagline => 'हर चरण को समझें और अभ्यास करें।';
 
   @override

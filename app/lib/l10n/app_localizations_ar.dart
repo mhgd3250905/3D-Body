@@ -188,6 +188,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appName => 'Flare توماس';
 
   @override
+  String get flareStraightLegs => 'توماس (بساقين ممدودتين)';
+
+  @override
   String get tagline => 'افهم الحركة وتدرّب على كل خطوة.';
 
   @override

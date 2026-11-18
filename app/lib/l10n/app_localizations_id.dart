@@ -191,6 +191,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get appName => 'Flare Thomas';
 
   @override
+  String get flareStraightLegs => 'Flare (kedua kaki lurus)';
+
+  @override
   String get tagline => 'Pahami gerakan. Latih setiap tahap.';
 
   @override

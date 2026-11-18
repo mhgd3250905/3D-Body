@@ -192,6 +192,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appName => 'Flare Томас';
 
   @override
+  String get flareStraightLegs => 'Flare (прямые ноги)';
+
+  @override
   String get tagline => 'Поймите движение. Тренируйте каждый этап.';
 
   @override

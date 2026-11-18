@@ -50,6 +50,7 @@
   "actorBodyRobot": "Mecha",
   "actorBodyCyber": "Cyber-Silber",
   "appName": "Flare Thomas",
+  "flareStraightLegs": "Flare (gestreckte Beine)",
   "tagline": "Verstehe die Bewegung. Trainiere jeden Schritt.",
   "watch": "Bewegung",
   "library": "Training",
