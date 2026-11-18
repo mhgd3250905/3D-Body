@@ -161,6 +161,7 @@ export function resolveMovementPoseAnnotations(sequence, index) {
   if (!object(sequence) || !Array.isArray(sequence.steps) || !sequence.steps.length ||
       typeof sequence.period !== 'number' || !Number.isFinite(sequence.period) || sequence.period <= 0 ||
       !Number.isInteger(index) || index < 0 || index >= sequence.steps.length) return null;
+  if (sequence.source?.kind === 'move-2000') return null; // Flare teaching nodes do not apply to 2000
   const step = sequence.steps[index], id = stepId(step);
   const sourceStepNumber = sourceNumber(step, sequence, index);
   const profile = MOVEMENT_POSE_PROFILES[sourceStepNumber];

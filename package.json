@@ -6,7 +6,9 @@
   "description": "An offline Three.js anatomy and movement explorer for the breaking flare",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 8810",
+    "dev:2000": "vite --host 127.0.0.1 --port 8810 --open /?move=2000",
     "build": "vite build",
+    "build:2000": "vite build --mode b2000 --outDir dist-2000",
     "start": "node tools/server.mjs",
     "verify": "node tools/verify.mjs",
     "verify:pose": "node tools/verify-pose-editor.mjs",

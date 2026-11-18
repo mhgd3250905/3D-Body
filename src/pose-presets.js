@@ -104,6 +104,12 @@ function savedLoopTechnique(step,index,count){
 /** Return the user's authored key poses without regenerating their placement. */
 export function createFlarePosePresets(motion, sequence=OFFICIAL_FLARE_SEQUENCE) {
   if (!motion?.capturePose || !motion?.applyPose) throw new Error('展示姿势需要完整的姿势编辑接口。');
+  if(sequence.source?.kind==='move-2000')return sequence.steps.map((step,index)=>{
+    const guide=clone(step.guide||{});
+    const technique={hands:guide.hands||'',feet:guide.feet||'',body:guide.body||'',cue:guide.cue||'',exercises:guide.exercises||['wristLoad','scapPush'],sourceUrls:[]};
+    return {...clone(step),summary:technique.cue,supportHands:SIDES.filter(side=>step.pose.limbs[side].handLocked),
+      viewDirection:[.6,.25,1],technique,pose:clone(step.pose)};
+  });
   return sequence.steps.map((step,index)=>{
     const original={technique:clone(TECHNIQUE[SOURCE_TECHNIQUE[index]]),viewDirection:VIEW_DIRECTIONS[index]};
     const metadata=sequence.source?.kind==='saved-loop-9-16'&&Object.hasOwn(SAVED_LOOP_GUIDES,step.sourceStepNumber)
