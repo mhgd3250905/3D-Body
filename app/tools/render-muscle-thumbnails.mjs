@@ -10,11 +10,18 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const args = process.argv.slice(2), value = (flag, fallback) => args.includes(flag) ? args[args.indexOf(flag) + 1] : fallback;
-const output = path.resolve(value('--output', path.join(root, 'output/playwright/2026-10-11-muscle-thumbnails-metallic')));
+const compareToon = args.includes('--toon-review');
+const defaultOutput = compareToon ? 'muscle-toon-sample' : '2026-10-11-muscle-thumbnails-metallic';
+const output = path.resolve(value('--output', path.join(root, 'output/playwright', defaultOutput)));
 const assets = path.join(root, 'app/assets/muscles');
 const preview = args.includes('--preview'), requestedGroups = value('--groups', null)?.split(',');
-if (!output.startsWith(root + path.sep)) throw new Error('Output must remain inside this project on the E drive.');
-fs.mkdirSync(output, { recursive: true }); fs.mkdirSync(assets, { recursive: true });
+const projectRoot = value('--project-output', root);
+const evidenceRoot = path.resolve(projectRoot, 'output/playwright');
+if (!output.startsWith(root + path.sep) && !(compareToon && output.startsWith(evidenceRoot + path.sep))) {
+  throw new Error('Output must remain inside the working tree or the project Playwright output directory.');
+}
+fs.mkdirSync(output, { recursive: true });
+if (!compareToon) fs.mkdirSync(assets, { recursive: true });
 const source = path.join(root, 'app/scene/public/anatomy/mannequin-reference.meshopt.glb.gz');
 const compressed = fs.readFileSync(source), decoded = gunzipSync(compressed);
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -36,12 +43,56 @@ const { chromium } = playwrightRoot ? await import(pathToFileURL(path.join(playw
 await new Promise(resolve => server.listen(Number(value('--port', 8997)), '127.0.0.1', resolve));
 let browser;
 try {
-  browser = await chromium.launch({ headless: true, executablePath: value('--browser', process.env.FLARE_CHROMIUM_BINARY), args: ['--use-angle=gl', '--ignore-gpu-blocklist'] });
+  const browserArgs = compareToon
+    ? ['--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader']
+    : ['--use-angle=gl', '--ignore-gpu-blocklist'];
+  browser = await chromium.launch({ headless: true, executablePath: value('--browser', process.env.FLARE_CHROMIUM_BINARY), args: browserArgs });
   const page = await browser.newPage({ viewport: { width: 512, height: 512 } }), errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && !message.text().includes('404')) errors.push(message.text()); });
-  await page.goto('http://127.0.0.1:' + server.address().port + '/scene/tools/muscle-thumbnails.html');
+  const sceneUrl = 'http://127.0.0.1:' + server.address().port + '/scene/tools/muscle-thumbnails.html';
+  await page.goto(sceneUrl + (compareToon ? '?toon-review' : ''));
   const info = await page.evaluate(async () => { window.photo = await window.musclePhotography; return { ...window.photo.info, groups: window.photo.groups }; });
+  if (compareToon) {
+    const phasePath = 'app/assets/data/phase-muscles.json';
+    const phases = JSON.parse(fs.readFileSync(path.join(root, phasePath), 'utf8'));
+    const palette = await page.evaluate(() => window.photo.palette);
+    if (phases.groups.length !== 17 || Object.keys(palette).length !== 17 ||
+        !phases.groups.every(({ groupId, colour }) => palette[groupId] === colour)) {
+      throw new Error('Photography palette does not match the 17 App group colours');
+    }
+    const samples = [];
+    for (const id of await page.evaluate(() => window.photo.reviews)) {
+      const { png, ...metadata } = await page.evaluate(id => window.photo.compare(id), id);
+      if (errors.length) throw new Error('Photography page errors: ' + errors.join(' | '));
+      const bytes = Buffer.from(png, 'base64');
+      const file = id + '.png';
+      fs.writeFileSync(path.join(output, file), bytes);
+      samples.push({ file, bytes: bytes.length, sha256: hash(bytes), ...metadata });
+      console.log('Captured ' + file + ', ' + bytes.length + ' bytes');
+    }
+    const masks = [];
+    for (const groupId of info.groups) {
+      const audit = await page.evaluate(groupId => window.photo.audit(groupId), groupId);
+      if (!audit.groups[groupId]) throw new Error('No coverage for ' + groupId);
+      masks.push(audit);
+    }
+    if (!masks.find(mask => mask.groupId === 'rotator-cuff').hatchPixels ||
+        !masks.find(mask => mask.groupId === 'hip-flexors').hatchPixels) {
+      throw new Error('A deep region is missing its hatch');
+    }
+    if (errors.length) throw new Error('Photography page errors: ' + errors.join(' | '));
+    const maskSources = [relative(source), phasePath, 'app/scene/src/legacy/muscle-map.js',
+      'app/scene/src/legacy/flare-muscle-groups.js', 'app/scene/src/muscle-material.js', 'app/scene/src/v5/toon-r6.js'];
+    const report = {
+      renderer: info, palette, samples, masks,
+      sourceHashes: Object.fromEntries(maskSources.map(file => [file, hash(fs.readFileSync(path.join(root, file)))])),
+      method: 'Shared mesh, orthographic camera, upstream mask evaluation, selection coverage and deep hatch. RGB/A diagnostic channels are raw panel ID, selection coverage, deep hatch coverage, and silhouette respectively. No MSAA, both modes read at matching resolutions.',
+    };
+    fs.writeFileSync(path.join(output, 'mask-report.json'), JSON.stringify(report, null, 2) + '\n');
+    await page.evaluate(() => window.photo.dispose());
+    console.log('Verified ' + masks.length + ' groups and ' + samples.length + ' pairs with zero mask differences');
+  } else {
   const images = [];
   const capturedGroups = requestedGroups ?? info.groups;
   for (const groupId of capturedGroups) {
@@ -58,6 +109,7 @@ try {
   fs.writeFileSync(path.join(output, 'render-report.json'), JSON.stringify(manifest, null, 2) + '\n');
   await page.evaluate(() => window.photo.dispose());
   console.log(capturedGroups.length + (preview ? ' preview photographs' : ' thumbnails') + ' and contact sheet ready: ' + output);
+  }
 } finally {
   await browser?.close(); await new Promise(resolve => server.close(resolve));
 }

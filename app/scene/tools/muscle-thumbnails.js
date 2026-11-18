@@ -7,6 +7,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import * as MM from '../src/legacy/muscle-map.js';
 import { FLARE_GROUPS } from '../src/legacy/flare-muscle-groups.js';
 import { applyFunctionalSurface, setFunctionalFocus } from '../src/muscle-material.js';
+import { captureMasks, inkToon, installToonPreview, makeComparison } from './muscle-toon-preview.js';
 
 // Each crop contains its complete selected region plus familiar adjacent
 // anatomy. Frontal groups use a slight three-quarter turn; posterior groups
@@ -31,7 +32,21 @@ const VIEWS = {
   hamstrings:    { azimuth: 165, elevation: 5, target: [0, .64, -.025], span: .88, description: 'back complete thigh panels with hips and knees' },
 };
 
+const REVIEWS = [
+  { id: '01-chest', title: '胸大肌 · 正面', groups: ['chest'], camera: VIEWS.chest, highlights: [[189, 239, 24, 10]] },
+  { id: '02-glute-max', title: '臀大肌 · 背面', groups: ['glute-max'], camera: VIEWS['glute-max'], highlights: [[203, 291, 24, 10]] },
+  {
+    id: '03-lats-obliques', title: '背阔肌 + 腹斜肌 · 侧面', groups: ['lats', 'obliques'],
+    camera: { azimuth: 107, elevation: 5, target: [0, 1.13, -.01], span: .79, description: 'side waist and lower shoulder blades' },
+    highlights: [[271, 227, 10, 24], [225, 347, 7, 12]],
+  },
+  { id: '04-rotator-cuff', title: '肩袖 · 深层分区', groups: ['rotator-cuff'], camera: VIEWS['rotator-cuff'], highlights: [[190, 243, 15, 8]] },
+];
+
 window.musclePhotography = (async () => {
+  const reviewMode = new URLSearchParams(location.search).has('toon-review');
+  const maskMode = { value: false };
+  const highlights = [new THREE.Vector4(), new THREE.Vector4()];
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(2); renderer.setSize(512, 512, false);
   renderer.setClearColor(0x000000, 0);
@@ -54,13 +69,14 @@ window.musclePhotography = (async () => {
   uniforms.mmGroove.value.set('#747c87');
   uniforms.mmHomeEmphasis = { value: 1 }; uniforms.mmEffort = { value: .18 };
   const strokeDensity = { value: 2 }, materials = new Set(), meshes = [];
+  const sampleMaterials = [];
   model.traverse(mesh => {
     if (!mesh.isMesh) return;
     for (const material of [].concat(mesh.material)) material.dispose();
     const material = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .28, metalness: .88, clearcoat: .12, clearcoatRoughness: .24 });
     applyFunctionalSurface(material, uniforms, { density: strokeDensity });
     const functionalCompile = material.onBeforeCompile;
-    material.onBeforeCompile = (shader, renderer) => {
+    const titaniumCompile = (shader, renderer) => {
       functionalCompile(shader, renderer);
       // The live miniature intentionally desaturates its body for teaching.
       // Photography preserves its material swatch. Only this authoring
@@ -88,19 +104,45 @@ window.musclePhotography = (async () => {
       `);
     };
     const functionalKey = material.customProgramCacheKey;
+    material.onBeforeCompile = titaniumCompile;
     material.customProgramCacheKey = () => functionalKey() + '-photography-titanium-v3';
+    if (reviewMode) {
+      const toon = material.clone();
+      toon.onBeforeRender = material.onBeforeRender;
+      material.onBeforeCompile = (shader, renderer) => {
+        titaniumCompile(shader, renderer);
+        installToonPreview(shader, maskMode, highlights, false);
+      };
+      toon.onBeforeCompile = (shader, renderer) => {
+        titaniumCompile(shader, renderer);
+        installToonPreview(shader, maskMode, highlights, true);
+      };
+      material.customProgramCacheKey = () => functionalKey() + '-photography-titanium-audit';
+      toon.customProgramCacheKey = () => functionalKey() + '-photography-toon-preview';
+      sampleMaterials.push({ mesh, material, toon });
+      materials.add(toon);
+    }
     mesh.material = material; mesh.frustumCulled = false; meshes.push(mesh); materials.add(material);
   });
   model.updateMatrixWorld(true);
+  function useToon(enabled) {
+    for (const { mesh, material, toon } of sampleMaterials) {
+      mesh.material = enabled ? toon : material;
+    }
+  }
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .02, 20);
   const captures = [];
   const output = document.createElement('canvas'); output.width = output.height = 512;
   const outputContext = output.getContext('2d'); outputContext.imageSmoothingQuality = 'high';
   const toBase64 = dataUrl => dataUrl.slice(dataUrl.indexOf(',') + 1);
-  function capture(groupId) {
-    const group = FLARE_GROUPS.find(group => group.groupId === groupId), selection = MM.resolveGroup(groupId), settings = VIEWS[groupId];
-    if (!group || !selection || !settings) throw new Error('Unknown muscle photography group: ' + groupId);
-    MM.setMuscleSelection(uniforms, selection.muscles.map(muscle => ({ muscle, side: 'both', colour: group.colour, level: selection.deep ? 'deep' : 'primary', dim: 0 })));
+  function prepare(groupIds, settings) {
+    const selections = groupIds.map(groupId => {
+      const group = FLARE_GROUPS.find(group => group.groupId === groupId), selection = MM.resolveGroup(groupId);
+      if (!group || !selection || !settings) throw new Error('Unknown muscle photography group: ' + groupId);
+      return { group, selection };
+    });
+    MM.setMuscleSelection(uniforms, selections.flatMap(({ group, selection }) =>
+      selection.muscles.map(muscle => ({ muscle, side: 'both', colour: group.colour, level: selection.deep ? 'deep' : 'primary', dim: 0 }))));
     setFunctionalFocus(uniforms, []);
     const azimuth = THREE.MathUtils.degToRad(settings.azimuth), elevation = THREE.MathUtils.degToRad(settings.elevation);
     const direction = new THREE.Vector3(Math.sin(azimuth) * Math.cos(elevation), Math.sin(elevation), Math.cos(azimuth) * Math.cos(elevation));
@@ -115,12 +157,48 @@ window.musclePhotography = (async () => {
     fill.position.copy(target).addScaledVector(direction, 2).addScaledVector(right, 3).addScaledVector(up, .6);
     edge.position.copy(target).addScaledVector(direction, -2).addScaledVector(right, 1).addScaledVector(up, 2);
     for (const light of [key, fill, edge]) { light.target.position.copy(target); scene.add(light.target); }
+    return {
+      selections,
+      cameraInfo: { ...settings, position: camera.position.toArray(), target: target.toArray(), projection: 'orthographic' },
+    };
+  }
+  function capture(groupId) {
+    const { selections: [{ group, selection }], cameraInfo } = prepare([groupId], VIEWS[groupId]);
     renderer.render(scene, camera);
     outputContext.clearRect(0, 0, 512, 512); outputContext.drawImage(renderer.domElement, 0, 0, 512, 512);
     const webp = output.toDataURL('image/webp', .96);
     if (!webp.startsWith('data:image/webp;')) throw new Error('The capture browser has no WebP encoder.');
     captures.push({ groupId, label: group.label, colour: group.colour, webp });
-    return { webp: toBase64(webp), png: toBase64(renderer.domElement.toDataURL('image/png')), camera: { ...settings, position: camera.position.toArray(), target: target.toArray(), projection: 'orthographic' }, label: group.label, colour: group.colour, panels: selection.muscles, deepRegion: !!selection.deep };
+    return { webp: toBase64(webp), png: toBase64(renderer.domElement.toDataURL('image/png')), camera: cameraInfo, label: group.label, colour: group.colour, panels: selection.muscles, deepRegion: !!selection.deep };
+  }
+  function compare(id) {
+    if (!reviewMode) throw new Error('Comparison requires toon-review mode');
+    const shot = REVIEWS.find(entry => entry.id === id);
+    if (!shot) throw new Error('Unknown muscle sample: ' + id);
+    const { cameraInfo, selections } = prepare(shot.groups, shot.camera);
+    useToon(false);
+    renderer.render(scene, camera);
+    const before = document.createElement('canvas');
+    before.width = before.height = 512;
+    before.getContext('2d').drawImage(renderer.domElement, 0, 0, 512, 512);
+    const pixels = captureMasks(renderer, scene, camera, maskMode, useToon, renderer.domElement.width);
+    for (const [index, highlight] of highlights.entries()) {
+      highlight.set(...(shot.highlights[index] ?? [-100, -100, 1, 1]));
+    }
+    useToon(true);
+    renderer.render(scene, camera);
+    const after = inkToon(renderer, pixels.mask);
+    useToon(false);
+    const image = makeComparison(before, after, shot.title, selections.some(({ selection }) => selection.deep));
+    return {
+      png: toBase64(image.toDataURL('image/png')), width: image.width, height: image.height,
+      camera: cameraInfo, groups: shot.groups, mask: pixels.stats,
+    };
+  }
+  function audit(groupId) {
+    if (!reviewMode) throw new Error('Mask audit requires toon-review mode');
+    const { cameraInfo } = prepare([groupId], VIEWS[groupId]);
+    return { groupId, camera: cameraInfo, ...captureMasks(renderer, scene, camera, maskMode, useToon, 512).stats };
   }
   async function contactSheet({ cell = 180, columns = 5 } = {}) {
     const caption = 36;
@@ -136,7 +214,9 @@ window.musclePhotography = (async () => {
     return toBase64(canvas.toDataURL('image/png'));
   }
   return {
-    groups: FLARE_GROUPS.map(group => group.groupId), capture, contactSheet,
+    groups: FLARE_GROUPS.map(group => group.groupId),
+    palette: Object.fromEntries(FLARE_GROUPS.map(group => [group.groupId, group.colour])),
+    reviews: REVIEWS.map(review => review.id), capture, contactSheet, compare, audit,
     info: { threeRevision: THREE.REVISION, width: 512, height: 512, renderWidth: 1024, renderHeight: 1024, alpha: true, meshCount: meshes.length, vertices: meshes.reduce((sum, mesh) => sum + mesh.geometry.attributes.position.count, 0), toneMapping: 'ACESFilmic', exposure: renderer.toneMappingExposure, material: 'brushed titanium silver with original-colour enamel teaching regions', baseColour: '#b8bdc5', grooveColour: '#747c87', roughness: .28, metalness: .88, clearcoat: .12, clearcoatRoughness: .24, enamel: { metalness: .1, roughness: .44 }, brush: { roughnessAmplitude: .025, cyclesPerMetre: 2100 / (2 * Math.PI), antialias: 'fwidth footprint' }, lights: { environment: 1, hemisphere: .35, key: 1.4, fill: .45, edge: .6 }, background: 'transparent' },
     dispose() { for (const mesh of meshes) mesh.geometry.dispose(); for (const material of materials) material.dispose(); environmentMap.dispose(); environment.dispose(); pmrem.dispose(); renderer.dispose(); },
   };
