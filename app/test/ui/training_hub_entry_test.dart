@@ -12,7 +12,6 @@ void main() {
   const actorStage = ValueKey('hub-stage-gesture');
   const fallback = ValueKey('hub-stage-loading-frame');
   const entryFrame = ValueKey('hub-entry-frame');
-  const returnFrame = ValueKey('hub-return-frame');
   final catalog = loadCatalogFixture();
 
   testWidgets('the hub retains the live angle while entering and returning', (
@@ -177,14 +176,30 @@ void main() {
       find.byType(FlareTrainingHubPage),
     );
     expect(hubPage.interactionLocked, isFalse);
+    final returnCommands = commands.length;
     hubPage.onBack();
-    await deliverFrame(returnFrame);
+    await tester.pump();
     final returning = commands.lastWhere(
       (command) => command['type'] == 'hub_flight',
     );
     expect(returning['returning'], isTrue);
+    expect(returning['homeHeight'], isA<double>());
+    expect(
+      commands.skip(returnCommands).map((value) => value['type']),
+      isNot(contains('hub_capture')),
+    );
+    expect(
+      commands.skip(returnCommands).map((value) => value['type']),
+      isNot(contains('hub_exit')),
+    );
     expect(find.byKey(fallback), findsNothing);
     expect(tester.element(home), same(mountedHome));
+    expect(
+      tester
+          .widget<FlareTrainingHubPage>(find.byType(FlareTrainingHubPage))
+          .mountScene,
+      isTrue,
+    );
 
     scene.receiveEvent({
       'source': 'flare-scene',
@@ -192,9 +207,13 @@ void main() {
       'id': returning['id'],
     });
     await tester.pump();
-    expect(find.byKey(returnFrame), findsNothing);
     expect(find.byKey(fallback), findsNothing);
-    expect(commands.last['type'], 'hub_flight_resume');
+    expect(
+      tester
+          .widget<FlareTrainingHubPage>(find.byType(FlareTrainingHubPage))
+          .leaving,
+      isTrue,
+    );
 
     scene.receiveEvent({
       'source': 'flare-scene',

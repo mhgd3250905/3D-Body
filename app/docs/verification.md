@@ -1,5 +1,15 @@
 # App 验证记录
 
+## 第 15 阶段标签交接与返程起飞（2026-11-19）
+
+vc2071 的真机录屏在标签消失后仍保持原人物位置约 0.47 秒，之后才开始移动。旧返程路径串行等待取帧、平台视图移动和首帧确认，录屏无法拆分各步骤用时。新路径从正在显示训练页的画布直接开始飞行，保留当前像素密度并复用同一个渲染器。Chrome 故意扣住返程首帧确认，镜头仍开始移动，期间没有取帧命令。
+
+进退场先沿用出发页的标签位置和身体侧别，交接后按 220 毫秒 `easeOutCubic` 平移，连线随对应锚点。Chrome 第 15 阶段的三枚标签在首页和落地首帧的屏幕坐标一致。三张图保存在本工作树 `output/playwright/flare-hub-handoff-review/`，分别为首页、落地首帧和落地后 300 毫秒。
+
+`flutter analyze --no-pub`、36 项 Flutter 定向测试、12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。用户已确认三张 Chrome 截图并同意出 Android 测试包，真机交互待复验。
+
+`flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=72` 通过。vc2072 验签与 16 KiB ZIP 对齐通过，包内场景入口和脚本匹配本次构建，其余 1,305 个 App 资产与 vc2071 逐字节一致。
+
 ## 训练页进退场实时画面保留（2026-11-19）
 
 `codex/flare-hub-flash-fix` 在 Hark 的防占位图修复上接入 vc2070 基线。进场保留同一个 3D 画布的落地帧，退场保留退出前的实时角度，两端都等下一帧确认后再交接。首次冷加载仍可使用原静态占位图。

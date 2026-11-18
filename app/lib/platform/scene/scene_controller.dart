@@ -189,6 +189,7 @@ class SceneController extends ChangeNotifier {
     required double top,
     required double height,
     required Duration duration,
+    double? homeHeight,
     bool returning = false,
     double yaw = 0,
     VoidCallback? onPrepared,
@@ -202,14 +203,13 @@ class SceneController extends ChangeNotifier {
       'time': time,
       'top': top,
       'height': height,
+      'homeHeight': ?homeHeight,
       'duration': duration.inMilliseconds,
       'returning': returning,
       'yaw': yaw,
     });
     return flight.future;
   }
-
-  void resumeTrainingFlight() => command({'type': 'hub_flight_resume'});
 
   void rotateTrainingFlight(double yaw) {
     if (!yaw.isFinite || _trainingFlightId == 0) return;

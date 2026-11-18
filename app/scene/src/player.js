@@ -215,7 +215,7 @@ export class FlarePlayer {
     }
     this.stepGlide(now);
     if (!this.trainingHub) this.controls.update();
-    const hubMoving = this.trainingHub?.tick(now);
+    const hubMoving = !this.hubFlight?.returning && this.trainingHub?.tick(now);
     const flightMoving = this.hubFlight?.sample(now);
     if (flightMoving) this.dirty = true;
     const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
@@ -238,7 +238,11 @@ export class FlarePlayer {
     return moving || flightMoving;
   }
   render() {
-    if (this.trainingHub) return this.trainingHub.render();
+    if (this.trainingHub && !this.hubFlight?.returning) return this.trainingHub.render();
+    if (this.resizeBeforeRender) {
+      this.resizeBeforeRender = false;
+      this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    }
     this.callbacks.onBeforeRender?.();
     const flight = this.hubFlight;
     const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
@@ -336,7 +340,8 @@ export class FlarePlayer {
   stagePixelRatio(adaptiveRatio) {
     // The shared canvas stays sharp through the flight and handoff, within
     // the configured quality cap. The settled hub uses its adaptive density.
-    return this.hubFlight ? this.fullPixelRatio : adaptiveRatio;
+    if (!this.hubFlight) return adaptiveRatio;
+    return this.hubFlight.pixelRatio ?? this.fullPixelRatio;
   }
   applyPixelRatio(ratio) {
     // setPixelRatio reallocates the drawing buffer; only call it on a change.
@@ -350,7 +355,8 @@ export class FlarePlayer {
     this.lastSize = `${width}x${height}`;
     this.updateFramingTarget();
     this.applyProjection();
-    if (changed) this.renderer.setSize(width, height);
+    if (changed && this.hubFlight?.returning) this.resizeBeforeRender = true;
+    else if (changed) this.renderer.setSize(width, height);
     if (changed && this.autoFrame && this.motion) this.resetView();
     if (changed && this.framingMode === 'detail') this.callbacks.onResize?.();
     this.dirty = true;

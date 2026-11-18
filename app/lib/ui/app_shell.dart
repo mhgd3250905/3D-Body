@@ -386,7 +386,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     });
   }
 
-  ({double top, double height})? _trainingStageGeometry() {
+  ({double top, double height, double homeHeight})? _trainingStageGeometry() {
     final home = _homeSceneBounds.currentContext?.findRenderObject();
     final hub = _hubSceneBounds.currentContext?.findRenderObject();
     if (home is! RenderBox ||
@@ -401,6 +401,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           hub.localToGlobal(Offset.zero).dy -
           home.localToGlobal(Offset.zero).dy,
       height: hub.size.height,
+      homeHeight: home.size.height,
     );
   }
 
@@ -420,14 +421,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       const Duration(seconds: 3),
       _finishTrainingFlight,
     );
-    final shot = await hub.prepareReturn();
-    if (!mounted || _trainingFlightDeadline != deadline) return;
+    final shot = hub.beginReturn();
     if (shot == null) {
       _finishTrainingFlight();
       return;
     }
-    _scene.leaveTrainingHub();
-    setState(() => _returnFlightUsesHome = true);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || _trainingFlightDeadline != deadline) return;
       final geometry = _trainingStageGeometry();
@@ -435,21 +433,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _finishTrainingFlight();
         return;
       }
-      _scene.setVisible(_appVisible);
       await _scene.flyTrainingActor(
         time: shot.time,
         yaw: shot.yaw,
         top: geometry.top,
         height: geometry.height,
+        homeHeight: geometry.homeHeight,
         duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
         returning: true,
         onPrepared: () {
           if (!mounted || _trainingFlightDeadline != deadline) return;
-          setState(() => _returnFlightExposed = true);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && _trainingFlightDeadline == deadline) {
-              _scene.resumeTrainingFlight();
-            }
+          setState(() {
+            _returnFlightUsesHome = true;
+            _returnFlightExposed = true;
           });
         },
       );
@@ -1105,14 +1101,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        if (_returningToWatch && !_returnFlightExposed)
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: _StageBackdropCover(
-                                ancestor: _stageBackdropKey,
-                              ),
-                            ),
-                          ),
                         FlareStage(
                           pageKey: route.$1,
                           depth: route.$2,

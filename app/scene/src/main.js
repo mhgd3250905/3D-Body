@@ -34,6 +34,17 @@ let hubCalloutFrame = null, animateHubCallouts = true;
 let showHubCallouts = true;
 let homeCalloutRevealAt = null;
 let hubCaptureId = null;
+let entryLabels = null, returnLabels = null;
+
+function labelHandoff(transition, viewportTop = 0) {
+  if (!transition?.layout.size) return null;
+  const elapsed = transition.start == null ? 0 : performance.now() - transition.start;
+  const t = Math.min(1, elapsed / 220);
+  if (t >= 1) return null;
+  if (transition.start != null) player.requestRedraw();
+  return { layout: transition.layout, offsetY: transition.top - viewportTop,
+    progress: 1 - (1 - t) ** 3 };
+}
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
     && stage.clientWidth > 0 && stage.clientHeight > 0 && !player.glide && !player.projectionGlide && !themeSettling(),
@@ -97,8 +108,8 @@ function clearHotspots() {
   hubCallouts.clear(); hubCalloutFrame = null;
 }
 function refreshHotspots(rendered = false) {
-  if (media) return;
-  if (!ready || previewing || player.playing || player.hubFlight || !player.visible || document.hidden || player.contextLost || errorCode
+  if (media || player.hubFlight) return;
+  if (!ready || previewing || player.playing || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     clearHotspots(); return;
   }
@@ -108,7 +119,8 @@ function refreshHotspots(rendered = false) {
       opacity = Math.min(1, (performance.now() - homeCalloutRevealAt) / 200);
       if (opacity < 1) player.requestRedraw(); else homeCalloutRevealAt = null;
     }
-    hotspots = callouts?.update(phaseAt(player.time).items, { opacity }) ?? [];
+    hotspots = callouts?.update(phaseAt(player.time).items, { opacity,
+      handoff: labelHandoff(returnLabels) }) ?? [];
   }
 }
 function renderHubCallouts(frame) {
@@ -123,6 +135,7 @@ function renderHubCallouts(frame) {
   if (hubCalloutFrame.redrawing) player.requestRedraw();
   hotspots = callouts?.update(phaseAt(hubCalloutFrame.time).items, {
     camera: frame.camera, opacity: hubCalloutFrame.opacity, reservedBottom: 32, homeOverlays: false,
+    handoff: labelHandoff(entryLabels, entryLabels?.hubTop ?? 0),
   }) ?? [];
 }
 function openMusclePlan(groupId, pause = false) {
@@ -134,7 +147,7 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
-  if (media && ['hub_scene', 'hub_exit', 'hub_flight', 'hub_flight_resume', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
+  if (media && ['hub_scene', 'hub_exit', 'hub_flight', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
@@ -183,7 +196,7 @@ function command(value) {
       showHubCallouts = input.showCallouts !== false;
       if (!showHubCallouts) clearHotspots();
       if (!player.trainingHub) {
-        clearHotspots();
+        if (!entryLabels?.layout.size) clearHotspots();
         player.trainingHub = hub;
         player.playing = false;
         player.loopRange = null;
@@ -226,25 +239,31 @@ function command(value) {
       const returned = player.hubFlight?.returning && player.hubFlight.landed;
       player.hubFlight?.restore();
       player.hubFlight = null;
-      homeCalloutRevealAt = input.id === 0 && returned ? performance.now() : null;
+      homeCalloutRevealAt = input.id === 0 && returned && !returnLabels?.layout.size ? performance.now() : null;
+      if (input.id === 0 && returned && returnLabels) returnLabels.start = performance.now();
+      if (input.id === 0 && player.trainingHub && entryLabels && entryLabels.start == null) {
+        entryLabels.start = performance.now();
+      }
       if (input.id > 0) {
         player.playing = false;
         if (fx) fx.root.visible = false;
         player.v5?.setFxEnabled(false);
-        clearHotspots();
-        player.hubFlight = createHubFlight(player, input, CAMERA_PRESETS.standard,
+        const layout = callouts?.snapshotLayout() ?? new Map();
+        if (input.returning) {
+          returnLabels = { layout, top: input.top, start: null };
+          entryLabels = null;
+          player.trainingHub?.prepareActorReturn();
+        } else {
+          entryLabels = { layout, top: 0, hubTop: input.top, start: null };
+          returnLabels = null;
+        }
+        const pixelRatio = input.returning ? player.renderer.getPixelRatio() : undefined;
+        player.hubFlight = createHubFlight(player, { ...input, pixelRatio }, CAMERA_PRESETS.standard,
           () => {
             player.stop();
             post({ type: 'hub_flight_done', id: input.id });
           }, () => {
-            const flight = player.hubFlight;
-            // As for scene presentation, let the platform view composite
-            // the held frame before the host exposes it for the return.
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-              if (player.hubFlight !== flight || !flight.holding) return;
-              player.stop();
-              post({ type: 'hub_flight_ready', id: input.id });
-            }));
+            post({ type: 'hub_flight_ready', id: input.id });
           });
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
@@ -252,11 +271,9 @@ function command(value) {
       player.start();
       break;
     }
-    case 'hub_flight_resume':
-      player.hubFlight?.resume();
-      player.start();
-      break;
     case 'hub_flight_reverse': {
+      returnLabels = entryLabels;
+      entryLabels = null;
       const done = () => post({ type: 'hub_flight_done', id: input.id });
       if (!player.hubFlight?.reverse(done)) done();
       else player.start();
@@ -324,10 +341,10 @@ async function boot() {
       onBeforeRender: () => {
         if (player.hubFlight) {
           const flight = player.hubFlight;
-          if (flight.landed && !flight.returning) {
-            // The sharp landing frame owns its labels while the hub prepares.
+          const handoff = labelHandoff(flight.returning ? returnLabels : entryLabels, flight.viewportTop);
+          if (handoff || (flight.landed && !flight.returning)) {
             hotspots = callouts?.update(phaseAt(flight.landingTime).items, {
-              camera: flight.camera, reservedBottom: flight.landingBottomInset, homeOverlays: false,
+              camera: flight.camera, reservedBottom: flight.bottomInset + 32, homeOverlays: false, handoff,
             }) ?? [];
           }
           return;

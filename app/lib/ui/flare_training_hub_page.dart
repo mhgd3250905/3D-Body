@@ -89,7 +89,6 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   bool _presented = false;
   bool _everPresented = false;
   ui.Image? _entryFrame;
-  ui.Image? _returnFrame;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
@@ -107,25 +106,9 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     _entryFrame = frame;
   }
 
-  Future<({double time, double yaw})?> prepareReturn() async {
+  ({double time, double yaw})? beginReturn() {
     if (!_stage.presented) return null;
-    final wasMuscles = _muscles;
-    setState(() {
-      _returning = true;
-      _muscles = false;
-    });
-    _render(animate: wasMuscles, scrubbing: true);
-    if (wasMuscles) {
-      // Give the standing anatomy view time to reveal its matching pose.
-      await Future<void>.delayed(const Duration(milliseconds: 400));
-    }
-    if (!mounted) return null;
-    final frame = await _captureFrame();
-    if (!mounted || frame == null) {
-      frame?.dispose();
-      return null;
-    }
-    _returnFrame = frame;
+    setState(() => _returning = true);
     return (time: _time, yaw: _stage.trainingHubYaw);
   }
 
@@ -259,7 +242,6 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     _stage.removeListener(_sceneChanged);
     if (_ownsController) _stage.dispose();
     _entryFrame?.dispose();
-    _returnFrame?.dispose();
     super.dispose();
   }
 
@@ -393,15 +375,6 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                                 RawImage(
                                   key: const ValueKey('hub-entry-frame'),
                                   image: _entryFrame,
-                                  fit: BoxFit.fill,
-                                ),
-                              if (_returning &&
-                                  !widget.mountScene &&
-                                  !widget.leaving &&
-                                  _returnFrame != null)
-                                RawImage(
-                                  key: const ValueKey('hub-return-frame'),
-                                  image: _returnFrame,
                                   fit: BoxFit.fill,
                                 ),
                             ],

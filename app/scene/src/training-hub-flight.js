@@ -15,7 +15,9 @@ export function hubFlightProjection(fov, height, destinationTop, destinationHeig
 }
 
 export function createHubFlight(player, input, referenceDirection, onLanded, onPrepared) {
-  const { clientHeight: height, clientWidth: width } = player.container;
+  const { clientHeight: currentHeight, clientWidth: width } = player.container;
+  const returningInHub = input.returning === true && Number.isFinite(input.homeHeight) && input.homeHeight > 0;
+  const height = returningInHub ? input.homeHeight : currentHeight;
   if (!(height > 0 && width > 0 && input.height > 0) ||
       ![input.height, input.top, input.time, input.duration].every(Number.isFinite)) return null;
 
@@ -28,9 +30,13 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   const destTarget = new THREE.Vector3(...dest.target);
   const destOrbit = new THREE.Spherical().setFromVector3(dest.direction.clone().multiplyScalar(dest.distance));
   let yaw = Number.isFinite(input.yaw) ? input.yaw : 0;
-  const sourceTangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const homeVisible = Math.max(1, height - (player.viewInset ?? 0));
+  const sourceTangent = returningInHub
+    ? Math.tan(THREE.MathUtils.degToRad(player.baseFov / 2)) * height / homeVisible
+    : Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const sourceX = camera.view?.enabled ? camera.view.offsetX : 0;
-  const sourceY = camera.view?.enabled ? camera.view.offsetY : 0;
+  const sourceY = returningInHub ? homeVisible * (player.viewBias?.y ?? 0) + (height - homeVisible) / 2
+    : camera.view?.enabled ? camera.view.offsetY : 0;
   const projection = hubFlightProjection(player.baseFov, height, input.top, input.height);
   const target = new THREE.Vector3(), orbit = new THREE.Spherical();
   const homeTime = player.time;
@@ -40,26 +46,30 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
   let duration = Math.max(0, input.duration);
   let returning = input.returning === true;
   let from = returning ? 1 : 0, to = returning ? 0 : 1, progress = from;
-  let holding = returning, prepared = false;
+  let prepared = false;
   let start = null, landed = false, reported = false;
   let angleDirty = false;
   let poseTime = homeTime, positionInHub = 0;
   const hubTop = Math.max(0, input.top);
   const hubBottomInset = Math.max(0, height - input.top - input.height);
+  const viewportTop = () => returningInHub &&
+    Math.abs(player.container.clientHeight - input.height) < Math.abs(player.container.clientHeight - height) ? input.top : 0;
 
   return {
     camera,
+    pixelRatio: input.pixelRatio,
     get returning() { return returning; },
     landingTime: input.time,
     destinationTop: input.top,
     destinationHeight: input.height,
-    landingBottomInset: Math.max(32, height - input.top - input.height + 32),
     get poseTime() { return poseTime; },
-    get topInset() { return positionInHub * hubTop; },
-    get bottomInset() { return lerp(player.viewInset ?? 0, hubBottomInset, positionInHub); },
-    get holding() { return holding; },
+    get viewportTop() { return viewportTop(); },
+    get topInset() { return Math.max(0, positionInHub * hubTop - viewportTop()); },
+    get bottomInset() {
+      return Math.max(0, viewportTop() + player.container.clientHeight - height +
+        lerp(player.viewInset ?? 0, hubBottomInset, positionInHub));
+    },
     get landed() { return landed; },
-    resume() { holding = false; },
     setAngleYaw(value) {
       if (returning || !Number.isFinite(value) || yaw === value) return false;
       yaw = value;
@@ -69,7 +79,6 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
     reverse(onReturned) {
       if (returning) return false;
       returning = true;
-      holding = false;
       from = progress;
       to = 0;
       duration *= progress;
@@ -79,10 +88,10 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       return true;
     },
     sample(now) {
-      if ((landed && !angleDirty) || (holding && prepared)) return false;
+      if (landed && !angleDirty) return false;
       angleDirty = false;
-      if (!holding) start ??= now;
-      const elapsed = holding ? 0 : duration === 0 ? 1 : Math.min(1, (now - start) / duration);
+      start ??= now;
+      const elapsed = duration === 0 ? 1 : Math.min(1, (now - start) / duration);
       progress = lerp(from, to, elapsed);
       const t = easeHub(progress);
       positionInHub = t;
@@ -96,7 +105,8 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       camera.position.setFromSpherical(orbit).add(target);
       camera.lookAt(target);
       camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(lerp(sourceTangent, projection.tangent, t)));
-      camera.setViewOffset(width, height, lerp(sourceX, projection.x, t), lerp(sourceY, projection.y, t), width, height);
+      camera.setViewOffset(width, height, lerp(sourceX, projection.x, t),
+        lerp(sourceY, projection.y, t) + viewportTop(), width, player.container.clientHeight);
       camera.updateMatrixWorld(true);
       poseTime = t === 0 || path === 0 ? homeTime : t === 1 ? input.time
         : THREE.MathUtils.euclideanModulo(homeTime + path * t, period);
@@ -105,7 +115,7 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
       return true;
     },
     rendered() {
-      if (holding && !prepared) {
+      if (input.returning && !prepared) {
         prepared = true;
         onPrepared?.();
       }

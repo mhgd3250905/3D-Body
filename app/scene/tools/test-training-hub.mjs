@@ -126,17 +126,37 @@ test('hub entry starts at the home shot and lands at the same pixels as the hub 
   assert.ok(back.camera.position.distanceTo(new THREE.Vector3(...fit.target).addScaledVector(expected, fit.distance)) < 1e-10);
   back.rendered();
   assert.equal(prepared, 1);
-  assert.equal(back.sample(250), false);
-  assert.equal(times.at(-1), 2.7);
-  back.resume();
-  back.sample(300);
-  back.sample(950);
+  assert.equal(back.sample(250), true);
+  assert.ok(times.at(-1) < 2.7);
+  back.sample(650);
   assert.equal(times.at(-1), 0);
   for (const point of boxCorners) {
     assert.ok(point.clone().project(home).distanceTo(point.clone().project(back.camera)) < 1e-10);
   }
   back.rendered();
   assert.equal(landings, 2);
+
+  // The first return frame can be drawn in the live, smaller hub viewport.
+  player.container.clientHeight = destinationHeight;
+  const liveBack = createHubFlight(player, {
+    top: destinationTop, height: destinationHeight, homeHeight: height, time: 2.7,
+    duration: 650, returning: true,
+  }, CAMERA_PRESETS.standard, () => {});
+  liveBack.sample(0);
+  for (const point of boxCorners) {
+    const a = point.clone().project(liveBack.camera);
+    const b = point.clone().project(landing);
+    assert.ok(Math.abs(a.x - b.x) < 1e-10);
+    assert.ok(Math.abs(a.y - b.y) < 1e-10);
+  }
+  const smallFrame = boxCorners.map(point => point.clone().project(liveBack.camera));
+  player.container.clientHeight = height;
+  liveBack.sample(0);
+  for (const [i, point] of boxCorners.entries()) {
+    const fullY = (1 - point.clone().project(liveBack.camera).y) * height / 2;
+    const smallY = destinationTop + (1 - smallFrame[i].y) * destinationHeight / 2;
+    assert.ok(Math.abs(fullY - smallY) < 1e-8);
+  }
 });
 
 test('an early Back reverses from the visible frame without a pose or camera jump', () => {

@@ -71,10 +71,20 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     if (moveFrame != null) cancelAnimationFrame(moveFrame); moveFrame = null;
     for (const record of records.values()) remove(record); records.clear(); anchors = [];
   }
-  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true } = {}) {
+  function snapshotLayout() {
+    return new Map(anchors.filter(point => point.callout).map(point => [point.groupId, {
+      x: point.callout.x, y: point.callout.y, side: point.side,
+      candidateKey: point.candidateKey, occluded: point.occluded,
+    }]));
+  }
+  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true, handoff = null } = {}) {
     pickCamera = camera;
     const project = point => player.project(point, camera);
-    anchors = computeHotspots(player, items, anchors, depthSampler, camera);
+    if (handoff) items = items.map(item => {
+      const side = handoff.layout.get(item.groupId)?.side;
+      return side && item.side === 'both' ? { ...item, side } : item;
+    });
+    anchors = computeHotspots(player, items, anchors, depthSampler, camera, handoff?.layout);
     const active = new Set(anchors.map(p => p.groupId));
     for (const [id, record] of records) if (!active.has(id)) { remove(record); records.delete(id); }
     const joints = player.getMetrics().joints;
@@ -136,15 +146,21 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const screenSide = dx < -12 ? -1 : dx > 12 ? 1 : record.screenSide ?? (index === 0 ? -1 : 1);
       const changedSide = record.screenSide != null && (record.screenSide !== screenSide || record.bodySide !== point.side);
       record.screenSide = screenSide; record.bodySide = point.side;
-      const evaluate = getClearance(), baseLift = index === 0 ? .02 : index === 1 ? .16 : .20;
+      const previous = handoff?.layout.get(point.groupId);
+      const frozen = previous && handoff.progress === 0;
+      const baseLift = index === 0 ? .02 : index === 1 ? .16 : .20;
       const positionAt = slot => {
         const position = surface.clone().addScaledVector(normal, .08)
           .addScaledVector(cameraRight, screenSide * slot.reach).addScaledVector(cameraUp, slot.lift);
         position.y = Math.max(position.y, floorHeight(record.card.scale));
         return position;
       };
-      let slot = record.slot, position = slot && positionAt(slot), score = position && evaluate.score(cardRect(position, record.card.scale), placed);
-      if (!slot || changedSide || score !== 0) {
+      let slot = record.slot;
+      if (frozen && !slot) slot = { reach: .42, lift: baseLift };
+      let position = slot && positionAt(slot);
+      let score = frozen ? record.clearanceScore ?? 0 : position && getClearance().score(cardRect(position, record.card.scale), placed);
+      if (!frozen && (!slot || changedSide || score !== 0)) {
+        const evaluate = getClearance();
         let best = null;
         for (const reach of [.18, .30, .42, .54, .66, .80, .96, 1.15]) {
           for (const lift of [baseLift, baseLift + .18, baseLift - .18, baseLift + .36, baseLift - .36, baseLift + .54, baseLift - .54,
@@ -160,15 +176,24 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       record.slot = slot; record.clearanceScore = score;
       const now = performance.now(), dt = Math.min(.05, Math.max(0, (now - (record.lastMove ?? now)) / 1000));
       const immediate = record.poseTime !== player.time || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (immediate) record.card.position.copy(position);
-      else record.card.position.lerp(position, 1 - Math.exp(-dt / .065));
-      keepVisible(record.card.position, record.card.scale);
+      if (previous) {
+        const end = position.clone().project(camera);
+        const startX = 2 * previous.x / viewWidth - 1;
+        const startY = 1 - 2 * (previous.y + handoff.offsetY) / canvasHeight;
+        end.x = THREE.MathUtils.lerp(startX, end.x, handoff.progress);
+        end.y = THREE.MathUtils.lerp(startY, end.y, handoff.progress);
+        record.card.position.copy(end.unproject(camera));
+      } else {
+        if (immediate) record.card.position.copy(position);
+        else record.card.position.lerp(position, 1 - Math.exp(-dt / .065));
+        keepVisible(record.card.position, record.card.scale);
+      }
       record.lastMove = now; record.poseTime = player.time;
       const moving = record.card.position.distanceToSquared(position) > .001 ** 2;
       if (!moving) record.card.position.copy(position);
       // Continue the tail of a camera-driven movement while paused. Re-target
       // from the current position; do not restart a tween or fade its name.
-      if (moving && moveFrame == null) moveFrame = requestAnimationFrame(() => {
+      if (moving && !previous && moveFrame == null) moveFrame = requestAnimationFrame(() => {
         // Labels are not shadow casters: redraw without invalidating the pose.
         moveFrame = null; if (player.requestRedraw) player.requestRedraw(); else player.dirty = true; player.start();
       });
@@ -240,5 +265,5 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     const card = hits.find(hit => !body || body.distance >= hit.distance - .002);
     return card ? { groupId: card.object.userData.groupId } : null;
   }
-  return { update, clear, pick, dispose() { clear(); root.removeFromParent(); depthSampler?.dispose?.(); } };
+  return { update, clear, pick, snapshotLayout, dispose() { clear(); root.removeFromParent(); depthSampler?.dispose?.(); } };
 }

@@ -434,5 +434,6 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     };
   }
 
-  return { configure, setAngleYaw, tick, render, releaseGpu, getState, setVisible, getStandingView: standing.getState };
+  return { configure, setAngleYaw, tick, render, releaseGpu, getState, setVisible,
+    prepareActorReturn: standing.close, getStandingView: standing.getState };
 }
