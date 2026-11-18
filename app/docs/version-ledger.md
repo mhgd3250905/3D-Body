@@ -1,5 +1,20 @@
 # Flare 版本管理台账
 
+## Android 本地测试包 vc2065–vc2068（2026-11-18）
+
+这四个包均为 Flare 1.0.15、`dev.mhgd.flare`、仅 arm64-v8a。SDK 固定 `85b57fda632f1f25eb94514d44e00e214cf9f7f5`。各包位于本机 `output/release-checkpoints/app-v1.0.15-buildNNNN/Flare-1.0.15-vcNNNN-arm64-release.apk`，NNNN 为实际 versionCode。验签证书 SHA-256 为 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7`。
+
+| 实际 versionCode | APK 运行源码 | 验证与验收 | 字节数 / SHA-256 |
+| --- | --- | --- | --- |
+| vc2065 | `dd7f5d829b0fcffdd6e4e4353081678a756967ef` | 19:41 用户确认五项修复。静态分析、Flutter 定向 45 项、场景 12 项通过。 | 105,448,167 / `e137421ed2864811e77afb57e0c02721bcaca1a43ac3a5089ef8acd1b7b6838e` |
+| vc2066 | `03aa9b7af6e752edb5bff120ddb8aaf041a2094a` | 直立肌群人台卡通着色、34 张缩略图和按需渲染。Flutter 全量 463 通过、1 项默认跳过。 | 105,196,075 / `412d872987aee677332e224fdda655b354e07cb1dd77029c8c0037964c91fc3e` |
+| vc2067 | `cdb10aff881e0db969fb0e4d0e3092c33b580644` | 描边收细、首页直达肌群计划、计划页布局和单上下文。Flutter 全量 447 通过、1 项默认跳过。已从 vc2066 同签名覆盖安装，安装哈希一致，21:55 用户确认真机通过。 | 105,160,515 / `238cc40723e7ef91a1caf08f4fc0cbd1643410ebaae95485b6c89cea91a451a9` |
+| vc2068 | `db4548043592ba61a03ad9a4bbfc67eff91f3dbd` | 合并版静态分析无问题，Flutter 全量 451 通过、1 项默认跳过，场景专项 12 项通过。Chrome 核对了首页直达肌群计划、原位返回和训练中心单画布。设备验收记录对应 vc2067。 | 105,160,791 / `f95b89ebd23212dc7a0846e616b918c4e1c0923536a08fc0550e3cbcd27228ed` |
+
+vc2068 从 fetch 后的 `origin/master add0b63b` 普通合入肌群分支 `cdb10aff`（合并提交 `3eab0cbe`）和 polish 分支 `dd7f5d82`（运行源码 `db45480`）。冲突中，肌群人台、首页直达与计划页保留 vc2067 的行为。首页实时进度、阶段标题渐变、两类动作详情透明演示区以及训练入口、拖转和反向返回采用 vc2065 的验收结果。训练转场复用同一画布并遵守画质档位上限。场景资源由合并后的源码重新构建。
+
+vc2068 同签名覆盖包已通过签名、16 KiB ZIP 对齐及入包场景和素材检查。标签 `app-v1.0.15-build2068` 指向包含本台账的提交，该提交相对 APK 运行源码只有台账变化。交付范围为本机测试包和 Git 版本记录。
+
 ## Android 本地候选包 vc2063（2026-11-18）
 
 `codex/flare-v5-model` 恢复 `cf654dde` 的原场景相机和各页面版式，V5 使用原时钟和帧间插值。Flutter 声明 1.0.15+63，arm64 split 实际为 1.0.15 (2063)。本地包、签名、SHA-256 和源码提交回执归档在主工作区 `output/release-checkpoints/app-v1.0.15-build2063/`。[原版对照和验证](flare-v5-model-2026-11-18.md)
