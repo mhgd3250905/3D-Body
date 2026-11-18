@@ -72,19 +72,29 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     for (const record of records.values()) remove(record); records.clear(); anchors = [];
   }
   function snapshotLayout() {
-    return new Map(anchors.filter(point => point.callout).map(point => [point.groupId, {
-      x: point.callout.x, y: point.callout.y, side: point.side,
-      candidateKey: point.candidateKey, occluded: point.occluded,
-    }]));
+    const scale = modelScale(pickCamera);
+    return new Map(anchors.filter(point => point.callout?.opacity > 0).map(point => {
+      const { x, y, dot, opacity } = point.callout;
+      return [point.groupId, { x, y, dot, opacity, side: point.side,
+        dx: (x - dot.x) / scale, dy: (y - dot.y) / scale,
+        candidateKey: point.candidateKey, occluded: point.occluded }];
+    }));
   }
-  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true, handoff = null } = {}) {
+  function modelScale(camera) {
+    const pelvis = new THREE.Vector3().fromArray(player.getMetrics().joints.pelvis);
+    const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    return Math.max(1, Math.abs(player.project(pelvis.clone().add(up), camera).y - player.project(pelvis, camera).y));
+  }
+  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true,
+    layout = null, departureOffset = null } = {}) {
     pickCamera = camera;
     const project = point => player.project(point, camera);
-    if (handoff) items = items.map(item => {
-      const side = handoff.layout.get(item.groupId)?.side;
+    if (layout) items = items.map(item => {
+      const side = layout.get(item.groupId)?.side;
       return side && item.side === 'both' ? { ...item, side } : item;
     });
-    anchors = computeHotspots(player, items, anchors, depthSampler, camera, handoff?.layout);
+    anchors = departureOffset == null ? computeHotspots(player, items, anchors, depthSampler, camera, layout)
+      : anchors.filter(point => layout.has(point.groupId));
     const active = new Set(anchors.map(p => p.groupId));
     for (const [id, record] of records) if (!active.has(id)) { remove(record); records.delete(id); }
     const joints = player.getMetrics().joints;
@@ -94,6 +104,12 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     const viewWidth = player.container.clientWidth;
     const canvasHeight = player.container.clientHeight;
     const viewHeight = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget, reservedBottom));
+    function atScreen(position, x, y) {
+      const ndc = position.clone().project(camera);
+      ndc.x = 2 * x / viewWidth - 1;
+      ndc.y = 1 - 2 * y / canvasHeight;
+      return ndc.unproject(camera);
+    }
     let clearance;
     const placed = [];
     function cardRect(position, scale) {
@@ -102,6 +118,33 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const left = Math.min(...corners.map(p => p.x)), top = Math.min(...corners.map(p => p.y));
       return { left, top, width: Math.max(...corners.map(p => p.x)) - left, height: Math.max(...corners.map(p => p.y)) - top };
     }
+    function recordFor(point) {
+      let record = records.get(point.groupId);
+      if (!record) {
+        record = { card: texture(point.name, point.colour), dot: texture('', point.colour, true), guide: guide(point.colour) };
+        record.card.userData.groupId = record.dot.userData.groupId = point.groupId;
+        records.set(point.groupId, record);
+      }
+      return record;
+    }
+    function fittedLayoutScale() {
+      let scale = modelScale(camera);
+      for (const point of anchors) {
+        const previous = layout.get(point.groupId);
+        if (!previous) continue;
+        const surface = new THREE.Vector3().fromArray(point.world), normal = new THREE.Vector3().fromArray(point.normal);
+        const dot = project(surface.clone().addScaledVector(normal, .014));
+        const card = cardRect(surface.addScaledVector(normal, .08), recordFor(point).card.scale);
+        const padX = card.width / 2 + 8, padY = card.height / 2 + 8;
+        const roomX = previous.dx > 0 ? viewWidth - padX - dot.x : dot.x - padX;
+        const roomY = previous.dy > 0 ? viewHeight - padY - dot.y : dot.y - padY;
+        // Fit all offsets with one factor so a near edge cannot reorder the cards.
+        if (roomX > 0 && previous.dx) scale = Math.min(scale, roomX / Math.abs(previous.dx));
+        if (roomY > 0 && previous.dy) scale = Math.min(scale, roomY / Math.abs(previous.dy));
+      }
+      return scale;
+    }
+    const scale = layout?.size && departureOffset == null ? fittedLayoutScale() : 1;
     function floorHeight(scale) {
       return .03 + Math.abs(cameraRight.y) * scale.x / 2 + Math.abs(cameraUp.y) * scale.y / 2;
     }
@@ -129,25 +172,24 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       return clearance;
     }
     for (const [index, point] of anchors.entries()) {
-      let record = records.get(point.groupId);
-      if (!record) {
-        record = { card: texture(point.name, point.colour), dot: texture('', point.colour, true), guide: guide(point.colour) };
-        record.card.userData.groupId = record.dot.userData.groupId = point.groupId;
-        records.set(point.groupId, record);
-      }
+      const record = recordFor(point);
       const surface = new THREE.Vector3().fromArray(point.world), normal = new THREE.Vector3().fromArray(point.normal);
-      record.card.material.opacity = record.dot.material.opacity = opacity;
-      record.guide.halo.material.opacity = .48 * opacity;
-      record.guide.stroke.material.opacity = .85 * opacity;
+      const previous = layout?.get(point.groupId);
+      const departing = departureOffset != null && previous;
+      const alpha = departing ? opacity * previous.opacity : opacity;
+      // A carried label keeps its slot even if the destination pose crosses it.
+      record.card.material.depthTest = !previous;
+      record.card.material.opacity = record.dot.material.opacity = alpha;
+      record.guide.halo.material.opacity = .48 * alpha;
+      record.guide.stroke.material.opacity = .85 * alpha;
       record.dot.position.copy(surface).addScaledVector(normal, .014);
+      if (departing) record.dot.position.copy(atScreen(record.dot.position, previous.dot.x, previous.dot.y + departureOffset));
       // Follow the currently visible body side. The small dead band prevents
       // a central muscle from repeatedly swapping labels across the athlete.
       const dx = point.x - centreX;
       const screenSide = dx < -12 ? -1 : dx > 12 ? 1 : record.screenSide ?? (index === 0 ? -1 : 1);
       const changedSide = record.screenSide != null && (record.screenSide !== screenSide || record.bodySide !== point.side);
       record.screenSide = screenSide; record.bodySide = point.side;
-      const previous = handoff?.layout.get(point.groupId);
-      const frozen = previous && handoff.progress === 0;
       const baseLift = index === 0 ? .02 : index === 1 ? .16 : .20;
       const positionAt = slot => {
         const position = surface.clone().addScaledVector(normal, .08)
@@ -156,10 +198,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         return position;
       };
       let slot = record.slot;
-      if (frozen && !slot) slot = { reach: .42, lift: baseLift };
+      if (previous && !slot) slot = { reach: .42, lift: baseLift };
       let position = slot && positionAt(slot);
-      let score = frozen ? record.clearanceScore ?? 0 : position && getClearance().score(cardRect(position, record.card.scale), placed);
-      if (!frozen && (!slot || changedSide || score !== 0)) {
+      let score = previous ? record.clearanceScore ?? 0 : position && getClearance().score(cardRect(position, record.card.scale), placed);
+      if (!previous && (!slot || changedSide || score !== 0)) {
         const evaluate = getClearance();
         let best = null;
         for (const reach of [.18, .30, .42, .54, .66, .80, .96, 1.15]) {
@@ -172,18 +214,16 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         }
         slot = best.slot; position = best.position; score = best.cost;
       }
-      keepVisible(position, record.card.scale);
       record.slot = slot; record.clearanceScore = score;
       const now = performance.now(), dt = Math.min(.05, Math.max(0, (now - (record.lastMove ?? now)) / 1000));
       const immediate = record.poseTime !== player.time || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (previous) {
-        const end = position.clone().project(camera);
-        const startX = 2 * previous.x / viewWidth - 1;
-        const startY = 1 - 2 * (previous.y + handoff.offsetY) / canvasHeight;
-        end.x = THREE.MathUtils.lerp(startX, end.x, handoff.progress);
-        end.y = THREE.MathUtils.lerp(startY, end.y, handoff.progress);
-        record.card.position.copy(end.unproject(camera));
+        const dot = project(record.dot.position);
+        position = atScreen(position, departing ? previous.x : dot.x + previous.dx * scale,
+          departing ? previous.y + departureOffset : dot.y + previous.dy * scale);
+        record.card.position.copy(position);
       } else {
+        keepVisible(position, record.card.scale);
         if (immediate) record.card.position.copy(position);
         else record.card.position.lerp(position, 1 - Math.exp(-dt / .065));
         keepVisible(record.card.position, record.card.scale);
@@ -225,7 +265,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const guideStart = project(start), guideEnd = project(end);
       const inside = bounds => bounds.left >= 0 && bounds.top >= 0 && bounds.left + bounds.width <= viewWidth && bounds.top + bounds.height <= viewHeight;
       const insidePoint = p => !p.behind && p.x >= 0 && p.y >= 0 && p.x <= viewWidth && p.y <= viewHeight;
-      point.callout = { ...projected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
+      point.callout = { ...projected, dot: dotProjected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
         label: record.card.userData.label, fontSize: record.card.userData.fontSize,
         textureSize: [record.card.material.map.image.width, record.card.material.map.image.height],

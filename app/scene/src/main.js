@@ -32,18 +32,19 @@ let presented = false, statusTimer = null;
 const hubCallouts = createHubCalloutVisibility();
 let hubCalloutFrame = null, animateHubCallouts = true;
 let showHubCallouts = true;
-let homeCalloutRevealAt = null;
 let hubCaptureId = null;
-let entryLabels = null, returnLabels = null;
+let pageLabels = null;
 
-function labelHandoff(transition, viewportTop = 0) {
-  if (!transition?.layout.size) return null;
-  const elapsed = transition.start == null ? 0 : performance.now() - transition.start;
-  const t = Math.min(1, elapsed / 220);
-  if (t >= 1) return null;
-  if (transition.start != null) player.requestRedraw();
-  return { layout: transition.layout, offsetY: transition.top - viewportTop,
-    progress: 1 - (1 - t) ** 3 };
+function labelArrival(page, time) {
+  if (pageLabels?.destination !== page) return { layout: null, opacity: 1 };
+  if (pageLabels.arrivedAt == null) return { layout: null, opacity: 0 };
+  if (Math.abs(time - pageLabels.time) > .001) {
+    pageLabels = null;
+    return { layout: null, opacity: 1 };
+  }
+  const t = pageLabels.animate ? Math.min(1, (performance.now() - pageLabels.arrivedAt) / 180) : 1;
+  if (t < 1) player.requestRedraw();
+  return { layout: pageLabels.layout, opacity: 1 - (1 - t) ** 3 };
 }
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
@@ -114,13 +115,9 @@ function refreshHotspots(rendered = false) {
     clearHotspots(); return;
   }
   if (rendered && !player.trainingHub) {
-    let opacity = 1;
-    if (homeCalloutRevealAt !== null) {
-      opacity = Math.min(1, (performance.now() - homeCalloutRevealAt) / 200);
-      if (opacity < 1) player.requestRedraw(); else homeCalloutRevealAt = null;
-    }
-    hotspots = callouts?.update(phaseAt(player.time).items, { opacity,
-      handoff: labelHandoff(returnLabels) }) ?? [];
+    const arrival = labelArrival('home', player.time);
+    if (arrival.opacity === 0) return;
+    hotspots = callouts?.update(phaseAt(player.time).items, arrival) ?? [];
   }
 }
 function renderHubCallouts(frame) {
@@ -133,9 +130,11 @@ function renderHubCallouts(frame) {
     return;
   }
   if (hubCalloutFrame.redrawing) player.requestRedraw();
+  const arrival = labelArrival('hub', hubCalloutFrame.time);
+  if (arrival.opacity === 0) return;
   hotspots = callouts?.update(phaseAt(hubCalloutFrame.time).items, {
-    camera: frame.camera, opacity: hubCalloutFrame.opacity, reservedBottom: 32, homeOverlays: false,
-    handoff: labelHandoff(entryLabels, entryLabels?.hubTop ?? 0),
+    camera: frame.camera, opacity: hubCalloutFrame.opacity * arrival.opacity, reservedBottom: 32, homeOverlays: false,
+    layout: arrival.layout,
   }) ?? [];
 }
 function openMusclePlan(groupId, pause = false) {
@@ -196,7 +195,7 @@ function command(value) {
       showHubCallouts = input.showCallouts !== false;
       if (!showHubCallouts) clearHotspots();
       if (!player.trainingHub) {
-        if (!entryLabels?.layout.size) clearHotspots();
+        clearHotspots();
         player.trainingHub = hub;
         player.playing = false;
         player.loopRange = null;
@@ -239,24 +238,21 @@ function command(value) {
       const returned = player.hubFlight?.returning && player.hubFlight.landed;
       player.hubFlight?.restore();
       player.hubFlight = null;
-      homeCalloutRevealAt = input.id === 0 && returned && !returnLabels?.layout.size ? performance.now() : null;
-      if (input.id === 0 && returned && returnLabels) returnLabels.start = performance.now();
-      if (input.id === 0 && player.trainingHub && entryLabels && entryLabels.start == null) {
-        entryLabels.start = performance.now();
+      if (input.id === 0 && pageLabels?.arrivedAt == null &&
+          (returned && pageLabels?.destination === 'home' || player.trainingHub && pageLabels?.destination === 'hub')) {
+        pageLabels.arrivedAt = performance.now();
       }
       if (input.id > 0) {
         player.playing = false;
         if (fx) fx.root.visible = false;
         player.v5?.setFxEnabled(false);
-        const layout = callouts?.snapshotLayout() ?? new Map();
-        if (input.returning) {
-          returnLabels = { layout, top: input.top, start: null };
-          entryLabels = null;
-          player.trainingHub?.prepareActorReturn();
-        } else {
-          entryLabels = { layout, top: 0, hubTop: input.top, start: null };
-          returnLabels = null;
-        }
+        pageLabels = {
+          layout: callouts?.snapshotLayout() ?? new Map(), time: input.time,
+          destination: input.returning ? 'home' : 'hub', sourceTop: input.returning ? input.top : 0,
+          departedAt: performance.now(), arrivedAt: null,
+          animate: input.duration > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        };
+        if (input.returning) player.trainingHub?.prepareActorReturn();
         const pixelRatio = input.returning ? player.renderer.getPixelRatio() : undefined;
         player.hubFlight = createHubFlight(player, { ...input, pixelRatio }, CAMERA_PRESETS.standard,
           () => {
@@ -272,8 +268,7 @@ function command(value) {
       break;
     }
     case 'hub_flight_reverse': {
-      returnLabels = entryLabels;
-      entryLabels = null;
+      if (pageLabels) pageLabels.destination = 'home';
       const done = () => post({ type: 'hub_flight_done', id: input.id });
       if (!player.hubFlight?.reverse(done)) done();
       else player.start();
@@ -283,6 +278,7 @@ function command(value) {
       if (player.hubFlight?.setAngleYaw(input.yaw)) player.start();
       return;
     case 'hub_angle':
+      if (pageLabels?.arrivedAt != null) pageLabels = null;
       player.trainingHub?.setAngleYaw(input.yaw);
       return;
     case 'play':
@@ -341,11 +337,14 @@ async function boot() {
       onBeforeRender: () => {
         if (player.hubFlight) {
           const flight = player.hubFlight;
-          const handoff = labelHandoff(flight.returning ? returnLabels : entryLabels, flight.viewportTop);
-          if (handoff || (flight.landed && !flight.returning)) {
-            hotspots = callouts?.update(phaseAt(flight.landingTime).items, {
-              camera: flight.camera, reservedBottom: flight.bottomInset + 32, homeOverlays: false, handoff,
+          const elapsed = pageLabels ? performance.now() - pageLabels.departedAt : 120;
+          if (pageLabels?.animate && pageLabels.layout.size && elapsed < 120 && !flight.landed) {
+            hotspots = callouts?.update([], {
+              camera: flight.camera, opacity: 1 - elapsed / 120, reservedBottom: flight.bottomInset + 32,
+              homeOverlays: false, layout: pageLabels.layout, departureOffset: pageLabels.sourceTop - flight.viewportTop,
             }) ?? [];
+          } else if (hotspots.length) {
+            clearHotspots();
           }
           return;
         }
