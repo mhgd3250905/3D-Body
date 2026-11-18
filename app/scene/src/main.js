@@ -5,15 +5,13 @@ import { createHotspotCallouts } from './hotspot-callouts.js';
 import { createHubFlight } from './training-hub-flight.js';
 import { createHotspotDepth } from './hotspot-depth.js';
 import { createHubCalloutVisibility } from './hub-callout-visibility.js';
-import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-mesh.js';
-import { createDetailView } from './detail.js';
+import { buildMmRest, createHitTester } from './mapped-mesh.js';
 import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 import { createPhaseMap } from './phase-map.js';
 import { applyTheme, themeSettling } from './theme.js';
 import { createPresentationGate } from './presentation.js';
 import { sceneStrings, setSceneStrings } from './localization.js';
 import { createFlareFx } from './fx.js';
-import { legacyFocusDirection } from './v5/legacy-framing.js';
 import { characterFromLocation } from './characters.js';
 import { createPerfHud, perfEnabled, perfSnapshot } from './perf-hud.js';
 import { createTrainingHub } from './training-hub-stage.js';
@@ -21,7 +19,7 @@ import { createTrainingHub } from './training-hub-stage.js';
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots');
-let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
+let player, hitTester, phaseMap, ready = false, hotspots = [], errorCode = null;
 let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
 const character = characterFromLocation(location.search);
 const options = new URLSearchParams(location.search);
@@ -61,9 +59,8 @@ function post(event) {
 }
 function state() {
   return { type: 'state', time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
-    speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
+    speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
-    detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
     quality: player?.quality ?? 'medium', fx: v5 ? v5Fx : fx?.enabled ?? false,
     character: v5 ? 'flare-v5' : character.id, ready, presented, errorCode };
 }
@@ -99,7 +96,7 @@ function clearHotspots() {
 }
 function refreshHotspots(rendered = false) {
   if (media) return;
-  if (!ready || previewing || player.playing || detailed || player.hubFlight || !player.visible || document.hidden || player.contextLost || errorCode
+  if (!ready || previewing || player.playing || player.hubFlight || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
     clearHotspots(); return;
   }
@@ -126,40 +123,16 @@ function renderHubCallouts(frame) {
     camera: frame.camera, opacity: hubCalloutFrame.opacity, reservedBottom: 32, homeOverlays: false,
   }) ?? [];
 }
-function closeDetail() {
-  detailView?.close(); detailed = false;
-  surface?.restore();
-  phaseMap?.setHidden(false);
-  for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
-}
-function setSelected(groupId, detail = detailed) {
+function openMusclePlan(groupId, pause = false) {
+  if (!ready || !GROUPS[groupId] || player.trainingHub || player.hubFlight || (player.playing && !pause)) return;
   player.playing = false;
-  if (!groupId) {
-    closeDetail(); selected = null; surface.restore();
-  } else {
-    selected = groupId; detailed = !!detail; const phase = phaseAt(player.time);
-    surface.show(selected, phase.items, detailed);
-    if (detailed) {
-      detailView.open(selected, phase);
-      phaseMap?.setHidden(true);
-      for (const prop of player.stageProps) prop.visible = false;
-    }
-  }
-  player.dirty = true; refreshHotspots(); emitState(true);
-}
-function selectFromTap(groupId) {
-  if (!ready || player.playing) return;
-  setSelected(groupId); post({ type: 'select', groupId, time: player.time });
-}
-function selectFromMap(groupId) {
-  if (!ready) return;
-  setSelected(groupId); post({ type: 'select', groupId, time: player.time });
+  post({ type: 'select', groupId, time: player.time });
 }
 function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
-  if (media && ['select', 'detail', 'detail_model', 'hub_scene', 'hub_flight', 'hub_flight_resume', 'hub_angle'].includes(input.type)) return;
+  if (media && ['hub_scene', 'hub_exit', 'hub_flight', 'hub_flight_resume', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
@@ -192,7 +165,7 @@ function command(value) {
       document.title = input.sceneAccessibility ?? 'Flare';
       retry.textContent = input.retry ?? 'Retry';
       if (errorCode) statusText.textContent = input.sceneFailed ?? 'Unable to load';
-      phaseMap?.setLocalization(); detailView?.updateLocalization(); callouts?.clear();
+      phaseMap?.setLocalization(); callouts?.clear();
       break;
     }
     case 'present':
@@ -215,12 +188,27 @@ function command(value) {
         player.autoFrame = false;
         player.glide = player.projectionGlide = null;
         player.controls.enabled = false;
+        player.setDemandFrames(true);
         phaseMap.setHidden(true);
         if (fx) { fx.setEnabled(false); fx.root.visible = false; }
         player.v5?.setFxEnabled(false);
       }
       break;
     }
+    case 'hub_exit':
+      if (!player.trainingHub) return;
+      player.trainingHub.releaseGpu();
+      player.trainingHub = null;
+      phaseMap.releaseGpu();
+      phaseMap.setHidden(false);
+      phaseMap.restorePhase();
+      phaseMap.clearHubCrop();
+      clearHotspots();
+      player.controls.enabled = true;
+      for (const prop of player.stageProps) prop.visible = prop !== player.shadowCatcher || player.renderer.shadowMap.enabled;
+      if (fx) { fx.setEnabled(true); fx.root.visible = true; }
+      player.setDemandFrames(false);
+      break;
     case 'hub_flight': {
       const returned = player.hubFlight?.returning && player.hubFlight.landed;
       player.hubFlight?.restore();
@@ -241,7 +229,7 @@ function command(value) {
           });
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
-      phaseMap?.setHidden(detailed || !!player.hubFlight);
+      phaseMap?.setHidden(!!player.trainingHub || !!player.hubFlight);
       player.start();
       break;
     }
@@ -253,14 +241,13 @@ function command(value) {
       player.trainingHub?.setAngleYaw(input.yaw);
       return;
     case 'play':
-      closeDetail(); selected = null; surface?.restore();
       if (player.time >= player.period) player.setTime(0);
       player.playing = player.visible && !document.hidden && !player.contextLost;
       player.start(); break;
     case 'pause': player.playing = false; break;
     case 'seek': {
       const time = Number(input.time); if (!Number.isFinite(time)) return;
-      closeDetail(); selected = null; surface?.restore(); player.playing = false; player.loopRange = null; player.setTime(time); break;
+      player.playing = false; player.loopRange = null; player.setTime(time); break;
     }
     case 'speed': if ([0.25, 0.5, 1].includes(Number(input.value))) player.speed = Number(input.value); break;
     case 'loop': {
@@ -273,24 +260,11 @@ function command(value) {
       }
       break;
     }
-    case 'reset':
-      if (detailed && selected) detailView.reset(phaseAt(player.time)); else player.resetView(); break;
+    case 'reset': player.resetView(); break;
     case 'camera': {
       if (!CAMERA_PRESETS[input.view]) return;
-      if (detailed && selected) detailView.reset(phaseAt(player.time), CAMERA_PRESETS[input.view]);
-      else player.resetView(CAMERA_PRESETS[input.view]); break;
+      player.resetView(CAMERA_PRESETS[input.view]); break;
     }
-    case 'select': if (input.groupId == null || GROUPS[input.groupId]) setSelected(input.groupId ?? null); else return; break;
-    case 'detail':
-      if (input.groupId == null) {
-        closeDetail();
-        if (selected) surface.show(selected, phaseAt(player.time).items, false); else surface.restore();
-      } else if (GROUPS[input.groupId]) setSelected(input.groupId, true);
-      else return;
-      break;
-    case 'detail_model':
-      if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
-      detailView.setModel(input.value, phaseAt(player.time)); break;
     case 'quality': player.setQuality(input.value); break;
     case 'fx':
       if (typeof input.value !== 'boolean') return;
@@ -326,16 +300,16 @@ async function boot() {
           }
           return;
         }
-        fx?.update(performance.now(), !detailed && !selected);
-        player.v5?.setFxEnabled(v5Fx && (previewing || (player.playing && !detailed && !selected)));
+        fx?.update(performance.now(), true);
+        player.v5?.setFxEnabled(v5Fx && (previewing || player.playing));
         refreshHotspots(true);
       },
       onRender: hubCompleted => {
         if (player.hubFlight) return;
-        const complete = player.trainingHub ? hubCompleted : detailed ? detailView?.renderMini() : phaseMap?.render();
+        const complete = player.trainingHub ? hubCompleted : phaseMap?.render();
         presentation.rendered(media || complete === true);
       },
-      onResize: () => { presentation.invalidate(); if (detailed) detailView?.refit(phaseAt(player.time)); },
+      onResize: () => presentation.invalidate(),
       onContext: restored => {
         if (restored) {
           phaseMap?.refreshEnvironment(); errorCode = null; delete status.dataset.error; retry.hidden = true;
@@ -344,7 +318,7 @@ async function boot() {
           post({ type: 'ready', period: player.period });
           if (!hosted) presentation.request(0);
         }
-        else { player.trainingHub?.releaseGpu(); surface?.releaseGpu(); phaseMap?.releaseGpu(); detailView?.releaseGpu(); showError('graphics_context_lost', true); }
+        else { player.trainingHub?.releaseGpu(); phaseMap?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
     player.setViewInset(viewInset, false);
@@ -353,7 +327,7 @@ async function boot() {
       const context = player.renderer.getContext();
       if ('drawingBufferColorSpace' in context) context.drawingBufferColorSpace = 'srgb';
     }
-    await Promise.all([player.load(), media ? null : createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
+    await Promise.all([player.load(), media ? null : createPhaseMap(player, groupId => openMusclePlan(groupId, true)).then(map => { phaseMap = map; })]);
     player.resetView();
     if (!v5) fx = createFlareFx(player, { palette: character.fx, enabled: options.get('fx') !== '0' });
     const skinned = media ? player.v5.skinned : configureTeaching();
@@ -376,19 +350,22 @@ async function boot() {
       getPhaseMap: () => phaseMap?.getState(), getFx: () => fx?.getState() ?? null,
       wallToTime: wall => player.motion.clock.toSequence(wall), wallDuration: () => player.motion.clock.duration,
       previewFx: (time, hold = true) => { previewing = hold; command({ type: 'seek', time }); fx?.setHold(hold); player.dirty = true; },
-      getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
-      getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
-        frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
-        pixelRatio: player.renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
-        framingMode: player.framingMode,
-        bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
+      getRenderState: () => {
+        const renderer = player.renderer;
+        return { visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
+          frame: renderer.info.render.frame, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles,
+          pixelRatio: renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
+          framingMode: player.framingMode, ticks: player.perf.ticks,
+          bufferSize: [renderer.domElement.width, renderer.domElement.height] };
+      },
       getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect,
         projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
       getTrainingHub: () => player.trainingHub?.getState() ?? null,
+      getStandingView: () => player.trainingHub?.getStandingView() ?? null,
       getTrainingFlight: () => player.hubFlight && {
         position: player.hubFlight.camera.position.toArray(), landed: player.hubFlight.landed,
       },
@@ -405,28 +382,23 @@ async function boot() {
 }
 function configureTeaching() {
   const skinned = buildMmRest(player.motion, player.coach);
-  callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, { hosted, depthSampler: createHotspotDepth(player, skinned) });
-  hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
-  const focusDirection = () => v5 ? legacyFocusDirection(player.time, selected) : surface.focusDirection();
-  detailView = createDetailView(player, phaseMap, () => { player.dirty = true; emitState(true); }, focusDirection);
-  detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
+  callouts = createHotspotCallouts(player, hotspotLayer, openMusclePlan, { hosted, depthSampler: createHotspotDepth(player, skinned) });
+  hitTester = createHitTester(player, skinned);
   const canvas = player.renderer.domElement;
   canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });
   canvas.addEventListener('pointercancel', () => { pointerDown = null; });
   canvas.addEventListener('pointerup', event => {
     const down = pointerDown; pointerDown = null;
     if (!down || player.trainingHub || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
-    const hit = (!detailed && callouts?.pick(event.clientX, event.clientY)) || (detailed && detailView.getModel() === 'muscles'
-      ? phaseMap.pickSurface(event.clientX, event.clientY, player.camera, canvas.getBoundingClientRect())
-      : hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items));
-    if (hit) selectFromTap(hit.groupId);
+    const hit = callouts?.pick(event.clientX, event.clientY) || hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items);
+    if (hit) openMusclePlan(hit.groupId);
   });
   return skinned;
 }
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;
   ready = false; pending = []; window.removeEventListener('message', receive);
-  perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
+  perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); phaseMap?.dispose(); player?.dispose();
 }
 window.addEventListener('pagehide', event => { if (event.persisted) player?.setVisible(false); else dispose(); });
 window.addEventListener('pageshow', event => { if (event.persisted) player?.setVisible(true); });

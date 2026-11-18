@@ -35,8 +35,6 @@ class SceneController extends ChangeNotifier {
   int? _presentationRequest;
   int _phase = 9;
   String? _selected;
-  String? _detail;
-  String _detailModel = 'motion';
 
   /// The platform reclaimed the WebView's content process (iOS memory
   /// pressure). The host may restart the scene without asking the user.
@@ -55,8 +53,6 @@ class SceneController extends ChangeNotifier {
   bool get presented => _presented;
   int get phase => _phase;
   String? get selected => _selected;
-  String? get detail => _detail;
-  String get detailModel => _detailModel;
   String? get errorCode => _errorCode;
 
   /// Advances only for an actual scene hit, never a command acknowledgement.
@@ -89,8 +85,6 @@ class SceneController extends ChangeNotifier {
     if (!value.isFinite || _disposed) return;
     _time = value.clamp(0, _period).toDouble();
     _playing = false;
-    _detail = null;
-    _resetDetailModel();
     command({'type': 'seek', 'time': _time});
     notifyListeners();
   }
@@ -99,8 +93,6 @@ class SceneController extends ChangeNotifier {
     if (_disposed) return;
     _playing = true;
     _selected = null;
-    _detail = null;
-    _resetDetailModel();
     command({'type': 'play'});
     notifyListeners();
   }
@@ -119,8 +111,8 @@ class SceneController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Render a paused training stage on a dedicated SceneView. Retaining the
-  /// two selected frames in one command also restores them after reloading.
+  /// Keep the selected frames together when the live view enters the training
+  /// hub or is recovered after a WebView process restart.
   void configureTrainingHub({
     required int phaseSource,
     required double phaseTime,
@@ -153,7 +145,17 @@ class SceneController extends ChangeNotifier {
       'showCallouts': showCallouts,
     };
     _trainingHubCommand = configuration;
+    _pending.remove('hub_exit');
     command(configuration);
+  }
+
+  void leaveTrainingHub() {
+    if (_trainingHubCommand == null) return;
+    _trainingHubCommand = null;
+    _trainingHubYaw = 0;
+    _pending.remove('hub_scene');
+    _pending.remove('hub_angle');
+    command({'type': 'hub_exit'});
   }
 
   void rotateTrainingHubAngle(double radians) {
@@ -211,50 +213,11 @@ class SceneController extends ChangeNotifier {
   void setCamera(String view) => command({'type': 'camera', 'view': view});
   void reset() => command({'type': 'reset'});
 
-  void select(String? groupId) {
-    if (_disposed) return;
-    _selected = groupId;
-    _playing = false;
-    command({'type': 'select', 'groupId': groupId});
-    notifyListeners();
-  }
-
   /// Bottom px of the 3D view covered by host chrome. The scene frames into
   /// the part above it and eases the change with its camera.
   void setViewInset(double bottom, {bool animate = true}) {
     if (_disposed) return;
     command({'type': 'viewport', 'bottom': bottom, 'animate': animate});
-  }
-
-  void setDetail(String? groupId) {
-    if (_disposed) return;
-    if (_detail == null || groupId == null) _resetDetailModel();
-    _detail = groupId;
-    _playing = false;
-    if (groupId != null) _selected = groupId;
-    command({'type': 'detail', 'groupId': groupId});
-    notifyListeners();
-  }
-
-  /// Both detail models observe the same paused source frame and muscle group.
-  void setDetailModel(String value) {
-    if (_disposed ||
-        _detail == null ||
-        !_detailModels.contains(value) ||
-        _detailModel == value) {
-      return;
-    }
-    _detailModel = value;
-    _playing = false;
-    command({'type': 'detail_model', 'value': value});
-    notifyListeners();
-  }
-
-  static const _detailModels = {'motion', 'muscles'};
-
-  void _resetDetailModel({bool discardQueuedCommand = true}) {
-    _detailModel = 'motion';
-    if (discardQueuedCommand) _pending.remove('detail_model');
   }
 
   void setLoop(double? start, double? end) =>
@@ -431,23 +394,12 @@ class SceneController extends ChangeNotifier {
       _phase = source.toInt();
     }
     if (type == 'select') {
-      _selectionGeneration++;
-      _selected = _groupId(event['groupId']);
+      final group = event['groupId'];
+      if (group is String && group.isNotEmpty) {
+        _selectionGeneration++;
+        _selected = group;
+      }
       _playing = false;
-    } else if (event.containsKey('selected')) {
-      _selected = _groupId(event['selected']);
-    }
-    if (event.containsKey('detail')) {
-      final detail = event['detail'];
-      _detail = detail is bool ? (detail ? _selected : null) : _groupId(detail);
-    }
-    if (_detail == null || _playing) {
-      // The scene may acknowledge its initial/previous state while a newer
-      // native command is still in flight. Only an explicit host action such
-      // as play, seek or closing detail can cancel a queued model choice.
-      _resetDetailModel(discardQueuedCommand: false);
-    } else if (_detailModels.contains(event['detailModel'])) {
-      _detailModel = event['detailModel'] as String;
     }
     if (type == 'presented') {
       _presentationRequest = null;
@@ -475,14 +427,6 @@ class SceneController extends ChangeNotifier {
     notifyListeners();
     if (_ready) unawaited(_flush());
     return true;
-  }
-
-  static String? _groupId(Object? value) {
-    if (value is String) return value;
-    if (value is Map && value['groupId'] is String) {
-      return value['groupId'] as String;
-    }
-    return null;
   }
 
   void reportError(String code) {
