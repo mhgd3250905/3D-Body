@@ -17,6 +17,7 @@ ap = argparse.ArgumentParser(); ap.add_argument('npz'); ap.add_argument('rig'); 
 ap.add_argument('--rev', default='r7', help='Pose-Hub revision tag, e.g. r8')
 ap.add_argument('--max-turn', type=float, default=80.0, help='max body rotation (deg) between neighbouring keys')
 A = ap.parse_args()
+REVN = int(A.rev.lstrip("r"))   # numeric revision (string compare put r10 before r9)
 d = np.load(A.npz); FPS = int(d['fps']); NF = len(d['P_pelvis']); T_END = (NF - 1) / FPS
 L = {k: np.array(v, float) for k, v in json.load(open(A.rig))['landmarks'].items()}
 n = lambda v: v / np.linalg.norm(v)
@@ -66,6 +67,7 @@ def editor_pose(i):
     w = float(np.clip((0.35 - up[1]) / 0.7, 0, 1))   # up.y >= .35 -> legs, <= -.35 -> shoulders
     t = i / FPS; te = t if t <= T1 else T0 - (t - T1); te = min(te, T0) if t <= T1 else te
     LOCK = {'left': te >= 0.95, 'right': 0.60 <= te <= 1.00}
+    if REVN >= 10: LOCK = {'right': te >= 0.95, 'left': 0.60 <= te <= 1.00}   # r10 is mirrored: left hand plants first, right hand is the axis
     locked_sides = [sd for sd in LOCK if LOCK[sd]]
     if locked_sides:   # Snow flat-palm wrist height differs from r7: move the inverted body with the planted hands
         p_hand = p_hand + np.array([0, np.mean([SNOW_FLAT_WRIST_Y - P(sd + 'Hand', i)[1] for sd in locked_sides]), 0])
@@ -116,18 +118,26 @@ T0, T1 = 1.40, 3.30
 ENTRY = [(0.00, '站立'), (0.24, '迈步起势'), (0.40, '宽站拧腰蓄力'), (0.56, '右手前伸找地'), (0.64, '右手撑地'),
          (0.75, '后腿抡起'), (0.85, '蹬地翻上 · 左手找地'), (0.97, '双手撑地 · 分腿倒立'), (1.14, '右手离地 · 带转'),
          (1.27, '叠手并腿夹头')]
-if A.rev >= 'r9':   # r9: entry re-keyed from the reference videos (face camera -> turn + hinge -> plant -> kick over -> left hand lands ahead)
+if REVN >= 9:   # r9: entry re-keyed from the reference videos (face camera -> turn + hinge -> plant -> kick over -> left hand lands ahead)
     ENTRY = [(0.00, '面向镜头展臂'), (0.22, '左转迈步'), (0.34, '弓步屈髋 · 右手下探'), (0.46, '右手找地'), (0.58, '右手撑地 · 后腿抡起'),
              (0.68, '前脚蹬地'), (0.80, '左臂侧平伸直'), (0.90, '左臂下落'), (1.00, '左手落地 · 分腿倒立'), (1.12, '右手离地'),
              (1.19, '屈腿 · 右手过去'), (1.27, '叠手屈腿夹头')]
+if REVN >= 10:   # r10: r9 mirrored (left hand plants first, right hand is the axis), hips driven over the hand, wide split, drive
+    ENTRY = [(0.00, '面向镜头展臂'), (0.22, '右转迈步'), (0.34, '弓步屈髋 · 左手下探'), (0.46, '左手找地 · 顶髋'), (0.58, '左手撑地 · 后腿抡起'),
+             (0.68, '大劈叉 · 前脚蹬地'), (0.80, '右臂侧平伸直'), (0.90, '右臂下落'), (1.00, '右手落地 · 分腿倒立'), (1.12, '左手离地'),
+             (1.19, '屈腿 · 左手过去'), (1.27, '叠手屈腿夹头')]
 EXIT = [(round(T1 + T0 - t, 3), nm) for t, nm in reversed(ENTRY)]
 EXIT_NAMES = {'站立': '落地站立', '迈步起势': '收步', '宽站拧腰蓄力': '宽站落地', '右手前伸找地': '右手离地起身',
               '右手撑地': '右手撑地 · 出', '后腿抡起': '后腿落下', '蹬地翻上 · 左手找地': '左手离地 · 落腿',
               '双手撑地 · 分腿倒立': '双手撑地 · 分腿 · 出', '右手离地 · 带转': '右手落地 · 拆叠', '叠手并腿夹头': '拆叠手 · 分腿'}
-if A.rev >= 'r9':
+if REVN >= 9:
     EXIT_NAMES = {'面向镜头展臂': '落地站立', '左转迈步': '收步转回', '弓步屈髋 · 右手下探': '弓步起身', '右手找地': '右手离地',
                   '右手撑地 · 后腿抡起': '右手撑地 · 后腿落下', '前脚蹬地': '前脚落地', '左臂侧平伸直': '左臂侧平抬起', '左臂下落': '左手离地',
                   '左手落地 · 分腿倒立': '双手撑地 · 分腿 · 出', '右手离地': '右手落地 · 拆叠', '屈腿 · 右手过去': '右手回撑', '叠手屈腿夹头': '拆叠手 · 屈腿'}
+if REVN >= 10:
+    EXIT_NAMES = {'面向镜头展臂': '落地站立', '右转迈步': '收步转回', '弓步屈髋 · 左手下探': '弓步起身', '左手找地 · 顶髋': '左手离地',
+                  '左手撑地 · 后腿抡起': '左手撑地 · 后腿落下', '大劈叉 · 前脚蹬地': '前脚落地', '右臂侧平伸直': '右臂侧平抬起', '右臂下落': '右手离地',
+                  '右手落地 · 分腿倒立': '双手撑地 · 分腿 · 出', '左手离地': '左手落地 · 拆叠', '屈腿 · 左手过去': '左手回撑', '叠手屈腿夹头': '拆叠手 · 屈腿'}
 keys = [(t, nm, 'entry') for t, nm in ENTRY] + [(T0, '叠手旋转开始', 'spin')]
 # spin: split evenly so no neighbour pair turns more than max-turn degrees
 f0, f1 = round(T0 * FPS), round(T1 * FPS)
@@ -171,7 +181,7 @@ for k, (t, nm, part) in enumerate(keys):
 # non-loop move: it starts and ends standing; make the last key exactly the first so the editor's loop closes on a hold
 steps[-1]['pose'] = json.loads(json.dumps(steps[0]['pose']))
 N = len(steps); period = round(T_END * N / (N - 1), 3)
-seq = {'format': 'flare-demonstration', 'version': 1, 'title': ('2000 · 面向镜头起势 → 侧翻撑地 → 叠手旋转 → 原路落地' if A.rev >= 'r9' else '2000 · 站立起势 → 叠手旋转 → 原路落地'), 'period': period,
+seq = {'format': 'flare-demonstration', 'version': 1, 'title': ('2000 · 面向镜头起势 → 左手撑地侧翻 → 右手轴叠手旋转 → 原路落地' if REVN >= 10 else '2000 · 面向镜头起势 → 侧翻撑地 → 叠手旋转 → 原路落地' if REVN >= 9 else '2000 · 站立起势 → 叠手旋转 → 原路落地'), 'period': period,
        'source': {'kind': 'move-2000', 'revision': f'pose-hub-2000-{A.rev}', 'file': f'b2000/{A.rev}.npz', 'script': 'b2000/editor/to_editor.py',
                   'fps': FPS, 'r7Duration': T_END, 'legRatio': round(RATIO, 4), 'stepIds': [s['id'] for s in steps]},
        'steps': steps}
