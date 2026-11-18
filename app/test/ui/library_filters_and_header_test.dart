@@ -1,5 +1,6 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/catalog.dart';
+import 'package:flare/data/flare_v5_drill.dart';
 import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/page_kit.dart';
@@ -55,6 +56,7 @@ void _expectResults(
   Catalog catalog, {
   required String tier,
   String? section,
+  bool includesStraightLegFlare = false,
   Set<String>? exactIds,
 }) {
   final cards = tester.widgetList<DrillCard>(find.byType(DrillCard)).toList();
@@ -65,8 +67,14 @@ void _expectResults(
     return;
   }
   expect(cards, isNotEmpty);
+  expect(
+    cards.where((card) => card.drill.id == flareV5DrillId),
+    hasLength(includesStraightLegFlare ? 1 : 0),
+  );
   for (final card in cards) {
-    expect(card.drill.tier, tier);
+    if (card.drill.id != flareV5DrillId) {
+      expect(card.drill.tier, tier);
+    }
     if (section != null) {
       expect(catalog.groupById(card.drill.groupId)!.section, section);
     }
@@ -165,18 +173,35 @@ void main() {
 
         await _tapLabel(tester, '核心');
         await _tapLabel(tester, '居家');
-        _expectResults(tester, catalog, tier: 'B', section: 'core');
+        _expectResults(
+          tester,
+          catalog,
+          tier: 'B',
+          section: 'core',
+          includesStraightLegFlare: true,
+        );
         expect(store.settings.tier, 'B');
 
         await _tapLabel(tester, '徒手');
-        _expectResults(tester, catalog, tier: 'A', section: 'core');
+        _expectResults(
+          tester,
+          catalog,
+          tier: 'A',
+          section: 'core',
+          includesStraightLegFlare: true,
+        );
         await _tapLabel(tester, '腿部');
         _expectResults(tester, catalog, tier: 'A', section: 'legs');
         await _tapLabel(tester, '全部部位');
-        _expectResults(tester, catalog, tier: 'A');
+        _expectResults(
+          tester,
+          catalog,
+          tier: 'A',
+          includesStraightLegFlare: true,
+        );
         expect(
           tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
-          17,
+          18,
         );
         final searchRect = tester.getRect(find.byType(TextField));
         await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));

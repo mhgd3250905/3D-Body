@@ -194,6 +194,8 @@ void main() {
         'settings About uses the fixed rail and restores scroll $language/$reduced',
         (tester) async {
           await phoneSize(tester);
+          // Use a short viewport so About requires scrolling in both locales.
+          tester.view.physicalSize = const Size(390, 640);
           final catalog = loadCatalogFixture();
           final store = LearningStore(
             catalog: catalog,
