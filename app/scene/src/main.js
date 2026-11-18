@@ -215,6 +215,7 @@ function command(value) {
         player.autoFrame = false;
         player.glide = player.projectionGlide = null;
         player.controls.enabled = false;
+        player.setDemandFrames(true);
         phaseMap.setHidden(true);
         if (fx) { fx.setEnabled(false); fx.root.visible = false; }
         player.v5?.setFxEnabled(false);
@@ -379,11 +380,15 @@ async function boot() {
       getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
-      getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
-        frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
-        pixelRatio: player.renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
-        framingMode: player.framingMode,
-        bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
+      getRenderState: () => {
+        const renderer = player.standingView?.renderer ?? player.renderer;
+        return { visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
+          frame: renderer.info.render.frame, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles,
+          pixelRatio: renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
+          framingMode: player.framingMode, ticks: player.perf.ticks,
+          bufferSize: [renderer.domElement.width, renderer.domElement.height] };
+      },
+      getStandingView: () => detailView?.getStandingView() ?? null,
       getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect,
         projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,

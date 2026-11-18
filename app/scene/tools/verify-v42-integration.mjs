@@ -16,8 +16,10 @@ import { createFlareFx } from '../src/fx.js';
 // Real emitted rigs exercise the App boundary, rather than a second IK runtime.
 globalThis.ProgressEvent ??= class { constructor(type, fields) { Object.assign(this, { type }, fields); } };
 globalThis.createImageBitmap ??= async () => ({ width: 1, height: 1, close() {} });
-globalThis.window = {}; window.parent = window;
-globalThis.document = { createElement: () => ({ setAttribute() {}, append() {}, querySelector: () => ({}), remove() {} }) };
+globalThis.window = { requestIdleCallback: () => 1, cancelIdleCallback() {} }; window.parent = window;
+globalThis.requestAnimationFrame = () => 1; globalThis.cancelAnimationFrame = () => {};
+globalThis.document = { hidden: false, createElement: () => ({ setAttribute() {}, append() {},
+  querySelector: () => ({}), getContext() { return { canvas: this, drawImage() {} }; }, remove() {} }) };
 const read = file => JSON.parse(fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8'));
 async function load(file) {
   let bytes = fs.readFileSync(new URL('../public/' + file.replace(/^\.\//, ''), import.meta.url));
@@ -95,17 +97,18 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
   let pixelRatio = 1;
   Object.assign(player, { coach: model, motion, scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(32, 1, 0.02, 40),
     container: { clientWidth: 390, clientHeight: 844, append() {} },
-    renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390, width: 390, height: 844 },
+    renderer: { domElement: { classList: { add() {}, remove() {} }, offsetWidth: 390, width: 390, height: 844,
+      after() {}, addEventListener() {}, removeEventListener() {} },
       shadowMap: { enabled: false }, info: { render: { calls: 0, triangles: 0 } },
-      getPixelRatio: () => pixelRatio, setPixelRatio(value) { pixelRatio = value; }, setSize() {}, render() {} },
+      getPixelRatio: () => pixelRatio, setPixelRatio(value) { pixelRatio = value; }, setSize() {}, setAnimationLoop() {}, render() {} },
     adaptive: createAdaptiveResolution(), keyLight: { castShadow: false },
     perf: { renders: 0, colorPixels: 0, shadowPasses: 0, shadowPixels: 0, skippedShadows: 0,
       calls: 0, triangles: 0, intervals: [], renderTimes: [], lastRenderTick: -1, ticks: 0, resizes: 0 },
     controls: { target: new THREE.Vector3(0, 0.5, 0), enableDamping: false, update() {} }, callbacks: {},
-    time: frozen.time, period: 9, speed: 1, playing: false, loopRange: null, running: false, autoFrame: true,
+    time: frozen.time, period: 9, speed: 1, playing: false, loopRange: null, running: false, autoFrame: true, visible: true,
     viewInset: 0, viewInsetTarget: 0, baseFov: 32, framingMode: 'main' });
   player.camera.position.set(0, 2, 4); player.scene.add(model);
-  const phaseMap = { scene: new THREE.Scene(), setDetail() {}, refreshEnvironment() {}, restorePhase() {},
+  const phaseMap = { scene: new THREE.Scene(), setDetail() {}, refreshEnvironment() {}, restorePhase() {}, releaseGpu() {},
     getFullBounds: () => new THREE.Box3(new THREE.Vector3(-0.5, 0, -0.3), new THREE.Vector3(0.5, 2, 0.3)) };
   const detail = createDetailView(player, phaseMap, null, () => selection.focusDirection());
   detail.open(group, selected); detail.setModel('muscles', selected); detail.setModel('motion', selected); detail.close();

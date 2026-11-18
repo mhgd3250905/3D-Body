@@ -44,7 +44,9 @@ const REVIEWS = [
 ];
 
 window.musclePhotography = (async () => {
-  const reviewMode = new URLSearchParams(location.search).has('toon-review');
+  const params = new URLSearchParams(location.search);
+  const toonV1 = params.has('toon-v1');
+  const reviewMode = toonV1 || params.has('toon-review');
   const maskMode = { value: false };
   const highlights = [new THREE.Vector4(), new THREE.Vector4()];
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
@@ -107,27 +109,32 @@ window.musclePhotography = (async () => {
     material.onBeforeCompile = titaniumCompile;
     material.customProgramCacheKey = () => functionalKey() + '-photography-titanium-v3';
     if (reviewMode) {
-      const toon = material.clone();
-      toon.onBeforeRender = material.onBeforeRender;
       material.onBeforeCompile = (shader, renderer) => {
         titaniumCompile(shader, renderer);
         installToonPreview(shader, maskMode, highlights, false);
       };
-      toon.onBeforeCompile = (shader, renderer) => {
-        titaniumCompile(shader, renderer);
-        installToonPreview(shader, maskMode, highlights, true);
-      };
       material.customProgramCacheKey = () => functionalKey() + '-photography-titanium-audit';
-      toon.customProgramCacheKey = () => functionalKey() + '-photography-toon-preview';
-      sampleMaterials.push({ mesh, material, toon });
-      materials.add(toon);
+      function makeToon(style) {
+        const toon = material.clone();
+        toon.onBeforeRender = material.onBeforeRender;
+        toon.onBeforeCompile = (shader, renderer) => {
+          titaniumCompile(shader, renderer);
+          installToonPreview(shader, maskMode, highlights, style);
+        };
+        toon.customProgramCacheKey = () => functionalKey() + '-photo-' + style;
+        materials.add(toon);
+        return toon;
+      }
+      const preview = makeToon(true);
+      const latest = toonV1 ? makeToon('muscle-toon-v1') : preview;
+      sampleMaterials.push({ mesh, material, preview, latest });
     }
     mesh.material = material; mesh.frustumCulled = false; meshes.push(mesh); materials.add(material);
   });
   model.updateMatrixWorld(true);
   function useToon(enabled) {
-    for (const { mesh, material, toon } of sampleMaterials) {
-      mesh.material = enabled ? toon : material;
+    for (const { mesh, material, preview, latest } of sampleMaterials) {
+      mesh.material = enabled === 'preview' ? preview : enabled ? latest : material;
     }
   }
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .02, 20);
@@ -171,6 +178,70 @@ window.musclePhotography = (async () => {
     captures.push({ groupId, label: group.label, colour: group.colour, webp });
     return { webp: toBase64(webp), png: toBase64(renderer.domElement.toDataURL('image/png')), camera: cameraInfo, label: group.label, colour: group.colour, panels: selection.muscles, deepRegion: !!selection.deep };
   }
+  function thumbnailBounds(canvas) {
+    const alpha = canvas.getContext('2d').getImageData(0, 0, 512, 512).data;
+    let left = 512, top = 512, right = 0, bottom = 0;
+    for (let y = 0; y < 512; y++) {
+      for (let x = 0; x < 512; x++) {
+        if (!alpha[(y * 512 + x) * 4 + 3]) continue;
+        left = Math.min(left, x);
+        top = Math.min(top, y);
+        right = Math.max(right, x + 1);
+        bottom = Math.max(bottom, y + 1);
+      }
+    }
+    return { left, top, right, bottom };
+  }
+  function photo512(source = renderer.domElement) {
+    const result = document.createElement('canvas');
+    result.width = result.height = 512;
+    const context = result.getContext('2d');
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(source, 0, 0, 512, 512);
+    return result;
+  }
+  function thumbnailCrop(entry) {
+    if (entry.crop) return entry.crop;
+    if (entry.width === 512 && entry.height === 512) return { x: 0, y: 0, width: 512, height: 512 };
+    const { left, top } = thumbnailBounds(photo512());
+    const x = Math.max(0, left - 5), y = Math.max(0, top - 5);
+    if (left === 512 || x + entry.width > 512 || y + entry.height > 512) {
+      throw new Error('Invalid legacy thumbnail crop for ' + entry.groupId);
+    }
+    return { x, y, width: entry.width, height: entry.height };
+  }
+  function setHighlights(rectangles) {
+    for (const [index, highlight] of highlights.entries()) {
+      highlight.set(...(rectangles[index] ?? [-100, -100, 1, 1]));
+    }
+  }
+  function captureToon(entry) {
+    if (!toonV1) throw new Error('Production thumbnails require toon-v1 mode');
+    const { selections: [{ group, selection }], cameraInfo } = prepare([entry.groupId], entry.camera);
+    useToon(false);
+    renderer.render(scene, camera);
+    const crop = thumbnailCrop(entry);
+    const dimensions = renderer.domElement.width;
+    const { mask, stats } = captureMasks(renderer, scene, camera, maskMode, useToon, dimensions);
+    if (!stats.groups[entry.groupId] || !stats.selectedPixels || (selection.deep && !stats.hatchPixels)) {
+      throw new Error('Missing selected region or depth hatch: ' + entry.groupId);
+    }
+    const sample = REVIEWS.find(({ groups, camera }) => groups.length === 1 &&
+      groups[0] === entry.groupId && camera.span === entry.camera.span);
+    setHighlights(sample?.highlights ?? []);
+    useToon(true);
+    renderer.render(scene, camera);
+    const art = photo512(inkToon(renderer, mask));
+    useToon(false);
+    const canvas = document.createElement('canvas');
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+    canvas.getContext('2d').drawImage(art, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height);
+    const webp = canvas.toDataURL('image/webp', .96);
+    if (!webp.startsWith('data:image/webp;')) throw new Error('The capture browser has no WebP encoder.');
+    return { webp: toBase64(webp), camera: cameraInfo, crop, label: group.label, colour: group.colour,
+      panels: selection.muscles, deepRegion: !!selection.deep, mask: stats };
+  }
   function compare(id) {
     if (!reviewMode) throw new Error('Comparison requires toon-review mode');
     const shot = REVIEWS.find(entry => entry.id === id);
@@ -178,18 +249,20 @@ window.musclePhotography = (async () => {
     const { cameraInfo, selections } = prepare(shot.groups, shot.camera);
     useToon(false);
     renderer.render(scene, camera);
-    const before = document.createElement('canvas');
-    before.width = before.height = 512;
-    before.getContext('2d').drawImage(renderer.domElement, 0, 0, 512, 512);
+    const before = photo512();
     const pixels = captureMasks(renderer, scene, camera, maskMode, useToon, renderer.domElement.width);
-    for (const [index, highlight] of highlights.entries()) {
-      highlight.set(...(shot.highlights[index] ?? [-100, -100, 1, 1]));
+    setHighlights(shot.highlights);
+    let approved = null;
+    if (toonV1) {
+      useToon('preview');
+      renderer.render(scene, camera);
+      approved = inkToon(renderer, pixels.mask);
     }
     useToon(true);
     renderer.render(scene, camera);
     const after = inkToon(renderer, pixels.mask);
     useToon(false);
-    const image = makeComparison(before, after, shot.title, selections.some(({ selection }) => selection.deep));
+    const image = makeComparison(before, after, shot.title, selections.some(({ selection }) => selection.deep), approved);
     return {
       png: toBase64(image.toDataURL('image/png')), width: image.width, height: image.height,
       camera: cameraInfo, groups: shot.groups, mask: pixels.stats,
@@ -216,7 +289,7 @@ window.musclePhotography = (async () => {
   return {
     groups: FLARE_GROUPS.map(group => group.groupId),
     palette: Object.fromEntries(FLARE_GROUPS.map(group => [group.groupId, group.colour])),
-    reviews: REVIEWS.map(review => review.id), capture, contactSheet, compare, audit,
+    reviews: REVIEWS.map(review => review.id), capture, captureToon, contactSheet, compare, audit,
     info: { threeRevision: THREE.REVISION, width: 512, height: 512, renderWidth: 1024, renderHeight: 1024, alpha: true, meshCount: meshes.length, vertices: meshes.reduce((sum, mesh) => sum + mesh.geometry.attributes.position.count, 0), toneMapping: 'ACESFilmic', exposure: renderer.toneMappingExposure, material: 'brushed titanium silver with original-colour enamel teaching regions', baseColour: '#b8bdc5', grooveColour: '#747c87', roughness: .28, metalness: .88, clearcoat: .12, clearcoatRoughness: .24, enamel: { metalness: .1, roughness: .44 }, brush: { roughnessAmplitude: .025, cyclesPerMetre: 2100 / (2 * Math.PI), antialias: 'fwidth footprint' }, lights: { environment: 1, hemisphere: .35, key: 1.4, fill: .45, edge: .6 }, background: 'transparent' },
     dispose() { for (const mesh of meshes) mesh.geometry.dispose(); for (const material of materials) material.dispose(); environmentMap.dispose(); environment.dispose(); pmrem.dispose(); renderer.dispose(); },
   };

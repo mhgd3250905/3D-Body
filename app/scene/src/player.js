@@ -45,7 +45,7 @@ export class FlarePlayer {
     Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.13, enablePan: false, minDistance: 0.45, maxDistance: 7, minPolarAngle: 0.12, maxPolarAngle: Math.PI * 0.9 });
     // An orbit-only change bypasses the `dirty` setter, so the next frame
     // knows the pose, lights and stage did not change.
-    this.onControlsChange = () => { this.redraw = true; this.cameraMoved = true; };
+    this.onControlsChange = () => { this.requestRedraw(); this.cameraMoved = true; };
     this.controls.addEventListener('change', this.onControlsChange);
     this.autoFrame = true;
     this.controls.addEventListener('start', () => { this.autoFrame = false; this.glide = null; });
@@ -65,6 +65,7 @@ export class FlarePlayer {
     this.setQuality('medium');
     this.resizeObserver = new ResizeObserver(() => this.resize()); this.resizeObserver.observe(container); this.resize();
     this.onVisibility = () => {
+      this.standingView?.setVisible(this.visible && !document.hidden);
       if (document.hidden) { this.playing = false; this.stop(); callbacks.onTime?.(this.time); }
       else if (this.visible) { this.dirty = true; this.start(); }
     };
@@ -91,9 +92,15 @@ export class FlarePlayer {
 
   // Every request outside the orbit handler may change the scene itself.
   get dirty() { return this.redraw; }
-  set dirty(value) { this.redraw = !!value; if (value) this.sceneDirty = true; }
+  set dirty(value) {
+    if (value) { this.sceneDirty = true; this.requestRedraw(); }
+    else this.redraw = false;
+  }
   /** Redraw for overlay-only motion (labels): pose, lights and stage unchanged. */
-  requestRedraw() { this.redraw = true; }
+  requestRedraw() {
+    this.redraw = true;
+    if (this.demandFrames) this.start();
+  }
 
   createEnvironment() {
     this.environment?.dispose();
@@ -148,9 +155,32 @@ export class FlarePlayer {
 
   start() {
     if (this.running || this.disposed || this.contextLost || !this.visible || document.hidden) return;
-    this.running = true; this.last = performance.now(); this.renderer.setAnimationLoop(now => this.tick(now));
+    this.running = true; this.last = performance.now();
+    if (this.demandFrames) this.scheduleDemandFrame();
+    else this.renderer.setAnimationLoop(now => this.tick(now));
   }
-  stop() { this.running = false; this.renderer.setAnimationLoop(null); }
+  stop() {
+    this.running = false;
+    this.renderer.setAnimationLoop(null);
+    if (this.demandFrame != null) cancelAnimationFrame(this.demandFrame);
+    this.demandFrame = null;
+  }
+  setDemandFrames(enabled) {
+    if (!!this.demandFrames === enabled) return;
+    this.stop();
+    this.demandFrames = enabled;
+    this.dirty = true;
+    this.start();
+  }
+  scheduleDemandFrame() {
+    this.demandFrame = requestAnimationFrame(now => {
+      this.demandFrame = null;
+      const moving = this.tick(now);
+      if (!this.running || !this.demandFrames || this.demandFrame != null) return;
+      if (moving || this.dirty || this.adaptive.moving) this.scheduleDemandFrame();
+      else this.running = false;
+    });
+  }
   tick(now) {
     const interval = Math.max(0, now - this.last);
     const delta = Math.min(interval / 1000, 0.06); this.last = now;
@@ -185,31 +215,37 @@ export class FlarePlayer {
       if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
       perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
     }
+    return moving || flightMoving;
   }
   render() {
     if (this.trainingHub) return this.trainingHub.render();
     this.callbacks.onBeforeRender?.();
-    const r = this.renderer, height = this.container.clientHeight;
     const flight = this.hubFlight;
     const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
     const top = Math.round(flight?.topInset ?? 0);
-    const clipped = top + bottom > 0 && top + bottom < height;
-    if (clipped) {
-      // Match the destination viewport at the handoff, including its shadow.
-      r.setScissorTest(false); r.clear();
-      r.setScissor(0, bottom, this.container.clientWidth, height - bottom - top);
-      r.setScissorTest(true);
-    }
-    try {
-      this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
-        !!flight || (this.adaptive.enabled && this.cameraOnly));
-    } finally {
-      if (clipped) r.setScissorTest(false);
+    const standing = this.standingView;
+    if (standing) {
+      if (!standing.render(this.displayScene, this.camera, bottom)) return;
+    } else {
+      this.withStageScissor(bottom, top, () => this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
+        !!flight || (this.adaptive.enabled && this.cameraOnly)));
     }
     this.cameraOnly = false;
+    const r = standing?.renderer ?? this.renderer;
     const perf = this.perf, canvas = r.domElement;
     perf.renders++; perf.colorPixels += canvas.width * canvas.height;
     perf.calls = r.info.render.calls; perf.triangles = r.info.render.triangles;
+  }
+  withStageScissor(bottom, top, render) {
+    const r = this.renderer, height = this.container.clientHeight;
+    const clipped = top + bottom > 0 && top + bottom < height;
+    if (!clipped) return render();
+    // Match the destination viewport at the handoff, including its shadow.
+    r.setScissorTest(false); r.clear();
+    r.setScissor(0, bottom, this.container.clientWidth, height - bottom - top);
+    r.setScissorTest(true);
+    try { return render(); }
+    finally { r.setScissorTest(false); }
   }
   renderActor(scene, camera, reusePoseShadow) {
     const r = this.renderer;
@@ -259,8 +295,14 @@ export class FlarePlayer {
     return this.v5 ? legacyPoseBounds(this.time) : this.getMetrics().bounds;
   }
   setDisplayScene(scene = null) { this.displayScene = scene; this.dirty = true; }
+  setStandingView(view = null) {
+    if (this.standingView === view) return;
+    this.standingView = view;
+    this.setDemandFrames(!!view);
+  }
   setVisible(visible) {
     this.visible = !!visible;
+    this.standingView?.setVisible(this.visible && !document.hidden);
     if (this.visible && !document.hidden) { this.dirty = true; this.start(); }
     else { this.playing = false; this.stop(); this.callbacks.onTime?.(this.time); }
   }
@@ -350,7 +392,7 @@ export class FlarePlayer {
    * reads as a sudden zoom-in and a flip. Longer turns get a little more time. */
   glideTo(position, target, ms = null) {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!this.running || reduce || ms === 0) { this.setCameraView(position, target); return; }
+    if ((!this.running && !this.demandFrames) || reduce || ms === 0) { this.setCameraView(position, target); return; }
     const damping = this.controls.enableDamping;
     this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
     const fromT = this.controls.target.clone(), toT = target.clone();
@@ -419,13 +461,16 @@ export class FlarePlayer {
   }
   dispose() {
     if (this.disposed) return; this.disposed = true; this.stop();
+    this.standingView?.close();
     this.resizeObserver.disconnect(); document.removeEventListener('visibilitychange', this.onVisibility);
     this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
     this.renderer.domElement.removeEventListener('webglcontextrestored', this.onContextRestored);
     this.controls.removeEventListener('change', this.onControlsChange); this.controls.dispose();
     this.trainingHub?.releaseGpu();
     this.motion?.dispose();
-    disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
+    disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose();
+    if (this.trainingHub) this.renderer.forceContextLoss();
+    this.renderer.domElement.remove();
   }
 }
 

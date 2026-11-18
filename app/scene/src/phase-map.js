@@ -3,6 +3,7 @@ import * as MM from './legacy/muscle-map.js';
 import { GROUPS, phaseAt, phaseTicks, phaseEmphasisItems } from './phase.js';
 import { loadOfflineGlb } from './assets.js';
 import { applyFunctionalSurface, setFunctionalFocus } from './muscle-material.js';
+import { applyMannequinToon, createMannequinOutlineMaterial } from './mannequin-toon.js';
 import { thumbnailDensity } from './thumbnail.js';
 import { sceneStrings, groupLabel } from './localization.js';
 
@@ -22,12 +23,24 @@ export async function createPhaseMap(player, onSelect) {
   uniforms.mmHubFraming = { value: 0 };
   const strokeDensity = { value: 2 };
   const meshes = [], materials = new Set();
+  const outlineMaterial = createMannequinOutlineMaterial(uniforms, strokeDensity);
+  materials.add(outlineMaterial);
   model.traverse(mesh => {
     if (!mesh.isMesh) return;
     for (const material of [].concat(mesh.material)) material.dispose();
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72, metalness: 0 });
-    applyFunctionalSurface(material, uniforms, { thumbnail: true, density: strokeDensity }); mesh.material = material; meshes.push(mesh); materials.add(material);
+    applyFunctionalSurface(material, uniforms, { thumbnail: true, density: strokeDensity });
+    applyMannequinToon(material);
+    mesh.material = material; meshes.push(mesh); materials.add(material);
   });
+  for (const mesh of meshes) {
+    const outline = new THREE.Mesh(mesh.geometry, outlineMaterial);
+    outline.userData.mannequinOutline = true;
+    // Crop blending uses the same gate as the body. Paint ink beneath it.
+    outline.renderOrder = -1;
+    outline.raycast = () => {};
+    mesh.add(outline);
+  }
   model.updateMatrixWorld(true);
   const cameras = [1, -1].map(sign => {
     const camera = new THREE.PerspectiveCamera(26, 0.5, 0.02, 20);
@@ -96,9 +109,9 @@ export async function createPhaseMap(player, onSelect) {
     uniforms.mmHubBottom.value = bottom;
     if (uniforms.mmHubFraming.value === 1) return;
     uniforms.mmHubFraming.value = 1;
-    for (const material of materials) {
-      material.transparent = true;
-      material.needsUpdate = true;
+    for (const mesh of meshes) {
+      mesh.material.transparent = true;
+      mesh.material.needsUpdate = true;
     }
   }
   function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }

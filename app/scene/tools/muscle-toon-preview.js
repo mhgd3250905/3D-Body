@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { FLARE_GROUPS } from '../src/legacy/flare-muscle-groups.js';
 import { MUSCLES, resolveGroup } from '../src/legacy/muscle-map.js';
+import { mannequinToonLighting } from '../src/mannequin-toon.js';
 
 const groupByPanel = new Uint8Array(MUSCLES.length);
 const panelById = new Map(MUSCLES.map(({ id, index }) => [id, index]));
@@ -22,7 +23,7 @@ export function installToonPreview(shader, maskMode, highlights, toon) {
   shader.uniforms.photoToonBase = { value: base };
   shader.uniforms.photoToonShade = { value: shade };
   shader.uniforms.photoHighlights = { value: highlights };
-  let source = `
+  let source = (toon === 'muscle-toon-v1' ? mannequinToonLighting : '') + `
 uniform bool photoMask;
 uniform vec3 photoToonLight, photoToonBase, photoToonShade;
 uniform vec4 photoHighlights[2];
@@ -48,6 +49,15 @@ float photoHighlight(vec4 bounds) {
   // sole line pattern inside any group.
   const lighting = toon ? `
     if (!photoMask) {
+      ${toon === 'muscle-toon-v1' ? `
+      float selection = clamp(abs(mmSelV), 0.0, 1.0) * mmShown * mmIsMuscle * mmPanelCoverage;
+      if (mmSelV < 0.0) selection *= mix(0.26, 1.0, photoDepthHatch);
+      float hardHighlight = photoHighlights[0].x < 0.0
+        ? mannequinHardHighlight(mannequinLight(normal, vMmPos), mmS1)
+        : max(photoHighlight(photoHighlights[0]), photoHighlight(photoHighlights[1]));
+      vec3 colour = mannequinToonColour(normal, vMmPos, mmPc, selection, hardHighlight);
+      gl_FragColor = sRGBTransferOETF(vec4(colour, 1.0));
+      ` : `
       float nDotL = dot(normal, photoToonLight);
       // Keep the original head silhouette and suppress face-like marks that
       // a hard ramp can bring out in the source mesh's minor surface relief.
@@ -62,6 +72,7 @@ float photoHighlight(vec4 bounds) {
       float selection = clamp(abs(mmSelV), 0.0, 1.0) * mmShown * mmIsMuscle * mmPanelCoverage;
       if (mmSelV < 0.0) selection *= mix(0.26, 1.0, photoDepthHatch);
       gl_FragColor = sRGBTransferOETF(vec4(mix(neutral, selectedColour, selection), 1.0));
+      `}
     }
   ` : '';
   shader.fragmentShader = source.replace(finalChunk, finalChunk + lighting + `
@@ -85,19 +96,20 @@ function canvasAt(size) {
 function countMask(before, after) {
   const groupPixels = new Uint32Array(FLARE_GROUPS.length);
   let regionDifferences = 0, selectionDifferences = 0, hatchDifferences = 0;
-  let silhouetteDifferences = 0, hatchPixels = 0;
+  let silhouetteDifferences = 0, selectedPixels = 0, hatchPixels = 0;
   for (let i = 0; i < before.length; i += 4) {
     if (before[i] !== after[i]) regionDifferences++;
     if (before[i + 1] !== after[i + 1]) selectionDifferences++;
     if (before[i + 2] !== after[i + 2]) hatchDifferences++;
     if (before[i + 3] !== after[i + 3]) silhouetteDifferences++;
+    if (before[i + 1]) selectedPixels++;
     if (before[i + 2]) hatchPixels++;
     const group = groupByPanel[before[i] - 1];
     if (group) groupPixels[group - 1]++;
   }
   return {
     pixels: before.length / 4, regionDifferences, selectionDifferences,
-    hatchDifferences, silhouetteDifferences, hatchPixels,
+    hatchDifferences, silhouetteDifferences, selectedPixels, hatchPixels,
     groups: Object.fromEntries(FLARE_GROUPS.map(({ groupId }, i) => [groupId, groupPixels[i]])),
   };
 }
@@ -197,25 +209,29 @@ export function inkToon(renderer, mask) {
   return result;
 }
 
-export function makeComparison(before, after, title, deep) {
+export function makeComparison(before, after, title, deep, approved = null) {
   const panel = 512, gap = 12, header = 79, footer = deep ? 42 : 20;
   const canvas = canvasAt(1);
-  canvas.width = panel * 2 + gap;
+  const images = approved ? [before, approved, after] : [before, after];
+  const labels = approved
+    ? ['原版 · 拉丝钛', '已确认样图 · 原阴影', 'muscle-toon-v1 · 浅一档阴影']
+    : ['现版 · 拉丝钛', '新版 · 日漫样图'];
+  canvas.width = panel * images.length + gap * (images.length - 1);
   canvas.height = header + panel + footer;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#eff2f6';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#f8f9fb';
-  ctx.fillRect(0, header, panel, panel);
-  ctx.fillRect(panel + gap, header, panel, panel);
-  ctx.drawImage(before, 0, header, panel, panel);
-  ctx.drawImage(after, panel + gap, header, panel, panel);
+  for (const [index, image] of images.entries()) {
+    const x = index * (panel + gap);
+    ctx.fillStyle = '#f8f9fb';
+    ctx.fillRect(x, header, panel, panel);
+    ctx.drawImage(image, x, header, panel, panel);
+  }
   ctx.fillStyle = '#202938';
   ctx.font = '700 24px "Microsoft YaHei", sans-serif';
   ctx.fillText(title, 18, 34);
   ctx.font = '600 16px "Microsoft YaHei", sans-serif';
-  ctx.fillText('现版 · 拉丝钛', 18, 64);
-  ctx.fillText('新版 · 日漫样图', panel + gap + 18, 64);
+  labels.forEach((label, index) => ctx.fillText(label, index * (panel + gap) + 18, 64));
   if (deep) {
     ctx.font = '15px "Microsoft YaHei", sans-serif';
     ctx.fillText('斜线表示深层肌群', 18, canvas.height - 15);

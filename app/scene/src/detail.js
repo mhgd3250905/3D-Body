@@ -4,6 +4,7 @@ import { resolveGroup, MUSCLE_BY_ID } from './legacy/muscle-map.js';
 import { CAMERA_PRESETS } from './player.js';
 import { createThumbnailRenderer, fitThumbnailCamera, thumbnailDensity } from './thumbnail.js';
 import { sceneStrings } from './localization.js';
+import { createStandingView } from './standing-view.js';
 
 export function createDetailView(player, phaseMap, onModelChange, focusDirection = () => null) {
   let saved = null, selected = null, model = 'motion', views = {};
@@ -15,6 +16,7 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
   mini.innerHTML = '<span>肌群图</span>'; player.container.append(mini);
   const miniImage = document.createElement('canvas'); miniImage.setAttribute('aria-hidden', 'true'); mini.append(miniImage);
   const thumbnail = createThumbnailRenderer(player.renderer, miniImage);
+  const standing = createStandingView(player, phaseMap.releaseGpu);
   let thumbnailKey = null, thumbnailEnvironment = null;
   // A model swap can arrive before the detail camera finishes gliding. Save
   // its destination so returning to the locked athlete view cannot strand
@@ -64,6 +66,20 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     lockCamera(); phaseMap.refreshEnvironment(); player.setDisplayScene(model === 'muscles' ? phaseMap.scene : null);
     updateLocalization();
   }
+  function showStanding() {
+    if (model !== 'muscles') {
+      standing.close(); player.setStandingView(null);
+      return;
+    }
+    if (!standing.getState().live) standing.show(context => {
+      const actor = player.renderer, canvas = actor.domElement;
+      const bottom = Math.round(player.viewInset);
+      player.withStageScissor(bottom, 0, () => actor.render(phaseMap.scene, player.camera));
+      context.canvas.width = canvas.width; context.canvas.height = canvas.height;
+      context.drawImage(canvas, 0, 0);
+    });
+    player.setStandingView(standing);
+  }
   function updateLocalization() {
     mini.querySelector('span').textContent = model === 'motion' ? sceneStrings.muscleMap ?? '肌群图' : sceneStrings.motion ?? '动作';
     mini.setAttribute('aria-label', model === 'motion' ? sceneStrings.switchToMuscles ?? 'Muscles' : sceneStrings.switchToMotion ?? 'Motion');
@@ -78,14 +94,18 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     selected = groupId; mini.hidden = false; phaseMap.setDetail(groupId, phase); showScene();
     // Opening or moving to another muscle glides the camera there.
     if (entering || changed) { views = {}; fit(phase, null, true); }
+    showStanding();
   }
   function setModel(value, phase) {
     if (!selected || !['motion', 'muscles'].includes(value) || value === model) return false;
-    views[model] = snapshot(); model = value; showScene(); fadeIn();
+    views[model] = snapshot(); model = value; showScene();
     if (views[model]) restore(views[model]); else fit(phase);
+    showStanding();
+    if (model === 'motion') fadeIn();
     player.autoFrame = false; player.dirty = true; return true;
   }
   function close() {
+    standing.close(); player.setStandingView(null);
     player.setDisplayScene(null); phaseMap.restorePhase();
     if (saved) {
       const home = saved; saved = null;
@@ -128,5 +148,6 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
   }
   function releaseGpu() { thumbnail.dispose(); thumbnailKey = null; thumbnailEnvironment = null; }
   return { open, close, toggle, setModel, reset, refit, renderMini, releaseGpu, updateLocalization, mini, getModel: () => model,
+    getStandingView: standing.getState,
     dispose() { close(); releaseGpu(); mini.remove(); } };
 }

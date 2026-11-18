@@ -27,7 +27,7 @@ function placeCamera(camera, shot, width, height, viewHeight) {
 export function getHubMuscleFrame(scene, bounds) {
   const silhouette = [], vertex = new THREE.Vector3();
   scene.traverse(mesh => {
-    if (!mesh.isMesh) return;
+    if (!mesh.isMesh || mesh.userData.mannequinOutline) return;
     const position = mesh.geometry.attributes.position;
     for (let index = 0; index < position.count; index++) {
       vertex.fromBufferAttribute(position, index).applyMatrix4(mesh.matrixWorld);
@@ -252,7 +252,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       r.clear();
       r.setScissor(0, height - muscleHeight, width, muscleHeight);
       r.setScissorTest(true);
-      try { r.render(phaseMap.scene, muscleCamera); }
+      try { phaseMap.withThumbnailDensity(r.getPixelRatio(), () => r.render(phaseMap.scene, muscleCamera)); }
       finally { r.setScissorTest(false); }
       return;
     }

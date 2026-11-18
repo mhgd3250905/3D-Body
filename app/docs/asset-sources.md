@@ -68,17 +68,17 @@ App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`
 
 原人物署名 **Snow Rig © Blender Foundation | studio.blender.org** 与 CC BY 4.0 来源保留于 [Snow-ATTRIBUTION.md](../assets/licenses/Snow-ATTRIBUTION.md)。本段记录用户选定的设计与资源同步；构建、安装与设备验证以版本台账和验证记录为准。
 
-## 最近训练卡肌群摄影（2026-11-17）
+## 肌群插图与最近训练卡（2026-11-18）
 
-`assets/plan_resume_muscles/` 中的 17 张 512 × 512 透明 WebP 仅用于计划页最近训练卡。使用下文 L26 的银色人台、原标识区和光照，逐组拉远镜头以容纳完整头部。原素材来源和 CC0-1.0 许可见 [解剖资产说明](../../docs/anatomy-assets.md)。[摄影清单](../assets/plan_resume_muscles/manifest.json)记录源网格、镜头参数和输入输出 SHA-256。
+`muscle-toon-v1` 使用与实时人台共享的哑光卡通着色。条目与最近训练卡各有 17 张透明 WebP，沿用各自的正交机位、裁切和输出尺寸。复现命令为 `node app/tools/render-muscle-thumbnails.mjs --toon-v1`，添加 `--preview` 可只输出验证文件。报告在上墨和编码前对比 34 个机位的分区 ID、选区、深层斜线与底模轮廓。原模型与 CC0-1.0 许可见 [解剖资产说明](../../docs/anatomy-assets.md)。[条目清单](../assets/muscles/manifest.json) · [最近训练卡清单](../assets/plan_resume_muscles/manifest.json)
 
-## 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
+## 历史：肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
 
 用户反馈L25米白质感仍不足，授权尝试金属。L26的17张透明512×512 WebP共592,628字节，采用钛银色金属人台和保留原色的珐琅教学选区；模型、原分区、左右与逐组镜头沿用L24/L25，仅更改离线截图的材质、反射和光照，运行时人台保持。L26安装后用户先反馈不满意并要求试作黄色橡胶，随后看手机银色截图明确确认“这个银色可以 就这个了”；当前选用L26银色肌群图文条目外观。该确认仅覆盖此处肌群图片与条目，不扩大为全App或其他T02验收。
 
 截图使用物理材质与本地工作室环境反射，基础色 `#b8bdc5`、金属度0.88、粗糙度0.28；细微拉丝以0.025幅度改变表面粗糙度，按像素覆盖抑制不可分辨纹理，不修改原网格或法线。肌群区域使用原色、金属度0.10和粗糙度0.44，保持颜色清晰；透明背景、1024渲染后缩小为512的流程保持。
 
-当前摄影清单采用L26的 `muscle-photography-v3-titanium`，保存尺寸、材质/光照、镜头、输出字节与SHA-256及工具源哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。复现使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L26原始1024图、联系表和报告保留在同一目录。L24/L25素材报告和具名交付包保留作历史。
+L26 的 `muscle-photography-v3-titanium` 清单保存尺寸、材质、光照、镜头与输入输出 SHA-256，历史副本见 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。L26 原始 1024 图、联系表和报告保留在同一目录。L24/L25 素材报告和具名交付包保留作历史。
 
 人台继续来自Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，来源见 [解剖资产说明](../../docs/anatomy-assets.md)。反光、选区色和深层斜线只用于展示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径和L24图文组件保持。
 
