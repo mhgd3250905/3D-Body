@@ -14,6 +14,7 @@ sys.path.insert(0, '/workspace/work/pylib')
 import numpy as np
 
 ap = argparse.ArgumentParser(); ap.add_argument('npz'); ap.add_argument('rig'); ap.add_argument('out')
+ap.add_argument('--rev', default='r7', help='Pose-Hub revision tag, e.g. r8')
 ap.add_argument('--max-turn', type=float, default=80.0, help='max body rotation (deg) between neighbouring keys')
 A = ap.parse_args()
 d = np.load(A.npz); FPS = int(d['fps']); NF = len(d['P_pelvis']); T_END = (NF - 1) / FPS
@@ -163,7 +164,7 @@ for k, (t, nm, part) in enumerate(keys):
 steps[-1]['pose'] = json.loads(json.dumps(steps[0]['pose']))
 N = len(steps); period = round(T_END * N / (N - 1), 3)
 seq = {'format': 'flare-demonstration', 'version': 1, 'title': '2000 · 站立起势 → 叠手旋转 → 原路落地', 'period': period,
-       'source': {'kind': 'move-2000', 'revision': 'pose-hub-2000-r7', 'file': 'b2000/r7.npz', 'script': 'b2000/editor/to_editor.py',
+       'source': {'kind': 'move-2000', 'revision': f'pose-hub-2000-{A.rev}', 'file': f'b2000/{A.rev}.npz', 'script': 'b2000/editor/to_editor.py',
                   'fps': FPS, 'r7Duration': T_END, 'legRatio': round(RATIO, 4), 'stepIds': [s['id'] for s in steps]},
        'steps': steps}
 json.dump(seq, open(A.out, 'w'), ensure_ascii=False, indent=1)

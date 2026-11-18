@@ -34,6 +34,7 @@
 - `tools/move-2000/from_editor.py <输入> public/coach/coach-rig.json <keys.json>`：输入可以是完整动画 JSON、正式展示、姿势库导出，或分享码（存成文本文件或直接贴在命令行）。输出 Pose-Hub 通道（pelvis、pelvisQ、spine、Wrist、Elbow、Ankle、Knee、Toe/Sole、Fing/Palm、Locked），世界坐标，旋转角已烘焙（th = 0），腿长换回 Pose-Hub 骨架。分享码按 `--base`（默认 `public/coach/move-2000-sequence.json`）还原。
 - `tools/move-2000/share_code.py <分享码或文件> [--out backup.json]`：把分享码还原成完整备份 JSON。
 - `tools/move-2000/to_editor.py <rN.npz> public/coach/coach-rig.json public/coach/move-2000-sequence.json`：从 Pose-Hub 逐帧结果重新生成预载关键帧。换版本后，旧版本的分享码要用旧的 sequence 文件作 `--base` 还原。
+- 当前预载为 r8（`--rev r8`）；r7 版预载另存 `tools/move-2000/move-2000-sequence-r7.json`，r7 分享码用它作 `--base` 还原。
 
 ## 检查
 
