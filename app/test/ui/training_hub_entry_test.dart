@@ -129,4 +129,31 @@ void main() {
     expect(find.byType(SceneView), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('a live-entry hub never shows the yaw-0 loading still', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    await tester.pumpWidget(
+      testApp(
+        Scaffold(
+          body: FlareTrainingHubPage(
+            catalog: catalog,
+            actorBody: 'original',
+            quality: 'balanced',
+            enableScene: true,
+            initialTime: 2,
+            mountScene: false,
+            liveEntry: true,
+            visible: true,
+            onBack: () {},
+            onAngle: (_) {},
+            onMuscle: (_) {},
+          ),
+        ),
+      ),
+    );
+    expect(find.byKey(fallback), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

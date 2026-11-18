@@ -39,6 +39,7 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.onAngle,
     required this.onMuscle,
     this.actorHandoff = false,
+    this.liveEntry = false,
     this.interactionLocked = false,
     this.leaving = false,
     this.sceneBoundsKey,
@@ -59,6 +60,11 @@ class FlareTrainingHubPage extends StatefulWidget {
   final ValueChanged<Phase> onAngle;
   final ValueChanged<MuscleGroup> onMuscle;
   final bool actorHandoff;
+
+  /// The live home athlete carried this visit in and will carry it out.
+  /// The pre-rendered yaw-0 still must never cover the stage in between:
+  /// it reads as a one-frame jump to a different camera angle.
+  final bool liveEntry;
   final bool interactionLocked;
   final bool leaving;
   final GlobalKey? sceneBoundsKey;
@@ -80,6 +86,9 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   bool _requestedPresentation = false;
   bool _returning = false;
   bool _presented = false;
+  // Once this stage has shown a real frame, a later re-presentation keeps
+  // that frame on screen instead of swapping in the loading still.
+  bool _everPresented = false;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
@@ -112,7 +121,10 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
 
   void _sceneChanged() {
     if (_presented != _stage.presented) {
-      setState(() => _presented = _stage.presented);
+      setState(() {
+        _presented = _stage.presented;
+        if (_presented) _everPresented = true;
+      });
     }
     if (!_stage.ready) {
       _requestedPresentation = _reportedPresentation = false;
@@ -286,7 +298,10 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                         ? Stack(
                             fit: StackFit.expand,
                             children: [
-                              if (!_presented && !widget.actorHandoff)
+                              if (!_presented &&
+                                  !_everPresented &&
+                                  !widget.liveEntry &&
+                                  !widget.actorHandoff)
                                 Image.asset(
                                   'assets/angles/v5-phase-${phase.source}.webp',
                                   key: const ValueKey(
@@ -301,7 +316,9 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                                   controller: _stage,
                                   body: widget.actorBody,
                                   interactive: false,
-                                  concealed: widget.actorHandoff || !_presented,
+                                  concealed:
+                                      widget.actorHandoff ||
+                                      (!_presented && !_everPresented),
                                 ),
                             ],
                           )

@@ -120,6 +120,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Timer? _trainingFlightDeadline;
   double _trainingEntryTime = 0;
   bool _trainingActorFlight = false;
+  bool _trainingHubLiveEntry = false;
   bool _trainingFlightLanded = false;
   bool _trainingHubPresented = false;
   bool _returningToWatch = false;
@@ -335,6 +336,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         widget.enableScene &&
         _scene.presented &&
         _scene.errorCode == null;
+    _trainingHubLiveEntry = _trainingActorFlight;
     _trainingFlightLanded = false;
     _trainingHubPresented = false;
     _changeTab(_trainingHubTab);
@@ -1164,6 +1166,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                             _returningToWatch ||
                                             _trainingFlightLanded,
                                         actorHandoff: _concealTrainingHub,
+                                        liveEntry: _trainingHubLiveEntry,
                                         interactionLocked: _trainingActorFlight,
                                         leaving: _returnFlightExposed,
                                         sceneBoundsKey: _hubSceneBounds,
