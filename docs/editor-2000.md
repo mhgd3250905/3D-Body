@@ -1,6 +1,6 @@
 # 2000 · 在托马斯编辑器里切换
 
-托马斯编辑网页顶部右侧有「托马斯 / 2000」切换（手机在「更多」菜单的「动作」里）。默认打开托马斯，点「2000」就在同一个网页里换成 Breaking 2000，预载 Pose-Hub 2000 关键帧（站立起势 → 右手撑地抡腿 → 分腿倒立 → 叠手并腿旋转 → 原路落地，39 帧）。
+托马斯编辑网页顶部右侧有「托马斯 / 2000」切换（手机在「更多」菜单的「动作」里）。默认打开托马斯，点「2000」就在同一个网页里换成 Breaking 2000，预载 Pose-Hub 2000 关键帧（面向镜头起势 → 转向屈髋、右手撑地 → 后腿抡起侧翻 → 左手落地分腿倒立 → 叠手旋转 → 原路落地，42 帧）。
 
 ## 打开
 
@@ -34,7 +34,7 @@
 - `tools/move-2000/from_editor.py <输入> public/coach/coach-rig.json <keys.json>`：输入可以是完整动画 JSON、正式展示、姿势库导出，或分享码（存成文本文件或直接贴在命令行）。输出 Pose-Hub 通道（pelvis、pelvisQ、spine、Wrist、Elbow、Ankle、Knee、Toe/Sole、Fing/Palm、Locked），世界坐标，旋转角已烘焙（th = 0），腿长换回 Pose-Hub 骨架。分享码按 `--base`（默认 `public/coach/move-2000-sequence.json`）还原。
 - `tools/move-2000/share_code.py <分享码或文件> [--out backup.json]`：把分享码还原成完整备份 JSON。
 - `tools/move-2000/to_editor.py <rN.npz> public/coach/coach-rig.json public/coach/move-2000-sequence.json`：从 Pose-Hub 逐帧结果重新生成预载关键帧。换版本后，旧版本的分享码要用旧的 sequence 文件作 `--base` 还原。
-- 当前预载为 r8（`--rev r8`）；r7 版预载另存 `tools/move-2000/move-2000-sequence-r7.json`，r7 分享码用它作 `--base` 还原。
+- 当前预载为 r9（`--rev r9`，起势按两条参考视频重做：面向镜头起势→转向屈髋→右手撑地→后腿抡起侧翻→左手落在右手前方→叠手旋转）；r8 版预载另存 `tools/move-2000/move-2000-sequence-r8.json`、r7 版另存 `tools/move-2000/move-2000-sequence-r7.json`，旧分享码用对应文件作 `--base` 还原。
 
 ## 检查
 

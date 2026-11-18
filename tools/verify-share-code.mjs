@@ -21,7 +21,7 @@ const canonical = value => JSON.stringify(value, (_, child) => child && typeof c
 const clone = value => structuredClone(value);
 const nudge = (pose, dy, dx = 0) => { const next = clone(pose); next.pelvis[1] += dy; next.pelvis[0] += dx; next.limbs.left.wrist[2] += dx; return next; };
 
-check('modules load in 2000 mode', IS_2000 && OFFICIAL_FLARE_SEQUENCE.source.kind === 'move-2000' && OFFICIAL_FLARE_SEQUENCE.steps.length === 39);
+check('modules load in 2000 mode', IS_2000 && OFFICIAL_FLARE_SEQUENCE.source.kind === 'move-2000' && OFFICIAL_FLARE_SEQUENCE.steps.length === JSON.parse(fs.readFileSync(path.join(root, 'public/coach/move-2000-sequence.json'), 'utf8')).steps.length && OFFICIAL_FLARE_SEQUENCE.steps.length >= 30);
 const bundled = OFFICIAL_FLARE_SEQUENCE;
 
 // 1) untouched animation: the code is tiny and restores the same backup
@@ -50,7 +50,7 @@ const codeEdited = await encodeShareCode(edited, bundled, '2000');
 const payloadEdited = await decodeShareCode(codeEdited);
 const backEdited = restorePayload(payloadEdited, bundled);
 check('edited: lossless', canonical(backEdited) === canonical(edited));
-check('edited: only changed frames are carried', Object.keys(payloadEdited.steps).map(Number).sort((a, b) => a - b).join() === '0,12,20,38', Object.keys(payloadEdited.steps));
+check('edited: only changed frames are carried', Object.keys(payloadEdited.steps).map(Number).sort((a, b) => a - b).join() === '0,12,20,' + (bundled.steps.length - 1), Object.keys(payloadEdited.steps));
 check('edited: code much shorter than full JSON', codeEdited.length * 5 < fullEdited.length, { code: codeEdited.length, json: fullEdited.length });
 check('edited: restored document accepted by the editor', !!validateTransitionEdits((({ sequence: _s, move: _m, ...rest }) => rest)(backEdited), backEdited.sequence));
 check('isShareCode recognises codes with line breaks', isShareCode(codeEdited.slice(0, 40) + '\n' + codeEdited.slice(40)) && !isShareCode(fullEdited));
@@ -86,6 +86,6 @@ if (process.env.SKIP_PY !== '1') {
   const a = fs.readFileSync(path.join(out, 'keys-full.json'), 'utf8'), b = fs.readFileSync(path.join(out, 'keys-code.json'), 'utf8');
   const keys = JSON.parse(a).keys;
   check('from_editor.py: share code == full JSON (same numbers)', canonical(JSON.parse(a)) === canonical(JSON.parse(b)), { keys: keys.length });
-  check('from_editor.py: 39 frames + 3 K frames', keys.length === 42 && keys.filter(key => key.kind === 'K').length === 3);
+  check('from_editor.py: all frames + 3 K frames', keys.length === bundled.steps.length + 3 && keys.filter(key => key.kind === 'K').length === 3);
 }
 console.log(JSON.stringify({ pass: true, codeChars: codeEdited.length, fullJsonChars: fullEdited.length, untouchedCodeChars: codeUntouched.length, checks }, null, 1));
