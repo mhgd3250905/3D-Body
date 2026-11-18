@@ -14,12 +14,8 @@ Map<String, Object?> sceneLocalization(
     for (final group in groups) group.id: strings.viewGroup(group.shortLabel),
   },
   'syncEffort': strings.syncEffort,
-  'muscleMap': strings.muscleMap,
-  'motion': strings.watch,
   'mapAccessibility': strings.phaseMapAccessibility,
   'sceneAccessibility': strings.sceneAccessibleTitle,
-  'switchToMuscles': strings.switchToMuscles,
-  'switchToMotion': strings.switchToMotion,
   'sceneFailed': strings.sceneFailed,
   'retry': strings.retry,
 };

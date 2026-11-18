@@ -1,5 +1,29 @@
 # App 验证记录
 
+## 训练页进退场实时画面保留（2026-11-19）
+
+`codex/flare-hub-flash-fix` 在 Hark 的防占位图修复上接入 vc2070 基线。进场保留同一个 3D 画布的落地帧，退场保留退出前的实时角度，两端都等下一帧确认后再交接。首次冷加载仍可使用原静态占位图。
+
+- `flutter analyze --no-pub` 和 36 项 Flutter 定向测试通过。12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。
+- Chrome 手机视口下分别延迟进场、退场首帧确认，两端复用同一 3D 视图。对比画面中的蓝衣躯干区域，进退场掩膜交并比分别为 98.99% 和 98.42%。Android 真机观感待复验。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=71` 通过。vc2071 签名与 vc2064、vc2070 一致，16 KiB ZIP 对齐通过。包内场景入口与更新脚本匹配本次构建，其余 1,305 个 App 资产与 vc2070 逐字节一致。
+
+## 训练页返回首页的角度交接（2026-11-19）
+
+vc2069 真机反馈显示，返回时有一帧回落到第 12 阶段的静态占位图，之后恢复实时角度。修复后，退场在原 3D 画布上截取当前姿态与镜头，保留到首页的退场首帧确认。取帧失败时直接返回首页。
+
+- 36 项 Flutter 定向测试及静态分析通过。12 项训练场景测试、`npm run verify`、场景与离线 Web 构建通过。
+- Chrome 手机模拟选择第 12 阶段、拖转镜头并点击返回。故意延迟退场首帧确认，对比等待前后的截图，蓝衣躯干区域的像素掩膜交并比为 98.87%。确认返回后继续复用原 3D 视图。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=70` 通过。vc2070 验签和 16 KiB ZIP 对齐通过，场景入口与脚本和源码产物一致，其余 1,305 个随包 App 资产与 vc2069 逐字节一致。11 月 19 日 06:27 同签名覆盖安装，真机版本与 APK 哈希回读通过，退场观感由用户复验。
+
+## 首页进入训练的加载层（2026-11-19）
+
+以 vc2068 为基线。训练页接管共享 3D 画布时，首页退出加载层，由训练页负责等待画面确认。回归测试延迟训练页的画面确认，覆盖同一画布交接、等待期间首页加载层隐藏及提前返回。
+
+- Flutter 3.44.7 的训练入口、场景加载、启动、导航与场景控制测试共 24 项通过。`flutter analyze --no-pub lib/ui/app_shell.dart test/ui/training_hub_entry_test.dart` 通过。
+- `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 通过。Chrome 移动端模拟核对「前往训练」及返回，确认复用同一个 3D 视图。进场期间逐帧采样，未检测到「正在载入 3D 动作」。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=69` 通过。vc2069 签名与 vc2068 一致，16 KiB ZIP 对齐通过，1,307 个随包 App 资产与 vc2068 逐字节一致。11 月 19 日 06:08 用 `adb install -r --no-incremental` 覆盖安装，回读版本、包哈希、首次安装时间和数据目录均符合预期。训练转场的真机观感待用户复验。
+
 ## V5 恢复原相机与播放器（2026-11-18）
 
 使用 Flutter 3.44.7 执行静态分析与 108 项定向测试，通过。场景构建、场景回归和离线 Web 构建通过。以 `cf654dde` 为 Chrome 同帧基线，归档 13 组并排图和训练播放 5 秒录屏。原版没有的完整双腿伸直条目以原页面模板比较。新增入口的 Android 真机验收待进行。[实现与量化验证](flare-v5-model-2026-11-18.md)

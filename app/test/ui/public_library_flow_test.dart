@@ -486,27 +486,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('muscle entry uses SDK facets and returns to the paused frame', (
+  testWidgets('muscle preset filters SDK actions by the incoming facet', (
     tester,
   ) async {
-    final scene = await mountShell(tester);
-    scene.receiveEvent({
-      'source': 'flare-scene',
-      'type': 'select',
-      'groupId': 'deltoids',
-      'time': 2.375,
-      'playing': false,
-      'phase': {'source': 11},
-    });
-    await tester.pumpAndSettle();
-    expect(_key('train-group'), findsOneWidget);
-    await tester.tap(_key('detail-card'));
-    await tester.pumpAndSettle();
-    expect(scene.detailModel, 'muscles');
-    final frame = scene.time;
-    final selected = scene.selected;
-    await tester.tap(_key('train-group'));
-    await _settleLocalAssets(tester);
+    await mountLibrary(tester, initialMuscle: 'deltoids');
     final expected = matching(
       const sdk.TrainingLibraryFilter(muscle: 'deltoids'),
     );
@@ -524,15 +507,6 @@ void main() {
         contains('deltoids'),
       );
     }
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.byType(FlareSharedLibraryPage), findsNothing);
-    expect(_key('train-group'), findsOneWidget);
-    expect(scene.detail, 'deltoids');
-    expect(scene.selected, selected);
-    expect(scene.time, frame);
-    expect(scene.detailModel, 'muscles');
-    expect(scene.playing, isFalse);
     expect(tester.takeException(), isNull);
   });
 

@@ -24,6 +24,8 @@ class SceneController extends ChangeNotifier {
   Completer<void>? _trainingFlight;
   VoidCallback? _onTrainingFlightPrepared;
   int _trainingFlightId = 0;
+  Completer<Uint8List?>? _trainingCapture;
+  int _trainingCaptureId = 0;
 
   double _time = 0;
   final _playhead = ValueNotifier<double>(0);
@@ -37,8 +39,6 @@ class SceneController extends ChangeNotifier {
   int? _presentationRequest;
   int _phase = 9;
   String? _selected;
-  String? _detail;
-  String _detailModel = 'motion';
 
   /// The platform reclaimed the WebView's content process (iOS memory
   /// pressure). The host may restart the scene without asking the user.
@@ -58,8 +58,6 @@ class SceneController extends ChangeNotifier {
   bool get presented => _presented;
   int get phase => _phase;
   String? get selected => _selected;
-  String? get detail => _detail;
-  String get detailModel => _detailModel;
   String? get errorCode => _errorCode;
 
   /// Advances only for an actual scene hit, never a command acknowledgement.
@@ -93,8 +91,6 @@ class SceneController extends ChangeNotifier {
     _time = value.clamp(0, _period).toDouble();
     _playhead.value = _time;
     _playing = false;
-    _detail = null;
-    _resetDetailModel();
     command({'type': 'seek', 'time': _time, 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
@@ -103,8 +99,6 @@ class SceneController extends ChangeNotifier {
     if (_disposed) return;
     _playing = true;
     _selected = null;
-    _detail = null;
-    _resetDetailModel();
     command({'type': 'play', 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
@@ -123,8 +117,8 @@ class SceneController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Render a paused training stage on a dedicated SceneView. Retaining the
-  /// two selected frames in one command also restores them after reloading.
+  /// Keep the selected frames together when the live view enters the training
+  /// hub or is recovered after a WebView process restart.
   void configureTrainingHub({
     required int phaseSource,
     required double phaseTime,
@@ -157,13 +151,25 @@ class SceneController extends ChangeNotifier {
       'showCallouts': showCallouts,
     };
     _trainingHubCommand = configuration;
+    _pending.remove('hub_exit');
     command(configuration);
   }
 
+  void leaveTrainingHub() {
+    _trainingHubYaw = 0;
+    if (_trainingHubCommand == null) return;
+    _trainingHubCommand = null;
+    _pending.remove('hub_scene');
+    _pending.remove('hub_angle');
+    command({'type': 'hub_exit'});
+  }
+
   void rotateTrainingHubAngle(double radians) {
-    final hub = _trainingHubCommand;
-    if (_disposed || hub == null || !radians.isFinite || radians == 0) return;
+    if (_disposed || !radians.isFinite || radians == 0) return;
+    // Buffer rotation while the shared renderer is still flying into the hub.
     _trainingHubYaw = (_trainingHubYaw + radians) % (2 * math.pi);
+    final hub = _trainingHubCommand;
+    if (hub == null) return;
     final configuration = {...hub, 'angleYaw': _trainingHubYaw};
     _trainingHubCommand = configuration;
     if (_pending.containsKey('hub_scene')) {
@@ -225,53 +231,38 @@ class SceneController extends ChangeNotifier {
     command({'type': 'hub_flight', 'id': 0});
   }
 
+  /// Retain one rendered angle frame while the host moves the platform view.
+  Future<Uint8List?> captureTrainingFrame() async {
+    if (_disposed ||
+        !_ready ||
+        !_presented ||
+        _errorCode != null ||
+        _trainingCapture != null) {
+      return null;
+    }
+    final capture = _trainingCapture = Completer<Uint8List?>();
+    command({'type': 'hub_capture', 'id': ++_trainingCaptureId});
+    try {
+      return await capture.future.timeout(
+        const Duration(milliseconds: 500),
+        onTimeout: () => null,
+      );
+    } finally {
+      if (identical(_trainingCapture, capture)) {
+        _trainingCapture = null;
+        _pending.remove('hub_capture');
+      }
+    }
+  }
+
   void setCamera(String view) => command({'type': 'camera', 'view': view});
   void reset() => command({'type': 'reset'});
-
-  void select(String? groupId) {
-    if (_disposed) return;
-    _selected = groupId;
-    _playing = false;
-    command({'type': 'select', 'groupId': groupId});
-    notifyListeners();
-  }
 
   /// Bottom px of the 3D view covered by host chrome. The scene frames into
   /// the part above it and eases the change with its camera.
   void setViewInset(double bottom, {bool animate = true}) {
     if (_disposed) return;
     command({'type': 'viewport', 'bottom': bottom, 'animate': animate});
-  }
-
-  void setDetail(String? groupId) {
-    if (_disposed) return;
-    if (_detail == null || groupId == null) _resetDetailModel();
-    _detail = groupId;
-    _playing = false;
-    if (groupId != null) _selected = groupId;
-    command({'type': 'detail', 'groupId': groupId});
-    notifyListeners();
-  }
-
-  /// Both detail models observe the same paused source frame and muscle group.
-  void setDetailModel(String value) {
-    if (_disposed ||
-        _detail == null ||
-        !_detailModels.contains(value) ||
-        _detailModel == value) {
-      return;
-    }
-    _detailModel = value;
-    _playing = false;
-    command({'type': 'detail_model', 'value': value});
-    notifyListeners();
-  }
-
-  static const _detailModels = {'motion', 'muscles'};
-
-  void _resetDetailModel({bool discardQueuedCommand = true}) {
-    _detailModel = 'motion';
-    if (discardQueuedCommand) _pending.remove('detail_model');
   }
 
   void setLoop(double? start, double? end) =>
@@ -426,6 +417,25 @@ class SceneController extends ChangeNotifier {
       _trainingFlight = null;
       return true;
     }
+    if (type == 'hub_captured') {
+      final capture = _trainingCapture;
+      if (event['id'] != _trainingCaptureId ||
+          capture == null ||
+          capture.isCompleted) {
+        return false;
+      }
+      final png = event['png'];
+      try {
+        capture.complete(
+          png is String && png.isNotEmpty && png.length <= 4000000
+              ? base64Decode(png)
+              : null,
+        );
+      } on FormatException {
+        capture.complete(null);
+      }
+      return true;
+    }
     if (!const {
       'ready',
       'presented',
@@ -476,23 +486,12 @@ class SceneController extends ChangeNotifier {
       _phase = source.toInt();
     }
     if (type == 'select') {
-      _selectionGeneration++;
-      _selected = _groupId(event['groupId']);
+      final group = event['groupId'];
+      if (group is String && group.isNotEmpty) {
+        _selectionGeneration++;
+        _selected = group;
+      }
       _playing = false;
-    } else if (event.containsKey('selected')) {
-      _selected = _groupId(event['selected']);
-    }
-    if (event.containsKey('detail')) {
-      final detail = event['detail'];
-      _detail = detail is bool ? (detail ? _selected : null) : _groupId(detail);
-    }
-    if (_detail == null || _playing) {
-      // The scene may acknowledge its initial/previous state while a newer
-      // native command is still in flight. Only an explicit host action such
-      // as play, seek or closing detail can cancel a queued model choice.
-      _resetDetailModel(discardQueuedCommand: false);
-    } else if (_detailModels.contains(event['detailModel'])) {
-      _detailModel = event['detailModel'] as String;
     }
     if (type == 'presented') {
       _presentationRequest = null;
@@ -522,14 +521,6 @@ class SceneController extends ChangeNotifier {
     return true;
   }
 
-  static String? _groupId(Object? value) {
-    if (value is String) return value;
-    if (value is Map && value['groupId'] is String) {
-      return value['groupId'] as String;
-    }
-    return null;
-  }
-
   void reportError(String code) {
     if (_disposed) return;
     _ready = false;
@@ -545,6 +536,8 @@ class SceneController extends ChangeNotifier {
     _connection++;
     _sink = null;
     _pending.clear();
+    final capture = _trainingCapture;
+    if (capture != null && !capture.isCompleted) capture.complete(null);
     _playhead.dispose();
     super.dispose();
   }

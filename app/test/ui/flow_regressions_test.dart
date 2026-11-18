@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:flare/control/learning_store.dart';
-import 'package:flare/data/muscle_knowledge.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart';
-import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/motion.dart';
@@ -65,20 +63,6 @@ void assertNoFlutterError(WidgetTester tester) {
   );
 }
 
-void expectMuscleKnowledge(WidgetTester tester, String groupId) {
-  final finder = find.byKey(const ValueKey('muscle-knowledge'));
-  expect(finder, findsOneWidget);
-  final text = tester.widget<Text>(finder);
-  final actual = text.data ?? text.textSpan?.toPlainText() ?? '';
-  expect(
-    actual.replaceAll(RegExp(r'\s+'), ''),
-    muscleKnowledge[groupId]!.replaceAll(RegExp(r'\s+'), ''),
-    reason:
-        'The detail must show the existing reviewed copy without new wording',
-  );
-  expect(actual, contains('\n\n'));
-}
-
 // Composite Material buttons expose the same semantics through a parent
 // annotation and their child container; target the outer advertised control.
 Finder labeledControl(String label) =>
@@ -105,7 +89,10 @@ void assertLeanHome(WidgetTester tester) {
   expect(find.byKey(const ValueKey('detail-card')), findsNothing);
   expect(find.byType(MotionTimeline), findsOneWidget);
   final scene = find.byWidgetPredicate(
-    (widget) => widget is ColoredBox && widget.color == FlareColors.background,
+    (widget) =>
+        widget is SizedBox &&
+        widget.key is GlobalKey &&
+        widget.child is ColoredBox,
   );
   expect(scene, findsOneWidget);
   expect(
@@ -160,642 +147,8 @@ Future<void> waitForTrainingRoute(WidgetTester tester) async {
 void main() {
   final catalog = loadCatalogFixture();
 
-  testWidgets('fixed stage sends home inset before system back camera glide', (
-    tester,
-  ) async {
-    await phoneSize(tester);
-    final store = LearningStore(
-      catalog: catalog,
-      storage: MemoryStateStorage(),
-    );
-    await store.initialize();
-    await store.acknowledgeSafety();
-    await store.setLastTime(2.375);
-    final commands = <Map<String, Object?>>[];
-    final scene = SceneController(commandSink: commands.add);
-    addTearDown(store.dispose);
-    addTearDown(scene.dispose);
-    await tester.pumpWidget(
-      testApp(
-        FlareShell(
-          catalog: catalog,
-          store: store,
-          sceneController: scene,
-          enableScene: false,
-        ),
-      ),
-    );
-    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
-    await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('Flare · 托马斯助手'), findsOneWidget);
-    expect(tester.getSize(find.byKey(const ValueKey('home'))).height, 44);
-    final stage = find.byWidgetPredicate(
-      (widget) =>
-          widget is ColoredBox && widget.color == FlareColors.background,
-    );
-    final homeSize = tester.getSize(stage);
-    final homeInset = commands.lastWhere(
-      (c) => c['type'] == 'viewport',
-    )['bottom'];
-    scene.receiveEvent({
-      'source': 'flare-scene',
-      'type': 'select',
-      'groupId': 'triceps',
-      'time': 2.375,
-    });
-    await tester.pumpAndSettle();
-    expect(tester.getSize(stage), homeSize);
-    expect(tester.getSize(find.byKey(const ValueKey('triceps'))).height, 44);
-    expect(find.textContaining('暂停于'), findsNothing);
-    expect(scene.time, 2.375);
-    commands.clear();
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(scene.detail, isNull);
-    expect(scene.time, 2.375);
-    expect(tester.getSize(stage), homeSize);
-    final viewport = commands.indexWhere((c) => c['type'] == 'viewport');
-    final close = commands.indexWhere(
-      (c) => c['type'] == 'detail' && c['groupId'] == null,
-    );
-    expect(viewport, greaterThanOrEqualTo(0));
-    expect(close, greaterThan(viewport));
-    expect(commands[viewport]['bottom'], homeInset);
-    assertNoFlutterError(tester);
-  });
-
-  testWidgets('scene retry reinstalls inset and paused detail before framing', (
-    tester,
-  ) async {
-    await phoneSize(tester);
-    final store = LearningStore(
-      catalog: catalog,
-      storage: MemoryStateStorage(),
-    );
-    await store.initialize();
-    await store.acknowledgeSafety();
-    await store.setLastTime(2.375);
-    final commands = <Map<String, Object?>>[];
-    final scene = SceneController(commandSink: commands.add);
-    addTearDown(store.dispose);
-    addTearDown(scene.dispose);
-    await tester.pumpWidget(
-      testApp(
-        FlareShell(
-          catalog: catalog,
-          store: store,
-          sceneController: scene,
-          enableScene: false,
-        ),
-      ),
-    );
-    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
-    await tester.pumpAndSettle();
-    scene.receiveEvent({
-      'source': 'flare-scene',
-      'type': 'select',
-      'groupId': 'triceps',
-      'time': 2.375,
-    });
-    await tester.pumpAndSettle();
-    scene.setDetailModel('muscles');
-    await tester.pumpAndSettle();
-    final inset = commands.lastWhere((c) => c['type'] == 'viewport')['bottom'];
-    scene.reportError('scene_load_failed');
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('重试'));
-    await tester.pumpAndSettle();
-    commands.clear();
-    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
-    await tester.pumpAndSettle();
-    final viewport = commands.indexWhere((c) => c['type'] == 'viewport');
-    final seek = commands.indexWhere((c) => c['type'] == 'seek');
-    expect(viewport, greaterThanOrEqualTo(0));
-    expect(seek, greaterThan(viewport));
-    expect(commands[viewport], {
-      'type': 'viewport',
-      'bottom': inset,
-      'animate': false,
-    });
-    expect(scene.detail, 'triceps');
-    expect(scene.detailModel, 'muscles');
-    expect(scene.playing, isFalse);
-    expect(scene.time, 2.375);
-    // WebGL recovery keeps the native view, so no retry button recreates the
-    // shell. A new readiness event must still restore its complete framing.
-    scene.reportError('graphics_context_lost');
-    await tester.pumpAndSettle();
-    commands.clear();
-    scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
-    await tester.pumpAndSettle();
-    expect(commands.first, {
-      'type': 'viewport',
-      'bottom': inset,
-      'animate': false,
-    });
-    expect(commands.any((command) => command['type'] == 'seek'), isTrue);
-    expect(scene.time, 2.375);
-    expect(scene.detailModel, 'muscles');
-    assertNoFlutterError(tester);
-  });
-
   testWidgets(
-    'phone safety → phase muscle → drill → SDK plan route → same paused frame',
-    (tester) async {
-      await phoneSize(tester);
-      final semantics = tester.ensureSemantics();
-      try {
-        final storage = MemoryStateStorage();
-        final store = LearningStore(catalog: catalog, storage: storage);
-        await store.initialize();
-        final commands = <Map<String, Object?>>[];
-        final scene = SceneController(commandSink: commands.add);
-        addTearDown(store.dispose);
-        addTearDown(scene.dispose);
-
-        await tester.pumpWidget(
-          testApp(
-            FlareShell(
-              catalog: catalog,
-              store: store,
-              sceneController: scene,
-              enableScene: false,
-              trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        final enter = find.widgetWithText(FilledButton, '开始');
-        expect(enter, findsOneWidget);
-        expect(store.safetyAccepted, isFalse);
-        assertNoFlutterError(tester);
-
-        // Start shows the three-rule safety card once; dismissing it does not
-        // accept, only the explicit acknowledgement does.
-        await tester.tap(enter);
-        await tester.pumpAndSettle();
-        expect(find.text('三件事'), findsOneWidget);
-        expect(store.safetyAccepted, isFalse);
-        assertNoFlutterError(tester);
-        await tester.tap(find.widgetWithText(FilledButton, '我知道了'));
-        await tester.pumpAndSettle();
-        expect(store.safetyAccepted, isTrue);
-        expect(find.byType(WelcomePage), findsNothing);
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'ready',
-          'period': 9,
-          'time': 0,
-          'phase': {'source': 9},
-        });
-        await tester.pump();
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'state',
-          'time': 2.0,
-          'playing': true,
-          'phase': {'source': 11},
-        });
-        await tester.pumpAndSettle();
-        expect(find.text('第一侧支撑'), findsOneWidget);
-        // The transport no longer prints a time readout; the timeline holds it.
-        expect(find.text('2.0 / 9.0 s'), findsNothing);
-        expect(
-          tester.widget<MotionTimeline>(find.byType(MotionTimeline)).time,
-          2.0,
-        );
-        assertLeanHome(tester);
-        assertNoFlutterError(tester);
-
-        await tester.tap(labeledControl('暂停'));
-        await tester.pumpAndSettle();
-        expect(scene.playing, isFalse);
-        expect(scene.time, 2.0);
-        // More keeps only the four entries and speed.
-        await tester.tap(labeledControl('更多'));
-        await tester.pumpAndSettle();
-        for (final label in ['训练', '计划', '记录', '设置']) {
-          expect(find.widgetWithText(FlareListRow, label), findsOneWidget);
-        }
-        expect(find.byType(FlareSegmented<double>), findsOneWidget);
-        expect(find.byType(ActionChip), findsNothing);
-        assertNoFlutterError(tester);
-        await tester.tapAt(const Offset(195, 40));
-        await tester.pumpAndSettle();
-        expect(scene.playing, isFalse);
-        expect(scene.time, 2.0);
-        assertLeanHome(tester);
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'select',
-          'groupId': 'deltoids',
-          'time': 2.0,
-          'phase': {'source': 11},
-        });
-        await tester.pumpAndSettle();
-        expect(find.text('暂停于 2.0 秒'), findsNothing);
-        expect(find.text('11 · 第一侧支撑'), findsNothing);
-        expect(find.text('协助发力'), findsNothing);
-        expect(find.text('正面'), findsNothing);
-        expect(find.text('背面'), findsNothing);
-        expect(find.byType(DrillTile), findsNothing);
-        expect(scene.time, 2.0);
-        expect(scene.playing, isFalse);
-        expect(scene.selected, 'deltoids');
-        expect(scene.detail, 'deltoids');
-        expect(scene.detailModel, 'motion');
-        expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-        expect(find.text('动作白膜'), findsNothing);
-        expect(find.text('肌群模型'), findsNothing);
-        expect(
-          find.text(catalog.phaseBySource(11)!.muscle('deltoids')!.why!),
-          findsOneWidget,
-        );
-
-        // The whole visible card is the only model switch.
-        final generation = scene.selectionGeneration;
-        await tester.tap(find.byKey(const ValueKey('detail-card')));
-        await tester.pumpAndSettle();
-        expect(commands.lastWhere((value) => value['type'] == 'detail_model'), {
-          'type': 'detail_model',
-          'value': 'muscles',
-        });
-        expect(commands.lastWhere((value) => value['type'] == 'visibility'), {
-          'type': 'visibility',
-          'visible': true,
-        });
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'state',
-          'time': 2.0,
-          'playing': false,
-          'selected': 'deltoids',
-          'detail': true,
-          'detailModel': 'muscles',
-        });
-        await tester.pumpAndSettle();
-        expect(scene.detailModel, 'muscles');
-        expect(scene.time, 2.0);
-        expect(scene.selected, 'deltoids');
-        expect(scene.detail, 'deltoids');
-        expect(scene.playing, isFalse);
-        expect(scene.selectionGeneration, generation);
-        expect(
-          find.text(catalog.phaseBySource(11)!.muscle('deltoids')!.why!),
-          findsOneWidget,
-        );
-        await tester.tap(find.byKey(const ValueKey('detail-card')));
-        await tester.pumpAndSettle();
-        expect(commands.lastWhere((value) => value['type'] == 'detail_model'), {
-          'type': 'detail_model',
-          'value': 'motion',
-        });
-        // The scene acknowledgement is not another muscle hit.
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'state',
-          'time': 2.0,
-          'playing': false,
-          'selected': 'deltoids',
-          'detail': true,
-          'detailModel': 'motion',
-        });
-        await tester.pumpAndSettle();
-        expect(scene.selectionGeneration, generation);
-        expect(scene.detailModel, 'motion');
-        expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-        expect(
-          find.text(catalog.phaseBySource(11)!.muscle('deltoids')!.why!),
-          findsOneWidget,
-        );
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'state',
-          'time': 2.0,
-          'playing': false,
-          'selected': 'deltoids',
-          'detail': true,
-          'detailModel': 'muscles',
-        });
-        await tester.pumpAndSettle();
-
-        expect(find.widgetWithText(FilledButton, '练三角肌'), findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('train-group')));
-        await tester.pumpAndSettle();
-        // The muscle opens a library searched by its label; no scene sheet
-        // or direct jump into a drill is needed.
-        expect(find.byType(LibraryPage), findsOneWidget);
-        expect(find.text('选一个训练场景'), findsNothing);
-        for (final tier in ['A', 'B', 'C']) {
-          expect(find.byKey(ValueKey('scene-$tier')), findsNothing);
-        }
-        expect(find.byType(DrillDetailPage), findsNothing);
-        expect(
-          tester.widget<LibraryPage>(find.byType(LibraryPage)).initialGroup?.id,
-          'deltoids',
-        );
-        expect(find.byType(TextField), findsOneWidget);
-        expect(
-          tester
-              .widget<EditableText>(find.byType(EditableText))
-              .controller
-              .text,
-          '三角肌',
-        );
-        expect(
-          tester.widgetList<DrillCard>(find.byType(DrillCard)),
-          hasLength(1),
-        );
-        // System back returns to the paused muscle, retaining the model and
-        // exact frame rather than treating the library as a detail exit.
-        await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
-        expect(find.byType(LibraryPage), findsNothing);
-        expect(find.byType(DrillDetailPage), findsNothing);
-        expect(scene.detail, 'deltoids');
-        expect(scene.selected, 'deltoids');
-        expect(scene.time, 2.0);
-        expect(scene.detailModel, 'muscles');
-
-        await tester.tap(find.byKey(const ValueKey('train-group')));
-        await tester.pumpAndSettle();
-        for (final (tier, label) in [('B', '居家'), ('C', '健身房')]) {
-          await tester.tap(find.text(label));
-          await tester.pumpAndSettle();
-          final card = tester.widget<DrillCard>(find.byType(DrillCard));
-          expect(card.drill.id, 'deltoids-$tier');
-          expect(store.settings.tier, tier);
-          await tester.tap(find.text(card.drill.name));
-          await tester.pumpAndSettle();
-          expect(
-            tester
-                .widget<DrillDetailPage>(find.byType(DrillDetailPage))
-                .drill
-                .id,
-            'deltoids-$tier',
-          );
-          expect(scene.time, 2.0);
-          expect(scene.detailModel, 'muscles');
-          await tester.tap(find.byTooltip('返回'));
-          await tester.pumpAndSettle();
-          expect(find.byType(DrillDetailPage), findsNothing);
-          expect(find.byType(LibraryPage), findsOneWidget);
-          expect(
-            tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
-            'deltoids-$tier',
-          );
-          expect(scene.detail, 'deltoids');
-          expect(scene.selected, 'deltoids');
-          expect(scene.time, 2.0);
-          expect(scene.detailModel, 'muscles');
-          expect(scene.playing, isFalse);
-          assertNoFlutterError(tester);
-        }
-        await tester.tap(find.text('徒手'));
-        await tester.pumpAndSettle();
-        expect(
-          tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
-          'deltoids-A',
-        );
-        await tester.tap(find.text(catalog.drillById('deltoids-A')!.name));
-        await tester.pumpAndSettle();
-        final detail = tester.widget<DrillDetailPage>(
-          find.byType(DrillDetailPage),
-        );
-        expect(detail.drill.id, 'deltoids-A');
-        expect(scene.time, 2.0);
-        expect(scene.selected, 'deltoids');
-        expect(scene.detailModel, 'muscles');
-        assertNoFlutterError(tester);
-
-        // Add the drill to a new plan straight from its page; saving returns
-        // to the same drill.
-        await tester.tap(find.byKey(const ValueKey('drill-add-to-plan')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('新建计划并加入'));
-        await tester.pumpAndSettle();
-        expect(find.byType(RoutineEditorPage), findsOneWidget);
-        await tapVisible(tester, find.byKey(const ValueKey('routine-save')));
-        await tester.pumpAndSettle();
-        expect(find.byType(RoutineEditorPage), findsNothing);
-        expect(find.byType(DrillDetailPage), findsOneWidget);
-        expect(store.routines.single.drillIds, ['deltoids-A']);
-        expect(store.routines.single.name, '我的训练');
-        ScaffoldMessenger.of(
-          tester.element(find.byType(DrillDetailPage)),
-        ).removeCurrentSnackBar();
-        await tester.pumpAndSettle();
-        await tapVisible(tester, find.widgetWithText(FilledButton, '开始训练'));
-        await waitForTrainingRoute(tester);
-        final delivered = tester
-            .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
-            .plan;
-        expect(delivered.exerciseIds, {'deltoids-A'});
-        expect(
-          delivered.items.first.workSeconds,
-          catalog.drillById('deltoids-A')!.dose.min,
-        );
-        assertNoFlutterError(tester);
-        // Closing a route with no SDK result must not fabricate a local record.
-        await tester.tap(find.byKey(const ValueKey('training-probe-close')));
-        await tester.pumpAndSettle();
-        expect(store.sessions, isEmpty);
-        expect(find.byType(DrillDetailPage), findsOneWidget);
-        await tester.tap(find.byTooltip('返回'));
-        await tester.pumpAndSettle();
-        expect(find.byType(DrillDetailPage), findsNothing);
-        expect(find.byType(LibraryPage), findsOneWidget);
-        expect(
-          tester.widget<LibraryPage>(find.byType(LibraryPage)).initialGroup?.id,
-          'deltoids',
-        );
-        expect(
-          tester.widget<DrillCard>(find.byType(DrillCard)).drill.id,
-          'deltoids-A',
-        );
-        await tester.tap(find.byTooltip('返回'));
-        await tester.pumpAndSettle();
-        expect(find.byType(LibraryPage), findsNothing);
-        expect(scene.selected, 'deltoids');
-        expect(scene.detail, 'deltoids');
-        expect(scene.detailModel, 'muscles');
-        expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-        expect(scene.time, 2.0);
-        expect(scene.playing, isFalse);
-        expect(store.lastTime, 2.0);
-        assertNoFlutterError(tester);
-
-        await tester.tap(labeledControl('返回同一帧'));
-        await tester.pumpAndSettle();
-        expect(scene.time, 2.0);
-        expect(scene.playing, isFalse);
-        expect(scene.detail, isNull);
-        expect(scene.detailModel, 'motion');
-        expect(scene.selected, 'deltoids');
-        assertLeanHome(tester);
-        // The transport no longer prints a time readout; the timeline holds it.
-        expect(find.text('2.0 / 9.0 s'), findsNothing);
-        expect(
-          tester.widget<MotionTimeline>(find.byType(MotionTimeline)).time,
-          2.0,
-        );
-        // An old state acknowledgement is not a new user selection.
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'state',
-          'time': 2.0,
-          'playing': false,
-          'selected': 'deltoids',
-          'detail': false,
-        });
-        await tester.pumpAndSettle();
-        expect(scene.detail, isNull);
-        assertLeanHome(tester);
-        // A later real hotspot for the retained muscle must still open.
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'select',
-          'time': 2.0,
-          'groupId': 'deltoids',
-        });
-        await tester.pumpAndSettle();
-        expect(scene.detail, 'deltoids');
-        expect(scene.detailModel, 'motion');
-        await tester.tap(labeledControl('返回同一帧'));
-        await tester.pumpAndSettle();
-        expect(scene.detail, isNull);
-        expect(scene.selected, 'deltoids');
-        await tester.tap(labeledControl('播放'));
-        await tester.pumpAndSettle();
-        expect(scene.selected, isNull);
-        expect(scene.playing, isTrue);
-        expect(scene.time, 2.0);
-        await tester.tap(labeledControl('更多'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.widgetWithText(FlareListRow, '记录'));
-        await tester.pumpAndSettle();
-        expect(find.byType(ProgressPage), findsOneWidget);
-        final historyEmpty = AppLocalizations.of(
-          tester.element(find.byType(ProgressPage)),
-        ).historyEmpty;
-        expect(find.byKey(const ValueKey('records-empty')), findsOneWidget);
-        expect(find.text(historyEmpty), findsOneWidget);
-        expect(find.text('记录了不适'), findsNothing);
-        expect(find.text(catalog.drillById('deltoids-A')!.name), findsNothing);
-        expect(store.sessions, isEmpty);
-        expect(store.trainerSessions, isEmpty);
-        final restored = LearningStore(catalog: catalog, storage: storage);
-        await restored.initialize();
-        // Opening and closing the SDK route probe produced no result. Saving
-        // a routine must survive reload without fabricating a training record.
-        expect(restored.sessions, isEmpty);
-        expect(restored.trainerSessions, isEmpty);
-        expect(restored.routines.single.name, '我的训练');
-        expect(restored.routines.single.drillIds, ['deltoids-A']);
-        expect(
-          restored.routines.single.toJson(),
-          store.routines.single.toJson(),
-        );
-        restored.dispose();
-        assertNoFlutterError(tester);
-        await tester.pumpWidget(const SizedBox());
-      } finally {
-        semantics.dispose();
-      }
-    },
-  );
-
-  testWidgets(
-    'thumbnail model state retains phase role and reviewed knowledge without metadata',
-    (tester) async {
-      await phoneSize(tester);
-      final store = LearningStore(
-        catalog: catalog,
-        storage: MemoryStateStorage(),
-      );
-      await store.initialize();
-      await store.acknowledgeSafety();
-      final scene = SceneController();
-      addTearDown(scene.dispose);
-      addTearDown(store.dispose);
-      await tester.pumpWidget(
-        testApp(
-          FlareShell(
-            catalog: catalog,
-            store: store,
-            sceneController: scene,
-            enableScene: false,
-          ),
-        ),
-      );
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'ready',
-        'time': 2.0,
-        'period': 9.0,
-        'phase': {'source': 11},
-      });
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'select',
-        'time': 2.0,
-        'groupId': 'rotator-cuff',
-      });
-      await tester.pumpAndSettle();
-
-      for (final size in const [Size(390, 844), Size(320, 700)]) {
-        tester.view.physicalSize = size;
-        await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-        expect(find.text('动作白膜'), findsNothing);
-        expect(find.text('肌群模型'), findsNothing);
-        expect(
-          tester.getSize(find.byKey(const ValueKey('detail-card'))),
-          const Size(86, 136),
-        );
-        expect(scene.detailModel, 'motion');
-        expect(find.text('深层肌群 · 颜色示意所在部位'), findsNothing);
-        expect(find.text('深层肌群 · 斜线示意所在部位'), findsNothing);
-        expectMuscleKnowledge(tester, 'rotator-cuff');
-        expect(
-          find.text(catalog.phaseBySource(11)!.muscle('rotator-cuff')!.why!),
-          findsOneWidget,
-        );
-        assertNoFlutterError(tester);
-      }
-      final generation = scene.selectionGeneration;
-      expect(find.byKey(const ValueKey('train-group')), findsOneWidget);
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'state',
-        'time': 2.0,
-        'playing': false,
-        'selected': 'rotator-cuff',
-        'detail': true,
-        'detailModel': 'muscles',
-      });
-      await tester.pumpAndSettle();
-      expect(scene.detailModel, 'muscles');
-      expect(scene.detail, 'rotator-cuff');
-      expect(scene.selected, 'rotator-cuff');
-      expect(scene.time, 2.0);
-      expect(scene.selectionGeneration, generation);
-      expect(find.text('深层肌群 · 斜线示意所在部位'), findsNothing);
-      expect(find.text('深层肌群 · 颜色示意所在部位'), findsNothing);
-      expectMuscleKnowledge(tester, 'rotator-cuff');
-      expect(
-        find.text(catalog.phaseBySource(11)!.muscle('rotator-cuff')!.why!),
-        findsOneWidget,
-      );
-      expect(find.byKey(const ValueKey('detail-model')), findsNothing);
-      expect(find.byKey(const ValueKey('train-group')), findsOneWidget);
-      assertNoFlutterError(tester);
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
-  testWidgets(
-    'inactive iframe focus keeps detail visible while hidden stops it and resumed restores paused',
+    'home muscle hits enter a single muscle plan and return to the same paused stage',
     (tester) async {
       await phoneSize(tester);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
@@ -804,102 +157,109 @@ void main() {
           AppLifecycleState.resumed,
         ),
       );
+      tester.view.padding = const FakeViewPadding(bottom: 34);
+      tester.view.viewPadding = const FakeViewPadding(bottom: 34);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewPadding);
+      final planned = loadCatalogFixture(includeFlarePlans: true);
       final store = LearningStore(
-        catalog: catalog,
+        catalog: planned,
         storage: MemoryStateStorage(),
       );
       await store.initialize();
       await store.acknowledgeSafety();
-      await store.setLastTime(2.375);
       final commands = <Map<String, Object?>>[];
       final scene = SceneController(commandSink: commands.add);
-      addTearDown(scene.dispose);
       addTearDown(store.dispose);
+      addTearDown(scene.dispose);
       await tester.pumpWidget(
         testApp(
           FlareShell(
-            catalog: catalog,
+            catalog: planned,
             store: store,
             sceneController: scene,
             enableScene: false,
           ),
         ),
       );
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'ready',
-        'time': 0.0,
-        'period': 9.0,
-        'phase': {'source': 11},
-      });
+      scene.receiveEvent({'source': 'flare-scene', 'type': 'ready'});
       await tester.pumpAndSettle();
-      expect(scene.playing, isTrue);
-      // Moving focus to the embedded scene must pause without hiding it.
+
+      const time = 2.375;
+      scene.setTime(time);
+      scene.play();
+      await tester.pumpAndSettle();
       commands.clear();
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       await tester.pump();
       expect(scene.playing, isFalse);
-      expect(scene.time, 2.375);
+      expect(scene.time, time);
       expect(commands.any((command) => command['type'] == 'pause'), isTrue);
       expect(
         commands.where((command) => command['type'] == 'visibility'),
         isEmpty,
       );
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'select',
-        'time': 2.375,
-        'groupId': 'triceps',
-      });
-      await tester.pumpAndSettle();
-      scene.receiveEvent({
-        'source': 'flare-scene',
-        'type': 'state',
-        'time': 2.375,
-        'playing': false,
-        'selected': 'triceps',
-        'detail': true,
-        'detailModel': 'muscles',
-      });
-      await tester.pumpAndSettle();
-      expect(scene.detail, 'triceps');
-      expect(scene.detailModel, 'muscles');
-      expect(
-        commands.where(
-          (command) =>
-              command['type'] == 'visibility' && command['visible'] == false,
-        ),
-        isEmpty,
-      );
-      await tester.pump(const Duration(seconds: 2));
-      expect(scene.time, 2.375);
-      expect(store.lastTime, 2.375);
-      assertNoFlutterError(tester);
-
-      for (final state in const [
-        AppLifecycleState.hidden,
-        AppLifecycleState.paused,
-        AppLifecycleState.detached,
-      ]) {
-        commands.clear();
-        tester.binding.handleAppLifecycleStateChanged(state);
-        await tester.pump();
-        expect(commands.last, {'type': 'visibility', 'visible': false});
-        expect(scene.playing, isFalse);
-        expect(scene.time, 2.375);
-        expect(scene.detail, 'triceps');
-        expect(scene.detailModel, 'muscles');
-      }
-      commands.clear();
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
-      expect(commands.last, {'type': 'visibility', 'visible': true});
-      expect(scene.playing, isFalse);
-      expect(scene.time, 2.375);
-      expect(scene.selected, 'triceps');
-      expect(scene.detail, 'triceps');
-      expect(scene.detailModel, 'muscles');
-      expect(find.byKey(const ValueKey('detail-model')), findsNothing);
+      final home = find.byType(MotionTimeline, skipOffstage: false);
+      final timeline = tester.element(home);
+      final geometry = tester.getRect(home);
+      commands.clear();
+
+      // Both the body label and the phase map emit a home muscle hit.
+      for (final (group, via) in [('triceps', 'label'), ('deltoids', 'map')]) {
+        final hit = {
+          'source': 'flare-scene',
+          'type': 'select',
+          'groupId': group,
+          'time': time,
+          'phase': {'source': 11},
+          'via': via,
+        };
+        scene.receiveEvent(hit);
+        scene.receiveEvent(hit); // A fast double tap must not stack two plans.
+        await tester.pumpAndSettle();
+
+        final plan = find.byType(FlarePlanDetailPage);
+        expect(plan, findsOneWidget);
+        expect(
+          tester.widget<FlarePlanDetailPage>(plan).plans.first.groupId,
+          group,
+        );
+        expect(find.byKey(const ValueKey('muscle-panel-title')), findsNothing);
+        expect(identical(tester.element(home), timeline), isTrue);
+        expect(tester.getRect(home), geometry);
+        expect(scene.time, time);
+        expect(scene.playing, isFalse);
+        expect(
+          commands.lastWhere(
+            (command) => command['type'] == 'visibility',
+          )['visible'],
+          isFalse,
+        );
+
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(plan, findsNothing);
+        expect(identical(tester.element(home), timeline), isTrue);
+        expect(tester.getRect(home), geometry);
+        expect(scene.time, time);
+        expect(scene.playing, isFalse);
+        expect(
+          commands.lastWhere(
+            (command) => command['type'] == 'visibility',
+          )['visible'],
+          isTrue,
+        );
+      }
+      expect(
+        commands.where(
+          (command) => !{'visibility', 'pause'}.contains(command['type']),
+        ),
+        isEmpty,
+        reason:
+            'The home player must not seek, reframe, reset or present anew.',
+      );
       assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
     },

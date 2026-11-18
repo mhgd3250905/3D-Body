@@ -51,6 +51,8 @@ export function createHubFlight(player, input, referenceDirection, onLanded, onP
     camera,
     get returning() { return returning; },
     landingTime: input.time,
+    destinationTop: input.top,
+    destinationHeight: input.height,
     landingBottomInset: Math.max(32, height - input.top - input.height + 32),
     get poseTime() { return poseTime; },
     get topInset() { return positionInHub * hubTop; },

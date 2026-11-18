@@ -114,8 +114,6 @@ class _ScenePlatformViewState extends State<ScenePlatformView> {
         'playing': oldWidget.controller.playing,
         'speed': oldWidget.controller.speed,
         'phase': oldWidget.controller.phase,
-        'selected': oldWidget.controller.selected,
-        'detail': oldWidget.controller.detail,
       });
     }
     if (wasPresented) widget.controller.retainPresentedView();

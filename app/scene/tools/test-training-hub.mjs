@@ -174,26 +174,17 @@ test('an early Back reverses from the visible frame without a pose or camera jum
   assert.deepEqual(completed, ['return']);
 });
 
-test('both flight canvases draw at the device DPR during their handoff', () => {
-  const previous = globalThis.window;
-  try {
-    globalThis.window = { devicePixelRatio: 3.25 };
-    const deviceDensity = FlarePlayer.prototype.stagePixelRatio;
-    const player = { fullPixelRatio: 3 };
-    assert.equal(deviceDensity.call(player, 1.25), 1.25);
-    player.hubFlight = { landed: false };
-    assert.equal(deviceDensity.call(player, 1), 3.25);
-    player.hubFlight.landed = true;
-    assert.equal(deviceDensity.call(player, 1), 3.25);
-    player.hubFlight = null;
-    player.trainingHub = {};
-    assert.equal(deviceDensity.call(player, 1), 3.25);
-    globalThis.window.devicePixelRatio = 0;
-    assert.equal(deviceDensity.call(player, 1), 3);
-  } finally {
-    if (previous === undefined) delete globalThis.window;
-    else globalThis.window = previous;
-  }
+test('the shared canvas keeps the quality cap in flight and adapts in the hub', () => {
+  const stageDensity = FlarePlayer.prototype.stagePixelRatio;
+  const player = { fullPixelRatio: 3 };
+  assert.equal(stageDensity.call(player, 1.25), 1.25);
+  player.hubFlight = { landed: false };
+  assert.equal(stageDensity.call(player, 1), 3);
+  player.hubFlight.landed = true;
+  assert.equal(stageDensity.call(player, 1), 3);
+  player.hubFlight = null;
+  player.trainingHub = {};
+  assert.equal(stageDensity.call(player, 1.25), 1.25);
 });
 
 test('a camera move keeps the same ground projection until the pose changes', () => {
