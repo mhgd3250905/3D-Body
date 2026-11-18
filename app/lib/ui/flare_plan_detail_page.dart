@@ -463,7 +463,7 @@ class _AnglePlanArt extends StatelessWidget {
           top: artTop,
           height: artHeight,
           child: Image.asset(
-            'assets/angles/phase-$source.webp',
+            'assets/angles/v5-phase-$source.webp',
             key: ValueKey('flare-plan-angle-hero-$source'),
             excludeFromSemantics: true,
           ),

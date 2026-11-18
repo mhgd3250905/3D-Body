@@ -3,6 +3,7 @@
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import 'flare_public_catalog.dart';
+import 'flare_v5_drill.dart';
 import 'posehub_catalog_updates.dart';
 
 abstract final class FlarePublicMedia {
@@ -27,10 +28,22 @@ abstract final class FlarePublicMedia {
       mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
       rootDirectory: rootDirectory,
     );
-    return trainer.TrainingMediaPolicy(
+    return _FlareTrainingMediaPolicy(
       repository: repository,
       posterAssetRoot: coverRoot,
       prefetchBeforeTraining: prefetchBeforeTraining,
     );
   }
+}
+
+class _FlareTrainingMediaPolicy extends trainer.TrainingMediaPolicy {
+  const _FlareTrainingMediaPolicy({
+    required super.repository,
+    required super.posterAssetRoot,
+    required super.prefetchBeforeTraining,
+  });
+
+  @override
+  String? posterAssetFor(String id) =>
+      id == flareV5DrillId ? flareV5PosterAsset : super.posterAssetFor(id);
 }

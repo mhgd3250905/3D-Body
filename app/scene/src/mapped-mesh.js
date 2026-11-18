@@ -31,7 +31,7 @@ export function buildMmRest(motion, coach) {
   const skinned = [], tmp = new THREE.Vector3(), acc = new THREE.Vector3(), mapped = new THREE.Vector3();
   const indices = new THREE.Vector4(), weights = new THREE.Vector4();
   coach.traverse(mesh => {
-    if (!mesh.isSkinnedMesh) return;
+    if (!mesh.isSkinnedMesh || mesh.userData.__outline) return;
     const geometry = mesh.geometry, count = geometry.attributes.position.count, output = new Float32Array(count * 3);
     const si = geometry.attributes.skinIndex, sw = geometry.attributes.skinWeight, bones = mesh.skeleton.bones;
     mesh.skeleton.update();
@@ -40,7 +40,8 @@ export function buildMmRest(motion, coach) {
       indices.fromBufferAttribute(si, i); weights.fromBufferAttribute(sw, i); acc.set(0, 0, 0); let total = 0;
       for (let k = 0; k < 4; k++) {
         const weight = weights.getComponent(k); if (weight <= 0) continue;
-        const bone = bones[indices.getComponent(k)]?.name, map = mappings[bone];
+        const bone = bones[indices.getComponent(k)]?.name
+          ?.replace(/Twist\d+$/, '').replace(/WristBend\d+$/, 'Forearm'), map = mappings[bone];
         if (map) mapped.copy(tmp).sub(map.P0).applyQuaternion(map.rotation).multiplyScalar(map.scale).add(map.Q0);
         else if (CORE_BONES.has(bone)) mapCore(tmp, mapped);
         else mapped.copy(tmp);
@@ -71,7 +72,7 @@ export function createHitTester(player, skinned) {
   function pick(x, y, phaseItems) {
     if (preparedTime !== player.time) prepare();
     const rect = player.renderer.domElement.getBoundingClientRect();
-    ndc.set((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1); ray.setFromCamera(ndc, player.camera);
+    ndc.set((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1); ray.setFromCamera(ndc, player.v5Camera ?? player.camera);
     const hits = ray.intersectObjects(skinned.filter(mesh => mesh.visible), false);
     for (const hit of hits) {
       const mesh = hit.object, face = hit.face, rest = mesh.geometry.getAttribute('mmRest'); if (!face || !rest) continue;
@@ -102,6 +103,16 @@ function focusMaterial(material, tint, field) {
   // original; only the shader adds a soft group-coloured tint.
   const copy = material.clone(), compile = material.onBeforeCompile;
   copy.userData = { ...material.userData, flareFocusProxyOf: material.uuid };
+  if (material.isShaderMaterial) {
+    copy.uniforms.focusTint = tint;
+    Object.assign(copy.uniforms, field.uniforms);
+    copy.vertexShader = 'attribute vec3 mmRest;\nvarying vec3 vFocusRest;\n' +
+      copy.vertexShader.replace('void main() {', 'void main() { vFocusRest = mmRest;');
+    copy.fragmentShader = 'uniform vec3 focusTint;\nvarying vec3 vFocusRest;\n' + MOTION_FOCUS_GLSL +
+      copy.fragmentShader.replace('gl_FragColor = vec4(lit, 1.0);',
+        'gl_FragColor = vec4(mix(lit, focusTint, 0.68 * flareFocusCoverage(vFocusRest)), 1.0);');
+    return copy;
+  }
   copy.onBeforeCompile = (shader, renderer) => {
     compile?.call(copy, shader, renderer); shader.uniforms.focusTint = tint;
     Object.assign(shader.uniforms, field.uniforms);

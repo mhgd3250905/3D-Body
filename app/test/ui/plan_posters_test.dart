@@ -2,6 +2,7 @@
 // placeholder icon. Regression: master eb3b6e8 removed
 // assets/drill_media/<id>.jpg but DrillPoster still pointed there.
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/flare_v5_drill.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
@@ -92,7 +93,7 @@ void main() {
     final asset =
         (provider is ResizeImage ? provider.imageProvider : provider)
             as AssetImage;
-    expect(asset.assetName, 'assets/angles/phase-11.webp');
+    expect(asset.assetName, 'assets/angles/v5-phase-11.webp');
     final data = await tester.runAsync(() => rootBundle.load(asset.assetName));
     expect(data!.lengthInBytes, greaterThan(0));
   });
@@ -104,6 +105,7 @@ void main() {
     final drills = [
       catalog.drillById('forearms-A')!,
       catalog.drillById('abs-A')!,
+      catalog.drillById(flareV5DrillId)!,
     ];
     await tester.pumpWidget(
       _app(
@@ -119,6 +121,7 @@ void main() {
     await tester.pumpAndSettle();
     final assets = _posterAssets(tester);
     expect(assets.length, drills.length);
+    expect(assets, contains(flareV5PosterAsset));
     await _expectBundled(tester, assets);
   });
 }

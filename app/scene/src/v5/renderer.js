@@ -57,6 +57,7 @@ export async function loadFlareV5(renderer) {
   }
   for (const bone of Object.values(bones)) bone.quaternion.identity();
   root.updateMatrixWorld(true);
+  const neutralPelvis = bones.pelvis.position.clone();
 
   // This WebGL renderer belongs exclusively to V5. The delivered runtime
   // wrapper drives the helpers exactly once before toon and FX rendering.
@@ -83,18 +84,65 @@ export async function loadFlareV5(renderer) {
     getFrames: () => anim.frames,
   });
   const size = new THREE.Vector2();
+  const viewDirection = new THREE.Spherical().setFromVector3(offset);
+  const orbit = new THREE.Spherical();
+  const world = new THREE.Vector3();
+  const skeletons = [...new Set(skinned.map(mesh => mesh.skeleton))];
+  function updatePose() {
+    wrist.update();
+    root.updateMatrixWorld(true);
+    for (const skeleton of skeletons) skeleton.update();
+  }
+  function setProgress(progress) {
+    const frame = Math.min(anim.count - 1, Math.floor(((progress % 1 + 1) % 1) * anim.count + 1e-8));
+    if (index === frame) return;
+    index = frame;
+    pose(index);
+    updatePose();
+  }
+  function frameCamera(width, height, { top = 0, bottom = 0, yaw = 0, pitch = 0, zoom = 1 } = {}) {
+    const visibleHeight = Math.max(1, height - top - bottom);
+    if (!pitch) camera.position.copy(offset).applyAxisAngle(vertical, yaw).add(target);
+    else {
+      orbit.set(viewDirection.radius, viewDirection.phi + pitch, viewDirection.theta + yaw).makeSafe();
+      camera.position.setFromSpherical(orbit).add(target);
+    }
+    camera.lookAt(target);
+    fit(camera, width, visibleHeight);
+    if (height !== visibleHeight || zoom !== 1) {
+      camera.setViewOffset(width, visibleHeight, camera.view.offsetX * zoom,
+        camera.view.offsetY * zoom - top, width, height);
+      camera.zoom = zoom;
+      camera.updateProjectionMatrix();
+    }
+    camera.updateMatrixWorld(true);
+    return camera;
+  }
+  function draw(fxEnabled) {
+    displayedFx = fxEnabled;
+    renderer.render(scene, camera);
+  }
   return {
     period: anim.count / anim.fps,
-    render(progress, { fxEnabled = true, yaw = 0 } = {}) {
-      index = Math.min(anim.count - 1, Math.floor(((progress % 1 + 1) % 1) * anim.count));
-      displayedFx = fxEnabled;
-      pose(index);
-      root.updateMatrixWorld(true);
+    fps: anim.fps, root, skinned, scene,
+    setProgress, frameCamera, draw,
+    resetPose() {
+      index = -1;
+      for (const bone of Object.values(bones)) bone.quaternion.identity();
+      bones.pelvis.position.copy(neutralPelvis);
+      updatePose();
+    },
+    joint(name, local = null) {
+      const bone = bones[name];
+      if (local) return bone.localToWorld(world.fromArray(local)).toArray();
+      return bone.getWorldPosition(world).toArray();
+    },
+    getBodyHulls: fit.getBodyHulls,
+    render(progress, { fxEnabled = true, ...view } = {}) {
+      setProgress(progress);
       renderer.getSize(size);
-      camera.position.copy(offset).applyAxisAngle(vertical, yaw).add(target);
-      camera.lookAt(target);
-      fit(camera, Math.max(1, size.x), Math.max(1, size.y));
-      renderer.render(scene, camera);
+      frameCamera(Math.max(1, size.x), Math.max(1, size.y), view);
+      draw(fxEnabled);
     },
     dispose() {
       const resources = new Set();

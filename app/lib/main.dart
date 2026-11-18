@@ -13,6 +13,7 @@ import 'data/content_translations.dart';
 import 'data/flare_public_catalog.dart';
 import 'data/flare_public_media.dart';
 import 'data/flare_shared_library.dart';
+import 'data/flare_v5_drill.dart';
 import 'data/posehub_catalog_updates.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/languages.dart';
@@ -216,6 +217,8 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                   '自行回顾整圈：换手、开腿与节奏是否连贯': s.reviewFullLoop,
                   '腕屈': s.wristFlexion,
                   '腕伸': s.wristExtension,
+                  flareV5Name: s.flareStraightLegs,
+                  flareV5Prescription: s.libraryDose(1, s.countLabel(1)),
                 }, shortLabels: _content!.shortLabelsFor(language)),
               );
         // Keep one splash State while data loads and the actual, full-sized

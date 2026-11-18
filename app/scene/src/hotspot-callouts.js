@@ -8,10 +8,11 @@ import { sceneFont } from './localization.js';
 
 // Cards live outside the muscle surface and remain camera-facing. Dots and
 // their fine guides remain visible through the actor; cards keep natural depth.
-export function createHotspotCallouts(player, layer, onSelect, { hosted = false, depthSampler = null } = {}) {
+export function createHotspotCallouts(player, layer, onSelect, { hosted = false, depthSampler = null, scene = player.scene } = {}) {
   const records = new Map(), raycaster = new THREE.Raycaster();
-  const root = new THREE.Group(); root.name = 'MuscleBillboards'; player.scene.add(root);
+  const root = new THREE.Group(); root.name = 'MuscleBillboards'; scene.add(root);
   let anchors = [], moveFrame = null;
+  let pickCamera = player.camera;
   function texture(name, colour, dot = false) {
     const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
     const ratio = 4, height = dot ? 24 : 30;
@@ -71,6 +72,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     for (const record of records.values()) remove(record); records.clear(); anchors = [];
   }
   function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true } = {}) {
+    pickCamera = camera;
     const project = point => player.project(point, camera);
     anchors = computeHotspots(player, items, anchors, depthSampler, camera);
     const active = new Set(anchors.map(p => p.groupId));
@@ -217,7 +219,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
   function pick(clientX, clientY) {
     if (!records.size) return null;
     const rect = player.renderer.domElement.getBoundingClientRect();
-    raycaster.setFromCamera(new THREE.Vector2((clientX - rect.left) / rect.width * 2 - 1, 1 - (clientY - rect.top) / rect.height * 2), player.camera);
+    raycaster.setFromCamera(new THREE.Vector2((clientX - rect.left) / rect.width * 2 - 1, 1 - (clientY - rect.top) / rect.height * 2), pickCamera);
     const hits = raycaster.intersectObjects([...records.values()].flatMap(r => [r.card, r.dot]), false).filter(hit => {
       const uv = hit.uv, sprite = hit.object;
       if (!uv) return false;

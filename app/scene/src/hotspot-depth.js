@@ -14,7 +14,11 @@ const OUTWARD = {
   adductors: [-1, 0, 0], quadLat: [.6, 0, .7], hamLat: [.3, 0, -1], hamMed: [0, 0, -1],
 };
 const visible = mesh => { for (let p = mesh; p; p = p.parent) if (!p.visible) return false; return true; };
-const proxyPart = mesh => { for (let p = mesh; p; p = p.parent) if (PROXY_PARTS.has(p.name)) return true; return false; };
+const proxyPart = mesh => {
+  if (mesh.geometry.attributes._region) return true;
+  for (let p = mesh; p; p = p.parent) if (PROXY_PARTS.has(p.name)) return true;
+  return false;
+};
 
 // Pause labels refer to the actor's actual teaching-map surface, not an
 // internal joint. Each panel has a few stable surface samples; only these and

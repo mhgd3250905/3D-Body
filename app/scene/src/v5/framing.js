@@ -43,10 +43,11 @@ export function createFraming(meshes, hair, baseFov) {
   const point = new Vector3();
   const baseTangent = Math.tan(MathUtils.degToRad(baseFov) / 2);
 
-  return (camera, width, height) => {
+  function fit(camera, width, height) {
     camera.clearViewOffset();
     camera.aspect = 1;
     camera.fov = baseFov;
+    camera.zoom = 1;
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld(true);
 
@@ -70,5 +71,8 @@ export function createFraming(meshes, hair, baseFov) {
     const focalPixels = halfSize * scale;
     camera.fov = MathUtils.radToDeg(2 * Math.atan((baseTangent * height) / (2 * focalPixels)));
     camera.setViewOffset(width, height, (left + right) * focalPixels / 2, -(bottom + top) * focalPixels / 2, width, height);
-  };
+  }
+  fit.getBodyHulls = () => samples.map(([mesh, indices]) =>
+    indices.map(i => mesh.getVertexPosition(i, new Vector3()).applyMatrix4(mesh.matrixWorld)));
+  return fit;
 }

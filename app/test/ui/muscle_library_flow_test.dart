@@ -307,7 +307,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
-        17,
+        18,
       );
       await tester.enterText(find.byType(TextField), '三角肌');
       await tester.pumpAndSettle();
@@ -338,7 +338,7 @@ void main() {
       expect(find.byKey(const ValueKey('library-group-filter')), findsNothing);
       expect(
         tester.widget<SliverCardRows>(find.byType(SliverCardRows)).itemCount,
-        17,
+        18,
       );
       expect(scene.time, 2.375);
       expect(scene.playing, isFalse);

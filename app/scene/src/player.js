@@ -6,6 +6,8 @@ import { loadOfflineGlb } from './assets.js';
 import { renderQuality } from './render-quality.js';
 import { createAdaptiveResolution, adaptiveEnabled } from './adaptive-resolution.js';
 import { applyCharacter, characterAsset } from './characters.js';
+import { loadFlareV5 } from './v5/renderer.js';
+import { createV5TeachingMotion } from './v5/teaching-motion.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -100,6 +102,16 @@ export class FlarePlayer {
   }
 
   async load() {
+    if (this.callbacks.v5) {
+      const stage = await loadFlareV5(this.renderer);
+      if (this.disposed) { stage.dispose(); return; }
+      this.v5 = stage;
+      this.v5Fx = true;
+      this.coach = stage.root;
+      this.motion = createV5TeachingMotion(stage);
+      this.prepareMotion();
+      return;
+    }
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
     const [gltf, rig] = await Promise.all([
       // The App's saved body selection supplies ?body=training for the faceless
@@ -121,12 +133,17 @@ export class FlarePlayer {
     // available on disk and are not loaded or attached to the current actor.
     this.motion = createBakedMotion(gltf, rig);
     this.coach.traverse(object => { if (object.isMesh) object.castShadow = this.renderer.shadowMap.enabled; });
-    this.scene.add(this.coach); this.period = this.motion.getMetrics().period;
+    this.scene.add(this.coach);
+    this.prepareMotion(rig.height);
+  }
+
+  prepareMotion(height = this.motion.getMetrics().neutralHeight) {
+    this.period = this.motion.clock.period;
     for (let i = 0; i < 18; i++) {
       this.motion.update(i * this.period / 18); const bounds = this.motion.getMetrics().bounds;
       this.loopBounds.union(new THREE.Box3(new THREE.Vector3().fromArray(bounds.min), new THREE.Vector3().fromArray(bounds.max)));
     }
-    this.loopBounds.expandByScalar(rig.height * 0.045);
+    this.loopBounds.expandByScalar(height * 0.045);
     this.setTime(0); this.resetView(); this.start();
   }
 
@@ -172,12 +189,25 @@ export class FlarePlayer {
   }
   render() {
     if (this.trainingHub) return this.trainingHub.render();
-    this.callbacks.onBeforeRender?.();
     const r = this.renderer, height = this.container.clientHeight;
     const flight = this.hubFlight;
     const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
     const top = Math.round(flight?.topInset ?? 0);
     const clipped = top + bottom > 0 && top + bottom < height;
+    const showV5 = this.v5 && !this.displayScene;
+    if (showV5) {
+      const orbitCamera = flight?.camera ?? this.camera;
+      const orbitTarget = flight?.target ?? this.controls.target;
+      const orbit = orbitCamera.position.clone().sub(orbitTarget);
+      const standard = CAMERA_PRESETS.standard;
+      const yaw = Math.atan2(orbit.x, orbit.z) - Math.atan2(standard.x, standard.z);
+      const detail = this.framingMode === 'detail';
+      const pitch = detail ? Math.atan2(standard.y, Math.hypot(standard.x, standard.z)) -
+        Math.atan2(orbit.y, Math.hypot(orbit.x, orbit.z)) : 0;
+      const zoom = flight || detail ? 1 : THREE.MathUtils.clamp(this.homeOrbitDistance / orbit.length(), 0.55, 1.8);
+      this.v5Camera = this.v5.frameCamera(this.container.clientWidth, height, { top, bottom, yaw, pitch, zoom });
+    }
+    this.callbacks.onBeforeRender?.();
     if (clipped) {
       // Match the destination viewport at the handoff, including its shadow.
       r.setScissorTest(false); r.clear();
@@ -185,7 +215,8 @@ export class FlarePlayer {
       r.setScissorTest(true);
     }
     try {
-      this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
+      if (showV5) this.v5.draw(this.v5Fx && !flight && this.framingMode !== 'detail');
+      else this.renderActor(this.displayScene ?? this.scene, flight?.camera ?? this.camera,
         !!flight || (this.adaptive.enabled && this.cameraOnly));
     } finally {
       if (clipped) r.setScissorTest(false);
@@ -310,6 +341,7 @@ export class FlarePlayer {
     this.autoFrame = true;
     const fullStage = this.container.clientWidth <= 600 && this.visibleHeight(this.viewInsetTarget) >= 500;
     this.fitBounds(this.loopBounds, direction, fullStage ? 0.75 : this.container.clientWidth <= 600 ? 0.78 : 0.74);
+    this.homeOrbitDistance = this.camera.position.distanceTo(this.controls.target);
   }
   setCameraView(position, target) {
     this.glide = null; this.projectionGlide = null;

@@ -23,6 +23,8 @@ const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
 let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
 const character = characterFromLocation(location.search);
+const v5 = new URLSearchParams(location.search).get('actor') === 'flare-v5';
+if (v5) document.documentElement.style.colorScheme = 'only light';
 const hosted = document.documentElement.dataset.hosted === 'true';
 let presented = false, statusTimer = null;
 const hubCallouts = createHubCalloutVisibility();
@@ -59,7 +61,8 @@ function state() {
     speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
     detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
-    quality: player?.quality ?? 'medium', fx: fx?.enabled ?? false, character: character.id, ready, presented, errorCode };
+    quality: player?.quality ?? 'medium', fx: v5 ? player?.v5Fx ?? false : fx?.enabled ?? false,
+    character: v5 ? 'flare-v5' : character.id, ready, presented, errorCode };
 }
 function emitState(force = false) {
   // Intermediate viewport/theme/seek acknowledgements must not flash the
@@ -102,7 +105,7 @@ function refreshHotspots(rendered = false) {
       opacity = Math.min(1, (performance.now() - homeCalloutRevealAt) / 200);
       if (opacity < 1) player.requestRedraw(); else homeCalloutRevealAt = null;
     }
-    hotspots = callouts?.update(phaseAt(player.time).items, { opacity }) ?? [];
+    hotspots = callouts?.update(phaseAt(player.time).items, { opacity, camera: player.v5Camera ?? player.camera }) ?? [];
   }
 }
 function renderHubCallouts(frame) {
@@ -282,7 +285,9 @@ function command(value) {
       if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
       detailView.setModel(input.value, phaseAt(player.time)); break;
     case 'quality': player.setQuality(input.value); break;
-    case 'fx': if (typeof input.value !== 'boolean') return; fx?.setEnabled(input.value); break;
+    case 'fx':
+      if (typeof input.value !== 'boolean') return;
+      fx?.setEnabled(input.value); player.v5Fx = input.value; break;
     case 'visibility': player.setVisible(input.visible); break;
     default: return;
   }
@@ -301,7 +306,7 @@ retry.addEventListener('click', () => window.location.reload());
 
 async function boot() {
   try {
-    player = new FlarePlayer(stage, { character,
+    player = new FlarePlayer(stage, { character, v5,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
       onBeforeRender: () => {
         if (player.hubFlight) {
@@ -309,7 +314,7 @@ async function boot() {
           if (flight.landed && !flight.returning) {
             // The sharp landing frame owns its labels while the hub prepares.
             hotspots = callouts?.update(phaseAt(flight.landingTime).items, {
-              camera: flight.camera, reservedBottom: flight.landingBottomInset, homeOverlays: false,
+              camera: player.v5Camera ?? flight.camera, reservedBottom: flight.landingBottomInset, homeOverlays: false,
             }) ?? [];
           }
           return;
@@ -333,13 +338,21 @@ async function boot() {
         else { player.trainingHub?.releaseGpu(); surface?.releaseGpu(); phaseMap?.releaseGpu(); detailView?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
+    if (v5) {
+      const graphics = player.renderer.getContext();
+      if ('drawingBufferColorSpace' in graphics) graphics.drawingBufferColorSpace = 'srgb';
+    }
     player.setViewInset(viewInset, false);
     if (perfEnabled(location.search)) perfHud = createPerfHud(player);
     await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
     player.resetView();
-    fx = createFlareFx(player, { palette: character.fx, enabled: new URLSearchParams(location.search).get('fx') !== '0' });
+    const effects = new URLSearchParams(location.search).get('fx') !== '0';
+    if (v5) player.v5Fx = effects;
+    else fx = createFlareFx(player, { palette: character.fx, enabled: effects });
     const skinned = buildMmRest(player.motion, player.coach);
-    callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, { hosted, depthSampler: createHotspotDepth(player, skinned) });
+    callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, {
+      hosted, depthSampler: createHotspotDepth(player, skinned), scene: player.v5?.scene,
+    });
     hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
     detailView = createDetailView(player, phaseMap, () => { player.dirty = true; emitState(true); }, () => surface.focusDirection());
     detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
@@ -397,7 +410,7 @@ async function boot() {
     const queued = pending; pending = []; for (const input of queued) command(input);
     if (!hosted) presentation.request(0);
     emitState(true);
-  } catch (error) { player?.stop(); showError(error?.message === 'rig_load_failed' ? 'rig_load_failed' : 'scene_load_failed'); }
+  } catch (error) { console.error(error); player?.stop(); showError(error?.message === 'rig_load_failed' ? 'rig_load_failed' : 'scene_load_failed'); }
 }
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;

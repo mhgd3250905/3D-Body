@@ -410,7 +410,12 @@ class _DrillFilterSheetState extends State<_DrillFilterSheet> {
   Widget build(BuildContext context) {
     final s = context.strings;
     final count = widget.catalog
-        .searchDrills(widget.query, tier: _tier, section: _section)
+        .searchDrills(
+          widget.query,
+          tier: _tier,
+          section: _section,
+          includeStraightLegFlare: true,
+        )
         .length;
     return SafeArea(
       child: ConstrainedBox(

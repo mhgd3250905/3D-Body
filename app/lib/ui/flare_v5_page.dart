@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../platform/scene/scene.dart';
-import '../platform/scene/scene_variant.dart';
+import 'flare_v5_stage.dart';
 import 'components.dart' show FlareStrings;
 import 'page_kit.dart';
-import 'theme.dart';
 
 class FlareV5Page extends StatefulWidget {
   const FlareV5Page({super.key, required this.speed});
@@ -54,41 +53,15 @@ class _FlareV5PageState extends State<FlareV5Page> with WidgetsBindingObserver {
         title: s.flareStraightLegs,
         onBack: () => Navigator.of(context).pop(),
         bodyScrollsUnderBar: false,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            SceneView(
-              key: ValueKey(_generation),
-              controller: _scene,
-              body: flareStraightLegsScene,
-            ),
-            ListenableBuilder(
-              listenable: _scene,
-              builder: (context, _) {
-                if (_scene.presented) return const SizedBox.shrink();
-                return ColoredBox(
-                  color: FlareColors.background,
-                  child: Center(
-                    child: _scene.errorCode == null
-                        ? Semantics(
-                            label: s.sceneLoading,
-                            child: const CircularProgressIndicator(),
-                          )
-                        : TextButton(
-                            onPressed: () {
-                              setState(() => _generation++);
-                              // The new view first attaches its command sink.
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (mounted) _prepare();
-                              });
-                            },
-                            child: Text(s.retry),
-                          ),
-                  ),
-                );
-              },
-            ),
-          ],
+        body: FlareV5Stage(
+          key: ValueKey(_generation),
+          controller: _scene,
+          onRetry: () {
+            setState(() => _generation++);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _prepare();
+            });
+          },
         ),
         bottomBar: SafeArea(
           top: false,

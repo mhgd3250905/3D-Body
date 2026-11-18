@@ -405,7 +405,7 @@ void main() {
         matching: find.byType(Image),
       ),
     );
-    expect((art.image as AssetImage).assetName, 'assets/angles/phase-15.png');
+    expect((art.image as AssetImage).assetName, 'assets/angles/v5-phase-15.webp');
     await tester.tap(_key('plan-continue'));
     await helpers.waitForTrainingRoute(tester);
     final delivered = tester
@@ -862,7 +862,7 @@ void main() {
         );
         expect(
           (hero.image as AssetImage).assetName,
-          'assets/angles/phase-$source.webp',
+          'assets/angles/v5-phase-$source.webp',
         );
         _expectPlanMinutes(tester);
         expect(detail.plans.map((plan) => plan.id), [

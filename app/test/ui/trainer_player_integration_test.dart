@@ -1,11 +1,13 @@
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/flare_public_media.dart';
+import 'package:flare/data/flare_v5_drill.dart';
 import 'package:flare/domain/dose.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_v5_playback.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
@@ -211,6 +213,70 @@ void main() {
   tearDown(() {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
+  });
+
+  testWidgets('V5 and public media run in the same SDK session', (
+    tester,
+  ) async {
+    final policy = (await tester.runAsync(
+      () => FlarePublicMedia.load(
+        rootDirectory: '../output/trainer-widget-media-20261102',
+        prefetchBeforeTraining: false,
+      ),
+    ))!;
+    FlarePublicMedia.current = policy;
+    addTearDown(() {
+      FlarePublicMedia.current = null;
+      policy.repository.dispose();
+    });
+    final base = _plan();
+    final plan = base.copyWith(
+      blocks: [
+        uc.PlanBlock(
+          id: 'main',
+          name: 'Main',
+          type: uc.BlockType.main,
+          items: [
+            const uc.PlanItem(
+              exerciseId: flareV5DrillId,
+              mode: uc.DoseMode.reps,
+              sets: 1,
+              reps: 1,
+              perSide: false,
+              restSeconds: 0,
+            ),
+            base.items.first,
+          ],
+        ),
+      ],
+    );
+    final store = await _open(tester, sdkPlan: plan);
+    expect(policy.posterAssetFor(flareV5DrillId), flareV5PosterAsset);
+    expect(policy.actionFor(flareV5DrillId), isNull);
+    expect(find.byType(FlareV5Playback), findsOneWidget);
+    final player = _player(tester);
+    final phases = sdk.SessionBuilder(
+      rhythms: player.rhythms,
+      rhythmDefaults: player.rhythmDefaults,
+      prepSeconds: player.prepSeconds,
+      transitionSeconds: player.transitionSeconds,
+    ).phases(player.plan);
+    final firstWork = phases.firstWhere((phase) => phase.isWork);
+    expect(firstWork.countedOnClock, isTrue);
+    await _advance(tester, phases.first.seconds.ceil() + 1);
+    expect(find.byKey(const ValueKey('counter')), findsOneWidget);
+    expect(find.byType(FlareV5Playback), findsOneWidget);
+    await _advance(tester, firstWork.seconds.ceil() + 1);
+    expect(find.byType(FlareV5Playback), findsNothing);
+    await _expectPoster(tester, base.items.first.exerciseId);
+    await _advance(tester, player.transitionSeconds + 12);
+    expect(store.trainerSessions.single.full, isTrue);
+    expect(store.trainerSessions.single.items.map((item) => item.exerciseId), [
+      flareV5DrillId,
+      base.items.first.exerciseId,
+    ]);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
   });
 
   for (final singleDrill in [false, true]) {

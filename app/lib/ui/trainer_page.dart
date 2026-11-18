@@ -6,12 +6,14 @@ import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
+import '../data/flare_v5_drill.dart';
 import '../l10n/app_localizations.dart';
 import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
+import 'flare_v5_playback.dart';
 import 'page_kit.dart';
 
 /// Opened through the SDK TrainerLauncher: TrainerPlayer owns back/finish,
@@ -244,6 +246,75 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     ),
   );
 
+  Widget _media(BuildContext context, sdk.TrainerMediaRequest request) {
+    final drill = request.drill;
+    final experience = sdk.TrainerExperienceScope.maybeOf(context);
+    final stage = request.theme.mediaStage;
+    final media = drill.media;
+    final id = media?.actionId ?? drill.id;
+    Widget poster(String asset) => sdk.TrainerPoster(
+      asset: asset,
+      bundle: experience?.bundle,
+      decodeWidth: experience?.decodeWidth,
+      mirrored: request.mirrored,
+      radius: 0,
+      stageColor: stage,
+    );
+
+    if (drill.id == flareV5DrillId) {
+      return request.canPlay
+          ? FlareV5Playback(
+              key: const ValueKey('flare-v5-training-media'),
+              initialSpeed: widget.store.settings.speed,
+              autoplay: true,
+              sessionPaused: request.paused,
+            )
+          : poster(flareV5PosterAsset);
+    }
+
+    // For other exercises in the same plan, preserve the SDK's public media
+    // path, including its cache queue and shared download/decoder indicator.
+    final policy = sdk.TrainingMediaPolicyScope.maybeOf(context);
+    if (policy != null) {
+      if (media?.videoAvailable == false) {
+        final asset = policy.posterAssetFor(id);
+        return asset == null ? ColoredBox(color: stage) : poster(asset);
+      }
+      return sdk.TrainingActionMedia(
+        key: const ValueKey('player-public-media'),
+        showInlineStatus: false,
+        actionId: id,
+        policy: policy,
+        prefetchWhenIdle: true,
+        playing: request.canPlay,
+        paused: request.paused,
+        mirrored: request.mirrored,
+        radius: 0,
+        stage: stage,
+        playbackHandle: request.playbackHandle,
+      );
+    }
+    if (experience != null && !request.canPlay) {
+      final asset = media?.posterFor(light: !request.theme.isDark);
+      return switch (asset ?? experience.firstPosterAsset) {
+        final String path when path.isNotEmpty => poster(path),
+        _ => ColoredBox(color: stage),
+      };
+    }
+    if (media == null) return ColoredBox(color: stage);
+    return sdk.DrillMediaView(
+      key: const ValueKey('player-media'),
+      media: media,
+      paused: request.paused,
+      mirrored: request.mirrored,
+      radius: 0,
+      stage: stage,
+      errorLabel: request.strings.mediaUnavailable,
+      errorColor: request.theme.muted,
+      playbackHandle: request.playbackHandle,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = AppLocalizations.of(context);
@@ -298,7 +369,10 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           final public = data.shared.catalog[id];
           final name = drill?.name ?? data.shared.nameOf(id, language);
           if (name == null) return null;
-          final poster = FlarePublicMedia.current?.posterAssetFor(id);
+          final isV5 = id == flareV5DrillId;
+          final poster = isV5
+              ? flareV5PosterAsset
+              : FlarePublicMedia.current?.posterAssetFor(id);
           final timedWrist = timedWristRocks && id == 'forearms-A';
           return sdk.TrainerDrill(
             id: id,
@@ -320,6 +394,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                     videoAsset: '',
                     posterAsset: poster,
                     duration: 0,
+                    videoAvailable: !isV5,
                   ),
           );
         }
@@ -359,6 +434,9 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               showSoundToggle: true,
               notificationIcon: 'mipmap/ic_launcher',
               doseLabel: _doseLabel,
+              mediaBuilder: data.plan.exerciseIds.contains(flareV5DrillId)
+                  ? _media
+                  : null,
             ),
           ),
         );

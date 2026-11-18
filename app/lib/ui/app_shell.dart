@@ -14,6 +14,7 @@ import '../data/catalog.dart';
 import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
+import '../platform/scene/scene_variant.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../trainer/flare_plan_resume.dart';
@@ -22,7 +23,6 @@ import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
 import 'components.dart';
 import 'page_kit.dart';
-import 'actor_body_selector.dart';
 import 'content_pages.dart';
 import 'flare_silhouette.dart';
 import 'motion_controls.dart';
@@ -86,7 +86,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   bool? _recoveryWasPlaying;
   String? _recoveryDetailModel;
   double? _recoveryTime;
-  late String _actorBody;
   bool _settings = false;
   bool _about = false;
   bool _trainingOpen = false;
@@ -147,7 +146,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         lifecycle == AppLifecycleState.resumed ||
         lifecycle == AppLifecycleState.inactive;
     _scene = widget.sceneController ?? SceneController();
-    _actorBody = store.settings.actorBody;
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
     WidgetsBinding.instance.addObserver(this);
@@ -166,11 +164,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _storeChanged() {
-    if (_actorBody != store.settings.actorBody) {
-      _actorBody = store.settings.actorBody;
-      _restartScene();
-      return;
-    }
     _refreshView();
   }
 
@@ -666,6 +659,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                   body: FlareSharedLibraryPage(
                     presentationCatalog: catalog,
                     onBack: () => Navigator.pop(libraryContext),
+                    onOpenStraightLegFlare: (drill) {
+                      navigator.popUntil((route) => route.isFirst);
+                      if (mounted) _openDrill(drill);
+                    },
                   ),
                 ),
               ),
@@ -1118,7 +1115,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         key: _trainingHubState,
                                         catalog: catalog,
                                         sceneTier: store.settings.tier,
-                                        actorBody: _actorBody,
+                                        actorBody: flareTeachingScene,
                                         quality: _quality,
                                         enableScene: widget.enableScene,
                                         initialTime: _trainingEntryTime,
@@ -1296,6 +1293,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         DrillDetailPage(
           drill: drill,
           group: catalog.groupById(drill.groupId),
+          demoSpeed: store.settings.speed,
           onBack: _back,
           onAddToPlan: () => _addToPlan(drill),
           onStart: () => _startDrills(drill.name, [drill]),
@@ -1384,6 +1382,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 onBack: _back,
                 initialMuscle: _libraryGroup?.id,
                 presentationCatalog: catalog,
+                onOpenStraightLegFlare: _openDrill,
               )
             : LibraryPage(
                 catalog: catalog,
@@ -1549,10 +1548,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             key: ValueKey((
                               _sceneGeneration,
                               widget.sceneRevision,
-                              _actorBody,
                             )),
                             controller: _scene,
-                            body: _actorBody,
+                            body: flareTeachingScene,
                           )
                         : ColoredBox(color: FlareColors.background),
                   ),
@@ -2502,15 +2500,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         _result(store.updateSettings(themeMode: value)),
                   ),
                 ),
-                line(
-                  s.actorBodyLabel,
-                  Icons.accessibility_new_rounded,
-                  ActorBodySelector(
-                    value: store.settings.actorBody,
-                    onChanged: (value) =>
-                        _result(store.updateSettings(actorBody: value)),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: FlareGeometry.groupGap),
@@ -3220,7 +3209,7 @@ class _SceneRevealLayerState extends State<SceneRevealLayer>
   }
 }
 
-/// Placeholder while the 3D scene boots: the baked R17 action silhouette
+/// Placeholder while the 3D scene boots: the V5 action silhouette
 /// with one quiet line. The lightweight asset needs no live model to play.
 /// Flutter owns the hosted scene's loading UI. The scene only draws its own
 /// loader when opened on its own, avoiding two marks during initialization.

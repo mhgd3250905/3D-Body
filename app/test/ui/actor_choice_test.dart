@@ -17,7 +17,7 @@ void main() {
     (const Locale('en'), 320.0, 1.0),
     (const Locale('ar'), 390.0, 1.0),
   ]) {
-    testWidgets('actor choices fit $locale/$width/$scale and preserve frame', (
+    testWidgets('fixed V5 actor fits settings and preserves frame $locale/$width', (
       tester,
     ) async {
       tester.view.physicalSize = Size(width, 844);
@@ -32,6 +32,7 @@ void main() {
       await store.initialize();
       await store.acknowledgeSafety();
       await store.setLastTime(2.375);
+      await store.updateSettings(actorBody: 'training');
       final scene = SceneController();
       addTearDown(scene.dispose);
       addTearDown(store.dispose);
@@ -68,27 +69,11 @@ void main() {
       await tester.ensureVisible(settings);
       await tester.tap(settings);
       await tester.pumpAndSettle();
-      for (final value in LearningSettings.actorBodies) {
-        final changed = store.settings.actorBody != value;
-        final choice = find.byKey(ValueKey('actor-body-$value'));
-        expect(choice, findsOneWidget);
-        await tester.ensureVisible(choice);
-        await tester.tap(choice);
-        await tester.pumpAndSettle();
-        if (changed) {
-          scene.receiveEvent({
-            'source': 'flare-scene',
-            'type': 'ready',
-            'time': 0,
-          });
-        }
-        await tester.pumpAndSettle();
-        expect(store.settings.actorBody, value);
-        expect(tester.widget<ChoiceChip>(choice).selected, isTrue);
-        expect(scene.time, closeTo(2.375, .001));
-        expect(scene.playing, isFalse);
-        expect(tester.takeException(), isNull);
-      }
+      expect(find.byType(ActorBodySelector), findsNothing);
+      expect(store.settings.actorBody, 'training');
+      expect(scene.time, closeTo(2.375, .001));
+      expect(scene.playing, isFalse);
+      expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       semantics.dispose();
     });

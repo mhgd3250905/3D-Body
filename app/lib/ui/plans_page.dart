@@ -10,6 +10,7 @@ import '../control/learning_store.dart';
 import '../data/catalog.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_public_media.dart';
+import '../data/flare_v5_drill.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
@@ -41,7 +42,7 @@ class DrillPoster extends StatelessWidget {
     color: FlareColors.raised,
     child: Image.asset(
       drillPosterAsset(drill),
-      fit: BoxFit.cover,
+      fit: drill.id == flareV5DrillId ? BoxFit.contain : BoxFit.cover,
       gaplessPlayback: true,
       excludeFromSemantics: true,
       errorBuilder: (_, _, _) => Center(
@@ -405,7 +406,7 @@ class _LastPlanCard extends StatelessWidget {
         ? s.plansYesterday
         : MaterialLocalizations.of(context).formatShortDate(date);
     final art = switch ((resume.phaseSource, resume.groupId)) {
-      (final int source, _) => 'assets/angles/phase-$source.png',
+      (final int source, _) => 'assets/angles/v5-phase-$source.webp',
       (_, final String id) => 'assets/plan_resume_muscles/$id.webp',
       _ => null,
     };
@@ -844,7 +845,7 @@ class _AnglePlanCard extends StatelessWidget {
               end: 0,
               height: 132,
               child: Image.asset(
-                'assets/angles/phase-${phase.source}.webp',
+                'assets/angles/v5-phase-${phase.source}.webp',
                 fit: BoxFit.contain,
                 excludeFromSemantics: true,
               ),
@@ -1554,7 +1555,12 @@ class _DrillPickerState extends State<_DrillPicker> {
   Widget build(BuildContext context) {
     final s = context.strings;
     final catalog = widget.catalog;
-    final drills = catalog.searchDrills(_query, tier: _tier, section: _section);
+    final drills = catalog.searchDrills(
+      _query,
+      tier: _tier,
+      section: _section,
+      includeStraightLegFlare: true,
+    );
     return SafeArea(
       child: SizedBox(
         height: MediaQuery.sizeOf(context).height * .86,

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../domain/catalog_models.dart';
 import '../domain/flare_plan.dart';
+import 'flare_v5_drill.dart';
 
 export '../domain/catalog_models.dart';
 export '../domain/dose.dart';
@@ -36,7 +37,9 @@ class Catalog {
     required this.drillNote,
     required this.curriculumNote,
     required this.period,
-  }) : sections = List.unmodifiable(sections),
+    Drill? straightLegFlare,
+  }) : straightLegFlare = straightLegFlare ?? flareV5Drill,
+       sections = List.unmodifiable(sections),
        groups = List.unmodifiable(groups),
        phases = List.unmodifiable(phases),
        drills = List.unmodifiable(drills),
@@ -46,7 +49,10 @@ class Catalog {
        tiers = Map.unmodifiable(tiers),
        _groups = {for (final value in groups) value.groupId: value},
        _phases = {for (final value in phases) value.source: value},
-       _drills = {for (final value in drills) value.id: value},
+       _drills = {
+         for (final value in drills) value.id: value,
+         flareV5DrillId: straightLegFlare ?? flareV5Drill,
+       },
        _stages = {for (final value in stages) value.n: value},
        _lessons = {
          for (final stage in stages)
@@ -61,6 +67,7 @@ class Catalog {
   final List<MuscleGroup> groups;
   final List<Phase> phases;
   final List<Drill> drills;
+  final Drill straightLegFlare;
   final List<CourseStage> stages;
   final List<FlarePlan> _flarePlans;
   final List<PhaseKey> phaseKeys;
@@ -203,6 +210,10 @@ class Catalog {
       drillNote: t(drillNote),
       curriculumNote: t(curriculumNote),
       period: period,
+      straightLegFlare: buildFlareV5Drill(
+        name: t(flareV5Name),
+        prescription: t(flareV5Prescription),
+      ),
     );
     result._translations = Map.unmodifiable(translations);
     result._original = _original ?? this;
@@ -259,6 +270,7 @@ class Catalog {
     String? tier,
     String? groupId,
     String? section,
+    bool includeStraightLegFlare = false,
   }) {
     final terms = _searchText(query)
         .trim()
@@ -266,13 +278,17 @@ class Catalog {
         .split(RegExp(r'\s+'))
         .where((term) => term.isNotEmpty);
     return List.unmodifiable(
-      drills.where((drill) {
-        if (tier != null && drill.tier != tier) return false;
+      [if (includeStraightLegFlare) straightLegFlare, ...drills].where((drill) {
+        final isStraightLegFlare = drill.id == flareV5DrillId;
+        if (!isStraightLegFlare && tier != null && drill.tier != tier) {
+          return false;
+        }
         if (groupId != null && drill.groupId != groupId) return false;
         final group = _groups[drill.groupId]!;
         if (section != null && group.section != section) return false;
+        final aliases = isStraightLegFlare ? '$flareV5Name thomas' : '';
         final haystack = _searchText(
-          '${drill.name} ${drill.nameEn} ${drill.equipment} ${group.label} ${group.shortLabel} ${drill.tierLabel} ${_original?.drillById(drill.id)?.name ?? ''} ${_original?.groupById(drill.groupId)?.label ?? ''}',
+          '${drill.name} ${drill.nameEn} $aliases ${drill.equipment} ${group.label} ${group.shortLabel} ${drill.tierLabel} ${_original?.drillById(drill.id)?.name ?? ''} ${_original?.groupById(drill.groupId)?.label ?? ''}',
         );
         return terms.every(haystack.contains);
       }),

@@ -76,6 +76,9 @@ void main() {
       final v5 = configuredSceneUri(base, body: flareStraightLegsScene);
       expect(v5.path, base.resolve('v5.html').path);
       expect(v5.origin, base.origin);
+      final teaching = configuredSceneUri(base, body: flareTeachingScene);
+      expect(teaching.path, base.path);
+      expect(teaching.queryParameters, {'actor': flareStraightLegsScene});
       expect(configuredSceneUri(base, body: 'training').path, base.path);
     }
   });

@@ -15,6 +15,7 @@ import 'flare_drill_resolver.dart';
 import 'flare_action_scope.dart';
 import 'flare_public_catalog.dart';
 import 'flare_public_media.dart';
+import 'flare_v5_drill.dart';
 
 /// The verified public definitions shared by Coach, library and player.
 class FlareShared {
@@ -215,10 +216,12 @@ class FlareSharedLibraryPage extends StatefulWidget {
     this.onBack,
     this.initialMuscle,
     this.presentationCatalog,
+    this.onOpenStraightLegFlare,
   });
   final VoidCallback? onBack;
   final String? initialMuscle;
   final flare.Catalog? presentationCatalog;
+  final ValueChanged<flare.Drill>? onOpenStraightLegFlare;
   @override
   State<FlareSharedLibraryPage> createState() => _FlareSharedLibraryPageState();
 }
@@ -253,6 +256,23 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
     return widget.presentationCatalog?.translate(source) ?? source;
   }
 
+  bool _showsStraightLegFlare(
+    trainer.TrainingLibraryFilter filter,
+    String title,
+  ) {
+    if (widget.onOpenStraightLegFlare == null) return false;
+    const all = trainer.TrainingLibraryFilter.all;
+    final terms = filter.query.toLowerCase().trim().split(RegExp(r'\s+'));
+    final names = '$title $flareV5Name $flareV5NameEn Thomas'.toLowerCase();
+    return terms.every(names.contains) &&
+        (filter.equipment == all || filter.equipment == '徒手') &&
+        (filter.bodyPart == all || filter.bodyPart == '全身') &&
+        (filter.type == all || filter.type == '其他') &&
+        (filter.level == null || filter.level == flareV5Drill.difficulty) &&
+        filter.side != trainer.TrainingLibrarySide.unilateral &&
+        (filter.muscle == null || filter.muscle == flareV5Drill.groupId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final shared = FlareShared.current!;
@@ -261,15 +281,18 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
     final s = context.strings;
     final language = Localizations.localeOf(context).toLanguageTag();
     final all = config.actions(policy.catalog).toList(growable: false);
-    final shown = all
-        .where(
-          (action) => trainer.PoseHubActionFacets.matchesFilter(
-            action,
-            _filter,
-            extraNames: config.searchNames?.call(action.id) ?? const [],
-          ),
-        )
-        .toList(growable: false);
+    bool showsStraightLegFlare(trainer.TrainingLibraryFilter filter) =>
+        _showsStraightLegFlare(filter, s.flareStraightLegs);
+    final shown = <(String, coach.PoseHubPackAction?)>[
+      if (showsStraightLegFlare(_filter)) (flareV5DrillId, null),
+      for (final action in all)
+        if (trainer.PoseHubActionFacets.matchesFilter(
+          action,
+          _filter,
+          extraNames: config.searchNames?.call(action.id) ?? const [],
+        ))
+          (action.id, action),
+    ];
     final strings = trainerStrings(s);
     final textMetricsKey = (
       Localizations.localeOf(context),
@@ -292,7 +315,13 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
       _cardHeights.clear();
       _textMetricsKey = textMetricsKey;
     }
+    String titleFor(String id) => id == flareV5DrillId
+        ? s.flareStraightLegs
+        : shared.catalog[id]!.name.of(language);
     String doseFor(String id) {
+      if (id == flareV5DrillId) {
+        return s.libraryDose(flareV5Drill.dose.sets, s.countLabel(1));
+      }
       final definition = shared.catalog[id]!;
       final dose = definition.defaultDose;
       final reps = dose.mode == coach.DoseMode.reps;
@@ -329,6 +358,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                   controller: _search,
                   strings: config.strings,
                   label: _label,
+                  includesHostDrill: showsStraightLegFlare,
                   onChanged: (value) => setState(() => _filter = value),
                 ),
                 const SizedBox(height: FlareGeometry.libraryFieldGap),
@@ -365,8 +395,8 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
             sliver: SliverCardRows(
               itemCount: shown.length,
               itemHeightBuilder: (context, width, index) {
-                final id = shown[index].id;
-                final title = shared.catalog[id]!.name.of(language);
+                final id = shown[index].$1;
+                final title = titleFor(id);
                 final subtitle = doseFor(id);
                 return _cardHeights.putIfAbsent(
                   (id, width, title, subtitle),
@@ -379,8 +409,28 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                 );
               },
               itemBuilder: (context, index) {
-                final action = shown[index];
-                final definition = shared.catalog[action.id]!;
+                final (id, action) = shown[index];
+                if (action == null) {
+                  final drill =
+                      widget.presentationCatalog?.straightLegFlare ??
+                      flareV5Drill;
+                  return DrillCard(
+                    key: const ValueKey('public-action-$flareV5DrillId'),
+                    drill: drill,
+                    libraryPresentation: true,
+                    title: titleFor(id),
+                    subtitle: doseFor(id),
+                    groupLabel: _label('全身'),
+                    color: FlareColors.accent,
+                    artwork: Image.asset(
+                      flareV5PosterAsset,
+                      key: const ValueKey('library-poster-$flareV5DrillId'),
+                      fit: BoxFit.contain,
+                      excludeFromSemantics: true,
+                    ),
+                    onTap: () => widget.onOpenStraightLegFlare!(drill),
+                  );
+                }
                 final drill = sharedDisplayDrill(shared.catalog, action.id)!;
                 final muscles =
                     (action.raw['muscleGroups'] as List?)
@@ -399,7 +449,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                   key: ValueKey('public-action-${action.id}'),
                   drill: drill,
                   libraryPresentation: true,
-                  title: definition.name.of(language),
+                  title: titleFor(id),
                   subtitle: dose,
                   groupLabel: badge == null
                       ? _label(

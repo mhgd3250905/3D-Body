@@ -1,5 +1,9 @@
 # Flare 版本管理台账
 
+## Android 本地候选包 vc2062（2026-11-18）
+
+`codex/flare-v5-model` 将 V5 接入首页教学、动作库、计划及训练播放，延续 vc2061 的 WebView 调色板修复。Flutter 声明 1.0.15+62，arm64 split 的实际版本为 1.0.15 (2062)。本地包与源码提交、SHA-256 和签名回执归档在主工作区 `output/release-checkpoints/app-v1.0.15-build2062/`。新增入口由用户真机复验。[V5 接入与验证](flare-v5-model-2026-11-18.md)
+
 ## Android 测试包 vc2056（2026-11-17）
 
 `feat/flare-plans-full` 构建源码 `ce7ec04e986975b9d71a4000365c973225135bdc`，源码版本 `1.0.15+56`，arm64 release 实际为 `1.0.15 (2056)`。包含独立的训练前器材行、14 语器材名称，以及高级背阔肌徒手和居家统一的毛巾下拉处方。

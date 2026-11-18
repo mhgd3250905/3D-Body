@@ -298,7 +298,7 @@ void main() {
     },
   );
 
-  testWidgets('empty logs open all 248 actions with SDK poster artwork', (
+  testWidgets('empty logs open 248 public actions and the local V5 drill', (
     tester,
   ) async {
     final scene = await mountShell(tester);
@@ -310,7 +310,13 @@ void main() {
     await _settleLocalAssets(tester);
     expect(find.byType(FlareSharedLibraryPage), findsOneWidget);
     expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
-    _expectCount(tester, 248);
+    _expectCount(tester, 249);
+    expect(_key('public-action-flare-v5'), findsOneWidget);
+    final v5Poster = tester.widget<Image>(_key('library-poster-flare-v5'));
+    expect(
+      (v5Poster.image as AssetImage).assetName,
+      'assets/public_posters/flare-v5.webp',
+    );
     final artwork = tester
         .widgetList<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster))
         .toList();

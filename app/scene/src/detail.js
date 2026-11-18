@@ -120,9 +120,14 @@ export function createDetailView(player, phaseMap, onModelChange, focusDirection
     const key = [alternate, selected, player.time, width, height, density, player.quality, player.renderer.toneMappingExposure, ...direction.toArray()].join(':');
     if (key === thumbnailKey && thumbnailEnvironment === player.scene.environment) return true;
     const box = alternate === 'muscles' ? phaseMap.getFullBounds() : fullMotionBounds();
-    fitThumbnailCamera(miniCamera, box, direction, width, height);
     phaseMap.refreshEnvironment();
-    phaseMap.withThumbnailDensity(density, () => thumbnail.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera, width, height, density, alternate === 'muscles'));
+    if (alternate === 'motion' && player.v5) {
+      const camera = player.v5.frameCamera(width, height);
+      thumbnail.render(player.v5.scene, camera, width, height, density);
+    } else {
+      fitThumbnailCamera(miniCamera, box, direction, width, height);
+      phaseMap.withThumbnailDensity(density, () => thumbnail.render(alternate === 'muscles' ? phaseMap.scene : player.scene, miniCamera, width, height, density, alternate === 'muscles'));
+    }
     thumbnailKey = key; thumbnailEnvironment = player.scene.environment;
     return true;
   }

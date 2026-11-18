@@ -19,6 +19,7 @@ class PublicLibraryFilter extends StatelessWidget {
     required this.strings,
     required this.onChanged,
     required this.label,
+    this.includesHostDrill,
   });
 
   final List<uc.PoseHubPackAction> actions;
@@ -27,6 +28,7 @@ class PublicLibraryFilter extends StatelessWidget {
   final sdk.TrainingLibraryStrings strings;
   final ValueChanged<sdk.TrainingLibraryFilter> onChanged;
   final String Function(String) label;
+  final bool Function(sdk.TrainingLibraryFilter)? includesHostDrill;
 
   Future<void> _openSheet(BuildContext context) async {
     FocusScope.of(context).unfocus();
@@ -40,6 +42,7 @@ class PublicLibraryFilter extends StatelessWidget {
         initial: filter,
         strings: strings,
         label: label,
+        includesHostDrill: includesHostDrill,
       ),
     );
     if (context.mounted && result != null) onChanged(result);
@@ -184,12 +187,14 @@ class _PublicLibraryFilterSheet extends StatefulWidget {
     required this.initial,
     required this.strings,
     required this.label,
+    required this.includesHostDrill,
   });
 
   final List<uc.PoseHubPackAction> actions;
   final sdk.TrainingLibraryFilter initial;
   final sdk.TrainingLibraryStrings strings;
   final String Function(String) label;
+  final bool Function(sdk.TrainingLibraryFilter)? includesHostDrill;
 
   @override
   State<_PublicLibraryFilterSheet> createState() =>
@@ -367,9 +372,11 @@ class _PublicLibraryFilterSheetState extends State<_PublicLibraryFilterSheet> {
           ),
       ]),
     ];
-    final count = actions
-        .where((a) => sdk.PoseHubActionFacets.matchesFilter(a, _draft))
-        .length;
+    final count =
+        actions
+            .where((a) => sdk.PoseHubActionFacets.matchesFilter(a, _draft))
+            .length +
+        (widget.includesHostDrill?.call(_draft) == true ? 1 : 0);
     return SafeArea(
       top: false,
       child: ConstrainedBox(

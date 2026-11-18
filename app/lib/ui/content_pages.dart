@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/flare_v5_drill.dart';
 import 'components.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -9,6 +10,7 @@ import 'drill_media.dart';
 import 'app_glass.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
+import 'flare_v5_playback.dart';
 
 /// The three-rule safety card. Shown once before entering, and from Settings.
 Future<bool?> showSafetySheet(BuildContext context) {
@@ -147,7 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   children: [
                     Expanded(
                       child: Image.asset(
-                        'assets/brand/hero-thomas.webp',
+                        'assets/public_posters/flare-v5-cutout.webp',
                         fit: BoxFit.contain,
                         semanticLabel: s.welcomeHeadline,
                         frameBuilder: (context, child, frame, sync) =>
@@ -297,7 +299,12 @@ class _LibraryPageState extends State<LibraryPage> {
     final s = context.strings;
     final catalog = widget.catalog;
     final tier = widget.store.settings.tier;
-    final drills = catalog.searchDrills(_query, tier: tier, section: _section);
+    final drills = catalog.searchDrills(
+      _query,
+      tier: tier,
+      section: _section,
+      includeStraightLegFlare: true,
+    );
     return FlareNavPage(
       title: s.library,
       onBack: widget.onBack,
@@ -381,12 +388,14 @@ class DrillDetailPage extends StatefulWidget {
     required this.onStart,
     required this.onAddToPlan,
     this.group,
+    this.demoSpeed = .5,
   });
   final Drill drill;
   final MuscleGroup? group;
   final VoidCallback onBack;
   final VoidCallback onStart;
   final VoidCallback onAddToPlan;
+  final double demoSpeed;
 
   @override
   State<DrillDetailPage> createState() => _DrillDetailPageState();
@@ -467,7 +476,17 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       body: ListView(
         padding: EdgeInsets.only(top: flareNavInset(context)),
         children: [
-          DrillMediaCard(key: ValueKey('demo:${drill.id}'), drillId: drill.id),
+          if (drill.id == flareV5DrillId)
+            AspectRatio(
+              key: ValueKey('demo:${drill.id}'),
+              aspectRatio: 1,
+              child: FlareV5Playback(initialSpeed: widget.demoSpeed),
+            )
+          else
+            DrillMediaCard(
+              key: ValueKey('demo:${drill.id}'),
+              drillId: drill.id,
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
             child: Column(
@@ -515,15 +534,19 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
                 ),
                 const SizedBox(height: 22),
                 for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
-                const Divider(),
+                if (shown.isNotEmpty) const Divider(),
                 Disclosure(
                   title: s.moreCuesAndSafety,
                   children: [
                     for (var i = 0; i < rest.length; i++) _cue(i + 2, rest[i]),
-                    SectionTitle(s.mistake),
-                    BodyText(drill.mistake),
-                    SectionTitle(s.drillWhy),
-                    BodyText(drill.why),
+                    if (drill.mistake.isNotEmpty) ...[
+                      SectionTitle(s.mistake),
+                      BodyText(drill.mistake),
+                    ],
+                    if (drill.why.isNotEmpty) ...[
+                      SectionTitle(s.drillWhy),
+                      BodyText(drill.why),
+                    ],
                     SectionTitle(s.safety),
                     BodyText(drill.safety ?? s.safetyBody),
                     if (drill.illustrationNote != null) ...[

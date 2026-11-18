@@ -4,6 +4,7 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
+import '../data/flare_v5_drill.dart';
 import '../l10n/app_localizations.dart';
 import 'drill_decoder_pool.dart';
 import 'motion.dart';
@@ -160,7 +161,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   }
 
   void _syncActivity() {
-    if (!_active) {
+    if (!_active || widget.drillId == flareV5DrillId) {
       _autoRequested = false;
       _coordinator.forget(this);
     } else if (widget.autoPlay && !_autoRequested) {
@@ -224,6 +225,16 @@ class _DrillMediaCardState extends State<DrillMediaCard>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.drillId == flareV5DrillId) {
+      final poster = Image.asset(
+        flareV5PosterAsset,
+        fit: BoxFit.contain,
+        excludeFromSemantics: true,
+      );
+      return widget.mirrored
+          ? Transform.flip(flipX: true, child: poster)
+          : poster;
+    }
     if (widget.thumbnail) {
       return Image.asset(
         '${FlarePublicMedia.thumbnailRoot}${widget.drillId}.webp',
