@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { FLARE_GROUPS } from '../src/legacy/flare-muscle-groups.js';
 import { MUSCLES, resolveGroup } from '../src/legacy/muscle-map.js';
-import { mannequinToonLighting } from '../src/mannequin-toon.js';
+import { addMannequinBoundary, mannequinOutlineWidth, mannequinToonLighting } from '../src/mannequin-toon.js';
 
 const groupByPanel = new Uint8Array(MUSCLES.length);
 const panelById = new Map(MUSCLES.map(({ id, index }) => [id, index]));
@@ -23,7 +23,8 @@ export function installToonPreview(shader, maskMode, highlights, toon) {
   shader.uniforms.photoToonBase = { value: base };
   shader.uniforms.photoToonShade = { value: shade };
   shader.uniforms.photoHighlights = { value: highlights };
-  let source = (toon === 'muscle-toon-v1' ? mannequinToonLighting : '') + `
+  const production = toon === 'muscle-toon-v1';
+  let source = (production ? mannequinToonLighting : '') + `
 uniform bool photoMask;
 uniform vec3 photoToonLight, photoToonBase, photoToonShade;
 uniform vec4 photoHighlights[2];
@@ -39,6 +40,7 @@ float photoHighlight(vec4 bounds) {
   return 1.0 - smoothstep(1.0 - edge, 1.0 + edge, radius);
 }
 ` + shader.fragmentShader;
+  if (production) source = addMannequinBoundary(source);
   const hatch = /float hatch = mix\(smoothstep[^;]+;/;
   if (!hatch.test(source)) throw new Error('The original hatch expression was not found');
   source = source.replace(hatch, '$&\n          photoDepthHatch = hatch;');
@@ -49,13 +51,14 @@ float photoHighlight(vec4 bounds) {
   // sole line pattern inside any group.
   const lighting = toon ? `
     if (!photoMask) {
-      ${toon === 'muscle-toon-v1' ? `
+      ${production ? `
       float selection = clamp(abs(mmSelV), 0.0, 1.0) * mmShown * mmIsMuscle * mmPanelCoverage;
       if (mmSelV < 0.0) selection *= mix(0.26, 1.0, photoDepthHatch);
       float hardHighlight = photoHighlights[0].x < 0.0
         ? mannequinHardHighlight(mannequinLight(normal, vMmPos), mmS1)
         : max(photoHighlight(photoHighlights[0]), photoHighlight(photoHighlights[1]));
       vec3 colour = mannequinToonColour(normal, vMmPos, mmPc, selection, hardHighlight);
+      colour = inkMannequinBoundary(colour, mmPc, selection);
       gl_FragColor = sRGBTransferOETF(vec4(colour, 1.0));
       ` : `
       float nDotL = dot(normal, photoToonLight);
@@ -140,47 +143,53 @@ export function captureMasks(renderer, scene, camera, maskMode, useToon, size) {
   return { mask: after, stats };
 }
 
-export function inkToon(renderer, mask) {
+export function inkToon(renderer, mask, { legacy = false } = {}) {
   const size = renderer.domElement.width;
   const canvas = canvasAt(size);
   const context = canvas.getContext('2d', { willReadFrequently: true });
   context.drawImage(renderer.domElement, 0, 0);
   const pixels = context.getImageData(0, 0, size, size);
   const ids = new Uint8Array(size * size);
-  const groups = new Uint8Array(ids.length);
-  const active = new Uint8Array(ids.length);
+  const groups = legacy ? new Uint8Array(ids.length) : null;
+  const active = legacy ? new Uint8Array(ids.length) : null;
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const at = y * size + x;
       const from = ((size - 1 - y) * size + x) * 4;
       ids[at] = mask[from];
-      groups[at] = groupByPanel[mask[from] - 1] || 0;
-      active[at] = mask[from + 1] > 96 ? 1 : 0;
+      if (legacy) {
+        groups[at] = groupByPanel[mask[from] - 1] || 0;
+        active[at] = mask[from + 1] > 96 ? 1 : 0;
+      }
     }
   }
-  // Work at 2x and downsample. The V5 contour starts at 0.48% of viewport
-  // height; its uniform dark ink is independent of the unaltered ID mask.
-  const radius = Math.round(size * 0.0048);
+  // Rasterize the outer ink at the photo's supersampling density. The
+  // original thick style remains available for the approved reference.
+  const radius = legacy ? Math.round(size * 0.0048) : mannequinOutlineWidth * renderer.getPixelRatio();
+  const reach = Math.ceil(radius + 0.5);
   const offsets = [];
-  for (let y = -radius; y <= radius; y++) {
-    for (let x = -radius; x <= radius; x++) {
-      if (x * x + y * y <= radius * radius) offsets.push([x, y]);
+  for (let y = -reach; y <= reach; y++) {
+    for (let x = -reach; x <= reach; x++) {
+      const distance = Math.hypot(x, y);
+      const coverage = legacy ? Number(distance <= radius) : THREE.MathUtils.clamp(radius + 0.5 - distance, 0, 1);
+      if (coverage > 0) offsets.push([x, y, Math.round(255 * coverage)]);
     }
   }
+  offsets.sort((a, b) => b[2] - a[2]);
   const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
   const outline = context.createImageData(size, size);
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const at = y * size + x, pixel = at * 4;
       if (pixels.data[pixel + 3] < 255) {
-        for (const [dx, dy] of offsets) {
+        for (const [dx, dy, alpha] of offsets) {
           const xx = x + dx, yy = y + dy;
           if (xx < 0 || xx >= size || yy < 0 || yy >= size || !ids[yy * size + xx]) continue;
-          outline.data.set([42, 29, 51, 255], pixel);
+          outline.data.set([42, 29, 51, alpha], pixel);
           break;
         }
       }
-      if (!ids[at] || !pixels.data[pixel + 3]) continue;
+      if (!legacy || !ids[at] || !pixels.data[pixel + 3]) continue;
       // Ink lives at the boundary between published groups. A shared group
       // index suppresses internal subpanel changes (e.g. three deltoid lobes).
       // No groove from the legacy abs tendons or cosmetic relief is copied.
@@ -214,7 +223,7 @@ export function makeComparison(before, after, title, deep, approved = null) {
   const canvas = canvasAt(1);
   const images = approved ? [before, approved, after] : [before, after];
   const labels = approved
-    ? ['原版 · 拉丝钛', '已确认样图 · 原阴影', 'muscle-toon-v1 · 浅一档阴影']
+    ? ['原版 · 拉丝钛', '已确认样图 · 原阴影', '浅暗部 · 细描边']
     : ['现版 · 拉丝钛', '新版 · 日漫样图'];
   canvas.width = panel * images.length + gap * (images.length - 1);
   canvas.height = header + panel + footer;

@@ -70,7 +70,7 @@ App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`
 
 ## 肌群插图与最近训练卡（2026-11-18）
 
-`muscle-toon-v1` 使用与实时人台共享的哑光卡通着色。条目与最近训练卡各有 17 张透明 WebP，沿用各自的正交机位、裁切和输出尺寸。复现命令为 `node app/tools/render-muscle-thumbnails.mjs --toon-v1`，添加 `--preview` 可只输出验证文件。报告在上墨和编码前对比 34 个机位的分区 ID、选区、深层斜线与底模轮廓。原模型与 CC0-1.0 许可见 [解剖资产说明](../../docs/anatomy-assets.md)。[条目清单](../assets/muscles/manifest.json) · [最近训练卡清单](../assets/plan_resume_muscles/manifest.json)
+`muscle-toon-v1` 使用与实时人台共享的哑光卡通着色和肌群分界线。实时外轮廓为 1.2 CSS px，缩略图按相同比例缩细。条目与最近训练卡各有 17 张透明 WebP，沿用各自的正交机位、裁切和输出尺寸。复现命令为 `node app/tools/render-muscle-thumbnails.mjs --toon-v1`，添加 `--preview` 可只输出验证文件。报告在上墨和编码前对比 34 个机位的分区 ID、选区、深层斜线与底模轮廓。原模型与 CC0-1.0 许可见 [解剖资产说明](../../docs/anatomy-assets.md)。[条目清单](../assets/muscles/manifest.json) · [最近训练卡清单](../assets/plan_resume_muscles/manifest.json)
 
 ## 历史：肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
 

@@ -4,6 +4,7 @@ import angleBounds from './training-hub-angle-bounds.json' with { type: 'json' }
 import { CAMERA_PRESETS } from './player.js';
 import { resolveHubAngleCamera } from './training-hub-angle-fit.js';
 import { createHubTransitions } from './training-hub-transitions.js';
+import { createStandingView } from './standing-view.js';
 
 const noPhase = { items: [] };
 const angleSources = new Set(phaseTicks.map(tick => tick.phase));
@@ -126,6 +127,7 @@ function captureMaterial(source) {
 export function createTrainingHub(player, phaseMap, onAngleFrame) {
   const transitions = createHubTransitions(player.period);
   const r = player.renderer;
+  const standing = createStandingView(player, phaseMap.releaseGpu);
   const angleCamera = new THREE.PerspectiveCamera(player.baseFov, 1, .02, 40);
   const muscleCamera = new THREE.PerspectiveCamera(26, 1, .02, 20);
   const muscleFrame = getHubMuscleFrame(phaseMap.scene, phaseMap.getFullBounds());
@@ -220,7 +222,10 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
     const muscleCamera = currentMuscleShot(input);
-    if (!transitions.configure({ ...input, muscleCamera }, now)) return false;
+    const modeChanged = lastInput && lastInput.showMuscles !== input.showMuscles;
+    // The new mode presents a matched still first. Within a mode, keep the
+    // existing motion, camera and focus transitions.
+    if (!transitions.configure({ ...input, muscleCamera, animate: input.animate && !modeChanged }, now)) return false;
     setAngleYaw(input.angleYaw);
     lastInput = input;
     if (player.time !== transitions.frame.time) player.setTime(transitions.frame.time);
@@ -276,7 +281,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     finally { for (const [mesh, original] of replaced) mesh.material = original; }
   }
 
-  function render() {
+  function renderFrame() {
     const width = player.container.clientWidth, height = player.container.clientHeight;
     if (!lastInput || !(width > 0 && height > 0)) return false;
     frameAngleCamera(width, height);
@@ -294,6 +299,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       ({ groupId, weight: weight * frame.mode }))].filter(({ weight }) => weight > 1 / 255);
     for (const prop of player.stageProps) prop.visible = false;
     if (layers.length === 1) {
+      if (target || modeTargets.length) releaseBlends();
       draw(layers[0], false, width, height, muscleHeight);
       return true;
     }
@@ -351,15 +357,58 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     return true;
   }
 
-  function releaseGpu() {
+  function releaseBlends() {
     target?.dispose();
     target = null;
     for (const buffer of modeTargets) buffer.dispose();
     modeTargets.length = 0;
     modeCaptureKey = '';
-    lastGroup = null;
     for (const material of materials.values()) material.dispose();
     materials.clear();
+  }
+
+  function render() {
+    const frame = transitions.frame;
+    if (!frame || !player.visible || document.hidden) return false;
+    if (frame.targetMode !== 1) {
+      standing.close();
+      return renderFrame();
+    }
+    if (!standing.getState().active) {
+      releaseBlends();
+      phaseMap.releaseThumbnailGpu();
+      player.releaseActorGpu();
+      // Complete the actor's queued draw/deletion before uploading anatomy.
+      // This runs at the mode boundary only, never during the render loop.
+      r.getContext().finish();
+      phaseMap.refreshEnvironment();
+      standing.show(poster => {
+        renderFrame();
+        const canvas = r.domElement;
+        const height = player.container.clientHeight;
+        const hiddenRows = Math.round(Math.min(Math.max(0, height - 120), angleStageHeight - standingStageHeight) * r.getPixelRatio());
+        poster.canvas.width = canvas.width;
+        poster.canvas.height = Math.max(1, canvas.height - hiddenRows);
+        poster.canvas.style.height = `${100 * poster.canvas.height / canvas.height}%`;
+        poster.drawImage(canvas, 0, 0, canvas.width, poster.canvas.height, 0, 0, canvas.width, poster.canvas.height);
+      });
+      return true;
+    }
+    standing.render(renderFrame);
+    return true;
+  }
+
+  function setVisible(visible) {
+    if (!visible) {
+      standing.close();
+      releaseBlends();
+    }
+  }
+
+  function releaseGpu() {
+    standing.close();
+    releaseBlends();
+    lastGroup = null;
     material.dispose();
     plane.dispose();
   }
@@ -385,5 +434,5 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     };
   }
 
-  return { configure, setAngleYaw, tick, render, releaseGpu, getState };
+  return { configure, setAngleYaw, tick, render, releaseGpu, getState, setVisible, getStandingView: standing.getState };
 }

@@ -8,7 +8,6 @@ import { createBakedClock, createBakedMotion } from '../src/baked-motion.js';
 import { characterFromLocation, characterAsset, applyCharacter } from '../src/characters.js';
 import { phaseAt, phaseTicks, phaseAtV41, phaseTicksV41, phaseAtV38, phaseTicksV38 } from '../src/phase.js';
 import { buildMmRest, createSurfaceSelection } from '../src/mapped-mesh.js';
-import { createDetailView } from '../src/detail.js';
 import { FlarePlayer, applyTrainingClothSink } from '../src/player.js';
 import { createAdaptiveResolution } from '../src/adaptive-resolution.js';
 import { createFlareFx } from '../src/fx.js';
@@ -108,11 +107,8 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
     time: frozen.time, period: 9, speed: 1, playing: false, loopRange: null, running: false, autoFrame: true, visible: true,
     viewInset: 0, viewInsetTarget: 0, baseFov: 32, framingMode: 'main' });
   player.camera.position.set(0, 2, 4); player.scene.add(model);
-  const phaseMap = { scene: new THREE.Scene(), setDetail() {}, refreshEnvironment() {}, restorePhase() {}, releaseGpu() {},
-    getFullBounds: () => new THREE.Box3(new THREE.Vector3(-0.5, 0, -0.3), new THREE.Vector3(0.5, 2, 0.3)) };
-  const detail = createDetailView(player, phaseMap, null, () => selection.focusDirection());
-  detail.open(group, selected); detail.setModel('muscles', selected); detail.setModel('motion', selected); detail.close();
-  assert.equal(player.time, frozen.time); assert.deepEqual(motion.getMetrics().joints, frozen.joints, 'detail, swap and return preserve pose');
+  player.releaseActorGpu();
+  assert.equal(player.time, frozen.time); assert.deepEqual(motion.getMetrics().joints, frozen.joints, 'releasing actor GPU resources preserves decoded pose');
   selection.restore(); for (let i = 0; i < skinned.length; i++) assert.equal(skinned[i].material, materials[i], 'character material identity is restored');
   const savedPerformance = globalThis.performance, savedMatchMedia = globalThis.matchMedia;
   let now = 0, detailActive = false;
@@ -131,8 +127,8 @@ for (const search of ['', '?body=training', '?character=shadow', '?character=chr
   const settled = renders; frames(90); assert.equal(renders, settled, 'reduced-motion detail finishes fading and becomes idle');
   fx.dispose(); globalThis.performance = savedPerformance;
   if (savedMatchMedia === undefined) delete globalThis.matchMedia; else globalThis.matchMedia = savedMatchMedia;
-  detail.dispose(); selection.dispose(); motion.dispose();
-  rows.push({ character: character.id, asset, poses, detailSameFrame: true, materialRestored: true, reducedMotionFxSettled: true });
+  selection.dispose(); motion.dispose();
+  rows.push({ character: character.id, asset, poses, actorGpuReleasePreservesPose: true, materialRestored: true, reducedMotionFxSettled: true });
 }
 for (const [revision, asset, clockFile] of [
   ['v41', 'coach/flare-coach-v41-animated.meshopt.glb.gz', 'src/v41-clock.json'],
@@ -143,7 +139,7 @@ for (const [revision, asset, clockFile] of [
   assert.equal(motion.getMetrics().motionRevision, revision);
   assert.equal(motion.getMetrics().wallTime, createBakedClock(read(clockFile)).toWall(2.375)); motion.dispose();
 }
-console.log(JSON.stringify({ status: 'passed', scope: 'v42-r17-real-assets-app-clock-phases-seven-characters-detail-and-fx',
+console.log(JSON.stringify({ status: 'passed', scope: 'v42-r17-real-assets-app-clock-phases-seven-characters-resource-lifecycle-and-fx',
   period: clock.period, clipDuration: clock.duration, clockRoundtripMaxError: maxRoundtripError,
   phaseFrames: phases.frames.length, historicalClocksPreserved: ['v41', 'v38'], characters: rows,
   limitation: 'Node runtime regression; GPU output, native devices and long background timing require separate evidence.' }, null, 2));

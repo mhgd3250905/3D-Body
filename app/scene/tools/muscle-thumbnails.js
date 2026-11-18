@@ -256,11 +256,11 @@ window.musclePhotography = (async () => {
     if (toonV1) {
       useToon('preview');
       renderer.render(scene, camera);
-      approved = inkToon(renderer, pixels.mask);
+      approved = inkToon(renderer, pixels.mask, { legacy: true });
     }
     useToon(true);
     renderer.render(scene, camera);
-    const after = inkToon(renderer, pixels.mask);
+    const after = inkToon(renderer, pixels.mask, { legacy: !toonV1 });
     useToon(false);
     const image = makeComparison(before, after, shot.title, selections.some(({ selection }) => selection.deep), approved);
     return {

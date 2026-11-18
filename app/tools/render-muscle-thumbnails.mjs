@@ -95,7 +95,7 @@ try {
         revision: 'muscle-toon-v1', createdDate: '2026-11-18',
         renderer: {
           threeRevision: info.threeRevision, renderWidth: info.renderWidth, renderHeight: info.renderHeight,
-          material: 'Shared matte cel shading with lighter shadows and screen-space ink',
+          material: 'Shared matte cel shading with lighter shadows and fine screen-space ink',
           background: 'transparent', alpha: true, meshCount: info.meshCount, vertices: info.vertices,
         },
         method: 'Original mannequin, orthographic cameras, functional partition, group colors and deep hatch. Transparent WebP from a 1024px render, preserving each published crop and output dimensions.',

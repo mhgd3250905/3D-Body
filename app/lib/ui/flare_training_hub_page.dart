@@ -43,6 +43,8 @@ class FlareTrainingHubPage extends StatefulWidget {
     this.leaving = false,
     this.sceneBoundsKey,
     this.onScenePresented,
+    this.sharedController,
+    this.sharedSceneView,
   });
 
   final Catalog catalog;
@@ -62,13 +64,16 @@ class FlareTrainingHubPage extends StatefulWidget {
   final bool leaving;
   final GlobalKey? sceneBoundsKey;
   final VoidCallback? onScenePresented;
+  final SceneController? sharedController;
+  final Widget? sharedSceneView;
 
   @override
   State<FlareTrainingHubPage> createState() => FlareTrainingHubPageState();
 }
 
 class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
-  final _stage = SceneController();
+  late final _stage = widget.sharedController ?? SceneController();
+  bool get _ownsController => widget.sharedController == null;
   late double _time = widget.initialTime;
   late bool _muscles = widget.initialMuscles;
   bool? _pendingMode;
@@ -101,18 +106,35 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   void initState() {
     super.initState();
     _stage.addListener(_sceneChanged);
-    _render(animate: false);
-    _stage.setQuality(widget.quality);
-    _stage.setVisible(widget.visible);
+    if (_ownsController) {
+      _render(animate: false);
+      _stage.setQuality(widget.quality);
+      _stage.setVisible(widget.visible);
+    } else {
+      _enterSharedScene();
+    }
+  }
+
+  void _enterSharedScene() {
+    _requestedPresentation = _reportedPresentation = false;
+    if (!widget.mountScene) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !widget.mountScene) return;
+      _requestedPresentation = true;
+      _render(animate: false);
+      _stage.requestPresentation();
+    });
   }
 
   void _sceneChanged() {
+    if (!_ownsController && !widget.mountScene) return;
     if (!_stage.ready) {
       _requestedPresentation = _reportedPresentation = false;
       return;
     }
     if (!_requestedPresentation) {
       _requestedPresentation = true;
+      if (!_ownsController) _render(animate: false);
       _stage.requestPresentation();
     }
     if (_stage.presented && !_reportedPresentation) {
@@ -124,19 +146,29 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _stage.setTheme(
-      Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light',
-    );
-    _localizeScene();
+    if (_ownsController) {
+      _stage.setTheme(
+        Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light',
+      );
+      _localizeScene();
+    }
   }
 
   @override
   void didUpdateWidget(FlareTrainingHubPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.quality != widget.quality) _stage.setQuality(widget.quality);
-    if (oldWidget.visible != widget.visible) _stage.setVisible(widget.visible);
-    if (oldWidget.catalog != widget.catalog) _localizeScene();
-    if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
+    if (_ownsController) {
+      if (oldWidget.quality != widget.quality) {
+        _stage.setQuality(widget.quality);
+      }
+      if (oldWidget.visible != widget.visible) {
+        _stage.setVisible(widget.visible);
+      }
+      if (oldWidget.catalog != widget.catalog) _localizeScene();
+      if (oldWidget.mountScene != widget.mountScene) _render(animate: false);
+    } else if (oldWidget.mountScene != widget.mountScene) {
+      _enterSharedScene();
+    }
     if (oldWidget.interactionLocked && !widget.interactionLocked) {
       final pending = _pendingMode;
       _pendingMode = null;
@@ -159,12 +191,13 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
 
   @override
   void dispose() {
-    _stage.dispose();
+    _stage.removeListener(_sceneChanged);
+    if (_ownsController) _stage.dispose();
     super.dispose();
   }
 
   void _render({bool animate = true, bool scrubbing = false}) {
-    if (!widget.enableScene) return;
+    if (!widget.enableScene || (!_ownsController && !widget.mountScene)) return;
     _stage.configureTrainingHub(
       phaseSource: _phase.source,
       phaseTime: _time,
@@ -270,13 +303,14 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                             -2 * math.pi * details.delta.dx / box.maxWidth,
                           ),
                     scene: widget.enableScene && widget.mountScene
-                        ? SceneView(
-                            key: ValueKey(widget.actorBody),
-                            controller: _stage,
-                            body: widget.actorBody,
-                            interactive: false,
-                            concealed: widget.actorHandoff,
-                          )
+                        ? widget.sharedSceneView ??
+                              SceneView(
+                                key: ValueKey(widget.actorBody),
+                                controller: _stage,
+                                body: widget.actorBody,
+                                interactive: false,
+                                concealed: widget.actorHandoff,
+                              )
                         : const SizedBox.expand(),
                   ),
                   Expanded(

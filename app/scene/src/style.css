@@ -34,10 +34,6 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 #status-text { max-width: 290px; margin: 0; line-height: 1.5; }
 #retry { font: inherit; color: #fff; background: #393b46; border: 1px solid #ffffff33; border-radius: 9px; padding: 9px 16px; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { #status { transition: none; } }
-.minimap { position: absolute; bottom: calc(31px + var(--inset-bottom, 0px)); left: 12px; width: 86px; height: 136px; z-index: 3; border: 1px solid #ffffff22; border-radius: 10px; background: #171922; padding: 0; overflow: hidden; cursor: pointer; }
-.minimap[hidden] { display: none; }
-.minimap > canvas { position: absolute; left: 5px; top: 5px; width: calc(100% - 10px); height: calc(100% - 32px); pointer-events: none; }
-.minimap span { position: absolute; bottom: 0; left: 0; right: 0; color: #d6d6de; background: #17192299; letter-spacing: .4px; font: 600 9.5px/22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .phase-map { position: absolute; z-index: 2; bottom: calc(18px + var(--inset-bottom, 0px)); left: 14px; width: 180px; padding: 8px 8px 9px; border: 1px solid #ffffff20; border-radius: 20px; overflow: hidden; background: rgba(30,30,34,.7); box-shadow: 0 8px 24px #0004, inset 0 1px #ffffff0b; color: #ebebf5a3; }
 .phase-map[hidden] { display: none; }
 .phase-map header { display: flex; align-items: center; gap: 6px; padding: 0 2px 6px; font-size: 11px; line-height: 13px; font-weight: 600; }
@@ -53,7 +49,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 /* Appearance switches dissolve over --theme-fade (set per switch by the app,
    0ms on first load and with reduced motion), in step with the app. */
 :root { --theme-fade: 0ms; }
-#retry, .minimap, .minimap span, .hotspot::before, .hotspot-label, .phase-map, .phase-map-view, .phase-map-legend button {
+#retry, .hotspot::before, .hotspot-label, .phase-map, .phase-map-view, .phase-map-legend button {
   transition-property: background-color, color, border-color, box-shadow; transition-duration: var(--theme-fade); transition-timing-function: ease-in-out; }
 #status { transition: opacity 320ms cubic-bezier(.22,.9,.24,1), background-color var(--theme-fade) ease-in-out, color var(--theme-fade) ease-in-out; }
 #status > * { transition: opacity 120ms ease-out; }
@@ -66,16 +62,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 /* Light appearance: warm paper chrome, same athlete and lighting. */
 :root[data-theme="light"] #status { background: #f5f4f1; color: #74747d; }
 :root[data-theme="light"] #retry { color: #16161a; background: #ffffff; border-color: #dedcd6; }
-:root[data-theme="light"] .minimap { background: #efeee9; border-color: #0000001f; box-shadow: 0 6px 18px #0000001a; }
-:root[data-theme="light"] .minimap span { color: #4b4b54; background: #ffffffcc; }
 :root[data-theme="light"] .hotspot::before { border-color: #ffffff; box-shadow: 0 1px 5px #0003; }
 :root[data-theme="light"] .phase-map { background: rgba(255,255,255,.78); border-color: #0000000f; box-shadow: 0 8px 24px #0000001a, inset 0 1px #ffffff; color: #4b4b54; }
 :root[data-theme="light"] .phase-map-view { background: #efeee9; }
 :root[data-theme="light"] .phase-map-legend button { color: #4b4b54; }
-
-/* Model switch dissolve and soft minimap entrance. */
-@keyframes flare-swap { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
-canvas.model-swap { animation: flare-swap 360ms cubic-bezier(.22,.9,.24,1); }
-@keyframes flare-rise { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
-.minimap:not([hidden]) { animation: flare-rise 420ms cubic-bezier(.22,.9,.24,1) both; }
-@media (prefers-reduced-motion: reduce) { canvas.model-swap, .minimap:not([hidden]) { animation: none; } }

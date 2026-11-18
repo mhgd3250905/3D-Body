@@ -27,7 +27,7 @@
     "threeRevision": "170",
     "renderWidth": 1024,
     "renderHeight": 1024,
-    "material": "Shared matte cel shading with lighter shadows and screen-space ink",
+    "material": "Shared matte cel shading with lighter shadows and fine screen-space ink",
     "background": "transparent",
     "alpha": true,
     "meshCount": 1,
@@ -39,8 +39,8 @@
       "file": "app/assets/muscles/deltoids.webp",
       "width": 512,
       "height": 512,
-      "bytes": 22372,
-      "sha256": "915e854d815911ef628d74001e53e52dfdeae94cee98a30539f7daa09b5178a2",
+      "bytes": 22046,
+      "sha256": "5b09a5480d61fd46feee540c8d47b78c6e077c0a5bbdbf1678129824d4ebae9b",
       "crop": {
         "x": 0,
         "y": 0,
@@ -78,8 +78,8 @@
       "file": "app/assets/muscles/rotator-cuff.webp",
       "width": 512,
       "height": 512,
-      "bytes": 25692,
-      "sha256": "09a6ef795f017aae2828dd34a5b312e358b03706cb3361341bda1bba565cf6af",
+      "bytes": 24832,
+      "sha256": "79ff46f17e1af9b9364cee3105e4c182e6ebc2597a23100f5acf1f4011551d1e",
       "crop": {
         "x": 0,
         "y": 0,
@@ -115,8 +115,8 @@
       "file": "app/assets/muscles/triceps.webp",
       "width": 512,
       "height": 512,
-      "bytes": 26662,
-      "sha256": "1347b1bd89a21dd17096ab9cf726b21315d8164e6b1e35b1f75903959468cd14",
+      "bytes": 26274,
+      "sha256": "d0559652a5b0bd600314bd343063c69bf659ee515ad0aa7411910829fd823a61",
       "crop": {
         "x": 0,
         "y": 0,
@@ -152,8 +152,8 @@
       "file": "app/assets/muscles/forearms.webp",
       "width": 512,
       "height": 512,
-      "bytes": 25800,
-      "sha256": "966dcacded776017a17b37119744f9ca66981ddf07379848af042e13401b3869",
+      "bytes": 26848,
+      "sha256": "e38129ea43516abca3f71356c7b837103eff9945d362f3461b5a2fa685ee3261",
       "crop": {
         "x": 0,
         "y": 0,
@@ -190,8 +190,8 @@
       "file": "app/assets/muscles/serratus.webp",
       "width": 512,
       "height": 512,
-      "bytes": 23128,
-      "sha256": "cb35c1393736928082ef0f93aaac7ebe1f20700a523f167a77f5163ddc23bf9d",
+      "bytes": 23246,
+      "sha256": "4c485fd2baf9159f169bbdc6c0001fb3957f04a2a36455cf92d9a30c869e64b9",
       "crop": {
         "x": 0,
         "y": 0,
@@ -227,8 +227,8 @@
       "file": "app/assets/muscles/scapular.webp",
       "width": 512,
       "height": 512,
-      "bytes": 22430,
-      "sha256": "e64dd7a539198a6dd6651fcbad20c29ebf7b861cafb4aeb880574c4e6cca1c6c",
+      "bytes": 22230,
+      "sha256": "202ae85714649a664012ca11151f221aa2b801d567246137fd632521fc71a8c3",
       "crop": {
         "x": 0,
         "y": 0,
@@ -264,8 +264,8 @@
       "file": "app/assets/muscles/chest.webp",
       "width": 512,
       "height": 512,
-      "bytes": 22442,
-      "sha256": "e2e966a208306eb6b31a5a48f9adb8193bf4ff7c9ad6bde9f90acfbf39fda170",
+      "bytes": 23032,
+      "sha256": "9f23aa53134045cfe9f8e9b19830f7d1f4bbaf31f262439d7750bf084857c406",
       "crop": {
         "x": 0,
         "y": 0,
@@ -301,8 +301,8 @@
       "file": "app/assets/muscles/lats.webp",
       "width": 512,
       "height": 512,
-      "bytes": 27976,
-      "sha256": "e20b32b5dc276812eea3e43cae406d4ad35d17f49ca8d32d3a7dce6840c21859",
+      "bytes": 28262,
+      "sha256": "dd2b3c10bded01efcfd228b70474f27540bff32ed70bc1529987924e42ccb8b9",
       "crop": {
         "x": 0,
         "y": 0,
@@ -338,8 +338,8 @@
       "file": "app/assets/muscles/abs.webp",
       "width": 512,
       "height": 512,
-      "bytes": 27468,
-      "sha256": "118ed0760689999f5521db2d82c5efb57dd7adf1142c742678fa10676f914478",
+      "bytes": 27424,
+      "sha256": "65a581291b62fb0ad46f0817e20b1a86947fdc26f3041198f8ee5473d26bd13f",
       "crop": {
         "x": 0,
         "y": 0,
@@ -375,8 +375,8 @@
       "file": "app/assets/muscles/obliques.webp",
       "width": 512,
       "height": 512,
-      "bytes": 28860,
-      "sha256": "c56577650987539f411084d7b30d0c7f017f6f1e0c38101e74f27badfa8f63f1",
+      "bytes": 27060,
+      "sha256": "5e77bc9dffb385c3d45f7d2a21fc54b824540e5234d962a97b8f186961fa6e04",
       "crop": {
         "x": 0,
         "y": 0,
@@ -412,8 +412,8 @@
       "file": "app/assets/muscles/erectors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 28538,
-      "sha256": "51926912687ee621f6abd9856aedc38be4939565490cb8b1482677a465ab377c",
+      "bytes": 28530,
+      "sha256": "fffa560b4aa74654db25cf3b97a2c8dec10a5cbfd5ef03eeb3421a00c1347443",
       "crop": {
         "x": 0,
         "y": 0,
@@ -449,8 +449,8 @@
       "file": "app/assets/muscles/hip-flexors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 29184,
-      "sha256": "e10b0784cf857382f2e20fedb306c9a29c114c9a27c880bd35197540e39fa511",
+      "bytes": 30616,
+      "sha256": "2c1a07fa9281d6f38ece7782366dfa3c48423231eb2bff2ef6d71a2a2016881e",
       "crop": {
         "x": 0,
         "y": 0,
@@ -486,8 +486,8 @@
       "file": "app/assets/muscles/glute-max.webp",
       "width": 512,
       "height": 512,
-      "bytes": 29266,
-      "sha256": "8814011571e3a646816e7fac6f8ff7c192e5e99251f68915453278bfbe51c829",
+      "bytes": 29386,
+      "sha256": "6f74d3ee5343c560209db436b1c1e557aa3967636ec9b2a99f571127a8f7b1ef",
       "crop": {
         "x": 0,
         "y": 0,
@@ -523,8 +523,8 @@
       "file": "app/assets/muscles/hip-abductors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 29060,
-      "sha256": "b9d1765bb9be30d9482504be63d77537315c6e0fdd3766d28426759c4ae09f49",
+      "bytes": 28314,
+      "sha256": "a52465591bc3d933586d1dac4946af662953d2647cb8bc1f2d3b924b7c16de95",
       "crop": {
         "x": 0,
         "y": 0,
@@ -560,8 +560,8 @@
       "file": "app/assets/muscles/adductors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 21196,
-      "sha256": "342cbed9a090c282c13d1b879555f864dbee5bc34dd5adca6cfebc85452fbf1b",
+      "bytes": 22764,
+      "sha256": "628342fa3c3d80c0e00f42ec6fdf340b4ae373203739ec406999ca463dfdbe56",
       "crop": {
         "x": 0,
         "y": 0,
@@ -597,8 +597,8 @@
       "file": "app/assets/muscles/quadriceps.webp",
       "width": 512,
       "height": 512,
-      "bytes": 25640,
-      "sha256": "ad4a7875b20c78de36bf6a2c1888841ca7d0f6c2955e2d0611752a1c425d89af",
+      "bytes": 26994,
+      "sha256": "690fb67b8033ee87e2c4b15a8e1ed2830d28e333c45d3af0bce4d4ad5e07e7ee",
       "crop": {
         "x": 0,
         "y": 0,
@@ -636,8 +636,8 @@
       "file": "app/assets/muscles/hamstrings.webp",
       "width": 512,
       "height": 512,
-      "bytes": 25148,
-      "sha256": "5fb584d0fcd072403c44e5c4f89b18738c52fb530e8ac4ad62237c211aa54462",
+      "bytes": 26870,
+      "sha256": "99f97ba3c65c9b29b7f18757a75c68099907e69f17e1b8d26d13b275cb5792de",
       "crop": {
         "x": 0,
         "y": 0,
@@ -697,15 +697,15 @@
     },
     {
       "file": "app/scene/src/mannequin-toon.js",
-      "sha256": "b1adc5fad326e374b7195bd210c9a3ec468d54d0d92aaba14e2dd71780333a55"
+      "sha256": "4b5a220d713427618a2d34e73abd02dc90370abe18a4842d0615f6336a776af8"
     },
     {
       "file": "app/scene/tools/muscle-thumbnails.js",
-      "sha256": "ad804a492a8906c0269ce709c6fb80b91940a6e29e0e4e453a931cb11b8366c0"
+      "sha256": "8d24aa27cc0cccb18b4527441f5413fd2c626d0a32ffe47fcc1c711115326729"
     },
     {
       "file": "app/scene/tools/muscle-toon-preview.js",
-      "sha256": "7fe721d1cbcea69b539c16ea5ca74a9e86e3fea548e6a873514c80b999057452"
+      "sha256": "0d231c061f5cd5f53784232644aaa7e0971d31fd4f53335240876895330a3eee"
     }
   ],
   "errors": []

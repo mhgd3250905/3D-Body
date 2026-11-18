@@ -15,9 +15,10 @@ import 'page_kit.dart';
 import 'theme.dart';
 
 const _gutter = 22.0;
-const _heroHeight = 300.0;
+const _angleHeroHeight = 300.0;
 const _heroTitleOverlap = 24.0;
 const _heroArtTop = 64.0;
+const _muscleHeroTextGap = 8.0;
 const _switchTime = Duration(milliseconds: 220);
 const _figures = [FontFeature.tabularFigures()];
 const _startButtonHeight = 56.0;
@@ -40,6 +41,7 @@ class FlarePlanDetailPage extends StatefulWidget {
     required this.onStart,
     this.phase,
     this.membership,
+    this.emptyTargetGroup,
   });
 
   final String title;
@@ -54,6 +56,7 @@ class FlarePlanDetailPage extends StatefulWidget {
   final VoidCallback onBack;
   final ValueChanged<FlarePlan> onStart;
   final FlareMembership? membership;
+  final MuscleGroup? emptyTargetGroup;
 
   @override
   State<FlarePlanDetailPage> createState() => _FlarePlanDetailPageState();
@@ -73,6 +76,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     final s = context.strings;
     final p = FlareColors.palette;
     final plans = widget.plans;
+    if (plans.isEmpty) return _emptyPlan(context);
     final catalog = widget.catalog;
     final phase = widget.phase;
     final plan = plans.firstWhere(
@@ -251,6 +255,43 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     );
   }
 
+  Widget _emptyPlan(BuildContext context) {
+    final p = FlareColors.palette;
+    final target = widget.emptyTargetGroup;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+          .copyWith(statusBarColor: Colors.transparent),
+      child: ColoredBox(
+        color: p.background,
+        child: FlareScrollNav(
+          onBack: widget.onBack,
+          scrollFadeController: _scroll,
+          child: ListView(
+            controller: _scroll,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.viewPaddingOf(context).bottom,
+            ),
+            children: [
+              _PlanHero(
+                title: widget.title,
+                intro: target?.label == target?.shortLabel
+                    ? null
+                    : target?.label,
+                phaseSource: widget.phase?.source,
+                groupId: target?.id,
+                safeTop: FlareGeometry.navSafeTop(context),
+                info: Text(
+                  context.strings.hubPlanComingSoon,
+                  style: TextStyle(color: p.secondary),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _row(
     BuildContext context,
     int index,
@@ -302,9 +343,13 @@ class _PlanHero extends StatelessWidget {
     final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
     final isAngle = phaseSource != null;
     final width = MediaQuery.sizeOf(context).width;
-    final viewportHeight = safeTop + _heroHeight;
     final artHeight = (width * .70).clamp(0.0, 236.0);
-    final artTop = safeTop + _heroArtTop - .01 * artHeight;
+    // The cropped muscle artwork has a 2–3 px transparent top margin.
+    final artTop = safeTop - .004 * artHeight;
+    final artBottom = artTop + artHeight;
+    final viewportHeight = isAngle
+        ? safeTop + _angleHeroHeight
+        : artBottom + _muscleHeroTextGap + _heroTitleOverlap;
     return Stack(
       children: [
         Positioned(
@@ -323,16 +368,16 @@ class _PlanHero extends StatelessWidget {
                   child: const FlarePlanGlow(diameter: 300),
                 ),
                 if (!isAngle)
-                  Positioned(
-                    right: 24,
-                    top: artTop + artHeight - 18,
+                  PositionedDirectional(
+                    end: 24,
+                    top: artBottom - 18,
                     width: 220,
                     height: 26,
                     child: _PlanArtShadow(shadow),
                   ),
                 if (groupId case final id?)
-                  Positioned(
-                    right: 20,
+                  PositionedDirectional(
+                    end: 20,
                     top: artTop,
                     height: artHeight,
                     child: FlarePlanMuscleFade(

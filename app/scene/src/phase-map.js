@@ -114,6 +114,14 @@ export async function createPhaseMap(player, onSelect) {
       mesh.material.needsUpdate = true;
     }
   }
+  function clearHubCrop() {
+    if (uniforms.mmHubFraming.value === 0) return;
+    uniforms.mmHubFraming.value = 0;
+    for (const mesh of meshes) {
+      mesh.material.transparent = false;
+      mesh.material.needsUpdate = true;
+    }
+  }
   function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }
   function refreshEnvironment() { scene.environment = player.scene.environment; }
   function withThumbnailDensity(density, render) {
@@ -209,8 +217,13 @@ export async function createPhaseMap(player, onSelect) {
     panel.setAttribute('aria-label', sceneStrings.mapAccessibility ?? 'Muscles');
     source = null; player.dirty = true;
   }
-  function releaseGpu() { target?.dispose(); target = null; renderKey = null; for (const mesh of meshes) mesh.geometry.dispose(); for (const material of materials) material.dispose(); }
-  return { render, setHidden, setLocalization, releaseGpu, scene, setDetail, setHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
+  function releaseThumbnailGpu() { target?.dispose(); target = null; renderKey = null; }
+  function releaseGpu() {
+    releaseThumbnailGpu();
+    for (const mesh of meshes) mesh.geometry.dispose();
+    for (const material of materials) material.dispose();
+  }
+  return { render, setHidden, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
     getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
     dispose() { releaseGpu(); view.removeEventListener('click', select); panel.remove(); } };

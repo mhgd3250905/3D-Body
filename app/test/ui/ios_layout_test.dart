@@ -109,19 +109,10 @@ void main() {
               'groupId': 'triceps',
             });
             await tester.pumpAndSettle();
-            expect(tester.takeException(), isNull, reason: 'muscle detail');
-            final train = find.byKey(const ValueKey('train-group'));
-            expect(train, findsOneWidget);
-            expect(
-              tester.getRect(train).bottom,
-              lessThanOrEqualTo(size.height - bottom),
-            );
-            await tester.tap(train);
-            await tester.pumpAndSettle();
             expect(
               tester.takeException(),
               isNull,
-              reason: 'training scene choices',
+              reason: 'muscle plan',
             );
             final plan = find.byType(FlarePlanDetailPage);
             expect(plan, findsOneWidget);
@@ -152,8 +143,8 @@ void main() {
             expect(tester.takeException(), isNull, reason: 'drill detail');
             expect(find.byType(DrillDetailPage), findsOneWidget);
 
-            // Return through the muscle plan and detail to the home menu.
-            for (var page = 0; page < 3; page++) {
+            // Return through the muscle plan to the home menu.
+            for (var page = 0; page < 2; page++) {
               await tester.binding.handlePopRoute();
               await tester.pumpAndSettle();
             }

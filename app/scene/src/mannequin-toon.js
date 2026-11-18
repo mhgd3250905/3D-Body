@@ -12,9 +12,12 @@ for (const [index, { groupId }] of FLARE_GROUPS.entries()) {
 
 const shade = new THREE.Color('#95a6ba');
 const base = new THREE.Color('#aebdcd');
+const boundaryInk = new THREE.Color('#515a67');
 const light = new THREE.Vector3(-0.45, 0.75, 0.55).normalize();
 const vec3 = ({ x, y, z, r, g, b }) =>
   `vec3(${[x ?? r, y ?? g, z ?? b].map(channel => channel.toFixed(8)).join(', ')})`;
+
+export const mannequinOutlineWidth = 1.2;
 
 export const mannequinToonLighting = /* glsl */`
 float mannequinLight(vec3 n, vec3 p) {
@@ -41,6 +44,25 @@ vec3 mannequinToonColour(vec3 n, vec3 p, vec3 colour, float selection, float har
 }
 `;
 
+export function addMannequinBoundary(source) {
+  const coverage = 'mmPanelCoverage = smoothstep(0.0, 0.9, px);';
+  if (!source.includes(coverage)) throw new Error('mannequin_toon_boundary_missing');
+  return /* glsl */`
+const int mannequinGroups[${mannequinPanelGroups.length}] = int[${mannequinPanelGroups.length}](${mannequinPanelGroups.join(', ')});
+float mannequinBoundary;
+vec3 inkMannequinBoundary(vec3 colour, vec3 accent, float selection) {
+  vec3 ink = mix(${vec3(boundaryInk)}, accent * 0.55, step(0.15, selection));
+  return mix(colour, ink, 0.56 * mannequinBoundary);
+}
+` + source.replace(coverage, coverage + /* glsl */`
+       // Ink the published group boundary using the score's screen derivative.
+       float edge = 1.0 - smoothstep(0.38 * mmStrokeDensity - 0.5,
+                                    0.38 * mmStrokeDensity + 0.5, max(0.0, px));
+       int a = b1 > 0.0 ? mannequinGroups[i1] : 0;
+       int b = b2 > 0.0 ? mannequinGroups[i2] : 0;
+       mannequinBoundary = a != b ? edge : 0.0;`);
+}
+
 // Presentation only. Keep the original selector, anatomical hit-test,
 // smooth normals, highlight coverage and deep hatch in the functional shader.
 export function applyMannequinToon(material) {
@@ -48,25 +70,14 @@ export function applyMannequinToon(material) {
   const cacheKey = material.customProgramCacheKey;
   material.onBeforeCompile = (shader, renderer) => {
     compile(shader, renderer);
-    let source = `
-const int mannequinGroups[${mannequinPanelGroups.length}] = int[${mannequinPanelGroups.length}](${mannequinPanelGroups.join(', ')});
-float mannequinBoundary;
+    let source = addMannequinBoundary(`
 float mannequinDepthHatch;
 ${mannequinToonLighting}
-` + shader.fragmentShader;
+` + shader.fragmentShader);
     const replace = (from, to) => {
       if (!source.includes(from)) throw new Error('mannequin_toon_source_mismatch');
       source = source.replace(from, to);
     };
-    const panelCoverage = 'mmPanelCoverage = smoothstep(0.0, 0.9, px);';
-    replace(panelCoverage, panelCoverage + `
-       // The original first/second score gap already accounts for its screen
-       // derivative. Ink the public group boundary, never its internal panels.
-       float edge = 1.0 - smoothstep(0.62 * mmStrokeDensity - 0.5,
-                                    0.62 * mmStrokeDensity + 0.5, max(0.0, px));
-       int a = b1 > 0.0 ? mannequinGroups[i1] : 0;
-       int b = b2 > 0.0 ? mannequinGroups[i2] : 0;
-       mannequinBoundary = a != b ? edge : 0.0;`);
     const hatch = /float hatch = mix\(smoothstep[^;]+;/.exec(source)?.[0];
     if (!hatch) throw new Error('mannequin_toon_hatch_missing');
     replace(hatch, hatch + '\n          mannequinDepthHatch = hatch;');
@@ -83,16 +94,13 @@ ${mannequinToonLighting}
          highlight *= smoothstep(0.005, 0.045, -vMmPos.x);
        }
        vec3 colour = mannequinToonColour(n, vMmPos, mmPc, selection, highlight);
-       vec3 ink = mix(${vec3(new THREE.Color('#2a2d3a'))}, mmPc * 0.30, step(0.15, selection));
-       colour = mix(colour, ink, 0.77 * mannequinBoundary);
+       colour = inkMannequinBoundary(colour, mmPc, selection);
        gl_FragColor.rgb = sRGBTransferOETF(vec4(colour, 1.0)).rgb;`);
     shader.fragmentShader = source;
   };
-  material.customProgramCacheKey = () => cacheKey() + '-mannequin-toon-v1';
+  material.customProgramCacheKey = () => cacheKey() + '-mannequin-toon-v1-fine-ink';
   material.needsUpdate = true;
 }
-
-export const mannequinOutlineWidth = 2.4;
 
 export function createMannequinOutlineMaterial(uniforms, strokeDensity) {
   const viewport = new THREE.Vector4();
