@@ -13,6 +13,7 @@ import '../data/flare_public_media.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
+import 'flare_action_artwork.dart';
 import 'flare_plan_visuals.dart' show FlarePlanGlow;
 import 'motion.dart';
 import 'theme.dart';
@@ -37,22 +38,32 @@ class DrillPoster extends StatelessWidget {
   const DrillPoster(this.drill, {super.key});
   final Drill drill;
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: FlareColors.raised,
-    child: Image.asset(
-      drillPosterAsset(drill),
-      fit: BoxFit.cover,
-      gaplessPlayback: true,
-      excludeFromSemantics: true,
-      errorBuilder: (_, _, _) => Center(
-        child: Icon(
-          Icons.fitness_center_outlined,
-          size: 20,
-          color: FlareColors.dim,
+  Widget build(BuildContext context) {
+    final bundled = FlarePublicMedia.of(context)?.posterAssetFor(drill.id);
+    return ColoredBox(
+      color: FlareColors.raised,
+      child: FlareActionArtwork(
+        actionId: drill.id,
+        thumbnail: true,
+        fit: BoxFit.cover,
+        fallback: Image.asset(
+          bundled == null
+              ? drillPosterAsset(drill)
+              : FlarePublicMedia.thumbnailAssetFor(drill.id),
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          excludeFromSemantics: true,
+          errorBuilder: (_, _, _) => Center(
+            child: Icon(
+              Icons.fitness_center_outlined,
+              size: 20,
+              color: FlareColors.dim,
+            ),
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Up to three overlapping round posters, for a compact row.
@@ -1006,6 +1017,7 @@ class PlanDetailPage extends StatelessWidget {
     this.onEdit,
     this.sdkPlan,
     this.catalog,
+    this.soundEnabled = true,
   });
   final String title;
   final List<Drill> drills;
@@ -1014,6 +1026,7 @@ class PlanDetailPage extends StatelessWidget {
   final ValueChanged<Drill> onDrill;
   final uc.TrainingPlan? sdkPlan;
   final Catalog? catalog;
+  final bool soundEnabled;
 
   final VoidCallback? onCopy;
   final VoidCallback? onEdit;
@@ -1102,7 +1115,11 @@ class PlanDetailPage extends StatelessWidget {
                         grouped: true,
                         // Shared public actions open the SDK details.
                         onTap: () => catalog!.drillById(entry.drill.id) == null
-                            ? FlareShared.openDetail(context, entry.drill.id)
+                            ? FlareShared.openDetail(
+                                context,
+                                entry.drill.id,
+                                soundEnabled: soundEnabled,
+                              )
                             : onDrill(entry.drill),
                       ),
                   ],

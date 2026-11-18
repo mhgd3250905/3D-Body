@@ -9,7 +9,7 @@ const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
 
 /// Prefer the SDK-verified hot-update cache unless it predates Flare's
-/// bundled r2-v11 baseline (for example after an offline app upgrade).
+/// bundled r2-v18 baseline (for example after an offline app upgrade).
 Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
   AssetBundle? bundle,
   trainer.PoseHubCatalogStore? verifiedCache,
@@ -25,6 +25,13 @@ Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
       if (order != null && order >= 0) return cached;
     }
   }
+  return loadFlareBundledPublicCatalog(bundle: bundle);
+}
+
+/// Reads the shipped baseline even when a newer pack is active.
+Future<coach.PoseHubAppTestCatalog> loadFlareBundledPublicCatalog({
+  AssetBundle? bundle,
+}) async {
   final assets = bundle ?? rootBundle;
   // Large loadString assets decode in an isolate outside widget fake clocks.
   // Read exact bytes; the SDK verifies the canonical semantics descriptor.

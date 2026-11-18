@@ -533,7 +533,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (catalog.drillById(id) case final drill?) {
       _openDrill(drill);
     } else {
-      unawaited(FlareShared.openDetail(context, id));
+      unawaited(
+        FlareShared.openDetail(context, id, soundEnabled: store.settings.sound),
+      );
     }
   }
 
@@ -545,10 +547,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     Future<bool> Function()? onStarting,
     VoidCallback Function()? holdTransition,
   }) {
-    final policy = FlarePublicMedia.current;
+    final policy =
+        sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
     final ids = plan.exerciseIds.toList();
-    String? posterFor(String id) =>
-        policy?.posterAssetFor(id) ?? 'assets/public_posters/$id.webp';
+    String? posterFor(String id) => policy?.actionFor(id) != null
+        ? policy!.posterAssetFor(id)
+        : policy?.posterAssetFor(id) ??
+              '${FlarePublicMedia.posterRoot}$id.webp';
     return sdk.TrainerLauncher.open<sdk.SessionResult>(
       context,
       builder: (_) =>
@@ -646,13 +651,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 holdTransition: request.holdTransition,
               );
             },
-            onOpenAction: (context, request) =>
-                FlareShared.openDetail(context, request.actionId),
+            onOpenAction: (context, request) => FlareShared.openDetail(
+              context,
+              request.actionId,
+              soundEnabled: store.settings.sound,
+            ),
             onOpenLibrary: (context, request) => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (libraryContext) => Scaffold(
                   body: FlareSharedLibraryPage(
                     presentationCatalog: catalog,
+                    soundEnabled: store.settings.sound,
                     onBack: () => Navigator.pop(libraryContext),
                     onOpenStraightLegFlare: (drill) {
                       navigator.popUntil((route) => route.isFirst);
@@ -1336,6 +1345,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         2,
         false,
         PlanDetailPage(
+          soundEnabled: store.settings.sound,
           title: routine.name,
           drills: drills,
           onBack: _back,
@@ -1377,6 +1387,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 onBack: _back,
                 initialMuscle: _libraryGroup?.id,
                 presentationCatalog: catalog,
+                soundEnabled: store.settings.sound,
                 onOpenStraightLegFlare: _openDrill,
               )
             : LibraryPage(

@@ -9,6 +9,7 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
     show
         PoseHubActionLibrary,
         PoseHubCatalogChannel,
+        PoseHubCatalogHttpClient,
         PoseHubCatalogStore,
         PoseHubCatalogUpdateConfig,
         PoseHubCatalogUpdateEvent,
@@ -17,21 +18,26 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
         createPoseHubCatalogFileStore,
         poseHubPackVersionOf;
 
+import 'flare_public_catalog.dart';
+
 /// Action-library hot update (SDK `PoseHubCatalogUpdater`).
 ///
 /// Checks the channel pointer once per launch and again on resume once a day
-/// has passed. A verified new catalogue is stored and takes effect on the next
-/// launch; [PoseHubActionLibrary.load] always opens the verified cache first,
-/// then Flare's bundled r2-v11 baseline if the cache is absent or older.
+/// has passed. The SDK commits a new catalog only after all display assets
+/// pass verification. Training video and action voice remain on demand.
 ///
 /// The channel is fixed at build time: `--dart-define=POSEHUB_CATALOG_CHANNEL=
 /// dev|beta|stable`, defaulting to `stable`.
 class PoseHubCatalogUpdates with WidgetsBindingObserver {
-  PoseHubCatalogUpdates._(this.updater);
+  PoseHubCatalogUpdates._(
+    this.updater,
+    this.assetRootDirectory,
+    this._onOutcome,
+  );
 
-  static const bundledPackVersion = 'r2-v11';
+  static const bundledPackVersion = 'r2-v18';
   static const bundledCatalogSha256 =
-      '6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0';
+      '1de7303f94fe0441ed4d006d4a4aa7ceac0e160b1c2527ae0f875b112bb52203';
 
   static const channelName = String.fromEnvironment(
     'POSEHUB_CATALOG_CHANNEL',
@@ -48,17 +54,23 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
       PoseHubCatalogUpdateConfig(channel: channel);
 
   final PoseHubCatalogUpdater updater;
+  final String? assetRootDirectory;
+  final void Function(PoseHubCatalogUpdateOutcome outcome)? _onOutcome;
+  Future<PoseHubCatalogUpdateOutcome>? _launchCheck;
+  bool _disposed = false;
 
   /// The verified cache opened by [start]; null when updates are disabled.
   static PoseHubCatalogStore? activeStore;
 
-  /// Opens the verified cache for [PoseHubActionLibrary.load] and starts the
-  /// launch check in the background. Returns null on web or when the support
-  /// directory is unavailable (bundled baseline only).
+  /// Opens the SDK's verified cache. Call [onAppReady] once the app and its
+  /// dialog are listening. Web uses the bundled baseline unless injected.
   static Future<PoseHubCatalogUpdates?> start({
     void Function(PoseHubCatalogUpdateEvent event)? onEvent,
     void Function(PoseHubCatalogUpdateOutcome outcome)? onOutcome,
     PoseHubCatalogStore? store,
+    PoseHubCatalogHttpClient? http,
+    PoseHubCatalogUpdateConfig? config,
+    String? assetRootDirectory,
     Future<coach.PoseHubAppTestCatalog> Function()? loadLocal,
   }) async {
     if (kIsWeb && store == null) return null;
@@ -66,21 +78,24 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
       final resolved =
           store ??
           createPoseHubCatalogFileStore(
-            '${(await getApplicationSupportDirectory()).path}/posehub-catalog',
+            // The legacy catalog cache did not verify or install the images.
+            '${(await getApplicationSupportDirectory()).path}/posehub-display-catalog',
           );
-      PoseHubActionLibrary.useVerifiedCache(resolved);
-      activeStore = resolved;
       final updates = PoseHubCatalogUpdates._(
-        PoseHubCatalogUpdater(
-          config: buildConfig,
+        PoseHubCatalogUpdater.withPersistentAssets(
+          config: config ?? buildConfig,
           store: resolved,
-          loadLocal: loadLocal,
+          http: http,
+          assetRootDirectory: assetRootDirectory,
+          loadLocal: loadLocal ?? loadFlareBundledPublicCatalog,
           onEvent: onEvent,
         ),
+        assetRootDirectory,
+        onOutcome,
       );
-      updates._onOutcome = onOutcome;
+      PoseHubActionLibrary.useVerifiedCache(resolved);
+      activeStore = resolved;
       WidgetsBinding.instance.addObserver(updates);
-      updates._check();
       return updates;
     } on Object catch (error) {
       debugPrint('PoseHub catalogue updates disabled: $error');
@@ -88,20 +103,40 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     }
   }
 
-  void Function(PoseHubCatalogUpdateOutcome outcome)? _onOutcome;
+  Future<PoseHubCatalogUpdateOutcome>? onAppReady() {
+    if (_disposed) return null;
+    return _launchCheck ??= maybeCheck();
+  }
 
-  void _check() {
-    unawaited(
-      updater.maybeCheck().then((outcome) => _onOutcome?.call(outcome)),
-    );
+  Future<PoseHubCatalogUpdateOutcome> maybeCheck() =>
+      _reportOutcome(updater.maybeCheck());
+
+  Future<PoseHubCatalogUpdateOutcome> checkNow() =>
+      _reportOutcome(updater.checkNow());
+
+  Future<PoseHubCatalogUpdateOutcome> _reportOutcome(
+    Future<PoseHubCatalogUpdateOutcome> check,
+  ) async {
+    final outcome = await check;
+    if (!_disposed) _onOutcome?.call(outcome);
+    return outcome;
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _check();
+    if (_launchCheck != null && state == AppLifecycleState.resumed) {
+      unawaited(maybeCheck());
+    }
   }
 
-  void dispose() => WidgetsBinding.instance.removeObserver(this);
+  void dispose() {
+    _disposed = true;
+    WidgetsBinding.instance.removeObserver(this);
+    if (identical(activeStore, updater.store)) {
+      activeStore = null;
+      PoseHubActionLibrary.useVerifiedCache(null);
+    }
+  }
 }
 
 /// A 64-hex revision for the catalogue in use: the audited SHA for Flare's

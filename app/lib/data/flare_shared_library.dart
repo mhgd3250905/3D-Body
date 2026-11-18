@@ -1,14 +1,17 @@
 // Flare scope, theme and library presentation; SDK owns catalogue semantics,
-// media, details and training entry. Browsing only requests bundled posters.
+// media, details and training entry. Browsing requests display artwork only.
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
 import '../ui/theme.dart';
 import '../ui/components.dart';
+import '../ui/flare_action_artwork.dart';
 import '../ui/page_kit.dart';
 import '../ui/public_library_filter.dart';
+import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
 import 'catalog.dart' as flare;
 import 'flare_drill_resolver.dart';
@@ -136,8 +139,11 @@ class FlareShared {
         },
   };
 
-  static Future<FlareShared> load({AssetBundle? bundle}) async {
-    final pack = await loadFlarePublicCatalog(bundle: bundle);
+  static Future<FlareShared> load({
+    AssetBundle? bundle,
+    coach.PoseHubAppTestCatalog? activeCatalog,
+  }) async {
+    final pack = activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle);
     final rhythms = flarePublicRhythms(pack);
     final catalog = flareCoachCatalogFromPublic(pack, rhythms: rhythms);
     return FlareShared._(
@@ -194,16 +200,54 @@ class FlareShared {
   }
 
   /// SDK action details with the host's localized presentation.
-  static Future<void> openDetail(BuildContext context, String id) async {
+  static Future<void> openDetail(
+    BuildContext context,
+    String id, {
+    bool soundEnabled = true,
+  }) async {
     final shared = current;
-    final policy = FlarePublicMedia.current;
+    final policy = FlarePublicMedia.of(context);
     if (shared == null || policy == null) return;
+    final resolvedTheme = theme(context);
     await trainer.TrainingLibraryDetails.open(
       context,
       actionId: id,
       config: shared.libraryFor(context),
       mediaPolicy: policy,
-      theme: theme(context),
+      theme: resolvedTheme,
+      onStart: soundEnabled
+          ? (actionId) async {
+              final action = policy.actionFor(actionId);
+              if (action == null) return;
+              final language = Localizations.localeOf(context).languageCode;
+              final source = await trainer.withPoseHubCatalogVoice(
+                await loadTrainerVoiceSource(
+                  language: language,
+                  leftFirst: false,
+                ),
+                catalog: policy.catalog,
+              );
+              if (!context.mounted) return;
+              trainer.TrainerVoice? voice;
+              await trainer.TrainerLauncher.open<void>(
+                context,
+                firstPosterAsset: policy.posterAssetFor(actionId),
+                planActionIds: [actionId],
+                mediaPolicy: policy,
+                theme: resolvedTheme,
+                builder: (_) => trainer.PoseHubSinglePracticePage(
+                  action: action,
+                  mediaBaseUri: policy.repository.mediaBaseUri,
+                  theme: resolvedTheme,
+                  voice: voice ??= trainer.TrainerVoice(
+                    source: source,
+                    output: trainerAudio.acquire(),
+                    settings: trainer.VoiceSettings(language: language),
+                  ),
+                ),
+              );
+            }
+          : null,
     );
   }
 }
@@ -217,11 +261,13 @@ class FlareSharedLibraryPage extends StatefulWidget {
     this.initialMuscle,
     this.presentationCatalog,
     this.onOpenStraightLegFlare,
+    this.soundEnabled = true,
   });
   final VoidCallback? onBack;
   final String? initialMuscle;
   final flare.Catalog? presentationCatalog;
   final ValueChanged<flare.Drill>? onOpenStraightLegFlare;
+  final bool soundEnabled;
   @override
   State<FlareSharedLibraryPage> createState() => _FlareSharedLibraryPageState();
 }
@@ -276,7 +322,7 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
   @override
   Widget build(BuildContext context) {
     final shared = FlareShared.current!;
-    final policy = FlarePublicMedia.current!;
+    final policy = FlarePublicMedia.of(context)!;
     final config = shared.libraryFor(context);
     final s = context.strings;
     final language = Localizations.localeOf(context).toLanguageTag();
@@ -319,16 +365,23 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
         ? s.flareStraightLegs
         : shared.catalog[id]!.name.of(language);
     Widget posterFor(String id) => LayoutBuilder(
-      builder: (context, box) => trainer.TrainerPoster(
-        key: ValueKey('library-poster-$id'),
-        asset: id == flareV5DrillId
-            ? flareV5PosterAsset
-            : policy.posterAssetFor(id)!,
-        bundle: trainer.TrainerExperienceScope.maybeOf(context)?.bundle,
-        decodeWidth: (box.maxWidth * MediaQuery.devicePixelRatioOf(context))
-            .ceil(),
-        stageColor: FlareColors.mediaBackdrop,
-      ),
+      builder: (context, box) {
+        final asset = policy.posterAssetFor(id);
+        final fallback = asset == null
+            ? const SizedBox.expand()
+            : trainer.TrainerPoster(
+                key: ValueKey('library-poster-$id'),
+                asset: asset,
+                bundle: trainer.TrainerExperienceScope.maybeOf(context)?.bundle,
+                decodeWidth:
+                    (box.maxWidth * MediaQuery.devicePixelRatioOf(context))
+                        .ceil(),
+                stageColor: FlareColors.mediaBackdrop,
+              );
+        return id == flareV5DrillId
+            ? fallback
+            : FlareActionArtwork(actionId: id, fallback: fallback);
+      },
     );
     String doseFor(String id) {
       if (id == flareV5DrillId) {
@@ -477,7 +530,11 @@ class _FlareSharedLibraryPageState extends State<FlareSharedLibraryPage> {
                       ? FlareColors.accent
                       : Color(group.colorValue),
                   artwork: posterFor(id),
-                  onTap: () => FlareShared.openDetail(context, action.id),
+                  onTap: () => FlareShared.openDetail(
+                    context,
+                    action.id,
+                    soundEnabled: widget.soundEnabled,
+                  ),
                 );
               },
             ),

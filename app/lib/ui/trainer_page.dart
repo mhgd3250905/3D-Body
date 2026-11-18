@@ -105,7 +105,11 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final wristDirections = trainerWristDirections(
       AppLocalizations.of(context),
     );
-    final shared = FlareShared.current ?? await FlareShared.load();
+    final active = sdk.TrainingMediaPolicyScope.read(context)?.catalog;
+    final current = FlareShared.current;
+    final shared = current != null && (active == null || active == current.pack)
+        ? current
+        : await FlareShared.load(activeCatalog: active);
     bool known(String id) => shared.catalog[id] != null;
     validateTrainingPlan(widget.plan, widget.catalog, known: known);
     // Layer the active Pose-Hub catalog's recorded prompts and structured
@@ -374,7 +378,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           final isV5 = id == flareV5DrillId;
           final poster = isV5
               ? flareV5PosterAsset
-              : FlarePublicMedia.current?.posterAssetFor(id);
+              : FlarePublicMedia.of(context)?.posterAssetFor(id);
           final timedWrist = timedWristRocks && id == 'forearms-A';
           return sdk.TrainerDrill(
             id: id,

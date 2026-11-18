@@ -8,6 +8,7 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 import '../data/flare_action_scope.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
+import '../ui/flare_action_artwork.dart';
 import '../ui/theme.dart';
 
 /// Flare product configuration only. Conversation, admission, fitting and
@@ -95,23 +96,29 @@ CoachChatVisuals flareCoachChatVisuals(FlareShared shared) => CoachChatVisuals(
   fontFamily: 'FlareSans',
   exerciseFor: (id, brightness) {
     final drill = shared.catalog[id];
-    final poster = FlarePublicMedia.current?.posterAssetFor(id);
     final action = FlarePublicMedia.current?.actionFor(id);
     if (!shared.allowedActionIds.contains(id) ||
         drill == null ||
-        poster == null) {
+        action == null) {
       return null;
     }
+    final poster = FlarePublicMedia.current?.posterAssetFor(id);
     final p = brightness == Brightness.dark
         ? FlarePalette.dark
         : FlarePalette.light;
     return CoachExercise(
       id: id,
       name: drill.name.of('zh'),
-      poster: poster,
-      categoryLabel: action == null
-          ? drill.category
-          : trainer.PoseHubActionFacets.type(action),
+      poster: poster ?? '${FlarePublicMedia.posterRoot}$id.webp',
+      artworkBuilder: (context, {required bool thumbnail}) =>
+          FlareActionArtwork(
+            actionId: id,
+            thumbnail: thumbnail,
+            fallback: poster == null
+                ? const SizedBox.expand()
+                : trainer.TrainerPoster(asset: poster),
+          ),
+      categoryLabel: trainer.PoseHubActionFacets.type(action),
       levelLabel: coach.levelZh(drill.level),
       cues: drill.cues['zh'] ?? const [],
       stage: CoachMediaPalette(
@@ -122,7 +129,7 @@ CoachChatVisuals flareCoachChatVisuals(FlareShared shared) => CoachChatVisuals(
     );
   },
   preloadPoster: (context, id) async {
-    final poster = FlarePublicMedia.current?.posterAssetFor(id);
+    final poster = FlarePublicMedia.of(context)?.posterAssetFor(id);
     if (poster != null) {
       await trainer.TrainingPosterImages.prepareAsset(context, poster);
     }

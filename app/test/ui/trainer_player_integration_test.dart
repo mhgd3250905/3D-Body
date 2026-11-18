@@ -78,7 +78,7 @@ Future<void> _advance(WidgetTester tester, int seconds) async {
 
 /// Whole session length as the SDK player itself schedules it: the same
 /// builder inputs [sdk.TrainerPlayer] uses, including the delivery rhythms.
-/// r2-v11 rows carry counted cadences, so a counted drill such as chest-A
+/// r2-v18 rows carry counted cadences, so a counted drill such as chest-A
 /// plays its catalog reps (6 left/right pairs × 8 s + 1 s
 /// lead = 49 s) even when the item asks for a 1 s timed set.
 double _sessionSeconds(sdk.TrainerPlayer player) => sdk.SessionBuilder(
@@ -98,7 +98,7 @@ Future<void> _expectPoster(WidgetTester tester, String id) async {
   expect(media, findsOneWidget);
   expect(
     tester.widget<sdk.DrillMediaView>(media).media.posterAsset,
-    'assets/public_posters/r2-v11/cover/$id.webp',
+    '${FlarePublicMedia.coverRoot}$id.webp',
   );
   final decoded = find.descendant(
     of: media,
@@ -428,7 +428,7 @@ void main() {
     final popped = <sdk.SessionResult>[];
     final store = await _open(tester, popped: popped);
     final total = _sessionSeconds(_player(tester));
-    // 10 s prep + abs-A 1 s + 15 s transition + chest-A r2-v11 cadence 49 s.
+    // 10 s prep + abs-A 1 s + 15 s transition + chest-A cadence 49 s.
     expect(total, 75);
     await _advance(tester, total.ceil() - 3);
     expect(find.byKey(const ValueKey('finish')), findsNothing);
@@ -665,7 +665,7 @@ void main() {
       await _advance(tester, 16);
       expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
       expect(store.trainerSessions, isEmpty);
-      // chest-A then plays its r2-v11 counted cadence (49 s).
+      // chest-A then plays its counted cadence (49 s).
       await _advance(tester, 16);
       expect(store.trainerSessions, isEmpty);
       await _advance(tester, 49);

@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.15+63
+version: 1.0.15+64
 
 environment:
   sdk: ^3.12.2
@@ -26,33 +26,43 @@ dependencies:
   http: ^1.6.0
   purchases_flutter: 10.4.1
   url_launcher: 6.3.2
-  # Shared SDK packages are pinned together to Player V1 and voice guide.
+  # Shared SDK packages are pinned together to the verified display release.
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f1e02eb8229b4636d232b4621c38c5f8d9788b27
+      ref: ugk_trainer-v1.0.1
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f1e02eb8229b4636d232b4621c38c5f8d9788b27
+      ref: ugk_trainer-v1.0.1
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f1e02eb8229b4636d232b4621c38c5f8d9788b27
+      ref: ugk_trainer-v1.0.1
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f1e02eb8229b4636d232b4621c38c5f8d9788b27
+      ref: ugk_trainer-v1.0.1
       path: packages/ugk_coach_chat
 
-# Keep SDK transitive dependencies on the same reviewed commit.
+# Resolve the SDK's sibling Git dependencies with the same release tag.
 dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: f1e02eb8229b4636d232b4621c38c5f8d9788b27
+      ref: ugk_trainer-v1.0.1
+  ugk_trainer_runtime:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      ref: ugk_trainer-v1.0.1
+      path: packages/ugk_trainer_runtime
+  ugk_coach_ui:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      ref: ugk_trainer-v1.0.1
+      path: packages/ugk_coach_ui
 
 dev_dependencies:
   flutter_test:
@@ -88,8 +98,8 @@ flutter:
     - assets/public_media/
     - assets/public_media/catalog/
     - assets/public_posters/
-    - assets/public_posters/r2-v11/cover/
-    - assets/public_posters/r2-v11/thumbnail/
+    - assets/public_posters/r2-v18/cover/
+    - assets/public_posters/r2-v18/thumbnail/
     - assets/muscles/
     - assets/plan_resume_muscles/
     - assets/angles/
