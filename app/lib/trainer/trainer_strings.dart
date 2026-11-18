@@ -443,6 +443,9 @@ sdk.TrainerStrings trainerStrings(
   sdk.SessionResult? result,
 }) {
   final w = _for(s);
+  final (_, _, recorded, comfortable, tight, pain) = trainerRestFeedbackLabels(
+    s,
+  );
   final playerCopy = s.localeName.startsWith('zh')
       ? sdk.TrainerStrings.zh()
       : sdk.TrainerStrings.en();
@@ -507,6 +510,11 @@ sdk.TrainerStrings trainerStrings(
     finish: s.done,
     feelingPrompt: playerCopy.feelingPrompt,
     feelingLabels: playerCopy.feelingLabels,
+    restFeedbackComfortable: comfortable,
+    restFeedbackTight: tight,
+    restFeedbackPain: pain,
+    restFeedbackRecorded: (label) => '$recorded · $label',
+    restFeedbackEdit: s.planEdit,
     actualDuration: playerCopy.actualDuration,
     totalReps: playerCopy.totalReps,
     totalWorkTime: playerCopy.totalWorkTime,

@@ -39,10 +39,19 @@ void main() {
       }
       expect(s.notificationText, app.library);
       expect(s.extendRest, app.addRest);
+      final (_, _, _, comfortable, tight, pain) = trainerRestFeedbackLabels(
+        app,
+      );
+      expect(
+        (s.restFeedbackComfortable, s.restFeedbackTight, s.restFeedbackPain),
+        (comfortable, tight, pain),
+      );
+      expect(s.restFeedbackEdit, app.planEdit);
       expect(trainerWristDirections(app), hasLength(4));
       if (app.localeName == 'zh') {
         expect(trainerWristDirections(app), ['手指朝前', '手指朝侧', '手指朝后', '手背撑地']);
         expect(trainerTimedWristCue(app), '每个手位轻摇约 15 秒');
+        expect(s.restFeedbackRecorded('舒服'), '已选择 · 舒服');
       }
       if (app.localeName == 'en') {
         expect(trainerWristDirections(app), [
