@@ -1,0 +1,63 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flare/data/catalog.dart';
+import 'package:flare/data/flare_public_catalog.dart';
+import 'package:flare/trainer/training_plan_adapter.dart';
+import 'package:flare/ui/flare_plan_detail_page.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
+import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  test('export exact duration audit without device playback', () async {
+    final catalog = await Catalog.load();
+    final pack = uc.PoseHubAppTestCatalog.fromBytes(
+      File(flarePublicCatalogAsset).readAsBytesSync(),
+      semanticCatalogBytes: File(flarePublicSemanticsAsset).readAsBytesSync(),
+    );
+    final rhythms = flarePublicRhythms(pack);
+    final source = flareCoachCatalogFromPublic(pack, rhythms: rhythms);
+    final plans = [
+      ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
+      ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
+    ];
+    final builder = sdk.SessionBuilder(rhythms: rhythms);
+    final output = <Map<String,Object?>>[];
+    for (final p in plans) {
+      for (final scene in ['A','B','C']) {
+        final resolved = trainingPlanFromFlarePlan(
+          plan:p, title:p.id, sceneTier:scene, catalog:catalog,
+          sourceCatalog:source, rhythms:rhythms,
+        );
+        output.add({
+          'id':p.id, 'scene':scene, 'uiMinutes':flarePlanMinutes(p),
+          'sdkSeconds':builder.planSeconds(resolved),
+          'adapterMinutes':resolved.targetMinutes,
+          'sideSwitchCount':builder.sideSwitchCount(resolved),
+          'items':[
+            for(final item in resolved.items) {
+              'id':item.exerciseId,
+              'mode':item.mode.name,
+              'perSide':item.perSide,
+              'effectiveKind':builder.rhythmOf(item).kind.id,
+              'repCycle':builder.rhythmOf(item).cycleFor(),
+              'sets':item.sets,
+              'reps':item.reps,
+              'workSeconds':item.workSeconds,
+              'segments':[
+                for(final seg in item.segments){
+                  'id':seg.id,'rhythm':seg.rhythm,'mode':seg.mode.name,
+                  'seconds':seg.workSeconds,'reps':seg.reps
+                }
+              ]
+            }
+          ]
+        });
+      }
+    }
+    File(const String.fromEnvironment('AUDIT_OUTPUT', defaultValue: '.dart_tool/training-plan-audit-duration.json'))
+      .writeAsStringSync(const JsonEncoder.withIndent('  ').convert(output));
+    expect(output.length,216);
+  });
+}

@@ -1,0 +1,7 @@
+# Evidence snapshots and composed views; authored review text stays expanded.
+* text eol=lf
+catalog-extract.json linguist-generated=true
+execution-extract.json linguist-generated=true
+duration-sdk.json linguist-generated=true
+training-plan-audit.html linguist-generated=true
+training-plan-audit.md linguist-generated=true
