@@ -73,23 +73,43 @@ void main() {
   #include <project_vertex>
   vV = -mvPosition.xyz;
 }`;
+const regionSelection = /* glsl */`
+int dominantRegion(vec4 weights) {
+  int region = 0;
+  float weight = weights.x;
+  if (weights.y > weight) { weight = weights.y; region = 1; }
+  if (weights.z > weight) { weight = weights.z; region = 2; }
+  if (weights.w > weight) region = 3;
+  return region;
+}`;
+
+// Compile the fixed palette into each material to avoid vec3 uniform arrays.
+// The affected Android colors matched reading the next entry's red as blue.
+function paletteLookup(name, colors) {
+  const [skin, shirt, pants, shoe] = colors.map(hex => {
+    const { r, g, b } = new THREE.Color(hex);
+    const components = [r, g, b].map(channel => Math.fround(channel).toPrecision(9));
+    return `vec3(${components.join(', ')})`;
+  });
+  return /* glsl */`
+vec3 ${name}(int region) {
+  if (region == 1) return ${shirt};
+  if (region == 2) return ${pants};
+  if (region == 3) return ${shoe};
+  return ${skin};
+}`;
+}
+
 const toonFS = /* glsl */`
-uniform vec3 uBase[4];
-uniform vec3 uShade[4];
 uniform vec3 uLight;
 varying vec4 vW;
 varying vec3 vN;
 varying vec3 vV;
+${regionSelection}
 void main() {
   // 部位：取插值后权重最大的那一项，边界落在三角形中线上，不会糊
-  int r = 0; float m = vW.x;
-  if (vW.y > m) { m = vW.y; r = 1; }
-  if (vW.z > m) { m = vW.z; r = 2; }
-  if (vW.w > m) { m = vW.w; r = 3; }
-  vec3 alb = uBase[0], shc = uShade[0];
-  if (r == 1) { alb = uBase[1]; shc = uShade[1]; }
-  else if (r == 2) { alb = uBase[2]; shc = uShade[2]; }
-  else if (r == 3) { alb = uBase[3]; shc = uShade[3]; }
+  int r = dominantRegion(vW);
+  vec3 alb = baseColor(r), shc = shadeColor(r);
   vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
   vec3 v = normalize(vV);
   float nl = dot(n, normalize(uLight));
@@ -169,13 +189,10 @@ void main() {
   gl_Position = ol2Clip(mv, normalize(normalMatrix * objectNormal), olW);
 }`;
 const outline2FS = /* glsl */`
-uniform vec3 uShade[4]; uniform vec3 uInk; varying vec4 vW;
+uniform vec3 uInk; varying vec4 vW;
+${regionSelection}
 void main() {
-  int r = 0; float m = vW.x;
-  if (vW.y > m) { m = vW.y; r = 1; }
-  if (vW.z > m) { m = vW.z; r = 2; }
-  if (vW.w > m) { m = vW.w; r = 3; }
-  vec3 s = uShade[0]; if (r == 1) s = uShade[1]; else if (r == 2) s = uShade[2]; else if (r == 3) s = uShade[3];
+  vec3 s = shadeColor(dominantRegion(vW));
   gl_FragColor = vec4(mix(s * 0.42, uInk, 0.38), 1.0);    // 色线：各部位暗色 + 深紫墨（不是纯黑）
   #include <colorspace_fragment>
 }`;
@@ -185,11 +202,10 @@ function makeToonMaterial(pal = PAL) {
   return new THREE.ShaderMaterial({ ...(STYLE2 ? { defines: RIM ? { STYLE2: '', RIM: '' } : { STYLE2: '', ...(TSM > 0 ? { TOONN: '' } : {}) } } : {}),
     name: 'toon3r2',
     uniforms: {
-      uBase: { value: pal.base.map(c => new THREE.Color(c)) },
-      uShade: { value: pal.shade.map(c => new THREE.Color(c)) },
       uLight: { value: new THREE.Vector3(-0.45, 0.75, 0.55) },   // 视空间左上前方（同 hub toon 的 Ld），跟随相机
     },
-    vertexShader: toonVS, fragmentShader: toonFS,
+    vertexShader: toonVS,
+    fragmentShader: paletteLookup('baseColor', pal.base) + paletteLookup('shadeColor', pal.shade) + toonFS,
   });
 }
 
@@ -391,7 +407,13 @@ export function applyToon({ scene, root, bones, skinned, grid, floor, renderer, 
   info.toonN = { iters: STYLE2 && !RIM ? TSM : 0, ms: +(performance.now() - tN0).toFixed(0) };
   // 描边：每个蒙皮网格挂一个反向外壳
   const olMat = STYLE2
-    ? new THREE.ShaderMaterial({ name: 'toon-outline-r2', uniforms: { ...ol2Uniforms(), uShade: { value: OF.shade.map(c => new THREE.Color(c)) }, uInk: { value: new THREE.Color(OL2.ink) } }, vertexShader: outline2VS, fragmentShader: outline2FS, side: THREE.BackSide })
+    ? new THREE.ShaderMaterial({
+      name: 'toon-outline-r2',
+      uniforms: { ...ol2Uniforms(), uInk: { value: new THREE.Color(OL2.ink) } },
+      vertexShader: outline2VS,
+      fragmentShader: paletteLookup('shadeColor', OF.shade) + outline2FS,
+      side: THREE.BackSide,
+    })
     : new THREE.ShaderMaterial({ name: 'toon3r2-outline', uniforms: { uColor: { value: new THREE.Color(LINE) } }, vertexShader: outlineVS, fragmentShader: outlineFS, side: THREE.BackSide });
   if (STYLE2) for (const m of meshes) {   // 每顶点粗细系数：手 / 头 / 鞋按骨骼权重插值
     const g = m.geometry, J = g.attributes.skinIndex, Wt = g.attributes.skinWeight, RA = g.attributes._region, n = J.count, w = new Float32Array(n), names = m.skeleton.bones.map(b => b.name);
