@@ -72,6 +72,7 @@ class FlareShell extends StatefulWidget {
 enum _HubRouteStage { entering, waitingForScene, sceneConfigured, leaving }
 
 class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
+  static const _recordsTab = 3;
   static const _trainingHubTab = 4;
   late final SceneController _scene;
   int _tab = 0;
@@ -337,7 +338,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  void _changeTab(int value) {
+  Future<bool> _changeTab(int value) async {
+    if (value == _recordsTab && !await _requirePremium()) return false;
+    if (!mounted) return false;
     if (_tab == _trainingHubTab && value != _trainingHubTab) {
       if (_hubFromAnotherTab) {
         _hubRouteStage = _HubRouteStage.leaving;
@@ -355,6 +358,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _libraryQuery = '';
     });
     _syncSceneVisibility();
+    return true;
   }
 
   void _enterTrainingHub({bool muscles = false}) {
@@ -370,7 +374,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _trainingHubLiveEntry = _trainingActorFlight;
     _trainingHubStagePresented = false;
     _trainingFlightLanded = false;
-    _changeTab(_trainingHubTab);
+    unawaited(_changeTab(_trainingHubTab));
     if (!_trainingActorFlight) return;
     _trainingFlightDeadline = Timer(const Duration(seconds: 3), () {
       if (mounted && !_returningToWatch && !_trainingFlightLanded) {
@@ -437,7 +441,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Future<void> _returnFromTrainingHub() async {
     final hub = _trainingHubState.currentState;
     if (hub == null) {
-      _changeTab(0);
+      await _changeTab(0);
       return;
     }
     setState(() {
@@ -617,12 +621,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _startPlan(
-    uc.TrainingPlan plan, {
-    bool premiumRequired = true,
-  }) async {
+  Future<void> _startPlan(uc.TrainingPlan plan) async {
     if (_trainingOpen || plan.items.isEmpty) return;
-    if (premiumRequired && !await _requirePremium()) return;
+    if (!await _requirePremium()) return;
     if (!mounted || _trainingOpen) return;
     FlareHaptics.light();
     DrillPlaybackCoordinator.shared.pauseAll();
@@ -830,7 +831,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     String title,
     List<Drill> drills, {
     String? id,
-    bool premiumRequired = false,
   }) async {
     if (_trainingOpen || drills.isEmpty) return;
     try {
@@ -843,7 +843,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           id: id,
           sourceCatalog: source,
         ),
-        premiumRequired: premiumRequired,
       );
     } catch (_) {
       _showTrainingLoadFailure();
@@ -959,14 +958,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _drill == null &&
         !_settings) {
       if (_trainingHubOrigin != 0) {
-        _changeTab(_trainingHubOrigin);
+        unawaited(_changeTab(_trainingHubOrigin));
         return;
       }
       if (widget.enableScene && _scene.presented && _scene.errorCode == null) {
         unawaited(_returnFromTrainingHub());
         return;
       }
-      _changeTab(0);
+      unawaited(_changeTab(0));
       return;
     }
     setState(() {
@@ -1403,12 +1402,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             if (routine.sdkPlan case final plan?) {
               await _startPlan(plan.copyWith(id: routine.id));
             } else {
-              await _startDrills(
-                routine.name,
-                drills,
-                id: routine.id,
-                premiumRequired: true,
-              );
+              await _startDrills(routine.name, drills, id: routine.id);
             }
           },
           onEdit: () => _editRoutine(_RoutineEdit(routineId: routine.id)),
@@ -1446,8 +1440,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               ),
       ),
       2 => ('tab2', 1, false, _plansPage()),
-      _ => (
-        'tab$_tab',
+      _recordsTab => (
+        'tab$_recordsTab',
         1,
         false,
         ProgressPage(
@@ -1455,9 +1449,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           store: store,
           onBack: _back,
           onDrill: _openDrill,
-          onStart: () => _changeTab(1),
+          onStart: () => unawaited(_changeTab(1)),
         ),
       ),
+      _ => throw StateError('Unknown Flare tab: $_tab'),
     };
   }
 
@@ -2158,9 +2153,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       case 'library':
         _enterTrainingHub();
       case 'plans':
-        _changeTab(2);
+        await _changeTab(2);
       case 'progress':
-        _changeTab(3);
+        final opened = await _changeTab(_recordsTab);
+        if (!opened && mounted && wasPlaying && _watchVisible) _scene.play();
       case 'settings':
         setState(() {
           _settings = true;

@@ -3,6 +3,8 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/components.dart' show PrimaryAction;
+import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
 import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
@@ -110,8 +112,95 @@ void main() {
     membership.dispose();
   });
 
+  testWidgets('training records gate guests and continue after purchase', (
+    tester,
+  ) async {
+    await helpers.phoneSize(tester);
+    final catalog = loadCatalogFixture(includeFlarePlans: true);
+    final store = LearningStore(
+      catalog: catalog,
+      storage: helpers.MemoryStateStorage(),
+    );
+    await store.initialize();
+    await store.acknowledgeSafety();
+    final purchases = _TestStore();
+    final membership = FlareMembership(purchases);
+    final scene = SceneController(commandSink: (_) {});
+    addTearDown(store.dispose);
+    addTearDown(scene.dispose);
+    final more = find.byKey(const ValueKey('home-menu-chip'));
+    final paywall = find.byType(FlareMembershipPage);
+    final records = find.byType(ProgressPage, skipOffstage: false);
+
+    Future<void> openRecords() async {
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('more-progress')));
+      await tester.pumpAndSettle();
+    }
+
+    try {
+      await tester.pumpWidget(
+        helpers.testApp(
+          FlareShell(
+            catalog: catalog,
+            store: store,
+            sceneController: scene,
+            enableScene: false,
+            membership: membership,
+          ),
+        ),
+      );
+      scene.receiveEvent({
+        'source': 'flare-scene',
+        'type': 'ready',
+        'period': catalog.period,
+      });
+      scene.play();
+      await tester.pumpAndSettle();
+
+      await openRecords();
+      expect(paywall, findsOneWidget);
+      expect(records, findsNothing);
+      expect(scene.playing, isFalse);
+      await tester.tap(
+        find.descendant(of: paywall, matching: find.byType(FlareBackChip)),
+      );
+      await tester.pumpAndSettle();
+      expect(paywall, findsNothing);
+      expect(records, findsNothing);
+      expect(more.hitTestable(), findsOneWidget);
+      expect(scene.playing, isTrue);
+
+      await openRecords();
+      expect(paywall, findsOneWidget);
+      await helpers.tapVisible(
+        tester,
+        find.byKey(const ValueKey('premium-subscribe')),
+      );
+      await tester.pumpAndSettle();
+      expect(purchases.purchased, isNotNull);
+      expect(membership.isPremium, isTrue);
+      expect(paywall, findsNothing);
+      expect(records, findsOneWidget);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(records, findsNothing);
+      final offerRequests = purchases.offerRequests;
+      await openRecords();
+      expect(records, findsOneWidget);
+      expect(paywall, findsNothing);
+      expect(purchases.offerRequests, offerRequests);
+      helpers.assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    } finally {
+      membership.dispose();
+    }
+  });
+
   testWidgets(
-    'angle training, saved routine training and copying ask for membership',
+    'single exercise, angle and saved routine actions ask for membership',
     (tester) async {
       await helpers.phoneSize(tester);
       final semantics = tester.ensureSemantics();
@@ -161,6 +250,26 @@ void main() {
 
         await helpers.tapVisible(tester, routineRow);
         await tester.pumpAndSettle();
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('plan-row-abs-A')),
+        );
+        await tester.pumpAndSettle();
+        final drill = find.byType(DrillDetailPage);
+        expect(drill, findsOneWidget);
+        expect(find.byType(FlareMembershipPage), findsNothing);
+        await tester.tap(
+          find.descendant(of: drill, matching: find.byType(PrimaryAction)),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(FlareMembershipPage), findsOneWidget);
+        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+        await tester.tap(membershipBack);
+        await tester.pumpAndSettle();
+        expect(drill, findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+
         await tester.tap(find.byKey(const ValueKey('plan-start')));
         await tester.pumpAndSettle();
         expect(find.byType(FlareMembershipPage), findsOneWidget);
