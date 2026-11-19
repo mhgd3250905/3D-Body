@@ -48,6 +48,7 @@ RATIO = LEG_E['left'] / LEG_R
 FOOT_PLANT_Y, SNOW_FLAT_WRIST_Y = 0.13, 0.031   # Snow flat palm (getGroundHandPose) wrist height
 ARM_E = {sd: np.linalg.norm(L[sd + 'Shoulder'] - L[sd + 'Elbow']) + np.linalg.norm(L[sd + 'Elbow'] - L[sd + 'Wrist']) for sd in ('left', 'right')}
 T0, T1 = 1.40, 3.30
+if REVN >= 11: T0, T1 = 1.80, 3.70   # r11: slower entry (spin starts 1.80 s)
 STRAIGHT = 0.975   # planted-arm reach (shoulder-wrist / arm length) when inverted, ~25 deg elbow at most
 
 def editor_pose(i):
@@ -68,6 +69,7 @@ def editor_pose(i):
     t = i / FPS; te = t if t <= T1 else T0 - (t - T1); te = min(te, T0) if t <= T1 else te
     LOCK = {'left': te >= 0.95, 'right': 0.60 <= te <= 1.00}
     if REVN >= 10: LOCK = {'right': te >= 0.95, 'left': 0.60 <= te <= 1.00}   # r10 is mirrored: left hand plants first, right hand is the axis
+    if REVN >= 11: LOCK = {'right': te >= 1.17, 'left': 0.70 <= te <= 1.45}   # r11: slower entry, left plants 0.72, right lands 1.19, left lifts 1.46
     locked_sides = [sd for sd in LOCK if LOCK[sd]]
     if locked_sides:   # Snow flat-palm wrist height differs from r7: move the inverted body with the planted hands
         p_hand = p_hand + np.array([0, np.mean([SNOW_FLAT_WRIST_Y - P(sd + 'Hand', i)[1] for sd in locked_sides]), 0])
@@ -115,6 +117,7 @@ def rot_between(i, j):
 
 # key moments (r7 seconds): entry names from move_2000_r5.py K list; exit = entry reversed (T_SPIN1 + T_SPIN0 - t)
 T0, T1 = 1.40, 3.30
+if REVN >= 11: T0, T1 = 1.80, 3.70   # r11: slower entry (spin starts 1.80 s)
 ENTRY = [(0.00, '站立'), (0.24, '迈步起势'), (0.40, '宽站拧腰蓄力'), (0.56, '右手前伸找地'), (0.64, '右手撑地'),
          (0.75, '后腿抡起'), (0.85, '蹬地翻上 · 左手找地'), (0.97, '双手撑地 · 分腿倒立'), (1.14, '右手离地 · 带转'),
          (1.27, '叠手并腿夹头')]
@@ -126,6 +129,10 @@ if REVN >= 10:   # r10: r9 mirrored (left hand plants first, right hand is the a
     ENTRY = [(0.00, '面向镜头展臂'), (0.22, '右转迈步'), (0.34, '弓步屈髋 · 左手下探'), (0.46, '左手找地 · 顶髋'), (0.58, '左手撑地 · 后腿抡起'),
              (0.68, '大劈叉 · 前脚蹬地'), (0.80, '右臂侧平伸直'), (0.90, '右臂下落'), (1.00, '右手落地 · 分腿倒立'), (1.12, '左手离地'),
              (1.19, '屈腿 · 左手过去'), (1.27, '叠手屈腿夹头')]
+if REVN >= 11:   # r11: refs + HMR2 data: legs together at the plant, kick after it, support foot on the first-hand side, 0.5 m hands, walk-over before the stack
+    ENTRY = [(0.00, '面向镜头展臂'), (0.20, '转身'), (0.32, '左脚上步'), (0.48, '屈髋侧转 · 左手下探'), (0.62, '左手找地'),
+             (0.72, '左手撑地 · 两腿并拢'), (0.84, '右腿后摆 · 顶髋'), (0.96, '髋过撑地手'), (1.04, '左脚蹬离'), (1.12, '右臂侧平落下'),
+             (1.19, '右手落地'), (1.33, '分腿倒立'), (1.40, '移到右手上方'), (1.49, '左手离地'), (1.57, '屈腿 · 左手过去'), (1.66, '叠手屈腿夹头')]
 EXIT = [(round(T1 + T0 - t, 3), nm) for t, nm in reversed(ENTRY)]
 EXIT_NAMES = {'站立': '落地站立', '迈步起势': '收步', '宽站拧腰蓄力': '宽站落地', '右手前伸找地': '右手离地起身',
               '右手撑地': '右手撑地 · 出', '后腿抡起': '后腿落下', '蹬地翻上 · 左手找地': '左手离地 · 落腿',
@@ -138,6 +145,11 @@ if REVN >= 10:
     EXIT_NAMES = {'面向镜头展臂': '落地站立', '右转迈步': '收步转回', '弓步屈髋 · 左手下探': '弓步起身', '左手找地 · 顶髋': '左手离地',
                   '左手撑地 · 后腿抡起': '左手撑地 · 后腿落下', '大劈叉 · 前脚蹬地': '前脚落地', '右臂侧平伸直': '右臂侧平抬起', '右臂下落': '右手离地',
                   '右手落地 · 分腿倒立': '双手撑地 · 分腿 · 出', '左手离地': '左手落地 · 拆叠', '屈腿 · 左手过去': '左手回撑', '叠手屈腿夹头': '拆叠手 · 屈腿'}
+if REVN >= 11:
+    EXIT_NAMES = {'面向镜头展臂': '落地站立', '转身': '转回', '左脚上步': '收步', '屈髋侧转 · 左手下探': '弓步起身', '左手找地': '左手离地',
+                  '左手撑地 · 两腿并拢': '左手撑地 · 两脚落地', '右腿后摆 · 顶髋': '右腿落下', '髋过撑地手': '髋回撤', '左脚蹬离': '左脚落地',
+                  '右臂侧平落下': '右臂侧平抬起', '右手落地': '右手离地', '分腿倒立': '分腿倒立 · 出', '移到右手上方': '身体移回中间',
+                  '左手离地': '左手落地 · 拆叠', '屈腿 · 左手过去': '左手回撑', '叠手屈腿夹头': '拆叠手 · 屈腿'}
 keys = [(t, nm, 'entry') for t, nm in ENTRY] + [(T0, '叠手旋转开始', 'spin')]
 # spin: split evenly so no neighbour pair turns more than max-turn degrees
 f0, f1 = round(T0 * FPS), round(T1 * FPS)

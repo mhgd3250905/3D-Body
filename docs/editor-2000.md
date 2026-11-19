@@ -34,7 +34,7 @@
 - `tools/move-2000/from_editor.py <输入> public/coach/coach-rig.json <keys.json>`：输入可以是完整动画 JSON、正式展示、姿势库导出，或分享码（存成文本文件或直接贴在命令行）。输出 Pose-Hub 通道（pelvis、pelvisQ、spine、Wrist、Elbow、Ankle、Knee、Toe/Sole、Fing/Palm、Locked），世界坐标，旋转角已烘焙（th = 0），腿长换回 Pose-Hub 骨架。分享码按 `--base`（默认 `public/coach/move-2000-sequence.json`）还原。
 - `tools/move-2000/share_code.py <分享码或文件> [--out backup.json]`：把分享码还原成完整备份 JSON。
 - `tools/move-2000/to_editor.py <rN.npz> public/coach/coach-rig.json public/coach/move-2000-sequence.json`：从 Pose-Hub 逐帧结果重新生成预载关键帧。换版本后，旧版本的分享码要用旧的 sequence 文件作 `--base` 还原。
-- 当前预载为 r10（`--rev r10`，r9 整套左右镜像：左手先撑、右手为轴手、旋转方向相反；起势空手侧平略上举（r9 举过头偏后），顶髋过撑地手、后腿抡起大劈叉后前脚蹬地发力）；r9 版预载另存 `tools/move-2000/move-2000-sequence-r9.json`、r8 版另存 `tools/move-2000/move-2000-sequence-r8.json`、r7 版另存 `tools/move-2000/move-2000-sequence-r7.json`，旧分享码用对应文件作 `--base` 还原。
+- 当前预载为 r11（`--rev r11`，按两条参考视频 + HMR2 骨骼数据重排起势：左手先撑、左脚（同侧）为支撑脚、撑地时两腿基本并拢、右腿撑地后才后摆；躯干绕脊柱侧转，空手相对躯干侧平；起势放慢（翻转最快约 220°/s）；两手间距 0.5 m、右手直臂侧落；分腿倒立后身体移到右手上方再叠手；49 帧，旋转从 1.80 s 开始）；r10 版预载另存 `tools/move-2000/move-2000-sequence-r10.json`、r9 版另存 `tools/move-2000/move-2000-sequence-r9.json`、r8 版另存 `tools/move-2000/move-2000-sequence-r8.json`、r7 版另存 `tools/move-2000/move-2000-sequence-r7.json`，旧分享码用对应文件作 `--base` 还原。
 
 ## 检查
 
