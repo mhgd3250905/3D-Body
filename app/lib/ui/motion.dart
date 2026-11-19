@@ -978,8 +978,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   }
 }
 
-/// Gentle entrance: fades in and rises a few pixels, once, after [delay].
-/// Used for list and grid items (staggered by index) and swapped panels.
+/// Gentle entrance that waits for navigation before applying the item's
+/// stagger. Used for list and grid items and swapped panels.
 class FadeSlideIn extends StatefulWidget {
   const FadeSlideIn({
     super.key,
@@ -1004,28 +1004,80 @@ class FadeSlideIn extends StatefulWidget {
 class _FadeSlideInState extends State<FadeSlideIn>
     with SingleTickerProviderStateMixin {
   Timer? _startTimer;
+  ModalRoute<dynamic>? _route;
+  bool _settled = true;
+  bool _active = true;
+  bool _reduced = false;
+  bool _began = false;
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: widget.duration,
   );
+  late final _opacity = _controller.drive(CurveTween(curve: Curves.easeOut));
+
+  bool get _ready =>
+      _active &&
+      _settled &&
+      _route?.offstage != true &&
+      (_route?.animation?.status ?? AnimationStatus.completed) ==
+          AnimationStatus.completed;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (_route != route) {
+      _route?.animation?.removeStatusListener(_onRouteStatus);
+      _route = route;
+      route?.animation?.addStatusListener(_onRouteStatus);
+    }
+    _active = FlarePageActivity.of(context);
+    _settled = FlarePageActivity.settledOf(context);
+    _reduced = FlareMotion.reduced(context);
+    if (!_ready) _pauseEntrance();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      if (FlareMotion.reduced(context)) {
-        _controller.value = 1;
-      } else if (widget.delay == Duration.zero) {
-        _controller.forward();
-      } else {
-        _startTimer = Timer(widget.delay, () => _controller.forward());
-      }
+      if (mounted) _startWhenReady();
     });
+  }
+
+  void _onRouteStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _startWhenReady();
+    } else if (status == AnimationStatus.reverse) {
+      _pauseEntrance();
+    }
+  }
+
+  void _pauseEntrance() {
+    _startTimer?.cancel();
+    _startTimer = null;
+    if (_controller.isAnimating) _controller.stop();
+  }
+
+  void _startWhenReady() {
+    if (_controller.isCompleted || _controller.isAnimating) return;
+    if (_reduced) {
+      _pauseEntrance();
+      _controller.value = 1;
+      return;
+    }
+    if (!_ready || _startTimer != null) return;
+    if (_began || widget.delay == Duration.zero) {
+      _began = true;
+      _controller.forward();
+    } else {
+      _startTimer = Timer(widget.delay, () {
+        _startTimer = null;
+        if (!_ready) return;
+        _began = true;
+        _controller.forward();
+      });
+    }
   }
 
   @override
   void dispose() {
+    _route?.animation?.removeStatusListener(_onRouteStatus);
     _startTimer?.cancel();
     _controller.dispose();
     super.dispose();
@@ -1034,16 +1086,15 @@ class _FadeSlideInState extends State<FadeSlideIn>
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: _controller,
-    child: widget.child,
+    child: FadeTransition(
+      opacity: _opacity,
+      child: RepaintBoundary(child: widget.child),
+    ),
     builder: (context, child) {
       final t = FlareMotion.settle.transform(_controller.value);
-      if (t >= 1) return child!;
-      return Opacity(
-        opacity: Curves.easeOut.transform(_controller.value),
-        child: Transform.translate(
-          offset: Offset(0, widget.offset * (1 - t)),
-          child: child,
-        ),
+      return Transform.translate(
+        offset: Offset(0, widget.offset * (1 - t)),
+        child: child,
       );
     },
   );

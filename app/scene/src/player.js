@@ -313,7 +313,8 @@ export class FlarePlayer {
       this.projectionGlide.toBias = { ...this.viewBiasTarget };
       return;
     }
-    if (animate && this.running && Math.abs(value - this.viewInset) > 0.5) {
+    const canGlide = this.running || (this.demandFrames && this.visible && !document.hidden && !this.contextLost);
+    if (animate && canGlide && Math.abs(value - this.viewInset) > 0.5) {
       this.glideTo(this.camera.position.clone(), this.controls.target.clone(), 420);
     } else { this.projectionGlide = null; this.viewInset = value; this.viewBias = { ...this.viewBiasTarget }; this.applyProjection(); }
     this.dirty = true;

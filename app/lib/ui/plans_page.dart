@@ -175,6 +175,8 @@ class PlansPage extends StatelessWidget {
     final safe = MediaQuery.viewPaddingOf(context);
     final resume = this.resume;
     final routines = store.routines;
+    final aiCoach = onAiCoach;
+    final routineRowCount = routines.length + (aiCoach == null ? 0 : 1);
     final angles = [
       for (final source in {
         ..._featuredAngles,
@@ -258,36 +260,84 @@ class PlansPage extends StatelessWidget {
                         withHistory: resume != null,
                         onTap: onNewRoutine,
                       ),
-                      if (routines.isNotEmpty || onAiCoach != null) ...[
-                        const SizedBox(height: 12),
-                        FlareListGroup(
-                          children: [
-                            for (final routine in routines)
-                              _routineRow(context, routine),
-                            if (onAiCoach != null)
-                              FlareListRow(
-                                key: const ValueKey('plan-ai-coach'),
-                                leading: const FlareRowIcon(
-                                  Icons.auto_awesome_rounded,
-                                ),
-                                title: s.plansAiTitle,
-                                subtitle: aiCoachConfigured
-                                    ? s.plansAiHint
-                                    : s.plansAiUnavailable,
-                                onTap: onAiCoach,
-                              ),
-                          ],
-                        ),
-                      ],
-                      const SizedBox(height: 24),
-                      _PlansSection(
-                        title: s.plansAnglesTitle,
-                        description: s.plansAnglesDescription,
-                        count: angles.length,
-                        actionKey: const ValueKey('plan-all-angles'),
-                        onAll: onAllAngles,
-                      ),
                     ],
+                  ),
+                ),
+                if (routineRowCount > 0)
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      _pageInset,
+                      12,
+                      _pageInset,
+                      0,
+                    ),
+                    sliver: DecoratedSliver(
+                      decoration: BoxDecoration(
+                        color: FlareListGroup.fill(),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(FlareGeometry.groupRadius),
+                        ),
+                      ),
+                      sliver: SliverList.separated(
+                        itemCount: routineRowCount,
+                        separatorBuilder: (_, _) => Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            start: FlareGeometry.rowTextStart,
+                          ),
+                          child: SizedBox(
+                            height: FlareGeometry.hairline,
+                            child: ColoredBox(
+                              color: p.text.withValues(alpha: .10),
+                            ),
+                          ),
+                        ),
+                        itemBuilder: (context, index) {
+                          const radius = Radius.circular(
+                            FlareGeometry.groupRadius,
+                          );
+                          final first = index == 0;
+                          final last = index == routineRowCount - 1;
+                          return ClipRRect(
+                            borderRadius: BorderRadius.vertical(
+                              top: first ? radius : Radius.zero,
+                              bottom: last ? radius : Radius.zero,
+                            ),
+                            clipBehavior: first || last
+                                ? Clip.antiAlias
+                                : Clip.none,
+                            child: index < routines.length
+                                ? _routineRow(context, routines[index])
+                                : FlareListRow(
+                                    key: const ValueKey('plan-ai-coach'),
+                                    leading: const FlareRowIcon(
+                                      Icons.auto_awesome_rounded,
+                                    ),
+                                    title: s.plansAiTitle,
+                                    subtitle: aiCoachConfigured
+                                        ? s.plansAiHint
+                                        : s.plansAiUnavailable,
+                                    onTap: aiCoach,
+                                  ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    _pageInset,
+                    24,
+                    _pageInset,
+                    0,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: _PlansSection(
+                      title: s.plansAnglesTitle,
+                      description: s.plansAnglesDescription,
+                      count: angles.length,
+                      actionKey: const ValueKey('plan-all-angles'),
+                      onAll: onAllAngles,
+                    ),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -1544,11 +1594,13 @@ Future<List<String>?> showDrillPicker(
   context: context,
   isScrollControlled: true,
   sheetAnimationStyle: FlareMotion.sheetStyle(context),
-  builder: (sheet) => _DrillPicker(
-    catalog: catalog,
-    initialTier: initialTier,
-    exclude: exclude,
-    room: room,
+  builder: (sheet) => RepaintBoundary(
+    child: _DrillPicker(
+      catalog: catalog,
+      initialTier: initialTier,
+      exclude: exclude,
+      room: room,
+    ),
   ),
 );
 
@@ -1829,36 +1881,65 @@ Future<String?> showAddToPlanSheet(
   sheetAnimationStyle: FlareMotion.sheetStyle(context),
   builder: (sheet) {
     final s = sheet.strings;
-    return SafeArea(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(sheet).height * .7,
-        ),
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
-              child: Text(
-                s.planAddTo,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            for (final routine in store.routines)
-              ListTile(
+    final routines = store.routines;
+    return RepaintBoundary(
+      child: SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(sheet).height * .7,
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            itemCount: routines.length + 2,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+                  child: Text(
+                    s.planAddTo,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              }
+              if (index == routines.length + 1) {
+                return ListTile(
+                  key: const ValueKey('add-to-new'),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                  minTileHeight: 60,
+                  leading: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: FlareColors.accent.withValues(alpha: .14),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.add_rounded,
+                      color: FlareColors.accentInk,
+                    ),
+                  ),
+                  title: Text(
+                    s.planNewWith,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  onTap: () => Navigator.pop(sheet, 'new'),
+                );
+              }
+              final routine = routines[index - 1];
+              final poster = routine.drills(catalog).firstOrNull;
+              final containsDrill = _routineHasItem(routine, drill.id);
+              return ListTile(
                 key: ValueKey('add-to-${routine.id}'),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
                 minTileHeight: 60,
                 leading: SizedBox.square(
                   dimension: 44,
                   child: ClipOval(
-                    child: routine.drills(catalog).isEmpty
-                        ? null
-                        : DrillPoster(routine.drills(catalog).first),
+                    child: poster == null ? null : DrillPoster(poster),
                   ),
                 ),
                 title: Text(
@@ -1873,35 +1954,17 @@ Future<String?> showAddToPlanSheet(
                   ),
                   style: TextStyle(fontSize: 12, color: FlareColors.dim),
                 ),
-                trailing: _routineHasItem(routine, drill.id)
+                trailing: containsDrill
                     ? Icon(Icons.check_rounded, color: FlareColors.success)
                     : Icon(Icons.add_rounded, color: FlareColors.dim),
                 enabled:
-                    !_routineHasItem(routine, drill.id) &&
+                    !containsDrill &&
                     (routine.sdkPlan != null ||
                         routine.drillIds.length < TrainingRoutine.maxDrills),
                 onTap: () => Navigator.pop(sheet, routine.id),
-              ),
-            ListTile(
-              key: const ValueKey('add-to-new'),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-              minTileHeight: 60,
-              leading: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: FlareColors.accent.withValues(alpha: .14),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.add_rounded, color: FlareColors.accentInk),
-              ),
-              title: Text(
-                s.planNewWith,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              onTap: () => Navigator.pop(sheet, 'new'),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );

@@ -57,11 +57,13 @@ class FlareDrillFilter extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
-      builder: (_) => _DrillFilterSheet(
-        catalog: catalog,
-        query: query,
-        tier: tier,
-        section: section,
+      builder: (_) => RepaintBoundary(
+        child: _DrillFilterSheet(
+          catalog: catalog,
+          query: query,
+          tier: tier,
+          section: section,
+        ),
       ),
     );
     if (result == null) return;

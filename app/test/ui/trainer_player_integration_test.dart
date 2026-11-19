@@ -704,7 +704,10 @@ void main() {
         ],
       );
       await _open(tester, sdkPlan: plan);
-      expect(_player(tester).theme.usePlayerV1, isTrue);
+      final player = _player(tester);
+      expect(player.theme.usePlayerV1, isTrue);
+      final drillId = player.plan.items.first.exerciseId;
+      expect(player.drillOf(drillId), same(player.drillOf(drillId)));
       final panel = find.byType(sdk.TrainerRestFeedbackPanel);
       await _advance(tester, 16);
       expect(panel, findsOneWidget);
@@ -712,10 +715,12 @@ void main() {
         tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
         isNull,
       );
+      final playerBeforeChoice = _player(tester);
       await tester.tap(
         find.byKey(const ValueKey('player-v1-rest-comfortable')).hitTestable(),
       );
       await tester.pump();
+      expect(_player(tester), same(playerBeforeChoice));
       expect(
         tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
         sdk.TrainerRestFeedbackChoice.comfortable,

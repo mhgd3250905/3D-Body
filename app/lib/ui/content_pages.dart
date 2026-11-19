@@ -17,83 +17,85 @@ Future<bool?> showSafetySheet(BuildContext context) {
     context: context,
     sheetAnimationStyle: FlareMotion.sheetStyle(context),
     isScrollControlled: true,
-    builder: (sheet) => SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Eyebrow(s.safetySheetEyebrow),
-            const SizedBox(height: 4),
-            Text(
-              s.safetySheetTitle,
-              style: const TextStyle(
-                fontSize: 22,
-                height: 1.25,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 24),
-            for (final (index, rule) in [
-              (s.safetyRule1, s.safetyRule1Note),
-              (s.safetyRule2, s.safetyRule2Note),
-              (s.safetyRule3, s.safetyRule3Note),
-            ].indexed)
-              Padding(
-                padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: FlareColors.accent.withValues(alpha: .12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${index + 1}',
-                        style: TextStyle(
-                          color: FlareColors.accentInk,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            rule.$1,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            rule.$2,
-                            style: TextStyle(
-                              fontSize: 13,
-                              height: 1.45,
-                              color: FlareColors.dim,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+    builder: (sheet) => RepaintBoundary(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Eyebrow(s.safetySheetEyebrow),
+              const SizedBox(height: 4),
+              Text(
+                s.safetySheetTitle,
+                style: const TextStyle(
+                  fontSize: 22,
+                  height: 1.25,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            const SizedBox(height: 24),
-            PrimaryAction(
-              label: s.gotIt,
-              onPressed: () => Navigator.pop(sheet, true),
-            ),
-          ],
+              const SizedBox(height: 24),
+              for (final (index, rule) in [
+                (s.safetyRule1, s.safetyRule1Note),
+                (s.safetyRule2, s.safetyRule2Note),
+                (s.safetyRule3, s.safetyRule3Note),
+              ].indexed)
+                Padding(
+                  padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: FlareColors.accent.withValues(alpha: .12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${index + 1}',
+                          style: TextStyle(
+                            color: FlareColors.accentInk,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              rule.$1,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              rule.$2,
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.45,
+                                color: FlareColors.dim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 24),
+              PrimaryAction(
+                label: s.gotIt,
+                onPressed: () => Navigator.pop(sheet, true),
+              ),
+            ],
+          ),
         ),
       ),
     ),

@@ -17,6 +17,7 @@ class MotionTimeline extends StatefulWidget {
     required this.phase,
     required this.onSeek,
     this.onSettle,
+    this.onScrubbing,
     this.connectedNodes = false,
     this.playhead,
   });
@@ -28,6 +29,9 @@ class MotionTimeline extends StatefulWidget {
 
   /// Lets a host snap a tap, keyboard step, or completed scrub to a pose.
   final ValueChanged<double>? onSettle;
+
+  /// Reports drag lifetime without opting into pose snapping.
+  final ValueChanged<bool>? onScrubbing;
   final bool connectedNodes;
 
   /// Rendered scene time. Keeps the playhead moving without rebuilding the
@@ -51,7 +55,9 @@ class _MotionTimelineState extends State<MotionTimeline> {
   }
 
   void _setDragging(bool value) {
-    if (_dragging != value) setState(() => _dragging = value);
+    if (_dragging == value) return;
+    setState(() => _dragging = value);
+    widget.onScrubbing?.call(value);
   }
 
   // Pin the real source poses to their printed ticks. Interpolation between
@@ -108,6 +114,9 @@ class _MotionTimelineState extends State<MotionTimeline> {
 
   void _preview(double time) {
     _scrubTime = time;
+    // An owner may handle the playhead without rebuilding the page. Keep
+    // the slider's semantic value current inside the timeline in that case.
+    if (widget.onScrubbing != null) setState(() {});
     widget.onSeek(time);
   }
 
@@ -121,7 +130,10 @@ class _MotionTimelineState extends State<MotionTimeline> {
   @override
   Widget build(BuildContext context) {
     final period = widget.catalog.period;
-    final value = widget.time.clamp(0, period).toDouble();
+    final currentTime = widget.onScrubbing == null
+        ? widget.time
+        : _scrubTime ?? widget.time;
+    final value = currentTime.clamp(0, period).toDouble();
     final s = context.strings;
     return Semantics(
       slider: true,

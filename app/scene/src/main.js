@@ -28,6 +28,7 @@ const v5 = options.get('actor') === 'flare-v5';
 const media = v5 && options.get('embed') === 'media';
 let v5Fx = options.get('fx') !== '0';
 const hosted = document.documentElement.dataset.hosted === 'true';
+const homeDemandFrames = hosted && v5 && !media;
 let presented = false, statusTimer = null;
 const hubCallouts = createHubCalloutVisibility();
 let hubCalloutFrame = null, animateHubCallouts = true;
@@ -243,7 +244,7 @@ function command(value) {
       clearHotspots();
       player.controls.enabled = true;
       if (fx) { fx.setEnabled(true); fx.root.visible = true; }
-      player.setDemandFrames(false);
+      player.setDemandFrames(homeDemandFrames);
       break;
     case 'hub_capture': {
       if (!Number.isSafeInteger(input.id) || input.id <= 0) return;
@@ -420,6 +421,7 @@ async function boot() {
     const skinned = media ? player.v5.skinned : configureTeaching();
 
     ready = true; player.dirty = true;
+    if (homeDemandFrames) player.setDemandFrames(true);
     const geometryStats = skinned.reduce((stats, mesh) => ({ meshes: stats.meshes + 1, vertices: stats.vertices + mesh.geometry.attributes.position.count,
       triangles: stats.triangles + (mesh.geometry.index?.count ?? mesh.geometry.attributes.position.count) / 3 }), { meshes: 0, vertices: 0, triangles: 0 });
     // Diagnostics return data copies, not scene objects. The playback bridge is

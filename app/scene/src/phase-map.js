@@ -68,6 +68,14 @@ export async function createPhaseMap(player, onSelect) {
   let rasterKey = null, rasterEnvironment = null, selectionDirty = false;
   let paintKey = null, paintEffort = 0;
   let chromeMotion = null;
+  let viewSize = null;
+  const viewObserver = new ResizeObserver(([entry]) => {
+    const { width, height } = entry.contentRect;
+    if (viewSize?.width === width && viewSize.height === height) return;
+    viewSize = { width, height };
+    if (!hidden) player.requestRedraw();
+  });
+  viewObserver.observe(view);
   const fullBounds = new THREE.Box3().setFromObject(model);
   const shortNames = { 'hip-abductors': '臀中肌', abs: '腹直肌', 'rotator-cuff': '肩袖', forearms: '前臂', scapular: '中下斜方 · 菱形', adductors: '内收肌' };
   function pickSurface(x, y, camera, rect) {
@@ -161,7 +169,11 @@ export async function createPhaseMap(player, onSelect) {
         button.append(dot, text); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
       }
     }
-    const r = view.getBoundingClientRect(); if (!(r.width > 0 && r.height > 0)) return false;
+    // The cached raster uses layout size, unaffected by the route transform.
+    // Read the live box only before observation or on the first frame after
+    // a display:none interval, when its observed dimensions are zero.
+    const r = viewSize?.width > 0 && viewSize.height > 0 ? viewSize : view.getBoundingClientRect();
+    if (!(r.width > 0 && r.height > 0)) return false;
     const renderer = player.renderer, density = thumbnailDensity(player.quality);
     const width = Math.ceil(r.width / 2 * density), height = Math.ceil(r.height * density);
     strokeDensity.value = width / (r.width / 2);
@@ -262,5 +274,5 @@ export async function createPhaseMap(player, onSelect) {
   return { render, setHidden, setChromeMotion, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
     getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
-    dispose() { releaseGpu(); view.removeEventListener('click', select); motion.remove(); } };
+    dispose() { viewObserver.disconnect(); releaseGpu(); view.removeEventListener('click', select); motion.remove(); } };
 }

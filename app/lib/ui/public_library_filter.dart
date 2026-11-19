@@ -37,12 +37,14 @@ class PublicLibraryFilter extends StatelessWidget {
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => _PublicLibraryFilterSheet(
-        actions: actions,
-        initial: filter,
-        strings: strings,
-        label: label,
-        includesHostDrill: includesHostDrill,
+      builder: (_) => RepaintBoundary(
+        child: _PublicLibraryFilterSheet(
+          actions: actions,
+          initial: filter,
+          strings: strings,
+          label: label,
+          includesHostDrill: includesHostDrill,
+        ),
       ),
     );
     if (context.mounted && result != null) onChanged(result);

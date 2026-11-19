@@ -104,6 +104,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   String _libraryQuery = '';
   int _handledSelection = 0;
   double _lastSavedTime = -1;
+  Object? _scrubChrome;
   String _quality = 'balanced';
   String? _sceneTheme;
   String? _sceneLanguage;
@@ -274,13 +275,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _scene.setVisible(false);
       }
     }
-    if (store.safetyAccepted &&
-        (_scene.presented || !widget.enableScene) &&
-        !_scene.playing &&
-        (_scene.time - _lastSavedTime).abs() > .001) {
-      _lastSavedTime = _scene.time;
-      unawaited(store.setLastTime(_scene.time));
-    }
+    if (_scrubChrome == null) _savePausedSceneTime();
     if (_scene.selectionGeneration != _handledSelection) {
       _handledSelection = _scene.selectionGeneration;
       if (_scene.selected == null) {
@@ -296,7 +291,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         });
       }
     }
+    if (_scrubChrome != null) {
+      final chrome = _watchChrome;
+      if (_scrubChrome == chrome) return;
+      _scrubChrome = chrome;
+    }
     _refreshView();
+  }
+
+  // Time changes already go through the timeline's playhead. During a
+  // drag rebuild the shell only when its visible scene controls change.
+  Object get _watchChrome => (
+    phase: _scene.phase,
+    playing: _scene.playing,
+    speed: _scene.speed,
+    period: _scene.period,
+    presented: _scene.presented,
+    error: _scene.errorCode,
+  );
+
+  void _savePausedSceneTime() {
+    if (store.safetyAccepted &&
+        (_scene.presented || !widget.enableScene) &&
+        !_scene.playing &&
+        (_scene.time - _lastSavedTime).abs() > .001) {
+      _lastSavedTime = _scene.time;
+      unawaited(store.setLastTime(_scene.time));
+    }
+  }
+
+  void _onHomeScrubbing(bool active) {
+    _scrubChrome = active ? _watchChrome : null;
+    if (!active) _savePausedSceneTime();
   }
 
   bool get _watchVisible =>
@@ -335,6 +361,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
     if (!_watchVisible) {
       _scene.pause();
+      _scrubChrome = null;
       if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
         unawaited(store.setLastTime(_scene.time));
       }
@@ -1958,6 +1985,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         playhead: _scene.playhead,
                         phase: phase.source,
                         onSeek: _seek,
+                        onScrubbing: _onHomeScrubbing,
                       ),
                     ),
                   ],
@@ -2087,148 +2115,152 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
       showDragHandle: false,
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (sheetContext, setSheet) => SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Semantics(
-                label: MaterialLocalizations.of(
-                  sheetContext,
-                ).modalBarrierDismissLabel,
-                button: true,
-                onTap: () => Navigator.of(sheetContext).pop(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Container(
-                    key: const ValueKey('more-drag-handle'),
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: FlareColors.palette.dragHandle,
-                      borderRadius: BorderRadius.circular(2),
+      builder: (sheetContext) => RepaintBoundary(
+        child: StatefulBuilder(
+          builder: (sheetContext, setSheet) => SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Semantics(
+                  label: MaterialLocalizations.of(
+                    sheetContext,
+                  ).modalBarrierDismissLabel,
+                  button: true,
+                  onTap: () => Navigator.of(sheetContext).pop(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Container(
+                      key: const ValueKey('more-drag-handle'),
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: FlareColors.palette.dragHandle,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
-                    FlareGeometry.pageInset,
-                    0,
-                    FlareGeometry.pageInset,
-                    FlareGeometry.rowSideInset,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      FlareListGroup(
-                        children: [
-                          for (final entry in [
-                            (
-                              'library',
-                              s.library,
-                              s.libraryHint,
-                              Icons.fitness_center_outlined,
-                            ),
-                            (
-                              'plans',
-                              s.plans,
-                              store.routines.isEmpty
-                                  ? s.plansHint
-                                  : '${s.plansMine} · ${store.routines.length}',
-                              Icons.playlist_play_rounded,
-                            ),
-                            (
-                              'progress',
-                              s.progress,
-                              store.weekTrainingDays == 0
-                                  ? s.recordsEmptyAction
-                                  : s.moreProgressHint(store.weekTrainingDays),
-                              Icons.insights_outlined,
-                            ),
-                            (
-                              'settings',
-                              s.settings,
-                              s.settingsHint,
-                              Icons.tune_outlined,
-                            ),
-                          ])
-                            FlareListRow(
-                              key: ValueKey('more-${entry.$1}'),
-                              leading: FlareRowIcon(entry.$4),
-                              title: entry.$2,
-                              subtitle: entry.$3,
-                              onTap: () {
-                                final navigator = Navigator.of(sheetContext);
-                                if (entry.$1 == 'library') {
-                                  // Remove the sheet and its barrier together before
-                                  // the training page starts covering the home stage.
-                                  final sheet = ModalRoute.of<String>(
-                                    sheetContext,
-                                  );
-                                  if (sheet != null && sheet.isCurrent) {
-                                    navigator.removeRoute(sheet, entry.$1);
-                                  }
-                                } else {
-                                  navigator.pop(entry.$1);
-                                }
-                              },
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: FlareGeometry.groupGap),
-                      FlareListGroup(
-                        key: const ValueKey('more-playback-speed'),
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      FlareGeometry.pageInset,
+                      0,
+                      FlareGeometry.pageInset,
+                      FlareGeometry.rowSideInset,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FlareListGroup(
+                          children: [
+                            for (final entry in [
+                              (
+                                'library',
+                                s.library,
+                                s.libraryHint,
+                                Icons.fitness_center_outlined,
+                              ),
+                              (
+                                'plans',
+                                s.plans,
+                                store.routines.isEmpty
+                                    ? s.plansHint
+                                    : '${s.plansMine} · ${store.routines.length}',
+                                Icons.playlist_play_rounded,
+                              ),
+                              (
+                                'progress',
+                                s.progress,
+                                store.weekTrainingDays == 0
+                                    ? s.recordsEmptyAction
+                                    : s.moreProgressHint(
+                                        store.weekTrainingDays,
+                                      ),
+                                Icons.insights_outlined,
+                              ),
+                              (
+                                'settings',
+                                s.settings,
+                                s.settingsHint,
+                                Icons.tune_outlined,
+                              ),
+                            ])
                               FlareListRow(
-                                leading: const FlareRowIcon(
-                                  Icons.speed_rounded,
-                                ),
-                                title: s.playbackSpeed,
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                  start: FlareGeometry.rowSideInset,
-                                  end: FlareGeometry.rowSideInset,
-                                  bottom: FlareGeometry.rowControlBottom,
-                                ),
-                                child: FlareSegmented<double>(
-                                  expand: true,
-                                  height: FlareGeometry.settingsSegmentHeight,
-                                  radius: FlareGeometry.settingsSegmentRadius,
-                                  inset: FlareGeometry.settingsSegmentInset,
-                                  ios: true,
-                                  segments: const [
-                                    (.25, '0.25×'),
-                                    (.5, '0.5×'),
-                                    (1.0, '1×'),
-                                  ],
-                                  selected: _scene.speed,
-                                  // Speed applies in place; the sheet stays so the
-                                  // new choice is visible, and play resumes on close.
-                                  onChanged: (value) {
-                                    _scene.setSpeed(value);
-                                    unawaited(
-                                      store.updateSettings(speed: value),
+                                key: ValueKey('more-${entry.$1}'),
+                                leading: FlareRowIcon(entry.$4),
+                                title: entry.$2,
+                                subtitle: entry.$3,
+                                onTap: () {
+                                  final navigator = Navigator.of(sheetContext);
+                                  if (entry.$1 == 'library') {
+                                    // Remove the sheet and its barrier together before
+                                    // the training page starts covering the home stage.
+                                    final sheet = ModalRoute.of<String>(
+                                      sheetContext,
                                     );
-                                    setSheet(() {});
-                                  },
-                                ),
+                                    if (sheet != null && sheet.isCurrent) {
+                                      navigator.removeRoute(sheet, entry.$1);
+                                    }
+                                  } else {
+                                    navigator.pop(entry.$1);
+                                  }
+                                },
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: FlareGeometry.groupGap),
+                        FlareListGroup(
+                          key: const ValueKey('more-playback-speed'),
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                FlareListRow(
+                                  leading: const FlareRowIcon(
+                                    Icons.speed_rounded,
+                                  ),
+                                  title: s.playbackSpeed,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                    start: FlareGeometry.rowSideInset,
+                                    end: FlareGeometry.rowSideInset,
+                                    bottom: FlareGeometry.rowControlBottom,
+                                  ),
+                                  child: FlareSegmented<double>(
+                                    expand: true,
+                                    height: FlareGeometry.settingsSegmentHeight,
+                                    radius: FlareGeometry.settingsSegmentRadius,
+                                    inset: FlareGeometry.settingsSegmentInset,
+                                    ios: true,
+                                    segments: const [
+                                      (.25, '0.25×'),
+                                      (.5, '0.5×'),
+                                      (1.0, '1×'),
+                                    ],
+                                    selected: _scene.speed,
+                                    // Speed applies in place; the sheet stays so the
+                                    // new choice is visible, and play resumes on close.
+                                    onChanged: (value) {
+                                      _scene.setSpeed(value);
+                                      unawaited(
+                                        store.updateSettings(speed: value),
+                                      );
+                                      setSheet(() {});
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -2487,40 +2519,42 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (context) => SizedBox(
-        height: MediaQuery.sizeOf(context).height * .75,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                s.languageTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+      builder: (context) => RepaintBoundary(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(context).height * .75,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  s.languageTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: ListView(
-                children: [
-                  for (final entry in {
-                    'system': s.languageSystem,
-                    ...languageNames,
-                  }.entries)
-                    ListTile(
-                      key: ValueKey('language-${entry.key}'),
-                      title: Text(entry.value),
-                      trailing: store.settings.language == entry.key
-                          ? const Icon(Icons.check_rounded)
-                          : null,
-                      selected: store.settings.language == entry.key,
-                      onTap: () => Navigator.of(context).pop(entry.key),
-                    ),
-                ],
+              Expanded(
+                child: ListView(
+                  children: [
+                    for (final entry in {
+                      'system': s.languageSystem,
+                      ...languageNames,
+                    }.entries)
+                      ListTile(
+                        key: ValueKey('language-${entry.key}'),
+                        title: Text(entry.value),
+                        trailing: store.settings.language == entry.key
+                            ? const Icon(Icons.check_rounded)
+                            : null,
+                        selected: store.settings.language == entry.key,
+                        onTap: () => Navigator.of(context).pop(entry.key),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -112,6 +112,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   bool _pageActive = true;
   bool _foreground = true;
   bool _autoRequested = false;
+  var _renderedPlayback = (playing: false, started: false);
   trainer.TrainingMediaPolicy? _sourcePolicy;
   trainer.TrainingMediaPolicy? _decoderPolicy;
 
@@ -144,8 +145,15 @@ class _DrillMediaCardState extends State<DrillMediaCard>
   }
 
   void _changed() {
-    if (mounted) setState(() {});
+    // A coordinator event can affect the playing and held slots, but other
+    // cards are still showing exactly the same poster or paused frame.
+    if (mounted && !widget.thumbnail && _playback != _renderedPlayback) {
+      setState(() {});
+    }
   }
+
+  ({bool playing, bool started}) get _playback =>
+      (playing: _playing, started: _started);
 
   bool get _active => widget.active && _pageActive && _foreground;
 
@@ -271,6 +279,7 @@ class _DrillMediaCardState extends State<DrillMediaCard>
         ),
       );
     }
+    _renderedPlayback = _playback;
     final s = AppLocalizations.of(context);
     final shared = FlareShared.current;
     final policy = FlarePublicMedia.of(context);

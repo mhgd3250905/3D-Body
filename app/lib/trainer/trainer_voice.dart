@@ -16,12 +16,16 @@ Future<VoiceSource> loadTrainerVoiceSource({
   Future<String> Function(String path)? read,
 }) async {
   const root = 'assets/trainer_voice';
-  final text = await (read ?? rootBundle.loadString)('$root/_common/pack.json');
+  const pack = '$root/_common/pack.json';
+  DrillPackVoiceSource decode(String text) => DrillPackVoiceSource.fromPacks(
+    common: jsonDecode(text) as Map<String, dynamic>,
+    root: root,
+  );
+  final source = read == null
+      ? await rootBundle.loadStructuredData(pack, (text) async => decode(text))
+      : decode(await read(pack));
   return _LeftFirstVoiceSource(
-    DrillPackVoiceSource.fromPacks(
-      common: jsonDecode(text) as Map<String, dynamic>,
-      root: root,
-    ),
+    source,
     language: language,
     leftFirst: leftFirst,
   );

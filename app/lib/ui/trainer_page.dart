@@ -51,8 +51,10 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   static const _initialCountdownSeconds = 10;
   Future<_PlayerData>? _loading;
   sdk.VoiceOutput? _output;
-  sdk.SessionPhase? _feedbackPhase;
-  sdk.TrainerRestFeedbackChoice? _feedbackChoice;
+  final _restSelection =
+      ValueNotifier<
+        ({sdk.SessionPhase phase, sdk.TrainerRestFeedbackChoice choice})?
+      >(null);
   ModalRoute<dynamic>? _route;
   sdk.SessionResult? _result;
   bool _sdkExitStarted = false;
@@ -72,6 +74,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     super.didChangeDependencies();
     _route = ModalRoute.of(context);
     _loading ??= _load(Localizations.localeOf(context).languageCode);
+  }
+
+  @override
+  void dispose() {
+    _restSelection.dispose();
+    super.dispose();
   }
 
   bool get _isCurrentRoute => mounted && _route?.isCurrent == true;
@@ -185,29 +193,29 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final (title, description, recorded, comfortable, tight, pain) =
         trainerRestFeedbackLabels(s);
     void select(sdk.TrainerRestFeedbackChoice choice) {
-      setState(() {
-        _feedbackPhase = feedback.completedPhase;
-        _feedbackChoice = choice;
-      });
+      _restSelection.value = (phase: feedback.completedPhase, choice: choice);
     }
 
-    final panel = sdk.TrainerRestFeedbackPanel(
-      theme: theme,
-      title: title,
-      description: description,
-      recordedTitle: recorded,
-      selected: identical(_feedbackPhase, feedback.completedPhase)
-          ? _feedbackChoice
-          : null,
-      comfortableLabel: comfortable,
-      onComfortable: () => select(sdk.TrainerRestFeedbackChoice.comfortable),
-      tightLabel: tight,
-      onTight: () => select(sdk.TrainerRestFeedbackChoice.tight),
-      painLabel: pain,
-      onPain: () async {
-        select(sdk.TrainerRestFeedbackChoice.pain);
-        await feedback.reportDiscomfort();
-      },
+    final panel = ValueListenableBuilder(
+      valueListenable: _restSelection,
+      builder: (context, selection, _) => sdk.TrainerRestFeedbackPanel(
+        theme: theme,
+        title: title,
+        description: description,
+        recordedTitle: recorded,
+        selected: identical(selection?.phase, feedback.completedPhase)
+            ? selection?.choice
+            : null,
+        comfortableLabel: comfortable,
+        onComfortable: () => select(sdk.TrainerRestFeedbackChoice.comfortable),
+        tightLabel: tight,
+        onTight: () => select(sdk.TrainerRestFeedbackChoice.tight),
+        painLabel: pain,
+        onPain: () async {
+          select(sdk.TrainerRestFeedbackChoice.pain);
+          await feedback.reportDiscomfort();
+        },
+      ),
     );
     final next = feedback.phase.nextItem;
     if (next == null) return panel;
@@ -452,16 +460,18 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               item.segments.length == 4 &&
               item.segments.every((segment) => segment.workSeconds == 15),
         );
-        sdk.TrainerDrill? drillOf(String id) {
-          final language = Localizations.localeOf(context).languageCode;
+        final language = Localizations.localeOf(context).languageCode;
+        final policy = FlarePublicMedia.of(context);
+        // The player's clock and media priority callbacks request the same
+        // action repeatedly. Refresh the descriptors when the host rebuilds.
+        final drills = <String, sdk.TrainerDrill?>{};
+        sdk.TrainerDrill? drillOf(String id) => drills.putIfAbsent(id, () {
           final drill = widget.catalog.drillById(id);
           final public = data.shared.catalog[id];
           final name = drill?.name ?? data.shared.nameOf(id, language);
           if (name == null) return null;
           final isV5 = id == flareV5DrillId;
-          final poster = isV5
-              ? flareV5PosterAsset
-              : FlarePublicMedia.of(context)?.posterAssetFor(id);
+          final poster = isV5 ? flareV5PosterAsset : policy?.posterAssetFor(id);
           final timedWrist = timedWristRocks && id == 'forearms-A';
           return sdk.TrainerDrill(
             id: id,
@@ -486,7 +496,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                     videoAvailable: !isV5,
                   ),
           );
-        }
+        });
 
         return TooltipVisibility(
           visible: _result == null,
