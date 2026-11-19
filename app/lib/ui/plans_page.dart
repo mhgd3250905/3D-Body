@@ -1286,6 +1286,7 @@ class RoutineEditorPage extends StatefulWidget {
     this.seedDrillIds = const [],
     this.onDeleted,
     this.allowSave,
+    this.readOnly = false,
   });
   final Catalog catalog;
   final LearningStore store;
@@ -1296,6 +1297,7 @@ class RoutineEditorPage extends StatefulWidget {
   final List<String> seedDrillIds;
   final VoidCallback? onDeleted;
   final Future<bool> Function()? allowSave;
+  final bool readOnly;
   @override
   State<RoutineEditorPage> createState() => _RoutineEditorPageState();
 }
@@ -1316,6 +1318,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
   }
 
   Future<void> _add() async {
+    if (widget.readOnly) return;
     final picked = await showDrillPicker(
       context,
       catalog: widget.catalog,
@@ -1323,14 +1326,16 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
       exclude: _ids.toSet(),
       room: TrainingRoutine.maxDrills - _ids.length,
     );
-    if (!mounted || picked == null || picked.isEmpty) return;
+    if (!mounted || widget.readOnly || picked == null || picked.isEmpty) return;
     setState(() => _ids = [..._ids, ...picked]);
   }
 
   Future<void> _save() async {
-    if (_busy ||
+    if (widget.readOnly ||
+        _busy ||
         !(await widget.allowSave?.call() ?? true) ||
         !mounted ||
+        widget.readOnly ||
         _busy) {
       return;
     }
@@ -1386,6 +1391,8 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                 field: TextField(
                   key: const ValueKey('routine-name'),
                   controller: _name,
+                  readOnly: widget.readOnly,
+                  canRequestFocus: !widget.readOnly,
                   maxLength: TrainingRoutine.maxName,
                   textInputAction: TextInputAction.done,
                   style: const TextStyle(
@@ -1427,7 +1434,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                       leading: const FlareRowIcon(Icons.add_rounded),
                       title: s.planAddDrills,
                       trailing: const SizedBox.shrink(),
-                      onTap: full ? null : _add,
+                      onTap: widget.readOnly || full ? null : _add,
                     ),
                   ],
                 ),
@@ -1440,7 +1447,9 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                         title: s.planDelete,
                         destructive: true,
                         trailing: const SizedBox.shrink(),
-                        onTap: _busy ? null : widget.onDeleted,
+                        onTap: widget.readOnly || _busy
+                            ? null
+                            : widget.onDeleted,
                       ),
                     ],
                   ),
@@ -1450,6 +1459,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
           ),
           itemCount: drills.length,
           onReorderItem: (from, to) {
+            if (widget.readOnly) return;
             FlareHaptics.selection();
             setState(() {
               final id = _ids.removeAt(from);
@@ -1487,12 +1497,15 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
                       size: 20,
                       color: FlareColors.dim,
                     ),
-                    onPressed: () {
-                      FlareHaptics.light();
-                      setState(() => _ids.remove(drill.id));
-                    },
+                    onPressed: widget.readOnly
+                        ? null
+                        : () {
+                            FlareHaptics.light();
+                            setState(() => _ids.remove(drill.id));
+                          },
                   ),
                   ReorderableDragStartListener(
+                    enabled: !widget.readOnly,
                     index: index,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 12, 8, 12),
@@ -1512,7 +1525,7 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
         child: PrimaryAction(
           key: const ValueKey('routine-save'),
           label: s.planSave,
-          onPressed: _busy || _ids.isEmpty ? null : _save,
+          onPressed: widget.readOnly || _busy || _ids.isEmpty ? null : _save,
         ),
       ),
     );

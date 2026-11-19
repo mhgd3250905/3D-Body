@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "프리미엄 기능",
+  "premiumPreviewSubscribe": "프리미엄 구독",
+  "premiumPreviewRecordsTitle": "프리미엄으로 모든 운동을 기록하세요",
+  "premiumPreviewRecordsDescription": "운동 시간, 연속 운동 일수, 달성 기록이 자동 저장되어 진도를 한눈에 볼 수 있어요.",
+  "premiumPreviewPlanEditorTitle": "프리미엄으로 나만의 계획을 만드세요",
+  "premiumPreviewPlanEditorDescription": "운동을 고르고 세트 수를 조절해 나만의 계획으로 저장하세요.",
+  "premiumPreviewTrainingTitle": "프리미엄으로 운동을 시작하세요",
+  "premiumPreviewTrainingDescription": "음성 타이머와 동작 시범을 따라 운동하세요. 끝나면 자동으로 기록됩니다.",
   "premiumPlanSummary": "토마스 플레어의 모든 구간을 위한 운동 계획 {count}개",
   "premiumAngleCount": "주요 각도",
   "premiumMuscleCount": "근육군",

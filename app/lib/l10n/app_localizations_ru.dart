@@ -9,6 +9,34 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'Функция Premium';
+
+  @override
+  String get premiumPreviewSubscribe => 'Подключить Premium';
+
+  @override
+  String get premiumPreviewRecordsTitle =>
+      'Записывайте каждую тренировку с Premium';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Длительность, дни подряд и достижения сохраняются автоматически, чтобы прогресс был виден сразу.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'Создайте свой план с Premium';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Выбирайте упражнения, настраивайте подходы и сохраняйте свой план тренировок.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'Начните тренировку с Premium';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Следуйте голосовым подсказкам и демонстрациям упражнений. В конце тренировка сохранится автоматически.';
+
+  @override
   String premiumConditionalTrial(int days) {
     return 'При наличии права — $days дн. бесплатно';
   }

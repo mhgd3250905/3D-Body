@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Premium-Funktion",
+  "premiumPreviewSubscribe": "Premium abonnieren",
+  "premiumPreviewRecordsTitle": "Mit Premium jedes Training erfassen",
+  "premiumPreviewRecordsDescription": "Trainingsdauer, Serien und Meilensteine werden automatisch gespeichert. So siehst du deine Fortschritte auf einen Blick.",
+  "premiumPreviewPlanEditorTitle": "Mit Premium deinen eigenen Plan erstellen",
+  "premiumPreviewPlanEditorDescription": "Wähle Übungen, passe die Sätze an und speichere deinen persönlichen Trainingsplan.",
+  "premiumPreviewTrainingTitle": "Mit Premium das Training starten",
+  "premiumPreviewTrainingDescription": "Trainiere mit Audio-Timing und Übungsvideos. Dein Training wird am Ende automatisch gespeichert.",
   "premiumPlanSummary": "{count} Pläne für jede Phase des Flare",
   "premiumAngleCount": "Wichtige Winkel",
   "premiumMuscleCount": "Muskelgruppen",

@@ -9,6 +9,30 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => '会员功能';
+
+  @override
+  String get premiumPreviewSubscribe => '开通会员';
+
+  @override
+  String get premiumPreviewRecordsTitle => '开通会员，记录每一次训练';
+
+  @override
+  String get premiumPreviewRecordsDescription => '自动保存训练时长、连续天数和里程碑，进步一眼看清。';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '开通会员，组合自己的计划';
+
+  @override
+  String get premiumPreviewPlanEditorDescription => '自由挑选动作、调整组数，保存成你的专属计划。';
+
+  @override
+  String get premiumPreviewTrainingTitle => '开通会员，开始跟练';
+
+  @override
+  String get premiumPreviewTrainingDescription => '全程语音计时与动作示范，练完自动记录。';
+
+  @override
   String premiumConditionalTrial(int days) {
     return '符合资格可免费试用 $days 天';
   }
@@ -1461,6 +1485,30 @@ class AppLocalizationsZh extends AppLocalizations {
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
+
+  @override
+  String get premiumPreviewBadge => '會員功能';
+
+  @override
+  String get premiumPreviewSubscribe => '開通會員';
+
+  @override
+  String get premiumPreviewRecordsTitle => '開通會員，記錄每一次訓練';
+
+  @override
+  String get premiumPreviewRecordsDescription => '自動儲存訓練時長、連續天數和里程碑，進步一目了然。';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '開通會員，組合自己的計畫';
+
+  @override
+  String get premiumPreviewPlanEditorDescription => '自由挑選動作、調整組數，儲存成你的專屬計畫。';
+
+  @override
+  String get premiumPreviewTrainingTitle => '開通會員，開始跟練';
+
+  @override
+  String get premiumPreviewTrainingDescription => '全程語音計時與動作示範，練完自動記錄。';
 
   @override
   String premiumConditionalTrial(int days) {

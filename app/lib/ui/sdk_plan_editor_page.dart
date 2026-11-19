@@ -20,12 +20,14 @@ class SdkPlanEditorPage extends StatefulWidget {
     required this.onBack,
     required this.onSaved,
     this.initialTier = 'A',
+    this.readOnly = false,
   });
   final uc.TrainingPlan plan;
   final Catalog catalog;
   final VoidCallback onBack;
   final Future<bool> Function(uc.TrainingPlan plan) onSaved;
   final String initialTier;
+  final bool readOnly;
 
   @override
   State<SdkPlanEditorPage> createState() => _SdkPlanEditorPageState();
@@ -53,7 +55,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
   }
 
   Future<void> _add(int blockIndex) async {
-    if (_picking || _saving) return;
+    if (widget.readOnly || _picking || _saving) return;
     _picking = true;
     final ids = await showDrillPicker(
       context,
@@ -62,7 +64,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
       room: widget.catalog.drills.length,
     );
     _picking = false;
-    if (!mounted || ids == null || ids.isEmpty) return;
+    if (!mounted || widget.readOnly || ids == null || ids.isEmpty) return;
     try {
       final added = trainingPlanFromDrills(
         title: widget.plan.title,
@@ -79,7 +81,11 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
   }
 
   Future<void> _save() async {
-    if (_saving || !_items.any((items) => items.isNotEmpty)) return;
+    if (widget.readOnly ||
+        _saving ||
+        !_items.any((items) => items.isNotEmpty)) {
+      return;
+    }
     setState(() => _saving = true);
     // PlanCodec preserves every untouched schema field, including note,
     // replacedFrom, safetyNotes and avoid; only title and block item arrays vary.
@@ -126,6 +132,8 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
               key: const ValueKey('sdk-plan-name'),
               controller: _name,
               enabled: !_saving,
+              readOnly: widget.readOnly,
+              canRequestFocus: !widget.readOnly,
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ),
@@ -151,7 +159,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                   buildDefaultDragHandles: false,
                   itemCount: _items[bi].length,
                   onReorderItem: (from, to) {
-                    if (_saving) return;
+                    if (widget.readOnly || _saving) return;
                     setState(() {
                       final item = _items[bi].removeAt(from);
                       _items[bi].insert(to, item);
@@ -192,6 +200,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                         color: FlareColors.dim,
                       ),
                       leading: ReorderableDragStartListener(
+                        enabled: !widget.readOnly,
                         index: ii,
                         child: const Padding(
                           padding: EdgeInsets.all(8),
@@ -210,7 +219,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                           size: 20,
                           color: FlareColors.dim,
                         ),
-                        onPressed: _saving
+                        onPressed: widget.readOnly || _saving
                             ? null
                             : () => setState(() => _items[bi].removeAt(ii)),
                       ),
@@ -222,7 +231,7 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
                   leading: const FlareRowIcon(Icons.add_rounded),
                   title: s.planAddDrills,
                   trailing: const SizedBox.shrink(),
-                  onTap: _saving ? null : () => _add(bi),
+                  onTap: widget.readOnly || _saving ? null : () => _add(bi),
                 ),
               ],
             ),
@@ -234,7 +243,10 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
           key: const ValueKey('sdk-plan-save'),
           label: s.planSave,
           icon: Icons.check_rounded,
-          onPressed: !_saving && _items.any((items) => items.isNotEmpty)
+          onPressed:
+              !widget.readOnly &&
+                  !_saving &&
+                  _items.any((items) => items.isNotEmpty)
               ? _save
               : null,
         ),

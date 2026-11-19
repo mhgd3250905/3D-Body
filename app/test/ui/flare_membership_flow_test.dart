@@ -6,6 +6,7 @@ import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart' show PrimaryAction;
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_membership_page.dart';
+import 'package:flare/ui/flare_premium_preview.dart';
 import 'package:flare/ui/page_kit.dart';
 import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ void main() {
     membership.dispose();
   });
 
-  testWidgets('training records gate guests and continue after purchase', (
+  testWidgets('training records stay in place and unlock after purchase', (
     tester,
   ) async {
     await helpers.phoneSize(tester);
@@ -160,19 +161,27 @@ void main() {
       await tester.pumpAndSettle();
 
       await openRecords();
-      expect(paywall, findsOneWidget);
-      expect(records, findsNothing);
+      final subscribe = find.byKey(const ValueKey('premium-preview-subscribe'));
+      expect(paywall, findsNothing);
+      expect(records, findsOneWidget);
+      expect(tester.widget<ProgressPage>(records).readOnly, isTrue);
+      final recordElement = tester.element(records);
       expect(scene.playing, isFalse);
+
+      await tester.tap(subscribe);
+      await tester.pumpAndSettle();
+      expect(paywall, findsOneWidget);
       await tester.tap(
         find.descendant(of: paywall, matching: find.byType(FlareBackChip)),
       );
       await tester.pumpAndSettle();
       expect(paywall, findsNothing);
-      expect(records, findsNothing);
-      expect(more.hitTestable(), findsOneWidget);
-      expect(scene.playing, isTrue);
+      expect(subscribe.hitTestable(), findsOneWidget);
+      expect(tester.element(records), same(recordElement));
+      expect(tester.widget<ProgressPage>(records).readOnly, isTrue);
 
-      await openRecords();
+      await tester.tap(subscribe);
+      await tester.pumpAndSettle();
       expect(paywall, findsOneWidget);
       await helpers.tapVisible(
         tester,
@@ -182,7 +191,9 @@ void main() {
       expect(purchases.purchased, isNotNull);
       expect(membership.isPremium, isTrue);
       expect(paywall, findsNothing);
-      expect(records, findsOneWidget);
+      expect(subscribe, findsNothing);
+      expect(tester.element(records), same(recordElement));
+      expect(tester.widget<ProgressPage>(records).readOnly, isFalse);
 
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
@@ -191,6 +202,7 @@ void main() {
       await openRecords();
       expect(records, findsOneWidget);
       expect(paywall, findsNothing);
+      expect(subscribe, findsNothing);
       expect(purchases.offerRequests, offerRequests);
       helpers.assertNoFlutterError(tester);
       await tester.pumpWidget(const SizedBox());
@@ -200,7 +212,7 @@ void main() {
   });
 
   testWidgets(
-    'single exercise, angle and saved routine actions ask for membership',
+    'plan editors preview read-only while copying still opens membership',
     (tester) async {
       await helpers.phoneSize(tester);
       final semantics = tester.ensureSemantics();
@@ -248,64 +260,53 @@ void main() {
         await tester.pumpAndSettle();
         await helpers.openPlansFromHome(tester);
 
+        final editor = find.byType(RoutineEditorPage);
+        final preview = find.byType(FlarePremiumPreview);
+        final paywall = find.byType(FlareMembershipPage);
+        final save = find.byKey(const ValueKey('routine-save'));
+        final subscribe = find.byKey(
+          const ValueKey('premium-preview-subscribe'),
+        );
+
+        await helpers.tapVisible(
+          tester,
+          find.byKey(const ValueKey('plan-new')),
+        );
+        await tester.pumpAndSettle();
+        expect(editor, findsOneWidget);
+        expect(paywall, findsNothing);
+        expect(tester.widget<FlarePremiumPreview>(preview).locked, isTrue);
+        expect(tester.widget<RoutineEditorPage>(editor).readOnly, isTrue);
+        expect(tester.widget<PrimaryAction>(save).onPressed, isNull);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+
         await helpers.tapVisible(tester, routineRow);
         await tester.pumpAndSettle();
         await helpers.tapVisible(
           tester,
-          find.byKey(const ValueKey('plan-row-abs-A')),
+          find.byKey(const ValueKey('plan-edit')),
         );
         await tester.pumpAndSettle();
-        final drill = find.byType(DrillDetailPage);
-        expect(drill, findsOneWidget);
-        expect(find.byType(FlareMembershipPage), findsNothing);
-        await tester.tap(
-          find.descendant(of: drill, matching: find.byType(PrimaryAction)),
+        expect(find.byKey(const ValueKey('edit-abs-A')), findsOneWidget);
+        expect(
+          tester
+              .widget<TextField>(find.byKey(const ValueKey('routine-name')))
+              .readOnly,
+          isTrue,
         );
+        expect(tester.widget<PrimaryAction>(save).onPressed, isNull);
+        final editorElement = tester.element(editor);
+        await tester.tap(subscribe);
         await tester.pumpAndSettle();
-        expect(find.byType(FlareMembershipPage), findsOneWidget);
-        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+        expect(paywall, findsOneWidget);
         await tester.tap(membershipBack);
         await tester.pumpAndSettle();
-        expect(drill, findsOneWidget);
-        await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
+        expect(tester.element(editor), same(editorElement));
+        expect(tester.widget<PrimaryAction>(save).onPressed, isNull);
+        expect(store.routines.single.drillIds, ['abs-A']);
 
-        await tester.tap(find.byKey(const ValueKey('plan-start')));
-        await tester.pumpAndSettle();
-        expect(find.byType(FlareMembershipPage), findsOneWidget);
-        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
-        expect(find.text('免费试用 7 天'), findsOneWidget);
-        expect(find.text('省 44%'), findsOneWidget);
-        await tester.tap(membershipBack);
-        await tester.pumpAndSettle();
         await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
-
-        await helpers.tapVisible(
-          tester,
-          find.byKey(const ValueKey('plan-angle-11')),
-        );
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('flare-plan-start')));
-        await tester.pumpAndSettle();
-        expect(find.byType(FlareMembershipPage), findsOneWidget);
-        expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
-        await tester.tap(membershipBack);
-        await tester.pumpAndSettle();
-        await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
-        final plansScroll = find.descendant(
-          of: find.byKey(const PageStorageKey<String>('plans-scroll')),
-          matching: find.byWidgetPredicate(
-            (widget) =>
-                widget is Scrollable &&
-                widget.axisDirection == AxisDirection.down,
-          ),
-        );
-        final position = tester.state<ScrollableState>(plansScroll).position;
-        position.jumpTo(position.minScrollExtent);
-        await tester.pumpAndSettle();
-        await tester.tap(routineRow);
         await tester.pumpAndSettle();
 
         await helpers.tapVisible(

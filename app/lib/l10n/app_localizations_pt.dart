@@ -9,6 +9,34 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'Recurso Premium';
+
+  @override
+  String get premiumPreviewSubscribe => 'Assinar Premium';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'Registre cada treino com Premium';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Duração, dias seguidos e conquistas são salvos automaticamente para você acompanhar o progresso.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle =>
+      'Monte seu próprio plano com Premium';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Escolha exercícios, ajuste as séries e salve seu plano personalizado.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'Comece a treinar com Premium';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Acompanhe o tempo com a guia de voz e veja as demonstrações. O treino é registrado automaticamente ao terminar.';
+
+  @override
   String premiumConditionalTrial(int days) {
     return 'Teste grátis por $days dias se elegível';
   }

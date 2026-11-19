@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Fonctionnalité Premium",
+  "premiumPreviewSubscribe": "S’abonner à Premium",
+  "premiumPreviewRecordsTitle": "Consignez chaque entraînement avec Premium",
+  "premiumPreviewRecordsDescription": "La durée des séances, les séries de jours et les étapes sont enregistrées automatiquement pour suivre vos progrès.",
+  "premiumPreviewPlanEditorTitle": "Créez votre propre programme avec Premium",
+  "premiumPreviewPlanEditorDescription": "Choisissez vos exercices, ajustez les séries et enregistrez votre programme personnalisé.",
+  "premiumPreviewTrainingTitle": "Commencez à vous entraîner avec Premium",
+  "premiumPreviewTrainingDescription": "Suivez les indications vocales et les démonstrations. Votre séance est enregistrée à la fin.",
   "premiumPlanSummary": "{count} programmes pour chaque phase du Flare",
   "premiumAngleCount": "Angles clés",
   "premiumMuscleCount": "Groupes musculaires",

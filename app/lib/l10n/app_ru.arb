@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Функция Premium",
+  "premiumPreviewSubscribe": "Подключить Premium",
+  "premiumPreviewRecordsTitle": "Записывайте каждую тренировку с Premium",
+  "premiumPreviewRecordsDescription": "Длительность, дни подряд и достижения сохраняются автоматически, чтобы прогресс был виден сразу.",
+  "premiumPreviewPlanEditorTitle": "Создайте свой план с Premium",
+  "premiumPreviewPlanEditorDescription": "Выбирайте упражнения, настраивайте подходы и сохраняйте свой план тренировок.",
+  "premiumPreviewTrainingTitle": "Начните тренировку с Premium",
+  "premiumPreviewTrainingDescription": "Следуйте голосовым подсказкам и демонстрациям упражнений. В конце тренировка сохранится автоматически.",
   "premiumPlanSummary": "{count} трен. планов для всех фаз флэра",
   "premiumAngleCount": "Ключевые углы",
   "premiumMuscleCount": "Группы мышц",

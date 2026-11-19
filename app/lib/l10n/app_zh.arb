@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "会员功能",
+  "premiumPreviewSubscribe": "开通会员",
+  "premiumPreviewRecordsTitle": "开通会员，记录每一次训练",
+  "premiumPreviewRecordsDescription": "自动保存训练时长、连续天数和里程碑，进步一眼看清。",
+  "premiumPreviewPlanEditorTitle": "开通会员，组合自己的计划",
+  "premiumPreviewPlanEditorDescription": "自由挑选动作、调整组数，保存成你的专属计划。",
+  "premiumPreviewTrainingTitle": "开通会员，开始跟练",
+  "premiumPreviewTrainingDescription": "全程语音计时与动作示范，练完自动记录。",
   "premiumConditionalTrial": "符合资格可免费试用 {days} 天",
   "premiumSubscribeAt": "订阅 {price}",
   "@premiumConditionalTrial": {

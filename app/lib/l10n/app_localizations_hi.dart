@@ -9,6 +9,36 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'प्रीमियम सुविधा';
+
+  @override
+  String get premiumPreviewSubscribe => 'प्रीमियम लें';
+
+  @override
+  String get premiumPreviewRecordsTitle =>
+      'हर कसरत दर्ज करने के लिए प्रीमियम लें';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'कसरत का समय, लगातार अभ्यास के दिन और उपलब्धियाँ अपने आप सहेजें और प्रगति एक नज़र में देखें।';
+
+  @override
+  String get premiumPreviewPlanEditorTitle =>
+      'अपनी योजना बनाने के लिए प्रीमियम लें';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'व्यायाम चुनें, सेट बदलें और अपनी प्रशिक्षण योजना सहेजें।';
+
+  @override
+  String get premiumPreviewTrainingTitle =>
+      'प्रशिक्षण शुरू करने के लिए प्रीमियम लें';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'आवाज़ से समय का संकेत और व्यायाम का प्रदर्शन पाएँ। कसरत पूरी होते ही दर्ज हो जाती है।';
+
+  @override
   String premiumConditionalTrial(int days) {
     return 'पात्र होने पर $days दिनों की मुफ़्त आज़माइश';
   }

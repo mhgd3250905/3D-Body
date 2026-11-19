@@ -9,6 +9,33 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'ميزة بريميوم';
+
+  @override
+  String get premiumPreviewSubscribe => 'اشترك في بريميوم';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'اشترك في بريميوم لتسجيل كل تمرين';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'يُحفظ وقت التمرين وأيام التدريب المتتالية والإنجازات تلقائيًا، لتتابع تقدّمك بسهولة.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'اشترك في بريميوم لتصميم خطتك';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'اختر التمارين وعدّل عدد المجموعات واحفظ خطتك التدريبية الخاصة.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'اشترك في بريميوم لبدء التدريب';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'تابع التوقيت الصوتي وعروض التمارين. تُسجَّل جلستك تلقائيًا عند الانتهاء.';
+
+  @override
   String premiumConditionalTrial(int days) {
     return 'تجربة مجانية لمدة $days أيام للمؤهلين';
   }

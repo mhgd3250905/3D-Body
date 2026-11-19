@@ -121,6 +121,54 @@ abstract class AppLocalizations {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
+  /// No description provided for @premiumPreviewBadge.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员功能'**
+  String get premiumPreviewBadge;
+
+  /// No description provided for @premiumPreviewSubscribe.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通会员'**
+  String get premiumPreviewSubscribe;
+
+  /// No description provided for @premiumPreviewRecordsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通会员，记录每一次训练'**
+  String get premiumPreviewRecordsTitle;
+
+  /// No description provided for @premiumPreviewRecordsDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动保存训练时长、连续天数和里程碑，进步一眼看清。'**
+  String get premiumPreviewRecordsDescription;
+
+  /// No description provided for @premiumPreviewPlanEditorTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通会员，组合自己的计划'**
+  String get premiumPreviewPlanEditorTitle;
+
+  /// No description provided for @premiumPreviewPlanEditorDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'自由挑选动作、调整组数，保存成你的专属计划。'**
+  String get premiumPreviewPlanEditorDescription;
+
+  /// No description provided for @premiumPreviewTrainingTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通会员，开始跟练'**
+  String get premiumPreviewTrainingTitle;
+
+  /// No description provided for @premiumPreviewTrainingDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'全程语音计时与动作示范，练完自动记录。'**
+  String get premiumPreviewTrainingDescription;
+
   /// No description provided for @premiumConditionalTrial.
   ///
   /// In zh, this message translates to:

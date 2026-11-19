@@ -638,6 +638,7 @@ class ProgressPage extends StatefulWidget {
     this.onBack,
     this.onStart,
     this.now,
+    this.readOnly = false,
   });
   final Catalog catalog;
   final LearningStore store;
@@ -647,6 +648,7 @@ class ProgressPage extends StatefulWidget {
   /// Empty state's 去练第一个动作 (opens the library). Hidden when null.
   final VoidCallback? onStart;
   final DateTime Function()? now;
+  final bool readOnly;
 
   static const milestones = [3, 7, 14, 30, 60, 100];
 
@@ -679,6 +681,17 @@ class _ProgressPageState extends State<ProgressPage> {
   @override
   void initState() {
     super.initState();
+    _celebrateMilestone();
+  }
+
+  @override
+  void didUpdateWidget(ProgressPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.readOnly && !widget.readOnly) _celebrateMilestone();
+  }
+
+  void _celebrateMilestone() {
+    if (widget.readOnly) return;
     final earned = ProgressPage.earnedDates(widget.store.trainingDates);
     if (earned.isEmpty) return;
     final best = earned.keys.reduce((a, b) => a > b ? a : b);
@@ -686,7 +699,9 @@ class _ProgressPageState extends State<ProgressPage> {
       // One-time: shown on this visit, persisted so it never repeats.
       _celebrate = best;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) widget.store.markStreakCelebrated(best);
+        if (mounted && !widget.readOnly) {
+          widget.store.markStreakCelebrated(best);
+        }
       });
     }
   }

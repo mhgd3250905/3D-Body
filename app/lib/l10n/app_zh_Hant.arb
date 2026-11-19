@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "會員功能",
+  "premiumPreviewSubscribe": "開通會員",
+  "premiumPreviewRecordsTitle": "開通會員，記錄每一次訓練",
+  "premiumPreviewRecordsDescription": "自動儲存訓練時長、連續天數和里程碑，進步一目了然。",
+  "premiumPreviewPlanEditorTitle": "開通會員，組合自己的計畫",
+  "premiumPreviewPlanEditorDescription": "自由挑選動作、調整組數，儲存成你的專屬計畫。",
+  "premiumPreviewTrainingTitle": "開通會員，開始跟練",
+  "premiumPreviewTrainingDescription": "全程語音計時與動作示範，練完自動記錄。",
   "premiumConditionalTrial": "符合資格可免費試用 {days} 天",
   "premiumSubscribeAt": "訂閱 {price}",
   "premiumTrialOffer": "{days} 天免費試用",

@@ -9,6 +9,35 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'Fitur Premium';
+
+  @override
+  String get premiumPreviewSubscribe => 'Aktifkan Premium';
+
+  @override
+  String get premiumPreviewRecordsTitle =>
+      'Catat setiap latihan dengan Premium';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Durasi, hari latihan berturut-turut, dan pencapaian disimpan otomatis agar progres mudah dilihat.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle =>
+      'Buat rencana sendiri dengan Premium';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Pilih gerakan, atur jumlah set, lalu simpan rencana latihanmu sendiri.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'Mulai latihan dengan Premium';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Ikuti panduan waktu lewat suara dan demonstrasi gerakan. Latihan otomatis dicatat saat selesai.';
+
+  @override
   String premiumConditionalTrial(int days) {
     return 'Uji coba gratis $days hari jika memenuhi syarat';
   }

@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "プレミアム機能",
+  "premiumPreviewSubscribe": "プレミアムに登録",
+  "premiumPreviewRecordsTitle": "プレミアムで毎回のトレーニングを記録",
+  "premiumPreviewRecordsDescription": "トレーニング時間、連続日数、達成記録を自動保存し、進歩をひと目で確認できます。",
+  "premiumPreviewPlanEditorTitle": "プレミアムで自分だけのプランを作成",
+  "premiumPreviewPlanEditorDescription": "種目を選び、セット数を調整して、自分専用のプランとして保存できます。",
+  "premiumPreviewTrainingTitle": "プレミアムでトレーニングを開始",
+  "premiumPreviewTrainingDescription": "音声タイマーと動作のデモに合わせて練習。終了すると自動で記録されます。",
   "premiumPlanSummary": "フレアの各局面を鍛える {count} 種類のプラン",
   "premiumAngleCount": "難所の角度",
   "premiumMuscleCount": "筋群",

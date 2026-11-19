@@ -125,6 +125,7 @@ Future<LearningStore> _open(
   uc.TrainingPlan? sdkPlan,
   _Storage? storage,
   List<sdk.SessionResult>? popped,
+  ValueNotifier<bool>? previewLocked,
   double textScale = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
@@ -156,16 +157,24 @@ Future<LearningStore> _open(
             child: TextButton(
               key: const ValueKey('open-player'),
               onPressed: () async {
+                Widget trainingPage(bool locked) => FlareTrainingPage(
+                  plan: sdkPlan ?? _plan(reps: reps),
+                  catalog: store.catalog,
+                  store: store,
+                  startInPreview: previewLocked != null,
+                  previewLocked: locked,
+                  voiceOutput: sdk.MutedVoiceOutput(),
+                  keepAlive: false,
+                );
                 final result = await Navigator.of(context)
                     .push<sdk.SessionResult>(
                       MaterialPageRoute(
-                        builder: (_) => FlareTrainingPage(
-                          plan: sdkPlan ?? _plan(reps: reps),
-                          catalog: store.catalog,
-                          store: store,
-                          voiceOutput: sdk.MutedVoiceOutput(),
-                          keepAlive: false,
-                        ),
+                        builder: (_) => previewLocked == null
+                            ? trainingPage(false)
+                            : ValueListenableBuilder<bool>(
+                                valueListenable: previewLocked,
+                                builder: (_, locked, _) => trainingPage(locked),
+                              ),
                       ),
                     );
                 if (result != null) popped?.add(result);
@@ -213,6 +222,92 @@ void main() {
   tearDown(() {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
+  });
+
+  testWidgets('locked training preview requires manual Start after unlock', (
+    tester,
+  ) async {
+    final locked = ValueNotifier(true);
+    addTearDown(locked.dispose);
+    final semantics = tester.ensureSemantics();
+    try {
+      final store = await _open(tester, previewLocked: locked);
+      final start = find.byKey(const ValueKey('start-training'));
+      final startLabel = _player(tester).strings.startTraining;
+
+      expect(_player(tester).startMode, sdk.TrainerStartMode.preview);
+      expect(start, findsOneWidget);
+      expect(start.hitTestable(), findsNothing);
+      expect(find.bySemanticsLabel(startLabel), findsNothing);
+      final focusGuard = find.ancestor(
+        of: start,
+        matching: find.byWidgetPredicate(
+          (widget) => widget is ExcludeFocus && widget.excluding,
+        ),
+      );
+      expect(focusGuard, findsWidgets);
+
+      await tester.tapAt(tester.getCenter(start));
+      await _advance(tester, 15);
+      expect(start, findsOneWidget);
+      expect(store.trainerSessions, isEmpty);
+
+      locked.value = false;
+      await _advance(tester, 15);
+      expect(start.hitTestable(), findsOneWidget);
+      expect(store.trainerSessions, isEmpty);
+      await tester.tap(start);
+      await tester.pump(const Duration(milliseconds: 450));
+      expect(start, findsNothing);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  for (final exit in ['close', 'edge swipe', 'system back']) {
+    testWidgets('locked training preview exits via $exit without saving', (
+      tester,
+    ) async {
+      final locked = ValueNotifier(true);
+      addTearDown(locked.dispose);
+      final results = <sdk.SessionResult>[];
+      final store = await _open(tester, previewLocked: locked, popped: results);
+      switch (exit) {
+        case 'close':
+          await tester.tap(
+            find.byKey(const ValueKey('training-preview-close')),
+          );
+        case 'edge swipe':
+          await tester.dragFrom(const Offset(12, 300), const Offset(160, 0));
+        case 'system back':
+          await tester.binding.handlePopRoute();
+      }
+      await tester.pumpAndSettle();
+      expect(find.byType(FlareTrainingPage), findsNothing);
+      expect(results, isEmpty);
+      expect(store.trainerSessions, isEmpty);
+    });
+  }
+
+  testWidgets('paid training retains the system-back confirmation', (
+    tester,
+  ) async {
+    final store = await _open(tester);
+    final player = _player(tester);
+    expect(player.startMode, sdk.TrainerStartMode.training);
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('close-confirm')), findsOneWidget);
+    expect(find.byType(FlareTrainingPage), findsOneWidget);
+    expect(store.trainerSessions, isEmpty);
+
+    await tester.tap(find.text(player.strings.closeCancel));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('close-confirm')), findsNothing);
+    expect(find.byType(FlareTrainingPage), findsOneWidget);
   });
 
   testWidgets('V5 and public media run in the same SDK session', (

@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Fitur Premium",
+  "premiumPreviewSubscribe": "Aktifkan Premium",
+  "premiumPreviewRecordsTitle": "Catat setiap latihan dengan Premium",
+  "premiumPreviewRecordsDescription": "Durasi, hari latihan berturut-turut, dan pencapaian disimpan otomatis agar progres mudah dilihat.",
+  "premiumPreviewPlanEditorTitle": "Buat rencana sendiri dengan Premium",
+  "premiumPreviewPlanEditorDescription": "Pilih gerakan, atur jumlah set, lalu simpan rencana latihanmu sendiri.",
+  "premiumPreviewTrainingTitle": "Mulai latihan dengan Premium",
+  "premiumPreviewTrainingDescription": "Ikuti panduan waktu lewat suara dan demonstrasi gerakan. Latihan otomatis dicatat saat selesai.",
   "premiumPlanSummary": "{count} rencana untuk setiap fase Flare",
   "premiumAngleCount": "Sudut utama",
   "premiumMuscleCount": "Kelompok otot",

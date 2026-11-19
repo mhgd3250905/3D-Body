@@ -25,6 +25,8 @@ class FlareTrainingPage extends StatefulWidget {
     required this.plan,
     required this.catalog,
     required this.store,
+    this.startInPreview = false,
+    this.previewLocked = false,
     this.voiceOutput,
     this.keepAlive = true,
   });
@@ -32,6 +34,8 @@ class FlareTrainingPage extends StatefulWidget {
   final uc.TrainingPlan plan;
   final Catalog catalog;
   final LearningStore store;
+  final bool startInPreview;
+  final bool previewLocked;
   @visibleForTesting
   final sdk.VoiceOutput? voiceOutput;
   @visibleForTesting
@@ -42,6 +46,7 @@ class FlareTrainingPage extends StatefulWidget {
 }
 
 class _FlareTrainingPageState extends State<FlareTrainingPage> {
+  static const _initialCountdownSeconds = 10;
   Future<_PlayerData>? _loading;
   sdk.VoiceOutput? _output;
   sdk.SessionPhase? _feedbackPhase;
@@ -50,6 +55,10 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   sdk.SessionResult? _result;
   bool _sdkExitStarted = false;
   bool _returningEmptyResult = false;
+  bool _previewStarted = false;
+  double _previewSwipeDistance = 0;
+
+  bool get _startsInPreview => widget.startInPreview || widget.previewLocked;
 
   @override
   void didChangeDependencies() {
@@ -66,6 +75,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   }
 
   Future<void> _saveResult(sdk.SessionResult result) async {
+    if (widget.previewLocked) return;
     final returnEmpty = result.completedExercises == 0 && !_sdkExitStarted;
     if (_isCurrentRoute) {
       // The SDK's training controls can have a tooltip in the route overlay
@@ -250,6 +260,88 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     ),
   );
 
+  void _closePreview() {
+    if (_isCurrentRoute) Navigator.maybePop(context);
+  }
+
+  Widget _previewControls(Widget player, sdk.TrainerStrings strings) {
+    if (!_startsInPreview) return player;
+    final locked = widget.previewLocked;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // The SDK preview already idles its training clock and transport. Its
+        // start button has no eligibility callback, so gate its inputs here.
+        AbsorbPointer(
+          absorbing: locked,
+          child: ExcludeFocus(
+            excluding: locked,
+            child: ExcludeSemantics(excluding: locked, child: player),
+          ),
+        ),
+        if (!_previewStarted)
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 24,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              excludeFromSemantics: true,
+              onHorizontalDragStart: (_) => _previewSwipeDistance = 0,
+              onHorizontalDragUpdate: (details) {
+                _previewSwipeDistance += details.delta.dx;
+              },
+              onHorizontalDragEnd: (details) {
+                final fast = (details.primaryVelocity ?? 0) >= 700;
+                if (_previewSwipeDistance >= 64 ||
+                    (_previewSwipeDistance >= 12 && fast)) {
+                  _closePreview();
+                }
+              },
+            ),
+          ),
+        if (locked)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              bottom: false,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  // Match the SDK preview header. Its original Close button
+                  // supplies the visible icon beneath this 44 px target.
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 19, top: 22),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      heightFactor: 1,
+                      child: Semantics(
+                        label: strings.close,
+                        button: true,
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: InkWell(
+                            key: const ValueKey('training-preview-close'),
+                            borderRadius: BorderRadius.circular(22),
+                            onTap: _closePreview,
+                            child: const SizedBox.square(dimension: 44),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _media(BuildContext context, sdk.TrainerMediaRequest request) {
     final drill = request.drill;
     final experience = sdk.TrainerExperienceScope.maybeOf(context);
@@ -264,6 +356,14 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       radius: 0,
       stageColor: stage,
     );
+
+    if (_startsInPreview && !_previewStarted) {
+      final asset = drill.id == flareV5DrillId
+          ? flareV5PosterAsset
+          : media?.posterFor(light: !request.theme.isDark) ??
+                FlarePublicMedia.coverAssetFor(id);
+      return poster(asset);
+    }
 
     if (drill.id == flareV5DrillId) {
       return request.canPlay
@@ -361,7 +461,15 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         }
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
-        final strings = trainerStrings(s, result: _result);
+        final preview = _startsInPreview && !_previewStarted;
+        final first = data.plan.items.first;
+        final strings = trainerStrings(
+          s,
+          result: _result,
+          demonstration: preview
+              ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(_initialCountdownSeconds)}'
+              : null,
+        );
         final timedWristRocks = data.plan.items.any(
           (item) =>
               item.exerciseId == 'forearms-A' &&
@@ -410,39 +518,52 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           child: Visibility(
             visible: !_returningEmptyResult,
             maintainState: true,
-            child: sdk.TrainerPlayer(
-              plan: data.plan,
-              rhythms: data.rhythms,
-              drillOf: drillOf,
-              strings: strings,
-              theme: theme,
-              voice: sdk.TrainerVoice(
-                source: data.source,
-                output: _output!,
-                settings: sdk.VoiceSettings(
-                  language: data.language,
-                  voice: widget.store.settings.sound,
-                  chimes: widget.store.settings.sound,
+            child: _previewControls(
+              sdk.TrainerPlayer(
+                plan: data.plan,
+                rhythms: data.rhythms,
+                drillOf: drillOf,
+                strings: strings,
+                theme: theme,
+                prepSeconds: _initialCountdownSeconds,
+                startMode: _startsInPreview
+                    ? sdk.TrainerStartMode.preview
+                    : sdk.TrainerStartMode.training,
+                onStartTraining: _startsInPreview
+                    ? () => setState(() => _previewStarted = true)
+                    : null,
+                voice: sdk.TrainerVoice(
+                  source: data.source,
+                  output: _output!,
+                  settings: sdk.VoiceSettings(
+                    language: data.language,
+                    voice: widget.store.settings.sound,
+                    chimes: widget.store.settings.sound,
+                  ),
                 ),
+                onFinished: _saveResult,
+                onExitStarted: _onExitStarted,
+                onCompleted: (_) async {
+                  // Replay runs in this route with fresh training controls.
+                  if (!_sdkExitStarted && mounted) {
+                    setState(() => _result = null);
+                  }
+                  _sdkExitStarted = false;
+                },
+                restFeedbackBuilder: (context, feedback) =>
+                    _restFeedback(context, feedback, theme, strings, drillOf),
+                keepAlive: widget.keepAlive,
+                showExtendRest: true,
+                showCompleteTimedPhase: true,
+                showSoundToggle: true,
+                notificationIcon: 'mipmap/ic_launcher',
+                doseLabel: _doseLabel,
+                mediaBuilder:
+                    preview || data.plan.exerciseIds.contains(flareV5DrillId)
+                    ? _media
+                    : null,
               ),
-              onFinished: _saveResult,
-              onExitStarted: _onExitStarted,
-              onCompleted: (_) async {
-                // Replay runs in this route with fresh training controls.
-                if (!_sdkExitStarted && mounted) setState(() => _result = null);
-                _sdkExitStarted = false;
-              },
-              restFeedbackBuilder: (context, feedback) =>
-                  _restFeedback(context, feedback, theme, strings, drillOf),
-              keepAlive: widget.keepAlive,
-              showExtendRest: true,
-              showCompleteTimedPhase: true,
-              showSoundToggle: true,
-              notificationIcon: 'mipmap/ic_launcher',
-              doseLabel: _doseLabel,
-              mediaBuilder: data.plan.exerciseIds.contains(flareV5DrillId)
-                  ? _media
-                  : null,
+              strings,
             ),
           ),
         );

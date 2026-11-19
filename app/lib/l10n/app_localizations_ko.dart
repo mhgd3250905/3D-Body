@@ -9,6 +9,33 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => '프리미엄 기능';
+
+  @override
+  String get premiumPreviewSubscribe => '프리미엄 구독';
+
+  @override
+  String get premiumPreviewRecordsTitle => '프리미엄으로 모든 운동을 기록하세요';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      '운동 시간, 연속 운동 일수, 달성 기록이 자동 저장되어 진도를 한눈에 볼 수 있어요.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '프리미엄으로 나만의 계획을 만드세요';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      '운동을 고르고 세트 수를 조절해 나만의 계획으로 저장하세요.';
+
+  @override
+  String get premiumPreviewTrainingTitle => '프리미엄으로 운동을 시작하세요';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      '음성 타이머와 동작 시범을 따라 운동하세요. 끝나면 자동으로 기록됩니다.';
+
+  @override
   String premiumConditionalTrial(int days) {
     return '자격 충족 시 $days일 무료 체험';
   }

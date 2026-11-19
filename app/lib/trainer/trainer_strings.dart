@@ -441,6 +441,7 @@ String? _completionTitle(AppLocalizations s, sdk.SessionResult? result) {
 sdk.TrainerStrings trainerStrings(
   AppLocalizations s, {
   sdk.SessionResult? result,
+  String? demonstration,
 }) {
   final w = _for(s);
   final (_, _, recorded, comfortable, tight, pain) = trainerRestFeedbackLabels(
@@ -478,7 +479,7 @@ sdk.TrainerStrings trainerStrings(
     nextUp: s.planUpNext,
     upcomingLabel: s.planUpNext,
     restLabel: s.rest,
-    demonstration: s.drillDemo,
+    demonstration: demonstration ?? s.drillDemo,
     startTraining: s.startTimer,
     playerStart: s.start,
     howTo: s.cues,

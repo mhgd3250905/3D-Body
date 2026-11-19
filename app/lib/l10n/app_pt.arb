@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Recurso Premium",
+  "premiumPreviewSubscribe": "Assinar Premium",
+  "premiumPreviewRecordsTitle": "Registre cada treino com Premium",
+  "premiumPreviewRecordsDescription": "Duração, dias seguidos e conquistas são salvos automaticamente para você acompanhar o progresso.",
+  "premiumPreviewPlanEditorTitle": "Monte seu próprio plano com Premium",
+  "premiumPreviewPlanEditorDescription": "Escolha exercícios, ajuste as séries e salve seu plano personalizado.",
+  "premiumPreviewTrainingTitle": "Comece a treinar com Premium",
+  "premiumPreviewTrainingDescription": "Acompanhe o tempo com a guia de voz e veja as demonstrações. O treino é registrado automaticamente ao terminar.",
   "premiumPlanSummary": "{count} planos para cada fase do Flare",
   "premiumAngleCount": "Ângulos principais",
   "premiumMuscleCount": "Grupos musculares",

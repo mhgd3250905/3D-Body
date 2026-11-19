@@ -1,4 +1,12 @@
 {
+  "premiumPreviewBadge": "Premium feature",
+  "premiumPreviewSubscribe": "Get Premium",
+  "premiumPreviewRecordsTitle": "Get Premium to log every workout",
+  "premiumPreviewRecordsDescription": "Automatically save workout time, streaks and milestones to see your progress at a glance.",
+  "premiumPreviewPlanEditorTitle": "Get Premium to build your own plan",
+  "premiumPreviewPlanEditorDescription": "Choose exercises, adjust sets and save your own training plan.",
+  "premiumPreviewTrainingTitle": "Get Premium to start training",
+  "premiumPreviewTrainingDescription": "Follow timed voice cues and exercise demos. Your workout is logged when you finish.",
   "premiumConditionalTrial": "Free trial for {days} days if eligible",
   "premiumSubscribeAt": "Subscribe {price}",
   "premiumTrialOffer": "{days}-day free trial",

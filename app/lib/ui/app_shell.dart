@@ -34,6 +34,7 @@ import 'scene_localization.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
 import 'flare_membership_page.dart';
+import 'flare_premium_preview.dart';
 import '../coach/flare_coach_chat.dart';
 import '../coach/usage_store.dart';
 import 'startup_splash.dart';
@@ -97,6 +98,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       widget.coach ??
       FlareCoachChat(store: store, membership: widget.membership);
   bool _membershipOpen = false;
+  final _awaitingPreviewUnlock = ValueNotifier(false);
+  bool get _hasPremium => widget.membership?.isPremium ?? true;
   late final _usage = CoachUsageStore.device();
   String _libraryQuery = '';
   int _handledSelection = 0;
@@ -338,9 +341,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  Future<bool> _changeTab(int value) async {
-    if (value == _recordsTab && !await _requirePremium()) return false;
-    if (!mounted) return false;
+  void _changeTab(int value) {
     if (_tab == _trainingHubTab && value != _trainingHubTab) {
       if (_hubFromAnotherTab) {
         _hubRouteStage = _HubRouteStage.leaving;
@@ -358,7 +359,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _libraryQuery = '';
     });
     _syncSceneVisibility();
-    return true;
   }
 
   void _enterTrainingHub({bool muscles = false}) {
@@ -374,7 +374,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _trainingHubLiveEntry = _trainingActorFlight;
     _trainingHubStagePresented = false;
     _trainingFlightLanded = false;
-    unawaited(_changeTab(_trainingHubTab));
+    _changeTab(_trainingHubTab);
     if (!_trainingActorFlight) return;
     _trainingFlightDeadline = Timer(const Duration(seconds: 3), () {
       if (mounted && !_returningToWatch && !_trainingFlightLanded) {
@@ -441,7 +441,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Future<void> _returnFromTrainingHub() async {
     final hub = _trainingHubState.currentState;
     if (hub == null) {
-      await _changeTab(0);
+      _changeTab(0);
       return;
     }
     setState(() {
@@ -605,15 +605,31 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ? policy!.posterAssetFor(id)
         : policy?.posterAssetFor(id) ??
               '${FlarePublicMedia.posterRoot}$id.webp';
+    final preview = _hasPremium
+        ? null
+        : _premiumPreview(
+            FlarePremiumFeature.training,
+            (locked) => FlareTrainingPage(
+              plan: plan,
+              catalog: catalog,
+              store: store,
+              startInPreview: true,
+              previewLocked: locked,
+            ),
+            keepUnlocked: true,
+          );
     return sdk.TrainerLauncher.open<sdk.SessionResult>(
       context,
       builder: (_) =>
+          preview ??
           widget.trainingPageBuilder?.call(plan) ??
           FlareTrainingPage(plan: plan, catalog: catalog, store: store),
       firstPosterAsset: ids.isEmpty ? null : posterFor(ids.first),
-      posterAssets: [for (final id in ids) ?posterFor(id)],
+      posterAssets: preview == null
+          ? [for (final id in ids) ?posterFor(id)]
+          : const [],
       mediaPolicy: policy,
-      planActionIds: ids,
+      planActionIds: preview == null ? ids : const [],
       theme: trainerTheme(context),
       onStarting: onStarting,
       holdTransition: holdTransition,
@@ -622,9 +638,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   Future<void> _startPlan(uc.TrainingPlan plan) async {
-    if (_trainingOpen || plan.items.isEmpty) return;
-    if (!await _requirePremium()) return;
-    if (!mounted || _trainingOpen) return;
+    if (!mounted || _trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
     DrillPlaybackCoordinator.shared.pauseAll();
     setState(() => _trainingOpen = true);
@@ -639,18 +653,55 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _openMembership() async {
+  Widget _premiumPreview(
+    FlarePremiumFeature feature,
+    Widget Function(bool locked) buildPage, {
+    bool keepUnlocked = false,
+  }) {
+    final membership = widget.membership;
+    if (membership == null) return buildPage(false);
+    var unlocked = false;
+    return ListenableBuilder(
+      listenable: Listenable.merge([membership, _awaitingPreviewUnlock]),
+      builder: (context, _) {
+        final hasAccess = membership.isPremium && !_awaitingPreviewUnlock.value;
+        if (keepUnlocked && hasAccess) unlocked = true;
+        final locked = !hasAccess && !unlocked;
+        return FlarePremiumPreview(
+          feature: feature,
+          locked: locked,
+          onSubscribe: () => unawaited(_openPreviewMembership()),
+          onEdgeBack: feature == FlarePremiumFeature.training
+              ? () => unawaited(Navigator.maybePop(context))
+              : null,
+          child: buildPage(locked),
+        );
+      },
+    );
+  }
+
+  Future<void> _openPreviewMembership() async {
+    if (_membershipOpen || _awaitingPreviewUnlock.value) return;
+    _awaitingPreviewUnlock.value = true;
+    try {
+      await _openMembership(waitForTransition: true);
+    } finally {
+      if (mounted) _awaitingPreviewUnlock.value = false;
+    }
+  }
+
+  Future<void> _openMembership({bool waitForTransition = false}) async {
     final membership = widget.membership;
     if (membership == null || _membershipOpen || !mounted) return;
     _membershipOpen = true;
     try {
-      await Navigator.of(context).push<bool>(
-        MaterialPageRoute(
-          settings: const RouteSettings(name: '/membership'),
-          builder: (_) =>
-              FlareMembershipPage(membership: membership, catalog: catalog),
-        ),
+      final route = MaterialPageRoute<bool>(
+        settings: const RouteSettings(name: '/membership'),
+        builder: (_) =>
+            FlareMembershipPage(membership: membership, catalog: catalog),
       );
+      await Navigator.of(context).push(route);
+      if (waitForTransition) await route.completed;
     } finally {
       _membershipOpen = false;
     }
@@ -663,8 +714,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     return mounted && membership.isPremium;
   }
 
-  Future<void> _editRoutine(_RoutineEdit edit) async {
-    if (!await _requirePremium() || !mounted) return;
+  void _editRoutine(_RoutineEdit edit) {
     setState(() => _editing = edit);
   }
 
@@ -727,7 +777,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _tab = 2;
             }),
             onOpenCustomPlan: (_) async {
-              if (!await _requirePremium() || !mounted) return;
+              if (!mounted) return;
               leaveChat(() {
                 _drill = null;
                 _settings = false;
@@ -851,7 +901,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   Future<void> _addToPlan(Drill drill) async {
     if (_sheetOpen) return;
-    if (!await _requirePremium() || !mounted || _sheetOpen) return;
     _sheetOpen = true;
     final String? choice;
     try {
@@ -865,13 +914,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _sheetOpen = false;
     }
     if (!mounted || choice == null) return;
-    if (!await _requirePremium() || !mounted) return;
     if (choice == 'new') {
       setState(
         () => _editing = _RoutineEdit(seedIds: [drill.id], fromDrill: true),
       );
       return;
     }
+    if (!await _requirePremium() || !mounted) return;
     final name = store.routineById(choice)?.name ?? '';
     final success = await store.addToRoutine(
       choice,
@@ -958,14 +1007,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _drill == null &&
         !_settings) {
       if (_trainingHubOrigin != 0) {
-        unawaited(_changeTab(_trainingHubOrigin));
+        _changeTab(_trainingHubOrigin);
         return;
       }
       if (widget.enableScene && _scene.presented && _scene.errorCode == null) {
         unawaited(_returnFromTrainingHub());
         return;
       }
-      unawaited(_changeTab(0));
+      _changeTab(0);
       return;
     }
     setState(() {
@@ -1019,6 +1068,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (_trainingActorFlight) _scene.finishTrainingFlight();
     _scene.removeListener(_sceneChanged);
     store.removeListener(_storeChanged);
+    _awaitingPreviewUnlock.dispose();
     if (widget.coach == null) unawaited(_coach?.close());
     WidgetsBinding.instance.removeObserver(this);
     if (widget.sceneController == null) _scene.dispose();
@@ -1279,27 +1329,31 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           'edit:${routine!.id}',
           3,
           false,
-          SdkPlanEditorPage(
-            plan: plan,
-            catalog: catalog,
-            initialTier: store.settings.tier,
-            onBack: _back,
-            onSaved: (updated) async {
-              if (!await _requirePremium() || !mounted) return false;
-              final saved = await store.updateRoutine(
-                routine.id,
-                name: TrainingRoutine.truncateName(updated.title),
-                sdkPlan: updated,
-              );
-              if (!mounted) return false;
-              if (saved) {
-                setState(() {
-                  _editing = null;
-                  _routine = store.routineById(routine.id);
-                });
-              }
-              return saved;
-            },
+          _premiumPreview(
+            FlarePremiumFeature.planEditor,
+            (locked) => SdkPlanEditorPage(
+              readOnly: locked,
+              plan: plan,
+              catalog: catalog,
+              initialTier: store.settings.tier,
+              onBack: _back,
+              onSaved: (updated) async {
+                if (!_hasPremium || !mounted) return false;
+                final saved = await store.updateRoutine(
+                  routine.id,
+                  name: TrainingRoutine.truncateName(updated.title),
+                  sdkPlan: updated,
+                );
+                if (!mounted) return false;
+                if (saved) {
+                  setState(() {
+                    _editing = null;
+                    _routine = store.routineById(routine.id);
+                  });
+                }
+                return saved;
+              },
+            ),
           ),
         );
       }
@@ -1307,30 +1361,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         'edit:${edit.routineId ?? 'new'}',
         drill != null ? _drillDepth + 1 : 3,
         false,
-        RoutineEditorPage(
-          key: ValueKey('editor:${edit.routineId ?? edit.seedIds.join(',')}'),
-          catalog: catalog,
-          store: store,
-          routine: routine,
-          seedDrillIds: edit.seedIds,
-          onBack: _back,
-          allowSave: _requirePremium,
-          onSaved: (saved) {
-            setState(() {
-              _editing = null;
-              if (!edit.fromDrill) {
-                _routine = saved;
+        _premiumPreview(
+          FlarePremiumFeature.planEditor,
+          (locked) => RoutineEditorPage(
+            key: ValueKey('editor:${edit.routineId ?? edit.seedIds.join(',')}'),
+            readOnly: locked,
+            catalog: catalog,
+            store: store,
+            routine: routine,
+            seedDrillIds: edit.seedIds,
+            onBack: _back,
+            allowSave: () async => _hasPremium,
+            onSaved: (saved) {
+              setState(() {
+                _editing = null;
+                if (!edit.fromDrill) {
+                  _routine = saved;
+                }
+              });
+              if (edit.fromDrill) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(content: Text(s.planAddedTo(saved.name))),
+                  );
               }
-            });
-            if (edit.fromDrill) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(content: Text(s.planAddedTo(saved.name))),
-                );
-            }
-          },
-          onDeleted: routine == null ? null : () => _deleteRoutine(routine),
+            },
+            onDeleted: routine == null
+                ? null
+                : () {
+                    if (_hasPremium) _deleteRoutine(routine);
+                  },
+          ),
         ),
       );
     }
@@ -1444,12 +1506,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         'tab$_recordsTab',
         1,
         false,
-        ProgressPage(
-          catalog: catalog,
-          store: store,
-          onBack: _back,
-          onDrill: _openDrill,
-          onStart: () => unawaited(_changeTab(1)),
+        _premiumPreview(
+          FlarePremiumFeature.records,
+          (locked) => ProgressPage(
+            catalog: catalog,
+            store: store,
+            readOnly: locked,
+            onBack: _back,
+            onDrill: _openDrill,
+            onStart: () => _changeTab(1),
+          ),
         ),
       ),
       _ => throw StateError('Unknown Flare tab: $_tab'),
@@ -2153,10 +2219,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       case 'library':
         _enterTrainingHub();
       case 'plans':
-        await _changeTab(2);
+        _changeTab(2);
       case 'progress':
-        final opened = await _changeTab(_recordsTab);
-        if (!opened && mounted && wasPlaying && _watchVisible) _scene.play();
+        _changeTab(_recordsTab);
       case 'settings':
         setState(() {
           _settings = true;
