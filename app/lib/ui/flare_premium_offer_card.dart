@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
@@ -43,7 +44,7 @@ class FlarePremiumOfferCard extends StatelessWidget {
   final String footer;
   final double safeBottom;
   final Animation<double> glow;
-  final bool sheenEnabled;
+  final ValueListenable<bool> sheenEnabled;
   final VoidCallback onSubscribe;
 
   @override
@@ -398,7 +399,7 @@ class _OfferButton extends StatefulWidget {
   });
 
   final String label;
-  final bool sheenEnabled;
+  final ValueListenable<bool> sheenEnabled;
   final VoidCallback onPressed;
 
   @override
@@ -421,13 +422,18 @@ class _OfferButtonState extends State<_OfferButton>
   void initState() {
     super.initState();
     _buttonStates.addListener(_updatePressed);
+    widget.sheenEnabled.addListener(_updateSheen);
     _updateSheen();
   }
 
   @override
   void didUpdateWidget(covariant _OfferButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sheenEnabled != widget.sheenEnabled) _updateSheen();
+    if (oldWidget.sheenEnabled != widget.sheenEnabled) {
+      oldWidget.sheenEnabled.removeListener(_updateSheen);
+      widget.sheenEnabled.addListener(_updateSheen);
+      _updateSheen();
+    }
   }
 
   void _updatePressed() {
@@ -438,7 +444,7 @@ class _OfferButtonState extends State<_OfferButton>
   void _updateSheen() {
     _repeat?.cancel();
     _repeat = null;
-    if (!widget.sheenEnabled) {
+    if (!widget.sheenEnabled.value) {
       _sheen.reset();
       return;
     }
@@ -450,6 +456,7 @@ class _OfferButtonState extends State<_OfferButton>
 
   @override
   void dispose() {
+    widget.sheenEnabled.removeListener(_updateSheen);
     _repeat?.cancel();
     _sheen.dispose();
     _buttonStates.dispose();
@@ -493,7 +500,15 @@ class _OfferButtonState extends State<_OfferButton>
                     ),
                   ),
                 ),
-                IgnorePointer(child: CustomPaint(painter: _OfferSheen(_sheen))),
+                IgnorePointer(
+                  child: RepaintBoundary(
+                    child: AnimatedBuilder(
+                      animation: _sheen,
+                      builder: (context, _) =>
+                          CustomPaint(painter: _OfferSheen(_sheen.value)),
+                    ),
+                  ),
+                ),
                 FilledButton(
                   key: const ValueKey('premium-preview-subscribe'),
                   statesController: _buttonStates,
@@ -536,15 +551,15 @@ class _OfferButtonState extends State<_OfferButton>
 }
 
 class _OfferSheen extends CustomPainter {
-  _OfferSheen(this.sweep) : super(repaint: sweep);
+  _OfferSheen(this.progress);
 
-  final Animation<double> sweep;
+  final double progress;
   static const _angle = 20 * math.pi / 180;
   static const _halfWidth = 20.0;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (sweep.value > 0 && sweep.value < 1) {
+    if (progress > 0 && progress < 1) {
       final sin = math.sin(_angle);
       final cos = math.cos(_angle);
       final halfStripe = Offset(cos, sin) * _halfWidth;
@@ -553,7 +568,7 @@ class _OfferSheen extends CustomPainter {
       final x = ui.lerpDouble(
         -outside,
         size.width + outside,
-        Curves.easeInOut.transform(sweep.value),
+        Curves.easeInOut.transform(progress),
       )!;
       final center = Offset(x, size.height / 2);
       canvas.drawRect(
@@ -579,5 +594,6 @@ class _OfferSheen extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_OfferSheen oldDelegate) => oldDelegate.sweep != sweep;
+  bool shouldRepaint(_OfferSheen oldDelegate) =>
+      oldDelegate.progress != progress;
 }

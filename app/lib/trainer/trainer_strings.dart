@@ -441,7 +441,7 @@ String? _completionTitle(AppLocalizations s, sdk.SessionResult? result) {
 sdk.TrainerStrings trainerStrings(
   AppLocalizations s, {
   sdk.SessionResult? result,
-  String? demonstration,
+  String? prepFirst,
 }) {
   final w = _for(s);
   final (_, _, recorded, comfortable, tight, pain) = trainerRestFeedbackLabels(
@@ -458,7 +458,7 @@ sdk.TrainerStrings trainerStrings(
         _completeTimed['en']!,
     soundOn: s.trainerSoundOn,
     soundOff: s.trainerSoundOff,
-    prepFirst: '${s.countdown} · ${w[0]}',
+    prepFirst: prepFirst ?? '${s.countdown} · ${w[0]}',
     restNext: '${s.rest} · ${s.planNext}',
     restBetweenSets: s.rest,
     roundRest: '${s.completed} · ${s.rest}',
@@ -479,7 +479,7 @@ sdk.TrainerStrings trainerStrings(
     nextUp: s.planUpNext,
     upcomingLabel: s.planUpNext,
     restLabel: s.rest,
-    demonstration: demonstration ?? s.drillDemo,
+    demonstration: s.drillDemo,
     startTraining: s.startTimer,
     playerStart: s.start,
     howTo: s.cues,

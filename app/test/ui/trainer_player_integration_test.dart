@@ -235,30 +235,43 @@ void main() {
       final start = find.byKey(const ValueKey('start-training'));
       final startLabel = _player(tester).strings.startTraining;
 
-      expect(_player(tester).startMode, sdk.TrainerStartMode.preview);
-      expect(start, findsOneWidget);
-      expect(start.hitTestable(), findsNothing);
-      expect(find.bySemanticsLabel(startLabel), findsNothing);
-      final focusGuard = find.ancestor(
-        of: start,
-        matching: find.byWidgetPredicate(
-          (widget) => widget is ExcludeFocus && widget.excluding,
-        ),
-      );
-      expect(focusGuard, findsWidgets);
+      final stage = find.byKey(const ValueKey('player-v1-media-viewport'));
+      String countdownValue() => tester
+          .widget<sdk.TrainerV1PhaseCountdown>(
+            find.byType(sdk.TrainerV1PhaseCountdown),
+          )
+          .value;
+      final prepCountdown = countdownValue();
+      final stageElement = tester.element(stage);
 
-      await tester.tapAt(tester.getCenter(start));
+      expect(_player(tester).startMode, sdk.TrainerStartMode.training);
+      expect(_player(tester).startGate, isNotNull);
+      expect(
+        find.textContaining(_player(tester).strings.prepFirst),
+        findsOneWidget,
+      );
+      expect(find.byType(sdk.TrainerPoster), findsOneWidget);
+      expect(start, findsNothing);
+      expect(find.bySemanticsLabel(startLabel), findsNothing);
+      expect(countdownValue(), prepCountdown);
+
       await _advance(tester, 15);
-      expect(start, findsOneWidget);
+      expect(start, findsNothing);
+      expect(countdownValue(), prepCountdown);
       expect(store.trainerSessions, isEmpty);
 
       locked.value = false;
       await _advance(tester, 15);
       expect(start.hitTestable(), findsOneWidget);
+      expect(countdownValue(), prepCountdown);
+      expect(tester.element(stage), same(stageElement));
       expect(store.trainerSessions, isEmpty);
+
       await tester.tap(start);
-      await tester.pump(const Duration(milliseconds: 450));
+      await _advance(tester, 2);
       expect(start, findsNothing);
+      expect(countdownValue(), isNot(prepCountdown));
+      expect(tester.element(stage), same(stageElement));
     } finally {
       semantics.dispose();
     }
@@ -274,9 +287,7 @@ void main() {
       final store = await _open(tester, previewLocked: locked, popped: results);
       switch (exit) {
         case 'close':
-          await tester.tap(
-            find.byKey(const ValueKey('training-preview-close')),
-          );
+          await tester.tap(find.byKey(const ValueKey('close')));
         case 'edge swipe':
           await tester.dragFrom(const Offset(12, 300), const Offset(160, 0));
         case 'system back':
@@ -295,6 +306,10 @@ void main() {
     final store = await _open(tester);
     final player = _player(tester);
     expect(player.startMode, sdk.TrainerStartMode.training);
+    expect(
+      find.byKey(const ValueKey('player-v1-media-viewport')),
+      findsOneWidget,
+    );
 
     await tester.binding.handlePopRoute();
     await tester.pump();

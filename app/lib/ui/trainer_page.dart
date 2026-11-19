@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
@@ -55,10 +57,15 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   sdk.SessionResult? _result;
   bool _sdkExitStarted = false;
   bool _returningEmptyResult = false;
-  bool _previewStarted = false;
   double _previewSwipeDistance = 0;
 
-  bool get _startsInPreview => widget.startInPreview || widget.previewLocked;
+  // Keep the same V1 player mounted across unlock and Start. Its gate idles
+  // the session clock, voice and history, without selecting the legacy stage.
+  late final _previewStartGate = widget.startInPreview || widget.previewLocked
+      ? Completer<void>()
+      : null;
+
+  bool get _awaitingPreviewStart => _previewStartGate?.isCompleted == false;
 
   @override
   void didChangeDependencies() {
@@ -264,22 +271,18 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     if (_isCurrentRoute) Navigator.maybePop(context);
   }
 
+  void _startPreview() {
+    if (widget.previewLocked || !_awaitingPreviewStart) return;
+    setState(() => _previewStartGate!.complete());
+  }
+
   Widget _previewControls(Widget player, sdk.TrainerStrings strings) {
-    if (!_startsInPreview) return player;
-    final locked = widget.previewLocked;
+    if (_previewStartGate == null) return player;
     return Stack(
       fit: StackFit.expand,
       children: [
-        // The SDK preview already idles its training clock and transport. Its
-        // start button has no eligibility callback, so gate its inputs here.
-        AbsorbPointer(
-          absorbing: locked,
-          child: ExcludeFocus(
-            excluding: locked,
-            child: ExcludeSemantics(excluding: locked, child: player),
-          ),
-        ),
-        if (!_previewStarted)
+        ExcludeFocus(excluding: widget.previewLocked, child: player),
+        if (_awaitingPreviewStart)
           Positioned(
             left: 0,
             top: 0,
@@ -301,41 +304,17 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               },
             ),
           ),
-        if (locked)
+        if (_awaitingPreviewStart && !widget.previewLocked)
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              bottom: false,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: ConstrainedBox(
-                  // Match the SDK preview header. Its original Close button
-                  // supplies the visible icon beneath this 44 px target.
-                  constraints: const BoxConstraints(maxWidth: 560),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 19, top: 22),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      heightFactor: 1,
-                      child: Semantics(
-                        label: strings.close,
-                        button: true,
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: InkWell(
-                            key: const ValueKey('training-preview-close'),
-                            borderRadius: BorderRadius.circular(22),
-                            onTap: _closePreview,
-                            child: const SizedBox.square(dimension: 44),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.paddingOf(context).bottom + 20,
+            child: FlareBottomButton(
+              key: const ValueKey('start-training'),
+              label: strings.startTraining,
+              icon: Icons.play_arrow_rounded,
+              height: 56,
+              onPressed: _startPreview,
             ),
           ),
       ],
@@ -357,16 +336,10 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       stageColor: stage,
     );
 
-    if (_startsInPreview && !_previewStarted) {
-      final asset = drill.id == flareV5DrillId
-          ? flareV5PosterAsset
-          : media?.posterFor(light: !request.theme.isDark) ??
-                FlarePublicMedia.coverAssetFor(id);
-      return poster(asset);
-    }
+    final canPlay = request.canPlay && !_awaitingPreviewStart;
 
     if (drill.id == flareV5DrillId) {
-      return request.canPlay
+      return canPlay
           ? FlareV5Media(
               key: const ValueKey('flare-v5-training-media'),
               speed: widget.store.settings.speed,
@@ -391,8 +364,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         showInlineStatus: false,
         actionId: id,
         policy: policy,
-        prefetchWhenIdle: true,
-        playing: request.canPlay,
+        prefetchWhenIdle: !_awaitingPreviewStart,
+        playing: canPlay,
         paused: request.paused,
         mirrored: request.mirrored,
         radius: 0,
@@ -400,9 +373,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         playbackHandle: request.playbackHandle,
       );
     }
-    if (experience != null && !request.canPlay) {
-      final asset = media?.posterFor(light: !request.theme.isDark);
-      return switch (asset ?? experience.firstPosterAsset) {
+    if (_awaitingPreviewStart || experience != null && !canPlay) {
+      final asset =
+          media?.posterFor(light: !request.theme.isDark) ??
+          experience?.firstPosterAsset ??
+          (_awaitingPreviewStart ? FlarePublicMedia.coverAssetFor(id) : null);
+      return switch (asset) {
         final String path when path.isNotEmpty => poster(path),
         _ => ColoredBox(color: stage),
       };
@@ -461,12 +437,11 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         }
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
-        final preview = _startsInPreview && !_previewStarted;
         final first = data.plan.items.first;
         final strings = trainerStrings(
           s,
           result: _result,
-          demonstration: preview
+          prepFirst: _awaitingPreviewStart
               ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(_initialCountdownSeconds)}'
               : null,
         );
@@ -526,12 +501,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                 strings: strings,
                 theme: theme,
                 prepSeconds: _initialCountdownSeconds,
-                startMode: _startsInPreview
-                    ? sdk.TrainerStartMode.preview
-                    : sdk.TrainerStartMode.training,
-                onStartTraining: _startsInPreview
-                    ? () => setState(() => _previewStarted = true)
-                    : null,
+                startGate: _previewStartGate?.future,
                 voice: sdk.TrainerVoice(
                   source: data.source,
                   output: _output!,
@@ -559,7 +529,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                 notificationIcon: 'mipmap/ic_launcher',
                 doseLabel: _doseLabel,
                 mediaBuilder:
-                    preview || data.plan.exerciseIds.contains(flareV5DrillId)
+                    _previewStartGate != null ||
+                        data.plan.exerciseIds.contains(flareV5DrillId)
                     ? _media
                     : null,
               ),

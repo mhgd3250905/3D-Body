@@ -228,15 +228,25 @@ class FlarePageActivity extends InheritedWidget {
   const FlarePageActivity({
     super.key,
     required this.active,
+    this.settled = true,
     required super.child,
   });
   final bool active;
+  final bool settled;
   static bool of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<FlarePageActivity>()?.active ??
       true;
+
+  /// Whether the page is in place after the shell's navigation animation.
+  static bool settledOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<FlarePageActivity>()
+          ?.settled ??
+      true;
+
   @override
   bool updateShouldNotify(FlarePageActivity oldWidget) =>
-      active != oldWidget.active;
+      active != oldWidget.active || settled != oldWidget.settled;
 }
 
 /// Tells a page's [FlareNavBar] that the stage is drawing the one back
@@ -628,7 +638,11 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
           child: RepaintBoundary(
             child: FlareBackPin(
               hidden: _showPinnedBack,
-              child: FlarePageActivity(active: incoming, child: child),
+              child: FlarePageActivity(
+                active: incoming,
+                settled: incoming && !animating,
+                child: child,
+              ),
             ),
           ),
           builder: (context, child) {

@@ -1,5 +1,8 @@
-import 'package:flare/ui/flare_premium_preview.dart';
+import 'dart:async';
+
 import 'package:flare/ui/flare_premium_offer_card.dart';
+import 'package:flare/ui/flare_premium_preview.dart';
+import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,7 +11,6 @@ import 'flow_regressions_test.dart' show phoneSize, testApp;
 
 const _card = ValueKey('premium-preview-card');
 const _gradient = ValueKey('premium-preview-gradient');
-const _blur = ValueKey('premium-preview-blur');
 const _subscribe = ValueKey('premium-preview-subscribe');
 
 void main() {
@@ -20,35 +22,38 @@ void main() {
       addTearDown(tester.view.resetViewPadding);
       final locked = ValueNotifier(true);
       addTearDown(locked.dispose);
-      await tester.pumpWidget(
-        testApp(
-          Scaffold(
-            body: ValueListenableBuilder(
-              valueListenable: locked,
-              builder: (_, value, _) => FlarePremiumPreview(
-                feature: FlarePremiumFeature.records,
-                locked: value,
-                onSubscribe: () {},
-                child: const SizedBox.expand(),
-              ),
+      await tester.pumpWidget(testApp(const Scaffold()));
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      final route = PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 400),
+        pageBuilder: (_, _, _) => Scaffold(
+          body: ValueListenableBuilder(
+            valueListenable: locked,
+            builder: (_, value, _) => FlarePremiumPreview(
+              feature: FlarePremiumFeature.records,
+              locked: value,
+              onSubscribe: () {},
+              child: const SizedBox.expand(),
             ),
           ),
         ),
       );
+      unawaited(navigator.push(route));
+      await tester.pump();
       final card = find.byKey(_card);
       FadeTransition cardFade() =>
           tester.element(card).findAncestorWidgetOfExactType<FadeTransition>()!;
-      expect(cardFade().opacity.value, 0);
       const cardBottom = 844.0;
-      expect(tester.getRect(card).bottom, cardBottom + 40);
       final offer = find.byType(FlarePremiumOfferCard);
       FlarePremiumOfferCard offerCard() => tester.widget(offer);
-      expect(offerCard().glow.value, 0);
+      expect(card, findsNothing);
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(route.animation!.status, AnimationStatus.forward);
+      expect(card, findsNothing);
       expect(find.byKey(_subscribe).hitTestable(), findsNothing);
-
-      await tester.pump(const Duration(milliseconds: 119));
-      expect(cardFade().opacity.value, 0);
-      await tester.pump(const Duration(milliseconds: 1));
+      await tester.pump(const Duration(milliseconds: 201));
+      expect(route.animation!.status, AnimationStatus.completed);
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 110));
       expect(cardFade().opacity.value, allOf(greaterThan(0), lessThan(1)));
       expect(
@@ -66,33 +71,32 @@ void main() {
       expect(fullSize.bottom, closeTo(cardBottom, .001));
       expect(offerCard().safeBottom, 34);
       expect(tester.getSize(find.byKey(_subscribe)).height, 54);
-      expect(tester.getRect(find.byKey(_blur)).top, closeTo(844 * .50, .001));
       await tester.pump(const Duration(milliseconds: 120));
       expect(offerCard().glow.value, 1);
       final bounds = tester.getRect(card);
-      await tester.pump(const Duration(milliseconds: 579));
-      expect(offerCard().sheenEnabled, isFalse);
+      await tester.pump(const Duration(milliseconds: 1079));
+      expect(offerCard().sheenEnabled.value, isFalse);
       await tester.pump(const Duration(milliseconds: 1));
-      expect(offerCard().sheenEnabled, isTrue);
+      expect(offerCard().sheenEnabled.value, isTrue);
 
       final fade = find.byKey(_gradient);
       final blocker = find.byKey(const ValueKey('premium-preview-blocker'));
       expect(tester.getRect(blocker).top, closeTo(844 * .45, .001));
       expect(tester.getRect(fade).top, 0);
       expect(tester.getRect(fade).bottom, closeTo(bounds.top + 28, .001));
-      final tint = find.descendant(of: fade, matching: find.byType(ColoredBox));
+      final decoration =
+          tester.widget<DecoratedBox>(fade).decoration as BoxDecoration;
+      final tint = decoration.gradient! as LinearGradient;
+      final height = tester.getSize(fade).height;
+      expect(tint.stops![1] * height, closeTo(844 * .40, .001));
+      expect(tint.stops![2] * height, closeTo(844 * .55, .001));
+      expect(tint.stops![3] * height, closeTo(bounds.top, .001));
+      expect(tint.colors.map((color) => color.a), [0, 0, .70, .96, .96]);
+      expect(tint.colors.last, FlareColors.background.withValues(alpha: .96));
+      expect(find.byType(BackdropFilter), findsNothing);
       expect(
-        tester.widget<ColoredBox>(tint).color,
-        FlareColors.background.withValues(alpha: .92),
-      );
-      final filters = find.descendant(
-        of: find.byKey(_blur),
-        matching: find.byType(BackdropFilter),
-      );
-      expect(filters, findsWidgets);
-      expect(
-        tester.getRect(filters.last).bottom,
-        closeTo(bounds.top + 28, .001),
+        find.descendant(of: fade, matching: find.byType(ShaderMask)),
+        findsNothing,
       );
 
       locked.value = false;
@@ -106,6 +110,45 @@ void main() {
       expect(fade, findsNothing);
     },
   );
+
+  testWidgets('premium preview waits for the shell page transition', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    final open = ValueNotifier(false);
+    addTearDown(open.dispose);
+    await tester.pumpWidget(
+      testApp(
+        Scaffold(
+          body: ValueListenableBuilder(
+            valueListenable: open,
+            builder: (_, isOpen, _) => FlareStage(
+              pageKey: isOpen ? 'planEditor' : 'plans',
+              depth: isOpen ? 2 : 1,
+              child: isOpen
+                  ? FlarePremiumPreview(
+                      feature: FlarePremiumFeature.planEditor,
+                      locked: true,
+                      onSubscribe: () {},
+                      child: const SizedBox.expand(),
+                    )
+                  : const SizedBox.expand(),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    open.value = true;
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(FlareMotion.push - const Duration(milliseconds: 1));
+    expect(find.byKey(_card), findsNothing);
+    await tester.pump(const Duration(milliseconds: 2));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 110));
+    expect(find.byKey(_card), findsOneWidget);
+  });
 
   testWidgets('premium preview blocks only the covered pointer and semantics', (
     tester,
@@ -166,7 +209,8 @@ void main() {
     expect(
       tester
           .widget<FlarePremiumOfferCard>(find.byType(FlarePremiumOfferCard))
-          .sheenEnabled,
+          .sheenEnabled
+          .value,
       isFalse,
     );
     expect(find.semantics.byLabel('Preview back'), findsOne);
