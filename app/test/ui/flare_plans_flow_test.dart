@@ -94,11 +94,17 @@ Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
     final viewportRect = tester.getRect(viewport);
     expect(viewportRect.top, 0);
     final detail = tester.widget<FlarePlanDetailPage>(page);
+    var titleOffset = 24.0;
     if (detail.plans.first.groupId case final group?) {
       final art = tester.getRect(_key('flare-plan-muscle-hero-$group'));
       expect(viewportRect.height, closeTo(art.bottom + 8 + 24, .01));
+      expect(art.top, closeTo(safeTop - .004 * art.height, .01));
+      titleOffset += 120;
     } else {
-      expect(viewportRect.height, safeTop + 300);
+      expect(
+        viewportRect.height,
+        inInclusiveRange(safeTop + 230, safeTop + 254),
+      );
     }
     final kicker = find.descendant(
       of: page,
@@ -114,7 +120,10 @@ Future<void> _expectScrollNavFade(WidgetTester tester, Finder page) async {
               AppLocalizations.of(tester.element(nav)).musclePlanLabel,
             ),
           );
-    expect(tester.getTopLeft(label).dy, viewportRect.bottom - 24);
+    expect(
+      tester.getTopLeft(label).dy,
+      closeTo(viewportRect.bottom - titleOffset, .01),
+    );
     scroll.jumpTo(20);
     await tester.pump();
     expect(tint(), .5);
@@ -1078,10 +1087,11 @@ void main() {
       final viewport = _key('flare-plan-hero-viewport');
       final initialPose = tester.getRect(pose);
       expect(initialPose.height, 268);
-      expect(initialPose.top + initialPose.height * .070, closeTo(24 + 64, .5));
+      expect(initialPose.right, tester.getRect(viewport).right + 16);
+      expect(initialPose.top + initialPose.height * .070, closeTo(24 - 6, .5));
       expect(
         initialPose.top + initialPose.height * .929,
-        lessThan(tester.getRect(viewport).bottom),
+        closeTo(tester.getRect(viewport).bottom - 24, .01),
       );
       scroll.jumpTo(135);
       await tester.pumpAndSettle();

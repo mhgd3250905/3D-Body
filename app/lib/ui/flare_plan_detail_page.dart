@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,10 +17,14 @@ import 'page_kit.dart';
 import 'theme.dart';
 
 const _gutter = 22.0;
-const _angleHeroHeight = 300.0;
+const _angleTitleInset = 206.0;
+const _angleArtTopInset = -6.0;
+const _angleShadowHeight = 24.0;
+const _angleShadowGap = 12.0;
+const _artShadowFadeStop = .7;
 const _heroTitleOverlap = 24.0;
-const _heroArtTop = 64.0;
 const _muscleHeroTextGap = 8.0;
+const _muscleTitleLift = 120.0;
 const _switchTime = Duration(milliseconds: 220);
 const _figures = [FontFeature.tabularFigures()];
 const _startButtonHeight = 56.0;
@@ -103,6 +109,8 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       s.planTierAdvanced,
     ];
     final groupId = plan.groupId;
+    final tierTopPadding =
+        (muscles.isEmpty ? 12.0 : 8.0) + (groupId != null ? 16.0 : 0.0);
     final targetGroup = groupId == null ? null : catalog.groupById(groupId);
     final intro = switch ((plan.phaseSource, plan.groupId)) {
       (11, _) => s.angleSupportPlanIntro,
@@ -158,7 +166,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                       Padding(
                         padding: EdgeInsets.fromLTRB(
                           _gutter,
-                          muscles.isEmpty ? 12 : 8,
+                          tierTopPadding,
                           _gutter,
                           0,
                         ),
@@ -343,14 +351,25 @@ class _PlanHero extends StatelessWidget {
     final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
     final isAngle = phaseSource != null;
     final width = MediaQuery.sizeOf(context).width;
-    final artHeight = (width * .70).clamp(0.0, 236.0);
-    // The cropped muscle artwork has a 2–3 px transparent top margin.
-    final artTop = safeTop - .004 * artHeight;
-    final artBottom = artTop + artHeight;
+    final artHeight = math.min(width * .70, isAngle ? 268.0 : 236.0);
+    final (topInset, bottomInset) = isAngle
+        ? _AnglePlanArt.bounds[phaseSource]!
+        : (.004, 1.0);
+    final artTop =
+        (isAngle ? math.max(0.0, safeTop + _angleArtTopInset) : safeTop) -
+        topInset * artHeight;
+    final artBottom = artTop + bottomInset * artHeight;
+    final titleTop = isAngle
+        ? math.max(safeTop + _angleTitleInset, artBottom)
+        : math.max(
+            safeTop + 44,
+            artBottom + _muscleHeroTextGap - _muscleTitleLift,
+          );
     final viewportHeight = isAngle
-        ? safeTop + _angleHeroHeight
+        ? titleTop + _heroTitleOverlap
         : artBottom + _muscleHeroTextGap + _heroTitleOverlap;
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Positioned(
           left: 0,
@@ -375,6 +394,15 @@ class _PlanHero extends StatelessWidget {
                     height: 26,
                     child: _PlanArtShadow(shadow),
                   ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 104,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(gradient: _bottomFade(p, .82)),
+                  ),
+                ),
                 if (groupId case final id?)
                   PositionedDirectional(
                     end: 20,
@@ -388,21 +416,13 @@ class _PlanHero extends StatelessWidget {
                       ),
                     ),
                   ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 104,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(gradient: _bottomFade(p, .82)),
-                  ),
-                ),
                 if (phaseSource case final source?)
                   Positioned.fill(
                     child: _AnglePlanArt(
                       source: source,
-                      safeTop: safeTop,
-                      width: width,
+                      top: artTop,
+                      height: artHeight,
+                      titleTop: titleTop,
                       shadow: shadow,
                     ),
                   ),
@@ -411,12 +431,7 @@ class _PlanHero extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(
-            _gutter,
-            viewportHeight - _heroTitleOverlap,
-            _gutter,
-            0,
-          ),
+          padding: EdgeInsets.fromLTRB(_gutter, titleTop, _gutter, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -465,19 +480,21 @@ class _PlanHero extends StatelessWidget {
 class _AnglePlanArt extends StatelessWidget {
   const _AnglePlanArt({
     required this.source,
-    required this.safeTop,
-    required this.width,
+    required this.top,
+    required this.height,
+    required this.titleTop,
     required this.shadow,
   });
 
   final int source;
-  final double safeTop;
-  final double width;
+  final double top;
+  final double height;
+  final double titleTop;
   final Color shadow;
 
   // The pose renders retain their original transparent canvas. Use the
   // silhouette bounds to align the visible figure instead of the canvas edge.
-  static const _angleBounds = {
+  static const bounds = {
     9: (.150, .849),
     10: (.180, .820),
     11: (.070, .929),
@@ -490,23 +507,22 @@ class _AnglePlanArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (topInset, bottomInset) = _angleBounds[source]!;
-    final artHeight = (width * .70).clamp(0.0, 268.0);
-    final artTop = safeTop + _heroArtTop - artHeight * topInset;
+    // The shadow becomes transparent before the bottom of its paint box.
+    const shadowPaintBottom = _angleShadowHeight * (1 + _artShadowFadeStop) / 2;
 
     return Stack(
       children: [
         Positioned(
-          right: 20,
-          top: artTop + artHeight * bottomInset - 14,
-          width: artHeight * .72,
-          height: 24,
+          right: -8,
+          top: titleTop - _angleShadowGap - shadowPaintBottom,
+          width: height * .72,
+          height: _angleShadowHeight,
           child: _PlanArtShadow(shadow),
         ),
         Positioned(
-          right: 12,
-          top: artTop,
-          height: artHeight,
+          right: -16,
+          top: top,
+          height: height,
           child: Image.asset(
             'assets/angles/v5-phase-$source.webp',
             key: ValueKey('flare-plan-angle-hero-$source'),
@@ -537,7 +553,7 @@ class _PlanArtShadow extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [color, color.withValues(alpha: 0)],
-                  stops: const [0, .7],
+                  stops: const [0, _artShadowFadeStop],
                 ),
               ),
             ),

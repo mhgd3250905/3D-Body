@@ -46,7 +46,7 @@ class FlarePlanMuscleFade extends StatelessWidget {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [Colors.black, Colors.transparent],
-      stops: [.7, 1],
+      stops: [.65, 1],
     ).createShader(bounds),
     child: child,
   );

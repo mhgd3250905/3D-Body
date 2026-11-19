@@ -1,5 +1,11 @@
 # Flare 版本管理台账
 
+## Android 真机测试包 vc2074（2026-11-19）
+
+Flare **1.0.15 / vc2074**（`dev.mhgd.flare`、arm64-v8a）以 `codex/flare-hub-flash-fix` 的 `928ba068` 为基础，纳入计划详情页头部改版及肌群计划档位前增加的 16 px 留白。APK 共 105,162,283 字节，SHA-256 为 `98164b528575234442d6c6a9d83b88b7da520d07884ac85bf4c43661066ae726`。APK 与安装回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2074/`。
+
+07:58 已从 vc2072 同签名覆盖安装到 Android 真机。手机端 APK 哈希一致，首次安装时间和应用数据目录保持。留白观感待用户复验。[验证记录](verification.md#专项计划详情页头部2026-11-19)
+
 ## Android 本地测试包 vc2073（2026-11-19）
 
 Flare **1.0.15 / vc2073**（`dev.mhgd.flare`、arm64-v8a）来自 `codex/flare-hub-flash-fix`，包含训练页进退场时的标签与连线淡入淡出。APK 共 105,162,283 字节，SHA-256 为 `3adb134349e7988bb91e3ca2c6438055bbe563bef0c1d730258b30db7cad1196`。签名与 vc2072 一致。APK 及回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2073/`。真机观感待复验。[验证记录](verification.md#第-15-阶段标签淡入淡出2026-11-19)
