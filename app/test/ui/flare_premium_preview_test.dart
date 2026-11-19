@@ -75,7 +75,9 @@ void main() {
       expect(offerCard().sheenEnabled, isTrue);
 
       final fade = find.byKey(_gradient);
-      expect(tester.getRect(fade).top, closeTo(844 * .45, .001));
+      final blocker = find.byKey(const ValueKey('premium-preview-blocker'));
+      expect(tester.getRect(blocker).top, closeTo(844 * .45, .001));
+      expect(tester.getRect(fade).top, 0);
       final tint = find.descendant(of: fade, matching: find.byType(ColoredBox));
       expect(
         tester.widget<ColoredBox>(tint).color,

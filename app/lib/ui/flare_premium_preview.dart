@@ -119,9 +119,6 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
         final fadeTop = (screenHeight * .45).clamp(0.0, height);
         final blurTop = (screenHeight * .52).clamp(fadeTop, height);
         final fadeEnd = (screenHeight * .62).clamp(blurTop, height);
-        final opaqueStop = height > fadeTop
-            ? (fadeEnd - fadeTop) / (height - fadeTop)
-            : 1.0;
         return AnimatedBuilder(
           animation: _motion,
           child: widget.child,
@@ -138,43 +135,48 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
                   cutoff: blocked ? fadeTop : null,
                   child: child!,
                 ),
+                if (shown && blurTop < height)
+                  Positioned.fill(
+                    top: blurTop,
+                    child: IgnorePointer(
+                      child: _PremiumBackdropBlur(
+                        rampHeight: fadeEnd - blurTop,
+                        strength: opacity,
+                      ),
+                    ),
+                  ),
+                if (shown && fadeTop < height)
+                  IgnorePointer(
+                    child: FadeTransition(
+                      opacity: AlwaysStoppedAnimation(opacity),
+                      child: ShaderMask(
+                        key: const ValueKey('premium-preview-gradient'),
+                        blendMode: BlendMode.dstIn,
+                        // Keep the mask on the full screen so its fractional
+                        // fade position is inside the layer, not at its edge.
+                        shaderCallback: (bounds) => LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: const [
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.white,
+                            Colors.white,
+                          ],
+                          stops: [0, fadeTop / height, fadeEnd / height, 1],
+                        ).createShader(bounds),
+                        child: ColoredBox(
+                          color: background.withValues(alpha: .72),
+                        ),
+                      ),
+                    ),
+                  ),
                 if (blocked)
                   Positioned.fill(
                     top: fadeTop,
-                    child: AbsorbPointer(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          if (opacity > 0 && blurTop < height)
-                            Positioned.fill(
-                              top: blurTop - fadeTop,
-                              child: _PremiumBackdropBlur(
-                                rampHeight: fadeEnd - blurTop,
-                                strength: opacity,
-                              ),
-                            ),
-                          FadeTransition(
-                            opacity: AlwaysStoppedAnimation(opacity),
-                            child: ShaderMask(
-                              key: const ValueKey('premium-preview-gradient'),
-                              blendMode: BlendMode.dstIn,
-                              shaderCallback: (bounds) => LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: const [
-                                  Colors.transparent,
-                                  Colors.white,
-                                  Colors.white,
-                                ],
-                                stops: [0, opaqueStop, 1],
-                              ).createShader(bounds),
-                              child: ColoredBox(
-                                color: background.withValues(alpha: .72),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: const AbsorbPointer(
+                      key: ValueKey('premium-preview-blocker'),
+                      child: SizedBox.expand(),
                     ),
                   ),
                 if (widget.locked || shown)
