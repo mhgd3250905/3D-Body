@@ -319,140 +319,132 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     final footerBottom = safe.bottom + 34;
     final controlsBottom =
         footerBottom + _planFooterHeight + (_muscles ? 12 : 4);
-    return AnimatedSlide(
-      offset: widget.leaving ? const Offset(1, 0) : Offset.zero,
-      duration: FlareMotion.of(context, FlareMotion.pop),
-      curve: FlareMotion.pageEnter,
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value:
-            (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
-                .copyWith(statusBarColor: Colors.transparent),
-        child: LayoutBuilder(
-          builder: (context, box) {
-            _scheduleViewportUpdate();
-            final available = math.max(0.0, box.maxHeight - controlsBottom);
-            final height = math.max(stageHeight + 116, available);
-            final page = SizedBox(
-              height: height,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _HubStage(
-                    height: stageHeight,
-                    safeTop: safe.top,
-                    sceneBoundsKey: widget.sceneBoundsKey,
-                    onHorizontalDragUpdate:
-                        _returning ||
-                            widget.leaving ||
-                            _muscles ||
-                            box.maxWidth <= 0
-                        ? null
-                        : (details) => _rotateAngle(
-                            -2 * math.pi * details.delta.dx / box.maxWidth,
-                          ),
-                    scene: widget.enableScene
-                        ? Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              if (widget.showLoadingFrame &&
-                                  !_muscles &&
-                                  !_presented &&
-                                  !_everPresented &&
-                                  !widget.liveEntry &&
-                                  !_returning &&
-                                  !widget.actorHandoff)
-                                Image.asset(
-                                  'assets/angles/v5-phase-${phase.source}.webp',
-                                  key: const ValueKey(
-                                    'hub-stage-loading-frame',
-                                  ),
-                                  fit: BoxFit.contain,
-                                  excludeFromSemantics: true,
-                                ),
-                              if (widget.mountScene && _ownsController)
-                                _stageView(),
-                            ],
-                          )
-                        : const SizedBox.expand(),
-                  ),
-                  Expanded(
-                    child: IgnorePointer(
-                      ignoring: widget.interactionLocked,
-                      child: _muscles
-                          ? _HubMuscles(
-                              catalog: catalog,
-                              selected: muscle,
-                              onSelected: _selectMuscle,
-                              onSection: _selectMuscleSection,
-                            )
-                          : _angleControls(context, phase),
-                    ),
-                  ),
-                ],
-              ),
-            );
-            return Stack(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: (p.isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+          .copyWith(statusBarColor: Colors.transparent),
+      child: LayoutBuilder(
+        builder: (context, box) {
+          _scheduleViewportUpdate();
+          final available = math.max(0.0, box.maxHeight - controlsBottom);
+          final height = math.max(stageHeight + 116, available);
+          final page = SizedBox(
+            height: height,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Positioned.fill(
-                  bottom: controlsBottom,
-                  child: height == available
-                      ? page
-                      : NotificationListener<ScrollNotification>(
-                          onNotification: (notification) {
-                            if (notification.depth == 0) {
-                              _scheduleViewportUpdate();
-                            }
-                            return false;
-                          },
-                          child: SingleChildScrollView(
-                            key: widget.sceneClipBoundsKey,
-                            child: page,
-                          ),
+                _HubStage(
+                  height: stageHeight,
+                  safeTop: safe.top,
+                  sceneBoundsKey: widget.sceneBoundsKey,
+                  onHorizontalDragUpdate:
+                      _returning ||
+                          widget.leaving ||
+                          _muscles ||
+                          box.maxWidth <= 0
+                      ? null
+                      : (details) => _rotateAngle(
+                          -2 * math.pi * details.delta.dx / box.maxWidth,
                         ),
+                  scene: widget.enableScene
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            if (widget.showLoadingFrame &&
+                                !_muscles &&
+                                !_presented &&
+                                !_everPresented &&
+                                !widget.liveEntry &&
+                                !_returning &&
+                                !widget.actorHandoff)
+                              Image.asset(
+                                'assets/angles/v5-phase-${phase.source}.webp',
+                                key: const ValueKey('hub-stage-loading-frame'),
+                                fit: BoxFit.contain,
+                                excludeFromSemantics: true,
+                              ),
+                            if (widget.mountScene && _ownsController)
+                              _stageView(),
+                          ],
+                        )
+                      : const SizedBox.expand(),
                 ),
-                PositionedDirectional(
-                  start: _gutter,
-                  end: _gutter,
-                  bottom: footerBottom,
+                Expanded(
                   child: IgnorePointer(
                     ignoring: widget.interactionLocked,
-                    child: _HubPlanFooter(
-                      selection: selectedKey,
-                      title: _muscles ? muscle.shortLabel : phase.name,
-                      plan: beginner,
-                      minutes: beginner == null
-                          ? null
-                          : FlareShared.current?.authoredPlanMinutes(
-                              beginner,
-                              catalog,
-                              widget.sceneTier,
-                            ),
-                      onOpen: _muscles
-                          ? () => widget.onMuscle(muscle)
-                          : () => widget.onAngle(phase),
-                    ),
-                  ),
-                ),
-                PositionedDirectional(
-                  top: 0,
-                  start: 0,
-                  end: 0,
-                  child: FlareNavBar(
-                    onBack: widget.onBack,
-                    backEnabled: !widget.leaving,
-                    center: _HubModeControl(
-                      muscles: _pendingMode ?? _muscles,
-                      onMode: _selectMode,
-                    ),
-                    topInset: FlareGeometry.navSafeTop(context),
-                    glass: true,
-                    blurBackdrop: false,
+                    child: _muscles
+                        ? _HubMuscles(
+                            catalog: catalog,
+                            selected: muscle,
+                            onSelected: _selectMuscle,
+                            onSection: _selectMuscleSection,
+                          )
+                        : _angleControls(context, phase),
                   ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+          return Stack(
+            children: [
+              Positioned.fill(
+                bottom: controlsBottom,
+                child: height == available
+                    ? page
+                    : NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification.depth == 0) {
+                            _scheduleViewportUpdate();
+                          }
+                          return false;
+                        },
+                        child: SingleChildScrollView(
+                          key: widget.sceneClipBoundsKey,
+                          child: page,
+                        ),
+                      ),
+              ),
+              PositionedDirectional(
+                start: _gutter,
+                end: _gutter,
+                bottom: footerBottom,
+                child: IgnorePointer(
+                  ignoring: widget.interactionLocked,
+                  child: _HubPlanFooter(
+                    selection: selectedKey,
+                    title: _muscles ? muscle.shortLabel : phase.name,
+                    plan: beginner,
+                    minutes: beginner == null
+                        ? null
+                        : FlareShared.current?.authoredPlanMinutes(
+                            beginner,
+                            catalog,
+                            widget.sceneTier,
+                          ),
+                    onOpen: _muscles
+                        ? () => widget.onMuscle(muscle)
+                        : () => widget.onAngle(phase),
+                  ),
+                ),
+              ),
+              PositionedDirectional(
+                top: 0,
+                start: 0,
+                end: 0,
+                child: FlareNavBar(
+                  onBack: widget.onBack,
+                  backEnabled: !widget.leaving,
+                  center: _HubModeControl(
+                    muscles: _pendingMode ?? _muscles,
+                    onMode: _selectMode,
+                  ),
+                  topInset: FlareGeometry.navSafeTop(context),
+                  glass: true,
+                  blurBackdrop: false,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

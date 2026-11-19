@@ -1186,16 +1186,26 @@ void main() {
       await _revealPlanContent(tester, replacement);
 
       await tester.tap(_key('flare-plan-start'));
-      await tester.pumpAndSettle();
-      expect(find.byType(FlareMembershipPage), findsOneWidget);
+      final subscribe = _key('premium-preview-subscribe').hitTestable();
+      await helpers.waitForTrainingRoute(tester, route: subscribe);
+      expect(find.byType(FlareMembershipPage), findsNothing);
       expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+      await tester.tap(subscribe);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byType(FlareMembershipPage), findsOneWidget);
       await tester.tap(
         find.descendant(
           of: find.byType(FlareMembershipPage),
           matching: find.byType(FlareBackChip),
         ),
       );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(subscribe, findsOneWidget);
+      await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
+      expect(subscribe, findsNothing);
       expect(await membership.restore(), isTrue);
 
       await tester.tap(_key('flare-plan-start'));

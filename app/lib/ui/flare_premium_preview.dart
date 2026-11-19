@@ -61,16 +61,23 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
   Timer? _sheenTimer;
   bool? _reducedMotion;
   bool _stageSettled = true;
+  bool _pageActive = true;
+  bool _routeClosing = false;
   bool _entranceStarted = false;
+  double? _safeBottom;
   double _edgeDistance = 0;
+
+  bool get _leaving => !_pageActive || _routeClosing;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final wasLeaving = _leaving;
     final route = ModalRoute.of(context);
     if (_route != route) {
       _route?.animation?.removeStatusListener(_onRouteStatus);
       _route = route;
+      _routeClosing = route?.animation?.status == AnimationStatus.reverse;
       route?.animation?.addStatusListener(_onRouteStatus);
       if (route?.offstage == true) {
         // Hero measurement temporarily reports a completed route animation.
@@ -80,28 +87,31 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
       }
     }
     _stageSettled = FlarePageActivity.settledOf(context);
+    _pageActive = FlarePageActivity.of(context);
+    if (_leaving) {
+      if (!wasLeaving) _freezeForExit();
+      return;
+    }
     final reducedMotion = FlareMotion.reduced(context);
-    if (_reducedMotion == reducedMotion) {
-      _maybeStartEntrance();
-    } else {
+    if (_reducedMotion != reducedMotion) {
       _reducedMotion = reducedMotion;
       _updateReveal();
+    } else if (wasLeaving) {
+      _resumeAfterExitCancelled();
+    } else {
+      _maybeStartEntrance();
     }
   }
 
   @override
   void didUpdateWidget(FlarePremiumPreview oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.locked != widget.locked) _updateReveal();
+    if (!_leaving && oldWidget.locked != widget.locked) _updateReveal();
   }
 
   void _updateReveal() {
-    _sheenTimer?.cancel();
-    _sheenTimer = null;
-    _sheenEnabled.value = false;
+    _freezeForExit();
     _entranceStarted = false;
-    _entrance.stop();
-    _exit.stop();
     if (_reducedMotion == true) {
       _entrance.value = widget.locked ? 1 : 0;
       _exit.value = widget.locked ? 0 : 1;
@@ -114,8 +124,41 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
     }
   }
 
+  void _freezeForExit() {
+    _entrance.stop();
+    _exit.stop();
+    _sheenTimer?.cancel();
+    _sheenTimer = null;
+    _sheenEnabled.value = false;
+  }
+
+  void _resumeAfterExitCancelled() {
+    if (_reducedMotion == true) {
+      _updateReveal();
+    } else if (widget.locked && _entranceStarted) {
+      if (!_entrance.isCompleted) _entrance.forward();
+      _scheduleSheen();
+    } else if (!widget.locked && _entrance.value != 0 && !_exit.isCompleted) {
+      _exit.forward();
+    } else {
+      _maybeStartEntrance();
+    }
+  }
+
   void _onRouteStatus(AnimationStatus status) {
-    if (status == AnimationStatus.completed) _maybeStartEntrance();
+    final wasLeaving = _leaving;
+    if (status == AnimationStatus.reverse) {
+      _routeClosing = true;
+      if (!wasLeaving) _freezeForExit();
+    } else if (status == AnimationStatus.completed) {
+      _routeClosing = false;
+      if (wasLeaving && !_leaving) {
+        _resumeAfterExitCancelled();
+        setState(() {});
+      } else {
+        _maybeStartEntrance();
+      }
+    }
   }
 
   void _maybeStartEntrance() {
@@ -126,6 +169,7 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
     if (widget.locked &&
         _reducedMotion == false &&
         !_entranceStarted &&
+        !_leaving &&
         _stageSettled &&
         routeReady) {
       _entranceStarted = true;
@@ -134,7 +178,8 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
   }
 
   void _scheduleSheen() {
-    if (_entranceStarted &&
+    if (!_leaving &&
+        _entranceStarted &&
         _sheenTimer == null &&
         _cardProgress.transform(_entrance.value) == 1) {
       _sheenTimer = Timer(_sheenDelay, () => _sheenEnabled.value = true);
@@ -154,12 +199,13 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.sizeOf(context).height;
-    final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
+    final viewBottom = MediaQuery.viewPaddingOf(context).bottom;
+    if (!_leaving || _safeBottom == null) _safeBottom = viewBottom;
     final background = FlareColors.background;
     final offer = RepaintBoundary(
       child: Material(
         type: MaterialType.transparency,
-        child: _offer(context, safeBottom),
+        child: _offer(context, _safeBottom!),
       ),
     );
     return LayoutBuilder(

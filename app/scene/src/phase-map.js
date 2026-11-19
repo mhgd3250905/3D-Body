@@ -63,6 +63,7 @@ export async function createPhaseMap(player, onSelect) {
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), local = new THREE.Vector3();
   let source = null, hidden = false, legendItems = [], target = null, renderKey = null, renderCount = 0, focus = null;
   let paintKey = null, paintEffort = 0;
+  let chromeMotion = null;
   const fullBounds = new THREE.Box3().setFromObject(model);
   const shortNames = { 'hip-abductors': '臀中肌', abs: '腹直肌', 'rotator-cuff': '肩袖', forearms: '前臂', scapular: '中下斜方 · 菱形', adductors: '内收肌' };
   function pickSurface(x, y, camera, rect) {
@@ -211,7 +212,16 @@ export async function createPhaseMap(player, onSelect) {
     panel.style.visibility = '';
     return true;
   }
-  function setHidden(value) { hidden = value; panel.hidden = value; player.dirty = true; }
+  function syncChrome() {
+    // During the route motion use the retained 2D card even while the hub
+    // suspends thumbnail rendering. The fixed WebGL actor keeps its own view.
+    panel.hidden = chromeMotion === null && hidden;
+    panel.inert = hidden || chromeMotion !== null;
+    panel.style.opacity = chromeMotion === null ? '' : chromeMotion.opacity;
+    panel.style.transform = chromeMotion === null ? '' : `translateX(${chromeMotion.x}px)`;
+  }
+  function setHidden(value) { hidden = value; syncChrome(); player.dirty = true; }
+  function setChromeMotion(value) { chromeMotion = value; syncChrome(); }
   function setLocalization() {
     panel.querySelector('header span').textContent = sceneStrings.syncEffort ?? '同步发力';
     panel.setAttribute('aria-label', sceneStrings.mapAccessibility ?? 'Muscles');
@@ -223,7 +233,7 @@ export async function createPhaseMap(player, onSelect) {
     for (const mesh of meshes) mesh.geometry.dispose();
     for (const material of materials) material.dispose();
   }
-  return { render, setHidden, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
+  return { render, setHidden, setChromeMotion, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
     getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
     dispose() { releaseGpu(); view.removeEventListener('click', select); panel.remove(); } };

@@ -264,6 +264,57 @@ class FlareBackPin extends InheritedWidget {
   bool updateShouldNotify(FlareBackPin oldWidget) => oldWidget.hidden != hidden;
 }
 
+enum FlareHomeChromePart { muscles, training, timeline, header }
+
+typedef FlareHomeChromePose = ({Offset offset, double opacity});
+
+/// Paints a home control from the training page's own navigation progress.
+class FlareHomeChrome extends StatelessWidget {
+  const FlareHomeChrome({super.key, required this.part, required this.child});
+
+  final FlareHomeChromePart part;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = context
+        .dependOnInheritedWidgetOfExactType<_HomeChromeStage>()
+        ?.state;
+    if (stage == null) return child;
+    final width = MediaQuery.sizeOf(context).width;
+    return AnimatedBuilder(
+      animation: stage._motion,
+      child: child,
+      builder: (context, child) {
+        final pose = stage._homeChromePose(part, width);
+        return Offstage(
+          offstage: stage._homeChromeParked,
+          child: Transform.translate(
+            offset: pose?.offset ?? Offset.zero,
+            child: IgnorePointer(
+              ignoring: pose != null,
+              child: ExcludeSemantics(
+                excluding: pose != null,
+                child: Opacity(opacity: pose?.opacity ?? 1, child: child),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HomeChromeStage extends InheritedWidget {
+  const _HomeChromeStage({required this.state, required super.child});
+
+  final _FlareStageState state;
+
+  @override
+  bool updateShouldNotify(_HomeChromeStage oldWidget) =>
+      state != oldWidget.state;
+}
+
 class FlareStage extends StatefulWidget {
   const FlareStage({
     super.key,
@@ -271,6 +322,11 @@ class FlareStage extends StatefulWidget {
     required this.depth,
     required this.child,
     this.underlay,
+    this.backdrop,
+    this.homeTrainingHub = false,
+    this.homeTrainingExiting = false,
+    this.holdCommittedSwipe = false,
+    this.onHomeMusclesMotion,
     this.transparentUnderlay = false,
     this.opaqueUnderlayTransition = false,
     this.modal = false,
@@ -296,6 +352,14 @@ class FlareStage extends StatefulWidget {
   final Object pageKey;
   final int depth;
   final Widget? child;
+  final Widget? backdrop;
+
+  /// The training hub shares the home backdrop and may start its slide out
+  /// once the separate 3D handoff has prepared the returning frame.
+  final bool homeTrainingHub;
+  final bool homeTrainingExiting;
+  final bool holdCommittedSwipe;
+  final ValueChanged<FlareHomeChromePose?>? onHomeMusclesMotion;
 
   /// A page that stays mounted while another route covers it.
   final Widget? underlay;
@@ -336,10 +400,128 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   bool _pinned = false;
   bool _swipePinned = false;
   bool _cover = false;
+  bool _enteringHomeTraining = false;
+  bool _returningFromHomeTraining = false;
+  double? _interruptedEntry;
+  double _exitFrom = 0;
+  double _homeWidth = 0;
+  bool _reduceHomeMotion = false;
+  FlareHomeChromePose? _lastMusclesPose;
 
   bool get _showPinnedBack => _pinned || _swipePinned;
 
   bool get animating => _previousKey != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _motion.addListener(_publishMuscleMotion);
+  }
+
+  bool get _homeChromeParked =>
+      widget.homeTrainingHub &&
+      !widget.homeTrainingExiting &&
+      !(widget.cover && _swipe.value > 0) &&
+      !(animating && _enteringHomeTraining);
+
+  double get _homeTrainingPopProgress =>
+      _popFrom +
+      (1 - _popFrom) * FlareMotion.pageExit.transform(_controller.value);
+
+  FlareHomeChromePose? _homeChromePose(FlareHomeChromePart part, double width) {
+    if (_reduceHomeMotion) {
+      return widget.homeTrainingHub ? (offset: Offset.zero, opacity: 0) : null;
+    }
+    if (widget.homeTrainingHub) {
+      if (widget.homeTrainingExiting || widget.cover && _swipe.value > 0) {
+        return _homeChromeReturnPose(part, width, _swipe.value);
+      }
+      final progress = animating && _enteringHomeTraining
+          ? FlareMotion.pageEnter.transform(_controller.value)
+          : 1.0;
+      return _homeChromePoseAt(part, width, progress, returning: false);
+    }
+    if (animating && _returningFromHomeTraining) {
+      return _homeChromeReturnPose(part, width, _homeTrainingPopProgress);
+    }
+    return null;
+  }
+
+  FlareHomeChromePose _homeChromeReturnPose(
+    FlareHomeChromePart part,
+    double width,
+    double progress,
+  ) {
+    final interrupted = _interruptedEntry;
+    if (interrupted == null) {
+      return _homeChromePoseAt(part, width, progress, returning: true);
+    }
+    // A Back press while entering inherits the currently painted pose.
+    final from = _homeChromePoseAt(part, width, interrupted, returning: false);
+    final landed = _exitFrom < 1
+        ? ((progress - _exitFrom) / (1 - _exitFrom)).clamp(0.0, 1.0)
+        : 1.0;
+    return (
+      offset: from.offset * (1 - landed),
+      opacity: from.opacity + (1 - from.opacity) * landed,
+    );
+  }
+
+  FlareHomeChromePose _homeChromePoseAt(
+    FlareHomeChromePart part,
+    double width,
+    double progress, {
+    required bool returning,
+  }) {
+    final delay = switch ((part, returning)) {
+      (FlareHomeChromePart.muscles, true) ||
+      (FlareHomeChromePart.training, false) => .06,
+      (FlareHomeChromePart.training, true) ||
+      (FlareHomeChromePart.timeline, false) => .12,
+      _ => 0.0,
+    };
+    final motion = Interval(delay, 1).transform(progress);
+    final away = returning ? 1 - motion : motion;
+    return (
+      offset: part == FlareHomeChromePart.header
+          ? Offset(0, -8 * away)
+          : Offset(-width * .9 * away, 0),
+      opacity: returning
+          ? Interval(.4, 1).transform(progress)
+          : 1 - Interval(0, .6).transform(progress),
+    );
+  }
+
+  void _publishMuscleMotion() {
+    final notify = widget.onHomeMusclesMotion;
+    if (notify == null || _homeWidth <= 0) return;
+    final pose = _homeChromePose(FlareHomeChromePart.muscles, _homeWidth);
+    if (pose == _lastMusclesPose) return;
+    _lastMusclesPose = pose;
+    notify(pose);
+  }
+
+  void _slideHomeTrainingHubOut() {
+    if (animating && _enteringHomeTraining) {
+      _interruptedEntry = FlareMotion.pageEnter.transform(_controller.value);
+      _exitFrom = 1 - _interruptedEntry!;
+      _swipe.value = _exitFrom;
+    }
+    final duration = FlareMotion.of(context, FlareMotion.pop);
+    if (duration == Duration.zero) {
+      _swipe.value = 1;
+    } else {
+      // Continue directly from a committed edge swipe instead of springing
+      // back while the actor prepares its first returning frame.
+      unawaited(
+        _swipe.animateTo(
+          1,
+          duration: duration * (1 - _swipe.value),
+          curve: FlareMotion.pageEnter,
+        ),
+      );
+    }
+  }
 
   void _status(AnimationStatus status) {
     if (status != AnimationStatus.completed || !animating) return;
@@ -354,7 +536,12 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(FlareStage old) {
     super.didUpdateWidget(old);
-    if (old.pageKey == widget.pageKey) return;
+    if (old.pageKey == widget.pageKey) {
+      if (widget.homeTrainingExiting && !old.homeTrainingExiting) {
+        _slideHomeTrainingHubOut();
+      }
+      return;
+    }
     final kind = widget.modal && !old.modal
         ? _Kind.modalIn
         : old.modal && !widget.modal
@@ -364,6 +551,11 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         : widget.depth < old.depth
         ? _Kind.pop
         : _Kind.fade;
+    _enteringHomeTraining =
+        kind == _Kind.push && old.depth == 0 && widget.homeTrainingHub;
+    _returningFromHomeTraining =
+        kind == _Kind.pop && widget.depth == 0 && old.homeTrainingHub;
+    if (!_returningFromHomeTraining) _interruptedEntry = null;
     if (kind == _Kind.push) {
       _parents.removeWhere((parent) => parent.depth >= old.depth);
       _parents.add((key: old.pageKey, depth: old.depth, child: old.child));
@@ -404,7 +596,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         widget.backChip &&
         widget.backChipBuilder != null;
     final outgoingHub =
-        old.child == null && widget.underlay == null && !old.cover;
+        old.child == null &&
+        widget.underlay == null &&
+        (!old.cover || _returningFromHomeTraining && _popFrom < 1);
     _previous = old.child ?? (outgoingHub ? old.underlay : null);
     _previousTransparent =
         outgoingHub && old.transparentUnderlay && !old.opaqueUnderlayTransition;
@@ -420,7 +614,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   }
 
   void _dragStart(DragStartDetails _) {
-    if (animating) return;
+    if (animating || widget.holdCommittedSwipe) return;
     _swipe.stop();
     setState(() {
       _swiping = true;
@@ -448,7 +642,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       widget.onSwipeBack!();
       // If the shell refused to go back, settle the page home again.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !animating && (_swipe.value > 0 || _swipePinned)) {
+        if (mounted &&
+            !animating &&
+            !widget.holdCommittedSwipe &&
+            (_swipe.value > 0 || _swipePinned)) {
           _settleSwipe();
         }
       });
@@ -480,6 +677,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _motion.removeListener(_publishMuscleMotion);
     _controller.dispose();
     _swipe.dispose();
     super.dispose();
@@ -495,6 +693,13 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final underlay = widget.underlay;
+    _homeWidth = MediaQuery.sizeOf(context).width;
+    _reduceHomeMotion = FlareMotion.reduced(context);
+    if (widget.onHomeMusclesMotion != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _publishMuscleMotion();
+      });
+    }
     final current = _layer(
       key: widget.pageKey,
       incoming: true,
@@ -534,6 +739,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     return Stack(
       fit: StackFit.expand,
       children: [
+        if (widget.backdrop case final backdrop?)
+          _HomeChromeStage(state: this, child: backdrop),
         // While a swipe peels the page away, a dimmed backdrop sits beneath.
         AnimatedBuilder(
           key: const ValueKey('_swipe-underlay'),
@@ -705,7 +912,7 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                 }
             }
             if (!FlareMotion.reduced(context) &&
-                !animating &&
+                (!animating || widget.homeTrainingExiting) &&
                 incoming &&
                 _swipe.value > 0) {
               dx = _swipe.value * width;

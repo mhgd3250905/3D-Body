@@ -59,6 +59,34 @@ class _TestStore implements MembershipStore {
       MembershipSnapshot('tester', DateTime.now().add(const Duration(days: 1)));
 }
 
+void _withBottomSystemInset(WidgetTester tester) {
+  const inset = FakeViewPadding(bottom: 20);
+  tester.view.padding = inset;
+  tester.view.viewPadding = inset;
+  addTearDown(tester.view.resetPadding);
+  addTearDown(tester.view.resetViewPadding);
+}
+
+Future<void> _expectOfferFollowsBack(WidgetTester tester, Finder page) async {
+  final card = find.byKey(const ValueKey('premium-preview-card'));
+  final resting = tester.getRect(card);
+  expect(resting.bottom, 844);
+  await tester.tap(
+    find.descendant(of: page, matching: find.byType(FlareBackChip)),
+  );
+  await tester.pump();
+  final departing = tester.getRect(card);
+  expect(departing.top, resting.top);
+  expect(departing.bottom, resting.bottom);
+  await tester.pump(const Duration(milliseconds: 100));
+  final moving = tester.getRect(card);
+  expect(moving.left, greaterThan(departing.left));
+  expect(moving.top, resting.top);
+  expect(moving.bottom, resting.bottom);
+  await tester.pumpAndSettle();
+  expect(card, findsNothing);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final previousShared = FlareShared.current;
@@ -129,6 +157,7 @@ void main() {
     final scene = SceneController(commandSink: (_) {});
     addTearDown(store.dispose);
     addTearDown(scene.dispose);
+    _withBottomSystemInset(tester);
     final more = find.byKey(const ValueKey('home-menu-chip'));
     final paywall = find.byType(FlareMembershipPage);
     final records = find.byType(ProgressPage, skipOffstage: false);
@@ -160,6 +189,8 @@ void main() {
       scene.play();
       await tester.pumpAndSettle();
 
+      await openRecords();
+      await _expectOfferFollowsBack(tester, records);
       await openRecords();
       final subscribe = find.byKey(const ValueKey('premium-preview-subscribe'));
       expect(paywall, findsNothing);
@@ -215,6 +246,7 @@ void main() {
     'plan editors preview read-only while copying still opens membership',
     (tester) async {
       await helpers.phoneSize(tester);
+      _withBottomSystemInset(tester);
       final semantics = tester.ensureSemantics();
       final purchases = _TestStore();
       final membership = FlareMembership(purchases);
@@ -278,8 +310,7 @@ void main() {
         expect(tester.widget<FlarePremiumPreview>(preview).locked, isTrue);
         expect(tester.widget<RoutineEditorPage>(editor).readOnly, isTrue);
         expect(tester.widget<PrimaryAction>(save).onPressed, isNull);
-        await tester.binding.handlePopRoute();
-        await tester.pumpAndSettle();
+        await _expectOfferFollowsBack(tester, editor);
 
         await helpers.tapVisible(tester, routineRow);
         await tester.pumpAndSettle();

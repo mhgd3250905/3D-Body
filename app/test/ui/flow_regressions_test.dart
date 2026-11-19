@@ -125,20 +125,17 @@ class TrainingRouteProbe extends StatelessWidget {
 
 /// The App loads SDK voice/media metadata before pushing the training route.
 /// Pumping only the fake clock cannot complete rootBundle's real asset IO.
-Future<void> waitForTrainingRoute(WidgetTester tester) async {
-  for (
-    var attempt = 0;
-    attempt < 100 && find.byType(TrainingRouteProbe).evaluate().isEmpty;
-    attempt++
-  ) {
+Future<void> waitForTrainingRoute(WidgetTester tester, {Finder? route}) async {
+  final target = route ?? find.byType(TrainingRouteProbe);
+  for (var attempt = 0; attempt < 100 && target.evaluate().isEmpty; attempt++) {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 10)),
     );
     await tester.pump(const Duration(milliseconds: 100));
   }
-  await tester.pumpAndSettle();
+  if (route == null) await tester.pumpAndSettle();
   expect(
-    find.byType(TrainingRouteProbe),
+    target,
     findsOneWidget,
     reason: 'Training route must open after its bounded asset IO wait',
   );

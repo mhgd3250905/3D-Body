@@ -150,6 +150,49 @@ void main() {
     expect(find.byKey(_card), findsOneWidget);
   });
 
+  testWidgets(
+    'workout panel keeps its offset and safe inset during route pop',
+    (tester) async {
+      await phoneSize(tester);
+      tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+      addTearDown(tester.view.resetViewPadding);
+      await tester.pumpWidget(testApp(const Scaffold()));
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      final route = PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 100),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
+        pageBuilder: (_, _, _) => FlarePremiumPreview(
+          feature: FlarePremiumFeature.training,
+          locked: true,
+          onSubscribe: () {},
+          child: const SizedBox.expand(),
+        ),
+      );
+      unawaited(navigator.push(route));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 101));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final card = find.byKey(_card);
+      final bounds = tester.getRect(card);
+      final offer = find.byType(FlarePremiumOfferCard);
+      final glow = tester.widget<FlarePremiumOfferCard>(offer).glow.value;
+      expect(glow, allOf(greaterThan(0), lessThan(1)));
+
+      navigator.pop();
+      tester.view.viewPadding = const FakeViewPadding(bottom: 0);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(route.animation!.status, AnimationStatus.reverse);
+      expect(tester.getRect(card), bounds);
+      expect(tester.widget<FlarePremiumOfferCard>(offer).safeBottom, 24);
+      expect(tester.widget<FlarePremiumOfferCard>(offer).glow.value, glow);
+      await tester.pumpAndSettle();
+      expect(card, findsNothing);
+    },
+  );
+
   testWidgets('premium preview blocks only the covered pointer and semantics', (
     tester,
   ) async {

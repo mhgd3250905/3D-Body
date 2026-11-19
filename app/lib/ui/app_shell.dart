@@ -1113,6 +1113,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         widget.membership != null &&
         (route.$1 == 'tab$_recordsTab' || route.$1.startsWith('edit:'));
     final hasHub = _tab == _trainingHubTab;
+    final padding = MediaQuery.paddingOf(context).copyWith(top: 0);
+    final sidePadding = padding.copyWith(bottom: 0);
+    final homeOwnsBottomInset = edgeToEdgePlan || hasHub || edgeToEdgePreview;
+    final page = route.$4;
+    // FlareStage keeps the old page mounted while it exits. Give each
+    // page its own insets so the destination never resizes that old layer.
+    final stagePage = page == null || edgeToEdgePreview
+        ? page
+        : Padding(
+            padding: edgeToEdgePlan || hasHub ? sidePadding : padding,
+            child: page,
+          );
     final hubInFront = route.$1 == 'training-hub' && !_trainingOpen;
     if (route.$1 != _stageKey) {
       // Keep the live stage on screen while a page slides over or off it.
@@ -1137,151 +1149,150 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               ? Colors.transparent
               : FlareColors.background,
           // Page navigation and the live 3D surface each own their top inset.
-          body: SafeArea(
-            top: false,
-            left: !edgeToEdgePreview,
-            right: !edgeToEdgePreview,
-            bottom: !edgeToEdgePlan && !hasHub && !edgeToEdgePreview,
-            child: Column(
-              children: [
-                if (store.storageError != null)
-                  SafeArea(
-                    bottom: false,
-                    child: _StorageNotice(
-                      message: store.corruptState
-                          ? s.storageReadFailed
-                          : s.saveFailed,
-                      action: store.corruptState ? s.settings : s.retry,
-                      onAction: store.corruptState
-                          ? () {
-                              setState(() {
-                                _settings = true;
-                                _about = false;
-                              });
-                              _syncSceneVisibility();
-                            }
-                          : () => _result(store.retrySave()),
-                    ),
+          body: Column(
+            children: [
+              if (store.storageError != null)
+                SafeArea(
+                  bottom: false,
+                  child: _StorageNotice(
+                    message: store.corruptState
+                        ? s.storageReadFailed
+                        : s.saveFailed,
+                    action: store.corruptState ? s.settings : s.retry,
+                    onAction: store.corruptState
+                        ? () {
+                            setState(() {
+                              _settings = true;
+                              _about = false;
+                            });
+                            _syncSceneVisibility();
+                          }
+                        : () => _result(store.retrySave()),
                   ),
-                Expanded(
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: store.storageError != null,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Offstage(
-                          offstage:
-                              _hubSliding ||
-                              (!_watchVisible &&
-                                  !_homeCoveredByPlan &&
-                                  !_holdWatch &&
-                                  !_preparingScene &&
-                                  !_trainingActorFlight &&
-                                  !hasHub),
-                          child: SafeArea(
-                            top: false,
-                            left: false,
-                            right: false,
-                            // A full-bleed plan uses the safe area for its own
-                            // controls. Keep the covered home viewport steady.
-                            bottom:
-                                edgeToEdgePlan || hasHub || edgeToEdgePreview,
-                            child: IgnorePointer(
-                              ignoring: _hideHomeChrome || _homeCoveredByPlan,
-                              child: ExcludeSemantics(
-                                excluding:
-                                    _hideHomeChrome || _homeCoveredByPlan,
-                                child: Builder(builder: _watchPage),
-                              ),
+                ),
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: store.storageError != null,
+                  child: FlareStage(
+                    backdrop: Offstage(
+                      offstage:
+                          _hubSliding ||
+                          (!_watchVisible &&
+                              !_homeCoveredByPlan &&
+                              !_holdWatch &&
+                              !_preparingScene &&
+                              !_trainingActorFlight &&
+                              !hasHub),
+                      child: Padding(
+                        padding: homeOwnsBottomInset ? sidePadding : padding,
+                        child: SafeArea(
+                          top: false,
+                          left: false,
+                          right: false,
+                          bottom: homeOwnsBottomInset,
+                          child: IgnorePointer(
+                            ignoring: _hideHomeChrome || _homeCoveredByPlan,
+                            child: ExcludeSemantics(
+                              excluding: _hideHomeChrome || _homeCoveredByPlan,
+                              child: Builder(builder: _watchPage),
                             ),
                           ),
                         ),
-                        FlareStage(
-                          pageKey: route.$1,
-                          depth: route.$2,
-                          modal: route.$3,
-                          cover: hubInFront && _trainingHubOrigin == 0,
-                          anchorIncomingUnderlayHitTest:
-                              hubInFront &&
-                              _trainingActorFlight &&
-                              !_returningToWatch,
-                          transparentUnderlay: hasHub,
-                          opaqueUnderlayTransition: _hubFromAnotherTab,
-                          underlay: hasHub
-                              ? ExcludeSemantics(
-                                  excluding: !hubInFront || _returningToWatch,
-                                  child: IgnorePointer(
-                                    ignoring: !hubInFront || _returningToWatch,
-                                    child: KeyedSubtree(
-                                      key: const ValueKey('training-hub'),
-                                      child: FlareTrainingHubPage(
-                                        key: _trainingHubState,
-                                        catalog: catalog,
-                                        sceneTier: store.settings.tier,
-                                        actorBody: flareTeachingScene,
-                                        quality: _quality,
-                                        enableScene: widget.enableScene,
-                                        initialTime: _trainingEntryTime,
-                                        initialMuscles:
-                                            _trainingHubInitialMuscles,
-                                        mountScene: _hubStageActive,
-                                        sharedController: _scene,
-                                        sharedViewport: _trainingViewport,
-                                        actorHandoff: _showHomeActor,
-                                        liveEntry: _trainingHubLiveEntry,
-                                        showLoadingFrame: !_hubFromAnotherTab,
-                                        interactionLocked:
-                                            _trainingActorFlight ||
-                                            _hubRouteStage ==
-                                                _HubRouteStage.entering,
-                                        leaving: _returnFlightExposed,
-                                        sceneBoundsKey: _hubSceneBounds,
-                                        sceneClipBoundsKey: _hubSceneClipBounds,
-                                        onSceneConfigured: _hubFromAnotherTab
-                                            ? _onHubSceneConfigured
-                                            : null,
-                                        onScenePresented:
-                                            _onTrainingHubPresented,
-                                        onAngleYawChanged: (yaw) {
-                                          if (_trainingActorFlight &&
-                                              !_returningToWatch &&
-                                              !_trainingFlightLanded) {
-                                            _scene.rotateTrainingFlight(yaw);
-                                          }
-                                        },
-                                        visible:
-                                            hubInFront &&
-                                            !_returnFlightExposed &&
-                                            _appVisible &&
-                                            _appActive,
-                                        onBack: _back,
-                                        onAngle: _openAnglePlan,
-                                        onMuscle: _openMusclePlan,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : null,
-                          onSettled: _onStageSettled,
-                          onSwipeBack:
-                              canBack &&
-                                  !_trainingOpen &&
-                                  (route.$4 != null || hubInFront)
-                              ? _back
-                              : null,
-                          backChip: route.$4 != null || hubInFront,
-                          pinSwipeBack: route.$2 > 1,
-                          backChipBuilder: (_) =>
-                              const FlareBackChip(onPressed: _noop),
-                          child: route.$4,
-                        ),
-                      ],
+                      ),
                     ),
+                    homeTrainingHub: hasHub,
+                    homeTrainingExiting: _returnFlightExposed,
+                    holdCommittedSwipe: _returningToWatch,
+                    onHomeMusclesMotion: widget.enableScene
+                        ? (pose) => _scene.command({
+                            'type': 'home_chrome',
+                            'x': pose?.offset.dx,
+                            'opacity': pose?.opacity,
+                          })
+                        : null,
+                    pageKey: route.$1,
+                    depth: route.$2,
+                    modal: route.$3,
+                    cover: hubInFront && _trainingHubOrigin == 0,
+                    anchorIncomingUnderlayHitTest:
+                        hubInFront &&
+                        _trainingActorFlight &&
+                        !_returningToWatch,
+                    transparentUnderlay: hasHub,
+                    opaqueUnderlayTransition: _hubFromAnotherTab,
+                    underlay: hasHub
+                        ? Padding(
+                            padding: sidePadding,
+                            child: ExcludeSemantics(
+                              excluding: !hubInFront || _returningToWatch,
+                              child: IgnorePointer(
+                                ignoring: !hubInFront || _returningToWatch,
+                                child: KeyedSubtree(
+                                  key: const ValueKey('training-hub'),
+                                  child: FlareTrainingHubPage(
+                                    key: _trainingHubState,
+                                    catalog: catalog,
+                                    sceneTier: store.settings.tier,
+                                    actorBody: flareTeachingScene,
+                                    quality: _quality,
+                                    enableScene: widget.enableScene,
+                                    initialTime: _trainingEntryTime,
+                                    initialMuscles: _trainingHubInitialMuscles,
+                                    mountScene: _hubStageActive,
+                                    sharedController: _scene,
+                                    sharedViewport: _trainingViewport,
+                                    actorHandoff: _showHomeActor,
+                                    liveEntry: _trainingHubLiveEntry,
+                                    showLoadingFrame: !_hubFromAnotherTab,
+                                    interactionLocked:
+                                        _trainingActorFlight ||
+                                        _hubRouteStage ==
+                                            _HubRouteStage.entering,
+                                    leaving: _returnFlightExposed,
+                                    sceneBoundsKey: _hubSceneBounds,
+                                    sceneClipBoundsKey: _hubSceneClipBounds,
+                                    onSceneConfigured: _hubFromAnotherTab
+                                        ? _onHubSceneConfigured
+                                        : null,
+                                    onScenePresented: _onTrainingHubPresented,
+                                    onAngleYawChanged: (yaw) {
+                                      if (_trainingActorFlight &&
+                                          !_returningToWatch &&
+                                          !_trainingFlightLanded) {
+                                        _scene.rotateTrainingFlight(yaw);
+                                      }
+                                    },
+                                    visible:
+                                        hubInFront &&
+                                        !_returnFlightExposed &&
+                                        _appVisible &&
+                                        _appActive,
+                                    onBack: _back,
+                                    onAngle: _openAnglePlan,
+                                    onMuscle: _openMusclePlan,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : null,
+                    onSettled: _onStageSettled,
+                    onSwipeBack:
+                        canBack &&
+                            !_trainingOpen &&
+                            (route.$4 != null || hubInFront)
+                        ? _back
+                        : null,
+                    backChip: route.$4 != null || hubInFront,
+                    pinSwipeBack: route.$2 > 1,
+                    backChipBuilder: (_) =>
+                        const FlareBackChip(onPressed: _noop),
+                    child: stagePage,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -1566,8 +1577,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           top: 0,
           start: 0,
           end: 0,
-          child: Offstage(
-            offstage: _hideHomeChrome,
+          child: FlareHomeChrome(
+            part: FlareHomeChromePart.header,
             child: FlareNavBar(
               leading: FlareNavChip(
                 key: const ValueKey('home-menu-chip'),
@@ -1709,37 +1720,40 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               onRetry: _restartScene,
                             ),
                     ),
-                  Offstage(
-                    offstage: _hideHomeChrome,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              Positioned(
-                                right: 20,
-                                bottom: box.maxWidth < 380 ? 228 : 18,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: box.maxWidth < 380
-                                        ? box.maxWidth * .46
-                                        : box.maxWidth - 218,
-                                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Positioned(
+                              right: 20,
+                              bottom: box.maxWidth < 380 ? 228 : 18,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: box.maxWidth < 380
+                                      ? box.maxWidth * .46
+                                      : box.maxWidth - 218,
+                                ),
+                                child: FlareHomeChrome(
+                                  part: FlareHomeChromePart.training,
                                   child: _homeTrainingButton(context),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        FadeSlideIn(
-                          key: const ValueKey('transport'),
-                          offset: 10,
+                      ),
+                      FadeSlideIn(
+                        key: const ValueKey('transport'),
+                        offset: 10,
+                        child: FlareHomeChrome(
+                          part: FlareHomeChromePart.timeline,
                           child: _transport(context, phase),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               );

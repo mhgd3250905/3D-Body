@@ -221,6 +221,13 @@ function command(value) {
       }
       break;
     }
+    case 'home_chrome':
+      if (input.x === null && input.opacity === null) {
+        phaseMap?.setChromeMotion(null);
+      } else if (Number.isFinite(input.x) && Number.isFinite(input.opacity)) {
+        phaseMap?.setChromeMotion({ x: input.x, opacity: Math.max(0, Math.min(1, input.opacity)) });
+      }
+      return;
     case 'hub_viewport':
       player.trainingHub?.setViewport(input);
       return;

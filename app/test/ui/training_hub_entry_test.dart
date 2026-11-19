@@ -4,6 +4,8 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/flare_training_hub_page.dart';
+import 'package:flare/ui/motion.dart';
+import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/page_kit.dart' show FlareBackChip;
 import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,125 @@ void main() {
   const actorStage = ValueKey('hub-stage-gesture');
   const fallback = ValueKey('hub-stage-loading-frame');
   final catalog = loadCatalogFixture();
+
+  testWidgets('home controls share the hub slide and follow an edge swipe', (
+    tester,
+  ) async {
+    await phoneSize(tester);
+    final store = LearningStore(
+      catalog: catalog,
+      storage: MemoryStateStorage(),
+    );
+    await store.initialize();
+    await store.acknowledgeSafety();
+    addTearDown(store.dispose);
+    await tester.pumpWidget(
+      testApp(FlareShell(catalog: catalog, store: store, enableScene: false)),
+    );
+    await tester.pumpAndSettle();
+
+    final header = find.byKey(const ValueKey('home-menu-chip'));
+    final button = find.byKey(const ValueKey('home-go-to-training'));
+    final timeline = find.descendant(
+      of: find.byKey(const ValueKey('transport')),
+      matching: find.byType(MotionTimeline),
+    );
+    final hub = find.byType(FlareTrainingHubPage);
+    final headerHome = tester.getTopLeft(header);
+    final buttonHome = tester.getTopLeft(button);
+    final timelineHome = tester.getTopLeft(timeline);
+    final buttonElement = tester.element(button);
+
+    double alpha(FlareHomeChromePart part) => tester
+        .widget<Opacity>(
+          find
+              .descendant(
+                of: find.byWidgetPredicate(
+                  (widget) => widget is FlareHomeChrome && widget.part == part,
+                ),
+                matching: find.byType(Opacity),
+              )
+              .first,
+        )
+        .opacity;
+
+    await tester.tap(button);
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 40));
+    final entered = 1 - tester.getTopLeft(hub).dx / 390;
+    expect(entered, inExclusiveRange(.12, .6));
+    expect(tester.element(button), same(buttonElement));
+    expect(tester.getTopLeft(header).dx, headerHome.dx);
+    expect(
+      tester.getTopLeft(header).dy,
+      closeTo(headerHome.dy - 8 * entered, .01),
+    );
+    expect(
+      tester.getTopLeft(button).dx,
+      closeTo(
+        buttonHome.dx - 390 * .9 * const Interval(.06, 1).transform(entered),
+        .01,
+      ),
+    );
+    expect(
+      tester.getTopLeft(timeline).dx,
+      closeTo(
+        timelineHome.dx - 390 * .9 * const Interval(.12, 1).transform(entered),
+        .01,
+      ),
+    );
+    expect(
+      alpha(FlareHomeChromePart.header),
+      closeTo(1 - const Interval(0, .6).transform(entered), .001),
+    );
+    await tester.pumpAndSettle();
+    expect(button, findsNothing);
+    expect(
+      tester.element(
+        find.byKey(const ValueKey('home-go-to-training'), skipOffstage: false),
+      ),
+      same(buttonElement),
+    );
+
+    final swipe = await tester.startGesture(const Offset(3, 310));
+    await swipe.moveBy(const Offset(24, 0));
+    await swipe.moveBy(const Offset(260, 0));
+    await tester.pump();
+    final returned = tester.getTopLeft(hub).dx / 390;
+    expect(returned, inExclusiveRange(.55, .95));
+    expect(tester.element(button), same(buttonElement));
+    expect(
+      tester.getTopLeft(header).dy,
+      closeTo(headerHome.dy - 8 * (1 - returned), .01),
+    );
+    expect(
+      tester.getTopLeft(timeline).dx,
+      closeTo(timelineHome.dx - 390 * .9 * (1 - returned), .01),
+    );
+    expect(
+      tester.getTopLeft(button).dx,
+      closeTo(
+        buttonHome.dx -
+            390 * .9 * (1 - const Interval(.12, 1).transform(returned)),
+        .01,
+      ),
+    );
+    expect(
+      alpha(FlareHomeChromePart.timeline),
+      closeTo(const Interval(.4, 1).transform(returned), .001),
+    );
+    final dragPosition = tester.getTopLeft(button);
+    await swipe.up();
+    await tester.pump();
+    expect(tester.getTopLeft(button), dragPosition);
+    await tester.pumpAndSettle();
+    expect(hub, findsNothing);
+    expect(tester.element(button), same(buttonElement));
+    expect(tester.getTopLeft(button), buttonHome);
+    expect(tester.getTopLeft(header), headerHome);
+    expect(tester.getTopLeft(timeline), timelineHome);
+  });
 
   testWidgets('the hub retains the live angle while entering and returning', (
     tester,
@@ -83,6 +204,16 @@ void main() {
     // covers the destination's steady hit region.
     await tester.dragFrom(const Offset(195, 230), const Offset(92, 0));
     await tester.pump(const Duration(milliseconds: 32));
+    final entryProgress =
+        1 - tester.getTopLeft(find.byType(FlareTrainingHubPage)).dx / 390;
+    final cardPose = commands.lastWhere(
+      (command) => command['type'] == 'home_chrome',
+    );
+    expect(cardPose['x'], closeTo(-390 * .9 * entryProgress, .01));
+    expect(
+      cardPose['opacity'],
+      closeTo(1 - const Interval(0, .6).transform(entryProgress), .001),
+    );
     final hub = tester.state<FlareTrainingHubPageState>(
       find.byType(FlareTrainingHubPage),
     );
@@ -229,6 +360,26 @@ void main() {
           .leaving,
       isTrue,
     );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 120));
+    final returnProgress =
+        tester.getTopLeft(find.byType(FlareTrainingHubPage)).dx / 390;
+    final returningCardPose = commands.lastWhere(
+      (command) => command['type'] == 'home_chrome',
+    );
+    expect(returnProgress, inExclusiveRange(.4, 1));
+    expect(
+      returningCardPose['x'],
+      closeTo(
+        -390 * .9 * (1 - const Interval(.06, 1).transform(returnProgress)),
+        .01,
+      ),
+    );
+    expect(
+      returningCardPose['opacity'],
+      closeTo(const Interval(.4, 1).transform(returnProgress), .001),
+    );
+    expectFixedCanvas();
 
     scene.receiveEvent({
       'source': 'flare-scene',
