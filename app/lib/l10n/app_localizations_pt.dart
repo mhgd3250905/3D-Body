@@ -9,10 +9,37 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'Recurso Premium';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'Assinar Premium';
+  String get premiumPreviewSubscribe => 'Desbloquear Flare Pro';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Dias seguidos';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Conquistas';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Duração do treino';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Escolha de exercícios';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Séries flexíveis';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Planos ilimitados';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Timer por voz';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Demos de exercícios';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Registro automático';
 
   @override
   String get premiumPreviewRecordsTitle => 'Registre cada treino com Premium';

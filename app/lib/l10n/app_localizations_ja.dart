@@ -9,10 +9,37 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'プレミアム機能';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'プレミアムに登録';
+  String get premiumPreviewSubscribe => 'Flare Proを解放';
+
+  @override
+  String get premiumPreviewBenefitStreak => '連続日数';
+
+  @override
+  String get premiumPreviewBenefitMilestones => '達成記録';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'トレーニング時間';
+
+  @override
+  String get premiumPreviewBenefitActions => '種目を選択';
+
+  @override
+  String get premiumPreviewBenefitSets => 'セット数を調整';
+
+  @override
+  String get premiumPreviewBenefitSaves => '保存数無制限';
+
+  @override
+  String get premiumPreviewBenefitVoice => '音声タイマー';
+
+  @override
+  String get premiumPreviewBenefitDemos => '動作デモ';
+
+  @override
+  String get premiumPreviewBenefitLogging => '自動記録';
 
   @override
   String get premiumPreviewRecordsTitle => 'プレミアムで毎回のトレーニングを記録';

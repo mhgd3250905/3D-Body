@@ -9,10 +9,37 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'प्रीमियम सुविधा';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'प्रीमियम लें';
+  String get premiumPreviewSubscribe => 'Flare Pro अनलॉक करें';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'लगातार दिन';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'उपलब्धियाँ';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'कसरत का समय';
+
+  @override
+  String get premiumPreviewBenefitActions => 'व्यायाम चुनें';
+
+  @override
+  String get premiumPreviewBenefitSets => 'मनचाहे सेट';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'असीमित योजनाएँ';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'वॉइस टाइमर';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'व्यायाम प्रदर्शन';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'अपने आप रिकॉर्ड';
 
   @override
   String get premiumPreviewRecordsTitle =>

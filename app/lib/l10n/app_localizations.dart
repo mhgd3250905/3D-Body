@@ -124,14 +124,68 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPreviewBadge.
   ///
   /// In zh, this message translates to:
-  /// **'会员功能'**
+  /// **'FLARE 会员'**
   String get premiumPreviewBadge;
 
   /// No description provided for @premiumPreviewSubscribe.
   ///
   /// In zh, this message translates to:
-  /// **'开通会员'**
+  /// **'开通会员 · 解锁全部'**
   String get premiumPreviewSubscribe;
+
+  /// No description provided for @premiumPreviewBenefitStreak.
+  ///
+  /// In zh, this message translates to:
+  /// **'连续天数'**
+  String get premiumPreviewBenefitStreak;
+
+  /// No description provided for @premiumPreviewBenefitMilestones.
+  ///
+  /// In zh, this message translates to:
+  /// **'里程碑'**
+  String get premiumPreviewBenefitMilestones;
+
+  /// No description provided for @premiumPreviewBenefitDuration.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练时长'**
+  String get premiumPreviewBenefitDuration;
+
+  /// No description provided for @premiumPreviewBenefitActions.
+  ///
+  /// In zh, this message translates to:
+  /// **'自选动作'**
+  String get premiumPreviewBenefitActions;
+
+  /// No description provided for @premiumPreviewBenefitSets.
+  ///
+  /// In zh, this message translates to:
+  /// **'自由组数'**
+  String get premiumPreviewBenefitSets;
+
+  /// No description provided for @premiumPreviewBenefitSaves.
+  ///
+  /// In zh, this message translates to:
+  /// **'无限保存'**
+  String get premiumPreviewBenefitSaves;
+
+  /// No description provided for @premiumPreviewBenefitVoice.
+  ///
+  /// In zh, this message translates to:
+  /// **'语音计时'**
+  String get premiumPreviewBenefitVoice;
+
+  /// No description provided for @premiumPreviewBenefitDemos.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作示范'**
+  String get premiumPreviewBenefitDemos;
+
+  /// No description provided for @premiumPreviewBenefitLogging.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动记录'**
+  String get premiumPreviewBenefitLogging;
 
   /// No description provided for @premiumPreviewRecordsTitle.
   ///

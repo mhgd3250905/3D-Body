@@ -9,10 +9,37 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => '会员功能';
+  String get premiumPreviewBadge => 'FLARE 会员';
 
   @override
-  String get premiumPreviewSubscribe => '开通会员';
+  String get premiumPreviewSubscribe => '开通会员 · 解锁全部';
+
+  @override
+  String get premiumPreviewBenefitStreak => '连续天数';
+
+  @override
+  String get premiumPreviewBenefitMilestones => '里程碑';
+
+  @override
+  String get premiumPreviewBenefitDuration => '训练时长';
+
+  @override
+  String get premiumPreviewBenefitActions => '自选动作';
+
+  @override
+  String get premiumPreviewBenefitSets => '自由组数';
+
+  @override
+  String get premiumPreviewBenefitSaves => '无限保存';
+
+  @override
+  String get premiumPreviewBenefitVoice => '语音计时';
+
+  @override
+  String get premiumPreviewBenefitDemos => '动作示范';
+
+  @override
+  String get premiumPreviewBenefitLogging => '自动记录';
 
   @override
   String get premiumPreviewRecordsTitle => '开通会员，记录每一次训练';
@@ -1487,10 +1514,37 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
 
   @override
-  String get premiumPreviewBadge => '會員功能';
+  String get premiumPreviewBadge => 'FLARE 會員';
 
   @override
-  String get premiumPreviewSubscribe => '開通會員';
+  String get premiumPreviewSubscribe => '開通會員 · 解鎖全部';
+
+  @override
+  String get premiumPreviewBenefitStreak => '連續天數';
+
+  @override
+  String get premiumPreviewBenefitMilestones => '里程碑';
+
+  @override
+  String get premiumPreviewBenefitDuration => '訓練時長';
+
+  @override
+  String get premiumPreviewBenefitActions => '自選動作';
+
+  @override
+  String get premiumPreviewBenefitSets => '自由組數';
+
+  @override
+  String get premiumPreviewBenefitSaves => '無限儲存';
+
+  @override
+  String get premiumPreviewBenefitVoice => '語音計時';
+
+  @override
+  String get premiumPreviewBenefitDemos => '動作示範';
+
+  @override
+  String get premiumPreviewBenefitLogging => '自動記錄';
 
   @override
   String get premiumPreviewRecordsTitle => '開通會員，記錄每一次訓練';

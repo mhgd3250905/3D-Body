@@ -9,10 +9,37 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'Функция Premium';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'Подключить Premium';
+  String get premiumPreviewSubscribe => 'Открыть Flare Pro';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Дни подряд';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Достижения';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Время тренировки';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Выбор упражнений';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Настройка подходов';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Планы без ограничений';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Голосовой таймер';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Показ упражнений';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Автозапись';
 
   @override
   String get premiumPreviewRecordsTitle =>

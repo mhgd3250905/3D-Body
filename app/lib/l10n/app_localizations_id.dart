@@ -9,10 +9,37 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'Fitur Premium';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'Aktifkan Premium';
+  String get premiumPreviewSubscribe => 'Buka Flare Pro';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Hari berturut-turut';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Pencapaian';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Durasi latihan';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Pilih gerakan';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Set fleksibel';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Simpan tanpa batas';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Timer suara';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Demo gerakan';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Catatan otomatis';
 
   @override
   String get premiumPreviewRecordsTitle =>

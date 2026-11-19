@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'components.dart';
+import 'flare_premium_offer_card.dart';
 import 'motion.dart';
 import 'theme.dart';
 
@@ -31,11 +33,34 @@ class FlarePremiumPreview extends StatefulWidget {
 }
 
 class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
-    with SingleTickerProviderStateMixin {
-  late final _reveal = AnimationController(vsync: this);
+    with TickerProviderStateMixin {
+  static const _delay = Duration(milliseconds: 120);
+  static const _cardDuration = Duration(milliseconds: 320);
+  static const _glowDuration = Duration(milliseconds: 400);
+  static const _veilDuration = Duration(milliseconds: 240);
+  static const _exitDuration = Duration(milliseconds: 220);
+  static const _sheenDelay = Duration(milliseconds: 600);
+  static final _veilProgress = Interval(
+    0,
+    _veilDuration.inMilliseconds / _glowDuration.inMilliseconds,
+    curve: Curves.easeOutCubic,
+  );
+  static final _cardProgress = Interval(
+    0,
+    _cardDuration.inMilliseconds / _glowDuration.inMilliseconds,
+    curve: Curves.easeOutCubic,
+  );
+
+  late final _entrance = AnimationController(
+    vsync: this,
+    duration: _glowDuration,
+  );
+  late final _exit = AnimationController(vsync: this, duration: _exitDuration);
+  late final _motion = Listenable.merge([_entrance, _exit]);
   Timer? _entranceDelay;
+  Timer? _sheenTimer;
   bool? _reducedMotion;
-  double _exitOffset = 0;
+  bool _sheenReady = false;
   double _edgeDistance = 0;
 
   @override
@@ -55,27 +80,31 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
 
   void _updateReveal() {
     _entranceDelay?.cancel();
-    _reveal.stop();
+    _sheenTimer?.cancel();
+    _sheenReady = false;
+    _entrance.stop();
+    _exit.stop();
     if (_reducedMotion == true) {
-      _reveal.value = widget.locked ? 1 : 0;
+      _entrance.value = widget.locked ? 1 : 0;
+      _exit.value = widget.locked ? 0 : 1;
     } else if (widget.locked) {
-      _entranceDelay = Timer(const Duration(milliseconds: 120), () {
-        _reveal.animateTo(
-          1,
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-        );
+      _entrance.reset();
+      _exit.reset();
+      _entranceDelay = Timer(_delay, _entrance.forward);
+      _sheenTimer = Timer(_delay + _cardDuration + _sheenDelay, () {
+        setState(() => _sheenReady = true);
       });
-    } else {
-      _exitOffset = 16 * (1 - _reveal.value);
-      _reveal.animateBack(0, duration: const Duration(milliseconds: 200));
+    } else if (_entrance.value != 0) {
+      _exit.forward(from: 0);
     }
   }
 
   @override
   void dispose() {
     _entranceDelay?.cancel();
-    _reveal.dispose();
+    _sheenTimer?.cancel();
+    _entrance.dispose();
+    _exit.dispose();
     super.dispose();
   }
 
@@ -88,15 +117,19 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
       builder: (context, constraints) {
         final height = constraints.maxHeight;
         final fadeTop = (screenHeight * .45).clamp(0.0, height);
-        final fadeEnd = (screenHeight * .62).clamp(fadeTop, height);
+        final blurTop = (screenHeight * .52).clamp(fadeTop, height);
+        final fadeEnd = (screenHeight * .62).clamp(blurTop, height);
         final opaqueStop = height > fadeTop
             ? (fadeEnd - fadeTop) / (height - fadeTop)
             : 1.0;
         return AnimatedBuilder(
-          animation: _reveal,
+          animation: _motion,
           child: widget.child,
           builder: (context, child) {
-            final shown = _reveal.value > 0;
+            final opacity =
+                _veilProgress.transform(_entrance.value) * (1 - _exit.value);
+            final cardProgress = _cardProgress.transform(_entrance.value);
+            final shown = opacity > 0;
             final blocked = widget.locked || shown;
             return Stack(
               fit: StackFit.expand,
@@ -109,23 +142,38 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
                   Positioned.fill(
                     top: fadeTop,
                     child: AbsorbPointer(
-                      child: FadeTransition(
-                        opacity: _reveal,
-                        child: DecoratedBox(
-                          key: const ValueKey('premium-preview-gradient'),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                background.withValues(alpha: 0),
-                                background,
-                                background,
-                              ],
-                              stops: [0, opaqueStop, 1],
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          if (opacity > 0 && blurTop < height)
+                            Positioned.fill(
+                              top: blurTop - fadeTop,
+                              child: _PremiumBackdropBlur(
+                                rampHeight: fadeEnd - blurTop,
+                                strength: opacity,
+                              ),
+                            ),
+                          FadeTransition(
+                            opacity: AlwaysStoppedAnimation(opacity),
+                            child: ShaderMask(
+                              key: const ValueKey('premium-preview-gradient'),
+                              blendMode: BlendMode.dstIn,
+                              shaderCallback: (bounds) => LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: const [
+                                  Colors.transparent,
+                                  Colors.white,
+                                  Colors.white,
+                                ],
+                                stops: [0, opaqueStop, 1],
+                              ).createShader(bounds),
+                              child: ColoredBox(
+                                color: background.withValues(alpha: .72),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -139,19 +187,15 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
                       child: ExcludeSemantics(
                         excluding: !widget.locked || !shown,
                         child: FadeTransition(
-                          opacity: _reveal,
+                          opacity: AlwaysStoppedAnimation(opacity),
                           child: Transform.translate(
-                            offset: Offset(
-                              0,
-                              widget.locked
-                                  ? 16 * (1 - _reveal.value)
-                                  : _exitOffset,
-                            ),
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: _PreviewCard(
-                                feature: widget.feature,
-                                onSubscribe: widget.onSubscribe,
+                            offset: Offset(0, 24 * (1 - cardProgress)),
+                            child: Transform.scale(
+                              alignment: Alignment.bottomCenter,
+                              scale: .96 + .04 * cardProgress,
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: _offer(context),
                               ),
                             ),
                           ),
@@ -187,6 +231,92 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
       },
     );
   }
+
+  Widget _offer(BuildContext context) {
+    final strings = context.strings;
+    final (title, description, benefits) = switch (widget.feature) {
+      FlarePremiumFeature.records => (
+        strings.premiumPreviewRecordsTitle,
+        strings.premiumPreviewRecordsDescription,
+        [
+          strings.premiumPreviewBenefitStreak,
+          strings.premiumPreviewBenefitMilestones,
+          strings.premiumPreviewBenefitDuration,
+        ],
+      ),
+      FlarePremiumFeature.planEditor => (
+        strings.premiumPreviewPlanEditorTitle,
+        strings.premiumPreviewPlanEditorDescription,
+        [
+          strings.premiumPreviewBenefitActions,
+          strings.premiumPreviewBenefitSets,
+          strings.premiumPreviewBenefitSaves,
+        ],
+      ),
+      FlarePremiumFeature.training => (
+        strings.premiumPreviewTrainingTitle,
+        strings.premiumPreviewTrainingDescription,
+        [
+          strings.premiumPreviewBenefitVoice,
+          strings.premiumPreviewBenefitDemos,
+          strings.premiumPreviewBenefitLogging,
+        ],
+      ),
+    };
+    return FlarePremiumOfferCard(
+      badge: strings.premiumPreviewBadge,
+      title: title,
+      description: description,
+      benefits: benefits,
+      buttonLabel: strings.premiumPreviewSubscribe,
+      glow: _entrance,
+      sheenEnabled: widget.locked && _sheenReady,
+      onSubscribe: widget.onSubscribe,
+    );
+  }
+}
+
+class _PremiumBackdropBlur extends StatelessWidget {
+  const _PremiumBackdropBlur({
+    required this.rampHeight,
+    required this.strength,
+  });
+
+  final double rampHeight;
+  final double strength;
+
+  @override
+  Widget build(BuildContext context) {
+    const slices = 10;
+    final band = rampHeight / slices;
+    final sigma = 10 * strength;
+    // ShaderMask paints into an isolated layer on the web, so the filter
+    // must sample the page in sibling layers outside the tint's mask.
+    return Stack(
+      key: const ValueKey('premium-preview-blur'),
+      fit: StackFit.expand,
+      children: [
+        if (band > 0)
+          for (var i = 0; i < slices; i++)
+            Positioned.fill(
+              top: band * i,
+              bottom: null,
+              child: SizedBox(
+                height: band,
+                child: _blurBand(sigma * (i + .5) / slices),
+              ),
+            ),
+        Positioned.fill(top: rampHeight, child: _blurBand(sigma)),
+      ],
+    );
+  }
+
+  Widget _blurBand(double sigma) => ClipRect(
+    child: BackdropFilter(
+      filter: ui.ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+      child: const SizedBox.expand(),
+    ),
+  );
 }
 
 /// Restricts access to obscured controls while leaving the preview and header
@@ -222,124 +352,5 @@ class _RenderPreviewSemantics extends RenderProxyBox {
   Rect? describeSemanticsClip(RenderObject? child) {
     final cutoff = _cutoff;
     return cutoff == null ? null : Rect.fromLTWH(0, 0, size.width, cutoff);
-  }
-}
-
-class _PreviewCard extends StatelessWidget {
-  const _PreviewCard({required this.feature, required this.onSubscribe});
-
-  final FlarePremiumFeature feature;
-  final VoidCallback onSubscribe;
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = context.strings;
-    final (title, description) = switch (feature) {
-      FlarePremiumFeature.records => (
-        strings.premiumPreviewRecordsTitle,
-        strings.premiumPreviewRecordsDescription,
-      ),
-      FlarePremiumFeature.planEditor => (
-        strings.premiumPreviewPlanEditorTitle,
-        strings.premiumPreviewPlanEditorDescription,
-      ),
-      FlarePremiumFeature.training => (
-        strings.premiumPreviewTrainingTitle,
-        strings.premiumPreviewTrainingDescription,
-      ),
-    };
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return DecoratedBox(
-      key: const ValueKey('premium-preview-card'),
-      decoration: BoxDecoration(
-        color: FlareColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: dark
-            ? Border.all(color: Colors.white.withValues(alpha: .08))
-            : null,
-        boxShadow: dark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: .08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.lock_rounded,
-                  size: 18,
-                  color: FlareColors.accentInk,
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    strings.premiumPreviewBadge,
-                    style: FlareType.navSubtitle.copyWith(
-                      color: FlareColors.accentInk,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Semantics(
-              header: true,
-              child: Text(
-                title,
-                style: FlareType.navTitle.copyWith(
-                  color: FlareColors.text,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: FlareType.rowMeta.copyWith(color: FlareColors.dim),
-            ),
-            const SizedBox(height: 18),
-            SizedBox(
-              height: 48,
-              child: FilledButton(
-                key: const ValueKey('premium-preview-subscribe'),
-                onPressed: onSubscribe,
-                style: FilledButton.styleFrom(
-                  backgroundColor: FlareColors.accent,
-                  foregroundColor: FlareColors.onAccent,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  textStyle: FlareType.primaryButton.copyWith(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                child: Text(
-                  strings.premiumPreviewSubscribe,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

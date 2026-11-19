@@ -9,10 +9,37 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => '프리미엄 기능';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => '프리미엄 구독';
+  String get premiumPreviewSubscribe => 'Flare Pro 잠금 해제';
+
+  @override
+  String get premiumPreviewBenefitStreak => '연속 운동 일수';
+
+  @override
+  String get premiumPreviewBenefitMilestones => '달성 기록';
+
+  @override
+  String get premiumPreviewBenefitDuration => '운동 시간';
+
+  @override
+  String get premiumPreviewBenefitActions => '동작 선택';
+
+  @override
+  String get premiumPreviewBenefitSets => '세트 수 조절';
+
+  @override
+  String get premiumPreviewBenefitSaves => '무제한 저장';
+
+  @override
+  String get premiumPreviewBenefitVoice => '음성 타이머';
+
+  @override
+  String get premiumPreviewBenefitDemos => '동작 시범';
+
+  @override
+  String get premiumPreviewBenefitLogging => '자동 기록';
 
   @override
   String get premiumPreviewRecordsTitle => '프리미엄으로 모든 운동을 기록하세요';

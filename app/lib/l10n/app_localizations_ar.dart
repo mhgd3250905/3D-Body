@@ -9,10 +9,37 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'ميزة بريميوم';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'اشترك في بريميوم';
+  String get premiumPreviewSubscribe => 'افتح مزايا Flare Pro';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'أيام متتالية';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'الإنجازات';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'مدة التدريب';
+
+  @override
+  String get premiumPreviewBenefitActions => 'اختيار التمارين';
+
+  @override
+  String get premiumPreviewBenefitSets => 'مجموعات مرنة';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'حفظ بلا حدود';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'توقيت صوتي';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'عرض التمارين';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'تسجيل تلقائي';
 
   @override
   String get premiumPreviewRecordsTitle => 'اشترك في بريميوم لتسجيل كل تمرين';

@@ -9,10 +9,37 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'Premium-Funktion';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => 'Premium abonnieren';
+  String get premiumPreviewSubscribe => 'Flare Pro freischalten';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Trainingsserie';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Meilensteine';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Trainingsdauer';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Übungsauswahl';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Flexible Sätze';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Unbegrenzt speichern';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Audio-Timer';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Übungsdemos';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Automatisch erfassen';
 
   @override
   String get premiumPreviewRecordsTitle =>
