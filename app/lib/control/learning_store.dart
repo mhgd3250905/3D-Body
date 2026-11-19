@@ -54,6 +54,7 @@ class LearningStore extends ChangeNotifier {
   Map<String, int> _assessmentGrades = {};
   int _startStage = 1;
   int _celebratedStreak = 0;
+  int _trainingDataRevision = 0;
   String? _storageError;
   Map<String, dynamic> _preservedRoot = {};
 
@@ -61,6 +62,8 @@ class LearningStore extends ChangeNotifier {
   bool get safetyAccepted => _safetyAccepted;
   LearningSettings get settings => _settings;
   double get lastTime => _lastTime;
+  int get trainingDataRevision => _trainingDataRevision;
+  String get trainingDay => _today;
   String? get storageError => _storageError;
   bool get corruptState => _corruptState;
   bool get persistenceBlocked => _corruptState || !_readSucceeded;
@@ -306,8 +309,9 @@ class LearningStore extends ChangeNotifier {
     }
   }
 
-  Future<bool> _persist() {
+  Future<bool> _persist({bool trainingDataChanged = false}) {
     _ensureInitialized();
+    if (trainingDataChanged) _trainingDataRevision++;
     _notify();
     if (persistenceBlocked) return Future.value(false);
     final encoded = jsonEncode(_snapshotData());
@@ -410,15 +414,15 @@ class LearningStore extends ChangeNotifier {
       throw ArgumentError.value(drillId, 'drillId');
     }
     _ensureToday();
-    if (!_todayIds.contains(drillId)) _todayIds.add(drillId);
-    return _persist();
+    final added = !_todayIds.contains(drillId);
+    if (added) _todayIds.add(drillId);
+    return _persist(trainingDataChanged: added);
   }
 
   Future<bool> removeFromToday(String drillId) {
     _ensureInitialized();
     _ensureToday();
-    _todayIds.remove(drillId);
-    return _persist();
+    return _persist(trainingDataChanged: _todayIds.remove(drillId));
   }
 
   /// Saves a new set and returns it, or null when nothing valid was given.
@@ -442,7 +446,7 @@ class LearningStore extends ChangeNotifier {
     );
     if (!routine.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines, routine];
-    await _persist();
+    await _persist(trainingDataChanged: true);
     return routine;
   }
 
@@ -473,7 +477,7 @@ class LearningStore extends ChangeNotifier {
     );
     if (!next.valid) throw ArgumentError('Invalid training routine');
     _routines = [..._routines]..[index] = next;
-    return _persist();
+    return _persist(trainingDataChanged: true);
   }
 
   /// Adds one drill to the end of a set; already present is a no-op.
@@ -522,8 +526,9 @@ class LearningStore extends ChangeNotifier {
 
   Future<bool> deleteRoutine(String id) {
     _ensureInitialized();
+    final count = _routines.length;
     _routines = _routines.where((routine) => routine.id != id).toList();
-    return _persist();
+    return _persist(trainingDataChanged: _routines.length != count);
   }
 
   /// Puts a deleted set back where it was (undo).
@@ -534,7 +539,7 @@ class LearningStore extends ChangeNotifier {
     }
     _routines = [..._routines]
       ..insert(index.clamp(0, _routines.length), routine);
-    return _persist();
+    return _persist(trainingDataChanged: true);
   }
 
   /// Most sets one record may plan: the drill's own range, or a saved plan's
@@ -558,7 +563,7 @@ class LearningStore extends ChangeNotifier {
       return _persist();
     }
     _sessions.add(session);
-    return _persist();
+    return _persist(trainingDataChanged: true);
   }
 
   static Map<String, dynamic> _copyJson(Map<String, dynamic> value) =>
@@ -630,7 +635,9 @@ class LearningStore extends ChangeNotifier {
       _trainerSessions = [..._trainerSessions, json];
       _sessions = [..._sessions, ...rows];
     }
-    if (!await _persist()) throw StateError('SDK session could not be saved');
+    if (!await _persist(trainingDataChanged: existing == null)) {
+      throw StateError('SDK session could not be saved');
+    }
   }
 
   static bool _sameJson(Object? a, Object? b) {
@@ -652,12 +659,10 @@ class LearningStore extends ChangeNotifier {
     if (catalog.lessonById(lessonId) == null) {
       throw ArgumentError.value(lessonId, 'lessonId');
     }
-    if (completed) {
-      _completedLessonIds.add(lessonId);
-    } else {
-      _completedLessonIds.remove(lessonId);
-    }
-    return _persist();
+    final changed = completed
+        ? _completedLessonIds.add(lessonId)
+        : _completedLessonIds.remove(lessonId);
+    return _persist(trainingDataChanged: changed);
   }
 
   Future<bool> reportGate(String gateId, bool passed) {
@@ -665,8 +670,9 @@ class LearningStore extends ChangeNotifier {
     if (catalog.gateById(gateId) == null) {
       throw ArgumentError.value(gateId, 'gateId');
     }
+    final changed = _gateReports[gateId] != passed;
     _gateReports[gateId] = passed;
-    return _persist();
+    return _persist(trainingDataChanged: changed);
   }
 
   static bool _validGrades(
@@ -693,16 +699,18 @@ class LearningStore extends ChangeNotifier {
     if (!_validGrades(grades)) {
       throw ArgumentError('Assessment needs five self-reported grades in 1..4');
     }
+    final changed = !mapEquals(_assessmentGrades, grades);
     _assessmentGrades = Map.of(grades);
     _startStage = _placement(grades);
-    return _persist();
+    return _persist(trainingDataChanged: changed);
   }
 
   Future<bool> skipAssessment() {
     _ensureInitialized();
+    final changed = _assessmentGrades.isNotEmpty;
     _assessmentGrades = {};
     _startStage = 1;
-    return _persist();
+    return _persist(trainingDataChanged: changed);
   }
 
   void _notify() {

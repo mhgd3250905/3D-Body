@@ -35,6 +35,34 @@ let hubCalloutFrame = null, animateHubCallouts = true;
 let showHubCallouts = true;
 let hubCaptureId = null;
 let pageLabels = null;
+let snapshotSettings = {}, snapshotDay = '', snapshotMidnightTimer = null;
+let snapshotFontsReady = true;
+
+function refreshSnapshotDay() {
+  clearTimeout(snapshotMidnightTimer);
+  const now = new Date();
+  const year = now.getFullYear(), month = now.getMonth(), day = now.getDate();
+  snapshotDay = [year, month + 1, day].map(part => String(part).padStart(2, '0')).join('-');
+  if (phaseMap && player?.visible && !document.hidden) {
+    const midnight = new Date(year, month, day + 1);
+    snapshotMidnightTimer = setTimeout(refreshSnapshotDay, midnight - now);
+  }
+  syncPhaseMapSnapshots();
+}
+
+function syncPhaseMapSnapshots() {
+  if (!phaseMap) return;
+  phaseMap.setSnapshotContext({
+    theme: document.documentElement.dataset.theme ?? 'dark',
+    language: sceneStrings.locale ?? snapshotSettings.language ?? 'zh',
+    dataVersion: snapshotSettings.dataVersion ?? 'standalone',
+    day: snapshotDay,
+  });
+  phaseMap.setSnapshotSchedulingEnabled(ready && presented && !presentation.pending
+    && !errorCode && snapshotFontsReady && player.visible && !document.hidden
+    && !player.contextLost && !player.hubFlight && !player.trainingHub
+    && (!hosted || snapshotSettings.active === true));
+}
 
 function labelArrival(page, time) {
   if (pageLabels?.destination !== page) return { layout: null, opacity: 1 };
@@ -53,6 +81,7 @@ const presentation = createPresentationGate({
   requestRender: () => { if (player) { player.dirty = true; player.start(); } },
   onPresented: requestId => {
     presented = true;
+    syncPhaseMapSnapshots();
     // Include the final clock/selection in the acknowledgement, so the host
     // unveils the stage and updates its transport as one coherent state.
     if (hosted) post({ ...state(), type: 'presented', requestId });
@@ -148,6 +177,12 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
+  if (input.type === 'phase_map_snapshots') {
+    snapshotSettings = input;
+    if (typeof input.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(input.day)) snapshotDay = input.day;
+    syncPhaseMapSnapshots();
+    return;
+  }
   if (media && ['hub_scene', 'hub_viewport', 'hub_exit', 'hub_flight', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
@@ -155,6 +190,7 @@ function command(value) {
     // lighting and materials are identical in both themes.
     // An optional duration (ms) dissolves the chrome in step with the app.
     if (applyTheme(input.value, input.duration) && player) player.dirty = true;
+    syncPhaseMapSnapshots();
     return;
   }
   if (input.type === 'viewport') {
@@ -174,10 +210,17 @@ function command(value) {
       for (const [id, label] of Object.entries(input.groups ?? {})) {
         if (GROUPS[id] && typeof label === 'string') GROUPS[id].label = label;
       }
+      snapshotFontsReady = false;
       setSceneStrings(input).then(() => {
         callouts?.clear();
         if (player) { player.dirty = true; player.start(); }
-      }).catch(() => post({ type: 'localization_font_error', code: 'font_load_failed' }));
+      }).catch(() => post({ type: 'localization_font_error', code: 'font_load_failed' }))
+        .finally(() => {
+          if (sceneStrings !== input) return;
+          snapshotFontsReady = true;
+          syncPhaseMapSnapshots();
+        });
+      syncPhaseMapSnapshots();
       stage.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
       player.renderer.domElement.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
       hotspotLayer.setAttribute('aria-label', input.mapAccessibility ?? 'Muscles');
@@ -189,7 +232,9 @@ function command(value) {
     }
     case 'present':
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
-      presentation.request(input.requestId); return;
+      presentation.request(input.requestId);
+      syncPhaseMapSnapshots();
+      return;
     case 'hub_scene': {
       const flight = player.hubFlight;
       const entering = flight && !flight.returning;
@@ -217,6 +262,7 @@ function command(value) {
         player.controls.enabled = false;
         player.setDemandFrames(true);
         phaseMap.setHidden(true);
+        syncPhaseMapSnapshots();
         if (fx) { fx.setEnabled(false); fx.root.visible = false; }
         player.v5?.setFxEnabled(false);
       }
@@ -243,6 +289,7 @@ function command(value) {
       phaseMap.clearHubCrop();
       clearHotspots();
       player.controls.enabled = true;
+      syncPhaseMapSnapshots();
       if (fx) { fx.setEnabled(true); fx.root.visible = true; }
       player.setDemandFrames(homeDemandFrames);
       break;
@@ -289,6 +336,7 @@ function command(value) {
         if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
       }
       phaseMap?.setHidden(!!player.trainingHub || !!player.hubFlight);
+      syncPhaseMapSnapshots();
       player.start();
       break;
     }
@@ -339,7 +387,10 @@ function command(value) {
     case 'fx':
       if (typeof input.value !== 'boolean') return;
       fx?.setEnabled(input.value); v5Fx = input.value; break;
-    case 'visibility': player.setVisible(input.visible); break;
+    case 'visibility':
+      player.setVisible(input.visible);
+      refreshSnapshotDay();
+      break;
     default: return;
   }
   player.dirty = true; refreshHotspots(); emitState(true);
@@ -405,7 +456,12 @@ async function boot() {
           post({ type: 'ready', period: player.period });
           if (!hosted) presentation.request(0);
         }
-        else { player.trainingHub?.releaseGpu(); phaseMap?.releaseGpu(); showError('graphics_context_lost', true); }
+        else {
+          player.trainingHub?.releaseGpu();
+          phaseMap?.releaseGpu();
+          showError('graphics_context_lost', true);
+          syncPhaseMapSnapshots();
+        }
       },
     });
     player.setViewTop(viewTop);
@@ -416,6 +472,10 @@ async function boot() {
       if ('drawingBufferColorSpace' in context) context.drawingBufferColorSpace = 'srgb';
     }
     await Promise.all([player.load(), media ? null : createPhaseMap(player, groupId => openMusclePlan(groupId, true)).then(map => { phaseMap = map; })]);
+    if (phaseMap) {
+      document.addEventListener('visibilitychange', refreshSnapshotDay);
+      refreshSnapshotDay();
+    }
     player.resetView();
     if (!v5) fx = createFlareFx(player, { palette: character.fx, enabled: options.get('fx') !== '0' });
     const skinned = media ? player.v5.skinned : configureTeaching();
@@ -506,9 +566,16 @@ function configureTeaching() {
 }
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;
+  clearTimeout(snapshotMidnightTimer);
+  document.removeEventListener('visibilitychange', refreshSnapshotDay);
   ready = false; pending = []; window.removeEventListener('message', receive);
   perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); phaseMap?.dispose(); player?.dispose();
 }
-window.addEventListener('pagehide', event => { if (event.persisted) player?.setVisible(false); else dispose(); });
-window.addEventListener('pageshow', event => { if (event.persisted) player?.setVisible(true); });
+window.addEventListener('pagehide', event => {
+  if (event.persisted) { player?.setVisible(false); refreshSnapshotDay(); }
+  else dispose();
+});
+window.addEventListener('pageshow', event => {
+  if (event.persisted) { player?.setVisible(true); refreshSnapshotDay(); }
+});
 boot();

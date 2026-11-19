@@ -78,6 +78,38 @@ void main() {
   );
 
   test(
+    'training snapshot revision tracks mutations and the local day',
+    () async {
+      var now = day;
+      final store = LearningStore(
+        catalog: catalog,
+        storage: MemoryStorage(),
+        now: () => now,
+      );
+      addTearDown(store.dispose);
+      await store.initialize();
+
+      expect(store.trainingDay, '2026-10-08');
+      expect(store.trainingDataRevision, 0);
+      await store.setLastTime(2.15);
+      expect(store.trainingDataRevision, 0);
+
+      await store.addToToday('deltoids-A');
+      await store.addToToday('deltoids-A');
+      expect(store.trainingDataRevision, 1);
+      await store.logSession(session());
+      await store.logSession(session());
+      await store.retrySave();
+      expect(store.trainingDataRevision, 2);
+
+      now = DateTime(2026, 10, 9, 1);
+      store.refreshDate();
+      expect(store.trainingDay, '2026-10-09');
+      expect(store.trainingDataRevision, 2);
+    },
+  );
+
+  test(
     'settings, last frame, deduplicated dated plan and self-reports restore',
     () async {
       var now = day;

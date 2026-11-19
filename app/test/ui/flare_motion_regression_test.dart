@@ -58,13 +58,29 @@ void main() {
           Offset(timeline.left + 2, timeline.center.dy),
         );
         await drag.moveBy(const Offset(24, 0));
-        await drag.moveBy(const Offset(1, 0));
         await tester.pump(const Duration(milliseconds: 16));
         final initialBuilds = shellBuilds;
         final initialWrites = storage.writes;
-        for (var frame = 0; frame < 12; frame++) {
-          await drag.moveBy(const Offset(1, 0));
+        for (var index = 0; index < catalog.phases.length; index++) {
+          final phase = catalog.phases[index].source;
+          await drag.moveTo(
+            Offset(
+              timeline.left +
+                  timeline.width * (index + .5) / catalog.phases.length,
+              timeline.center.dy,
+            ),
+          );
+          scene.receiveEvent({
+            'source': 'flare-scene',
+            'type': 'state',
+            'phase': phase,
+            'playing': false,
+          });
           await tester.pump(const Duration(milliseconds: 16));
+          expect(
+            tester.widget<MotionTimeline>(find.byType(MotionTimeline)).phase,
+            phase,
+          );
         }
         final duringBuilds = shellBuilds - initialBuilds;
         final duringWrites = storage.writes - initialWrites;

@@ -52,21 +52,42 @@ export async function createPhaseMap(player, onSelect) {
   // Keep its layout measurable without exposing an empty card during GLB or
   // shader initialization. Reveal only after the cached canvas is composed.
   motion.style.visibility = 'hidden';
-  panel.innerHTML = '<header><i></i><span>同步发力</span></header><div class="phase-map-view"></div><div class="phase-map-legend"></div>';
+  panel.innerHTML = '<header><i></i><span>同步发力</span></header><div class="phase-map-view"></div>';
+  const legends = document.createElement('div');
+  legends.style.position = 'relative';
+  panel.append(legends);
   motion.append(shadow, panel);
   player.container.append(motion);
-  const view = panel.querySelector('.phase-map-view'), legend = panel.querySelector('.phase-map-legend');
-  // Keep one WebGL context. Render each view to a complete small MSAA target
-  // at independent density. Cache two local-emphasis endpoints per phase;
-  // their 2D blend follows the action without GPU readbacks every frame.
-  const thumbnail = document.createElement('canvas'); thumbnail.setAttribute('aria-hidden', 'true'); view.prepend(thumbnail);
+  const view = panel.querySelector('.phase-map-view');
+  function newCanvas() {
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = 'position:absolute;inset:0;opacity:0;visibility:hidden';
+    return canvas;
+  }
+  // Both the continuously rendered fallback and the atlas use the same
+  // renderer and two endpoint rasters, including matching alpha blending.
+  const thumbnail = newCanvas();
+  view.append(thumbnail);
   const thumbnailContext = thumbnail.getContext('2d');
   const effortFrames = [document.createElement('canvas'), document.createElement('canvas')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), local = new THREE.Vector3();
   let source = null, hidden = false, legendItems = [], target = null, renderCount = 0, focus = null;
-  let rasterKey = null, rasterEnvironment = null, selectionDirty = false;
+  let rasterKey = null, rasterEnvironment = null;
   let paintKey = null, paintEffort = 0;
+  const snapshots = new Map(), legendLayers = new Map();
+  const ticks = phaseTicks.map(tick => ({ ...tick, picture: phaseAt(tick.time) }));
+  const capacity = 24 * 1024 * 1024;
+  let snapshotContext = { theme: document.documentElement.dataset.theme ?? 'dark', language: '', dataVersion: '', day: '' };
+  let cacheShape = null, legendShape = null, completeTheme = null;
+  let snapshotFrame = null, scheduleEnabled = false, snapshotSingleTheme = false;
+  let activeCanvas = null, activeLegend = null, shownPhase = null;
+  let underCanvas = null, underLegend = null;
+  let livePaints = 0, snapshotBuilt = 0, snapshotHits = 0, legendBuilds = 0;
+  let observedTime = NaN, interactionUntil = 0;
+  const transitions = new WeakMap();
+  const retired = new WeakSet();
   let chromeMotion = null;
   let viewSize = null;
   const viewObserver = new ResizeObserver(([entry]) => {
@@ -78,10 +99,9 @@ export async function createPhaseMap(player, onSelect) {
   viewObserver.observe(view);
   const fullBounds = new THREE.Box3().setFromObject(model);
   const shortNames = { 'hip-abductors': '臀中肌', abs: '腹直肌', 'rotator-cuff': '肩袖', forearms: '前臂', scapular: '中下斜方 · 菱形', adductors: '内收肌' };
-  function pickSurface(x, y, camera, rect) {
+  function pickSurface(x, y, camera, rect, phase = phaseAt(player.time)) {
     ndc.set((x - rect.left) / rect.width * 2 - 1, -(y - rect.top) / rect.height * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    const phase = phaseAt(player.time);
     for (const hit of ray.intersectObjects(meshes)) {
       const muscle = MM.muscleAt(hit.object.worldToLocal(local.copy(hit.point)), 1.69); if (!muscle) continue;
       const candidates = Object.entries(MM.GROUP_MUSCLES).filter(([id, definition]) => GROUPS[id] && definition.muscles.includes(muscle.id)).map(([id]) => id);
@@ -93,7 +113,9 @@ export async function createPhaseMap(player, onSelect) {
   function select(event) {
     const r = view.getBoundingClientRect(), half = r.width / 2;
     const side = event.clientX - r.left < half ? 0 : 1;
-    const hit = pickSurface(event.clientX, event.clientY, cameras[side], { left: r.left + half * side, top: r.top, width: half, height: r.height });
+    const hit = pickSurface(event.clientX, event.clientY, cameras[side],
+      { left: r.left + half * side, top: r.top, width: half, height: r.height },
+      shownPhase ?? phaseAt(player.time));
     if (hit) onSelect(hit.groupId);
   }
   view.addEventListener('click', select);
@@ -117,7 +139,7 @@ export async function createPhaseMap(player, onSelect) {
     // figure and the home phase map retain their phase-specific side.
     setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], groupId ? 'both' : undefined);
   }
-  function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); selectionDirty = true; refreshEnvironment(); }
+  function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); refreshEnvironment(); }
   function setHubCrop(bottom) {
     uniforms.mmHubBottom.value = bottom;
     if (uniforms.mmHubFraming.value === 1) return;
@@ -135,30 +157,21 @@ export async function createPhaseMap(player, onSelect) {
       mesh.material.needsUpdate = true;
     }
   }
-  function restorePhase() { focus = null; selectionDirty = true; setFunctionalFocus(uniforms, []); }
+  function restorePhase() { focus = null; setFunctionalFocus(uniforms, []); }
   function refreshEnvironment() { scene.environment = player.scene.environment; }
   function withThumbnailDensity(density, render) {
     const previous = strokeDensity.value; strokeDensity.value = density;
     try { return render(); } finally { strokeDensity.value = previous; }
   }
-  function render() {
-    if (hidden) return false;
-    // The route owns only position and alpha. Keep the last painted pixels,
-    // including their emphasis, until the card is back at rest.
-    if (chromeMotion !== null && paintKey !== null) return true;
-    const phase = phaseAt(player.time);
-    const phaseChanged = phase.source !== source;
-    if (phaseChanged || selectionDirty) {
-      applySelection(phase);
-      selectionDirty = false;
-    }
-    if (phaseChanged) {
-      source = phase.source;
-      // The colored regions and legend describe exactly the same three
-      // teaching priorities, instead of also lighting every secondary group.
-      legendItems = emphasisItems(phase);
-      legend.replaceChildren();
-      for (const item of legendItems) {
+  function legendFor(phase) {
+    if (!legendLayers.has(phase.source)) {
+      const items = emphasisItems(phase);
+      const layer = document.createElement('div');
+      layer.className = 'phase-map-legend';
+      layer.style.cssText = 'position:absolute;top:0;left:0;right:0;opacity:0;pointer-events:none';
+      layer.inert = true;
+      layer.setAttribute('aria-hidden', 'true');
+      for (const item of items) {
         const name = groupLabel(item.groupId, shortNames[item.groupId] ?? item.label);
         const button = document.createElement('button'); button.type = 'button';
         button.dataset.groupId = item.groupId; button.setAttribute('aria-label', sceneStrings.viewLabels?.[item.groupId] ?? '查看' + name);
@@ -166,23 +179,42 @@ export async function createPhaseMap(player, onSelect) {
         const text = document.createElement('span');
         text.textContent = name;
         button.title = name;
-        button.append(dot, text); button.addEventListener('click', () => onSelect(item.groupId)); legend.append(button);
+        button.append(dot, text); button.addEventListener('click', () => onSelect(item.groupId)); layer.append(button);
       }
+      legends.append(layer);
+      const height = layer.getBoundingClientRect().height + (parseFloat(getComputedStyle(layer).marginTop) || 0);
+      legendLayers.set(phase.source, { layer, items, height });
+      legendBuilds++;
     }
+    return legendLayers.get(phase.source);
+  }
+
+  function dimensions() {
     // The cached raster uses layout size, unaffected by the route transform.
-    // Read the live box only before observation or on the first frame after
-    // a display:none interval, when its observed dimensions are zero.
     const r = viewSize?.width > 0 && viewSize.height > 0 ? viewSize : view.getBoundingClientRect();
-    if (!(r.width > 0 && r.height > 0)) return false;
+    if (!(r.width > 0 && r.height > 0)) return null;
     const renderer = player.renderer, density = thumbnailDensity(player.quality);
     const width = Math.ceil(r.width / 2 * density), height = Math.ceil(r.height * density);
-    strokeDensity.value = width / (r.width / 2);
-    const key = [phase.source, width, height, player.quality, renderer.toneMappingExposure].join(':');
+    const dpr = window.devicePixelRatio || 1;
+    const bytes = width * 2 * height * 4;
+    return {
+      width, height, ratio: r.width / 2 / r.height, stroke: width / (r.width / 2), bytes,
+      legendKey: r.width + ':' + r.height,
+      plannedBytes: Math.max(bytes, Math.ceil(r.width * dpr) * Math.ceil(r.height * dpr) * 4),
+      key: [width, height, r.width, r.height, player.quality, renderer.toneMappingExposure,
+        player.scene.environment?.uuid ?? '', dpr, reducedMotion.matches].join(':'),
+    };
+  }
+
+  function ensureRasters(phase, size) {
+    const renderer = player.renderer, { width, height } = size;
+    const key = phase.source + ':' + size.key;
     if (key !== rasterKey || rasterEnvironment !== player.scene.environment) {
+      applySelection(phase);
+      strokeDensity.value = size.stroke;
       scene.environment = player.scene.environment;
       if (!target) target = new THREE.WebGLRenderTarget(width, height, { samples: Math.min(4, renderer.capabilities.maxSamples), stencilBuffer: false });
       else target.setSize(width, height);
-      if (thumbnail.width !== width * 2 || thumbnail.height !== height) { thumbnail.width = width * 2; thumbnail.height = height; }
       const previous = { target: renderer.getRenderTarget(), viewport: renderer.getViewport(new THREE.Vector4()), scissor: renderer.getScissor(new THREE.Vector4()),
         scissorTest: renderer.getScissorTest(), color: renderer.getClearColor(new THREE.Color()), alpha: renderer.getClearAlpha(), autoClear: renderer.autoClear };
       const pixels = new Uint8Array(width * height * 4), flipped = new Uint8ClampedArray(pixels.length);
@@ -194,7 +226,7 @@ export async function createPhaseMap(player, onSelect) {
           const context = frame.getContext('2d');
           uniforms.mmEffort.value = effort;
           for (let i = 0; i < 2; i++) {
-            cameras[i].aspect = r.width / 2 / r.height; cameras[i].updateProjectionMatrix();
+            cameras[i].aspect = size.ratio; cameras[i].updateProjectionMatrix();
             // Render targets use physical pixels independently of stage DPR.
             renderer.setRenderTarget(target); renderer.render(scene, cameras[i]);
             renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
@@ -211,33 +243,281 @@ export async function createPhaseMap(player, onSelect) {
         }
         rasterKey = key;
         rasterEnvironment = scene.environment;
-        paintKey = null;
       } finally {
         uniforms.mmEffort.value = 0;
         renderer.setRenderTarget(previous.target); renderer.setViewport(previous.viewport); renderer.setScissor(previous.scissor);
         renderer.setScissorTest(previous.scissorTest); renderer.setClearColor(previous.color, previous.alpha); renderer.autoClear = previous.autoClear;
       }
     }
-    // This is visual emphasis, not a force estimate. Derive it only from the
-    // existing animation position so seeking, slow motion and pause agree.
+  }
+
+  function effortAt(time, phase) {
     const start = phaseTicks.find(tick => tick.phase === phase.source)?.time ?? 0;
     const end = phaseTicks.find(tick => tick.time > start)?.time ?? player.period;
-    const progress = THREE.MathUtils.clamp((player.time - start) / Math.max(0.001, end - start), 0, 1);
-    const effort = reducedMotion.matches ? 0.75 : 0.25 + 0.75 * Math.sin(Math.PI * progress) ** 2;
-    const step = Math.round(effort * 24);
-    const nextPaintKey = `${rasterKey}:${step}`;
-    if (nextPaintKey === paintKey) return true;
-    paintEffort = step / 24;
-    // Weighted additive composition preserves antialiased edge coverage.
-    thumbnailContext.globalCompositeOperation = 'copy'; thumbnailContext.globalAlpha = 1 - paintEffort;
-    thumbnailContext.drawImage(effortFrames[0], 0, 0);
-    thumbnailContext.globalCompositeOperation = 'lighter'; thumbnailContext.globalAlpha = paintEffort;
-    thumbnailContext.drawImage(effortFrames[1], 0, 0);
-    thumbnailContext.globalCompositeOperation = 'source-over'; thumbnailContext.globalAlpha = 1;
-    paintKey = nextPaintKey;
+    const progress = THREE.MathUtils.clamp((time - start) / Math.max(0.001, end - start), 0, 1);
+    const effort = reducedMotion.matches ? .75 : .25 + .75 * Math.sin(Math.PI * progress) ** 2;
+    return Math.round(effort * 24) / 24;
+  }
+
+  function paint(context, effort) {
+    // The old weighted composition is preserved for static tick parity.
+    context.globalCompositeOperation = 'copy'; context.globalAlpha = 1 - effort;
+    context.drawImage(effortFrames[0], 0, 0);
+    context.globalCompositeOperation = 'lighter'; context.globalAlpha = effort;
+    context.drawImage(effortFrames[1], 0, 0);
+    context.globalCompositeOperation = 'source-over'; context.globalAlpha = 1;
+  }
+
+  function retire(layer) {
+    if (layer === activeCanvas || layer === activeLegend || layer === underCanvas || layer === underLegend ||
+        transitions.has(layer)) retired.add(layer);
+    else layer.remove();
+  }
+
+  function retireSnapshots(predicate = () => true) {
+    for (const [key, snapshot] of snapshots) if (predicate(snapshot)) {
+      snapshots.delete(key);
+      completeTheme = null;
+      retire(snapshot.canvas);
+    }
+  }
+
+  function clearLegends() {
+    for (const { layer } of legendLayers.values()) retire(layer);
+    legendLayers.clear();
+  }
+
+  function fade(layer, from, to, smooth, finished) {
+    const previous = transitions.get(layer);
+    if (previous) {
+      previous.cancel();
+      transitions.delete(layer);
+    }
+    layer.style.opacity = to;
+    if (!smooth || typeof layer.animate !== 'function') { finished?.(); return; }
+    const animation = layer.animate([{ opacity: from }, { opacity: to }], { duration: 120, easing: 'ease-in-out' });
+    transitions.set(layer, animation);
+    animation.finished.then(() => {
+      if (transitions.get(layer) !== animation) return;
+      transitions.delete(layer);
+      finished?.();
+    }, () => {});
+  }
+
+  function deactivate(layer, isLegend) {
+    layer.removeAttribute('data-phase-layer-visible');
+    if (isLegend) {
+      layer.style.pointerEvents = 'none';
+      layer.inert = true;
+      layer.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function hideLayer(layer, isLegend) {
+    deactivate(layer, isLegend);
+    fade(layer, 0, 0, false);
+    if (!isLegend) layer.style.visibility = 'hidden';
+    if (retired.has(layer)) layer.remove();
+  }
+
+  function showLayer(next, previous, isLegend = false, smooth = true) {
+    if (next === previous) return;
+    const held = isLegend ? underLegend : underCanvas;
+    let under = held ?? previous;
+    if (held && previous) hideLayer(previous, isLegend);
+    if (under === next) under = null;
+
+    // Keep one fully painted layer underneath while the new bitmap fades
+    // over it. If a scrub selects again before it completes, the same
+    // underneath image survives until the next selection is opaque.
+    if (under) {
+      deactivate(under, isLegend);
+      under.style.zIndex = '1';
+    }
+    if (isLegend) underLegend = under;
+    else underCanvas = under;
+
+    next.style.visibility = 'visible';
+    next.style.zIndex = '2';
+    next.setAttribute('data-phase-layer-visible', '');
+    if (isLegend) {
+      next.style.pointerEvents = '';
+      next.inert = false;
+      next.removeAttribute('aria-hidden');
+    }
+    fade(next, 0, 1, !!under && smooth && !reducedMotion.matches, () => {
+      if (!under) return;
+      hideLayer(under, isLegend);
+      if (isLegend) underLegend = null;
+      else underCanvas = null;
+    });
+  }
+
+  function present(canvas, phase, effort, smooth = true) {
+    const { layer, items, height } = legendFor(phase);
+    showLayer(canvas, activeCanvas, false, smooth);
+    if (layer !== activeLegend) {
+      legends.style.height = height + 'px';
+      showLayer(layer, activeLegend, true, smooth);
+    }
+    activeCanvas = canvas;
+    activeLegend = layer;
+    shownPhase = phase;
+    source = phase.source;
+    legendItems = items;
+    paintEffort = effort;
     motion.style.visibility = '';
+  }
+
+  function updateCacheShape(size) {
+    if (legendShape !== size.legendKey) {
+      legendShape = size.legendKey;
+      clearLegends();
+    }
+    if (cacheShape === size.key) return;
+    cacheShape = size.key;
+    retireSnapshots();
+    snapshotSingleTheme = size.plannedBytes * ticks.length * 2 > capacity;
+  }
+
+  function cacheKey(phaseId) {
+    const { theme, language, dataVersion, day } = snapshotContext;
+    return JSON.stringify([phaseId, theme, language, dataVersion, day]);
+  }
+
+  function currentTicks() {
+    const index = Math.max(0, ticks.findIndex(tick => tick.phase === phaseAt(player.time).source));
+    const order = [ticks[index]];
+    for (let offset = 1; order.length < ticks.length; offset++) {
+      order.push(ticks[(index + offset) % ticks.length]);
+      if (order.length === ticks.length) break;
+      order.push(ticks[(index - offset + ticks.length) % ticks.length]);
+    }
+    return order;
+  }
+
+  function nextTick(size) {
+    if (completeTheme === snapshotContext.theme) return null;
+    const order = currentTicks();
+    const count = Math.min(order.length, Math.floor(capacity / size.plannedBytes));
+    const allowed = order.slice(0, count);
+    const keys = new Set(allowed.map(tick => cacheKey(tick.phase)));
+    if (snapshotSingleTheme) retireSnapshots(snapshot =>
+      snapshot.theme !== snapshotContext.theme || !keys.has(snapshot.key));
+    const next = allowed.find(tick => !snapshots.has(cacheKey(tick.phase)));
+    if (!next && count === ticks.length) completeTheme = snapshotContext.theme;
+    return next;
+  }
+
+  function refreshInteraction() {
+    if (observedTime !== player.time) {
+      if (!player.playing && Number.isFinite(observedTime)) interactionUntil = performance.now() + 110;
+      observedTime = player.time;
+    }
+  }
+
+  function canWarm() {
+    return scheduleEnabled && !hidden && chromeMotion === null && player.visible &&
+      !document.hidden && !player.hubFlight && !player.trainingHub && !player.contextLost;
+  }
+
+  function cancelSnapshotFrame() {
+    if (snapshotFrame !== null) cancelAnimationFrame(snapshotFrame);
+    snapshotFrame = null;
+  }
+
+  function queueSnapshots(size = null) {
+    if (!canWarm() || snapshotFrame !== null) return;
+    size ??= dimensions();
+    if (!size) return;
+    updateCacheShape(size);
+    if (!nextTick(size)) return;
+    snapshotFrame = requestAnimationFrame(frame => {
+      snapshotFrame = null;
+      if (!canWarm()) return;
+      refreshInteraction();
+      if (performance.now() < interactionUntil || performance.now() - frame > 6 ||
+          player.cameraMoved || player.cameraOnly || player.glide || player.projectionGlide) {
+        queueSnapshots();
+        return;
+      }
+      const size = dimensions();
+      if (!size) return;
+      updateCacheShape(size);
+      const tick = nextTick(size);
+      if (!tick) return;
+      const key = cacheKey(tick.phase);
+      const canvas = newCanvas();
+      canvas.width = size.width * 2;
+      canvas.height = size.height;
+      const context = canvas.getContext('2d');
+      if (!context) return; // Retain the live card if a bitmap can't be allocated.
+      ensureRasters(tick.picture, size);
+      const effort = effortAt(tick.time, tick.picture);
+      paint(context, effort);
+      canvas.dataset.phaseSnapshot = String(tick.phase);
+      view.append(canvas);
+      legendFor(tick.picture);
+      snapshots.set(key, { key, stage: tick.phase, theme: snapshotContext.theme,
+        bytes: size.bytes, phase: tick.picture, effort, canvas });
+      snapshotBuilt++;
+      if (phaseAt(player.time).source === tick.phase) present(canvas, tick.picture, effort);
+      queueSnapshots();
+    });
+  }
+
+  function setSnapshotSchedulingEnabled(enabled) {
+    scheduleEnabled = enabled === true;
+    if (scheduleEnabled) queueSnapshots();
+    else cancelSnapshotFrame();
+  }
+
+  function setSnapshotContext(context) {
+    const next = { ...snapshotContext };
+    for (const key of Object.keys(next)) if (context[key] !== undefined) next[key] = String(context[key]);
+    const changed = Object.keys(next).filter(key => next[key] !== snapshotContext[key]);
+    if (!changed.length) return;
+    snapshotContext = next;
+    if (changed.some(key => key !== 'theme')) {
+      retireSnapshots();
+      if (changed.includes('language')) clearLegends();
+    } else if (snapshotSingleTheme) retireSnapshots(snapshot => snapshot.theme !== next.theme);
+    player.requestRedraw();
+    queueSnapshots();
+  }
+
+  function render() {
+    if (hidden) return false;
+    if (chromeMotion !== null && activeCanvas !== null) return true;
+    const size = dimensions();
+    if (!size) return false;
+    updateCacheShape(size);
+    refreshInteraction();
+    const phase = phaseAt(player.time);
+    const snapshot = snapshots.get(cacheKey(phase.source));
+    if (snapshot) {
+      if (activeCanvas !== snapshot.canvas) {
+        snapshotHits++;
+        present(snapshot.canvas, snapshot.phase, snapshot.effort);
+      }
+    } else {
+      ensureRasters(phase, size);
+      const effort = effortAt(player.time, phase);
+      const nextPaintKey = rasterKey + ':' + effort;
+      if (nextPaintKey !== paintKey) {
+        if (thumbnail.width !== size.width * 2 || thumbnail.height !== size.height) {
+          thumbnail.width = size.width * 2; thumbnail.height = size.height;
+        }
+        paint(thumbnailContext, effort);
+        paintKey = nextPaintKey;
+        livePaints++;
+      }
+      present(thumbnail, phase, effort, activeCanvas !== thumbnail);
+    }
+    queueSnapshots(size);
     return true;
   }
+
   function syncVisibility() {
     motion.hidden = chromeMotion === null && hidden;
     motion.inert = hidden || chromeMotion !== null;
@@ -246,6 +526,7 @@ export async function createPhaseMap(player, onSelect) {
     if (hidden === value) return;
     hidden = value;
     syncVisibility();
+    if (value) cancelSnapshotFrame();
     player.dirty = true;
   }
   function setChromeMotion(value) {
@@ -253,6 +534,7 @@ export async function createPhaseMap(player, onSelect) {
     if (value === null && !wasMoving) return;
     chromeMotion = value;
     if (wasMoving !== (value !== null)) syncVisibility();
+    if (value !== null) cancelSnapshotFrame();
     motion.style.transform = value === null ? '' : `translate3d(${value.x}px, 0, 0)`;
     const opacity = value === null ? '' : value.opacity;
     panel.style.opacity = opacity;
@@ -262,7 +544,9 @@ export async function createPhaseMap(player, onSelect) {
   function setLocalization() {
     panel.querySelector('header span').textContent = sceneStrings.syncEffort ?? '同步发力';
     panel.setAttribute('aria-label', sceneStrings.mapAccessibility ?? 'Muscles');
-    source = null; player.dirty = true;
+    clearLegends();
+    retireSnapshots();
+    player.dirty = true;
   }
   // The CPU-side rasters survive GPU release and can be shown on return.
   function releaseThumbnailGpu() { target?.dispose(); target = null; }
@@ -271,8 +555,22 @@ export async function createPhaseMap(player, onSelect) {
     for (const mesh of meshes) mesh.geometry.dispose();
     for (const material of materials) material.dispose();
   }
-  return { render, setHidden, setChromeMotion, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
-    getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
-    resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
-    dispose() { viewObserver.disconnect(); releaseGpu(); view.removeEventListener('click', select); motion.remove(); } };
+  return { render, setHidden, setChromeMotion, setLocalization, setSnapshotContext, setSnapshotSchedulingEnabled,
+    releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase,
+    refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
+    getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'],
+      legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })),
+      referencePose: 'static CC0 mannequin',
+      resolution: [(activeCanvas ?? thumbnail).width, (activeCanvas ?? thumbnail).height],
+      renderCount, samples: target?.samples ?? 0, emphasis: paintEffort,
+      snapshotCount: snapshots.size,
+      snapshotReadyTicks: ticks.filter(tick => snapshots.has(cacheKey(tick.phase))).map(tick => tick.phase),
+      snapshotBytes: [...snapshots.values()].reduce((sum, item) => sum + item.bytes, 0),
+      snapshotSingleTheme, snapshotBuilt, snapshotHits, livePaints, legendBuilds,
+      displayed: activeCanvas === thumbnail ? 'live' : activeCanvas ? 'snapshot' : null,
+    }),
+    dispose() {
+      cancelSnapshotFrame();
+      viewObserver.disconnect(); releaseGpu(); view.removeEventListener('click', select); motion.remove();
+    } };
 }

@@ -109,6 +109,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   String? _sceneTheme;
   String? _sceneLanguage;
   String? _stageKey;
+  int _phaseMapCatalogRevision = 0;
+  Object? _phaseMapSnapshotSettings;
+  bool _homeRouteCurrent = true;
+  late final ValueNotifier<({int phase, bool playing})> _transportChrome;
   double _stageArea = 0, _sentInset = -1, _sentStageTop = 0;
   bool _insetSent = false;
   bool _holdWatch = false;
@@ -171,6 +175,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         lifecycle == AppLifecycleState.resumed ||
         lifecycle == AppLifecycleState.inactive;
     _scene = widget.sceneController ?? SceneController();
+    _transportChrome = ValueNotifier((
+      phase: _scene.phase,
+      playing: _scene.playing,
+    ));
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
     WidgetsBinding.instance.addObserver(this);
@@ -183,6 +191,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _liveSceneKey = GlobalKey();
     }
     if (!identical(widget.catalog, oldWidget.catalog)) {
+      _phaseMapCatalogRevision++;
+      _sceneLanguage = null;
       if (_drill != null) _drill = catalog.drillById(_drill!.id);
     }
   }
@@ -215,6 +225,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _sceneChanged() {
     if (!mounted || _configuring) return;
+    _transportChrome.value = (phase: _scene.phase, playing: _scene.playing);
     if (_scene.errorCode == SceneController.processTerminated) {
       final now = DateTime.now();
       final last = _lastAutoRestart;
@@ -234,6 +245,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       // Their provisional clock must not replace the user's saved position.
       _configured = false;
       _didPresentScene = false;
+      _phaseMapSnapshotSettings = null;
       _refreshView();
       return;
     }
@@ -263,6 +275,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       // view. Let it produce its replacement frame before hiding it again.
       _scene.setVisible(_appVisible && _routeAllowsScene);
       if (widget.enableScene) _scene.requestPresentation();
+      _transportChrome.value = (phase: _scene.phase, playing: _scene.playing);
       _configuring = false;
       _refreshView();
       return;
@@ -299,11 +312,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _refreshView();
   }
 
-  // Time changes already go through the timeline's playhead. During a
-  // drag rebuild the shell only when its visible scene controls change.
+  // The playhead and phase title update inside the transport during a drag.
+  // Only scene changes that affect the shell itself need to rebuild it.
   Object get _watchChrome => (
-    phase: _scene.phase,
-    playing: _scene.playing,
     speed: _scene.speed,
     period: _scene.period,
     presented: _scene.presented,
@@ -322,7 +333,36 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _onHomeScrubbing(bool active) {
     _scrubChrome = active ? _watchChrome : null;
+    _syncPhaseMapSnapshots();
     if (!active) _savePausedSceneTime();
+  }
+
+  void _syncPhaseMapSnapshots() {
+    if (!mounted || !widget.enableScene || !_scene.ready) return;
+    final settings = (
+      language: _sceneLanguage,
+      dataVersion: '$_phaseMapCatalogRevision:${store.trainingDataRevision}',
+      day: store.trainingDay,
+      active:
+          _scene.presented &&
+          _scene.errorCode == null &&
+          !widget.startupCovered &&
+          _appActive &&
+          _homeRouteCurrent &&
+          _watchVisible &&
+          !_holdWatch &&
+          !_trainingActorFlight &&
+          _scrubChrome == null,
+    );
+    if (_phaseMapSnapshotSettings == settings) return;
+    _phaseMapSnapshotSettings = settings;
+    _scene.command({
+      'type': 'phase_map_snapshots',
+      'language': settings.language,
+      'dataVersion': settings.dataVersion,
+      'day': settings.day,
+      'active': settings.active,
+    });
   }
 
   bool get _watchVisible =>
@@ -1090,6 +1130,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       unawaited(widget.membership?.refresh());
       _syncSceneVisibility();
     }
+    _syncPhaseMapSnapshots();
   }
 
   @override
@@ -1097,6 +1138,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _trainingFlightDeadline?.cancel();
     if (_trainingActorFlight) _scene.finishTrainingFlight();
     _scene.removeListener(_sceneChanged);
+    _transportChrome.dispose();
     store.removeListener(_storeChanged);
     _awaitingPreviewUnlock.dispose();
     if (widget.coach == null) unawaited(_coach?.close());
@@ -1159,6 +1201,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _holdWatch = true;
       }
       _stageKey = route.$1;
+    }
+    _homeRouteCurrent = ModalRoute.isCurrentOf(context) ?? true;
+    if (widget.enableScene && _scene.ready) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _syncPhaseMapSnapshots();
+      });
     }
     final shell = PopScope(
       canPop: !canBack && !_trainingOpen,
@@ -1632,7 +1680,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   Widget _watchContent(BuildContext context) {
     final s = context.strings;
-    final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
     // Retain the previous header height so simplifying its text does not
     // resize the shared 3D stage or shift the athlete's framing.
     final textScaler = MediaQuery.textScalerOf(context);
@@ -1777,7 +1824,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                         offset: 10,
                         child: FlareHomeChrome(
                           part: FlareHomeChromePart.timeline,
-                          child: _transport(context, phase),
+                          child: ValueListenableBuilder(
+                            valueListenable: _transportChrome,
+                            builder: (context, chrome, _) {
+                              final phase =
+                                  catalog.phaseBySource(chrome.phase) ??
+                                  catalog.phases.first;
+                              return _transport(context, phase, chrome.playing);
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -1893,9 +1948,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     return _nameLines = lines;
   }
 
-  Widget _phaseTitle(Phase phase) {
-    final canOpen =
-        !_scene.playing && catalog.plansForAngle(phase.source).isNotEmpty;
+  Widget _phaseTitle(Phase phase, bool playing) {
+    final canOpen = !playing && catalog.plansForAngle(phase.source).isNotEmpty;
     final row = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1945,7 +1999,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  Widget _transport(BuildContext context, Phase phase) {
+  Widget _transport(BuildContext context, Phase phase, bool playing) {
     final s = context.strings;
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -1961,12 +2015,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: Row(
             children: [
               _roundControl(
-                label: _scene.playing ? s.pause : s.play,
-                icon: _scene.playing
-                    ? Icons.pause_rounded
-                    : Icons.play_arrow_rounded,
+                label: playing ? s.pause : s.play,
+                icon: playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
                 diameter: 48,
-                solid: !_scene.playing,
+                solid: !playing,
                 onTap: () {
                   FlareHaptics.light();
                   _scene.playing ? _scene.pause() : _scene.play();
@@ -1977,7 +2029,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _phaseTitle(phase),
+                    _phaseTitle(phase, playing),
                     Expanded(
                       child: MotionTimeline(
                         catalog: catalog,
