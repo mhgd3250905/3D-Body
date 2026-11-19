@@ -69,6 +69,8 @@ class FlareShell extends StatefulWidget {
   State<FlareShell> createState() => _FlareShellState();
 }
 
+enum _HubRouteStage { entering, waitingForScene, sceneConfigured, leaving }
+
 class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   static const _trainingHubTab = 4;
   late final SceneController _scene;
@@ -111,6 +113,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   final _hubSceneClipBounds = GlobalKey();
   final _trainingHubState = GlobalKey<FlareTrainingHubPageState>();
   int _trainingHubOrigin = 0;
+  _HubRouteStage? _hubRouteStage;
   bool _trainingHubInitialMuscles = false;
   Timer? _trainingFlightDeadline;
   double _trainingEntryTime = 0;
@@ -125,8 +128,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _trainingActorFlight &&
       (_returningToWatch ? _returnFlightExposed : !_trainingFlightLanded);
 
+  bool get _hubFromAnotherTab =>
+      _tab == _trainingHubTab && _trainingHubOrigin != 0;
+
+  bool get _hubSliding =>
+      _hubRouteStage == _HubRouteStage.entering ||
+      _hubRouteStage == _HubRouteStage.leaving;
+
+  bool get _routeAllowsScene =>
+      _hubRouteStage == null ||
+      _hubRouteStage == _HubRouteStage.sceneConfigured;
+
   bool get _hubStageActive =>
       _tab == _trainingHubTab &&
+      _hubRouteStage != _HubRouteStage.entering &&
       (!_trainingActorFlight ||
           (_returningToWatch ? !_returnFlightExposed : _trainingFlightLanded));
 
@@ -241,7 +256,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _recoveryTime = null;
       // A recovered WebGL context may still belong to a hidden, prewarmed
       // view. Let it produce its replacement frame before hiding it again.
-      _scene.setVisible(_appVisible);
+      _scene.setVisible(_appVisible && _routeAllowsScene);
       if (widget.enableScene) _scene.requestPresentation();
       _configuring = false;
       _refreshView();
@@ -308,6 +323,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         !_trainingOpen;
     _scene.setVisible(
       _appVisible &&
+          _routeAllowsScene &&
           (_watchVisible ||
               _preparingScene ||
               _trainingActorFlight ||
@@ -323,6 +339,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _changeTab(int value) {
     if (_tab == _trainingHubTab && value != _trainingHubTab) {
+      if (_hubFromAnotherTab) {
+        _hubRouteStage = _HubRouteStage.leaving;
+        // Stop drawing before hub_exit restores the home scene.
+        _scene.setVisible(false);
+      }
       _scene.leaveTrainingHub();
     }
     setState(() {
@@ -338,6 +359,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _enterTrainingHub({bool muscles = false}) {
     _trainingHubOrigin = _tab;
+    _hubRouteStage = _tab == 0 ? null : _HubRouteStage.entering;
     _trainingHubInitialMuscles = muscles;
     _trainingEntryTime = _scene.time;
     _trainingActorFlight =
@@ -475,6 +497,25 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (mounted && _trainingFlightDeadline == deadline) {
       _finishTrainingFlight();
     }
+  }
+
+  void _onStageSettled() {
+    if (!mounted) return;
+    final entering = _hubRouteStage == _HubRouteStage.entering;
+    final leaving = _hubRouteStage == _HubRouteStage.leaving;
+    if (!_holdWatch && !entering && !leaving) return;
+    setState(() {
+      _holdWatch = false;
+      if (entering) _hubRouteStage = _HubRouteStage.waitingForScene;
+      if (leaving) _hubRouteStage = null;
+    });
+    if (leaving) _syncSceneVisibility();
+  }
+
+  void _onHubSceneConfigured() {
+    if (_hubRouteStage != _HubRouteStage.waitingForScene) return;
+    _hubRouteStage = _HubRouteStage.sceneConfigured;
+    _syncSceneVisibility();
   }
 
   void _onTrainingHubPresented() {
@@ -1074,12 +1115,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       children: [
                         Offstage(
                           offstage:
-                              !_watchVisible &&
-                              !_homeCoveredByPlan &&
-                              !_holdWatch &&
-                              !_preparingScene &&
-                              !_trainingActorFlight &&
-                              !hasHub,
+                              _hubSliding ||
+                              (!_watchVisible &&
+                                  !_homeCoveredByPlan &&
+                                  !_holdWatch &&
+                                  !_preparingScene &&
+                                  !_trainingActorFlight &&
+                                  !hasHub),
                           child: SafeArea(
                             top: false,
                             left: false,
@@ -1107,6 +1149,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               _trainingActorFlight &&
                               !_returningToWatch,
                           transparentUnderlay: hasHub,
+                          opaqueUnderlayTransition: _hubFromAnotherTab,
                           underlay: hasHub
                               ? ExcludeSemantics(
                                   excluding: !hubInFront || _returningToWatch,
@@ -1129,10 +1172,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         sharedViewport: _trainingViewport,
                                         actorHandoff: _showHomeActor,
                                         liveEntry: _trainingHubLiveEntry,
-                                        interactionLocked: _trainingActorFlight,
+                                        showLoadingFrame: !_hubFromAnotherTab,
+                                        interactionLocked:
+                                            _trainingActorFlight ||
+                                            _hubRouteStage ==
+                                                _HubRouteStage.entering,
                                         leaving: _returnFlightExposed,
                                         sceneBoundsKey: _hubSceneBounds,
                                         sceneClipBoundsKey: _hubSceneClipBounds,
+                                        onSceneConfigured: _hubFromAnotherTab
+                                            ? _onHubSceneConfigured
+                                            : null,
                                         onScenePresented:
                                             _onTrainingHubPresented,
                                         onAngleYawChanged: (yaw) {
@@ -1155,11 +1205,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                   ),
                                 )
                               : null,
-                          onSettled: () {
-                            if (mounted && _holdWatch) {
-                              setState(() => _holdWatch = false);
-                            }
-                          },
+                          onSettled: _onStageSettled,
                           onSwipeBack:
                               canBack &&
                                   !_trainingOpen &&
@@ -1545,6 +1591,32 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                     SizedBox.expand(
                       key: _homeSceneBounds,
                       child: ColoredBox(color: FlareColors.background),
+                    ),
+                  if (widget.enableScene && _hubFromAnotherTab)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: -stageTop,
+                      bottom: 0,
+                      child: IgnorePointer(
+                        child: AnimatedOpacity(
+                          key: const ValueKey('hub-scene-reveal'),
+                          opacity:
+                              _trainingHubStagePresented && _scene.presented
+                              ? 0
+                              : 1,
+                          duration:
+                              _trainingHubStagePresented && _scene.presented
+                              ? FlareMotion.of(
+                                  context,
+                                  const Duration(milliseconds: 150),
+                                )
+                              : Duration.zero,
+                          child: _StageBackdropCover(
+                            ancestor: _stageBackdropKey,
+                          ),
+                        ),
+                      ),
                     ),
                   if (_tab != _trainingHubTab)
                     SceneRevealLayer(

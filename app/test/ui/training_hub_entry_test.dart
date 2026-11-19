@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/platform/scene/scene.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/flare_training_hub_page.dart';
+import 'package:flare/ui/page_kit.dart' show FlareBackChip;
+import 'package:flare/ui/plans_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../domain/fixtures.dart';
-import 'flow_regressions_test.dart' show MemoryStateStorage, phoneSize, testApp;
+import 'flow_regressions_test.dart'
+    show MemoryStateStorage, openPlansFromHome, phoneSize, testApp;
 
 void main() {
   const actorStage = ValueKey('hub-stage-gesture');
@@ -262,4 +267,196 @@ void main() {
     expect(find.byType(SceneView), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  for (final reducedMotion in [false, true]) {
+    testWidgets(
+      'the Plans hub only reveals its scene after the route and frame are ready '
+      '(${reducedMotion ? 'reduced motion' : 'animated'})',
+      (tester) async {
+        await phoneSize(tester);
+        final store = LearningStore(
+          catalog: catalog,
+          storage: MemoryStateStorage(),
+        );
+        await store.initialize();
+        await store.acknowledgeSafety();
+        final commands = <Map<String, Object?>>[];
+        Completer<void>? bridgeGate;
+        final scene = SceneController(
+          commandSink: (command) async {
+            commands.add(command);
+            await bridgeGate?.future;
+          },
+        );
+        addTearDown(store.dispose);
+        addTearDown(scene.dispose);
+
+        await tester.pumpWidget(
+          testApp(
+            Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(disableAnimations: reducedMotion),
+                child: FlareShell(
+                  catalog: catalog,
+                  store: store,
+                  sceneController: scene,
+                ),
+              ),
+            ),
+          ),
+        );
+        scene.receiveEvent({
+          'source': 'flare-scene',
+          'type': 'ready',
+          'period': 9,
+        });
+        await tester.pumpAndSettle();
+
+        void presentLatestFrame() {
+          final presentation = commands.lastWhere(
+            (command) => command['type'] == 'present',
+          );
+          expect(
+            scene.receiveEvent({
+              'source': 'flare-scene',
+              'type': 'presented',
+              'requestId': presentation['requestId'],
+              'time': 2,
+              'phase': 11,
+            }),
+            isTrue,
+          );
+        }
+
+        presentLatestFrame();
+        await tester.pumpAndSettle();
+        final canvas = find.byType(SceneView);
+        final retainedCanvas = find.byType(SceneView, skipOffstage: false);
+        final home = tester.element(canvas);
+        final bounds = tester.getRect(canvas);
+        bool showsScene(Map<String, Object?> command) =>
+            command['type'] == 'visibility' && command['visible'] == true;
+
+        await openPlansFromHome(tester);
+        final plans = find.byType(PlansPage);
+        final hub = find.byType(FlareTrainingHubPage);
+        final curtain = find.byKey(const ValueKey('hub-scene-reveal'));
+        double? hubBackgroundOpacity() => tester
+            .element(hub)
+            .findAncestorWidgetOfExactType<Material>()
+            ?.color
+            ?.a;
+        for (final (link, muscles) in [
+          ('plan-all-angles', false),
+          ('plan-all-muscles', true),
+        ]) {
+          final target = find.byKey(ValueKey(link));
+          await tester.scrollUntilVisible(
+            target,
+            250,
+            scrollable: find.descendant(
+              of: plans,
+              matching: find.byWidgetPredicate(
+                (widget) =>
+                    widget is Scrollable &&
+                    widget.axisDirection == AxisDirection.down,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(canvas, findsNothing);
+
+          commands.clear();
+          await tester.tap(target);
+          await tester.pump();
+          if (!reducedMotion) {
+            await tester.pump(const Duration(milliseconds: 80));
+            expect(tester.getTopLeft(hub).dx, greaterThan(0));
+            expect(hubBackgroundOpacity(), 1);
+            expect(canvas, findsNothing);
+            expect(commands.any(showsScene), isFalse);
+            expect(
+              commands.map((command) => command['type']),
+              isNot(contains('hub_scene')),
+            );
+          }
+
+          await tester.pumpAndSettle();
+          final configuration = commands.singleWhere(
+            (command) => command['type'] == 'hub_scene',
+          );
+          expect(configuration['showMuscles'], muscles);
+          expect(scene.presented, isFalse);
+          final present = commands.indexWhere(
+            (command) => command['type'] == 'present',
+          );
+          expect(present, greaterThan(commands.indexOf(configuration)));
+          expect(commands.indexWhere(showsScene), greaterThan(present));
+          expect(tester.element(retainedCanvas), same(home));
+          expect(tester.widget<AnimatedOpacity>(curtain).opacity, 1);
+
+          presentLatestFrame();
+          if (!reducedMotion) {
+            await tester.pump();
+            await tester.pump();
+            expect(tester.widget<AnimatedOpacity>(curtain).opacity, 0);
+            await tester.pump(const Duration(milliseconds: 60));
+            final fade = tester.widget<FadeTransition>(
+              find.descendant(
+                of: curtain,
+                matching: find.byType(FadeTransition),
+              ),
+            );
+            expect(fade.opacity.value, allOf(greaterThan(0), lessThan(1)));
+          }
+          await tester.pumpAndSettle();
+          expect(hubBackgroundOpacity(), 0);
+          expect(tester.element(canvas), same(home));
+          expect(tester.widget<SceneView>(canvas).concealed, isFalse);
+          expect(tester.getRect(canvas), bounds);
+
+          // A native bridge call can still be pending when the back chip is
+          // pressed. This makes the route queue visibility and exit together.
+          bridgeGate = Completer<void>();
+          scene.setQuality('balanced');
+          final returnStart = commands.length;
+          await tester.tap(find.byType(FlareBackChip));
+          await tester.pump();
+          if (!reducedMotion) {
+            await tester.pump(const Duration(milliseconds: 80));
+            expect(hub, findsOneWidget);
+            expect(hubBackgroundOpacity(), 1);
+            expect(canvas, findsNothing);
+          }
+          bridgeGate.complete();
+          bridgeGate = null;
+          await tester.pumpAndSettle();
+          expect(hub, findsNothing);
+          expect(plans, findsOneWidget);
+          expect(canvas, findsNothing);
+          expect(tester.element(retainedCanvas), same(home));
+          final returnCommands = commands.skip(returnStart).toList();
+          final hide = returnCommands.indexWhere(
+            (command) =>
+                command['type'] == 'visibility' && command['visible'] == false,
+          );
+          final exit = returnCommands.indexWhere(
+            (command) => command['type'] == 'hub_exit',
+          );
+          expect(hide, isNonNegative);
+          expect(exit, greaterThan(hide));
+          expect(returnCommands.any(showsScene), isFalse);
+          expect(
+            commands.any(
+              (command) => (command['type'] as String).startsWith('hub_flight'),
+            ),
+            isFalse,
+          );
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 }

@@ -40,10 +40,12 @@ class FlareTrainingHubPage extends StatefulWidget {
     required this.onMuscle,
     this.actorHandoff = false,
     this.liveEntry = false,
+    this.showLoadingFrame = true,
     this.interactionLocked = false,
     this.leaving = false,
     this.sceneBoundsKey,
     this.sceneClipBoundsKey,
+    this.onSceneConfigured,
     this.onScenePresented,
     this.sharedController,
     this.sharedViewport,
@@ -66,10 +68,12 @@ class FlareTrainingHubPage extends StatefulWidget {
   final ValueChanged<MuscleGroup> onMuscle;
   final bool actorHandoff;
   final bool liveEntry;
+  final bool showLoadingFrame;
   final bool interactionLocked;
   final bool leaving;
   final GlobalKey? sceneBoundsKey;
   final GlobalKey? sceneClipBoundsKey;
+  final VoidCallback? onSceneConfigured;
   final VoidCallback? onScenePresented;
   final SceneController? sharedController;
   final TrainingViewport? Function()? sharedViewport;
@@ -129,10 +133,19 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
           _requestedPresentation) {
         return;
       }
-      _requestedPresentation = true;
-      _render(animate: false);
-      _stage.requestPresentation();
+      _requestScenePresentation();
     });
+  }
+
+  void _requestScenePresentation() {
+    if (widget.onSceneConfigured != null &&
+        widget.sharedViewport?.call() == null) {
+      return;
+    }
+    _requestedPresentation = true;
+    if (!_ownsController) _render(animate: false);
+    _stage.requestPresentation();
+    widget.onSceneConfigured?.call();
   }
 
   void _sceneChanged() {
@@ -142,11 +155,8 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       if (_presented) setState(() => _presented = false);
       return;
     }
-    if (!_requestedPresentation) {
-      _requestedPresentation = true;
-      if (!_ownsController) _render(animate: false);
-      _stage.requestPresentation();
-    }
+    if (!_requestedPresentation) _requestScenePresentation();
+    if (!_requestedPresentation) return;
     if (_presented != _stage.presented) {
       setState(() {
         _presented = _stage.presented;
@@ -344,7 +354,8 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                         ? Stack(
                             fit: StackFit.expand,
                             children: [
-                              if (!_muscles &&
+                              if (widget.showLoadingFrame &&
+                                  !_muscles &&
                                   !_presented &&
                                   !_everPresented &&
                                   !widget.liveEntry &&

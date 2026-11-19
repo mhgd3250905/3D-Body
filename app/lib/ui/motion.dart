@@ -262,6 +262,7 @@ class FlareStage extends StatefulWidget {
     required this.child,
     this.underlay,
     this.transparentUnderlay = false,
+    this.opaqueUnderlayTransition = false,
     this.modal = false,
     this.cover = false,
     this.anchorIncomingUnderlayHitTest = false,
@@ -289,6 +290,9 @@ class FlareStage extends StatefulWidget {
   /// A page that stays mounted while another route covers it.
   final Widget? underlay;
   final bool transparentUnderlay;
+
+  /// Give a moving underlay an opaque surface while it crosses its parent.
+  final bool opaqueUnderlayTransition;
   final bool modal;
 
   /// Slide over the previous page while keeping it stationary and undimmed.
@@ -392,7 +396,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     final outgoingHub =
         old.child == null && widget.underlay == null && !old.cover;
     _previous = old.child ?? (outgoingHub ? old.underlay : null);
-    _previousTransparent = outgoingHub && old.transparentUnderlay;
+    _previousTransparent =
+        outgoingHub && old.transparentUnderlay && !old.opaqueUnderlayTransition;
     _previousKey = old.pageKey;
     _controller.duration = _popFrom > 0
         ? Duration(
@@ -497,6 +502,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
     final incomingUnderlay = underlay != null && widget.child == null;
+    final opaqueUnderlay =
+        widget.opaqueUnderlayTransition &&
+        incomingUnderlay &&
+        (animating ? _kind == _Kind.push : _swiping || _swipe.value > 0);
     final outgoingUnderlay = underlay != null && animating && _previous == null;
     final reduced = FlareMotion.reduced(context);
     final swipeParent = !animating && !reduced && (_swiping || _swipe.value > 0)
@@ -557,7 +566,10 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             swipeBackdrop: previewHub,
             anchorHitTest:
                 incomingUnderlay && widget.anchorIncomingUnderlayHitTest,
-            child: _page(underlay, transparent: widget.transparentUnderlay),
+            child: _page(
+              underlay,
+              transparent: widget.transparentUnderlay && !opaqueUnderlay,
+            ),
           ),
         if (previous != null && !previousOnTop && !incomingUnderlay) previous,
         current,

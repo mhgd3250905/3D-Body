@@ -310,7 +310,10 @@ class SceneController extends ChangeNotifier {
   void setVisible(bool visible) {
     if (_disposed) return;
     if (!visible) _playing = false;
-    command({'type': 'visibility', 'visible': visible});
+    // Keep an already queued hide ahead of later scene changes, such as hub_exit.
+    if (_pending['visibility']?['visible'] != visible) {
+      command({'type': 'visibility', 'visible': visible});
+    }
     notifyListeners();
   }
 
