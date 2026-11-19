@@ -1,4 +1,8 @@
-import bundled from '../public/coach/flare-sequence.json' with {type:'json'};
+import flareBundled from '../public/coach/flare-sequence.json' with {type:'json'};
+import move2000 from '../public/coach/move-2000-sequence.json' with {type:'json'};
+import { IS_2000 } from './move-2000.js';
+// ?move=2000 swaps the bundled default for the 2000 keyframes; Flare behaviour is unchanged otherwise.
+const bundled=IS_2000?move2000:flareBundled;
 import beforeWebV41 from '../public/coach/flare-sequence-before-web-v41.json' with {type:'json'};
 import { createFlareSequence } from './flare-sequence.js';
 
@@ -17,6 +21,11 @@ const parse=raw=>{try{return JSON.parse(raw||'null');}catch{return null;}};
 const loopRevision=()=>bundled.source?.kind==='saved-loop-9-16'?bundled.source.revision:null;
 
 export function sequenceFromSavedSteps(steps){
+  if(IS_2000){
+    if(!Array.isArray(steps)||steps.length!==bundled.steps.length)throw new Error(`2000 正式展示需要 ${bundled.steps.length} 个步骤（与默认关键帧一一对应）。`);
+    createFlareSequence(steps,{period:bundled.period});
+    return {...clone(bundled),source:{...clone(bundled.source),origin:'browser-saved-steps'},steps:steps.map((step,index)=>({...clone(bundled.steps[index]),name:step.name||bundled.steps[index].name,sourceStepId:step.id,pose:clone(step.pose)}))};
+  }
   if(!Array.isArray(steps)||(steps.length!==9&&steps.length<16))throw new Error('请保存至少 16 个步骤，或准备完整的 9 步循环，再用于正式展示。');
   const fromLoop=steps.length>=16;
   let selected=steps;
@@ -40,7 +49,7 @@ export function sequenceFromSavedSteps(steps){
 }
 
 export function validSequence(value){
-  if(value?.format!=='flare-demonstration'||value.version!==1||value.period!==9||!Array.isArray(value.steps)||value.steps.length!==9)return false;
+  if(value?.format!=='flare-demonstration'||value.version!==1||value.period!==bundled.period||!Array.isArray(value.steps)||value.steps.length!==bundled.steps.length)return false;
   const ids=new Set();
   for(const step of value.steps){
     if(typeof step?.id!=='string'||!step.id.trim()||ids.has(step.id)||typeof step.name!=='string'||!step.name.trim()||!PHASES.has(step.phase))return false;
