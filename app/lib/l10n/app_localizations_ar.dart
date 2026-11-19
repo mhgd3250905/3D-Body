@@ -15,6 +15,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get premiumPreviewSubscribe => 'افتح مزايا Flare Pro';
 
   @override
+  String get premiumPreviewFooter =>
+      'بعد الاشتراك، تتاح لك التدريبات والسجل والخطط المخصصة.';
+
+  @override
   String get premiumPreviewBenefitStreak => 'أيام متتالية';
 
   @override
@@ -42,21 +46,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'تسجيل تلقائي';
 
   @override
-  String get premiumPreviewRecordsTitle => 'اشترك في بريميوم لتسجيل كل تمرين';
+  String get premiumPreviewRecordsTitle => 'سجّل كل تمرين';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'كل';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'يُحفظ وقت التمرين وأيام التدريب المتتالية والإنجازات تلقائيًا، لتتابع تقدّمك بسهولة.';
 
   @override
-  String get premiumPreviewPlanEditorTitle => 'اشترك في بريميوم لتصميم خطتك';
+  String get premiumPreviewPlanEditorTitle => 'صمّم خطتك بنفسك';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'بنفسك';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'اختر التمارين وعدّل عدد المجموعات واحفظ خطتك التدريبية الخاصة.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'اشترك في بريميوم لبدء التدريب';
+  String get premiumPreviewTrainingTitle => 'تدرّب معنا، كل مجموعة تُحسب';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'كل مجموعة';
 
   @override
   String get premiumPreviewTrainingDescription =>

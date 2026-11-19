@@ -15,6 +15,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Desbloquear Flare Pro';
 
   @override
+  String get premiumPreviewFooter =>
+      'Treinos, histórico e planos personalizados, tudo desbloqueado.';
+
+  @override
   String get premiumPreviewBenefitStreak => 'Dias seguidos';
 
   @override
@@ -42,22 +46,31 @@ class AppLocalizationsPt extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'Registro automático';
 
   @override
-  String get premiumPreviewRecordsTitle => 'Registre cada treino com Premium';
+  String get premiumPreviewRecordsTitle => 'Registre cada treino';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'cada';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'Duração, dias seguidos e conquistas são salvos automaticamente para você acompanhar o progresso.';
 
   @override
-  String get premiumPreviewPlanEditorTitle =>
-      'Monte seu próprio plano com Premium';
+  String get premiumPreviewPlanEditorTitle => 'Monte seu próprio plano';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'próprio';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'Escolha exercícios, ajuste as séries e salve seu plano personalizado.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'Comece a treinar com Premium';
+  String get premiumPreviewTrainingTitle =>
+      'Siga a orientação, cada série conta';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'cada série';
 
   @override
   String get premiumPreviewTrainingDescription =>

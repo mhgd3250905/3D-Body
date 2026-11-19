@@ -9,10 +9,13 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get premiumPreviewBadge => 'FLARE 会员';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => '开通会员 · 解锁全部';
+  String get premiumPreviewSubscribe => '解锁 Flare 会员';
+
+  @override
+  String get premiumPreviewFooter => '开通后 · 训练、记录、自定义计划全部可用';
 
   @override
   String get premiumPreviewBenefitStreak => '连续天数';
@@ -42,19 +45,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get premiumPreviewBenefitLogging => '自动记录';
 
   @override
-  String get premiumPreviewRecordsTitle => '开通会员，记录每一次训练';
+  String get premiumPreviewRecordsTitle => '记录每一次训练';
 
   @override
-  String get premiumPreviewRecordsDescription => '自动保存训练时长、连续天数和里程碑，进步一眼看清。';
+  String get premiumPreviewRecordsHighlight => '每一次';
 
   @override
-  String get premiumPreviewPlanEditorTitle => '开通会员，组合自己的计划';
+  String get premiumPreviewRecordsDescription => '自动保存时长、连续天数和里程碑，进步一眼看清。';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '组合你自己的计划';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => '自己';
 
   @override
   String get premiumPreviewPlanEditorDescription => '自由挑选动作、调整组数，保存成你的专属计划。';
 
   @override
-  String get premiumPreviewTrainingTitle => '开通会员，开始跟练';
+  String get premiumPreviewTrainingTitle => '跟着练，每组都算数';
+
+  @override
+  String get premiumPreviewTrainingHighlight => '每组';
 
   @override
   String get premiumPreviewTrainingDescription => '全程语音计时与动作示范，练完自动记录。';
@@ -1514,10 +1526,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
 
   @override
-  String get premiumPreviewBadge => 'FLARE 會員';
+  String get premiumPreviewBadge => 'FLARE PRO';
 
   @override
-  String get premiumPreviewSubscribe => '開通會員 · 解鎖全部';
+  String get premiumPreviewSubscribe => '解鎖 Flare 會員';
+
+  @override
+  String get premiumPreviewFooter => '開通後 · 訓練、記錄、自訂計畫全部可用';
 
   @override
   String get premiumPreviewBenefitStreak => '連續天數';
@@ -1547,19 +1562,28 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get premiumPreviewBenefitLogging => '自動記錄';
 
   @override
-  String get premiumPreviewRecordsTitle => '開通會員，記錄每一次訓練';
+  String get premiumPreviewRecordsTitle => '記錄每一次訓練';
 
   @override
-  String get premiumPreviewRecordsDescription => '自動儲存訓練時長、連續天數和里程碑，進步一目了然。';
+  String get premiumPreviewRecordsHighlight => '每一次';
 
   @override
-  String get premiumPreviewPlanEditorTitle => '開通會員，組合自己的計畫';
+  String get premiumPreviewRecordsDescription => '自動儲存時長、連續天數和里程碑，進步一目了然。';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '組合你自己的計畫';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => '自己';
 
   @override
   String get premiumPreviewPlanEditorDescription => '自由挑選動作、調整組數，儲存成你的專屬計畫。';
 
   @override
-  String get premiumPreviewTrainingTitle => '開通會員，開始跟練';
+  String get premiumPreviewTrainingTitle => '跟著練，每組都算數';
+
+  @override
+  String get premiumPreviewTrainingHighlight => '每組';
 
   @override
   String get premiumPreviewTrainingDescription => '全程語音計時與動作示範，練完自動記錄。';

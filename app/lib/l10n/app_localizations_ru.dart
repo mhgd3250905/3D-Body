@@ -15,6 +15,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Открыть Flare Pro';
 
   @override
+  String get premiumPreviewFooter =>
+      'Тренировки, история и персональные планы доступны после подписки.';
+
+  @override
   String get premiumPreviewBenefitStreak => 'Дни подряд';
 
   @override
@@ -42,22 +46,31 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'Автозапись';
 
   @override
-  String get premiumPreviewRecordsTitle =>
-      'Записывайте каждую тренировку с Premium';
+  String get premiumPreviewRecordsTitle => 'Записывайте каждую тренировку';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'каждую';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'Длительность, дни подряд и достижения сохраняются автоматически, чтобы прогресс был виден сразу.';
 
   @override
-  String get premiumPreviewPlanEditorTitle => 'Создайте свой план с Premium';
+  String get premiumPreviewPlanEditorTitle => 'Создайте свой план';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'свой';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'Выбирайте упражнения, настраивайте подходы и сохраняйте свой план тренировок.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'Начните тренировку с Premium';
+  String get premiumPreviewTrainingTitle =>
+      'Тренируйтесь по подсказкам, каждый подход важен';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'каждый подход';
 
   @override
   String get premiumPreviewTrainingDescription =>

@@ -15,6 +15,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Buka Flare Pro';
 
   @override
+  String get premiumPreviewFooter =>
+      'Buka semua akses ke latihan, riwayat, dan rencana kustom.';
+
+  @override
   String get premiumPreviewBenefitStreak => 'Hari berturut-turut';
 
   @override
@@ -42,23 +46,30 @@ class AppLocalizationsId extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'Catatan otomatis';
 
   @override
-  String get premiumPreviewRecordsTitle =>
-      'Catat setiap latihan dengan Premium';
+  String get premiumPreviewRecordsTitle => 'Catat setiap latihan';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'setiap';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'Durasi, hari latihan berturut-turut, dan pencapaian disimpan otomatis agar progres mudah dilihat.';
 
   @override
-  String get premiumPreviewPlanEditorTitle =>
-      'Buat rencana sendiri dengan Premium';
+  String get premiumPreviewPlanEditorTitle => 'Buat rencana latihan sendiri';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'sendiri';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'Pilih gerakan, atur jumlah set, lalu simpan rencana latihanmu sendiri.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'Mulai latihan dengan Premium';
+  String get premiumPreviewTrainingTitle => 'Ikuti latihan, setiap set berarti';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'setiap set';
 
   @override
   String get premiumPreviewTrainingDescription =>

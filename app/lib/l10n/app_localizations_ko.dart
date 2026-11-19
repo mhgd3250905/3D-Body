@@ -15,6 +15,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Flare Pro 잠금 해제';
 
   @override
+  String get premiumPreviewFooter => '운동, 기록, 맞춤 계획을 모두 이용할 수 있어요.';
+
+  @override
   String get premiumPreviewBenefitStreak => '연속 운동 일수';
 
   @override
@@ -42,21 +45,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get premiumPreviewBenefitLogging => '자동 기록';
 
   @override
-  String get premiumPreviewRecordsTitle => '프리미엄으로 모든 운동을 기록하세요';
+  String get premiumPreviewRecordsTitle => '모든 운동을 기록하세요';
+
+  @override
+  String get premiumPreviewRecordsHighlight => '모든';
 
   @override
   String get premiumPreviewRecordsDescription =>
       '운동 시간, 연속 운동 일수, 달성 기록이 자동 저장되어 진도를 한눈에 볼 수 있어요.';
 
   @override
-  String get premiumPreviewPlanEditorTitle => '프리미엄으로 나만의 계획을 만드세요';
+  String get premiumPreviewPlanEditorTitle => '나만의 계획을 만드세요';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => '나만의';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       '운동을 고르고 세트 수를 조절해 나만의 계획으로 저장하세요.';
 
   @override
-  String get premiumPreviewTrainingTitle => '프리미엄으로 운동을 시작하세요';
+  String get premiumPreviewTrainingTitle => '따라 하세요, 모든 세트가 기록돼요';
+
+  @override
+  String get premiumPreviewTrainingHighlight => '모든 세트';
 
   @override
   String get premiumPreviewTrainingDescription =>

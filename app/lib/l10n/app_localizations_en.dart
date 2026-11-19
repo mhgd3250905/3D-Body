@@ -15,6 +15,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Unlock Flare Pro';
 
   @override
+  String get premiumPreviewFooter =>
+      'Training, history and custom plans, all unlocked';
+
+  @override
   String get premiumPreviewBenefitStreak => 'Streaks';
 
   @override
@@ -42,22 +46,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'Auto logging';
 
   @override
-  String get premiumPreviewRecordsTitle => 'Get Premium to log every workout';
+  String get premiumPreviewRecordsTitle => 'Log every workout';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'every';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'Automatically save workout time, streaks and milestones to see your progress at a glance.';
 
   @override
-  String get premiumPreviewPlanEditorTitle =>
-      'Get Premium to build your own plan';
+  String get premiumPreviewPlanEditorTitle => 'Build your own plan';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'your own';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'Choose exercises, adjust sets and save your own training plan.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'Get Premium to start training';
+  String get premiumPreviewTrainingTitle =>
+      'Follow along, make every set count';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'every set';
 
   @override
   String get premiumPreviewTrainingDescription =>

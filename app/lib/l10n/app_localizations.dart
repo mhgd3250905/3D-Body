@@ -124,14 +124,20 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPreviewBadge.
   ///
   /// In zh, this message translates to:
-  /// **'FLARE 会员'**
+  /// **'FLARE PRO'**
   String get premiumPreviewBadge;
 
   /// No description provided for @premiumPreviewSubscribe.
   ///
   /// In zh, this message translates to:
-  /// **'开通会员 · 解锁全部'**
+  /// **'解锁 Flare 会员'**
   String get premiumPreviewSubscribe;
+
+  /// No description provided for @premiumPreviewFooter.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通后 · 训练、记录、自定义计划全部可用'**
+  String get premiumPreviewFooter;
 
   /// No description provided for @premiumPreviewBenefitStreak.
   ///
@@ -190,20 +196,32 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPreviewRecordsTitle.
   ///
   /// In zh, this message translates to:
-  /// **'开通会员，记录每一次训练'**
+  /// **'记录每一次训练'**
   String get premiumPreviewRecordsTitle;
+
+  /// No description provided for @premiumPreviewRecordsHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'每一次'**
+  String get premiumPreviewRecordsHighlight;
 
   /// No description provided for @premiumPreviewRecordsDescription.
   ///
   /// In zh, this message translates to:
-  /// **'自动保存训练时长、连续天数和里程碑，进步一眼看清。'**
+  /// **'自动保存时长、连续天数和里程碑，进步一眼看清。'**
   String get premiumPreviewRecordsDescription;
 
   /// No description provided for @premiumPreviewPlanEditorTitle.
   ///
   /// In zh, this message translates to:
-  /// **'开通会员，组合自己的计划'**
+  /// **'组合你自己的计划'**
   String get premiumPreviewPlanEditorTitle;
+
+  /// No description provided for @premiumPreviewPlanEditorHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'自己'**
+  String get premiumPreviewPlanEditorHighlight;
 
   /// No description provided for @premiumPreviewPlanEditorDescription.
   ///
@@ -214,8 +232,14 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPreviewTrainingTitle.
   ///
   /// In zh, this message translates to:
-  /// **'开通会员，开始跟练'**
+  /// **'跟着练，每组都算数'**
   String get premiumPreviewTrainingTitle;
+
+  /// No description provided for @premiumPreviewTrainingHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'每组'**
+  String get premiumPreviewTrainingHighlight;
 
   /// No description provided for @premiumPreviewTrainingDescription.
   ///

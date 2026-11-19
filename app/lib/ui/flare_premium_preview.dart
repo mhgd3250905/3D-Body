@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -35,11 +36,11 @@ class FlarePremiumPreview extends StatefulWidget {
 class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
     with TickerProviderStateMixin {
   static const _delay = Duration(milliseconds: 120);
-  static const _cardDuration = Duration(milliseconds: 320);
-  static const _glowDuration = Duration(milliseconds: 400);
+  static const _cardDuration = Duration(milliseconds: 360);
+  static const _glowDuration = Duration(milliseconds: 480);
   static const _veilDuration = Duration(milliseconds: 240);
   static const _exitDuration = Duration(milliseconds: 220);
-  static const _sheenDelay = Duration(milliseconds: 600);
+  static const _sheenDelay = Duration(milliseconds: 700);
   static final _veilProgress = Interval(
     0,
     _veilDuration.inMilliseconds / _glowDuration.inMilliseconds,
@@ -117,8 +118,8 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
       builder: (context, constraints) {
         final height = constraints.maxHeight;
         final fadeTop = (screenHeight * .45).clamp(0.0, height);
-        final blurTop = (screenHeight * .52).clamp(fadeTop, height);
-        final fadeEnd = (screenHeight * .62).clamp(blurTop, height);
+        final blurTop = screenHeight * .50;
+        final blurRamp = screenHeight * .10;
         return AnimatedBuilder(
           animation: _motion,
           child: widget.child,
@@ -135,42 +136,6 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
                   cutoff: blocked ? fadeTop : null,
                   child: child!,
                 ),
-                if (shown && blurTop < height)
-                  Positioned.fill(
-                    top: blurTop,
-                    child: IgnorePointer(
-                      child: _PremiumBackdropBlur(
-                        rampHeight: fadeEnd - blurTop,
-                        strength: opacity,
-                      ),
-                    ),
-                  ),
-                if (shown && fadeTop < height)
-                  IgnorePointer(
-                    child: FadeTransition(
-                      opacity: AlwaysStoppedAnimation(opacity),
-                      child: ShaderMask(
-                        key: const ValueKey('premium-preview-gradient'),
-                        blendMode: BlendMode.dstIn,
-                        // Keep the mask on the full screen so its fractional
-                        // fade position is inside the layer, not at its edge.
-                        shaderCallback: (bounds) => LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: const [
-                            Colors.transparent,
-                            Colors.transparent,
-                            Colors.white,
-                            Colors.white,
-                          ],
-                          stops: [0, fadeTop / height, fadeEnd / height, 1],
-                        ).createShader(bounds),
-                        child: ColoredBox(
-                          color: background.withValues(alpha: .72),
-                        ),
-                      ),
-                    ),
-                  ),
                 if (blocked)
                   Positioned.fill(
                     top: fadeTop,
@@ -180,30 +145,39 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
                     ),
                   ),
                 if (widget.locked || shown)
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    bottom: safeBottom + 16,
-                    child: IgnorePointer(
-                      ignoring: !widget.locked || !shown,
-                      child: ExcludeSemantics(
-                        excluding: !widget.locked || !shown,
-                        child: FadeTransition(
-                          opacity: AlwaysStoppedAnimation(opacity),
-                          child: Transform.translate(
-                            offset: Offset(0, 24 * (1 - cardProgress)),
-                            child: Transform.scale(
-                              alignment: Alignment.bottomCenter,
-                              scale: .96 + .04 * cardProgress,
+                  CustomMultiChildLayout(
+                    delegate: _PremiumOfferLayout(40 * (1 - cardProgress)),
+                    children: [
+                      if (shown)
+                        LayoutId(
+                          id: _OfferSlot.backdrop,
+                          child: IgnorePointer(
+                            child: _PremiumBackdrop(
+                              fadeTop: fadeTop,
+                              blurTop: blurTop,
+                              blurRamp: blurRamp,
+                              opacity: opacity,
+                              background: background,
+                            ),
+                          ),
+                        ),
+                      LayoutId(
+                        id: _OfferSlot.panel,
+                        child: IgnorePointer(
+                          ignoring: !widget.locked || !shown,
+                          child: ExcludeSemantics(
+                            excluding: !widget.locked || !shown,
+                            child: FadeTransition(
+                              opacity: AlwaysStoppedAnimation(opacity),
                               child: Material(
                                 type: MaterialType.transparency,
-                                child: _offer(context),
+                                child: _offer(context, safeBottom),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 if (blocked && widget.onEdgeBack != null)
                   Positioned(
@@ -234,43 +208,71 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
     );
   }
 
-  Widget _offer(BuildContext context) {
+  Widget _offer(BuildContext context, double safeBottom) {
     final strings = context.strings;
-    final (title, description, benefits) = switch (widget.feature) {
+    final (
+      title,
+      highlight,
+      description,
+      benefits,
+      icons,
+    ) = switch (widget.feature) {
       FlarePremiumFeature.records => (
         strings.premiumPreviewRecordsTitle,
+        strings.premiumPreviewRecordsHighlight,
         strings.premiumPreviewRecordsDescription,
         [
           strings.premiumPreviewBenefitStreak,
           strings.premiumPreviewBenefitMilestones,
           strings.premiumPreviewBenefitDuration,
         ],
+        [
+          Icons.local_fire_department_outlined,
+          Icons.emoji_events_outlined,
+          Icons.timer_outlined,
+        ],
       ),
       FlarePremiumFeature.planEditor => (
         strings.premiumPreviewPlanEditorTitle,
+        strings.premiumPreviewPlanEditorHighlight,
         strings.premiumPreviewPlanEditorDescription,
         [
-          strings.premiumPreviewBenefitActions,
           strings.premiumPreviewBenefitSets,
+          strings.premiumPreviewBenefitActions,
           strings.premiumPreviewBenefitSaves,
+        ],
+        [
+          Icons.tune_rounded,
+          Icons.layers_outlined,
+          Icons.all_inclusive_rounded,
         ],
       ),
       FlarePremiumFeature.training => (
         strings.premiumPreviewTrainingTitle,
+        strings.premiumPreviewTrainingHighlight,
         strings.premiumPreviewTrainingDescription,
         [
           strings.premiumPreviewBenefitVoice,
           strings.premiumPreviewBenefitDemos,
           strings.premiumPreviewBenefitLogging,
         ],
+        [
+          Icons.graphic_eq_rounded,
+          Icons.play_circle_outline_rounded,
+          Icons.insights_rounded,
+        ],
       ),
     };
     return FlarePremiumOfferCard(
       badge: strings.premiumPreviewBadge,
       title: title,
+      highlight: highlight,
       description: description,
       benefits: benefits,
+      benefitIcons: icons,
       buttonLabel: strings.premiumPreviewSubscribe,
+      footer: strings.premiumPreviewFooter,
+      safeBottom: safeBottom,
       glow: _entrance,
       sheenEnabled: widget.locked && _sheenReady,
       onSubscribe: widget.onSubscribe,
@@ -278,13 +280,116 @@ class _FlarePremiumPreviewState extends State<FlarePremiumPreview>
   }
 }
 
+enum _OfferSlot { backdrop, panel }
+
+class _PremiumOfferLayout extends MultiChildLayoutDelegate {
+  _PremiumOfferLayout(this.offset);
+
+  final double offset;
+
+  @override
+  void performLayout(Size size) {
+    final panel = layoutChild(
+      _OfferSlot.panel,
+      BoxConstraints.tightFor(
+        width: size.width,
+      ).copyWith(maxHeight: size.height),
+    );
+    final top = size.height - panel.height + offset;
+    positionChild(_OfferSlot.panel, Offset(0, top));
+    if (hasChild(_OfferSlot.backdrop)) {
+      // The backdrop extends behind the rounded corners of the panel.
+      layoutChild(
+        _OfferSlot.backdrop,
+        BoxConstraints.tightFor(
+          width: size.width,
+          height: top + FlarePremiumOfferCard.topRadius,
+        ),
+      );
+      positionChild(_OfferSlot.backdrop, Offset.zero);
+    }
+  }
+
+  @override
+  bool shouldRelayout(_PremiumOfferLayout oldDelegate) =>
+      offset != oldDelegate.offset;
+}
+
+class _PremiumBackdrop extends StatelessWidget {
+  const _PremiumBackdrop({
+    required this.fadeTop,
+    required this.blurTop,
+    required this.blurRamp,
+    required this.opacity,
+    required this.background,
+  });
+
+  final double fadeTop;
+  final double blurTop;
+  final double blurRamp;
+  final double opacity;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final panelTop = height - FlarePremiumOfferCard.topRadius;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            if (blurTop < height)
+              Positioned.fill(
+                top: blurTop,
+                child: _PremiumBackdropBlur(
+                  rampHeight: blurRamp,
+                  visibleHeight: height - blurTop,
+                  strength: opacity,
+                ),
+              ),
+            FadeTransition(
+              opacity: AlwaysStoppedAnimation(opacity),
+              child: ShaderMask(
+                key: const ValueKey('premium-preview-gradient'),
+                blendMode: BlendMode.dstIn,
+                // Start the mask at the top of the viewport to keep the
+                // transparent stop inside its layer at fractional pixel sizes.
+                shaderCallback: (bounds) => LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: const [
+                    Colors.transparent,
+                    Colors.transparent,
+                    Colors.white,
+                    Colors.white,
+                  ],
+                  stops: [
+                    0,
+                    math.min(fadeTop, panelTop) / height,
+                    panelTop / height,
+                    1,
+                  ],
+                ).createShader(bounds),
+                child: ColoredBox(color: background.withValues(alpha: .92)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _PremiumBackdropBlur extends StatelessWidget {
   const _PremiumBackdropBlur({
     required this.rampHeight,
+    required this.visibleHeight,
     required this.strength,
   });
 
   final double rampHeight;
+  final double visibleHeight;
   final double strength;
 
   @override
@@ -298,17 +403,17 @@ class _PremiumBackdropBlur extends StatelessWidget {
       key: const ValueKey('premium-preview-blur'),
       fit: StackFit.expand,
       children: [
-        if (band > 0)
-          for (var i = 0; i < slices; i++)
-            Positioned.fill(
-              top: band * i,
-              bottom: null,
-              child: SizedBox(
-                height: band,
-                child: _blurBand(sigma * (i + .5) / slices),
-              ),
+        for (var i = 0; i < slices && band * i < visibleHeight; i++)
+          Positioned.fill(
+            top: band * i,
+            bottom: null,
+            child: SizedBox(
+              height: math.min(band, visibleHeight - band * i),
+              child: _blurBand(sigma * (i + .5) / slices),
             ),
-        Positioned.fill(top: rampHeight, child: _blurBand(sigma)),
+          ),
+        if (rampHeight < visibleHeight)
+          Positioned.fill(top: rampHeight, child: _blurBand(sigma)),
       ],
     );
   }

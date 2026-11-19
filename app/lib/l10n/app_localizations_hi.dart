@@ -15,6 +15,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Flare Pro अनलॉक करें';
 
   @override
+  String get premiumPreviewFooter =>
+      'कसरत, इतिहास और अपनी योजनाओं का इस्तेमाल करें।';
+
+  @override
   String get premiumPreviewBenefitStreak => 'लगातार दिन';
 
   @override
@@ -42,16 +46,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'अपने आप रिकॉर्ड';
 
   @override
-  String get premiumPreviewRecordsTitle =>
-      'हर कसरत दर्ज करने के लिए प्रीमियम लें';
+  String get premiumPreviewRecordsTitle => 'हर कसरत दर्ज करें';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'हर';
 
   @override
   String get premiumPreviewRecordsDescription =>
       'कसरत का समय, लगातार अभ्यास के दिन और उपलब्धियाँ अपने आप सहेजें और प्रगति एक नज़र में देखें।';
 
   @override
-  String get premiumPreviewPlanEditorTitle =>
-      'अपनी योजना बनाने के लिए प्रीमियम लें';
+  String get premiumPreviewPlanEditorTitle => 'अपनी योजना खुद बनाएँ';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'खुद';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
@@ -59,7 +67,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get premiumPreviewTrainingTitle =>
-      'प्रशिक्षण शुरू करने के लिए प्रीमियम लें';
+      'साथ में कसरत करें, हर सेट मायने रखता है';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'हर सेट';
 
   @override
   String get premiumPreviewTrainingDescription =>

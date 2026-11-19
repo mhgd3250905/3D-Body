@@ -667,6 +667,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         final hasAccess = membership.isPremium && !_awaitingPreviewUnlock.value;
         if (keepUnlocked && hasAccess) unlocked = true;
         final locked = !hasAccess && !unlocked;
+        final page = buildPage(locked);
         return FlarePremiumPreview(
           feature: feature,
           locked: locked,
@@ -674,7 +675,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onEdgeBack: feature == FlarePremiumFeature.training
               ? () => unawaited(Navigator.maybePop(context))
               : null,
-          child: buildPage(locked),
+          child: feature == FlarePremiumFeature.training
+              ? page
+              : SafeArea(top: false, child: page),
         );
       },
     );
@@ -1106,6 +1109,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final canBack = drill != null || _inPlan || _settings || _tab != 0;
     final route = _route(context);
     final edgeToEdgePlan = route.$4 is FlarePlanDetailPage;
+    final edgeToEdgePreview =
+        widget.membership != null &&
+        (route.$1 == 'tab$_recordsTab' || route.$1.startsWith('edit:'));
     final hasHub = _tab == _trainingHubTab;
     final hubInFront = route.$1 == 'training-hub' && !_trainingOpen;
     if (route.$1 != _stageKey) {
@@ -1133,7 +1139,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           // Page navigation and the live 3D surface each own their top inset.
           body: SafeArea(
             top: false,
-            bottom: !edgeToEdgePlan && !hasHub,
+            left: !edgeToEdgePreview,
+            right: !edgeToEdgePreview,
+            bottom: !edgeToEdgePlan && !hasHub && !edgeToEdgePreview,
             child: Column(
               children: [
                 if (store.storageError != null)
@@ -1177,7 +1185,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                             right: false,
                             // A full-bleed plan uses the safe area for its own
                             // controls. Keep the covered home viewport steady.
-                            bottom: edgeToEdgePlan || hasHub,
+                            bottom:
+                                edgeToEdgePlan || hasHub || edgeToEdgePreview,
                             child: IgnorePointer(
                               ignoring: _hideHomeChrome || _homeCoveredByPlan,
                               child: ExcludeSemantics(

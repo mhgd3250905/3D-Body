@@ -39,8 +39,8 @@ void main() {
       FadeTransition cardFade() =>
           tester.element(card).findAncestorWidgetOfExactType<FadeTransition>()!;
       expect(cardFade().opacity.value, 0);
-      const cardBottom = 844.0 - 34 - 16;
-      expect(tester.getRect(card).bottom, cardBottom + 24);
+      const cardBottom = 844.0;
+      expect(tester.getRect(card).bottom, cardBottom + 40);
       final offer = find.byType(FlarePremiumOfferCard);
       FlarePremiumOfferCard offerCard() => tester.widget(offer);
       expect(offerCard().glow.value, 0);
@@ -53,23 +53,24 @@ void main() {
       expect(cardFade().opacity.value, allOf(greaterThan(0), lessThan(1)));
       expect(
         tester.getRect(card).bottom,
-        allOf(greaterThan(cardBottom), lessThan(cardBottom + 24)),
+        allOf(greaterThan(cardBottom), lessThan(cardBottom + 40)),
       );
       await tester.pump(const Duration(milliseconds: 130));
       expect(cardFade().opacity.value, 1);
       expect(tester.getRect(card).bottom, greaterThan(cardBottom));
-      await tester.pump(const Duration(milliseconds: 80));
-      expect(offerCard().glow.value, closeTo(.8, .001));
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(offerCard().glow.value, closeTo(.75, .001));
       final fullSize = tester.getRect(card);
-      expect(fullSize.left, closeTo(16, .001));
-      expect(fullSize.right, closeTo(374, .001));
+      expect(fullSize.left, closeTo(0, .001));
+      expect(fullSize.right, closeTo(390, .001));
       expect(fullSize.bottom, closeTo(cardBottom, .001));
-      expect(tester.getSize(find.byKey(_subscribe)).height, 52);
-      expect(tester.getRect(find.byKey(_blur)).top, closeTo(844 * .52, .001));
-      await tester.pump(const Duration(milliseconds: 80));
+      expect(offerCard().safeBottom, 34);
+      expect(tester.getSize(find.byKey(_subscribe)).height, 54);
+      expect(tester.getRect(find.byKey(_blur)).top, closeTo(844 * .50, .001));
+      await tester.pump(const Duration(milliseconds: 120));
       expect(offerCard().glow.value, 1);
       final bounds = tester.getRect(card);
-      await tester.pump(const Duration(milliseconds: 519));
+      await tester.pump(const Duration(milliseconds: 579));
       expect(offerCard().sheenEnabled, isFalse);
       await tester.pump(const Duration(milliseconds: 1));
       expect(offerCard().sheenEnabled, isTrue);
@@ -78,17 +79,21 @@ void main() {
       final blocker = find.byKey(const ValueKey('premium-preview-blocker'));
       expect(tester.getRect(blocker).top, closeTo(844 * .45, .001));
       expect(tester.getRect(fade).top, 0);
+      expect(tester.getRect(fade).bottom, closeTo(bounds.top + 28, .001));
       final tint = find.descendant(of: fade, matching: find.byType(ColoredBox));
       expect(
         tester.widget<ColoredBox>(tint).color,
-        FlareColors.background.withValues(alpha: .72),
+        FlareColors.background.withValues(alpha: .92),
       );
       final filters = find.descendant(
         of: find.byKey(_blur),
         matching: find.byType(BackdropFilter),
       );
-      expect(filters, findsNWidgets(11));
-      expect(tester.getTopLeft(filters.last).dy, closeTo(844 * .62, .001));
+      expect(filters, findsWidgets);
+      expect(
+        tester.getRect(filters.last).bottom,
+        closeTo(bounds.top + 28, .001),
+      );
 
       locked.value = false;
       await tester.pump();
@@ -148,8 +153,13 @@ void main() {
         ),
       ),
     );
-    expect(find.text('开通会员，开始跟练'), findsOneWidget);
-    expect(find.text('FLARE 会员'), findsOneWidget);
+    final offer = tester.widget<FlarePremiumOfferCard>(
+      find.byType(FlarePremiumOfferCard),
+    );
+    expect(offer.title, '跟着练，每组都算数');
+    expect(offer.highlight, '每组');
+    expect(find.text('FLARE PRO'), findsOneWidget);
+    expect(find.text('解锁 Flare 会员'), findsOneWidget);
     expect(find.text('语音计时'), findsOneWidget);
     expect(find.text('动作示范'), findsOneWidget);
     expect(find.text('自动记录'), findsOneWidget);

@@ -15,6 +15,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premiumPreviewSubscribe => 'Flare Pro freischalten';
 
   @override
+  String get premiumPreviewFooter =>
+      'Training, Verlauf und eigene Pläne freischalten.';
+
+  @override
   String get premiumPreviewBenefitStreak => 'Trainingsserie';
 
   @override
@@ -42,8 +46,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premiumPreviewBenefitLogging => 'Automatisch erfassen';
 
   @override
-  String get premiumPreviewRecordsTitle =>
-      'Mit Premium jedes Training erfassen';
+  String get premiumPreviewRecordsTitle => 'Zeichne jedes Training auf';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'jedes';
 
   @override
   String get premiumPreviewRecordsDescription =>
@@ -51,14 +57,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get premiumPreviewPlanEditorTitle =>
-      'Mit Premium deinen eigenen Plan erstellen';
+      'Stell deinen eigenen Plan zusammen';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'eigenen';
 
   @override
   String get premiumPreviewPlanEditorDescription =>
       'Wähle Übungen, passe die Sätze an und speichere deinen persönlichen Trainingsplan.';
 
   @override
-  String get premiumPreviewTrainingTitle => 'Mit Premium das Training starten';
+  String get premiumPreviewTrainingTitle => 'Trainiere mit, jeder Satz zählt';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'jeder Satz';
 
   @override
   String get premiumPreviewTrainingDescription =>
