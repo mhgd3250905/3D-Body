@@ -102,12 +102,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   String? _sceneTheme;
   String? _sceneLanguage;
   String? _stageKey;
-  double _stageArea = 0, _sentInset = -1;
+  double _stageArea = 0, _sentInset = -1, _sentStageTop = 0;
   bool _insetSent = false;
   bool _holdWatch = false;
   final _stageBackdropKey = GlobalKey();
   final _homeSceneBounds = GlobalKey();
   final _hubSceneBounds = GlobalKey();
+  final _hubSceneClipBounds = GlobalKey();
   final _trainingHubState = GlobalKey<FlareTrainingHubPageState>();
   int _trainingHubOrigin = 0;
   bool _trainingHubInitialMuscles = false;
@@ -115,19 +116,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   double _trainingEntryTime = 0;
   bool _trainingActorFlight = false;
   bool _trainingHubLiveEntry = false;
+  bool _trainingHubStagePresented = false;
   bool _trainingFlightLanded = false;
   bool _returningToWatch = false;
   bool _returnFlightExposed = false;
-  bool _returnFlightUsesHome = false;
 
   bool get _showHomeActor =>
       _trainingActorFlight &&
       (_returningToWatch ? _returnFlightExposed : !_trainingFlightLanded);
 
-  bool get _hubOwnsScene =>
+  bool get _hubStageActive =>
       _tab == _trainingHubTab &&
       (!_trainingActorFlight ||
-          (_returningToWatch ? !_returnFlightUsesHome : _trainingFlightLanded));
+          (_returningToWatch ? !_returnFlightExposed : _trainingFlightLanded));
+
+  bool get _hideHomeChrome => _tab == _trainingHubTab || _trainingActorFlight;
 
   bool get _homeCoveredByPlan => _tab == 0 && _flarePlanTrail.isNotEmpty;
 
@@ -222,7 +225,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       // unchanged. Install the inset before seek/play can frame the new view.
       _sentInset = _viewInsetFor(context);
       _insetSent = true;
-      _scene.setViewInset(_sentInset, animate: false);
+      _scene.setViewInset(_sentInset, top: _sentStageTop, animate: false);
       _scene.setSpeed(store.settings.speed);
       _scene.setQuality(_quality);
       if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
@@ -248,7 +251,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _didPresentScene = true;
       // First-use welcome still requires explicit acknowledgement. Its model
       // is now prewarmed, so stop its idle loop until the action is shown.
-      if (!_watchVisible && !_hubOwnsScene) _scene.setVisible(false);
+      if (!_watchVisible && !_hubStageActive && !_trainingActorFlight) {
+        _scene.setVisible(false);
+      }
     }
     if (store.safetyAccepted &&
         (_scene.presented || !widget.enableScene) &&
@@ -296,7 +301,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _syncSceneVisibility() {
     final hubVisible =
-        _hubOwnsScene &&
+        _hubStageActive &&
         !_inPlan &&
         _drill == null &&
         !_settings &&
@@ -341,20 +346,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _scene.presented &&
         _scene.errorCode == null;
     _trainingHubLiveEntry = _trainingActorFlight;
+    _trainingHubStagePresented = false;
     _trainingFlightLanded = false;
     _changeTab(_trainingHubTab);
     if (!_trainingActorFlight) return;
     _trainingFlightDeadline = Timer(const Duration(seconds: 3), () {
       if (mounted && !_returningToWatch && !_trainingFlightLanded) {
-        // Keep the existing renderer and transfer it even if the flight
-        // acknowledgement was delayed.
+        // Let the hub configure the shared scene if the flight times out.
         _scene.finishTrainingFlight();
         setState(() => _trainingFlightLanded = true);
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !_trainingActorFlight) return;
-      final geometry = _trainingStageGeometry();
+      final geometry = _trainingViewport();
       if (geometry == null) {
         _finishTrainingFlight();
         return;
@@ -363,8 +368,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       await _scene.flyTrainingActor(
         time: _trainingEntryTime,
         yaw: _trainingHubState.currentState?.angleYaw ?? 0,
-        top: geometry.top,
-        height: geometry.height,
+        viewport: geometry,
         duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
       );
       if (!mounted ||
@@ -373,36 +377,39 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           _trainingFlightDeadline != deadline) {
         return;
       }
-      await _trainingHubState.currentState?.retainEntryFrame();
-      if (!mounted ||
-          !_trainingActorFlight ||
-          _trainingFlightLanded ||
-          _trainingFlightDeadline != deadline) {
-        return;
-      }
-      // Move the same platform view to the hub after the landing frame.
+      // The fixed canvas keeps the landing frame until the hub configures it.
       _scene.finishTrainingFlight();
       setState(() => _trainingFlightLanded = true);
     });
   }
 
-  ({double top, double height, double homeHeight})? _trainingStageGeometry() {
+  TrainingViewport? _trainingViewport() {
     final home = _homeSceneBounds.currentContext?.findRenderObject();
     final hub = _hubSceneBounds.currentContext?.findRenderObject();
     if (home is! RenderBox ||
         hub is! RenderBox ||
         !home.hasSize ||
         !hub.hasSize ||
+        home.size.isEmpty ||
         hub.size.isEmpty) {
       return null;
     }
-    return (
-      top:
-          hub.localToGlobal(Offset.zero).dy -
-          home.localToGlobal(Offset.zero).dy,
-      height: hub.size.height,
-      homeHeight: home.size.height,
-    );
+    final canvasTop = home.localToGlobal(Offset.zero).dy;
+    final top = hub.localToGlobal(Offset.zero).dy - canvasTop;
+    if (!top.isFinite) return null;
+    final scroll = _hubSceneClipBounds.currentContext?.findRenderObject();
+    if (scroll is RenderBox && scroll.hasSize && !scroll.size.isEmpty) {
+      final clipTop = scroll.localToGlobal(Offset.zero).dy - canvasTop;
+      if (clipTop.isFinite) {
+        return (
+          top: top,
+          height: hub.size.height,
+          clipTop: clipTop,
+          clipBottom: clipTop + scroll.size.height,
+        );
+      }
+    }
+    return (top: top, height: hub.size.height, clipTop: null, clipBottom: null);
   }
 
   Future<void> _returnFromTrainingHub() async {
@@ -415,7 +422,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _trainingActorFlight = true;
       _returningToWatch = true;
       _returnFlightExposed = false;
-      _returnFlightUsesHome = false;
     });
     final deadline = _trainingFlightDeadline = Timer(
       const Duration(seconds: 3),
@@ -428,7 +434,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || _trainingFlightDeadline != deadline) return;
-      final geometry = _trainingStageGeometry();
+      final geometry = _trainingViewport();
       if (geometry == null) {
         _finishTrainingFlight();
         return;
@@ -436,17 +442,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       await _scene.flyTrainingActor(
         time: shot.time,
         yaw: shot.yaw,
-        top: geometry.top,
-        height: geometry.height,
-        homeHeight: geometry.homeHeight,
+        viewport: geometry,
         duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
         returning: true,
         onPrepared: () {
           if (!mounted || _trainingFlightDeadline != deadline) return;
-          setState(() {
-            _returnFlightUsesHome = true;
-            _returnFlightExposed = true;
-          });
+          setState(() => _returnFlightExposed = true);
         },
       );
       if (mounted && _trainingFlightDeadline == deadline) {
@@ -469,7 +470,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() {
       _returningToWatch = true;
       _returnFlightExposed = true;
-      _returnFlightUsesHome = true;
     });
     await _scene.reverseTrainingFlight();
     if (mounted && _trainingFlightDeadline == deadline) {
@@ -478,11 +478,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _onTrainingHubPresented() {
-    if (!_trainingActorFlight || _returningToWatch) return;
     final deadline = _trainingFlightDeadline;
-    // Allow the transferred platform view to composite before unlocking
-    // the destination controls.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _tab != _trainingHubTab) return;
+      if (!_trainingHubStagePresented) {
+        setState(() => _trainingHubStagePresented = true);
+      }
+      if (!_trainingActorFlight || _returningToWatch) return;
+      // Let the landed frame composite before unlocking the controls.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _trainingFlightDeadline == deadline) {
           _finishTrainingFlight();
@@ -503,7 +506,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _tab = 0;
         _returningToWatch = false;
         _returnFlightExposed = false;
-        _returnFlightUsesHome = false;
       }
     });
     // Keep the landing frame until the destination canvas has been unveiled.
@@ -1076,27 +1078,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               !_homeCoveredByPlan &&
                               !_holdWatch &&
                               !_preparingScene &&
-                              !_trainingActorFlight,
+                              !_trainingActorFlight &&
+                              !hasHub,
                           child: SafeArea(
                             top: false,
                             left: false,
                             right: false,
                             // A full-bleed plan uses the safe area for its own
                             // controls. Keep the covered home viewport steady.
-                            bottom: edgeToEdgePlan && !hasHub,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                bottom: _trainingActorFlight
-                                    ? MediaQuery.viewPaddingOf(context).bottom
-                                    : 0,
-                              ),
-                              child: IgnorePointer(
-                                ignoring:
-                                    _trainingActorFlight || _homeCoveredByPlan,
-                                child: ExcludeSemantics(
-                                  excluding: _homeCoveredByPlan,
-                                  child: Builder(builder: _watchPage),
-                                ),
+                            bottom: edgeToEdgePlan || hasHub,
+                            child: IgnorePointer(
+                              ignoring: _hideHomeChrome || _homeCoveredByPlan,
+                              child: ExcludeSemantics(
+                                excluding:
+                                    _hideHomeChrome || _homeCoveredByPlan,
+                                child: Builder(builder: _watchPage),
                               ),
                             ),
                           ),
@@ -1128,16 +1124,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                                         initialTime: _trainingEntryTime,
                                         initialMuscles:
                                             _trainingHubInitialMuscles,
-                                        mountScene: _hubOwnsScene,
+                                        mountScene: _hubStageActive,
                                         sharedController: _scene,
-                                        sharedSceneView: _hubOwnsScene
-                                            ? _liveScene(interactive: false)
-                                            : null,
+                                        sharedViewport: _trainingViewport,
                                         actorHandoff: _showHomeActor,
                                         liveEntry: _trainingHubLiveEntry,
                                         interactionLocked: _trainingActorFlight,
                                         leaving: _returnFlightExposed,
                                         sceneBoundsKey: _hubSceneBounds,
+                                        sceneClipBoundsKey: _hubSceneClipBounds,
                                         onScenePresented:
                                             _onTrainingHubPresented,
                                         onAngleYawChanged: (yaw) {
@@ -1455,8 +1450,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           top: 0,
           start: 0,
           end: 0,
-          child: Opacity(
-            opacity: _trainingActorFlight ? 0 : 1,
+          child: Offstage(
+            offstage: _hideHomeChrome,
             child: FlareNavBar(
               leading: FlareNavChip(
                 key: const ValueKey('home-menu-chip'),
@@ -1492,16 +1487,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           44.0,
           double.infinity,
         );
+    final headingTop = (54 - MediaQuery.viewPaddingOf(context).top).clamp(
+      8.0,
+      54.0,
+    );
+    // Extend the single surface through the empty home header. The scene
+    // projects the original home frame below this band and can also paint the
+    // higher training viewport without moving or resizing the platform view.
+    final stageTop = headingTop + headingHeight + 10;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
-            16,
-            10,
-          ),
+          padding: EdgeInsets.fromLTRB(16, headingTop, 16, 10),
           child: SizedBox(key: const ValueKey('home'), height: headingHeight),
         ),
         Expanded(
@@ -1510,9 +1508,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               // The same home 3D view stays mounted under navigation.
               _stageArea = box.maxHeight;
               final inset = _viewInsetFor(context);
-              _sendViewInset(inset);
+              _sendViewInset(inset, stageTop);
               return Stack(
                 fit: StackFit.expand,
+                clipBehavior: Clip.none,
                 children: [
                   // Under the live view: during an appearance dissolve the
                   // old frame's backdrop fades out here, behind the athlete.
@@ -1525,16 +1524,28 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       enabled: widget.enableScene && _watchVisible,
                     ),
                   ),
-                  SizedBox.expand(
-                    key: _homeSceneBounds,
-                    child: !widget.enableScene
-                        ? ColoredBox(color: FlareColors.background)
-                        : _hubOwnsScene
-                        ? const SizedBox.expand()
-                        : _liveScene(interactive: !_trainingActorFlight),
-                  ),
-                  // The hub owns presentation while the live view is in
-                  // transit, even while the home stage is still visible.
+                  if (widget.enableScene)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: -stageTop,
+                      bottom: 0,
+                      child: SizedBox.expand(
+                        key: _homeSceneBounds,
+                        child: _liveScene(
+                          interactive: !_hideHomeChrome,
+                          concealed:
+                              _tab == _trainingHubTab &&
+                              !_trainingHubLiveEntry &&
+                              !_trainingHubStagePresented,
+                        ),
+                      ),
+                    )
+                  else
+                    SizedBox.expand(
+                      key: _homeSceneBounds,
+                      child: ColoredBox(color: FlareColors.background),
+                    ),
                   if (_tab != _trainingHubTab)
                     SceneRevealLayer(
                       enabled: widget.enableScene && !widget.startupCovered,
@@ -1556,8 +1567,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                               onRetry: _restartScene,
                             ),
                     ),
-                  Opacity(
-                    opacity: _trainingActorFlight ? 0 : 1,
+                  Offstage(
+                    offstage: _hideHomeChrome,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -1597,12 +1608,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  Widget _liveScene({bool interactive = true}) => SceneView(
-    key: _liveSceneKey,
-    controller: _scene,
-    body: flareTeachingScene,
-    interactive: interactive,
-  );
+  Widget _liveScene({bool interactive = true, bool concealed = false}) =>
+      SceneView(
+        key: _liveSceneKey,
+        controller: _scene,
+        body: flareTeachingScene,
+        interactive: interactive,
+        concealed: concealed,
+      );
 
   /// Height of the transport chrome over the bottom of the home 3D view.
   double _viewInsetFor(BuildContext context) {
@@ -1613,15 +1626,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             .toDouble();
   }
 
-  void _sendViewInset(double inset) {
-    if ((inset - _sentInset).abs() < .5) return;
+  void _sendViewInset(double inset, double top) {
+    if ((inset - _sentInset).abs() < .5 && (top - _sentStageTop).abs() < .5) {
+      return;
+    }
     _sentInset = inset;
+    _sentStageTop = top;
     // The first value lands at once; later ones ease with the camera.
     final first = !_insetSent;
     _insetSent = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && (_sentInset - inset).abs() < .5) {
-        _scene.setViewInset(inset, animate: !first);
+      if (mounted && _sentInset == inset && _sentStageTop == top) {
+        _scene.setViewInset(inset, top: top, animate: !first);
       }
     });
   }

@@ -175,7 +175,7 @@ void main() {
     tester,
   ) async {
     await mountDetail(tester);
-    tester.view.physicalSize = const Size(390, 760);
+    tester.view.physicalSize = const Size(390, 640);
     tester.view.viewPadding = const FakeViewPadding(bottom: 24);
     addTearDown(tester.view.resetViewPadding);
     await tester.pumpAndSettle();

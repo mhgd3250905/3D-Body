@@ -43,9 +43,10 @@ class FlareTrainingHubPage extends StatefulWidget {
     this.interactionLocked = false,
     this.leaving = false,
     this.sceneBoundsKey,
+    this.sceneClipBoundsKey,
     this.onScenePresented,
     this.sharedController,
-    this.sharedSceneView,
+    this.sharedViewport,
     this.onAngleYawChanged,
   });
 
@@ -56,6 +57,8 @@ class FlareTrainingHubPage extends StatefulWidget {
   final bool enableScene;
   final double initialTime;
   final bool initialMuscles;
+
+  /// Activates the scene. A shared controller is hosted by the parent shell.
   final bool mountScene;
   final bool visible;
   final VoidCallback onBack;
@@ -66,9 +69,10 @@ class FlareTrainingHubPage extends StatefulWidget {
   final bool interactionLocked;
   final bool leaving;
   final GlobalKey? sceneBoundsKey;
+  final GlobalKey? sceneClipBoundsKey;
   final VoidCallback? onScenePresented;
   final SceneController? sharedController;
-  final Widget? sharedSceneView;
+  final TrainingViewport? Function()? sharedViewport;
   final ValueChanged<double>? onAngleYawChanged;
 
   @override
@@ -88,38 +92,17 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   bool _returning = false;
   bool _presented = false;
   bool _everPresented = false;
-  ui.Image? _entryFrame;
+  bool _viewportUpdateScheduled = false;
   final Map<String, String> _lastMuscleInSection = {};
 
   Phase get _phase => widget.catalog.phaseAt(_time);
   MuscleGroup get _muscle => widget.catalog.groupById(_muscleId)!;
   double get angleYaw => _stage.trainingHubYaw;
 
-  Future<void> retainEntryFrame() async {
-    final yaw = angleYaw;
-    final frame = await _captureFrame();
-    if (frame == null) return;
-    if (!mounted || widget.mountScene || yaw != angleYaw) {
-      frame.dispose();
-      return;
-    }
-    _entryFrame = frame;
-  }
-
   ({double time, double yaw})? beginReturn() {
     if (!_stage.presented) return null;
     setState(() => _returning = true);
     return (time: _time, yaw: _stage.trainingHubYaw);
-  }
-
-  Future<ui.Image?> _captureFrame() async {
-    final bytes = await _stage.captureTrainingFrame();
-    if (!mounted || bytes == null) return null;
-    try {
-      return await decodeImageFromList(bytes);
-    } on Exception {
-      return null;
-    }
   }
 
   @override
@@ -167,16 +150,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
     if (_presented != _stage.presented) {
       setState(() {
         _presented = _stage.presented;
-        if (_presented) {
-          _everPresented = true;
-          final frame = _entryFrame;
-          _entryFrame = null;
-          if (frame != null) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => frame.dispose(),
-            );
-          }
-        }
+        if (_presented) _everPresented = true;
       });
     }
     if (_stage.presented && !_reportedPresentation) {
@@ -241,12 +215,12 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   void dispose() {
     _stage.removeListener(_sceneChanged);
     if (_ownsController) _stage.dispose();
-    _entryFrame?.dispose();
     super.dispose();
   }
 
   void _render({bool animate = true, bool scrubbing = false}) {
     if (!widget.enableScene || (!_ownsController && !widget.mountScene)) return;
+    final viewport = widget.sharedViewport?.call();
     _stage.configureTrainingHub(
       phaseSource: _phase.source,
       phaseTime: _time,
@@ -256,7 +230,20 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
       animate: animate,
       scrubbing: scrubbing,
       showCallouts: widget.mountScene && !_returning,
+      viewport: viewport,
     );
+  }
+
+  void _scheduleViewportUpdate() {
+    if (widget.sharedViewport == null || _viewportUpdateScheduled) return;
+    _viewportUpdateScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewportUpdateScheduled = false;
+      if (!mounted || !widget.mountScene) return;
+      if (widget.sharedViewport?.call() case final viewport?) {
+        _stage.updateTrainingHubViewport(viewport);
+      }
+    });
   }
 
   void _selectMode(bool muscles) {
@@ -332,6 +319,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                 .copyWith(statusBarColor: Colors.transparent),
         child: LayoutBuilder(
           builder: (context, box) {
+            _scheduleViewportUpdate();
             final available = math.max(0.0, box.maxHeight - controlsBottom);
             final height = math.max(stageHeight + 116, available);
             final page = SizedBox(
@@ -370,13 +358,8 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                                   fit: BoxFit.contain,
                                   excludeFromSemantics: true,
                                 ),
-                              if (widget.mountScene) _stageView(),
-                              if (widget.mountScene && _entryFrame != null)
-                                RawImage(
-                                  key: const ValueKey('hub-entry-frame'),
-                                  image: _entryFrame,
-                                  fit: BoxFit.fill,
-                                ),
+                              if (widget.mountScene && _ownsController)
+                                _stageView(),
                             ],
                           )
                         : const SizedBox.expand(),
@@ -403,7 +386,18 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
                   bottom: controlsBottom,
                   child: height == available
                       ? page
-                      : SingleChildScrollView(child: page),
+                      : NotificationListener<ScrollNotification>(
+                          onNotification: (notification) {
+                            if (notification.depth == 0) {
+                              _scheduleViewportUpdate();
+                            }
+                            return false;
+                          },
+                          child: SingleChildScrollView(
+                            key: widget.sceneClipBoundsKey,
+                            child: page,
+                          ),
+                        ),
                 ),
                 PositionedDirectional(
                   start: _gutter,
@@ -455,13 +449,7 @@ class FlareTrainingHubPageState extends State<FlareTrainingHubPage> {
   Widget _stageView() {
     final concealed =
         widget.actorHandoff ||
-        _entryFrame != null ||
         (!_presented && !_everPresented && !widget.liveEntry);
-    if (widget.sharedSceneView case final scene?) {
-      // Keep the same platform-view element mounted as the poster gives way
-      // to the presented frame.
-      return Opacity(opacity: concealed ? 1 / 255 : 1, child: scene);
-    }
     return SceneView(
       key: ValueKey(widget.actorBody),
       controller: _stage,

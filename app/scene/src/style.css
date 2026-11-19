@@ -25,7 +25,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; outline:
 @keyframes callout-in { from { opacity: 0; } to { opacity: 1; } }
 .hotspot, .hotspot-label { animation: callout-in 180ms ease-out both; }
 @media (prefers-reduced-motion: reduce) { .hotspot, .hotspot-label { animation: none; } .hotspot-card { transition: none; } }
-#status { position: absolute; inset: 0 0 var(--inset-bottom, 0px) 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #101116; z-index: 4; color: #8e8e98; font-size: 12px; letter-spacing: .6px; text-align: center; padding: 24px; transition: opacity 320ms cubic-bezier(.22,.9,.24,1); }
+#status { position: absolute; inset: var(--inset-top, 0px) 0 var(--inset-bottom, 0px) 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #101116; z-index: 4; color: #8e8e98; font-size: 12px; letter-spacing: .6px; text-align: center; padding: 24px; transition: opacity 320ms cubic-bezier(.22,.9,.24,1); }
 #status.leaving { opacity: 0; pointer-events: none; }
 #loader { width: 132px; height: 132px; }
 #status[data-error="true"] #loader { display: none; }

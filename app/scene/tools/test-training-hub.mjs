@@ -5,6 +5,7 @@ import { createMuscleUniforms } from '../src/legacy/muscle-map.js';
 import { applyFunctionalSurface } from '../src/muscle-material.js';
 import { CAMERA_PRESETS, FlarePlayer } from '../src/player.js';
 import { fitHubAngle, resolveHubAngleCamera } from '../src/training-hub-angle-fit.js';
+import { createHubAngleView } from '../src/training-hub-angle-view.js';
 import { createHubFlight } from '../src/training-hub-flight.js';
 import { createHubTransitions } from '../src/training-hub-transitions.js';
 import angleBounds from '../src/training-hub-angle-bounds.json' with { type: 'json' };
@@ -116,47 +117,48 @@ test('hub entry starts at the home shot and lands at the same pixels as the hub 
   assert.equal(player.shadowCatcher.material.opacity, .28);
 
   let prepared = 0;
-  const yaw = -1.2;
+  const actualTime = 2.85;
+  const actualView = createHubAngleView(32, CAMERA_PRESETS.standard);
+  const viewport = { top: destinationTop, height: destinationHeight };
+  actualView.frame(width, height, viewport, -1.2);
+  actualView.camera.setViewOffset(width, destinationHeight, 3, -destinationTop, width, height);
+  player.trainingHub = {
+    getActorFrame: () => ({ camera: actualView.camera, target: actualView.target, time: actualTime, viewport }),
+  };
+  // Settling the flight while the hub owns the actor must not reapply home time.
+  times.push(actualTime);
+  flight.restore();
+  assert.equal(times.at(-1), actualTime);
+
+  // The return must trust the rendered camera and pose instead of recalculating
+  // the shot from a possibly queued host yaw/time command.
   const back = createHubFlight(player, {
     top: destinationTop, height: destinationHeight, time: 2.7,
-    duration: 650, returning: true, yaw,
+    duration: 650, returning: true, yaw: 0,
   }, CAMERA_PRESETS.standard, () => landings++, () => prepared++);
   back.sample(0);
-  const expected = fit.direction.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-  assert.ok(back.camera.position.distanceTo(new THREE.Vector3(...fit.target).addScaledVector(expected, fit.distance)) < 1e-10);
+  assert.deepEqual(back.camera.matrixWorld.elements, actualView.camera.matrixWorld.elements);
+  assert.deepEqual(back.camera.projectionMatrix.elements, actualView.camera.projectionMatrix.elements);
+  assert.equal(times.at(-1), actualTime);
+  back.rendered();
+  assert.equal(prepared, 1);
+  assert.equal(back.sample(16), true, 'draw the exact departure pose again');
+  assert.deepEqual(back.camera.projectionMatrix.elements, actualView.camera.projectionMatrix.elements);
+  assert.equal(times.at(-1), actualTime);
   back.rendered();
   assert.equal(prepared, 1);
   assert.equal(back.sample(250), true);
-  assert.ok(times.at(-1) < 2.7);
-  back.sample(650);
+  assert.ok(times.at(-1) < actualTime);
+  back.sample(666);
   assert.equal(times.at(-1), 0);
   for (const point of boxCorners) {
     assert.ok(point.clone().project(home).distanceTo(point.clone().project(back.camera)) < 1e-10);
   }
   back.rendered();
+  assert.equal(landings, 1);
+  assert.equal(back.sample(682), true);
+  back.rendered();
   assert.equal(landings, 2);
-
-  // The first return frame can be drawn in the live, smaller hub viewport.
-  player.container.clientHeight = destinationHeight;
-  const liveBack = createHubFlight(player, {
-    top: destinationTop, height: destinationHeight, homeHeight: height, time: 2.7,
-    duration: 650, returning: true,
-  }, CAMERA_PRESETS.standard, () => {});
-  liveBack.sample(0);
-  for (const point of boxCorners) {
-    const a = point.clone().project(liveBack.camera);
-    const b = point.clone().project(landing);
-    assert.ok(Math.abs(a.x - b.x) < 1e-10);
-    assert.ok(Math.abs(a.y - b.y) < 1e-10);
-  }
-  const smallFrame = boxCorners.map(point => point.clone().project(liveBack.camera));
-  player.container.clientHeight = height;
-  liveBack.sample(0);
-  for (const [i, point] of boxCorners.entries()) {
-    const fullY = (1 - point.clone().project(liveBack.camera).y) * height / 2;
-    const smallY = destinationTop + (1 - smallFrame[i].y) * destinationHeight / 2;
-    assert.ok(Math.abs(fullY - smallY) < 1e-8);
-  }
 });
 
 test('an early Back reverses from the visible frame without a pose or camera jump', () => {
@@ -191,6 +193,9 @@ test('an early Back reverses from the visible frame without a pose or camera jum
   assert.equal(poses.at(-1), 0);
   assert.ok(flight.camera.position.distanceTo(home.position) < 1e-10);
   flight.rendered();
+  assert.deepEqual(completed, []);
+  assert.ok(flight.sample(681));
+  flight.rendered();
   assert.deepEqual(completed, ['return']);
 });
 
@@ -202,8 +207,16 @@ test('the shared canvas keeps the quality cap in flight and adapts in the hub', 
   assert.equal(stageDensity.call(player, 1), 3);
   player.hubFlight.landed = true;
   assert.equal(stageDensity.call(player, 1), 3);
+  player.hubFlight = { pixelRatio: 1.25 };
+  assert.equal(stageDensity.call(player, 3), 1.25);
   player.hubFlight = null;
   player.trainingHub = {};
+  player.stageHandoffFrames = 2;
+  player.stageHandoffRatio = 3;
+  assert.equal(stageDensity.call(player, 1.25), 3);
+  player.stageHandoffFrames--;
+  assert.equal(stageDensity.call(player, 1.25), 3);
+  player.stageHandoffFrames--;
   assert.equal(stageDensity.call(player, 1.25), 1.25);
 });
 

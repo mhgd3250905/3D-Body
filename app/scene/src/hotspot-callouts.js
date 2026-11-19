@@ -86,7 +86,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     return Math.max(1, Math.abs(player.project(pelvis.clone().add(up), camera).y - player.project(pelvis, camera).y));
   }
   function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true,
-    layout = null, departureOffset = null } = {}) {
+    layout = null, departureOffset = null, viewport = null } = {}) {
     pickCamera = camera;
     const project = point => player.project(point, camera);
     if (layout) items = items.map(item => {
@@ -103,7 +103,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     const centreX = project(new THREE.Vector3().fromArray(joints.pelvis)).x;
     const viewWidth = player.container.clientWidth;
     const canvasHeight = player.container.clientHeight;
-    const viewHeight = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget, reservedBottom));
+    const viewTop = Math.max(0, viewport?.clipTop ?? viewport?.top ?? player.viewTop ?? 0);
+    const viewBottom = Math.max(viewTop + 1, viewport
+      ? Math.min(canvasHeight, viewport.clipBottom ?? Infinity, viewport.top + viewport.height - reservedBottom)
+      : canvasHeight - Math.max(player.viewInset, player.viewInsetTarget, reservedBottom));
     function atScreen(position, x, y) {
       const ndc = position.clone().project(camera);
       ndc.x = 2 * x / viewWidth - 1;
@@ -137,7 +140,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         const card = cardRect(surface.addScaledVector(normal, .08), recordFor(point).card.scale);
         const padX = card.width / 2 + 8, padY = card.height / 2 + 8;
         const roomX = previous.dx > 0 ? viewWidth - padX - dot.x : dot.x - padX;
-        const roomY = previous.dy > 0 ? viewHeight - padY - dot.y : dot.y - padY;
+        const roomY = previous.dy > 0 ? viewBottom - padY - dot.y : dot.y - viewTop - padY;
         // Fit all offsets with one factor so a near edge cannot reorder the cards.
         if (roomX > 0 && previous.dx) scale = Math.min(scale, roomX / Math.abs(previous.dx));
         if (roomY > 0 && previous.dy) scale = Math.min(scale, roomY / Math.abs(previous.dy));
@@ -153,7 +156,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         position.y = Math.max(position.y, floorHeight(scale));
         const rect = cardRect(position, scale);
         const dx = rect.left < 8 ? 8 - rect.left : rect.left + rect.width > viewWidth - 8 ? viewWidth - 8 - rect.left - rect.width : 0;
-        const dy = rect.top < 8 ? 8 - rect.top : rect.top + rect.height > viewHeight - 8 ? viewHeight - 8 - rect.top - rect.height : 0;
+        const dy = rect.top < viewTop + 8 ? viewTop + 8 - rect.top : rect.top + rect.height > viewBottom - 8 ? viewBottom - 8 - rect.top - rect.height : 0;
         if (dx || dy) {
           const ndc = position.clone().project(camera);
           ndc.x += 2 * dx / viewWidth; ndc.y -= 2 * dy / canvasHeight;
@@ -166,9 +169,9 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       const rect = player.container.getBoundingClientRect(), obstacles = [];
       const map = homeOverlays && player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
       if (map) obstacles.push({ left: map.left - rect.left, top: map.top - rect.top, width: map.width, height: map.height });
-      if (hosted && homeOverlays) obstacles.push({ left: Math.max(0, rect.width - 208), top: viewHeight - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
+      if (hosted && homeOverlays) obstacles.push({ left: Math.max(0, rect.width - 208), top: viewBottom - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
       clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(project)),
-        { width: rect.width, height: viewHeight, obstacles, gap: 8 });
+        { width: rect.width, height: viewBottom - viewTop, top: viewTop, obstacles, gap: 8 });
       return clearance;
     }
     for (const [index, point] of anchors.entries()) {
@@ -263,8 +266,8 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       }
       const rect = cardRect(record.card.position, record.card.scale), dotRect = cardRect(record.dot.position, record.dot.scale);
       const guideStart = project(start), guideEnd = project(end);
-      const inside = bounds => bounds.left >= 0 && bounds.top >= 0 && bounds.left + bounds.width <= viewWidth && bounds.top + bounds.height <= viewHeight;
-      const insidePoint = p => !p.behind && p.x >= 0 && p.y >= 0 && p.x <= viewWidth && p.y <= viewHeight;
+      const inside = bounds => bounds.left >= 0 && bounds.top >= viewTop && bounds.left + bounds.width <= viewWidth && bounds.top + bounds.height <= viewBottom;
+      const insidePoint = p => !p.behind && p.x >= 0 && p.y >= viewTop && p.x <= viewWidth && p.y <= viewBottom;
       point.callout = { ...projected, dot: dotProjected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
         label: record.card.userData.label, fontSize: record.card.userData.fontSize,
@@ -274,7 +277,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         screenSide,
         moving, targetWorld: position.toArray(), opacity: record.card.material.opacity,
         minWorldY: record.card.position.y - floorHeight(record.card.scale) + .03,
-        rect, viewWidth, viewHeight,
+        rect, viewWidth, viewHeight: viewBottom,
         fitsStage: inside(rect) && inside(dotRect) && (!record.guide.stroke.visible || (insidePoint(guideStart) && insidePoint(guideEnd))),
         guide: { start: start.toArray(), end: end.toArray(), width: record.guide.stroke.material.linewidth,
           visible: record.guide.stroke.visible, colour: point.colour } };

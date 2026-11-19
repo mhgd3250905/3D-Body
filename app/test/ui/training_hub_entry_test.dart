@@ -11,13 +11,18 @@ import 'flow_regressions_test.dart' show MemoryStateStorage, phoneSize, testApp;
 void main() {
   const actorStage = ValueKey('hub-stage-gesture');
   const fallback = ValueKey('hub-stage-loading-frame');
-  const entryFrame = ValueKey('hub-entry-frame');
   final catalog = loadCatalogFixture();
 
   testWidgets('the hub retains the live angle while entering and returning', (
     tester,
   ) async {
     await phoneSize(tester);
+    tester.view.physicalSize = const Size(390, 620);
+    const safeArea = FakeViewPadding(top: 54, bottom: 34);
+    tester.view.padding = safeArea;
+    tester.view.viewPadding = safeArea;
+    addTearDown(tester.view.resetPadding);
+    addTearDown(tester.view.resetViewPadding);
     final store = LearningStore(
       catalog: catalog,
       storage: MemoryStateStorage(),
@@ -26,37 +31,6 @@ void main() {
     await store.acknowledgeSafety();
     final commands = <Map<String, Object?>>[];
     final scene = SceneController(commandSink: commands.add);
-    Future<void> deliverFrame(Key key) async {
-      await tester.pump();
-      final capture = commands.lastWhere(
-        (command) => command['type'] == 'hub_capture',
-      );
-      expect(
-        scene.receiveEvent({
-          'source': 'flare-scene',
-          'type': 'hub_captured',
-          'id': capture['id'],
-          'png':
-              'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4'
-              'nGNgiPr/HwAEEAJZs1E1mQAAAABJRU5ErkJggg==',
-        }),
-        isTrue,
-      );
-      // The engine decodes the PNG on a native worker outside fake time.
-      final frame = find.byKey(key);
-      for (
-        var attempt = 0;
-        attempt < 50 && frame.evaluate().isEmpty;
-        attempt++
-      ) {
-        await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 10)),
-        );
-        await tester.pump();
-      }
-      expect(frame, findsOneWidget);
-    }
-
     addTearDown(store.dispose);
     addTearDown(scene.dispose);
     await tester.pumpWidget(
@@ -83,12 +57,18 @@ void main() {
       (widget) => widget is SceneView && widget.controller == scene,
     );
     final mountedHome = tester.element(home);
+    final homeFrame = tester.getRect(home);
+    void expectFixedCanvas() {
+      expect(tester.element(home), same(mountedHome));
+      expect(tester.getRect(home), homeFrame);
+    }
+
     await tester.tap(find.byKey(const ValueKey('home-go-to-training')));
     await tester.pump();
     expect(find.byKey(actorStage), findsOneWidget);
     expect(find.byKey(fallback), findsNothing);
     expect(find.byType(SceneView), findsOneWidget);
-    expect(tester.element(home), same(mountedHome));
+    expectFixedCanvas();
     final entry = commands.lastWhere(
       (command) => command['type'] == 'hub_flight',
     );
@@ -115,7 +95,7 @@ void main() {
       (command) => command['type'] == 'hub_flight_reverse',
     );
     expect(reverse['id'], isNot(entry['id']));
-    expect(tester.element(home), same(mountedHome));
+    expectFixedCanvas();
     expect(
       scene.receiveEvent({
         'source': 'flare-scene',
@@ -132,7 +112,7 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(find.byType(FlareTrainingHubPage), findsNothing);
-    expect(tester.element(home), same(mountedHome));
+    expectFixedCanvas();
 
     // Finish a second entry and hold the hub's presentation response while
     // the home stage is still mounted behind it.
@@ -146,15 +126,26 @@ void main() {
       'type': 'hub_flight_done',
       'id': secondEntry['id'],
     });
-    await deliverFrame(entryFrame);
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 650));
+    final hubConfig = commands.lastWhere(
+      (command) => command['type'] == 'hub_scene',
+    );
+    expect(hubConfig['viewportTop'], secondEntry['top']);
+    expect(hubConfig['viewportHeight'], secondEntry['height']);
+    expect(hubConfig['viewportClipTop'], secondEntry['clipTop']);
+    expect(hubConfig['viewportClipBottom'], secondEntry['clipBottom']);
+    expect(hubConfig['viewportClipBottom'], isA<double>());
+    expect(
+      commands.map((command) => command['type']),
+      isNot(contains('hub_capture')),
+    );
     final hubPresentation = commands.lastWhere(
       (command) => command['type'] == 'present',
     );
     expect(hubPresentation['requestId'], isNot(presentation['requestId']));
     expect(scene.presented, isFalse);
-    expect(tester.element(home), same(mountedHome));
-    expect(find.byKey(entryFrame), findsOneWidget);
+    expectFixedCanvas();
     expect(find.byKey(fallback), findsNothing);
     expect(find.byType(SceneLoading), findsNothing);
     expect(find.byKey(const ValueKey('scene-cover-opacity')), findsNothing);
@@ -167,8 +158,7 @@ void main() {
       'phase': 11,
     });
     await tester.pumpAndSettle();
-    expect(tester.element(home), same(mountedHome));
-    expect(find.byKey(entryFrame), findsNothing);
+    expectFixedCanvas();
     expect(find.byKey(fallback), findsNothing);
     expect(find.byType(SceneLoading), findsNothing);
 
@@ -176,6 +166,24 @@ void main() {
       find.byType(FlareTrainingHubPage),
     );
     expect(hubPage.interactionLocked, isFalse);
+    final scroll = tester.state<ScrollableState>(
+      find.ancestor(
+        of: find.byKey(actorStage),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    scroll.position.jumpTo(18);
+    await tester.pumpAndSettle();
+    final scrolled = commands.lastWhere(
+      (command) => command['type'] == 'hub_viewport',
+    );
+    expect(scrolled['viewportTop'], (hubConfig['viewportTop']! as double) - 18);
+    expect(scrolled['viewportHeight'], hubConfig['viewportHeight']);
+    expect(scrolled['viewportClipBottom'], hubConfig['viewportClipBottom']);
+    expectFixedCanvas();
+    scroll.position.jumpTo(0);
+    await tester.pumpAndSettle();
+
     final returnCommands = commands.length;
     hubPage.onBack();
     await tester.pump();
@@ -183,7 +191,8 @@ void main() {
       (command) => command['type'] == 'hub_flight',
     );
     expect(returning['returning'], isTrue);
-    expect(returning['homeHeight'], isA<double>());
+    expect(returning['top'], hubConfig['viewportTop']);
+    expect(returning['height'], hubConfig['viewportHeight']);
     expect(
       commands.skip(returnCommands).map((value) => value['type']),
       isNot(contains('hub_capture')),
@@ -193,7 +202,7 @@ void main() {
       isNot(contains('hub_exit')),
     );
     expect(find.byKey(fallback), findsNothing);
-    expect(tester.element(home), same(mountedHome));
+    expectFixedCanvas();
     expect(
       tester
           .widget<FlareTrainingHubPage>(find.byType(FlareTrainingHubPage))
@@ -207,6 +216,7 @@ void main() {
       'id': returning['id'],
     });
     await tester.pump();
+    expectFixedCanvas();
     expect(find.byKey(fallback), findsNothing);
     expect(
       tester
@@ -222,7 +232,7 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(find.byType(FlareTrainingHubPage), findsNothing);
-    expect(tester.element(home), same(mountedHome));
+    expectFixedCanvas();
     expect(tester.takeException(), isNull);
   });
 

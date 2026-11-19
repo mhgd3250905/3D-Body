@@ -9,6 +9,21 @@ import 'scene_hub_camera.dart';
 typedef SceneCommandSink =
     FutureOr<void> Function(Map<String, Object?> command);
 
+/// Training frame and optional scroll clipping edges in canvas coordinates.
+typedef TrainingViewport = ({
+  double top,
+  double height,
+  double? clipTop,
+  double? clipBottom,
+});
+
+Map<String, double?> _trainingViewportFields(TrainingViewport viewport) => {
+  'viewportTop': viewport.top,
+  'viewportHeight': viewport.height,
+  'viewportClipTop': viewport.clipTop,
+  'viewportClipBottom': viewport.clipBottom,
+};
+
 /// Shared state and commands for the bundled Three.js scene.
 /// The scene owns the animation clock; Flutter never advances it independently.
 class SceneController extends ChangeNotifier {
@@ -128,6 +143,7 @@ class SceneController extends ChangeNotifier {
     bool animate = true,
     bool scrubbing = false,
     bool showCallouts = true,
+    TrainingViewport? viewport,
   }) {
     final muscle = SceneHubCamera.muscle(muscleId, focused: focusMuscle);
     if (_disposed ||
@@ -149,10 +165,28 @@ class SceneController extends ChangeNotifier {
       'animate': animate,
       'scrubbing': scrubbing,
       'showCallouts': showCallouts,
+      if (viewport != null) ..._trainingViewportFields(viewport),
     };
     _trainingHubCommand = configuration;
     _pending.remove('hub_exit');
+    _pending.remove('hub_viewport');
     command(configuration);
+  }
+
+  /// Move the clip within the shared canvas as the training page scrolls or
+  /// relayouts, without applying a new pose or replaying its labels.
+  void updateTrainingHubViewport(TrainingViewport viewport) {
+    final hub = _trainingHubCommand;
+    if (hub == null) return;
+    final fields = _trainingViewportFields(viewport);
+    if (fields.entries.every((field) => hub[field.key] == field.value)) return;
+    final updated = {...hub, ...fields};
+    _trainingHubCommand = updated;
+    if (_pending.containsKey('hub_scene')) {
+      _pending['hub_scene'] = Map<String, Object?>.unmodifiable(updated);
+    } else {
+      command({'type': 'hub_viewport', ...fields});
+    }
   }
 
   void leaveTrainingHub() {
@@ -160,6 +194,7 @@ class SceneController extends ChangeNotifier {
     if (_trainingHubCommand == null) return;
     _trainingHubCommand = null;
     _pending.remove('hub_scene');
+    _pending.remove('hub_viewport');
     _pending.remove('hub_angle');
     command({'type': 'hub_exit'});
   }
@@ -186,10 +221,8 @@ class SceneController extends ChangeNotifier {
 
   Future<void> flyTrainingActor({
     required double time,
-    required double top,
-    required double height,
+    required TrainingViewport viewport,
     required Duration duration,
-    double? homeHeight,
     bool returning = false,
     double yaw = 0,
     VoidCallback? onPrepared,
@@ -201,9 +234,10 @@ class SceneController extends ChangeNotifier {
       'type': 'hub_flight',
       'id': ++_trainingFlightId,
       'time': time,
-      'top': top,
-      'height': height,
-      'homeHeight': ?homeHeight,
+      'top': viewport.top,
+      'height': viewport.height,
+      'clipTop': ?viewport.clipTop,
+      'clipBottom': ?viewport.clipBottom,
       'duration': duration.inMilliseconds,
       'returning': returning,
       'yaw': yaw,
@@ -231,7 +265,7 @@ class SceneController extends ChangeNotifier {
     command({'type': 'hub_flight', 'id': 0});
   }
 
-  /// Retain one rendered angle frame while the host moves the platform view.
+  /// Capture one rendered angle frame from the shared scene.
   Future<Uint8List?> captureTrainingFrame() async {
     if (_disposed ||
         !_ready ||
@@ -258,11 +292,16 @@ class SceneController extends ChangeNotifier {
   void setCamera(String view) => command({'type': 'camera', 'view': view});
   void reset() => command({'type': 'reset'});
 
-  /// Bottom px of the 3D view covered by host chrome. The scene frames into
-  /// the part above it and eases the change with its camera.
-  void setViewInset(double bottom, {bool animate = true}) {
+  /// Logical pixels outside the home frame. The fixed canvas extends above
+  /// it so the training viewport can keep its original framing.
+  void setViewInset(double bottom, {double top = 0, bool animate = true}) {
     if (_disposed) return;
-    command({'type': 'viewport', 'bottom': bottom, 'animate': animate});
+    command({
+      'type': 'viewport',
+      'top': top,
+      'bottom': bottom,
+      'animate': animate,
+    });
   }
 
   void setLoop(double? start, double? end) =>

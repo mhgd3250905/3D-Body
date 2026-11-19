@@ -20,7 +20,7 @@ const stage = document.querySelector('#stage'), status = document.querySelector(
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots');
 let player, hitTester, phaseMap, ready = false, hotspots = [], errorCode = null;
-let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
+let viewTop = 0, viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
 let clockRevision = 0;
 const character = characterFromLocation(location.search);
 const options = new URLSearchParams(location.search);
@@ -133,7 +133,8 @@ function renderHubCallouts(frame) {
   const arrival = labelArrival('hub', hubCalloutFrame.time);
   if (arrival.opacity === 0) return;
   hotspots = callouts?.update(phaseAt(hubCalloutFrame.time).items, {
-    camera: frame.camera, opacity: hubCalloutFrame.opacity * arrival.opacity, reservedBottom: 32, homeOverlays: false,
+    camera: frame.camera, viewport: frame.viewport,
+    opacity: hubCalloutFrame.opacity * arrival.opacity, reservedBottom: 32, homeOverlays: false,
     layout: arrival.layout,
   }) ?? [];
 }
@@ -146,7 +147,7 @@ function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
-  if (media && ['hub_scene', 'hub_exit', 'hub_flight', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
+  if (media && ['hub_scene', 'hub_viewport', 'hub_exit', 'hub_flight', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
@@ -159,7 +160,10 @@ function command(value) {
     // The host's chrome covers the bottom `bottom` px of the stage. DOM
     // overlays sit above it; the camera eases its framing into what is left.
     const bottom = Math.max(0, Number(input.bottom) || 0);
+    viewTop = Number.isFinite(input.top) ? Math.max(0, input.top) : viewTop;
     viewInset = bottom; stage.style.setProperty('--inset-bottom', `${bottom}px`);
+    stage.style.setProperty('--inset-top', `${viewTop}px`);
+    player?.setViewTop(viewTop);
     player?.setViewInset(bottom, ready && input.animate !== false);
     return;
   }
@@ -186,7 +190,10 @@ function command(value) {
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
       presentation.request(input.requestId); return;
     case 'hub_scene': {
-      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap, renderHubCallouts);
+      const flight = player.hubFlight;
+      const entering = flight && !flight.returning;
+      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap, renderHubCallouts,
+        entering ? flight.angleView : undefined);
       if (!hub.configure(input, performance.now())) {
         if (!player.trainingHub) hub.releaseGpu();
         return;
@@ -197,6 +204,11 @@ function command(value) {
       if (!player.trainingHub) {
         clearHotspots();
         player.trainingHub = hub;
+        if (entering) {
+          player.holdStageHandoff();
+          player.hubFlight = null;
+          if (pageLabels?.destination === 'hub') pageLabels.arrivedAt = performance.now();
+        }
         player.playing = false;
         player.loopRange = null;
         player.autoFrame = false;
@@ -209,6 +221,9 @@ function command(value) {
       }
       break;
     }
+    case 'hub_viewport':
+      player.trainingHub?.setViewport(input);
+      return;
     case 'hub_exit':
       hubCaptureId = null;
       if (!player.trainingHub) return;
@@ -220,7 +235,6 @@ function command(value) {
       phaseMap.clearHubCrop();
       clearHotspots();
       player.controls.enabled = true;
-      for (const prop of player.stageProps) prop.visible = prop !== player.shadowCatcher || player.renderer.shadowMap.enabled;
       if (fx) { fx.setEnabled(true); fx.root.visible = true; }
       player.setDemandFrames(false);
       break;
@@ -235,11 +249,14 @@ function command(value) {
       return;
     }
     case 'hub_flight': {
-      const returned = player.hubFlight?.returning && player.hubFlight.landed;
-      player.hubFlight?.restore();
+      const flight = player.hubFlight;
+      // Keep the final angle shot visible while Flutter configures the hub.
+      if (input.id === 0 && flight?.landed && !flight.returning && !player.trainingHub) return;
+      const returned = flight?.returning && flight.landed;
+      if (input.id === 0 && returned) player.holdStageHandoff();
+      flight?.restore();
       player.hubFlight = null;
-      if (input.id === 0 && pageLabels?.arrivedAt == null &&
-          (returned && pageLabels?.destination === 'home' || player.trainingHub && pageLabels?.destination === 'hub')) {
+      if (input.id === 0 && pageLabels?.arrivedAt == null && returned && pageLabels?.destination === 'home') {
         pageLabels.arrivedAt = performance.now();
       }
       if (input.id > 0) {
@@ -247,8 +264,8 @@ function command(value) {
         if (fx) fx.root.visible = false;
         player.v5?.setFxEnabled(false);
         pageLabels = {
-          layout: callouts?.snapshotLayout() ?? new Map(), time: input.time,
-          destination: input.returning ? 'home' : 'hub', sourceTop: input.returning ? input.top : 0,
+          layout: callouts?.snapshotLayout() ?? new Map(), time: input.returning ? player.time : input.time,
+          destination: input.returning ? 'home' : 'hub',
           departedAt: performance.now(), arrivedAt: null,
           animate: input.duration > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
         };
@@ -341,15 +358,18 @@ async function boot() {
           if (pageLabels?.animate && pageLabels.layout.size && elapsed < 120 && !flight.landed) {
             hotspots = callouts?.update([], {
               camera: flight.camera, opacity: 1 - elapsed / 120, reservedBottom: flight.bottomInset + 32,
-              homeOverlays: false, layout: pageLabels.layout, departureOffset: pageLabels.sourceTop - flight.viewportTop,
+              homeOverlays: false, layout: pageLabels.layout, departureOffset: 0,
+              viewport: { top: flight.topInset, height: stage.clientHeight - flight.topInset - flight.bottomInset },
             }) ?? [];
           } else if (hotspots.length) {
             clearHotspots();
           }
           return;
         }
-        fx?.update(performance.now(), true);
-        player.v5?.setFxEnabled(v5Fx && (previewing || player.playing));
+        if (!player.stageHandoffFrames) {
+          fx?.update(performance.now(), true);
+          player.v5?.setFxEnabled(v5Fx && (previewing || player.playing));
+        }
         refreshHotspots(true);
       },
       onRender: hubCompleted => {
@@ -358,7 +378,7 @@ async function boot() {
         if (hubCaptureId !== null && (landed || (player.trainingHub && hubCompleted))) {
           const id = hubCaptureId;
           hubCaptureId = null;
-          captureHubFrame(id, player.renderer.domElement, landed ? flight : null);
+          captureHubFrame(id, player.renderer.domElement, landed ? flight.viewport : player.trainingHub.getViewport());
         }
         if (flight) return;
         const complete = player.trainingHub ? hubCompleted : phaseMap?.render();
@@ -380,6 +400,7 @@ async function boot() {
         else { player.trainingHub?.releaseGpu(); phaseMap?.releaseGpu(); showError('graphics_context_lost', true); }
       },
     });
+    player.setViewTop(viewTop);
     player.setViewInset(viewInset, false);
     if (perfEnabled(location.search)) perfHud = createPerfHud(player);
     if (v5) {
@@ -439,11 +460,11 @@ async function boot() {
     emitState(true);
   } catch (error) { console.error(error); player?.stop(); showError(error?.message === 'rig_load_failed' ? 'rig_load_failed' : 'scene_load_failed'); }
 }
-function captureHubFrame(id, source, landing) {
+function captureHubFrame(id, source, viewport) {
   const canvas = document.createElement('canvas');
   const ratio = source.height / stage.clientHeight;
-  const top = landing ? Math.round(landing.destinationTop * ratio) : 0;
-  const height = landing ? Math.max(1, Math.round(landing.destinationHeight * ratio)) : source.height;
+  const top = Math.round(viewport.top * ratio);
+  const height = Math.max(1, Math.round(viewport.height * ratio));
   const scale = Math.min(1, 960 / Math.max(source.width, height));
   canvas.width = Math.max(1, Math.round(source.width * scale));
   canvas.height = Math.max(1, Math.round(height * scale));

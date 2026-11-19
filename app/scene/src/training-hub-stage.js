@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { GROUPS, phaseTicks } from './phase.js';
-import angleBounds from './training-hub-angle-bounds.json' with { type: 'json' };
 import { CAMERA_PRESETS } from './player.js';
-import { resolveHubAngleCamera } from './training-hub-angle-fit.js';
+import { createHubAngleView, hubViewport } from './training-hub-angle-view.js';
 import { createHubTransitions } from './training-hub-transitions.js';
 import { createStandingView } from './standing-view.js';
 
@@ -16,12 +15,12 @@ const maximumMuscleZoom = 1.35;
 const maximumFocusSpan = .25;
 const minimumLegHeadroom = .06;
 
-function placeCamera(camera, shot, width, height, viewHeight) {
+function placeCamera(camera, shot, width, height, viewHeight, top) {
   camera.position.setFromSpherical(shot.orbit).add(shot.target);
   camera.lookAt(shot.target);
   camera.fov = shot.fov;
   // The anatomy view keeps its shorter framing inside the same canvas.
-  camera.setViewOffset(width, viewHeight, 0, 0, width, height);
+  camera.setViewOffset(width, viewHeight, 0, -top, width, height);
   camera.updateMatrixWorld(true);
 }
 
@@ -124,11 +123,12 @@ function captureMaterial(source) {
   return converted;
 }
 
-export function createTrainingHub(player, phaseMap, onAngleFrame) {
+export function createTrainingHub(player, phaseMap, onAngleFrame,
+  angleView = createHubAngleView(player.baseFov, CAMERA_PRESETS.standard)) {
   const transitions = createHubTransitions(player.period);
   const r = player.renderer;
   const standing = createStandingView(player, phaseMap.releaseGpu);
-  const angleCamera = new THREE.PerspectiveCamera(player.baseFov, 1, .02, 40);
+  const { camera: angleCamera, target: angleTarget } = angleView;
   const muscleCamera = new THREE.PerspectiveCamera(26, 1, .02, 20);
   const muscleFrame = getHubMuscleFrame(phaseMap.scene, phaseMap.getFullBounds());
   const overviewCamera = new THREE.PerspectiveCamera();
@@ -140,11 +140,8 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
   let modeCaptureKey = '', modeCaptures = 0;
   let lastGroup = null;
   let lastInput = null, muscleShot = null, muscleShotKey = '';
-  let angleFit = null, angleFitKey = '';
-  let angleYaw = 0, appliedAngleYaw;
-  const angleTarget = new THREE.Vector3();
-  const angleDirection = new THREE.Vector3();
-  const worldUp = new THREE.Vector3(0, 1, 0);
+  let angleYaw = 0, viewportInput;
+  let actorFrame = null;
   const composite = new THREE.Scene();
   const compositeCamera = new THREE.Camera();
   const material = new THREE.RawShaderMaterial({
@@ -176,7 +173,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
 
   function currentMuscleShot(input) {
     const width = player.container.clientWidth || 390;
-    const sceneHeight = player.container.clientHeight || angleStageHeight - 54;
+    const sceneHeight = currentViewport().height || angleStageHeight - 54;
     const height = Math.max(120, sceneHeight - (angleStageHeight - standingStageHeight));
     const showHead = GROUPS[input.muscleId]?.section === 'legs';
     const key = JSON.stringify([width, height, input.focusMuscle, input.muscleCamera, showHead]);
@@ -188,28 +185,15 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     return muscleShot;
   }
 
-  function frameAngleCamera(width, height) {
-    const key = `${width}:${height}`;
-    const needsFit = key !== angleFitKey;
-    if (needsFit) {
-      angleFit = resolveHubAngleCamera(angleBounds, {
-        referenceDirection: CAMERA_PRESETS.standard, fov: angleCamera.fov, aspect: width / height,
-      });
-      angleTarget.fromArray(angleFit.target);
-      angleFitKey = key;
-    }
-    if (needsFit || appliedAngleYaw !== angleYaw) {
-      angleDirection.copy(angleFit.direction).applyAxisAngle(worldUp, angleYaw);
-      angleCamera.position.copy(angleTarget).addScaledVector(angleDirection, angleFit.distance);
-      angleCamera.lookAt(angleTarget);
-      angleCamera.updateMatrixWorld(true);
-      appliedAngleYaw = angleYaw;
-    }
-    const aspect = width / height;
-    if (angleCamera.aspect !== aspect) {
-      angleCamera.aspect = aspect;
-      angleCamera.updateProjectionMatrix();
-    }
+  function currentViewport() {
+    return hubViewport(viewportInput?.viewportTop, viewportInput?.viewportHeight, player.container.clientHeight,
+      viewportInput?.viewportClipTop, viewportInput?.viewportClipBottom);
+  }
+
+  function setViewport({ viewportTop, viewportHeight, viewportClipTop, viewportClipBottom }) {
+    if (!Number.isFinite(viewportTop) || !(viewportHeight > 0)) return;
+    viewportInput = { viewportTop, viewportHeight, viewportClipTop, viewportClipBottom };
+    player.requestRedraw();
   }
 
   function setAngleYaw(yaw) {
@@ -221,6 +205,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
 
   function configure(input, now) {
     if (!angleSources.has(input.phaseSource) || !Object.prototype.hasOwnProperty.call(GROUPS, input.muscleId)) return false;
+    setViewport(input);
     const muscleCamera = currentMuscleShot(input);
     const modeChanged = lastInput && lastInput.showMuscles !== input.showMuscles;
     // The new mode presents a matched still first. Within a mode, keep the
@@ -249,21 +234,19 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     lastGroup = groupId;
   }
 
-  function draw(layer, capture, width, height, muscleHeight) {
+  function draw(layer, capture, height, viewport, muscleHeight) {
+    const top = Math.max(0, viewport.clipTop);
     if (layer.groupId != null) {
       select(layer.groupId);
-      r.setScissorTest(false);
-      r.clear();
-      r.setScissor(0, height - muscleHeight, width, muscleHeight);
-      r.setScissorTest(true);
-      try { phaseMap.withThumbnailDensity(r.getPixelRatio(), () => r.render(phaseMap.scene, muscleCamera)); }
-      finally { r.setScissorTest(false); }
+      const bottom = Math.max(0, height - Math.min(viewport.clipBottom, viewport.top + muscleHeight));
+      player.withStageScissor(bottom, top, () =>
+        phaseMap.withThumbnailDensity(r.getPixelRatio(), () => r.render(phaseMap.scene, muscleCamera)));
       return;
     }
-    player.floor.visible = true;
-    player.shadowCatcher.visible = r.shadowMap.enabled && player.keyLight.castShadow;
+    const bottom = Math.max(0, height - viewport.clipBottom);
+    const drawActor = () => player.withStageScissor(bottom, top, () => player.renderActor(player.scene, angleCamera, true));
     if (!capture) {
-      player.renderActor(player.scene, angleCamera, true);
+      drawActor();
       return;
     }
     const replaced = [];
@@ -277,30 +260,32 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       replaced.push([mesh, original]);
       mesh.material = Array.isArray(original) ? original.map(encoded) : encoded(original);
     });
-    try { player.renderActor(player.scene, angleCamera, true); }
+    try { drawActor(); }
     finally { for (const [mesh, original] of replaced) mesh.material = original; }
   }
 
   function renderFrame() {
     const width = player.container.clientWidth, height = player.container.clientHeight;
     if (!lastInput || !(width > 0 && height > 0)) return false;
-    frameAngleCamera(width, height);
+    const viewport = currentViewport();
+    angleView.frame(width, height, viewport, angleYaw);
     const previous = muscleShot;
     const current = currentMuscleShot(lastInput);
     if (previous !== current) transitions.configure({ ...lastInput, muscleCamera: current }, performance.now());
     const frame = transitions.frame;
     muscleTarget = frame.muscle.target;
-    onAngleFrame?.({ camera: angleCamera, time: frame.time, phase: frame.targetPhase,
+    onAngleFrame?.({ camera: angleCamera, viewport, time: frame.time, phase: frame.targetPhase,
       showMuscles: frame.targetMode === 1 || frame.modeMoving, scrubbing: frame.scrubbing, moving: frame.poseMoving });
-    const muscleHeight = Math.max(120, height - (angleStageHeight - standingStageHeight));
-    placeCamera(muscleCamera, frame.muscle, width, height, muscleHeight);
+    const muscleHeight = Math.max(120, viewport.height - (angleStageHeight - standingStageHeight));
+    placeCamera(muscleCamera, frame.muscle, width, height, muscleHeight, viewport.top);
     phaseMap.setHubCrop(frame.muscle.cutoff);
     const layers = [{ weight: 1 - frame.mode }, ...[...frame.groups].map(([groupId, weight]) =>
       ({ groupId, weight: weight * frame.mode }))].filter(({ weight }) => weight > 1 / 255);
-    for (const prop of player.stageProps) prop.visible = false;
+    // The actor uses the same floor and shadow in both stage render paths.
+    actorFrame = { camera: angleCamera, target: angleTarget, viewport, time: frame.time };
     if (layers.length === 1) {
       if (target || modeTargets.length) releaseBlends();
-      draw(layers[0], false, width, height, muscleHeight);
+      draw(layers[0], false, height, viewport, muscleHeight);
       return true;
     }
 
@@ -313,7 +298,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
     const cacheable = frame.modeMoving && !frame.poseMoving && !frame.muscleMoving &&
       !frame.scrubbing && frame.groups.size === 1;
     const captureKey = cacheable ? JSON.stringify([
-      size.x, size.y, width, height, frame.time, angleYaw, muscleShotKey,
+      size.x, size.y, width, height, viewport, frame.time, angleYaw, muscleShotKey,
       frame.targetMuscle, shadowEnabled,
     ]) : '';
     const captureNeeded = !cacheable || captureKey !== modeCaptureKey;
@@ -337,7 +322,7 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
           r.shadowMap.enabled = layer.groupId == null && shadowEnabled;
           r.autoClear = true;
           r.setRenderTarget(buffer);
-          draw(layer, true, width, height, muscleHeight);
+          draw(layer, true, height, viewport, muscleHeight);
           if (cacheable) modeCaptures++;
         }
         r.shadowMap.enabled = false;
@@ -385,10 +370,11 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       standing.show(poster => {
         renderFrame();
         const canvas = r.domElement;
-        const height = player.container.clientHeight;
-        const hiddenRows = Math.round(Math.min(Math.max(0, height - 120), angleStageHeight - standingStageHeight) * r.getPixelRatio());
+        const viewport = currentViewport();
+        const muscleHeight = Math.max(120, viewport.height - (angleStageHeight - standingStageHeight));
+        const end = Math.min(player.container.clientHeight, viewport.clipBottom, viewport.top + muscleHeight);
         poster.canvas.width = canvas.width;
-        poster.canvas.height = Math.max(1, canvas.height - hiddenRows);
+        poster.canvas.height = Math.max(1, Math.round(end * r.getPixelRatio()));
         poster.canvas.style.height = `${100 * poster.canvas.height / canvas.height}%`;
         poster.drawImage(canvas, 0, 0, canvas.width, poster.canvas.height, 0, 0, canvas.width, poster.canvas.height);
       });
@@ -427,13 +413,14 @@ export function createTrainingHub(player, phaseMap, onAngleFrame) {
       angleMoving: frame.poseMoving,
       modeMoving: frame.modeMoving,
       modeCaptures,
-      angle: angleFit && { position: angleCamera.position.toArray(), target: [...angleFit.target],
-        fov: angleCamera.fov, distance: angleFit.distance },
+      angle: angleView.distance != null && { position: angleCamera.position.toArray(), target: angleTarget.toArray(),
+        fov: angleCamera.fov, distance: angleView.distance },
       muscle: { position: muscleCamera.position.toArray(), target: muscleTarget?.toArray(), fov: muscleCamera.fov,
         cutoff: frame.muscle.cutoff, distance: frame.muscle.orbit.radius, focused: lastInput.focusMuscle === true },
     };
   }
 
-  return { configure, setAngleYaw, tick, render, releaseGpu, getState, setVisible,
+  return { configure, setAngleYaw, setViewport, tick, render, releaseGpu, getState, setVisible,
+    getActorFrame: () => actorFrame, getViewport: currentViewport,
     prepareActorReturn: standing.close, getStandingView: standing.getState };
 }

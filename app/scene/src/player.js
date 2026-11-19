@@ -23,7 +23,8 @@ export class FlarePlayer {
     // `viewInset` px with chrome (transport or the detail panel). The view is
     // framed into the visible part above it, so entering or leaving detail is
     // a camera move, never a WebView resize.
-    this.viewInset = 0; this.viewInsetTarget = 0;
+    this.viewTop = 0; this.viewInset = 0; this.viewInsetTarget = 0;
+    this.stageHandoffFrames = 0;
     this.time = 0; this.period = 9; this.playing = false; this.speed = 0.5; this.loopRange = null;
     this.visible = true; this.disposed = false; this.contextLost = false; this.sceneDirty = false; this.dirty = true;
     this.framingMode = 'main';
@@ -208,14 +209,16 @@ export class FlarePlayer {
   tick(now) {
     const interval = Math.max(0, now - this.last);
     const delta = Math.min(interval / 1000, 0.06); this.last = now;
-    const animated = !!(this.motion && this.playing);
+    const animated = !!(this.motion && this.playing && !this.stageHandoffFrames);
     if (animated) {
       this.time = this.motion.clock.advance(this.time, delta, this.speed, this.loopRange);
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
-    this.stepGlide(now);
-    if (!this.trainingHub) this.controls.update();
-    const hubMoving = !this.hubFlight?.returning && this.trainingHub?.tick(now);
+    if (!this.hubFlight && !this.stageHandoffFrames) {
+      this.stepGlide(now);
+      if (!this.trainingHub) this.controls.update();
+    }
+    const hubMoving = !this.hubFlight?.returning && !this.stageHandoffFrames && this.trainingHub?.tick(now);
     const flightMoving = this.hubFlight?.sample(now);
     if (flightMoving) this.dirty = true;
     const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
@@ -231,6 +234,10 @@ export class FlarePlayer {
       // Consume this frame's request before running those hooks.
       this.redraw = false; this.sceneDirty = false; const complete = this.render(); this.callbacks.onRender?.(complete);
       this.hubFlight?.rendered();
+      if (this.stageHandoffFrames > 0) {
+        this.stageHandoffFrames--;
+        this.requestRedraw();
+      }
       const perf = this.perf;
       if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
       perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
@@ -239,14 +246,10 @@ export class FlarePlayer {
   }
   render() {
     if (this.trainingHub && !this.hubFlight?.returning) return this.trainingHub.render();
-    if (this.resizeBeforeRender) {
-      this.resizeBeforeRender = false;
-      this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    }
     this.callbacks.onBeforeRender?.();
     const flight = this.hubFlight;
-    const bottom = Math.round(flight?.bottomInset ?? this.viewInset);
-    const top = Math.round(flight?.topInset ?? 0);
+    const bottom = flight?.bottomInset ?? this.viewInset;
+    const top = flight?.topInset ?? this.viewTop ?? 0;
     this.withStageScissor(bottom, top, () => this.renderActor(this.scene, flight?.camera ?? this.camera,
       !!flight || (this.adaptive.enabled && this.cameraOnly)));
     this.cameraOnly = false;
@@ -257,10 +260,12 @@ export class FlarePlayer {
   }
   withStageScissor(bottom, top, render) {
     const r = this.renderer, height = this.container.clientHeight;
-    const clipped = top + bottom > 0 && top + bottom < height;
-    if (!clipped) return render();
+    top = Math.round(top);
+    bottom = Math.round(bottom);
+    if (top + bottom === 0) return render();
     // Match the destination viewport at the handoff, including its shadow.
     r.setScissorTest(false); r.clear();
+    if (top + bottom >= height) return;
     r.setScissor(0, bottom, this.container.clientWidth, height - bottom - top);
     r.setScissorTest(true);
     try { return render(); }
@@ -285,6 +290,16 @@ export class FlarePlayer {
       this.shadowFresh = !!this.keyLight.shadow.map;
       this.shadowPoseTime = time;
     }
+  }
+  setViewTop(px) {
+    const top = Math.max(0, px);
+    if (this.viewTop === top) return;
+    this.viewTop = top;
+    this.updateFramingTarget();
+    this.viewBias = { ...this.viewBiasTarget };
+    this.applyProjection();
+    if (this.autoFrame && this.motion) this.resetView();
+    this.dirty = true;
   }
   /** Bottom px of the stage hidden under host chrome. A running glide carries
    * the change; otherwise it eases on its own (reduced motion: at once). */
@@ -337,11 +352,15 @@ export class FlarePlayer {
     this.fullPixelRatio = full;
     this.applyPixelRatio(this.stagePixelRatio(this.adaptive.configure(full, this.quality)));
   }
+  holdStageHandoff() {
+    // Hold the last drawn buffer for the first two destination frames.
+    this.stageHandoffRatio = this.renderer.getPixelRatio();
+    this.stageHandoffFrames = 2;
+    this.requestRedraw();
+  }
   stagePixelRatio(adaptiveRatio) {
-    // The shared canvas stays sharp through the flight and handoff, within
-    // the configured quality cap. The settled hub uses its adaptive density.
-    if (!this.hubFlight) return adaptiveRatio;
-    return this.hubFlight.pixelRatio ?? this.fullPixelRatio;
+    if (this.hubFlight) return this.hubFlight.pixelRatio ?? this.fullPixelRatio;
+    return this.stageHandoffFrames > 0 ? this.stageHandoffRatio : adaptiveRatio;
   }
   applyPixelRatio(ratio) {
     // setPixelRatio reallocates the drawing buffer; only call it on a change.
@@ -355,14 +374,13 @@ export class FlarePlayer {
     this.lastSize = `${width}x${height}`;
     this.updateFramingTarget();
     this.applyProjection();
-    if (changed && this.hubFlight?.returning) this.resizeBeforeRender = true;
-    else if (changed) this.renderer.setSize(width, height);
+    if (changed) this.renderer.setSize(width, height);
     if (changed && this.autoFrame && this.motion) this.resetView();
     if (changed && this.framingMode === 'detail') this.callbacks.onResize?.();
     this.dirty = true;
   }
   /** Visible stage height for an inset (the part above the host's chrome). */
-  visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - inset); }
+  visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - (this.viewTop ?? 0) - inset); }
   updateFramingTarget() {
     const width = this.container.clientWidth, visible = this.visibleHeight(this.viewInsetTarget);
     const fullStage = this.framingMode === 'main' && width <= 600 && visible >= 500;
@@ -372,12 +390,12 @@ export class FlarePlayer {
     this.viewBias ??= { ...this.viewBiasTarget };
   }
   applyProjection() {
-    const width = this.container.clientWidth, height = this.container.clientHeight;
+    const width = this.container.clientWidth, canvasHeight = this.container.clientHeight;
+    const top = this.viewTop ?? 0;
+    const height = canvasHeight - top;
     if (!(width > 0 && height > 0)) return;
     const visible = this.visibleHeight();
-    // The visible part keeps the base field of view; the canvas below it is
-    // the same lens extended, so framing matches a stage of that height.
-    this.camera.aspect = width / height;
+    // Map the original home lens into its rectangle inside the shared canvas.
     this.camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(this.baseFov / 2)) * height / visible));
     if (!this.viewBias) this.updateFramingTarget();
     // h1 embeds the 650px stage at global y108. Lift the visual composition
@@ -385,8 +403,7 @@ export class FlarePlayer {
     // shift is retained for v38; its slightly wider envelope is fitted below.
     this.offsetY = visible * this.viewBias.y + (height - visible) / 2;
     this.offsetX = width * this.viewBias.x;
-    this.camera.setViewOffset(width, height, this.offsetX, this.offsetY, width, height);
-    this.camera.updateProjectionMatrix();
+    this.camera.setViewOffset(width, height, this.offsetX, this.offsetY - top, width, canvasHeight);
   }
   setFramingMode(value) { this.framingMode = value; this.resize(); }
   resetView(direction = CAMERA_PRESETS.standard) {
