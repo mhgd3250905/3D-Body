@@ -46,12 +46,15 @@ export async function createPhaseMap(player, onSelect) {
     const camera = new THREE.PerspectiveCamera(26, 0.5, 0.02, 20);
     camera.position.set(0, 0.845, sign * 4.0); camera.lookAt(0, 0.845, 0); camera.updateMatrixWorld(true); return camera;
   });
+  const motion = document.createElement('div'); motion.className = 'phase-map-motion';
+  const shadow = document.createElement('div'); shadow.className = 'phase-map-shadow'; shadow.setAttribute('aria-hidden', 'true');
   const panel = document.createElement('aside'); panel.className = 'phase-map'; panel.setAttribute('aria-label', '随动作阶段同步的肌群正面和背面定位图');
   // Keep its layout measurable without exposing an empty card during GLB or
   // shader initialization. Reveal only after the cached canvas is composed.
-  panel.style.visibility = 'hidden';
+  motion.style.visibility = 'hidden';
   panel.innerHTML = '<header><i></i><span>同步发力</span></header><div class="phase-map-view"></div><div class="phase-map-legend"></div>';
-  player.container.append(panel);
+  motion.append(shadow, panel);
+  player.container.append(motion);
   const view = panel.querySelector('.phase-map-view'), legend = panel.querySelector('.phase-map-legend');
   // Keep one WebGL context. Render each view to a complete small MSAA target
   // at independent density. Cache two local-emphasis endpoints per phase;
@@ -61,7 +64,8 @@ export async function createPhaseMap(player, onSelect) {
   const effortFrames = [document.createElement('canvas'), document.createElement('canvas')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), local = new THREE.Vector3();
-  let source = null, hidden = false, legendItems = [], target = null, renderKey = null, renderCount = 0, focus = null;
+  let source = null, hidden = false, legendItems = [], target = null, renderCount = 0, focus = null;
+  let rasterKey = null, rasterEnvironment = null, selectionDirty = false;
   let paintKey = null, paintEffort = 0;
   let chromeMotion = null;
   const fullBounds = new THREE.Box3().setFromObject(model);
@@ -105,7 +109,7 @@ export async function createPhaseMap(player, onSelect) {
     // figure and the home phase map retain their phase-specific side.
     setFunctionalFocus(uniforms, groupId ? MM.resolveGroup(groupId)?.muscles ?? [] : [], groupId ? 'both' : undefined);
   }
-  function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); renderKey = null; refreshEnvironment(); }
+  function setDetail(groupId, phase) { focus = groupId; applySelection(phase, groupId); selectionDirty = true; refreshEnvironment(); }
   function setHubCrop(bottom) {
     uniforms.mmHubBottom.value = bottom;
     if (uniforms.mmHubFraming.value === 1) return;
@@ -123,7 +127,7 @@ export async function createPhaseMap(player, onSelect) {
       mesh.material.needsUpdate = true;
     }
   }
-  function restorePhase() { focus = null; source = null; renderKey = null; setFunctionalFocus(uniforms, []); }
+  function restorePhase() { focus = null; selectionDirty = true; setFunctionalFocus(uniforms, []); }
   function refreshEnvironment() { scene.environment = player.scene.environment; }
   function withThumbnailDensity(density, render) {
     const previous = strokeDensity.value; strokeDensity.value = density;
@@ -131,9 +135,17 @@ export async function createPhaseMap(player, onSelect) {
   }
   function render() {
     if (hidden) return false;
+    // The route owns only position and alpha. Keep the last painted pixels,
+    // including their emphasis, until the card is back at rest.
+    if (chromeMotion !== null && paintKey !== null) return true;
     const phase = phaseAt(player.time);
-    if (phase.source !== source) {
-      source = phase.source; applySelection(phase);
+    const phaseChanged = phase.source !== source;
+    if (phaseChanged || selectionDirty) {
+      applySelection(phase);
+      selectionDirty = false;
+    }
+    if (phaseChanged) {
+      source = phase.source;
       // The colored regions and legend describe exactly the same three
       // teaching priorities, instead of also lighting every secondary group.
       legendItems = emphasisItems(phase);
@@ -154,7 +166,7 @@ export async function createPhaseMap(player, onSelect) {
     const width = Math.ceil(r.width / 2 * density), height = Math.ceil(r.height * density);
     strokeDensity.value = width / (r.width / 2);
     const key = [phase.source, width, height, player.quality, renderer.toneMappingExposure].join(':');
-    if (key !== renderKey || scene.environment !== player.scene.environment) {
+    if (key !== rasterKey || rasterEnvironment !== player.scene.environment) {
       scene.environment = player.scene.environment;
       if (!target) target = new THREE.WebGLRenderTarget(width, height, { samples: Math.min(4, renderer.capabilities.maxSamples), stencilBuffer: false });
       else target.setSize(width, height);
@@ -185,7 +197,9 @@ export async function createPhaseMap(player, onSelect) {
           }
           renderCount++;
         }
-        renderKey = key; paintKey = null;
+        rasterKey = key;
+        rasterEnvironment = scene.environment;
+        paintKey = null;
       } finally {
         uniforms.mmEffort.value = 0;
         renderer.setRenderTarget(previous.target); renderer.setViewport(previous.viewport); renderer.setScissor(previous.scissor);
@@ -199,7 +213,7 @@ export async function createPhaseMap(player, onSelect) {
     const progress = THREE.MathUtils.clamp((player.time - start) / Math.max(0.001, end - start), 0, 1);
     const effort = reducedMotion.matches ? 0.75 : 0.25 + 0.75 * Math.sin(Math.PI * progress) ** 2;
     const step = Math.round(effort * 24);
-    const nextPaintKey = `${renderKey}:${step}`;
+    const nextPaintKey = `${rasterKey}:${step}`;
     if (nextPaintKey === paintKey) return true;
     paintEffort = step / 24;
     // Weighted additive composition preserves antialiased edge coverage.
@@ -209,25 +223,37 @@ export async function createPhaseMap(player, onSelect) {
     thumbnailContext.drawImage(effortFrames[1], 0, 0);
     thumbnailContext.globalCompositeOperation = 'source-over'; thumbnailContext.globalAlpha = 1;
     paintKey = nextPaintKey;
-    panel.style.visibility = '';
+    motion.style.visibility = '';
     return true;
   }
-  function syncChrome() {
-    // During the route motion use the retained 2D card even while the hub
-    // suspends thumbnail rendering. The fixed WebGL actor keeps its own view.
-    panel.hidden = chromeMotion === null && hidden;
-    panel.inert = hidden || chromeMotion !== null;
-    panel.style.opacity = chromeMotion === null ? '' : chromeMotion.opacity;
-    panel.style.transform = chromeMotion === null ? '' : `translateX(${chromeMotion.x}px)`;
+  function syncVisibility() {
+    motion.hidden = chromeMotion === null && hidden;
+    motion.inert = hidden || chromeMotion !== null;
   }
-  function setHidden(value) { hidden = value; syncChrome(); player.dirty = true; }
-  function setChromeMotion(value) { chromeMotion = value; syncChrome(); }
+  function setHidden(value) {
+    if (hidden === value) return;
+    hidden = value;
+    syncVisibility();
+    player.dirty = true;
+  }
+  function setChromeMotion(value) {
+    const wasMoving = chromeMotion !== null;
+    if (value === null && !wasMoving) return;
+    chromeMotion = value;
+    if (wasMoving !== (value !== null)) syncVisibility();
+    motion.style.transform = value === null ? '' : `translate3d(${value.x}px, 0, 0)`;
+    const opacity = value === null ? '' : value.opacity;
+    panel.style.opacity = opacity;
+    shadow.style.opacity = opacity;
+    if (value === null && !hidden) player.requestRedraw();
+  }
   function setLocalization() {
     panel.querySelector('header span').textContent = sceneStrings.syncEffort ?? '同步发力';
     panel.setAttribute('aria-label', sceneStrings.mapAccessibility ?? 'Muscles');
     source = null; player.dirty = true;
   }
-  function releaseThumbnailGpu() { target?.dispose(); target = null; renderKey = null; }
+  // The CPU-side rasters survive GPU release and can be shown on return.
+  function releaseThumbnailGpu() { target?.dispose(); target = null; }
   function releaseGpu() {
     releaseThumbnailGpu();
     for (const mesh of meshes) mesh.geometry.dispose();
@@ -236,5 +262,5 @@ export async function createPhaseMap(player, onSelect) {
   return { render, setHidden, setChromeMotion, setLocalization, releaseGpu, releaseThumbnailGpu, scene, setDetail, setHubCrop, clearHubCrop, restorePhase, refreshEnvironment, withThumbnailDensity, pickSurface, getFullBounds: () => fullBounds.clone(),
     getState: () => ({ phase: source, hidden, focus, views: ['front', 'back'], legend: legendItems.map(item => ({ groupId: item.groupId, label: groupLabel(item.groupId, shortNames[item.groupId] ?? item.label) })), referencePose: 'static CC0 mannequin',
     resolution: [thumbnail.width, thumbnail.height], renderCount, samples: target?.samples ?? 0, emphasis: paintEffort }),
-    dispose() { releaseGpu(); view.removeEventListener('click', select); panel.remove(); } };
+    dispose() { releaseGpu(); view.removeEventListener('click', select); motion.remove(); } };
 }
