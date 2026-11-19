@@ -1,18 +1,28 @@
 # Flare 版本管理台账
 
+## 当前开发检查点（2026-11-19）
+
+| 项目 | 已核对的状态 |
+| --- | --- |
+| 主线运行源码 | `266653fe69ffcea2e302d089a1a93d813976e7da` 已合入 `origin/master`。后续开发从最新主线开始，文档提交可位于此运行检查点之后。 |
+| App 声明版本 | `pubspec.yaml` 为 **1.0.15+64**。测试包通过构建参数指定编号，以实际 APK versionCode 为准。 |
+| SDK | `ugk_coach`、`ugk_coach_chat`、`ugk_coach_ui` 与 `ugk_trainer_runtime` 均为 **1.0.1**，锁定 `85b57fda632f1f25eb94514d44e00e214cf9f7f5`。 |
+| 最近一次 Android 真机安装 | **1.0.15 / vc2074**，详见下节。 |
+| 验收与发布 | 用户确认了 vc2073 和计划详情页四组 Chrome 截图。vc2074 追加留白后的视觉验收、iOS 同步验证另记。本批交付范围为本机测试包和 Git 源码。 |
+
 ## Android 真机测试包 vc2074（2026-11-19）
 
-Flare **1.0.15 / vc2074**（`dev.mhgd.flare`、arm64-v8a）以 `codex/flare-hub-flash-fix` 的 `928ba068` 为基础，纳入计划详情页头部改版及肌群计划档位前增加的 16 px 留白。APK 共 105,162,283 字节，SHA-256 为 `98164b528575234442d6c6a9d83b88b7da520d07884ac85bf4c43661066ae726`。APK 与安装回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2074/`。
+Flare **1.0.15 / vc2074**（`dev.mhgd.flare`、arm64-v8a）的运行源码已入上述主线检查点，包含计划详情页头部改版和肌群计划档位前新增的 16 px 留白。APK 共 105,162,283 字节，SHA-256 为 `98164b528575234442d6c6a9d83b88b7da520d07884ac85bf4c43661066ae726`。具名 APK `Flare-1.0.15-vc2074-arm64-release.apk` 与 `apk-verification.json` 位于主工作区 `output/release-checkpoints/app-v1.0.15-build2074/`。
 
 07:58 已从 vc2072 同签名覆盖安装到 Android 真机。手机端 APK 哈希一致，首次安装时间和应用数据目录保持。留白观感待用户复验。[验证记录](verification.md#专项计划详情页头部2026-11-19)
 
 ## Android 本地测试包 vc2073（2026-11-19）
 
-Flare **1.0.15 / vc2073**（`dev.mhgd.flare`、arm64-v8a）来自 `codex/flare-hub-flash-fix`，包含训练页进退场时的标签与连线淡入淡出。APK 共 105,162,283 字节，SHA-256 为 `3adb134349e7988bb91e3ca2c6438055bbe563bef0c1d730258b30db7cad1196`。签名与 vc2072 一致。APK 及回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2073/`。真机观感待复验。[验证记录](verification.md#第-15-阶段标签淡入淡出2026-11-19)
+Flare **1.0.15 / vc2073**（`dev.mhgd.flare`、arm64-v8a）来自 `928ba06800dab63af488944d3f50c049231b2fd5`，包含训练页进退场时的标签与连线淡入淡出。APK 共 105,162,283 字节，SHA-256 为 `3adb134349e7988bb91e3ca2c6438055bbe563bef0c1d730258b30db7cad1196`。签名与 vc2072 一致。APK 及回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2073/`。08:01 收到用户验收确认。现场设备从 vc2072 更新至 vc2074。[验证记录](verification.md#第-15-阶段标签淡入淡出2026-11-19)
 
 ## Android 本地测试包 vc2072（2026-11-19）
 
-Flare **1.0.15 / vc2072**（`dev.mhgd.flare`、arm64-v8a）来自 `codex/flare-hub-flash-fix`，包含肌群标签平滑交接与返程立即起飞。APK 共 105,161,839 字节，SHA-256 为 `f35ae4469f441d801717fa599f40ea6a2448118af76a6b7e8feaf114f13b71a5`。签名与 vc2071 一致。安装包及校验回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2072/`。真机交互待复验。[验证记录](verification.md#第-15-阶段标签交接与返程起飞2026-11-19)
+Flare **1.0.15 / vc2072**（`dev.mhgd.flare`、arm64-v8a）来自 `31b17923583c82872af05f5e1bc68ba8f41ce4b8`，包含肌群标签平滑交接与返程立即起飞。APK 共 105,161,839 字节，SHA-256 为 `f35ae4469f441d801717fa599f40ea6a2448118af76a6b7e8feaf114f13b71a5`。签名与 vc2071 一致。安装包及校验回执位于主工作区 `output/release-checkpoints/app-v1.0.15-build2072/`。真机进退场获认可，升级至 vc2074 前已回读 vc2072 及其 APK 哈希。[验证记录](verification.md#第-15-阶段标签交接与返程起飞2026-11-19)
 
 ## Android 本地测试包 vc2071（2026-11-19）
 

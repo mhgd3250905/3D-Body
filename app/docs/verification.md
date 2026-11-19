@@ -1,20 +1,32 @@
 # App 验证记录
 
+## vc2074 主线核验（2026-11-19）
+
+运行源码为 `266653fe69ffcea2e302d089a1a93d813976e7da`。以下测试在该提交推送前运行，APK 则从提交前相同的运行文件构建，来源和关键文件哈希记录在[版本台账](version-ledger.md#android-真机测试包-vc20742026-11-19)所列回执中。
+
+| 范围 | 命令与结果 |
+| --- | --- |
+| Flutter 静态分析 | `flutter analyze --no-pub`，通过。 |
+| 页面与转场 | `flutter test --no-pub --reporter expanded test/ui/flare_plans_flow_test.dart test/ui/training_hub_entry_test.dart`，14 项通过。 |
+| 训练场景与资产 | 在 `app/scene` 执行 `node --test tools/test-training-hub.mjs` 与 `npm run verify`，12 项场景测试及资产校验通过。 |
+| Android APK | `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=74`，构建通过。与 vc2073 同签名，16 KiB ZIP 对齐通过。 |
+| 真机安装 | 07:58 以 `adb install -r` 从 vc2072 覆盖更新，版本、包哈希、首次安装时间和数据目录回读符合预期。 |
+
+08:01 的验收确认覆盖 vc2073 和计划详情页四组 Chrome 截图。vc2074 最后增加的 16 px 留白由用户真机复验。iOS、长期运行和设备矩阵各自保留待验状态。
+
 ## 专项计划详情页头部（2026-11-19）
 
 Chrome 390×844 拍摄了背阔肌、三角肌、第二侧支撑（15）和后侧支撑（09）的改前、改后图，见本工作树 `output/playwright/flare-plan-header-review/`。两张肌群计划的人台位置与尺寸一致，标题和下方内容上移 120 px。两张角度计划标题和下方内容上移约 70 px。Chrome 顶部安全区为 0 时，人物画布贴近顶边，人物上移 64 px。较高的角度姿势会按轮廓下缘留出标题空间。
 
 `flutter analyze --no-pub`、12 项计划流程定向测试和离线 Web 构建通过。截图交付后，用户要求打包安装，并在背阔肌图上指出人台与档位之间需要留白。肌群计划档位及后续内容追加下移 16 px，静态分析和 12 项流程测试复跑通过。上方截图为追加留白前的对照。
 
-vc2074 arm64 APK 同签名、16 KiB 对齐及 1,307 项入包 App 资源对比通过。Android 真机从 vc2072 覆盖更新，回读版本和 APK 哈希通过，首次安装时间及应用数据目录保持。新版观感由用户复验。
-
-08:01 收到飞书确认，vc2073 与计划详情页四组截图验收通过，授权合入 master。
+与 vc2073 对比，vc2074 的 1,307 项随包 App 资产逐字节一致。构建和安装见上方主线核验。
 
 ## 第 15 阶段标签淡入淡出（2026-11-19）
 
 以用户真机认可进退场的 vc2072 为基线。首页与训练页切换开始时，标签、锚点和连线在起始位置用 120 毫秒淡出。镜头落定后，按人物的屏幕缩放换算锚点到标签的偏移，标签在最终位置用 180 毫秒 `easeOutCubic` 淡入。窄屏统一限制三枚标签偏移的缩放比例以保留完整文字。
 
-Chrome 390×844 第 15 阶段核对了三个标签的侧别、上下顺序和统一缩放比，淡入期间屏幕坐标无变化，主体飞行期间无标签。12 项训练场景测试、场景与离线 Web 构建通过。首页、训练页落定和返回首页落定的三张图位于本工作树 `output/playwright/flare-hub-label-fade-review/`。同尺寸对照 vc2072 已确认返程人物部分出画原先存在。用户已确认截图并同意出 vc2073，真机观感待复验。
+Chrome 390×844 第 15 阶段核对了三个标签的侧别、上下顺序和统一缩放比，淡入期间屏幕坐标无变化，主体飞行期间无标签。12 项训练场景测试、场景与离线 Web 构建通过。首页、训练页落定和返回首页落定的三张图位于本工作树 `output/playwright/flare-hub-label-fade-review/`。同尺寸对照 vc2072 已确认返程人物部分出画原先存在。用户已确认截图并同意出 vc2073，后续验收见上方主线核验。
 
 `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=73` 通过。APK 与 vc2072 同签名，16 KiB ZIP 对齐通过，场景入口与脚本对应本次构建，其余 1,305 个 App 资产逐字节一致。
 
@@ -24,7 +36,7 @@ vc2071 的真机录屏在标签消失后仍保持原人物位置约 0.47 秒，�
 
 进退场先沿用出发页的标签位置和身体侧别，交接后按 220 毫秒 `easeOutCubic` 平移，连线随对应锚点。Chrome 第 15 阶段的三枚标签在首页和落地首帧的屏幕坐标一致。三张图保存在本工作树 `output/playwright/flare-hub-handoff-review/`，分别为首页、落地首帧和落地后 300 毫秒。
 
-`flutter analyze --no-pub`、36 项 Flutter 定向测试、12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。用户已确认三张 Chrome 截图并同意出 Android 测试包，真机交互待复验。
+`flutter analyze --no-pub`、36 项 Flutter 定向测试、12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。用户确认三张 Chrome 截图并同意出 Android 测试包，随后认可 vc2072 真机进退场。
 
 `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=72` 通过。vc2072 验签与 16 KiB ZIP 对齐通过，包内场景入口和脚本匹配本次构建，其余 1,305 个 App 资产与 vc2071 逐字节一致。
 
