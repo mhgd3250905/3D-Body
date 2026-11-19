@@ -8,7 +8,9 @@ Flutter 3.44.7 全量测试通过 451 项，既有的 live 测试默认跳过 1 
 
 在 Chrome 以 390 × 690（DPR 1）与 393 × 745（DPR 3，含训练滚动裁剪）驱动真实场景桥接命令。通过 `app/scene/tools/test-handoff-frames.mjs` 采样连续绘制帧，进场和返程的骨盆与头顶最大位移均为 0.000000 CSS px；画布矩形、缓冲尺寸、裁剪、地面和阴影状态、姿态时间在边界上相同。Flutter 组件测试另行验证共享视图的矩形和短屏滚动。逐帧数据见本工作树 `output/playwright/handoff-frames/frame-report.json`。
 
-本轮为本地 Android 测试包，iOS WKWebView 和 Android 真机复验待进行。
+合入前从最新主线快进到验收提交后复跑，Flutter 静态分析通过，全量测试 451 项通过、1 项默认跳过；15 项场景测试及场景完整性校验通过。
+
+11:28 飞书回执确认开哥已在 Android vc2075 与 iOS 构建 40 真机验收首页与训练页的双向交接抖动修复。真机结论来自用户反馈。[版本与包身份](version-ledger.md#首页与训练页交接真机验收2026-11-19)
 
 ## vc2074 主线核验（2026-11-19）
 
