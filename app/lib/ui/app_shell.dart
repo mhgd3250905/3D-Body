@@ -13,6 +13,7 @@ import '../data/catalog.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
 import '../platform/scene/scene_variant.dart';
+import '../data/flare_public_catalog.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../trainer/flare_plan_resume.dart';
@@ -681,9 +682,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ...item.trainingMediaIdsForScene('A'),
     };
     final ids = plan.exerciseIds.map((id) => mediaIds[id] ?? id).toList();
+    final localSupplemental =
+        policy == null && ids.any(flareSupplementalActionIds.contains)
+        ? await FlareSupplementalActions.load()
+        : null;
+    if (!context.mounted) return null;
     String? posterFor(String id) => policy?.actionFor(id) != null
         ? policy!.posterAssetFor(id)
         : policy?.posterAssetFor(id) ??
+              localSupplemental?.coverAssetFor(id) ??
               '${FlarePublicMedia.posterRoot}$id.webp';
     final cooldown = supplementalPlan == null
         ? catalog.flareCooldownPlan

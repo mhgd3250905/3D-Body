@@ -62,15 +62,17 @@ class FlareShared {
     String? planActionId,
   }) {
     final locale = Localizations.localeOf(context);
-    // Only this authored warm-up opens the additional action. It is outside
-    // the general library and Coach action allowlist.
+    // Authored routines can inspect their extra actions outside the general
+    // library and Coach action allowlist.
     final detailScope =
-        planActionId == flareWarmupPushupId &&
-            catalog[flareWarmupPushupId] != null
+        planActionId != null &&
+            (planActionId == flareWarmupPushupId ||
+                flareSupplementalActionIds.contains(planActionId)) &&
+            catalog[planActionId] != null
         ? coach.CoachActionScopeManifest.fromCatalogBytes(
             appId: flareAppId,
             catalogBytes: utf8.encode(jsonEncode(catalog.toJson())),
-            allowedActionIds: [flareWarmupPushupId],
+            allowedActionIds: [planActionId],
           )
         : scope;
     return _libraryConfig(
@@ -169,7 +171,7 @@ class FlareShared {
     AssetBundle? bundle,
     coach.PoseHubAppTestCatalog? activeCatalog,
   }) async {
-    final pack = await withFlareWarmupAction(
+    final pack = await withFlareSupplementalActions(
       activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle),
       bundle: bundle,
     );
@@ -244,7 +246,7 @@ class FlareShared {
       config: shared.libraryFor(context, planActionId: id),
       mediaPolicy: policy,
       theme: resolvedTheme.copyWith(mediaStage: Colors.transparent),
-      onStart: soundEnabled
+      onStart: soundEnabled && !flareSupplementalActionIds.contains(id)
           ? (actionId) async {
               final action = policy.actionFor(actionId);
               if (action == null) return;
