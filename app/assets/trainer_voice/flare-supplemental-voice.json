@@ -52,100 +52,100 @@
       "sha256": "5e30ca516daa1feed077a755849fadcdbd361ad1ea6a830befd054342f08b16b"
     },
     "supplemental.cooldown.strength.1.1": {
-      "ms": 9768,
-      "sha256": "5848e52f80139c26263383a0495cfeb65fa3656732a3713725f78528e74435e6"
+      "ms": 9092,
+      "sha256": "543857f3391df57ad8a44b205e98f3dd6a5fc22007fefa80e2125a9df824a150"
     },
     "supplemental.cooldown.strength.1.2": {
-      "ms": 9294,
-      "sha256": "2dd9fa86a9ba005a5465ec927d4dc27af99eff974c28fcf5495f1e117b7d6950"
+      "ms": 9089,
+      "sha256": "0231b6a47d9988ddbe7cd5513f95764bba5325e1fb93b74b33511e3ad495479d"
     },
     "supplemental.cooldown.strength.1.3": {
       "ms": 8719,
       "sha256": "73291693e23dc6209971d3009014469d6a840cbff90d831806267713bfe621ad"
     },
     "supplemental.cooldown.strength.1.4": {
-      "ms": 11325,
-      "sha256": "2fbe442322430246b8839ca02863a7ce79929b40885aa0a7058ac1ecbc036a10"
+      "ms": 9100,
+      "sha256": "8097b9e3b9a475525007f1beb775d9deffb308ac92ae6d4cc0fcc51e81ec159a"
     },
     "supplemental.cooldown.strength.1.5": {
-      "ms": 10592,
-      "sha256": "94f9cafdcfcfcb4a47fb60c233ca004f24df796a0b1ab24d89fba1536485d13c"
+      "ms": 9099,
+      "sha256": "8dbc3e4bb34eb0c3831c1cb3dcee40578d97a3a27ccd37d0f1a750283a87c2fe"
     },
     "supplemental.cooldown.strength.1.6": {
-      "ms": 10123,
-      "sha256": "5651b499339777484d422cbd4bc9da27edc087f8dc3f0125d741bfd6524eadf3"
+      "ms": 9101,
+      "sha256": "43023166c8119d951eeb15ac487920e0bad7ecf7e2296b0459e33dcf6da4bd5b"
     },
     "supplemental.cooldown.strength.2.1": {
-      "ms": 11433,
-      "sha256": "01b2040703e1d162f613aaa190f6dde8b8f9bf48320ff69966b48ac1d6c16159"
+      "ms": 9099,
+      "sha256": "67e5769fa9d8348115ff9c7c9ed1e107ce2b7b15f50e66aa114fa34cc2f307b7"
     },
     "supplemental.cooldown.strength.2.2": {
-      "ms": 10064,
-      "sha256": "4bda138bc169100cd619d33679d64846f5519a6ed83ece339ba18a41d1b3d1ee"
+      "ms": 9097,
+      "sha256": "563883d125ab3eda69f29ff3e2ff8b8d39204f395b5237896fd7c9dfed448624"
     },
     "supplemental.cooldown.strength.2.3": {
-      "ms": 10628,
-      "sha256": "9e3efa8490d9b9fb9ccca9d0bccfa748a6f508ce3e24dc92ecf8169fa969199d"
+      "ms": 9098,
+      "sha256": "58537a8785d38207dba6895995f2a508cfcb057039abe27a150f0dd8f4184cb8"
     },
     "supplemental.cooldown.strength.2.4": {
-      "ms": 10725,
-      "sha256": "92aca194156a49af8ca85d08f4b08784bc487d87aeac6deb53a1e1e81e7275c4"
+      "ms": 9100,
+      "sha256": "6cbc7a6fecf8d56eb3f02cf3c7e88cd551906c87ed1e4523c5138cd1c7cff132"
     },
     "supplemental.cooldown.strength.2.5": {
-      "ms": 12243,
-      "sha256": "9c8274b66fa6063b2ea42190fc5757cedebcb3edf458d24eb67170862c0d9bbe"
+      "ms": 9099,
+      "sha256": "ea81ea31c13ca22660340089529c7d73505ef700bcca94d11dbf255488d5dca9"
     },
     "supplemental.cooldown.strength.2.6": {
-      "ms": 11921,
-      "sha256": "26b4a38b9675580f419d798e5a71147ebcb9c26b4441b452b0139b6025e47a65"
+      "ms": 9102,
+      "sha256": "9c9552f305ca3009576a925011458fb32dc19e1ec182b091535edd4821b4809d"
     },
     "supplemental.cooldown.strength.2.7": {
-      "ms": 11135,
-      "sha256": "7f3f417c66a1d4c8d609aa81db4cae28152d026371b7e1c3cc5dffc2d5a7a1ea"
+      "ms": 9100,
+      "sha256": "adbb2fe984494dc59a87303560479f27f9d1925b5bf2988556d4063e6112ae8d"
     },
     "supplemental.cooldown.strength.3.1": {
-      "ms": 11591,
-      "sha256": "ca9339ba5cdfcfed4163efe7bbc2aa29f906ac35514c0f4c5e26033856ff28fb"
+      "ms": 9101,
+      "sha256": "a24b745ddc6fc1e2594918eaa6c2a6452e075d254c5c889248a2f1f334221acd"
     },
     "supplemental.cooldown.strength.3.2": {
-      "ms": 10508,
-      "sha256": "20926a7003c5f68daf8c733380da8e9010a663040a6f48bb864d928fb3c5a643"
+      "ms": 9097,
+      "sha256": "7eb2d563948081a1be38b2a0c5898f62a3260ec159058bd5ac98e72237e887a3"
     },
     "supplemental.cooldown.strength.3.3": {
-      "ms": 11294,
-      "sha256": "fa243d9b2661ee4296d24d91f94a8acf5cc572fc6fbcc0c21cb1bb0531893e21"
+      "ms": 9101,
+      "sha256": "816ff735a2ceffc848d79045ea29ed5bc38a99ee8f9622c09d9ceba008208920"
     },
     "supplemental.cooldown.strength.3.4": {
-      "ms": 12791,
-      "sha256": "1af8d6838b6fc9b088349ff93dc263eb25b7d3e8821409c6546053f59e24f327"
+      "ms": 9100,
+      "sha256": "fa47785f51ec7ff548b24e70395f5d63bf39d85615d2d23533e1c6ae10db7174"
     },
     "supplemental.cooldown.strength.3.5": {
-      "ms": 11639,
-      "sha256": "917fbaa150b24387c982b964a8cbc04c96fe97a2597778c61b9e68091dea6c1b"
+      "ms": 9100,
+      "sha256": "5cd916b76acf26fed0c0dc267ad594cf708c9ebfd523eff38475af540a175b6a"
     },
     "supplemental.cooldown.strength.3.6": {
-      "ms": 12951,
-      "sha256": "a599bdc00fe76a0c10e9fe86c33a76ca23bb064052dd0bb092cdb95f0d852e80"
+      "ms": 9097,
+      "sha256": "1c6f54b0cceb2e3a3448e45359c696946a64f44e4c7dace5a26fd58f187605bd"
     },
     "supplemental.cooldown.stretch.1": {
-      "ms": 9775,
-      "sha256": "3c7b145a0699b1737fcdc7ff21e2c2dc593a4b268f7980d5432691763e0ac08c"
+      "ms": 9100,
+      "sha256": "0e5a1ae136b83758c678b3bc4c83f73dcd8e3464a356954d7b2d709042278620"
     },
     "supplemental.cooldown.stretch.2": {
-      "ms": 9244,
-      "sha256": "dc37f72a42030ddc4ca0cdbdacdec903d4d578f03df4fce9fb0ab1585b34b5f9"
+      "ms": 9095,
+      "sha256": "ad72130afa9a796a2fe2e6e1c727bba73597b585348c924cad719ef0ac462cf6"
     },
     "supplemental.cooldown.stretch.3": {
-      "ms": 9748,
-      "sha256": "155031f15c8ff7b06ba657cc254ab1e5e6f88e5a0b3480bab7451de81ff245ac"
+      "ms": 9100,
+      "sha256": "84a48c4c35a5d04edd16a6aaba232dd076185de4d846b6a187f3a4e74ac19fc2"
     },
     "supplemental.cooldown.stretch.4": {
-      "ms": 9530,
-      "sha256": "ba9dc9f866c27407bf80bc4a6e1078bd60e7d204308b499e1f43f0e55c662324"
+      "ms": 9100,
+      "sha256": "bd77ac1852109f5a37b7bf3f3b974b1e1e7549c4d90ea1d9575e3a4c8737631a"
     },
     "supplemental.cooldown.stretch.5": {
-      "ms": 9249,
-      "sha256": "80a4240ecb339e43e61e13e305b97ca1f5bd442afededc1b288b0a5304b725fa"
+      "ms": 9091,
+      "sha256": "5471955089506969b1b52bc5d0735f4b0ad857c33018aa0e7867b692bf3ac4e4"
     },
     "supplemental.cooldown.stretch.6.1": {
       "ms": 4639,
@@ -160,28 +160,28 @@
       "sha256": "3ce23c47d3e0a7f359f371da8153d6690e3eb28cb76e7135716a790b039ab5a2"
     },
     "supplemental.cooldown.stretch.8": {
-      "ms": 9765,
-      "sha256": "31bd0c8dd535ab5a98648e3df6cdf1952ecd6105105d1fcb5d801847a4285a04"
+      "ms": 9098,
+      "sha256": "417110563aedef56b56e5b388dd7f15021b44a454da969e1d2e0fafbc31f67c1"
     },
     "supplemental.cooldown.stretch.9": {
-      "ms": 10340,
-      "sha256": "788ef4745b240f51b7f1f07c4b6428c354ea20dfc1e5ea2bf976d0ae700006e4"
+      "ms": 9100,
+      "sha256": "7044418d9d1fe94c5e0aa22f8e7582390f329889171815aeb7d81004784ad60a"
     },
     "supplemental.cooldown.stretch.10": {
-      "ms": 11353,
-      "sha256": "51445ac7c542cdb3297de3e5f03d4ef905a6f5283be6dc319cf3a8c95bfe50fb"
+      "ms": 9100,
+      "sha256": "5afaa1cfd4d0eac6c78dd357534c42e5d10e96fbe98afc79160b7a5a5f027a80"
     },
     "supplemental.cooldown.stretch.11": {
-      "ms": 13038,
-      "sha256": "d1cb11cc3be18240a48c2c8312e5225b57e48c4c7ac950c708ec66b67bca2b0b"
+      "ms": 9101,
+      "sha256": "23b40ea1e89117d825c3339ecfac3f0e8118f15e98b1649be4694e2e3a52b788"
     },
     "supplemental.cooldown.stretch.12": {
-      "ms": 11247,
-      "sha256": "9fc77e65c2b7876056bd15f971b50a73760a009a068d96b4cd9bf25bf90e6d27"
+      "ms": 9100,
+      "sha256": "10e00bb6521c3e06b213285f0cb01724a58441a0db99be7e0806adc8e5f87fcc"
     },
     "supplemental.cooldown.stretch.13": {
-      "ms": 12593,
-      "sha256": "6b84ee62da34d161794ab978f62671527969ff6f248e40d83f90f876c156079a"
+      "ms": 9101,
+      "sha256": "f1bc1754ee1715ce8f7d30f8c45468caa8933f7dc4df158566f495a6885502dd"
     },
     "supplemental.cooldown.pnf": {
       "ms": 4290,

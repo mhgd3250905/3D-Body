@@ -86,6 +86,11 @@ SessionScript buildCooldownTrainerScript(VoiceSource source, String language) =>
 class _CooldownSessionScript extends SessionScript {
   _CooldownSessionScript({required super.source, required super.lang});
 
+  // The spoken technique line belongs to the changeover. The work phase
+  // keeps its ordinary rep counts and timer cues.
+  @override
+  List<String> cueKeys(String exerciseId) => const [];
+
   @override
   List<VoiceCue> cues(
     SessionPhase p, {
@@ -105,37 +110,41 @@ class _CooldownSessionScript extends SessionScript {
         ),
       ];
     }
-    final ordinary = super.cues(p, planSeconds: planSeconds, bySkip: bySkip);
-    final next = p.nextExerciseId;
-    if (next == null ||
-        (p.kind != PhaseKind.rest && p.kind != PhaseKind.roundRest)) {
-      return ordinary;
+    if (p.kind == PhaseKind.prep || p.nextExerciseId != null) {
+      final id = p.exerciseId;
+      final key = id == null ? null : source.drill(id, DrillLine.cue1);
+      final guide = key != null && key.startsWith('supplemental.cooldown.')
+          ? key
+          : p.kind == PhaseKind.prep
+          ? call(VoiceCall.first)
+          : null;
+      final round = p.kind == PhaseKind.roundRest;
+      final start = (round ? p.seconds - 10 : 0.0) + .25;
+      return [
+        if (round)
+          ...super
+              .cues(p, planSeconds: planSeconds, bySkip: bySkip)
+              .where((cue) => cue.at + len(cue.clips) <= start)
+        else if (p.kind == PhaseKind.rest)
+          const VoiceCue(0, ['chime.end'], CuePriority.call),
+        if (guide != null &&
+            source.has(guide, lang: lang) &&
+            start + len([guide]) < p.seconds)
+          VoiceCue(
+            start,
+            [guide],
+            CuePriority.coach,
+            subtitle: source.line(guide, lang: lang),
+          ),
+        // Countdown chimes use their own channel and leave the guide intact.
+        for (final remaining in [3, 2, 1])
+          if (p.seconds > remaining)
+            VoiceCue(p.seconds - remaining, const [
+              'chime.tick',
+            ], CuePriority.count),
+      ];
     }
-    final key = source.drill(next, DrillLine.cue1);
-    if (key == null ||
-        !key.startsWith('supplemental.cooldown.strength.') ||
-        !source.has(key, lang: lang) ||
-        ordinary.any((cue) => cue.clips.contains(key))) {
-      return ordinary;
-    }
-    // Short strength holds may end before a full technique line fits. Use the
-    // preceding rest, leaving the final countdown and transition chimes intact.
-    final end = p.seconds - 3.8;
-    final start = end - len([key]);
-    if (start < .35) return ordinary;
-    return [
-      for (final cue in ordinary)
-        if (cue.at >= end || cue.at + len(cue.clips) <= start)
-          cue
-        else if (cue.chimes.isNotEmpty)
-          VoiceCue(cue.at, cue.chimes, cue.priority),
-      VoiceCue(
-        start,
-        [key],
-        CuePriority.coach,
-        subtitle: source.line(key, lang: lang),
-      ),
-    ]..sort((a, b) => a.at.compareTo(b.at));
+    return super.cues(p, planSeconds: planSeconds, bySkip: bySkip);
   }
 }
 
