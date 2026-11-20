@@ -1357,8 +1357,9 @@ class PlanDetailPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (onOpenWarmup case final open?)
-              FlarePlanWarmupLink(onOpen: open),
+            if ((onOpenWarmup, catalog?.flareWarmupPlan?.estimatedMinutes)
+                case (final open?, final minutes?))
+              FlarePlanWarmupLink(onOpen: open, minutes: minutes),
             PrimaryAction(
               key: const ValueKey('plan-start'),
               icon: Icons.play_arrow_rounded,

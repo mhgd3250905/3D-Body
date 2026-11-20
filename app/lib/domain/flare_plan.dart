@@ -84,6 +84,7 @@ class FlarePlanItem {
   const FlarePlanItem._({
     required this.drill,
     required this.dose,
+    this.trainingDrill,
     this.bodyweight,
     this.bodyweightDose,
     this.home,
@@ -96,13 +97,16 @@ class FlarePlanItem {
 
   final String drill;
   final FlarePlanDose dose;
+
+  /// Optional training identity when two movements share one demonstration.
+  final String? trainingDrill;
   final String? bodyweight;
   final FlarePlanDose? bodyweightDose;
   final String? home;
   final FlarePlanDose? homeDose;
   final String? voiceCue;
 
-  /// The authored movement's name when its temporary demonstration differs.
+  /// An authored movement name for the plan's presentation.
   final String? displayName;
   final String? displayNameEn;
   final bool usesPlaceholderDemo;
@@ -118,6 +122,11 @@ class FlarePlanItem {
     'B' => home ?? drill,
     _ => drill,
   };
+
+  String trainingDrillForScene(String tier) {
+    final media = drillForScene(tier);
+    return media == drill ? trainingDrill ?? media : media;
+  }
 
   FlarePlanDose doseForScene(String tier) => switch (tier) {
     'A' => bodyweightDose ?? dose,
@@ -148,13 +157,13 @@ class FlarePlanItem {
       return FlarePlanDose._fromJson(value, '$drill/$key');
     }
 
-    // TODO: Replace the two wall-demo IDs when their exact demonstrations
-    // are available from Pose-Hub, then remove the placeholder names and flag.
+    // TODO: Replace temporary demo IDs when their exact demonstrations
+    // are available from Pose-Hub, then remove the placeholder flag.
     final demoPending = json['demoPending'] ?? false;
     final displayName = optionalText('displayName');
     final displayNameEn = optionalText('displayNameEn');
     if (demoPending is! bool ||
-        demoPending != (displayName != null && displayNameEn != null) ||
+        (demoPending && displayName == null) ||
         (displayName == null) != (displayNameEn == null)) {
       throw FormatException('Invalid placeholder demonstration: $drill');
     }
@@ -162,6 +171,7 @@ class FlarePlanItem {
     return FlarePlanItem._(
       drill: drill,
       dose: FlarePlanDose._fromJson(json, drill),
+      trainingDrill: optionalText('trainingDrill'),
       bodyweight: optionalText('bodyweight'),
       bodyweightDose: override('bodyweightDose'),
       home: optionalText('home'),
@@ -174,12 +184,20 @@ class FlarePlanItem {
   }
 }
 
+enum FlarePlanMovement {
+  bothCircleDirections,
+  alternatingHipSwitch,
+  threeWayWristRocks,
+}
+
 /// A complete dose, independent of the drill's catalog defaults.
 class FlarePlanDose {
   const FlarePlanDose._({
     required this.sets,
     this.reps,
     this.seconds,
+    this.holdSeconds,
+    this.movement,
     required this.restSeconds,
     required this.perSide,
   });
@@ -187,13 +205,26 @@ class FlarePlanDose {
   final int sets;
   final int? reps;
   final int? seconds;
+  final int? holdSeconds;
+  final FlarePlanMovement? movement;
   final int restSeconds;
   final bool perSide;
+
+  bool get bothCircleDirections =>
+      movement == FlarePlanMovement.bothCircleDirections;
 
   factory FlarePlanDose._fromJson(Map<String, dynamic> json, String label) {
     final sets = json['sets'];
     final reps = json['reps'];
     final seconds = json['seconds'];
+    final holdSeconds = json['holdSeconds'];
+    final movement = switch (json['movement']) {
+      null => null,
+      'bothCircleDirections' => FlarePlanMovement.bothCircleDirections,
+      'alternatingHipSwitch' => FlarePlanMovement.alternatingHipSwitch,
+      'threeWayWristRocks' => FlarePlanMovement.threeWayWristRocks,
+      _ => throw FormatException('Invalid Flare plan movement: $label'),
+    };
     final restSeconds = json['restSeconds'];
     final perSide = json['perSide'] ?? false;
     if (sets is! int ||
@@ -201,15 +232,26 @@ class FlarePlanDose {
         (reps == null) == (seconds == null) ||
         (reps != null && (reps is! int || reps < 1)) ||
         (seconds != null && (seconds is! int || seconds < 1)) ||
+        (holdSeconds != null &&
+            (holdSeconds is! int || holdSeconds < 1 || reps == null)) ||
         restSeconds is! int ||
         restSeconds < 0 ||
-        perSide is! bool) {
+        perSide is! bool ||
+        switch (movement) {
+          FlarePlanMovement.bothCircleDirections ||
+          FlarePlanMovement.alternatingHipSwitch => reps == null || !perSide,
+          FlarePlanMovement.threeWayWristRocks =>
+            seconds is! int || seconds < 3 || perSide,
+          null => false,
+        }) {
       throw FormatException('Invalid Flare plan dose: $label');
     }
     return FlarePlanDose._(
       sets: sets,
       reps: reps as int?,
       seconds: seconds as int?,
+      holdSeconds: holdSeconds as int?,
+      movement: movement,
       restSeconds: restSeconds,
       perSide: perSide,
     );

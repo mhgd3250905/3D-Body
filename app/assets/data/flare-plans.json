@@ -1000,16 +1000,20 @@
     {
       "id": "general-warmup",
       "kind": "warmup",
-      "estimatedMinutes": 8,
+      "estimatedMinutes": 9,
       "items": [
-        {"drill":"h-step-jack","sets":1,"seconds":60,"restSeconds":0,"voiceCue":"不用跳，左右点步，双臂大画圈抬过头顶，微微出汗即可"},
-        {"drill":"forearms-A","sets":1,"seconds":60,"restSeconds":0,"voiceCue":"前后左右画圈，掌根慢慢压上去"},
-        {"drill":"h-catcow-quad","sets":1,"reps":8,"restSeconds":0,"voiceCue":"跟着呼吸，一节一节动"},
-        {"drill":"h-kneeling-thread-needle","sets":1,"reps":6,"restSeconds":0,"perSide":true,"voiceCue":"眼睛跟着手走，打开时停一下"},
-        {"drill":"h-quad-cars","sets":1,"reps":5,"restSeconds":0,"perSide":true,"voiceCue":"骨盆不动，只让大腿画圈"},
-        {"drill":"h-adductor-rock","sets":1,"reps":8,"restSeconds":0,"perSide":true,"voiceCue":"往后坐到大腿内侧有拉扯感就回来"},
-        {"drill":"t-kneeling-scap-pushup","sets":1,"reps":10,"restSeconds":0,"voiceCue":"手肘不弯，只让肩胛骨夹紧再推开"},
-        {"drill":"rotator-cuff-A","sets":1,"reps":4,"restSeconds":0,"perSide":true,"voiceCue":"髋别晃，重心慢慢移到单手"}
+        {"drill":"h-step-jack","sets":1,"restSeconds":0,"seconds":60,"displayName":"低冲击开合踏步 + 双臂大绕环","displayNameEn":"Low-Impact Step Jacks + Large Arm Circles","demoPending":true,"voiceCue":"不用跳，左右大步点地，后半段掌心朝外大画圈把肩活动开"},
+        {"drill":"forearms-A","sets":1,"restSeconds":0,"trainingDrill":"warmup-neck-wrist-fingers","seconds":45,"displayName":"站姿颈-腕-指唤醒","displayNameEn":"Standing Neck, Wrist and Finger Warm-Up","demoPending":true,"voiceCue":"下巴贴胸左右慢滚不仰头，再十指相扣绕腕，最后用力张指弹开"},
+        {"drill":"n-squat-shift","sets":1,"restSeconds":0,"reps":5,"perSide":true,"displayName":"宽距侧蹲左右移重心","displayNameEn":"Wide-Stance Lateral Squat Shifts","demoPending":true,"voiceCue":"双脚宽开立，重心左右慢移，伸直那条腿脚尖朝天、膝盖锁直"},
+        {"drill":"n-leg-circles","sets":1,"restSeconds":0,"reps":3,"perSide":true,"movement":"bothCircleDirections","voiceCue":"膝盖绷直，骨盆贴垫，用脚尖在空中慢慢画大圆","displayName":"仰卧单腿直腿大画圈","displayNameEn":"Supine Straight-Leg Circles"},
+        {"drill":"w-dead-bug","sets":1,"restSeconds":0,"reps":5,"perSide":true,"voiceCue":"下背压住垫子，呼气慢慢伸远对侧手脚，腰一离地就收回"},
+        {"drill":"s-9090","sets":1,"restSeconds":0,"reps":4,"perSide":true,"movement":"alternatingHipSwitch","voiceCue":"脚跟压稳，双膝翻到另一侧，上身尽量坐直","displayName":"90/90 坐姿换髋","displayNameEn":"90/90 Seated Hip Switches"},
+        {"drill":"t-seated-straddle-lift-1leg","sets":1,"restSeconds":0,"reps":5,"perSide":true,"holdSeconds":1,"voiceCue":"分腿坐稳、双手撑腿旁，膝盖绷直把单腿抬离地面几厘米停一下","displayName":"坐姿分腿单腿抬起","displayNameEn":"Seated Straddle Single-Leg Lift"},
+        {"drill":"forearms-A","sets":1,"restSeconds":0,"seconds":50,"movement":"threeWayWristRocks","voiceCue":"手臂伸直锁肘，指尖朝前、朝外、朝后慢慢摇，刺痛立刻减力"},
+        {"drill":"h-catcow-quad","sets":1,"restSeconds":0,"reps":6,"displayName":"四足猫牛式","displayNameEn":"Quadruped Cat-Cow","voiceCue":"吸气塌腰抬头，呼气推地拱背，跟着呼吸一节一节动"},
+        {"drill":"h-kneeling-thread-needle","sets":1,"restSeconds":0,"reps":4,"perSide":true,"voiceCue":"一手从腋下穿过去滑远，再打开指向天花板，眼睛跟着手走"},
+        {"drill":"t-kneeling-scap-pushup","sets":1,"restSeconds":0,"reps":10,"voiceCue":"手肘不弯，胸口下沉夹肩胛，再用力把地推远"},
+        {"drill":"rotator-cuff-A","sets":1,"restSeconds":0,"reps":4,"perSide":true,"voiceCue":"重心先移到支撑手、肘锁直，另一手慢慢摸对侧肩，骨盆别晃"}
       ]
     },
     {

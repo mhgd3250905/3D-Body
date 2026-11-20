@@ -1610,7 +1610,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get postWorkoutStretch => 'Dehnen nach dem Training';
 
   @override
-  String get preWorkoutWarmupPrompt => 'Noch nicht aufgewärmt? 8 Minuten ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Noch nicht aufgewärmt? $minutesString Minuten ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'Je Seite $count Kreise pro Richtung';
+  }
+
+  @override
+  String get planCircleClockwise => 'Im Uhrzeigersinn';
+
+  @override
+  String get planCircleCounterclockwise => 'Gegen den Uhrzeigersinn';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Oben $seconds Sek. halten';
+  }
 
   @override
   String get continuePostWorkoutStretch => 'Weiter zum Dehnen · 10 Min.';

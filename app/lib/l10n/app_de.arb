@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "Vor und nach dem Training",
   "preWorkoutWarmup": "Aufwärmen",
   "postWorkoutStretch": "Dehnen nach dem Training",
-  "preWorkoutWarmupPrompt": "Noch nicht aufgewärmt? 8 Minuten ",
+  "preWorkoutWarmupPrompt": "Noch nicht aufgewärmt? {minutes} Minuten ",
+  "planCirclesInBothDirections": "Je Seite {count} Kreise pro Richtung",
+  "planCircleClockwise": "Im Uhrzeigersinn",
+  "planCircleCounterclockwise": "Gegen den Uhrzeigersinn",
+  "planPeakHold": "Oben {seconds} Sek. halten",
   "continuePostWorkoutStretch": "Weiter zum Dehnen · 10 Min.",
   "bodyweightPlanMinutes": "{minutes} Min. · Eigengewicht",
   "temporaryPlanDemo": "Vorläufige Demo"

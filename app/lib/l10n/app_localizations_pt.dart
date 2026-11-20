@@ -1601,7 +1601,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get postWorkoutStretch => 'Alongamento pós-treino';
 
   @override
-  String get preWorkoutWarmupPrompt => 'Ainda não aqueceu? Faça 8 min de ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Ainda não aqueceu? Faça $minutesString min de ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count círculos por sentido e por lado';
+  }
+
+  @override
+  String get planCircleClockwise => 'Sentido horário';
+
+  @override
+  String get planCircleCounterclockwise => 'Sentido anti-horário';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Segure no alto por $seconds s';
+  }
 
   @override
   String get continuePostWorkoutStretch =>

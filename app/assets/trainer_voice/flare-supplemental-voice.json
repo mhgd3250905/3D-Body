@@ -4,36 +4,52 @@
   "source": "https://github.com/espeak-ng/espeak-ng",
   "clips": {
     "supplemental.general-warmup.1": {
-      "ms": 9641,
-      "sha256": "fd036b4e574238272f1f36f1f1ea270169cd39f83db0586ae68640aa4ce6baca"
+      "ms": 10981,
+      "sha256": "9829262e15695348d45092d568044375a759c7ba6033d490803e110c28bd8e43"
     },
     "supplemental.general-warmup.2": {
-      "ms": 6358,
-      "sha256": "7f55f81cca701cb0c080c63cde500a94487e14535f9434c0a7ff6cd1517315b8"
+      "ms": 11911,
+      "sha256": "f627a5139d46bd7c0dd189c163c3bd95c084f57efd2370c768ecdcf96d4eaaad"
     },
     "supplemental.general-warmup.3": {
-      "ms": 4316,
-      "sha256": "3744dacfdbfcc4d73a1d06ca3333d977c1e4931e0ee96ad3dd80fb1cf21e010d"
+      "ms": 11087,
+      "sha256": "820694239a1b1827d4579b4a79afb806ebc8ddb87432de5c49efbce81f4e2c99"
     },
     "supplemental.general-warmup.4": {
-      "ms": 5530,
-      "sha256": "f452cc6ae77de04a5afd8efb043c5c52946b09d900ca0ed1f31cb29255ea17ff"
+      "ms": 8764,
+      "sha256": "1609887bd39037e02309866d2a9b14f7588e64b7c5e64899864b4dec7aaf479d"
     },
     "supplemental.general-warmup.5": {
-      "ms": 4681,
-      "sha256": "47da5a60204eca09c5bfb7e4467ba0eb22526da38daf0c99922d7e4227931319"
+      "ms": 11084,
+      "sha256": "c78936862d60548c4726736d3d966dd908a2f7fe117757f3c4f90c98782fc840"
     },
     "supplemental.general-warmup.6": {
-      "ms": 6019,
-      "sha256": "bed1a69f209ff173611195b596d9081c7a68834afd11c9dd91e3c1c680da4e46"
+      "ms": 7686,
+      "sha256": "226d5d55a5fd79f3acb6b3e12132ff9163bc319917d342e4782a92e6141a08cb"
     },
     "supplemental.general-warmup.7": {
-      "ms": 5782,
-      "sha256": "269f0d7ed6f8b012fca720dcb730e32b3cdd80fe1af2a1d32b4672483044028e"
+      "ms": 11000,
+      "sha256": "8e505ab69221fb467d051cf2de47840e63b87fc3f18f08f92f4d16b3f9ac99ad"
     },
     "supplemental.general-warmup.8": {
-      "ms": 5279,
-      "sha256": "ead384e1a021566fae5cf34802499927fc1735f7bcf39e58e8e2f64c0cbefdb3"
+      "ms": 10236,
+      "sha256": "e6ed3fed58bd6e2cfd5639d27bbc39cb9ed77e274c183f3a8f16e079363ac071"
+    },
+    "supplemental.general-warmup.9": {
+      "ms": 9734,
+      "sha256": "18c637ee7d8c743366291b38f9ee963f378beedec95d75a4a3a62f453fe3c326"
+    },
+    "supplemental.general-warmup.10": {
+      "ms": 10955,
+      "sha256": "3c2e212f9cbe79c53779f7bc237dc9cfc89ca28dfdf33e21d06a815acb118f8d"
+    },
+    "supplemental.general-warmup.11": {
+      "ms": 8360,
+      "sha256": "d8f5a08234edabe978006d807963f6e4850b96189e3aa509cccdd79cd83ae004"
+    },
+    "supplemental.general-warmup.12": {
+      "ms": 10607,
+      "sha256": "5e30ca516daa1feed077a755849fadcdbd361ad1ea6a830befd054342f08b16b"
     },
     "supplemental.general-cooldown.1": {
       "ms": 9077,

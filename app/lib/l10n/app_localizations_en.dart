@@ -1595,7 +1595,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postWorkoutStretch => 'Post-workout stretch';
 
   @override
-  String get preWorkoutWarmupPrompt => 'Not warmed up? Try the 8-minute ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Not warmed up? Try the $minutesString-minute ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count circles each way per side';
+  }
+
+  @override
+  String get planCircleClockwise => 'Clockwise';
+
+  @override
+  String get planCircleCounterclockwise => 'Counterclockwise';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Hold at the top for $seconds s';
+  }
 
   @override
   String get continuePostWorkoutStretch =>

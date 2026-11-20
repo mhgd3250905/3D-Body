@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "운동 전후",
   "preWorkoutWarmup": "운동 전 워밍업",
   "postWorkoutStretch": "운동 후 스트레칭",
-  "preWorkoutWarmupPrompt": "아직 몸을 풀지 않았다면 8분 ",
+  "preWorkoutWarmupPrompt": "아직 몸을 풀지 않았다면 {minutes}분 ",
+  "planCirclesInBothDirections": "양쪽 각각 방향마다 {count}회",
+  "planCircleClockwise": "시계 방향",
+  "planCircleCounterclockwise": "반시계 방향",
+  "planPeakHold": "정점에서 {seconds}초 유지",
   "continuePostWorkoutStretch": "이어서 운동 후 스트레칭 · 10분",
   "bodyweightPlanMinutes": "{minutes}분 · 맨몸",
   "temporaryPlanDemo": "임시 시범"

@@ -298,7 +298,10 @@ _Target? _resolveTarget({
     for (final allowAliases in [false, true]) {
       for (final scene in candidates) {
         final ids = [
-          [for (final item in authored.items) item.drillForScene(scene)],
+          [
+            for (final item in authored.items)
+              item.trainingDrillForScene(scene),
+          ],
         ];
         final indexes = [
           List<int>.generate(authored.items.length, (index) => index),

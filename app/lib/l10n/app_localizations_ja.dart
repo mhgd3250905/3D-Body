@@ -1541,7 +1541,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get postWorkoutStretch => 'トレーニング後のストレッチ';
 
   @override
-  String get preWorkoutWarmupPrompt => 'まだ準備運動をしていませんか？ 8分の';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'まだ準備運動をしていませんか？ $minutesString分の';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '各側で順・逆に各 $count 回';
+  }
+
+  @override
+  String get planCircleClockwise => '時計回り';
+
+  @override
+  String get planCircleCounterclockwise => '反時計回り';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '上で $seconds 秒止める';
+  }
 
   @override
   String get continuePostWorkoutStretch => '続けてストレッチ · 10分';

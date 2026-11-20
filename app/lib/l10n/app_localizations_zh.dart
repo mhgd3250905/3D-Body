@@ -1530,7 +1530,29 @@ class AppLocalizationsZh extends AppLocalizations {
   String get postWorkoutStretch => '练后拉伸';
 
   @override
-  String get preWorkoutWarmupPrompt => '还没热身？先做 8 分钟';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '还没热身？先做 $minutesString 分钟';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '每侧顺逆各 $count 圈';
+  }
+
+  @override
+  String get planCircleClockwise => '顺时针';
+
+  @override
+  String get planCircleCounterclockwise => '逆时针';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '顶峰停 $seconds 秒';
+  }
 
   @override
   String get continuePostWorkoutStretch => '接着做练后拉伸 · 10 分钟';
@@ -3071,7 +3093,29 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get postWorkoutStretch => '練後伸展';
 
   @override
-  String get preWorkoutWarmupPrompt => '還沒熱身？先做 8 分鐘';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '還沒熱身？先做 $minutesString 分鐘';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '每側順逆各 $count 圈';
+  }
+
+  @override
+  String get planCircleClockwise => '順時針';
+
+  @override
+  String get planCircleCounterclockwise => '逆時針';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '頂峰停 $seconds 秒';
+  }
 
   @override
   String get continuePostWorkoutStretch => '接著做練後伸展 · 10 分鐘';

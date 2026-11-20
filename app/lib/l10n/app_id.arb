@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "Sebelum dan sesudah latihan",
   "preWorkoutWarmup": "Pemanasan",
   "postWorkoutStretch": "Peregangan setelah latihan",
-  "preWorkoutWarmupPrompt": "Belum pemanasan? Coba 8 menit ",
+  "preWorkoutWarmupPrompt": "Belum pemanasan? Coba {minutes} menit ",
+  "planCirclesInBothDirections": "{count} putaran per arah dan sisi",
+  "planCircleClockwise": "Searah jarum jam",
+  "planCircleCounterclockwise": "Berlawanan arah jarum jam",
+  "planPeakHold": "Tahan di atas {seconds} dtk",
   "continuePostWorkoutStretch": "Lanjutkan peregangan · 10 menit",
   "bodyweightPlanMinutes": "{minutes} menit · Berat badan",
   "temporaryPlanDemo": "Demo sementara"

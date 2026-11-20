@@ -2902,8 +2902,32 @@ abstract class AppLocalizations {
   /// No description provided for @preWorkoutWarmupPrompt.
   ///
   /// In zh, this message translates to:
-  /// **'还没热身？先做 8 分钟'**
-  String get preWorkoutWarmupPrompt;
+  /// **'还没热身？先做 {minutes} 分钟'**
+  String preWorkoutWarmupPrompt(int minutes);
+
+  /// No description provided for @planCirclesInBothDirections.
+  ///
+  /// In zh, this message translates to:
+  /// **'每侧顺逆各 {count} 圈'**
+  String planCirclesInBothDirections(int count);
+
+  /// No description provided for @planCircleClockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'顺时针'**
+  String get planCircleClockwise;
+
+  /// No description provided for @planCircleCounterclockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'逆时针'**
+  String get planCircleCounterclockwise;
+
+  /// No description provided for @planPeakHold.
+  ///
+  /// In zh, this message translates to:
+  /// **'顶峰停 {seconds} 秒'**
+  String planPeakHold(int seconds);
 
   /// No description provided for @continuePostWorkoutStretch.
   ///

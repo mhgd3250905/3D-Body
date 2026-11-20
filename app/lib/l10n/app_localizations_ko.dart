@@ -1544,7 +1544,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String get postWorkoutStretch => '운동 후 스트레칭';
 
   @override
-  String get preWorkoutWarmupPrompt => '아직 몸을 풀지 않았다면 8분 ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '아직 몸을 풀지 않았다면 $minutesString분 ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '양쪽 각각 방향마다 $count회';
+  }
+
+  @override
+  String get planCircleClockwise => '시계 방향';
+
+  @override
+  String get planCircleCounterclockwise => '반시계 방향';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '정점에서 $seconds초 유지';
+  }
 
   @override
   String get continuePostWorkoutStretch => '이어서 운동 후 스트레칭 · 10분';

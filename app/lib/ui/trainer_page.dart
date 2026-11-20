@@ -137,6 +137,15 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     if (_isCurrentRoute && !_sdkExitStarted) _route?.navigator?.pop(result);
   }
 
+  late final _authoredItems = {
+    for (final item
+        in widget.supplementalPlan?.items ?? const <FlarePlanItem>[])
+      item.trainingDrillForScene('A'): item,
+  };
+
+  String _mediaId(String exerciseId) =>
+      _authoredItems[exerciseId]?.drillForScene('A') ?? exerciseId;
+
   Future<_PlayerData> _load(String language) async {
     final wristDirections = trainerWristDirections(
       AppLocalizations.of(context),
@@ -146,7 +155,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final shared = current != null && (active == null || active == current.pack)
         ? current
         : await FlareShared.load(activeCatalog: active);
-    bool known(String id) => shared.catalog[id] != null;
+    bool known(String id) => shared.catalog[_mediaId(id)] != null;
     validateTrainingPlan(widget.plan, widget.catalog, known: known);
     // Layer the active Pose-Hub catalog's recorded prompts and structured
     // voice guides behind Flare's shared prompts. The SDK prefetches and
@@ -638,31 +647,32 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         );
         final language = Localizations.localeOf(context).languageCode;
         final policy = FlarePublicMedia.of(context);
-        final authoredItems = {
-          for (final item in widget.supplementalPlan?.items ?? const [])
-            item.drill: item,
-        };
         // The player's clock and media priority callbacks request the same
         // action repeatedly. Refresh the descriptors when the host rebuilds.
         final drills = <String, sdk.TrainerDrill?>{};
         sdk.TrainerDrill? drillOf(String id) => drills.putIfAbsent(id, () {
-          final drill = widget.catalog.drillById(id);
-          final public = data.shared.catalog[id];
-          final authored = authoredItems[id];
+          final mediaId = _mediaId(id);
+          final drill = widget.catalog.drillById(mediaId);
+          final public = data.shared.catalog[mediaId];
+          final authored = _authoredItems[id];
+          final placeholder = authored?.usesPlaceholderDemo == true;
           final displayName = language == 'zh'
               ? authored?.displayName
               : authored?.displayNameEn;
           final name =
-              displayName ?? drill?.name ?? data.shared.nameOf(id, language);
+              displayName ??
+              drill?.name ??
+              data.shared.nameOf(mediaId, language);
           if (name == null) return null;
           final isV5 = id == flareV5DrillId;
-          final poster = isV5 ? flareV5PosterAsset : policy?.posterAssetFor(id);
+          final poster = isV5
+              ? flareV5PosterAsset
+              : policy?.posterAssetFor(mediaId);
           final timedWrist = timedWristRocks && id == 'forearms-A';
           final authoredCue = language == 'zh' ? authored?.voiceCue : null;
-          final cue = switch ((displayName, authoredCue)) {
-            (final String _, final String text) =>
-              '${s.temporaryPlanDemo} · $text',
-            (final String _, null) => s.temporaryPlanDemo,
+          final cue = switch ((placeholder, authoredCue)) {
+            (true, final String text) => '${s.temporaryPlanDemo} · $text',
+            (true, null) => s.temporaryPlanDemo,
             (_, final String text) => text,
             _ when timedWrist => trainerTimedWristCue(s),
             _ => drill?.cues.firstOrNull,
@@ -673,7 +683,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             cue: cue,
             cues:
                 authoredCue == null &&
-                    displayName == null &&
+                    !placeholder &&
                     !timedWrist &&
                     drill == null
                 ? public?.cues['zh'] ?? const []
@@ -683,7 +693,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                 ? null
                 : sdk.DrillMedia(
                     id: id,
-                    actionId: id,
+                    actionId: mediaId,
                     videoAsset: '',
                     posterAsset: poster,
                     duration: 0,
@@ -706,6 +716,10 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   strings: strings,
                   theme: theme,
                   prepSeconds: _initialCountdownSeconds,
+                  transitionSeconds:
+                      widget.supplementalPlan?.kind == FlarePlanKind.warmup
+                      ? flareWarmupTransitionSeconds
+                      : 15,
                   startGate: _previewStartGate?.future,
                   voice: sdk.TrainerVoice(
                     source: data.source,

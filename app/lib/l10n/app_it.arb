@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "Prima e dopo",
   "preWorkoutWarmup": "Riscaldamento",
   "postWorkoutStretch": "Stretching dopo l’allenamento",
-  "preWorkoutWarmupPrompt": "Non hai fatto il riscaldamento? 8 min di ",
+  "preWorkoutWarmupPrompt": "Non hai fatto il riscaldamento? {minutes} min di ",
+  "planCirclesInBothDirections": "{count} cerchi per direzione e lato",
+  "planCircleClockwise": "Senso orario",
+  "planCircleCounterclockwise": "Senso antiorario",
+  "planPeakHold": "Tieni in alto per {seconds} s",
   "continuePostWorkoutStretch": "Continua con lo stretching · 10 min",
   "bodyweightPlanMinutes": "{minutes} min · Corpo libero",
   "temporaryPlanDemo": "Demo temporanea"

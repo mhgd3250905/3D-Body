@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "قبل التمرين وبعده",
   "preWorkoutWarmup": "الإحماء قبل التمرين",
   "postWorkoutStretch": "الإطالة بعد التمرين",
-  "preWorkoutWarmupPrompt": "لم تبدأ الإحماء؟ جرّب ٨ دقائق من ",
+  "preWorkoutWarmupPrompt": "لم تبدأ الإحماء؟ جرّب {minutes} دقائق من ",
+  "planCirclesInBothDirections": "{count} دورات في كل اتجاه لكل جانب",
+  "planCircleClockwise": "مع عقارب الساعة",
+  "planCircleCounterclockwise": "عكس عقارب الساعة",
+  "planPeakHold": "الثبات في الأعلى {seconds} ث",
   "continuePostWorkoutStretch": "تابع الإطالة بعد التمرين · ١٠ دقائق",
   "bodyweightPlanMinutes": "{minutes} د · وزن الجسم",
   "temporaryPlanDemo": "عرض مؤقت"

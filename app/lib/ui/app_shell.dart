@@ -676,7 +676,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }) async {
     final policy =
         sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
-    final ids = plan.exerciseIds.toList();
+    final mediaIds = {
+      for (final item in supplementalPlan?.items ?? const <FlarePlanItem>[])
+        item.trainingDrillForScene('A'): item.drillForScene('A'),
+    };
+    final ids = plan.exerciseIds.map((id) => mediaIds[id] ?? id).toList();
     String? posterFor(String id) => policy?.actionFor(id) != null
         ? policy!.posterAssetFor(id)
         : policy?.posterAssetFor(id) ??
@@ -909,6 +913,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     sceneTier,
     title: title,
     wristDirections: trainerWristDirections(context.strings),
+    circleDirections: (
+      clockwise: context.strings.planCircleClockwise,
+      counterclockwise: context.strings.planCircleCounterclockwise,
+    ),
   );
 
   Future<void> _startFlarePlan(

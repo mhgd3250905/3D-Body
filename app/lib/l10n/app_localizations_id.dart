@@ -1586,7 +1586,29 @@ class AppLocalizationsId extends AppLocalizations {
   String get postWorkoutStretch => 'Peregangan setelah latihan';
 
   @override
-  String get preWorkoutWarmupPrompt => 'Belum pemanasan? Coba 8 menit ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Belum pemanasan? Coba $minutesString menit ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count putaran per arah dan sisi';
+  }
+
+  @override
+  String get planCircleClockwise => 'Searah jarum jam';
+
+  @override
+  String get planCircleCounterclockwise => 'Berlawanan arah jarum jam';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Tahan di atas $seconds dtk';
+  }
 
   @override
   String get continuePostWorkoutStretch => 'Lanjutkan peregangan · 10 menit';

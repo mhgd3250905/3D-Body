@@ -92,7 +92,10 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       orElse: () => plans.first,
     );
     final isSupplemental = plan.isSupplemental;
-    final openWarmup = isSupplemental ? null : widget.onOpenWarmup;
+    final warmupMinutes = catalog.flareWarmupPlan?.estimatedMinutes;
+    final openWarmup = isSupplemental || warmupMinutes == null
+        ? null
+        : widget.onOpenWarmup;
     final scene = isSupplemental ? 'A' : widget.store.settings.tier;
     final shared = FlareShared.current;
     final minutes =
@@ -267,6 +270,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                   safeBottom: safe.bottom,
                   onStart: () => widget.onStart(plan),
                   onOpenWarmup: openWarmup,
+                  warmupMinutes: warmupMinutes,
                 ),
               ),
             ],
@@ -1034,11 +1038,18 @@ class _PlanExercise extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final p = FlareColors.palette;
-    final amount = dose.reps == null
+    final amount = dose.bothCircleDirections
+        ? s.planCirclesInBothDirections(dose.reps!)
+        : dose.reps == null
         ? s.secondsLabel(dose.seconds!)
         : s.countLabel(dose.reps!);
     final volume = dose.sets == 1 ? amount : '${dose.sets} × $amount';
-    final side = dose.perSide ? s.planDosePerSide('') : '';
+    final side = dose.perSide && !dose.bothCircleDirections
+        ? s.planDosePerSide('')
+        : '';
+    final peak = dose.holdSeconds == null
+        ? ''
+        : ' · ${s.planPeakHold(dose.holdSeconds!)}';
     final rest = dose.sets > 1
         ? ' · ${s.planRestSeconds(dose.restSeconds)}'
         : '';
@@ -1106,7 +1117,7 @@ class _PlanExercise extends StatelessWidget {
                                   text: volume,
                                   style: TextStyle(color: p.secondary),
                                 ),
-                                TextSpan(text: '$side$rest'),
+                                TextSpan(text: '$side$peak$rest'),
                               ],
                             ),
                           ),
@@ -1164,16 +1175,21 @@ class _PlanExercise extends StatelessWidget {
 
 /// The same pre-workout entry is used on authored and personal plans.
 class FlarePlanWarmupLink extends StatelessWidget {
-  const FlarePlanWarmupLink({super.key, required this.onOpen});
+  const FlarePlanWarmupLink({
+    super.key,
+    required this.minutes,
+    required this.onOpen,
+  });
 
   static const height = 32.0;
+  final int minutes;
   final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
     final p = FlareColors.palette;
     final s = context.strings;
-    final prompt = s.preWorkoutWarmupPrompt;
+    final prompt = s.preWorkoutWarmupPrompt(minutes);
     final title = s.preWorkoutWarmup;
     return FlarePressable(
       key: const ValueKey('flare-plan-warmup-link'),
@@ -1212,12 +1228,14 @@ class _PlanBottom extends StatefulWidget {
     required this.safeBottom,
     required this.onStart,
     this.onOpenWarmup,
+    this.warmupMinutes,
   });
   final FlareMembership? membership;
   final int? minutes;
   final double safeBottom;
   final VoidCallback onStart;
   final VoidCallback? onOpenWarmup;
+  final int? warmupMinutes;
 
   @override
   State<_PlanBottom> createState() => _PlanBottomState();
@@ -1292,8 +1310,11 @@ class _PlanBottomState extends State<_PlanBottom> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (widget.onOpenWarmup case final open?)
-                  FlarePlanWarmupLink(onOpen: open),
+                if ((widget.onOpenWarmup, widget.warmupMinutes) case (
+                  final open?,
+                  final minutes?,
+                ))
+                  FlarePlanWarmupLink(onOpen: open, minutes: minutes),
                 FlarePressable(
                   key: const ValueKey('flare-plan-start'),
                   scale: 1,

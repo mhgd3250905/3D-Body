@@ -608,7 +608,11 @@
   "warmupCooldownHeading": "Before and after",
   "preWorkoutWarmup": "Pre-workout warm-up",
   "postWorkoutStretch": "Post-workout stretch",
-  "preWorkoutWarmupPrompt": "Not warmed up? Try the 8-minute ",
+  "preWorkoutWarmupPrompt": "Not warmed up? Try the {minutes}-minute ",
+  "planCirclesInBothDirections": "{count} circles each way per side",
+  "planCircleClockwise": "Clockwise",
+  "planCircleCounterclockwise": "Counterclockwise",
+  "planPeakHold": "Hold at the top for {seconds} s",
   "continuePostWorkoutStretch": "Continue with post-workout stretch · 10 min",
   "bodyweightPlanMinutes": "{minutes} min · Bodyweight",
   "temporaryPlanDemo": "Temporary demo"

@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "トレーニング前後",
   "preWorkoutWarmup": "ウォームアップ",
   "postWorkoutStretch": "トレーニング後のストレッチ",
-  "preWorkoutWarmupPrompt": "まだ準備運動をしていませんか？ 8分の",
+  "preWorkoutWarmupPrompt": "まだ準備運動をしていませんか？ {minutes}分の",
+  "planCirclesInBothDirections": "各側で順・逆に各 {count} 回",
+  "planCircleClockwise": "時計回り",
+  "planCircleCounterclockwise": "反時計回り",
+  "planPeakHold": "上で {seconds} 秒止める",
   "continuePostWorkoutStretch": "続けてストレッチ · 10分",
   "bodyweightPlanMinutes": "{minutes}分 · 自重",
   "temporaryPlanDemo": "仮のデモ"

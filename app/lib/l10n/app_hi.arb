@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "कसरत से पहले और बाद में",
   "preWorkoutWarmup": "कसरत से पहले वार्म-अप",
   "postWorkoutStretch": "कसरत के बाद स्ट्रेचिंग",
-  "preWorkoutWarmupPrompt": "अभी वार्म-अप नहीं किया? 8 मिनट · ",
+  "preWorkoutWarmupPrompt": "अभी वार्म-अप नहीं किया? {minutes} मिनट · ",
+  "planCirclesInBothDirections": "हर तरफ़, हर दिशा में {count} चक्कर",
+  "planCircleClockwise": "घड़ी की दिशा में",
+  "planCircleCounterclockwise": "घड़ी की विपरीत दिशा में",
+  "planPeakHold": "ऊपर {seconds} सेकंड रुकें",
   "continuePostWorkoutStretch": "कसरत के बाद स्ट्रेचिंग करें · 10 मिनट",
   "bodyweightPlanMinutes": "{minutes} मिनट · शरीर का वज़न",
   "temporaryPlanDemo": "अस्थायी डेमो"

@@ -118,6 +118,9 @@ uc.TrainingPlan trainingPlanFromDrills({
   );
 }
 
+// Keep 12 warm-up moves close to nine minutes at their authored doses.
+const flareWarmupTransitionSeconds = 5;
+
 /// Resolve the authored drill and dose for the chosen scene before scheduling.
 uc.TrainingPlan trainingPlanFromFlarePlan({
   required FlarePlan plan,
@@ -127,6 +130,10 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
   required uc.Catalog sourceCatalog,
   Map<String, sdk.Rhythm> rhythms = const {},
   List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+  ({String clockwise, String counterclockwise}) circleDirections = const (
+    clockwise: '顺时针',
+    counterclockwise: '逆时针',
+  ),
 }) {
   if (wristDirections.length != 4) {
     throw ArgumentError('Four wrist directions required');
@@ -139,7 +146,8 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
 
   final items = <uc.PlanItem>[];
   for (final authored in plan.items) {
-    final id = authored.drillForScene(sceneTier);
+    final mediaId = authored.drillForScene(sceneTier);
+    final id = authored.trainingDrillForScene(sceneTier);
     final dose = authored.doseForScene(sceneTier);
     final workSeconds = dose.seconds;
     final item = uc.PlanItem(
@@ -150,14 +158,76 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       workSeconds: workSeconds,
       perSide: dose.perSide,
       restSeconds: dose.restSeconds,
-      replacedFrom: id == authored.drill ? null : authored.drill,
+      replacedFrom: mediaId == authored.drill ? null : authored.drill,
     );
+    if (dose.bothCircleDirections) {
+      items.add(
+        item.copyWith(
+          segments: [
+            uc.PlanSegment(
+              id: 'clockwise',
+              exerciseId: id,
+              label: circleDirections.clockwise,
+              mode: item.mode,
+              reps: item.reps,
+            ),
+            uc.PlanSegment(
+              id: 'counterclockwise',
+              exerciseId: id,
+              label: circleDirections.counterclockwise,
+              mode: item.mode,
+              reps: item.reps,
+            ),
+          ],
+        ),
+      );
+      continue;
+    }
+    if (dose.movement == FlarePlanMovement.alternatingHipSwitch) {
+      // The source pose is held. Schedule both directions per count for this
+      // authored 90/90 switch while continuing to use its published media.
+      items.add(
+        item.copyWith(
+          segments: [
+            uc.PlanSegment(
+              id: 'hip-switches',
+              exerciseId: id,
+              mode: item.mode,
+              reps: item.reps,
+              rhythm: const {
+                'kind': 'rep_alternate',
+                'repUnit': 'left+right',
+                'phases': 'go=2s; hold=1s',
+              },
+            ),
+          ],
+        ),
+      );
+      continue;
+    }
+    if (dose.holdSeconds case final hold?) {
+      items.add(
+        item.copyWith(
+          segments: [
+            uc.PlanSegment(
+              id: 'peak-hold',
+              exerciseId: id,
+              mode: item.mode,
+              reps: item.reps,
+              holdSeconds: hold,
+            ),
+          ],
+        ),
+      );
+      continue;
+    }
 
     // A counted catalog rhythm can stretch a time budget to fit its default
     // reps. These prescribed holds use elapsed time, including substitutions
     // whose catalog entries normally count reps.
     final usesTimedHold =
         workSeconds != null &&
+        id == mediaId &&
         (rhythms[id]?.counted == true ||
             sourceCatalog[id]!.defaultDose.mode == uc.DoseMode.reps);
     final drill = catalog.drillById(id);
@@ -169,6 +239,8 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
             wristDirections,
             splitWorkSeconds: true,
             forceTimedHold: usesTimedHold,
+            wristRockPositions:
+                dose.movement == FlarePlanMovement.threeWayWristRocks ? 3 : 4,
           );
     items.add(
       usesTimedHold && segmented.segments.isEmpty
@@ -205,12 +277,18 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       ),
     ],
   );
-  validateTrainingPlan(
-    result,
-    catalog,
-    known: (id) => sourceCatalog[id] != null,
-  );
-  final estimate = sdk.SessionBuilder(rhythms: rhythms).planSeconds(result);
+  // Every media ID above has passed availability validation. The player's
+  // exercise IDs can also include a plan-only identity for shared media.
+  final trainingIds = {
+    for (final item in plan.items) item.trainingDrillForScene(sceneTier),
+  };
+  validateTrainingPlan(result, catalog, known: trainingIds.contains);
+  final estimate = sdk.SessionBuilder(
+    rhythms: rhythms,
+    transitionSeconds: plan.kind == FlarePlanKind.warmup
+        ? flareWarmupTransitionSeconds
+        : 15,
+  ).planSeconds(result);
   return result.copyWith(
     targetMinutes: (estimate / 60).ceil().clamp(1, 1000000),
   );
@@ -318,10 +396,11 @@ uc.PlanItem _withSegments(
   List<String> wristDirections, {
   bool splitWorkSeconds = false,
   bool forceTimedHold = false,
+  int wristRockPositions = 4,
 }) {
   if (item.segments.isNotEmpty) return item;
   final labels = switch (item.exerciseId) {
-    'forearms-A' => wristDirections,
+    'forearms-A' => wristDirections.take(wristRockPositions).toList(),
     'scapular-A' => const ['Y', 'T', 'W'],
     'forearms-B' => drill.dose.blockLabels,
     _ => const <String>[],

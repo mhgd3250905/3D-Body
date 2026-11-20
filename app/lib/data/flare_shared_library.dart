@@ -122,6 +122,10 @@ class FlareShared {
     String scene, {
     String? title,
     List<String>? wristDirections,
+    ({String clockwise, String counterclockwise}) circleDirections = const (
+      clockwise: '顺时针',
+      counterclockwise: '逆时针',
+    ),
   }) => trainingPlanFromFlarePlan(
     plan: plan,
     title: title ?? plan.id,
@@ -130,6 +134,7 @@ class FlareShared {
     sourceCatalog: catalog,
     rhythms: rhythms,
     wristDirections: wristDirections ?? const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+    circleDirections: circleDirections,
   );
 
   int? authoredPlanMinutes(

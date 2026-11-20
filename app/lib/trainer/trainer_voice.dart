@@ -58,11 +58,11 @@ Future<VoiceSource> withSupplementalTrainerVoice(
     final key = 'supplemental.${plan.id}.${index + 1}';
     final ms = durations[key];
     if (text == null || ms == null) continue;
-    cues[item.drill] = (
+    cues[item.trainingDrillForScene('A')] = (
       key: key,
       text: text,
       seconds: ms / 1000,
-      placeholderName: item.usesPlaceholderDemo ? item.displayName : null,
+      authoredName: item.displayName,
     );
   }
   return _SupplementalVoiceSource(source, cues);
@@ -72,7 +72,7 @@ typedef _SupplementalCue = ({
   String key,
   String text,
   double seconds,
-  String? placeholderName,
+  String? authoredName,
 });
 
 class _SupplementalVoiceSource extends _LeftFirstVoiceSource
@@ -114,7 +114,7 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
     if (cue == null) return super.drill(exerciseId, line);
     return switch (line) {
       DrillLine.cue1 => cue.key,
-      DrillLine.name when cue.placeholderName == null => super.drill(
+      DrillLine.name when cue.authoredName == null => super.drill(
         exerciseId,
         line,
       ),
@@ -129,7 +129,7 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
     return switch (line) {
       DrillLine.cue1 => cue.text,
       DrillLine.name =>
-        cue.placeholderName ?? source.drillText(exerciseId, line, lang: lang),
+        cue.authoredName ?? source.drillText(exerciseId, line, lang: lang),
       _ => null,
     };
   }

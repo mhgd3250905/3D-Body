@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "練前練後",
   "preWorkoutWarmup": "練前熱身",
   "postWorkoutStretch": "練後伸展",
-  "preWorkoutWarmupPrompt": "還沒熱身？先做 8 分鐘",
+  "preWorkoutWarmupPrompt": "還沒熱身？先做 {minutes} 分鐘",
+  "planCirclesInBothDirections": "每側順逆各 {count} 圈",
+  "planCircleClockwise": "順時針",
+  "planCircleCounterclockwise": "逆時針",
+  "planPeakHold": "頂峰停 {seconds} 秒",
   "continuePostWorkoutStretch": "接著做練後伸展 · 10 分鐘",
   "bodyweightPlanMinutes": "{minutes} 分鐘 · 徒手",
   "temporaryPlanDemo": "臨時示範"

@@ -369,9 +369,11 @@ void main() {
     expect(membership.isPremium, isFalse);
     await mounted.store.updateSettings(tier: 'C');
     await helpers.openPlansFromHome(tester);
+    expect(find.text('9 分钟 · 徒手'), findsOneWidget);
+    expect(find.text('10 分钟 · 徒手'), findsOneWidget);
 
     for (final (id, exercises) in [
-      ('general-warmup', 8),
+      ('general-warmup', 12),
       ('general-cooldown', 9),
     ]) {
       await tester.tap(_key('plan-$id'));
@@ -391,6 +393,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(PlansPage), findsOneWidget);
     }
+    final normalPlan = _key('plan-angle-11');
+    await Scrollable.ensureVisible(tester.element(normalPlan));
+    await tester.pumpAndSettle();
+    await tester.tap(normalPlan);
+    await tester.pumpAndSettle();
+    final warmupLink = _key('flare-plan-warmup-link');
+    expect(
+      tester.widget<FlarePressable>(warmupLink).semanticLabel,
+      '还没热身？先做 9 分钟练前热身',
+    );
+    await tester.tap(warmupLink);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<FlarePlanDetailPage>(find.byType(FlarePlanDetailPage))
+          .plans
+          .single
+          .items,
+      hasLength(12),
+    );
     helpers.assertNoFlutterError(tester);
     await tester.pumpWidget(const SizedBox());
   });

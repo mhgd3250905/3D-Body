@@ -1602,7 +1602,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get postWorkoutStretch => 'الإطالة بعد التمرين';
 
   @override
-  String get preWorkoutWarmupPrompt => 'لم تبدأ الإحماء؟ جرّب ٨ دقائق من ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'لم تبدأ الإحماء؟ جرّب $minutesString دقائق من ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count دورات في كل اتجاه لكل جانب';
+  }
+
+  @override
+  String get planCircleClockwise => 'مع عقارب الساعة';
+
+  @override
+  String get planCircleCounterclockwise => 'عكس عقارب الساعة';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'الثبات في الأعلى $seconds ث';
+  }
 
   @override
   String get continuePostWorkoutStretch =>

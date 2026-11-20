@@ -605,7 +605,11 @@
   "warmupCooldownHeading": "До и после тренировки",
   "preWorkoutWarmup": "Разминка",
   "postWorkoutStretch": "Растяжка после тренировки",
-  "preWorkoutWarmupPrompt": "Ещё не разогрелись? 8 мин · ",
+  "preWorkoutWarmupPrompt": "Ещё не разогрелись? {minutes} мин · ",
+  "planCirclesInBothDirections": "По {count} круга в каждом направлении на сторону",
+  "planCircleClockwise": "По часовой стрелке",
+  "planCircleCounterclockwise": "Против часовой стрелки",
+  "planPeakHold": "Задержитесь вверху на {seconds} с",
   "continuePostWorkoutStretch": "Продолжить растяжку · 10 мин",
   "bodyweightPlanMinutes": "{minutes} мин · Без инвентаря",
   "temporaryPlanDemo": "Временный показ"

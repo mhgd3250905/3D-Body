@@ -1626,7 +1626,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get postWorkoutStretch => 'Растяжка после тренировки';
 
   @override
-  String get preWorkoutWarmupPrompt => 'Ещё не разогрелись? 8 мин · ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Ещё не разогрелись? $minutesString мин · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'По $count круга в каждом направлении на сторону';
+  }
+
+  @override
+  String get planCircleClockwise => 'По часовой стрелке';
+
+  @override
+  String get planCircleCounterclockwise => 'Против часовой стрелки';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Задержитесь вверху на $seconds с';
+  }
 
   @override
   String get continuePostWorkoutStretch => 'Продолжить растяжку · 10 мин';

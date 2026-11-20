@@ -1575,7 +1575,29 @@ class AppLocalizationsHi extends AppLocalizations {
   String get postWorkoutStretch => 'कसरत के बाद स्ट्रेचिंग';
 
   @override
-  String get preWorkoutWarmupPrompt => 'अभी वार्म-अप नहीं किया? 8 मिनट · ';
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'अभी वार्म-अप नहीं किया? $minutesString मिनट · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'हर तरफ़, हर दिशा में $count चक्कर';
+  }
+
+  @override
+  String get planCircleClockwise => 'घड़ी की दिशा में';
+
+  @override
+  String get planCircleCounterclockwise => 'घड़ी की विपरीत दिशा में';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'ऊपर $seconds सेकंड रुकें';
+  }
 
   @override
   String get continuePostWorkoutStretch =>

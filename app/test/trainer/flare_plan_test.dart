@@ -101,7 +101,7 @@ void main() {
 
       final warmup = catalog.flareWarmupPlan!;
       final cooldown = catalog.flareCooldownPlan!;
-      expect((warmup.id, warmup.estimatedMinutes), ('general-warmup', 8));
+      expect((warmup.id, warmup.estimatedMinutes), ('general-warmup', 9));
       expect(
         (cooldown.id, cooldown.estimatedMinutes),
         ('general-cooldown', 10),
@@ -112,7 +112,7 @@ void main() {
         supplementary,
         rhythms: supplementalRhythms,
       );
-      List<(String, int?, int?, bool)> doses(FlarePlan authored) {
+      uc.TrainingPlan playablePlan(FlarePlan authored) {
         final plan = trainingPlanFromFlarePlan(
           plan: authored,
           title: authored.id,
@@ -123,33 +123,42 @@ void main() {
         );
         expect(plan.items, hasLength(authored.items.length));
         expect(plan.items.map((item) => item.sets), everyElement(1));
+        expect(plan.items.map((item) => item.restSeconds), everyElement(0));
         expect(
           authored.items.map((item) => item.voiceCue),
           everyElement(isNotEmpty),
         );
         expect(
-          plan.exerciseIds.map(
-            (id) => supplementary.tryGet(id)?.availableForTraining,
+          authored.items.map(
+            (item) => supplementary
+                .tryGet(item.drillForScene('A'))
+                ?.availableForTraining,
           ),
           everyElement(isTrue),
         );
-        return [
-          for (final item in plan.items)
-            (item.exerciseId, item.reps, item.workSeconds, item.perSide),
-        ];
+        return plan;
       }
 
-      expect(doses(warmup), [
+      List<(String, int?, int?, bool)> doses(uc.TrainingPlan plan) => [
+        for (final item in plan.items)
+          (item.exerciseId, item.reps, item.workSeconds, item.perSide),
+      ];
+      final warmupPlan = playablePlan(warmup);
+      expect(doses(warmupPlan), [
         ('h-step-jack', null, 60, false),
-        ('forearms-A', null, 60, false),
-        ('h-catcow-quad', 8, null, false),
-        ('h-kneeling-thread-needle', 6, null, true),
-        ('h-quad-cars', 5, null, true),
-        ('h-adductor-rock', 8, null, true),
+        ('warmup-neck-wrist-fingers', null, 45, false),
+        ('n-squat-shift', 5, null, true),
+        ('n-leg-circles', 3, null, true),
+        ('w-dead-bug', 5, null, true),
+        ('s-9090', 4, null, true),
+        ('t-seated-straddle-lift-1leg', 5, null, true),
+        ('forearms-A', null, 50, false),
+        ('h-catcow-quad', 6, null, false),
+        ('h-kneeling-thread-needle', 4, null, true),
         (flareWarmupPushupId, 10, null, false),
         ('rotator-cuff-A', 4, null, true),
       ]);
-      expect(doses(cooldown), [
+      expect(doses(playablePlan(cooldown)), [
         ('h-wall-wrist-flexor-stretch', null, 30, false),
         ('h-standing-wrist-extensor-stretch', null, 30, true),
         ('h-wall-pec', null, 30, false),
@@ -160,7 +169,65 @@ void main() {
         ('s-figure4', null, 30, true),
         ('h-supine-twist', null, 30, true),
       ]);
-      expect(warmup.items.where((item) => item.usesPlaceholderDemo), isEmpty);
+      expect(
+        warmup.items
+            .where((item) => item.usesPlaceholderDemo)
+            .map((item) => item.drill),
+        ['h-step-jack', 'forearms-A', 'n-squat-shift'],
+      );
+      expect(
+        warmup.items[1].trainingDrillForScene('A'),
+        'warmup-neck-wrist-fingers',
+      );
+      expect(warmup.items[7].trainingDrillForScene('A'), 'forearms-A');
+      expect(
+        [
+          for (final index in [3, 5, 6, 8]) warmup.items[index].displayName,
+        ],
+        ['仰卧单腿直腿大画圈', '90/90 坐姿换髋', '坐姿分腿单腿抬起', '四足猫牛式'],
+      );
+      expect(warmup.items[8].usesPlaceholderDemo, isFalse);
+
+      final timeline = sdk.SessionBuilder(
+        rhythms: supplementalRhythms,
+        transitionSeconds: flareWarmupTransitionSeconds,
+      ).phases(warmupPlan);
+      Iterable<sdk.SessionPhase> work(String id) =>
+          timeline.where((phase) => phase.isWork && phase.exerciseId == id);
+      final neck = work('warmup-neck-wrist-fingers').single;
+      expect((neck.seconds, neck.segment), (45, null));
+      expect(
+        work('n-leg-circles').map(
+          (phase) =>
+              (phase.segmentId, phase.segment?.label, phase.side, phase.reps),
+        ),
+        [
+          ('clockwise', '顺时针', sdk.Side.right, 3),
+          ('clockwise', '顺时针', sdk.Side.left, 3),
+          ('counterclockwise', '逆时针', sdk.Side.right, 3),
+          ('counterclockwise', '逆时针', sdk.Side.left, 3),
+        ],
+      );
+      final hips = work('s-9090').single;
+      expect(hips.reps, 4);
+      expect(hips.rhythm?.alternatePair, isTrue);
+      final lift = work('t-seated-straddle-lift-1leg').single;
+      expect((lift.reps, lift.holdSeconds), (5, 1));
+      expect(
+        lift.rhythm!
+            .phasesFor()
+            .where((part) => part.id == 'hold')
+            .map((part) => part.seconds),
+        [1, 1],
+      );
+      expect(
+        work('forearms-A').map((phase) => (phase.segmentId, phase.seconds)),
+        [
+          ('fingers-forward', 17),
+          ('fingers-sideways', 17),
+          ('fingers-backward', 16),
+        ],
+      );
       expect(
         cooldown.items
             .where((item) => item.usesPlaceholderDemo)
@@ -188,9 +255,9 @@ void main() {
       active,
       rhythms: activeRhythms,
     );
-    final baseVoice = await loadTrainerVoiceSource(
-      language: 'zh',
-      leftFirst: false,
+    final baseVoice = await sdk.withPoseHubCatalogVoice(
+      await loadTrainerVoiceSource(language: 'zh', leftFirst: false),
+      catalog: active,
     );
     for (final authored in [
       catalog.flareWarmupPlan!,
@@ -209,24 +276,41 @@ void main() {
         sourceCatalog: activeSource,
         rhythms: activeRhythms,
       );
+      final knownIds = {
+        for (final item in authored.items) item.trainingDrillForScene('A'),
+      };
+      final playable = expandSegmentedTrainingPlan(
+        plan,
+        catalog,
+        known: knownIds.contains,
+      );
       final script = sdk.SessionScript(source: voice, lang: 'zh');
       final phases = sdk.SessionBuilder(
         rhythms: activeRhythms,
+        transitionSeconds: authored.kind == FlarePlanKind.warmup
+            ? flareWarmupTransitionSeconds
+            : 15,
         prepSecondsFor: script.prepSecondsFor,
         switchSecondsFor: script.switchSecondsFor,
-      ).phases(plan);
+        voiceGuideFor: voice.voiceGuide,
+      ).phases(playable);
       final seconds = phases.fold(0.0, (total, phase) => total + phase.seconds);
+      if (authored.kind == FlarePlanKind.warmup) {
+        expect(seconds, inInclusiveRange(480, 600), reason: '${seconds}s');
+      }
       final clips = phases
           .expand((phase) => script.cues(phase, planSeconds: seconds))
           .expand((cue) => cue.clips)
           .toSet();
+      final missing = <String>[];
       for (final (index, item) in authored.items.indexed) {
         final key = 'supplemental.${authored.id}.${index + 1}';
-        expect(clips, contains(key), reason: item.drill);
+        if (!clips.contains(key)) missing.add('${index + 1}: ${item.drill}');
         expect(voice.line(key, lang: 'zh'), item.voiceCue);
         final bytes = await rootBundle.load(voice.asset(key, lang: 'zh'));
         expect(bytes.lengthInBytes, greaterThan(0));
       }
+      expect(missing, isEmpty, reason: '${authored.id}, ${seconds}s');
     }
   });
 
