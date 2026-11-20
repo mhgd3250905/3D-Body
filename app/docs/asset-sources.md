@@ -6,6 +6,10 @@
 - 随包公共媒体清单 `assets/public_media/catalog.json` 对应 r2-v18、源提交 `e8a5b8f62dfbbbbc32722d1a3540f9429944777b`，公共媒体与语义目录各 249 项。浏览和 AI 的公共动作授权由 `lib/data/flare_action_scope.dart` 维护，本地 V5 与辅助图单独计数。
 - 共享动作封面随包，SDK 从配置的媒体仓库按需下载视频，缓存命中时可重用。清单标为 `test-unreviewed`、`reviewed=false`、`releaseEligible=false`。清单中的 `readyCount` 记录素材交付状态。
 
+## iOS 热身和放松内测离线包
+
+本次内测从 `1a43a8c` 取清单、语义目录、计划数据、提示词和录音。目录为 r2-v18 加 r2-v19 的跪姿肩胛俯卧撑。运行 `python3 tools/bundle-flare-public-media.py`，按清单下载并校验视频和中英语音的字节数与 SHA-256，再用 `--dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 构建 iOS。生成的媒体文件不提交 Git。启用此选项时，训练库使用随包目录、动作媒体和语音，跳过线上目录指针。
+
 ## 249项动作库缺失封面补齐（2026-11-08）
 
 沿用当前 r2-v1 公共目录，给已授权的249项动作补齐缺少的40张封面。只读来源为本机 `F:/PoseHub-v3/app-pack/r2-v1/` 中目录各项 `files.cover.path`，目标为 `assets/public_posters/{id}.webp`；每张的字节数和 SHA-256 均与当前 App 目录及源文件一致。40张共626,008字节，640×640 WebP；没有重渲、生成、下载或上传素材，也未修改 Pose-Hub/SDK。

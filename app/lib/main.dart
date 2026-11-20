@@ -13,6 +13,7 @@ import 'control/learning_store.dart';
 import 'control/flare_membership.dart';
 import 'data/catalog.dart';
 import 'data/content_translations.dart';
+import 'data/flare_offline_media.dart';
 import 'data/flare_public_catalog.dart';
 import 'data/flare_public_media.dart';
 import 'data/flare_shared_library.dart';
@@ -35,7 +36,9 @@ SemanticsHandle? _webSemantics;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeFlareGlass();
-  final catalogUpdates = await PoseHubCatalogUpdates.start();
+  final catalogUpdates = FlareOfflineMedia.enabled
+      ? null
+      : await PoseHubCatalogUpdates.start();
   LicenseRegistry.addLicense(() async* {
     for (final entry in [
       ('Snow Rig', 'Snow-ATTRIBUTION.md'),

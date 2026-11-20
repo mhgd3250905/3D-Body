@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
+import 'flare_offline_media.dart';
 import 'flare_public_catalog.dart';
 import 'flare_v5_drill.dart';
 import 'posehub_catalog_updates.dart';
@@ -46,6 +47,12 @@ abstract final class FlarePublicMedia {
       for (final action in bundled.allActions)
         action.thumbnail.sha256: thumbnailAssetFor(action.id),
     };
+    if (FlareOfflineMedia.enabled) {
+      await FlareOfflineMedia.installVideos(
+        bundled,
+        rootDirectory: rootDirectory,
+      );
+    }
     final repository = await trainer.TrainingMediaRepository.fromCatalog(
       catalog: catalog,
       catalogRevision:
@@ -55,7 +62,10 @@ abstract final class FlarePublicMedia {
           ? catalog.semanticCatalogFile.sha256
           : poseHubCatalogRevisionOf(catalog),
       // The SDK resolves the media root from the catalogue in use.
-      mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
+      mediaBaseUrls: [
+        if (!FlareOfflineMedia.enabled)
+          trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog),
+      ],
       rootDirectory: rootDirectory,
       bundledFileLoader: (file) async {
         final asset = assetsBySha[file.sha256];

@@ -7,6 +7,7 @@ import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
+import '../data/flare_offline_media.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_v5_drill.dart';
@@ -161,7 +162,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     // Layer the active Pose-Hub catalog's recorded prompts and structured
     // voice guides behind Flare's shared prompts. The SDK prefetches and
     // verifies the needed clips and retains the bundled fallback.
-    var voice = await sdk.withPoseHubCatalogVoice(
+    var voice = await FlareOfflineMedia.withCatalogVoice(
       await loadTrainerVoiceSource(
         language: language,
         // TrainerPlayer uses its default right-first side sequence.

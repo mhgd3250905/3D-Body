@@ -18,6 +18,7 @@ import '../trainer/training_plan_adapter.dart';
 import 'catalog.dart' as flare;
 import 'flare_drill_resolver.dart';
 import 'flare_action_scope.dart';
+import 'flare_offline_media.dart';
 import 'flare_public_catalog.dart';
 import 'flare_public_media.dart';
 import 'flare_v5_drill.dart';
@@ -248,7 +249,7 @@ class FlareShared {
               final action = policy.actionFor(actionId);
               if (action == null) return;
               final language = Localizations.localeOf(context).languageCode;
-              final source = await trainer.withPoseHubCatalogVoice(
+              final source = await FlareOfflineMedia.withCatalogVoice(
                 await loadTrainerVoiceSource(
                   language: language,
                   leftFirst: false,

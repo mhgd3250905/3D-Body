@@ -97,6 +97,8 @@ flutter:
     # Shared SDK public definitions and posters; videos load on demand.
     - assets/public_media/
     - assets/public_media/catalog/
+    - assets/public_media/offline/video/
+    - assets/public_media/offline/voice/
     - assets/public_posters/
     - assets/public_posters/r2-v18/cover/
     - assets/public_posters/r2-v18/thumbnail/
