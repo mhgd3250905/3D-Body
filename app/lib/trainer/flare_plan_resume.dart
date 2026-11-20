@@ -19,6 +19,7 @@ class FlarePlanResume {
     this.tier,
     this.sceneTier,
     this.authoredPlan,
+    this.skipStrengthening = false,
     this.routine,
     this._sourceId,
     this._sessionId,
@@ -35,6 +36,7 @@ class FlarePlanResume {
   final int? tier;
   final String? sceneTier;
   final FlarePlan? authoredPlan;
+  final bool skipStrengthening;
   final TrainingRoutine? routine;
   final String? _sourceId;
   final String? _sessionId;
@@ -142,6 +144,7 @@ class FlarePlanResume {
       tier: target.authoredPlan?.tier ?? target.routine?.sdkPlan?.level,
       sceneTier: target.sceneTier,
       authoredPlan: target.authoredPlan,
+      skipStrengthening: target.skipStrengthening,
       routine: target.routine,
       sourceId: identity.sourceId,
       sessionId: latest.sessionId,
@@ -266,6 +269,7 @@ typedef _Target = ({
   TrainingRoutine? routine,
   int? phaseSource,
   String? sceneTier,
+  bool skipStrengthening,
 });
 
 _Target? _resolveTarget({
@@ -279,10 +283,10 @@ _Target? _resolveTarget({
     ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
     ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
     ?catalog.flareWarmupPlan,
-    ?catalog.flareCooldownPlan,
+    ...catalog.flareCooldownPlans,
   ].where((plan) => plan.id == identity.sourceId).firstOrNull;
   if (authored != null) {
-    final candidates = authored.isSupplemental
+    final scenes = authored.isSupplemental
         ? const ['A']
         : identity.sceneTier != null
         ? [identity.sceneTier!]
@@ -293,18 +297,28 @@ _Target? _resolveTarget({
             'B',
             'C',
           };
+    final candidates = [
+      for (final scene in scenes) ...[
+        (scene, false),
+        if (authored.kind == FlarePlanKind.cooldown) (scene, true),
+      ],
+    ];
     // Prefer the recorded movement itself over a historical substitution
     // reference when older logs cannot name the scene directly.
     for (final allowAliases in [false, true]) {
-      for (final scene in candidates) {
+      for (final (scene, skipStrengthening) in candidates) {
+        final groups = [
+          if (!skipStrengthening && authored.strengtheningItems.isNotEmpty)
+            authored.strengtheningItems,
+          authored.items,
+        ];
         final ids = [
-          [
-            for (final item in authored.items)
-              item.trainingDrillForScene(scene),
-          ],
+          for (final group in groups)
+            [for (final item in group) item.trainingDrillForScene(scene)],
         ];
         final indexes = [
-          List<int>.generate(authored.items.length, (index) => index),
+          for (final group in groups)
+            List<int>.generate(group.length, (index) => index),
         ];
         if (!_applyResult(origin, ids, indexes, allowAliases: allowAliases)) {
           continue;
@@ -329,6 +343,7 @@ _Target? _resolveTarget({
           routine: null,
           phaseSource: phaseSource,
           sceneTier: scene,
+          skipStrengthening: skipStrengthening,
         );
       }
     }
@@ -358,6 +373,7 @@ _Target? _resolveTarget({
     routine: routine,
     phaseSource: null,
     sceneTier: null,
+    skipStrengthening: false,
   );
 }
 

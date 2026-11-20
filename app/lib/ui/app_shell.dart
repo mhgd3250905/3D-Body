@@ -677,8 +677,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final policy =
         sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
     final mediaIds = {
-      for (final item in supplementalPlan?.items ?? const <FlarePlanItem>[])
-        item.trainingDrillForScene('A'): item.drillForScene('A'),
+      for (final item in supplementalPlan?.allItems ?? const <FlarePlanItem>[])
+        ...item.trainingMediaIdsForScene('A'),
     };
     final ids = plan.exerciseIds.map((id) => mediaIds[id] ?? id).toList();
     String? posterFor(String id) => policy?.actionFor(id) != null
@@ -906,12 +906,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     FlarePlan plan,
     String title,
     String sceneTier,
-    FlareShared shared,
-  ) => shared.authoredPlan(
+    FlareShared shared, {
+    bool skipStrengthening = false,
+  }) => shared.authoredPlan(
     plan,
     catalog,
     sceneTier,
     title: title,
+    skipStrengthening: skipStrengthening,
     wristDirections: trainerWristDirections(context.strings),
     circleDirections: (
       clockwise: context.strings.planCircleClockwise,
@@ -923,6 +925,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     String title,
     FlarePlan plan, {
     int? phaseSource,
+    bool skipStrengthening = false,
   }) async {
     if (_trainingOpen) return;
     final sceneTier = plan.isSupplemental ? 'A' : store.settings.tier;
@@ -931,7 +934,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       if (!mounted) return;
       await _startPlan(
         FlarePlanResume.recordAuthored(
-          _authoredTrainingPlan(plan, title, sceneTier, shared),
+          _authoredTrainingPlan(
+            plan,
+            title,
+            sceneTier,
+            shared,
+            skipStrengthening: skipStrengthening,
+          ),
           sceneTier: sceneTier,
           phaseSource: phaseSource,
         ),
@@ -954,6 +963,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           resume.title,
           resume.sceneTier!,
           shared,
+          skipStrengthening: resume.skipStrengthening,
         );
       } else if (resume.routine case final routine?) {
         original =
@@ -1557,6 +1567,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
     if (_flarePlanTrail.lastOrNull case final target?) {
       final supplemental = target.supplemental;
+      final cooldown = supplemental?.kind == FlarePlanKind.cooldown;
       final phaseSource = target.phaseSource;
       final phase = phaseSource == null
           ? null
@@ -1564,7 +1575,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       final group = target.groupId == null
           ? null
           : catalog.groupById(target.groupId!);
-      final plans = supplemental != null
+      final plans = cooldown
+          ? catalog.flareCooldownPlans
+          : supplemental != null
           ? [supplemental]
           : phaseSource != null
           ? catalog.plansForAngle(phaseSource)
@@ -1585,10 +1598,18 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           phase: phase,
           emptyTargetGroup: group,
           plans: plans,
-          selectedTier: target.selectedTier,
+          selectedTier: cooldown
+              ? store.settings.cooldownTier
+              : target.selectedTier,
           catalog: catalog,
           store: store,
-          onTierChanged: (value) => setState(() => target.selectedTier = value),
+          onTierChanged: (value) {
+            if (cooldown) {
+              unawaited(store.updateSettings(cooldownTier: value));
+            } else {
+              setState(() => target.selectedTier = value);
+            }
+          },
           onMuscle: _openMusclePlan,
           onDrill: _openFlarePlanDrill,
           onBack: _back,
@@ -1597,6 +1618,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               : () => _openSupplementalPlan(warmup),
           onStart: (plan) =>
               _startFlarePlan(title, plan, phaseSource: phaseSource),
+          onSkipStrengthening: cooldown
+              ? (plan) => _startFlarePlan(title, plan, skipStrengthening: true)
+              : null,
         ),
       );
     }

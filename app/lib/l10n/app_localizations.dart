@@ -2896,7 +2896,7 @@ abstract class AppLocalizations {
   /// No description provided for @postWorkoutStretch.
   ///
   /// In zh, this message translates to:
-  /// **'练后拉伸'**
+  /// **'练后'**
   String get postWorkoutStretch;
 
   /// No description provided for @preWorkoutWarmupPrompt.
@@ -2932,8 +2932,74 @@ abstract class AppLocalizations {
   /// No description provided for @continuePostWorkoutStretch.
   ///
   /// In zh, this message translates to:
-  /// **'接着做练后拉伸 · 10 分钟'**
+  /// **'接着做练后'**
   String get continuePostWorkoutStretch;
+
+  /// No description provided for @cooldownPlanCardSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'初／中／高 · 徒手'**
+  String get cooldownPlanCardSubtitle;
+
+  /// No description provided for @cooldownStrengtheningHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'A 专项补强'**
+  String get cooldownStrengtheningHeading;
+
+  /// No description provided for @cooldownStretchHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'B 全身拉伸'**
+  String get cooldownStretchHeading;
+
+  /// No description provided for @skipCooldownStrengthening.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过补强，直接全身拉伸'**
+  String get skipCooldownStrengthening;
+
+  /// No description provided for @cooldownStrengtheningAdvice.
+  ///
+  /// In zh, this message translates to:
+  /// **'建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过'**
+  String get cooldownStrengtheningAdvice;
+
+  /// No description provided for @cooldownStrengtheningRounds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{rounds} 轮'**
+  String cooldownStrengtheningRounds(int rounds);
+
+  /// No description provided for @cooldownStrengtheningRest.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作间休息 {seconds} 秒 · 轮间休息 {roundSeconds} 秒'**
+  String cooldownStrengtheningRest(int seconds, int roundSeconds);
+
+  /// No description provided for @cooldownSecondsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 秒'**
+  String cooldownSecondsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 次'**
+  String cooldownRepsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsPerPosition.
+  ///
+  /// In zh, this message translates to:
+  /// **'各 {reps} 次'**
+  String cooldownRepsPerPosition(int reps);
+
+  /// No description provided for @cooldownPnfSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'PNF {seconds} 秒'**
+  String cooldownPnfSeconds(int seconds);
 
   /// No description provided for @bodyweightPlanMinutes.
   ///

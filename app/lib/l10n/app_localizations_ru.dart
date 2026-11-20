@@ -1623,7 +1623,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get preWorkoutWarmup => 'Разминка';
 
   @override
-  String get postWorkoutStretch => 'Растяжка после тренировки';
+  String get postWorkoutStretch => 'После тренировки';
 
   @override
   String preWorkoutWarmupPrompt(int minutes) {
@@ -1651,7 +1651,55 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get continuePostWorkoutStretch => 'Продолжить растяжку · 10 мин';
+  String get continuePostWorkoutStretch =>
+      'Перейти к упражнениям после тренировки';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 уровня · Без инвентаря';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Целевое укрепление';
+
+  @override
+  String get cooldownStretchHeading => 'B Растяжка всего тела';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Пропустить укрепление и перейти к растяжке';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Выполняйте 2–3 раза в неделю через день. Пропустите укрепление, если сегодня уже тренировали верхнюю часть тела или у вас болят запястья.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds круга';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds с между упражнениями · $roundSeconds с между кругами';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max с';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max повт.';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'По $reps повт.';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds с ПНФ';
+  }
 
   @override
   String bodyweightPlanMinutes(int minutes) {

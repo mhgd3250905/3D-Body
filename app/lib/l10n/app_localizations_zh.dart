@@ -1527,7 +1527,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get preWorkoutWarmup => '练前热身';
 
   @override
-  String get postWorkoutStretch => '练后拉伸';
+  String get postWorkoutStretch => '练后';
 
   @override
   String preWorkoutWarmupPrompt(int minutes) {
@@ -1555,7 +1555,52 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get continuePostWorkoutStretch => '接着做练后拉伸 · 10 分钟';
+  String get continuePostWorkoutStretch => '接着做练后';
+
+  @override
+  String get cooldownPlanCardSubtitle => '初／中／高 · 徒手';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 专项补强';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身拉伸';
+
+  @override
+  String get skipCooldownStrengthening => '跳过补强，直接全身拉伸';
+
+  @override
+  String get cooldownStrengtheningAdvice => '建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 轮';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '动作间休息 $seconds 秒 · 轮间休息 $roundSeconds 秒';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max 次';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 次';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
 
   @override
   String bodyweightPlanMinutes(int minutes) {
@@ -3090,7 +3135,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get preWorkoutWarmup => '練前熱身';
 
   @override
-  String get postWorkoutStretch => '練後伸展';
+  String get postWorkoutStretch => '練後';
 
   @override
   String preWorkoutWarmupPrompt(int minutes) {
@@ -3118,7 +3163,52 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get continuePostWorkoutStretch => '接著做練後伸展 · 10 分鐘';
+  String get continuePostWorkoutStretch => '接著做練後';
+
+  @override
+  String get cooldownPlanCardSubtitle => '初／中／高 · 徒手';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 專項補強';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身伸展';
+
+  @override
+  String get skipCooldownStrengthening => '跳過補強，直接全身伸展';
+
+  @override
+  String get cooldownStrengtheningAdvice => '建議每週 2–3 次、隔天做；當天已練上肢力量或手腕發痠請直接跳過';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 輪';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '動作間休息 $seconds 秒 · 輪間休息 $roundSeconds 秒';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max 次';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 次';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
 
   @override
   String bodyweightPlanMinutes(int minutes) {

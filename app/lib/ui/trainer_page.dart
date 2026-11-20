@@ -139,12 +139,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
 
   late final _authoredItems = {
     for (final item
-        in widget.supplementalPlan?.items ?? const <FlarePlanItem>[])
-      item.trainingDrillForScene('A'): item,
+        in widget.supplementalPlan?.allItems ?? const <FlarePlanItem>[])
+      for (final alias in item.trainingMediaIdsForScene('A').entries)
+        alias.key: (item: item, media: alias.value),
   };
 
   String _mediaId(String exerciseId) =>
-      _authoredItems[exerciseId]?.drillForScene('A') ?? exerciseId;
+      _authoredItems[exerciseId]?.media ?? exerciseId;
 
   Future<_PlayerData> _load(String language) async {
     final wristDirections = trainerWristDirections(
@@ -654,7 +655,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           final mediaId = _mediaId(id);
           final drill = widget.catalog.drillById(mediaId);
           final public = data.shared.catalog[mediaId];
-          final authored = _authoredItems[id];
+          final authored = _authoredItems[id]?.item;
+          final pnf = authored?.pnfTrainingIdForScene('A') == id;
           final placeholder = authored?.usesPlaceholderDemo == true;
           final displayName = language == 'zh'
               ? authored?.displayName
@@ -669,7 +671,11 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               ? flareV5PosterAsset
               : policy?.posterAssetFor(mediaId);
           final timedWrist = timedWristRocks && id == 'forearms-A';
-          final authoredCue = language == 'zh' ? authored?.voiceCue : null;
+          final authoredCue = language != 'zh'
+              ? null
+              : pnf
+              ? flareCooldownPnfCue
+              : authored?.voiceCue;
           final cue = switch ((placeholder, authoredCue)) {
             (true, final String text) => '${s.temporaryPlanDemo} · $text',
             (true, null) => s.temporaryPlanDemo,
@@ -688,7 +694,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                     drill == null
                 ? public?.cues['zh'] ?? const []
                 : const [],
-            precautions: [...?public?.cautions, ...?public?.contraindications],
+            precautions: [
+              if (language == 'zh') ?authored?.safetyNote,
+              if (!(placeholder && authored?.safetyNote != null)) ...[
+                ...?public?.cautions,
+                ...?public?.contraindications,
+              ],
+            ],
             media: poster == null
                 ? null
                 : sdk.DrillMedia(
@@ -702,6 +714,26 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           );
         });
 
+        final authored = widget.supplementalPlan;
+        final cooldown = authored?.kind == FlarePlanKind.cooldown
+            ? authored
+            : null;
+        final sound = widget.store.settings.sound;
+        final cooldownScript = cooldown == null
+            ? null
+            : buildCooldownTrainerScript(data.source, data.language);
+        final sessionBuilder = cooldown == null || cooldownScript == null
+            ? null
+            : FlareCooldownSessionBuilder(
+                strengtheningRestSeconds: cooldown.strengtheningRestSeconds,
+                rhythms: data.rhythms,
+                known: (id) => drillOf(id) != null,
+                prepSeconds: _initialCountdownSeconds,
+                switchSecondsFor: cooldownScript.switchSecondsFor,
+                prepSecondsFor: sound ? cooldownScript.prepSecondsFor : null,
+                voiceGuideFor: data.source.voiceGuide,
+                guideSideSwitchSecondsFor: data.source.sideSwitchSecondsFor,
+              );
         return TooltipVisibility(
           visible: _result == null,
           child: Visibility(
@@ -716,6 +748,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   strings: strings,
                   theme: theme,
                   prepSeconds: _initialCountdownSeconds,
+                  sessionBuilder: sessionBuilder,
                   transitionSeconds:
                       widget.supplementalPlan?.kind == FlarePlanKind.warmup
                       ? flareWarmupTransitionSeconds
@@ -724,10 +757,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   voice: sdk.TrainerVoice(
                     source: data.source,
                     output: _output!,
+                    scriptBuilder: cooldown == null
+                        ? null
+                        : buildCooldownTrainerScript,
                     settings: sdk.VoiceSettings(
                       language: data.language,
-                      voice: widget.store.settings.sound,
-                      chimes: widget.store.settings.sound,
+                      voice: sound,
+                      chimes: sound,
                     ),
                   ),
                   onFinished: _saveResult,

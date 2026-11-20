@@ -371,12 +371,14 @@ class LearningStore extends ChangeNotifier {
     String? themeMode,
     String? language,
     String? actorBody,
+    int? cooldownTier,
   }) {
     _ensureInitialized();
     final next = _settings.copyWith(
       themeMode: themeMode,
       language: language,
       actorBody: actorBody,
+      cooldownTier: cooldownTier,
       tier: tier,
       speed: speed,
       cues: cues,

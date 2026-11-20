@@ -1037,7 +1037,9 @@ class _SupplementalPlanCard extends StatelessWidget {
     final s = context.strings;
     final warmup = plan.kind == FlarePlanKind.warmup;
     final title = warmup ? s.preWorkoutWarmup : s.postWorkoutStretch;
-    final subtitle = s.bodyweightPlanMinutes(plan.estimatedMinutes!);
+    final subtitle = warmup
+        ? s.bodyweightPlanMinutes(plan.estimatedMinutes!)
+        : s.cooldownPlanCardSubtitle;
     final circle = switch ((p.isDark, warmup)) {
       (true, true) => const Color(0xffff6a3d).withValues(alpha: .14),
       (true, false) => const Color(0xff5eead4).withValues(alpha: .12),

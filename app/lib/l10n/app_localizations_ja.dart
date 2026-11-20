@@ -1538,7 +1538,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get preWorkoutWarmup => 'ウォームアップ';
 
   @override
-  String get postWorkoutStretch => 'トレーニング後のストレッチ';
+  String get postWorkoutStretch => 'トレーニング後';
 
   @override
   String preWorkoutWarmupPrompt(int minutes) {
@@ -1566,7 +1566,53 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get continuePostWorkoutStretch => '続けてストレッチ · 10分';
+  String get continuePostWorkoutStretch => '続けてトレーニング後のルーティンへ';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3段階 · 自重';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 部位別の強化';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身ストレッチ';
+
+  @override
+  String get skipCooldownStrengthening => '強化をスキップして全身ストレッチへ';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      '1日おきに週2〜3回が目安です。当日に上半身の筋トレをした場合や手首に痛みがある場合は、強化をスキップしてください。';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 周';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '種目間は $seconds 秒休憩 · 周回間は $roundSeconds 秒休憩';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min〜$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min〜$max 回';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 回';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
 
   @override
   String bodyweightPlanMinutes(int minutes) {

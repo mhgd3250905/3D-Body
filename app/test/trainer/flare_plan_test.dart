@@ -100,12 +100,7 @@ void main() {
       }
 
       final warmup = catalog.flareWarmupPlan!;
-      final cooldown = catalog.flareCooldownPlan!;
       expect((warmup.id, warmup.estimatedMinutes), ('general-warmup', 9));
-      expect(
-        (cooldown.id, cooldown.estimatedMinutes),
-        ('general-cooldown', 10),
-      );
 
       final supplementalRhythms = flarePublicRhythms(supplementary);
       final supplementalSource = flareCoachCatalogFromPublic(
@@ -157,17 +152,6 @@ void main() {
         ('h-kneeling-thread-needle', 4, null, true),
         (flareWarmupPushupId, 10, null, false),
         ('rotator-cuff-A', 4, null, true),
-      ]);
-      expect(doses(playablePlan(cooldown)), [
-        ('h-wall-wrist-flexor-stretch', null, 30, false),
-        ('h-standing-wrist-extensor-stretch', null, 30, true),
-        ('h-wall-pec', null, 30, false),
-        ('h-dd-shoulder', null, 30, false),
-        ('s-kneel-hipflex', null, 30, true),
-        ('s-butterfly', null, 45, false),
-        ('n-straddle-fold', null, 60, false),
-        ('s-figure4', null, 30, true),
-        ('h-supine-twist', null, 30, true),
       ]);
       expect(
         warmup.items
@@ -228,27 +212,10 @@ void main() {
           ('fingers-backward', 16),
         ],
       );
-      expect(
-        cooldown.items
-            .where((item) => item.usesPlaceholderDemo)
-            .map((item) => (item.drill, item.displayName, item.displayNameEn)),
-        [
-          (
-            'h-wall-wrist-flexor-stretch',
-            '跪姿前臂拉伸（指尖朝膝）',
-            'Kneeling Forearm Stretch (Fingers Toward Knees)',
-          ),
-          (
-            'h-wall-pec',
-            '背后十指交扣扩胸',
-            'Standing Chest Opener with Clasped Hands',
-          ),
-        ],
-      );
     },
   );
 
-  test('the SDK schedules every bundled supplemental Mandarin cue', () async {
+  test('the SDK schedules every bundled warm-up Mandarin cue', () async {
     final active = await withFlareWarmupAction(pack);
     final activeRhythms = flarePublicRhythms(active);
     final activeSource = flareCoachCatalogFromPublic(
@@ -259,10 +226,7 @@ void main() {
       await loadTrainerVoiceSource(language: 'zh', leftFirst: false),
       catalog: active,
     );
-    for (final authored in [
-      catalog.flareWarmupPlan!,
-      catalog.flareCooldownPlan!,
-    ]) {
+    for (final authored in [catalog.flareWarmupPlan!]) {
       final voice = await withSupplementalTrainerVoice(
         baseVoice,
         authored,
@@ -311,6 +275,189 @@ void main() {
         expect(bytes.lengthInBytes, greaterThan(0));
       }
       expect(missing, isEmpty, reason: '${authored.id}, ${seconds}s');
+    }
+  });
+
+  test('cooldown tiers preserve circuit, stretch, safety and hold doses', () {
+    final plans = catalog.flareCooldownPlans;
+    expect(plans.map((plan) => plan.id), [
+      'general-cooldown',
+      'general-cooldown-t2',
+      'general-cooldown-t3',
+    ]);
+    expect(catalog.flareCooldownPlan, same(plans.first));
+
+    for (final (index, authored) in plans.indexed) {
+      final tier = index + 1;
+      final rounds = [2, 3, 3][index];
+      final rest = [20, 25, 30][index];
+      final stretchSeconds = [30, 45, 60][index];
+      expect(authored.tier, tier);
+      expect(authored.strengtheningRounds, rounds);
+      expect(authored.strengtheningRestSeconds, rest);
+      expect(authored.strengtheningRoundRestSeconds, 60);
+      expect(authored.strengtheningItems, hasLength([6, 7, 6][index]));
+      expect(authored.items, hasLength(tier == 3 ? 13 : 12));
+      expect(authored.items.first.drill, 'o-stand-sidebend');
+      expect(authored.items.any((item) => item.drill == 's-frog'), tier == 3);
+      expect(
+        authored.allItems.map((item) => item.safetyNote),
+        everyElement(isNotEmpty),
+      );
+
+      final full = training(authored, 'A');
+      final stretchOnly = trainingPlanFromFlarePlan(
+        plan: authored,
+        title: authored.id,
+        sceneTier: 'A',
+        catalog: catalog,
+        sourceCatalog: source,
+        rhythms: rhythms,
+        skipStrengthening: true,
+      );
+      expect(full.blocks.map((block) => block.type), [
+        uc.BlockType.circuit,
+        uc.BlockType.cooldown,
+      ]);
+      expect(full.blocks.first.rounds, rounds);
+      expect(full.blocks.first.restBetweenRoundsSeconds, 60);
+      expect(stretchOnly.blocks.map((block) => block.type), [
+        uc.BlockType.cooldown,
+      ]);
+      expect(
+        stretchOnly.blocks.single.items.map((item) => item.toJson()),
+        full.blocks.last.items.map((item) => item.toJson()),
+      );
+
+      final playableIds = <String, String>{
+        for (final item in authored.allItems)
+          ...item.trainingMediaIdsForScene('A'),
+      };
+      expect(full.exerciseIds.toSet(), playableIds.keys.toSet());
+      expect(
+        playableIds.values.map((id) => pack.tryGet(id)?.availableForTraining),
+        everyElement(isTrue),
+      );
+      final bItems = stretchOnly.items.toList();
+      expect(
+        bItems.map((item) => item.workSeconds),
+        everyElement(stretchSeconds),
+      );
+      final starred = authored.items.where(
+        (item) => item.dose.sets == 2 || item.dose.pnfSeconds != null,
+      );
+      expect(starred.map((item) => item.voiceKey), [
+        'supplemental.cooldown.stretch.7',
+        'supplemental.cooldown.stretch.10',
+        'supplemental.cooldown.stretch.11',
+      ]);
+
+      final builder = FlareCooldownSessionBuilder(
+        strengtheningRestSeconds: rest,
+        rhythms: rhythms,
+      );
+      final fullTimeline = builder.phases(full);
+      final aRests = fullTimeline.where(
+        (phase) => phase.kind == sdk.PhaseKind.rest && phase.blockIndex == 0,
+      );
+      expect(
+        aRests,
+        hasLength((authored.strengtheningItems.length - 1) * rounds),
+      );
+      expect(aRests.map((phase) => phase.seconds), everyElement(rest));
+      final roundRests = fullTimeline.where(
+        (phase) => phase.kind == sdk.PhaseKind.roundRest,
+      );
+      expect(roundRests, hasLength(rounds - 1));
+      expect(roundRests.map((phase) => phase.seconds), everyElement(60));
+      final bTimeline = builder.phases(stretchOnly);
+      expect(
+        bTimeline.where((phase) => phase.kind == sdk.PhaseKind.rest),
+        isEmpty,
+      );
+      final wrist = bTimeline.where((phase) => phase.itemInBlock == 4);
+      expect(
+        wrist
+            .where((phase) => phase.isWork)
+            .map((phase) => (phase.segmentId, phase.side, phase.seconds)),
+        [
+          ('wrist-flexed', sdk.Side.right, (stretchSeconds + 1) ~/ 2),
+          ('wrist-extended', sdk.Side.right, stretchSeconds ~/ 2),
+          ('wrist-flexed', sdk.Side.left, (stretchSeconds + 1) ~/ 2),
+          ('wrist-extended', sdk.Side.left, stretchSeconds ~/ 2),
+        ],
+      );
+      final firstPriority = starred.first;
+      final hip = bTimeline.where(
+        (phase) => phase.item?.exerciseId == firstPriority.drill,
+      );
+      if (tier == 3) {
+        expect(
+          hip
+              .where((phase) => phase.isWork)
+              .map((phase) => (phase.segmentId, phase.side, phase.seconds)),
+          [
+            ('stretch-hold', sdk.Side.right, 60),
+            ('pnf-press', sdk.Side.right, 5),
+            ('stretch-hold', sdk.Side.left, 60),
+            ('pnf-press', sdk.Side.left, 5),
+          ],
+        );
+        final turn = hip.singleWhere(
+          (phase) => phase.kind == sdk.PhaseKind.switchSide,
+        );
+        expect(
+          (turn.side, turn.segmentId, turn.exerciseId),
+          (sdk.Side.left, 'stretch-hold', firstPriority.drill),
+        );
+      }
+      expect(
+        starred.map((item) => (item.dose.sets, item.dose.pnfSeconds)),
+        everyElement(tier == 3 ? (1, 5) : (2, null)),
+      );
+      final shoulders = fullTimeline.where(
+        (phase) => phase.isWork && phase.exerciseId == 'scapular-A',
+      );
+      expect(
+        shoulders
+            .take(tier == 1 ? 2 : 3)
+            .map((phase) => (phase.segmentId, phase.reps, phase.holdSeconds)),
+        switch (tier) {
+          1 => [('t', 6, 2), ('w', 6, 2)],
+          2 => [('y', 6, null), ('t', 6, null), ('w', 6, 2)],
+          _ => [('y', 6, 2), ('t', 6, 2), ('w', 6, 2)],
+        },
+      );
+      final controlledMove = fullTimeline.firstWhere(
+        (phase) =>
+            phase.isWork &&
+            phase.exerciseId ==
+                switch (tier) {
+                  1 => 'h-wall-palm-lift',
+                  2 => 'h-inner-thigh',
+                  _ => 'h-wall-straddle',
+                },
+      );
+      final controlledPhases = controlledMove.rhythm!.phasesFor();
+      expect(
+        controlledPhases
+            .singleWhere((phase) => phase.id == (tier == 3 ? 'go' : 'back'))
+            .seconds,
+        3,
+      );
+      expect(controlledMove.holdSeconds, switch (tier) {
+        1 => null,
+        2 => 2,
+        _ => 1,
+      });
+
+      final fullSeconds = builder.planSeconds(full);
+      final stretchSecondsTotal = builder.planSeconds(stretchOnly);
+      expect(fullSeconds, [1543, 2650, 2467][index]);
+      expect(stretchSecondsTotal, [765, 1075, 1255][index]);
+      expect(full.targetMinutes, (fullSeconds / 60).ceil());
+      expect(full.targetMinutes, authored.estimatedMinutes);
+      expect(stretchOnly.targetMinutes, (stretchSecondsTotal / 60).ceil());
     }
   });
 

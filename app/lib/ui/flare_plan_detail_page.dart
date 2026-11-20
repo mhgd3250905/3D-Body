@@ -46,6 +46,7 @@ class FlarePlanDetailPage extends StatefulWidget {
     required this.onBack,
     required this.onStart,
     this.onOpenWarmup,
+    this.onSkipStrengthening,
     this.phase,
     this.membership,
     this.emptyTargetGroup,
@@ -63,6 +64,7 @@ class FlarePlanDetailPage extends StatefulWidget {
   final VoidCallback onBack;
   final ValueChanged<FlarePlan> onStart;
   final VoidCallback? onOpenWarmup;
+  final ValueChanged<FlarePlan>? onSkipStrengthening;
   final FlareMembership? membership;
   final MuscleGroup? emptyTargetGroup;
 
@@ -92,15 +94,21 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       orElse: () => plans.first,
     );
     final isSupplemental = plan.isSupplemental;
+    final isCooldown = plan.kind == FlarePlanKind.cooldown;
+    final count = isCooldown
+        ? plan.strengtheningItems.length + plan.items.length
+        : plan.items.length;
     final warmupMinutes = catalog.flareWarmupPlan?.estimatedMinutes;
     final openWarmup = isSupplemental || warmupMinutes == null
         ? null
         : widget.onOpenWarmup;
     final scene = isSupplemental ? 'A' : widget.store.settings.tier;
     final shared = FlareShared.current;
-    final minutes =
-        plan.estimatedMinutes ??
-        shared?.authoredPlanMinutes(plan, catalog, scene);
+    final minutes = isCooldown
+        ? shared?.authoredPlanMinutes(plan, catalog, scene) ??
+              plan.estimatedMinutes
+        : plan.estimatedMinutes ??
+              shared?.authoredPlanMinutes(plan, catalog, scene);
     final equipment = isSupplemental
         ? const <String>{}
         : shared?.authoredPlanEquipment(plan, scene) ?? const <String>{};
@@ -163,10 +171,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                         phaseSource: phase?.source ?? plan.phaseSource,
                         groupId: plan.groupId,
                         safeTop: FlareGeometry.navSafeTop(context),
-                        info: _PlanInfo(
-                          minutes: minutes,
-                          count: plan.items.length,
-                        ),
+                        info: _PlanInfo(minutes: minutes, count: count),
                       ),
                       if (muscles.isNotEmpty)
                         _PlanMuscleStrip(
@@ -176,7 +181,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                               ? null
                               : () => widget.onMuscle(group),
                         ),
-                      if (!isSupplemental) ...[
+                      if (!isSupplemental || isCooldown)
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                             _gutter,
@@ -194,6 +199,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                             onChanged: widget.onTierChanged,
                           ),
                         ),
+                      if (!isSupplemental)
                         Padding(
                           padding: const EdgeInsets.fromLTRB(
                             _gutter,
@@ -205,6 +211,32 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                             selected: scene,
                             onChanged: (value) =>
                                 widget.store.updateSettings(tier: value),
+                          ),
+                        ),
+                      if (isCooldown) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            _gutter,
+                            20,
+                            _gutter,
+                            8,
+                          ),
+                          child: _CooldownStrengtheningHeader(
+                            plan: plan,
+                            onSkip: widget.onSkipStrengthening == null
+                                ? null
+                                : () => widget.onSkipStrengthening!(plan),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: _gutter,
+                          ),
+                          child: _PlanRows(
+                            planId: plan.id,
+                            items: plan.strengtheningItems,
+                            scene: scene,
+                            buildRow: _cooldownRow,
                           ),
                         ),
                       ],
@@ -219,7 +251,9 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             FlarePlanSectionHeading(
-                              title: s.planTrainingContent,
+                              title: isCooldown
+                                  ? s.cooldownStretchHeading
+                                  : s.planTrainingContent,
                               hint: s.planDrillCount(plan.items.length),
                             ),
                             if (equipmentNames.isNotEmpty) ...[
@@ -251,9 +285,10 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                           horizontal: _gutter,
                         ),
                         child: _PlanRows(
-                          plan: plan,
+                          planId: plan.id,
+                          items: plan.items,
                           scene: scene,
-                          buildRow: _row,
+                          buildRow: isCooldown ? _cooldownRow : _row,
                         ),
                       ),
                     ],
@@ -317,13 +352,22 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     );
   }
 
-  Widget _row(
+  Widget _cooldownRow(
     BuildContext context,
     int index,
     FlarePlanItem item,
     String scene,
     bool separator,
-  ) {
+  ) => _row(context, index, item, scene, separator, isCooldown: true);
+
+  Widget _row(
+    BuildContext context,
+    int index,
+    FlarePlanItem item,
+    String scene,
+    bool separator, {
+    bool isCooldown = false,
+  }) {
     final id = item.drillForScene(scene);
     final locale = Localizations.localeOf(context);
     final name =
@@ -344,9 +388,60 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       name: authoredName ?? name ?? id,
       index: index,
       dose: item.doseForScene(scene),
+      isCooldown: isCooldown,
       substitutionLabel: placeholderDemo ?? bodyweightSubstitution,
       separator: separator,
       onTap: name == null ? null : () => widget.onDrill(id),
+    );
+  }
+}
+
+class _CooldownStrengtheningHeader extends StatelessWidget {
+  const _CooldownStrengtheningHeader({
+    required this.plan,
+    required this.onSkip,
+  });
+
+  final FlarePlan plan;
+  final VoidCallback? onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.strings;
+    final secondary = TextStyle(
+      color: FlareColors.palette.secondary,
+      fontSize: 13,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FlarePlanSectionHeading(
+          title: s.cooldownStrengtheningHeading,
+          hint: s.cooldownStrengtheningRounds(plan.strengtheningRounds),
+        ),
+        if (onSkip != null) ...[
+          const SizedBox(height: 12),
+          PrimaryAction(
+            key: const ValueKey('flare-cooldown-skip-strengthening'),
+            label: s.skipCooldownStrengthening,
+            onPressed: onSkip,
+          ),
+          const SizedBox(height: 8),
+        ],
+        Text(s.cooldownStrengtheningAdvice, style: secondary),
+        const SizedBox(height: 8),
+        Text(
+          s.cooldownStrengtheningRest(
+            plan.strengtheningRestSeconds,
+            plan.strengtheningRoundRestSeconds,
+          ),
+          style: secondary.copyWith(
+            color: FlareColors.palette.dim,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1022,6 +1117,7 @@ class _PlanExercise extends StatelessWidget {
     required this.name,
     required this.index,
     required this.dose,
+    required this.isCooldown,
     required this.substitutionLabel,
     required this.separator,
     required this.onTap,
@@ -1030,6 +1126,7 @@ class _PlanExercise extends StatelessWidget {
   final String name;
   final int index;
   final FlarePlanDose dose;
+  final bool isCooldown;
   final String? substitutionLabel;
   final bool separator;
   final VoidCallback? onTap;
@@ -1038,24 +1135,39 @@ class _PlanExercise extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.strings;
     final p = FlareColors.palette;
-    final amount = dose.bothCircleDirections
-        ? s.planCirclesInBothDirections(dose.reps!)
-        : dose.reps == null
-        ? s.secondsLabel(dose.seconds!)
-        : s.countLabel(dose.reps!);
+    final amount = switch ((dose.recommendedMin, dose.recommendedMax)) {
+      (final min?, final max?) =>
+        dose.reps == null
+            ? s.cooldownSecondsRange(min, max)
+            : s.cooldownRepsRange(min, max),
+      _ when dose.repPositions.isNotEmpty => s.cooldownRepsPerPosition(
+        dose.reps!,
+      ),
+      _ when dose.bothCircleDirections => s.planCirclesInBothDirections(
+        dose.reps!,
+      ),
+      _ when dose.reps == null => s.secondsLabel(dose.seconds!),
+      _ => s.countLabel(dose.reps!),
+    };
     final volume = dose.sets == 1 ? amount : '${dose.sets} × $amount';
     final side = dose.perSide && !dose.bothCircleDirections
         ? s.planDosePerSide('')
         : '';
-    final peak = dose.holdSeconds == null
-        ? ''
-        : ' · ${s.planPeakHold(dose.holdSeconds!)}';
-    final rest = dose.sets > 1
+    final peak = switch ((dose.lastPositionHoldSeconds, dose.holdSeconds)) {
+      (final last?, _) =>
+        ' · ${dose.repPositions.last} ${s.planPeakHold(last)}',
+      (_, final hold?) => ' · ${s.planPeakHold(hold)}',
+      _ => '',
+    };
+    final rest = dose.sets > 1 && (!isCooldown || dose.restSeconds > 0)
         ? ' · ${s.planRestSeconds(dose.restSeconds)}'
         : '';
+    final pnf = dose.pnfSeconds == null
+        ? ''
+        : ' + ${s.cooldownPnfSeconds(dose.pnfSeconds!)}';
     final title = Text(
       name,
-      maxLines: 1,
+      maxLines: isCooldown ? 2 : 1,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontSize: 16,
@@ -1117,7 +1229,7 @@ class _PlanExercise extends StatelessWidget {
                                   text: volume,
                                   style: TextStyle(color: p.secondary),
                                 ),
-                                TextSpan(text: '$side$peak$rest'),
+                                TextSpan(text: '$side$peak$rest$pnf'),
                               ],
                             ),
                           ),
@@ -1377,12 +1489,14 @@ class _PlanBottomState extends State<_PlanBottom> {
 
 class _PlanRows extends StatefulWidget {
   const _PlanRows({
-    required this.plan,
+    required this.planId,
+    required this.items,
     required this.scene,
     required this.buildRow,
   });
 
-  final FlarePlan plan;
+  final String planId;
+  final List<FlarePlanItem> items;
   final String scene;
   final Widget Function(
     BuildContext context,
@@ -1403,8 +1517,11 @@ class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
   static const _rowDelay = Duration(milliseconds: 40);
   static const _sizeTime = Duration(milliseconds: 260);
 
-  late FlarePlan _visiblePlan = widget.plan;
-  late String _visibleScene = widget.scene;
+  late var _visible = (
+    planId: widget.planId,
+    items: widget.items,
+    scene: widget.scene,
+  );
   late final _leave = AnimationController(vsync: this, duration: _leaveTime)
     ..addStatusListener(_showLatest);
   late final _enter = AnimationController(
@@ -1429,7 +1546,7 @@ class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
   void didUpdateWidget(covariant _PlanRows oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (_reducedMotion ||
-        (widget.plan.id == _visiblePlan.id && widget.scene == _visibleScene)) {
+        (widget.planId == _visible.planId && widget.scene == _visible.scene)) {
       _useLatest();
     } else if (!_leave.isAnimating) {
       // Preserve the current per-row progress if a selection interrupts entry.
@@ -1439,8 +1556,11 @@ class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
   }
 
   void _useLatest() {
-    _visiblePlan = widget.plan;
-    _visibleScene = widget.scene;
+    _visible = (
+      planId: widget.planId,
+      items: widget.items,
+      scene: widget.scene,
+    );
   }
 
   void _showLatest(AnimationStatus status) {
@@ -1449,7 +1569,8 @@ class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
     // selections are never queued or mounted as overlapping lists.
     setState(_useLatest);
     _leave.reset();
-    _enter.duration = _rowTime + _rowDelay * (_visiblePlan.items.length - 1);
+    _enter.duration =
+        _rowTime + _rowDelay * math.max(0, _visible.items.length - 1);
     _enter.forward(from: 0);
   }
 
@@ -1464,15 +1585,15 @@ class _PlanRowsState extends State<_PlanRows> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final rows = Column(
       children: [
-        for (final (index, item) in _visiblePlan.items.indexed)
+        for (final (index, item) in _visible.items.indexed)
           _enterRow(
             index,
             widget.buildRow(
               context,
               index,
               item,
-              _visibleScene,
-              index + 1 < _visiblePlan.items.length,
+              _visible.scene,
+              index + 1 < _visible.items.length,
             ),
           ),
       ],

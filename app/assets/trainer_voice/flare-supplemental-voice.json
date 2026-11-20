@@ -51,41 +51,141 @@
       "ms": 10607,
       "sha256": "5e30ca516daa1feed077a755849fadcdbd361ad1ea6a830befd054342f08b16b"
     },
-    "supplemental.general-cooldown.1": {
-      "ms": 9077,
-      "sha256": "de63d627794b937e214b240c0a08cd96afb12b5bc80fac8c020dabfa3366678b"
+    "supplemental.cooldown.strength.1.1": {
+      "ms": 9768,
+      "sha256": "5848e52f80139c26263383a0495cfeb65fa3656732a3713725f78528e74435e6"
     },
-    "supplemental.general-cooldown.2": {
-      "ms": 4323,
-      "sha256": "1933a34bc1b2ea7dedec2f53bc96f59d6af35ab12b38c2bd73bc305d7b4ae9e8"
+    "supplemental.cooldown.strength.1.2": {
+      "ms": 9294,
+      "sha256": "2dd9fa86a9ba005a5465ec927d4dc27af99eff974c28fcf5495f1e117b7d6950"
     },
-    "supplemental.general-cooldown.3": {
-      "ms": 11072,
-      "sha256": "a670f0dc775cecd630f0df58879ed8f9bb52d163a655dc36897496b81dd5bb3a"
+    "supplemental.cooldown.strength.1.3": {
+      "ms": 8719,
+      "sha256": "73291693e23dc6209971d3009014469d6a840cbff90d831806267713bfe621ad"
     },
-    "supplemental.general-cooldown.4": {
-      "ms": 10708,
-      "sha256": "062fe6d817827e2a0ce522b2d927ea89d24195266f61dc5be74a18adf64ed5c6"
+    "supplemental.cooldown.strength.1.4": {
+      "ms": 11325,
+      "sha256": "2fbe442322430246b8839ca02863a7ce79929b40885aa0a7058ac1ecbc036a10"
     },
-    "supplemental.general-cooldown.5": {
-      "ms": 4851,
-      "sha256": "bd64ac4c951a2de8eece972705bd594a7fdc3dacb4586beae91a5bea4cab810b"
+    "supplemental.cooldown.strength.1.5": {
+      "ms": 10592,
+      "sha256": "94f9cafdcfcfcb4a47fb60c233ca004f24df796a0b1ab24d89fba1536485d13c"
     },
-    "supplemental.general-cooldown.6": {
-      "ms": 6516,
-      "sha256": "5164b3495d9297f0e0ce665397061237facab956d1b3a82e0a7f900feb702d20"
+    "supplemental.cooldown.strength.1.6": {
+      "ms": 10123,
+      "sha256": "5651b499339777484d422cbd4bc9da27edc087f8dc3f0125d741bfd6524eadf3"
     },
-    "supplemental.general-cooldown.7": {
-      "ms": 4112,
-      "sha256": "3236049b50eed3cdec2ae4b553fc6c9a7b47cb451176a813e15c4f174df77112"
+    "supplemental.cooldown.strength.2.1": {
+      "ms": 11433,
+      "sha256": "01b2040703e1d162f613aaa190f6dde8b8f9bf48320ff69966b48ac1d6c16159"
     },
-    "supplemental.general-cooldown.8": {
-      "ms": 4604,
-      "sha256": "f4df93a50c2c1a40ee299cbf6cb314ee333d14d93f8ae1a5ac0bc36075dcff43"
+    "supplemental.cooldown.strength.2.2": {
+      "ms": 10064,
+      "sha256": "4bda138bc169100cd619d33679d64846f5519a6ed83ece339ba18a41d1b3d1ee"
     },
-    "supplemental.general-cooldown.9": {
-      "ms": 6808,
-      "sha256": "9f1a15f68088290a5a8af8824dee099f00a1c5aa18f4134dfe315cd26d10548c"
+    "supplemental.cooldown.strength.2.3": {
+      "ms": 10628,
+      "sha256": "9e3efa8490d9b9fb9ccca9d0bccfa748a6f508ce3e24dc92ecf8169fa969199d"
+    },
+    "supplemental.cooldown.strength.2.4": {
+      "ms": 10725,
+      "sha256": "92aca194156a49af8ca85d08f4b08784bc487d87aeac6deb53a1e1e81e7275c4"
+    },
+    "supplemental.cooldown.strength.2.5": {
+      "ms": 12243,
+      "sha256": "9c8274b66fa6063b2ea42190fc5757cedebcb3edf458d24eb67170862c0d9bbe"
+    },
+    "supplemental.cooldown.strength.2.6": {
+      "ms": 11921,
+      "sha256": "26b4a38b9675580f419d798e5a71147ebcb9c26b4441b452b0139b6025e47a65"
+    },
+    "supplemental.cooldown.strength.2.7": {
+      "ms": 11135,
+      "sha256": "7f3f417c66a1d4c8d609aa81db4cae28152d026371b7e1c3cc5dffc2d5a7a1ea"
+    },
+    "supplemental.cooldown.strength.3.1": {
+      "ms": 11591,
+      "sha256": "ca9339ba5cdfcfed4163efe7bbc2aa29f906ac35514c0f4c5e26033856ff28fb"
+    },
+    "supplemental.cooldown.strength.3.2": {
+      "ms": 10508,
+      "sha256": "20926a7003c5f68daf8c733380da8e9010a663040a6f48bb864d928fb3c5a643"
+    },
+    "supplemental.cooldown.strength.3.3": {
+      "ms": 11294,
+      "sha256": "fa243d9b2661ee4296d24d91f94a8acf5cc572fc6fbcc0c21cb1bb0531893e21"
+    },
+    "supplemental.cooldown.strength.3.4": {
+      "ms": 12791,
+      "sha256": "1af8d6838b6fc9b088349ff93dc263eb25b7d3e8821409c6546053f59e24f327"
+    },
+    "supplemental.cooldown.strength.3.5": {
+      "ms": 11639,
+      "sha256": "917fbaa150b24387c982b964a8cbc04c96fe97a2597778c61b9e68091dea6c1b"
+    },
+    "supplemental.cooldown.strength.3.6": {
+      "ms": 12951,
+      "sha256": "a599bdc00fe76a0c10e9fe86c33a76ca23bb064052dd0bb092cdb95f0d852e80"
+    },
+    "supplemental.cooldown.stretch.1": {
+      "ms": 9775,
+      "sha256": "3c7b145a0699b1737fcdc7ff21e2c2dc593a4b268f7980d5432691763e0ac08c"
+    },
+    "supplemental.cooldown.stretch.2": {
+      "ms": 9244,
+      "sha256": "dc37f72a42030ddc4ca0cdbdacdec903d4d578f03df4fce9fb0ab1585b34b5f9"
+    },
+    "supplemental.cooldown.stretch.3": {
+      "ms": 9748,
+      "sha256": "155031f15c8ff7b06ba657cc254ab1e5e6f88e5a0b3480bab7451de81ff245ac"
+    },
+    "supplemental.cooldown.stretch.4": {
+      "ms": 9530,
+      "sha256": "ba9dc9f866c27407bf80bc4a6e1078bd60e7d204308b499e1f43f0e55c662324"
+    },
+    "supplemental.cooldown.stretch.5": {
+      "ms": 9249,
+      "sha256": "80a4240ecb339e43e61e13e305b97ca1f5bd442afededc1b288b0a5304b725fa"
+    },
+    "supplemental.cooldown.stretch.6.1": {
+      "ms": 4639,
+      "sha256": "bff02849b3977b9fb386dc38bc73d8d7ca11675f102c8f6768a098931af01411"
+    },
+    "supplemental.cooldown.stretch.6.2": {
+      "ms": 5924,
+      "sha256": "8b3ce0b90ecb336f1ce9bbe5ce24a6fda275975b6a7f44fc9c2cf107ee8072f2"
+    },
+    "supplemental.cooldown.stretch.7": {
+      "ms": 8407,
+      "sha256": "3ce23c47d3e0a7f359f371da8153d6690e3eb28cb76e7135716a790b039ab5a2"
+    },
+    "supplemental.cooldown.stretch.8": {
+      "ms": 9765,
+      "sha256": "31bd0c8dd535ab5a98648e3df6cdf1952ecd6105105d1fcb5d801847a4285a04"
+    },
+    "supplemental.cooldown.stretch.9": {
+      "ms": 10340,
+      "sha256": "788ef4745b240f51b7f1f07c4b6428c354ea20dfc1e5ea2bf976d0ae700006e4"
+    },
+    "supplemental.cooldown.stretch.10": {
+      "ms": 11353,
+      "sha256": "51445ac7c542cdb3297de3e5f03d4ef905a6f5283be6dc319cf3a8c95bfe50fb"
+    },
+    "supplemental.cooldown.stretch.11": {
+      "ms": 13038,
+      "sha256": "d1cb11cc3be18240a48c2c8312e5225b57e48c4c7ac950c708ec66b67bca2b0b"
+    },
+    "supplemental.cooldown.stretch.12": {
+      "ms": 11247,
+      "sha256": "9fc77e65c2b7876056bd15f971b50a73760a009a068d96b4cd9bf25bf90e6d27"
+    },
+    "supplemental.cooldown.stretch.13": {
+      "ms": 12593,
+      "sha256": "6b84ee62da34d161794ab978f62671527969ff6f248e40d83f90f876c156079a"
+    },
+    "supplemental.cooldown.pnf": {
+      "ms": 4290,
+      "sha256": "46575afdb4b913459fc394ea1fc2839f1a1346d9f48390b09849ec3a9f1c0e57"
     }
   }
 }

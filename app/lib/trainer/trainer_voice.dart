@@ -33,7 +33,10 @@ Future<VoiceSource> loadTrainerVoiceSource({
   );
 }
 
-/// Use the authored Mandarin cue in these two plans while keeping the usual
+const flareCooldownPnfCue = '用三到四成力，发力五秒。';
+const _cooldownPnfKey = 'supplemental.cooldown.pnf';
+
+/// Use the authored Mandarin cue in these plans while keeping the usual
 /// common prompts, action names, playback controls and audio output.
 Future<VoiceSource> withSupplementalTrainerVoice(
   VoiceSource source,
@@ -52,20 +55,88 @@ Future<VoiceSource> withSupplementalTrainerVoice(
     },
   );
   final cues = <String, _SupplementalCue>{};
-  for (var index = 0; index < plan.items.length; index++) {
-    final item = plan.items[index];
-    final text = item.voiceCue;
-    final key = 'supplemental.${plan.id}.${index + 1}';
-    final ms = durations[key];
-    if (text == null || ms == null) continue;
-    cues[item.trainingDrillForScene('A')] = (
-      key: key,
-      text: text,
-      seconds: ms / 1000,
-      authoredName: item.displayName,
-    );
+  for (final (index, item) in plan.allItems.indexed) {
+    final key = item.voiceKey ?? 'supplemental.${plan.id}.${index + 1}';
+    if ((item.voiceCue, durations[key]) case (final text?, final ms?)) {
+      cues[item.trainingDrillForScene('A')] = (
+        key: key,
+        text: text,
+        seconds: ms / 1000,
+        authoredName: item.displayName,
+      );
+    }
+    if ((item.pnfTrainingIdForScene('A'), durations[_cooldownPnfKey]) case (
+      final exerciseId?,
+      final ms?,
+    )) {
+      cues[exerciseId] = (
+        key: _cooldownPnfKey,
+        text: flareCooldownPnfCue,
+        seconds: ms / 1000,
+        authoredName: item.displayName,
+      );
+    }
   }
   return _SupplementalVoiceSource(source, cues);
+}
+
+SessionScript buildCooldownTrainerScript(VoiceSource source, String language) =>
+    _CooldownSessionScript(source: source, lang: language);
+
+class _CooldownSessionScript extends SessionScript {
+  _CooldownSessionScript({required super.source, required super.lang});
+
+  @override
+  List<VoiceCue> cues(
+    SessionPhase p, {
+    required double planSeconds,
+    bool bySkip = false,
+  }) {
+    if (p.isWork &&
+        p.segmentId == 'pnf-press' &&
+        source.has(_cooldownPnfKey, lang: lang)) {
+      // A spoken countdown would interrupt the instruction in this 5s hold.
+      return const [
+        VoiceCue(
+          0,
+          ['chime.start', _cooldownPnfKey],
+          CuePriority.call,
+          subtitle: flareCooldownPnfCue,
+        ),
+      ];
+    }
+    final ordinary = super.cues(p, planSeconds: planSeconds, bySkip: bySkip);
+    final next = p.nextExerciseId;
+    if (next == null ||
+        (p.kind != PhaseKind.rest && p.kind != PhaseKind.roundRest)) {
+      return ordinary;
+    }
+    final key = source.drill(next, DrillLine.cue1);
+    if (key == null ||
+        !key.startsWith('supplemental.cooldown.strength.') ||
+        !source.has(key, lang: lang) ||
+        ordinary.any((cue) => cue.clips.contains(key))) {
+      return ordinary;
+    }
+    // Short strength holds may end before a full technique line fits. Use the
+    // preceding rest, leaving the final countdown and transition chimes intact.
+    final end = p.seconds - 3.8;
+    final start = end - len([key]);
+    if (start < .35) return ordinary;
+    return [
+      for (final cue in ordinary)
+        if (cue.at >= end || cue.at + len(cue.clips) <= start)
+          cue
+        else if (cue.chimes.isNotEmpty)
+          VoiceCue(cue.at, cue.chimes, cue.priority),
+      VoiceCue(
+        start,
+        [key],
+        CuePriority.coach,
+        subtitle: source.line(key, lang: lang),
+      ),
+    ]..sort((a, b) => a.at.compareTo(b.at));
+  }
 }
 
 typedef _SupplementalCue = ({

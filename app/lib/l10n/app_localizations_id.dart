@@ -1583,7 +1583,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get preWorkoutWarmup => 'Pemanasan';
 
   @override
-  String get postWorkoutStretch => 'Peregangan setelah latihan';
+  String get postWorkoutStretch => 'Setelah latihan';
 
   @override
   String preWorkoutWarmupPrompt(int minutes) {
@@ -1611,7 +1611,55 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get continuePostWorkoutStretch => 'Lanjutkan peregangan · 10 menit';
+  String get continuePostWorkoutStretch =>
+      'Lanjutkan rutinitas setelah latihan';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 tingkat · Berat badan';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Penguatan terarah';
+
+  @override
+  String get cooldownStretchHeading => 'B Peregangan seluruh tubuh';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Lewati penguatan dan langsung ke peregangan';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Lakukan 2–3 kali seminggu dengan jeda satu hari. Lewati penguatan jika hari ini sudah melatih tubuh bagian atas atau pergelangan tangan terasa nyeri.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds putaran';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds dtk antar latihan · $roundSeconds dtk antar putaran';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max dtk';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max repetisi';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps repetisi per posisi';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds dtk PNF';
+  }
 
   @override
   String bodyweightPlanMinutes(int minutes) {

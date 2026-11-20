@@ -242,9 +242,11 @@ class Catalog {
       .where((plan) => plan.kind == FlarePlanKind.warmup)
       .firstOrNull;
 
-  FlarePlan? get flareCooldownPlan => _flarePlans
-      .where((plan) => plan.kind == FlarePlanKind.cooldown)
-      .firstOrNull;
+  List<FlarePlan> get flareCooldownPlans => List.unmodifiable(
+    _flarePlans.where((plan) => plan.kind == FlarePlanKind.cooldown),
+  );
+
+  FlarePlan? get flareCooldownPlan => flareCooldownPlans.firstOrNull;
 
   ({int plans, int angles, int muscles, int tiers}) get flarePlanCounts => (
     plans: _flarePlans.where((plan) => !plan.isSupplemental).length,
@@ -502,7 +504,7 @@ class Catalog {
     final plans = <FlarePlan>[];
     final ids = <String>{};
     final tierSlots = <(Object, int)>{};
-    final supplementalKinds = <FlarePlanKind>{};
+    final supplementalSlots = <(FlarePlanKind, int)>{};
     for (final row in rows) {
       final plan = FlarePlan.fromJson(Map<String, dynamic>.from(row as Map));
       final validTarget = switch (plan.kind) {
@@ -511,7 +513,7 @@ class Catalog {
               plan.mirrors.every(phaseSources.contains),
         FlarePlanKind.muscle => groupIds.contains(plan.groupId),
         FlarePlanKind.warmup ||
-        FlarePlanKind.cooldown => supplementalKinds.add(plan.kind),
+        FlarePlanKind.cooldown => supplementalSlots.add((plan.kind, plan.tier)),
       };
       if (!validTarget ||
           !ids.add(plan.id) ||
