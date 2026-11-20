@@ -186,6 +186,42 @@
     "supplemental.cooldown.pnf": {
       "ms": 4290,
       "sha256": "46575afdb4b913459fc394ea1fc2839f1a1346d9f48390b09849ec3a9f1c0e57"
+    },
+    "supplemental.cooldown.stretch.2.short": {
+      "ms": 4337,
+      "sha256": "9f732e13b5b5a29ceb8cec78194767b2ee5d14b72ec18be9b1d74723ecb1562a"
+    },
+    "supplemental.cooldown.stretch.3.short": {
+      "ms": 4496,
+      "sha256": "e80521ccc045532802d5b750416e401a91e6f3900946e2b0e1d0d971e2f75fb3"
+    },
+    "supplemental.cooldown.stretch.4.short": {
+      "ms": 4493,
+      "sha256": "0514ffb880cf855db7b7a4d2682deeae9c62ad60968f997f0f9defb0f4828dda"
+    },
+    "supplemental.cooldown.stretch.5.short": {
+      "ms": 4493,
+      "sha256": "57209ca5967a8b161990ec6f10dcace619247e6cd532439515fe8cfbfb68e66d"
+    },
+    "supplemental.cooldown.stretch.7.short": {
+      "ms": 4494,
+      "sha256": "a261eceb8f4c8736bbfdf797035ced6e15a0289086bcf20154e8ed0b2122e59f"
+    },
+    "supplemental.cooldown.stretch.8.short": {
+      "ms": 4496,
+      "sha256": "cc0b321faaf567299dffaf34847cbfed852b5b19c2755527a818f6b52c46360a"
+    },
+    "supplemental.cooldown.stretch.10.short": {
+      "ms": 4496,
+      "sha256": "457dad78240461c5ec7ddc9e5abb419a56becf32dd885d6b9240defb0a8cebb3"
+    },
+    "supplemental.cooldown.stretch.11.short": {
+      "ms": 4499,
+      "sha256": "b58a5cd2f82971e8b66570231fb95e59d3a26a7e9bb16d9e9be337f02c76d4b1"
+    },
+    "supplemental.cooldown.stretch.13.short": {
+      "ms": 4035,
+      "sha256": "0fc602b579bc4e6ad38837c3ff50bc1c4785b9a511b050eda37e950032a36c60"
     }
   }
 }

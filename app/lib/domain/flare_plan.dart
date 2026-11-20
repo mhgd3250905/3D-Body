@@ -1,5 +1,7 @@
 enum FlarePlanKind { angle, muscle, warmup, cooldown }
 
+enum FlareStretchPosture { standing, kneeling, seated, supine }
+
 /// A curated plan with authored exercises and doses.
 class FlarePlan {
   FlarePlan._({
@@ -41,6 +43,13 @@ class FlarePlan {
     yield* strengtheningItems;
     yield* items;
   }
+
+  /// Use the SDK item ID so reposition times also work after resuming a
+  /// partial plan, where block and item indices may change.
+  Map<String, FlareStretchPosture> stretchPosturesForScene(String scene) => {
+    for (final item in items)
+      item.trainingDrillForScene(scene): ?item.posture,
+  };
 
   factory FlarePlan.fromJson(Map<String, dynamic> json) {
     final id = json['id'];
@@ -124,6 +133,7 @@ class FlarePlanItem {
     required this.dose,
     this.trainingDrill,
     this.secondaryStretchDrill,
+    this.posture,
     this.bodyweight,
     this.bodyweightDose,
     this.home,
@@ -142,6 +152,7 @@ class FlarePlanItem {
   /// Optional training identity when two movements share one demonstration.
   final String? trainingDrill;
   final String? secondaryStretchDrill;
+  final FlareStretchPosture? posture;
   final String? bodyweight;
   final FlarePlanDose? bodyweightDose;
   final String? home;
@@ -231,6 +242,15 @@ class FlarePlanItem {
       throw FormatException('Invalid placeholder demonstration: $drill');
     }
 
+    final posture = switch (json['posture']) {
+      null => null,
+      'standing' => FlareStretchPosture.standing,
+      'kneeling' => FlareStretchPosture.kneeling,
+      'seated' => FlareStretchPosture.seated,
+      'supine' => FlareStretchPosture.supine,
+      _ => throw FormatException('Invalid stretch posture: $drill'),
+    };
+
     final dose = FlarePlanDose._fromJson(json, drill);
     final secondary = optionalText('secondaryStretchDrill');
     if (secondary != null && (dose.seconds == null || dose.seconds! < 2)) {
@@ -244,6 +264,7 @@ class FlarePlanItem {
       dose: dose,
       trainingDrill: optionalText('trainingDrill'),
       secondaryStretchDrill: secondary,
+      posture: posture,
       bodyweight: optionalText('bodyweight'),
       bodyweightDose: override('bodyweightDose'),
       home: optionalText('home'),

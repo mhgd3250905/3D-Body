@@ -301,6 +301,12 @@ void main() {
       expect(authored.items, hasLength(tier == 3 ? 13 : 12));
       expect(authored.items.first.drill, 'o-stand-sidebend');
       expect(authored.items.any((item) => item.drill == 's-frog'), tier == 3);
+      expect(authored.items.map((item) => item.posture), [
+        ...List.filled(5, FlareStretchPosture.standing),
+        ...List.filled(tier == 3 ? 3 : 2, FlareStretchPosture.kneeling),
+        ...List.filled(3, FlareStretchPosture.seated),
+        ...List.filled(2, FlareStretchPosture.supine),
+      ]);
       expect(
         authored.allItems.map((item) => item.safetyNote),
         everyElement(isNotEmpty),
@@ -355,6 +361,7 @@ void main() {
 
       final builder = FlareCooldownSessionBuilder(
         strengtheningRestSeconds: reposition,
+        stretchPostures: authored.stretchPosturesForScene('A'),
         rhythms: rhythms,
         switchSecondsFor: (_, _, _) => 19,
       );
@@ -383,8 +390,8 @@ void main() {
         expect(
           timeline
               .where((phase) => phase.kind == sdk.PhaseKind.rest)
-              .map((phase) => (phase.seconds, phase.nextItem != null)),
-          everyElement((reposition, true)),
+              .map((phase) => phase.nextItem),
+          everyElement(isNotNull),
         );
       }
       final bFullTransitions = fullTimeline.where(
@@ -396,6 +403,46 @@ void main() {
         (phase) => phase.kind == sdk.PhaseKind.rest,
       );
       expect(bOnlyTransitions, hasLength(authored.items.length - 1));
+      final repositionByPosture = [
+        5,
+        5,
+        5,
+        5,
+        10,
+        5,
+        if (tier == 3) 5,
+        10,
+        5,
+        5,
+        10,
+        5,
+      ];
+      expect(bFullTransitions.map((phase) => phase.seconds), [
+        10,
+        ...repositionByPosture,
+      ]);
+      expect(
+        bOnlyTransitions.map((phase) => phase.seconds),
+        repositionByPosture,
+      );
+
+      // Resuming can remove earlier exercises and change every item index.
+      final partialBlock = stretchOnly.blocks.single;
+      final resumed = stretchOnly.copyWith(
+        blocks: [
+          uc.PlanBlock(
+            id: partialBlock.id,
+            name: partialBlock.name,
+            type: partialBlock.type,
+            items: [bItems[1], bItems[4], bItems[6], bItems.last],
+          ),
+        ],
+      );
+      final resumedTransitions = builder
+          .phases(resumed)
+          .where((phase) => phase.kind == sdk.PhaseKind.rest);
+      expect(resumedTransitions.map((phase) => phase.seconds), [5, 10, 10]);
+
       final wrist = bTimeline.where((phase) => phase.itemInBlock == 4);
       expect(
         wrist
@@ -474,8 +521,9 @@ void main() {
 
       final fullSeconds = builder.planSeconds(full);
       final stretchSecondsTotal = builder.planSeconds(stretchOnly);
-      expect(fullSeconds, [1533, 2470, 2267][index]);
-      expect(stretchSecondsTotal, [875, 1185, 1375][index]);
+      expect(fullSeconds, [1493, 2430, 2222][index]);
+      expect(stretchSecondsTotal, [835, 1145, 1330][index]);
+      expect(fullSeconds - stretchSecondsTotal - 10, [648, 1275, 882][index]);
       expect(full.targetMinutes, (fullSeconds / 60).ceil());
       expect(full.targetMinutes, authored.estimatedMinutes);
       expect(stretchOnly.targetMinutes, (stretchSecondsTotal / 60).ceil());

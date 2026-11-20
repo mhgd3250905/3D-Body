@@ -4,6 +4,7 @@ import 'package:ugk_trainer_runtime/engine.dart' as sdk;
 import '../data/catalog.dart';
 import '../domain/training_plan.dart';
 import '../domain/training_session.dart';
+import 'training_plan_adapter.dart';
 
 /// What the Plans page can truthfully show and, when identified, continue.
 /// The SDK owns work and result recording. A follow-up is a new SDK session
@@ -193,7 +194,15 @@ class FlarePlanResume {
           '${Uri.encodeComponent(_sessionId!)}',
       blocks: blocks,
     );
-    final seconds = sdk.SessionBuilder(rhythms: rhythms).planSeconds(followUp);
+    final authored = authoredPlan;
+    final builder = authored != null && authored.kind == FlarePlanKind.cooldown
+        ? FlareCooldownSessionBuilder(
+            strengtheningRestSeconds: authored.strengtheningRestSeconds,
+            stretchPostures: authored.stretchPosturesForScene(sceneTier ?? 'A'),
+            rhythms: rhythms,
+          )
+        : sdk.SessionBuilder(rhythms: rhythms);
+    final seconds = builder.planSeconds(followUp);
     return followUp.copyWith(
       targetMinutes: (seconds / 60).ceil().clamp(1, 1000000),
     );
