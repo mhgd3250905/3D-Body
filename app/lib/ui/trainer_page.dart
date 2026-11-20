@@ -14,6 +14,7 @@ import '../l10n/app_localizations.dart';
 import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
+import '../trainer/flare_demo_orientation.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
 import 'flare_v5_media.dart';
@@ -521,11 +522,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final stage = request.theme.mediaStage;
     final media = drill.media;
     final id = media?.actionId ?? drill.id;
+    final mirrored = flareDemoMirrored(id, request.mirrored);
     Widget poster(String asset) => sdk.TrainerPoster(
       asset: asset,
       bundle: experience?.bundle,
       decodeWidth: experience?.decodeWidth,
-      mirrored: request.mirrored,
+      mirrored: mirrored,
       radius: 0,
       stageColor: stage,
     );
@@ -538,7 +540,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               key: const ValueKey('flare-v5-training-media'),
               speed: widget.store.settings.speed,
               playing: !request.paused,
-              mirrored: request.mirrored,
+              mirrored: mirrored,
               fallback: poster(flareV5PosterAsset),
               background: stage,
             )
@@ -561,7 +563,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         prefetchWhenIdle: !_awaitingPreviewStart,
         playing: canPlay,
         paused: request.paused,
-        mirrored: request.mirrored,
+        mirrored: mirrored,
         radius: 0,
         stage: stage,
         playbackHandle: request.playbackHandle,
@@ -582,7 +584,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       key: const ValueKey('player-media'),
       media: media,
       paused: request.paused,
-      mirrored: request.mirrored,
+      mirrored: mirrored,
       radius: 0,
       stage: stage,
       errorLabel: request.strings.mediaUnavailable,
@@ -776,7 +778,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   doseLabel: _doseLabel,
                   mediaBuilder:
                       _previewStartGate != null ||
-                          data.plan.exerciseIds.contains(flareV5DrillId)
+                          data.plan.exerciseIds.any(
+                            (id) =>
+                                id == flareV5DrillId ||
+                                flareDemoOrientationOverrides.containsKey(
+                                  _mediaId(id),
+                                ),
+                          )
                       ? _media
                       : null,
                 ),

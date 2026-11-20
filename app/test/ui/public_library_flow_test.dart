@@ -237,7 +237,14 @@ void main() {
       expect(packIds, hasLength(249));
       expect(packIds, contains('n-thomas-test'));
       expect(scopedIds, hasLength(248));
-      expect(aiIds, unorderedEquals({...packIds, flareWarmupPushupId}));
+      expect(
+        aiIds,
+        unorderedEquals({
+          ...packIds,
+          flareWarmupPushupId,
+          ...flareSupplementalActionIds,
+        }),
+      );
       expect(
         policy.actionFor(flareWarmupPushupId)?.availableForTraining,
         isTrue,

@@ -4,6 +4,7 @@ import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_action_scope.dart';
 import 'package:flare/data/flare_public_catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
+import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,7 @@ void main() {
   late uc.PoseHubAppTestCatalog pack;
   late uc.Catalog source;
   late Map<String, sdk.Rhythm> rhythms;
+  late final activeCatalog = FlareShared.load(activeCatalog: pack);
   setUpAll(() async {
     catalog = await Catalog.load();
     pack = uc.PoseHubAppTestCatalog.fromBytes(
@@ -77,16 +79,77 @@ void main() {
     expect(localized.plansForMuscle('deltoids'), muscle);
   });
 
+  test('exact supplemental demos keep stable workout identities', () {
+    final warmup = catalog.flareWarmupPlan!;
+    expect(
+      warmup.items
+          .take(3)
+          .map(
+            (item) => (
+              item.drill,
+              item.trainingDrillForScene('A'),
+              item.usesPlaceholderDemo,
+            ),
+          ),
+      [
+        ('t-step-jack-arm-circles', 'h-step-jack', false),
+        ('t-neck-wrist-finger-wakeup', 'warmup-neck-wrist-fingers', false),
+        ('t-wide-side-squat-shift', 'n-squat-shift', false),
+      ],
+    );
+    expect(warmup.items[1].voiceCue, '下巴贴胸左右慢滚不仰头，再双手合掌画八字，最后用力张指弹开');
+    expect(warmup.items[7].drill, 'forearms-A');
+
+    final abduction = catalog.flareCooldownPlan!.strengtheningItems.last;
+    expect(
+      (
+        abduction.drill,
+        abduction.trainingDrillForScene('A'),
+        abduction.usesPlaceholderDemo,
+      ),
+      ('t-side-lying-straight-leg-abduction', 'w-clamshell', false),
+    );
+    for (final plan in catalog.flareCooldownPlans) {
+      final neck = plan.items.first;
+      expect(
+        (neck.drill, neck.trainingDrillForScene('A'), neck.usesPlaceholderDemo),
+        ('t-standing-neck-side-stretch', 'o-stand-sidebend', false),
+      );
+      final wrist = plan.items[4];
+      expect(wrist.trainingMediaIdsForScene('A'), {
+        'h-standing-wrist-extensor-stretch':
+            'h-standing-wrist-extensor-stretch',
+        'h-standing-wrist-extensor-stretch-secondary':
+            't-standing-wrist-flexor-stretch',
+      });
+      expect(wrist.usesPlaceholderDemo, isFalse);
+    }
+    final childPose = catalog.flareCooldownPlan!.items[5];
+    expect(
+      (childPose.drill, childPose.usesPlaceholderDemo),
+      ('h-dd-shoulder', true),
+    );
+  });
+
   test(
     'supplemental plans resolve in the player at their authored doses',
     () async {
-      final supplementary = await withFlareWarmupAction(pack);
+      final shared = await activeCatalog;
+      final supplementary = shared.pack;
       expect(pack.tryGet(flareWarmupPushupId), isNull);
-      expect(supplementary.allActions.map((a) => a.id), [
-        ...pack.allActions.map((a) => a.id),
-        flareWarmupPushupId,
-      ]);
-      expect(await withFlareWarmupAction(pack), same(supplementary));
+      expect(
+        supplementary.allActions.map((a) => a.id),
+        unorderedEquals([
+          ...pack.allActions.map((a) => a.id),
+          flareWarmupPushupId,
+          't-step-jack-arm-circles',
+          't-neck-wrist-finger-wakeup',
+          't-wide-side-squat-shift',
+          't-standing-neck-side-stretch',
+          't-standing-wrist-flexor-stretch',
+          't-side-lying-straight-leg-abduction',
+        ]),
+      );
 
       final pushup = supplementary.tryGet(flareWarmupPushupId)!;
       expect(flareAuthorizedActionIds, isNot(contains(pushup.id)));
@@ -102,11 +165,8 @@ void main() {
       final warmup = catalog.flareWarmupPlan!;
       expect((warmup.id, warmup.estimatedMinutes), ('general-warmup', 9));
 
-      final supplementalRhythms = flarePublicRhythms(supplementary);
-      final supplementalSource = flareCoachCatalogFromPublic(
-        supplementary,
-        rhythms: supplementalRhythms,
-      );
+      final supplementalRhythms = shared.rhythms;
+      final supplementalSource = shared.catalog;
       uc.TrainingPlan playablePlan(FlarePlan authored) {
         final plan = trainingPlanFromFlarePlan(
           plan: authored,
@@ -153,12 +213,7 @@ void main() {
         (flareWarmupPushupId, 10, null, false),
         ('rotator-cuff-A', 4, null, true),
       ]);
-      expect(
-        warmup.items
-            .where((item) => item.usesPlaceholderDemo)
-            .map((item) => item.drill),
-        ['h-step-jack', 'forearms-A', 'n-squat-shift'],
-      );
+      expect(warmup.items.any((item) => item.usesPlaceholderDemo), isFalse);
       expect(
         warmup.items[1].trainingDrillForScene('A'),
         'warmup-neck-wrist-fingers',
@@ -178,8 +233,15 @@ void main() {
       ).phases(warmupPlan);
       Iterable<sdk.SessionPhase> work(String id) =>
           timeline.where((phase) => phase.isWork && phase.exerciseId == id);
+      final stepJack = work('h-step-jack').single;
+      expect((stepJack.seconds, stepJack.reps), (60, null));
       final neck = work('warmup-neck-wrist-fingers').single;
       expect((neck.seconds, neck.segment), (45, null));
+      final squat = work('n-squat-shift').single;
+      expect(
+        (squat.seconds, squat.reps, squat.side, squat.rhythm?.pairFirstSide),
+        (41, 5, null, 'right'),
+      );
       expect(
         work('n-leg-circles').map(
           (phase) =>
@@ -216,12 +278,10 @@ void main() {
   );
 
   test('the SDK schedules every bundled warm-up Mandarin cue', () async {
-    final active = await withFlareWarmupAction(pack);
-    final activeRhythms = flarePublicRhythms(active);
-    final activeSource = flareCoachCatalogFromPublic(
-      active,
-      rhythms: activeRhythms,
-    );
+    final shared = await activeCatalog;
+    final active = shared.pack;
+    final activeRhythms = shared.rhythms;
+    final activeSource = shared.catalog;
     final baseVoice = await sdk.withPoseHubCatalogVoice(
       await loadTrainerVoiceSource(language: 'zh', leftFirst: false),
       catalog: active,
@@ -278,7 +338,8 @@ void main() {
     }
   });
 
-  test('cooldown tiers preserve circuit, stretch, safety and hold doses', () {
+  test('cooldown tiers preserve circuit and stretch doses', () async {
+    final shared = await activeCatalog;
     final plans = catalog.flareCooldownPlans;
     expect(plans.map((plan) => plan.id), [
       'general-cooldown',
@@ -299,7 +360,7 @@ void main() {
       expect(authored.strengtheningRoundRestSeconds, roundRest);
       expect(authored.strengtheningItems, hasLength([6, 7, 6][index]));
       expect(authored.items, hasLength(tier == 3 ? 13 : 12));
-      expect(authored.items.first.drill, 'o-stand-sidebend');
+      expect(authored.items.first.drill, 't-standing-neck-side-stretch');
       expect(authored.items.any((item) => item.drill == 's-frog'), tier == 3);
       expect(authored.items.map((item) => item.posture), [
         ...List.filled(5, FlareStretchPosture.standing),
@@ -312,14 +373,11 @@ void main() {
         everyElement(isNotEmpty),
       );
 
-      final full = training(authored, 'A');
-      final stretchOnly = trainingPlanFromFlarePlan(
-        plan: authored,
-        title: authored.id,
-        sceneTier: 'A',
-        catalog: catalog,
-        sourceCatalog: source,
-        rhythms: rhythms,
+      final full = shared.authoredPlan(authored, catalog, 'A');
+      final stretchOnly = shared.authoredPlan(
+        authored,
+        catalog,
+        'A',
         skipStrengthening: true,
       );
       expect(full.blocks.map((block) => block.type), [
@@ -342,7 +400,9 @@ void main() {
       };
       expect(full.exerciseIds.toSet(), playableIds.keys.toSet());
       expect(
-        playableIds.values.map((id) => pack.tryGet(id)?.availableForTraining),
+        playableIds.values.map(
+          (id) => shared.pack.tryGet(id)?.availableForTraining,
+        ),
         everyElement(isTrue),
       );
       final bItems = stretchOnly.items.toList();
@@ -362,7 +422,7 @@ void main() {
       final builder = FlareCooldownSessionBuilder(
         strengtheningRestSeconds: reposition,
         stretchPostures: authored.stretchPosturesForScene('A'),
-        rhythms: rhythms,
+        rhythms: shared.rhythms,
         switchSecondsFor: (_, _, _) => 19,
       );
       final fullTimeline = builder.phases(full);

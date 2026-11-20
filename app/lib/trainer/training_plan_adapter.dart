@@ -226,9 +226,8 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
     // whose catalog entries normally count reps.
     final usesTimedHold =
         workSeconds != null &&
-        id == mediaId &&
         (rhythms[id]?.counted == true ||
-            sourceCatalog[id]!.defaultDose.mode == uc.DoseMode.reps);
+            sourceCatalog[id]?.defaultDose.mode == uc.DoseMode.reps);
     final drill = catalog.drillById(id);
     final segmented = drill == null
         ? item

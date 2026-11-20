@@ -1,0 +1,4818 @@
+{
+  "sourcePackVersion": "r2-v21",
+  "sourceCatalogSha256": "1f3a339183a8f8f889f2a74c8996b7bb89dbabf543f197874af41602e15628e3",
+  "sourceCanonicalSha256": "cdf6521e9f391f44ea1d4f5c8662c62f9a1ba49d1745c554ed8a83c62ca02cb1",
+  "actions": [
+    {
+      "id": "t-step-jack-arm-circles",
+      "nameZh": "低冲击开合踏步+大绕环",
+      "muscleGroups": [
+        "deltoids",
+        "hip-abductors"
+      ],
+      "equipment": [],
+      "rhythm": {
+        "fps": 30,
+        "frames": 480,
+        "durationSeconds": 16,
+        "coverFrame": 270,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "hold",
+          "leadSeconds": 2,
+          "phases": "",
+          "source": null
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-step-jack-arm-circles.json",
+          "actionId": "t-step-jack-arm-circles",
+          "sha256": "5ace61c8a68b5943d3b9feb33453b553f9dd3f68d8255599f21a7b434b2d35d6"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-step-jack-arm-circles.js",
+          "sha256": "7e28e7d520b0a2183a697f636c485093c93ea1d97e4128ed2bbabf3a12362964"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-step-jack-arm-circles-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-step-jack-arm-circles",
+      "muscleGroupsZh": "三角肌、臀中肌 · 髋外展",
+      "equipmentZh": "",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-step-jack-arm-circles.json",
+            "sha256": "5ace61c8a68b5943d3b9feb33453b553f9dd3f68d8255599f21a7b434b2d35d6"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-step-jack-arm-circles.json",
+            "sha256": "a2ee77979abc618e937df7a4ff6dfefc51f6a34c1114ced3f60c5daa64e6c5e5"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-step-jack-arm-circles"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-step-jack-arm-circles"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "不跳的全身热身：脚左右踏开、双臂上举和大绕环，把心率和肩膀一起热起来",
+      "category": "cardio",
+      "muscles": [
+        "三角肌",
+        "臀中肌 · 髋外展"
+      ],
+      "position": "standing",
+      "unilateral": false,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 60,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          60,
+          60
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脚轮流往旁边踏开再收回，双臂伸直举过头",
+          "一只脚踏出时另一只脚始终踩在地上，不跳。",
+          "后半分钟手臂换成大绕环：手臂伸直，掌心朝外，绕得越大越好。",
+          "支撑腿膝盖微弯，身体站高，别弓背。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "肩膀有疼痛就把绕环改小"
+      ],
+      "contraindications": [
+        "肩"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-step-jack-arm-circles",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.rgb-alpha.mp4",
+          "bytes": 1047096,
+          "sha256": "1837f1bc13ece24afe8f6f991b278b43f9433223d382fcd4857f6635633332b8",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-step-jack-arm-circles.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.cover.alpha.webp",
+          "bytes": 14968,
+          "sha256": "fcea22de872f07e2687e036a5f5a21ff86529d5f9aaad484df0fef9cf47af3b8",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-step-jack-arm-circles.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.thumbnail.alpha.webp",
+          "bytes": 3858,
+          "sha256": "e896c0909cbac66757263e8c485f2ee90b1187828416a40c7b535a34f4085e19",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-step-jack-arm-circles.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-step-jack-arm-circles/r2-v21/t-step-jack-arm-circles.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-step-jack-arm-circles/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Step Jack with Arm Circles",
+      "purposeEn": "A no-jump full-body warm-up: step out side to side while the arms reach overhead and then circle, warming up your heart rate and shoulders.",
+      "activeMuscles": [
+        "deltoids",
+        "hip-abductors"
+      ],
+      "synergistMuscles": [
+        "calves",
+        "upper-back"
+      ],
+      "equipmentEn": [],
+      "cuesEn": [
+        "Step out and in, straight arms overhead",
+        "One foot always stays on the floor as the other steps out; no jumping.",
+        "For the second half, straight arms draw big circles, palms facing out.",
+        "Soft knee on the standing leg, stand tall, no hunching."
+      ],
+      "commonErrors": [
+        {
+          "zh": "变成跳跃",
+          "en": "Turning it into a jump."
+        },
+        {
+          "zh": "手肘弯着、绕环太小",
+          "en": "Bent elbows and small circles."
+        },
+        {
+          "zh": "耸肩缩脖子",
+          "en": "Shrugging the shoulders up to the ears."
+        }
+      ],
+      "cautionsEn": [
+        "If your shoulder hurts, make the circles smaller."
+      ],
+      "phases": {
+        "start": {
+          "zh": "脚踏开手上举",
+          "en": "Step out, arms up"
+        },
+        "peak": {
+          "zh": "双臂大绕环",
+          "en": "Big arm circles"
+        },
+        "end": {
+          "zh": "收回站好",
+          "en": "Feet together"
+        }
+      },
+      "training": {
+        "kind": "hold",
+        "leadSeconds": 2
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-step-jack-arm-circles.json",
+        "sha256": "a2ee77979abc618e937df7a4ff6dfefc51f6a34c1114ced3f60c5daa64e6c5e5",
+        "fingerprint": "sha256:a2ee77979abc618e937df7a4ff6dfefc51f6a34c1114ced3f60c5daa64e6c5e5"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-step-jack-arm-circles",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，热身 v2-1：低冲击开合踏步+大绕环 60 秒）",
+          "drill-anim/specs/t-step-jack-arm-circles.js",
+          "tools/flare2-moves-r2/standards/t-step-jack-arm-circles.md"
+        ],
+        "name": {
+          "zh": "低冲击开合踏步+大绕环",
+          "en": "Step Jack with Arm Circles"
+        },
+        "purpose": {
+          "zh": "不跳的全身热身：脚左右踏开、双臂上举和大绕环，把心率和肩膀一起热起来",
+          "en": "A no-jump full-body warm-up: step out side to side while the arms reach overhead and then circle, warming up your heart rate and shoulders."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "脚轮流往旁边踏开再收回，双臂伸直举过头",
+              "en": "Step out and in, straight arms overhead"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "一只脚踏出时另一只脚始终踩在地上，不跳。",
+              "en": "One foot always stays on the floor as the other steps out; no jumping."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "后半分钟手臂换成大绕环：手臂伸直，掌心朝外，绕得越大越好。",
+              "en": "For the second half, straight arms draw big circles, palms facing out."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "支撑腿膝盖微弯，身体站高，别弓背。",
+              "en": "Soft knee on the standing leg, stand tall, no hunching."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "变成跳跃",
+            "en": "Turning it into a jump."
+          },
+          {
+            "zh": "手肘弯着、绕环太小",
+            "en": "Bent elbows and small circles."
+          },
+          {
+            "zh": "耸肩缩脖子",
+            "en": "Shrugging the shoulders up to the ears."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "肩膀有疼痛就把绕环改小",
+            "en": "If your shoulder hurts, make the circles smaller."
+          }
+        ],
+        "tags": {
+          "category": "cardio",
+          "activeMuscles": [
+            "deltoids",
+            "hip-abductors"
+          ],
+          "synergistMuscles": [
+            "calves",
+            "upper-back"
+          ],
+          "equipment": [],
+          "position": "standing",
+          "difficulty": 1
+        },
+        "unilateral": false,
+        "defaultDose": {
+          "mode": "time",
+          "sets": 1,
+          "seconds": 60,
+          "restSeconds": 15
+        },
+        "phases": {
+          "start": {
+            "zh": "脚踏开手上举",
+            "en": "Step out, arms up"
+          },
+          "peak": {
+            "zh": "双臂大绕环",
+            "en": "Big arm circles"
+          },
+          "end": {
+            "zh": "收回站好",
+            "en": "Feet together"
+          }
+        },
+        "training": {
+          "kind": "hold",
+          "leadSeconds": 2
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "热身 v2-1：低冲击开合踏步+大绕环 60 秒",
+          "camera": "正前略偏右（看得到踏步宽度和手臂绕环）",
+          "doseBrief": "表：60 秒（前 30 秒上举，后 30 秒大绕环），1 组",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: one 16 s loop = 8 s step jack with arms overhead + 8 s step jack with backward arm circles (palms out); about 1 step per second, never airborne. Text/voice carry the 30 s switch.",
+          "standard": "tools/flare2-moves-r2/standards/t-step-jack-arm-circles.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-step-jack-arm-circles/voice-manifest.json",
+          "sha256": "d49ad9322d516cffb439dbc20b81988648642adb50668c85b928e30fe8c51296",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-step-jack-arm-circles/voice-guide-manifest.json",
+          "sha256": "ad4e6d0d93ebd3f169f70c2d941a67169094342737dfcc9d85622818d568e444",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/name.m4a",
+            "bytes": 21744,
+            "sha256": "108e99348789d754ea4905bf0ffd9dfd79e3d1e10409c40ed24cd5c5b45ebfbe",
+            "durationSeconds": 2.507755,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "低冲击开合踏步+大绕环"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/primaryCue.m4a",
+            "bytes": 34477,
+            "sha256": "1cddf337a8d60200d140b6d60a5a9506d4d217e2cbfef34e0b63c6e71b1dd553",
+            "durationSeconds": 4.063492,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "脚轮流往旁边踏开再收回，双臂伸直举过头"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/phase.start.m4a",
+            "bytes": 12109,
+            "sha256": "a293e1c34ce82173408ed7b797a637089515bb19911fadee37b0e7e82331127b",
+            "durationSeconds": 1.346757,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "脚踏开手上举"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/phase.peak.m4a",
+            "bytes": 11466,
+            "sha256": "f9ba71a1dc99da5d5936702a00d500db39c845ec7586d7eeaeac2f3b21e521bd",
+            "durationSeconds": 1.253878,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "双臂大绕环"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/phase.end.m4a",
+            "bytes": 9558,
+            "sha256": "7e3c64973145d4e3296165c05c3644baadb70cedb5b7a50414da11ebb7ac64c6",
+            "durationSeconds": 1.021678,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "收回站好"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.1.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.1.m4a",
+            "bytes": 23151,
+            "sha256": "d2fefb45823270505f669dac0c05e26b6c42829f00c41bf103334a9089ad42f8",
+            "durationSeconds": 2.693515,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "一只脚始终踩在地上，不用跳"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.2.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.2.m4a",
+            "bytes": 20612,
+            "sha256": "333e5be84f25c773748e8cc8ce7e8fbe52b9d4d6a0d1256459472eba0b01cc5a",
+            "durationSeconds": 2.368435,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "手臂伸直，往头顶上方够"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.3.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.3.m4a",
+            "bytes": 22106,
+            "sha256": "0683079072eb2a977d2313d8e0b89f7522b170d89ff8af1d57148868e0c8d55d",
+            "durationSeconds": 2.554195,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "支撑腿膝盖微弯，身体站高"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.4",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.4.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.4.m4a",
+            "bytes": 26750,
+            "sha256": "2d3f831570f562e16b4fcb48952a5a034b52317d761acfbfe044c1a2734dc534",
+            "durationSeconds": 3.134694,
+            "assetName": "g.set.4.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.4.m4a",
+            "contentType": "audio/mp4",
+            "text": "后半段手臂改成大绕环，掌心朝外"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.5",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.5.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.5.m4a",
+            "bytes": 19850,
+            "sha256": "cfc4bc10efdf1cf645ea513e7f13b689e52c4b1d5a13bc9873638380a1f5659c",
+            "durationSeconds": 2.298776,
+            "assetName": "g.set.5.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.5.m4a",
+            "contentType": "audio/mp4",
+            "text": "绕环画大一点，手肘别弯"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.6",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/zh/g.set.6.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/zh/g.set.6.m4a",
+            "bytes": 20459,
+            "sha256": "6d535652aaa05273e4134342a2acf50fa04d8e1d6e983bbfe56c1fb350ca2e4a",
+            "durationSeconds": 2.368435,
+            "assetName": "g.set.6.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/zh/g.set.6.m4a",
+            "contentType": "audio/mp4",
+            "text": "肩膀放松往下，别耸到耳朵"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/name.m4a",
+            "bytes": 14437,
+            "sha256": "72cf87ef7eb1488f26cf3e4e825ae5934fc41f8ad5f96be8ec00706ce340e779",
+            "durationSeconds": 1.625397,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Step Jack with Arm Circles"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/primaryCue.m4a",
+            "bytes": 18514,
+            "sha256": "aa2750eda78c3b0295efb2a095770a303d442da4950e2f84365f9a43033a29f1",
+            "durationSeconds": 2.113016,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Step out and in, straight arms overhead"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/phase.start.m4a",
+            "bytes": 12620,
+            "sha256": "129c4b309b7fb944c27226b653105303c815aeaae35ce322fa2ee383c454e447",
+            "durationSeconds": 1.393197,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Step out, arms up"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/phase.peak.m4a",
+            "bytes": 10254,
+            "sha256": "d251350ed9dd8c1ae9d3ebb22dadb4691a6397c29092ff963539cf1d679140a1",
+            "durationSeconds": 1.114558,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Big arm circles"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/phase.end.m4a",
+            "bytes": 8425,
+            "sha256": "01eee59fd2512421a2c9cb7328ae19f2508621dfeae65eff08f5b0ebda0eb46a",
+            "durationSeconds": 0.882358,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Feet together"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.1.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.1.m4a",
+            "bytes": 20212,
+            "sha256": "0e2228763b67d0d83844b3ec4734f584ab4f148c9290808b6594041038575fc7",
+            "durationSeconds": 2.321995,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "One foot always on the floor, no jumping"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.2.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.2.m4a",
+            "bytes": 16363,
+            "sha256": "632eefb574331b3ebcb1d97c10b1036c420b9ed00659b894f844341a02a48164",
+            "durationSeconds": 1.880816,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "Arms straight, reaching up overhead"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.3.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.3.m4a",
+            "bytes": 17696,
+            "sha256": "a791d483434cd8777f859416caa0d8cf590fcabb92787a7f145da5f2cbd55991",
+            "durationSeconds": 2.020136,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "Soft standing knee, stand tall"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.4",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.4.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.4.m4a",
+            "bytes": 27224,
+            "sha256": "1fc7ad0363987ddc193f10e4a5b24351aaf978df2c80af851159c594c621aecb",
+            "durationSeconds": 3.181134,
+            "assetName": "g.set.4.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.4.m4a",
+            "contentType": "audio/mp4",
+            "text": "Second half: big arm circles, palms facing out"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.5",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.5.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.5.m4a",
+            "bytes": 18144,
+            "sha256": "800f81d4fcc34f54bc612a63b8470137ebc653588625c50c0b466f0efc45a6fb",
+            "durationSeconds": 2.089796,
+            "assetName": "g.set.5.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.5.m4a",
+            "contentType": "audio/mp4",
+            "text": "Make the circles big, elbows straight"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.6",
+            "role": "guide",
+            "path": "voice/t-step-jack-arm-circles/r2-v21/en/g.set.6.m4a",
+            "sourcePath": "packages/t-step-jack-arm-circles/voice/en/g.set.6.m4a",
+            "bytes": 17761,
+            "sha256": "8fb494572965f138044108440fc892254e535c2e8167c2f24cf09f26a2d37539",
+            "durationSeconds": 2.020136,
+            "assetName": "g.set.6.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-step-jack-arm-circles/r2-v21/en/g.set.6.m4a",
+            "contentType": "audio/mp4",
+            "text": "Shoulders down, away from your ears"
+          }
+        ]
+      },
+      "status": "active",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "hold",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "set": [
+          {
+            "at": 0,
+            "key": "p.go"
+          },
+          {
+            "at": 3,
+            "role": "posture",
+            "zh": "一只脚始终踩在地上，不用跳",
+            "en": "One foot always on the floor, no jumping",
+            "from": [
+              "cue2",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.set.1"
+          },
+          {
+            "at": 12,
+            "role": "form",
+            "zh": "手臂伸直，往头顶上方够",
+            "en": "Arms straight, reaching up overhead",
+            "from": [
+              "cue1"
+            ],
+            "clipId": "g.set.2"
+          },
+          {
+            "at": 21,
+            "role": "form",
+            "zh": "支撑腿膝盖微弯，身体站高",
+            "en": "Soft standing knee, stand tall",
+            "from": [
+              "cue4"
+            ],
+            "clipId": "g.set.3"
+          },
+          {
+            "at": 30,
+            "role": "form",
+            "zh": "后半段手臂改成大绕环，掌心朝外",
+            "en": "Second half: big arm circles, palms facing out",
+            "from": [
+              "cue3"
+            ],
+            "clipId": "g.set.4"
+          },
+          {
+            "at": 39,
+            "role": "form",
+            "zh": "绕环画大一点，手肘别弯",
+            "en": "Make the circles big, elbows straight",
+            "from": [
+              "cue3",
+              "commonErrors[1]"
+            ],
+            "clipId": "g.set.5"
+          },
+          {
+            "at": 48,
+            "role": "form",
+            "zh": "肩膀放松往下，别耸到耳朵",
+            "en": "Shoulders down, away from your ears",
+            "from": [
+              "commonErrors[2]"
+            ],
+            "clipId": "g.set.6"
+          },
+          {
+            "at": 57,
+            "key": "n.3"
+          },
+          {
+            "at": 58,
+            "key": "n.2"
+          },
+          {
+            "at": 59,
+            "key": "n.1"
+          }
+        ],
+        "afterSet": {
+          "moreSets": [
+            "p.release",
+            "p.rest",
+            "sec.15"
+          ],
+          "allDone": [
+            "p.release",
+            "p.nice"
+          ]
+        }
+      }
+    },
+    {
+      "id": "t-neck-wrist-finger-wakeup",
+      "nameZh": "站姿颈腕指唤醒",
+      "muscleGroups": [
+        "neck",
+        "forearms"
+      ],
+      "equipment": [],
+      "rhythm": {
+        "fps": 30,
+        "frames": 630,
+        "durationSeconds": 21,
+        "coverFrame": 534,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "hold",
+          "leadSeconds": 2,
+          "phases": "",
+          "source": null
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-neck-wrist-finger-wakeup.json",
+          "actionId": "t-neck-wrist-finger-wakeup",
+          "sha256": "7f8b1f59bfff5b2517a42fa0eccd30afd484adcffec2b8295b1418e84a4acaeb"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-neck-wrist-finger-wakeup.js",
+          "sha256": "f7c8e83652480c7a14af6825aa8874e4f4696c077423babb3f153e2d5d975c14"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-neck-wrist-finger-wakeup-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-neck-wrist-finger-wakeup",
+      "muscleGroupsZh": "颈部、前臂 · 腕屈伸肌",
+      "equipmentZh": "",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-neck-wrist-finger-wakeup.json",
+            "sha256": "7f8b1f59bfff5b2517a42fa0eccd30afd484adcffec2b8295b1418e84a4acaeb"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-neck-wrist-finger-wakeup.json",
+            "sha256": "b25e1eda95f58b078eea56df60b9a9ad98de6f80727c8f8def3480cd7bf86c80"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-neck-wrist-finger-wakeup"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-neck-wrist-finger-wakeup"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "撑地和地板动作前，把脖子、手腕和手指轻轻活动开",
+      "category": "mobility",
+      "muscles": [
+        "颈部",
+        "前臂 · 腕屈伸肌"
+      ],
+      "position": "standing",
+      "unilateral": false,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 45,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          45,
+          45
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脖子半圈慢绕，只在前面绕，不往后仰",
+          "耳朵朝右肩，下巴经过胸口，再到左肩，来回慢慢绕。",
+          "双手在胸前合掌，手腕带着手画横着的 8 字。",
+          "双臂前伸，用力握拳再把手指张到最大，重复几次。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "脖子发麻、头晕或疼就停下"
+      ],
+      "contraindications": [
+        "颈"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-neck-wrist-finger-wakeup",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.rgb-alpha.mp4",
+          "bytes": 330124,
+          "sha256": "49d784fd5a9a5fe699b225d7b64ae02d8ab912dac51f27c4eff7e8bcdc991968",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-neck-wrist-finger-wakeup.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.cover.alpha.webp",
+          "bytes": 16858,
+          "sha256": "07bb55d072e60088a986555ac328d1e1c2676dd8c5859f65d0a65ba54db51cbb",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-neck-wrist-finger-wakeup.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.thumbnail.alpha.webp",
+          "bytes": 4298,
+          "sha256": "4cd787dc6f1e298acfa0ef8a54bf4c61aa2539b01040b30b5309d292af0a213b",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-neck-wrist-finger-wakeup.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-neck-wrist-finger-wakeup/r2-v21/t-neck-wrist-finger-wakeup.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-neck-wrist-finger-wakeup/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Standing Neck, Wrist & Finger Wake-Up",
+      "purposeEn": "Gently wakes up your neck, wrists and fingers before floor and hand-support work.",
+      "activeMuscles": [
+        "neck",
+        "forearms"
+      ],
+      "synergistMuscles": [
+        "upper-back"
+      ],
+      "equipmentEn": [],
+      "cuesEn": [
+        "Slow half circles in front, never tip back",
+        "Ear toward the right shoulder, chin past the chest, to the left shoulder, and back, slowly.",
+        "Press your palms together in front of your chest and let the wrists draw a sideways figure eight.",
+        "Arms forward, make a tight fist, then spread your fingers wide; repeat a few times."
+      ],
+      "commonErrors": [
+        {
+          "zh": "头往后仰",
+          "en": "Tipping the head back."
+        },
+        {
+          "zh": "绕得太快太猛",
+          "en": "Rolling the neck fast or hard."
+        },
+        {
+          "zh": "耸肩",
+          "en": "Shrugging the shoulders."
+        }
+      ],
+      "cautionsEn": [
+        "Stop if your neck tingles, hurts, or you feel dizzy."
+      ],
+      "phases": {
+        "start": {
+          "zh": "脖子慢绕",
+          "en": "Slow neck rolls"
+        },
+        "peak": {
+          "zh": "合掌绕腕",
+          "en": "Palms-together wrist eights"
+        },
+        "end": {
+          "zh": "握拳张指",
+          "en": "Fist and spread"
+        }
+      },
+      "training": {
+        "kind": "hold",
+        "leadSeconds": 2
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-neck-wrist-finger-wakeup.json",
+        "sha256": "b25e1eda95f58b078eea56df60b9a9ad98de6f80727c8f8def3480cd7bf86c80",
+        "fingerprint": "sha256:b25e1eda95f58b078eea56df60b9a9ad98de6f80727c8f8def3480cd7bf86c80"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-neck-wrist-finger-wakeup",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，热身 v2-2：站姿颈-腕-指唤醒 45 秒（表：十指交扣腕绕 8 字；动画改合掌））",
+          "drill-anim/specs/t-neck-wrist-finger-wakeup.js",
+          "tools/flare2-moves-r2/standards/t-neck-wrist-finger-wakeup.md"
+        ],
+        "name": {
+          "zh": "站姿颈腕指唤醒",
+          "en": "Standing Neck, Wrist & Finger Wake-Up"
+        },
+        "purpose": {
+          "zh": "撑地和地板动作前，把脖子、手腕和手指轻轻活动开",
+          "en": "Gently wakes up your neck, wrists and fingers before floor and hand-support work."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "脖子半圈慢绕，只在前面绕，不往后仰",
+              "en": "Slow half circles in front, never tip back"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "耳朵朝右肩，下巴经过胸口，再到左肩，来回慢慢绕。",
+              "en": "Ear toward the right shoulder, chin past the chest, to the left shoulder, and back, slowly."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "双手在胸前合掌，手腕带着手画横着的 8 字。",
+              "en": "Press your palms together in front of your chest and let the wrists draw a sideways figure eight."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "双臂前伸，用力握拳再把手指张到最大，重复几次。",
+              "en": "Arms forward, make a tight fist, then spread your fingers wide; repeat a few times."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "头往后仰",
+            "en": "Tipping the head back."
+          },
+          {
+            "zh": "绕得太快太猛",
+            "en": "Rolling the neck fast or hard."
+          },
+          {
+            "zh": "耸肩",
+            "en": "Shrugging the shoulders."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "脖子发麻、头晕或疼就停下",
+            "en": "Stop if your neck tingles, hurts, or you feel dizzy."
+          }
+        ],
+        "tags": {
+          "category": "mobility",
+          "activeMuscles": [
+            "neck",
+            "forearms"
+          ],
+          "synergistMuscles": [
+            "upper-back"
+          ],
+          "equipment": [],
+          "position": "standing",
+          "difficulty": 1
+        },
+        "unilateral": false,
+        "defaultDose": {
+          "mode": "time",
+          "sets": 1,
+          "seconds": 45,
+          "restSeconds": 15
+        },
+        "phases": {
+          "start": {
+            "zh": "脖子慢绕",
+            "en": "Slow neck rolls"
+          },
+          "peak": {
+            "zh": "合掌绕腕",
+            "en": "Palms-together wrist eights"
+          },
+          "end": {
+            "zh": "握拳张指",
+            "en": "Fist and spread"
+          }
+        },
+        "training": {
+          "kind": "hold",
+          "leadSeconds": 2
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "热身 v2-2：站姿颈-腕-指唤醒 45 秒（表：十指交扣腕绕 8 字；动画改合掌）",
+          "camera": "正前略偏右（看得到头部绕环和手部）",
+          "doseBrief": "表：45 秒，1 组",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: one 21 s loop = neck half rolls (no extension) 0-6.6 s, palms-together wrist figure-8 6.6-14.6 s (r2 fallback from the brief interlaced fingers, which read as crossed wrists in the sandbox close-ups), fist / spread x3 14.6-21 s. Head and finger motion are V5-only (v5r2-ext.js).",
+          "standard": "tools/flare2-moves-r2/standards/t-neck-wrist-finger-wakeup.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-neck-wrist-finger-wakeup/voice-manifest.json",
+          "sha256": "0e5f3b51727a0391e97f448d90f4283c9efe0861960b282e5579ff3cae0b88cf",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-neck-wrist-finger-wakeup/voice-guide-manifest.json",
+          "sha256": "7a65a26cd46692c035da7fed52896750074acce1d2cffafef3a04aa1a9a8403f",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/name.m4a",
+            "bytes": 13495,
+            "sha256": "acb74453bf8f291fc566fdbe922ffdb2f44bbfc86d4df6388b5ef341d2cbd05b",
+            "durationSeconds": 1.509297,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "站姿颈腕指唤醒"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/primaryCue.m4a",
+            "bytes": 28888,
+            "sha256": "8442ae548d9664a35ea84939bfa7c18b75c2a4eea95412969741e525c13650fa",
+            "durationSeconds": 3.390113,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "脖子半圈慢绕，只在前面绕，不往后仰"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/phase.start.m4a",
+            "bytes": 8212,
+            "sha256": "a79c37e4b1849bff1b430fc9cac21c4439ccdf8ebe23d1b2b3fa0aa8154f8262",
+            "durationSeconds": 0.882358,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "脖子慢绕"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/phase.peak.m4a",
+            "bytes": 8948,
+            "sha256": "761b1a6e6ad9218e3b9e05d9a5819e01335ca46d3e60005b30672c63009e06cd",
+            "durationSeconds": 0.952018,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "合掌绕腕"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/phase.end.m4a",
+            "bytes": 9263,
+            "sha256": "2369eaa941dcc7f6a0e3f5671d54f80a66fcf0a8c6d7a7c3aef8f9ec388c1bf4",
+            "durationSeconds": 0.998458,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "握拳张指"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.1.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/g.set.1.m4a",
+            "bytes": 22879,
+            "sha256": "3663d09e49851db9eb64fec53f28d83ad893a896b03d77f15abcedda2c726e90",
+            "durationSeconds": 2.670295,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "脖子只在前面半圈绕，不往后仰"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.2.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/g.set.2.m4a",
+            "bytes": 20594,
+            "sha256": "889ca8a109b5e5eb3c949442df6196482cfb95222e3553b597cb37648aee7474",
+            "durationSeconds": 2.368435,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "耳朵找肩膀，下巴经过胸口"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.3.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/g.set.3.m4a",
+            "bytes": 23168,
+            "sha256": "16c62b9325b224057fe65a203f4601cb8b91b7f1c53f3ac4a67269112bded127",
+            "durationSeconds": 2.693515,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "双手合掌，手腕画横着的 8 字"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.4",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.4.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/g.set.4.m4a",
+            "bytes": 26392,
+            "sha256": "0b300423958f630d92b35e63b544e3fe77fcb3cfd27bf83b9e73a50fbfaa1617",
+            "durationSeconds": 3.111474,
+            "assetName": "g.set.4.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.4.m4a",
+            "contentType": "audio/mp4",
+            "text": "握拳握紧，张开时手指撑到最大"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.5",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.5.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/zh/g.set.5.m4a",
+            "bytes": 19020,
+            "sha256": "a9145f9bc3985f201d9d19fcde4387a67e7e32a81ea9c94ba936646d2c55ab84",
+            "durationSeconds": 2.182676,
+            "assetName": "g.set.5.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/zh/g.set.5.m4a",
+            "contentType": "audio/mp4",
+            "text": "肩膀放松往下，别耸起来"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/name.m4a",
+            "bytes": 19907,
+            "sha256": "416e2d8c6b4549d6cc59396ce3e1d84b3184d44064c3773df3cd2afc1025b641",
+            "durationSeconds": 2.298776,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Standing Neck, Wrist & Finger Wake-Up"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/primaryCue.m4a",
+            "bytes": 22205,
+            "sha256": "db95b55afdf6636eb842573dccaea6e5f0b3673ee69fe4df55f6a495c0fa9d5e",
+            "durationSeconds": 2.577415,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Slow half circles in front, never tip back"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/phase.start.m4a",
+            "bytes": 10351,
+            "sha256": "fc66b666d07aa8b777a272883076170ed79f368765ef7b53facfad3e7d66f0a6",
+            "durationSeconds": 1.114558,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Slow neck rolls"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/phase.peak.m4a",
+            "bytes": 13009,
+            "sha256": "f26b4d92c957b17e279da4f5e1c36c1fbb140a3a23390aa2146b590cf2899b58",
+            "durationSeconds": 1.439637,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Palms-together wrist eights"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/phase.end.m4a",
+            "bytes": 9693,
+            "sha256": "2b28cea1c1a0126104ea5c47018c25bcdae8b5e81b2d33b88ba1592f83997a7b",
+            "durationSeconds": 1.044898,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Fist and spread"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.1.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/g.set.1.m4a",
+            "bytes": 21508,
+            "sha256": "cdbb8c70590302fec5edb2ec6d27b76acdba80748d0a16133b962ab323dd308c",
+            "durationSeconds": 2.484535,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "Half circles in front only, never tip back"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.2.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/g.set.2.m4a",
+            "bytes": 19314,
+            "sha256": "199d1239f62f652c2c532ed460737fd08090d6929d05ef260b4404df969dd26f",
+            "durationSeconds": 2.229116,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "Ear to shoulder, chin past the chest"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.3.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/g.set.3.m4a",
+            "bytes": 22372,
+            "sha256": "eff7406373de562a858f26d07d060eba1cf3aec87f71a07efe292763fcdd6027",
+            "durationSeconds": 2.554195,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "Palms together, wrists draw a sideways eight"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.4",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.4.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/g.set.4.m4a",
+            "bytes": 20306,
+            "sha256": "bc1b5d6b54b9f026708cc780115b995be6b9c158d3550b8941bd8d91e0701c42",
+            "durationSeconds": 2.345215,
+            "assetName": "g.set.4.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.4.m4a",
+            "contentType": "audio/mp4",
+            "text": "Tight fist, fingers spread wide after"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.5",
+            "role": "guide",
+            "path": "voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.5.m4a",
+            "sourcePath": "packages/t-neck-wrist-finger-wakeup/voice/en/g.set.5.m4a",
+            "bytes": 13928,
+            "sha256": "bb0a73af67c57bf33926bdb8f33dbbe3722376386a7027a5a863906a9881544e",
+            "durationSeconds": 1.555737,
+            "assetName": "g.set.5.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-neck-wrist-finger-wakeup/r2-v21/en/g.set.5.m4a",
+            "contentType": "audio/mp4",
+            "text": "Shoulders relaxed and down"
+          }
+        ]
+      },
+      "status": "active",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "hold",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "set": [
+          {
+            "at": 0,
+            "key": "p.go"
+          },
+          {
+            "at": 3,
+            "role": "posture",
+            "zh": "脖子只在前面半圈绕，不往后仰",
+            "en": "Half circles in front only, never tip back",
+            "from": [
+              "cue1",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.set.1"
+          },
+          {
+            "at": 11,
+            "role": "form",
+            "zh": "耳朵找肩膀，下巴经过胸口",
+            "en": "Ear to shoulder, chin past the chest",
+            "from": [
+              "cue2"
+            ],
+            "clipId": "g.set.2"
+          },
+          {
+            "at": 19,
+            "role": "form",
+            "zh": "双手合掌，手腕画横着的 8 字",
+            "en": "Palms together, wrists draw a sideways eight",
+            "from": [
+              "cue3"
+            ],
+            "clipId": "g.set.3"
+          },
+          {
+            "at": 28,
+            "role": "form",
+            "zh": "握拳握紧，张开时手指撑到最大",
+            "en": "Tight fist, fingers spread wide after",
+            "from": [
+              "cue4"
+            ],
+            "clipId": "g.set.4"
+          },
+          {
+            "at": 36,
+            "role": "form",
+            "zh": "肩膀放松往下，别耸起来",
+            "en": "Shoulders relaxed and down",
+            "from": [
+              "commonErrors[2]"
+            ],
+            "clipId": "g.set.5"
+          },
+          {
+            "at": 42,
+            "key": "n.3"
+          },
+          {
+            "at": 43,
+            "key": "n.2"
+          },
+          {
+            "at": 44,
+            "key": "n.1"
+          }
+        ],
+        "afterSet": {
+          "moreSets": [
+            "p.release",
+            "p.rest",
+            "sec.15"
+          ],
+          "allDone": [
+            "p.release",
+            "p.nice"
+          ]
+        }
+      }
+    },
+    {
+      "id": "t-wide-side-squat-shift",
+      "nameZh": "宽距侧蹲左右移重心",
+      "muscleGroups": [
+        "adductors",
+        "quadriceps",
+        "glute-max"
+      ],
+      "equipment": [],
+      "rhythm": {
+        "fps": 30,
+        "frames": 240,
+        "durationSeconds": 8,
+        "coverFrame": 178,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "rep_alternate",
+          "leadSeconds": 2,
+          "phases": "go=1.3s; hold=0.7s; back=1.3s; rest=0.7s",
+          "source": "flare2 r2 animation tempo (4 s per side: 1.3 s down, 0.7 s bottom, 1.3 s up, 0.7 s stand); 表：每侧 5 次，左右各一次计 1 次",
+          "reps": 5,
+          "perSide": "alternate",
+          "repUnit": "left+right",
+          "startingSide": "right"
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-wide-side-squat-shift.json",
+          "actionId": "t-wide-side-squat-shift",
+          "sha256": "73e47809f13c69618399b8ac06125231dbe7e560f2a445650b4b02f698701a2c"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-wide-side-squat-shift.js",
+          "sha256": "78758b5a494a45aac9280764210f30a8fd2f87ec8029aea4ac64b22f566d145c"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-wide-side-squat-shift-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-wide-side-squat-shift",
+      "muscleGroupsZh": "内收肌群、股四头肌、臀大肌",
+      "equipmentZh": "",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-wide-side-squat-shift.json",
+            "sha256": "73e47809f13c69618399b8ac06125231dbe7e560f2a445650b4b02f698701a2c"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-wide-side-squat-shift.json",
+            "sha256": "bcce7de251143c1a8849b19b14c16de164204085ff0341673acb6b28a074ea81"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-wide-side-squat-shift"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-wide-side-squat-shift"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "打开大腿内侧和髋，左右移重心，为腿部动作热身",
+      "category": "mobility",
+      "muscles": [
+        "内收肌群",
+        "股四头肌",
+        "臀大肌"
+      ],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "reps",
+        "sets": 1,
+        "reps": 5,
+        "restSeconds": 30
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          5,
+          5
+        ],
+        "restSeconds": [
+          30,
+          30
+        ]
+      },
+      "cues": {
+        "zh": [
+          "两脚宽站脚尖外转，蹲到大腿接近水平",
+          "站距约两倍肩宽，脚尖朝外大约 20 度。",
+          "伸直那条腿膝盖伸直，脚尖朝上，脚跟着地。",
+          "胸口抬起，双手前伸帮助平衡，蹲那侧脚跟踩实。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "膝盖或大腿内侧疼就蹲浅一点"
+      ],
+      "contraindications": [
+        "膝",
+        "大腿内侧"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-wide-side-squat-shift",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.rgb-alpha.mp4",
+          "bytes": 309681,
+          "sha256": "c63dfc8b889163179538f4756edb57301f499e922d3f90fb1fabbcf82ab18b38",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-wide-side-squat-shift.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.cover.alpha.webp",
+          "bytes": 17040,
+          "sha256": "c0abdd3a7a646d453eba266b2a242e647f51e084cbc222c076c418f1a7b253e6",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-wide-side-squat-shift.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.thumbnail.alpha.webp",
+          "bytes": 4456,
+          "sha256": "2612ddeb5d3e5a6b9c679c7264f3063a312d400e761aebbccaa0f9d922627ad8",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-wide-side-squat-shift.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-wide-side-squat-shift/r2-v21/t-wide-side-squat-shift.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-wide-side-squat-shift/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Wide Side Squat Shift",
+      "purposeEn": "Opens the inner thighs and hips as you shift side to side, warming up for leg work.",
+      "activeMuscles": [
+        "adductors",
+        "quadriceps",
+        "glutes"
+      ],
+      "synergistMuscles": [
+        "hamstrings"
+      ],
+      "equipmentEn": [],
+      "cuesEn": [
+        "Wide stance, toes out, thigh about level",
+        "Feet about twice shoulder width, toes turned out about 20 degrees.",
+        "The straight leg stays straight, toes up, heel on the floor.",
+        "Chest up, arms forward for balance, heel of the bending leg flat."
+      ],
+      "commonErrors": [
+        {
+          "zh": "蹲那侧脚跟抬起",
+          "en": "Lifting the heel of the bending leg."
+        },
+        {
+          "zh": "上身往前塌",
+          "en": "Collapsing the chest forward."
+        },
+        {
+          "zh": "膝盖往里扣",
+          "en": "Knee caving inward."
+        }
+      ],
+      "cautionsEn": [
+        "If your knee or inner thigh hurts, go shallower."
+      ],
+      "phases": {
+        "start": {
+          "zh": "重心移到一侧",
+          "en": "Shift to one side"
+        },
+        "peak": {
+          "zh": "大腿接近水平",
+          "en": "Thigh about level"
+        },
+        "end": {
+          "zh": "站回中间",
+          "en": "Back to the middle"
+        }
+      },
+      "training": {
+        "kind": "rep_alternate",
+        "leadSeconds": 2,
+        "phases": [
+          {
+            "id": "go",
+            "seconds": 1.3
+          },
+          {
+            "id": "hold",
+            "seconds": 0.7
+          },
+          {
+            "id": "back",
+            "seconds": 1.3
+          },
+          {
+            "id": "rest",
+            "seconds": 0.7
+          }
+        ],
+        "perSide": "alternate",
+        "repUnit": "left+right",
+        "source": "flare2 r2 animation tempo (4 s per side: 1.3 s down, 0.7 s bottom, 1.3 s up, 0.7 s stand); 表：每侧 5 次，左右各一次计 1 次"
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-wide-side-squat-shift.json",
+        "sha256": "bcce7de251143c1a8849b19b14c16de164204085ff0341673acb6b28a074ea81",
+        "fingerprint": "sha256:bcce7de251143c1a8849b19b14c16de164204085ff0341673acb6b28a074ea81"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-wide-side-squat-shift",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，热身 v2-3：宽距侧蹲左右移重心 每侧 5 次）",
+          "drill-anim/specs/t-wide-side-squat-shift.js",
+          "tools/flare2-moves-r2/standards/t-wide-side-squat-shift.md"
+        ],
+        "name": {
+          "zh": "宽距侧蹲左右移重心",
+          "en": "Wide Side Squat Shift"
+        },
+        "purpose": {
+          "zh": "打开大腿内侧和髋，左右移重心，为腿部动作热身",
+          "en": "Opens the inner thighs and hips as you shift side to side, warming up for leg work."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "两脚宽站脚尖外转，蹲到大腿接近水平",
+              "en": "Wide stance, toes out, thigh about level"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "站距约两倍肩宽，脚尖朝外大约 20 度。",
+              "en": "Feet about twice shoulder width, toes turned out about 20 degrees."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "伸直那条腿膝盖伸直，脚尖朝上，脚跟着地。",
+              "en": "The straight leg stays straight, toes up, heel on the floor."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "胸口抬起，双手前伸帮助平衡，蹲那侧脚跟踩实。",
+              "en": "Chest up, arms forward for balance, heel of the bending leg flat."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "蹲那侧脚跟抬起",
+            "en": "Lifting the heel of the bending leg."
+          },
+          {
+            "zh": "上身往前塌",
+            "en": "Collapsing the chest forward."
+          },
+          {
+            "zh": "膝盖往里扣",
+            "en": "Knee caving inward."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "膝盖或大腿内侧疼就蹲浅一点",
+            "en": "If your knee or inner thigh hurts, go shallower."
+          }
+        ],
+        "tags": {
+          "category": "mobility",
+          "activeMuscles": [
+            "adductors",
+            "quadriceps",
+            "glutes"
+          ],
+          "synergistMuscles": [
+            "hamstrings"
+          ],
+          "equipment": [],
+          "position": "standing",
+          "difficulty": 1
+        },
+        "unilateral": true,
+        "startingSide": "right",
+        "defaultDose": {
+          "mode": "reps",
+          "sets": 1,
+          "reps": 5,
+          "restSeconds": 30
+        },
+        "phases": {
+          "start": {
+            "zh": "重心移到一侧",
+            "en": "Shift to one side"
+          },
+          "peak": {
+            "zh": "大腿接近水平",
+            "en": "Thigh about level"
+          },
+          "end": {
+            "zh": "站回中间",
+            "en": "Back to the middle"
+          }
+        },
+        "training": {
+          "kind": "rep_alternate",
+          "leadSeconds": 2,
+          "phases": [
+            {
+              "id": "go",
+              "seconds": 1.3
+            },
+            {
+              "id": "hold",
+              "seconds": 0.7
+            },
+            {
+              "id": "back",
+              "seconds": 1.3
+            },
+            {
+              "id": "rest",
+              "seconds": 0.7
+            }
+          ],
+          "perSide": "alternate",
+          "repUnit": "left+right",
+          "source": "flare2 r2 animation tempo (4 s per side: 1.3 s down, 0.7 s bottom, 1.3 s up, 0.7 s stand); 表：每侧 5 次，左右各一次计 1 次"
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "热身 v2-3：宽距侧蹲左右移重心 每侧 5 次",
+          "camera": "正前略高（看得到站距、脚尖方向和蹲深）",
+          "doseBrief": "表：每侧 5 次，左右交替",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: ankles 72 cm apart (1.9x shoulder width), toes out 20 deg, bending thigh ~20 deg below horizontal at the bottom, straight knee >=174 deg with toes up 40 deg, feet stay planted (pins 0 mm). Right side first in the loop.",
+          "standard": "tools/flare2-moves-r2/standards/t-wide-side-squat-shift.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-wide-side-squat-shift/voice-manifest.json",
+          "sha256": "09b145ee64870e3997857dd47490003a55ecf40bfdf8e2630e2a708adbacbbd5",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-wide-side-squat-shift/voice-guide-manifest.json",
+          "sha256": "3c55a5a769a19f178d3a6dc4af65f0ebc7f1bca6af621f566068e508d37affb6",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/name.m4a",
+            "bytes": 17363,
+            "sha256": "98c3f44e3cdf1567acd4205eb1669afbd7df902709709a5c8b55c02c7890bfff",
+            "durationSeconds": 1.973696,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "宽距侧蹲左右移重心"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/primaryCue.m4a",
+            "bytes": 31237,
+            "sha256": "0203f564443760f8ca3c20518531ac96a567ab1af8143b2f2338aef09067e8f5",
+            "durationSeconds": 3.668753,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "两脚宽站脚尖外转，蹲到大腿接近水平"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/phase.start.m4a",
+            "bytes": 11073,
+            "sha256": "a9f6555446408f049a88f106be00a0aec03fb96b5c6179eef0591d53c6cf1554",
+            "durationSeconds": 1.230658,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "重心移到一侧"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/phase.peak.m4a",
+            "bytes": 12743,
+            "sha256": "9ceddae8166a783d9ceb2b7d8365d89ff0eaeebbfa981253b3f032d38304cf6a",
+            "durationSeconds": 1.416417,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "大腿接近水平"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/phase.end.m4a",
+            "bytes": 9106,
+            "sha256": "5576d7bb3f9de80b04f43616d03b15a1634c13c689753e11ebd8005d3568127f",
+            "durationSeconds": 0.975238,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "站回中间"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.rem.0",
+            "role": "guide",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/g.rem.0.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/g.rem.0.m4a",
+            "bytes": 27824,
+            "sha256": "5097bfefe89e40c8fea22669574dcf9f234a1ea1a7fb9b57ddb198f59fd49aa2",
+            "durationSeconds": 3.250794,
+            "assetName": "g.rem.0.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/g.rem.0.m4a",
+            "contentType": "audio/mp4",
+            "text": "蹲那侧脚跟踩实，伸直腿脚尖朝上"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.rem.1",
+            "role": "guide",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/zh/g.rem.1.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/zh/g.rem.1.m4a",
+            "bytes": 25043,
+            "sha256": "c7285ad1f52fd7dcb776c8587037d6082e5f768bfcba545783c49623388b0b2c",
+            "durationSeconds": 2.925714,
+            "assetName": "g.rem.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/zh/g.rem.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "胸口抬起，膝盖跟脚尖同一个方向"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/name.m4a",
+            "bytes": 12796,
+            "sha256": "f699a546de75b70bda877eeed24cee43ac92ff526a7c64c8f2f2adda694d6fd4",
+            "durationSeconds": 1.416417,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Wide Side Squat Shift"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/primaryCue.m4a",
+            "bytes": 22615,
+            "sha256": "31896aa86d2d610ec32dc765e3d6e41b118caa525a9257e7655d850ea20c4046",
+            "durationSeconds": 2.600635,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Wide stance, toes out, thigh about level"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/phase.start.m4a",
+            "bytes": 11063,
+            "sha256": "6f2b3fc562decc9b345bd146df8ecb822af57f28490faa9be4ad30b95bfad84a",
+            "durationSeconds": 1.230658,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Shift to one side"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/phase.peak.m4a",
+            "bytes": 9169,
+            "sha256": "a6a62fe3eb0813af36d1cf48a8198a135622ea0da5a7236197692d0f0fa56554",
+            "durationSeconds": 0.998458,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Thigh about level"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/phase.end.m4a",
+            "bytes": 8428,
+            "sha256": "c4b88d2cede85f104d59fb88f003bc1c376b66b4aa252a35456a1ae9f5c91680",
+            "durationSeconds": 0.882358,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Back to the middle"
+          },
+          {
+            "language": "en",
+            "clipId": "g.rem.0",
+            "role": "guide",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/g.rem.0.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/g.rem.0.m4a",
+            "bytes": 19792,
+            "sha256": "588904eae91bb9c7aa4ddb6c84bd6e28bf4c6110eb9ae49080ca0efdd5a1b9ae",
+            "durationSeconds": 2.275556,
+            "assetName": "g.rem.0.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/g.rem.0.m4a",
+            "contentType": "audio/mp4",
+            "text": "Bending heel flat, straight leg toes up"
+          },
+          {
+            "language": "en",
+            "clipId": "g.rem.1",
+            "role": "guide",
+            "path": "voice/t-wide-side-squat-shift/r2-v21/en/g.rem.1.m4a",
+            "sourcePath": "packages/t-wide-side-squat-shift/voice/en/g.rem.1.m4a",
+            "bytes": 18317,
+            "sha256": "e000afbf81cfe6438d146f25e405dc1371ea2db394dbd4ea2fbf1ca60b501f1d",
+            "durationSeconds": 2.089796,
+            "assetName": "g.rem.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-wide-side-squat-shift/r2-v21/en/g.rem.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "Chest up, knee in line with the toes"
+          }
+        ]
+      },
+      "status": "active",
+      "startingSide": "right",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "reps",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "repSeconds": 8,
+        "repUnit": "left+right",
+        "phaseCues": "first-2-reps",
+        "count": {
+          "key": "n.{rep}",
+          "at": "rep-end"
+        },
+        "reminders": [
+          {
+            "afterRep": 1,
+            "role": "form",
+            "zh": "蹲那侧脚跟踩实，伸直腿脚尖朝上",
+            "en": "Bending heel flat, straight leg toes up",
+            "from": [
+              "cue3",
+              "cue4",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.rem.0"
+          },
+          {
+            "afterRep": 3,
+            "role": "form",
+            "zh": "胸口抬起，膝盖跟脚尖同一个方向",
+            "en": "Chest up, knee in line with the toes",
+            "from": [
+              "cue4",
+              "commonErrors[1]",
+              "commonErrors[2]"
+            ],
+            "clipId": "g.rem.1"
+          },
+          {
+            "afterRep": 4,
+            "key": "p.last_rep"
+          }
+        ],
+        "before": [],
+        "afterSet": {
+          "moreSets": [
+            "p.rest",
+            "sec.30"
+          ],
+          "allDone": [
+            "p.nice"
+          ]
+        }
+      }
+    },
+    {
+      "id": "t-standing-neck-side-stretch",
+      "nameZh": "站姿颈侧拉伸",
+      "muscleGroups": [
+        "neck"
+      ],
+      "equipment": [],
+      "rhythm": {
+        "fps": 30,
+        "frames": 480,
+        "durationSeconds": 16,
+        "coverFrame": 288,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "hold",
+          "leadSeconds": 1,
+          "phases": "",
+          "source": null,
+          "perSide": "each-side-separately",
+          "sideSwitchSeconds": 10,
+          "startingSide": "right"
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-standing-neck-side-stretch.json",
+          "actionId": "t-standing-neck-side-stretch",
+          "sha256": "67f13476755afeb9d1e434d4c2601ea7b0a10fbe3752c64582a86feae59d304b"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-standing-neck-side-stretch.js",
+          "sha256": "12c882a3a0d0cc3173a531f85695482ef99b7a8de17a1b62e455cfa96740dc66"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-standing-neck-side-stretch-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-standing-neck-side-stretch",
+      "muscleGroupsZh": "颈部",
+      "equipmentZh": "",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-standing-neck-side-stretch.json",
+            "sha256": "67f13476755afeb9d1e434d4c2601ea7b0a10fbe3752c64582a86feae59d304b"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-standing-neck-side-stretch.json",
+            "sha256": "d4fa79b2ec33a9632fcbd0c7788cd3647985e6b09121b34fc55dff8324760ebe"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-standing-neck-side-stretch"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-standing-neck-side-stretch"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "放松脖子侧面和肩膀上方，练完撑地动作后舒缓肩颈",
+      "category": "stretch",
+      "muscles": [
+        "颈部"
+      ],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 30,
+        "restSeconds": 10
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          30,
+          30
+        ],
+        "restSeconds": [
+          10,
+          10
+        ]
+      },
+      "cues": {
+        "zh": [
+          "耳朵朝肩膀，手轻搭头侧，另一肩下沉",
+          "站直，头往一侧歪，脸朝正前方，不转头、不低头。",
+          "同侧的手越过头顶轻轻搭在头另一侧，只是搭着，不用力拉。",
+          "另一只手往地面方向伸长，肩膀往下沉。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "手臂发麻或刺疼就减小幅度"
+      ],
+      "contraindications": [
+        "颈"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-standing-neck-side-stretch",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.rgb-alpha.mp4",
+          "bytes": 246919,
+          "sha256": "5aee07026197da45b7dfda6bb59152cd238cad21006c911951570723ce2e6d4a",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-standing-neck-side-stretch.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.cover.alpha.webp",
+          "bytes": 16592,
+          "sha256": "d49719ac8757c8375ee40fd95b3c5a91cbe5ef4a0593683deda5c6b488b91ea3",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-standing-neck-side-stretch.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.thumbnail.alpha.webp",
+          "bytes": 4238,
+          "sha256": "51247fabb5b010dae35bb04b18a7d8372d9a3c13da3faa98092cce0b629508d8",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-standing-neck-side-stretch.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-neck-side-stretch/r2-v21/t-standing-neck-side-stretch.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-standing-neck-side-stretch/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Standing Neck Side Stretch",
+      "purposeEn": "Relaxes the side of your neck and the top of the shoulder after support training.",
+      "activeMuscles": [
+        "neck",
+        "upper-back"
+      ],
+      "synergistMuscles": [],
+      "equipmentEn": [],
+      "cuesEn": [
+        "Ear to shoulder, hand rests, other shoulder down",
+        "Stand tall and tilt your head to one side, face forward, no turning or dropping the chin.",
+        "The same-side hand reaches over and rests on the other side of your head; no pulling.",
+        "The other arm reaches toward the floor, shoulder sinking down."
+      ],
+      "commonErrors": [
+        {
+          "zh": "用手使劲拽头",
+          "en": "Pulling the head hard with the hand."
+        },
+        {
+          "zh": "耸起对侧肩膀",
+          "en": "Letting the other shoulder rise."
+        },
+        {
+          "zh": "转头或低头",
+          "en": "Turning or dropping the head."
+        }
+      ],
+      "cautionsEn": [
+        "Ease off if your arm tingles or you feel sharp pain."
+      ],
+      "phases": {
+        "start": {
+          "zh": "头歪向一侧",
+          "en": "Tilt to one side"
+        },
+        "peak": {
+          "zh": "手搭头侧保持",
+          "en": "Hand rests, hold"
+        },
+        "end": {
+          "zh": "慢慢回正",
+          "en": "Slowly back up"
+        }
+      },
+      "training": {
+        "kind": "hold",
+        "leadSeconds": 1,
+        "perSide": "each-side-separately",
+        "sideSwitchSeconds": 10
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-standing-neck-side-stretch.json",
+        "sha256": "d4fa79b2ec33a9632fcbd0c7788cd3647985e6b09121b34fc55dff8324760ebe",
+        "fingerprint": "sha256:d4fa79b2ec33a9632fcbd0c7788cd3647985e6b09121b34fc55dff8324760ebe"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-standing-neck-side-stretch",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，练后：站姿颈侧拉伸）",
+          "drill-anim/specs/t-standing-neck-side-stretch.js",
+          "tools/flare2-moves-r2/standards/t-standing-neck-side-stretch.md"
+        ],
+        "name": {
+          "zh": "站姿颈侧拉伸",
+          "en": "Standing Neck Side Stretch"
+        },
+        "purpose": {
+          "zh": "放松脖子侧面和肩膀上方，练完撑地动作后舒缓肩颈",
+          "en": "Relaxes the side of your neck and the top of the shoulder after support training."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "耳朵朝肩膀，手轻搭头侧，另一肩下沉",
+              "en": "Ear to shoulder, hand rests, other shoulder down"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "站直，头往一侧歪，脸朝正前方，不转头、不低头。",
+              "en": "Stand tall and tilt your head to one side, face forward, no turning or dropping the chin."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "同侧的手越过头顶轻轻搭在头另一侧，只是搭着，不用力拉。",
+              "en": "The same-side hand reaches over and rests on the other side of your head; no pulling."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "另一只手往地面方向伸长，肩膀往下沉。",
+              "en": "The other arm reaches toward the floor, shoulder sinking down."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "用手使劲拽头",
+            "en": "Pulling the head hard with the hand."
+          },
+          {
+            "zh": "耸起对侧肩膀",
+            "en": "Letting the other shoulder rise."
+          },
+          {
+            "zh": "转头或低头",
+            "en": "Turning or dropping the head."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "手臂发麻或刺疼就减小幅度",
+            "en": "Ease off if your arm tingles or you feel sharp pain."
+          }
+        ],
+        "tags": {
+          "category": "stretch",
+          "activeMuscles": [
+            "neck",
+            "upper-back"
+          ],
+          "synergistMuscles": [],
+          "equipment": [],
+          "position": "standing",
+          "difficulty": 1
+        },
+        "unilateral": true,
+        "startingSide": "right",
+        "defaultDose": {
+          "mode": "time",
+          "sets": 1,
+          "seconds": 30,
+          "restSeconds": 10
+        },
+        "phases": {
+          "start": {
+            "zh": "头歪向一侧",
+            "en": "Tilt to one side"
+          },
+          "peak": {
+            "zh": "手搭头侧保持",
+            "en": "Hand rests, hold"
+          },
+          "end": {
+            "zh": "慢慢回正",
+            "en": "Slowly back up"
+          }
+        },
+        "training": {
+          "kind": "hold",
+          "leadSeconds": 1,
+          "perSide": "each-side-separately",
+          "sideSwitchSeconds": 10
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "练后：站姿颈侧拉伸",
+          "camera": "正前（看得到头侧屈和对侧肩下沉）",
+          "doseBrief": "表：左右各一次静态保持；草稿每侧 30 秒 1 组（秒数待开哥/mhgd 定）",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: 16 s loop = right side 0-8 s (tilt ~36 deg, right hand resting on the left side of the head, left shoulder pressed down) then the left side mirrored. Head tilt is V5-only.",
+          "standard": "tools/flare2-moves-r2/standards/t-standing-neck-side-stretch.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-standing-neck-side-stretch/voice-manifest.json",
+          "sha256": "01bfb1f324e86068af4ff4f7927c2b7804b3f3f506c30cbb5b1d97fcb4ca1c12",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-standing-neck-side-stretch/voice-guide-manifest.json",
+          "sha256": "a7508322a205820b681cff483b98dd492aca8fb512f54f31d493215bb82312d5",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/name.m4a",
+            "bytes": 11992,
+            "sha256": "240a242b7d0e1c6370a65611f0351037fd05c1b4ae9f15a78e90a3025e3f8a22",
+            "durationSeconds": 1.323537,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "站姿颈侧拉伸"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/primaryCue.m4a",
+            "bytes": 28776,
+            "sha256": "93db837f656becf1755994c5a66d01658a095d2c885d9d552ee310b9a338a13d",
+            "durationSeconds": 3.366893,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "耳朵朝肩膀，手轻搭头侧，另一肩下沉"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/phase.start.m4a",
+            "bytes": 10267,
+            "sha256": "baef40d508440debd551fe546cfa7561c5e0f947f08c05449adc6d535ea69a36",
+            "durationSeconds": 1.114558,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "头歪向一侧"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/phase.peak.m4a",
+            "bytes": 12772,
+            "sha256": "621b70e61c55c1200699f41a68becfbc72dd406dbb2daf68c2a5e0919de6424f",
+            "durationSeconds": 1.416417,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "手搭头侧保持"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/phase.end.m4a",
+            "bytes": 8989,
+            "sha256": "0863bfc119b4c115245e77b9b94143fb077620ad64d9b9cd644b34c5e1db904b",
+            "durationSeconds": 0.952018,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "慢慢回正"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.1.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/g.set.1.m4a",
+            "bytes": 20313,
+            "sha256": "29628cd0b67caded7942ea128adaee22a490b9f990e13fb97e5fa01a1597c9e0",
+            "durationSeconds": 2.345215,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "耳朵朝肩膀，脸朝正前方"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.2.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/g.set.2.m4a",
+            "bytes": 19826,
+            "sha256": "771d5035d840965e0db549c079a6bd765dc808355f41497a2cf97438731d1c46",
+            "durationSeconds": 2.275556,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "手只是搭在头上，不用拉"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.3.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/zh/g.set.3.m4a",
+            "bytes": 24333,
+            "sha256": "99e943856a3a05909e830c27245cd5c5a5733f39949cf7ec2cd11149562ae7cc",
+            "durationSeconds": 2.832834,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/zh/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "另一边肩膀往下沉，手往地面伸"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/name.m4a",
+            "bytes": 14601,
+            "sha256": "a0921421433a2c7362d08c91650d401af028fc3876e1a2fc061442f2b2198368",
+            "durationSeconds": 1.648617,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Standing Neck Side Stretch"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/primaryCue.m4a",
+            "bytes": 24339,
+            "sha256": "88769ee472e9447e641a28a688c07fe836d3835318631c22c720eadad2821289",
+            "durationSeconds": 2.832834,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Ear to shoulder, hand rests, other shoulder down"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/phase.start.m4a",
+            "bytes": 10124,
+            "sha256": "47ea65054dc3bdf57b3ccde31e1b6e61598f26e6fab484b96f4b379f7fd14bbb",
+            "durationSeconds": 1.091338,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Tilt to one side"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/phase.peak.m4a",
+            "bytes": 12109,
+            "sha256": "b7c93f9812d67aa113196253444db30bcafd426562e027b644c290a87309d5bd",
+            "durationSeconds": 1.346757,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Hand rests, hold"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/phase.end.m4a",
+            "bytes": 9717,
+            "sha256": "5665cc145077b4388c6afdb49a321407695a95b8ef98438b83f5ffdfba8338bd",
+            "durationSeconds": 1.044898,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Slowly back up"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/g.set.1.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/g.set.1.m4a",
+            "bytes": 16599,
+            "sha256": "6830dbb155a8a31bed70b9a68e0c6414b29c829d02c974798cc8b06eee381066",
+            "durationSeconds": 1.880816,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "Ear toward shoulder, face forward"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/g.set.2.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/g.set.2.m4a",
+            "bytes": 17927,
+            "sha256": "8099eb6b69fcd81be0223866980124da71c0b1483ac2c9fab697d3b8a2517a98",
+            "durationSeconds": 2.020136,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "The hand just rests, no pulling"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-standing-neck-side-stretch/r2-v21/en/g.set.3.m4a",
+            "sourcePath": "packages/t-standing-neck-side-stretch/voice/en/g.set.3.m4a",
+            "bytes": 21182,
+            "sha256": "9cc5f2b5334c900704f0156e1ac8536a334f6b9806d5288281110943f4d2127b",
+            "durationSeconds": 2.461315,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-neck-side-stretch/r2-v21/en/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "Other shoulder down, hand reaching to the floor"
+          }
+        ]
+      },
+      "status": "active",
+      "startingSide": "right",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "hold",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "set": [
+          {
+            "at": 0,
+            "key": "p.go"
+          },
+          {
+            "at": 4,
+            "role": "posture",
+            "zh": "耳朵朝肩膀，脸朝正前方",
+            "en": "Ear toward shoulder, face forward",
+            "from": [
+              "cue1",
+              "cue2"
+            ],
+            "clipId": "g.set.1"
+          },
+          {
+            "at": 12,
+            "role": "halfway",
+            "zh": "手只是搭在头上，不用拉",
+            "en": "The hand just rests, no pulling",
+            "from": [
+              "cue3",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.set.2"
+          },
+          {
+            "at": 20,
+            "role": "form",
+            "zh": "另一边肩膀往下沉，手往地面伸",
+            "en": "Other shoulder down, hand reaching to the floor",
+            "from": [
+              "cue4",
+              "commonErrors[1]"
+            ],
+            "clipId": "g.set.3"
+          },
+          {
+            "at": 27,
+            "key": "n.3"
+          },
+          {
+            "at": 28,
+            "key": "n.2"
+          },
+          {
+            "at": 29,
+            "key": "n.1"
+          }
+        ],
+        "afterSet": {
+          "moreSetsSameSide": [
+            "p.rest",
+            "sec.10"
+          ],
+          "sideDone": [
+            "p.release",
+            "p.switch_left"
+          ],
+          "allDone": [
+            "p.release",
+            "p.nice"
+          ]
+        },
+        "sides": {
+          "order": [
+            "right",
+            "left"
+          ],
+          "perSide": "each-side-separately",
+          "note": "一侧全部组做完再换边；换边准备 10 秒（training.sideSwitchSeconds，App 未接入）"
+        }
+      }
+    },
+    {
+      "id": "t-standing-wrist-flexor-stretch",
+      "nameZh": "站姿屈腕拉伸",
+      "muscleGroups": [
+        "forearms"
+      ],
+      "equipment": [],
+      "rhythm": {
+        "fps": 30,
+        "frames": 240,
+        "durationSeconds": 8,
+        "coverFrame": 126,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "hold",
+          "leadSeconds": 1,
+          "phases": "",
+          "source": null,
+          "perSide": "each-side-separately",
+          "sideSwitchSeconds": 10,
+          "startingSide": "right"
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-standing-wrist-flexor-stretch.json",
+          "actionId": "t-standing-wrist-flexor-stretch",
+          "sha256": "10b3fdaea48344305b5d8fc307e572ad927b50b16557aea805bc4b1d0e225533"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-standing-wrist-flexor-stretch.js",
+          "sha256": "bbb5a934b3b347d9cdeac57d40402ba2fa8012e0b2d90ad8f5875446381a6e02"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-standing-wrist-flexor-stretch-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-standing-wrist-flexor-stretch",
+      "muscleGroupsZh": "前臂 · 腕屈伸肌",
+      "equipmentZh": "",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-standing-wrist-flexor-stretch.json",
+            "sha256": "10b3fdaea48344305b5d8fc307e572ad927b50b16557aea805bc4b1d0e225533"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-standing-wrist-flexor-stretch.json",
+            "sha256": "4ccad90f9daf2eacd8ec815d9a6d375a9eccacd8b9941f42f628ed93f0de7b28"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-standing-wrist-flexor-stretch"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-standing-wrist-flexor-stretch"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "拉开前臂内侧和手腕，撑地训练后放松",
+      "category": "stretch",
+      "muscles": [
+        "前臂 · 腕屈伸肌"
+      ],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 30,
+        "restSeconds": 10
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          30,
+          30
+        ],
+        "restSeconds": [
+          10,
+          10
+        ]
+      },
+      "cues": {
+        "zh": [
+          "手臂伸直掌心朝前，另一手把手指往回拉",
+          "手臂伸直抬到肩高，手腕往上翻，掌心朝前，指尖朝下。",
+          "另一只手握住手指，轻轻往身体方向拉，前臂里面有拉的感觉就够了。",
+          "手肘一直伸直，肩膀放松。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "手腕刺疼就拉轻一点；有腕伤先问医生"
+      ],
+      "contraindications": [
+        "手腕"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-standing-wrist-flexor-stretch",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.rgb-alpha.mp4",
+          "bytes": 42347,
+          "sha256": "e87474d26ff3fe9cb305addf6ec364696cacadbdc59f5d83c52defce5f8183b5",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-standing-wrist-flexor-stretch.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.cover.alpha.webp",
+          "bytes": 14956,
+          "sha256": "7db0675299c243698371a59f0cfa8471d34ce18a9714d05ed6ce1ab272fbc62d",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-standing-wrist-flexor-stretch.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.thumbnail.alpha.webp",
+          "bytes": 3972,
+          "sha256": "18c99b7b3c0a8f5cb5466aafb4c2286f4e7be994a2337d78d872124a0008e313",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-standing-wrist-flexor-stretch.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-standing-wrist-flexor-stretch/r2-v21/t-standing-wrist-flexor-stretch.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-standing-wrist-flexor-stretch/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Standing Wrist Flexor Stretch",
+      "purposeEn": "Stretches the inside of the forearm and wrist after hand-support training.",
+      "activeMuscles": [
+        "forearms"
+      ],
+      "synergistMuscles": [],
+      "equipmentEn": [],
+      "cuesEn": [
+        "Arm straight, palm out, other hand draws fingers back",
+        "Straight arm at shoulder height, palm facing forward, fingertips pointing down.",
+        "The other hand holds the fingers and gently draws them toward you until the inner forearm stretches.",
+        "Keep the elbow straight and the shoulder relaxed."
+      ],
+      "commonErrors": [
+        {
+          "zh": "手肘弯了",
+          "en": "Bending the elbow."
+        },
+        {
+          "zh": "拉得太猛",
+          "en": "Pulling too hard."
+        },
+        {
+          "zh": "耸肩",
+          "en": "Shrugging the shoulder."
+        }
+      ],
+      "cautionsEn": [
+        "If your wrist feels sharp pain, pull less; check with a doctor if you have a wrist injury."
+      ],
+      "phases": {
+        "start": {
+          "zh": "手臂伸直抬起",
+          "en": "Arm straight forward"
+        },
+        "peak": {
+          "zh": "拉手指保持",
+          "en": "Draw fingers back"
+        },
+        "end": {
+          "zh": "慢慢放松",
+          "en": "Ease off"
+        }
+      },
+      "training": {
+        "kind": "hold",
+        "leadSeconds": 1,
+        "perSide": "each-side-separately",
+        "sideSwitchSeconds": 10
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-standing-wrist-flexor-stretch.json",
+        "sha256": "4ccad90f9daf2eacd8ec815d9a6d375a9eccacd8b9941f42f628ed93f0de7b28",
+        "fingerprint": "sha256:4ccad90f9daf2eacd8ec815d9a6d375a9eccacd8b9941f42f628ed93f0de7b28"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-standing-wrist-flexor-stretch",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，练后：站姿屈腕拉伸（无墙））",
+          "drill-anim/specs/t-standing-wrist-flexor-stretch.js",
+          "tools/flare2-moves-r2/standards/t-standing-wrist-flexor-stretch.md"
+        ],
+        "name": {
+          "zh": "站姿屈腕拉伸",
+          "en": "Standing Wrist Flexor Stretch"
+        },
+        "purpose": {
+          "zh": "拉开前臂内侧和手腕，撑地训练后放松",
+          "en": "Stretches the inside of the forearm and wrist after hand-support training."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "手臂伸直掌心朝前，另一手把手指往回拉",
+              "en": "Arm straight, palm out, other hand draws fingers back"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "手臂伸直抬到肩高，手腕往上翻，掌心朝前，指尖朝下。",
+              "en": "Straight arm at shoulder height, palm facing forward, fingertips pointing down."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "另一只手握住手指，轻轻往身体方向拉，前臂里面有拉的感觉就够了。",
+              "en": "The other hand holds the fingers and gently draws them toward you until the inner forearm stretches."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "手肘一直伸直，肩膀放松。",
+              "en": "Keep the elbow straight and the shoulder relaxed."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "手肘弯了",
+            "en": "Bending the elbow."
+          },
+          {
+            "zh": "拉得太猛",
+            "en": "Pulling too hard."
+          },
+          {
+            "zh": "耸肩",
+            "en": "Shrugging the shoulder."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "手腕刺疼就拉轻一点；有腕伤先问医生",
+            "en": "If your wrist feels sharp pain, pull less; check with a doctor if you have a wrist injury."
+          }
+        ],
+        "tags": {
+          "category": "stretch",
+          "activeMuscles": [
+            "forearms"
+          ],
+          "synergistMuscles": [],
+          "equipment": [],
+          "position": "standing",
+          "difficulty": 1
+        },
+        "unilateral": true,
+        "startingSide": "right",
+        "defaultDose": {
+          "mode": "time",
+          "sets": 1,
+          "seconds": 30,
+          "restSeconds": 10
+        },
+        "phases": {
+          "start": {
+            "zh": "手臂伸直抬起",
+            "en": "Arm straight forward"
+          },
+          "peak": {
+            "zh": "拉手指保持",
+            "en": "Draw fingers back"
+          },
+          "end": {
+            "zh": "慢慢放松",
+            "en": "Ease off"
+          }
+        },
+        "training": {
+          "kind": "hold",
+          "leadSeconds": 1,
+          "perSide": "each-side-separately",
+          "sideSwitchSeconds": 10
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "练后：站姿屈腕拉伸（无墙）",
+          "camera": "右侧前方（看得到腕背伸角度和伸直的手肘）",
+          "doseBrief": "表：静态保持，左右各一次；草稿每侧 30 秒 1 组（秒数待定）；动画右手示范，App 镜像",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: right arm only (one-sided, the app mirrors for the left). 8 s loop: draw back 0.6-1.8 s, hold to 6.6 s, ease off. Finger poses V5-only.",
+          "standard": "tools/flare2-moves-r2/standards/t-standing-wrist-flexor-stretch.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-standing-wrist-flexor-stretch/voice-manifest.json",
+          "sha256": "85bea8e852862192b5b932a3d1fe2a1c76b343770542abe957a9845b1608ca0b",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-standing-wrist-flexor-stretch/voice-guide-manifest.json",
+          "sha256": "6911675dde2054174025b20a136226faf2e394e8f91ebc1ecabe3d9b933be177",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/name.m4a",
+            "bytes": 11982,
+            "sha256": "4786d020c03aec5cac2610c3befb1f1dd9ebddd77d5ecbd51986116f4deda1d1",
+            "durationSeconds": 1.323537,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "站姿屈腕拉伸"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/primaryCue.m4a",
+            "bytes": 31822,
+            "sha256": "206d1a7c3cb51117884496b4cc37aed949079deb8ff2b1ae53c4f7370ee0a298",
+            "durationSeconds": 3.761633,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "手臂伸直掌心朝前，另一手把手指往回拉"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/phase.start.m4a",
+            "bytes": 13126,
+            "sha256": "d3f716cdf3b23cfa5787e495a22446fa100bef35713f887ef337cfd2049d1b9b",
+            "durationSeconds": 1.462857,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "手臂伸直抬起"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/phase.peak.m4a",
+            "bytes": 10892,
+            "sha256": "ae499c8a8168d2395a06f04cdce9493011986408c2c8b0a61528263f80c404bf",
+            "durationSeconds": 1.184218,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "拉手指保持"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/phase.end.m4a",
+            "bytes": 9042,
+            "sha256": "b3a50ef4e4f66688466d74be2eff9bf4fd5347716b0e2e1d1e569cef9af3f34d",
+            "durationSeconds": 0.975238,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "慢慢放松"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.1.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/g.set.1.m4a",
+            "bytes": 23142,
+            "sha256": "54018ac051673ecea3845bd0d9616bd9f6f43d33a880fe534b18ba1df84934ce",
+            "durationSeconds": 2.693515,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "手臂伸直到肩高，掌心朝前"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.2.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/g.set.2.m4a",
+            "bytes": 26645,
+            "sha256": "d6485e547513625f3457b9b4725c413f92fdd2bbad72da55ade545771c1a3e26",
+            "durationSeconds": 3.111474,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "前臂里面有拉的感觉就够了，别使劲拽"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.3.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/zh/g.set.3.m4a",
+            "bytes": 20619,
+            "sha256": "fa444e8e64112d62ad0ac588a2d64f93cc477f5619b909a11bbefd80b46738e0",
+            "durationSeconds": 2.368435,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/zh/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "手肘一直伸直，肩膀放松"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/name.m4a",
+            "bytes": 16164,
+            "sha256": "c193d3eb17374126431d588bfd542c875580546a55a12ef494709c3d6e119995",
+            "durationSeconds": 1.811156,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Standing Wrist Flexor Stretch"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/primaryCue.m4a",
+            "bytes": 26402,
+            "sha256": "de6092be251bb5abd9c492b2e873b400e6ed3e691ac30eb8074a7b2c8f3a09eb",
+            "durationSeconds": 3.065034,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Arm straight, palm out, other hand draws fingers back"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/phase.start.m4a",
+            "bytes": 10252,
+            "sha256": "56c7129b655b21c974d87e66a9d997e6446325493747ff677c3ac3e259edc559",
+            "durationSeconds": 1.114558,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Arm straight forward"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/phase.peak.m4a",
+            "bytes": 10352,
+            "sha256": "18371c12f40867fde952229a926b61ba167291f6a227e74b67e7e441e3529724",
+            "durationSeconds": 1.137778,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Draw fingers back"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/phase.end.m4a",
+            "bytes": 6681,
+            "sha256": "73191565ca917a7b003d68d3bf3b5634dad1f0f230fc5d2b44e196de6636ce3b",
+            "durationSeconds": 0.673379,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Ease off"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.1",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.1.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/g.set.1.m4a",
+            "bytes": 20996,
+            "sha256": "21910908a1e3b72c7e5a8b8e206ccc93d1b9aeeb639eef1a357a8d264253ce84",
+            "durationSeconds": 2.275556,
+            "assetName": "g.set.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "Arm straight at shoulder height, palm forward"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.2",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.2.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/g.set.2.m4a",
+            "bytes": 20194,
+            "sha256": "c3374dda1f2fefcd2d5611f7adc87618fd7ff061fa35a14958d0fadf4ac80ab7",
+            "durationSeconds": 2.321995,
+            "assetName": "g.set.2.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.2.m4a",
+            "contentType": "audio/mp4",
+            "text": "A gentle pull inside the forearm is enough"
+          },
+          {
+            "language": "en",
+            "clipId": "g.set.3",
+            "role": "guide",
+            "path": "voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.3.m4a",
+            "sourcePath": "packages/t-standing-wrist-flexor-stretch/voice/en/g.set.3.m4a",
+            "bytes": 19274,
+            "sha256": "75401b04f0c0e60500c4e9606e73cc6068a3089a33f65cd1f3f7d3c4047136e9",
+            "durationSeconds": 2.205896,
+            "assetName": "g.set.3.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-standing-wrist-flexor-stretch/r2-v21/en/g.set.3.m4a",
+            "contentType": "audio/mp4",
+            "text": "Elbow stays straight, shoulder relaxed"
+          }
+        ]
+      },
+      "status": "active",
+      "startingSide": "right",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "hold",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "set": [
+          {
+            "at": 0,
+            "key": "p.go"
+          },
+          {
+            "at": 4,
+            "role": "posture",
+            "zh": "手臂伸直到肩高，掌心朝前",
+            "en": "Arm straight at shoulder height, palm forward",
+            "from": [
+              "cue2"
+            ],
+            "clipId": "g.set.1"
+          },
+          {
+            "at": 12,
+            "role": "halfway",
+            "zh": "前臂里面有拉的感觉就够了，别使劲拽",
+            "en": "A gentle pull inside the forearm is enough",
+            "from": [
+              "cue3",
+              "commonErrors[1]"
+            ],
+            "clipId": "g.set.2"
+          },
+          {
+            "at": 20,
+            "role": "form",
+            "zh": "手肘一直伸直，肩膀放松",
+            "en": "Elbow stays straight, shoulder relaxed",
+            "from": [
+              "cue4",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.set.3"
+          },
+          {
+            "at": 27,
+            "key": "n.3"
+          },
+          {
+            "at": 28,
+            "key": "n.2"
+          },
+          {
+            "at": 29,
+            "key": "n.1"
+          }
+        ],
+        "afterSet": {
+          "moreSetsSameSide": [
+            "p.rest",
+            "sec.10"
+          ],
+          "sideDone": [
+            "p.release",
+            "p.switch_left"
+          ],
+          "allDone": [
+            "p.release",
+            "p.nice"
+          ]
+        },
+        "sides": {
+          "order": [
+            "right",
+            "left"
+          ],
+          "perSide": "each-side-separately",
+          "note": "一侧全部组做完再换边；换边准备 10 秒（training.sideSwitchSeconds，App 未接入）"
+        }
+      }
+    },
+    {
+      "id": "t-side-lying-straight-leg-abduction",
+      "nameZh": "侧卧直腿外展",
+      "muscleGroups": [
+        "hip-abductors",
+        "glute-max"
+      ],
+      "equipment": [
+        "mat"
+      ],
+      "rhythm": {
+        "fps": 30,
+        "frames": 240,
+        "durationSeconds": 8,
+        "coverFrame": 162,
+        "policy": "pose-hub-v3-source-motion",
+        "execution": {
+          "kind": "rep_updown",
+          "leadSeconds": 2,
+          "phases": "go=1.1s; hold=0.7s; back=1.4s; rest=0.8s",
+          "source": "flare2 r2 animation tempo (4 s per rep: 1.1 s up, 0.7 s top, 1.4 s down, 0.8 s pause); 表：剂量未写，草稿每侧 10 次",
+          "reps": 10,
+          "perSide": "each-side-separately",
+          "startingSide": "right"
+        },
+        "executionStatus": "draft-ai-needs-user-review",
+        "executionSource": {
+          "path": "catalog/production/flare2-moves-r2/text/t-side-lying-straight-leg-abduction.json",
+          "actionId": "t-side-lying-straight-leg-abduction",
+          "sha256": "53dbeecf481a618515e5252bc171564ce37e01f13f941eb2249dc997005266b9"
+        },
+        "videoLoopIsTrainingDose": false
+      },
+      "source": {
+        "branch": "codex/flare2-r2-publish",
+        "commit": "b69126ca3a963cd2156495399b0591f7db1dc976",
+        "renderCommit": "138e3e935788db70752387687366e37a41df464d",
+        "spec": {
+          "path": "drill-anim/specs/t-side-lying-straight-leg-abduction.js",
+          "sha256": "9b37d6cea78e90749e0e7d750d161400d0055bb63774bfb523a40afffdb9345f"
+        },
+        "mediaSet": "2026-11-21_flare2-r2-final_138e3e9",
+        "model": "coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2)"
+      },
+      "revision": "t-side-lying-straight-leg-abduction-r2-v21",
+      "state": "ready-test-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "family": "t-side-lying-straight-leg-abduction",
+      "muscleGroupsZh": "臀中肌 · 髋外展、臀大肌",
+      "equipmentZh": "瑜伽垫",
+      "trainingDefinitionComplete": true,
+      "trainingSemantics": {
+        "status": "complete-unreviewed",
+        "reviewed": false,
+        "releaseEligible": false,
+        "batchId": "flare2-moves-r2",
+        "definitionComplete": true,
+        "missingRequiredFields": [],
+        "unknownFields": [],
+        "evidence": [
+          {
+            "path": "catalog/production/flare2-moves-r2/text/t-side-lying-straight-leg-abduction.json",
+            "sha256": "53dbeecf481a618515e5252bc171564ce37e01f13f941eb2249dc997005266b9"
+          },
+          {
+            "path": "catalog/production/flare2-moves-r2/recipes/t-side-lying-straight-leg-abduction.json",
+            "sha256": "c3a9344e6dfc9c6901dc143d581998c01bdea3cccf213011502458cda76170b1"
+          },
+          {
+            "path": "tools/flare2-moves-r2/publish/pack-fields.json",
+            "actionId": "t-side-lying-straight-leg-abduction"
+          },
+          {
+            "path": "catalog/catalog.json",
+            "actionId": "t-side-lying-straight-leg-abduction"
+          }
+        ],
+        "videoLoopIsTrainingDose": false
+      },
+      "purpose": "练臀部外侧，让髋在分腿和摆腿动作里更稳",
+      "category": "strength",
+      "muscles": [
+        "臀中肌 · 髋外展",
+        "臀大肌"
+      ],
+      "position": "side_lying",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "reps",
+        "sets": 1,
+        "reps": 10,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脚尖朝前，脚跟带着直腿往上抬",
+          "侧躺，下面手臂撑着，上面的手扶在胯上，身体一条直线。",
+          "上面的腿伸直，脚尖朝前不朝天，腿略在身体后方。",
+          "胯不往后翻，腿慢慢落下，中间不在下面腿上休息。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "胯外侧刺疼就减小高度"
+      ],
+      "contraindications": [
+        "髋"
+      ],
+      "alternative": null,
+      "sourceRevision": "t-side-lying-straight-leg-abduction",
+      "mediaRevision": "r2-v21",
+      "repairReason": "Flare 2.0 新动作 r2 第 1 批（V5 日漫 v5-toon；渲染内容 138e3e9；开哥 2026-11-21 02:02 定由 mhgd 统筹编动作、渲染、上传新 pack，不切指针）",
+      "files": {
+        "video": {
+          "path": "media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.rgb-alpha.mp4",
+          "bytes": 102066,
+          "sha256": "c2f9bfff125309db6f585c64bca913b7316b03c7c11eaef91d1f5419dd484406",
+          "width": 720,
+          "height": 1440,
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "assetName": "t-side-lying-straight-leg-abduction.rgb-alpha.mp4",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.rgb-alpha.mp4",
+          "status": "ready"
+        },
+        "cover": {
+          "path": "media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.cover.alpha.webp",
+          "bytes": 15804,
+          "sha256": "c13a34e481db4a7e5d72fd71b64ba3ebe50052b4387bc0a2dea4dc5ba4c2e4ca",
+          "width": 640,
+          "height": 640,
+          "alpha": true,
+          "assetName": "t-side-lying-straight-leg-abduction.cover.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.cover.alpha.webp",
+          "status": "ready"
+        },
+        "thumbnail": {
+          "path": "media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.thumbnail.alpha.webp",
+          "bytes": 4022,
+          "sha256": "f0b8d7e6d288510b3d63ad88442e5c9557b0a7020fd9f8e7c35833ad6337e485",
+          "width": 192,
+          "height": 192,
+          "alpha": true,
+          "assetName": "t-side-lying-straight-leg-abduction.thumbnail.alpha.webp",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-side-lying-straight-leg-abduction/r2-v21/t-side-lying-straight-leg-abduction.thumbnail.alpha.webp",
+          "status": "ready"
+        }
+      },
+      "qa": {
+        "report": {
+          "path": "qa/t-side-lying-straight-leg-abduction/r2-v21/export-check.json",
+          "bytes": null,
+          "sha256": null
+        },
+        "metrics": {
+          "status": "pending-export"
+        }
+      },
+      "availableForApp": true,
+      "availableForTraining": true,
+      "nameEn": "Side-Lying Straight-Leg Raise",
+      "purposeEn": "Works the outside of your hip so it holds steady in straddle and leg-swing moves.",
+      "activeMuscles": [
+        "hip-abductors",
+        "glutes"
+      ],
+      "synergistMuscles": [
+        "obliques"
+      ],
+      "equipmentEn": [
+        "mat"
+      ],
+      "cuesEn": [
+        "Toes forward, lead with the heel, leg straight",
+        "Lie on your side propped on the lower forearm, top hand on the hip, body in a line.",
+        "Top leg straight, toes pointing forward not up, leg slightly behind the body.",
+        "Hips stay stacked; lower slowly without resting on the bottom leg."
+      ],
+      "commonErrors": [
+        {
+          "zh": "脚尖朝天",
+          "en": "Turning the toes up to the ceiling."
+        },
+        {
+          "zh": "身体往后翻",
+          "en": "Rolling the hips back."
+        },
+        {
+          "zh": "甩腿借力",
+          "en": "Swinging the leg."
+        }
+      ],
+      "cautionsEn": [
+        "If the outside of your hip hurts sharply, lift lower."
+      ],
+      "phases": {
+        "start": {
+          "zh": "脚跟带腿上抬",
+          "en": "Heel leads the lift"
+        },
+        "peak": {
+          "zh": "顶端停住",
+          "en": "Pause at the top"
+        },
+        "end": {
+          "zh": "慢慢落下",
+          "en": "Lower slowly"
+        }
+      },
+      "training": {
+        "kind": "rep_updown",
+        "leadSeconds": 2,
+        "phases": [
+          {
+            "id": "go",
+            "seconds": 1.1
+          },
+          {
+            "id": "hold",
+            "seconds": 0.7
+          },
+          {
+            "id": "back",
+            "seconds": 1.4
+          },
+          {
+            "id": "rest",
+            "seconds": 0.8
+          }
+        ],
+        "perSide": "each-side-separately",
+        "source": "flare2 r2 animation tempo (4 s per rep: 1.1 s up, 0.7 s top, 1.4 s down, 0.8 s pause); 表：剂量未写，草稿每侧 10 次"
+      },
+      "reviewStatus": "draft-ai-needs-user-review",
+      "packRevision": "r2-v21",
+      "assetStatus": "pending-export",
+      "recipe": {
+        "path": "catalog/production/flare2-moves-r2/recipes/t-side-lying-straight-leg-abduction.json",
+        "sha256": "c3a9344e6dfc9c6901dc143d581998c01bdea3cccf213011502458cda76170b1",
+        "fingerprint": "sha256:c3a9344e6dfc9c6901dc143d581998c01bdea3cccf213011502458cda76170b1"
+      },
+      "doseRangeSource": "flare2-r2-default-dose-single-point-2026-11-21",
+      "scenesSource": "inferred-from-equipment-and-position",
+      "poseHubText": {
+        "format": "pose-hub-action-text@1",
+        "id": "t-side-lying-straight-leg-abduction",
+        "reviewStatus": "draft-ai-needs-user-review",
+        "sources": [
+          "Flare 2.0 热身 v2 / 练后三档 2026-11-21（Google 表 1aCseEk4vslsG-QKb-zsZwg30amvoYh5tMxzy6p9n8vA，练后：侧卧直腿外展）",
+          "drill-anim/specs/t-side-lying-straight-leg-abduction.js",
+          "tools/flare2-moves-r2/standards/t-side-lying-straight-leg-abduction.md"
+        ],
+        "name": {
+          "zh": "侧卧直腿外展",
+          "en": "Side-Lying Straight-Leg Raise"
+        },
+        "purpose": {
+          "zh": "练臀部外侧，让髋在分腿和摆腿动作里更稳",
+          "en": "Works the outside of your hip so it holds steady in straddle and leg-swing moves."
+        },
+        "cues": [
+          {
+            "id": "cue1",
+            "primary": true,
+            "text": {
+              "zh": "脚尖朝前，脚跟带着直腿往上抬",
+              "en": "Toes forward, lead with the heel, leg straight"
+            }
+          },
+          {
+            "id": "cue2",
+            "primary": false,
+            "text": {
+              "zh": "侧躺，下面手臂撑着，上面的手扶在胯上，身体一条直线。",
+              "en": "Lie on your side propped on the lower forearm, top hand on the hip, body in a line."
+            }
+          },
+          {
+            "id": "cue3",
+            "primary": false,
+            "text": {
+              "zh": "上面的腿伸直，脚尖朝前不朝天，腿略在身体后方。",
+              "en": "Top leg straight, toes pointing forward not up, leg slightly behind the body."
+            }
+          },
+          {
+            "id": "cue4",
+            "primary": false,
+            "text": {
+              "zh": "胯不往后翻，腿慢慢落下，中间不在下面腿上休息。",
+              "en": "Hips stay stacked; lower slowly without resting on the bottom leg."
+            }
+          }
+        ],
+        "commonErrors": [
+          {
+            "zh": "脚尖朝天",
+            "en": "Turning the toes up to the ceiling."
+          },
+          {
+            "zh": "身体往后翻",
+            "en": "Rolling the hips back."
+          },
+          {
+            "zh": "甩腿借力",
+            "en": "Swinging the leg."
+          }
+        ],
+        "cautions": [
+          {
+            "zh": "胯外侧刺疼就减小高度",
+            "en": "If the outside of your hip hurts sharply, lift lower."
+          }
+        ],
+        "tags": {
+          "category": "strength",
+          "activeMuscles": [
+            "hip-abductors",
+            "glutes"
+          ],
+          "synergistMuscles": [
+            "obliques"
+          ],
+          "equipment": [
+            "mat"
+          ],
+          "position": "side-lying",
+          "difficulty": 1
+        },
+        "unilateral": true,
+        "startingSide": "right",
+        "defaultDose": {
+          "mode": "reps",
+          "sets": 1,
+          "reps": 10,
+          "restSeconds": 15
+        },
+        "phases": {
+          "start": {
+            "zh": "脚跟带腿上抬",
+            "en": "Heel leads the lift"
+          },
+          "peak": {
+            "zh": "顶端停住",
+            "en": "Pause at the top"
+          },
+          "end": {
+            "zh": "慢慢落下",
+            "en": "Lower slowly"
+          }
+        },
+        "training": {
+          "kind": "rep_updown",
+          "leadSeconds": 2,
+          "phases": [
+            {
+              "id": "go",
+              "seconds": 1.1
+            },
+            {
+              "id": "hold",
+              "seconds": 0.7
+            },
+            {
+              "id": "back",
+              "seconds": 1.4
+            },
+            {
+              "id": "rest",
+              "seconds": 0.8
+            }
+          ],
+          "perSide": "each-side-separately",
+          "source": "flare2 r2 animation tempo (4 s per rep: 1.1 s up, 0.7 s top, 1.4 s down, 0.8 s pause); 表：剂量未写，草稿每侧 10 次"
+        },
+        "flare2": {
+          "version": "r2",
+          "batch": 1,
+          "item": "练后：侧卧直腿外展",
+          "camera": "正前略高（看得到抬腿高度、脚尖方向和骨盆不后翻）",
+          "doseBrief": "表：侧卧直腿外展；草稿每侧 10 次 1 组（次数待定）；动画左侧卧抬右腿示范，App 镜像",
+          "status": "draft-awaiting-user-review",
+          "note": "Animation r2: lying on the left side, right leg lifts ~35 deg, heel first, toes forward, hip slightly extended; pelvis fixed (no roll-back). One side shown, the app mirrors.",
+          "standard": "tools/flare2-moves-r2/standards/t-side-lying-straight-leg-abduction.md"
+        }
+      },
+      "voice": {
+        "status": "ready",
+        "sourceBatch": "2026-11-21_flare2-r2-voice",
+        "revision": "r2-v21",
+        "sourceManifest": {
+          "path": "packages/t-side-lying-straight-leg-abduction/voice-manifest.json",
+          "sha256": "0202be5f1f2b5c9ecc1b31ec7a57c335d83a42b6494e768343bad71f4c2bc1f7",
+          "status": "technical-passed"
+        },
+        "guideManifest": {
+          "path": "packages/t-side-lying-straight-leg-abduction/voice-guide-manifest.json",
+          "sha256": "ea2d65849b25259f5e35fd9c28684c0b70c309fd6519a27000d2287c5ea72357",
+          "status": "technical-passed"
+        },
+        "manualListening": "pending",
+        "files": [
+          {
+            "language": "zh",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/name.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/name.m4a",
+            "bytes": 12348,
+            "sha256": "9e1081544b30f37795ceab2606acb50e7b89ea163b444fccc6e88b08e7fd4fd6",
+            "durationSeconds": 1.393197,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "侧卧直腿外展"
+          },
+          {
+            "language": "zh",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/primaryCue.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/primaryCue.m4a",
+            "bytes": 24980,
+            "sha256": "c9ed863e7a834673429b8e11eeba2053afb6eaac48829d1b52148e2f101b67c2",
+            "durationSeconds": 2.902494,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "脚尖朝前，脚跟带着直腿往上抬"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.start.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/phase.start.m4a",
+            "bytes": 12196,
+            "sha256": "a8bd909bf27dfac32cee9e754d4ede96e10f8aaf767d0891b179ba3f4ee5a11f",
+            "durationSeconds": 1.346757,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "脚跟带腿上抬"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.peak.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/phase.peak.m4a",
+            "bytes": 8947,
+            "sha256": "281afb4848fcb69de2016ff5e89ae6397851e05a752461d1198230e2af6cd2a0",
+            "durationSeconds": 0.952018,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "顶端停住"
+          },
+          {
+            "language": "zh",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.end.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/phase.end.m4a",
+            "bytes": 8776,
+            "sha256": "fc6fe85fb5797b912b3197f620d375bd5b1daad594b58a0276f19c2061fca78c",
+            "durationSeconds": 0.928798,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "慢慢落下"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.rem.0",
+            "role": "guide",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/g.rem.0.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/g.rem.0.m4a",
+            "bytes": 20058,
+            "sha256": "ed671668c55390139330dedd1cbcb8f2a9c2a052db1f54c363dcb9d7ada27fab",
+            "durationSeconds": 2.321995,
+            "assetName": "g.rem.0.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/g.rem.0.m4a",
+            "contentType": "audio/mp4",
+            "text": "脚尖朝前，脚跟带着腿走"
+          },
+          {
+            "language": "zh",
+            "clipId": "g.rem.1",
+            "role": "guide",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/zh/g.rem.1.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/zh/g.rem.1.m4a",
+            "bytes": 19059,
+            "sha256": "e2898234c536c9a27bdfabf52ef9b61f184845f72aa0a45c1e078bdd3ce649a2",
+            "durationSeconds": 2.182676,
+            "assetName": "g.rem.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/zh/g.rem.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "胯别往后翻，腿不靠下面"
+          },
+          {
+            "language": "en",
+            "clipId": "name",
+            "role": "intro",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/name.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/name.m4a",
+            "bytes": 14507,
+            "sha256": "ded26376c4e581f81f332bca3d0db020a47a936ebe71c783ddd61087ff406dd7",
+            "durationSeconds": 1.625397,
+            "assetName": "name.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/name.m4a",
+            "contentType": "audio/mp4",
+            "text": "Side-Lying Straight-Leg Raise"
+          },
+          {
+            "language": "en",
+            "clipId": "primaryCue",
+            "role": "intro",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/primaryCue.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/primaryCue.m4a",
+            "bytes": 23090,
+            "sha256": "5e565120f880b5d2a3e097cd8631339b1833356646e189626e9033b255a45e0c",
+            "durationSeconds": 2.670295,
+            "assetName": "primaryCue.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/primaryCue.m4a",
+            "contentType": "audio/mp4",
+            "text": "Toes forward, lead with the heel, leg straight"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.start",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.start.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/phase.start.m4a",
+            "bytes": 10668,
+            "sha256": "204e12162a2f7a5f3c0f50afd3b374b5300274725efe4d92f63a738ab1f060cc",
+            "durationSeconds": 1.160998,
+            "assetName": "phase.start.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.start.m4a",
+            "contentType": "audio/mp4",
+            "text": "Heel leads the lift"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.peak",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.peak.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/phase.peak.m4a",
+            "bytes": 9188,
+            "sha256": "8f9d84187d019795a6962d1d2c76c5767ad22da85b77700ceeec6b86a6425988",
+            "durationSeconds": 0.975238,
+            "assetName": "phase.peak.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.peak.m4a",
+            "contentType": "audio/mp4",
+            "text": "Pause at the top"
+          },
+          {
+            "language": "en",
+            "clipId": "phase.end",
+            "role": "phase",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.end.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/phase.end.m4a",
+            "bytes": 8966,
+            "sha256": "af559c681a20fa6a898e0a91b0c0edf01354833f2c74ef74fe6a58e6daa1d57d",
+            "durationSeconds": 0.952018,
+            "assetName": "phase.end.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/phase.end.m4a",
+            "contentType": "audio/mp4",
+            "text": "Lower slowly"
+          },
+          {
+            "language": "en",
+            "clipId": "g.rem.0",
+            "role": "guide",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/g.rem.0.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/g.rem.0.m4a",
+            "bytes": 19259,
+            "sha256": "3996452c4ef9e57ac03e7b0148750aaa6bd8a1bccb9ce81070410c781e7dbfe8",
+            "durationSeconds": 2.205896,
+            "assetName": "g.rem.0.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/g.rem.0.m4a",
+            "contentType": "audio/mp4",
+            "text": "Toes forward, the heel leads the leg"
+          },
+          {
+            "language": "en",
+            "clipId": "g.rem.1",
+            "role": "guide",
+            "path": "voice/t-side-lying-straight-leg-abduction/r2-v21/en/g.rem.1.m4a",
+            "sourcePath": "packages/t-side-lying-straight-leg-abduction/voice/en/g.rem.1.m4a",
+            "bytes": 18220,
+            "sha256": "5ed3628be0c141298dfcbef49e283b006117c7dce00ee891eb0e8b69c1b101b3",
+            "durationSeconds": 2.066576,
+            "assetName": "g.rem.1.m4a",
+            "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-side-lying-straight-leg-abduction/r2-v21/en/g.rem.1.m4a",
+            "contentType": "audio/mp4",
+            "text": "Hips stacked, top leg stays off"
+          }
+        ]
+      },
+      "status": "active",
+      "startingSide": "right",
+      "voiceGuide": {
+        "format": "pose-hub-voice-guide@1",
+        "status": "ready",
+        "mode": "reps",
+        "speechRate": {
+          "zhCharsPerSecond": 4,
+          "enWordsPerSecond": 2.5
+        },
+        "sharedVocabulary": "catalog/voice-v2/script.json#common",
+        "repSeconds": 4,
+        "phaseCues": "first-2-reps",
+        "count": {
+          "key": "n.{rep}",
+          "at": "rep-end"
+        },
+        "reminders": [
+          {
+            "afterRep": 3,
+            "role": "form",
+            "zh": "脚尖朝前，脚跟带着腿走",
+            "en": "Toes forward, the heel leads the leg",
+            "from": [
+              "cue1",
+              "cue3",
+              "commonErrors[0]"
+            ],
+            "clipId": "g.rem.0"
+          },
+          {
+            "afterRep": 6,
+            "role": "form",
+            "zh": "胯别往后翻，腿不靠下面",
+            "en": "Hips stacked, top leg stays off",
+            "from": [
+              "cue4",
+              "commonErrors[1]"
+            ],
+            "clipId": "g.rem.1"
+          },
+          {
+            "afterRep": 9,
+            "key": "p.last_rep"
+          }
+        ],
+        "before": [],
+        "afterSet": {
+          "moreSets": [
+            "p.rest",
+            "sec.15"
+          ],
+          "allDone": [
+            "p.nice"
+          ]
+        }
+      }
+    }
+  ],
+  "definitions": [
+    {
+      "id": "t-step-jack-arm-circles",
+      "name": {
+        "zh": "低冲击开合踏步+大绕环",
+        "en": "Step Jack with Arm Circles"
+      },
+      "purpose": "不跳的全身热身：脚左右踏开、双臂上举和大绕环，把心率和肩膀一起热起来",
+      "category": "cardio",
+      "muscles": [
+        "三角肌",
+        "臀中肌 · 髋外展"
+      ],
+      "muscleGroups": [
+        "deltoids",
+        "hip-abductors"
+      ],
+      "equipment": [],
+      "position": "standing",
+      "unilateral": false,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 60,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          60,
+          60
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脚轮流往旁边踏开再收回，双臂伸直举过头",
+          "一只脚踏出时另一只脚始终踩在地上，不跳。",
+          "后半分钟手臂换成大绕环：手臂伸直，掌心朝外，绕得越大越好。",
+          "支撑腿膝盖微弯，身体站高，别弓背。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "肩膀有疼痛就把绕环改小"
+      ],
+      "contraindications": [
+        "肩"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    },
+    {
+      "id": "t-neck-wrist-finger-wakeup",
+      "name": {
+        "zh": "站姿颈腕指唤醒",
+        "en": "Standing Neck, Wrist & Finger Wake-Up"
+      },
+      "purpose": "撑地和地板动作前，把脖子、手腕和手指轻轻活动开",
+      "category": "mobility",
+      "muscles": [
+        "颈部",
+        "前臂 · 腕屈伸肌"
+      ],
+      "muscleGroups": [
+        "neck",
+        "forearms"
+      ],
+      "equipment": [],
+      "position": "standing",
+      "unilateral": false,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 45,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          45,
+          45
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脖子半圈慢绕，只在前面绕，不往后仰",
+          "耳朵朝右肩，下巴经过胸口，再到左肩，来回慢慢绕。",
+          "双手在胸前合掌，手腕带着手画横着的 8 字。",
+          "双臂前伸，用力握拳再把手指张到最大，重复几次。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "脖子发麻、头晕或疼就停下"
+      ],
+      "contraindications": [
+        "颈"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    },
+    {
+      "id": "t-wide-side-squat-shift",
+      "name": {
+        "zh": "宽距侧蹲左右移重心",
+        "en": "Wide Side Squat Shift"
+      },
+      "purpose": "打开大腿内侧和髋，左右移重心，为腿部动作热身",
+      "category": "mobility",
+      "muscles": [
+        "内收肌群",
+        "股四头肌",
+        "臀大肌"
+      ],
+      "muscleGroups": [
+        "adductors",
+        "quadriceps",
+        "glute-max"
+      ],
+      "equipment": [],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "reps",
+        "sets": 1,
+        "reps": 5,
+        "restSeconds": 30
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          5,
+          5
+        ],
+        "restSeconds": [
+          30,
+          30
+        ]
+      },
+      "cues": {
+        "zh": [
+          "两脚宽站脚尖外转，蹲到大腿接近水平",
+          "站距约两倍肩宽，脚尖朝外大约 20 度。",
+          "伸直那条腿膝盖伸直，脚尖朝上，脚跟着地。",
+          "胸口抬起，双手前伸帮助平衡，蹲那侧脚跟踩实。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "膝盖或大腿内侧疼就蹲浅一点"
+      ],
+      "contraindications": [
+        "膝",
+        "大腿内侧"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    },
+    {
+      "id": "t-standing-neck-side-stretch",
+      "name": {
+        "zh": "站姿颈侧拉伸",
+        "en": "Standing Neck Side Stretch"
+      },
+      "purpose": "放松脖子侧面和肩膀上方，练完撑地动作后舒缓肩颈",
+      "category": "stretch",
+      "muscles": [
+        "颈部"
+      ],
+      "muscleGroups": [
+        "neck"
+      ],
+      "equipment": [],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 30,
+        "restSeconds": 10
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          30,
+          30
+        ],
+        "restSeconds": [
+          10,
+          10
+        ]
+      },
+      "cues": {
+        "zh": [
+          "耳朵朝肩膀，手轻搭头侧，另一肩下沉",
+          "站直，头往一侧歪，脸朝正前方，不转头、不低头。",
+          "同侧的手越过头顶轻轻搭在头另一侧，只是搭着，不用力拉。",
+          "另一只手往地面方向伸长，肩膀往下沉。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "手臂发麻或刺疼就减小幅度"
+      ],
+      "contraindications": [
+        "颈"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    },
+    {
+      "id": "t-standing-wrist-flexor-stretch",
+      "name": {
+        "zh": "站姿屈腕拉伸",
+        "en": "Standing Wrist Flexor Stretch"
+      },
+      "purpose": "拉开前臂内侧和手腕，撑地训练后放松",
+      "category": "stretch",
+      "muscles": [
+        "前臂 · 腕屈伸肌"
+      ],
+      "muscleGroups": [
+        "forearms"
+      ],
+      "equipment": [],
+      "position": "standing",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "office",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "time",
+        "sets": 1,
+        "seconds": 30,
+        "restSeconds": 10
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "seconds": [
+          30,
+          30
+        ],
+        "restSeconds": [
+          10,
+          10
+        ]
+      },
+      "cues": {
+        "zh": [
+          "手臂伸直掌心朝前，另一手把手指往回拉",
+          "手臂伸直抬到肩高，手腕往上翻，掌心朝前，指尖朝下。",
+          "另一只手握住手指，轻轻往身体方向拉，前臂里面有拉的感觉就够了。",
+          "手肘一直伸直，肩膀放松。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "手腕刺疼就拉轻一点；有腕伤先问医生"
+      ],
+      "contraindications": [
+        "手腕"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    },
+    {
+      "id": "t-side-lying-straight-leg-abduction",
+      "name": {
+        "zh": "侧卧直腿外展",
+        "en": "Side-Lying Straight-Leg Raise"
+      },
+      "purpose": "练臀部外侧，让髋在分腿和摆腿动作里更稳",
+      "category": "strength",
+      "muscles": [
+        "臀中肌 · 髋外展",
+        "臀大肌"
+      ],
+      "muscleGroups": [
+        "hip-abductors",
+        "glute-max"
+      ],
+      "equipment": [
+        "mat"
+      ],
+      "position": "side_lying",
+      "unilateral": true,
+      "level": 1,
+      "scenes": [
+        "home",
+        "gym"
+      ],
+      "defaultDose": {
+        "mode": "reps",
+        "sets": 1,
+        "reps": 10,
+        "restSeconds": 15
+      },
+      "doseRange": {
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10
+        ],
+        "restSeconds": [
+          15,
+          15
+        ]
+      },
+      "cues": {
+        "zh": [
+          "脚尖朝前，脚跟带着直腿往上抬",
+          "侧躺，下面手臂撑着，上面的手扶在胯上，身体一条直线。",
+          "上面的腿伸直，脚尖朝前不朝天，腿略在身体后方。",
+          "胯不往后翻，腿慢慢落下，中间不在下面腿上休息。"
+        ]
+      },
+      "primaryCue": 0,
+      "cautions": [
+        "胯外侧刺疼就减小高度"
+      ],
+      "contraindications": [
+        "髋"
+      ],
+      "alternative": null,
+      "apps": [],
+      "tags": [
+        "thomas",
+        "flare2:moves-r2"
+      ],
+      "review": {
+        "status": "draft-ai-needs-user-review"
+      }
+    }
+  ],
+  "assetsBySha256": {
+    "1837f1bc13ece24afe8f6f991b278b43f9433223d382fcd4857f6635633332b8": "assets/public_media/flare-r2-v21-1837f1bc13ece24afe8f6f991b278b43f9433223d382fcd4857f6635633332b8.mp4",
+    "fcea22de872f07e2687e036a5f5a21ff86529d5f9aaad484df0fef9cf47af3b8": "assets/public_media/flare-r2-v21-fcea22de872f07e2687e036a5f5a21ff86529d5f9aaad484df0fef9cf47af3b8.webp",
+    "e896c0909cbac66757263e8c485f2ee90b1187828416a40c7b535a34f4085e19": "assets/public_media/flare-r2-v21-e896c0909cbac66757263e8c485f2ee90b1187828416a40c7b535a34f4085e19.webp",
+    "108e99348789d754ea4905bf0ffd9dfd79e3d1e10409c40ed24cd5c5b45ebfbe": "assets/public_media/flare-r2-v21-108e99348789d754ea4905bf0ffd9dfd79e3d1e10409c40ed24cd5c5b45ebfbe.m4a",
+    "1cddf337a8d60200d140b6d60a5a9506d4d217e2cbfef34e0b63c6e71b1dd553": "assets/public_media/flare-r2-v21-1cddf337a8d60200d140b6d60a5a9506d4d217e2cbfef34e0b63c6e71b1dd553.m4a",
+    "a293e1c34ce82173408ed7b797a637089515bb19911fadee37b0e7e82331127b": "assets/public_media/flare-r2-v21-a293e1c34ce82173408ed7b797a637089515bb19911fadee37b0e7e82331127b.m4a",
+    "f9ba71a1dc99da5d5936702a00d500db39c845ec7586d7eeaeac2f3b21e521bd": "assets/public_media/flare-r2-v21-f9ba71a1dc99da5d5936702a00d500db39c845ec7586d7eeaeac2f3b21e521bd.m4a",
+    "7e3c64973145d4e3296165c05c3644baadb70cedb5b7a50414da11ebb7ac64c6": "assets/public_media/flare-r2-v21-7e3c64973145d4e3296165c05c3644baadb70cedb5b7a50414da11ebb7ac64c6.m4a",
+    "d2fefb45823270505f669dac0c05e26b6c42829f00c41bf103334a9089ad42f8": "assets/public_media/flare-r2-v21-d2fefb45823270505f669dac0c05e26b6c42829f00c41bf103334a9089ad42f8.m4a",
+    "333e5be84f25c773748e8cc8ce7e8fbe52b9d4d6a0d1256459472eba0b01cc5a": "assets/public_media/flare-r2-v21-333e5be84f25c773748e8cc8ce7e8fbe52b9d4d6a0d1256459472eba0b01cc5a.m4a",
+    "0683079072eb2a977d2313d8e0b89f7522b170d89ff8af1d57148868e0c8d55d": "assets/public_media/flare-r2-v21-0683079072eb2a977d2313d8e0b89f7522b170d89ff8af1d57148868e0c8d55d.m4a",
+    "2d3f831570f562e16b4fcb48952a5a034b52317d761acfbfe044c1a2734dc534": "assets/public_media/flare-r2-v21-2d3f831570f562e16b4fcb48952a5a034b52317d761acfbfe044c1a2734dc534.m4a",
+    "cfc4bc10efdf1cf645ea513e7f13b689e52c4b1d5a13bc9873638380a1f5659c": "assets/public_media/flare-r2-v21-cfc4bc10efdf1cf645ea513e7f13b689e52c4b1d5a13bc9873638380a1f5659c.m4a",
+    "6d535652aaa05273e4134342a2acf50fa04d8e1d6e983bbfe56c1fb350ca2e4a": "assets/public_media/flare-r2-v21-6d535652aaa05273e4134342a2acf50fa04d8e1d6e983bbfe56c1fb350ca2e4a.m4a",
+    "72cf87ef7eb1488f26cf3e4e825ae5934fc41f8ad5f96be8ec00706ce340e779": "assets/public_media/flare-r2-v21-72cf87ef7eb1488f26cf3e4e825ae5934fc41f8ad5f96be8ec00706ce340e779.m4a",
+    "aa2750eda78c3b0295efb2a095770a303d442da4950e2f84365f9a43033a29f1": "assets/public_media/flare-r2-v21-aa2750eda78c3b0295efb2a095770a303d442da4950e2f84365f9a43033a29f1.m4a",
+    "129c4b309b7fb944c27226b653105303c815aeaae35ce322fa2ee383c454e447": "assets/public_media/flare-r2-v21-129c4b309b7fb944c27226b653105303c815aeaae35ce322fa2ee383c454e447.m4a",
+    "d251350ed9dd8c1ae9d3ebb22dadb4691a6397c29092ff963539cf1d679140a1": "assets/public_media/flare-r2-v21-d251350ed9dd8c1ae9d3ebb22dadb4691a6397c29092ff963539cf1d679140a1.m4a",
+    "01eee59fd2512421a2c9cb7328ae19f2508621dfeae65eff08f5b0ebda0eb46a": "assets/public_media/flare-r2-v21-01eee59fd2512421a2c9cb7328ae19f2508621dfeae65eff08f5b0ebda0eb46a.m4a",
+    "0e2228763b67d0d83844b3ec4734f584ab4f148c9290808b6594041038575fc7": "assets/public_media/flare-r2-v21-0e2228763b67d0d83844b3ec4734f584ab4f148c9290808b6594041038575fc7.m4a",
+    "632eefb574331b3ebcb1d97c10b1036c420b9ed00659b894f844341a02a48164": "assets/public_media/flare-r2-v21-632eefb574331b3ebcb1d97c10b1036c420b9ed00659b894f844341a02a48164.m4a",
+    "a791d483434cd8777f859416caa0d8cf590fcabb92787a7f145da5f2cbd55991": "assets/public_media/flare-r2-v21-a791d483434cd8777f859416caa0d8cf590fcabb92787a7f145da5f2cbd55991.m4a",
+    "1fc7ad0363987ddc193f10e4a5b24351aaf978df2c80af851159c594c621aecb": "assets/public_media/flare-r2-v21-1fc7ad0363987ddc193f10e4a5b24351aaf978df2c80af851159c594c621aecb.m4a",
+    "800f81d4fcc34f54bc612a63b8470137ebc653588625c50c0b466f0efc45a6fb": "assets/public_media/flare-r2-v21-800f81d4fcc34f54bc612a63b8470137ebc653588625c50c0b466f0efc45a6fb.m4a",
+    "8fb494572965f138044108440fc892254e535c2e8167c2f24cf09f26a2d37539": "assets/public_media/flare-r2-v21-8fb494572965f138044108440fc892254e535c2e8167c2f24cf09f26a2d37539.m4a",
+    "49d784fd5a9a5fe699b225d7b64ae02d8ab912dac51f27c4eff7e8bcdc991968": "assets/public_media/flare-r2-v21-49d784fd5a9a5fe699b225d7b64ae02d8ab912dac51f27c4eff7e8bcdc991968.mp4",
+    "07bb55d072e60088a986555ac328d1e1c2676dd8c5859f65d0a65ba54db51cbb": "assets/public_media/flare-r2-v21-07bb55d072e60088a986555ac328d1e1c2676dd8c5859f65d0a65ba54db51cbb.webp",
+    "4cd787dc6f1e298acfa0ef8a54bf4c61aa2539b01040b30b5309d292af0a213b": "assets/public_media/flare-r2-v21-4cd787dc6f1e298acfa0ef8a54bf4c61aa2539b01040b30b5309d292af0a213b.webp",
+    "acb74453bf8f291fc566fdbe922ffdb2f44bbfc86d4df6388b5ef341d2cbd05b": "assets/public_media/flare-r2-v21-acb74453bf8f291fc566fdbe922ffdb2f44bbfc86d4df6388b5ef341d2cbd05b.m4a",
+    "8442ae548d9664a35ea84939bfa7c18b75c2a4eea95412969741e525c13650fa": "assets/public_media/flare-r2-v21-8442ae548d9664a35ea84939bfa7c18b75c2a4eea95412969741e525c13650fa.m4a",
+    "a79c37e4b1849bff1b430fc9cac21c4439ccdf8ebe23d1b2b3fa0aa8154f8262": "assets/public_media/flare-r2-v21-a79c37e4b1849bff1b430fc9cac21c4439ccdf8ebe23d1b2b3fa0aa8154f8262.m4a",
+    "761b1a6e6ad9218e3b9e05d9a5819e01335ca46d3e60005b30672c63009e06cd": "assets/public_media/flare-r2-v21-761b1a6e6ad9218e3b9e05d9a5819e01335ca46d3e60005b30672c63009e06cd.m4a",
+    "2369eaa941dcc7f6a0e3f5671d54f80a66fcf0a8c6d7a7c3aef8f9ec388c1bf4": "assets/public_media/flare-r2-v21-2369eaa941dcc7f6a0e3f5671d54f80a66fcf0a8c6d7a7c3aef8f9ec388c1bf4.m4a",
+    "3663d09e49851db9eb64fec53f28d83ad893a896b03d77f15abcedda2c726e90": "assets/public_media/flare-r2-v21-3663d09e49851db9eb64fec53f28d83ad893a896b03d77f15abcedda2c726e90.m4a",
+    "889ca8a109b5e5eb3c949442df6196482cfb95222e3553b597cb37648aee7474": "assets/public_media/flare-r2-v21-889ca8a109b5e5eb3c949442df6196482cfb95222e3553b597cb37648aee7474.m4a",
+    "16c62b9325b224057fe65a203f4601cb8b91b7f1c53f3ac4a67269112bded127": "assets/public_media/flare-r2-v21-16c62b9325b224057fe65a203f4601cb8b91b7f1c53f3ac4a67269112bded127.m4a",
+    "0b300423958f630d92b35e63b544e3fe77fcb3cfd27bf83b9e73a50fbfaa1617": "assets/public_media/flare-r2-v21-0b300423958f630d92b35e63b544e3fe77fcb3cfd27bf83b9e73a50fbfaa1617.m4a",
+    "a9145f9bc3985f201d9d19fcde4387a67e7e32a81ea9c94ba936646d2c55ab84": "assets/public_media/flare-r2-v21-a9145f9bc3985f201d9d19fcde4387a67e7e32a81ea9c94ba936646d2c55ab84.m4a",
+    "416e2d8c6b4549d6cc59396ce3e1d84b3184d44064c3773df3cd2afc1025b641": "assets/public_media/flare-r2-v21-416e2d8c6b4549d6cc59396ce3e1d84b3184d44064c3773df3cd2afc1025b641.m4a",
+    "db95b55afdf6636eb842573dccaea6e5f0b3673ee69fe4df55f6a495c0fa9d5e": "assets/public_media/flare-r2-v21-db95b55afdf6636eb842573dccaea6e5f0b3673ee69fe4df55f6a495c0fa9d5e.m4a",
+    "fc66b666d07aa8b777a272883076170ed79f368765ef7b53facfad3e7d66f0a6": "assets/public_media/flare-r2-v21-fc66b666d07aa8b777a272883076170ed79f368765ef7b53facfad3e7d66f0a6.m4a",
+    "f26b4d92c957b17e279da4f5e1c36c1fbb140a3a23390aa2146b590cf2899b58": "assets/public_media/flare-r2-v21-f26b4d92c957b17e279da4f5e1c36c1fbb140a3a23390aa2146b590cf2899b58.m4a",
+    "2b28cea1c1a0126104ea5c47018c25bcdae8b5e81b2d33b88ba1592f83997a7b": "assets/public_media/flare-r2-v21-2b28cea1c1a0126104ea5c47018c25bcdae8b5e81b2d33b88ba1592f83997a7b.m4a",
+    "cdbb8c70590302fec5edb2ec6d27b76acdba80748d0a16133b962ab323dd308c": "assets/public_media/flare-r2-v21-cdbb8c70590302fec5edb2ec6d27b76acdba80748d0a16133b962ab323dd308c.m4a",
+    "199d1239f62f652c2c532ed460737fd08090d6929d05ef260b4404df969dd26f": "assets/public_media/flare-r2-v21-199d1239f62f652c2c532ed460737fd08090d6929d05ef260b4404df969dd26f.m4a",
+    "eff7406373de562a858f26d07d060eba1cf3aec87f71a07efe292763fcdd6027": "assets/public_media/flare-r2-v21-eff7406373de562a858f26d07d060eba1cf3aec87f71a07efe292763fcdd6027.m4a",
+    "bc1b5d6b54b9f026708cc780115b995be6b9c158d3550b8941bd8d91e0701c42": "assets/public_media/flare-r2-v21-bc1b5d6b54b9f026708cc780115b995be6b9c158d3550b8941bd8d91e0701c42.m4a",
+    "bb0a73af67c57bf33926bdb8f33dbbe3722376386a7027a5a863906a9881544e": "assets/public_media/flare-r2-v21-bb0a73af67c57bf33926bdb8f33dbbe3722376386a7027a5a863906a9881544e.m4a",
+    "c63dfc8b889163179538f4756edb57301f499e922d3f90fb1fabbcf82ab18b38": "assets/public_media/flare-r2-v21-c63dfc8b889163179538f4756edb57301f499e922d3f90fb1fabbcf82ab18b38.mp4",
+    "c0abdd3a7a646d453eba266b2a242e647f51e084cbc222c076c418f1a7b253e6": "assets/public_media/flare-r2-v21-c0abdd3a7a646d453eba266b2a242e647f51e084cbc222c076c418f1a7b253e6.webp",
+    "2612ddeb5d3e5a6b9c679c7264f3063a312d400e761aebbccaa0f9d922627ad8": "assets/public_media/flare-r2-v21-2612ddeb5d3e5a6b9c679c7264f3063a312d400e761aebbccaa0f9d922627ad8.webp",
+    "98c3f44e3cdf1567acd4205eb1669afbd7df902709709a5c8b55c02c7890bfff": "assets/public_media/flare-r2-v21-98c3f44e3cdf1567acd4205eb1669afbd7df902709709a5c8b55c02c7890bfff.m4a",
+    "0203f564443760f8ca3c20518531ac96a567ab1af8143b2f2338aef09067e8f5": "assets/public_media/flare-r2-v21-0203f564443760f8ca3c20518531ac96a567ab1af8143b2f2338aef09067e8f5.m4a",
+    "a9f6555446408f049a88f106be00a0aec03fb96b5c6179eef0591d53c6cf1554": "assets/public_media/flare-r2-v21-a9f6555446408f049a88f106be00a0aec03fb96b5c6179eef0591d53c6cf1554.m4a",
+    "9ceddae8166a783d9ceb2b7d8365d89ff0eaeebbfa981253b3f032d38304cf6a": "assets/public_media/flare-r2-v21-9ceddae8166a783d9ceb2b7d8365d89ff0eaeebbfa981253b3f032d38304cf6a.m4a",
+    "5576d7bb3f9de80b04f43616d03b15a1634c13c689753e11ebd8005d3568127f": "assets/public_media/flare-r2-v21-5576d7bb3f9de80b04f43616d03b15a1634c13c689753e11ebd8005d3568127f.m4a",
+    "5097bfefe89e40c8fea22669574dcf9f234a1ea1a7fb9b57ddb198f59fd49aa2": "assets/public_media/flare-r2-v21-5097bfefe89e40c8fea22669574dcf9f234a1ea1a7fb9b57ddb198f59fd49aa2.m4a",
+    "c7285ad1f52fd7dcb776c8587037d6082e5f768bfcba545783c49623388b0b2c": "assets/public_media/flare-r2-v21-c7285ad1f52fd7dcb776c8587037d6082e5f768bfcba545783c49623388b0b2c.m4a",
+    "f699a546de75b70bda877eeed24cee43ac92ff526a7c64c8f2f2adda694d6fd4": "assets/public_media/flare-r2-v21-f699a546de75b70bda877eeed24cee43ac92ff526a7c64c8f2f2adda694d6fd4.m4a",
+    "31896aa86d2d610ec32dc765e3d6e41b118caa525a9257e7655d850ea20c4046": "assets/public_media/flare-r2-v21-31896aa86d2d610ec32dc765e3d6e41b118caa525a9257e7655d850ea20c4046.m4a",
+    "6f2b3fc562decc9b345bd146df8ecb822af57f28490faa9be4ad30b95bfad84a": "assets/public_media/flare-r2-v21-6f2b3fc562decc9b345bd146df8ecb822af57f28490faa9be4ad30b95bfad84a.m4a",
+    "a6a62fe3eb0813af36d1cf48a8198a135622ea0da5a7236197692d0f0fa56554": "assets/public_media/flare-r2-v21-a6a62fe3eb0813af36d1cf48a8198a135622ea0da5a7236197692d0f0fa56554.m4a",
+    "c4b88d2cede85f104d59fb88f003bc1c376b66b4aa252a35456a1ae9f5c91680": "assets/public_media/flare-r2-v21-c4b88d2cede85f104d59fb88f003bc1c376b66b4aa252a35456a1ae9f5c91680.m4a",
+    "588904eae91bb9c7aa4ddb6c84bd6e28bf4c6110eb9ae49080ca0efdd5a1b9ae": "assets/public_media/flare-r2-v21-588904eae91bb9c7aa4ddb6c84bd6e28bf4c6110eb9ae49080ca0efdd5a1b9ae.m4a",
+    "e000afbf81cfe6438d146f25e405dc1371ea2db394dbd4ea2fbf1ca60b501f1d": "assets/public_media/flare-r2-v21-e000afbf81cfe6438d146f25e405dc1371ea2db394dbd4ea2fbf1ca60b501f1d.m4a",
+    "5aee07026197da45b7dfda6bb59152cd238cad21006c911951570723ce2e6d4a": "assets/public_media/flare-r2-v21-5aee07026197da45b7dfda6bb59152cd238cad21006c911951570723ce2e6d4a.mp4",
+    "d49719ac8757c8375ee40fd95b3c5a91cbe5ef4a0593683deda5c6b488b91ea3": "assets/public_media/flare-r2-v21-d49719ac8757c8375ee40fd95b3c5a91cbe5ef4a0593683deda5c6b488b91ea3.webp",
+    "51247fabb5b010dae35bb04b18a7d8372d9a3c13da3faa98092cce0b629508d8": "assets/public_media/flare-r2-v21-51247fabb5b010dae35bb04b18a7d8372d9a3c13da3faa98092cce0b629508d8.webp",
+    "240a242b7d0e1c6370a65611f0351037fd05c1b4ae9f15a78e90a3025e3f8a22": "assets/public_media/flare-r2-v21-240a242b7d0e1c6370a65611f0351037fd05c1b4ae9f15a78e90a3025e3f8a22.m4a",
+    "93db837f656becf1755994c5a66d01658a095d2c885d9d552ee310b9a338a13d": "assets/public_media/flare-r2-v21-93db837f656becf1755994c5a66d01658a095d2c885d9d552ee310b9a338a13d.m4a",
+    "baef40d508440debd551fe546cfa7561c5e0f947f08c05449adc6d535ea69a36": "assets/public_media/flare-r2-v21-baef40d508440debd551fe546cfa7561c5e0f947f08c05449adc6d535ea69a36.m4a",
+    "621b70e61c55c1200699f41a68becfbc72dd406dbb2daf68c2a5e0919de6424f": "assets/public_media/flare-r2-v21-621b70e61c55c1200699f41a68becfbc72dd406dbb2daf68c2a5e0919de6424f.m4a",
+    "0863bfc119b4c115245e77b9b94143fb077620ad64d9b9cd644b34c5e1db904b": "assets/public_media/flare-r2-v21-0863bfc119b4c115245e77b9b94143fb077620ad64d9b9cd644b34c5e1db904b.m4a",
+    "29628cd0b67caded7942ea128adaee22a490b9f990e13fb97e5fa01a1597c9e0": "assets/public_media/flare-r2-v21-29628cd0b67caded7942ea128adaee22a490b9f990e13fb97e5fa01a1597c9e0.m4a",
+    "771d5035d840965e0db549c079a6bd765dc808355f41497a2cf97438731d1c46": "assets/public_media/flare-r2-v21-771d5035d840965e0db549c079a6bd765dc808355f41497a2cf97438731d1c46.m4a",
+    "99e943856a3a05909e830c27245cd5c5a5733f39949cf7ec2cd11149562ae7cc": "assets/public_media/flare-r2-v21-99e943856a3a05909e830c27245cd5c5a5733f39949cf7ec2cd11149562ae7cc.m4a",
+    "a0921421433a2c7362d08c91650d401af028fc3876e1a2fc061442f2b2198368": "assets/public_media/flare-r2-v21-a0921421433a2c7362d08c91650d401af028fc3876e1a2fc061442f2b2198368.m4a",
+    "88769ee472e9447e641a28a688c07fe836d3835318631c22c720eadad2821289": "assets/public_media/flare-r2-v21-88769ee472e9447e641a28a688c07fe836d3835318631c22c720eadad2821289.m4a",
+    "47ea65054dc3bdf57b3ccde31e1b6e61598f26e6fab484b96f4b379f7fd14bbb": "assets/public_media/flare-r2-v21-47ea65054dc3bdf57b3ccde31e1b6e61598f26e6fab484b96f4b379f7fd14bbb.m4a",
+    "b7c93f9812d67aa113196253444db30bcafd426562e027b644c290a87309d5bd": "assets/public_media/flare-r2-v21-b7c93f9812d67aa113196253444db30bcafd426562e027b644c290a87309d5bd.m4a",
+    "5665cc145077b4388c6afdb49a321407695a95b8ef98438b83f5ffdfba8338bd": "assets/public_media/flare-r2-v21-5665cc145077b4388c6afdb49a321407695a95b8ef98438b83f5ffdfba8338bd.m4a",
+    "6830dbb155a8a31bed70b9a68e0c6414b29c829d02c974798cc8b06eee381066": "assets/public_media/flare-r2-v21-6830dbb155a8a31bed70b9a68e0c6414b29c829d02c974798cc8b06eee381066.m4a",
+    "8099eb6b69fcd81be0223866980124da71c0b1483ac2c9fab697d3b8a2517a98": "assets/public_media/flare-r2-v21-8099eb6b69fcd81be0223866980124da71c0b1483ac2c9fab697d3b8a2517a98.m4a",
+    "9cc5f2b5334c900704f0156e1ac8536a334f6b9806d5288281110943f4d2127b": "assets/public_media/flare-r2-v21-9cc5f2b5334c900704f0156e1ac8536a334f6b9806d5288281110943f4d2127b.m4a",
+    "e87474d26ff3fe9cb305addf6ec364696cacadbdc59f5d83c52defce5f8183b5": "assets/public_media/flare-r2-v21-e87474d26ff3fe9cb305addf6ec364696cacadbdc59f5d83c52defce5f8183b5.mp4",
+    "7db0675299c243698371a59f0cfa8471d34ce18a9714d05ed6ce1ab272fbc62d": "assets/public_media/flare-r2-v21-7db0675299c243698371a59f0cfa8471d34ce18a9714d05ed6ce1ab272fbc62d.webp",
+    "18c99b7b3c0a8f5cb5466aafb4c2286f4e7be994a2337d78d872124a0008e313": "assets/public_media/flare-r2-v21-18c99b7b3c0a8f5cb5466aafb4c2286f4e7be994a2337d78d872124a0008e313.webp",
+    "4786d020c03aec5cac2610c3befb1f1dd9ebddd77d5ecbd51986116f4deda1d1": "assets/public_media/flare-r2-v21-4786d020c03aec5cac2610c3befb1f1dd9ebddd77d5ecbd51986116f4deda1d1.m4a",
+    "206d1a7c3cb51117884496b4cc37aed949079deb8ff2b1ae53c4f7370ee0a298": "assets/public_media/flare-r2-v21-206d1a7c3cb51117884496b4cc37aed949079deb8ff2b1ae53c4f7370ee0a298.m4a",
+    "d3f716cdf3b23cfa5787e495a22446fa100bef35713f887ef337cfd2049d1b9b": "assets/public_media/flare-r2-v21-d3f716cdf3b23cfa5787e495a22446fa100bef35713f887ef337cfd2049d1b9b.m4a",
+    "ae499c8a8168d2395a06f04cdce9493011986408c2c8b0a61528263f80c404bf": "assets/public_media/flare-r2-v21-ae499c8a8168d2395a06f04cdce9493011986408c2c8b0a61528263f80c404bf.m4a",
+    "b3a50ef4e4f66688466d74be2eff9bf4fd5347716b0e2e1d1e569cef9af3f34d": "assets/public_media/flare-r2-v21-b3a50ef4e4f66688466d74be2eff9bf4fd5347716b0e2e1d1e569cef9af3f34d.m4a",
+    "54018ac051673ecea3845bd0d9616bd9f6f43d33a880fe534b18ba1df84934ce": "assets/public_media/flare-r2-v21-54018ac051673ecea3845bd0d9616bd9f6f43d33a880fe534b18ba1df84934ce.m4a",
+    "d6485e547513625f3457b9b4725c413f92fdd2bbad72da55ade545771c1a3e26": "assets/public_media/flare-r2-v21-d6485e547513625f3457b9b4725c413f92fdd2bbad72da55ade545771c1a3e26.m4a",
+    "fa444e8e64112d62ad0ac588a2d64f93cc477f5619b909a11bbefd80b46738e0": "assets/public_media/flare-r2-v21-fa444e8e64112d62ad0ac588a2d64f93cc477f5619b909a11bbefd80b46738e0.m4a",
+    "c193d3eb17374126431d588bfd542c875580546a55a12ef494709c3d6e119995": "assets/public_media/flare-r2-v21-c193d3eb17374126431d588bfd542c875580546a55a12ef494709c3d6e119995.m4a",
+    "de6092be251bb5abd9c492b2e873b400e6ed3e691ac30eb8074a7b2c8f3a09eb": "assets/public_media/flare-r2-v21-de6092be251bb5abd9c492b2e873b400e6ed3e691ac30eb8074a7b2c8f3a09eb.m4a",
+    "56c7129b655b21c974d87e66a9d997e6446325493747ff677c3ac3e259edc559": "assets/public_media/flare-r2-v21-56c7129b655b21c974d87e66a9d997e6446325493747ff677c3ac3e259edc559.m4a",
+    "18371c12f40867fde952229a926b61ba167291f6a227e74b67e7e441e3529724": "assets/public_media/flare-r2-v21-18371c12f40867fde952229a926b61ba167291f6a227e74b67e7e441e3529724.m4a",
+    "73191565ca917a7b003d68d3bf3b5634dad1f0f230fc5d2b44e196de6636ce3b": "assets/public_media/flare-r2-v21-73191565ca917a7b003d68d3bf3b5634dad1f0f230fc5d2b44e196de6636ce3b.m4a",
+    "21910908a1e3b72c7e5a8b8e206ccc93d1b9aeeb639eef1a357a8d264253ce84": "assets/public_media/flare-r2-v21-21910908a1e3b72c7e5a8b8e206ccc93d1b9aeeb639eef1a357a8d264253ce84.m4a",
+    "c3374dda1f2fefcd2d5611f7adc87618fd7ff061fa35a14958d0fadf4ac80ab7": "assets/public_media/flare-r2-v21-c3374dda1f2fefcd2d5611f7adc87618fd7ff061fa35a14958d0fadf4ac80ab7.m4a",
+    "75401b04f0c0e60500c4e9606e73cc6068a3089a33f65cd1f3f7d3c4047136e9": "assets/public_media/flare-r2-v21-75401b04f0c0e60500c4e9606e73cc6068a3089a33f65cd1f3f7d3c4047136e9.m4a",
+    "c2f9bfff125309db6f585c64bca913b7316b03c7c11eaef91d1f5419dd484406": "assets/public_media/flare-r2-v21-c2f9bfff125309db6f585c64bca913b7316b03c7c11eaef91d1f5419dd484406.mp4",
+    "c13a34e481db4a7e5d72fd71b64ba3ebe50052b4387bc0a2dea4dc5ba4c2e4ca": "assets/public_media/flare-r2-v21-c13a34e481db4a7e5d72fd71b64ba3ebe50052b4387bc0a2dea4dc5ba4c2e4ca.webp",
+    "f0b8d7e6d288510b3d63ad88442e5c9557b0a7020fd9f8e7c35833ad6337e485": "assets/public_media/flare-r2-v21-f0b8d7e6d288510b3d63ad88442e5c9557b0a7020fd9f8e7c35833ad6337e485.webp",
+    "9e1081544b30f37795ceab2606acb50e7b89ea163b444fccc6e88b08e7fd4fd6": "assets/public_media/flare-r2-v21-9e1081544b30f37795ceab2606acb50e7b89ea163b444fccc6e88b08e7fd4fd6.m4a",
+    "c9ed863e7a834673429b8e11eeba2053afb6eaac48829d1b52148e2f101b67c2": "assets/public_media/flare-r2-v21-c9ed863e7a834673429b8e11eeba2053afb6eaac48829d1b52148e2f101b67c2.m4a",
+    "a8bd909bf27dfac32cee9e754d4ede96e10f8aaf767d0891b179ba3f4ee5a11f": "assets/public_media/flare-r2-v21-a8bd909bf27dfac32cee9e754d4ede96e10f8aaf767d0891b179ba3f4ee5a11f.m4a",
+    "281afb4848fcb69de2016ff5e89ae6397851e05a752461d1198230e2af6cd2a0": "assets/public_media/flare-r2-v21-281afb4848fcb69de2016ff5e89ae6397851e05a752461d1198230e2af6cd2a0.m4a",
+    "fc6fe85fb5797b912b3197f620d375bd5b1daad594b58a0276f19c2061fca78c": "assets/public_media/flare-r2-v21-fc6fe85fb5797b912b3197f620d375bd5b1daad594b58a0276f19c2061fca78c.m4a",
+    "ed671668c55390139330dedd1cbcb8f2a9c2a052db1f54c363dcb9d7ada27fab": "assets/public_media/flare-r2-v21-ed671668c55390139330dedd1cbcb8f2a9c2a052db1f54c363dcb9d7ada27fab.m4a",
+    "e2898234c536c9a27bdfabf52ef9b61f184845f72aa0a45c1e078bdd3ce649a2": "assets/public_media/flare-r2-v21-e2898234c536c9a27bdfabf52ef9b61f184845f72aa0a45c1e078bdd3ce649a2.m4a",
+    "ded26376c4e581f81f332bca3d0db020a47a936ebe71c783ddd61087ff406dd7": "assets/public_media/flare-r2-v21-ded26376c4e581f81f332bca3d0db020a47a936ebe71c783ddd61087ff406dd7.m4a",
+    "5e565120f880b5d2a3e097cd8631339b1833356646e189626e9033b255a45e0c": "assets/public_media/flare-r2-v21-5e565120f880b5d2a3e097cd8631339b1833356646e189626e9033b255a45e0c.m4a",
+    "204e12162a2f7a5f3c0f50afd3b374b5300274725efe4d92f63a738ab1f060cc": "assets/public_media/flare-r2-v21-204e12162a2f7a5f3c0f50afd3b374b5300274725efe4d92f63a738ab1f060cc.m4a",
+    "8f9d84187d019795a6962d1d2c76c5767ad22da85b77700ceeec6b86a6425988": "assets/public_media/flare-r2-v21-8f9d84187d019795a6962d1d2c76c5767ad22da85b77700ceeec6b86a6425988.m4a",
+    "af559c681a20fa6a898e0a91b0c0edf01354833f2c74ef74fe6a58e6daa1d57d": "assets/public_media/flare-r2-v21-af559c681a20fa6a898e0a91b0c0edf01354833f2c74ef74fe6a58e6daa1d57d.m4a",
+    "3996452c4ef9e57ac03e7b0148750aaa6bd8a1bccb9ce81070410c781e7dbfe8": "assets/public_media/flare-r2-v21-3996452c4ef9e57ac03e7b0148750aaa6bd8a1bccb9ce81070410c781e7dbfe8.m4a",
+    "5ed3628be0c141298dfcbef49e283b006117c7dce00ee891eb0e8b69c1b101b3": "assets/public_media/flare-r2-v21-5ed3628be0c141298dfcbef49e283b006117c7dce00ee891eb0e8b69c1b101b3.m4a"
+  }
+}
