@@ -383,7 +383,7 @@ List<uc.PlanSegment> _authoredDoseSegments(
   ];
 }
 
-/// Keep circuit rest in A, and group the two parts of a B stretch by side.
+/// Use fixed repositioning and side-change times for the cooldown plans.
 class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
   FlareCooldownSessionBuilder({
     required int strengtheningRestSeconds,
@@ -397,6 +397,20 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
   }) : super(transitionSeconds: strengtheningRestSeconds);
 
   @override
+  double workSeconds(uc.PlanItem item, [sdk.Rhythm? rhythm]) {
+    final effective = rhythm ?? rhythmOf(item);
+    if (item.mode == uc.DoseMode.reps &&
+        effective.counted &&
+        !effective.derived) {
+      // Keep the authored cadence, including any hold or lowering phase.
+      // The SDK normally rounds a set up and distributes the extra time.
+      return effective.lead +
+          (item.reps ?? effective.defaultReps ?? 1) * effective.cycleFor();
+    }
+    return super.workSeconds(item, effective);
+  }
+
+  @override
   List<sdk.SessionPhase> phases(uc.TrainingPlan plan) =>
       _cooldownPhases(plan, super.phases(plan)).toList();
 
@@ -404,22 +418,18 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
   double planSeconds(uc.TrainingPlan plan, {double? sideSwitchMargin}) {
     // Use the same SDK scheduling without its prep callback, which calls
     // planSeconds to size the welcome voice line.
-    final estimateBuilder = sdk.SessionBuilder(
-      rhythms: rhythms,
-      known: known,
-      transitionSeconds: transitionSeconds,
-      switchSecondsFor: switchSecondsFor,
-      voiceGuideFor: voiceGuideFor,
-      guideSideSwitchSecondsFor: guideSideSwitchSecondsFor,
-    );
-    final margin = sideSwitchMargin ?? 0;
-    return _cooldownPhases(plan, estimateBuilder.phases(plan))
+    final estimateBuilder = prepSecondsFor == null
+        ? this
+        : FlareCooldownSessionBuilder(
+            strengtheningRestSeconds: transitionSeconds,
+            rhythms: rhythms,
+            known: known,
+            voiceGuideFor: voiceGuideFor,
+          );
+    return estimateBuilder
+        .phases(plan)
         .where((phase) => phase.kind != sdk.PhaseKind.prep)
-        .fold(0.0, (sum, phase) {
-          return sum +
-              phase.seconds +
-              (phase.kind == sdk.PhaseKind.switchSide ? margin : 0);
-        });
+        .fold(0.0, (sum, phase) => sum + phase.seconds);
   }
 
   Iterable<sdk.SessionPhase> _cooldownPhases(
@@ -431,10 +441,10 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
         plan.blocks[phase.blockIndex].type == uc.BlockType.cooldown;
     final active = [
       for (final phase in phases)
-        if (phase.kind != sdk.PhaseKind.rest ||
-            !isStretch(phase) ||
-            (phase.nextItem == null && phase.seconds > 0))
-          phase,
+        // A repositioning phase has a next item; a set within one exercise
+        // advances directly. Voice callbacks can never widen a side switch.
+        if (phase.kind != sdk.PhaseKind.rest || phase.nextItem != null)
+          phase.kind == sdk.PhaseKind.switchSide ? phase.withSeconds(5) : phase,
     ];
     for (var i = 0; i < active.length; i++) {
       final first = active[i];

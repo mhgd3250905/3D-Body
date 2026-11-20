@@ -720,18 +720,13 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             ? authored
             : null;
         final sound = widget.store.settings.sound;
-        final cooldownScript = cooldown == null
-            ? null
-            : buildCooldownTrainerScript(data.source, data.language);
-        final sessionBuilder = cooldown == null || cooldownScript == null
+        final sessionBuilder = cooldown == null
             ? null
             : FlareCooldownSessionBuilder(
                 strengtheningRestSeconds: cooldown.strengtheningRestSeconds,
                 rhythms: data.rhythms,
                 known: (id) => drillOf(id) != null,
                 prepSeconds: _initialCountdownSeconds,
-                switchSecondsFor: cooldownScript.switchSecondsFor,
-                prepSecondsFor: sound ? cooldownScript.prepSecondsFor : null,
                 voiceGuideFor: data.source.voiceGuide,
                 guideSideSwitchSecondsFor: data.source.sideSwitchSecondsFor,
               );

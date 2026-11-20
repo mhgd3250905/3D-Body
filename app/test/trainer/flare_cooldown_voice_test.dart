@@ -36,7 +36,6 @@ void main() {
           known: known,
           prepSeconds: 10,
           switchSecondsFor: script.switchSecondsFor,
-          prepSecondsFor: script.prepSecondsFor,
           voiceGuideFor: source.voiceGuide,
           guideSideSwitchSecondsFor: source.sideSwitchSecondsFor,
         );
@@ -64,6 +63,37 @@ void main() {
             expect(source.line(key, lang: 'zh'), item.voiceCue);
             final bytes = await rootBundle.load(source.asset(key, lang: 'zh'));
             expect(bytes.lengthInBytes, greaterThan(0));
+          }
+          final prep = phases.first;
+          expect(prep.kind, sdk.PhaseKind.prep);
+          expect(prep.seconds, 10);
+          expect(
+            script.cues(prep, planSeconds: seconds).expand((c) => c.voiceClips),
+            [source.drill(prep.exerciseId!, sdk.DrillLine.cue1)],
+          );
+          for (final phase in phases.where((p) => p.nextExerciseId != null)) {
+            final round = phase.kind == sdk.PhaseKind.roundRest;
+            expect(phase.seconds, round ? (plan.tier == 1 ? 30 : 45) : 10);
+            final nextKey = source.drill(
+              phase.exerciseId!,
+              sdk.DrillLine.cue1,
+            )!;
+            final transition = script.cues(phase, planSeconds: seconds);
+            final guide = transition.singleWhere(
+              (c) => c.voiceClips.contains(nextKey),
+            );
+            expect(
+              guide.at + source.total(guide.voiceClips, lang: 'zh'),
+              lessThan(phase.seconds),
+            );
+            if (!round) {
+              expect(transition.expand((c) => c.voiceClips), [nextKey]);
+            }
+          }
+          for (final phase in phases.where(
+            (p) => p.kind == sdk.PhaseKind.switchSide,
+          )) {
+            expect(phase.seconds, 5);
           }
           final pnf = phases.where(
             (phase) => phase.isWork && phase.segmentId == 'pnf-press',

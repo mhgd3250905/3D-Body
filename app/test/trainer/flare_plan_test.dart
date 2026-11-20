@@ -290,12 +290,13 @@ void main() {
     for (final (index, authored) in plans.indexed) {
       final tier = index + 1;
       final rounds = [2, 3, 3][index];
-      final rest = [20, 25, 30][index];
+      const reposition = 10;
+      final roundRest = [30, 45, 45][index];
       final stretchSeconds = [30, 45, 60][index];
       expect(authored.tier, tier);
       expect(authored.strengtheningRounds, rounds);
-      expect(authored.strengtheningRestSeconds, rest);
-      expect(authored.strengtheningRoundRestSeconds, 60);
+      expect(authored.strengtheningRestSeconds, reposition);
+      expect(authored.strengtheningRoundRestSeconds, roundRest);
       expect(authored.strengtheningItems, hasLength([6, 7, 6][index]));
       expect(authored.items, hasLength(tier == 3 ? 13 : 12));
       expect(authored.items.first.drill, 'o-stand-sidebend');
@@ -320,7 +321,7 @@ void main() {
         uc.BlockType.cooldown,
       ]);
       expect(full.blocks.first.rounds, rounds);
-      expect(full.blocks.first.restBetweenRoundsSeconds, 60);
+      expect(full.blocks.first.restBetweenRoundsSeconds, roundRest);
       expect(stretchOnly.blocks.map((block) => block.type), [
         uc.BlockType.cooldown,
       ]);
@@ -353,8 +354,9 @@ void main() {
       ]);
 
       final builder = FlareCooldownSessionBuilder(
-        strengtheningRestSeconds: rest,
+        strengtheningRestSeconds: reposition,
         rhythms: rhythms,
+        switchSecondsFor: (_, _, _) => 19,
       );
       final fullTimeline = builder.phases(full);
       final aRests = fullTimeline.where(
@@ -364,17 +366,36 @@ void main() {
         aRests,
         hasLength((authored.strengtheningItems.length - 1) * rounds),
       );
-      expect(aRests.map((phase) => phase.seconds), everyElement(rest));
+      expect(aRests.map((phase) => phase.seconds), everyElement(reposition));
       final roundRests = fullTimeline.where(
         (phase) => phase.kind == sdk.PhaseKind.roundRest,
       );
       expect(roundRests, hasLength(rounds - 1));
-      expect(roundRests.map((phase) => phase.seconds), everyElement(60));
+      expect(roundRests.map((phase) => phase.seconds), everyElement(roundRest));
       final bTimeline = builder.phases(stretchOnly);
-      expect(
-        bTimeline.where((phase) => phase.kind == sdk.PhaseKind.rest),
-        isEmpty,
+      for (final timeline in [fullTimeline, bTimeline]) {
+        expect(
+          timeline
+              .where((phase) => phase.kind == sdk.PhaseKind.switchSide)
+              .map((phase) => phase.seconds),
+          everyElement(5),
+        );
+        expect(
+          timeline
+              .where((phase) => phase.kind == sdk.PhaseKind.rest)
+              .map((phase) => (phase.seconds, phase.nextItem != null)),
+          everyElement((reposition, true)),
+        );
+      }
+      final bFullTransitions = fullTimeline.where(
+        (phase) => phase.kind == sdk.PhaseKind.rest && phase.blockIndex == 1,
       );
+      expect(bFullTransitions, hasLength(authored.items.length));
+      expect(bFullTransitions.first.itemInBlock, 0);
+      final bOnlyTransitions = bTimeline.where(
+        (phase) => phase.kind == sdk.PhaseKind.rest,
+      );
+      expect(bOnlyTransitions, hasLength(authored.items.length - 1));
       final wrist = bTimeline.where((phase) => phase.itemInBlock == 4);
       expect(
         wrist
@@ -453,13 +474,34 @@ void main() {
 
       final fullSeconds = builder.planSeconds(full);
       final stretchSecondsTotal = builder.planSeconds(stretchOnly);
-      expect(fullSeconds, [1543, 2650, 2467][index]);
-      expect(stretchSecondsTotal, [765, 1075, 1255][index]);
+      expect(fullSeconds, [1533, 2470, 2267][index]);
+      expect(stretchSecondsTotal, [875, 1185, 1375][index]);
       expect(full.targetMinutes, (fullSeconds / 60).ceil());
       expect(full.targetMinutes, authored.estimatedMinutes);
       expect(stretchOnly.targetMinutes, (stretchSecondsTotal / 60).ceil());
     }
   });
+
+  test(
+    'cooldown preserves fractional movement cadence without rounding a set',
+    () {
+      final builder = FlareCooldownSessionBuilder(strengtheningRestSeconds: 10);
+      const wristRaise = uc.PlanItem(
+        exerciseId: 'wrist-raise',
+        mode: uc.DoseMode.reps,
+        sets: 1,
+        reps: 5,
+        perSide: false,
+        restSeconds: 0,
+      );
+      final rhythm = sdk.Rhythm.fromJson({
+        'kind': 'rep_hold',
+        'leadSeconds': .6,
+        'phases': 'go=1.5s; hold=2s; back=3s',
+      });
+      expect(builder.workSeconds(wristRaise, rhythm), closeTo(33.1, 1e-9));
+    },
+  );
 
   test('every scene uses an available, scoped drill and exact dose', () {
     final plans = allPlans();
