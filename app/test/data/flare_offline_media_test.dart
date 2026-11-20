@@ -34,7 +34,7 @@ void main() {
   );
 
   test(
-    'all six r2-v21 action voices resolve from the bundle on a cold cache',
+    'r2-v21 and r2-v22 action voices resolve from the bundle on a cold cache',
     () async {
       final root = await Directory.systemTemp.createTemp(
         'flare-offline-voice-',
@@ -51,13 +51,18 @@ void main() {
                 cacheDirectory: root.path,
               )
               as trainer.LayeredVoiceSource;
-      final clips = source.catalog.allClips.where(
-        (clip) => flareSupplementalActionIds.contains(clip.actionId),
-      );
-      expect(clips, hasLength(102));
-      final result = await source.cache.prefetch(clips);
-      expect(result.failed, isEmpty);
-      expect(result.ready, 102);
+      for (final (ids, count) in [
+        (flareSupplementalV21ActionIds, 102),
+        (flareSupplementalV22ActionIds, 142),
+      ]) {
+        final clips = source.catalog.allClips.where(
+          (clip) => ids.contains(clip.actionId),
+        );
+        expect(clips, hasLength(count));
+        final result = await source.cache.prefetch(clips);
+        expect(result.failed, isEmpty);
+        expect(result.ready, count);
+      }
     },
     skip: !FlareOfflineMedia.enabled,
   );
