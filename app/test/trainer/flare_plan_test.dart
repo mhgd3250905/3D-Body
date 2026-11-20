@@ -12,6 +12,47 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
+const _cooldownDemoReplacements = {
+  'supplemental.cooldown.strength.1.1': (
+    'h-wall-palm-lift',
+    't-kneeling-wrist-pushup',
+  ),
+  'supplemental.cooldown.strength.1.2': (
+    'h-kneeling-pushup',
+    't-kneeling-fist-plank',
+  ),
+  'supplemental.cooldown.strength.1.4': ('scapular-A', 't-prone-t-w'),
+  'supplemental.cooldown.strength.2.1': (
+    'h-wall-palm-lift',
+    't-kneeling-wrist-pushup',
+  ),
+  'supplemental.cooldown.strength.2.2': (
+    'h-pike-pushup',
+    't-planche-lean-hold',
+  ),
+  'supplemental.cooldown.strength.2.7': (
+    'h-short-side-plank',
+    't-forearm-side-plank',
+  ),
+  'supplemental.cooldown.strength.3.1': (
+    'h-pike-pushup',
+    't-pseudo-planche-pushup-v2',
+  ),
+  'supplemental.cooldown.strength.3.2': ('t-lsit-tuck', 't-floor-tuck-hold'),
+  'supplemental.cooldown.strength.3.4': (
+    'h-wall-straddle',
+    't-supine-straddle-open-close',
+  ),
+  'supplemental.cooldown.strength.3.5': (
+    'chest-A',
+    't-straight-arm-side-plank-switch',
+  ),
+  'supplemental.cooldown.stretch.4': (
+    'h-wall-pec',
+    't-standing-clasp-chest-opener',
+  ),
+};
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -131,6 +172,39 @@ void main() {
     );
   });
 
+  test('r2-v22 demos replace existing cooldown slots only', () {
+    final items = catalog.flareCooldownPlans.expand((plan) => plan.allItems);
+    final replacementMedia = _cooldownDemoReplacements.values
+        .map((replacement) => replacement.$2)
+        .toSet();
+    final updated = items.where(
+      (item) => replacementMedia.contains(item.drill),
+    );
+    expect(updated, hasLength(13));
+    expect(
+      updated.map((item) => item.voiceKey).toSet(),
+      _cooldownDemoReplacements.keys.toSet(),
+    );
+    for (final item in updated) {
+      expect((
+        item.trainingDrillForScene('A'),
+        item.drill,
+      ), _cooldownDemoReplacements[item.voiceKey]);
+      expect(item.usesPlaceholderDemo, isFalse);
+    }
+    expect(
+      items
+          .where((item) => item.dose.repPositions.length == 3)
+          .map((item) => item.drill),
+      ['scapular-A', 'scapular-A'],
+    );
+    final remaining = items.where((item) => item.usesPlaceholderDemo).single;
+    expect(
+      (remaining.drill, remaining.voiceKey),
+      ('h-dd-shoulder', 'supplemental.cooldown.stretch.6.1'),
+    );
+  });
+
   test(
     'supplemental plans resolve in the player at their authored doses',
     () async {
@@ -148,6 +222,9 @@ void main() {
           't-standing-neck-side-stretch',
           't-standing-wrist-flexor-stretch',
           't-side-lying-straight-leg-abduction',
+          ..._cooldownDemoReplacements.values
+              .map((replacement) => replacement.$2)
+              .toSet(),
         ]),
       );
 

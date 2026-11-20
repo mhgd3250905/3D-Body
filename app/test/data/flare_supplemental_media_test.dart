@@ -79,16 +79,40 @@ void main() {
       bundle: fixture,
     );
     expect(trainer.poseHubPackVersionOf(augmented), 'r2-v20');
-    expect(augmented.allActions.length, older.allActions.length + 6);
+    expect(
+      augmented.allActions.length,
+      older.allActions.length + flareSupplementalActionIds.length,
+    );
     expect(augmented.tryGet(id)?.allMediaFiles, isNotEmpty);
 
-    final missing = _SupplementalBundle(omitManifest: true);
+    final missing = _SupplementalBundle(v21: false, v22: false);
     final fallback = await withFlareSupplementalActions(
       original,
       bundle: missing,
     );
     expect(fallback.tryGet(flareWarmupPushupId), isNotNull);
     expect(fallback.tryGet(id), isNull);
+  });
+
+  test('either bundled pack can load independently of the other', () async {
+    for (final (v21, ids) in [
+      (true, flareSupplementalV21ActionIds),
+      (false, flareSupplementalV22ActionIds),
+    ]) {
+      final fixture = _SupplementalBundle(v21: v21, v22: !v21);
+      final original = await loadFlareBundledPublicCatalog(bundle: fixture);
+      final local = await withFlareSupplementalActions(
+        original,
+        bundle: fixture,
+      );
+      expect(
+        local.allActions
+            .map((action) => action.id)
+            .toSet()
+            .intersection(flareSupplementalActionIds),
+        ids,
+      );
+    }
   });
 
   test(
@@ -150,32 +174,72 @@ void main() {
     },
   );
 
-  test('the six shipped r2-v21 demonstrations resolve offline', () async {
-    final directory = await Directory.systemTemp.createTemp(
-      'flare-r2-v21-assets-',
-    );
-    addTearDown(() => directory.delete(recursive: true));
-    await HttpOverrides.runZoned(() async {
-      final policy = await FlarePublicMedia.load(rootDirectory: directory.path);
-      addTearDown(policy.repository.dispose);
-      for (final id in flareSupplementalActionIds) {
-        final action = policy.actionFor(id)!;
-        final poster = policy.posterAssetFor(id);
-        expect(poster, isNotNull, reason: id);
-        for (final file in [action.video, action.cover, action.thumbnail]) {
-          final uri = await policy.repository.ensureFile(file);
-          final bytes = await File.fromUri(uri).readAsBytes();
-          expect(bytes.length, file.bytes, reason: file.path);
-          expect(coach.sha256Hex(bytes), file.sha256, reason: file.path);
+  test(
+    'shipped r2-v21 and r2-v22 media and voice bytes resolve offline',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'flare-supplemental-assets-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      await HttpOverrides.runZoned(() async {
+        final policy = await FlarePublicMedia.load(
+          rootDirectory: directory.path,
+        );
+        final bundled = (await FlareSupplementalActions.load())!;
+        addTearDown(policy.repository.dispose);
+        for (final id in flareSupplementalActionIds) {
+          final action = policy.actionFor(id)!;
+          final poster = policy.posterAssetFor(id);
+          expect(poster, isNotNull, reason: id);
+          for (final file in action.allMediaFiles) {
+            final uri = await policy.repository.ensureFile(file);
+            final bytes = await File.fromUri(uri).readAsBytes();
+            expect(bytes.length, file.bytes, reason: file.path);
+            expect(coach.sha256Hex(bytes), file.sha256, reason: file.path);
+          }
+          final voice = action.raw['voice'] as Map;
+          final files = voice['files'] as List;
+          expect(files, isNotEmpty, reason: id);
+          for (final raw in files) {
+            final file = coach.PoseHubPackFile.fromJson(raw);
+            final asset = bundled.assetsBySha[file.sha256];
+            expect(asset, isNotNull, reason: file.path);
+            final data = await rootBundle.load(asset!);
+            final bytes = data.buffer.asUint8List(
+              data.offsetInBytes,
+              data.lengthInBytes,
+            );
+            expect(bytes.length, file.bytes, reason: file.path);
+            expect(coach.sha256Hex(bytes), file.sha256, reason: file.path);
+          }
         }
-      }
-    }, createHttpClient: (_) => throw StateError('Unexpected HTTP request'));
-  });
+      }, createHttpClient: (_) => throw StateError('Unexpected HTTP request'));
+    },
+  );
 }
 
 class _SupplementalBundle extends CachingAssetBundle {
-  _SupplementalBundle({bool omitManifest = false}) {
-    if (omitManifest) return;
+  _SupplementalBundle({bool v21 = true, bool v22 = true}) {
+    if (v21) {
+      _addPack(
+        'r2-v21',
+        flareSupplementalActionsAsset,
+        flareSupplementalV21ActionIds,
+      );
+    }
+    if (v22) {
+      _addPack(
+        'r2-v22',
+        flareSupplementalV22ActionsAsset,
+        flareSupplementalV22ActionIds,
+      );
+    }
+  }
+
+  final _bytes = <String, List<int>>{};
+  final paths = <String, String>{};
+
+  void _addPack(String release, String asset, Set<String> ids) {
     final donor =
         jsonDecode(
               File(
@@ -187,45 +251,50 @@ class _SupplementalBundle extends CachingAssetBundle {
     final definition = donor['definition'] as Map<String, Object?>;
     final media = action['files'] as Map<String, Object?>;
     final actions = [
-      for (final id in flareSupplementalActionIds)
+      for (final id in ids)
         {
           ...action,
           'id': id,
           'files': {
-            ..._mediaSet(media, id, 'base'),
+            ..._mediaSet(media, release, id, 'base'),
             'themes': {
-              'dark': {'skin': 'test', ..._mediaSet(media, id, 'dark')},
+              'dark': {
+                'skin': 'test',
+                ..._mediaSet(media, release, id, 'dark'),
+              },
             },
           },
         },
     ];
-    _bytes[flareSupplementalActionsAsset] = utf8.encode(
+    _bytes[asset] = utf8.encode(
       jsonEncode({
-        'sourcePackVersion': 'r2-v21',
+        'sourcePackVersion': release,
         'actions': actions,
         'definitions': [
-          for (final id in flareSupplementalActionIds)
-            {...definition, 'id': id},
+          for (final id in ids) {...definition, 'id': id},
         ],
-        'assetsBySha256': paths,
+        'assetsBySha256': {
+          for (final path in paths.entries)
+            if (path.value.startsWith('assets/public_media/flare-$release-'))
+              path.key: path.value,
+        },
       }),
     );
   }
 
-  final _bytes = <String, List<int>>{};
-  final paths = <String, String>{};
-
   Map<String, Object?> _mediaSet(
     Map<String, Object?> source,
+    String release,
     String id,
     String variant,
   ) => {
     for (final MapEntry(key: role, value: raw) in source.entries)
-      role: _media(raw as Map<String, Object?>, id, variant, role),
+      role: _media(raw as Map<String, Object?>, release, id, variant, role),
   };
 
   Map<String, Object?> _media(
     Map<String, Object?> source,
+    String release,
     String id,
     String variant,
     String role,
@@ -234,9 +303,9 @@ class _SupplementalBundle extends CachingAssetBundle {
     final bytes = utf8.encode(name);
     final hash = coach.sha256Hex(bytes);
     final extension = role == 'video' ? 'mp4' : 'webp';
-    final path = 'media/$id/r2-v21/$name.$extension';
+    final path = 'media/$id/$release/$name.$extension';
     final asset = paths[hash] =
-        'assets/public_media/flare-r2-v21-$hash.$extension';
+        'assets/public_media/flare-$release-$hash.$extension';
     _bytes[asset] = bytes;
     return {
       ...source,
@@ -251,7 +320,9 @@ class _SupplementalBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) async {
     final bytes = _bytes[key];
-    if (bytes == null && key == flareSupplementalActionsAsset) {
+    if (bytes == null &&
+        (key == flareSupplementalActionsAsset ||
+            key == flareSupplementalV22ActionsAsset)) {
       throw const FileSystemException('Supplemental manifest omitted');
     }
     return ByteData.sublistView(

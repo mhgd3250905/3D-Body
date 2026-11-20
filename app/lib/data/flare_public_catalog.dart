@@ -11,7 +11,7 @@ import 'posehub_catalog_updates.dart';
 const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
 const flareWarmupPushupId = 't-kneeling-scap-pushup';
-const flareSupplementalActionIds = <String>{
+const flareSupplementalV21ActionIds = <String>{
   't-step-jack-arm-circles',
   't-neck-wrist-finger-wakeup',
   't-wide-side-squat-shift',
@@ -19,8 +19,39 @@ const flareSupplementalActionIds = <String>{
   't-standing-wrist-flexor-stretch',
   't-side-lying-straight-leg-abduction',
 };
+const flareSupplementalV22ActionIds = <String>{
+  't-kneeling-wrist-pushup',
+  't-kneeling-fist-plank',
+  't-prone-t-w',
+  't-forearm-side-plank',
+  't-straight-arm-side-plank-switch',
+  't-planche-lean-hold',
+  't-pseudo-planche-pushup-v2',
+  't-floor-tuck-hold',
+  't-supine-straddle-open-close',
+  't-standing-clasp-chest-opener',
+};
+const flareSupplementalActionIds = {
+  ...flareSupplementalV21ActionIds,
+  ...flareSupplementalV22ActionIds,
+};
 const flareSupplementalActionsAsset =
     'assets/public_media/flare-supplemental-actions-r2-v21.json';
+const flareSupplementalV22ActionsAsset =
+    'assets/public_media/flare-supplemental-actions-r2-v22.json';
+
+const _flareSupplementalPacks = [
+  (
+    version: 'r2-v21',
+    asset: flareSupplementalActionsAsset,
+    ids: flareSupplementalV21ActionIds,
+  ),
+  (
+    version: 'r2-v22',
+    asset: flareSupplementalV22ActionsAsset,
+    ids: flareSupplementalV22ActionIds,
+  ),
+];
 
 const _flareWarmupActionAsset = 'assets/public_media/flare-warmup-action.json';
 final _warmupCatalogs = Expando<Future<coach.PoseHubAppTestCatalog>>();
@@ -39,38 +70,77 @@ Future<coach.PoseHubAppTestCatalog> withFlareSupplementalActions(
 }
 
 final class FlareSupplementalActions {
-  FlareSupplementalActions._(
-    this._actions,
-    this._definitions,
-    this.assetsBySha,
-  );
+  FlareSupplementalActions._(this._packs)
+    : assetsBySha = Map.unmodifiable({
+        for (final pack in _packs.reversed) ...pack.assetsBySha,
+      });
 
-  final List<Map<String, Object?>> _actions;
-  final List<Map<String, Object?>> _definitions;
+  final List<_FlareSupplementalPack> _packs;
   final Map<String, String> assetsBySha;
   final _projections = Expando<coach.PoseHubAppTestCatalog>();
 
   String? coverAssetFor(String id) {
-    final row = _actions.where((action) => action['id'] == id).firstOrNull;
-    final files = row?['files'];
-    final cover = files is Map ? files['cover'] : null;
-    final sha = cover is Map ? cover['sha256'] : null;
-    return sha is String ? assetsBySha[sha] : null;
+    for (final pack in _packs) {
+      if (pack.coverShaFor(id) case final sha?) return assetsBySha[sha];
+    }
+    return null;
   }
 
   static Future<FlareSupplementalActions?> load({AssetBundle? bundle}) async {
     final assets = bundle ?? rootBundle;
     final cached = _supplementalBundles[assets];
     if (cached != null) return cached;
-    final parsed = await _load(assets);
-    if (parsed == null) return null;
-    return _supplementalBundles[assets] ??= parsed;
+    final parsed = await Future.wait([
+      for (final source in _flareSupplementalPacks)
+        _FlareSupplementalPack.load(
+          assets,
+          source.asset,
+          source.version,
+          source.ids,
+        ),
+    ]);
+    final available = parsed.nonNulls.toList();
+    if (available.isEmpty) return null;
+    return _supplementalBundles[assets] ??= FlareSupplementalActions._(
+      available,
+    );
   }
 
-  static Future<FlareSupplementalActions?> _load(AssetBundle assets) async {
+  coach.PoseHubAppTestCatalog apply(coach.PoseHubAppTestCatalog pack) =>
+      _projections[pack] ??= _packs.fold<coach.PoseHubAppTestCatalog>(
+        pack,
+        (active, local) => local.apply(active),
+      );
+}
+
+final class _FlareSupplementalPack {
+  const _FlareSupplementalPack(
+    this.actions,
+    this.definitions,
+    this.assetsBySha,
+  );
+
+  final List<Map<String, Object?>> actions;
+  final List<Map<String, Object?>> definitions;
+  final Map<String, String> assetsBySha;
+
+  String? coverShaFor(String id) {
+    final row = actions.where((action) => action['id'] == id).firstOrNull;
+    final files = row?['files'];
+    final cover = files is Map ? files['cover'] : null;
+    final sha = cover is Map ? cover['sha256'] : null;
+    return sha is String ? sha : null;
+  }
+
+  static Future<_FlareSupplementalPack?> load(
+    AssetBundle assets,
+    String manifestAsset,
+    String version,
+    Set<String> actionIds,
+  ) async {
     final ByteData data;
     try {
-      data = await assets.load(flareSupplementalActionsAsset);
+      data = await assets.load(manifestAsset);
     } on FlutterError {
       return null;
     } on Exception {
@@ -83,26 +153,22 @@ final class FlareSupplementalActions {
         ),
       );
       if (json is! Map<String, Object?> ||
-          json['sourcePackVersion'] != 'r2-v21') {
+          json['sourcePackVersion'] != version) {
         throw const FormatException('Invalid Flare supplemental source pack');
       }
-      final actions = _actionRows(json['actions']);
-      final definitions = _actionRows(json['definitions']);
+      final actions = _actionRows(json['actions'], actionIds);
+      final definitions = _actionRows(json['definitions'], actionIds);
       final paths = Map<String, String>.from(json['assetsBySha256'] as Map);
       final hash = RegExp(r'^[0-9a-f]{64}$');
       for (final MapEntry(key: sha, value: asset) in paths.entries) {
-        final prefix = 'assets/public_media/flare-r2-v21-$sha.';
+        final prefix = 'assets/public_media/flare-$version-$sha.';
         if (!hash.hasMatch(sha) ||
             !asset.startsWith(prefix) ||
             !RegExp(r'^[a-z0-9]+$').hasMatch(asset.substring(prefix.length))) {
           throw const FormatException('Invalid Flare supplemental asset path');
         }
       }
-      return FlareSupplementalActions._(
-        actions,
-        definitions,
-        Map.unmodifiable(paths),
-      );
+      return _FlareSupplementalPack(actions, definitions, paths);
     } on FormatException catch (error) {
       debugPrint('Flare supplemental catalog unavailable: $error');
       return null;
@@ -112,31 +178,30 @@ final class FlareSupplementalActions {
     }
   }
 
-  static List<Map<String, Object?>> _actionRows(Object? raw) {
+  static List<Map<String, Object?>> _actionRows(
+    Object? raw,
+    Set<String> expected,
+  ) {
     final rows = (raw as List).cast<Map<String, Object?>>();
     final ids = rows.map((row) => row['id']).toSet();
-    if (rows.length != flareSupplementalActionIds.length ||
-        !ids.containsAll(flareSupplementalActionIds)) {
+    if (rows.length != expected.length || !ids.containsAll(expected)) {
       throw const FormatException('Unexpected Flare supplemental action IDs');
     }
     return rows;
   }
 
-  coach.PoseHubAppTestCatalog apply(coach.PoseHubAppTestCatalog pack) =>
-      _projections[pack] ??= _apply(pack);
-
-  coach.PoseHubAppTestCatalog _apply(coach.PoseHubAppTestCatalog pack) {
-    final ids = flareSupplementalActionIds
-        .where((id) => pack.tryGet(id) == null)
-        .toSet();
-    if (ids.isEmpty) return pack;
+  coach.PoseHubAppTestCatalog apply(coach.PoseHubAppTestCatalog pack) {
+    final additions = actions
+        .where((row) => pack.tryGet(row['id'] as String) == null)
+        .toList();
+    if (additions.isEmpty) return pack;
+    final ids = additions.map((row) => row['id'] as String).toSet();
     try {
-      final actions = _actions.where((row) => ids.contains(row['id'])).toList();
       final projection = _appendFlareActions(
         pack,
         canonical: _localSemantics[pack] ?? pack.toAiCatalog().raw,
-        actions: actions,
-        definitions: _definitions.where((row) => ids.contains(row['id'])),
+        actions: additions,
+        definitions: definitions.where((row) => ids.contains(row['id'])),
       );
       for (final id in ids) {
         final action = projection.tryGet(id)!;

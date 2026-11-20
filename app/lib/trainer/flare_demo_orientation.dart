@@ -8,6 +8,16 @@ const flareDemoOrientationOverrides = {
   't-wide-side-squat-shift': FlareDemoOrientation.bilateral,
   't-standing-neck-side-stretch': FlareDemoOrientation.bilateral,
   't-side-lying-straight-leg-abduction': FlareDemoOrientation.left,
+  't-kneeling-wrist-pushup': FlareDemoOrientation.bilateral,
+  't-kneeling-fist-plank': FlareDemoOrientation.bilateral,
+  't-prone-t-w': FlareDemoOrientation.bilateral,
+  't-straight-arm-side-plank-switch': FlareDemoOrientation.bilateral,
+  't-planche-lean-hold': FlareDemoOrientation.bilateral,
+  't-pseudo-planche-pushup-v2': FlareDemoOrientation.bilateral,
+  't-floor-tuck-hold': FlareDemoOrientation.bilateral,
+  't-supine-straddle-open-close': FlareDemoOrientation.bilateral,
+  't-standing-clasp-chest-opener': FlareDemoOrientation.bilateral,
+  't-forearm-side-plank': FlareDemoOrientation.left,
 };
 
 bool flareDemoMirrored(String mediaActionId, bool sdkMirrored) =>
