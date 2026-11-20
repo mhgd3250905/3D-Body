@@ -55,6 +55,7 @@ Future<VoiceSource> withSupplementalTrainerVoice(
     },
   );
   final cues = <String, _SupplementalCue>{};
+  final shortCues = <String, _SupplementalCue>{};
   for (final (index, item) in plan.allItems.indexed) {
     final key = item.voiceKey ?? 'supplemental.${plan.id}.${index + 1}';
     if ((item.voiceCue, durations[key]) case (final text?, final ms?)) {
@@ -64,6 +65,16 @@ Future<VoiceSource> withSupplementalTrainerVoice(
         seconds: ms / 1000,
         authoredName: item.displayName,
       );
+      final shortKey = '$key.short';
+      if (durations[shortKey] case final shortMs?) {
+        shortCues[shortKey] = (
+          key: shortKey,
+          // Read a shorter line aloud while the full instruction stays visible.
+          text: text,
+          seconds: shortMs / 1000,
+          authoredName: item.displayName,
+        );
+      }
     }
     if ((item.pnfTrainingIdForScene('A'), durations[_cooldownPnfKey]) case (
       final exerciseId?,
@@ -77,7 +88,7 @@ Future<VoiceSource> withSupplementalTrainerVoice(
       );
     }
   }
-  return _SupplementalVoiceSource(source, cues);
+  return _SupplementalVoiceSource(source, cues, shortCues);
 }
 
 SessionScript buildCooldownTrainerScript(VoiceSource source, String language) =>
@@ -113,11 +124,13 @@ class _CooldownSessionScript extends SessionScript {
     if (p.kind == PhaseKind.prep || p.nextExerciseId != null) {
       final id = p.exerciseId;
       final key = id == null ? null : source.drill(id, DrillLine.cue1);
-      final guide = key != null && key.startsWith('supplemental.cooldown.')
-          ? key
-          : p.kind == PhaseKind.prep
-          ? call(VoiceCall.first)
-          : null;
+      var guide = p.kind == PhaseKind.prep ? call(VoiceCall.first) : null;
+      if (key != null && key.startsWith('supplemental.cooldown.')) {
+        final shortKey = '$key.short';
+        guide = p.seconds == 5 && source.has(shortKey, lang: lang)
+            ? shortKey
+            : key;
+      }
       final round = p.kind == PhaseKind.roundRest;
       final start = (round ? p.seconds - 10 : 0.0) + .25;
       return [
@@ -157,8 +170,11 @@ typedef _SupplementalCue = ({
 
 class _SupplementalVoiceSource extends _LeftFirstVoiceSource
     implements PreparableVoiceSource {
-  _SupplementalVoiceSource(super.source, this.cues)
-    : byKey = {for (final cue in cues.values) cue.key: cue},
+  _SupplementalVoiceSource(
+    super.source,
+    this.cues,
+    Map<String, _SupplementalCue> shortCues,
+  ) : byKey = {for (final cue in cues.values) cue.key: cue, ...shortCues},
       super(language: 'zh', leftFirst: false);
 
   final Map<String, _SupplementalCue> cues;

@@ -293,6 +293,7 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
   final builder = isCooldown
       ? FlareCooldownSessionBuilder(
           strengtheningRestSeconds: plan.strengtheningRestSeconds,
+          stretchPostures: plan.stretchPosturesForScene(sceneTier),
           rhythms: rhythms,
         )
       : sdk.SessionBuilder(
@@ -387,6 +388,7 @@ List<uc.PlanSegment> _authoredDoseSegments(
 class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
   FlareCooldownSessionBuilder({
     required int strengtheningRestSeconds,
+    this.stretchPostures = const {},
     super.rhythms,
     super.known,
     super.prepSeconds,
@@ -395,6 +397,8 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
     super.voiceGuideFor,
     super.guideSideSwitchSecondsFor,
   }) : super(transitionSeconds: strengtheningRestSeconds);
+
+  final Map<String, FlareStretchPosture> stretchPostures;
 
   @override
   double workSeconds(uc.PlanItem item, [sdk.Rhythm? rhythm]) {
@@ -422,6 +426,7 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
         ? this
         : FlareCooldownSessionBuilder(
             strengtheningRestSeconds: transitionSeconds,
+            stretchPostures: stretchPostures,
             rhythms: rhythms,
             known: known,
             voiceGuideFor: voiceGuideFor,
@@ -439,13 +444,29 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
     bool isStretch(sdk.SessionPhase phase) =>
         phase.blockIndex >= 0 &&
         plan.blocks[phase.blockIndex].type == uc.BlockType.cooldown;
-    final active = [
-      for (final phase in phases)
-        // A repositioning phase has a next item; a set within one exercise
-        // advances directly. Voice callbacks can never widen a side switch.
-        if (phase.kind != sdk.PhaseKind.rest || phase.nextItem != null)
-          phase.kind == sdk.PhaseKind.switchSide ? phase.withSeconds(5) : phase,
-    ];
+    final active = <sdk.SessionPhase>[];
+    sdk.SessionPhase? previousWork;
+    for (final phase in phases) {
+      if (phase.isWork) previousWork = phase;
+      if (phase.kind == sdk.PhaseKind.switchSide) {
+        // Voice callbacks can never widen a side switch.
+        active.add(phase.withSeconds(5));
+      } else if (phase.kind == sdk.PhaseKind.rest) {
+        final next = phase.nextItem;
+        // A set within one exercise advances directly.
+        if (next == null) continue;
+        final fromPosture = stretchPostures[phase.doneExerciseId];
+        final sameStretchPosture =
+            previousWork != null &&
+            isStretch(previousWork) &&
+            isStretch(phase) &&
+            fromPosture != null &&
+            fromPosture == stretchPostures[next.exerciseId];
+        active.add(sameStretchPosture ? phase.withSeconds(5) : phase);
+      } else {
+        active.add(phase);
+      }
+    }
     for (var i = 0; i < active.length; i++) {
       final first = active[i];
       if (i + 5 < active.length &&

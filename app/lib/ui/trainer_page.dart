@@ -724,6 +724,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             ? null
             : FlareCooldownSessionBuilder(
                 strengtheningRestSeconds: cooldown.strengtheningRestSeconds,
+                stretchPostures: cooldown.stretchPosturesForScene('A'),
                 rhythms: data.rhythms,
                 known: (id) => drillOf(id) != null,
                 prepSeconds: _initialCountdownSeconds,

@@ -30,8 +30,10 @@ void main() {
             ...item.trainingMediaIdsForScene('A'),
         };
         bool known(String id) => shared.catalog[mediaIds[id] ?? id] != null;
+        final postures = plan.stretchPosturesForScene('A');
         final builder = FlareCooldownSessionBuilder(
           strengtheningRestSeconds: plan.strengtheningRestSeconds,
+          stretchPostures: postures,
           rhythms: shared.rhythms,
           known: known,
           prepSeconds: 10,
@@ -39,7 +41,11 @@ void main() {
           voiceGuideFor: source.voiceGuide,
           guideSideSwitchSecondsFor: source.sideSwitchSecondsFor,
         );
-        double? fullDuration;
+        final (fullDuration, stretchDuration) = const {
+          1: (1503, 845),
+          2: (2440, 1155),
+          3: (2232, 1340),
+        }[plan.tier]!;
         for (final skip in [false, true]) {
           final session = expandSegmentedTrainingPlan(
             shared.authoredPlan(plan, catalog, 'A', skipStrengthening: skip),
@@ -52,16 +58,15 @@ void main() {
               .expand((p) => script.cues(p, planSeconds: seconds))
               .expand((v) => v.voiceClips)
               .toSet();
-          if (skip) {
-            expect(seconds, lessThan(fullDuration!));
-          } else {
-            fullDuration = seconds;
-          }
+          expect(seconds, skip ? stretchDuration : fullDuration);
           for (final item in skip ? plan.items : plan.allItems) {
             final key = item.voiceKey!;
-            expect(clips, contains(key), reason: '${plan.id} ${item.drill}');
+            final played = clips.contains(key) ? key : '$key.short';
+            expect(clips, contains(played), reason: '${plan.id} ${item.drill}');
             expect(source.line(key, lang: 'zh'), item.voiceCue);
-            final bytes = await rootBundle.load(source.asset(key, lang: 'zh'));
+            final bytes = await rootBundle.load(
+              source.asset(played, lang: 'zh'),
+            );
             expect(bytes.lengthInBytes, greaterThan(0));
           }
           final prep = phases.first;
@@ -73,21 +78,32 @@ void main() {
           );
           for (final phase in phases.where((p) => p.nextExerciseId != null)) {
             final round = phase.kind == sdk.PhaseKind.roundRest;
-            expect(phase.seconds, round ? (plan.tier == 1 ? 30 : 45) : 10);
+            final previous = postures[phase.doneExerciseId];
+            final samePosture =
+                previous != null && previous == postures[phase.nextExerciseId];
+            expect(
+              phase.seconds,
+              round
+                  ? (plan.tier == 1 ? 30 : 45)
+                  : samePosture
+                  ? 5
+                  : 10,
+            );
             final nextKey = source.drill(
               phase.exerciseId!,
               sdk.DrillLine.cue1,
             )!;
+            final guideKey = samePosture ? '$nextKey.short' : nextKey;
             final transition = script.cues(phase, planSeconds: seconds);
             final guide = transition.singleWhere(
-              (c) => c.voiceClips.contains(nextKey),
+              (c) => c.voiceClips.contains(guideKey),
             );
             expect(
               guide.at + source.total(guide.voiceClips, lang: 'zh'),
               lessThan(phase.seconds),
             );
             if (!round) {
-              expect(transition.expand((c) => c.voiceClips), [nextKey]);
+              expect(transition.expand((c) => c.voiceClips), [guideKey]);
             }
           }
           for (final phase in phases.where(
