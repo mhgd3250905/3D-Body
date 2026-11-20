@@ -238,14 +238,26 @@ class Catalog {
     _flarePlans.map((plan) => plan.groupId).nonNulls.toSet(),
   );
 
+  FlarePlan? get flareWarmupPlan => _flarePlans
+      .where((plan) => plan.kind == FlarePlanKind.warmup)
+      .firstOrNull;
+
+  FlarePlan? get flareCooldownPlan => _flarePlans
+      .where((plan) => plan.kind == FlarePlanKind.cooldown)
+      .firstOrNull;
+
   ({int plans, int angles, int muscles, int tiers}) get flarePlanCounts => (
-    plans: _flarePlans.length,
+    plans: _flarePlans.where((plan) => !plan.isSupplemental).length,
     angles: {
       for (final plan in _flarePlans)
         if (plan.phaseSource case final source?) ...[source, ...plan.mirrors],
     }.length,
     muscles: flarePlanMuscles.length,
-    tiers: _flarePlans.map((plan) => plan.tier).toSet().length,
+    tiers: _flarePlans
+        .where((plan) => !plan.isSupplemental)
+        .map((plan) => plan.tier)
+        .toSet()
+        .length,
   );
 
   List<FlarePlan> plansForAngle(int phaseSource) => List.unmodifiable(
@@ -490,6 +502,7 @@ class Catalog {
     final plans = <FlarePlan>[];
     final ids = <String>{};
     final tierSlots = <(Object, int)>{};
+    final supplementalKinds = <FlarePlanKind>{};
     for (final row in rows) {
       final plan = FlarePlan.fromJson(Map<String, dynamic>.from(row as Map));
       final validTarget = switch (plan.kind) {
@@ -497,13 +510,16 @@ class Catalog {
           phaseSources.contains(plan.phaseSource) &&
               plan.mirrors.every(phaseSources.contains),
         FlarePlanKind.muscle => groupIds.contains(plan.groupId),
+        FlarePlanKind.warmup ||
+        FlarePlanKind.cooldown => supplementalKinds.add(plan.kind),
       };
       if (!validTarget ||
           !ids.add(plan.id) ||
-          ![
-            plan.target,
-            ...plan.mirrors,
-          ].every((target) => tierSlots.add((target, plan.tier)))) {
+          (!plan.isSupplemental &&
+              ![
+                plan.target!,
+                ...plan.mirrors,
+              ].every((target) => tierSlots.add((target, plan.tier))))) {
         throw FormatException('Invalid or duplicate target: ${plan.id}');
       }
       plans.add(plan);

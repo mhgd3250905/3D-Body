@@ -219,30 +219,41 @@ void main() {
     return scene;
   }
 
-  test('the intact r2-v18 pack exposes 248 actions to library and AI', () {
-    final packIds = shared.pack.toAiCatalog().drills.map((d) => d.id).toSet();
-    final scopedIds = {...packIds}..remove('n-thomas-test');
-    final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
-    final libraryIds = shared.library
-        .actions(policy.catalog)
-        .map((a) => a.id)
-        .toSet();
-    final profile = flareCoachAppProfile(
-      shared: shared,
-      executionTiming: shared.sessionBuilder().executionTiming,
-    );
-    expect(packIds, hasLength(249));
-    expect(packIds, contains('n-thomas-test'));
-    expect(scopedIds, hasLength(248));
-    expect(aiIds, unorderedEquals(packIds));
-    expect(libraryIds, unorderedEquals(scopedIds));
-    expect(shared.allowedActionIds, unorderedEquals(scopedIds));
-    expect(profile.scopeManifest.allowedActionIds, unorderedEquals(libraryIds));
-    expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
-    expect(_newR2V1Actions, hasLength(40));
-    expect(packIds, containsAll(_newR2V1Actions));
-    expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
-  });
+  test(
+    'the warm-up addition preserves the r2-v18 library and AI scope',
+    () async {
+      final bundled = await loadFlareBundledPublicCatalog();
+      final packIds = bundled.toAiCatalog().drills.map((d) => d.id).toSet();
+      final scopedIds = {...packIds}..remove('n-thomas-test');
+      final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
+      final libraryIds = shared.library
+          .actions(policy.catalog)
+          .map((a) => a.id)
+          .toSet();
+      final profile = flareCoachAppProfile(
+        shared: shared,
+        executionTiming: shared.sessionBuilder().executionTiming,
+      );
+      expect(packIds, hasLength(249));
+      expect(packIds, contains('n-thomas-test'));
+      expect(scopedIds, hasLength(248));
+      expect(aiIds, unorderedEquals({...packIds, flareWarmupPushupId}));
+      expect(
+        policy.actionFor(flareWarmupPushupId)?.availableForTraining,
+        isTrue,
+      );
+      expect(libraryIds, unorderedEquals(scopedIds));
+      expect(shared.allowedActionIds, unorderedEquals(scopedIds));
+      expect(
+        profile.scopeManifest.allowedActionIds,
+        unorderedEquals(libraryIds),
+      );
+      expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
+      expect(_newR2V1Actions, hasLength(40));
+      expect(packIds, containsAll(_newR2V1Actions));
+      expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
+    },
+  );
 
   test(
     'every scoped action has both verified WebP files in the asset bundle',
@@ -272,8 +283,9 @@ void main() {
     () async {
       const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
+      final bundled = await loadFlareBundledPublicCatalog();
       final olderBytes = utf8.encode(
-        jsonEncode({...shared.pack.raw, 'pack': olderPack}),
+        jsonEncode({...bundled.raw, 'pack': olderPack}),
       );
       final semanticBytes = File(flarePublicSemanticsAsset).readAsBytesSync();
       await store.writeAtomic('packs/$olderPack/catalog.json', olderBytes);

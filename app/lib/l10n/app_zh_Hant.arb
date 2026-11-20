@@ -601,5 +601,12 @@
   "libraryDose": "{sets} 組 × {amount}",
   "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
   "planEquipmentNeeded": "需要：",
-  "planEquipmentNameForId": "{id, select, mat{瑜伽墊} chair{椅子} band{彈力帶} dumbbell{啞鈴} wall{牆} cable{滑輪訓練機} block{瑜伽磚} pullup_bar{單槓} parallettes{伏地挺身架} dip_bars{雙槓} slider{滑盤} rings{吊環} landmine{地雷管} swiss_ball{健身球} roman_chair{羅馬椅} kettlebell{壺鈴} reverse_hyper{反向挺身機} ghd{臀腿訓練器} hip_abductor_machine{髖外展機} leg_extension_machine{腿屈伸機} foam_roller{滾筒} towel{毛巾} doorframe{門框} bench{訓練椅} barbell{槓鈴} clamp_pad{夾墊} other{}}"
+  "planEquipmentNameForId": "{id, select, mat{瑜伽墊} chair{椅子} band{彈力帶} dumbbell{啞鈴} wall{牆} cable{滑輪訓練機} block{瑜伽磚} pullup_bar{單槓} parallettes{伏地挺身架} dip_bars{雙槓} slider{滑盤} rings{吊環} landmine{地雷管} swiss_ball{健身球} roman_chair{羅馬椅} kettlebell{壺鈴} reverse_hyper{反向挺身機} ghd{臀腿訓練器} hip_abductor_machine{髖外展機} leg_extension_machine{腿屈伸機} foam_roller{滾筒} towel{毛巾} doorframe{門框} bench{訓練椅} barbell{槓鈴} clamp_pad{夾墊} other{}}",
+  "warmupCooldownHeading": "練前練後",
+  "preWorkoutWarmup": "練前熱身",
+  "postWorkoutStretch": "練後伸展",
+  "preWorkoutWarmupPrompt": "還沒熱身？先做 8 分鐘",
+  "continuePostWorkoutStretch": "接著做練後伸展 · 10 分鐘",
+  "bodyweightPlanMinutes": "{minutes} 分鐘 · 徒手",
+  "temporaryPlanDemo": "臨時示範"
 }

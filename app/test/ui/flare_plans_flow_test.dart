@@ -360,6 +360,41 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('non-members can open and start both supplemental plans', (
+    tester,
+  ) async {
+    final membership = FlareMembership(_MembershipStore());
+    addTearDown(membership.dispose);
+    final mounted = await mountShell(tester, membership: membership);
+    expect(membership.isPremium, isFalse);
+    await mounted.store.updateSettings(tier: 'C');
+    await helpers.openPlansFromHome(tester);
+
+    for (final (id, exercises) in [
+      ('general-warmup', 8),
+      ('general-cooldown', 9),
+    ]) {
+      await tester.tap(_key('plan-$id'));
+      await tester.pumpAndSettle();
+      expect(_key('flare-plan-tier'), findsNothing);
+      expect(_key('flare-plan-warmup-link'), findsNothing);
+      await tester.tap(_key('flare-plan-start'));
+      await helpers.waitForTrainingRoute(tester);
+      final probe = tester.widget<helpers.TrainingRouteProbe>(
+        find.byType(helpers.TrainingRouteProbe),
+      );
+      expect(probe.plan.items.length, exercises);
+      expect(mounted.store.settings.tier, 'C');
+      await tester.tap(_key('training-probe-close'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(FlareBackChip));
+      await tester.pumpAndSettle();
+      expect(find.byType(PlansPage), findsOneWidget);
+    }
+    helpers.assertNoFlutterError(tester);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('plans continues the recorded angle and scene at the next move', (
     tester,
   ) async {

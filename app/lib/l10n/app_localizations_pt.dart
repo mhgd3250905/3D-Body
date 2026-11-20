@@ -1590,4 +1590,28 @@ class AppLocalizationsPt extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Antes e depois';
+
+  @override
+  String get preWorkoutWarmup => 'Aquecimento';
+
+  @override
+  String get postWorkoutStretch => 'Alongamento pós-treino';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'Ainda não aqueceu? Faça 8 min de ';
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Continue com o alongamento · 10 min';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes min · Peso corporal';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demonstração temporária';
 }

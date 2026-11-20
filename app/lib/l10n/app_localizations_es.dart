@@ -1598,4 +1598,28 @@ class AppLocalizationsEs extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Antes y después';
+
+  @override
+  String get preWorkoutWarmup => 'Calentamiento previo';
+
+  @override
+  String get postWorkoutStretch => 'Estiramientos al terminar';
+
+  @override
+  String get preWorkoutWarmupPrompt => '¿Aún sin calentar? Dedica 8 min al ';
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Continuar con los estiramientos · 10 min';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes min · Peso corporal';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demostración temporal';
 }

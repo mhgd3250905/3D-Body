@@ -1530,4 +1530,27 @@ class AppLocalizationsJa extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'トレーニング前後';
+
+  @override
+  String get preWorkoutWarmup => 'ウォームアップ';
+
+  @override
+  String get postWorkoutStretch => 'トレーニング後のストレッチ';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'まだ準備運動をしていませんか？ 8分の';
+
+  @override
+  String get continuePostWorkoutStretch => '続けてストレッチ · 10分';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes分 · 自重';
+  }
+
+  @override
+  String get temporaryPlanDemo => '仮のデモ';
 }

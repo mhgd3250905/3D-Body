@@ -601,5 +601,12 @@
   "libraryDose": "{sets} series × {amount}",
   "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
   "planEquipmentNeeded": "Necesitas:",
-  "planEquipmentNameForId": "{id, select, mat{Esterilla} chair{Silla} band{Banda elástica} dumbbell{Mancuerna} wall{Pared} cable{Máquina de poleas} block{Bloque de yoga} pullup_bar{Barra de dominadas} parallettes{Paralelas bajas} dip_bars{Barras de fondos} slider{Discos deslizantes} rings{Anillas de gimnasia} landmine{Soporte para barra landmine} swiss_ball{Pelota de ejercicio} roman_chair{Silla romana} kettlebell{Pesa rusa} reverse_hyper{Máquina de hiperextensión inversa} ghd{Banco para glúteos e isquiotibiales} hip_abductor_machine{Máquina de abducción de cadera} leg_extension_machine{Máquina de extensión de piernas} foam_roller{Rodillo de espuma} towel{Toalla} doorframe{Marco de la puerta} bench{Banco de pesas} barbell{Barra de pesas} clamp_pad{Almohadilla pequeña} other{}}"
+  "planEquipmentNameForId": "{id, select, mat{Esterilla} chair{Silla} band{Banda elástica} dumbbell{Mancuerna} wall{Pared} cable{Máquina de poleas} block{Bloque de yoga} pullup_bar{Barra de dominadas} parallettes{Paralelas bajas} dip_bars{Barras de fondos} slider{Discos deslizantes} rings{Anillas de gimnasia} landmine{Soporte para barra landmine} swiss_ball{Pelota de ejercicio} roman_chair{Silla romana} kettlebell{Pesa rusa} reverse_hyper{Máquina de hiperextensión inversa} ghd{Banco para glúteos e isquiotibiales} hip_abductor_machine{Máquina de abducción de cadera} leg_extension_machine{Máquina de extensión de piernas} foam_roller{Rodillo de espuma} towel{Toalla} doorframe{Marco de la puerta} bench{Banco de pesas} barbell{Barra de pesas} clamp_pad{Almohadilla pequeña} other{}}",
+  "warmupCooldownHeading": "Antes y después",
+  "preWorkoutWarmup": "Calentamiento previo",
+  "postWorkoutStretch": "Estiramientos al terminar",
+  "preWorkoutWarmupPrompt": "¿Aún sin calentar? Dedica 8 min al ",
+  "continuePostWorkoutStretch": "Continuar con los estiramientos · 10 min",
+  "bodyweightPlanMinutes": "{minutes} min · Peso corporal",
+  "temporaryPlanDemo": "Demostración temporal"
 }

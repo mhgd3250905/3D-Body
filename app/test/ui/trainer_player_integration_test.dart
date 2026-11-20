@@ -126,6 +126,7 @@ Future<LearningStore> _open(
   _Storage? storage,
   List<sdk.SessionResult>? popped,
   ValueNotifier<bool>? previewLocked,
+  VoidCallback? onContinueCooldown,
   double textScale = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
@@ -163,6 +164,7 @@ Future<LearningStore> _open(
                   store: store,
                   startInPreview: previewLocked != null,
                   previewLocked: locked,
+                  onContinueCooldown: onContinueCooldown,
                   voiceOutput: sdk.MutedVoiceOutput(),
                   keepAlive: false,
                 );
@@ -554,6 +556,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
     expect(find.byType(FlareTrainingPage), findsNothing);
+    expect(store.sessions, hasLength(2));
+  });
+
+  testWidgets('cooldown follows Finish and returns the saved SDK result once', (
+    tester,
+  ) async {
+    var continued = 0;
+    final popped = <sdk.SessionResult>[];
+    final store = await _open(
+      tester,
+      popped: popped,
+      onContinueCooldown: () => continued++,
+    );
+    final cooldown = find.byKey(const ValueKey('continue-cooldown'));
+    expect(cooldown, findsNothing);
+    await _advance(tester, _sessionSeconds(_player(tester)).ceil() + 2);
+    await tester.pumpAndSettle();
+
+    final finish = find.byKey(const ValueKey('finish'));
+    final replay = find.byKey(const ValueKey('flare-completion-replay'));
+    expect(cooldown, findsOneWidget);
+    expect(tester.getSize(cooldown).height, 48);
+    expect(
+      tester.getTopLeft(cooldown).dy - tester.getBottomLeft(finish).dy,
+      10,
+    );
+    expect(tester.getTopLeft(replay).dy, tester.getBottomLeft(cooldown).dy);
+    expect(store.trainerSessions, hasLength(1));
+
+    await tester.tap(cooldown);
+    await tester.pumpAndSettle();
+    expect(continued, 1);
+    expect(find.byType(FlareTrainingPage), findsNothing);
+    expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
     expect(store.sessions, hasLength(2));
   });
 

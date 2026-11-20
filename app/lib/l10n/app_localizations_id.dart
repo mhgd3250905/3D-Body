@@ -1575,4 +1575,27 @@ class AppLocalizationsId extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Sebelum dan sesudah latihan';
+
+  @override
+  String get preWorkoutWarmup => 'Pemanasan';
+
+  @override
+  String get postWorkoutStretch => 'Peregangan setelah latihan';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'Belum pemanasan? Coba 8 menit ';
+
+  @override
+  String get continuePostWorkoutStretch => 'Lanjutkan peregangan · 10 menit';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes menit · Berat badan';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demo sementara';
 }

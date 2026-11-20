@@ -1519,6 +1519,29 @@ class AppLocalizationsZh extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '练前练后';
+
+  @override
+  String get preWorkoutWarmup => '练前热身';
+
+  @override
+  String get postWorkoutStretch => '练后拉伸';
+
+  @override
+  String get preWorkoutWarmupPrompt => '还没热身？先做 8 分钟';
+
+  @override
+  String get continuePostWorkoutStretch => '接着做练后拉伸 · 10 分钟';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes 分钟 · 徒手';
+  }
+
+  @override
+  String get temporaryPlanDemo => '临时示范';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3037,4 +3060,27 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '練前練後';
+
+  @override
+  String get preWorkoutWarmup => '練前熱身';
+
+  @override
+  String get postWorkoutStretch => '練後伸展';
+
+  @override
+  String get preWorkoutWarmupPrompt => '還沒熱身？先做 8 分鐘';
+
+  @override
+  String get continuePostWorkoutStretch => '接著做練後伸展 · 10 分鐘';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes 分鐘 · 徒手';
+  }
+
+  @override
+  String get temporaryPlanDemo => '臨時示範';
 }

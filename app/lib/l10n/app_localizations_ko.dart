@@ -1533,4 +1533,27 @@ class AppLocalizationsKo extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '운동 전후';
+
+  @override
+  String get preWorkoutWarmup => '운동 전 워밍업';
+
+  @override
+  String get postWorkoutStretch => '운동 후 스트레칭';
+
+  @override
+  String get preWorkoutWarmupPrompt => '아직 몸을 풀지 않았다면 8분 ';
+
+  @override
+  String get continuePostWorkoutStretch => '이어서 운동 후 스트레칭 · 10분';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes분 · 맨몸';
+  }
+
+  @override
+  String get temporaryPlanDemo => '임시 시범';
 }

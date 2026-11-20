@@ -1,6 +1,6 @@
-enum FlarePlanKind { angle, muscle }
+enum FlarePlanKind { angle, muscle, warmup, cooldown }
 
-/// A curated stage or muscle plan with a fixed difficulty and authored doses.
+/// A curated plan with authored exercises and doses.
 class FlarePlan {
   FlarePlan._({
     required this.id,
@@ -8,6 +8,7 @@ class FlarePlan {
     required this.target,
     required List<int> mirrors,
     required this.tier,
+    this.estimatedMinutes,
     required List<FlarePlanItem> items,
   }) : mirrors = List.unmodifiable(mirrors),
        items = List.unmodifiable(items);
@@ -15,12 +16,15 @@ class FlarePlan {
   final String id;
   final FlarePlanKind kind;
 
-  /// Phase source for angle plans, muscle group ID for muscle plans.
-  final Object target;
+  /// Phase source or muscle group for targeted plans.
+  final Object? target;
   int? get phaseSource => kind == FlarePlanKind.angle ? target as int : null;
   String? get groupId => kind == FlarePlanKind.muscle ? target as String : null;
   final List<int> mirrors;
   final int tier;
+  final int? estimatedMinutes;
+  bool get isSupplemental =>
+      kind == FlarePlanKind.warmup || kind == FlarePlanKind.cooldown;
   final List<FlarePlanItem> items;
 
   factory FlarePlan.fromJson(Map<String, dynamic> json) {
@@ -28,11 +32,16 @@ class FlarePlan {
     final kind = switch (json['kind']) {
       'angle' => FlarePlanKind.angle,
       'muscle' => FlarePlanKind.muscle,
+      'warmup' => FlarePlanKind.warmup,
+      'cooldown' => FlarePlanKind.cooldown,
       _ => throw const FormatException('Unknown Flare plan kind'),
     };
     final target = json['target'];
     final mirrors = json['mirrors'] ?? const [];
-    final tier = json['tier'];
+    final supplemental =
+        kind == FlarePlanKind.warmup || kind == FlarePlanKind.cooldown;
+    final tier = supplemental ? 1 : json['tier'];
+    final estimatedMinutes = json['estimatedMinutes'];
     final items = json['items'];
     if (id is! String ||
         id.isEmpty ||
@@ -41,7 +50,13 @@ class FlarePlan {
             (target is! String || target.isEmpty)) ||
         mirrors is! List ||
         mirrors.any((value) => value is! int) ||
-        (kind == FlarePlanKind.muscle && mirrors.isNotEmpty) ||
+        (kind != FlarePlanKind.angle && mirrors.isNotEmpty) ||
+        (supplemental &&
+            (target != null ||
+                json['tier'] != null ||
+                estimatedMinutes is! int ||
+                estimatedMinutes < 1)) ||
+        (!supplemental && estimatedMinutes != null) ||
         tier is! int ||
         tier < 1 ||
         tier > 3 ||
@@ -52,9 +67,10 @@ class FlarePlan {
     return FlarePlan._(
       id: id,
       kind: kind,
-      target: target as Object,
+      target: target,
       mirrors: mirrors.cast<int>(),
       tier: tier,
+      estimatedMinutes: estimatedMinutes as int?,
       items: [
         for (final item in items)
           FlarePlanItem.fromJson(Map<String, dynamic>.from(item as Map)),
@@ -72,6 +88,10 @@ class FlarePlanItem {
     this.bodyweightDose,
     this.home,
     this.homeDose,
+    this.voiceCue,
+    this.displayName,
+    this.displayNameEn,
+    required this.usesPlaceholderDemo,
   });
 
   final String drill;
@@ -80,6 +100,12 @@ class FlarePlanItem {
   final FlarePlanDose? bodyweightDose;
   final String? home;
   final FlarePlanDose? homeDose;
+  final String? voiceCue;
+
+  /// The authored movement's name when its temporary demonstration differs.
+  final String? displayName;
+  final String? displayNameEn;
+  final bool usesPlaceholderDemo;
 
   int get sets => dose.sets;
   int? get reps => dose.reps;
@@ -105,7 +131,7 @@ class FlarePlanItem {
       throw FormatException('Invalid Flare plan item: $drill');
     }
 
-    String? substitution(String key) {
+    String? optionalText(String key) {
       final value = json[key];
       if (value == null || (value is String && value.isNotEmpty)) {
         return value as String?;
@@ -122,13 +148,28 @@ class FlarePlanItem {
       return FlarePlanDose._fromJson(value, '$drill/$key');
     }
 
+    // TODO: Replace the two wall-demo IDs when their exact demonstrations
+    // are available from Pose-Hub, then remove the placeholder names and flag.
+    final demoPending = json['demoPending'] ?? false;
+    final displayName = optionalText('displayName');
+    final displayNameEn = optionalText('displayNameEn');
+    if (demoPending is! bool ||
+        demoPending != (displayName != null && displayNameEn != null) ||
+        (displayName == null) != (displayNameEn == null)) {
+      throw FormatException('Invalid placeholder demonstration: $drill');
+    }
+
     return FlarePlanItem._(
       drill: drill,
       dose: FlarePlanDose._fromJson(json, drill),
-      bodyweight: substitution('bodyweight'),
+      bodyweight: optionalText('bodyweight'),
       bodyweightDose: override('bodyweightDose'),
-      home: substitution('home'),
+      home: optionalText('home'),
       homeDose: override('homeDose'),
+      voiceCue: optionalText('voiceCue'),
+      displayName: displayName,
+      displayNameEn: displayNameEn,
+      usesPlaceholderDemo: demoPending,
     );
   }
 }

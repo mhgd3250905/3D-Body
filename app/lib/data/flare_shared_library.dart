@@ -1,5 +1,7 @@
 // Flare scope, theme and library presentation; SDK owns catalogue semantics,
 // media, details and training entry. Browsing requests display artwork only.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
@@ -54,10 +56,24 @@ class FlareShared {
   final trainer.TrainingLibraryConfig library;
 
   /// SDK library strings and action details for the current app locale.
-  trainer.TrainingLibraryConfig libraryFor(BuildContext context) {
+  trainer.TrainingLibraryConfig libraryFor(
+    BuildContext context, {
+    String? planActionId,
+  }) {
     final locale = Localizations.localeOf(context);
+    // Only this authored warm-up opens the additional action. It is outside
+    // the general library and Coach action allowlist.
+    final detailScope =
+        planActionId == flareWarmupPushupId &&
+            catalog[flareWarmupPushupId] != null
+        ? coach.CoachActionScopeManifest.fromCatalogBytes(
+            appId: flareAppId,
+            catalogBytes: utf8.encode(jsonEncode(catalog.toJson())),
+            allowedActionIds: [flareWarmupPushupId],
+          )
+        : scope;
     return _libraryConfig(
-      scope,
+      detailScope,
       locale.toLanguageTag(),
       displayText: locale.languageCode == 'en' ? _englishActionText : null,
     );
@@ -129,21 +145,26 @@ class FlareShared {
   }
 
   Set<String> authoredPlanEquipment(flare.FlarePlan plan, String scene) => {
-    for (final item in plan.items)
-      for (final tool
-          in catalog[item.drillForScene(scene)]?.equipment ?? const <String>[])
-        switch ((item.drillForScene(scene), tool, scene)) {
-          ('forearms-B', 'bench', 'B') => 'chair',
-          ('rotator-cuff-B', 'block', _) => 'clamp-pad',
-          _ => tool,
-        },
+    if (!plan.isSupplemental)
+      for (final item in plan.items)
+        for (final tool
+            in catalog[item.drillForScene(scene)]?.equipment ??
+                const <String>[])
+          switch ((item.drillForScene(scene), tool, scene)) {
+            ('forearms-B', 'bench', 'B') => 'chair',
+            ('rotator-cuff-B', 'block', _) => 'clamp-pad',
+            _ => tool,
+          },
   };
 
   static Future<FlareShared> load({
     AssetBundle? bundle,
     coach.PoseHubAppTestCatalog? activeCatalog,
   }) async {
-    final pack = activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle);
+    final pack = await withFlareWarmupAction(
+      activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle),
+      bundle: bundle,
+    );
     final rhythms = flarePublicRhythms(pack);
     final catalog = flareCoachCatalogFromPublic(pack, rhythms: rhythms);
     return FlareShared._(
@@ -212,7 +233,7 @@ class FlareShared {
     await trainer.TrainingLibraryDetails.open(
       context,
       actionId: id,
-      config: shared.libraryFor(context),
+      config: shared.libraryFor(context, planActionId: id),
       mediaPolicy: policy,
       theme: resolvedTheme.copyWith(mediaStage: Colors.transparent),
       onStart: soundEnabled

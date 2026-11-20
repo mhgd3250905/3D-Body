@@ -32,12 +32,14 @@ abstract final class FlarePublicMedia {
     String? rootDirectory,
     bool prefetchBeforeTraining = false,
   }) async {
-    final catalog = activeCatalog ?? await loadFlarePublicCatalog();
+    final catalog = await withFlareWarmupAction(
+      activeCatalog ?? await loadFlarePublicCatalog(),
+    );
     final bundled =
         trainer.poseHubPackVersionOf(catalog) ==
             PoseHubCatalogUpdates.bundledPackVersion
         ? catalog
-        : await loadFlareBundledPublicCatalog();
+        : await withFlareWarmupAction(await loadFlareBundledPublicCatalog());
     final assetsBySha = {
       for (final action in bundled.allActions)
         action.cover.sha256: coverAssetFor(action.id),
@@ -46,7 +48,12 @@ abstract final class FlarePublicMedia {
     };
     final repository = await trainer.TrainingMediaRepository.fromCatalog(
       catalog: catalog,
-      catalogRevision: poseHubCatalogRevisionOf(catalog),
+      catalogRevision:
+          trainer.poseHubPackVersionOf(catalog) ==
+                  PoseHubCatalogUpdates.bundledPackVersion &&
+              catalog.tryGet(flareWarmupPushupId) != null
+          ? catalog.semanticCatalogFile.sha256
+          : poseHubCatalogRevisionOf(catalog),
       // The SDK resolves the media root from the catalogue in use.
       mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
       rootDirectory: rootDirectory,

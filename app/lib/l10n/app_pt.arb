@@ -601,5 +601,12 @@
   "libraryDose": "{sets} séries × {amount}",
   "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
   "planEquipmentNeeded": "Precisas de:",
-  "planEquipmentNameForId": "{id, select, mat{Tapete de treino} chair{Cadeira} band{Faixa elástica} dumbbell{Haltere} wall{Parede} cable{Máquina de cabos} block{Bloco de ioga} pullup_bar{Barra de elevações} parallettes{Paralelas baixas} dip_bars{Barras para fundos} slider{Discos deslizantes} rings{Argolas de ginástica} landmine{Suporte de barra landmine} swiss_ball{Bola de exercício} roman_chair{Banco romano} kettlebell{Kettlebell} reverse_hyper{Máquina de hiperextensão inversa} ghd{Banco para glúteos e isquiotibiais} hip_abductor_machine{Máquina abdutora} leg_extension_machine{Máquina de extensão de pernas} foam_roller{Rolo de espuma} towel{Toalha} doorframe{Batente da porta} bench{Banco de musculação} barbell{Barra de musculação} clamp_pad{Almofada pequena} other{}}"
+  "planEquipmentNameForId": "{id, select, mat{Tapete de treino} chair{Cadeira} band{Faixa elástica} dumbbell{Haltere} wall{Parede} cable{Máquina de cabos} block{Bloco de ioga} pullup_bar{Barra de elevações} parallettes{Paralelas baixas} dip_bars{Barras para fundos} slider{Discos deslizantes} rings{Argolas de ginástica} landmine{Suporte de barra landmine} swiss_ball{Bola de exercício} roman_chair{Banco romano} kettlebell{Kettlebell} reverse_hyper{Máquina de hiperextensão inversa} ghd{Banco para glúteos e isquiotibiais} hip_abductor_machine{Máquina abdutora} leg_extension_machine{Máquina de extensão de pernas} foam_roller{Rolo de espuma} towel{Toalha} doorframe{Batente da porta} bench{Banco de musculação} barbell{Barra de musculação} clamp_pad{Almofada pequena} other{}}",
+  "warmupCooldownHeading": "Antes e depois",
+  "preWorkoutWarmup": "Aquecimento",
+  "postWorkoutStretch": "Alongamento pós-treino",
+  "preWorkoutWarmupPrompt": "Ainda não aqueceu? Faça 8 min de ",
+  "continuePostWorkoutStretch": "Continue com o alongamento · 10 min",
+  "bodyweightPlanMinutes": "{minutes} min · Peso corporal",
+  "temporaryPlanDemo": "Demonstração temporária"
 }

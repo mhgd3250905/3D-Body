@@ -1,0 +1,75 @@
+{
+  "language": "zh",
+  "engine": "eSpeak NG 1.52-dev, cmn, 156 words/min, pitch 48",
+  "source": "https://github.com/espeak-ng/espeak-ng",
+  "clips": {
+    "supplemental.general-warmup.1": {
+      "ms": 9641,
+      "sha256": "fd036b4e574238272f1f36f1f1ea270169cd39f83db0586ae68640aa4ce6baca"
+    },
+    "supplemental.general-warmup.2": {
+      "ms": 6358,
+      "sha256": "7f55f81cca701cb0c080c63cde500a94487e14535f9434c0a7ff6cd1517315b8"
+    },
+    "supplemental.general-warmup.3": {
+      "ms": 4316,
+      "sha256": "3744dacfdbfcc4d73a1d06ca3333d977c1e4931e0ee96ad3dd80fb1cf21e010d"
+    },
+    "supplemental.general-warmup.4": {
+      "ms": 5530,
+      "sha256": "f452cc6ae77de04a5afd8efb043c5c52946b09d900ca0ed1f31cb29255ea17ff"
+    },
+    "supplemental.general-warmup.5": {
+      "ms": 4681,
+      "sha256": "47da5a60204eca09c5bfb7e4467ba0eb22526da38daf0c99922d7e4227931319"
+    },
+    "supplemental.general-warmup.6": {
+      "ms": 6019,
+      "sha256": "bed1a69f209ff173611195b596d9081c7a68834afd11c9dd91e3c1c680da4e46"
+    },
+    "supplemental.general-warmup.7": {
+      "ms": 5782,
+      "sha256": "269f0d7ed6f8b012fca720dcb730e32b3cdd80fe1af2a1d32b4672483044028e"
+    },
+    "supplemental.general-warmup.8": {
+      "ms": 5279,
+      "sha256": "ead384e1a021566fae5cf34802499927fc1735f7bcf39e58e8e2f64c0cbefdb3"
+    },
+    "supplemental.general-cooldown.1": {
+      "ms": 9077,
+      "sha256": "de63d627794b937e214b240c0a08cd96afb12b5bc80fac8c020dabfa3366678b"
+    },
+    "supplemental.general-cooldown.2": {
+      "ms": 4323,
+      "sha256": "1933a34bc1b2ea7dedec2f53bc96f59d6af35ab12b38c2bd73bc305d7b4ae9e8"
+    },
+    "supplemental.general-cooldown.3": {
+      "ms": 11072,
+      "sha256": "a670f0dc775cecd630f0df58879ed8f9bb52d163a655dc36897496b81dd5bb3a"
+    },
+    "supplemental.general-cooldown.4": {
+      "ms": 10708,
+      "sha256": "062fe6d817827e2a0ce522b2d927ea89d24195266f61dc5be74a18adf64ed5c6"
+    },
+    "supplemental.general-cooldown.5": {
+      "ms": 4851,
+      "sha256": "bd64ac4c951a2de8eece972705bd594a7fdc3dacb4586beae91a5bea4cab810b"
+    },
+    "supplemental.general-cooldown.6": {
+      "ms": 6516,
+      "sha256": "5164b3495d9297f0e0ce665397061237facab956d1b3a82e0a7f900feb702d20"
+    },
+    "supplemental.general-cooldown.7": {
+      "ms": 4112,
+      "sha256": "3236049b50eed3cdec2ae4b553fc6c9a7b47cb451176a813e15c4f174df77112"
+    },
+    "supplemental.general-cooldown.8": {
+      "ms": 4604,
+      "sha256": "f4df93a50c2c1a40ee299cbf6cb314ee333d14d93f8ae1a5ac0bc36075dcff43"
+    },
+    "supplemental.general-cooldown.9": {
+      "ms": 6808,
+      "sha256": "9f1a15f68088290a5a8af8824dee099f00a1c5aa18f4134dfe315cd26d10548c"
+    }
+  }
+}

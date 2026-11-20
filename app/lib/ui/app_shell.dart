@@ -642,6 +642,14 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _openFlarePlan(_FlarePlanTarget.muscle(group.id));
   }
 
+  void _openSupplementalPlan(FlarePlan plan) {
+    setState(() {
+      _flarePlanTrail.add(_FlarePlanTarget.supplemental(plan, _drill));
+      _drill = null;
+    });
+    _syncSceneVisibility();
+  }
+
   void _openFlarePlan(_FlarePlanTarget target) {
     setState(() => _flarePlanTrail.add(target));
     _syncSceneVisibility();
@@ -664,7 +672,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     uc.TrainingPlan plan, {
     Future<bool> Function()? onStarting,
     VoidCallback Function()? holdTransition,
-  }) {
+    FlarePlan? supplementalPlan,
+  }) async {
     final policy =
         sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
     final ids = plan.exerciseIds.toList();
@@ -672,7 +681,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ? policy!.posterAssetFor(id)
         : policy?.posterAssetFor(id) ??
               '${FlarePublicMedia.posterRoot}$id.webp';
-    final preview = _hasPremium
+    final cooldown = supplementalPlan == null
+        ? catalog.flareCooldownPlan
+        : null;
+    var continueCooldown = false;
+    void markCooldownRequested() => continueCooldown = true;
+    final onContinueCooldown = cooldown == null ? null : markCooldownRequested;
+    final preview = _hasPremium || supplementalPlan != null
         ? null
         : _premiumPreview(
             FlarePremiumFeature.training,
@@ -682,15 +697,22 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               store: store,
               startInPreview: true,
               previewLocked: locked,
+              onContinueCooldown: onContinueCooldown,
             ),
             keepUnlocked: true,
           );
-    return sdk.TrainerLauncher.open<sdk.SessionResult>(
+    final result = await sdk.TrainerLauncher.open<sdk.SessionResult>(
       context,
       builder: (_) =>
           preview ??
           widget.trainingPageBuilder?.call(plan) ??
-          FlareTrainingPage(plan: plan, catalog: catalog, store: store),
+          FlareTrainingPage(
+            plan: plan,
+            catalog: catalog,
+            store: store,
+            supplementalPlan: supplementalPlan,
+            onContinueCooldown: onContinueCooldown,
+          ),
       firstPosterAsset: ids.isEmpty ? null : posterFor(ids.first),
       posterAssets: preview == null
           ? [for (final id in ids) ?posterFor(id)]
@@ -702,16 +724,23 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       holdTransition: holdTransition,
       settings: const RouteSettings(name: '/training'),
     );
+    if (mounted && continueCooldown && cooldown != null) {
+      _openSupplementalPlan(cooldown);
+    }
+    return result;
   }
 
-  Future<void> _startPlan(uc.TrainingPlan plan) async {
+  Future<void> _startPlan(
+    uc.TrainingPlan plan, {
+    FlarePlan? supplementalPlan,
+  }) async {
     if (!mounted || _trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
     DrillPlaybackCoordinator.shared.pauseAll();
     setState(() => _trainingOpen = true);
     _syncSceneVisibility();
     try {
-      await _launchTraining(context, plan);
+      await _launchTraining(context, plan, supplementalPlan: supplementalPlan);
     } finally {
       if (mounted) {
         setState(() => _trainingOpen = false);
@@ -888,7 +917,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     int? phaseSource,
   }) async {
     if (_trainingOpen) return;
-    final sceneTier = store.settings.tier;
+    final sceneTier = plan.isSupplemental ? 'A' : store.settings.tier;
     try {
       final shared = FlareShared.current ?? await FlareShared.load();
       if (!mounted) return;
@@ -898,6 +927,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           sceneTier: sceneTier,
           phaseSource: phaseSource,
         ),
+        supplementalPlan: plan.isSupplemental ? plan : null,
       );
     } catch (_) {
       _showTrainingLoadFailure();
@@ -934,7 +964,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         _showTrainingLoadFailure();
         return;
       }
-      await _startPlan(remaining);
+      final authored = resume.authoredPlan;
+      await _startPlan(
+        remaining,
+        supplementalPlan: authored?.isSupplemental == true ? authored : null,
+      );
     } catch (_) {
       _showTrainingLoadFailure();
     }
@@ -1095,7 +1129,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       } else if (_drill != null) {
         _drill = null;
       } else if (_flarePlanTrail.isNotEmpty) {
-        _flarePlanTrail.removeLast();
+        _drill = _flarePlanTrail.removeLast().returnToDrill;
       } else if (_routine != null) {
         _routine = null;
       } else if (_settings) {
@@ -1399,8 +1433,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   int get _hubDepth => _trainingHubOrigin == 0 ? 1 : 2;
 
   int get _planDepth {
-    final parent = _tab == _trainingHubTab ? _hubDepth : (_tab == 0 ? 0 : 1);
-    return parent + _flarePlanTrail.length;
+    final parent = _routine != null
+        ? 2
+        : _tab == _trainingHubTab
+        ? _hubDepth
+        : (_tab == 0 ? 0 : 1);
+    final coveredDrills = _flarePlanTrail
+        .where((target) => target.returnToDrill != null)
+        .length;
+    return parent + _flarePlanTrail.length + coveredDrills;
   }
 
   int get _drillDepth => _flarePlanTrail.isNotEmpty
@@ -1507,6 +1548,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       );
     }
     if (_flarePlanTrail.lastOrNull case final target?) {
+      final supplemental = target.supplemental;
       final phaseSource = target.phaseSource;
       final phase = phaseSource == null
           ? null
@@ -1514,17 +1556,24 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       final group = target.groupId == null
           ? null
           : catalog.groupById(target.groupId!);
-      final plans = phaseSource != null
+      final plans = supplemental != null
+          ? [supplemental]
+          : phaseSource != null
           ? catalog.plansForAngle(phaseSource)
           : catalog.plansForMuscle(target.groupId!);
-      final title = phase?.name ?? group!.shortLabel;
+      final title = switch (supplemental?.kind) {
+        FlarePlanKind.warmup => s.preWorkoutWarmup,
+        FlarePlanKind.cooldown => s.postWorkoutStretch,
+        _ => phase?.name ?? group!.shortLabel,
+      };
+      final warmup = supplemental == null ? catalog.flareWarmupPlan : null;
       return (
-        'flare-plan:${phaseSource ?? target.groupId}',
+        'flare-plan:${supplemental?.id ?? phaseSource ?? target.groupId}',
         _planDepth,
         false,
         FlarePlanDetailPage(
           title: title,
-          membership: widget.membership,
+          membership: supplemental == null ? widget.membership : null,
           phase: phase,
           emptyTargetGroup: group,
           plans: plans,
@@ -1535,6 +1584,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onMuscle: _openMusclePlan,
           onDrill: _openFlarePlanDrill,
           onBack: _back,
+          onOpenWarmup: warmup == null
+              ? null
+              : () => _openSupplementalPlan(warmup),
           onStart: (plan) =>
               _startFlarePlan(title, plan, phaseSource: phaseSource),
         ),
@@ -1543,6 +1595,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (_routine case final viewed?) {
       final routine = store.routineById(viewed.id) ?? viewed;
       final drills = routine.drills(catalog);
+      final warmup = catalog.flareWarmupPlan;
       return (
         'routine:${routine.id}',
         2,
@@ -1553,6 +1606,9 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           drills: drills,
           onBack: _back,
           onDrill: _openDrill,
+          onOpenWarmup: warmup == null
+              ? null
+              : () => _openSupplementalPlan(warmup),
           sdkPlan: routine.sdkPlan,
           catalog: catalog,
           onStart: () async {
@@ -1634,6 +1690,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       onNewRoutine: () => _editRoutine(const _RoutineEdit()),
       onOpenAngle: _openAnglePlan,
       onOpenMuscle: _openMusclePlan,
+      onOpenSupplemental: _openSupplementalPlan,
       onAllAngles: _enterTrainingHub,
       onAllMuscles: () => _enterTrainingHub(muscles: true),
       onContinue: () {
@@ -3050,11 +3107,22 @@ class _SceneError extends StatelessWidget {
 
 /// An open set editor: an existing set, or a new one seeded with drills.
 class _FlarePlanTarget {
-  _FlarePlanTarget.angle(this.phaseSource) : groupId = null;
-  _FlarePlanTarget.muscle(this.groupId) : phaseSource = null;
+  _FlarePlanTarget.angle(this.phaseSource)
+    : groupId = null,
+      supplemental = null,
+      returnToDrill = null;
+  _FlarePlanTarget.muscle(this.groupId)
+    : phaseSource = null,
+      supplemental = null,
+      returnToDrill = null;
+  _FlarePlanTarget.supplemental(this.supplemental, this.returnToDrill)
+    : phaseSource = null,
+      groupId = null;
 
   final int? phaseSource;
   final String? groupId;
+  final FlarePlan? supplemental;
+  final Drill? returnToDrill;
   int selectedTier = 1;
 }
 

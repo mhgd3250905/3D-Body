@@ -601,5 +601,12 @@
   "libraryDose": "{sets} подхода × {amount}",
   "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
   "planEquipmentNeeded": "Понадобится:",
-  "planEquipmentNameForId": "{id, select, mat{Коврик} chair{Стул} band{Эластичная лента} dumbbell{Гантель} wall{Стена} cable{Блочный тренажёр} block{Блок для йоги} pullup_bar{Турник} parallettes{Низкие паралетсы} dip_bars{Брусья} slider{Диски для скольжения} rings{Гимнастические кольца} landmine{Шарнир для штанги} swiss_ball{Фитбол} roman_chair{Римский стул} kettlebell{Гиря} reverse_hyper{Тренажёр для обратной гиперэкстензии} ghd{Тренажёр для ягодиц и задней поверхности бедра} hip_abductor_machine{Тренажёр для отведения бедра} leg_extension_machine{Тренажёр для разгибания ног} foam_roller{Массажный ролик} towel{Полотенце} doorframe{Дверная рама} bench{Тренировочная скамья} barbell{Штанга} clamp_pad{Маленькая подушка} other{}}"
+  "planEquipmentNameForId": "{id, select, mat{Коврик} chair{Стул} band{Эластичная лента} dumbbell{Гантель} wall{Стена} cable{Блочный тренажёр} block{Блок для йоги} pullup_bar{Турник} parallettes{Низкие паралетсы} dip_bars{Брусья} slider{Диски для скольжения} rings{Гимнастические кольца} landmine{Шарнир для штанги} swiss_ball{Фитбол} roman_chair{Римский стул} kettlebell{Гиря} reverse_hyper{Тренажёр для обратной гиперэкстензии} ghd{Тренажёр для ягодиц и задней поверхности бедра} hip_abductor_machine{Тренажёр для отведения бедра} leg_extension_machine{Тренажёр для разгибания ног} foam_roller{Массажный ролик} towel{Полотенце} doorframe{Дверная рама} bench{Тренировочная скамья} barbell{Штанга} clamp_pad{Маленькая подушка} other{}}",
+  "warmupCooldownHeading": "До и после тренировки",
+  "preWorkoutWarmup": "Разминка",
+  "postWorkoutStretch": "Растяжка после тренировки",
+  "preWorkoutWarmupPrompt": "Ещё не разогрелись? 8 мин · ",
+  "continuePostWorkoutStretch": "Продолжить растяжку · 10 мин",
+  "bodyweightPlanMinutes": "{minutes} мин · Без инвентаря",
+  "temporaryPlanDemo": "Временный показ"
 }

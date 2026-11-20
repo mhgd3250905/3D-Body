@@ -45,6 +45,7 @@ class FlarePlanDetailPage extends StatefulWidget {
     required this.onDrill,
     required this.onBack,
     required this.onStart,
+    this.onOpenWarmup,
     this.phase,
     this.membership,
     this.emptyTargetGroup,
@@ -61,6 +62,7 @@ class FlarePlanDetailPage extends StatefulWidget {
   final ValueChanged<String> onDrill;
   final VoidCallback onBack;
   final ValueChanged<FlarePlan> onStart;
+  final VoidCallback? onOpenWarmup;
   final FlareMembership? membership;
   final MuscleGroup? emptyTargetGroup;
 
@@ -89,11 +91,16 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
       (plan) => plan.tier == widget.selectedTier,
       orElse: () => plans.first,
     );
-    final scene = widget.store.settings.tier;
+    final isSupplemental = plan.isSupplemental;
+    final openWarmup = isSupplemental ? null : widget.onOpenWarmup;
+    final scene = isSupplemental ? 'A' : widget.store.settings.tier;
     final shared = FlareShared.current;
-    final minutes = shared?.authoredPlanMinutes(plan, catalog, scene);
-    final equipment =
-        shared?.authoredPlanEquipment(plan, scene) ?? const <String>{};
+    final minutes =
+        plan.estimatedMinutes ??
+        shared?.authoredPlanMinutes(plan, catalog, scene);
+    final equipment = isSupplemental
+        ? const <String>{}
+        : shared?.authoredPlanEquipment(plan, scene) ?? const <String>{};
     final locale = Localizations.localeOf(context);
     final equipmentNames = [
       for (final id in equipment) ?planEquipmentName(id, locale),
@@ -140,8 +147,11 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                   ).copyWith(scrollbars: false),
                   child: ListView(
                     controller: _scroll,
-                    padding: const EdgeInsets.only(
-                      bottom: _startButtonHeight + _lastExerciseGap,
+                    padding: EdgeInsets.only(
+                      bottom:
+                          _startButtonHeight +
+                          _lastExerciseGap +
+                          (openWarmup == null ? 0 : FlarePlanWarmupLink.height),
                     ),
                     children: [
                       _PlanHero(
@@ -163,36 +173,38 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                               ? null
                               : () => widget.onMuscle(group),
                         ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          _gutter,
-                          tierTopPadding,
-                          _gutter,
-                          0,
+                      if (!isSupplemental) ...[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            _gutter,
+                            tierTopPadding,
+                            _gutter,
+                            0,
+                          ),
+                          child: _PlanTiers(
+                            key: const ValueKey('flare-plan-tier'),
+                            selected: plan.tier,
+                            labels: [
+                              for (final option in plans)
+                                (option.tier, tiers[option.tier - 1]),
+                            ],
+                            onChanged: widget.onTierChanged,
+                          ),
                         ),
-                        child: _PlanTiers(
-                          key: const ValueKey('flare-plan-tier'),
-                          selected: plan.tier,
-                          labels: [
-                            for (final option in plans)
-                              (option.tier, tiers[option.tier - 1]),
-                          ],
-                          onChanged: widget.onTierChanged,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            _gutter,
+                            8,
+                            _gutter,
+                            0,
+                          ),
+                          child: _PlanScenes(
+                            selected: scene,
+                            onChanged: (value) =>
+                                widget.store.updateSettings(tier: value),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          _gutter,
-                          8,
-                          _gutter,
-                          0,
-                        ),
-                        child: _PlanScenes(
-                          selected: scene,
-                          onChanged: (value) =>
-                              widget.store.updateSettings(tier: value),
-                        ),
-                      ),
+                      ],
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
                           _gutter,
@@ -250,10 +262,11 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                 start: 0,
                 end: 0,
                 child: _PlanBottom(
-                  membership: widget.membership,
+                  membership: isSupplemental ? null : widget.membership,
                   minutes: minutes,
                   safeBottom: safe.bottom,
                   onStart: () => widget.onStart(plan),
+                  onOpenWarmup: openWarmup,
                 ),
               ),
             ],
@@ -308,19 +321,26 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
     bool separator,
   ) {
     final id = item.drillForScene(scene);
+    final locale = Localizations.localeOf(context);
     final name =
         widget.catalog.drillById(id)?.name ??
-        FlareShared.current?.nameOf(
-          id,
-          languageForLocale(Localizations.localeOf(context)),
-        );
+        FlareShared.current?.nameOf(id, languageForLocale(locale));
+    final authoredName = locale.languageCode == 'zh'
+        ? item.displayName
+        : item.displayNameEn;
+    final placeholderDemo = item.usesPlaceholderDemo
+        ? context.strings.temporaryPlanDemo
+        : null;
+    final bodyweightSubstitution = scene == 'A' && id != item.drill
+        ? context.strings.planBodyweightSubstitution
+        : null;
     return _PlanExercise(
       key: ValueKey('flare-plan-item-$index-$id'),
       id: id,
-      name: name ?? id,
+      name: authoredName ?? name ?? id,
       index: index,
       dose: item.doseForScene(scene),
-      bodyweightSubstitution: scene == 'A' && id != item.drill,
+      substitutionLabel: placeholderDemo ?? bodyweightSubstitution,
       separator: separator,
       onTap: name == null ? null : () => widget.onDrill(id),
     );
@@ -350,6 +370,7 @@ class _PlanHero extends StatelessWidget {
     final s = context.strings;
     final shadow = Colors.black.withValues(alpha: p.isDark ? .45 : .12);
     final isAngle = phaseSource != null;
+    final hasArt = isAngle || groupId != null;
     final width = MediaQuery.sizeOf(context).width;
     final artHeight = math.min(width * .70, isAngle ? 268.0 : 236.0);
     final (topInset, bottomInset) = isAngle
@@ -359,7 +380,9 @@ class _PlanHero extends StatelessWidget {
         (isAngle ? math.max(0.0, safeTop + _angleArtTopInset) : safeTop) -
         topInset * artHeight;
     final artBottom = artTop + bottomInset * artHeight;
-    final titleTop = isAngle
+    final titleTop = !hasArt
+        ? flareNavInset(context)
+        : isAngle
         ? math.max(safeTop + _angleTitleInset, artBottom)
         : math.max(
             safeTop + 44,
@@ -371,74 +394,77 @@ class _PlanHero extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          height: viewportHeight,
-          child: DecoratedBox(
-            key: const ValueKey('flare-plan-hero-viewport'),
-            decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -40,
-                  top: safeTop - 24,
-                  child: const FlarePlanGlow(diameter: 300),
-                ),
-                if (!isAngle)
-                  PositionedDirectional(
-                    end: 24,
-                    top: artBottom - 18,
-                    width: 220,
-                    height: 26,
-                    child: _PlanArtShadow(shadow),
+        if (hasArt)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: viewportHeight,
+            child: DecoratedBox(
+              key: const ValueKey('flare-plan-hero-viewport'),
+              decoration: BoxDecoration(gradient: flarePlanArtGradient(p)),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -40,
+                    top: safeTop - 24,
+                    child: const FlarePlanGlow(diameter: 300),
                   ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 104,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(gradient: _bottomFade(p, .82)),
-                  ),
-                ),
-                if (groupId case final id?)
-                  PositionedDirectional(
-                    end: 20,
-                    top: artTop,
-                    height: artHeight,
-                    child: FlarePlanMuscleFade(
-                      child: Image.asset(
-                        'assets/plan_resume_muscles/$id.webp',
-                        key: ValueKey('flare-plan-muscle-hero-$id'),
-                        excludeFromSemantics: true,
-                      ),
+                  if (!isAngle)
+                    PositionedDirectional(
+                      end: 24,
+                      top: artBottom - 18,
+                      width: 220,
+                      height: 26,
+                      child: _PlanArtShadow(shadow),
+                    ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 104,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(gradient: _bottomFade(p, .82)),
                     ),
                   ),
-                if (phaseSource case final source?)
-                  Positioned.fill(
-                    child: _AnglePlanArt(
-                      source: source,
+                  if (groupId case final id?)
+                    PositionedDirectional(
+                      end: 20,
                       top: artTop,
                       height: artHeight,
-                      titleTop: titleTop,
-                      shadow: shadow,
+                      child: FlarePlanMuscleFade(
+                        child: Image.asset(
+                          'assets/plan_resume_muscles/$id.webp',
+                          key: ValueKey('flare-plan-muscle-hero-$id'),
+                          excludeFromSemantics: true,
+                        ),
+                      ),
                     ),
-                  ),
-              ],
+                  if (phaseSource case final source?)
+                    Positioned.fill(
+                      child: _AnglePlanArt(
+                        source: source,
+                        top: artTop,
+                        height: artHeight,
+                        titleTop: titleTop,
+                        shadow: shadow,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
-        ),
         Padding(
           padding: EdgeInsets.fromLTRB(_gutter, titleTop, _gutter, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FlarePlanKicker(
-                label: isAngle ? s.anglePlanLabel : s.musclePlanLabel,
-              ),
-              const SizedBox(height: 4),
+              if (hasArt) ...[
+                FlarePlanKicker(
+                  label: isAngle ? s.anglePlanLabel : s.musclePlanLabel,
+                ),
+                const SizedBox(height: 4),
+              ],
               Semantics(
                 header: true,
                 child: Text(
@@ -992,7 +1018,7 @@ class _PlanExercise extends StatelessWidget {
     required this.name,
     required this.index,
     required this.dose,
-    required this.bodyweightSubstitution,
+    required this.substitutionLabel,
     required this.separator,
     required this.onTap,
   });
@@ -1000,7 +1026,7 @@ class _PlanExercise extends StatelessWidget {
   final String name;
   final int index;
   final FlarePlanDose dose;
-  final bool bodyweightSubstitution;
+  final String? substitutionLabel;
   final bool separator;
   final VoidCallback? onTap;
 
@@ -1084,7 +1110,7 @@ class _PlanExercise extends StatelessWidget {
                               ],
                             ),
                           ),
-                          if (bodyweightSubstitution)
+                          if (substitutionLabel case final label?)
                             Container(
                               constraints: const BoxConstraints(minHeight: 18),
                               padding: const EdgeInsets.symmetric(
@@ -1098,7 +1124,7 @@ class _PlanExercise extends StatelessWidget {
                                 widthFactor: 1,
                                 heightFactor: 1,
                                 child: Text(
-                                  s.planBodyweightSubstitution,
+                                  label,
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
@@ -1136,17 +1162,62 @@ class _PlanExercise extends StatelessWidget {
   }
 }
 
+/// The same pre-workout entry is used on authored and personal plans.
+class FlarePlanWarmupLink extends StatelessWidget {
+  const FlarePlanWarmupLink({super.key, required this.onOpen});
+
+  static const height = 32.0;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    final s = context.strings;
+    final prompt = s.preWorkoutWarmupPrompt;
+    final title = s.preWorkoutWarmup;
+    return FlarePressable(
+      key: const ValueKey('flare-plan-warmup-link'),
+      onTap: onOpen,
+      semanticLabel: '$prompt$title',
+      child: SizedBox(
+        height: height,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text.rich(
+              TextSpan(
+                text: prompt,
+                style: TextStyle(color: p.dim, fontSize: 13),
+                children: [
+                  TextSpan(
+                    text: '$title ›',
+                    style: TextStyle(color: p.text),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PlanBottom extends StatefulWidget {
   const _PlanBottom({
     required this.membership,
     required this.minutes,
     required this.safeBottom,
     required this.onStart,
+    this.onOpenWarmup,
   });
   final FlareMembership? membership;
   final int? minutes;
   final double safeBottom;
   final VoidCallback onStart;
+  final VoidCallback? onOpenWarmup;
 
   @override
   State<_PlanBottom> createState() => _PlanBottomState();
@@ -1217,55 +1288,64 @@ class _PlanBottomState extends State<_PlanBottom> {
               _gutter,
               widget.safeBottom + _startButtonBottomInset,
             ),
-            child: FlarePressable(
-              key: const ValueKey('flare-plan-start'),
-              scale: 1,
-              onTap: widget.onStart,
-              onPressChanged: (pressed) => setState(() => _pressed = pressed),
-              child: AnimatedScale(
-                scale: _pressed && !FlareMotion.reduced(context) ? .98 : 1,
-                duration: const Duration(milliseconds: 100),
-                child: Container(
-                  width: double.infinity,
-                  height: _startButtonHeight,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color.lerp(p.accent, Colors.white, .15)!,
-                        p.accent,
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: p.accent,
-                        offset: const Offset(0, 10),
-                        blurRadius: 28,
-                        spreadRadius: -8,
-                      ),
-                    ],
-                  ),
-                  foregroundDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0x40ffffff), Color(0x00ffffff)],
-                      stops: [0, 1 / _startButtonHeight],
-                    ),
-                  ),
-                  child: widget.membership == null
-                      ? label()
-                      : ListenableBuilder(
-                          listenable: widget.membership!,
-                          builder: (_, _) => label(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (widget.onOpenWarmup case final open?)
+                  FlarePlanWarmupLink(onOpen: open),
+                FlarePressable(
+                  key: const ValueKey('flare-plan-start'),
+                  scale: 1,
+                  onTap: widget.onStart,
+                  onPressChanged: (pressed) =>
+                      setState(() => _pressed = pressed),
+                  child: AnimatedScale(
+                    scale: _pressed && !FlareMotion.reduced(context) ? .98 : 1,
+                    duration: const Duration(milliseconds: 100),
+                    child: Container(
+                      width: double.infinity,
+                      height: _startButtonHeight,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.lerp(p.accent, Colors.white, .15)!,
+                            p.accent,
+                          ],
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: p.accent,
+                            offset: const Offset(0, 10),
+                            blurRadius: 28,
+                            spreadRadius: -8,
+                          ),
+                        ],
+                      ),
+                      foregroundDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x40ffffff), Color(0x00ffffff)],
+                          stops: [0, 1 / _startButtonHeight],
+                        ),
+                      ),
+                      child: widget.membership == null
+                          ? label()
+                          : ListenableBuilder(
+                              listenable: widget.membership!,
+                              builder: (_, _) => label(),
+                            ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

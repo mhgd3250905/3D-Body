@@ -808,5 +808,13 @@
         "type": "String"
       }
     }
-  }
+  },
+  "warmupCooldownHeading": "练前练后",
+  "preWorkoutWarmup": "练前热身",
+  "postWorkoutStretch": "练后拉伸",
+  "preWorkoutWarmupPrompt": "还没热身？先做 8 分钟",
+  "continuePostWorkoutStretch": "接着做练后拉伸 · 10 分钟",
+  "bodyweightPlanMinutes": "{minutes} 分钟 · 徒手",
+  "@bodyweightPlanMinutes": {"placeholders":{"minutes":{"type":"int"}}},
+  "temporaryPlanDemo": "临时示范"
 }

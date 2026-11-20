@@ -4,7 +4,9 @@ import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_action_scope.dart';
 import 'package:flare/data/flare_public_catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
+import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flare/trainer/training_plan_adapter.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
@@ -73,6 +75,159 @@ void main() {
     final localized = catalog.localized(const {'三角肌': 'Deltoids'});
     expect(localized.plansForAngle(15), angle);
     expect(localized.plansForMuscle('deltoids'), muscle);
+  });
+
+  test(
+    'supplemental plans resolve in the player at their authored doses',
+    () async {
+      final supplementary = await withFlareWarmupAction(pack);
+      expect(pack.tryGet(flareWarmupPushupId), isNull);
+      expect(supplementary.allActions.map((a) => a.id), [
+        ...pack.allActions.map((a) => a.id),
+        flareWarmupPushupId,
+      ]);
+      expect(await withFlareWarmupAction(pack), same(supplementary));
+
+      final pushup = supplementary.tryGet(flareWarmupPushupId)!;
+      expect(flareAuthorizedActionIds, isNot(contains(pushup.id)));
+      for (final (asset, file) in [
+        (FlarePublicMedia.coverAssetFor(pushup.id), pushup.cover),
+        (FlarePublicMedia.thumbnailAssetFor(pushup.id), pushup.thumbnail),
+      ]) {
+        final bytes = File(asset).readAsBytesSync();
+        expect(bytes.length, file.bytes);
+        expect(uc.sha256Hex(bytes), file.sha256);
+      }
+
+      final warmup = catalog.flareWarmupPlan!;
+      final cooldown = catalog.flareCooldownPlan!;
+      expect((warmup.id, warmup.estimatedMinutes), ('general-warmup', 8));
+      expect(
+        (cooldown.id, cooldown.estimatedMinutes),
+        ('general-cooldown', 10),
+      );
+
+      final supplementalRhythms = flarePublicRhythms(supplementary);
+      final supplementalSource = flareCoachCatalogFromPublic(
+        supplementary,
+        rhythms: supplementalRhythms,
+      );
+      List<(String, int?, int?, bool)> doses(FlarePlan authored) {
+        final plan = trainingPlanFromFlarePlan(
+          plan: authored,
+          title: authored.id,
+          sceneTier: 'A',
+          catalog: catalog,
+          sourceCatalog: supplementalSource,
+          rhythms: supplementalRhythms,
+        );
+        expect(plan.items, hasLength(authored.items.length));
+        expect(plan.items.map((item) => item.sets), everyElement(1));
+        expect(
+          authored.items.map((item) => item.voiceCue),
+          everyElement(isNotEmpty),
+        );
+        expect(
+          plan.exerciseIds.map(
+            (id) => supplementary.tryGet(id)?.availableForTraining,
+          ),
+          everyElement(isTrue),
+        );
+        return [
+          for (final item in plan.items)
+            (item.exerciseId, item.reps, item.workSeconds, item.perSide),
+        ];
+      }
+
+      expect(doses(warmup), [
+        ('h-step-jack', null, 60, false),
+        ('forearms-A', null, 60, false),
+        ('h-catcow-quad', 8, null, false),
+        ('h-kneeling-thread-needle', 6, null, true),
+        ('h-quad-cars', 5, null, true),
+        ('h-adductor-rock', 8, null, true),
+        (flareWarmupPushupId, 10, null, false),
+        ('rotator-cuff-A', 4, null, true),
+      ]);
+      expect(doses(cooldown), [
+        ('h-wall-wrist-flexor-stretch', null, 30, false),
+        ('h-standing-wrist-extensor-stretch', null, 30, true),
+        ('h-wall-pec', null, 30, false),
+        ('h-dd-shoulder', null, 30, false),
+        ('s-kneel-hipflex', null, 30, true),
+        ('s-butterfly', null, 45, false),
+        ('n-straddle-fold', null, 60, false),
+        ('s-figure4', null, 30, true),
+        ('h-supine-twist', null, 30, true),
+      ]);
+      expect(warmup.items.where((item) => item.usesPlaceholderDemo), isEmpty);
+      expect(
+        cooldown.items
+            .where((item) => item.usesPlaceholderDemo)
+            .map((item) => (item.drill, item.displayName, item.displayNameEn)),
+        [
+          (
+            'h-wall-wrist-flexor-stretch',
+            '跪姿前臂拉伸（指尖朝膝）',
+            'Kneeling Forearm Stretch (Fingers Toward Knees)',
+          ),
+          (
+            'h-wall-pec',
+            '背后十指交扣扩胸',
+            'Standing Chest Opener with Clasped Hands',
+          ),
+        ],
+      );
+    },
+  );
+
+  test('the SDK schedules every bundled supplemental Mandarin cue', () async {
+    final active = await withFlareWarmupAction(pack);
+    final activeRhythms = flarePublicRhythms(active);
+    final activeSource = flareCoachCatalogFromPublic(
+      active,
+      rhythms: activeRhythms,
+    );
+    final baseVoice = await loadTrainerVoiceSource(
+      language: 'zh',
+      leftFirst: false,
+    );
+    for (final authored in [
+      catalog.flareWarmupPlan!,
+      catalog.flareCooldownPlan!,
+    ]) {
+      final voice = await withSupplementalTrainerVoice(
+        baseVoice,
+        authored,
+        language: 'zh',
+      );
+      final plan = trainingPlanFromFlarePlan(
+        plan: authored,
+        title: authored.id,
+        sceneTier: 'A',
+        catalog: catalog,
+        sourceCatalog: activeSource,
+        rhythms: activeRhythms,
+      );
+      final script = sdk.SessionScript(source: voice, lang: 'zh');
+      final phases = sdk.SessionBuilder(
+        rhythms: activeRhythms,
+        prepSecondsFor: script.prepSecondsFor,
+        switchSecondsFor: script.switchSecondsFor,
+      ).phases(plan);
+      final seconds = phases.fold(0.0, (total, phase) => total + phase.seconds);
+      final clips = phases
+          .expand((phase) => script.cues(phase, planSeconds: seconds))
+          .expand((cue) => cue.clips)
+          .toSet();
+      for (final (index, item) in authored.items.indexed) {
+        final key = 'supplemental.${authored.id}.${index + 1}';
+        expect(clips, contains(key), reason: item.drill);
+        expect(voice.line(key, lang: 'zh'), item.voiceCue);
+        final bytes = await rootBundle.load(voice.asset(key, lang: 'zh'));
+        expect(bytes.lengthInBytes, greaterThan(0));
+      }
+    }
   });
 
   test('every scene uses an available, scoped drill and exact dose', () {

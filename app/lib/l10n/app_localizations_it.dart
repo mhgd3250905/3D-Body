@@ -1592,4 +1592,29 @@ class AppLocalizationsIt extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Prima e dopo';
+
+  @override
+  String get preWorkoutWarmup => 'Riscaldamento';
+
+  @override
+  String get postWorkoutStretch => 'Stretching dopo l’allenamento';
+
+  @override
+  String get preWorkoutWarmupPrompt =>
+      'Non hai fatto il riscaldamento? 8 min di ';
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Continua con lo stretching · 10 min';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes min · Corpo libero';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demo temporanea';
 }

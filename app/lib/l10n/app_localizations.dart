@@ -2880,6 +2880,48 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{id, select, mat{瑜伽垫} chair{椅子} band{弹力带} dumbbell{哑铃} wall{墙} cable{绳索训练机} block{瑜伽砖} pullup_bar{单杠} parallettes{俯卧撑架} dip_bars{双杠} slider{滑盘} rings{吊环} landmine{地雷杆} swiss_ball{健身球} roman_chair{罗马椅} kettlebell{壶铃} reverse_hyper{反向挺身机} ghd{臀腿训练器} hip_abductor_machine{髋外展机} leg_extension_machine{腿屈伸机} foam_roller{泡沫轴} towel{毛巾} doorframe{门框} bench{训练凳} barbell{杠铃} clamp_pad{夹垫} other{}}'**
   String planEquipmentNameForId(String id);
+
+  /// No description provided for @warmupCooldownHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前练后'**
+  String get warmupCooldownHeading;
+
+  /// No description provided for @preWorkoutWarmup.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前热身'**
+  String get preWorkoutWarmup;
+
+  /// No description provided for @postWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'练后拉伸'**
+  String get postWorkoutStretch;
+
+  /// No description provided for @preWorkoutWarmupPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没热身？先做 8 分钟'**
+  String get preWorkoutWarmupPrompt;
+
+  /// No description provided for @continuePostWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'接着做练后拉伸 · 10 分钟'**
+  String get continuePostWorkoutStretch;
+
+  /// No description provided for @bodyweightPlanMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{minutes} 分钟 · 徒手'**
+  String bodyweightPlanMinutes(int minutes);
+
+  /// No description provided for @temporaryPlanDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时示范'**
+  String get temporaryPlanDemo;
 }
 
 class _AppLocalizationsDelegate

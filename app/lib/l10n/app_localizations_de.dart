@@ -1599,4 +1599,27 @@ class AppLocalizationsDe extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Vor und nach dem Training';
+
+  @override
+  String get preWorkoutWarmup => 'Aufwärmen';
+
+  @override
+  String get postWorkoutStretch => 'Dehnen nach dem Training';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'Noch nicht aufgewärmt? 8 Minuten ';
+
+  @override
+  String get continuePostWorkoutStretch => 'Weiter zum Dehnen · 10 Min.';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes Min. · Eigengewicht';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Vorläufige Demo';
 }

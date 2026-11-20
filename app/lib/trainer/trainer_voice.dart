@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
+import '../domain/flare_plan.dart';
+
 /// Offline shared prompts from the pinned SmartFit LC32 bundle, with HipLab's
 /// side prompt retained for legacy single-drill fixtures. The whole-plan
 /// player passes leftFirst: false and follows the SDK side sequence.
@@ -29,6 +31,123 @@ Future<VoiceSource> loadTrainerVoiceSource({
     language: language,
     leftFirst: leftFirst,
   );
+}
+
+/// Use the authored Mandarin cue in these two plans while keeping the usual
+/// common prompts, action names, playback controls and audio output.
+Future<VoiceSource> withSupplementalTrainerVoice(
+  VoiceSource source,
+  FlarePlan? plan, {
+  required String language,
+}) async {
+  if (plan == null || language != 'zh') return source;
+  final durations = await rootBundle.loadStructuredData(
+    'assets/trainer_voice/flare-supplemental-voice.json',
+    (text) async {
+      final clips = (jsonDecode(text) as Map<String, dynamic>)['clips'] as Map;
+      return <String, int>{
+        for (final clip in clips.entries)
+          clip.key as String: (clip.value as Map)['ms'] as int,
+      };
+    },
+  );
+  final cues = <String, _SupplementalCue>{};
+  for (var index = 0; index < plan.items.length; index++) {
+    final item = plan.items[index];
+    final text = item.voiceCue;
+    final key = 'supplemental.${plan.id}.${index + 1}';
+    final ms = durations[key];
+    if (text == null || ms == null) continue;
+    cues[item.drill] = (
+      key: key,
+      text: text,
+      seconds: ms / 1000,
+      placeholderName: item.usesPlaceholderDemo ? item.displayName : null,
+    );
+  }
+  return _SupplementalVoiceSource(source, cues);
+}
+
+typedef _SupplementalCue = ({
+  String key,
+  String text,
+  double seconds,
+  String? placeholderName,
+});
+
+class _SupplementalVoiceSource extends _LeftFirstVoiceSource
+    implements PreparableVoiceSource {
+  _SupplementalVoiceSource(super.source, this.cues)
+    : byKey = {for (final cue in cues.values) cue.key: cue},
+      super(language: 'zh', leftFirst: false);
+
+  final Map<String, _SupplementalCue> cues;
+  final Map<String, _SupplementalCue> byKey;
+
+  @override
+  bool has(String key, {required String lang}) =>
+      lang == 'zh' && byKey.containsKey(key) || super.has(key, lang: lang);
+
+  @override
+  bool expected(String key, {required String lang}) =>
+      lang == 'zh' && byKey.containsKey(key) ||
+      source.expected(key, lang: lang);
+
+  @override
+  String asset(String key, {required String lang}) =>
+      lang == 'zh' && byKey.containsKey(key)
+      ? 'assets/trainer_voice/_common/voice/zh/$key.m4a'
+      : super.asset(key, lang: lang);
+
+  @override
+  String? line(String key, {required String lang}) =>
+      (lang == 'zh' ? byKey[key]?.text : null) ?? super.line(key, lang: lang);
+
+  @override
+  double seconds(String key, {required String lang}) =>
+      (lang == 'zh' ? byKey[key]?.seconds : null) ??
+      super.seconds(key, lang: lang);
+
+  @override
+  String? drill(String exerciseId, DrillLine line) {
+    final cue = cues[exerciseId];
+    if (cue == null) return super.drill(exerciseId, line);
+    return switch (line) {
+      DrillLine.cue1 => cue.key,
+      DrillLine.name when cue.placeholderName == null => super.drill(
+        exerciseId,
+        line,
+      ),
+      _ => null,
+    };
+  }
+
+  @override
+  String? drillText(String exerciseId, DrillLine line, {required String lang}) {
+    final cue = cues[exerciseId];
+    if (cue == null) return source.drillText(exerciseId, line, lang: lang);
+    return switch (line) {
+      DrillLine.cue1 => cue.text,
+      DrillLine.name =>
+        cue.placeholderName ?? source.drillText(exerciseId, line, lang: lang),
+      _ => null,
+    };
+  }
+
+  @override
+  KitVoice? kitVoice(String exerciseId) =>
+      cues.containsKey(exerciseId) ? null : super.kitVoice(exerciseId);
+
+  @override
+  Future<void> prepare(
+    Iterable<String> exerciseIds, {
+    required String lang,
+  }) async {
+    final parent = source;
+    if (parent is PreparableVoiceSource) {
+      await (parent as PreparableVoiceSource).prepare(exerciseIds, lang: lang);
+    }
+  }
 }
 
 /// English phrase grammar and optional legacy side-call compatibility.

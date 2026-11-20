@@ -1591,4 +1591,28 @@ class AppLocalizationsAr extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'قبل التمرين وبعده';
+
+  @override
+  String get preWorkoutWarmup => 'الإحماء قبل التمرين';
+
+  @override
+  String get postWorkoutStretch => 'الإطالة بعد التمرين';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'لم تبدأ الإحماء؟ جرّب ٨ دقائق من ';
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'تابع الإطالة بعد التمرين · ١٠ دقائق';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes د · وزن الجسم';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'عرض مؤقت';
 }

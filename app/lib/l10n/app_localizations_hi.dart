@@ -1564,4 +1564,28 @@ class AppLocalizationsHi extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'कसरत से पहले और बाद में';
+
+  @override
+  String get preWorkoutWarmup => 'कसरत से पहले वार्म-अप';
+
+  @override
+  String get postWorkoutStretch => 'कसरत के बाद स्ट्रेचिंग';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'अभी वार्म-अप नहीं किया? 8 मिनट · ';
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'कसरत के बाद स्ट्रेचिंग करें · 10 मिनट';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes मिनट · शरीर का वज़न';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'अस्थायी डेमो';
 }

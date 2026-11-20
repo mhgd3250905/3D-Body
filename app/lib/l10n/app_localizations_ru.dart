@@ -1615,4 +1615,27 @@ class AppLocalizationsRu extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'До и после тренировки';
+
+  @override
+  String get preWorkoutWarmup => 'Разминка';
+
+  @override
+  String get postWorkoutStretch => 'Растяжка после тренировки';
+
+  @override
+  String get preWorkoutWarmupPrompt => 'Ещё не разогрелись? 8 мин · ';
+
+  @override
+  String get continuePostWorkoutStretch => 'Продолжить растяжку · 10 мин';
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes мин · Без инвентаря';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Временный показ';
 }

@@ -996,6 +996,37 @@
         {"drill":"h-goblet-squat","sets":3,"reps":10,"restSeconds":60,"bodyweight":"adductors-A","bodyweightDose":{"sets":3,"reps":10,"restSeconds":60,"perSide":false},"home":"h-squat","homeDose":{"sets":3,"reps":12,"restSeconds":60,"perSide":false}},
         {"drill":"t-lsit-tuck","sets":3,"reps":6,"restSeconds":60}
       ]
+    },
+    {
+      "id": "general-warmup",
+      "kind": "warmup",
+      "estimatedMinutes": 8,
+      "items": [
+        {"drill":"h-step-jack","sets":1,"seconds":60,"restSeconds":0,"voiceCue":"不用跳，左右点步，双臂大画圈抬过头顶，微微出汗即可"},
+        {"drill":"forearms-A","sets":1,"seconds":60,"restSeconds":0,"voiceCue":"前后左右画圈，掌根慢慢压上去"},
+        {"drill":"h-catcow-quad","sets":1,"reps":8,"restSeconds":0,"voiceCue":"跟着呼吸，一节一节动"},
+        {"drill":"h-kneeling-thread-needle","sets":1,"reps":6,"restSeconds":0,"perSide":true,"voiceCue":"眼睛跟着手走，打开时停一下"},
+        {"drill":"h-quad-cars","sets":1,"reps":5,"restSeconds":0,"perSide":true,"voiceCue":"骨盆不动，只让大腿画圈"},
+        {"drill":"h-adductor-rock","sets":1,"reps":8,"restSeconds":0,"perSide":true,"voiceCue":"往后坐到大腿内侧有拉扯感就回来"},
+        {"drill":"t-kneeling-scap-pushup","sets":1,"reps":10,"restSeconds":0,"voiceCue":"手肘不弯，只让肩胛骨夹紧再推开"},
+        {"drill":"rotator-cuff-A","sets":1,"reps":4,"restSeconds":0,"perSide":true,"voiceCue":"髋别晃，重心慢慢移到单手"}
+      ]
+    },
+    {
+      "id": "general-cooldown",
+      "kind": "cooldown",
+      "estimatedMinutes": 10,
+      "items": [
+        {"drill":"h-wall-wrist-flexor-stretch","sets":1,"seconds":30,"restSeconds":0,"displayName":"跪姿前臂拉伸（指尖朝膝）","displayNameEn":"Kneeling Forearm Stretch (Fingers Toward Knees)","demoPending":true,"voiceCue":"双手撑地、指尖朝膝盖，臀部慢慢往后坐，掌根别离地"},
+        {"drill":"h-standing-wrist-extensor-stretch","sets":1,"seconds":30,"restSeconds":0,"perSide":true,"voiceCue":"手背朝前，另一只手轻拉"},
+        {"drill":"h-wall-pec","sets":1,"seconds":30,"restSeconds":0,"displayName":"背后十指交扣扩胸","displayNameEn":"Standing Chest Opener with Clasped Hands","demoPending":true,"voiceCue":"双手背后交扣，挺胸、手臂慢慢往后抬，肩前侧有拉扯感就停"},
+        {"drill":"h-dd-shoulder","sets":1,"seconds":30,"restSeconds":0,"voiceCue":"胸口往大腿方向沉，膝盖可以弯；手腕酸就改跪姿婴儿式压肩"},
+        {"drill":"s-kneel-hipflex","sets":1,"seconds":30,"restSeconds":0,"perSide":true,"voiceCue":"收紧后侧臀部，骨盆往前推"},
+        {"drill":"s-butterfly","sets":1,"seconds":45,"restSeconds":0,"voiceCue":"背挺直，膝盖自然下沉，不要压弹"},
+        {"drill":"n-straddle-fold","sets":1,"seconds":60,"restSeconds":0,"voiceCue":"从髋往前折，背别弓"},
+        {"drill":"s-figure4","sets":1,"seconds":30,"restSeconds":0,"perSide":true,"voiceCue":"膝盖不适就把腿放低一点"},
+        {"drill":"h-supine-twist","sets":1,"seconds":30,"restSeconds":0,"perSide":true,"voiceCue":"肩贴地，慢慢呼气，让心率降下来"}
+      ]
     }
   ]
 }

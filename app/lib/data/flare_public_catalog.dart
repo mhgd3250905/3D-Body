@@ -1,4 +1,6 @@
 // Read the shipped public definitions through the SDK's verified adapter.
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
@@ -7,6 +9,99 @@ import 'posehub_catalog_updates.dart';
 
 const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
+const flareWarmupPushupId = 't-kneeling-scap-pushup';
+
+const _flareWarmupActionAsset = 'assets/public_media/flare-warmup-action.json';
+final _warmupCatalogs = Expando<Future<coach.PoseHubAppTestCatalog>>();
+
+/// Project the one exact warm-up action from Pose-Hub r2-v19. The bundled
+/// delivery and canonical bytes stay intact for the hot-update verifier.
+Future<coach.PoseHubAppTestCatalog> withFlareWarmupAction(
+  coach.PoseHubAppTestCatalog pack, {
+  AssetBundle? bundle,
+}) async {
+  if (trainer.poseHubPackVersionOf(pack) !=
+          PoseHubCatalogUpdates.bundledPackVersion ||
+      pack.tryGet(flareWarmupPushupId) != null) {
+    return pack;
+  }
+
+  return _warmupCatalogs[pack] ??= _addFlareWarmupAction(
+    pack,
+    bundle ?? rootBundle,
+  );
+}
+
+Future<coach.PoseHubAppTestCatalog> _addFlareWarmupAction(
+  coach.PoseHubAppTestCatalog pack,
+  AssetBundle bundle,
+) async {
+  final data = await bundle.load(_flareWarmupActionAsset);
+  final supplement =
+      jsonDecode(
+            utf8.decode(
+              data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+            ),
+          )
+          as Map<String, dynamic>;
+  final action = supplement['action'] as Map<String, dynamic>;
+  final definition = supplement['definition'] as Map<String, dynamic>;
+  if (action['id'] != flareWarmupPushupId ||
+      definition['id'] != flareWarmupPushupId ||
+      action['availableForTraining'] != true) {
+    throw const FormatException('Invalid Flare warm-up action');
+  }
+
+  final canonicalData = await bundle.load(flarePublicSemanticsAsset);
+  final canonicalBytes = canonicalData.buffer.asUint8List(
+    canonicalData.offsetInBytes,
+    canonicalData.lengthInBytes,
+  );
+  if (coach.sha256Hex(canonicalBytes) != pack.semanticCatalogFile.sha256) {
+    throw const FormatException('Unexpected Flare warm-up baseline');
+  }
+  final canonical =
+      jsonDecode(utf8.decode(canonicalBytes)) as Map<String, dynamic>;
+  final semantics = {
+    ...canonical,
+    'drills': [...canonical['drills'] as List, definition],
+  };
+  final semanticsBytes = utf8.encode(jsonEncode(semantics));
+  final source = pack.raw;
+  final summary = source['trainingSemantics'] as Map;
+  final distribution = source['mediaDistribution'] as Map;
+  final files = (action['files'] as Map).values.map(
+    coach.PoseHubPackFile.fromJson,
+  );
+
+  return coach.PoseHubAppTestCatalog.fromJson({
+    ...source,
+    'actions': [...source['actions'] as List, action],
+    'totalCount': (source['totalCount'] as int) + 1,
+    'readyCount': (source['readyCount'] as int) + 1,
+    'trainingSemantics': {
+      ...summary,
+      'definitionCompleteCount':
+          (summary['definitionCompleteCount'] as int) + 1,
+      'definitionCompleteIds': [
+        ...summary['definitionCompleteIds'] as List,
+        flareWarmupPushupId,
+      ],
+    },
+    'semanticCatalog': {
+      ...source['semanticCatalog'] as Map,
+      'bytes': semanticsBytes.length,
+      'sha256': coach.sha256Hex(semanticsBytes),
+    },
+    'mediaDistribution': {
+      ...distribution,
+      'mediaFiles': (distribution['mediaFiles'] as int) + files.length,
+      'mediaBytes':
+          (distribution['mediaBytes'] as int) +
+          files.fold(0, (bytes, file) => bytes + file.bytes),
+    },
+  }, semanticCatalog: semantics);
+}
 
 /// Prefer the SDK-verified hot-update cache unless it predates Flare's
 /// bundled r2-v18 baseline (for example after an offline app upgrade).

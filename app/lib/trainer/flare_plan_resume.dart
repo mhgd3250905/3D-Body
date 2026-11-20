@@ -278,9 +278,13 @@ _Target? _resolveTarget({
   final authored = [
     ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
     ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
+    ?catalog.flareWarmupPlan,
+    ?catalog.flareCooldownPlan,
   ].where((plan) => plan.id == identity.sourceId).firstOrNull;
   if (authored != null) {
-    final candidates = identity.sceneTier != null
+    final candidates = authored.isSupplemental
+        ? const ['A']
+        : identity.sceneTier != null
         ? [identity.sceneTier!]
         : {
             if (const ['A', 'B', 'C'].contains(preferredSceneTier))
