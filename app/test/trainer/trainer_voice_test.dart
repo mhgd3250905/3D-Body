@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flare/data/catalog.dart';
 import 'package:flare/trainer/trainer_voice.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   Future<String> read(String path) => File(path).readAsString();
 
   test(
@@ -97,6 +101,65 @@ void main() {
       expect(speech, 176);
       // n.1 was 395 ms before re-encoding but the actual LC recording is 418 ms.
       expect(source.seconds('n.1', lang: 'zh'), .418);
+    },
+  );
+
+  test(
+    'plan voices and chime aliases resolve only to the versioned bundle',
+    () async {
+      const versionedRoot = 'assets/trainer_voice/flare-plan-voice-r1-6c5d81a9';
+      const legacyRoot = 'assets/trainer_voice/_common/voice/zh';
+      final base = await loadTrainerVoiceSource(read: read);
+      final catalog = await Catalog.load();
+      final source = await withSupplementalTrainerVoice(
+        base,
+        catalog.flareWarmupPlan,
+        language: 'zh',
+      );
+      final expected = <String>{};
+      for (final file in [
+        'flare-supplemental-voice.json',
+        'flare-plan-announcements.json',
+      ]) {
+        final manifest =
+            jsonDecode(
+                  await rootBundle.loadString('assets/trainer_voice/$file'),
+                )
+                as Map<String, dynamic>;
+        expected.addAll(
+          (manifest['clips'] as Map<String, dynamic>).keys.map(
+            (key) => '$versionedRoot/$key.m4a',
+          ),
+        );
+      }
+      expect(expected, hasLength(151));
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final assets = manifest.listAssets();
+      expect(
+        assets.where((asset) => asset.startsWith('$versionedRoot/')),
+        unorderedEquals(expected),
+      );
+      expect(
+        assets.where((asset) => asset.startsWith('$legacyRoot/supplemental.')),
+        isEmpty,
+      );
+
+      const technique = 'supplemental.general-warmup.1';
+      const segment = '$technique.segment.step-jack-side-raise';
+      for (final key in [
+        technique,
+        '$technique.intro',
+        segment,
+        'chime.$segment',
+      ]) {
+        expect(source.has(key, lang: 'zh'), isTrue);
+        final asset = source.asset(key, lang: 'zh');
+        expect(asset, '$versionedRoot/${key.replaceFirst('chime.', '')}.m4a');
+        expect((await rootBundle.load(asset)).lengthInBytes, greaterThan(0));
+      }
+      for (final key in ['n.1', 'chime.start']) {
+        expect(source.asset(key, lang: 'zh'), base.asset(key, lang: 'zh'));
+      }
     },
   );
 

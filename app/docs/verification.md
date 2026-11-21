@@ -1,5 +1,11 @@
 # App 验证记录
 
+## iOS vc2092 计划口播缓存更新（2026-11-21）
+
+同步 `bdf36525`，151 段计划口播使用 `assets/trainer_voice/flare-plan-voice-r1-6c5d81a9/`。录音逐段与 Build 48 及 Pose-Hub 源清单的 SHA-256 一致。核对 Build 47 和 48 的 IPA 后，确认新版口播路径与两个旧包的缓存键没有交集。所用 `just_audio 0.10.6` 在原生平台按完整资产路径查找缓存。准备期、动作内分段、左右侧和短音别名均通过版本化路径测试。
+
+`flutter analyze --no-pub` 通过。`flutter test --no-pub --dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 的 12 个定向测试文件共 153 项通过。真机覆盖安装后的听感待核对。
+
 ## iOS vc2091 计划播报（2026-11-21）
 
 同步 vc2090 `4f746a18` 和 vc2091 `ac9d979d`。覆盖准备期的名称与剂量、动作开始后的技术提示、轮次与左右侧播报、分段及字母提示。151 段普通话录音使用 Pose-Hub `flare-plan-voice-r1`，音色 `zh-CN-XiaoxiaoNeural`，语速 `+6%`。源清单 SHA-256 为 `6c5d81a9b80e9565729ee003825b72b6a8c04ce44c57a6b9af5b3468b043c3f4`。逐条核对长度和 SHA-256，两个播报清单登记时长均与 `ffprobe` 读取的 M4A 播放时长一致。
