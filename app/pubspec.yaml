@@ -87,6 +87,7 @@ flutter:
     - assets/ai_tags/actions.json
     - assets/coach/
     - assets/trainer_voice/
+    - assets/trainer_voice/flare-plan-voice-r1-6c5d81a9/
     - assets/trainer_voice/_common/
     - assets/trainer_voice/_common/voice/zh/
     - assets/trainer_voice/_common/voice/en/

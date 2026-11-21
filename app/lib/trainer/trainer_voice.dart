@@ -34,6 +34,10 @@ Future<VoiceSource> loadTrainerVoiceSource({
   );
 }
 
+/// A revisioned path keeps plan recordings distinct in the native audio cache.
+const flarePlanVoiceAssetRoot =
+    'assets/trainer_voice/flare-plan-voice-r1-6c5d81a9';
+
 const flareCooldownPnfCue = '用三到四成力，发力五秒。';
 const _cooldownPnfKey = 'supplemental.cooldown.pnf';
 const _announcementManifest =
@@ -542,7 +546,7 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
   @override
   String asset(String key, {required String lang}) =>
       lang == 'zh' && byKey.containsKey(_assetKey(key))
-      ? 'assets/trainer_voice/_common/voice/zh/${_assetKey(key)}.m4a'
+      ? '$flarePlanVoiceAssetRoot/${_assetKey(key)}.m4a'
       : super.asset(key, lang: lang);
 
   @override

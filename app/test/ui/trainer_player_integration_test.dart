@@ -6,6 +6,7 @@ import 'package:flare/data/flare_v5_drill.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_v5_media.dart';
@@ -923,7 +924,7 @@ void main() {
         voiceOutput: output,
       );
 
-      const root = 'assets/trainer_voice/_common/voice/zh/';
+      const root = '$flarePlanVoiceAssetRoot/';
       final technique = cooldown
           ? 'supplemental.cooldown.strength.2.1'
           : 'supplemental.general-warmup.1';
