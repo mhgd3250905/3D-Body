@@ -1,24 +1,24 @@
 {
   "schema": 1,
   "app": "flare",
-  "version": "flare-plans-r1",
+  "version": "flare-plans-r2",
   "min_catalog_pack": "r2-v22",
   "voice_manifest": {
-    "url": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r1/manifest.json",
-    "bytes": 159943,
-    "sha256": "6c5d81a9b80e9565729ee003825b72b6a8c04ce44c57a6b9af5b3468b043c3f4"
+    "url": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json",
+    "bytes": 178802,
+    "sha256": "51c62f3fa921cd890bdfe325d8348e0117f00760badd9cf663f8b4312036cf1a"
   },
   "plans": [
     {
       "id": "general-warmup",
       "kind": "warmup",
-      "estimatedMinutes": 9,
+      "estimatedMinutes": 17,
       "items": [
         {
           "drill": "t-step-jack-arm-circles",
           "sets": 1,
           "restSeconds": 0,
-          "seconds": 60,
+          "seconds": 90,
           "displayName": "低冲击开合踏步 + 双臂大绕环",
           "displayNameEn": "Low-Impact Step Jacks + Large Arm Circles",
           "voiceCue": "不用跳，左右大步点地，后半段掌心朝外大画圈把肩活动开",
@@ -27,17 +27,17 @@
             {
               "id": "step-jack-side-raise",
               "label": "侧平举",
-              "seconds": 30
+              "seconds": 45
             },
             {
               "id": "step-jack-forward-circles",
               "label": "向前绕环",
-              "seconds": 15
+              "seconds": 23
             },
             {
               "id": "step-jack-backward-circles",
               "label": "向后绕环",
-              "seconds": 15
+              "seconds": 22
             }
           ]
         },
@@ -69,64 +69,38 @@
           ]
         },
         {
-          "drill": "t-wide-side-squat-shift",
+          "drill": "h-standing-forearm-rotation",
+          "reps": 8,
+          "voiceCue": "大臂贴身屈肘九十度，掌心朝上、朝下慢慢转到底",
           "sets": 1,
           "restSeconds": 0,
-          "reps": 5,
-          "perSide": true,
-          "displayName": "宽距侧蹲左右移重心",
-          "displayNameEn": "Wide-Stance Lateral Squat Shifts",
-          "voiceCue": "双脚宽开立，重心左右慢移，伸直那条腿脚尖朝天、膝盖锁直",
-          "trainingDrill": "n-squat-shift",
+          "displayName": "站姿屈肘前臂旋转",
+          "displayNameEn": "Standing Forearm Rotation",
           "rhythm": {
-            "kind": "rep_alternate",
+            "kind": "rep_updown",
             "leadSeconds": 1,
-            "perSide": "alternate",
-            "repUnit": "left+right",
-            "startingSide": "right",
-            "phases": "go=1.5s; hold=1s; back=1.5s"
+            "phases": "go=1s; hold=0.5s; back=1s",
+            "source": "real-tempo r3",
+            "reps": 10,
+            "perSide": "each-side-separately",
+            "startingSide": "right"
           }
         },
         {
-          "drill": "n-leg-circles",
+          "drill": "n-pelvis-circle",
+          "reps": 10,
+          "voiceCue": "双手叉腰膝盖微弯，胯部先顺时针画 5 圈、再逆时针 5 圈，上身尽量不动",
           "sets": 1,
           "restSeconds": 0,
-          "reps": 3,
-          "perSide": true,
-          "movement": "bothCircleDirections",
-          "voiceCue": "膝盖绷直，骨盆贴垫，用脚尖在空中慢慢画大圆",
-          "displayName": "仰卧单腿直腿大画圈",
-          "displayNameEn": "Supine Straight-Leg Circles"
-        },
-        {
-          "drill": "w-dead-bug",
-          "sets": 1,
-          "restSeconds": 0,
-          "reps": 5,
-          "perSide": true,
-          "voiceCue": "下背压住垫子，呼气慢慢伸远对侧手脚，腰一离地就收回"
-        },
-        {
-          "drill": "s-9090",
-          "sets": 1,
-          "restSeconds": 0,
-          "reps": 4,
-          "perSide": true,
-          "movement": "alternatingHipSwitch",
-          "voiceCue": "脚跟压稳，双膝翻到另一侧，上身尽量坐直",
-          "displayName": "90/90 坐姿换髋",
-          "displayNameEn": "90/90 Seated Hip Switches"
-        },
-        {
-          "drill": "t-seated-straddle-lift-1leg",
-          "sets": 1,
-          "restSeconds": 0,
-          "reps": 5,
-          "perSide": true,
-          "holdSeconds": 1,
-          "voiceCue": "分腿坐稳、双手撑腿旁，膝盖绷直把单腿抬离地面几厘米停一下",
-          "displayName": "坐姿分腿单腿抬起",
-          "displayNameEn": "Seated Straddle Single-Leg Lift"
+          "displayName": "站姿转胯画圈",
+          "displayNameEn": "Standing Hip Circles",
+          "rhythm": {
+            "kind": "rep_cycle",
+            "leadSeconds": 1,
+            "phases": "go=4s",
+            "source": "real-tempo r3",
+            "reps": 8
+          }
         },
         {
           "drill": "forearms-A",
@@ -190,6 +164,178 @@
           "voiceCue": "一手从腋下穿过去滑远，再打开指向天花板，眼睛跟着手走"
         },
         {
+          "drill": "h-quad-cars",
+          "reps": 3,
+          "perSide": true,
+          "movement": "bothCircleDirections",
+          "voiceCue": "跪撑背平，一侧膝盖抬起向侧后方画大圈，骨盆别跟着转",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "跪撑抬膝画圈",
+          "displayNameEn": "Hands-and-Knees Hip Circles",
+          "rhythm": {
+            "kind": "rep_cycle",
+            "leadSeconds": 1,
+            "phases": "go=1.5s; hold=1.5s; back=2s",
+            "source": "real-tempo r3",
+            "reps": 6,
+            "perSide": "each-side-separately",
+            "startingSide": "right"
+          }
+        },
+        {
+          "drill": "h-adductor-rock",
+          "reps": 5,
+          "perSide": true,
+          "voiceCue": "一条腿向侧伸直、脚掌踩地，背平着往后坐，大腿内侧有拉感就回",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "四足单腿侧伸后摇",
+          "displayNameEn": "Quadruped Adductor Rock-Back",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1.5s; hold=1s; back=1.2s; rest=0.3s",
+            "source": "real-tempo r3",
+            "reps": 8,
+            "perSide": "each-side-separately",
+            "startingSide": "right"
+          }
+        },
+        {
+          "drill": "n-leg-circles",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 3,
+          "perSide": true,
+          "movement": "bothCircleDirections",
+          "voiceCue": "膝盖绷直，骨盆贴垫，用脚尖在空中慢慢画大圆",
+          "displayName": "仰卧单腿直腿大画圈",
+          "displayNameEn": "Supine Straight-Leg Circles"
+        },
+        {
+          "drill": "w-dead-bug",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 5,
+          "perSide": true,
+          "voiceCue": "下背压住垫子，呼气慢慢伸远对侧手脚，腰一离地就收回"
+        },
+        {
+          "drill": "h-bridge-march",
+          "reps": 6,
+          "perSide": true,
+          "voiceCue": "臀部抬起保持骨盆水平，左右交替抬脚，臀部别往下掉",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "臀桥交替踏步",
+          "displayNameEn": "Glute Bridge March",
+          "rhythm": {
+            "kind": "rep_alternate",
+            "leadSeconds": 1,
+            "phases": "go=0.6s; hold=0.6s; back=0.6s; rest=0.2s",
+            "source": "real-tempo r3",
+            "reps": 10,
+            "perSide": "alternate",
+            "repUnit": "left+right",
+            "startingSide": "right"
+          }
+        },
+        {
+          "drill": "s-9090",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 4,
+          "perSide": true,
+          "movement": "alternatingHipSwitch",
+          "voiceCue": "脚跟压稳，双膝翻到另一侧，上身尽量坐直",
+          "displayName": "90/90 坐姿换髋",
+          "displayNameEn": "90/90 Seated Hip Switches"
+        },
+        {
+          "drill": "h-9090-liftoff",
+          "reps": 5,
+          "perSide": true,
+          "holdSeconds": 1,
+          "voiceCue": "90/90 坐稳上身立直，后侧小腿抬离地面停一下再放",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "90/90 后腿主动抬起",
+          "displayNameEn": "90/90 Back-Leg Lift-Off",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1s; hold=1s; back=1.2s; rest=0.3s",
+            "source": "real-tempo r3",
+            "reps": 8,
+            "perSide": "each-side-separately",
+            "sideSwitchSeconds": 10,
+            "startingSide": "left"
+          }
+        },
+        {
+          "drill": "t-seated-straddle-lift-1leg",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 5,
+          "perSide": true,
+          "holdSeconds": 1,
+          "voiceCue": "分腿坐稳、双手撑腿旁，膝盖绷直把单腿抬离地面几厘米停一下",
+          "displayName": "坐姿分腿单腿抬起",
+          "displayNameEn": "Seated Straddle Single-Leg Lift"
+        },
+        {
+          "drill": "h-sumo-pry",
+          "reps": 6,
+          "voiceCue": "双脚宽于肩、脚尖朝外，蹲到底用手肘把膝盖往外推，停住再站起",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "相扑深蹲肘推膝停留",
+          "displayNameEn": "Sumo Squat Hold with Elbow Pry",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1.5s; hold=2.5s; back=1.5s",
+            "source": "real-tempo r3",
+            "reps": 8
+          }
+        },
+        {
+          "drill": "t-wide-side-squat-shift",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 5,
+          "perSide": true,
+          "displayName": "宽距侧蹲左右移重心",
+          "displayNameEn": "Wide-Stance Lateral Squat Shifts",
+          "voiceCue": "双脚宽开立，重心左右慢移，伸直那条腿脚尖朝天、膝盖锁直",
+          "trainingDrill": "n-squat-shift",
+          "rhythm": {
+            "kind": "rep_alternate",
+            "leadSeconds": 1,
+            "perSide": "alternate",
+            "repUnit": "left+right",
+            "startingSide": "right",
+            "phases": "go=1.5s; hold=1s; back=1.5s"
+          }
+        },
+        {
+          "drill": "h-good-morning",
+          "reps": 8,
+          "voiceCue": "膝盖微弯背挺直，屁股向后推、上身前倾，大腿后侧有拉感就起",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "徒手早安式",
+          "displayNameEn": "Bodyweight Good Morning",
+          "rhythm": {
+            "kind": "rep_updown",
+            "leadSeconds": 1,
+            "phases": "go=2s; hold=0.5s; back=1.5s",
+            "source": "real-tempo r3",
+            "reps": 12
+          }
+        },
+        {
           "drill": "t-kneeling-scap-pushup",
           "sets": 1,
           "restSeconds": 0,
@@ -203,6 +349,43 @@
           "reps": 4,
           "perSide": true,
           "voiceCue": "重心先移到支撑手、肘锁直，另一手慢慢摸对侧肩，骨盆别晃"
+        },
+        {
+          "drill": "h-plank-side-step",
+          "reps": 5,
+          "perSide": true,
+          "voiceCue": "直臂俯撑，肩在手腕正上方，单脚向侧点地再收回，臀部别晃",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "直臂俯撑交替侧点地",
+          "displayNameEn": "High Plank Alternating Side Toe Tap",
+          "rhythm": {
+            "kind": "rep_alternate",
+            "leadSeconds": 1,
+            "phases": "go=1s; hold=0.5s; back=1s",
+            "source": "real-tempo r3",
+            "reps": 8,
+            "perSide": "alternate",
+            "repUnit": "left+right",
+            "startingSide": "right"
+          }
+        },
+        {
+          "drill": "h-tabletop",
+          "reps": 6,
+          "holdSeconds": 1,
+          "voiceCue": "坐姿双手撑在身后指尖朝后，伸髋把身体顶成桌面，停一下再落",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "桌面式后撑抬髋",
+          "displayNameEn": "Reverse Tabletop Bridge",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1s; hold=1s; back=1.5s",
+            "source": "real-tempo r3",
+            "reps": 10
+          }
         }
       ]
     },

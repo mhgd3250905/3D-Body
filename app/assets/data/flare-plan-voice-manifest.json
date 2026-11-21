@@ -1,9 +1,9 @@
 {
  "format": "pose-hub-plan-voice@1",
- "version": "flare-plan-voice-r1",
+ "version": "flare-plan-voice-r2",
  "app": "flare",
- "objectPrefix": "pack/r2-v1/plan-voice/flare-plan-voice-r1/",
- "sourceManifestSha256": "0116d35b71b06619f6242e20c563afcc72f34620f34084709b5080b13efd569f",
+ "objectPrefix": "pack/r2-v1/plan-voice/flare-plan-voice-r2/",
+ "sourceManifestSha256": "27642565d13a575256cf4f689433b14827a9b0614784992f40378930c4c3d738",
  "voiceProfile": {
   "voice": "zh-CN-XiaoxiaoNeural",
   "rate": "+6%"
@@ -18,7 +18,7 @@
   "bitrateKbps": 64,
   "process": "hiplab v4.1"
  },
- "count": 151,
+ "count": 173,
  "lines": [
   {
    "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.m4a",
@@ -74,136 +74,58 @@
   },
   {
    "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.m4a",
-   "text": "双脚宽开立，重心左右慢移，伸直那条腿脚尖朝天、膝盖锁直",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.m4a",
-   "sha256": "5c4e7e662194b8d3f6f8e0ed0225f8d1428d0e13acd1364c75cafc940718c354",
-   "bytes": 50095,
-   "durationSeconds": 5.967528,
+   "text": "大臂贴身屈肘九十度，掌心朝上、朝下慢慢转到底",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.m4a",
+   "sha256": "4d778edc9aab5613d8eb70e9b421ca720709bfd3c35b50074c506df2bd840cfb",
+   "bytes": 39626,
+   "durationSeconds": 4.690431,
    "format": "m4a",
-   "aacSha256": "5c4e7e662194b8d3f6f8e0ed0225f8d1428d0e13acd1364c75cafc940718c354",
+   "aacSha256": "4d778edc9aab5613d8eb70e9b421ca720709bfd3c35b50074c506df2bd840cfb",
    "provenance": {
     "voice": "zh-CN-XiaoxiaoNeural",
     "rate": "+6%",
-    "rawSha256": "325973d1c951fa33bc12c873b14747a862ec7bbf0a32723a3850539fe2ddd4b6",
-    "ttsFingerprint": "23b826d3ffc6f1a4930a556600ebc4ed5fe31195fd5dc159b520bed48d873479"
+    "rawSha256": "aba52c60ca0b07330ec2a6cd2181ab1928c196ec9236f7860cd29bce46f3ab89",
+    "ttsFingerprint": "5fe32c05eb5d8f6afe59a7146ffd847b0d0bd2182927b1366451b862ce5fbcf4"
    },
    "audit": {
     "status": "passed",
     "fails": [],
     "lufs": -16.2,
-    "truePeak": -2.0,
-    "leadMs": 40,
-    "tailMs": 88,
-    "charsPerSecond": 4.11,
-    "speechSeconds": 5.84
+    "truePeak": -2.3,
+    "leadMs": 30,
+    "tailMs": 90,
+    "charsPerSecond": 4.38,
+    "speechSeconds": 4.57
    }
   },
   {
    "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.m4a",
-   "text": "膝盖绷直，骨盆贴垫，用脚尖在空中慢慢画大圆",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.m4a",
-   "sha256": "2422a51b50d7c2f622d87bb5e60ed08c8a91652fd3b68dd45022b148f2b145e5",
-   "bytes": 37923,
-   "durationSeconds": 4.481451,
+   "text": "双手叉腰膝盖微弯，胯部先顺时针画 5 圈、再逆时针 5 圈，上身尽量不动",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.m4a",
+   "sha256": "787c810f31ad8b9025669289578e975462ee2ba8932249c931c869c9e4f990ca",
+   "bytes": 55014,
+   "durationSeconds": 6.571247,
    "format": "m4a",
-   "aacSha256": "2422a51b50d7c2f622d87bb5e60ed08c8a91652fd3b68dd45022b148f2b145e5",
+   "aacSha256": "787c810f31ad8b9025669289578e975462ee2ba8932249c931c869c9e4f990ca",
    "provenance": {
     "voice": "zh-CN-XiaoxiaoNeural",
     "rate": "+6%",
-    "rawSha256": "29f3c3e29aa60ec7163845b870bf58c053f2de18bff8f5ea9f7a7416fe37448b",
-    "ttsFingerprint": "d4260c4b4ad2bdd3a6bf48c21b80b5a977c8cb7e0d80b50c1bdd09824558dec4"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -15.9,
-    "truePeak": -2.2,
-    "leadMs": 30,
-    "tailMs": 81,
-    "charsPerSecond": 4.35,
-    "speechSeconds": 4.37
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.m4a",
-   "text": "下背压住垫子，呼气慢慢伸远对侧手脚，腰一离地就收回",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.m4a",
-   "sha256": "35836e8ff1d452aba19e27680091c794fb90d3d2626391ed9c221ff5d920d6ff",
-   "bytes": 41704,
-   "durationSeconds": 4.94585,
-   "format": "m4a",
-   "aacSha256": "35836e8ff1d452aba19e27680091c794fb90d3d2626391ed9c221ff5d920d6ff",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "6bf0249e0a62eea8b2cb65ba4a2c1f43947998eec84ba9e2c219b59e179125aa",
-    "ttsFingerprint": "22d5a90072bce7baa5e3ed19824fc99b044296e2ab0d74ee991f256c54f60ecb"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.0,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 86,
-    "charsPerSecond": 4.77,
-    "speechSeconds": 4.82
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.m4a",
-   "text": "脚跟压稳，双膝翻到另一侧，上身尽量坐直",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.m4a",
-   "sha256": "1681e8aaaf1cf9dbc6fd4af0d95dfb832ef6ee0d10df75d4fa2252df4251b1c1",
-   "bytes": 33140,
-   "durationSeconds": 3.900952,
-   "format": "m4a",
-   "aacSha256": "1681e8aaaf1cf9dbc6fd4af0d95dfb832ef6ee0d10df75d4fa2252df4251b1c1",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "6e3c4dd99250fe3a32f82a4a8a54a7f3d4f231fe152a9dfe89eaade95ea764ef",
-    "ttsFingerprint": "ded0bf3a9e46468bc146c7537cd2ae01c5c9f47b2fbd9e158f22066387b19ce7"
+    "rawSha256": "02e33315d1fd19527051c676f54bad6341949049f8801a5fbdf779bff6756a09",
+    "ttsFingerprint": "2011c11e19ba135b544f02f0dfeeaeda2cb6aa4042bd6ddf1cca307699e98fef"
    },
    "audit": {
     "status": "passed",
     "fails": [],
     "lufs": -16.2,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 81,
-    "charsPerSecond": 4.5,
-    "speechSeconds": 3.78
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.m4a",
-   "text": "分腿坐稳、双手撑腿旁，膝盖绷直把单腿抬离地面几厘米停一下",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.m4a",
-   "sha256": "7784d5c6b87a55e776681d460b55401e238162251eb3b8edfa7bb9a0737764e4",
-   "bytes": 48115,
-   "durationSeconds": 5.735329,
-   "format": "m4a",
-   "aacSha256": "7784d5c6b87a55e776681d460b55401e238162251eb3b8edfa7bb9a0737764e4",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "d0d76ac211177000a1c9aa640d1e26aab1f24c46f4de906b1c0fdfcb79c850bc",
-    "ttsFingerprint": "68827ff5b8e19e5fde2c4bde259f2815be2120496b4f27697ff9c064e766dca5"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
     "truePeak": -2.3,
     "leadMs": 30,
-    "tailMs": 95,
-    "charsPerSecond": 4.63,
-    "speechSeconds": 5.61
+    "tailMs": 101,
+    "charsPerSecond": 4.5,
+    "speechSeconds": 6.44
    }
   },
   {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.m4a",
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.m4a",
    "text": "手臂伸直锁肘，指尖朝前、朝外、朝后慢慢摇，刺痛立刻减力",
    "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.m4a",
    "sha256": "e79c6b8e6ff2f552a09f8dbe3a8e9ee16e8bd71863a602a6e378ae2a6c5f7ec3",
@@ -229,7 +151,7 @@
    }
   },
   {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.m4a",
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.m4a",
    "text": "吸气塌腰抬头，呼气推地拱背，跟着呼吸一节一节动",
    "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.m4a",
    "sha256": "954a62b3d48cbbb46cb44a9562ab49f261ace2f25149ae860dc319019e10c35d",
@@ -255,7 +177,7 @@
    }
   },
   {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.m4a",
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.m4a",
    "text": "一手从腋下穿过去滑远，再打开指向天花板，眼睛跟着手走",
    "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.m4a",
    "sha256": "47c3d6d03df41110b1a06f05269698a62a76a582e9d41a1c6e80642da64ad965",
@@ -281,7 +203,293 @@
    }
   },
   {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.m4a",
+   "text": "跪撑背平，一侧膝盖抬起向侧后方画大圈，骨盆别跟着转",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.m4a",
+   "sha256": "2eacc310be949ca3bf34144f463f7e92dafb009763182576b55abd8ce3cd286b",
+   "bytes": 44328,
+   "durationSeconds": 5.27093,
+   "format": "m4a",
+   "aacSha256": "2eacc310be949ca3bf34144f463f7e92dafb009763182576b55abd8ce3cd286b",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "16922b9af2867f8aa4c089f87b94f866f26a285d6dba553326b1122a83506f0d",
+    "ttsFingerprint": "28f142e8b70a4a41f9100130cd35805b60f4235a14c601ed01ecad3d0c1fa8ed"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.2,
+    "leadMs": 40,
+    "tailMs": 101,
+    "charsPerSecond": 4.48,
+    "speechSeconds": 5.13
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.m4a",
+   "text": "一条腿向侧伸直、脚掌踩地，背平着往后坐，大腿内侧有拉感就回",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.m4a",
+   "sha256": "bccd66f9beef541d4461deb235dd7c94fcf95bf11199da0d39e76f3abec4fb14",
+   "bytes": 49693,
+   "durationSeconds": 5.921088,
+   "format": "m4a",
+   "aacSha256": "bccd66f9beef541d4461deb235dd7c94fcf95bf11199da0d39e76f3abec4fb14",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "a0c8862bd27dfda55bf2edb9df44a03ff0a31d73799f02a32af14a54c7015015",
+    "ttsFingerprint": "8768196075fb7b15f11973b62c687e66e8fa72c6c976fc8f3a232b116c46d97e"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.2,
+    "leadMs": 30,
+    "tailMs": 71,
+    "charsPerSecond": 4.47,
+    "speechSeconds": 5.82
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.m4a",
+   "text": "膝盖绷直，骨盆贴垫，用脚尖在空中慢慢画大圆",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.m4a",
+   "sha256": "2422a51b50d7c2f622d87bb5e60ed08c8a91652fd3b68dd45022b148f2b145e5",
+   "bytes": 37923,
+   "durationSeconds": 4.481451,
+   "format": "m4a",
+   "aacSha256": "2422a51b50d7c2f622d87bb5e60ed08c8a91652fd3b68dd45022b148f2b145e5",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "29f3c3e29aa60ec7163845b870bf58c053f2de18bff8f5ea9f7a7416fe37448b",
+    "ttsFingerprint": "d4260c4b4ad2bdd3a6bf48c21b80b5a977c8cb7e0d80b50c1bdd09824558dec4"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -15.9,
+    "truePeak": -2.2,
+    "leadMs": 30,
+    "tailMs": 81,
+    "charsPerSecond": 4.35,
+    "speechSeconds": 4.37
+   }
+  },
+  {
    "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.m4a",
+   "text": "下背压住垫子，呼气慢慢伸远对侧手脚，腰一离地就收回",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.m4a",
+   "sha256": "35836e8ff1d452aba19e27680091c794fb90d3d2626391ed9c221ff5d920d6ff",
+   "bytes": 41704,
+   "durationSeconds": 4.94585,
+   "format": "m4a",
+   "aacSha256": "35836e8ff1d452aba19e27680091c794fb90d3d2626391ed9c221ff5d920d6ff",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6bf0249e0a62eea8b2cb65ba4a2c1f43947998eec84ba9e2c219b59e179125aa",
+    "ttsFingerprint": "22d5a90072bce7baa5e3ed19824fc99b044296e2ab0d74ee991f256c54f60ecb"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.0,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 86,
+    "charsPerSecond": 4.77,
+    "speechSeconds": 4.82
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.m4a",
+   "text": "臀部抬起保持骨盆水平，左右交替抬脚，臀部别往下掉",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.m4a",
+   "sha256": "bcc24a5781e4da4cf26b6ba25b8a6cdf62e0cc5176d39bed49b315cf16eb230d",
+   "bytes": 43300,
+   "durationSeconds": 5.06195,
+   "format": "m4a",
+   "aacSha256": "bcc24a5781e4da4cf26b6ba25b8a6cdf62e0cc5176d39bed49b315cf16eb230d",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "5de9de6676ce9bad6e4593e27e6454a2692a148d6e1e2805377a26429eb74484",
+    "ttsFingerprint": "d6eeda44beaec583c713e7285b1f5160188484f7502269eb97ec038ebab02a73"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 92,
+    "charsPerSecond": 4.46,
+    "speechSeconds": 4.93
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.13.m4a",
+   "text": "脚跟压稳，双膝翻到另一侧，上身尽量坐直",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.m4a",
+   "sha256": "1681e8aaaf1cf9dbc6fd4af0d95dfb832ef6ee0d10df75d4fa2252df4251b1c1",
+   "bytes": 33140,
+   "durationSeconds": 3.900952,
+   "format": "m4a",
+   "aacSha256": "1681e8aaaf1cf9dbc6fd4af0d95dfb832ef6ee0d10df75d4fa2252df4251b1c1",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6e3c4dd99250fe3a32f82a4a8a54a7f3d4f231fe152a9dfe89eaade95ea764ef",
+    "ttsFingerprint": "ded0bf3a9e46468bc146c7537cd2ae01c5c9f47b2fbd9e158f22066387b19ce7"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 81,
+    "charsPerSecond": 4.5,
+    "speechSeconds": 3.78
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.14.m4a",
+   "text": "90/90 坐稳上身立直，后侧小腿抬离地面停一下再放",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.14.m4a",
+   "sha256": "fb208e1312668dfdcffb55dbc0c4099898d4c94300bb9d96064b58df42a1eeb8",
+   "bytes": 40304,
+   "durationSeconds": 4.783311,
+   "format": "m4a",
+   "aacSha256": "fb208e1312668dfdcffb55dbc0c4099898d4c94300bb9d96064b58df42a1eeb8",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "788dbb7e07f0e4ae48603d55ce6e7b37ec00085d54740fdd883bdecf623b26ea",
+    "ttsFingerprint": "4bb5c9f20825cfe3971e7d5d878d163304adfcd728d24a5ee23efbfed7823107"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.5,
+    "leadMs": 40,
+    "tailMs": 83,
+    "charsPerSecond": 4.94,
+    "speechSeconds": 4.66
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.15.m4a",
+   "text": "分腿坐稳、双手撑腿旁，膝盖绷直把单腿抬离地面几厘米停一下",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.m4a",
+   "sha256": "7784d5c6b87a55e776681d460b55401e238162251eb3b8edfa7bb9a0737764e4",
+   "bytes": 48115,
+   "durationSeconds": 5.735329,
+   "format": "m4a",
+   "aacSha256": "7784d5c6b87a55e776681d460b55401e238162251eb3b8edfa7bb9a0737764e4",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "d0d76ac211177000a1c9aa640d1e26aab1f24c46f4de906b1c0fdfcb79c850bc",
+    "ttsFingerprint": "68827ff5b8e19e5fde2c4bde259f2815be2120496b4f27697ff9c064e766dca5"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 30,
+    "tailMs": 95,
+    "charsPerSecond": 4.63,
+    "speechSeconds": 5.61
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.16.m4a",
+   "text": "双脚宽于肩、脚尖朝外，蹲到底用手肘把膝盖往外推，停住再站起",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.16.m4a",
+   "sha256": "d8916bb6e32d05cfb72844084f5d2817ac1d583190844600d1053d3498143e88",
+   "bytes": 51473,
+   "durationSeconds": 6.130068,
+   "format": "m4a",
+   "aacSha256": "d8916bb6e32d05cfb72844084f5d2817ac1d583190844600d1053d3498143e88",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "7baba79e6a07554f32659910e9bd04d2718efee2742c1d0c2263cd6aa0a6d888",
+    "ttsFingerprint": "ae2dd85c6cf559eddfbbc6808dd7aebaa3cdce703c7926b5f38d1a8ddf7bd7c0"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.1,
+    "leadMs": 30,
+    "tailMs": 80,
+    "charsPerSecond": 4.32,
+    "speechSeconds": 6.02
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.17.m4a",
+   "text": "双脚宽开立，重心左右慢移，伸直那条腿脚尖朝天、膝盖锁直",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.m4a",
+   "sha256": "5c4e7e662194b8d3f6f8e0ed0225f8d1428d0e13acd1364c75cafc940718c354",
+   "bytes": 50095,
+   "durationSeconds": 5.967528,
+   "format": "m4a",
+   "aacSha256": "5c4e7e662194b8d3f6f8e0ed0225f8d1428d0e13acd1364c75cafc940718c354",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "325973d1c951fa33bc12c873b14747a862ec7bbf0a32723a3850539fe2ddd4b6",
+    "ttsFingerprint": "23b826d3ffc6f1a4930a556600ebc4ed5fe31195fd5dc159b520bed48d873479"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.0,
+    "leadMs": 40,
+    "tailMs": 88,
+    "charsPerSecond": 4.11,
+    "speechSeconds": 5.84
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.18.m4a",
+   "text": "膝盖微弯背挺直，屁股向后推、上身前倾，大腿后侧有拉感就起",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.18.m4a",
+   "sha256": "7cece877ee732bd61b82e66345303703f4c1c15428ea5a6e18e8d5c74cbe1178",
+   "bytes": 50092,
+   "durationSeconds": 5.967528,
+   "format": "m4a",
+   "aacSha256": "7cece877ee732bd61b82e66345303703f4c1c15428ea5a6e18e8d5c74cbe1178",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "834e83a1c15214e98ad9c2fa5604cf398527242ea3dd8315ba8f13f055955d4a",
+    "ttsFingerprint": "6b5b67e45cf385cf01f1685ebbb2f1467c6552f1764bc8d72a1a30f8142d9905"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.2,
+    "leadMs": 40,
+    "tailMs": 88,
+    "charsPerSecond": 4.28,
+    "speechSeconds": 5.84
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.19.m4a",
    "text": "手肘不弯，胸口下沉夹肩胛，再用力把地推远",
    "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.m4a",
    "sha256": "840e2a529638f9d6bd814318b842406fa971fe533cbf7af7e2764d9216069901",
@@ -307,7 +515,7 @@
    }
   },
   {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.m4a",
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.20.m4a",
    "text": "重心先移到支撑手、肘锁直，另一手慢慢摸对侧肩，骨盆别晃",
    "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.m4a",
    "sha256": "3d3b9965e119ec1d17d5e89504c4b4863a8deb7d54865782c3c488fd6f5e956c",
@@ -330,6 +538,994 @@
     "tailMs": 96,
     "charsPerSecond": 4.44,
     "speechSeconds": 5.4
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.21.m4a",
+   "text": "直臂俯撑，肩在手腕正上方，单脚向侧点地再收回，臀部别晃",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.21.m4a",
+   "sha256": "baf93fefc0223ba2b31921e07fae40cd3debfa3e3846c5a92fe7cd18c72ad7a0",
+   "bytes": 47927,
+   "durationSeconds": 5.712109,
+   "format": "m4a",
+   "aacSha256": "baf93fefc0223ba2b31921e07fae40cd3debfa3e3846c5a92fe7cd18c72ad7a0",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "d674e412cb937868ddfc3ec51a503a99e7692e017291029cb712ba8227ba1ae0",
+    "ttsFingerprint": "b71655a82749fa9c59656c1d16161ea87735425adabb28d8dd73076144a4257d"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 92,
+    "charsPerSecond": 4.3,
+    "speechSeconds": 5.58
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.22.m4a",
+   "text": "坐姿双手撑在身后指尖朝后，伸髋把身体顶成桌面，停一下再落",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.22.m4a",
+   "sha256": "673029e613c93e710735cdc8d897b6865909d60e3e441928e5d68a916ac89016",
+   "bytes": 46372,
+   "durationSeconds": 5.526349,
+   "format": "m4a",
+   "aacSha256": "673029e613c93e710735cdc8d897b6865909d60e3e441928e5d68a916ac89016",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "66a360f98866e30288d3a6adec4eb1b8d91c7a15d9d198d9571f07e3bcde0bd2",
+    "ttsFingerprint": "ac59a669bb9e12d890cbf0558a8e41afced76690d23c8b989149571bfdca3edb"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 86,
+    "charsPerSecond": 4.81,
+    "speechSeconds": 5.4
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.intro.m4a",
+   "text": "开合步绕臂，一分三十秒。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.intro.m4a",
+   "sha256": "f8890b9a5bfcb94b48f8d5ebdabc92f0eef2b4a03d0bf487b30cb166acc2f4f6",
+   "bytes": 19291,
+   "durationSeconds": 2.229116,
+   "format": "m4a",
+   "aacSha256": "f8890b9a5bfcb94b48f8d5ebdabc92f0eef2b4a03d0bf487b30cb166acc2f4f6",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "ef9d4ccac461057c3a041fd82166a9d8782c0372470dbe55f95a8690cfc28ca9",
+    "ttsFingerprint": "83709179341c52cfff7cfcede83f9c723243afd41e6537a23f897ceb62cbdb39"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 89,
+    "charsPerSecond": 4.76,
+    "speechSeconds": 2.1
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.intro.m4a",
+   "text": "颈腕手指唤醒，四十五秒。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.intro.m4a",
+   "sha256": "acb2a61d9e3c37399f976aa3439d1575f964e091a24a74a2143531f09827a2de",
+   "bytes": 20583,
+   "durationSeconds": 2.391655,
+   "format": "m4a",
+   "aacSha256": "acb2a61d9e3c37399f976aa3439d1575f964e091a24a74a2143531f09827a2de",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "186c2902d4c15006cf38bdad8fe495d98f97a98f4e259af91771983c25f3d398",
+    "ttsFingerprint": "28ea4eb9990a251153315391c72300126d6fefc1326f7e6ba31246dc34fb75a5"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.6,
+    "leadMs": 40,
+    "tailMs": 92,
+    "charsPerSecond": 4.43,
+    "speechSeconds": 2.26
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.intro.m4a",
+   "text": "站姿屈肘前臂旋转，八次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.intro.m4a",
+   "sha256": "514f07a6b2e9fbdd57e8aa12ec0654634f333926c34a52b9d923431d2f27304e",
+   "bytes": 22283,
+   "durationSeconds": 2.600635,
+   "format": "m4a",
+   "aacSha256": "514f07a6b2e9fbdd57e8aa12ec0654634f333926c34a52b9d923431d2f27304e",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "913bf1451826947afbee60096374fb4f9a32032b80800134be7e3710a238b0bc",
+    "ttsFingerprint": "aa489baef68c1c3905c44583efa3c4222bdb5fb328fa8694d22d3127b3c8176b"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 30,
+    "tailMs": 91,
+    "charsPerSecond": 4.03,
+    "speechSeconds": 2.48
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.intro.m4a",
+   "text": "站姿转胯画圈，两个方向各五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.intro.m4a",
+   "sha256": "22afc4b561a960311b4850a8ce51cb430669f052d749d39312fbe9565f7e73eb",
+   "bytes": 23770,
+   "durationSeconds": 2.763175,
+   "format": "m4a",
+   "aacSha256": "22afc4b561a960311b4850a8ce51cb430669f052d749d39312fbe9565f7e73eb",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "d5c383e0792d8641b802c3b2fc61f07fd6a7854b5df89e81d67efbb36c18c6a6",
+    "ttsFingerprint": "1be3a7d7d28721c8a86228b2124a3633fecc9573df08dd06871a812b5e25c579"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.0,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 83,
+    "charsPerSecond": 4.92,
+    "speechSeconds": 2.64
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.intro.m4a",
+   "text": "跪姿摇腕，三向各四次，手背十秒。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.intro.m4a",
+   "sha256": "425762e695a2d19ba3e1e3cd3edeb09d3514ee722078620fd3a61db46be93643",
+   "bytes": 27650,
+   "durationSeconds": 3.250794,
+   "format": "m4a",
+   "aacSha256": "425762e695a2d19ba3e1e3cd3edeb09d3514ee722078620fd3a61db46be93643",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "ec36eafa2f69724f2d950a668e39932aa5de17e69b77c99206dad8c2962c13e2",
+    "ttsFingerprint": "983c5c8abe70d5e379139e0a28326e81bcabaa86806b0a95c43530fe097abc00"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 91,
+    "charsPerSecond": 4.17,
+    "speechSeconds": 3.12
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.intro.m4a",
+   "text": "四足猫牛式，六次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.intro.m4a",
+   "sha256": "63f2c1b9b7483052ea9cf0294ca36a26e6aa13bfd0487f10f5e809c9689e7255",
+   "bytes": 16597,
+   "durationSeconds": 1.880816,
+   "format": "m4a",
+   "aacSha256": "63f2c1b9b7483052ea9cf0294ca36a26e6aa13bfd0487f10f5e809c9689e7255",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "8e73b9a96a69809c7b884c84c5c23370178078c5efaeadd0374b70678d8f434c",
+    "ttsFingerprint": "12525bfaac430a08ad369ec533496b41cfe3b80cc99625c38d0c54bf7f53b2fe"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.9,
+    "leadMs": 30,
+    "tailMs": 81,
+    "charsPerSecond": 3.96,
+    "speechSeconds": 1.77
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.intro.m4a",
+   "text": "跪姿穿针，每侧四次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.intro.m4a",
+   "sha256": "43f2333ffb63f103bfa7750315b32f89dfee2d623b83a4578349000acbbd5ecc",
+   "bytes": 17999,
+   "durationSeconds": 2.066576,
+   "format": "m4a",
+   "aacSha256": "43f2333ffb63f103bfa7750315b32f89dfee2d623b83a4578349000acbbd5ecc",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "503cb49121b28a71bcf656acd918d00cb9202c2efaa52c5b27a7ebf76ab9abb1",
+    "ttsFingerprint": "de64ac0cc98da1e47dde4c97f0127de6c89ef605612d747f26ce4b40264547fa"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 97,
+    "charsPerSecond": 4.15,
+    "speechSeconds": 1.93
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.intro.m4a",
+   "text": "跪撑抬膝画圈，每侧两个方向各三次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.intro.m4a",
+   "sha256": "50244a6abc83a3d7d29085f189567224807269cc661b5793d344e056fdbabba5",
+   "bytes": 27445,
+   "durationSeconds": 3.204354,
+   "format": "m4a",
+   "aacSha256": "50244a6abc83a3d7d29085f189567224807269cc661b5793d344e056fdbabba5",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "185069a4986e04fc1a7c885254552183501c2a38545f17a0cb860adb41c96516",
+    "ttsFingerprint": "0f308b4469b4fcb09542223321263302d5ac823e772452b43329445e4b274f26"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 74,
+    "charsPerSecond": 4.85,
+    "speechSeconds": 3.09
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.intro.m4a",
+   "text": "四足单腿侧伸后摇，每侧五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.intro.m4a",
+   "sha256": "d8144268ae28c5ca9c288c8ca5da78cf83ad6179705e9cd5366356666a000021",
+   "bytes": 24012,
+   "durationSeconds": 2.786395,
+   "format": "m4a",
+   "aacSha256": "d8144268ae28c5ca9c288c8ca5da78cf83ad6179705e9cd5366356666a000021",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "98cb90df781f34192cb19f984f92c33380b661c0a0be47269bf20ad0f38030aa",
+    "ttsFingerprint": "d1b852dc0a1ab912a000454413f3fa85efd1bb0d0b2b25820f8410a453636494"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 30,
+    "tailMs": 86,
+    "charsPerSecond": 4.49,
+    "speechSeconds": 2.67
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.intro.m4a",
+   "text": "仰卧画圈，每侧顺逆各三圈。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.intro.m4a",
+   "sha256": "b5d92d5f9c56d6a4bfbc244eeaaf5f61decb2848d0ad0c2b17e61623a3f70565",
+   "bytes": 22328,
+   "durationSeconds": 2.600635,
+   "format": "m4a",
+   "aacSha256": "b5d92d5f9c56d6a4bfbc244eeaaf5f61decb2848d0ad0c2b17e61623a3f70565",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "b2033d37363df29a8077cb3bb6159677bce57da1bdf85cbd4baa00f11fdda674",
+    "ttsFingerprint": "97d9fcf2ce43dff616b6cd149c0ba5f423cf426fcb6c7a21208c6d3845695829"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 101,
+    "charsPerSecond": 4.47,
+    "speechSeconds": 2.46
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.intro.m4a",
+   "text": "死虫式，每侧五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.intro.m4a",
+   "sha256": "f7f5bf49d12dac8bf0cb63ae53e5ab27aadae1e459a5d2a3c8f3e8933c4e7a5a",
+   "bytes": 16411,
+   "durationSeconds": 1.857596,
+   "format": "m4a",
+   "aacSha256": "f7f5bf49d12dac8bf0cb63ae53e5ab27aadae1e459a5d2a3c8f3e8933c4e7a5a",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "ace873a9745476c909cc51ae72f179076f8fd44b9e135945a6026699c623b0d7",
+    "ttsFingerprint": "2a0bd7ff2c0a0b511a17a85e9c5e08207907ea382b6019d512befa8e2ee7ea73"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.1,
+    "leadMs": 40,
+    "tailMs": 78,
+    "charsPerSecond": 4.02,
+    "speechSeconds": 1.74
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.intro.m4a",
+   "text": "臀桥交替踏步，每侧六次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.intro.m4a",
+   "sha256": "5a44e738f0a14b8fab9e7651a659cba7dacb853385b0e525c0da2f6976b0af2e",
+   "bytes": 20785,
+   "durationSeconds": 2.391655,
+   "format": "m4a",
+   "aacSha256": "5a44e738f0a14b8fab9e7651a659cba7dacb853385b0e525c0da2f6976b0af2e",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "e09ed24b414533508da863642ba1b27c551315b8e87bf97a1af4518a6946e927",
+    "ttsFingerprint": "1ead1640939d65678d5df879b30509f64f902a716e153af959b28e2c58a6a62a"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 82,
+    "charsPerSecond": 4.41,
+    "speechSeconds": 2.27
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.13.intro.m4a",
+   "text": "坐姿换髋，每侧四次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.intro.m4a",
+   "sha256": "c797db9983587a202623e3a260327514cd4df018c3da307926df57d0ff008439",
+   "bytes": 17740,
+   "durationSeconds": 2.020136,
+   "format": "m4a",
+   "aacSha256": "c797db9983587a202623e3a260327514cd4df018c3da307926df57d0ff008439",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "2615b1ed87e594db86f116c662e97af4a27fca91398292b16eff070b975dd400",
+    "ttsFingerprint": "898cc094c7a07e994fecf636ab07896bfc414cdfb5b1394a113665372f875fb1"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.0,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 90,
+    "charsPerSecond": 4.23,
+    "speechSeconds": 1.89
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.14.intro.m4a",
+   "text": "九十度坐姿后腿抬起，每侧五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.14.intro.m4a",
+   "sha256": "d591ee8a1f8c871f296581bfedc7514109e5206fbde463e4b0bcea8b738e9dca",
+   "bytes": 24369,
+   "durationSeconds": 2.832834,
+   "format": "m4a",
+   "aacSha256": "d591ee8a1f8c871f296581bfedc7514109e5206fbde463e4b0bcea8b738e9dca",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6775dda5f5003f862181fe912e3ce04739c3011fbd30ab44027aa6c697755b8f",
+    "ttsFingerprint": "e99b07046fb0518bcb777f1e88c34ed8cbd4666b6b0415f66f3769e2e0aefa8c"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.0,
+    "truePeak": -2.0,
+    "leadMs": 40,
+    "tailMs": 83,
+    "charsPerSecond": 4.8,
+    "speechSeconds": 2.71
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.15.intro.m4a",
+   "text": "分腿单腿抬，每侧五次，停一秒。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.intro.m4a",
+   "sha256": "b3a6cc5b3d3f1a4ea7cc4ecb4361c50cab67e93ebaa6d3e5dafe52903e60c199",
+   "bytes": 25192,
+   "durationSeconds": 2.948934,
+   "format": "m4a",
+   "aacSha256": "b3a6cc5b3d3f1a4ea7cc4ecb4361c50cab67e93ebaa6d3e5dafe52903e60c199",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "9765e89bc12b263255c4a9ddeaf1dc72b5129405d4ed6e21b7eb12e2593340c1",
+    "ttsFingerprint": "e2320b155f04fb9bab1b587d4e48d6dfe60a95dee74a136b3c7c45418cdd4015"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.4,
+    "leadMs": 30,
+    "tailMs": 99,
+    "charsPerSecond": 4.26,
+    "speechSeconds": 2.82
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.16.intro.m4a",
+   "text": "相扑深蹲肘推膝，六次，每次停两秒半。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.16.intro.m4a",
+   "sha256": "9496fbd690dac91e54a8aaaefe4b97829d9c2c407102fbb312b93a8c0b753b97",
+   "bytes": 32014,
+   "durationSeconds": 3.761633,
+   "format": "m4a",
+   "aacSha256": "9496fbd690dac91e54a8aaaefe4b97829d9c2c407102fbb312b93a8c0b753b97",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "1c5b2f7616bf65658d2e0fab7e6b56dfba68faacecf3042ed0a40b652c893d2e",
+    "ttsFingerprint": "e1457cd3951a41a1be55ce40ab49b8065118a215802347229883556ed4b266eb"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 30,
+    "tailMs": 82,
+    "charsPerSecond": 4.11,
+    "speechSeconds": 3.65
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.17.intro.m4a",
+   "text": "宽距侧蹲，每侧五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.intro.m4a",
+   "sha256": "b834add1cbb2bfdbacd92b9054906ffea25f8bbe3ce3e3f289bdfbb32a2ed3fe",
+   "bytes": 17108,
+   "durationSeconds": 1.950476,
+   "format": "m4a",
+   "aacSha256": "b834add1cbb2bfdbacd92b9054906ffea25f8bbe3ce3e3f289bdfbb32a2ed3fe",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "7b52adb007f06da77bda94ffba3a3065de384d095ff5495c88d4f913e5126333",
+    "ttsFingerprint": "a53fd959f45175de7bc1a7131cc31e8042da57446578b82663bac000251d7bd3"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 80,
+    "charsPerSecond": 4.37,
+    "speechSeconds": 1.83
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.18.intro.m4a",
+   "text": "徒手早安式，八次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.18.intro.m4a",
+   "sha256": "e84b2fe3bce60e744b7bf3ea9ca4dc551bb003fd1ef7970d933622f32150d3c5",
+   "bytes": 15696,
+   "durationSeconds": 1.787937,
+   "format": "m4a",
+   "aacSha256": "e84b2fe3bce60e744b7bf3ea9ca4dc551bb003fd1ef7970d933622f32150d3c5",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "c9eadadf5688e0b255ccef1a8814b15ce149e4953161c53222aa51c399db31db",
+    "ttsFingerprint": "1ffd9adb7d932d78fa1e601047d2d2b15434b3f1f2d4de6737c2a95813497826"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.8,
+    "leadMs": 40,
+    "tailMs": 98,
+    "charsPerSecond": 4.24,
+    "speechSeconds": 1.65
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.19.intro.m4a",
+   "text": "跪姿肩胛俯卧撑，十次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.intro.m4a",
+   "sha256": "840588922f0dc80f21fae566fe253d843fb92fb9f21bd59f30703c02c4d23696",
+   "bytes": 19201,
+   "durationSeconds": 2.205896,
+   "format": "m4a",
+   "aacSha256": "840588922f0dc80f21fae566fe253d843fb92fb9f21bd59f30703c02c4d23696",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "63750c701a6109c445206242f9b9ea25d90cecdc6dfe616d27548fcde6fee118",
+    "ttsFingerprint": "526b6afdb1dbdc670167edb3c2f90c04e52add6d27ad025c972dbffd59cf2abb"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 86,
+    "charsPerSecond": 4.33,
+    "speechSeconds": 2.08
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.20.intro.m4a",
+   "text": "俯撑触肩，每侧四次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.intro.m4a",
+   "sha256": "96e6fee7167d7cc06b216b2c4c299c4cdb154dadf9862ee43ae8ef5065b68940",
+   "bytes": 17565,
+   "durationSeconds": 2.020136,
+   "format": "m4a",
+   "aacSha256": "96e6fee7167d7cc06b216b2c4c299c4cdb154dadf9862ee43ae8ef5065b68940",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6c0c6fc33eaff18ae867fa4d72d8ed89c2b3e80299867507459f521200783f73",
+    "ttsFingerprint": "b1b151979821569a665b4c3679dd70beb0e9b785a8347426257746045313bf1b"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 30,
+    "tailMs": 100,
+    "charsPerSecond": 4.23,
+    "speechSeconds": 1.89
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.21.intro.m4a",
+   "text": "直臂俯撑交替侧点地，每侧五次。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.21.intro.m4a",
+   "sha256": "83ca15594c8e07f01f4f1eff9212bec77b800db05860ad2ffdd7a87cf52339fb",
+   "bytes": 25948,
+   "durationSeconds": 3.041814,
+   "format": "m4a",
+   "aacSha256": "83ca15594c8e07f01f4f1eff9212bec77b800db05860ad2ffdd7a87cf52339fb",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "e0294968ea8688b4587499da68702cd3a67b43fbdd8baba66d706b4077c4313e",
+    "ttsFingerprint": "2f4e07e858d6954dcafae23ffaa276919e68d80f1b4f4ebb5f81b87546fc2034"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.5,
+    "leadMs": 40,
+    "tailMs": 102,
+    "charsPerSecond": 4.48,
+    "speechSeconds": 2.9
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.22.intro.m4a",
+   "text": "桌面式后撑抬髋，六次，每次停一秒。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r2/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.22.intro.m4a",
+   "sha256": "9b35c400975abdff9e932e8e5cb16f94512784256c4275bddb28369ad83dcd04",
+   "bytes": 28632,
+   "durationSeconds": 3.366893,
+   "format": "m4a",
+   "aacSha256": "9b35c400975abdff9e932e8e5cb16f94512784256c4275bddb28369ad83dcd04",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "f3a52b06f78b1a1f421272e6159eda4b4d88adc5f30779b5ca4acc1d216b7cea",
+    "ttsFingerprint": "2e997c6d9061a031e4dc1e40725e1e274117935beea65d74550efea165f160e4"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.4,
+    "leadMs": 40,
+    "tailMs": 97,
+    "charsPerSecond": 4.33,
+    "speechSeconds": 3.23
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-side-raise.m4a",
+   "text": "双臂侧举。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-side-raise.m4a",
+   "sha256": "405cc13906a4fb76d33f079953565db5ab259798d882def0bef33905bb10455d",
+   "bytes": 9724,
+   "durationSeconds": 1.044898,
+   "format": "m4a",
+   "aacSha256": "405cc13906a4fb76d33f079953565db5ab259798d882def0bef33905bb10455d",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "59c9f0a1ed24378d25a06df01b340133a5f45cf2af8868beb1f7fa50e72a11ae",
+    "ttsFingerprint": "5fce798c00c816a8064edc9310a2393734bc7323c93a6ac18010085033f9842f"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.4,
+    "leadMs": 30,
+    "tailMs": 65,
+    "charsPerSecond": 4.21,
+    "speechSeconds": 0.95
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-forward-circles.m4a",
+   "text": "向前绕环。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-forward-circles.m4a",
+   "sha256": "7b59623dcf4849d25a6f0b81326d99df5b8e1aaf972ba27706901ceee64dfc3f",
+   "bytes": 9913,
+   "durationSeconds": 1.068118,
+   "format": "m4a",
+   "aacSha256": "7b59623dcf4849d25a6f0b81326d99df5b8e1aaf972ba27706901ceee64dfc3f",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "85cfbb358207e719231b5cc659249c149d53fbf6e140d64a8cb5dd2b09abfecf",
+    "ttsFingerprint": "6b74c26ddc99d38a1902be7b362a55a103fd6c791bd291a0dbb0dc315725e154"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.5,
+    "leadMs": 30,
+    "tailMs": 78,
+    "charsPerSecond": 4.17,
+    "speechSeconds": 0.96
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-backward-circles.m4a",
+   "text": "向后绕环。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-backward-circles.m4a",
+   "sha256": "559c99c528828775731410451f7f8c45abc1d22d98dc3939e2c13717a3e4ac54",
+   "bytes": 9766,
+   "durationSeconds": 1.044898,
+   "format": "m4a",
+   "aacSha256": "559c99c528828775731410451f7f8c45abc1d22d98dc3939e2c13717a3e4ac54",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "40befd02643cfb609d2c2e9b6d34f7cb3e27f5f1ef056aef4302ba241c450636",
+    "ttsFingerprint": "c44b75b4eb3b13543abf45802b8e58196b2de789169b402ab9d8a995508dc079"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.5,
+    "leadMs": 30,
+    "tailMs": 85,
+    "charsPerSecond": 4.3,
+    "speechSeconds": 0.93
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.neck-wakeup.m4a",
+   "text": "低头慢滚。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.neck-wakeup.m4a",
+   "sha256": "e3e0d5fe2ed1d4099f650c4fe93a294c96d637e18ddf7feb3e8e2a4f86dca72b",
+   "bytes": 9171,
+   "durationSeconds": 0.975238,
+   "format": "m4a",
+   "aacSha256": "e3e0d5fe2ed1d4099f650c4fe93a294c96d637e18ddf7feb3e8e2a4f86dca72b",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "afd912c4bd71062304eb15b4021fb78f7fddfbbee285ad49450e8f65c98a0889",
+    "ttsFingerprint": "5725062add581fc0117d780bc54b429dc062160367eddb17ea4cf2ac4235e29b"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -3.7,
+    "leadMs": 40,
+    "tailMs": 85,
+    "charsPerSecond": 4.7,
+    "speechSeconds": 0.85
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.wrist-figure-eight.m4a",
+   "text": "合掌画八字。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.wrist-figure-eight.m4a",
+   "sha256": "88cba189766c66c69156b93f6f59116e36e5fb0ef2d157fc17e5bb280efbacfe",
+   "bytes": 10912,
+   "durationSeconds": 1.184218,
+   "format": "m4a",
+   "aacSha256": "88cba189766c66c69156b93f6f59116e36e5fb0ef2d157fc17e5bb280efbacfe",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "e501927d66bbb000835566266c2f45b46b7a7eb94fbfe57c828340538544f0b0",
+    "ttsFingerprint": "896fd844ca7b956ebd85f1c76ec863f6425bb0481da1f22d2dee4c47b1282c49"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 30,
+    "tailMs": 84,
+    "charsPerSecond": 4.67,
+    "speechSeconds": 1.07
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.finger-spread.m4a",
+   "text": "张指弹开。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.finger-spread.m4a",
+   "sha256": "851d1b8c417fa1c469ce0b32dc64b48cd1d1c814e8006a0b2048ddf583324bbe",
+   "bytes": 8966,
+   "durationSeconds": 0.952018,
+   "format": "m4a",
+   "aacSha256": "851d1b8c417fa1c469ce0b32dc64b48cd1d1c814e8006a0b2048ddf583324bbe",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "9b7c19d8462d138aa7637fea2365c364512856e71d84158c53aa8bbbd7ae3d42",
+    "ttsFingerprint": "7c0aca90fdc977bb95c13a45273414ac8fb1654e4da3218b83b37ef719881fa1"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -15.9,
+    "truePeak": -2.5,
+    "leadMs": 40,
+    "tailMs": 92,
+    "charsPerSecond": 4.88,
+    "speechSeconds": 0.82
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.segment.fingers-forward.m4a",
+   "text": "指尖朝前。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-forward.m4a",
+   "sha256": "d8b0f32c4438271b1ae40c3c83af92591d555c4281304d68e951ce728c323fa9",
+   "bytes": 9503,
+   "durationSeconds": 1.021678,
+   "format": "m4a",
+   "aacSha256": "d8b0f32c4438271b1ae40c3c83af92591d555c4281304d68e951ce728c323fa9",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "02d81334413234c953cb33103997c1e8bde8a9ef59effc47e7758284577d71ef",
+    "ttsFingerprint": "7f63e6eee809fec07d04dd8c3749b8410ca281d7663bb336c698313eb61b5494"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.5,
+    "leadMs": 40,
+    "tailMs": 82,
+    "charsPerSecond": 4.45,
+    "speechSeconds": 0.9
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.segment.fingers-sideways.m4a",
+   "text": "指尖朝外。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-sideways.m4a",
+   "sha256": "7361aa08908b8b4eebb293a98ebe452bfa5a1c16c7cbc1bb1ccd6f43f208bb5d",
+   "bytes": 9068,
+   "durationSeconds": 0.975238,
+   "format": "m4a",
+   "aacSha256": "7361aa08908b8b4eebb293a98ebe452bfa5a1c16c7cbc1bb1ccd6f43f208bb5d",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "33e40467f41db2189a1d433b1a0e7a0b62990fe9e545120cc480c2db55c310f1",
+    "ttsFingerprint": "ce7c66a9df7c39ad97fdf8cce7912f8da2b23d55a9d665d53ca0e83e7d9ca70d"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.0,
+    "truePeak": -2.1,
+    "leadMs": 40,
+    "tailMs": 95,
+    "charsPerSecond": 4.76,
+    "speechSeconds": 0.84
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.segment.fingers-backward.m4a",
+   "text": "指尖朝后。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-backward.m4a",
+   "sha256": "bddc443719625e49e8780e40eaa1a06b125104321070016ba85cc854e3af53bd",
+   "bytes": 9206,
+   "durationSeconds": 0.998458,
+   "format": "m4a",
+   "aacSha256": "bddc443719625e49e8780e40eaa1a06b125104321070016ba85cc854e3af53bd",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "c59bd578a15268cf62c1a18172861816f8b83cf45014ba715257ded19a714744",
+    "ttsFingerprint": "a92e341bbdf18c3bbe185b3895df232ee69475537acdb371f8b30dceffcdfeed"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -3.0,
+    "leadMs": 40,
+    "tailMs": 88,
+    "charsPerSecond": 4.6,
+    "speechSeconds": 0.87
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.segment.back-of-hand.m4a",
+   "text": "手背轻压。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.back-of-hand.m4a",
+   "sha256": "855061b1eadc42d0635e4f2613d3f111e52bb541f486bdcec776aaae1734e919",
+   "bytes": 9375,
+   "durationSeconds": 1.021678,
+   "format": "m4a",
+   "aacSha256": "855061b1eadc42d0635e4f2613d3f111e52bb541f486bdcec776aaae1734e919",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "14b9619773112797d0778e1d9e901b87246c7e2d123a87a6d2876bd1005d4ad8",
+    "ttsFingerprint": "92d2584887c208536d2999fbc12dd1b4fac44ad75caa8ed3ec461f25ca7d17ba"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.0,
+    "leadMs": 30,
+    "tailMs": 92,
+    "charsPerSecond": 4.45,
+    "speechSeconds": 0.9
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.clockwise.m4a",
+   "text": "顺时针。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.clockwise.m4a",
+   "sha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
+   "bytes": 8223,
+   "durationSeconds": 0.882358,
+   "format": "m4a",
+   "aacSha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6c08c9d0d67e431ca29c37b35baca1543b489208dbf55694be6070a8765a76a3",
+    "ttsFingerprint": "d202802cb67eda1311436b4858e442dce79603645e9c7d6463923784e7879f30"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 102,
+    "charsPerSecond": 4.05,
+    "speechSeconds": 0.74
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.counterclockwise.m4a",
+   "text": "逆时针。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.counterclockwise.m4a",
+   "sha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
+   "bytes": 7451,
+   "durationSeconds": 0.766259,
+   "format": "m4a",
+   "aacSha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "48be169166a857fdf9e48b5433659fa750ed67f68cb7ae7ed33ccb5b1162d182",
+    "ttsFingerprint": "f458d80ba3df5ae22f66ba65a1410a9d706d2462f50415d418fcf5b660ee4e4f"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.7,
+    "leadMs": 40,
+    "tailMs": 76,
+    "charsPerSecond": 4.61,
+    "speechSeconds": 0.65
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.segment.clockwise.m4a",
+   "text": "顺时针。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.clockwise.m4a",
+   "sha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
+   "bytes": 8223,
+   "durationSeconds": 0.882358,
+   "format": "m4a",
+   "aacSha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "6c08c9d0d67e431ca29c37b35baca1543b489208dbf55694be6070a8765a76a3",
+    "ttsFingerprint": "d202802cb67eda1311436b4858e442dce79603645e9c7d6463923784e7879f30"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.1,
+    "truePeak": -2.3,
+    "leadMs": 40,
+    "tailMs": 102,
+    "charsPerSecond": 4.05,
+    "speechSeconds": 0.74
+   }
+  },
+  {
+   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.segment.counterclockwise.m4a",
+   "text": "逆时针。",
+   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.counterclockwise.m4a",
+   "sha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
+   "bytes": 7451,
+   "durationSeconds": 0.766259,
+   "format": "m4a",
+   "aacSha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
+   "provenance": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "rate": "+6%",
+    "rawSha256": "48be169166a857fdf9e48b5433659fa750ed67f68cb7ae7ed33ccb5b1162d182",
+    "ttsFingerprint": "f458d80ba3df5ae22f66ba65a1410a9d706d2462f50415d418fcf5b660ee4e4f"
+   },
+   "audit": {
+    "status": "passed",
+    "fails": [],
+    "lufs": -16.2,
+    "truePeak": -2.7,
+    "leadMs": 40,
+    "tailMs": 76,
+    "charsPerSecond": 4.61,
+    "speechSeconds": 0.65
    }
   },
   {
@@ -1448,318 +2644,6 @@
     "tailMs": 80,
     "charsPerSecond": 4.21,
     "speechSeconds": 1.9
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.intro.m4a",
-   "text": "开合踏步绕臂，一分钟。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.intro.m4a",
-   "sha256": "98ac2ff9567d0a1c2ba1763520e67f88764816934e80fd5720947df8e614b117",
-   "bytes": 17917,
-   "durationSeconds": 2.043356,
-   "format": "m4a",
-   "aacSha256": "98ac2ff9567d0a1c2ba1763520e67f88764816934e80fd5720947df8e614b117",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "99b5506b4109d58f0e58a9522dc8aecc98afdfaac06d38c37b34a444222e2bb1",
-    "ttsFingerprint": "5f36195f6bd58bf87b6683a0f11f57629bee3ed9c423238cb0325051abad86da"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 83,
-    "charsPerSecond": 4.69,
-    "speechSeconds": 1.92
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.intro.m4a",
-   "text": "颈腕手指唤醒，四十五秒。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.intro.m4a",
-   "sha256": "acb2a61d9e3c37399f976aa3439d1575f964e091a24a74a2143531f09827a2de",
-   "bytes": 20583,
-   "durationSeconds": 2.391655,
-   "format": "m4a",
-   "aacSha256": "acb2a61d9e3c37399f976aa3439d1575f964e091a24a74a2143531f09827a2de",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "186c2902d4c15006cf38bdad8fe495d98f97a98f4e259af91771983c25f3d398",
-    "ttsFingerprint": "28ea4eb9990a251153315391c72300126d6fefc1326f7e6ba31246dc34fb75a5"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.6,
-    "leadMs": 40,
-    "tailMs": 92,
-    "charsPerSecond": 4.43,
-    "speechSeconds": 2.26
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.intro.m4a",
-   "text": "宽距侧蹲，每侧五次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.3.intro.m4a",
-   "sha256": "b834add1cbb2bfdbacd92b9054906ffea25f8bbe3ce3e3f289bdfbb32a2ed3fe",
-   "bytes": 17108,
-   "durationSeconds": 1.950476,
-   "format": "m4a",
-   "aacSha256": "b834add1cbb2bfdbacd92b9054906ffea25f8bbe3ce3e3f289bdfbb32a2ed3fe",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "7b52adb007f06da77bda94ffba3a3065de384d095ff5495c88d4f913e5126333",
-    "ttsFingerprint": "a53fd959f45175de7bc1a7131cc31e8042da57446578b82663bac000251d7bd3"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.3,
-    "leadMs": 40,
-    "tailMs": 80,
-    "charsPerSecond": 4.37,
-    "speechSeconds": 1.83
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.intro.m4a",
-   "text": "仰卧画圈，每侧顺逆各三圈。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.intro.m4a",
-   "sha256": "b5d92d5f9c56d6a4bfbc244eeaaf5f61decb2848d0ad0c2b17e61623a3f70565",
-   "bytes": 22328,
-   "durationSeconds": 2.600635,
-   "format": "m4a",
-   "aacSha256": "b5d92d5f9c56d6a4bfbc244eeaaf5f61decb2848d0ad0c2b17e61623a3f70565",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "b2033d37363df29a8077cb3bb6159677bce57da1bdf85cbd4baa00f11fdda674",
-    "ttsFingerprint": "97d9fcf2ce43dff616b6cd149c0ba5f423cf426fcb6c7a21208c6d3845695829"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 101,
-    "charsPerSecond": 4.47,
-    "speechSeconds": 2.46
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.intro.m4a",
-   "text": "死虫式，每侧五次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.5.intro.m4a",
-   "sha256": "f7f5bf49d12dac8bf0cb63ae53e5ab27aadae1e459a5d2a3c8f3e8933c4e7a5a",
-   "bytes": 16411,
-   "durationSeconds": 1.857596,
-   "format": "m4a",
-   "aacSha256": "f7f5bf49d12dac8bf0cb63ae53e5ab27aadae1e459a5d2a3c8f3e8933c4e7a5a",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "ace873a9745476c909cc51ae72f179076f8fd44b9e135945a6026699c623b0d7",
-    "ttsFingerprint": "2a0bd7ff2c0a0b511a17a85e9c5e08207907ea382b6019d512befa8e2ee7ea73"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.1,
-    "leadMs": 40,
-    "tailMs": 78,
-    "charsPerSecond": 4.02,
-    "speechSeconds": 1.74
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.intro.m4a",
-   "text": "坐姿换髋，每侧四次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.6.intro.m4a",
-   "sha256": "c797db9983587a202623e3a260327514cd4df018c3da307926df57d0ff008439",
-   "bytes": 17740,
-   "durationSeconds": 2.020136,
-   "format": "m4a",
-   "aacSha256": "c797db9983587a202623e3a260327514cd4df018c3da307926df57d0ff008439",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "2615b1ed87e594db86f116c662e97af4a27fca91398292b16eff070b975dd400",
-    "ttsFingerprint": "898cc094c7a07e994fecf636ab07896bfc414cdfb5b1394a113665372f875fb1"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.0,
-    "truePeak": -2.3,
-    "leadMs": 40,
-    "tailMs": 90,
-    "charsPerSecond": 4.23,
-    "speechSeconds": 1.89
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.intro.m4a",
-   "text": "分腿单腿抬，每侧五次，停一秒。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.7.intro.m4a",
-   "sha256": "b3a6cc5b3d3f1a4ea7cc4ecb4361c50cab67e93ebaa6d3e5dafe52903e60c199",
-   "bytes": 25192,
-   "durationSeconds": 2.948934,
-   "format": "m4a",
-   "aacSha256": "b3a6cc5b3d3f1a4ea7cc4ecb4361c50cab67e93ebaa6d3e5dafe52903e60c199",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "9765e89bc12b263255c4a9ddeaf1dc72b5129405d4ed6e21b7eb12e2593340c1",
-    "ttsFingerprint": "e2320b155f04fb9bab1b587d4e48d6dfe60a95dee74a136b3c7c45418cdd4015"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.4,
-    "leadMs": 30,
-    "tailMs": 99,
-    "charsPerSecond": 4.26,
-    "speechSeconds": 2.82
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.intro.m4a",
-   "text": "跪姿摇腕，三向各四次，手背十秒。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.intro.m4a",
-   "sha256": "425762e695a2d19ba3e1e3cd3edeb09d3514ee722078620fd3a61db46be93643",
-   "bytes": 27650,
-   "durationSeconds": 3.250794,
-   "format": "m4a",
-   "aacSha256": "425762e695a2d19ba3e1e3cd3edeb09d3514ee722078620fd3a61db46be93643",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "ec36eafa2f69724f2d950a668e39932aa5de17e69b77c99206dad8c2962c13e2",
-    "ttsFingerprint": "983c5c8abe70d5e379139e0a28326e81bcabaa86806b0a95c43530fe097abc00"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 91,
-    "charsPerSecond": 4.17,
-    "speechSeconds": 3.12
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.intro.m4a",
-   "text": "四足猫牛式，六次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.9.intro.m4a",
-   "sha256": "63f2c1b9b7483052ea9cf0294ca36a26e6aa13bfd0487f10f5e809c9689e7255",
-   "bytes": 16597,
-   "durationSeconds": 1.880816,
-   "format": "m4a",
-   "aacSha256": "63f2c1b9b7483052ea9cf0294ca36a26e6aa13bfd0487f10f5e809c9689e7255",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "8e73b9a96a69809c7b884c84c5c23370178078c5efaeadd0374b70678d8f434c",
-    "ttsFingerprint": "12525bfaac430a08ad369ec533496b41cfe3b80cc99625c38d0c54bf7f53b2fe"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.9,
-    "leadMs": 30,
-    "tailMs": 81,
-    "charsPerSecond": 3.96,
-    "speechSeconds": 1.77
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.intro.m4a",
-   "text": "跪姿穿针，每侧四次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.10.intro.m4a",
-   "sha256": "43f2333ffb63f103bfa7750315b32f89dfee2d623b83a4578349000acbbd5ecc",
-   "bytes": 17999,
-   "durationSeconds": 2.066576,
-   "format": "m4a",
-   "aacSha256": "43f2333ffb63f103bfa7750315b32f89dfee2d623b83a4578349000acbbd5ecc",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "503cb49121b28a71bcf656acd918d00cb9202c2efaa52c5b27a7ebf76ab9abb1",
-    "ttsFingerprint": "de64ac0cc98da1e47dde4c97f0127de6c89ef605612d747f26ce4b40264547fa"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.3,
-    "leadMs": 40,
-    "tailMs": 97,
-    "charsPerSecond": 4.15,
-    "speechSeconds": 1.93
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.intro.m4a",
-   "text": "跪姿肩胛俯卧撑，十次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.11.intro.m4a",
-   "sha256": "840588922f0dc80f21fae566fe253d843fb92fb9f21bd59f30703c02c4d23696",
-   "bytes": 19201,
-   "durationSeconds": 2.205896,
-   "format": "m4a",
-   "aacSha256": "840588922f0dc80f21fae566fe253d843fb92fb9f21bd59f30703c02c4d23696",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "63750c701a6109c445206242f9b9ea25d90cecdc6dfe616d27548fcde6fee118",
-    "ttsFingerprint": "526b6afdb1dbdc670167edb3c2f90c04e52add6d27ad025c972dbffd59cf2abb"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.4,
-    "leadMs": 40,
-    "tailMs": 86,
-    "charsPerSecond": 4.33,
-    "speechSeconds": 2.08
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.intro.m4a",
-   "text": "俯撑触肩，每侧四次。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.12.intro.m4a",
-   "sha256": "96e6fee7167d7cc06b216b2c4c299c4cdb154dadf9862ee43ae8ef5065b68940",
-   "bytes": 17565,
-   "durationSeconds": 2.020136,
-   "format": "m4a",
-   "aacSha256": "96e6fee7167d7cc06b216b2c4c299c4cdb154dadf9862ee43ae8ef5065b68940",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "6c0c6fc33eaff18ae867fa4d72d8ed89c2b3e80299867507459f521200783f73",
-    "ttsFingerprint": "b1b151979821569a665b4c3679dd70beb0e9b785a8347426257746045313bf1b"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.3,
-    "leadMs": 30,
-    "tailMs": 100,
-    "charsPerSecond": 4.23,
-    "speechSeconds": 1.89
    }
   },
   {
@@ -3424,318 +4308,6 @@
     "tailMs": 87,
     "charsPerSecond": 4.26,
     "speechSeconds": 1.88
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-side-raise.m4a",
-   "text": "双臂侧举。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-side-raise.m4a",
-   "sha256": "405cc13906a4fb76d33f079953565db5ab259798d882def0bef33905bb10455d",
-   "bytes": 9724,
-   "durationSeconds": 1.044898,
-   "format": "m4a",
-   "aacSha256": "405cc13906a4fb76d33f079953565db5ab259798d882def0bef33905bb10455d",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "59c9f0a1ed24378d25a06df01b340133a5f45cf2af8868beb1f7fa50e72a11ae",
-    "ttsFingerprint": "5fce798c00c816a8064edc9310a2393734bc7323c93a6ac18010085033f9842f"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.4,
-    "leadMs": 30,
-    "tailMs": 65,
-    "charsPerSecond": 4.21,
-    "speechSeconds": 0.95
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-forward-circles.m4a",
-   "text": "向前绕环。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-forward-circles.m4a",
-   "sha256": "7b59623dcf4849d25a6f0b81326d99df5b8e1aaf972ba27706901ceee64dfc3f",
-   "bytes": 9913,
-   "durationSeconds": 1.068118,
-   "format": "m4a",
-   "aacSha256": "7b59623dcf4849d25a6f0b81326d99df5b8e1aaf972ba27706901ceee64dfc3f",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "85cfbb358207e719231b5cc659249c149d53fbf6e140d64a8cb5dd2b09abfecf",
-    "ttsFingerprint": "6b74c26ddc99d38a1902be7b362a55a103fd6c791bd291a0dbb0dc315725e154"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.5,
-    "leadMs": 30,
-    "tailMs": 78,
-    "charsPerSecond": 4.17,
-    "speechSeconds": 0.96
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-backward-circles.m4a",
-   "text": "向后绕环。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.1.segment.step-jack-backward-circles.m4a",
-   "sha256": "559c99c528828775731410451f7f8c45abc1d22d98dc3939e2c13717a3e4ac54",
-   "bytes": 9766,
-   "durationSeconds": 1.044898,
-   "format": "m4a",
-   "aacSha256": "559c99c528828775731410451f7f8c45abc1d22d98dc3939e2c13717a3e4ac54",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "40befd02643cfb609d2c2e9b6d34f7cb3e27f5f1ef056aef4302ba241c450636",
-    "ttsFingerprint": "c44b75b4eb3b13543abf45802b8e58196b2de789169b402ab9d8a995508dc079"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.5,
-    "leadMs": 30,
-    "tailMs": 85,
-    "charsPerSecond": 4.3,
-    "speechSeconds": 0.93
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.neck-wakeup.m4a",
-   "text": "低头慢滚。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.neck-wakeup.m4a",
-   "sha256": "e3e0d5fe2ed1d4099f650c4fe93a294c96d637e18ddf7feb3e8e2a4f86dca72b",
-   "bytes": 9171,
-   "durationSeconds": 0.975238,
-   "format": "m4a",
-   "aacSha256": "e3e0d5fe2ed1d4099f650c4fe93a294c96d637e18ddf7feb3e8e2a4f86dca72b",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "afd912c4bd71062304eb15b4021fb78f7fddfbbee285ad49450e8f65c98a0889",
-    "ttsFingerprint": "5725062add581fc0117d780bc54b429dc062160367eddb17ea4cf2ac4235e29b"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -3.7,
-    "leadMs": 40,
-    "tailMs": 85,
-    "charsPerSecond": 4.7,
-    "speechSeconds": 0.85
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.wrist-figure-eight.m4a",
-   "text": "合掌画八字。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.wrist-figure-eight.m4a",
-   "sha256": "88cba189766c66c69156b93f6f59116e36e5fb0ef2d157fc17e5bb280efbacfe",
-   "bytes": 10912,
-   "durationSeconds": 1.184218,
-   "format": "m4a",
-   "aacSha256": "88cba189766c66c69156b93f6f59116e36e5fb0ef2d157fc17e5bb280efbacfe",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "e501927d66bbb000835566266c2f45b46b7a7eb94fbfe57c828340538544f0b0",
-    "ttsFingerprint": "896fd844ca7b956ebd85f1c76ec863f6425bb0481da1f22d2dee4c47b1282c49"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.3,
-    "leadMs": 30,
-    "tailMs": 84,
-    "charsPerSecond": 4.67,
-    "speechSeconds": 1.07
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.finger-spread.m4a",
-   "text": "张指弹开。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.2.segment.finger-spread.m4a",
-   "sha256": "851d1b8c417fa1c469ce0b32dc64b48cd1d1c814e8006a0b2048ddf583324bbe",
-   "bytes": 8966,
-   "durationSeconds": 0.952018,
-   "format": "m4a",
-   "aacSha256": "851d1b8c417fa1c469ce0b32dc64b48cd1d1c814e8006a0b2048ddf583324bbe",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "9b7c19d8462d138aa7637fea2365c364512856e71d84158c53aa8bbbd7ae3d42",
-    "ttsFingerprint": "7c0aca90fdc977bb95c13a45273414ac8fb1654e4da3218b83b37ef719881fa1"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -15.9,
-    "truePeak": -2.5,
-    "leadMs": 40,
-    "tailMs": 92,
-    "charsPerSecond": 4.88,
-    "speechSeconds": 0.82
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.clockwise.m4a",
-   "text": "顺时针。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.clockwise.m4a",
-   "sha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
-   "bytes": 8223,
-   "durationSeconds": 0.882358,
-   "format": "m4a",
-   "aacSha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "6c08c9d0d67e431ca29c37b35baca1543b489208dbf55694be6070a8765a76a3",
-    "ttsFingerprint": "d202802cb67eda1311436b4858e442dce79603645e9c7d6463923784e7879f30"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.3,
-    "leadMs": 40,
-    "tailMs": 102,
-    "charsPerSecond": 4.05,
-    "speechSeconds": 0.74
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.counterclockwise.m4a",
-   "text": "逆时针。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.4.segment.counterclockwise.m4a",
-   "sha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
-   "bytes": 7451,
-   "durationSeconds": 0.766259,
-   "format": "m4a",
-   "aacSha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "48be169166a857fdf9e48b5433659fa750ed67f68cb7ae7ed33ccb5b1162d182",
-    "ttsFingerprint": "f458d80ba3df5ae22f66ba65a1410a9d706d2462f50415d418fcf5b660ee4e4f"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.7,
-    "leadMs": 40,
-    "tailMs": 76,
-    "charsPerSecond": 4.61,
-    "speechSeconds": 0.65
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-forward.m4a",
-   "text": "指尖朝前。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-forward.m4a",
-   "sha256": "d8b0f32c4438271b1ae40c3c83af92591d555c4281304d68e951ce728c323fa9",
-   "bytes": 9503,
-   "durationSeconds": 1.021678,
-   "format": "m4a",
-   "aacSha256": "d8b0f32c4438271b1ae40c3c83af92591d555c4281304d68e951ce728c323fa9",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "02d81334413234c953cb33103997c1e8bde8a9ef59effc47e7758284577d71ef",
-    "ttsFingerprint": "7f63e6eee809fec07d04dd8c3749b8410ca281d7663bb336c698313eb61b5494"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.2,
-    "truePeak": -2.5,
-    "leadMs": 40,
-    "tailMs": 82,
-    "charsPerSecond": 4.45,
-    "speechSeconds": 0.9
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-sideways.m4a",
-   "text": "指尖朝外。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-sideways.m4a",
-   "sha256": "7361aa08908b8b4eebb293a98ebe452bfa5a1c16c7cbc1bb1ccd6f43f208bb5d",
-   "bytes": 9068,
-   "durationSeconds": 0.975238,
-   "format": "m4a",
-   "aacSha256": "7361aa08908b8b4eebb293a98ebe452bfa5a1c16c7cbc1bb1ccd6f43f208bb5d",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "33e40467f41db2189a1d433b1a0e7a0b62990fe9e545120cc480c2db55c310f1",
-    "ttsFingerprint": "ce7c66a9df7c39ad97fdf8cce7912f8da2b23d55a9d665d53ca0e83e7d9ca70d"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.0,
-    "truePeak": -2.1,
-    "leadMs": 40,
-    "tailMs": 95,
-    "charsPerSecond": 4.76,
-    "speechSeconds": 0.84
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-backward.m4a",
-   "text": "指尖朝后。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.fingers-backward.m4a",
-   "sha256": "bddc443719625e49e8780e40eaa1a06b125104321070016ba85cc854e3af53bd",
-   "bytes": 9206,
-   "durationSeconds": 0.998458,
-   "format": "m4a",
-   "aacSha256": "bddc443719625e49e8780e40eaa1a06b125104321070016ba85cc854e3af53bd",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "c59bd578a15268cf62c1a18172861816f8b83cf45014ba715257ded19a714744",
-    "ttsFingerprint": "a92e341bbdf18c3bbe185b3895df232ee69475537acdb371f8b30dceffcdfeed"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -3.0,
-    "leadMs": 40,
-    "tailMs": 88,
-    "charsPerSecond": 4.6,
-    "speechSeconds": 0.87
-   }
-  },
-  {
-   "file": "assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.back-of-hand.m4a",
-   "text": "手背轻压。",
-   "objectKey": "pack/r2-v1/plan-voice/flare-plan-voice-r1/assets/flutter_assets/assets/trainer_voice/_common/voice/zh/supplemental.general-warmup.8.segment.back-of-hand.m4a",
-   "sha256": "855061b1eadc42d0635e4f2613d3f111e52bb541f486bdcec776aaae1734e919",
-   "bytes": 9375,
-   "durationSeconds": 1.021678,
-   "format": "m4a",
-   "aacSha256": "855061b1eadc42d0635e4f2613d3f111e52bb541f486bdcec776aaae1734e919",
-   "provenance": {
-    "voice": "zh-CN-XiaoxiaoNeural",
-    "rate": "+6%",
-    "rawSha256": "14b9619773112797d0778e1d9e901b87246c7e2d123a87a6d2876bd1005d4ad8",
-    "ttsFingerprint": "92d2584887c208536d2999fbc12dd1b4fac44ad75caa8ed3ec461f25ca7d17ba"
-   },
-   "audit": {
-    "status": "passed",
-    "fails": [],
-    "lufs": -16.1,
-    "truePeak": -2.0,
-    "leadMs": 30,
-    "tailMs": 92,
-    "charsPerSecond": 4.45,
-    "speechSeconds": 0.9
    }
   },
   {

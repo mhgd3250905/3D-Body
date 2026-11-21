@@ -133,7 +133,7 @@ void main() {
           ),
         );
       }
-      expect(expected, hasLength(151));
+      expect(expected, hasLength(172));
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       final assets = manifest.listAssets();
       expect(
