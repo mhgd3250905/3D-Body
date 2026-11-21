@@ -1,5 +1,11 @@
 # App 验证记录
 
+## iOS vc2091 计划播报（2026-11-21）
+
+同步 vc2090 `4f746a18` 和 vc2091 `ac9d979d`。覆盖准备期的名称与剂量、动作开始后的技术提示、轮次与左右侧播报、分段及字母提示。151 段普通话录音使用 Pose-Hub `flare-plan-voice-r1`，音色 `zh-CN-XiaoxiaoNeural`，语速 `+6%`。源清单 SHA-256 为 `6c5d81a9b80e9565729ee003825b72b6a8c04ce44c57a6b9af5b3468b043c3f4`。逐条核对长度和 SHA-256，两个播报清单登记时长均与 `ffprobe` 读取的 M4A 播放时长一致。
+
+`flutter analyze --no-pub` 通过。`flutter test --no-pub --dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 的 10 个定向测试文件共 145 项通过。真机听感和 TestFlight 组内分发待核对。
+
 ## iOS vc2089 示范同步（2026-11-21）
 
 对齐上游 `4552594`，核对练后 13 处示范替换前后的剂量与口播。r2-v22 的 10 段视频、20 张封面及缩略图和 141 个语音文件通过字节数与 SHA-256 校验。142 条语音引用全部在冷缓存下从包内解析。前臂侧桥左侧使用原片、右侧镜像，伪俄挺指向 `t-pseudo-planche-pushup-v2`。
