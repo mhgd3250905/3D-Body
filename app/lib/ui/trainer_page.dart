@@ -59,7 +59,17 @@ class FlareTrainingPage extends StatefulWidget {
 }
 
 class _FlareTrainingPageState extends State<FlareTrainingPage> {
-  static const _initialCountdownSeconds = 10;
+  int _countdownSeconds(sdk.VoiceSource source) {
+    if (!hasFlarePlanAnnouncements(source)) return 10;
+    final plan = widget.supplementalPlan;
+    if (plan?.kind == FlarePlanKind.warmup ||
+        plan?.kind == FlarePlanKind.cooldown &&
+            widget.plan.blocks.firstOrNull?.type == uc.BlockType.cooldown) {
+      return 5;
+    }
+    return 10;
+  }
+
   Future<_PlayerData>? _loading;
   sdk.VoiceOutput? _output;
   final _restSelection =
@@ -632,6 +642,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         if (data == null) {
           return _loadPage(context, const CircularProgressIndicator());
         }
+        final initialCountdownSeconds = _countdownSeconds(data.source);
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
         final first = data.plan.items.first;
@@ -639,7 +650,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           s,
           result: _result,
           prepFirst: _awaitingPreviewStart
-              ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(_initialCountdownSeconds)}'
+              ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(initialCountdownSeconds)}'
               : null,
         );
         final timedWristRocks = data.plan.items.any(
@@ -722,14 +733,23 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
             ? authored
             : null;
         final sound = widget.store.settings.sound;
+        final planAnnouncements =
+            authored != null && hasFlarePlanAnnouncements(data.source);
         final sessionBuilder = cooldown == null
-            ? null
+            ? planAnnouncements
+                  ? sdk.SessionBuilder(
+                      transitionSeconds: flareWarmupTransitionSeconds,
+                      prepSeconds: initialCountdownSeconds,
+                      rhythms: data.rhythms,
+                      known: (id) => drillOf(id) != null,
+                    )
+                  : null
             : FlareCooldownSessionBuilder(
                 strengtheningRestSeconds: cooldown.strengtheningRestSeconds,
                 stretchPostures: cooldown.stretchPosturesForScene('A'),
                 rhythms: data.rhythms,
                 known: (id) => drillOf(id) != null,
-                prepSeconds: _initialCountdownSeconds,
+                prepSeconds: initialCountdownSeconds,
                 voiceGuideFor: data.source.voiceGuide,
                 guideSideSwitchSecondsFor: data.source.sideSwitchSecondsFor,
               );
@@ -746,7 +766,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   drillOf: drillOf,
                   strings: strings,
                   theme: theme,
-                  prepSeconds: _initialCountdownSeconds,
+                  prepSeconds: initialCountdownSeconds,
                   sessionBuilder: sessionBuilder,
                   transitionSeconds:
                       widget.supplementalPlan?.kind == FlarePlanKind.warmup
@@ -756,7 +776,14 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
                   voice: sdk.TrainerVoice(
                     source: data.source,
                     output: _output!,
-                    scriptBuilder: cooldown == null
+                    scriptBuilder: planAnnouncements
+                        ? (source, language) => buildSupplementalTrainerScript(
+                            source,
+                            language,
+                            plan: authored,
+                            phases: sessionBuilder!.phases(data.plan),
+                          )
+                        : cooldown == null
                         ? null
                         : buildCooldownTrainerScript,
                     settings: sdk.VoiceSettings(

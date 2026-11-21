@@ -336,15 +336,32 @@ List<uc.PlanSegment> _authoredDoseSegments(
       ),
     ];
   }
+  final workSegments = [
+    for (final segment in dose.workSegments)
+      uc.PlanSegment(
+        id: segment.id,
+        exerciseId: item.exerciseId,
+        label: segment.label,
+        mode: segment.reps == null ? uc.DoseMode.time : uc.DoseMode.reps,
+        reps: segment.reps,
+        workSeconds: segment.seconds,
+        rhythm: segment.seconds != null
+            ? const {'kind': 'hold'}
+            : segment.rhythm,
+      ),
+  ];
   if (authored.pnfTrainingIdForScene(scene) case final pnf?) {
     return [
-      uc.PlanSegment(
-        id: 'stretch-hold',
-        exerciseId: item.exerciseId,
-        mode: uc.DoseMode.time,
-        workSeconds: dose.seconds,
-        rhythm: const {'kind': 'hold'},
-      ),
+      if (workSegments.isEmpty)
+        uc.PlanSegment(
+          id: 'stretch-hold',
+          exerciseId: item.exerciseId,
+          mode: uc.DoseMode.time,
+          workSeconds: dose.seconds,
+          rhythm: const {'kind': 'hold'},
+        )
+      else
+        ...workSegments,
       uc.PlanSegment(
         id: 'pnf-press',
         exerciseId: pnf,
@@ -355,6 +372,7 @@ List<uc.PlanSegment> _authoredDoseSegments(
       ),
     ];
   }
+  if (workSegments.isNotEmpty) return workSegments;
   if (dose.repPositions.isNotEmpty) {
     return [
       for (final (index, label) in dose.repPositions.indexed)
@@ -468,6 +486,45 @@ class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
     }
     for (var i = 0; i < active.length; i++) {
       final first = active[i];
+      if (i + 2 < active.length &&
+          first.isWork &&
+          first.side == sdk.Side.right &&
+          first.segment?.rhythm?['startingSide'] == 'left') {
+        final switchSide = active[i + 1];
+        final leftWork = active[i + 2];
+        if (switchSide.kind == sdk.PhaseKind.switchSide &&
+            leftWork.isWork &&
+            leftWork.side == sdk.Side.left &&
+            leftWork.itemIndex == first.itemIndex &&
+            leftWork.segmentId == first.segmentId &&
+            leftWork.set == first.set) {
+          // An authored single-side segment may use the left-side demo first.
+          // The SDK builds right-first phases for all segmented side changes.
+          yield leftWork;
+          yield sdk.SessionPhase(
+            kind: sdk.PhaseKind.switchSide,
+            seconds: switchSide.seconds,
+            exerciseId: switchSide.exerciseId,
+            item: switchSide.item,
+            itemIndex: switchSide.itemIndex,
+            blockIndex: switchSide.blockIndex,
+            itemInBlock: switchSide.itemInBlock,
+            set: switchSide.set,
+            sets: switchSide.sets,
+            round: switchSide.round,
+            rounds: switchSide.rounds,
+            side: sdk.Side.right,
+            blockName: switchSide.blockName,
+            rhythm: switchSide.rhythm,
+            segmentId: switchSide.segmentId,
+            segment: switchSide.segment,
+            afterGuidedSet: switchSide.afterGuidedSet,
+          );
+          yield first;
+          i += 2;
+          continue;
+        }
+      }
       if (i + 5 < active.length &&
           first.isWork &&
           first.side == sdk.Side.right &&

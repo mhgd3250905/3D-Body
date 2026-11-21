@@ -310,10 +310,26 @@ void main() {
       ).phases(warmupPlan);
       Iterable<sdk.SessionPhase> work(String id) =>
           timeline.where((phase) => phase.isWork && phase.exerciseId == id);
-      final stepJack = work('h-step-jack').single;
-      expect((stepJack.seconds, stepJack.reps), (60, null));
-      final neck = work('warmup-neck-wrist-fingers').single;
-      expect((neck.seconds, neck.segment), (45, null));
+      expect(
+        work(
+          'h-step-jack',
+        ).map((phase) => (phase.segmentId, phase.seconds, phase.reps)),
+        [
+          ('step-jack-side-raise', 30, null),
+          ('step-jack-forward-circles', 15, null),
+          ('step-jack-backward-circles', 15, null),
+        ],
+      );
+      expect(
+        work(
+          'warmup-neck-wrist-fingers',
+        ).map((phase) => (phase.segmentId, phase.seconds, phase.reps)),
+        [
+          ('neck-wakeup', 15, null),
+          ('wrist-figure-eight', 15, null),
+          ('finger-spread', 15, null),
+        ],
+      );
       final squat = work('n-squat-shift').single;
       expect(
         (squat.seconds, squat.reps, squat.side, squat.rhythm?.pairFirstSide),
@@ -344,11 +360,14 @@ void main() {
         [1, 1],
       );
       expect(
-        work('forearms-A').map((phase) => (phase.segmentId, phase.seconds)),
+        work(
+          'forearms-A',
+        ).map((phase) => (phase.segmentId, phase.seconds, phase.reps)),
         [
-          ('fingers-forward', 17),
-          ('fingers-sideways', 17),
-          ('fingers-backward', 16),
+          ('fingers-forward', 14, 4),
+          ('fingers-sideways', 13, 4),
+          ('fingers-backward', 13, 4),
+          ('back-of-hand', 10, null),
         ],
       );
     },
@@ -385,16 +404,19 @@ void main() {
         catalog,
         known: knownIds.contains,
       );
-      final script = sdk.SessionScript(source: voice, lang: 'zh');
+      expect(hasFlarePlanAnnouncements(voice), isTrue);
       final phases = sdk.SessionBuilder(
         rhythms: activeRhythms,
-        transitionSeconds: authored.kind == FlarePlanKind.warmup
-            ? flareWarmupTransitionSeconds
-            : 15,
-        prepSecondsFor: script.prepSecondsFor,
-        switchSecondsFor: script.switchSecondsFor,
-        voiceGuideFor: voice.voiceGuide,
+        transitionSeconds: flareWarmupTransitionSeconds,
+        prepSeconds: 5,
+        known: knownIds.contains,
       ).phases(playable);
+      final script = buildSupplementalTrainerScript(
+        voice,
+        'zh',
+        plan: authored,
+        phases: phases,
+      );
       final seconds = phases.fold(0.0, (total, phase) => total + phase.seconds);
       if (authored.kind == FlarePlanKind.warmup) {
         expect(seconds, inInclusiveRange(480, 600), reason: '${seconds}s');
@@ -616,6 +638,58 @@ void main() {
           (sdk.Side.left, 'stretch-hold', firstPriority.drill),
         );
       }
+      final straddle = bTimeline.where(
+        (phase) => phase.isWork && phase.item?.exerciseId == 'n-straddle-fold',
+      );
+      final third = stretchSeconds ~/ 3;
+      expect(
+        straddle.map((phase) => (phase.set, phase.segmentId, phase.seconds)),
+        [
+          for (var set = 1; set <= (tier == 3 ? 1 : 2); set++) ...[
+            (set, 'straddle-center', third),
+            (set, 'straddle-left', third),
+            (set, 'straddle-right', third),
+            if (tier == 3) (set, 'pnf-press', 5),
+          ],
+        ],
+      );
+      if (tier == 2) {
+        final lifts = fullTimeline.where(
+          (phase) =>
+              phase.exerciseId == 't-seated-straddle-lift-1leg' &&
+              (phase.isWork || phase.kind == sdk.PhaseKind.switchSide),
+        );
+        expect(
+          lifts.map(
+            (phase) => (
+              phase.round,
+              phase.side,
+              phase.seconds,
+              phase.reps,
+              phase.holdSeconds,
+            ),
+          ),
+          [
+            for (var round = 1; round <= rounds; round++) ...[
+              (round, sdk.Side.left, 31, 5, 3),
+              (round, sdk.Side.right, 5, null, null),
+              (round, sdk.Side.right, 31, 5, 3),
+            ],
+          ],
+        );
+      }
+      if (tier == 3) {
+        final switches = fullTimeline.where(
+          (phase) => phase.isWork && phase.exerciseId == 'chest-A',
+        );
+        expect(
+          switches.map(
+            (phase) => (phase.rhythm?.pairFirstSide, phase.reps, phase.seconds),
+          ),
+          everyElement(('left', 4, 33)),
+        );
+        expect(switches, hasLength(rounds));
+      }
       expect(
         starred.map((item) => (item.dose.sets, item.dose.pnfSeconds)),
         everyElement(tier == 3 ? (1, 5) : (2, null)),
@@ -658,9 +732,9 @@ void main() {
 
       final fullSeconds = builder.planSeconds(full);
       final stretchSecondsTotal = builder.planSeconds(stretchOnly);
-      expect(fullSeconds, [1493, 2430, 2222][index]);
+      expect(fullSeconds, [1493, 2448, 2222][index]);
       expect(stretchSecondsTotal, [835, 1145, 1330][index]);
-      expect(fullSeconds - stretchSecondsTotal - 10, [648, 1275, 882][index]);
+      expect(fullSeconds - stretchSecondsTotal - 10, [648, 1293, 882][index]);
       expect(full.targetMinutes, (fullSeconds / 60).ceil());
       expect(full.targetMinutes, authored.estimatedMinutes);
       expect(stretchOnly.targetMinutes, (stretchSecondsTotal / 60).ceil());
