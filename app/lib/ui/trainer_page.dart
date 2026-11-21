@@ -7,7 +7,6 @@ import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import '../control/learning_store.dart';
 import '../data/catalog.dart';
-import '../data/flare_offline_media.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
 import '../data/flare_v5_drill.dart';
@@ -34,6 +33,7 @@ class FlareTrainingPage extends StatefulWidget {
     this.startInPreview = false,
     this.previewLocked = false,
     this.supplementalPlan,
+    this.planSnapshot,
     this.onContinueCooldown,
     this.voiceOutput,
     this.keepAlive = true,
@@ -45,6 +45,7 @@ class FlareTrainingPage extends StatefulWidget {
   final bool startInPreview;
   final bool previewLocked;
   final FlarePlan? supplementalPlan;
+  final sdk.PoseHubPlanSnapshot? planSnapshot;
 
   /// Records the user's next destination once the SDK accepts the saved result.
   /// The opener can then navigate after the SDK route finishes closing.
@@ -173,7 +174,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     // Layer the active Pose-Hub catalog's recorded prompts and structured
     // voice guides behind Flare's shared prompts. The SDK prefetches and
     // verifies the needed clips and retains the bundled fallback.
-    var voice = await FlareOfflineMedia.withCatalogVoice(
+    var voice = await sdk.withPoseHubCatalogVoice(
       await loadTrainerVoiceSource(
         language: language,
         // TrainerPlayer uses its default right-first side sequence.
@@ -186,6 +187,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         voice,
         supplemental,
         language: language,
+        planSnapshot: widget.planSnapshot,
       );
     }
     return _PlayerData(

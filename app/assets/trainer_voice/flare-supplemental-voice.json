@@ -222,6 +222,57 @@
     "supplemental.cooldown.stretch.13.short": {
       "ms": 2010,
       "sha256": "16d45aa6da83322618ce5afb00a4a6544ece745bd1c88a654ce482a1e14a4436"
+    },
+    "supplemental.general-warmup.3.r2": {
+      "ms": 4690,
+      "sha256": "4d778edc9aab5613d8eb70e9b421ca720709bfd3c35b50074c506df2bd840cfb",
+      "text": "大臂贴身屈肘九十度，掌心朝上、朝下慢慢转到底"
+    },
+    "supplemental.general-warmup.4.r2": {
+      "ms": 6571,
+      "sha256": "787c810f31ad8b9025669289578e975462ee2ba8932249c931c869c9e4f990ca",
+      "text": "双手叉腰膝盖微弯，胯部先顺时针画 5 圈、再逆时针 5 圈，上身尽量不动"
+    },
+    "supplemental.general-warmup.8.r2": {
+      "ms": 5271,
+      "sha256": "2eacc310be949ca3bf34144f463f7e92dafb009763182576b55abd8ce3cd286b",
+      "text": "跪撑背平，一侧膝盖抬起向侧后方画大圈，骨盆别跟着转"
+    },
+    "supplemental.general-warmup.9.r2": {
+      "ms": 5921,
+      "sha256": "bccd66f9beef541d4461deb235dd7c94fcf95bf11199da0d39e76f3abec4fb14",
+      "text": "一条腿向侧伸直、脚掌踩地，背平着往后坐，大腿内侧有拉感就回"
+    },
+    "supplemental.general-warmup.12.r2": {
+      "ms": 5062,
+      "sha256": "bcc24a5781e4da4cf26b6ba25b8a6cdf62e0cc5176d39bed49b315cf16eb230d",
+      "text": "臀部抬起保持骨盆水平，左右交替抬脚，臀部别往下掉"
+    },
+    "supplemental.general-warmup.14.r2": {
+      "ms": 4783,
+      "sha256": "fb208e1312668dfdcffb55dbc0c4099898d4c94300bb9d96064b58df42a1eeb8",
+      "text": "90/90 坐稳上身立直，后侧小腿抬离地面停一下再放"
+    },
+    "supplemental.general-warmup.16.r2": {
+      "ms": 6130,
+      "sha256": "d8916bb6e32d05cfb72844084f5d2817ac1d583190844600d1053d3498143e88",
+      "text": "双脚宽于肩、脚尖朝外，蹲到底用手肘把膝盖往外推，停住再站起"
+    },
+    "supplemental.general-warmup.18.r2": {
+      "ms": 5968,
+      "sha256": "7cece877ee732bd61b82e66345303703f4c1c15428ea5a6e18e8d5c74cbe1178",
+      "text": "膝盖微弯背挺直，屁股向后推、上身前倾，大腿后侧有拉感就起"
+    },
+    "supplemental.general-warmup.21.r2": {
+      "ms": 5712,
+      "sha256": "baf93fefc0223ba2b31921e07fae40cd3debfa3e3846c5a92fe7cd18c72ad7a0",
+      "text": "直臂俯撑，肩在手腕正上方，单脚向侧点地再收回，臀部别晃"
+    },
+    "supplemental.general-warmup.22.r2": {
+      "ms": 5526,
+      "sha256": "673029e613c93e710735cdc8d897b6865909d60e3e441928e5d68a916ac89016",
+      "text": "坐姿双手撑在身后指尖朝后，伸髋把身体顶成桌面，停一下再落"
     }
-  }
+  },
+  "additionalSource": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json"
 }

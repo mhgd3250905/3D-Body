@@ -1,5 +1,11 @@
 # App 验证记录
 
+## iOS vc2095 线上计划（2026-11-21）
+
+在 Build 49 的 `dcfb4e55` 基础上合入 `75a3e1bf`。四项 SDK 锁定 `7ba0db822399ffd84aead01b07f2f9f21e947f13`。iOS Build 50 使用 `POSEHUB_CATALOG_CHANNEL=dev`。读取的 dev 指针与随包 r2-v22 目录及 `flare-plans-r2` 一致，练前热身 22 项、约 17 分钟。173 条计划口播引用均有字节与 SHA-256 匹配的本地录音。公共示范视频由 SDK 按需取用。
+
+`flutter analyze --no-pub` 通过。运行 `flutter test --no-pub --dart-define=POSEHUB_CATALOG_CHANNEL=dev`，全量 494 项通过，1 项需启用在线教练测试的用例按默认设置跳过。真机验证由开哥完成。
+
 ## iOS vc2092 计划口播缓存更新（2026-11-21）
 
 同步 `bdf36525`，151 段计划口播使用 `assets/trainer_voice/flare-plan-voice-r1-6c5d81a9/`。录音逐段与 Build 48 及 Pose-Hub 源清单的 SHA-256 一致。核对 Build 47 和 48 的 IPA 后，确认新版口播路径与两个旧包的缓存键没有交集。所用 `just_audio 0.10.6` 在原生平台按完整资产路径查找缓存。准备期、动作内分段、左右侧和短音别名均通过版本化路径测试。

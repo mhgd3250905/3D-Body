@@ -1,10 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show FlutterError;
+import 'package:flutter/foundation.dart' show FlutterError, debugPrint, kIsWeb;
 import 'package:flutter/services.dart';
+import 'package:ugk_coach/ugk_coach.dart' show sha256Hex;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 import '../domain/flare_plan.dart';
+import 'plan_voice_duration_stub.dart'
+    if (dart.library.io) 'plan_voice_duration_io.dart';
 
 /// Offline shared prompts from the pinned SmartFit LC32 bundle, with HipLab's
 /// side prompt retained for legacy single-drill fixtures. The whole-plan
@@ -43,19 +46,30 @@ const _cooldownPnfKey = 'supplemental.cooldown.pnf';
 const _announcementManifest =
     'assets/trainer_voice/flare-plan-announcements.json';
 
-Future<Map<String, _SupplementalCue>> _planAnnouncements() async {
+const _guideManifest = 'assets/trainer_voice/flare-supplemental-voice.json';
+const _networkOnlyPlanVoice = bool.fromEnvironment(
+  'FLARE_PLAN_VOICE_NETWORK_ONLY',
+);
+const _tracePlanVoiceSources = bool.fromEnvironment('FLARE_PLAN_VOICE_TRACE');
+
+typedef _PlanVoiceClip = ({
+  String asset,
+  String sha256,
+  String? text,
+  double seconds,
+});
+
+Future<Map<String, _PlanVoiceClip>> _bundledPlanVoice(String manifest) async {
   try {
-    return await rootBundle.loadStructuredData(_announcementManifest, (
-      text,
-    ) async {
+    return await rootBundle.loadStructuredData(manifest, (text) async {
       final clips = (jsonDecode(text) as Map<String, Object?>)['clips'] as Map;
       return {
         for (final entry in clips.entries)
           entry.key as String: (
-            key: entry.key as String,
-            text: (entry.value as Map)['text'] as String? ?? '',
+            asset: '$flarePlanVoiceAssetRoot/${entry.key}.m4a',
+            sha256: (entry.value as Map)['sha256'] as String,
+            text: entry.value['text'] as String?,
             seconds: (entry.value['ms'] as num) / 1000,
-            authoredName: null,
           ),
       };
     });
@@ -64,64 +78,175 @@ Future<Map<String, _SupplementalCue>> _planAnnouncements() async {
   }
 }
 
+Future<PoseHubPlanVoiceCache>? _nativePlanVoiceCache;
+
+String _planVoiceKey(String path) =>
+    path.split('/').last.replaceFirst(RegExp(r'\.m4a$'), '');
+
+String _guideKey(FlarePlan plan, int index, FlarePlanItem item) =>
+    item.voiceKey ?? 'supplemental.${plan.id}.${index + 1}';
+
+Iterable<String> _planVoicePaths(
+  FlarePlan plan,
+  PoseHubPlanVoiceManifest manifest,
+) {
+  final guides = {
+    for (final (index, item) in plan.allItems.indexed)
+      _guideKey(plan, index, item),
+  };
+  return manifest.files.keys.where((path) {
+    final key = _planVoiceKey(path);
+    return guides.contains(key) ||
+        guides.any((guide) => key.startsWith('$guide.')) ||
+        key.startsWith('supplemental.side.') ||
+        (plan.kind == FlarePlanKind.cooldown &&
+            (key == _cooldownPnfKey ||
+                key.startsWith('supplemental.cooldown.kickoff.') ||
+                key.startsWith('supplemental.cooldown.round.')));
+  });
+}
+
+Future<Map<String, _PlanVoiceClip>> _snapshotPlanVoice(
+  FlarePlan plan,
+  PoseHubPlanSnapshot snapshot,
+  Map<String, _PlanVoiceClip> bundled,
+  PoseHubPlanVoiceCache? voiceCache,
+) async {
+  final receipts = snapshot.voiceManifest;
+  final paths = receipts.plans[plan.id] ?? _planVoicePaths(plan, receipts);
+  final bundledBySha = {for (final clip in bundled.values) clip.sha256: clip};
+  Future<List<int>?> readBundled(String digest) async {
+    final clip = bundledBySha[digest];
+    if (clip == null) return null;
+    final data = await rootBundle.load(clip.asset);
+    return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  }
+
+  var local = const <String, Uri?>{};
+  if (!kIsWeb || voiceCache != null) {
+    try {
+      final cache =
+          voiceCache ??
+          await (_nativePlanVoiceCache ??=
+              PoseHubPlanVoiceCache.inApplicationSupport(
+                loadBundled: _networkOnlyPlanVoice ? null : readBundled,
+              ));
+      local = receipts.plans.containsKey(plan.id)
+          ? await cache.prefetchPlan(receipts, plan.id)
+          : await cache.prefetchFiles(receipts, paths);
+    } on Exception {
+      // A missing native cache can still use the exact bundled recordings.
+      _nativePlanVoiceCache = null;
+    }
+  }
+
+  final result = <String, _PlanVoiceClip>{};
+  for (final path in paths) {
+    final file = receipts.files[path]!;
+    final offline = bundledBySha[file.sha256];
+    final uri = local[path];
+    var asset = uri?.toString();
+    if (asset == null && !_networkOnlyPlanVoice && offline != null) {
+      try {
+        final bytes = await readBundled(file.sha256);
+        if (bytes != null &&
+            bytes.length == file.bytes &&
+            sha256Hex(bytes) == file.sha256) {
+          asset = offline.asset;
+        }
+      } on FlutterError {
+        // The bundled fallback can be absent in development builds.
+      }
+    }
+    final seconds =
+        offline?.seconds ??
+        (uri == null ? null : await readPlanVoiceDuration(uri));
+    if (asset == null || seconds == null) continue;
+    final key = _planVoiceKey(path);
+    result[key] = (
+      asset: asset,
+      sha256: file.sha256,
+      text: offline?.text,
+      seconds: seconds,
+    );
+    if (_tracePlanVoiceSources) {
+      debugPrint(
+        'FlarePlanVoice prepared plan=${plan.id} snapshot=${snapshot.id} '
+        'clip=$key sha=${file.sha256} source=${uri == null ? 'bundle' : 'cache'}',
+      );
+    }
+  }
+  return result;
+}
+
 /// Use the authored Mandarin cue in these plans while keeping the usual
 /// common prompts, action names, playback controls and audio output.
 Future<VoiceSource> withSupplementalTrainerVoice(
   VoiceSource source,
   FlarePlan? plan, {
   required String language,
+  PoseHubPlanSnapshot? planSnapshot,
+  PoseHubPlanVoiceCache? voiceCache,
 }) async {
   if (plan == null || language != 'zh') return source;
-  final durations = await rootBundle.loadStructuredData(
-    'assets/trainer_voice/flare-supplemental-voice.json',
-    (text) async {
-      final clips = (jsonDecode(text) as Map<String, dynamic>)['clips'] as Map;
-      return <String, int>{
-        for (final clip in clips.entries)
-          clip.key as String: (clip.value as Map)['ms'] as int,
-      };
-    },
-  );
+  final [bundleGuides, bundleAnnouncements] = await Future.wait([
+    _bundledPlanVoice(_guideManifest),
+    _bundledPlanVoice(_announcementManifest),
+  ]);
+  final bundled = {...bundleGuides, ...bundleAnnouncements};
+  final clips = planSnapshot != null
+      ? await _snapshotPlanVoice(plan, planSnapshot, bundled, voiceCache)
+      : _networkOnlyPlanVoice
+      ? const <String, _PlanVoiceClip>{}
+      : bundled;
   final cues = <String, _SupplementalCue>{};
   final shortCues = <String, _SupplementalCue>{};
+  final guideKeys = {_cooldownPnfKey};
   for (final (index, item) in plan.allItems.indexed) {
-    final key = item.voiceKey ?? 'supplemental.${plan.id}.${index + 1}';
-    if ((item.voiceCue, durations[key]) case (final text?, final ms?)) {
+    final key = _guideKey(plan, index, item);
+    final shortKey = '$key.short';
+    guideKeys.addAll([key, shortKey]);
+    if ((item.voiceCue, clips[key]) case (final text?, final clip?)) {
       cues[item.trainingDrillForScene('A')] = (
         key: key,
         text: text,
-        seconds: ms / 1000,
+        seconds: clip.seconds,
         authoredName: item.displayName,
       );
-      final shortKey = '$key.short';
-      if (durations[shortKey] case final shortMs?) {
+      if (clips[shortKey] case final shortClip?) {
         shortCues[shortKey] = (
           key: shortKey,
           // Read a shorter line aloud while the full instruction stays visible.
           text: text,
-          seconds: shortMs / 1000,
+          seconds: shortClip.seconds,
           authoredName: item.displayName,
         );
       }
     }
-    if ((item.pnfTrainingIdForScene('A'), durations[_cooldownPnfKey]) case (
+    if ((item.pnfTrainingIdForScene('A'), clips[_cooldownPnfKey]) case (
       final exerciseId?,
-      final ms?,
+      final pnfClip?,
     )) {
       cues[exerciseId] = (
         key: _cooldownPnfKey,
         text: flareCooldownPnfCue,
-        seconds: ms / 1000,
+        seconds: pnfClip.seconds,
         authoredName: item.displayName,
       );
     }
   }
-  return _SupplementalVoiceSource(
-    source,
-    cues,
-    shortCues,
-    await _planAnnouncements(),
-  );
+  return _SupplementalVoiceSource(source, cues, shortCues, {
+    for (final MapEntry(key: key, value: clip) in clips.entries)
+      if (planSnapshot == null
+          ? bundleAnnouncements.containsKey(key)
+          : !guideKeys.contains(key))
+        key: (
+          key: key,
+          text: clip.text ?? '',
+          seconds: clip.seconds,
+          authoredName: null,
+        ),
+  }, clips);
 }
 
 SessionScript buildCooldownTrainerScript(VoiceSource source, String language) =>
@@ -518,6 +643,7 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
     this.cues,
     Map<String, _SupplementalCue> shortCues,
     this.announcements,
+    this.clips,
   ) : byKey = {
         for (final cue in cues.values) cue.key: cue,
         ...shortCues,
@@ -528,6 +654,7 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
   final Map<String, _SupplementalCue> cues;
   final Map<String, _SupplementalCue> byKey;
   final Map<String, _SupplementalCue> announcements;
+  final Map<String, _PlanVoiceClip> clips;
 
   String _assetKey(String key) => key.startsWith('chime.supplemental.')
       ? key.substring('chime.'.length)
@@ -545,9 +672,10 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
 
   @override
   String asset(String key, {required String lang}) =>
-      lang == 'zh' && byKey.containsKey(_assetKey(key))
-      ? '$flarePlanVoiceAssetRoot/${_assetKey(key)}.m4a'
-      : super.asset(key, lang: lang);
+      (lang == 'zh' && byKey.containsKey(_assetKey(key))
+          ? clips[_assetKey(key)]?.asset
+          : null) ??
+      super.asset(key, lang: lang);
 
   @override
   String? line(String key, {required String lang}) =>

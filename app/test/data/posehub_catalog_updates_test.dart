@@ -31,13 +31,13 @@ void main() {
         catalogBytes,
         semanticCatalogBytes: semanticBytes,
       );
-      const nextPack = 'r2-v18';
+      const nextPack = 'r2-v22';
       final previous = await _oldBaseline(published, semanticBytes);
       expect(sdk.poseHubPackVersionOf(previous), 'r2-v11');
       expect(sdk.poseHubPackVersionOf(published), nextPack);
       expect(
         coach.sha256Hex(catalogBytes),
-        sdk.PoseHubActionLibrary.catalogSha256,
+        PoseHubCatalogUpdates.bundledCatalogSha256,
       );
       final mediaBase = sdk.PoseHubActionLibrary.mediaBaseUriFor(published);
       final artwork = {
@@ -83,11 +83,11 @@ void main() {
           coach.PoseHubDisplayUpdatePhase.downloading,
         );
         expect(progress.last.phase, coach.PoseHubDisplayUpdatePhase.completed);
-        expect(progress.last.completedFiles, 500);
+        expect(progress.last.completedFiles, 572);
         expect(progress.last.receivedBytes, progress.last.totalBytes);
-        expect(http.requests, hasLength(501));
+        expect(http.requests, hasLength(573));
         expect(http.requests, containsAll(artwork.keys));
-        expect(artwork, hasLength(498));
+        expect(artwork, hasLength(570));
         expect(
           http.requests.where(
             (uri) => !uri.path.endsWith('.json') && !uri.path.endsWith('.webp'),
@@ -133,11 +133,11 @@ void main() {
 
         // A later catalogue adds one new display file. Invalid bytes must
         // keep the active pack intact and leave the new transfer retryable.
-        const failedPack = 'r2-v19';
+        const failedPack = 'r2-v23';
         final newArtwork = await artwork.values.first.readAsBytes();
         final bytes = Uint8List.fromList([...newArtwork, 0]);
         final descriptor = {
-          'path': 'media/flare-home/r2-v19/frame.webp',
+          'path': 'media/flare-home/r2-v23/frame.webp',
           'bytes': bytes.length,
           'sha256': coach.sha256Hex(bytes),
         };

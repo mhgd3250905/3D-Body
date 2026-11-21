@@ -3,12 +3,14 @@
 ## 当前 App 消费来源
 
 - 首页、专项教学和本地 `flare-v5` 演示使用 [V5 交付包](flare-v5-model-2026-11-18.md)的模型与动作。根目录网页 R17 与旧版 App R17 的来源见 [v42/R17 记录](motion-v42.md)。
-- 随包公共媒体清单 `assets/public_media/catalog.json` 对应 r2-v18、源提交 `e8a5b8f62dfbbbbc32722d1a3540f9429944777b`，公共媒体与语义目录各 249 项。浏览和 AI 的公共动作授权由 `lib/data/flare_action_scope.dart` 维护，本地 V5 与辅助图单独计数。
+- 随包公共媒体清单 `assets/public_media/catalog.json` 对应 r2-v22，源提交 `7f03532a6e363e45028ccf8c3c5206432634f924`，交付目录 285 项。浏览和 AI 的公共动作授权由 `lib/data/flare_action_scope.dart` 维护，本地 V5 与辅助图单独计数。
 - 共享动作封面随包，SDK 从配置的媒体仓库按需下载视频，缓存命中时可重用。清单标为 `test-unreviewed`、`reviewed=false`、`releaseEligible=false`。清单中的 `readyCount` 记录素材交付状态。
 
-## iOS 热身和放松内测离线包
+- iOS Build 50 使用 `POSEHUB_CATALOG_CHANNEL=dev` 从 SDK 读取验证后的 `flare-plans-r2`。断网时可读取同版随包计划、r2-v22 目录及 173 条计划语音引用。公共训练示范继续由 SDK 按需下载。
 
-本次内测从 `1a43a8c` 取清单、语义目录、计划数据、提示词和录音。目录为 r2-v18 加 r2-v19 的跪姿肩胛俯卧撑。运行 `python3 tools/bundle-flare-public-media.py`，按清单下载并校验视频和中英语音的字节数与 SHA-256，再用 `--dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 构建 iOS。生成的媒体文件不提交 Git。启用此选项时，训练库使用随包目录、动作媒体和语音，跳过线上目录指针。
+## 历史 iOS 热身和放松内测离线包（Build 44–49）
+
+这批历史内测从 `1a43a8c` 取清单、语义目录、计划数据、提示词和录音。目录为 r2-v18 加 r2-v19 的跪姿肩胛俯卧撑。运行 `python3 tools/bundle-flare-public-media.py`，按清单下载并校验视频和中英语音的字节数与 SHA-256，再用 `--dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 构建 iOS。生成的媒体文件不提交 Git。启用此选项时，训练库使用随包目录、动作媒体和语音，跳过线上目录指针。
 
 同步 vc2088 时，按 `7721422` 追加 r2-v21 的六个动作及清单中的 6 段视频、12 张封面与缩略图和 102 段语音。新增媒体由源提交直接随包，原公共目录仍取 r2-v18。
 

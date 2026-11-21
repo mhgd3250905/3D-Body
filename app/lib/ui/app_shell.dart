@@ -55,6 +55,7 @@ class FlareShell extends StatefulWidget {
     this.coach,
     this.membership,
     this.trainingPageBuilder,
+    this.restorePlanSnapshot,
   });
   final Catalog catalog;
 
@@ -62,6 +63,8 @@ class FlareShell extends StatefulWidget {
   final FlareCoachChat? coach;
   final FlareMembership? membership;
   final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
+  final Future<sdk.PoseHubPlanSnapshot?> Function(String snapshotId)?
+  restorePlanSnapshot;
   final LearningStore store;
   final SceneController? sceneController;
   final bool enableScene;
@@ -94,6 +97,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
   final _flarePlanTrail = <_FlarePlanTarget>[];
+  String? _resumeSnapshotId;
+  Future<sdk.PoseHubPlanSnapshot?>? _resumeSnapshot;
   FlareCoachChat? _coach;
   FlareCoachChat get coach => _coach ??=
       widget.coach ??
@@ -190,6 +195,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     super.didUpdateWidget(oldWidget);
     if (widget.sceneRevision != oldWidget.sceneRevision) {
       _liveSceneKey = GlobalKey();
+    }
+    if (widget.catalog.planSnapshot?.id != oldWidget.catalog.planSnapshot?.id) {
+      _resumeSnapshotId = null;
+      _resumeSnapshot = null;
     }
     if (!identical(widget.catalog, oldWidget.catalog)) {
       _phaseMapCatalogRevision++;
@@ -674,26 +683,26 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     Future<bool> Function()? onStarting,
     VoidCallback Function()? holdTransition,
     FlarePlan? supplementalPlan,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
   }) async {
     final policy =
         sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
+    final trainingCatalog = catalog;
     final mediaIds = {
       for (final item in supplementalPlan?.allItems ?? const <FlarePlanItem>[])
         ...item.trainingMediaIdsForScene('A'),
     };
     final ids = plan.exerciseIds.map((id) => mediaIds[id] ?? id).toList();
-    final localSupplemental =
-        policy == null && ids.any(flareSupplementalActionIds.contains)
-        ? await FlareSupplementalActions.load()
-        : null;
-    if (!context.mounted) return null;
     String? posterFor(String id) => policy?.actionFor(id) != null
         ? policy!.posterAssetFor(id)
         : policy?.posterAssetFor(id) ??
-              localSupplemental?.coverAssetFor(id) ??
+              (flareSupplementalActionIds.contains(id) ||
+                      id == flareWarmupPushupId
+                  ? FlarePublicMedia.coverAssetFor(id)
+                  : null) ??
               '${FlarePublicMedia.posterRoot}$id.webp';
     final cooldown = supplementalPlan == null
-        ? catalog.flareCooldownPlan
+        ? trainingCatalog.flareCooldownPlan
         : null;
     var continueCooldown = false;
     void markCooldownRequested() => continueCooldown = true;
@@ -704,7 +713,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             FlarePremiumFeature.training,
             (locked) => FlareTrainingPage(
               plan: plan,
-              catalog: catalog,
+              catalog: trainingCatalog,
               store: store,
               startInPreview: true,
               previewLocked: locked,
@@ -719,9 +728,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           widget.trainingPageBuilder?.call(plan) ??
           FlareTrainingPage(
             plan: plan,
-            catalog: catalog,
+            catalog: trainingCatalog,
             store: store,
             supplementalPlan: supplementalPlan,
+            planSnapshot: planSnapshot,
             onContinueCooldown: onContinueCooldown,
           ),
       firstPosterAsset: ids.isEmpty ? null : posterFor(ids.first),
@@ -744,6 +754,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   Future<void> _startPlan(
     uc.TrainingPlan plan, {
     FlarePlan? supplementalPlan,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
   }) async {
     if (!mounted || _trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
@@ -751,7 +762,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     setState(() => _trainingOpen = true);
     _syncSceneVisibility();
     try {
-      await _launchTraining(context, plan, supplementalPlan: supplementalPlan);
+      await _launchTraining(
+        context,
+        plan,
+        supplementalPlan: supplementalPlan,
+        planSnapshot: planSnapshot,
+      );
     } finally {
       if (mounted) {
         setState(() => _trainingOpen = false);
@@ -933,6 +949,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     FlarePlan plan, {
     int? phaseSource,
     bool skipStrengthening = false,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
   }) async {
     if (_trainingOpen) return;
     final sceneTier = plan.isSupplemental ? 'A' : store.settings.tier;
@@ -950,8 +967,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
           sceneTier: sceneTier,
           phaseSource: phaseSource,
+          snapshotId: planSnapshot?.id,
         ),
         supplementalPlan: plan.isSupplemental ? plan : null,
+        planSnapshot: planSnapshot,
       );
     } catch (_) {
       _showTrainingLoadFailure();
@@ -993,6 +1012,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       await _startPlan(
         remaining,
         supplementalPlan: authored?.isSupplemental == true ? authored : null,
+        planSnapshot: resume.planSnapshot,
       );
     } catch (_) {
       _showTrainingLoadFailure();
@@ -1573,7 +1593,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       );
     }
     if (_flarePlanTrail.lastOrNull case final target?) {
-      final supplemental = target.supplemental;
+      final supplemental = switch (target.supplemental?.kind) {
+        FlarePlanKind.warmup => catalog.flareWarmupPlan ?? target.supplemental,
+        FlarePlanKind.cooldown =>
+          catalog.flareCooldownPlan ?? target.supplemental,
+        _ => null,
+      };
+      final planSnapshot = supplemental == null ? null : catalog.planSnapshot;
       final cooldown = supplemental?.kind == FlarePlanKind.cooldown;
       final phaseSource = target.phaseSource;
       final phase = phaseSource == null
@@ -1623,10 +1649,19 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           onOpenWarmup: warmup == null
               ? null
               : () => _openSupplementalPlan(warmup),
-          onStart: (plan) =>
-              _startFlarePlan(title, plan, phaseSource: phaseSource),
+          onStart: (plan) => _startFlarePlan(
+            title,
+            plan,
+            phaseSource: phaseSource,
+            planSnapshot: planSnapshot,
+          ),
           onSkipStrengthening: cooldown
-              ? (plan) => _startFlarePlan(title, plan, skipStrengthening: true)
+              ? (plan) => _startFlarePlan(
+                  title,
+                  plan,
+                  skipStrengthening: true,
+                  planSnapshot: planSnapshot,
+                )
               : null,
         ),
       );
@@ -1713,13 +1748,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   Widget _plansPage() {
-    final resume = FlarePlanResume.resolve(
-      catalog: catalog,
-      sessions: store.trainerSessions,
-      routines: store.routines,
-      legacySessions: store.sessions,
-      preferredSceneTier: store.settings.tier,
+    final resume = _resolvePlanResume(catalog.planSnapshot);
+    final snapshotId = resume?.snapshotId;
+    final restore = widget.restorePlanSnapshot;
+    if (snapshotId == null || restore == null) {
+      return _plansPageWithResume(resume);
+    }
+    if (_resumeSnapshotId != snapshotId) {
+      _resumeSnapshotId = snapshotId;
+      _resumeSnapshot = restore(snapshotId);
+    }
+    return FutureBuilder<sdk.PoseHubPlanSnapshot?>(
+      future: _resumeSnapshot,
+      builder: (context, result) {
+        final snapshot = result.data;
+        return _plansPageWithResume(
+          snapshot?.id == snapshotId ? _resolvePlanResume(snapshot) : resume,
+        );
+      },
     );
+  }
+
+  FlarePlanResume? _resolvePlanResume(sdk.PoseHubPlanSnapshot? snapshot) =>
+      FlarePlanResume.resolve(
+        catalog: catalog,
+        sessions: store.trainerSessions,
+        routines: store.routines,
+        legacySessions: store.sessions,
+        preferredSceneTier: store.settings.tier,
+        restoredSnapshot: snapshot,
+      );
+
+  Widget _plansPageWithResume(FlarePlanResume? resume) {
     return PlansPage(
       catalog: catalog,
       store: store,

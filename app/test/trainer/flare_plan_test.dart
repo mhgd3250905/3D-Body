@@ -210,22 +210,10 @@ void main() {
     () async {
       final shared = await activeCatalog;
       final supplementary = shared.pack;
-      expect(pack.tryGet(flareWarmupPushupId), isNull);
+      expect(supplementary, same(pack));
       expect(
         supplementary.allActions.map((a) => a.id),
-        unorderedEquals([
-          ...pack.allActions.map((a) => a.id),
-          flareWarmupPushupId,
-          't-step-jack-arm-circles',
-          't-neck-wrist-finger-wakeup',
-          't-wide-side-squat-shift',
-          't-standing-neck-side-stretch',
-          't-standing-wrist-flexor-stretch',
-          't-side-lying-straight-leg-abduction',
-          ..._cooldownDemoReplacements.values
-              .map((replacement) => replacement.$2)
-              .toSet(),
-        ]),
+        containsAll({flareWarmupPushupId, ...flareSupplementalActionIds}),
       );
 
       final pushup = supplementary.tryGet(flareWarmupPushupId)!;

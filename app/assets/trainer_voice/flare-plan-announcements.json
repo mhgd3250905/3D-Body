@@ -482,6 +482,62 @@
       "ms": 820,
       "sha256": "67d5672b9b1226f3cfc9c75a87dcda4524c7296f283b7fa4a2a951aa60928cc5",
       "text": "W 字。"
+    },
+    "supplemental.general-warmup.1.intro.r2": {
+      "ms": 2229,
+      "sha256": "f8890b9a5bfcb94b48f8d5ebdabc92f0eef2b4a03d0bf487b30cb166acc2f4f6",
+      "text": "开合步绕臂，一分三十秒。"
+    },
+    "supplemental.general-warmup.3.intro.r2": {
+      "ms": 2601,
+      "sha256": "514f07a6b2e9fbdd57e8aa12ec0654634f333926c34a52b9d923431d2f27304e",
+      "text": "站姿屈肘前臂旋转，八次。"
+    },
+    "supplemental.general-warmup.4.intro.r2": {
+      "ms": 2763,
+      "sha256": "22afc4b561a960311b4850a8ce51cb430669f052d749d39312fbe9565f7e73eb",
+      "text": "站姿转胯画圈，两个方向各五次。"
+    },
+    "supplemental.general-warmup.8.intro.r2": {
+      "ms": 3204,
+      "sha256": "50244a6abc83a3d7d29085f189567224807269cc661b5793d344e056fdbabba5",
+      "text": "跪撑抬膝画圈，每侧两个方向各三次。"
+    },
+    "supplemental.general-warmup.9.intro.r2": {
+      "ms": 2786,
+      "sha256": "d8144268ae28c5ca9c288c8ca5da78cf83ad6179705e9cd5366356666a000021",
+      "text": "四足单腿侧伸后摇，每侧五次。"
+    },
+    "supplemental.general-warmup.12.intro.r2": {
+      "ms": 2392,
+      "sha256": "5a44e738f0a14b8fab9e7651a659cba7dacb853385b0e525c0da2f6976b0af2e",
+      "text": "臀桥交替踏步，每侧六次。"
+    },
+    "supplemental.general-warmup.14.intro.r2": {
+      "ms": 2833,
+      "sha256": "d591ee8a1f8c871f296581bfedc7514109e5206fbde463e4b0bcea8b738e9dca",
+      "text": "九十度坐姿后腿抬起，每侧五次。"
+    },
+    "supplemental.general-warmup.16.intro.r2": {
+      "ms": 3762,
+      "sha256": "9496fbd690dac91e54a8aaaefe4b97829d9c2c407102fbb312b93a8c0b753b97",
+      "text": "相扑深蹲肘推膝，六次，每次停两秒半。"
+    },
+    "supplemental.general-warmup.18.intro.r2": {
+      "ms": 1788,
+      "sha256": "e84b2fe3bce60e744b7bf3ea9ca4dc551bb003fd1ef7970d933622f32150d3c5",
+      "text": "徒手早安式，八次。"
+    },
+    "supplemental.general-warmup.21.intro.r2": {
+      "ms": 3042,
+      "sha256": "83ca15594c8e07f01f4f1eff9212bec77b800db05860ad2ffdd7a87cf52339fb",
+      "text": "直臂俯撑交替侧点地，每侧五次。"
+    },
+    "supplemental.general-warmup.22.intro.r2": {
+      "ms": 3367,
+      "sha256": "9b35c400975abdff9e932e8e5cb16f94512784256c4275bddb28369ad83dcd04",
+      "text": "桌面式后撑抬髋，六次，每次停一秒。"
     }
-  }
+  },
+  "additionalSource": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json"
 }

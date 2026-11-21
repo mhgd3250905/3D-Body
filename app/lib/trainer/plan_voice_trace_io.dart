@@ -6,6 +6,14 @@ import 'package:ugk_coach/ugk_coach.dart' show sha256Hex;
 
 Future<void> tracePlanVoice(String event, String asset) async {
   try {
+    if (asset.startsWith('file:')) {
+      final current = File.fromUri(Uri.parse(asset));
+      final digest = await current.exists()
+          ? sha256Hex(await current.readAsBytes())
+          : 'missing';
+      debugPrint('FlarePlanVoice $event file=$asset cacheSha=$digest');
+      return;
+    }
     final cache = (await getTemporaryDirectory()).path;
     // just_audio prefixes logical assets with its own cache and "assets".
     final root = '$cache/just_audio_cache/assets';
