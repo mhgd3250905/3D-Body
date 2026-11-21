@@ -12,6 +12,6 @@ Catalog loadCatalogFixture({bool includeFlarePlans = false}) {
     drillLibrary: file('drills.json'),
     curriculum: file('course-stages.json'),
     manifest: file('source-manifest.json'),
-    flarePlans: includeFlarePlans ? file('flare-plans.json') : null,
+    flarePlans: includeFlarePlans ? file('flare-local-plans.json') : null,
   );
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
@@ -15,10 +16,45 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
         PoseHubCatalogUpdateEvent,
         PoseHubCatalogUpdateOutcome,
         PoseHubCatalogUpdater,
+        PoseHubPlanSnapshot,
         createPoseHubCatalogFileStore,
-        poseHubPackVersionOf;
+        poseHubPackVersionOf,
+        poseHubCatalogSdkVersion;
 
+import 'catalog.dart';
 import 'flare_public_catalog.dart';
+
+const flareChannelTrace = bool.fromEnvironment('FLARE_CHANNEL_TRACE');
+const _planApp = 'flare';
+const _bundledPlans = 'assets/data/flare-plans.json';
+const _bundledVoiceManifest = 'assets/data/flare-plan-voice-manifest.json';
+
+Future<PoseHubPlanSnapshot?> loadFlareBundledPlanSnapshot({
+  AssetBundle? bundle,
+}) async {
+  final assets = bundle ?? rootBundle;
+  try {
+    final documents = await Future.wait([
+      assets.load(_bundledPlans),
+      assets.load(_bundledVoiceManifest),
+    ]);
+    final snapshot = PoseHubPlanSnapshot.fromBytes(
+      _planBytes(documents[0]),
+      _planBytes(documents[1]),
+      minSdk: poseHubCatalogSdkVersion,
+    );
+    Catalog.readSupplementalPlans(snapshot);
+    return snapshot;
+  } on Object catch (error) {
+    if (flareChannelTrace) {
+      debugPrint('FlareChannel bundled plans unavailable: $error');
+    }
+    return null;
+  }
+}
+
+Uint8List _planBytes(ByteData data) =>
+    data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
 /// Action-library hot update (SDK `PoseHubCatalogUpdater`).
 ///
@@ -35,9 +71,9 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     this._onOutcome,
   );
 
-  static const bundledPackVersion = 'r2-v18';
+  static const bundledPackVersion = 'r2-v22';
   static const bundledCatalogSha256 =
-      '1de7303f94fe0441ed4d006d4a4aa7ceac0e160b1c2527ae0f875b112bb52203';
+      'bcb139236691df601c63b91cf317242fb124f346c3427d30bec71e18715bf647';
 
   static const channelName = String.fromEnvironment(
     'POSEHUB_CATALOG_CHANNEL',
@@ -88,7 +124,10 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
           http: http,
           assetRootDirectory: assetRootDirectory,
           loadLocal: loadLocal ?? loadFlareBundledPublicCatalog,
-          onEvent: onEvent,
+          onEvent: (event) {
+            if (flareChannelTrace) debugPrint('FlareChannel $event');
+            onEvent?.call(event);
+          },
         ),
         assetRootDirectory,
         onOutcome,
@@ -113,6 +152,43 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
 
   Future<PoseHubCatalogUpdateOutcome> checkNow() =>
       _reportOutcome(updater.checkNow());
+
+  Future<PoseHubPlanSnapshot?> planSnapshotFor(String catalogPack) async {
+    var source = 'verified-cache';
+    try {
+      final snapshot = await updater.planSnapshotFor(
+        _planApp,
+        catalogPack: catalogPack,
+        loadBundled: () {
+          source = 'bundle';
+          return loadFlareBundledPlanSnapshot();
+        },
+      );
+      if (snapshot == null) return null;
+      Catalog.readSupplementalPlans(snapshot);
+      if (flareChannelTrace) {
+        debugPrint(
+          'FlareChannel plan=${snapshot.version} sha=${snapshot.id} source=$source',
+        );
+      }
+      return snapshot;
+    } on Object catch (error) {
+      if (flareChannelTrace) {
+        debugPrint('FlareChannel plan selection failed: $error');
+      }
+      final bundled = await loadFlareBundledPlanSnapshot();
+      return bundled?.isCompatible(
+                catalogPack: catalogPack,
+                sdkVersion: updater.config.sdkVersion,
+              ) ==
+              true
+          ? bundled
+          : null;
+    }
+  }
+
+  Future<PoseHubPlanSnapshot?> restorePlanSnapshot(String id) =>
+      updater.restorePlanSnapshot(_planApp, id);
 
   Future<PoseHubCatalogUpdateOutcome> _reportOutcome(
     Future<PoseHubCatalogUpdateOutcome> check,

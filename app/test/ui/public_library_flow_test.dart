@@ -220,11 +220,11 @@ void main() {
   }
 
   test(
-    'the warm-up addition preserves the r2-v18 library and AI scope',
+    'the official r2-v22 catalog preserves the library and AI scope',
     () async {
       final bundled = await loadFlareBundledPublicCatalog();
       final packIds = bundled.toAiCatalog().drills.map((d) => d.id).toSet();
-      final scopedIds = {...packIds}..remove('n-thomas-test');
+      final scopedIds = packIds.intersection(flareAuthorizedActionIds);
       final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
       final libraryIds = shared.library
           .actions(policy.catalog)
@@ -234,17 +234,12 @@ void main() {
         shared: shared,
         executionTiming: shared.sessionBuilder().executionTiming,
       );
-      expect(packIds, hasLength(249));
+      expect(packIds, hasLength(285));
       expect(packIds, contains('n-thomas-test'));
       expect(scopedIds, hasLength(248));
-      expect(
-        aiIds,
-        unorderedEquals({
-          ...packIds,
-          flareWarmupPushupId,
-          ...flareSupplementalActionIds,
-        }),
-      );
+      expect(aiIds, unorderedEquals(packIds));
+      expect(scopedIds, isNot(contains(flareWarmupPushupId)));
+      expect(scopedIds.intersection(flareSupplementalActionIds), isEmpty);
       expect(
         policy.actionFor(flareWarmupPushupId)?.availableForTraining,
         isTrue,
@@ -286,7 +281,7 @@ void main() {
   );
 
   test(
-    'an older verified cache cannot shadow the bundled r2-v18 pack',
+    'an older verified cache cannot shadow the bundled r2-v22 pack',
     () async {
       const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
@@ -310,7 +305,7 @@ void main() {
       final cached = await sdk.readVerifiedPoseHubCatalog(store);
       expect(sdk.poseHubPackVersionOf(cached!), olderPack);
       final pack = await loadFlarePublicCatalog(verifiedCache: store);
-      expect(sdk.poseHubPackVersionOf(pack), 'r2-v18');
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v22');
       expect(
         poseHubCatalogRevisionOf(pack),
         PoseHubCatalogUpdates.bundledCatalogSha256,

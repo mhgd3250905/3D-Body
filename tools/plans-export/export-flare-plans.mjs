@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-const source = new URL('../../app/assets/data/flare-plans.json', import.meta.url);
+const source = new URL('../../app/assets/data/flare-local-plans.json', import.meta.url);
 const destination = new URL('./flare-plans-source.json', import.meta.url);
 const selectedIds = new Set([
   'general-warmup',

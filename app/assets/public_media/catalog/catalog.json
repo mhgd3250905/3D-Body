@@ -2,13 +2,13 @@
  "format": "pose-hub-catalog",
  "formatVersion": 1,
  "version": "2.1.0",
- "generatedAt": "2026-11-18T11:35:15+08:00",
+ "generatedAt": "2026-11-21T07:12:01+08:00",
  "source": {
-  "pack": "r2-v18",
+  "pack": "r2-v22",
   "catalogSha256": "22b2a391e327bc9eee775988315cd96651e0f623c76dae10c00284686dfe804e",
   "text": "catalog/production/v3-text",
-  "commit": "e8a5b8f62dfbbbbc32722d1a3540f9429944777b",
-  "previousPack": "r2-v16"
+  "commit": "7f03532a6e363e45028ccf8c3c5206432634f924",
+  "previousPack": "r2-v21"
  },
  "taxonomy": {
   "categories": {
@@ -17323,6 +17323,2567 @@
    "tags": [],
    "review": {
     "status": "ai-reviewed-r3-needs-user-review"
+   }
+  },
+  {
+   "id": "t-pushup-plus",
+   "name": {
+    "zh": "俯卧撑加推",
+    "en": "Push-Up Plus"
+   },
+   "purpose": "练腋下肋骨边上那块肌肉，单手撑地时肩不塌",
+   "category": "strength",
+   "muscles": [
+    "前锯肌",
+    "斜方肌中下部 · 菱形肌"
+   ],
+   "muscleGroups": [
+    "serratus",
+    "scapular"
+   ],
+   "equipment": [],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     10,
+     12
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手肘锁死别弯，只让肩胛骨动",
+     "胸口往地上沉一点，两块肩胛骨靠拢；再用手把地推开，推到后背微微拱起。",
+     "推到最高别急着落，停一秒，腋下那块会发酸。",
+     "从头到脚跟一块板，屁股别跟着肩上下晃。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "推起来肩前侧疼就先跪着做"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": "t-kneeling-scap-pushup",
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-kneeling-scap-pushup",
+   "name": {
+    "zh": "跪姿肩胛俯卧撑",
+    "en": "Kneeling Scapula Push-Up"
+   },
+   "purpose": "俯卧撑加推的入门版，膝盖跪着先把肩胛推地的劲儿找到",
+   "category": "strength",
+   "muscles": [
+    "前锯肌",
+    "斜方肌中下部 · 菱形肌"
+   ],
+   "muscleGroups": [
+    "serratus",
+    "scapular"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "kneeling",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     10,
+     12
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手肘锁死别弯，只让肩胛骨动",
+     "手放在肩膀正下方，膝盖跪稳，从膝盖到头是一条斜线。",
+     "胸口往地上沉，两块肩胛骨靠拢；再用手把地推开，推到后背微微拱起。",
+     "推到最高停一秒，肩膀离耳朵远一点，屁股别跟着上下晃。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝盖硌得疼就垫块毛巾"
+   ],
+   "contraindications": [
+    "膝"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-frog-stand",
+   "name": {
+    "zh": "蛙立",
+    "en": "Frog Stand"
+   },
+   "purpose": "练手腕和肩，找到身体压在手上、脚离地的平衡",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "forearms",
+    "deltoids"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     5
+    ],
+    "seconds": [
+     10,
+     20
+    ],
+    "restSeconds": [
+     60,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "膝盖架在大臂外侧，身体往前送到脚自己离地",
+     "手肘朝后弯着，膝盖压在手肘上面一掌的位置，别挂在肘尖上。",
+     "先别急着抬脚，脚尖踩着往前倾，重量到了手上脚自然就轻了。",
+     "肩膀往前过手腕、往下沉，手指张开抓地，往前栽了就用指尖按住。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "怕往前栽，就在脸前面放个枕头",
+    "脚尖离不了地，就先踮着脚把重量往手上送",
+    "别憋气，脚离地的时候照常喘气"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-planche-lean",
+   "name": {
+    "zh": "俄挺前倾",
+    "en": "Planche Lean"
+   },
+   "purpose": "练肩前侧和手腕，团身俄挺前的一级（初级前倾）",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌",
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus",
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 10,
+    "restSeconds": 90
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     4
+    ],
+    "seconds": [
+     10,
+     15
+    ],
+    "restSeconds": [
+     60,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，肩膀往前移过手腕",
+     "脚尖踩住垫子往前滚，整个人一起往前走，先过手腕一个拳头左右就够了。",
+     "肩胛骨把地推开、往下压，别让肩膀往耳朵那边耸。",
+     "屁股微微往里收，从头到脚跟一条线，手指往外转一点手腕更舒服。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕吃不住就少往前一点，从过手腕 5 厘米开始"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-straddle-planche",
+   "name": {
+    "zh": "分腿俄挺",
+    "en": "Straddle Planche"
+   },
+   "purpose": "团身俄挺之后的下一级，练肩和腹部撑起整个身体",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌",
+    "腹直肌（含深层腹横肌）"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus",
+    "abs"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 5,
+    "restSeconds": 90
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     5
+    ],
+    "seconds": [
+     3,
+     8
+    ],
+    "restSeconds": [
+     90,
+     120
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，肩膀往前倾过手，腿伸直往两边打开",
+     "手把地推开，肩膀往下压、背微微拱，屁股夹紧往下收。",
+     "身体和地面平，屁股跟肩一样高，重量压在手掌上，别往脚那边掉。",
+     "手指往两边转开一点，手腕会舒服些；撑不住就先单腿伸出去。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕、肩前侧疼就退回团身版"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": "t-tuck-planche",
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-pbar-support-swing",
+   "name": {
+    "zh": "双杠支撑摆动",
+    "en": "Parallel Bar Support Swing"
+   },
+   "purpose": "练手臂撑住时身体还能摆，像真实支撑那样",
+   "category": "strength",
+   "muscles": [
+    "肱三头肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "triceps",
+    "deltoids"
+   ],
+   "equipment": [
+    "dip-bars"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     10,
+     20
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂一直锁直，以肩为轴整个人前后摆",
+     "肩往下压，离耳朵远，肩膀一直停在手的正上方。",
+     "腿并拢，从肩到脚一根棍，往前别折腰，往后别塌腰。",
+     "先小幅摆，前后一样高，都别高过杠面。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩膀前侧疼就把幅度改小"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-hanging-leg-raise",
+   "name": {
+    "zh": "悬垂举腿",
+    "en": "Hanging Leg Raise"
+   },
+   "purpose": "练大腿前侧和腹部抬腿的耐力，腿能扫得过去",
+   "category": "strength",
+   "muscles": [
+    "髋屈肌",
+    "腹直肌（含深层腹横肌）"
+   ],
+   "muscleGroups": [
+    "hip-flexors",
+    "abs"
+   ],
+   "equipment": [
+    "pullup-bar"
+   ],
+   "position": "hanging",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 8,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     60,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "挂在杠上先把肩往下压，腿并拢伸直抬到和地面平",
+     "腿抬起来的时候屁股往后坐一点，身体别前后晃。",
+     "抬到平停一秒，再用三秒慢慢放下来，放到底先停稳再抬下一个。",
+     "直腿抬不到平，就先屈膝抬。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手握不住就先做屈膝版，组数少一点"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-straddle-active-lift",
+   "name": {
+    "zh": "分腿坐姿抬腿",
+    "en": "Straddle Active Leg Lift"
+   },
+   "purpose": "练腿张开的时候自己还能抬起来，换腿才扫得开",
+   "category": "mobility",
+   "muscles": [
+    "内收肌群",
+    "臀中肌 · 髋外展",
+    "髋屈肌"
+   ],
+   "muscleGroups": [
+    "adductors",
+    "hip-abductors",
+    "hip-flexors"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     6,
+     10
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "腿伸直，膝盖脚尖朝天，抬起一条腿离地几厘米",
+     "坐直，背挺起来，屁股可以靠着墙。",
+     "手放在屁股两边的地上，就搭着，别用手把自己撑起来。",
+     "抬起来停两秒，慢慢放下，换另一条腿，左右各一下算 1 次。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "背挺不直，就屁股靠着墙坐"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-seated-shoulder-ext-slide",
+   "name": {
+    "zh": "后撑肩部滑行",
+    "en": "Seated Back-Support Slide"
+   },
+   "purpose": "练肩膀往后打开时还能撑得住，前侧支撑用得上",
+   "category": "mobility",
+   "muscles": [
+    "三角肌",
+    "胸大肌",
+    "肱二头肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "chest",
+    "biceps"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     6,
+     8
+    ],
+    "restSeconds": [
+     60,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手撑身后指尖朝后，手臂伸直，屁股慢慢往前滑",
+     "手掌贴死地面别动，滑到肩膀前面拉紧就停。",
+     "停住的时候手往下压地，肩膀往下沉、胸口挺起来；下巴微收，眼睛看前面。",
+     "撑住了再用手推着屁股慢慢滑回来。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩前侧刺痛就马上停，滑得短一点"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-self-resisted-wrist-flexion",
+   "name": {
+    "zh": "自阻力手腕上卷",
+    "en": "Self-Resisted Wrist Curl"
+   },
+   "purpose": "不用器械也能给手腕前侧加力，撑地时手腕更扛得住",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "chair"
+   ],
+   "position": "seated",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     3
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂放大腿上，掌心朝上，另一只手压住掌心",
+     "身体往前倾，手腕伸出膝盖外，手先垂下去。",
+     "底下的手数两下卷到最高，停一下，再数三下慢慢放回；上面的手一直往下顶。",
+     "前臂一直贴着大腿，手肘和肩膀都别动，只有手腕在走。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "留两三下余力，手腕疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-self-resisted-wrist-extension",
+   "name": {
+    "zh": "自阻力手腕上抬",
+    "en": "Self-Resisted Wrist Lift"
+   },
+   "purpose": "不用器械给手背那侧加力，撑地时手腕更稳",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "chair"
+   ],
+   "position": "seated",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     3
+    ],
+    "reps": [
+     8,
+     12
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂放大腿上，掌心朝下，另一只手压住手背",
+     "身体往前倾，手腕伸出膝盖外，手先往下垂。",
+     "手背往上抬，数两下抬到最高，停一下，再数三下慢慢放回；上面的手一直往下顶。",
+     "前臂一直贴着大腿，手肘和肩膀都别动，只有手腕在走。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "留两三下余力，手腕疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-seated-forearm-rotation",
+   "name": {
+    "zh": "坐姿哑铃翻手腕",
+    "en": "Seated Dumbbell Palm Turn"
+   },
+   "purpose": "练前臂把手掌翻过来的力量，换手时手掌能转到位再落地",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "dumbbell",
+    "chair"
+   ],
+   "position": "seated",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 10,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     3
+    ],
+    "reps": [
+     10,
+     12
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "前臂贴住大腿不动，只把手掌翻过来",
+     "握住小哑铃中间，掌心朝上，慢慢翻到掌心朝下，再慢慢翻回来，一来一回算一次。",
+     "手腕别往上翘也别往下勾，像拧门把手一样整个前臂在转。",
+     "想加难度就握住哑铃一端，离重的那头越远越难。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "没有哑铃用锤子或水瓶也行"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "thomas:supplement-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-chair-support-hold",
+   "name": {
+    "zh": "双椅直臂支撑",
+    "en": "Chair Support Hold"
+   },
+   "purpose": "练直臂支撑和肩往下压的力量，为双杠和托马斯支撑打底",
+   "category": "strength",
+   "muscles": [
+    "肱三头肌",
+    "斜方肌中下部 · 菱形肌",
+    "背阔肌"
+   ],
+   "muscleGroups": [
+    "triceps",
+    "scapular",
+    "lats"
+   ],
+   "equipment": [
+    "chair"
+   ],
+   "position": "support",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 15,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     15,
+     15
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，肩往下沉，别耸肩",
+     "两把一样高的椅子靠墙放稳，手掌平放在椅面上，手指朝前。",
+     "把椅面往下推，脖子拉长，身体跟着往上升一点。",
+     "膝盖弯着，脚离地，撑不住时脚尖轻轻点地就行。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "椅子不稳就别撑；手腕疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-pseudo-planche-pushup",
+   "name": {
+    "zh": "伪俄挺俯卧撑",
+    "en": "Pseudo Planche Push-Up"
+   },
+   "purpose": "练肩前侧、前锯肌和直臂前倾力量，托马斯移重的高级辅助",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌",
+    "肱三头肌",
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus",
+    "triceps",
+    "chest"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 90
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     6,
+     6
+    ],
+    "restSeconds": [
+     90,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "先往前倾，肩在手前面再往下放",
+     "手放在腰两侧，指尖朝外，手腕不舒服就再往外转一点。",
+     "屈肘时手肘贴着身体往后，推起时把地推开。",
+     "脚尖踩住垫子，从头到脚跟一条线，别塌腰也别撅屁股。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕承重很大，先活动手腕；疼就停或减小前倾"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-tuck-lsit-hold",
+   "name": {
+    "zh": "团身 L 撑",
+    "en": "Tuck L-Sit Hold"
+   },
+   "purpose": "练直臂把身体撑离地面和收腹抬腿，L 撑的入门",
+   "category": "strength",
+   "muscles": [
+    "腹直肌（含深层腹横肌）",
+    "髋屈肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "abs",
+    "hip-flexors",
+    "triceps"
+   ],
+   "equipment": [
+    "mat",
+    "block"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     10,
+     10
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，把砖往下推，膝盖收到胸前",
+     "手掌平放在身体两侧的瑜伽砖（或厚书）上，手指朝前。",
+     "肩往下压，先把屁股撑离地，再把两脚抬起来。",
+     "脚抬不起来先抬一只脚，另一只脚尖点地。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕疼就停；砖要放稳不滑"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-wall-handstand-hold",
+   "name": {
+    "zh": "面墙靠墙倒立",
+    "en": "Chest-to-Wall Handstand Hold"
+   },
+   "purpose": "练倒立时直臂顶肩和身体一条线，为托马斯倒立类动作打底",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "肱三头肌",
+    "斜方肌中下部 · 菱形肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "triceps",
+    "scapular"
+   ],
+   "equipment": [
+    "wall",
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 20,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，肩往上顶，耳朵在两臂中间",
+     "胸口和肚子朝墙，手离墙约一掌长，手指背离墙、略向外转。",
+     "收紧肚子和屁股，从手到脚尖一条线，别塌腰。",
+     "先练爬墙到一半；累了随时侧翻或沿墙走下来。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "先学会侧翻或走下墙的退出，再倒立；手腕或肩疼就停；高血压、青光眼等不宜倒立"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-wall-handstand-shift",
+   "name": {
+    "zh": "靠墙倒立移重",
+    "en": "Chest-to-Wall Handstand Weight Shift"
+   },
+   "purpose": "练倒立时把重心移到单手、支撑臂锁直，为托马斯单手支撑打底",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "肱三头肌",
+    "斜方肌中下部 · 菱形肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "triceps",
+    "scapular"
+   ],
+   "equipment": [
+    "wall",
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": true,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 4,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     4,
+     4
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "支撑手臂锁直，重心慢慢移到这只手上",
+     "胸腹朝墙倒立，手离墙约一掌长、手指背离墙，肩往上顶。",
+     "另一只手掌根抬起，只留指尖点地；停一下再回中间换边。",
+     "肩累了就下墙休息。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "先能稳定保持面墙倒立 30 秒再练；手腕或肩疼就停"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": "t-wall-handstand-hold",
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-elevated-pike-hold",
+   "name": {
+    "zh": "脚垫高派克支撑",
+    "en": "Feet-Elevated Pike Hold"
+   },
+   "purpose": "练倒立方向的直臂顶肩，倒立前的入门版",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "triceps"
+   ],
+   "equipment": [
+    "chair",
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 20,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直往上顶肩，耳朵在两臂之间",
+     "椅子靠墙放稳，前脚掌踩在椅面上。",
+     "屁股顶高，身体成倒 V，髋角差不多 90 度。",
+     "腿伸直，背别塌。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "椅子要靠墙放稳；手腕或肩疼就停"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-pike-hold",
+   "name": {
+    "zh": "地面派克支撑",
+    "en": "Pike Hold"
+   },
+   "purpose": "练直臂顶肩，倒立和派克俯卧撑前的入门",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "triceps"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 20,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直往上顶肩，屁股是最高点",
+     "手与肩同宽撑地，脚往手的方向走近一点。",
+     "耳朵在两臂之间，背别塌。",
+     "腿后侧太紧可以微微屈膝。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕或肩疼就停"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-kneeling-wrist-flexor-stretch",
+   "name": {
+    "zh": "跪姿前臂拉伸",
+    "en": "Kneeling Forearm Stretch"
+   },
+   "purpose": "拉开前臂内侧和手腕，撑地练习前后的放松",
+   "category": "stretch",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 2,
+    "seconds": 30,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     2
+    ],
+    "seconds": [
+     30,
+     30
+    ],
+    "restSeconds": [
+     15,
+     15
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手指朝膝盖，掌根压住地，臀部慢慢往后坐",
+     "跪撑，手放在肩膀下面，手掌转过来让手指朝向膝盖。",
+     "手肘伸直，肘窝朝前。",
+     "前臂里面有拉的感觉就停住，别弹。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕刺疼就少坐一点；有腕伤先问医生"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-step-jack-arm-circles",
+   "name": {
+    "zh": "低冲击开合踏步+大绕环",
+    "en": "Step Jack with Arm Circles"
+   },
+   "purpose": "不跳的全身热身：脚左右踏开、双臂上举和大绕环，把心率和肩膀一起热起来",
+   "category": "cardio",
+   "muscles": [
+    "三角肌",
+    "臀中肌 · 髋外展"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "hip-abductors"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 60,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     60,
+     60
+    ],
+    "restSeconds": [
+     15,
+     15
+    ]
+   },
+   "cues": {
+    "zh": [
+     "脚轮流往旁边踏开再收回，双臂伸直举过头",
+     "一只脚踏出时另一只脚始终踩在地上，不跳。",
+     "后半分钟手臂换成大绕环：手臂伸直，掌心朝外，绕得越大越好。",
+     "支撑腿膝盖微弯，身体站高，别弓背。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩膀有疼痛就把绕环改小"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-neck-wrist-finger-wakeup",
+   "name": {
+    "zh": "站姿颈腕指唤醒",
+    "en": "Standing Neck, Wrist & Finger Wake-Up"
+   },
+   "purpose": "撑地和地板动作前，把脖子、手腕和手指轻轻活动开",
+   "category": "mobility",
+   "muscles": [
+    "颈部",
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "neck",
+    "forearms"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 45,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     45,
+     45
+    ],
+    "restSeconds": [
+     15,
+     15
+    ]
+   },
+   "cues": {
+    "zh": [
+     "脖子半圈慢绕，只在前面绕，不往后仰",
+     "耳朵朝右肩，下巴经过胸口，再到左肩，来回慢慢绕。",
+     "双手在胸前合掌，手腕带着手画横着的 8 字。",
+     "双臂前伸，用力握拳再把手指张到最大，重复几次。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "脖子发麻、头晕或疼就停下"
+   ],
+   "contraindications": [
+    "颈"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-wide-side-squat-shift",
+   "name": {
+    "zh": "宽距侧蹲左右移重心",
+    "en": "Wide Side Squat Shift"
+   },
+   "purpose": "打开大腿内侧和髋，左右移重心，为腿部动作热身",
+   "category": "mobility",
+   "muscles": [
+    "内收肌群",
+    "股四头肌",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "adductors",
+    "quadriceps",
+    "glute-max"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 5,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "reps": [
+     5,
+     5
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "两脚宽站脚尖外转，蹲到大腿接近水平",
+     "站距约两倍肩宽，脚尖朝外大约 20 度。",
+     "伸直那条腿膝盖伸直，脚尖朝上，脚跟着地。",
+     "胸口抬起，双手前伸帮助平衡，蹲那侧脚跟踩实。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝盖或大腿内侧疼就蹲浅一点"
+   ],
+   "contraindications": [
+    "膝",
+    "大腿内侧"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-standing-neck-side-stretch",
+   "name": {
+    "zh": "站姿颈侧拉伸",
+    "en": "Standing Neck Side Stretch"
+   },
+   "purpose": "放松脖子侧面和肩膀上方，练完撑地动作后舒缓肩颈",
+   "category": "stretch",
+   "muscles": [
+    "颈部"
+   ],
+   "muscleGroups": [
+    "neck"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 30,
+    "restSeconds": 10
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     30,
+     30
+    ],
+    "restSeconds": [
+     10,
+     10
+    ]
+   },
+   "cues": {
+    "zh": [
+     "耳朵朝肩膀，手轻搭头侧，另一肩下沉",
+     "站直，头往一侧歪，脸朝正前方，不转头、不低头。",
+     "同侧的手越过头顶轻轻搭在头另一侧，只是搭着，不用力拉。",
+     "另一只手往地面方向伸长，肩膀往下沉。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手臂发麻或刺疼就减小幅度"
+   ],
+   "contraindications": [
+    "颈"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-standing-wrist-flexor-stretch",
+   "name": {
+    "zh": "站姿屈腕拉伸",
+    "en": "Standing Wrist Flexor Stretch"
+   },
+   "purpose": "拉开前臂内侧和手腕，撑地训练后放松",
+   "category": "stretch",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 30,
+    "restSeconds": 10
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     30,
+     30
+    ],
+    "restSeconds": [
+     10,
+     10
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直掌心朝前，另一手把手指往回拉",
+     "手臂伸直抬到肩高，手腕往上翻，掌心朝前，指尖朝下。",
+     "另一只手握住手指，轻轻往身体方向拉，前臂里面有拉的感觉就够了。",
+     "手肘一直伸直，肩膀放松。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕刺疼就拉轻一点；有腕伤先问医生"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-side-lying-straight-leg-abduction",
+   "name": {
+    "zh": "侧卧直腿外展",
+    "en": "Side-Lying Straight-Leg Raise"
+   },
+   "purpose": "练臀部外侧，让髋在分腿和摆腿动作里更稳",
+   "category": "strength",
+   "muscles": [
+    "臀中肌 · 髋外展",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "hip-abductors",
+    "glute-max"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "side_lying",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "reps": [
+     10,
+     10
+    ],
+    "restSeconds": [
+     15,
+     15
+    ]
+   },
+   "cues": {
+    "zh": [
+     "脚尖朝前，脚跟带着直腿往上抬",
+     "侧躺，下面手臂撑着，上面的手扶在胯上，身体一条直线。",
+     "上面的腿伸直，脚尖朝前不朝天，腿略在身体后方。",
+     "胯不往后翻，腿慢慢落下，中间不在下面腿上休息。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "胯外侧刺疼就减小高度"
+   ],
+   "contraindications": [
+    "髋"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-kneeling-fist-plank",
+   "name": {
+    "zh": "跪姿拳面支撑",
+    "en": "Kneeling Knuckle Plank"
+   },
+   "purpose": "跪姿用拳头撑地，练手腕在直线上承重的力量，为拳撑和地面支撑打底",
+   "category": "core",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "kneeling",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 20,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "拳面撑地，手腕绝对直，手臂伸直",
+     "重心压在食指和中指的指根关节上，拳心相对。",
+     "拳头在肩膀正下方，前臂竖直。",
+     "双膝着垫，膝、髋、肩一条线，肚子收住。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "垫子太薄、指根硌疼就叠一层毛巾",
+    "手腕刺疼就停下，改用手掌撑"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-kneeling-wrist-pushup",
+   "name": {
+    "zh": "跪姿手腕俯卧撑",
+    "en": "Kneeling Wrist Push-Up"
+   },
+   "purpose": "跪姿撑地、手臂伸直，用手指把掌根抬起再慢慢放下，练手指和前臂，让手腕更能扛撑地动作",
+   "category": "strength",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "kneeling",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "reps": [
+     10,
+     10
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直，手指压地把掌根抬到指根",
+     "双膝着垫，膝、髋、肩一条线，手在肩下方，手指朝前。",
+     "掌根抬到只剩手指贴地，手指根部不离开垫子。",
+     "放下用 3 秒左右，掌根一点点贴回垫子；两只手同时做。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕或手指关节刺疼就减小抬起高度"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-planche-lean-hold",
+   "name": {
+    "zh": "前倾支撑",
+    "en": "Planche Lean Hold"
+   },
+   "purpose": "直臂撑地、肩膀前移过手腕并停住，练肩前侧和手腕的承重，为 Flare 和俄挺打底",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 15,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     15,
+     15
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "锁肘，肩膀前移过手腕，身体一条线",
+     "手指朝外 45 到 90 度，绝不朝后。",
+     "肩胛往前推开、往下压，背微微拱起。",
+     "脚尖撑地，臀部和腿夹紧，不塌腰。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕刺疼就减小前倾"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-forearm-side-plank",
+   "name": {
+    "zh": "前臂侧桥（直腿）",
+    "en": "Forearm Side Plank"
+   },
+   "purpose": "直腿侧桥，练身体侧面和肩膀的支撑力，让单手和侧向支撑更稳",
+   "category": "core",
+   "muscles": [
+    "腹斜肌"
+   ],
+   "muscleGroups": [
+    "obliques"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "side_lying",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 20,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     15,
+     15
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手肘在肩正下方，髋抬高，头到脚一条线",
+     "侧躺，前臂撑地朝前，双腿伸直并拢。",
+     "胸口朝正前方，不往前扑也不往后倒。",
+     "上面的手臂伸直指向天花板，或扶在髋上。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩膀疼就改成屈膝侧桥"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-straight-arm-side-plank-switch",
+   "name": {
+    "zh": "直臂侧桥转换",
+    "en": "Plank to Side Plank Switch"
+   },
+   "purpose": "从直臂平板整体转成直臂侧桥再转回来，练单手支撑时肩膀和身体侧面的稳定，接近 Flare 换手的感觉",
+   "category": "core",
+   "muscles": [
+    "腹斜肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "obliques",
+    "deltoids"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": true,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 6,
+    "restSeconds": 45
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "reps": [
+     6,
+     6
+    ],
+    "restSeconds": [
+     45,
+     45
+    ]
+   },
+   "cues": {
+    "zh": [
+     "先把手肘锁直，整个身体一起转",
+     "平板时手在肩下，身体一条线，脚尖撑地。",
+     "转成侧桥：撑地的肩膀叠在手正上方，上面的手指向天花板，髋保持高。",
+     "不做俯卧撑，转回平板后换另一边。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕或肩膀疼就改成前臂侧桥"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": "t-forearm-side-plank",
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-prone-t-w",
+   "name": {
+    "zh": "俯卧 T-W",
+    "en": "Prone T-W Raise"
+   },
+   "purpose": "趴着把手臂摆成 T 和 W 抬离垫子，练肩胛和肩后侧，让撑地和倒立时肩膀更稳",
+   "category": "strength",
+   "muscles": [
+    "斜方肌中下部 · 菱形肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "scapular",
+    "deltoids"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     1
+    ],
+    "reps": [
+     10,
+     10
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "肩胛往中间夹，手臂整条抬离垫子",
+     "T：双臂伸直向两侧平举，拇指朝上。",
+     "W：手肘收在身体两侧，弯成直角，前臂向上转，让手比手肘高。",
+     "额头朝下、脖子放长，每个位置在最高处停 2 秒。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩前侧刺疼就降低抬起高度"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-pseudo-planche-pushup-v2",
+   "name": {
+    "zh": "伪俄挺俯卧撑（指尖朝外）",
+    "en": "Pseudo Planche Push-Up (Fingers Out)"
+   },
+   "purpose": "指尖朝外的伪俄挺俯卧撑，练肩前侧、前锯肌和直臂前倾力量，手腕比指尖朝后的版本更好适应",
+   "category": "strength",
+   "muscles": [
+    "三角肌",
+    "前锯肌",
+    "肱三头肌",
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "deltoids",
+    "serratus",
+    "triceps",
+    "chest"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "prone",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 6,
+    "restSeconds": 90
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "reps": [
+     6,
+     6
+    ],
+    "restSeconds": [
+     90,
+     90
+    ]
+   },
+   "cues": {
+    "zh": [
+     "指尖朝外，先往前倾，肩在手前面再往下放",
+     "手放在腰两侧，指尖朝向身体外侧，不要朝脚的方向。",
+     "屈肘时手肘贴着身体往后，推起时把地推开。",
+     "脚尖踩住垫子，从头到脚跟一条线，别塌腰也别撅屁股。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕承重很大，先活动手腕；疼就停或减小前倾"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-floor-tuck-hold",
+   "name": {
+    "zh": "地面团身支撑",
+    "en": "Floor Tuck Support Hold"
+   },
+   "purpose": "双手直接撑地面，把身体撑离地、收腿悬空，练直臂下压和收腹，为 L 撑打底",
+   "category": "strength",
+   "muscles": [
+    "腹直肌（含深层腹横肌）",
+    "髋屈肌",
+    "肱三头肌"
+   ],
+   "muscleGroups": [
+    "abs",
+    "hip-flexors",
+    "triceps"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 3,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 3,
+    "seconds": 10,
+    "restSeconds": 60
+   },
+   "doseRange": {
+    "sets": [
+     3,
+     3
+    ],
+    "seconds": [
+     10,
+     10
+    ],
+    "restSeconds": [
+     60,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂锁直，把地往下推，臀和脚都离地",
+     "坐在垫上，手掌平放在髋两侧的垫子上，手指朝前。",
+     "肩往下压，先把屁股撑离地，再把膝盖收向胸口、两脚离地。",
+     "上身可以稍微前倾，臀离地几厘米就够。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕疼就停；撑不起来先用砖或厚书垫高手（团身 L 撑）"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": "t-tuck-lsit-hold",
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-supine-straddle-open-close",
+   "name": {
+    "zh": "仰卧直腿大分腿慢开合",
+    "en": "Supine Straddle Open-Close"
+   },
+   "purpose": "仰卧把直腿向两侧打开再合拢，练大腿内侧的控制和髋的开度，为分腿类动作打底",
+   "category": "mobility",
+   "muscles": [
+    "内收肌群"
+   ],
+   "muscleGroups": [
+    "adductors"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 8,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     2
+    ],
+    "reps": [
+     8,
+     8
+    ],
+    "restSeconds": [
+     30,
+     30
+    ]
+   },
+   "cues": {
+    "zh": [
+     "腿伸直，两腿匀速向两侧打开再合拢",
+     "仰卧，手臂放在身体两侧掌心贴垫，双腿伸直举到竖直。",
+     "膝盖一直伸直，两条腿同时打开，开到大腿内侧有拉伸感。",
+     "下背和骨盆贴住垫子，不左右晃。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腿后侧太紧举不到竖直，可以微屈膝或腿放低一点"
+   ],
+   "contraindications": [],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-standing-clasp-chest-opener",
+   "name": {
+    "zh": "背后十指交扣扩胸",
+    "en": "Standing Clasped-Hands Chest Opener"
+   },
+   "purpose": "双手背后交扣把手臂向后拉开，拉伸胸口和肩前侧，练完撑地和俯卧撑类动作后放松",
+   "category": "stretch",
+   "muscles": [
+    "胸大肌"
+   ],
+   "muscleGroups": [
+    "chest"
+   ],
+   "equipment": [],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "office",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 2,
+    "seconds": 20,
+    "restSeconds": 10
+   },
+   "doseRange": {
+    "sets": [
+     2,
+     2
+    ],
+    "seconds": [
+     20,
+     20
+    ],
+    "restSeconds": [
+     10,
+     10
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手臂伸直往后拉，肩胛夹紧，挺胸",
+     "站直，双手在背后十指交扣，掌心相对。",
+     "伸直手臂，交扣的手往后下方拉离身体。",
+     "肩膀往下沉，头保持中立，上身不往前弯。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "肩前侧刺疼就减小幅度；手扣不上可以握一条毛巾"
+   ],
+   "contraindications": [
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:moves-r3"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
    }
   }
  ]

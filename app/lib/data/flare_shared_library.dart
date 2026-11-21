@@ -170,10 +170,7 @@ class FlareShared {
     AssetBundle? bundle,
     coach.PoseHubAppTestCatalog? activeCatalog,
   }) async {
-    final pack = await withFlareSupplementalActions(
-      activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle),
-      bundle: bundle,
-    );
+    final pack = activeCatalog ?? await loadFlarePublicCatalog(bundle: bundle);
     final rhythms = flarePublicRhythms(pack);
     final catalog = flareCoachCatalogFromPublic(pack, rhythms: rhythms);
     return FlareShared._(

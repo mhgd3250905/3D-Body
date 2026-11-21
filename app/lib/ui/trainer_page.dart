@@ -33,6 +33,7 @@ class FlareTrainingPage extends StatefulWidget {
     this.startInPreview = false,
     this.previewLocked = false,
     this.supplementalPlan,
+    this.planSnapshot,
     this.onContinueCooldown,
     this.voiceOutput,
     this.keepAlive = true,
@@ -44,6 +45,7 @@ class FlareTrainingPage extends StatefulWidget {
   final bool startInPreview;
   final bool previewLocked;
   final FlarePlan? supplementalPlan;
+  final sdk.PoseHubPlanSnapshot? planSnapshot;
 
   /// Records the user's next destination once the SDK accepts the saved result.
   /// The opener can then navigate after the SDK route finishes closing.
@@ -185,6 +187,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         voice,
         supplemental,
         language: language,
+        planSnapshot: widget.planSnapshot,
       );
     }
     return _PlayerData(

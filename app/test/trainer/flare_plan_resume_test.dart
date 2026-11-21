@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flare/data/catalog.dart';
@@ -9,6 +10,8 @@ import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/engine.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
+    show PoseHubPlanSnapshot;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -42,12 +45,14 @@ void main() {
     List<TrainingRoutine> routines = const [],
     List<TrainingSession> legacy = const [],
     String preferred = 'A',
+    PoseHubPlanSnapshot? snapshot,
   }) => FlarePlanResume.resolve(
     catalog: catalog,
     sessions: sessions,
     routines: routines,
     legacySessions: legacy,
     preferredSceneTier: preferred,
+    restoredSnapshot: snapshot,
   );
 
   test('no history and skip-only results have no recent plan', () {
@@ -279,6 +284,82 @@ void main() {
       three[2],
     ]);
   });
+
+  test('a continued online plan uses only its recorded snapshot', () {
+    final row = <String, dynamic>{
+      'id': 'general-warmup',
+      'kind': 'warmup',
+      'estimatedMinutes': 2,
+      'items': [
+        {'drill': 'forearms-A', 'sets': 1, 'restSeconds': 0, 'seconds': 20},
+        {'drill': 'w-dead-bug', 'sets': 1, 'restSeconds': 0, 'reps': 8},
+        {'drill': 'h-catcow-quad', 'sets': 1, 'restSeconds': 0, 'reps': 5},
+      ],
+    };
+    final pinned = _snapshot(row);
+    final replacement = _snapshot({...row, 'estimatedMinutes': 3});
+    final original = trainingPlanFromFlarePlan(
+      plan: FlarePlan.fromJson(row),
+      title: 'Warm-up',
+      sceneTier: 'A',
+      catalog: catalog,
+      sourceCatalog: source,
+      rhythms: rhythms,
+    );
+    final recorded = FlarePlanResume.recordAuthored(
+      original,
+      sceneTier: 'A',
+      snapshotId: pinned.id,
+    );
+    final initial = _result(recorded, completed: {(0, 0)});
+    final unresolved = resolve(sessions: [initial])!;
+    expect(unresolved.snapshotId, pinned.id);
+    expect(unresolved.canContinue, isFalse);
+    expect(
+      resolve(sessions: [initial], snapshot: replacement)!.canContinue,
+      isFalse,
+    );
+
+    final first = resolve(sessions: [initial], snapshot: pinned)!;
+    expect(first.planSnapshot, same(pinned));
+    expect(first.authoredPlan!.estimatedMinutes, 2);
+    final continued = first.continueFrom(original, rhythms: rhythms)!;
+    expect(continued.items, original.items.skip(1));
+    final next = _result(continued, attempt: 1, completed: {(0, 0)});
+    final second = resolve(sessions: [initial, next], snapshot: pinned)!;
+    expect(second.planSnapshot, same(pinned));
+    expect(
+      second.continueFrom(original, rhythms: rhythms)!.items.single,
+      original.items.last,
+    );
+  });
+}
+
+PoseHubPlanSnapshot _snapshot(Map<String, dynamic> row) {
+  final voice = utf8.encode('{"schema":1,"files":[]}');
+  final plan = utf8.encode(
+    jsonEncode({
+      'schema': 1,
+      'app': 'flare',
+      'version': 'flare-plans-r1',
+      'min_catalog_pack': 'r2-v22',
+      'voice_manifest': {
+        'url': 'https://example.test/voice.json',
+        'bytes': voice.length,
+        'sha256': uc.sha256Hex(voice),
+      },
+      'plans': [
+        row,
+        for (final (id, tier) in [
+          ('general-cooldown', 1),
+          ('general-cooldown-t2', 2),
+          ('general-cooldown-t3', 3),
+        ])
+          {...row, 'id': id, 'kind': 'cooldown', 'tier': tier},
+      ],
+    }),
+  );
+  return PoseHubPlanSnapshot.fromBytes(plan, voice, minSdk: '1.0.2');
 }
 
 sdk.SessionResult _result(

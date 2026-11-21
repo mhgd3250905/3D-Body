@@ -212,7 +212,7 @@ void main() {
     Future<Map<String, dynamic>> loadData(String name) async =>
         jsonDecode(await rootBundle.loadString('assets/data/$name.json'))
             as Map<String, dynamic>;
-    final planData = await loadData('flare-plans');
+    final planData = await loadData('flare-local-plans');
     final pilotPlans = (planData['plans'] as List).where((plan) {
       final target = (plan as Map)['target'];
       return target == 11 || target == 'deltoids';
