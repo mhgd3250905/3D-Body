@@ -47,8 +47,7 @@ class FlarePlan {
   /// Use the SDK item ID so reposition times also work after resuming a
   /// partial plan, where block and item indices may change.
   Map<String, FlareStretchPosture> stretchPosturesForScene(String scene) => {
-    for (final item in items)
-      item.trainingDrillForScene(scene): ?item.posture,
+    for (final item in items) item.trainingDrillForScene(scene): ?item.posture,
   };
 
   factory FlarePlan.fromJson(Map<String, dynamic> json) {
@@ -285,6 +284,53 @@ enum FlarePlanMovement {
   threeWayWristRocks,
 }
 
+/// An ordered movement within one authored work interval.
+class FlarePlanWorkSegment {
+  const FlarePlanWorkSegment._({
+    required this.id,
+    required this.label,
+    this.seconds,
+    this.reps,
+    this.rhythm,
+  });
+
+  final String id;
+  final String label;
+  final int? seconds;
+  final int? reps;
+  final Map<String, dynamic>? rhythm;
+
+  factory FlarePlanWorkSegment._fromJson(
+    Map<String, dynamic> json,
+    String exercise,
+  ) {
+    final id = json['id'];
+    final label = json['label'];
+    final seconds = json['seconds'];
+    final reps = json['reps'];
+    final rhythm = json['rhythm'];
+    if (id is! String ||
+        id.isEmpty ||
+        label is! String ||
+        label.isEmpty ||
+        (reps == null) == (seconds == null) ||
+        (reps != null && (reps is! int || reps < 1)) ||
+        (seconds != null && (seconds is! int || seconds < 1)) ||
+        (rhythm != null && (reps == null || rhythm is! Map<String, dynamic>))) {
+      throw FormatException('Invalid work segment: $exercise/$id');
+    }
+    return FlarePlanWorkSegment._(
+      id: id,
+      label: label,
+      seconds: seconds as int?,
+      reps: reps as int?,
+      rhythm: rhythm == null
+          ? null
+          : Map.unmodifiable(rhythm as Map<String, dynamic>),
+    );
+  }
+}
+
 /// A complete dose, independent of the drill's catalog defaults.
 class FlarePlanDose {
   const FlarePlanDose._({
@@ -296,6 +342,7 @@ class FlarePlanDose {
     this.recommendedMin,
     this.recommendedMax,
     required this.repPositions,
+    required this.workSegments,
     this.lastPositionHoldSeconds,
     this.rhythm,
     this.movement,
@@ -311,6 +358,7 @@ class FlarePlanDose {
   final int? recommendedMin;
   final int? recommendedMax;
   final List<String> repPositions;
+  final List<FlarePlanWorkSegment> workSegments;
   final int? lastPositionHoldSeconds;
   final Map<String, dynamic>? rhythm;
   final FlarePlanMovement? movement;
@@ -329,6 +377,7 @@ class FlarePlanDose {
     final recommendedMin = json['recommendedMin'];
     final recommendedMax = json['recommendedMax'];
     final repPositions = json['repPositions'] ?? const [];
+    final workSegments = json['workSegments'] ?? const [];
     final lastPositionHoldSeconds = json['lastPositionHoldSeconds'];
     final rhythm = json['rhythm'];
     final amount = reps ?? seconds;
@@ -361,6 +410,10 @@ class FlarePlanDose {
         repPositions.any((value) => value is! String || value.isEmpty) ||
         repPositions.toSet().length != repPositions.length ||
         (repPositions.isNotEmpty && reps == null) ||
+        workSegments is! List ||
+        workSegments.any((segment) => segment is! Map<String, dynamic>) ||
+        (workSegments.isNotEmpty &&
+            (seconds == null || perSide != false || movement != null)) ||
         (lastPositionHoldSeconds != null &&
             (lastPositionHoldSeconds is! int ||
                 lastPositionHoldSeconds < 1 ||
@@ -378,6 +431,21 @@ class FlarePlanDose {
         }) {
       throw FormatException('Invalid Flare plan dose: $label');
     }
+    final parsedSegments = [
+      for (final segment in workSegments)
+        FlarePlanWorkSegment._fromJson(segment as Map<String, dynamic>, label),
+    ];
+    if (parsedSegments.map((segment) => segment.id).toSet().length !=
+            parsedSegments.length ||
+        (parsedSegments.isNotEmpty &&
+            parsedSegments.every((segment) => segment.seconds != null) &&
+            parsedSegments.fold<int>(
+                  0,
+                  (sum, segment) => sum + segment.seconds!,
+                ) !=
+                seconds)) {
+      throw FormatException('Invalid work segment total: $label');
+    }
     return FlarePlanDose._(
       sets: sets,
       reps: reps as int?,
@@ -387,6 +455,7 @@ class FlarePlanDose {
       recommendedMin: recommendedMin as int?,
       recommendedMax: recommendedMax as int?,
       repPositions: List.unmodifiable(repPositions.cast<String>()),
+      workSegments: List.unmodifiable(parsedSegments),
       lastPositionHoldSeconds: lastPositionHoldSeconds as int?,
       rhythm: rhythm == null
           ? null

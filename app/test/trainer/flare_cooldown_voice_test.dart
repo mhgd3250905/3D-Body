@@ -10,124 +10,163 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'the cooldown player schedules each authored guide and timed PNF',
+    'cooldown announcements follow the actual tier, phase, and side',
     () async {
       final catalog = await Catalog.load();
       final shared = await FlareShared.load();
-      final voiceBase = await sdk.withPoseHubCatalogVoice(
+      final base = await sdk.withPoseHubCatalogVoice(
         await loadTrainerVoiceSource(language: 'zh', leftFirst: false),
         catalog: shared.pack,
       );
       for (final plan in catalog.flareCooldownPlans) {
         final source = await withSupplementalTrainerVoice(
-          voiceBase,
+          base,
           plan,
           language: 'zh',
         );
-        final script = buildCooldownTrainerScript(source, 'zh');
+        expect(hasFlarePlanAnnouncements(source), isTrue);
+        final byId = {
+          for (final item in plan.allItems)
+            item.trainingDrillForScene('A'): item,
+        };
         final mediaIds = {
           for (final item in plan.allItems)
             ...item.trainingMediaIdsForScene('A'),
         };
         bool known(String id) => shared.catalog[mediaIds[id] ?? id] != null;
-        final postures = plan.stretchPosturesForScene('A');
-        final builder = FlareCooldownSessionBuilder(
-          strengtheningRestSeconds: plan.strengtheningRestSeconds,
-          stretchPostures: postures,
-          rhythms: shared.rhythms,
-          known: known,
-          prepSeconds: 10,
-          switchSecondsFor: script.switchSecondsFor,
-          voiceGuideFor: source.voiceGuide,
-          guideSideSwitchSecondsFor: source.sideSwitchSecondsFor,
-        );
-        final (fullDuration, stretchDuration) = const {
-          1: (1503, 845),
-          2: (2440, 1155),
-          3: (2232, 1340),
-        }[plan.tier]!;
         for (final skip in [false, true]) {
           final session = expandSegmentedTrainingPlan(
             shared.authoredPlan(plan, catalog, 'A', skipStrengthening: skip),
             catalog,
             known: known,
           );
-          final phases = builder.phases(session);
+          final phases = FlareCooldownSessionBuilder(
+            strengtheningRestSeconds: plan.strengtheningRestSeconds,
+            stretchPostures: plan.stretchPosturesForScene('A'),
+            rhythms: shared.rhythms,
+            known: known,
+            prepSeconds: skip ? 5 : 10,
+          ).phases(session);
+          final script = buildSupplementalTrainerScript(
+            source,
+            'zh',
+            plan: plan,
+            phases: phases,
+          );
           final seconds = phases.fold(0.0, (sum, p) => sum + p.seconds);
-          final clips = phases
-              .expand((p) => script.cues(p, planSeconds: seconds))
-              .expand((v) => v.voiceClips)
-              .toSet();
-          expect(seconds, skip ? stretchDuration : fullDuration);
-          for (final item in skip ? plan.items : plan.allItems) {
-            final key = item.voiceKey!;
-            final played = clips.contains(key) ? key : '$key.short';
-            expect(clips, contains(played), reason: '${plan.id} ${item.drill}');
-            expect(source.line(key, lang: 'zh'), item.voiceCue);
-            final bytes = await rootBundle.load(
-              source.asset(played, lang: 'zh'),
-            );
-            expect(bytes.lengthInBytes, greaterThan(0));
-          }
-          final prep = phases.first;
-          expect(prep.kind, sdk.PhaseKind.prep);
-          expect(prep.seconds, 10);
-          expect(
-            script.cues(prep, planSeconds: seconds).expand((c) => c.voiceClips),
-            [source.drill(prep.exerciseId!, sdk.DrillLine.cue1)],
-          );
-          for (final phase in phases.where((p) => p.nextExerciseId != null)) {
-            final round = phase.kind == sdk.PhaseKind.roundRest;
-            final previous = postures[phase.doneExerciseId];
-            final samePosture =
-                previous != null && previous == postures[phase.nextExerciseId];
-            expect(
-              phase.seconds,
-              round
-                  ? (plan.tier == 1 ? 30 : 45)
-                  : samePosture
-                  ? 5
-                  : 10,
-            );
-            final nextKey = source.drill(
-              phase.exerciseId!,
-              sdk.DrillLine.cue1,
-            )!;
-            final guideKey = samePosture ? '$nextKey.short' : nextKey;
-            final transition = script.cues(phase, planSeconds: seconds);
-            final guide = transition.singleWhere(
-              (c) => c.voiceClips.contains(guideKey),
-            );
-            expect(
-              guide.at + source.total(guide.voiceClips, lang: 'zh'),
-              lessThan(phase.seconds),
-            );
-            if (!round) {
-              expect(transition.expand((c) => c.voiceClips), [guideKey]);
+          List<sdk.VoiceCue> cues(sdk.SessionPhase p) =>
+              script.cues(p, planSeconds: seconds);
+          final works = phases.where((p) => p.isWork);
+          String keyOf(sdk.SessionPhase p) =>
+              byId[p.item!.exerciseId]!.voiceKey!;
+          final starts = [
+            for (final p in phases)
+              if (p.kind == sdk.PhaseKind.prep || p.nextExerciseId != null) p,
+          ];
+          expect(phases.first.seconds, skip ? 5 : 10);
+          for (final phase in starts) {
+            final technique = keyOf(phase);
+            final intro = technique.contains('.stretch.')
+                ? '$technique.intro.${plan.tier}'
+                : '$technique.intro';
+            final spoken = cues(phase).expand((cue) => cue.voiceClips).toList();
+            expect(spoken, [
+              if (!skip && phase.kind == sdk.PhaseKind.prep)
+                'supplemental.cooldown.kickoff.${plan.strengtheningRounds}',
+              if (phase.kind == sdk.PhaseKind.roundRest)
+                'supplemental.cooldown.round.${phase.round}',
+              intro,
+            ], reason: '${plan.id}: $intro');
+            for (final cue in cues(
+              phase,
+            ).where((cue) => cue.voiceClips.isNotEmpty)) {
+              expect(
+                cue.at + source.total(cue.voiceClips, lang: 'zh'),
+                lessThan(phase.seconds),
+              );
             }
           }
-          for (final phase in phases.where(
-            (p) => p.kind == sdk.PhaseKind.switchSide,
+          for (final itemIndex in works.map((p) => p.itemIndex).toSet()) {
+            final occurrence = works.where((p) => p.itemIndex == itemIndex);
+            final key = keyOf(occurrence.first);
+            final all = occurrence
+                .expand(cues)
+                .expand((cue) => cue.clips)
+                .toList();
+            expect(all.where((clip) => clip == key), [
+              key,
+            ], reason: '${plan.id}: $key');
+            expect(
+              source.line(key, lang: 'zh'),
+              byId[occurrence.first.item!.exerciseId]!.voiceCue,
+            );
+            expect(
+              (await rootBundle.load(
+                source.asset(key, lang: 'zh'),
+              )).lengthInBytes,
+              greaterThan(0),
+            );
+          }
+          for (final phase in works.where(
+            (p) => p.side != null && p.segmentId != 'pnf-press',
           )) {
-            expect(phase.seconds, 5);
+            expect(
+              cues(phase).first.clips,
+              contains('chime.supplemental.side.${phase.side!.name}'),
+            );
           }
-          final pnf = phases.where(
-            (phase) => phase.isWork && phase.segmentId == 'pnf-press',
+          for (final phase in works.where(
+            (p) => p.rhythm?.alternatePair == true,
+          )) {
+            final beats = cues(phase)
+                .expand((cue) => cue.chimes)
+                .where((clip) => clip.startsWith('chime.supplemental.side.'));
+            final first = phase.rhythm!.pairFirstSide!;
+            final second = first == 'left' ? 'right' : 'left';
+            expect(beats, [
+              for (var rep = 0; rep < phase.reps!; rep++) ...[
+                'chime.supplemental.side.$first',
+                'chime.supplemental.side.$second',
+              ],
+            ]);
+          }
+          final allWork = works.expand(cues).expand((cue) => cue.clips).toSet();
+          expect(
+            allWork,
+            contains(
+              'chime.supplemental.cooldown.stretch.5.segment.wrist-extended',
+            ),
           );
-          if (plan.tier == 3) {
-            expect(pnf, hasLength(4));
-            for (final phase in pnf) {
-              expect(phase.seconds, 5);
-              final cue = script.cues(phase, planSeconds: seconds).single;
-              expect(cue.at, 0);
-              expect(cue.subtitle, flareCooldownPnfCue);
-              expect(source.total(cue.voiceClips, lang: 'zh'), lessThan(5));
-            }
-          } else {
-            expect(pnf, isEmpty);
+          expect(allWork, contains('supplemental.cooldown.stretch.13.breath'));
+          final pnf = works.where((p) => p.segmentId == 'pnf-press');
+          expect(pnf.length, plan.tier == 3 ? 4 : 0);
+          for (final phase in pnf) {
+            final cue = cues(phase).single;
+            expect(cue.voiceClips, ['supplemental.cooldown.pnf']);
+            expect(cue.at, 0);
+            expect(cue.subtitle, flareCooldownPnfCue);
+            expect(phase.seconds, 5);
           }
         }
       }
+    },
+  );
+
+  test(
+    'supplemental announcements do not replace the English source',
+    () async {
+      final catalog = await Catalog.load();
+      final base = await loadTrainerVoiceSource(
+        language: 'en',
+        leftFirst: false,
+      );
+      final source = await withSupplementalTrainerVoice(
+        base,
+        catalog.flareCooldownPlan,
+        language: 'en',
+      );
+      expect(source, same(base));
+      expect(hasFlarePlanAnnouncements(source), isFalse);
     },
   );
 }
