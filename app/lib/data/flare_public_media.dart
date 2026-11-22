@@ -29,15 +29,18 @@ abstract final class FlarePublicMedia {
 
   static Future<trainer.TrainingMediaPolicy> load({
     coach.PoseHubAppTestCatalog? activeCatalog,
+    AssetBundle? bundle,
     String? rootDirectory,
     bool prefetchBeforeTraining = false,
   }) async {
-    final catalog = activeCatalog ?? await loadFlarePublicCatalog();
+    final assets = bundle ?? rootBundle;
+    final catalog =
+        activeCatalog ?? await loadFlarePublicCatalog(bundle: assets);
     final bundled =
         trainer.poseHubPackVersionOf(catalog) ==
             PoseHubCatalogUpdates.bundledPackVersion
         ? catalog
-        : await loadFlareBundledPublicCatalog();
+        : await loadFlareBundledPublicCatalog(bundle: assets);
     final assetsBySha = {
       for (final action in bundled.allActions)
         action.cover.sha256: coverAssetFor(action.id),
@@ -47,13 +50,12 @@ abstract final class FlarePublicMedia {
     final repository = await trainer.TrainingMediaRepository.fromCatalog(
       catalog: catalog,
       catalogRevision: poseHubCatalogRevisionOf(catalog),
-      // The SDK resolves the media root from the catalogue in use.
       mediaBaseUrls: [trainer.PoseHubActionLibrary.mediaBaseUriFor(catalog)],
       rootDirectory: rootDirectory,
       bundledFileLoader: (file) async {
         final asset = assetsBySha[file.sha256];
         if (asset == null) return null;
-        final bytes = await rootBundle.load(asset);
+        final bytes = await assets.load(asset);
         return bytes.buffer.asUint8List(
           bytes.offsetInBytes,
           bytes.lengthInBytes,
@@ -63,7 +65,6 @@ abstract final class FlarePublicMedia {
     return _FlareTrainingMediaPolicy(
       repository: repository,
       bundled: bundled,
-      posterAssetRoot: coverRoot,
       prefetchBeforeTraining: prefetchBeforeTraining,
     );
   }
@@ -73,9 +74,8 @@ class _FlareTrainingMediaPolicy extends trainer.TrainingMediaPolicy {
   const _FlareTrainingMediaPolicy({
     required super.repository,
     required this.bundled,
-    required super.posterAssetRoot,
     required super.prefetchBeforeTraining,
-  });
+  }) : super(posterAssetRoot: FlarePublicMedia.coverRoot);
 
   final coach.PoseHubAppTestCatalog bundled;
 

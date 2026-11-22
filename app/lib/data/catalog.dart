@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
+    show PoseHubPlanSnapshot;
 
 import '../domain/catalog_models.dart';
 import '../domain/flare_plan.dart';
@@ -38,6 +40,8 @@ class Catalog {
     required this.curriculumNote,
     required this.period,
     Drill? straightLegFlare,
+    this.planSnapshot,
+    List<FlarePlan>? snapshotPlans,
   }) : straightLegFlare = straightLegFlare ?? flareV5Drill,
        sections = List.unmodifiable(sections),
        groups = List.unmodifiable(groups),
@@ -45,6 +49,9 @@ class Catalog {
        drills = List.unmodifiable(drills),
        stages = List.unmodifiable(stages),
        _flarePlans = List.unmodifiable(flarePlans),
+       _snapshotPlans = snapshotPlans == null
+           ? null
+           : List.unmodifiable(snapshotPlans),
        phaseKeys = List.unmodifiable(phaseKeys),
        tiers = Map.unmodifiable(tiers),
        _groups = {for (final value in groups) value.groupId: value},
@@ -70,6 +77,8 @@ class Catalog {
   final Drill straightLegFlare;
   final List<CourseStage> stages;
   final List<FlarePlan> _flarePlans;
+  final List<FlarePlan>? _snapshotPlans;
+  final PoseHubPlanSnapshot? planSnapshot;
   final List<PhaseKey> phaseKeys;
   final Map<String, String> tiers;
   final String note;
@@ -205,6 +214,8 @@ class Catalog {
           .toList(),
       phaseKeys: phaseKeys,
       flarePlans: _flarePlans,
+      planSnapshot: planSnapshot,
+      snapshotPlans: _snapshotPlans,
       tiers: tiers.map((key, value) => MapEntry(key, t(value))),
       note: t(note),
       drillNote: t(drillNote),
@@ -227,6 +238,56 @@ class Catalog {
   Lesson? lessonById(String id) => _lessons[id];
   CourseGate? gateById(String id) => _gates[id];
 
+  /// Legacy session IDs predate snapshot pinning and refer to these authored
+  /// plans. The online selection never replaces this resume fallback.
+  FlarePlan? bundledSupplementalPlanById(String id) => _flarePlans
+      .where((plan) => plan.isSupplemental && plan.id == id)
+      .firstOrNull;
+
+  Catalog withPlanSnapshot(PoseHubPlanSnapshot? snapshot) {
+    if (snapshot?.id == planSnapshot?.id) return this;
+    return Catalog._(
+      sections: sections,
+      groups: groups,
+      phases: phases,
+      drills: drills,
+      stages: stages,
+      flarePlans: _flarePlans,
+      phaseKeys: phaseKeys,
+      tiers: tiers,
+      note: note,
+      drillNote: drillNote,
+      curriculumNote: curriculumNote,
+      period: period,
+      straightLegFlare: straightLegFlare,
+      planSnapshot: snapshot,
+      snapshotPlans: snapshot == null ? null : readSupplementalPlans(snapshot),
+    );
+  }
+
+  static List<FlarePlan> readSupplementalPlans(PoseHubPlanSnapshot snapshot) {
+    final plans = _readFlarePlans(
+      {'version': 2, 'plans': snapshot.plans},
+      const {},
+      const {},
+    );
+    final ids = plans.map((plan) => plan.id).toSet();
+    if (snapshot.app != 'flare' ||
+        plans.length != 4 ||
+        plans.any((plan) => !plan.isSupplemental) ||
+        !ids.containsAll({
+          'general-warmup',
+          'general-cooldown',
+          'general-cooldown-t2',
+          'general-cooldown-t3',
+        }) ||
+        plans.where((plan) => plan.kind == FlarePlanKind.cooldown).length !=
+            3) {
+      throw const FormatException('Unexpected Flare channel plan selection');
+    }
+    return List.unmodifiable(plans);
+  }
+
   /// Canonical angle targets for the list. Mirrored phases remain reachable
   /// directly from their home phase, without duplicating the list rows.
   List<int> get flarePlanAngles => List.unmodifiable(
@@ -238,14 +299,30 @@ class Catalog {
     _flarePlans.map((plan) => plan.groupId).nonNulls.toSet(),
   );
 
+  FlarePlan? get flareWarmupPlan => (_snapshotPlans ?? _flarePlans)
+      .where((plan) => plan.kind == FlarePlanKind.warmup)
+      .firstOrNull;
+
+  List<FlarePlan> get flareCooldownPlans => List.unmodifiable(
+    (_snapshotPlans ?? _flarePlans).where(
+      (plan) => plan.kind == FlarePlanKind.cooldown,
+    ),
+  );
+
+  FlarePlan? get flareCooldownPlan => flareCooldownPlans.firstOrNull;
+
   ({int plans, int angles, int muscles, int tiers}) get flarePlanCounts => (
-    plans: _flarePlans.length,
+    plans: _flarePlans.where((plan) => !plan.isSupplemental).length,
     angles: {
       for (final plan in _flarePlans)
         if (plan.phaseSource case final source?) ...[source, ...plan.mirrors],
     }.length,
     muscles: flarePlanMuscles.length,
-    tiers: _flarePlans.map((plan) => plan.tier).toSet().length,
+    tiers: _flarePlans
+        .where((plan) => !plan.isSupplemental)
+        .map((plan) => plan.tier)
+        .toSet()
+        .length,
   );
 
   List<FlarePlan> plansForAngle(int phaseSource) => List.unmodifiable(
@@ -366,7 +443,7 @@ class Catalog {
       source.loadString('assets/data/drills.json'),
       source.loadString('assets/data/course-stages.json'),
       source.loadString('assets/data/source-manifest.json'),
-      source.loadString('assets/data/flare-plans.json'),
+      source.loadString('assets/data/flare-local-plans.json'),
     ]);
     return Catalog.fromJson(
       phaseMuscles: jsonDecode(strings[0]) as Map<String, dynamic>,
@@ -490,6 +567,7 @@ class Catalog {
     final plans = <FlarePlan>[];
     final ids = <String>{};
     final tierSlots = <(Object, int)>{};
+    final supplementalSlots = <(FlarePlanKind, int)>{};
     for (final row in rows) {
       final plan = FlarePlan.fromJson(Map<String, dynamic>.from(row as Map));
       final validTarget = switch (plan.kind) {
@@ -497,13 +575,16 @@ class Catalog {
           phaseSources.contains(plan.phaseSource) &&
               plan.mirrors.every(phaseSources.contains),
         FlarePlanKind.muscle => groupIds.contains(plan.groupId),
+        FlarePlanKind.warmup ||
+        FlarePlanKind.cooldown => supplementalSlots.add((plan.kind, plan.tier)),
       };
       if (!validTarget ||
           !ids.add(plan.id) ||
-          ![
-            plan.target,
-            ...plan.mirrors,
-          ].every((target) => tierSlots.add((target, plan.tier)))) {
+          (!plan.isSupplemental &&
+              ![
+                plan.target!,
+                ...plan.mirrors,
+              ].every((target) => tierSlots.add((target, plan.tier))))) {
         throw FormatException('Invalid or duplicate target: ${plan.id}');
       }
       plans.add(plan);

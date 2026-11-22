@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -101,8 +102,10 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   bool _scenePresented = false;
   String? _sceneError;
   StreamSubscription<coach.PoseHubAppTestCatalog>? _catalogChanges;
+  StreamSubscription<sdk.PoseHubPlanSnapshot>? _planChanges;
   int _catalogGeneration = 0;
   FlareShared? _publishedShared;
+  Catalog? _publishedCatalog;
   // A player already on the Navigator keeps its original catalog and policy.
   final _ownedMedia = <sdk.TrainingMediaPolicy>[];
 
@@ -116,6 +119,10 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
       pack,
     ]);
     final activeCatalog = values[2] as coach.PoseHubAppTestCatalog;
+    final original = values[0] as Catalog;
+    final catalog = original.withPlanSnapshot(
+      await _activePlansFor(activeCatalog),
+    );
     final shared = await FlareShared.load(activeCatalog: activeCatalog);
     sdk.TrainingMediaPolicy? policy;
     try {
@@ -124,11 +131,10 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
       debugPrint('PoseHub training media unavailable: $error');
     }
     if (mounted) {
-      setState(() => _publishCatalog(shared, policy));
+      setState(() => _publishCatalog(shared, policy, catalog));
     } else {
       policy?.repository.dispose();
     }
-    final catalog = values[0] as Catalog;
     _content = values[1] as ContentTranslations;
     _localizedCatalogs.clear();
     final store = LearningStore(catalog: catalog);
@@ -139,10 +145,45 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     return (catalog, store);
   }
 
-  void _publishCatalog(FlareShared shared, sdk.TrainingMediaPolicy? policy) {
+  void _publishCatalog(
+    FlareShared shared,
+    sdk.TrainingMediaPolicy? policy,
+    Catalog catalog,
+  ) {
     FlareShared.current = _publishedShared = shared;
     FlarePublicMedia.current = policy;
+    _publishedCatalog = catalog;
     if (policy != null) _ownedMedia.add(policy);
+    if (!flareChannelTrace) return;
+    final pack = sdk.poseHubPackVersionOf(shared.pack);
+    debugPrint(
+      'FlareChannel catalog=$pack snapshot=${catalog.planSnapshot?.id ?? 'legacy'}',
+    );
+    final mediaBase = sdk.PoseHubActionLibrary.mediaBaseUriFor(shared.pack);
+    for (final id in flareSupplementalActionIds) {
+      final media = shared.pack.tryGet(id);
+      final definition = shared.catalog[id];
+      if (media == null || definition == null) continue;
+      debugPrint(
+        'FlareChannel action ${jsonEncode({'id': id, 'url': media.video.resolve(mediaBase).toString(), 'sha256': media.video.sha256, 'purpose': definition.purpose, 'cues': definition.cues['zh']})}',
+      );
+    }
+  }
+
+  Future<sdk.PoseHubPlanSnapshot?> _activePlansFor(
+    coach.PoseHubAppTestCatalog pack,
+  ) {
+    final updates = widget.catalogUpdates;
+    return updates == null
+        ? loadFlareBundledPlanSnapshot()
+        : updates.planSnapshotFor(sdk.poseHubPackVersionOf(pack));
+  }
+
+  Future<sdk.PoseHubPlanSnapshot?> _restorePlanSnapshot(String id) async {
+    final stored = await widget.catalogUpdates?.restorePlanSnapshot(id);
+    if (stored != null) return stored;
+    final bundled = await loadFlareBundledPlanSnapshot();
+    return bundled?.id == id ? bundled : null;
   }
 
   Future<sdk.TrainingMediaPolicy> _publicMediaFor(
@@ -152,21 +193,37 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     rootDirectory: widget.catalogUpdates?.assetRootDirectory,
   );
 
-  Future<void> _applyCatalogUpdate(coach.PoseHubAppTestCatalog pack) async {
+  Future<void> _applyContentUpdate() async {
     final generation = ++_catalogGeneration;
     sdk.TrainingMediaPolicy? pending;
     try {
-      await _loading;
-      if (!mounted ||
-          generation != _catalogGeneration ||
-          sdk.poseHubPackVersionOf(FlareShared.current!.pack) ==
+      final (initialCatalog, _) = await _loading;
+      if (!mounted || generation != _catalogGeneration) return;
+      final pack = await loadFlarePublicCatalog(
+        verifiedCache: widget.catalogUpdates?.updater.store,
+      );
+      final snapshot = await _activePlansFor(pack);
+      if (!mounted || generation != _catalogGeneration) return;
+      final catalog = initialCatalog.withPlanSnapshot(snapshot);
+      final currentPack = _publishedShared?.pack;
+      if (currentPack != null &&
+          sdk.poseHubPackVersionOf(currentPack) ==
               sdk.poseHubPackVersionOf(pack)) {
+        if (_publishedCatalog?.planSnapshot?.id != snapshot?.id) {
+          setState(() {
+            _localizedCatalogs.clear();
+            _publishedCatalog = catalog;
+          });
+        }
         return;
       }
       final shared = await FlareShared.load(activeCatalog: pack);
       final policy = pending = await _publicMediaFor(pack);
       if (!mounted || generation != _catalogGeneration) return;
-      setState(() => _publishCatalog(shared, policy));
+      setState(() {
+        _localizedCatalogs.clear();
+        _publishCatalog(shared, policy, catalog);
+      });
       pending = null;
     } on Object catch (error) {
       debugPrint('PoseHub catalog could not be applied to Flare: $error');
@@ -213,8 +270,11 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     _scene.addListener(_sceneChanged);
     final updates = widget.catalogUpdates;
     _catalogChanges = updates?.updater.catalogChanges.listen(
-      (pack) => unawaited(_applyCatalogUpdate(pack)),
+      (_) => unawaited(_applyContentUpdate()),
     );
+    _planChanges = updates?.updater.planChanges.listen((snapshot) {
+      if (snapshot.app == 'flare') unawaited(_applyContentUpdate());
+    });
     _loading = _load();
     if (updates != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -272,7 +332,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
             ? null
             : _localizedCatalogs.putIfAbsent(
                 language,
-                () => data.$1.localized({
+                () => (_publishedCatalog ?? data.$1).localized({
                   ..._content!.forLanguage(language),
                   '自行回顾 09–11：后撑、移重与侧撑是否连贯': s.reviewFirstPhases,
                   '自行回顾整圈：换手、开腿与节奏是否连贯': s.reviewFullLoop,
@@ -300,6 +360,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
                         sceneController: _scene,
                         sceneRevision: _sceneRevision,
                         startupCovered: !_launchComplete,
+                        restorePlanSnapshot: _restorePlanSnapshot,
                       ),
               ),
             ),
@@ -343,6 +404,7 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
   @override
   void dispose() {
     unawaited(_catalogChanges?.cancel());
+    unawaited(_planChanges?.cancel());
     widget.catalogUpdates?.dispose();
     if (_ownedMedia.contains(FlarePublicMedia.current)) {
       FlarePublicMedia.current = null;

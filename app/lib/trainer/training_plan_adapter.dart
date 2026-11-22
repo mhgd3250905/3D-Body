@@ -118,6 +118,9 @@ uc.TrainingPlan trainingPlanFromDrills({
   );
 }
 
+// Keep 12 warm-up moves close to nine minutes at their authored doses.
+const flareWarmupTransitionSeconds = 5;
+
 /// Resolve the authored drill and dose for the chosen scene before scheduling.
 uc.TrainingPlan trainingPlanFromFlarePlan({
   required FlarePlan plan,
@@ -126,20 +129,30 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
   required Catalog catalog,
   required uc.Catalog sourceCatalog,
   Map<String, sdk.Rhythm> rhythms = const {},
+  bool skipStrengthening = false,
   List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+  ({String clockwise, String counterclockwise}) circleDirections = const (
+    clockwise: '顺时针',
+    counterclockwise: '逆时针',
+  ),
 }) {
   if (wristDirections.length != 4) {
     throw ArgumentError('Four wrist directions required');
   }
-  final unknown = plan.items
-      .map((item) => item.drillForScene(sceneTier))
+  final authoredItems = skipStrengthening ? plan.items : plan.allItems;
+  final trainingMedia = <String, String>{
+    for (final item in authoredItems)
+      ...item.trainingMediaIdsForScene(sceneTier),
+  };
+  final unknown = trainingMedia.values
       .where((id) => sourceCatalog[id] == null)
       .toSet();
   if (unknown.isNotEmpty) throw UnknownTrainingDrills(unknown);
 
   final items = <uc.PlanItem>[];
-  for (final authored in plan.items) {
-    final id = authored.drillForScene(sceneTier);
+  for (final authored in authoredItems) {
+    final mediaId = authored.drillForScene(sceneTier);
+    final id = authored.trainingDrillForScene(sceneTier);
     final dose = authored.doseForScene(sceneTier);
     final workSeconds = dose.seconds;
     final item = uc.PlanItem(
@@ -150,8 +163,63 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       workSeconds: workSeconds,
       perSide: dose.perSide,
       restSeconds: dose.restSeconds,
-      replacedFrom: id == authored.drill ? null : authored.drill,
+      replacedFrom: mediaId == authored.drill ? null : authored.drill,
     );
+    if (dose.bothCircleDirections) {
+      items.add(
+        item.copyWith(
+          segments: [
+            uc.PlanSegment(
+              id: 'clockwise',
+              exerciseId: id,
+              label: circleDirections.clockwise,
+              mode: item.mode,
+              reps: item.reps,
+            ),
+            uc.PlanSegment(
+              id: 'counterclockwise',
+              exerciseId: id,
+              label: circleDirections.counterclockwise,
+              mode: item.mode,
+              reps: item.reps,
+            ),
+          ],
+        ),
+      );
+      continue;
+    }
+    if (dose.movement == FlarePlanMovement.alternatingHipSwitch) {
+      // The source pose is held. Schedule both directions per count for this
+      // authored 90/90 switch while continuing to use its published media.
+      items.add(
+        item.copyWith(
+          segments: [
+            uc.PlanSegment(
+              id: 'hip-switches',
+              exerciseId: id,
+              mode: item.mode,
+              reps: item.reps,
+              rhythm: const {
+                'kind': 'rep_alternate',
+                'repUnit': 'left+right',
+                'phases': 'go=2s; hold=1s',
+              },
+            ),
+          ],
+        ),
+      );
+      continue;
+    }
+    final explicitSegments = _authoredDoseSegments(
+      authored,
+      dose,
+      item,
+      sceneTier,
+    );
+    if (explicitSegments.isNotEmpty) {
+      items.add(item.copyWith(segments: explicitSegments));
+      continue;
+    }
 
     // A counted catalog rhythm can stretch a time budget to fit its default
     // reps. These prescribed holds use elapsed time, including substitutions
@@ -159,7 +227,7 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
     final usesTimedHold =
         workSeconds != null &&
         (rhythms[id]?.counted == true ||
-            sourceCatalog[id]!.defaultDose.mode == uc.DoseMode.reps);
+            sourceCatalog[id]?.defaultDose.mode == uc.DoseMode.reps);
     final drill = catalog.drillById(id);
     final segmented = drill == null
         ? item
@@ -169,6 +237,8 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
             wristDirections,
             splitWorkSeconds: true,
             forceTimedHold: usesTimedHold,
+            wristRockPositions:
+                dose.movement == FlarePlanMovement.threeWayWristRocks ? 3 : 4,
           );
     items.add(
       usesTimedHold && segmented.segments.isEmpty
@@ -187,6 +257,10 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
     );
   }
 
+  final strengtheningCount = skipStrengthening
+      ? 0
+      : plan.strengtheningItems.length;
+  final isCooldown = plan.kind == FlarePlanKind.cooldown;
   final result = uc.TrainingPlan(
     id: plan.id,
     source: 'template',
@@ -197,23 +271,287 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
     level: plan.tier,
     targetMinutes: 1,
     blocks: [
+      if (strengtheningCount > 0)
+        uc.PlanBlock(
+          id: 'strengthening',
+          name: title,
+          type: uc.BlockType.circuit,
+          rounds: plan.strengtheningRounds,
+          restBetweenRoundsSeconds: plan.strengtheningRoundRestSeconds,
+          items: items.take(strengtheningCount).toList(),
+        ),
       uc.PlanBlock(
-        id: plan.id,
+        id: isCooldown ? 'stretching' : plan.id,
         name: title,
-        type: uc.BlockType.main,
-        items: items,
+        type: isCooldown ? uc.BlockType.cooldown : uc.BlockType.main,
+        items: items.skip(strengtheningCount).toList(),
       ),
     ],
   );
-  validateTrainingPlan(
-    result,
-    catalog,
-    known: (id) => sourceCatalog[id] != null,
-  );
-  final estimate = sdk.SessionBuilder(rhythms: rhythms).planSeconds(result);
+  validateTrainingPlan(result, catalog, known: trainingMedia.containsKey);
+  final builder = isCooldown
+      ? FlareCooldownSessionBuilder(
+          strengtheningRestSeconds: plan.strengtheningRestSeconds,
+          stretchPostures: plan.stretchPosturesForScene(sceneTier),
+          rhythms: rhythms,
+        )
+      : sdk.SessionBuilder(
+          rhythms: rhythms,
+          transitionSeconds: plan.kind == FlarePlanKind.warmup
+              ? flareWarmupTransitionSeconds
+              : 15,
+        );
+  final estimate = builder.planSeconds(result);
   return result.copyWith(
     targetMinutes: (estimate / 60).ceil().clamp(1, 1000000),
   );
+}
+
+List<uc.PlanSegment> _authoredDoseSegments(
+  FlarePlanItem authored,
+  FlarePlanDose dose,
+  uc.PlanItem item,
+  String scene,
+) {
+  if (authored.secondaryStretchTrainingIdForScene(scene)
+      case final secondary?) {
+    final seconds = dose.seconds!;
+    final firstPositionSeconds = (seconds + 1) ~/ 2;
+    return [
+      uc.PlanSegment(
+        id: 'wrist-flexed',
+        exerciseId: item.exerciseId,
+        label: '手背朝前',
+        mode: uc.DoseMode.time,
+        workSeconds: firstPositionSeconds,
+        rhythm: const {'kind': 'hold'},
+      ),
+      uc.PlanSegment(
+        id: 'wrist-extended',
+        exerciseId: secondary,
+        label: '掌心朝前',
+        mode: uc.DoseMode.time,
+        workSeconds: seconds - firstPositionSeconds,
+        rhythm: const {'kind': 'hold'},
+      ),
+    ];
+  }
+  final workSegments = [
+    for (final segment in dose.workSegments)
+      uc.PlanSegment(
+        id: segment.id,
+        exerciseId: item.exerciseId,
+        label: segment.label,
+        mode: segment.reps == null ? uc.DoseMode.time : uc.DoseMode.reps,
+        reps: segment.reps,
+        workSeconds: segment.seconds,
+        rhythm: segment.seconds != null
+            ? const {'kind': 'hold'}
+            : segment.rhythm,
+      ),
+  ];
+  if (authored.pnfTrainingIdForScene(scene) case final pnf?) {
+    return [
+      if (workSegments.isEmpty)
+        uc.PlanSegment(
+          id: 'stretch-hold',
+          exerciseId: item.exerciseId,
+          mode: uc.DoseMode.time,
+          workSeconds: dose.seconds,
+          rhythm: const {'kind': 'hold'},
+        )
+      else
+        ...workSegments,
+      uc.PlanSegment(
+        id: 'pnf-press',
+        exerciseId: pnf,
+        label: 'PNF',
+        mode: uc.DoseMode.time,
+        workSeconds: dose.pnfSeconds,
+        rhythm: const {'kind': 'hold'},
+      ),
+    ];
+  }
+  if (workSegments.isNotEmpty) return workSegments;
+  if (dose.repPositions.isNotEmpty) {
+    return [
+      for (final (index, label) in dose.repPositions.indexed)
+        uc.PlanSegment(
+          id: label.toLowerCase(),
+          exerciseId: item.exerciseId,
+          label: label,
+          mode: uc.DoseMode.reps,
+          reps: dose.reps,
+          holdSeconds: index == dose.repPositions.length - 1
+              ? dose.lastPositionHoldSeconds ?? dose.holdSeconds
+              : dose.holdSeconds,
+        ),
+    ];
+  }
+  if (dose.holdSeconds == null && dose.rhythm == null) return const [];
+  return [
+    uc.PlanSegment(
+      id: dose.holdSeconds == null ? 'authored-tempo' : 'peak-hold',
+      exerciseId: item.exerciseId,
+      mode: item.mode,
+      reps: item.reps,
+      holdSeconds: dose.holdSeconds,
+      rhythm: dose.rhythm,
+    ),
+  ];
+}
+
+/// Use fixed repositioning and side-change times for the cooldown plans.
+class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
+  FlareCooldownSessionBuilder({
+    required int strengtheningRestSeconds,
+    this.stretchPostures = const {},
+    super.rhythms,
+    super.known,
+    super.prepSeconds,
+    super.switchSecondsFor,
+    super.prepSecondsFor,
+    super.voiceGuideFor,
+    super.guideSideSwitchSecondsFor,
+  }) : super(transitionSeconds: strengtheningRestSeconds);
+
+  final Map<String, FlareStretchPosture> stretchPostures;
+
+  @override
+  double workSeconds(uc.PlanItem item, [sdk.Rhythm? rhythm]) {
+    final effective = rhythm ?? rhythmOf(item);
+    if (item.mode == uc.DoseMode.reps &&
+        effective.counted &&
+        !effective.derived) {
+      // Keep the authored cadence, including any hold or lowering phase.
+      // The SDK normally rounds a set up and distributes the extra time.
+      return effective.lead +
+          (item.reps ?? effective.defaultReps ?? 1) * effective.cycleFor();
+    }
+    return super.workSeconds(item, effective);
+  }
+
+  @override
+  List<sdk.SessionPhase> phases(uc.TrainingPlan plan) =>
+      _cooldownPhases(plan, super.phases(plan)).toList();
+
+  @override
+  double planSeconds(uc.TrainingPlan plan, {double? sideSwitchMargin}) {
+    // Use the same SDK scheduling without its prep callback, which calls
+    // planSeconds to size the welcome voice line.
+    final estimateBuilder = prepSecondsFor == null
+        ? this
+        : FlareCooldownSessionBuilder(
+            strengtheningRestSeconds: transitionSeconds,
+            stretchPostures: stretchPostures,
+            rhythms: rhythms,
+            known: known,
+            voiceGuideFor: voiceGuideFor,
+          );
+    return estimateBuilder
+        .phases(plan)
+        .where((phase) => phase.kind != sdk.PhaseKind.prep)
+        .fold(0.0, (sum, phase) => sum + phase.seconds);
+  }
+
+  Iterable<sdk.SessionPhase> _cooldownPhases(
+    uc.TrainingPlan plan,
+    List<sdk.SessionPhase> phases,
+  ) sync* {
+    bool isStretch(sdk.SessionPhase phase) =>
+        phase.blockIndex >= 0 &&
+        plan.blocks[phase.blockIndex].type == uc.BlockType.cooldown;
+    final active = <sdk.SessionPhase>[];
+    sdk.SessionPhase? previousWork;
+    for (final phase in phases) {
+      if (phase.isWork) previousWork = phase;
+      if (phase.kind == sdk.PhaseKind.switchSide) {
+        // Voice callbacks can never widen a side switch.
+        active.add(phase.withSeconds(5));
+      } else if (phase.kind == sdk.PhaseKind.rest) {
+        final next = phase.nextItem;
+        // A set within one exercise advances directly.
+        if (next == null) continue;
+        final fromPosture = stretchPostures[phase.doneExerciseId];
+        final sameStretchPosture =
+            previousWork != null &&
+            isStretch(previousWork) &&
+            isStretch(phase) &&
+            fromPosture != null &&
+            fromPosture == stretchPostures[next.exerciseId];
+        active.add(sameStretchPosture ? phase.withSeconds(5) : phase);
+      } else {
+        active.add(phase);
+      }
+    }
+    for (var i = 0; i < active.length; i++) {
+      final first = active[i];
+      if (i + 2 < active.length &&
+          first.isWork &&
+          first.side == sdk.Side.right &&
+          first.segment?.rhythm?['startingSide'] == 'left') {
+        final switchSide = active[i + 1];
+        final leftWork = active[i + 2];
+        if (switchSide.kind == sdk.PhaseKind.switchSide &&
+            leftWork.isWork &&
+            leftWork.side == sdk.Side.left &&
+            leftWork.itemIndex == first.itemIndex &&
+            leftWork.segmentId == first.segmentId &&
+            leftWork.set == first.set) {
+          // An authored single-side segment may use the left-side demo first.
+          // The SDK builds right-first phases for all segmented side changes.
+          yield leftWork;
+          yield sdk.SessionPhase(
+            kind: sdk.PhaseKind.switchSide,
+            seconds: switchSide.seconds,
+            exerciseId: switchSide.exerciseId,
+            item: switchSide.item,
+            itemIndex: switchSide.itemIndex,
+            blockIndex: switchSide.blockIndex,
+            itemInBlock: switchSide.itemInBlock,
+            set: switchSide.set,
+            sets: switchSide.sets,
+            round: switchSide.round,
+            rounds: switchSide.rounds,
+            side: sdk.Side.right,
+            blockName: switchSide.blockName,
+            rhythm: switchSide.rhythm,
+            segmentId: switchSide.segmentId,
+            segment: switchSide.segment,
+            afterGuidedSet: switchSide.afterGuidedSet,
+          );
+          yield first;
+          i += 2;
+          continue;
+        }
+      }
+      if (i + 5 < active.length &&
+          first.isWork &&
+          first.side == sdk.Side.right &&
+          isStretch(first) &&
+          (first.item?.segments.length == 2)) {
+        final phases = active.sublist(i, i + 6);
+        if (phases.every(
+              (phase) =>
+                  phase.itemIndex == first.itemIndex && phase.set == first.set,
+            ) &&
+            phases[1].kind == sdk.PhaseKind.switchSide &&
+            phases[2].isWork &&
+            phases[3].isWork &&
+            phases[4].kind == sdk.PhaseKind.switchSide &&
+            phases[5].isWork) {
+          // The SDK schedules both sides of each segment. Finish both parts
+          // on the right before moving to the left once.
+          for (final index in [0, 3, 1, 2, 5]) {
+            yield phases[index];
+          }
+          i += 5;
+          continue;
+        }
+      }
+      yield first;
+    }
+  }
 }
 
 /// [known] admits the shared public scope in addition to Flare's own drills.
@@ -318,10 +656,11 @@ uc.PlanItem _withSegments(
   List<String> wristDirections, {
   bool splitWorkSeconds = false,
   bool forceTimedHold = false,
+  int wristRockPositions = 4,
 }) {
   if (item.segments.isNotEmpty) return item;
   final labels = switch (item.exerciseId) {
-    'forearms-A' => wristDirections,
+    'forearms-A' => wristDirections.take(wristRockPositions).toList(),
     'scapular-A' => const ['Y', 'T', 'W'],
     'forearms-B' => drill.dose.blockLabels,
     _ => const <String>[],

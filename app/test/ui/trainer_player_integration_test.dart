@@ -1,10 +1,12 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
+import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/data/flare_v5_drill.dart';
-import 'package:flare/domain/dose.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
 import 'package:flare/ui/flare_v5_media.dart';
@@ -31,6 +33,15 @@ class _Storage implements LocalStateStorage {
       throw StateError('test write failure');
     }
     this.value = value;
+  }
+}
+
+class _RecordingVoiceOutput extends sdk.MutedVoiceOutput {
+  final spoken = <String>[];
+
+  @override
+  Future<void> speak(List<String> assets) async {
+    spoken.addAll(assets);
   }
 }
 
@@ -123,16 +134,20 @@ Future<LearningStore> _open(
   bool dark = false,
   bool reps = false,
   uc.TrainingPlan? sdkPlan,
+  Catalog? catalog,
+  FlarePlan? supplementalPlan,
+  sdk.VoiceOutput? voiceOutput,
   _Storage? storage,
   List<sdk.SessionResult>? popped,
   ValueNotifier<bool>? previewLocked,
+  VoidCallback? onContinueCooldown,
   double textScale = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final store = LearningStore(
-    catalog: loadCatalogFixture(),
+    catalog: catalog ?? loadCatalogFixture(),
     storage: storage ?? _Storage(),
   );
   await store.initialize();
@@ -163,7 +178,9 @@ Future<LearningStore> _open(
                   store: store,
                   startInPreview: previewLocked != null,
                   previewLocked: locked,
-                  voiceOutput: sdk.MutedVoiceOutput(),
+                  onContinueCooldown: onContinueCooldown,
+                  supplementalPlan: supplementalPlan,
+                  voiceOutput: voiceOutput ?? sdk.MutedVoiceOutput(),
                   keepAlive: false,
                 );
                 final result = await Navigator.of(context)
@@ -557,6 +574,40 @@ void main() {
     expect(store.sessions, hasLength(2));
   });
 
+  testWidgets('cooldown follows Finish and returns the saved SDK result once', (
+    tester,
+  ) async {
+    var continued = 0;
+    final popped = <sdk.SessionResult>[];
+    final store = await _open(
+      tester,
+      popped: popped,
+      onContinueCooldown: () => continued++,
+    );
+    final cooldown = find.byKey(const ValueKey('continue-cooldown'));
+    expect(cooldown, findsNothing);
+    await _advance(tester, _sessionSeconds(_player(tester)).ceil() + 2);
+    await tester.pumpAndSettle();
+
+    final finish = find.byKey(const ValueKey('finish'));
+    final replay = find.byKey(const ValueKey('flare-completion-replay'));
+    expect(cooldown, findsOneWidget);
+    expect(tester.getSize(cooldown).height, 48);
+    expect(
+      tester.getTopLeft(cooldown).dy - tester.getBottomLeft(finish).dy,
+      10,
+    );
+    expect(tester.getTopLeft(replay).dy, tester.getBottomLeft(cooldown).dy);
+    expect(store.trainerSessions, hasLength(1));
+
+    await tester.tap(cooldown);
+    await tester.pumpAndSettle();
+    expect(continued, 1);
+    expect(find.byType(FlareTrainingPage), findsNothing);
+    expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
+    expect(store.sessions, hasLength(2));
+  });
+
   testWidgets('transition rest previews the next move with its dose', (
     tester,
   ) async {
@@ -852,6 +903,56 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  for (final cooldown in [false, true]) {
+    final planName = cooldown ? 'cooldown' : 'warm-up';
+    testWidgets('the $planName route speaks the dose before the technique', (
+      tester,
+    ) async {
+      final (catalog, shared) = (await tester.runAsync(() async {
+        return (await Catalog.load(), await FlareShared.load());
+      }))!;
+      final authored = cooldown
+          ? catalog.flareCooldownPlans[1]
+          : catalog.flareWarmupPlan!;
+      final output = _RecordingVoiceOutput();
+      await _open(
+        tester,
+        catalog: catalog,
+        supplementalPlan: authored,
+        sdkPlan: shared.authoredPlan(authored, catalog, 'A'),
+        voiceOutput: output,
+      );
+
+      const root = '$flarePlanVoiceAssetRoot/';
+      final technique = cooldown
+          ? 'supplemental.cooldown.strength.2.1'
+          : 'supplemental.general-warmup.1';
+      await _advance(tester, _player(tester).prepSeconds.ceil() + 3);
+      final planned = output.spoken
+          .where(
+            (path) => path.startsWith(
+              '$root'
+              'supplemental.',
+            ),
+          )
+          .toList();
+      final intro = '$root$technique.intro.m4a';
+      final guide = '$root$technique.m4a';
+      expect(planned.where((path) => path == intro), hasLength(1));
+      expect(planned.where((path) => path == guide), hasLength(1));
+      expect(planned.indexOf(intro), lessThan(planned.indexOf(guide)));
+      if (cooldown) {
+        const kickoff =
+            '$root'
+            'supplemental.cooldown.kickoff.3.m4a';
+        expect(planned.first, kickoff);
+      }
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final language in languageNames.keys) {
     for (final dark in [false, true]) {

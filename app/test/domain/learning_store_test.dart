@@ -123,6 +123,8 @@ void main() {
       expect(store.safetyAccepted, isFalse);
       await store.acknowledgeSafety();
       await store.updateSettings(tier: 'B', speed: 0.25, weeklyGoal: 4);
+      expect(store.settings.cooldownTier, 1);
+      expect(await store.updateSettings(cooldownTier: 3), isTrue);
       await store.setLastTime(2.15);
       await store.addToToday('deltoids-A');
       await store.addToToday('deltoids-A');
@@ -138,6 +140,7 @@ void main() {
       await restored.initialize();
       expect(restored.safetyAccepted, isTrue);
       expect(restored.settings.tier, 'B');
+      expect(restored.settings.cooldownTier, 3);
       expect(restored.settings.speed, 0.25);
       expect(restored.settings.weeklyGoal, 4);
       expect(restored.lastTime, 2.15);
@@ -448,10 +451,19 @@ void main() {
     });
     expect(legacy.themeMode, 'system');
     expect(legacy.actorBody, 'original');
+    expect(legacy.cooldownTier, 1);
     expect(legacy.valid, isTrue);
     expect(legacy.copyWith(themeMode: 'sepia').valid, isFalse);
     expect(legacy.copyWith(themeMode: 'light').toJson()['themeMode'], 'light');
     expect(legacy.copyWith(actorBody: 'other').valid, isFalse);
+    expect(legacy.copyWith(cooldownTier: 4).valid, isFalse);
+    expect(
+      LearningSettings.fromJson({
+        ...legacy.toJson(),
+        'cooldownTier': 4,
+      }).cooldownTier,
+      1,
+    );
     expect(
       LearningSettings.fromJson({
         ...legacy.toJson(),

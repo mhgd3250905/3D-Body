@@ -1591,4 +1591,96 @@ class AppLocalizationsAr extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'قبل التمرين وبعده';
+
+  @override
+  String get preWorkoutWarmup => 'الإحماء قبل التمرين';
+
+  @override
+  String get postWorkoutStretch => 'بعد التمرين';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'لم تبدأ الإحماء؟ جرّب $minutesString دقائق من ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count دورات في كل اتجاه لكل جانب';
+  }
+
+  @override
+  String get planCircleClockwise => 'مع عقارب الساعة';
+
+  @override
+  String get planCircleCounterclockwise => 'عكس عقارب الساعة';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'الثبات في الأعلى $seconds ث';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => 'تابع تمارين ما بعد التمرين';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 مستويات · وزن الجسم';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A تقوية موجهة';
+
+  @override
+  String get cooldownStretchHeading => 'B إطالة الجسم بالكامل';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'تخطّ التقوية وانتقل إلى إطالة الجسم بالكامل';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'يُفضّل أداؤها 2–3 مرات أسبوعيًا في أيام غير متتالية. تخطّ التقوية إذا كنت قد مرّنت الجزء العلوي من الجسم اليوم أو شعرت بألم في الرسغين.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds جولات';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds ث بين التمارين · $roundSeconds ث بين الجولات';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max ث';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max تكرار';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps تكرارات لكل وضعية';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF لمدة $seconds ث';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes د · وزن الجسم';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'عرض مؤقت';
 }

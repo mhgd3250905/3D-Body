@@ -1,5 +1,7 @@
 // Flare scope, theme and library presentation; SDK owns catalogue semantics,
 // media, details and training entry. Browsing requests display artwork only.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
@@ -54,10 +56,26 @@ class FlareShared {
   final trainer.TrainingLibraryConfig library;
 
   /// SDK library strings and action details for the current app locale.
-  trainer.TrainingLibraryConfig libraryFor(BuildContext context) {
+  trainer.TrainingLibraryConfig libraryFor(
+    BuildContext context, {
+    String? planActionId,
+  }) {
     final locale = Localizations.localeOf(context);
+    // Authored routines can inspect their extra actions outside the general
+    // library and Coach action allowlist.
+    final detailScope =
+        planActionId != null &&
+            (planActionId == flareWarmupPushupId ||
+                flareSupplementalActionIds.contains(planActionId)) &&
+            catalog[planActionId] != null
+        ? coach.CoachActionScopeManifest.fromCatalogBytes(
+            appId: flareAppId,
+            catalogBytes: utf8.encode(jsonEncode(catalog.toJson())),
+            allowedActionIds: [planActionId],
+          )
+        : scope;
     return _libraryConfig(
-      scope,
+      detailScope,
       locale.toLanguageTag(),
       displayText: locale.languageCode == 'en' ? _englishActionText : null,
     );
@@ -105,7 +123,12 @@ class FlareShared {
     flare.Catalog presentation,
     String scene, {
     String? title,
+    bool skipStrengthening = false,
     List<String>? wristDirections,
+    ({String clockwise, String counterclockwise}) circleDirections = const (
+      clockwise: '顺时针',
+      counterclockwise: '逆时针',
+    ),
   }) => trainingPlanFromFlarePlan(
     plan: plan,
     title: title ?? plan.id,
@@ -113,7 +136,9 @@ class FlareShared {
     catalog: presentation,
     sourceCatalog: catalog,
     rhythms: rhythms,
+    skipStrengthening: skipStrengthening,
     wristDirections: wristDirections ?? const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
+    circleDirections: circleDirections,
   );
 
   int? authoredPlanMinutes(
@@ -129,14 +154,16 @@ class FlareShared {
   }
 
   Set<String> authoredPlanEquipment(flare.FlarePlan plan, String scene) => {
-    for (final item in plan.items)
-      for (final tool
-          in catalog[item.drillForScene(scene)]?.equipment ?? const <String>[])
-        switch ((item.drillForScene(scene), tool, scene)) {
-          ('forearms-B', 'bench', 'B') => 'chair',
-          ('rotator-cuff-B', 'block', _) => 'clamp-pad',
-          _ => tool,
-        },
+    if (!plan.isSupplemental)
+      for (final item in plan.items)
+        for (final tool
+            in catalog[item.drillForScene(scene)]?.equipment ??
+                const <String>[])
+          switch ((item.drillForScene(scene), tool, scene)) {
+            ('forearms-B', 'bench', 'B') => 'chair',
+            ('rotator-cuff-B', 'block', _) => 'clamp-pad',
+            _ => tool,
+          },
   };
 
   static Future<FlareShared> load({
@@ -212,10 +239,10 @@ class FlareShared {
     await trainer.TrainingLibraryDetails.open(
       context,
       actionId: id,
-      config: shared.libraryFor(context),
+      config: shared.libraryFor(context, planActionId: id),
       mediaPolicy: policy,
       theme: resolvedTheme.copyWith(mediaStage: Colors.transparent),
-      onStart: soundEnabled
+      onStart: soundEnabled && !flareSupplementalActionIds.contains(id)
           ? (actionId) async {
               final action = policy.actionFor(actionId);
               if (action == null) return;

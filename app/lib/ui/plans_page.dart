@@ -14,6 +14,7 @@ import 'components.dart';
 import 'page_kit.dart';
 import 'drill_filter.dart';
 import 'flare_action_artwork.dart';
+import 'flare_plan_detail_page.dart' show FlarePlanWarmupLink;
 import 'flare_plan_visuals.dart' show FlarePlanGlow;
 import 'motion.dart';
 import 'theme.dart';
@@ -112,6 +113,7 @@ class PlansPage extends StatelessWidget {
     required this.onAllAngles,
     required this.onAllMuscles,
     required this.onContinue,
+    this.onOpenSupplemental,
     this.resume,
     this.onBack,
     this.onAiCoach,
@@ -127,6 +129,7 @@ class PlansPage extends StatelessWidget {
   final VoidCallback onAllAngles;
   final VoidCallback onAllMuscles;
   final VoidCallback onContinue;
+  final ValueChanged<FlarePlan>? onOpenSupplemental;
   final FlarePlanResume? resume;
   final VoidCallback? onBack;
   final VoidCallback? onAiCoach;
@@ -172,10 +175,18 @@ class PlansPage extends StatelessWidget {
     Theme.of(context);
     final p = FlareColors.palette;
     final s = context.strings;
+    final sectionLabelStyle = TextStyle(
+      color: p.dim,
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.5,
+    );
     final safe = MediaQuery.viewPaddingOf(context);
     final resume = this.resume;
     final routines = store.routines;
     final aiCoach = onAiCoach;
+    final openSupplemental = onOpenSupplemental;
+    final supplemental = [?catalog.flareWarmupPlan, ?catalog.flareCooldownPlan];
     final routineRowCount = routines.length + (aiCoach == null ? 0 : 1);
     final angles = [
       for (final source in {
@@ -223,33 +234,68 @@ class PlansPage extends StatelessWidget {
                     _pageInset,
                     0,
                   ),
+                  sliver: SliverToBoxAdapter(
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        s.plans,
+                        style: TextStyle(
+                          color: p.text,
+                          fontSize: 30,
+                          height: 1.2,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -.4,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (openSupplemental != null && supplemental.isNotEmpty)
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Semantics(
+                              header: true,
+                              child: Text(
+                                s.warmupCooldownHeading,
+                                style: sectionLabelStyle,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              for (final plan in supplemental)
+                                Expanded(
+                                  child: _SupplementalPlanCard(
+                                    plan: plan,
+                                    onTap: () => openSupplemental(plan),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    _pageInset,
+                    24,
+                    _pageInset,
+                    0,
+                  ),
                   sliver: SliverList.list(
                     children: [
                       Semantics(
                         header: true,
-                        child: Text(
-                          s.plans,
-                          style: TextStyle(
-                            color: p.text,
-                            fontSize: 30,
-                            height: 1.2,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -.4,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          s.plansMine,
-                          style: TextStyle(
-                            color: p.dim,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
+                        child: Text(s.plansMine, style: sectionLabelStyle),
                       ),
                       const SizedBox(height: 12),
                       if (resume != null) ...[
@@ -979,6 +1025,106 @@ class _AnglePlanCard extends StatelessWidget {
   }
 }
 
+class _SupplementalPlanCard extends StatelessWidget {
+  const _SupplementalPlanCard({required this.plan, required this.onTap});
+
+  final FlarePlan plan;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = FlareColors.palette;
+    final s = context.strings;
+    final warmup = plan.kind == FlarePlanKind.warmup;
+    final title = warmup ? s.preWorkoutWarmup : s.postWorkoutStretch;
+    final subtitle = warmup
+        ? s.bodyweightPlanMinutes(plan.estimatedMinutes!)
+        : s.cooldownPlanCardSubtitle;
+    final circle = switch ((p.isDark, warmup)) {
+      (true, true) => const Color(0xffff6a3d).withValues(alpha: .14),
+      (true, false) => const Color(0xff5eead4).withValues(alpha: .12),
+      (false, true) => const Color(0xfff2602f).withValues(alpha: .09),
+      (false, false) => const Color(0xff2ec4b6).withValues(alpha: .11),
+    };
+
+    return FlarePressable(
+      key: ValueKey('plan-${plan.id}'),
+      semanticLabel: '$title, $subtitle',
+      onTap: onTap,
+      child: Container(
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: p.hairline),
+          boxShadow: [
+            if (!p.isDark)
+              const BoxShadow(
+                color: Color(0x0a000000),
+                offset: Offset(0, 2),
+                blurRadius: 10,
+              ),
+          ],
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            SizedBox.square(
+              dimension: 44,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: circle,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Image.asset(
+                    warmup
+                        ? 'assets/plan_icons/icon-warmup.png'
+                        : 'assets/plan_icons/icon-stretch.png',
+                    width: warmup ? 40 : 38,
+                    height: warmup ? 40 : 38,
+                    excludeFromSemantics: true,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MediaQuery.withClampedTextScaling(
+                maxScaleFactor: 1.2,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: p.text,
+                        fontSize: 14,
+                        height: 1.16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: p.dim, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MusclePlanCard extends StatelessWidget {
   const _MusclePlanCard({
     required this.group,
@@ -1065,6 +1211,7 @@ class PlanDetailPage extends StatelessWidget {
     required this.onDrill,
     this.onCopy,
     this.onEdit,
+    this.onOpenWarmup,
     this.sdkPlan,
     this.catalog,
     this.soundEnabled = true,
@@ -1080,6 +1227,7 @@ class PlanDetailPage extends StatelessWidget {
 
   final VoidCallback? onCopy;
   final VoidCallback? onEdit;
+  final VoidCallback? onOpenWarmup;
 
   /// Consecutive entries of one block, keeping their global index.
   static List<List<(int, CoachPlanEntry)>> _blocks(
@@ -1207,14 +1355,24 @@ class PlanDetailPage extends StatelessWidget {
         ),
       ),
       bottomBar: FlareBottomAction(
-        child: PrimaryAction(
-          key: const ValueKey('plan-start'),
-          icon: Icons.play_arrow_rounded,
-          label: s.planStart,
-          onPressed:
-              (plan == null ? drills.isEmpty : plan.items.isEmpty) || !available
-              ? null
-              : onStart,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if ((onOpenWarmup, catalog?.flareWarmupPlan?.estimatedMinutes)
+                case (final open?, final minutes?))
+              FlarePlanWarmupLink(onOpen: open, minutes: minutes),
+            PrimaryAction(
+              key: const ValueKey('plan-start'),
+              icon: Icons.play_arrow_rounded,
+              label: s.planStart,
+              onPressed:
+                  (plan == null ? drills.isEmpty : plan.items.isEmpty) ||
+                      !available
+                  ? null
+                  : onStart,
+            ),
+          ],
         ),
       ),
     );

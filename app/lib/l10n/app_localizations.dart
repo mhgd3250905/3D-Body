@@ -2880,6 +2880,138 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{id, select, mat{瑜伽垫} chair{椅子} band{弹力带} dumbbell{哑铃} wall{墙} cable{绳索训练机} block{瑜伽砖} pullup_bar{单杠} parallettes{俯卧撑架} dip_bars{双杠} slider{滑盘} rings{吊环} landmine{地雷杆} swiss_ball{健身球} roman_chair{罗马椅} kettlebell{壶铃} reverse_hyper{反向挺身机} ghd{臀腿训练器} hip_abductor_machine{髋外展机} leg_extension_machine{腿屈伸机} foam_roller{泡沫轴} towel{毛巾} doorframe{门框} bench{训练凳} barbell{杠铃} clamp_pad{夹垫} other{}}'**
   String planEquipmentNameForId(String id);
+
+  /// No description provided for @warmupCooldownHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前练后'**
+  String get warmupCooldownHeading;
+
+  /// No description provided for @preWorkoutWarmup.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前热身'**
+  String get preWorkoutWarmup;
+
+  /// No description provided for @postWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'练后'**
+  String get postWorkoutStretch;
+
+  /// No description provided for @preWorkoutWarmupPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没热身？先做 {minutes} 分钟'**
+  String preWorkoutWarmupPrompt(int minutes);
+
+  /// No description provided for @planCirclesInBothDirections.
+  ///
+  /// In zh, this message translates to:
+  /// **'每侧顺逆各 {count} 圈'**
+  String planCirclesInBothDirections(int count);
+
+  /// No description provided for @planCircleClockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'顺时针'**
+  String get planCircleClockwise;
+
+  /// No description provided for @planCircleCounterclockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'逆时针'**
+  String get planCircleCounterclockwise;
+
+  /// No description provided for @planPeakHold.
+  ///
+  /// In zh, this message translates to:
+  /// **'顶峰停 {seconds} 秒'**
+  String planPeakHold(int seconds);
+
+  /// No description provided for @continuePostWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'接着做练后'**
+  String get continuePostWorkoutStretch;
+
+  /// No description provided for @cooldownPlanCardSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'初／中／高 · 徒手'**
+  String get cooldownPlanCardSubtitle;
+
+  /// No description provided for @cooldownStrengtheningHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'A 专项补强'**
+  String get cooldownStrengtheningHeading;
+
+  /// No description provided for @cooldownStretchHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'B 全身拉伸'**
+  String get cooldownStretchHeading;
+
+  /// No description provided for @skipCooldownStrengthening.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过补强，直接全身拉伸'**
+  String get skipCooldownStrengthening;
+
+  /// No description provided for @cooldownStrengtheningAdvice.
+  ///
+  /// In zh, this message translates to:
+  /// **'建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过'**
+  String get cooldownStrengtheningAdvice;
+
+  /// No description provided for @cooldownStrengtheningRounds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{rounds} 轮'**
+  String cooldownStrengtheningRounds(int rounds);
+
+  /// No description provided for @cooldownStrengtheningRest.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作间休息 {seconds} 秒 · 轮间休息 {roundSeconds} 秒'**
+  String cooldownStrengtheningRest(int seconds, int roundSeconds);
+
+  /// No description provided for @cooldownSecondsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 秒'**
+  String cooldownSecondsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 次'**
+  String cooldownRepsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsPerPosition.
+  ///
+  /// In zh, this message translates to:
+  /// **'各 {reps} 次'**
+  String cooldownRepsPerPosition(int reps);
+
+  /// No description provided for @cooldownPnfSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'PNF {seconds} 秒'**
+  String cooldownPnfSeconds(int seconds);
+
+  /// No description provided for @bodyweightPlanMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{minutes} 分钟 · 徒手'**
+  String bodyweightPlanMinutes(int minutes);
+
+  /// No description provided for @temporaryPlanDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时示范'**
+  String get temporaryPlanDemo;
 }
 
 class _AppLocalizationsDelegate

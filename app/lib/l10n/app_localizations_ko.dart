@@ -1533,4 +1533,95 @@ class AppLocalizationsKo extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '운동 전후';
+
+  @override
+  String get preWorkoutWarmup => '운동 전 워밍업';
+
+  @override
+  String get postWorkoutStretch => '운동 후';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '아직 몸을 풀지 않았다면 $minutesString분 ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '양쪽 각각 방향마다 $count회';
+  }
+
+  @override
+  String get planCircleClockwise => '시계 방향';
+
+  @override
+  String get planCircleCounterclockwise => '반시계 방향';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '정점에서 $seconds초 유지';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => '이어서 운동 후 루틴 시작';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3단계 · 맨몸';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 집중 강화';
+
+  @override
+  String get cooldownStretchHeading => 'B 전신 스트레칭';
+
+  @override
+  String get skipCooldownStrengthening => '강화를 건너뛰고 전신 스트레칭으로';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      '하루씩 쉬면서 주 2~3회 하는 것을 권장합니다. 당일에 상체 근력 운동을 했거나 손목이 뻐근하면 강화를 건너뛰세요.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds라운드';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '동작 사이 $seconds초 휴식 · 라운드 사이 $roundSeconds초 휴식';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min~$max초';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min~$max회';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '자세마다 $reps회';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds초';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes분 · 맨몸';
+  }
+
+  @override
+  String get temporaryPlanDemo => '임시 시범';
 }

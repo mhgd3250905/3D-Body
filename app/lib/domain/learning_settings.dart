@@ -9,8 +9,10 @@ class LearningSettings {
     this.themeMode = 'system',
     this.language = 'system',
     this.actorBody = 'original',
+    this.cooldownTier = 1,
   });
 
+  static const cooldownTiers = [1, 2, 3];
   static const themeModes = ['system', 'dark', 'light'];
   static const actorBodies = [
     'original',
@@ -55,6 +57,8 @@ class LearningSettings {
   /// The Thomas athlete; independent from the reference mannequin and videos.
   final String actorBody;
 
+  final int cooldownTier;
+
   LearningSettings copyWith({
     String? tier,
     double? speed,
@@ -65,6 +69,7 @@ class LearningSettings {
     String? themeMode,
     String? language,
     String? actorBody,
+    int? cooldownTier,
   }) => LearningSettings(
     tier: tier ?? this.tier,
     speed: speed ?? this.speed,
@@ -75,6 +80,7 @@ class LearningSettings {
     themeMode: themeMode ?? this.themeMode,
     language: language ?? this.language,
     actorBody: actorBody ?? this.actorBody,
+    cooldownTier: cooldownTier ?? this.cooldownTier,
   );
 
   bool get valid =>
@@ -84,7 +90,8 @@ class LearningSettings {
       weeklyGoal <= 7 &&
       themeModes.contains(themeMode) &&
       languages.contains(language) &&
-      actorBodies.contains(actorBody);
+      actorBodies.contains(actorBody) &&
+      cooldownTiers.contains(cooldownTier);
 
   Map<String, dynamic> toJson() => {
     'tier': tier,
@@ -96,6 +103,7 @@ class LearningSettings {
     'themeMode': themeMode,
     'language': language,
     'actorBody': actorBody,
+    'cooldownTier': cooldownTier,
   };
 
   factory LearningSettings.fromJson(Map<String, dynamic> json) =>
@@ -114,5 +122,9 @@ class LearningSettings {
         actorBody: actorBodies.contains(json['actorBody'])
             ? json['actorBody'] as String
             : 'original',
+        cooldownTier: switch (json['cooldownTier']) {
+          final int value when cooldownTiers.contains(value) => value,
+          _ => 1,
+        },
       );
 }

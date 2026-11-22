@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:ugk_coach/ugk_coach.dart' as uc;
@@ -13,10 +14,12 @@ import '../l10n/app_localizations.dart';
 import '../trainer/trainer_audio.dart';
 import '../trainer/trainer_strings.dart';
 import '../trainer/trainer_theme.dart';
+import '../trainer/flare_demo_orientation.dart';
 import '../trainer/trainer_voice.dart';
 import '../trainer/training_plan_adapter.dart';
 import 'flare_v5_media.dart';
 import 'page_kit.dart';
+import 'theme.dart';
 
 /// Opened through the SDK TrainerLauncher: TrainerPlayer owns back/finish,
 /// poster entry and on-demand public media, and returns one immutable SDK
@@ -29,6 +32,9 @@ class FlareTrainingPage extends StatefulWidget {
     required this.store,
     this.startInPreview = false,
     this.previewLocked = false,
+    this.supplementalPlan,
+    this.planSnapshot,
+    this.onContinueCooldown,
     this.voiceOutput,
     this.keepAlive = true,
   });
@@ -38,6 +44,12 @@ class FlareTrainingPage extends StatefulWidget {
   final LearningStore store;
   final bool startInPreview;
   final bool previewLocked;
+  final FlarePlan? supplementalPlan;
+  final sdk.PoseHubPlanSnapshot? planSnapshot;
+
+  /// Records the user's next destination once the SDK accepts the saved result.
+  /// The opener can then navigate after the SDK route finishes closing.
+  final VoidCallback? onContinueCooldown;
   @visibleForTesting
   final sdk.VoiceOutput? voiceOutput;
   @visibleForTesting
@@ -48,7 +60,17 @@ class FlareTrainingPage extends StatefulWidget {
 }
 
 class _FlareTrainingPageState extends State<FlareTrainingPage> {
-  static const _initialCountdownSeconds = 10;
+  int _countdownSeconds(sdk.VoiceSource source) {
+    if (!hasFlarePlanAnnouncements(source)) return 10;
+    final plan = widget.supplementalPlan;
+    if (plan?.kind == FlarePlanKind.warmup ||
+        plan?.kind == FlarePlanKind.cooldown &&
+            widget.plan.blocks.firstOrNull?.type == uc.BlockType.cooldown) {
+      return 5;
+    }
+    return 10;
+  }
+
   Future<_PlayerData>? _loading;
   sdk.VoiceOutput? _output;
   final _restSelection =
@@ -60,6 +82,8 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
   bool _sdkExitStarted = false;
   bool _returningEmptyResult = false;
   double _previewSwipeDistance = 0;
+  VoidCallback? _completionReplay;
+  bool _continueAfterFinish = false;
 
   // Keep the same V1 player mounted across unlock and Start. Its gate idles
   // the session clock, voice and history, without selecting the legacy stage.
@@ -126,6 +150,16 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     if (_isCurrentRoute && !_sdkExitStarted) _route?.navigator?.pop(result);
   }
 
+  late final _authoredItems = {
+    for (final item
+        in widget.supplementalPlan?.allItems ?? const <FlarePlanItem>[])
+      for (final alias in item.trainingMediaIdsForScene('A').entries)
+        alias.key: (item: item, media: alias.value),
+  };
+
+  String _mediaId(String exerciseId) =>
+      _authoredItems[exerciseId]?.media ?? exerciseId;
+
   Future<_PlayerData> _load(String language) async {
     final wristDirections = trainerWristDirections(
       AppLocalizations.of(context),
@@ -135,12 +169,12 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     final shared = current != null && (active == null || active == current.pack)
         ? current
         : await FlareShared.load(activeCatalog: active);
-    bool known(String id) => shared.catalog[id] != null;
+    bool known(String id) => shared.catalog[_mediaId(id)] != null;
     validateTrainingPlan(widget.plan, widget.catalog, known: known);
     // Layer the active Pose-Hub catalog's recorded prompts and structured
     // voice guides behind Flare's shared prompts. The SDK prefetches and
     // verifies the needed clips and retains the bundled fallback.
-    final voice = await sdk.withPoseHubCatalogVoice(
+    var voice = await sdk.withPoseHubCatalogVoice(
       await loadTrainerVoiceSource(
         language: language,
         // TrainerPlayer uses its default right-first side sequence.
@@ -148,6 +182,14 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       ),
       catalog: shared.pack,
     );
+    if (widget.supplementalPlan case final supplemental?) {
+      voice = await withSupplementalTrainerVoice(
+        voice,
+        supplemental,
+        language: language,
+        planSnapshot: widget.planSnapshot,
+      );
+    }
     return _PlayerData(
       plan: expandSegmentedTrainingPlan(
         widget.plan,
@@ -329,17 +371,176 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
     );
   }
 
+  bool get _offersCooldown =>
+      widget.onContinueCooldown != null && widget.supplementalPlan == null;
+
+  Widget _bindCompletionReplay(
+    BuildContext context,
+    sdk.SessionResult result,
+    VoidCallback replay,
+  ) {
+    // The SDK only invokes this builder after its automatic save succeeds.
+    // Publish the action after build without re-entering the SDK's subtree.
+    if (_completionReplay != replay) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_isCurrentRoute &&
+            _result?.sessionId == result.sessionId &&
+            result.completedExercises > 0 &&
+            _completionReplay != replay) {
+          setState(() => _completionReplay = replay);
+        }
+      });
+    }
+    return const SizedBox.shrink();
+  }
+
+  Future<void> _finishWithCooldown() async {
+    if (!_isCurrentRoute || _sdkExitStarted || _continueAfterFinish) return;
+    setState(() => _continueAfterFinish = true);
+    // TrainerPlayer's PopScope owns the saved result, the completion receipt
+    // and the audio/media exit animation. Going through it is the Finish path.
+    final handled = await Navigator.maybePop(context);
+    if (!handled && _isCurrentRoute) {
+      setState(() => _continueAfterFinish = false);
+    }
+  }
+
+  Future<void> _completeResult(sdk.SessionResult _) async {
+    if (_sdkExitStarted) {
+      if (_continueAfterFinish && _isCurrentRoute) {
+        widget.onContinueCooldown?.call();
+      }
+    } else if (mounted) {
+      // Replay runs in this route with a fresh session and completion receipt.
+      setState(() {
+        _result = null;
+        _completionReplay = null;
+        _continueAfterFinish = false;
+      });
+    }
+    _sdkExitStarted = false;
+  }
+
+  Widget _completionFooter(
+    Widget player,
+    sdk.TrainerTheme theme,
+    sdk.TrainerStrings strings,
+    String label,
+  ) {
+    if (!_offersCooldown) return player;
+    final replay = _completionReplay;
+    final open = replay != null && !widget.previewLocked;
+    final safe = MediaQuery.paddingOf(context);
+    final palette = theme.isDark ? FlarePalette.dark : FlarePalette.light;
+    final style = TextStyle(
+      fontFamily: theme.fontFamily,
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 1.35,
+    );
+    final material = Theme.of(context);
+    final scaledLabel = MediaQuery.textScalerOf(context).scale(14) * 1.35;
+    final minTouchHeight =
+        material.materialTapTargetSize == MaterialTapTargetSize.padded
+        ? kMinInteractiveDimension
+        : 40.0;
+    final replayHeight = math.max(
+      minTouchHeight + material.visualDensity.baseSizeAdjustment.dy,
+      scaledLabel.ceilToDouble(),
+    );
+    const buttonHeight = 48.0;
+    const buttonGap = 10.0;
+    const extra = buttonHeight + buttonGap;
+
+    // v1 has one fixed replay row under Finish and no footer slot. Keep the
+    // SDK page, including Finish, in place and host that replay action below
+    // Flare's new action. Clip only the original replay row to avoid duplicate
+    // touch targets. This also reserves scroll space for the larger footer.
+    return ColoredBox(
+      color: open ? theme.background : Colors.transparent,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned.fill(
+            bottom: open ? extra : 0,
+            child: ClipRect(
+              clipBehavior: open ? Clip.hardEdge : Clip.none,
+              clipper: open
+                  ? _TrainerReplayRowClip(safe.bottom + replayHeight)
+                  : null,
+              child: player,
+            ),
+          ),
+          if (open)
+            Positioned(
+              left: math.max(20, safe.left),
+              right: math.max(20, safe.right),
+              bottom: safe.bottom,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: buttonGap),
+                  SizedBox(
+                    height: buttonHeight,
+                    child: OutlinedButton(
+                      key: const ValueKey('continue-cooldown'),
+                      onPressed: _continueAfterFinish
+                          ? null
+                          : _finishWithCooldown,
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: theme.text,
+                        side: BorderSide(color: palette.hairline),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                        ),
+                        textStyle: style.copyWith(fontSize: 15),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(label),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: replayHeight,
+                    child: Center(
+                      child: TextButton(
+                        key: const ValueKey('flare-completion-replay'),
+                        onPressed: _continueAfterFinish ? null : replay,
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.sub,
+                          disabledForegroundColor: theme.sub,
+                          textStyle: style,
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(strings.replay),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _media(BuildContext context, sdk.TrainerMediaRequest request) {
     final drill = request.drill;
     final experience = sdk.TrainerExperienceScope.maybeOf(context);
     final stage = request.theme.mediaStage;
     final media = drill.media;
     final id = media?.actionId ?? drill.id;
+    final mirrored = flareDemoMirrored(id, request.mirrored);
     Widget poster(String asset) => sdk.TrainerPoster(
       asset: asset,
       bundle: experience?.bundle,
       decodeWidth: experience?.decodeWidth,
-      mirrored: request.mirrored,
+      mirrored: mirrored,
       radius: 0,
       stageColor: stage,
     );
@@ -352,7 +553,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
               key: const ValueKey('flare-v5-training-media'),
               speed: widget.store.settings.speed,
               playing: !request.paused,
-              mirrored: request.mirrored,
+              mirrored: mirrored,
               fallback: poster(flareV5PosterAsset),
               background: stage,
             )
@@ -375,7 +576,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         prefetchWhenIdle: !_awaitingPreviewStart,
         playing: canPlay,
         paused: request.paused,
-        mirrored: request.mirrored,
+        mirrored: mirrored,
         radius: 0,
         stage: stage,
         playbackHandle: request.playbackHandle,
@@ -396,7 +597,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       key: const ValueKey('player-media'),
       media: media,
       paused: request.paused,
-      mirrored: request.mirrored,
+      mirrored: mirrored,
       radius: 0,
       stage: stage,
       errorLabel: request.strings.mediaUnavailable,
@@ -443,6 +644,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         if (data == null) {
           return _loadPage(context, const CircularProgressIndicator());
         }
+        final initialCountdownSeconds = _countdownSeconds(data.source);
         _output ??= widget.voiceOutput ?? trainerAudio.acquire();
         final theme = trainerTheme(context);
         final first = data.plan.items.first;
@@ -450,7 +652,7 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           s,
           result: _result,
           prepFirst: _awaitingPreviewStart
-              ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(_initialCountdownSeconds)}'
+              ? '${s.setsLabel(1, first.sets)} · ${s.countdown} ${s.secondsLabel(initialCountdownSeconds)}'
               : null,
         );
         final timedWristRocks = data.plan.items.any(
@@ -466,30 +668,60 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         // action repeatedly. Refresh the descriptors when the host rebuilds.
         final drills = <String, sdk.TrainerDrill?>{};
         sdk.TrainerDrill? drillOf(String id) => drills.putIfAbsent(id, () {
-          final drill = widget.catalog.drillById(id);
-          final public = data.shared.catalog[id];
-          final name = drill?.name ?? data.shared.nameOf(id, language);
+          final mediaId = _mediaId(id);
+          final drill = widget.catalog.drillById(mediaId);
+          final public = data.shared.catalog[mediaId];
+          final authored = _authoredItems[id]?.item;
+          final pnf = authored?.pnfTrainingIdForScene('A') == id;
+          final placeholder = authored?.usesPlaceholderDemo == true;
+          final displayName = language == 'zh'
+              ? authored?.displayName
+              : authored?.displayNameEn;
+          final name =
+              displayName ??
+              drill?.name ??
+              data.shared.nameOf(mediaId, language);
           if (name == null) return null;
           final isV5 = id == flareV5DrillId;
-          final poster = isV5 ? flareV5PosterAsset : policy?.posterAssetFor(id);
+          final poster = isV5
+              ? flareV5PosterAsset
+              : policy?.posterAssetFor(mediaId);
           final timedWrist = timedWristRocks && id == 'forearms-A';
+          final authoredCue = language != 'zh'
+              ? null
+              : pnf
+              ? flareCooldownPnfCue
+              : authored?.voiceCue;
+          final cue = switch ((placeholder, authoredCue)) {
+            (true, final String text) => '${s.temporaryPlanDemo} · $text',
+            (true, null) => s.temporaryPlanDemo,
+            (_, final String text) => text,
+            _ when timedWrist => trainerTimedWristCue(s),
+            _ => drill?.cues.firstOrNull,
+          };
           return sdk.TrainerDrill(
             id: id,
             name: name,
-            cue: timedWrist
-                ? trainerTimedWristCue(s)
-                : drill == null || drill.cues.isEmpty
-                ? null
-                : drill.cues.first,
-            cues: !timedWrist && drill == null
+            cue: cue,
+            cues:
+                authoredCue == null &&
+                    !placeholder &&
+                    !timedWrist &&
+                    drill == null
                 ? public?.cues['zh'] ?? const []
                 : const [],
-            precautions: [...?public?.cautions, ...?public?.contraindications],
+            precautions: [
+              if (language == 'zh') ?authored?.safetyNote,
+              if (!(placeholder && authored?.safetyNote != null)) ...[
+                ...?public?.cautions,
+                ...?public?.contraindications,
+              ],
+            ],
             media: poster == null
                 ? null
                 : sdk.DrillMedia(
                     id: id,
-                    actionId: id,
+                    actionId: mediaId,
                     videoAsset: '',
                     posterAsset: poster,
                     duration: 0,
@@ -498,51 +730,97 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
           );
         });
 
+        final authored = widget.supplementalPlan;
+        final cooldown = authored?.kind == FlarePlanKind.cooldown
+            ? authored
+            : null;
+        final sound = widget.store.settings.sound;
+        final planAnnouncements =
+            authored != null && hasFlarePlanAnnouncements(data.source);
+        final sessionBuilder = cooldown == null
+            ? planAnnouncements
+                  ? sdk.SessionBuilder(
+                      transitionSeconds: flareWarmupTransitionSeconds,
+                      prepSeconds: initialCountdownSeconds,
+                      rhythms: data.rhythms,
+                      known: (id) => drillOf(id) != null,
+                    )
+                  : null
+            : FlareCooldownSessionBuilder(
+                strengtheningRestSeconds: cooldown.strengtheningRestSeconds,
+                stretchPostures: cooldown.stretchPosturesForScene('A'),
+                rhythms: data.rhythms,
+                known: (id) => drillOf(id) != null,
+                prepSeconds: initialCountdownSeconds,
+                voiceGuideFor: data.source.voiceGuide,
+                guideSideSwitchSecondsFor: data.source.sideSwitchSecondsFor,
+              );
         return TooltipVisibility(
           visible: _result == null,
           child: Visibility(
             visible: !_returningEmptyResult,
             maintainState: true,
             child: _previewControls(
-              sdk.TrainerPlayer(
-                plan: data.plan,
-                rhythms: data.rhythms,
-                drillOf: drillOf,
-                strings: strings,
-                theme: theme,
-                prepSeconds: _initialCountdownSeconds,
-                startGate: _previewStartGate?.future,
-                voice: sdk.TrainerVoice(
-                  source: data.source,
-                  output: _output!,
-                  settings: sdk.VoiceSettings(
-                    language: data.language,
-                    voice: widget.store.settings.sound,
-                    chimes: widget.store.settings.sound,
+              _completionFooter(
+                sdk.TrainerPlayer(
+                  plan: data.plan,
+                  rhythms: data.rhythms,
+                  drillOf: drillOf,
+                  strings: strings,
+                  theme: theme,
+                  prepSeconds: initialCountdownSeconds,
+                  sessionBuilder: sessionBuilder,
+                  transitionSeconds:
+                      widget.supplementalPlan?.kind == FlarePlanKind.warmup
+                      ? flareWarmupTransitionSeconds
+                      : 15,
+                  startGate: _previewStartGate?.future,
+                  voice: sdk.TrainerVoice(
+                    source: data.source,
+                    output: _output!,
+                    scriptBuilder: planAnnouncements
+                        ? (source, language) => buildSupplementalTrainerScript(
+                            source,
+                            language,
+                            plan: authored,
+                            phases: sessionBuilder!.phases(data.plan),
+                          )
+                        : cooldown == null
+                        ? null
+                        : buildCooldownTrainerScript,
+                    settings: sdk.VoiceSettings(
+                      language: data.language,
+                      voice: sound,
+                      chimes: sound,
+                    ),
                   ),
+                  onFinished: _saveResult,
+                  onExitStarted: _onExitStarted,
+                  onCompleted: _completeResult,
+                  replayBuilder: _offersCooldown ? _bindCompletionReplay : null,
+                  restFeedbackBuilder: (context, feedback) =>
+                      _restFeedback(context, feedback, theme, strings, drillOf),
+                  keepAlive: widget.keepAlive,
+                  showExtendRest: true,
+                  showCompleteTimedPhase: true,
+                  showSoundToggle: true,
+                  notificationIcon: 'mipmap/ic_launcher',
+                  doseLabel: _doseLabel,
+                  mediaBuilder:
+                      _previewStartGate != null ||
+                          data.plan.exerciseIds.any(
+                            (id) =>
+                                id == flareV5DrillId ||
+                                flareDemoOrientationOverrides.containsKey(
+                                  _mediaId(id),
+                                ),
+                          )
+                      ? _media
+                      : null,
                 ),
-                onFinished: _saveResult,
-                onExitStarted: _onExitStarted,
-                onCompleted: (_) async {
-                  // Replay runs in this route with fresh training controls.
-                  if (!_sdkExitStarted && mounted) {
-                    setState(() => _result = null);
-                  }
-                  _sdkExitStarted = false;
-                },
-                restFeedbackBuilder: (context, feedback) =>
-                    _restFeedback(context, feedback, theme, strings, drillOf),
-                keepAlive: widget.keepAlive,
-                showExtendRest: true,
-                showCompleteTimedPhase: true,
-                showSoundToggle: true,
-                notificationIcon: 'mipmap/ic_launcher',
-                doseLabel: _doseLabel,
-                mediaBuilder:
-                    _previewStartGate != null ||
-                        data.plan.exerciseIds.contains(flareV5DrillId)
-                    ? _media
-                    : null,
+                theme,
+                strings,
+                s.continuePostWorkoutStretch,
               ),
               strings,
             ),
@@ -551,6 +829,20 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
       },
     );
   }
+}
+
+class _TrainerReplayRowClip extends CustomClipper<Rect> {
+  const _TrainerReplayRowClip(this.height);
+
+  final double height;
+
+  @override
+  Rect getClip(Size size) =>
+      Rect.fromLTWH(0, 0, size.width, math.max(0, size.height - height));
+
+  @override
+  bool shouldReclip(_TrainerReplayRowClip oldClipper) =>
+      oldClipper.height != height;
 }
 
 class _PlayerData {

@@ -808,5 +808,37 @@
         "type": "String"
       }
     }
-  }
+  },
+  "warmupCooldownHeading": "练前练后",
+  "preWorkoutWarmup": "练前热身",
+  "postWorkoutStretch": "练后",
+  "preWorkoutWarmupPrompt": "还没热身？先做 {minutes} 分钟",
+  "planCirclesInBothDirections": "每侧顺逆各 {count} 圈",
+  "planCircleClockwise": "顺时针",
+  "planCircleCounterclockwise": "逆时针",
+  "planPeakHold": "顶峰停 {seconds} 秒",
+  "@preWorkoutWarmupPrompt": {"placeholders":{"minutes":{"type":"int","format":"decimalPattern"}}},
+  "@planCirclesInBothDirections": {"placeholders":{"count":{"type":"int"}}},
+  "@planPeakHold": {"placeholders":{"seconds":{"type":"int"}}},
+  "continuePostWorkoutStretch": "接着做练后",
+  "cooldownPlanCardSubtitle": "初／中／高 · 徒手",
+  "cooldownStrengtheningHeading": "A 专项补强",
+  "cooldownStretchHeading": "B 全身拉伸",
+  "skipCooldownStrengthening": "跳过补强，直接全身拉伸",
+  "cooldownStrengtheningAdvice": "建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过",
+  "cooldownStrengtheningRounds": "{rounds} 轮",
+  "@cooldownStrengtheningRounds": {"placeholders":{"rounds":{"type":"int"}}},
+  "cooldownStrengtheningRest": "动作间休息 {seconds} 秒 · 轮间休息 {roundSeconds} 秒",
+  "@cooldownStrengtheningRest": {"placeholders":{"seconds":{"type":"int"},"roundSeconds":{"type":"int"}}},
+  "cooldownSecondsRange": "{min}–{max} 秒",
+  "@cooldownSecondsRange": {"placeholders":{"min":{"type":"int"},"max":{"type":"int"}}},
+  "cooldownRepsRange": "{min}–{max} 次",
+  "@cooldownRepsRange": {"placeholders":{"min":{"type":"int"},"max":{"type":"int"}}},
+  "cooldownRepsPerPosition": "各 {reps} 次",
+  "@cooldownRepsPerPosition": {"placeholders":{"reps":{"type":"int"}}},
+  "cooldownPnfSeconds": "PNF {seconds} 秒",
+  "@cooldownPnfSeconds": {"placeholders":{"seconds":{"type":"int"}}},
+  "bodyweightPlanMinutes": "{minutes} 分钟 · 徒手",
+  "@bodyweightPlanMinutes": {"placeholders":{"minutes":{"type":"int"}}},
+  "temporaryPlanDemo": "临时示范"
 }

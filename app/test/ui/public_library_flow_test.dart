@@ -219,30 +219,43 @@ void main() {
     return scene;
   }
 
-  test('the intact r2-v18 pack exposes 248 actions to library and AI', () {
-    final packIds = shared.pack.toAiCatalog().drills.map((d) => d.id).toSet();
-    final scopedIds = {...packIds}..remove('n-thomas-test');
-    final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
-    final libraryIds = shared.library
-        .actions(policy.catalog)
-        .map((a) => a.id)
-        .toSet();
-    final profile = flareCoachAppProfile(
-      shared: shared,
-      executionTiming: shared.sessionBuilder().executionTiming,
-    );
-    expect(packIds, hasLength(249));
-    expect(packIds, contains('n-thomas-test'));
-    expect(scopedIds, hasLength(248));
-    expect(aiIds, unorderedEquals(packIds));
-    expect(libraryIds, unorderedEquals(scopedIds));
-    expect(shared.allowedActionIds, unorderedEquals(scopedIds));
-    expect(profile.scopeManifest.allowedActionIds, unorderedEquals(libraryIds));
-    expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
-    expect(_newR2V1Actions, hasLength(40));
-    expect(packIds, containsAll(_newR2V1Actions));
-    expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
-  });
+  test(
+    'the official r2-v22 catalog preserves the library and AI scope',
+    () async {
+      final bundled = await loadFlareBundledPublicCatalog();
+      final packIds = bundled.toAiCatalog().drills.map((d) => d.id).toSet();
+      final scopedIds = packIds.intersection(flareAuthorizedActionIds);
+      final aiIds = shared.catalog.drills.map((d) => d.id).toSet();
+      final libraryIds = shared.library
+          .actions(policy.catalog)
+          .map((a) => a.id)
+          .toSet();
+      final profile = flareCoachAppProfile(
+        shared: shared,
+        executionTiming: shared.sessionBuilder().executionTiming,
+      );
+      expect(packIds, hasLength(285));
+      expect(packIds, contains('n-thomas-test'));
+      expect(scopedIds, hasLength(248));
+      expect(aiIds, unorderedEquals(packIds));
+      expect(scopedIds, isNot(contains(flareWarmupPushupId)));
+      expect(scopedIds.intersection(flareSupplementalActionIds), isEmpty);
+      expect(
+        policy.actionFor(flareWarmupPushupId)?.availableForTraining,
+        isTrue,
+      );
+      expect(libraryIds, unorderedEquals(scopedIds));
+      expect(shared.allowedActionIds, unorderedEquals(scopedIds));
+      expect(
+        profile.scopeManifest.allowedActionIds,
+        unorderedEquals(libraryIds),
+      );
+      expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
+      expect(_newR2V1Actions, hasLength(40));
+      expect(packIds, containsAll(_newR2V1Actions));
+      expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
+    },
+  );
 
   test(
     'every scoped action has both verified WebP files in the asset bundle',
@@ -268,12 +281,13 @@ void main() {
   );
 
   test(
-    'an older verified cache cannot shadow the bundled r2-v18 pack',
+    'an older verified cache cannot shadow the bundled r2-v22 pack',
     () async {
       const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
+      final bundled = await loadFlareBundledPublicCatalog();
       final olderBytes = utf8.encode(
-        jsonEncode({...shared.pack.raw, 'pack': olderPack}),
+        jsonEncode({...bundled.raw, 'pack': olderPack}),
       );
       final semanticBytes = File(flarePublicSemanticsAsset).readAsBytesSync();
       await store.writeAtomic('packs/$olderPack/catalog.json', olderBytes);
@@ -291,7 +305,7 @@ void main() {
       final cached = await sdk.readVerifiedPoseHubCatalog(store);
       expect(sdk.poseHubPackVersionOf(cached!), olderPack);
       final pack = await loadFlarePublicCatalog(verifiedCache: store);
-      expect(sdk.poseHubPackVersionOf(pack), 'r2-v18');
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v22');
       expect(
         poseHubCatalogRevisionOf(pack),
         PoseHubCatalogUpdates.bundledCatalogSha256,
