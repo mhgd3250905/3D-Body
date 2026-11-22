@@ -1,11 +1,15 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
-import 'package:flare/domain/dose.dart';
+import 'package:flare/data/flare_shared_library.dart';
+import 'package:flare/data/flare_v5_drill.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
+import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_v5_media.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +33,15 @@ class _Storage implements LocalStateStorage {
       throw StateError('test write failure');
     }
     this.value = value;
+  }
+}
+
+class _RecordingVoiceOutput extends sdk.MutedVoiceOutput {
+  final spoken = <String>[];
+
+  @override
+  Future<void> speak(List<String> assets) async {
+    spoken.addAll(assets);
   }
 }
 
@@ -74,6 +87,21 @@ Future<void> _advance(WidgetTester tester, int seconds) async {
   }
 }
 
+/// Whole session length as the SDK player itself schedules it: the same
+/// builder inputs [sdk.TrainerPlayer] uses, including the delivery rhythms.
+/// r2-v18 rows carry counted cadences, so a counted drill such as chest-A
+/// plays its catalog reps (6 left/right pairs × 8 s + 1 s
+/// lead = 49 s) even when the item asks for a 1 s timed set.
+double _sessionSeconds(sdk.TrainerPlayer player) => sdk.SessionBuilder(
+  rhythms: player.rhythms,
+  rhythmDefaults: player.rhythmDefaults,
+  prepSeconds: player.prepSeconds,
+  transitionSeconds: player.transitionSeconds,
+).phases(player.plan).fold(0.0, (total, phase) => total + phase.seconds);
+
+sdk.TrainerPlayer _player(WidgetTester tester) =>
+    tester.widget<sdk.TrainerPlayer>(find.byType(sdk.TrainerPlayer));
+
 Future<void> _expectPoster(WidgetTester tester, String id) async {
   final media = find.byWidgetPredicate(
     (widget) => widget is sdk.DrillMediaView && widget.media.id == id,
@@ -81,7 +109,7 @@ Future<void> _expectPoster(WidgetTester tester, String id) async {
   expect(media, findsOneWidget);
   expect(
     tester.widget<sdk.DrillMediaView>(media).media.posterAsset,
-    'assets/public_posters/$id.webp',
+    '${FlarePublicMedia.coverRoot}$id.webp',
   );
   final decoded = find.descendant(
     of: media,
@@ -106,15 +134,20 @@ Future<LearningStore> _open(
   bool dark = false,
   bool reps = false,
   uc.TrainingPlan? sdkPlan,
+  Catalog? catalog,
+  FlarePlan? supplementalPlan,
+  sdk.VoiceOutput? voiceOutput,
   _Storage? storage,
   List<sdk.SessionResult>? popped,
+  ValueNotifier<bool>? previewLocked,
+  VoidCallback? onContinueCooldown,
   double textScale = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final store = LearningStore(
-    catalog: loadCatalogFixture(),
+    catalog: catalog ?? loadCatalogFixture(),
     storage: storage ?? _Storage(),
   );
   await store.initialize();
@@ -139,16 +172,26 @@ Future<LearningStore> _open(
             child: TextButton(
               key: const ValueKey('open-player'),
               onPressed: () async {
+                Widget trainingPage(bool locked) => FlareTrainingPage(
+                  plan: sdkPlan ?? _plan(reps: reps),
+                  catalog: store.catalog,
+                  store: store,
+                  startInPreview: previewLocked != null,
+                  previewLocked: locked,
+                  onContinueCooldown: onContinueCooldown,
+                  supplementalPlan: supplementalPlan,
+                  voiceOutput: voiceOutput ?? sdk.MutedVoiceOutput(),
+                  keepAlive: false,
+                );
                 final result = await Navigator.of(context)
                     .push<sdk.SessionResult>(
                       MaterialPageRoute(
-                        builder: (_) => FlareTrainingPage(
-                          plan: sdkPlan ?? _plan(reps: reps),
-                          catalog: store.catalog,
-                          store: store,
-                          voiceOutput: sdk.MutedVoiceOutput(),
-                          keepAlive: false,
-                        ),
+                        builder: (_) => previewLocked == null
+                            ? trainingPage(false)
+                            : ValueListenableBuilder<bool>(
+                                valueListenable: previewLocked,
+                                builder: (_, locked, _) => trainingPage(locked),
+                              ),
                       ),
                     );
                 if (result != null) popped?.add(result);
@@ -196,6 +239,171 @@ void main() {
   tearDown(() {
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
+  });
+
+  testWidgets('locked training preview requires manual Start after unlock', (
+    tester,
+  ) async {
+    final locked = ValueNotifier(true);
+    addTearDown(locked.dispose);
+    final semantics = tester.ensureSemantics();
+    try {
+      final store = await _open(tester, previewLocked: locked);
+      final start = find.byKey(const ValueKey('start-training'));
+      final startLabel = _player(tester).strings.startTraining;
+
+      final stage = find.byKey(const ValueKey('player-v1-media-viewport'));
+      String countdownValue() => tester
+          .widget<sdk.TrainerV1PhaseCountdown>(
+            find.byType(sdk.TrainerV1PhaseCountdown),
+          )
+          .value;
+      final prepCountdown = countdownValue();
+      final stageElement = tester.element(stage);
+
+      expect(_player(tester).startMode, sdk.TrainerStartMode.training);
+      expect(_player(tester).startGate, isNotNull);
+      expect(
+        find.textContaining(_player(tester).strings.prepFirst),
+        findsOneWidget,
+      );
+      expect(find.byType(sdk.TrainerPoster), findsOneWidget);
+      expect(start, findsNothing);
+      expect(find.bySemanticsLabel(startLabel), findsNothing);
+      expect(countdownValue(), prepCountdown);
+
+      await _advance(tester, 15);
+      expect(start, findsNothing);
+      expect(countdownValue(), prepCountdown);
+      expect(store.trainerSessions, isEmpty);
+
+      locked.value = false;
+      await _advance(tester, 15);
+      expect(start.hitTestable(), findsOneWidget);
+      expect(countdownValue(), prepCountdown);
+      expect(tester.element(stage), same(stageElement));
+      expect(store.trainerSessions, isEmpty);
+
+      await tester.tap(start);
+      await _advance(tester, 2);
+      expect(start, findsNothing);
+      expect(countdownValue(), isNot(prepCountdown));
+      expect(tester.element(stage), same(stageElement));
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  for (final exit in ['close', 'edge swipe', 'system back']) {
+    testWidgets('locked training preview exits via $exit without saving', (
+      tester,
+    ) async {
+      final locked = ValueNotifier(true);
+      addTearDown(locked.dispose);
+      final results = <sdk.SessionResult>[];
+      final store = await _open(tester, previewLocked: locked, popped: results);
+      switch (exit) {
+        case 'close':
+          await tester.tap(find.byKey(const ValueKey('close')));
+        case 'edge swipe':
+          await tester.dragFrom(const Offset(12, 300), const Offset(160, 0));
+        case 'system back':
+          await tester.binding.handlePopRoute();
+      }
+      await tester.pumpAndSettle();
+      expect(find.byType(FlareTrainingPage), findsNothing);
+      expect(results, isEmpty);
+      expect(store.trainerSessions, isEmpty);
+    });
+  }
+
+  testWidgets('paid training retains the system-back confirmation', (
+    tester,
+  ) async {
+    final store = await _open(tester);
+    final player = _player(tester);
+    expect(player.startMode, sdk.TrainerStartMode.training);
+    expect(
+      find.byKey(const ValueKey('player-v1-media-viewport')),
+      findsOneWidget,
+    );
+
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('close-confirm')), findsOneWidget);
+    expect(find.byType(FlareTrainingPage), findsOneWidget);
+    expect(store.trainerSessions, isEmpty);
+
+    await tester.tap(find.text(player.strings.closeCancel));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('close-confirm')), findsNothing);
+    expect(find.byType(FlareTrainingPage), findsOneWidget);
+  });
+
+  testWidgets('V5 and public media run in the same SDK session', (
+    tester,
+  ) async {
+    final policy = (await tester.runAsync(
+      () => FlarePublicMedia.load(
+        rootDirectory: '../output/trainer-widget-media-20261102',
+        prefetchBeforeTraining: false,
+      ),
+    ))!;
+    FlarePublicMedia.current = policy;
+    addTearDown(() {
+      FlarePublicMedia.current = null;
+      policy.repository.dispose();
+    });
+    final base = _plan();
+    final plan = base.copyWith(
+      blocks: [
+        uc.PlanBlock(
+          id: 'main',
+          name: 'Main',
+          type: uc.BlockType.main,
+          items: [
+            const uc.PlanItem(
+              exerciseId: flareV5DrillId,
+              mode: uc.DoseMode.reps,
+              sets: 1,
+              reps: 1,
+              perSide: false,
+              restSeconds: 0,
+            ),
+            base.items.first,
+          ],
+        ),
+      ],
+    );
+    final store = await _open(tester, sdkPlan: plan);
+    expect(policy.posterAssetFor(flareV5DrillId), flareV5PosterAsset);
+    expect(policy.actionFor(flareV5DrillId), isNull);
+    expect(find.byType(FlareV5Media), findsOneWidget);
+    final player = _player(tester);
+    final phases = sdk.SessionBuilder(
+      rhythms: player.rhythms,
+      rhythmDefaults: player.rhythmDefaults,
+      prepSeconds: player.prepSeconds,
+      transitionSeconds: player.transitionSeconds,
+    ).phases(player.plan);
+    final firstWork = phases.firstWhere((phase) => phase.isWork);
+    expect(firstWork.countedOnClock, isTrue);
+    await _advance(tester, phases.first.seconds.ceil() + 1);
+    expect(find.byKey(const ValueKey('counter')), findsOneWidget);
+    expect(find.byType(FlareV5Media), findsOneWidget);
+    await _advance(tester, firstWork.seconds.ceil() + 1);
+    expect(find.byType(FlareV5Media), findsNothing);
+    await _expectPoster(tester, base.items.first.exerciseId);
+    await _advance(tester, player.transitionSeconds + 12);
+    expect(store.trainerSessions.single.full, isTrue);
+    expect(store.trainerSessions.single.items.map((item) => item.exerciseId), [
+      flareV5DrillId,
+      base.items.first.exerciseId,
+    ]);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
   });
 
   for (final singleDrill in [false, true]) {
@@ -269,8 +477,7 @@ void main() {
             'phase': {'source': 9},
           });
           await tester.pumpAndSettle();
-          await tester.tap(flow.labeledControl('计划'));
-          await tester.pumpAndSettle();
+          await flow.openPlansFromHome(tester);
           await tester.tap(find.byKey(ValueKey('routine-${routine!.id}')));
           await tester.pumpAndSettle();
           if (singleDrill) {
@@ -299,21 +506,22 @@ void main() {
             expect(received.single.items.single.exerciseId, 'abs-A');
             expect(received.single.items.single.workSeconds, 1);
           } else {
-            expect(received.single.toJson(), plan.toJson());
+            expect(
+              received.single.toJson(),
+              plan.copyWith(id: routine.id).toJson(),
+            );
           }
-          final player = tester.widget<sdk.TrainerPlayer>(
-            find.byType(sdk.TrainerPlayer),
-          );
-          await _advance(
-            tester,
-            // SDK estimates exclude the lead-in; advance its public prep too.
-            sdk.SessionBuilder().planSeconds(received.single).ceil() +
-                player.prepSeconds +
-                2,
-          );
+          final player = _player(tester);
+          // Prep included; chest-A runs its r2 counted cadence (25 s/round).
+          final total = _sessionSeconds(player);
+          await _advance(tester, total.ceil() - 3);
+          expect(find.byKey(const ValueKey('finish')), findsNothing);
+          expect(store.trainerSessions, isEmpty);
+          await _advance(tester, 5);
           expect(find.byKey(const ValueKey('finish')), findsOneWidget);
           expect(store.trainerSessions, hasLength(1));
           final result = store.trainerSessions.single;
+          expect(result.planId, received.single.id);
           expect(result.full, isTrue);
           expect(result.items, hasLength(singleDrill ? 1 : 2));
           expect(
@@ -326,6 +534,7 @@ void main() {
           expect(restored.trainerSessions.single.toJson(), result.toJson());
           expect(restored.sessions, hasLength(singleDrill ? 1 : 2));
           restored.dispose();
+          await tester.pumpAndSettle();
           await tester.tap(find.byKey(const ValueKey('finish')));
           await tester.pumpAndSettle();
           expect(find.byType(FlareTrainingPage), findsNothing);
@@ -345,8 +554,15 @@ void main() {
   ) async {
     final popped = <sdk.SessionResult>[];
     final store = await _open(tester, popped: popped);
-    await _advance(tester, 28);
+    final total = _sessionSeconds(_player(tester));
+    // 10 s prep + abs-A 1 s + 15 s transition + chest-A cadence 49 s.
+    expect(total, 75);
+    await _advance(tester, total.ceil() - 3);
+    expect(find.byKey(const ValueKey('finish')), findsNothing);
+    expect(store.trainerSessions, isEmpty);
+    await _advance(tester, 5);
     expect(find.byKey(const ValueKey('finish')), findsOneWidget);
+    expect(find.text('这一套练完了'), findsOneWidget);
     expect(store.trainerSessions, hasLength(1));
     expect(store.trainerSessions.single.full, isTrue);
     expect(store.sessions.map((row) => row.drillId), ['abs-A', 'chest-A']);
@@ -358,13 +574,123 @@ void main() {
     expect(store.sessions, hasLength(2));
   });
 
+  testWidgets('cooldown follows Finish and returns the saved SDK result once', (
+    tester,
+  ) async {
+    var continued = 0;
+    final popped = <sdk.SessionResult>[];
+    final store = await _open(
+      tester,
+      popped: popped,
+      onContinueCooldown: () => continued++,
+    );
+    final cooldown = find.byKey(const ValueKey('continue-cooldown'));
+    expect(cooldown, findsNothing);
+    await _advance(tester, _sessionSeconds(_player(tester)).ceil() + 2);
+    await tester.pumpAndSettle();
+
+    final finish = find.byKey(const ValueKey('finish'));
+    final replay = find.byKey(const ValueKey('flare-completion-replay'));
+    expect(cooldown, findsOneWidget);
+    expect(tester.getSize(cooldown).height, 48);
+    expect(
+      tester.getTopLeft(cooldown).dy - tester.getBottomLeft(finish).dy,
+      10,
+    );
+    expect(tester.getTopLeft(replay).dy, tester.getBottomLeft(cooldown).dy);
+    expect(store.trainerSessions, hasLength(1));
+
+    await tester.tap(cooldown);
+    await tester.pumpAndSettle();
+    expect(continued, 1);
+    expect(find.byType(FlareTrainingPage), findsNothing);
+    expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
+    expect(store.sessions, hasLength(2));
+  });
+
+  testWidgets('transition rest previews the next move with its dose', (
+    tester,
+  ) async {
+    await _open(tester, reps: true);
+    final player = _player(tester);
+    await _advance(tester, 12);
+    final card = find.byKey(const ValueKey('flare-rest-next'));
+    final preview = tester.widget<Text>(
+      find.descendant(of: card, matching: find.byType(Text)),
+    );
+    expect(
+      preview.textSpan!.toPlainText(),
+      '下一个 · ${player.drillOf('chest-A')!.name} · 2 次',
+    );
+    expect(find.text('组间休息 · 15 秒'), findsOneWidget);
+    expect(find.text('组间休息 · 2 次'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
+  testWidgets('partial completion labels the completed and total moves', (
+    tester,
+  ) async {
+    final popped = <sdk.SessionResult>[];
+    final store = await _open(tester, popped: popped);
+    await _advance(tester, 12);
+    final skip = find.byKey(const ValueKey('skip'));
+    expect(TooltipVisibility.of(tester.element(skip)), isTrue);
+    await tester.tap(skip);
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.tap(skip);
+    await _advance(tester, 2);
+
+    expect(find.text('今天先练到这里\n完成 1/2 个动作'), findsOneWidget);
+    expect(find.text('这一套练完了'), findsNothing);
+    expect(store.trainerSessions.single.completedExercises, 1);
+    final finish = find.byKey(const ValueKey('finish'));
+    expect(TooltipVisibility.of(tester.element(finish)), isFalse);
+    expect(find.text('跳过'), findsNothing);
+    await tester.tap(finish);
+    await tester.pumpAndSettle();
+    expect(popped.single.sessionId, store.trainerSessions.single.sessionId);
+    expect(find.byType(FlareTrainingPage), findsNothing);
+  });
+
+  for (final failsOnce in [false, true]) {
+    testWidgets(
+      'zero completed moves ${failsOnce ? 'retries saving before return' : 'return without a result view'}',
+      (tester) async {
+        final storage = _Storage();
+        final popped = <sdk.SessionResult>[];
+        final store = await _open(tester, storage: storage, popped: popped);
+        storage.failNext = failsOnce;
+        final skip = find.byKey(const ValueKey('skip'));
+        for (var step = 0; step < 4; step++) {
+          await tester.tap(skip);
+          await tester.pump(const Duration(milliseconds: 120));
+        }
+        await _advance(tester, 2);
+        if (failsOnce) {
+          final retry = find.byKey(const ValueKey('save-retry'));
+          expect(retry, findsOneWidget);
+          expect(popped, isEmpty);
+          await tester.tap(retry);
+        } else {
+          expect(find.byKey(const ValueKey('finish')), findsNothing);
+        }
+        await tester.pumpAndSettle();
+        expect(popped.single.completedExercises, 0);
+        expect(store.trainerSessions.single.sessionId, popped.single.sessionId);
+        expect(store.sessions.map((row) => row.completed), [false, false]);
+        expect(find.byType(FlareTrainingPage), findsNothing);
+      },
+    );
+  }
+
   testWidgets(
     'SDK save retry retains the same session without duplicate history',
     (tester) async {
       final storage = _Storage();
       final store = await _open(tester, storage: storage);
       storage.failNext = true;
-      await _advance(tester, 28);
+      await _advance(tester, _sessionSeconds(_player(tester)).ceil() + 2);
       expect(find.byKey(const ValueKey('save-retry')), findsOneWidget);
       final id = store.trainerSessions.single.sessionId;
       await tester.tap(find.byKey(const ValueKey('save-retry')));
@@ -383,28 +709,91 @@ void main() {
     },
   );
 
-  testWidgets('unreviewed public rep cadence stays manual until completed', (
+  testWidgets('r2 needs-review rep cadence is counted on the SDK clock', (
     tester,
   ) async {
     final store = await _open(tester, reps: true);
-    await _advance(tester, 28);
-    expect(find.byKey(const ValueKey('complete-set-button')), findsOneWidget);
-    expect(store.trainerSessions, isEmpty);
-    final player = tester.widget<sdk.TrainerPlayer>(
-      find.byType(sdk.TrainerPlayer),
-    );
+    final player = _player(tester);
     expect(player.rhythms.containsKey('glute-max-A'), isTrue);
-    expect(player.rhythms['chest-A']!.selfPaced, isTrue);
-    await _advance(tester, 7);
+    // ai-reviewed-r2-needs-user-review rows play as the SDK delivers them.
+    final chest = player.rhythms['chest-A']!;
+    expect(chest.selfPaced, isFalse);
+    expect(chest.counted, isTrue);
+    expect(chest.phases.map((phase) => phase.id), ['go', 'hold', 'back']);
+    expect(chest.cycleFor(), 8);
+    // 10 s prep + abs-A 1 s + 15 s transition + 2 pairs × 8 s + 1 s lead.
+    final total = _sessionSeconds(player);
+    expect(total, 43);
+    await _advance(tester, total.ceil() - 3);
+    expect(find.byKey(const ValueKey('complete-set-button')), findsNothing);
     expect(store.trainerSessions, isEmpty);
-    await tester.tap(find.byKey(const ValueKey('complete-set-button')));
-    await tester.pump();
-    await tester.pump();
+    await _advance(tester, 5);
     expect(store.trainerSessions.single.full, isTrue);
     expect(store.trainerSessions.single.items.last.completedSets, 1);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  testWidgets(
+    'Player V1 shows rest feedback between sets and resets it per set',
+    (tester) async {
+      final base = _plan();
+      final plan = base.copyWith(
+        blocks: [
+          uc.PlanBlock(
+            id: 'main',
+            name: 'Main',
+            type: uc.BlockType.main,
+            items: [
+              base.items.first.copyWith(
+                sets: 3,
+                workSeconds: 2,
+                restSeconds: 20,
+              ),
+            ],
+          ),
+        ],
+      );
+      await _open(tester, sdkPlan: plan);
+      final player = _player(tester);
+      expect(player.theme.usePlayerV1, isTrue);
+      final drillId = player.plan.items.first.exerciseId;
+      expect(player.drillOf(drillId), same(player.drillOf(drillId)));
+      final panel = find.byType(sdk.TrainerRestFeedbackPanel);
+      await _advance(tester, 16);
+      expect(panel, findsOneWidget);
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        isNull,
+      );
+      final playerBeforeChoice = _player(tester);
+      await tester.tap(
+        find.byKey(const ValueKey('player-v1-rest-comfortable')).hitTestable(),
+      );
+      await tester.pump();
+      expect(_player(tester), same(playerBeforeChoice));
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        sdk.TrainerRestFeedbackChoice.comfortable,
+      );
+
+      await _advance(tester, 22);
+      expect(
+        tester.widget<sdk.TrainerRestFeedbackPanel>(panel).selected,
+        isNull,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('player-v1-rest-pain')).hitTestable(),
+      );
+      await _advance(tester, 1);
+      expect(
+        find.text(_player(tester).strings.discomfortTitle),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+    },
+  );
 
   testWidgets(
     'optional SDK controls extend rest, complete timer and toggle sound',
@@ -442,7 +831,10 @@ void main() {
       await _advance(tester, 16);
       expect(find.byKey(const ValueKey('extend-rest')), findsOneWidget);
       expect(store.trainerSessions, isEmpty);
+      // chest-A then plays its counted cadence (49 s).
       await _advance(tester, 16);
+      expect(store.trainerSessions, isEmpty);
+      await _advance(tester, 49);
       expect(store.trainerSessions.single.full, isTrue);
       expect(store.sessions, hasLength(2));
       await tester.pumpWidget(const SizedBox());
@@ -503,13 +895,64 @@ void main() {
     await _advance(tester, 3);
     await _expectPoster(tester, 'chest-A');
     expect(store.trainerSessions, isEmpty);
-    await _advance(tester, 4);
+    // Segment B (chest-A) runs its r2 counted cadence to the session end.
+    await _advance(tester, (_sessionSeconds(_player(tester)) - 14).ceil() + 2);
     expect(store.trainerSessions.single.items, hasLength(1));
     expect(store.trainerSessions.single.items.single.completedSets, 1);
     expect(store.sessions.single.drillId, 'scapular-A');
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  for (final cooldown in [false, true]) {
+    final planName = cooldown ? 'cooldown' : 'warm-up';
+    testWidgets('the $planName route speaks the dose before the technique', (
+      tester,
+    ) async {
+      final (catalog, shared) = (await tester.runAsync(() async {
+        return (await Catalog.load(), await FlareShared.load());
+      }))!;
+      final authored = cooldown
+          ? catalog.flareCooldownPlans[1]
+          : catalog.flareWarmupPlan!;
+      final output = _RecordingVoiceOutput();
+      await _open(
+        tester,
+        catalog: catalog,
+        supplementalPlan: authored,
+        sdkPlan: shared.authoredPlan(authored, catalog, 'A'),
+        voiceOutput: output,
+      );
+
+      const root = '$flarePlanVoiceAssetRoot/';
+      final technique = cooldown
+          ? 'supplemental.cooldown.strength.2.1'
+          : 'supplemental.general-warmup.1';
+      await _advance(tester, _player(tester).prepSeconds.ceil() + 3);
+      final planned = output.spoken
+          .where(
+            (path) => path.startsWith(
+              '$root'
+              'supplemental.',
+            ),
+          )
+          .toList();
+      final intro = '$root$technique.intro.m4a';
+      final guide = '$root$technique.m4a';
+      expect(planned.where((path) => path == intro), hasLength(1));
+      expect(planned.where((path) => path == guide), hasLength(1));
+      expect(planned.indexOf(intro), lessThan(planned.indexOf(guide)));
+      if (cooldown) {
+        const kickoff =
+            '$root'
+            'supplemental.cooldown.kickoff.3.m4a';
+        expect(planned.first, kickoff);
+      }
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final language in languageNames.keys) {
     for (final dark in [false, true]) {
@@ -526,6 +969,13 @@ void main() {
             final player = tester.widget<sdk.TrainerPlayer>(
               find.byType(sdk.TrainerPlayer),
             );
+            expect(player.theme.usePlayerV1, isTrue);
+            final labels = AppLocalizations.of(
+              tester.element(find.byType(sdk.TrainerPlayer)),
+            );
+            expect(player.strings.upcomingLabel, labels.planUpNext);
+            expect(player.strings.instructionsLabel, labels.cues);
+            expect(player.strings.restLabel, labels.rest);
             expect(player.strings.pause, isNotEmpty);
             expect(
               player.voice!.settings.language,

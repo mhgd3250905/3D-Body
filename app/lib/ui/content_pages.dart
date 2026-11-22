@@ -17,83 +17,85 @@ Future<bool?> showSafetySheet(BuildContext context) {
     context: context,
     sheetAnimationStyle: FlareMotion.sheetStyle(context),
     isScrollControlled: true,
-    builder: (sheet) => SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Eyebrow(s.safetySheetEyebrow),
-            const SizedBox(height: 4),
-            Text(
-              s.safetySheetTitle,
-              style: const TextStyle(
-                fontSize: 22,
-                height: 1.25,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 24),
-            for (final (index, rule) in [
-              (s.safetyRule1, s.safetyRule1Note),
-              (s.safetyRule2, s.safetyRule2Note),
-              (s.safetyRule3, s.safetyRule3Note),
-            ].indexed)
-              Padding(
-                padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: FlareColors.accent.withValues(alpha: .12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${index + 1}',
-                        style: TextStyle(
-                          color: FlareColors.accentInk,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            rule.$1,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            rule.$2,
-                            style: TextStyle(
-                              fontSize: 13,
-                              height: 1.45,
-                              color: FlareColors.dim,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+    builder: (sheet) => RepaintBoundary(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Eyebrow(s.safetySheetEyebrow),
+              const SizedBox(height: 4),
+              Text(
+                s.safetySheetTitle,
+                style: const TextStyle(
+                  fontSize: 22,
+                  height: 1.25,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            const SizedBox(height: 24),
-            PrimaryAction(
-              label: s.gotIt,
-              onPressed: () => Navigator.pop(sheet, true),
-            ),
-          ],
+              const SizedBox(height: 24),
+              for (final (index, rule) in [
+                (s.safetyRule1, s.safetyRule1Note),
+                (s.safetyRule2, s.safetyRule2Note),
+                (s.safetyRule3, s.safetyRule3Note),
+              ].indexed)
+                Padding(
+                  padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: FlareColors.accent.withValues(alpha: .12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${index + 1}',
+                          style: TextStyle(
+                            color: FlareColors.accentInk,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              rule.$1,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              rule.$2,
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.45,
+                                color: FlareColors.dim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 24),
+              PrimaryAction(
+                label: s.gotIt,
+                onPressed: () => Navigator.pop(sheet, true),
+              ),
+            ],
+          ),
         ),
       ),
     ),
@@ -147,7 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   children: [
                     Expanded(
                       child: Image.asset(
-                        'assets/brand/hero-thomas.webp',
+                        'assets/public_posters/flare-v5-cutout.webp',
                         fit: BoxFit.contain,
                         semanticLabel: s.welcomeHeadline,
                         frameBuilder: (context, child, frame, sync) =>
@@ -254,7 +256,7 @@ class _LibraryPageState extends State<LibraryPage> {
     super.initState();
     _section = widget.initialGroup?.section;
     _searchController = TextEditingController(
-      text: widget.initialQuery ?? widget.initialGroup?.label ?? '',
+      text: widget.initialQuery ?? widget.initialGroup?.shortLabel ?? '',
     );
   }
 
@@ -266,7 +268,8 @@ class _LibraryPageState extends State<LibraryPage> {
     }
     if (oldWidget.initialQuery != widget.initialQuery ||
         oldWidget.initialGroup != widget.initialGroup) {
-      final query = widget.initialQuery ?? widget.initialGroup?.label ?? '';
+      final query =
+          widget.initialQuery ?? widget.initialGroup?.shortLabel ?? '';
       if (_query != query) {
         _searchController.value = TextEditingValue(
           text: query,
@@ -296,68 +299,83 @@ class _LibraryPageState extends State<LibraryPage> {
     final s = context.strings;
     final catalog = widget.catalog;
     final tier = widget.store.settings.tier;
-    final drills = catalog.searchDrills(_query, tier: tier, section: _section);
-    return Column(
-      children: [
-        FlareNavBar(title: s.library, onBack: widget.onBack),
-        FlareDrillFilter(
-          catalog: catalog,
-          controller: _searchController,
-          query: _query,
-          tier: tier,
-          section: _section,
-          searchKey: const ValueKey('library-search'),
-          clearKey: const ValueKey('library-clear-search'),
-          onQueryChanged: _queryChanged,
-          onTier: (value) => widget.store.updateSettings(tier: value),
-          onSection: (value) => setState(() => _selectSection(value)),
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: ScrollEdge(
-            child: CustomScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverList.list(
-                    children: [
-                      if (drills.isEmpty)
-                        EmptyNote(
-                          icon: Icons.search_off_rounded,
-                          text: s.noResults,
-                          top: 40,
-                        ),
-                    ],
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  sliver: SliverCardRows(
-                    itemCount: drills.length,
-                    itemBuilder: (context, index) {
-                      final drill = drills[index];
-                      final group = catalog.groupById(drill.groupId)!;
-                      // Re-keyed per filter so a new result set eases in,
-                      // staggered from the top.
-                      return FadeSlideIn(
-                        key: ValueKey('$tier|$_section|$_query|${drill.id}'),
-                        delay: FadeSlideIn.stagger(index),
-                        child: DrillCard(
-                          drill: drill,
-                          groupLabel: group.shortLabel,
-                          color: Color(group.colorValue),
-                          onTap: () => widget.onDrill(drill),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+    final drills = catalog.searchDrills(
+      _query,
+      tier: tier,
+      section: _section,
+      includeStraightLegFlare: true,
+    );
+    return FlareNavPage(
+      title: s.library,
+      onBack: widget.onBack,
+      blurBackdrop: false,
+      body: Padding(
+        padding: EdgeInsets.only(top: flareNavInset(context)),
+        child: Column(
+          children: [
+            FlareDrillFilter(
+              catalog: catalog,
+              controller: _searchController,
+              query: _query,
+              tier: tier,
+              section: _section,
+              searchKey: const ValueKey('library-search'),
+              clearKey: const ValueKey('library-clear-search'),
+              onQueryChanged: _queryChanged,
+              onTier: (value) => widget.store.updateSettings(tier: value),
+              onSection: (value) => setState(() => _selectSection(value)),
             ),
-          ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ScrollEdge(
+                child: CustomScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      sliver: SliverList.list(
+                        children: [
+                          if (drills.isEmpty)
+                            EmptyNote(
+                              icon: Icons.search_off_rounded,
+                              text: s.noResults,
+                              top: 40,
+                            ),
+                        ],
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      sliver: SliverCardRows(
+                        itemCount: drills.length,
+                        itemBuilder: (context, index) {
+                          final drill = drills[index];
+                          final group = catalog.groupById(drill.groupId)!;
+                          // Re-keyed per filter so a new result set eases in,
+                          // staggered from the top.
+                          return FadeSlideIn(
+                            key: ValueKey(
+                              '$tier|$_section|$_query|${drill.id}',
+                            ),
+                            delay: FadeSlideIn.stagger(index),
+                            child: DrillCard(
+                              drill: drill,
+                              groupLabel: group.shortLabel,
+                              color: Color(group.colorValue),
+                              onTap: () => widget.onDrill(drill),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -370,12 +388,14 @@ class DrillDetailPage extends StatefulWidget {
     required this.onStart,
     required this.onAddToPlan,
     this.group,
+    this.demoSpeed = .5,
   });
   final Drill drill;
   final MuscleGroup? group;
   final VoidCallback onBack;
   final VoidCallback onStart;
   final VoidCallback onAddToPlan;
+  final double demoSpeed;
 
   @override
   State<DrillDetailPage> createState() => _DrillDetailPageState();
@@ -449,186 +469,160 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
     final s = context.strings;
     final shown = drill.cues.take(2).toList();
     final rest = drill.cues.skip(2).toList();
-    return ColoredBox(
-      color: FlareColors.background,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return FlareNavPage(
+      title: drill.name,
+      onBack: widget.onBack,
+      blurBackdrop: false,
+      body: ListView(
+        padding: EdgeInsets.only(top: flareNavInset(context)),
         children: [
-          FlareNavBar(title: drill.name, onBack: widget.onBack),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
+          DrillMediaCard(
+            key: ValueKey('demo:${drill.id}'),
+            drillId: drill.id,
+            sceneSpeed: widget.demoSpeed,
+            stageColor: Colors.transparent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                DrillMediaCard(
-                  key: ValueKey('demo:${drill.id}'),
-                  drillId: drill.id,
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          if (group != null) ...[
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: Color(group!.colorValue),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 7),
-                          ],
-                          Expanded(
-                            child: Eyebrow(
-                              [
-                                if (group != null) group!.label,
-                                // Same words as the library's scene filter.
-                                switch (drill.tier) {
-                                  'B' => s.sceneHome,
-                                  'C' => s.sceneGym,
-                                  _ => s.sceneNone,
-                                },
-                              ].join(' · '),
-                            ),
-                          ),
-                        ],
+                Row(
+                  children: [
+                    if (group != null) ...[
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Color(group!.colorValue),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        drill.nameEn,
-                        style: TextStyle(color: FlareColors.dim, fontSize: 12),
-                      ),
-                      const SizedBox(height: 18),
-                      FlareListGroup(
-                        children: [
-                          _spec(s.spec, drill.prescription),
-                          _spec(s.equipment, drill.equipment),
-                        ],
-                      ),
-                      const SizedBox(height: 22),
-                      for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
-                      const Divider(),
-                      Disclosure(
-                        title: s.moreCuesAndSafety,
-                        children: [
-                          for (var i = 0; i < rest.length; i++)
-                            _cue(i + 2, rest[i]),
-                          SectionTitle(s.mistake),
-                          BodyText(drill.mistake),
-                          SectionTitle(s.drillWhy),
-                          BodyText(drill.why),
-                          SectionTitle(s.safety),
-                          BodyText(drill.safety ?? s.safetyBody),
-                          if (drill.illustrationNote != null) ...[
-                            SectionTitle(s.illustration),
-                            BodyText(
-                              drill.illustrationNote!,
-                              color: FlareColors.dim,
-                            ),
-                          ],
-                        ],
-                      ),
+                      const SizedBox(width: 7),
                     ],
-                  ),
+                    Expanded(
+                      child: Eyebrow(
+                        [
+                          if (group != null) group!.shortLabel,
+                          // Same words as the library's scene filter.
+                          switch (drill.tier) {
+                            'B' => s.sceneHome,
+                            'C' => s.sceneGym,
+                            _ => s.sceneNone,
+                          },
+                        ].join(' · '),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  drill.nameEn,
+                  style: TextStyle(color: FlareColors.dim, fontSize: 12),
+                ),
+                const SizedBox(height: 18),
+                FlareListGroup(
+                  children: [
+                    _spec(s.spec, drill.prescription),
+                    _spec(s.equipment, drill.equipment),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                for (var i = 0; i < shown.length; i++) _cue(i, shown[i]),
+                if (shown.isNotEmpty) const Divider(),
+                Disclosure(
+                  title: s.moreCuesAndSafety,
+                  children: [
+                    for (var i = 0; i < rest.length; i++) _cue(i + 2, rest[i]),
+                    if (drill.mistake.isNotEmpty) ...[
+                      SectionTitle(s.mistake),
+                      BodyText(drill.mistake),
+                    ],
+                    if (drill.why.isNotEmpty) ...[
+                      SectionTitle(s.drillWhy),
+                      BodyText(drill.why),
+                    ],
+                    SectionTitle(s.safety),
+                    BodyText(drill.safety ?? s.safetyBody),
+                    if (drill.illustrationNote != null) ...[
+                      SectionTitle(s.illustration),
+                      BodyText(drill.illustrationNote!, color: FlareColors.dim),
+                    ],
+                  ],
                 ),
               ],
             ),
           ),
-          FlareBottomAction(
-            child: LayoutBuilder(
-              builder: (context, box) {
-                // When 加入计划 cannot fit at a readable size (long languages
-                // at 320 / 1.5× text) it becomes a labelled icon button
-                // instead of shrinking to unreadable type.
-                final label = TextPainter(
-                  text: TextSpan(
-                    text: s.planAddTo,
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  textScaler: MediaQuery.textScalerOf(context),
-                  textDirection: Directionality.of(context),
-                  maxLines: 1,
-                )..layout();
-                final compact = label.width + 64 > box.maxWidth * .46;
-                label.dispose();
-                return Row(
-                  children: [
-                    if (compact)
-                      SizedBox.square(
-                        dimension: FlareBottomAction.buttonHeight,
-                        child: IconButton.filledTonal(
-                          key: const ValueKey('drill-add-to-plan'),
-                          tooltip: s.planAddTo,
-                          style: IconButton.styleFrom(
-                            backgroundColor: FlareColors.accent.withValues(
-                              alpha: .14,
-                            ),
-                            foregroundColor: FlareColors.accentInk,
-                          ),
-                          onPressed: () {
-                            FlareHaptics.light();
-                            widget.onAddToPlan();
-                          },
-                          icon: const Icon(
-                            Icons.playlist_add_rounded,
-                            size: 22,
-                          ),
-                        ),
-                      )
-                    else
-                      ConstrainedBox(
-                        // Long languages / large text: the secondary pill shrinks
-                        // its label instead of pushing 开始 off screen.
-                        constraints: BoxConstraints(
-                          maxWidth: box.maxWidth * .46,
-                        ),
-                        child: SizedBox(
-                          height: FlareBottomAction.buttonHeight,
-                          child: FilledButton.tonalIcon(
-                            key: const ValueKey('drill-add-to-plan'),
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 18,
-                              ),
-                              backgroundColor: FlareColors.accent.withValues(
-                                alpha: .14,
-                              ),
-                              foregroundColor: FlareColors.accentInk,
-                            ),
-                            onPressed: () {
-                              FlareHaptics.light();
-                              widget.onAddToPlan();
-                            },
-                            icon: const Icon(
-                              Icons.playlist_add_rounded,
-                              size: 20,
-                            ),
-                            label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(s.planAddTo, maxLines: 1),
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: PrimaryAction(
-                        label: s.startTimer,
-                        onPressed: widget.onStart,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
         ],
+      ),
+      bottomBar: FlareBottomAction(
+        child: LayoutBuilder(
+          builder: (context, box) {
+            // When 加入计划 cannot fit at a readable size (long languages
+            // at 320 / 1.5× text) it becomes a labelled icon button
+            // instead of shrinking to unreadable type.
+            final label = TextPainter(
+              text: TextSpan(
+                text: s.planAddTo,
+                style: FlareType.secondaryButton,
+              ),
+              textScaler: MediaQuery.textScalerOf(context),
+              textDirection: Directionality.of(context),
+              maxLines: 1,
+            )..layout();
+            final compact = label.width + 64 > box.maxWidth * .46;
+            label.dispose();
+            return Row(
+              children: [
+                if (compact)
+                  SizedBox.square(
+                    dimension: FlareBottomAction.buttonHeight,
+                    child: IconButton.filledTonal(
+                      key: const ValueKey('drill-add-to-plan'),
+                      tooltip: s.planAddTo,
+                      style: IconButton.styleFrom(
+                        backgroundColor: FlareColors.secondaryFill,
+                        foregroundColor: FlareColors.text,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(FlareGeometry.buttonRadius),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        FlareHaptics.light();
+                        widget.onAddToPlan();
+                      },
+                      icon: const Icon(Icons.playlist_add_rounded, size: 22),
+                    ),
+                  )
+                else
+                  ConstrainedBox(
+                    // Long languages / large text: the secondary pill shrinks
+                    // its label instead of pushing 开始 off screen.
+                    constraints: BoxConstraints(maxWidth: box.maxWidth * .46),
+                    child: FlareSecondaryButton(
+                      key: const ValueKey('drill-add-to-plan'),
+                      expand: false,
+                      icon: Icons.playlist_add_rounded,
+                      label: s.planAddTo,
+                      onPressed: () {
+                        FlareHaptics.light();
+                        widget.onAddToPlan();
+                      },
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PrimaryAction(
+                    label: s.startTimer,
+                    onPressed: widget.onStart,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -646,6 +640,7 @@ class ProgressPage extends StatefulWidget {
     this.onBack,
     this.onStart,
     this.now,
+    this.readOnly = false,
   });
   final Catalog catalog;
   final LearningStore store;
@@ -655,6 +650,7 @@ class ProgressPage extends StatefulWidget {
   /// Empty state's 去练第一个动作 (opens the library). Hidden when null.
   final VoidCallback? onStart;
   final DateTime Function()? now;
+  final bool readOnly;
 
   static const milestones = [3, 7, 14, 30, 60, 100];
 
@@ -687,6 +683,17 @@ class _ProgressPageState extends State<ProgressPage> {
   @override
   void initState() {
     super.initState();
+    _celebrateMilestone();
+  }
+
+  @override
+  void didUpdateWidget(ProgressPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.readOnly && !widget.readOnly) _celebrateMilestone();
+  }
+
+  void _celebrateMilestone() {
+    if (widget.readOnly) return;
     final earned = ProgressPage.earnedDates(widget.store.trainingDates);
     if (earned.isEmpty) return;
     final best = earned.keys.reduce((a, b) => a > b ? a : b);
@@ -694,7 +701,9 @@ class _ProgressPageState extends State<ProgressPage> {
       // One-time: shown on this visit, persisted so it never repeats.
       _celebrate = best;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) widget.store.markStreakCelebrated(best);
+        if (mounted && !widget.readOnly) {
+          widget.store.markStreakCelebrated(best);
+        }
       });
     }
   }
@@ -709,11 +718,15 @@ class _ProgressPageState extends State<ProgressPage> {
     final logged = store.sessions
         .where((x) => x.completedSets > 0 || x.activeSeconds > 0)
         .toList();
+    final navInset = flareNavInset(context);
     final body = logged.isEmpty
-        ? _EmptyRecords(onStart: widget.onStart)
+        ? Padding(
+            padding: EdgeInsets.only(top: navInset),
+            child: _EmptyRecords(onStart: widget.onStart),
+          )
         : ScrollEdge(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              padding: EdgeInsets.fromLTRB(20, navInset, 20, 24),
               children: [
                 if (_celebrate case final int unlocked)
                   FadeSlideIn(child: _CelebrateBanner(days: unlocked)),
@@ -764,11 +777,11 @@ class _ProgressPageState extends State<ProgressPage> {
               ],
             ),
           );
-    return Column(
-      children: [
-        FlareNavBar(title: s.history, onBack: widget.onBack),
-        Expanded(child: body),
-      ],
+    return FlareNavPage(
+      title: s.history,
+      onBack: widget.onBack,
+      blurBackdrop: false,
+      body: body,
     );
   }
 

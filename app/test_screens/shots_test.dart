@@ -321,9 +321,13 @@ void main() {
             child: PlansPage(
               catalog: catalog,
               store: store,
-              onPreset: (_) {},
               onRoutine: (_) {},
               onNewRoutine: () {},
+              onOpenAngle: (_) {},
+              onOpenMuscle: (_) {},
+              onAllAngles: () {},
+              onAllMuscles: () {},
+              onContinue: () {},
               onBack: () {},
             ),
           ),
@@ -336,15 +340,18 @@ void main() {
       app(
         Scaffold(
           body: SafeArea(
-            child: PlanDetailPage(
-              title: '托马斯全链',
-              line: '一次练到托马斯的主力肌群',
-              drills: PresetPlan.all.last.drills(catalog, 'A'),
+            child: FlarePlanDetailPage(
+              title: catalog.phaseBySource(11)!.name,
+              phase: catalog.phaseBySource(11),
+              plans: catalog.plansForAngle(11),
+              selectedTier: 1,
+              catalog: catalog,
               store: store,
               onBack: () {},
-              onStart: () {},
+              onStart: (_) {},
+              onMuscle: (_) {},
+              onTierChanged: (_) {},
               onDrill: (_) {},
-              onSaveAsMine: () {},
             ),
           ),
         ),

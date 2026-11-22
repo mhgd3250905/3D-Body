@@ -1,6 +1,6 @@
 {
-  "revision": "muscle-photography-v3-titanium",
-  "createdDate": "2026-10-11",
+  "revision": "muscle-toon-v1",
+  "createdDate": "2026-11-18",
   "source": "app/scene/public/anatomy/mannequin-reference.meshopt.glb.gz",
   "sourceSha256": "b8278a0e5049e432df1ae523a32576490bea1450916a0f5ad09232e25fadbcd6",
   "decodedGlbSha256": "23088862775b08a4996ad1188c9ac4638593c8900b3a36ff4ab8db8950cdc15b",
@@ -25,58 +25,13 @@
   ],
   "renderer": {
     "threeRevision": "170",
-    "width": 512,
-    "height": 512,
     "renderWidth": 1024,
     "renderHeight": 1024,
+    "material": "Shared matte cel shading with lighter shadows and fine screen-space ink",
+    "background": "transparent",
     "alpha": true,
     "meshCount": 1,
-    "vertices": 37141,
-    "toneMapping": "ACESFilmic",
-    "exposure": 1.06,
-    "material": "brushed titanium silver with original-colour enamel teaching regions",
-    "baseColour": "#b8bdc5",
-    "grooveColour": "#747c87",
-    "roughness": 0.28,
-    "metalness": 0.88,
-    "clearcoat": 0.12,
-    "clearcoatRoughness": 0.24,
-    "enamel": {
-      "metalness": 0.1,
-      "roughness": 0.44
-    },
-    "brush": {
-      "roughnessAmplitude": 0.025,
-      "cyclesPerMetre": 334.2253804929802,
-      "antialias": "fwidth footprint"
-    },
-    "lights": {
-      "environment": 1,
-      "hemisphere": 0.35,
-      "key": 1.4,
-      "fill": 0.45,
-      "edge": 0.6
-    },
-    "background": "transparent",
-    "groups": [
-      "deltoids",
-      "rotator-cuff",
-      "triceps",
-      "forearms",
-      "serratus",
-      "scapular",
-      "chest",
-      "lats",
-      "abs",
-      "obliques",
-      "erectors",
-      "hip-flexors",
-      "glute-max",
-      "hip-abductors",
-      "adductors",
-      "quadriceps",
-      "hamstrings"
-    ]
+    "vertices": 37141
   },
   "images": [
     {
@@ -84,8 +39,14 @@
       "file": "app/assets/muscles/deltoids.webp",
       "width": 512,
       "height": 512,
-      "bytes": 31430,
-      "sha256": "f3e1c766323482664d3e18d83830348651061ad106fcb1426e76350bd8e57bc8",
+      "bytes": 22046,
+      "sha256": "5b09a5480d61fd46feee540c8d47b78c6e077c0a5bbdbf1678129824d4ebae9b",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 32,
         "elevation": 7,
@@ -117,8 +78,14 @@
       "file": "app/assets/muscles/rotator-cuff.webp",
       "width": 512,
       "height": 512,
-      "bytes": 34410,
-      "sha256": "8bb3f8cbc6c28cf0105dde23899ab2c8cf59add63df5151cd56ba8e7e8c0728b",
+      "bytes": 24832,
+      "sha256": "79ff46f17e1af9b9364cee3105e4c182e6ebc2597a23100f5acf1f4011551d1e",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 165,
         "elevation": 7,
@@ -148,8 +115,14 @@
       "file": "app/assets/muscles/triceps.webp",
       "width": 512,
       "height": 512,
-      "bytes": 32960,
-      "sha256": "d3c9296259e8b9f76f36753ffaa8d7c1245b4105dd5a549400ee836efd688989",
+      "bytes": 26274,
+      "sha256": "d0559652a5b0bd600314bd343063c69bf659ee515ad0aa7411910829fd823a61",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 155,
         "elevation": 6,
@@ -179,8 +152,14 @@
       "file": "app/assets/muscles/forearms.webp",
       "width": 512,
       "height": 512,
-      "bytes": 32268,
-      "sha256": "b8ccc5acb0a4035695f905e8bcd9a90f98212279b8c985ab0f8fe8f97f5ff22e",
+      "bytes": 26848,
+      "sha256": "e38129ea43516abca3f71356c7b837103eff9945d362f3461b5a2fa685ee3261",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 20,
         "elevation": 6,
@@ -211,8 +190,14 @@
       "file": "app/assets/muscles/serratus.webp",
       "width": 512,
       "height": 512,
-      "bytes": 35260,
-      "sha256": "2281e5bda789eb99def9aee845f3537a7bee047ea626e45030d3c8320a86ad75",
+      "bytes": 23246,
+      "sha256": "4c485fd2baf9159f169bbdc6c0001fb3957f04a2a36455cf92d9a30c869e64b9",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 48,
         "elevation": 6,
@@ -242,8 +227,14 @@
       "file": "app/assets/muscles/scapular.webp",
       "width": 512,
       "height": 512,
-      "bytes": 33084,
-      "sha256": "7dabc0229fa3746d792f53c1885ef6e3ae503bc7be3583f5d8dc822f128237ca",
+      "bytes": 22230,
+      "sha256": "202ae85714649a664012ca11151f221aa2b801d567246137fd632521fc71a8c3",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 170,
         "elevation": 8,
@@ -273,8 +264,14 @@
       "file": "app/assets/muscles/chest.webp",
       "width": 512,
       "height": 512,
-      "bytes": 33242,
-      "sha256": "6ebb7a94d0ca0582369bef0eab91695e3cd42d0e9f58a7f6788caf017a8cb6a8",
+      "bytes": 23032,
+      "sha256": "9f23aa53134045cfe9f8e9b19830f7d1f4bbaf31f262439d7750bf084857c406",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 18,
         "elevation": 7,
@@ -304,8 +301,14 @@
       "file": "app/assets/muscles/lats.webp",
       "width": 512,
       "height": 512,
-      "bytes": 37770,
-      "sha256": "bf3cf5e8a5ee14ba3cd7457893c61df8481eb855a4655e800dbeb66d24b97058",
+      "bytes": 28262,
+      "sha256": "dd2b3c10bded01efcfd228b70474f27540bff32ed70bc1529987924e42ccb8b9",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 155,
         "elevation": 6,
@@ -335,8 +338,14 @@
       "file": "app/assets/muscles/abs.webp",
       "width": 512,
       "height": 512,
-      "bytes": 43522,
-      "sha256": "a307024f6e6e11daf47915caacabe8520f246384049f0b54262c28e825d50758",
+      "bytes": 27424,
+      "sha256": "65a581291b62fb0ad46f0817e20b1a86947fdc26f3041198f8ee5473d26bd13f",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 16,
         "elevation": 5,
@@ -366,8 +375,14 @@
       "file": "app/assets/muscles/obliques.webp",
       "width": 512,
       "height": 512,
-      "bytes": 42288,
-      "sha256": "281b313c7bd41f181ef0bf72cad056d4d862be629b33a6514058579850f154e0",
+      "bytes": 27060,
+      "sha256": "5e77bc9dffb385c3d45f7d2a21fc54b824540e5234d962a97b8f186961fa6e04",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 38,
         "elevation": 5,
@@ -397,8 +412,14 @@
       "file": "app/assets/muscles/erectors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 37872,
-      "sha256": "b5be2842fd8eafd9f9f716693a8f0c9cce468af7858695831d94fb9ab75f3d6c",
+      "bytes": 28530,
+      "sha256": "fffa560b4aa74654db25cf3b97a2c8dec10a5cbfd5ef03eeb3421a00c1347443",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 165,
         "elevation": 4,
@@ -428,8 +449,14 @@
       "file": "app/assets/muscles/hip-flexors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 36422,
-      "sha256": "0fb29611d637fbd044dd794c486360dcb76d395d199aa1315629807b36042a99",
+      "bytes": 30616,
+      "sha256": "2c1a07fa9281d6f38ece7782366dfa3c48423231eb2bff2ef6d71a2a2016881e",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 24,
         "elevation": 6,
@@ -459,8 +486,14 @@
       "file": "app/assets/muscles/glute-max.webp",
       "width": 512,
       "height": 512,
-      "bytes": 34740,
-      "sha256": "c2b0599925147548c22c7d65b5e536d89f2e1e0d0455d2f53ed65e956a155f1f",
+      "bytes": 29386,
+      "sha256": "6f74d3ee5343c560209db436b1c1e557aa3967636ec9b2a99f571127a8f7b1ef",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 158,
         "elevation": 7,
@@ -490,8 +523,14 @@
       "file": "app/assets/muscles/hip-abductors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 37954,
-      "sha256": "86dcdfc308ee531dc0d9bc0955b43c9076d62c99cbb798029abb25a8a6dff8e1",
+      "bytes": 28314,
+      "sha256": "a52465591bc3d933586d1dac4946af662953d2647cb8bc1f2d3b924b7c16de95",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 135,
         "elevation": 6,
@@ -521,8 +560,14 @@
       "file": "app/assets/muscles/adductors.webp",
       "width": 512,
       "height": 512,
-      "bytes": 28826,
-      "sha256": "4205eda1c8f8664e05adb23aaf697ad356894c92a3d1617653d97d05c2d37e44",
+      "bytes": 22764,
+      "sha256": "628342fa3c3d80c0e00f42ec6fdf340b4ae373203739ec406999ca463dfdbe56",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 14,
         "elevation": 4,
@@ -552,8 +597,14 @@
       "file": "app/assets/muscles/quadriceps.webp",
       "width": 512,
       "height": 512,
-      "bytes": 30810,
-      "sha256": "43d7c33246597d2414671fc1a655f8cca2e94017d9223c0ed9aae7daad8f11d4",
+      "bytes": 26994,
+      "sha256": "690fb67b8033ee87e2c4b15a8e1ed2830d28e333c45d3af0bce4d4ad5e07e7ee",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 19,
         "elevation": 4,
@@ -585,8 +636,14 @@
       "file": "app/assets/muscles/hamstrings.webp",
       "width": 512,
       "height": 512,
-      "bytes": 29770,
-      "sha256": "30bb99ec0d23ee63590ebb63c8010b668d63a6f13ef549672efb896730b66f97",
+      "bytes": 26870,
+      "sha256": "99f97ba3c65c9b29b7f18757a75c68099907e69f17e1b8d26d13b275cb5792de",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
       "camera": {
         "azimuth": 165,
         "elevation": 5,
@@ -615,9 +672,17 @@
   ],
   "license": "CC0-1.0",
   "attribution": "Human Base Meshes v1.4.1, Blender Studio and community contributors; GEO-body_male_realistic, existing project mannequin derivative.",
-  "method": "Offline Three.js photography of the existing mature mesh with unchanged shader region definitions, one group at a time; transparent 1024px render downsampled to 512px WebP. Photography alone adds physical studio reflections and fine roughness brushing to the titanium body; source-colour regions have a less metallic enamel finish.",
+  "method": "Original mannequin, orthographic cameras, functional partition, group colors and deep hatch. Transparent WebP from a 1024px render, preserving each published crop and output dimensions.",
   "limits": "Colours show functional teaching locations. Deep structures use the existing hatched proxy. These are not independent internal muscle geometry, EMG, or exact anatomy/Snow registration.",
   "sourceHashes": [
+    {
+      "file": "app/scene/public/anatomy/mannequin-reference.meshopt.glb.gz",
+      "sha256": "b8278a0e5049e432df1ae523a32576490bea1450916a0f5ad09232e25fadbcd6"
+    },
+    {
+      "file": "app/assets/data/phase-muscles.json",
+      "sha256": "cebd33825c3436316078cf54547cceba1d4a039b7f2a87f39425a9d0aa8ba818"
+    },
     {
       "file": "app/scene/src/legacy/muscle-map.js",
       "sha256": "512e938cfac74d1c75bc8b14433e3f68aeec5663626eb48daf28e09d88f3a0cf"
@@ -628,11 +693,19 @@
     },
     {
       "file": "app/scene/src/muscle-material.js",
-      "sha256": "cf6441219deb27a08a7473537248561e305136d057bee3e90dcc65cc63d40f26"
+      "sha256": "b9b02f8706f68a7d5ffc45488ea0769591389b977907124c97a9d638a52ea1fe"
+    },
+    {
+      "file": "app/scene/src/mannequin-toon.js",
+      "sha256": "4b5a220d713427618a2d34e73abd02dc90370abe18a4842d0615f6336a776af8"
     },
     {
       "file": "app/scene/tools/muscle-thumbnails.js",
-      "sha256": "ea764bfbc0a5966a52f846d11392917d429ea393cd19e45183b7d8de25b7e04b"
+      "sha256": "8d24aa27cc0cccb18b4527441f5413fd2c626d0a32ffe47fcc1c711115326729"
+    },
+    {
+      "file": "app/scene/tools/muscle-toon-preview.js",
+      "sha256": "0d231c061f5cd5f53784232644aaa7e0971d31fd4f53335240876895330a3eee"
     }
   ],
   "errors": []

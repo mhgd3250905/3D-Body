@@ -1,4 +1,163 @@
 {
+  "premiumPreviewBadge": "FLARE PRO",
+  "premiumPreviewSubscribe": "解锁 Flare 会员",
+  "premiumPreviewFooter": "开通后 · 训练、记录、自定义计划全部可用",
+  "premiumPreviewBenefitStreak": "连续天数",
+  "premiumPreviewBenefitMilestones": "里程碑",
+  "premiumPreviewBenefitDuration": "训练时长",
+  "premiumPreviewBenefitActions": "自选动作",
+  "premiumPreviewBenefitSets": "自由组数",
+  "premiumPreviewBenefitSaves": "无限保存",
+  "premiumPreviewBenefitVoice": "语音计时",
+  "premiumPreviewBenefitDemos": "动作示范",
+  "premiumPreviewBenefitLogging": "自动记录",
+  "premiumPreviewRecordsTitle": "记录每一次训练",
+  "premiumPreviewRecordsHighlight": "每一次",
+  "premiumPreviewRecordsDescription": "自动保存时长、连续天数和里程碑，进步一眼看清。",
+  "premiumPreviewPlanEditorTitle": "组合你自己的计划",
+  "premiumPreviewPlanEditorHighlight": "自己",
+  "premiumPreviewPlanEditorDescription": "自由挑选动作、调整组数，保存成你的专属计划。",
+  "premiumPreviewTrainingTitle": "跟着练，每组都算数",
+  "premiumPreviewTrainingHighlight": "每组",
+  "premiumPreviewTrainingDescription": "全程语音计时与动作示范，练完自动记录。",
+  "premiumConditionalTrial": "符合资格可免费试用 {days} 天",
+  "premiumSubscribeAt": "订阅 {price}",
+  "@premiumConditionalTrial": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@premiumSubscribeAt": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumTrialOffer": "{days} 天免费试用",
+  "@premiumTrialOffer": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumPlanSummary": "{count} 套计划，托马斯每个难点都有专项练法",
+  "@premiumPlanSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumAngleCount": "难点角度",
+  "premiumMuscleCount": "肌群专项",
+  "premiumLevelCount": "难度档位",
+  "premiumVoiceTitle": "跟练语音与 3D 示范",
+  "premiumVoiceDescription": "计数、换边、休息全程提示",
+  "premiumCustomDescription": "把常练动作组合成自己的计划",
+  "premiumPerYear": "/年",
+  "premiumPerMonth": "/月",
+  "premiumStoreOffline": "暂未连上 {store}，价格以商店显示为准",
+  "@premiumStoreOffline": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumStoreRetryFailed": "仍未连上 {store}，请稍后重试",
+  "@premiumStoreRetryFailed": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumTrialRenewal": "试用结束后 {price} 自动续订，可随时在 {store} 取消",
+  "@premiumTrialRenewal": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumPaidRenewal": "{price} 自动续订，可随时在 {store} 取消",
+  "@premiumPaidRenewal": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumStoreRenewal": "订阅将自动续订，可在 {store} 取消",
+  "@premiumStoreRenewal": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumTitle": "解锁 Flare 会员",
+  "premiumSubtitle": "打造属于你的训练",
+  "premiumAiCoach": "全部训练计划随时开练",
+  "premiumAiPlans": "角度计划与肌群计划，初中高三档",
+  "premiumCustomWorkouts": "无限自定义训练组",
+  "premiumMonthly": "月付",
+  "premiumYearly": "年付",
+  "premiumMonthlyEstimate": "约 {price}/月",
+  "premiumSavings": "省 {percent}%",
+  "premiumTrial": "免费试用 {days} 天",
+  "premiumSubscribe": "订阅",
+  "premiumDisclosure": "订阅将自动续订，可随时在 Google Play 取消。在试用结束前取消则不会扣费。",
+  "premiumRestore": "恢复购买",
+  "premiumTerms": "服务条款",
+  "premiumPrivacy": "隐私政策",
+  "premiumStatus": "Flare 会员",
+  "premiumActive": "会员有效",
+  "premiumInactive": "未开通会员",
+  "premiumManage": "管理订阅",
+  "premiumUnavailable": "暂时无法连接商店，请重试。",
+  "premiumRestoreEmpty": "未找到有效订阅。",
+  "premiumQuota": "今日 AI 次数已用完（{limit} 次），明天再来。",
+  "premiumRateLimit": "请求过于频繁，请稍后再试。",
+  "premiumAiDisclaimer": "AI 建议仅供参考，非医疗建议。",
+  "@premiumMonthlyEstimate": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@premiumSavings": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "@premiumTrial": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@premiumQuota": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
   "@@locale": "zh",
   "actorBodyLabel": "托马斯形象",
   "actorBodyOriginal": "卡通教练",
@@ -9,6 +168,10 @@
   "actorBodyRobot": "机甲",
   "actorBodyCyber": "赛博银",
   "appName": "Flare 托马斯",
+  "flareStraightLegs": "托马斯（双腿伸直）",
+  "@flareStraightLegs": {
+    "description": "Title of the Flare variant performed with both legs straight."
+  },
   "tagline": "看懂动作，练好每一步",
   "watch": "动作",
   "library": "训练",
@@ -33,8 +196,7 @@
   "back": "背面",
   "goBack": "返回",
   "side": "侧面",
-  "pausedHint": "点选肌群",
-  "playingHint": "暂停后查看",
+  "homeGoToTraining": "前往训练",
   "loadingScene": "正在准备 3D 动作…",
   "sceneFailed": "3D 暂时无法显示，请重新打开动作页",
   "retry": "重试",
@@ -219,7 +381,7 @@
   "secondaryShort": "协同",
   "together": "一起发力",
   "assistMuscles": "协助发力",
-  "sceneNone": "无器械",
+  "sceneNone": "徒手",
   "sceneHome": "居家",
   "sceneGym": "健身房",
   "sceneNoneHint": "徒手，随时随地",
@@ -253,7 +415,7 @@
   "safetySheetEyebrow": "练之前",
   "safetySheetTitle": "三件事",
   "safetyRule1": "每次先热身手腕",
-  "safetyRule1Note": "计划里的「热身激活」会带你做一遍",
+  "safetyRule1Note": "先把手腕和肩胛活动开，再开始训练",
   "safetyRule2": "刺痛、麻木、头晕就停",
   "safetyRule2Note": "酸可以，痛不行",
   "safetyRule3": "这是动作教学",
@@ -407,8 +569,93 @@
       }
     }
   },
+  "plansByAngle": "按角度",
+  "plansByMuscle": "按肌群",
+  "anglePlanLabel": "角度计划",
+  "musclePlanLabel": "肌群计划",
+  "angleSupportPlanIntro": "单手撑地、双腿打开成高 V，练稳这一下的支撑力量",
+  "deltoidsPlanIntro": "单臂承重、把身体顶在手上方，托马斯每一圈都靠它",
+  "planTrainingContent": "训练内容",
+  "planMuscleLinkHint": "点肌群看专项计划",
+  "planSpecialized": "专项计划",
+  "planRestSeconds": "休息 {seconds} 秒",
+  "planBodyweightSubstitution": "徒手替换",
+  "planBodyweightScene": "徒手",
+  "hubAngle": "角度",
+  "hubMuscle": "肌群",
+  "hubMinutesFrom": "{count} 分钟起",
+  "hubThreeTiers": "三档",
+  "hubPrimaryMuscles": "这一刻的主力",
+  "hubSpecializedPlan": "专项计划",
+  "hubSupportTab": "支撑",
+  "hubCoreTab": "核心",
+  "hubLegsTab": "腿部",
+  "hubStillPlanning": "还在编排",
+  "hubPlanComingSoon": "专项计划准备中",
+  "hubViewNamedPlan": "查看「{name}」计划",
+  "@hubViewNamedPlan": {
+    "description": "Call to action for the currently selected training plan.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hubPhase09Caption": "双手撑地，开腿抬过前方",
+  "hubPhase10Caption": "从双手移重到单手",
+  "hubPhase11Caption": "单手撑起全身侧立，支撑肩最吃力。",
+  "hubPhase12Caption": "身体转向正面，双腿剪刀式换位过前。",
+  "hubPhase13Caption": "双手在身后撑地，开腿后扫",
+  "hubPhase14Caption": "换手接重，长腿向后扫",
+  "hubPhase15Caption": "换侧单手撑地，保持高 V",
+  "hubPhase16Caption": "转身朝下，双腿扫过后方",
+  "@hubMinutesFrom": {"placeholders": {"count": {"type": "int"}}, "description": "Starting duration of a beginner training plan, in minutes."},
+  "@planRestSeconds": {"placeholders": {"seconds": {"type": "int"}}},
+  "planTierBeginner": "初级",
+  "planTierIntermediate": "中级",
+  "planTierAdvanced": "高级",
+  "planActiveMuscles": "发力肌群",
+  "planExercises": "动作",
+  "planDosePerSide": "{dose} · 每侧",
+  "planTierSummary": "初级 · 中级 · 高级",
+  "@planDosePerSide": {"placeholders": {"dose": {"type": "String"}}},
   "plans": "计划",
-  "plansHint": "成套训练与我的计划",
+  "plansHint": "专项练习与我的计划",
+  "plansLastSession": "上次练到",
+  "plansContinue": "继续",
+  "plansToday": "今天",
+  "plansYesterday": "昨天",
+  "plansFinishedCount": "{completed}/{total} 个动作",
+  "@plansFinishedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "plansNewCompactHint": "组合常练动作",
+  "plansNewEmptyHint": "把常练的动作组合起来",
+  "plansAnglesTitle": "托马斯难点角度",
+  "plansAnglesDescription": "一圈里最吃力的几下，先把它们练稳",
+  "plansMusclesTitle": "补短板肌群",
+  "plansMusclesDescription": "托马斯里负荷最大、最容易受伤的部位",
+  "plansSeeAll": "全部 {count} 个",
+  "@plansSeeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plansOneHandSupport": "单手支撑",
+  "plansTwoHandSupport": "双手支撑",
+  "plansThreeLevels": "3 档",
+  "plansAiTitle": "AI 定制",
+  "plansAiHint": "说出场地、时长和想练的部位，排一份专项计划",
+  "plansAiUnavailable": "暂未接入 AI",
   "plansReady": "成套训练",
   "plansMine": "我的计划",
   "planNew": "新建计划",
@@ -426,6 +673,7 @@
   },
   "planStart": "开始训练",
   "planSaveAsMine": "存为我的计划",
+  "premiumCopyRoutine": "复制计划",
   "planSaved": "已存到我的计划",
   "planEdit": "编辑",
   "planDelete": "删除计划",
@@ -548,5 +796,49 @@
         "type": "int"
       }
     }
-  }
+  },
+  "libraryDose": "{sets} 组 × {amount}",
+  "@libraryDose": {"placeholders": {"sets": {"type": "int"}, "amount": {"type": "String"}}},
+  "planEquipmentNeeded": "需要：",
+  "planEquipmentNameForId": "{id, select, mat{瑜伽垫} chair{椅子} band{弹力带} dumbbell{哑铃} wall{墙} cable{绳索训练机} block{瑜伽砖} pullup_bar{单杠} parallettes{俯卧撑架} dip_bars{双杠} slider{滑盘} rings{吊环} landmine{地雷杆} swiss_ball{健身球} roman_chair{罗马椅} kettlebell{壶铃} reverse_hyper{反向挺身机} ghd{臀腿训练器} hip_abductor_machine{髋外展机} leg_extension_machine{腿屈伸机} foam_roller{泡沫轴} towel{毛巾} doorframe{门框} bench{训练凳} barbell{杠铃} clamp_pad{夹垫} other{}}",
+  "@planEquipmentNameForId": {
+    "description": "Individual equipment labels by catalog ID. Keep select keys unchanged. An empty other branch hides unrecognized equipment.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "warmupCooldownHeading": "练前练后",
+  "preWorkoutWarmup": "练前热身",
+  "postWorkoutStretch": "练后",
+  "preWorkoutWarmupPrompt": "还没热身？先做 {minutes} 分钟",
+  "planCirclesInBothDirections": "每侧顺逆各 {count} 圈",
+  "planCircleClockwise": "顺时针",
+  "planCircleCounterclockwise": "逆时针",
+  "planPeakHold": "顶峰停 {seconds} 秒",
+  "@preWorkoutWarmupPrompt": {"placeholders":{"minutes":{"type":"int","format":"decimalPattern"}}},
+  "@planCirclesInBothDirections": {"placeholders":{"count":{"type":"int"}}},
+  "@planPeakHold": {"placeholders":{"seconds":{"type":"int"}}},
+  "continuePostWorkoutStretch": "接着做练后",
+  "cooldownPlanCardSubtitle": "初／中／高 · 徒手",
+  "cooldownStrengtheningHeading": "A 专项补强",
+  "cooldownStretchHeading": "B 全身拉伸",
+  "skipCooldownStrengthening": "跳过补强，直接全身拉伸",
+  "cooldownStrengtheningAdvice": "建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过",
+  "cooldownStrengtheningRounds": "{rounds} 轮",
+  "@cooldownStrengtheningRounds": {"placeholders":{"rounds":{"type":"int"}}},
+  "cooldownStrengtheningRest": "动作间休息 {seconds} 秒 · 轮间休息 {roundSeconds} 秒",
+  "@cooldownStrengtheningRest": {"placeholders":{"seconds":{"type":"int"},"roundSeconds":{"type":"int"}}},
+  "cooldownSecondsRange": "{min}–{max} 秒",
+  "@cooldownSecondsRange": {"placeholders":{"min":{"type":"int"},"max":{"type":"int"}}},
+  "cooldownRepsRange": "{min}–{max} 次",
+  "@cooldownRepsRange": {"placeholders":{"min":{"type":"int"},"max":{"type":"int"}}},
+  "cooldownRepsPerPosition": "各 {reps} 次",
+  "@cooldownRepsPerPosition": {"placeholders":{"reps":{"type":"int"}}},
+  "cooldownPnfSeconds": "PNF {seconds} 秒",
+  "@cooldownPnfSeconds": {"placeholders":{"seconds":{"type":"int"}}},
+  "bodyweightPlanMinutes": "{minutes} 分钟 · 徒手",
+  "@bodyweightPlanMinutes": {"placeholders":{"minutes":{"type":"int"}}},
+  "temporaryPlanDemo": "临时示范"
 }

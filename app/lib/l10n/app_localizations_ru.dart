@@ -9,6 +9,230 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Открыть Flare Pro';
+
+  @override
+  String get premiumPreviewFooter =>
+      'Тренировки, история и персональные планы доступны после подписки.';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Дни подряд';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Достижения';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Время тренировки';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Выбор упражнений';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Настройка подходов';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Планы без ограничений';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Голосовой таймер';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Показ упражнений';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Автозапись';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'Записывайте каждую тренировку';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'каждую';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Длительность, дни подряд и достижения сохраняются автоматически, чтобы прогресс был виден сразу.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'Создайте свой план';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'свой';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Выбирайте упражнения, настраивайте подходы и сохраняйте свой план тренировок.';
+
+  @override
+  String get premiumPreviewTrainingTitle =>
+      'Тренируйтесь по подсказкам, каждый подход важен';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'каждый подход';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Следуйте голосовым подсказкам и демонстрациям упражнений. В конце тренировка сохранится автоматически.';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return 'При наличии права — $days дн. бесплатно';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Подписаться за $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Бесплатный пробный период: $days дн.';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count трен. планов для всех фаз флэра';
+  }
+
+  @override
+  String get premiumAngleCount => 'Ключевые углы';
+
+  @override
+  String get premiumMuscleCount => 'Группы мышц';
+
+  @override
+  String get premiumLevelCount => 'Уровни';
+
+  @override
+  String get premiumVoiceTitle => 'Голосовые подсказки и 3D-демонстрации';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Подсказки о повторах, смене стороны и отдыхе';
+
+  @override
+  String get premiumCustomDescription =>
+      'Составьте план из привычных упражнений';
+
+  @override
+  String get premiumPerYear => '/год';
+
+  @override
+  String get premiumPerMonth => '/мес.';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Не удалось подключиться к $store. Действуют цены магазина.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Подключиться к $store по-прежнему не удаётся. Повторите попытку позже.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'После пробного периода подписка продлится за $price. Отменить можно в любое время в $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Подписка продлится за $price. Отменить можно в любое время в $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Подписка продлевается автоматически. Отменить можно в $store.';
+  }
+
+  @override
+  String get premiumTitle => 'Откройте Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Создайте свою тренировку';
+
+  @override
+  String get premiumAiCoach =>
+      'Начинайте любую тренировку по плану в любое время';
+
+  @override
+  String get premiumAiPlans =>
+      'Планы по углу и группе мышц на трёх уровнях сложности';
+
+  @override
+  String get premiumCustomWorkouts => 'Неограниченное число своих тренировок';
+
+  @override
+  String get premiumMonthly => 'На месяц';
+
+  @override
+  String get premiumYearly => 'На год';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Около $price в месяц';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Экономия $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Бесплатная пробная версия на $days дн.';
+  }
+
+  @override
+  String get premiumSubscribe => 'Подписаться';
+
+  @override
+  String get premiumDisclosure =>
+      'Подписка продлевается автоматически. Её можно отменить в Google Play в любое время. Если отменить подписку до конца пробного периода, плата не будет списана.';
+
+  @override
+  String get premiumRestore => 'Восстановить покупки';
+
+  @override
+  String get premiumTerms => 'Условия использования';
+
+  @override
+  String get premiumPrivacy => 'Политика конфиденциальности';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Подписка активна';
+
+  @override
+  String get premiumInactive => 'Нет активной подписки';
+
+  @override
+  String get premiumManage => 'Управлять подпиской';
+
+  @override
+  String get premiumUnavailable => 'Магазин недоступен. Попробуйте ещё раз.';
+
+  @override
+  String get premiumRestoreEmpty => 'Активная подписка не найдена.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Лимит запросов к ИИ на сегодня исчерпан ($limit). Возвращайтесь завтра.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Слишком много запросов. Повторите попытку чуть позже.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'Рекомендации ИИ носят справочный характер и не являются медицинской консультацией.';
+
+  @override
   String get actorBodyLabel => 'Персонаж Томаса';
 
   @override
@@ -34,6 +258,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get appName => 'Flare Томас';
+
+  @override
+  String get flareStraightLegs => 'Flare (прямые ноги)';
 
   @override
   String get tagline => 'Поймите движение. Тренируйте каждый этап.';
@@ -108,10 +335,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get side => 'Сбоку';
 
   @override
-  String get pausedHint => 'Выбрать мышцы';
-
-  @override
-  String get playingHint => 'Сначала пауза';
+  String get homeGoToTraining => 'К тренировке';
 
   @override
   String get loadingScene => 'Подготовка 3D-движения…';
@@ -621,7 +845,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get safetyRule1 => 'Сначала разогрейте запястья';
 
   @override
-  String get safetyRule1Note => 'План «Разминка» проведёт вас по шагам';
+  String get safetyRule1Note =>
+      'Разомните запястья и лопатки перед тренировкой.';
 
   @override
   String get safetyRule2 =>
@@ -881,10 +1106,205 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wristExtension => 'Разгибание запястья';
 
   @override
+  String get plansByAngle => 'По углу';
+
+  @override
+  String get plansByMuscle => 'По группе мышц';
+
+  @override
+  String get anglePlanLabel => 'План по углу';
+
+  @override
+  String get musclePlanLabel => 'План на мышцы';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Одна рука на полу, ноги высоко буквой V. Укрепляй эту опору.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Держи корпус над одной рукой. Дельты работают в каждом обороте флэра.';
+
+  @override
+  String get planTrainingContent => 'Тренировка';
+
+  @override
+  String get planMuscleLinkHint => 'Нажми на мышцу, чтобы открыть план';
+
+  @override
+  String get planSpecialized => 'Целевой план';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Отдых $seconds с';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Замена без инвентаря';
+
+  @override
+  String get planBodyweightScene => 'Без инвентаря';
+
+  @override
+  String get hubAngle => 'Угол';
+
+  @override
+  String get hubMuscle => 'Мышцы';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'От $count мин';
+  }
+
+  @override
+  String get hubThreeTiers => 'Три уровня';
+
+  @override
+  String get hubPrimaryMuscles => 'Основные мышцы на этой фазе';
+
+  @override
+  String get hubSpecializedPlan => 'Целевой план';
+
+  @override
+  String get hubSupportTab => 'Опора';
+
+  @override
+  String get hubCoreTab => 'Кор';
+
+  @override
+  String get hubLegsTab => 'Ноги';
+
+  @override
+  String get hubStillPlanning => 'В разработке';
+
+  @override
+  String get hubPlanComingSoon => 'Целевой план в разработке';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Посмотреть план «$name»';
+  }
+
+  @override
+  String get hubPhase09Caption =>
+      'Обопритесь на обе руки и поднимите разведённые ноги перед собой.';
+
+  @override
+  String get hubPhase10Caption => 'Перенесите вес с обеих рук на одну.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Удерживайте тело боком на одной руке. Больше всего работает опорное плечо.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Повернитесь вперёд и поменяйте положение ног перед собой движением «ножницы».';
+
+  @override
+  String get hubPhase13Caption =>
+      'Поставьте руки за корпусом и махните разведёнными ногами назад.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Смените опорную руку и махните прямыми ногами назад.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Обопритесь на другую руку, удерживая ноги высоко буквой V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Повернитесь лицом вниз и проведите ноги сзади.';
+
+  @override
+  String get planTierBeginner => 'Начальный';
+
+  @override
+  String get planTierIntermediate => 'Средний';
+
+  @override
+  String get planTierAdvanced => 'Продвинутый';
+
+  @override
+  String get planActiveMuscles => 'Работающие мышцы';
+
+  @override
+  String get planExercises => 'Упражнения';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · на каждую сторону';
+  }
+
+  @override
+  String get planTierSummary => 'Начальный · Средний · Продвинутый';
+
+  @override
   String get plans => 'Планы';
 
   @override
-  String get plansHint => 'Готовые комплексы и ваши';
+  String get plansHint => 'Целевые тренировки и ваши планы';
+
+  @override
+  String get plansLastSession => 'Последняя тренировка';
+
+  @override
+  String get plansContinue => 'Продолжить';
+
+  @override
+  String get plansToday => 'Сегодня';
+
+  @override
+  String get plansYesterday => 'Вчера';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total упражнений';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Объединяйте привычные упражнения';
+
+  @override
+  String get plansNewEmptyHint =>
+      'Соберите упражнения, которые делаете чаще всего';
+
+  @override
+  String get plansAnglesTitle => 'Сложные положения во флэре';
+
+  @override
+  String get plansAnglesDescription =>
+      'Укрепляйте опору в самых трудных фазах оборота.';
+
+  @override
+  String get plansMusclesTitle => 'Группы мышц для укрепления';
+
+  @override
+  String get plansMusclesDescription =>
+      'Участки с наибольшей нагрузкой при флэре.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Все $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Опора на одну руку';
+
+  @override
+  String get plansTwoHandSupport => 'Опора на две руки';
+
+  @override
+  String get plansThreeLevels => '3 уровня';
+
+  @override
+  String get plansAiTitle => 'План с ИИ';
+
+  @override
+  String get plansAiHint => 'Выберите место, длительность и группу мышц.';
+
+  @override
+  String get plansAiUnavailable => 'ИИ недоступен';
 
   @override
   String get plansReady => 'Готовые комплексы';
@@ -909,6 +1329,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Сохранить как мой план';
+
+  @override
+  String get premiumCopyRoutine => 'Скопировать план';
 
   @override
   String get planSaved => 'Сохранено в «Мои планы»';
@@ -1150,4 +1573,139 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets подхода × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => 'Понадобится:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Коврик',
+      'chair': 'Стул',
+      'band': 'Эластичная лента',
+      'dumbbell': 'Гантель',
+      'wall': 'Стена',
+      'cable': 'Блочный тренажёр',
+      'block': 'Блок для йоги',
+      'pullup_bar': 'Турник',
+      'parallettes': 'Низкие паралетсы',
+      'dip_bars': 'Брусья',
+      'slider': 'Диски для скольжения',
+      'rings': 'Гимнастические кольца',
+      'landmine': 'Шарнир для штанги',
+      'swiss_ball': 'Фитбол',
+      'roman_chair': 'Римский стул',
+      'kettlebell': 'Гиря',
+      'reverse_hyper': 'Тренажёр для обратной гиперэкстензии',
+      'ghd': 'Тренажёр для ягодиц и задней поверхности бедра',
+      'hip_abductor_machine': 'Тренажёр для отведения бедра',
+      'leg_extension_machine': 'Тренажёр для разгибания ног',
+      'foam_roller': 'Массажный ролик',
+      'towel': 'Полотенце',
+      'doorframe': 'Дверная рама',
+      'bench': 'Тренировочная скамья',
+      'barbell': 'Штанга',
+      'clamp_pad': 'Маленькая подушка',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'До и после тренировки';
+
+  @override
+  String get preWorkoutWarmup => 'Разминка';
+
+  @override
+  String get postWorkoutStretch => 'После тренировки';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Ещё не разогрелись? $minutesString мин · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'По $count круга в каждом направлении на сторону';
+  }
+
+  @override
+  String get planCircleClockwise => 'По часовой стрелке';
+
+  @override
+  String get planCircleCounterclockwise => 'Против часовой стрелки';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Задержитесь вверху на $seconds с';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Перейти к упражнениям после тренировки';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 уровня · Без инвентаря';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Целевое укрепление';
+
+  @override
+  String get cooldownStretchHeading => 'B Растяжка всего тела';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Пропустить укрепление и перейти к растяжке';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Выполняйте 2–3 раза в неделю через день. Пропустите укрепление, если сегодня уже тренировали верхнюю часть тела или у вас болят запястья.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds круга';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds с между упражнениями · $roundSeconds с между кругами';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max с';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max повт.';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'По $reps повт.';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds с ПНФ';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes мин · Без инвентаря';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Временный показ';
 }

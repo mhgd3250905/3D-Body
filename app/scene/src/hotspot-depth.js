@@ -14,7 +14,11 @@ const OUTWARD = {
   adductors: [-1, 0, 0], quadLat: [.6, 0, .7], hamLat: [.3, 0, -1], hamMed: [0, 0, -1],
 };
 const visible = mesh => { for (let p = mesh; p; p = p.parent) if (!p.visible) return false; return true; };
-const proxyPart = mesh => { for (let p = mesh; p; p = p.parent) if (PROXY_PARTS.has(p.name)) return true; return false; };
+const proxyPart = mesh => {
+  if (mesh.geometry.attributes._region) return true;
+  for (let p = mesh; p; p = p.parent) if (PROXY_PARTS.has(p.name)) return true;
+  return false;
+};
 
 // Pause labels refer to the actor's actual teaching-map surface, not an
 // internal joint. Each panel has a few stable surface samples; only these and
@@ -131,8 +135,8 @@ export function createHotspotDepth(player, skinned) {
     return false;
   }
 
-  function choose(groupId, allowedSide, previous) {
-    prepare(); player.camera.updateMatrixWorld(true); player.camera.getWorldPosition(eye);
+  function choose(groupId, allowedSide, previous, camera = player.camera) {
+    prepare(); camera.updateMatrixWorld(true); camera.getWorldPosition(eye);
     const previousSide = typeof previous === 'string' ? previous : previous?.side;
     const sides = allowedSide === 'both' ? SIDES : SIDES.includes(allowedSide) ? [allowedSide] : [];
     const choices = [];
@@ -155,14 +159,14 @@ export function createHotspotDepth(player, skinned) {
       if (best) choices.push(best);
     }
     if (!choices.length) return null;
-    for (const choice of choices) choice.depth = -cameraPoint.copy(choice.candidate.point).applyMatrix4(player.camera.matrixWorldInverse).z;
+    for (const choice of choices) choice.depth = -cameraPoint.copy(choice.candidate.point).applyMatrix4(camera.matrixWorldInverse).z;
     choices.sort((u, v) => Number(u.occluded) - Number(v.occluded) || u.depth - v.depth);
     const retained = choices.find(choice => choice.side === previousSide);
     const chosen = retained && retained.occluded === choices[0].occluded && retained.depth < choices[0].depth + .09 ? retained : choices[0];
     return chosen;
   }
-  function describe(chosen) {
-    const centreDepth = -cameraPoint.copy(centre).applyMatrix4(player.camera.matrixWorldInverse).z;
+  function describe(chosen, camera = player.camera) {
+    const centreDepth = -cameraPoint.copy(centre).applyMatrix4(camera.matrixWorldInverse).z;
     // Translation of the camera toward/away from the actor subtracts equally
     // from both depths. Far therefore describes body-relative depth, never
     // the camera's arbitrary orbit radius or whether a deep muscle is hidden.
@@ -174,13 +178,13 @@ export function createHotspotDepth(player, skinned) {
     const chosen = choose(groupId, allowedSide, previous);
     return chosen ? describe(chosen) : null;
   }
-  function sampleFacing(groupId, allowedSide = 'both', previous = null) {
-    const chosen = choose(groupId, allowedSide, previous);
+  function sampleFacing(groupId, allowedSide = 'both', previous = null, camera = player.camera) {
+    const chosen = choose(groupId, allowedSide, previous, camera);
     if (!chosen) return null;
     // Bilateral callouts may follow the currently useful side as the view
     // changes. Reuse visibility/depth selection and its side hysteresis,
     // while also exposing the actual surface normal for a nearby billboard.
-    return { ...describe(chosen), normal: chosen.candidate.normal.clone(), candidateKey: chosen.candidate.key };
+    return { ...describe(chosen, camera), normal: chosen.candidate.normal.clone(), candidateKey: chosen.candidate.key };
   }
   function sampleFixed(groupId, allowedSide = 'both', previous = null) {
     const sides = allowedSide === 'both' ? SIDES : SIDES.includes(allowedSide) ? [allowedSide] : [];

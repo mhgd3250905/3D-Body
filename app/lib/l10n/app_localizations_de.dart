@@ -9,6 +9,230 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Flare Pro freischalten';
+
+  @override
+  String get premiumPreviewFooter =>
+      'Training, Verlauf und eigene Pläne freischalten.';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Trainingsserie';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Meilensteine';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Trainingsdauer';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Übungsauswahl';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Flexible Sätze';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Unbegrenzt speichern';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Audio-Timer';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Übungsdemos';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Automatisch erfassen';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'Zeichne jedes Training auf';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'jedes';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Trainingsdauer, Serien und Meilensteine werden automatisch gespeichert. So siehst du deine Fortschritte auf einen Blick.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle =>
+      'Stell deinen eigenen Plan zusammen';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'eigenen';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Wähle Übungen, passe die Sätze an und speichere deinen persönlichen Trainingsplan.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'Trainiere mit, jeder Satz zählt';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'jeder Satz';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Trainiere mit Audio-Timing und Übungsvideos. Dein Training wird am Ende automatisch gespeichert.';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return 'Bei Berechtigung $days Tage gratis testen';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Abonnieren für $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days Tage gratis testen';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count Pläne für jede Phase des Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Wichtige Winkel';
+
+  @override
+  String get premiumMuscleCount => 'Muskelgruppen';
+
+  @override
+  String get premiumLevelCount => 'Stufen';
+
+  @override
+  String get premiumVoiceTitle => 'Sprachführung und 3D-Demos';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Hinweise zu Wiederholungen, Seitenwechsel und Pausen';
+
+  @override
+  String get premiumCustomDescription =>
+      'Erstelle einen Plan aus deinen Lieblingsübungen';
+
+  @override
+  String get premiumPerYear => '/Jahr';
+
+  @override
+  String get premiumPerMonth => '/Monat';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store ist nicht erreichbar. Es gelten die Preise im Store.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return '$store ist weiterhin nicht erreichbar. Versuche es später erneut.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Nach der Testphase verlängert sich das Abo für $price. Jederzeit in $store kündbar.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Das Abo verlängert sich für $price. Jederzeit in $store kündbar.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Das Abo verlängert sich automatisch. Kündigung in $store.';
+  }
+
+  @override
+  String get premiumTitle => 'Flare Premium freischalten';
+
+  @override
+  String get premiumSubtitle => 'Gestalte dein eigenes Training';
+
+  @override
+  String get premiumAiCoach => 'Jeden Trainingsplan jederzeit starten';
+
+  @override
+  String get premiumAiPlans =>
+      'Pläne nach Winkel und Muskelgruppe in drei Schwierigkeitsstufen';
+
+  @override
+  String get premiumCustomWorkouts => 'Unbegrenzt eigene Workouts';
+
+  @override
+  String get premiumMonthly => 'Monatlich';
+
+  @override
+  String get premiumYearly => 'Jährlich';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Ca. $price/Monat';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent % sparen';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days Tage kostenlos testen';
+  }
+
+  @override
+  String get premiumSubscribe => 'Abonnieren';
+
+  @override
+  String get premiumDisclosure =>
+      'Das Abo verlängert sich automatisch. Du kannst es jederzeit in Google Play kündigen. Kündigst du vor Ende der Testphase, entstehen keine Kosten.';
+
+  @override
+  String get premiumRestore => 'Käufe wiederherstellen';
+
+  @override
+  String get premiumTerms => 'Nutzungsbedingungen';
+
+  @override
+  String get premiumPrivacy => 'Datenschutzerklärung';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Mitgliedschaft aktiv';
+
+  @override
+  String get premiumInactive => 'Keine aktive Mitgliedschaft';
+
+  @override
+  String get premiumManage => 'Abo verwalten';
+
+  @override
+  String get premiumUnavailable =>
+      'Der Store ist nicht erreichbar. Versuche es erneut.';
+
+  @override
+  String get premiumRestoreEmpty => 'Kein aktives Abo gefunden.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Du hast heute alle $limit KI-Anfragen verbraucht. Versuche es morgen erneut.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Zu viele Anfragen. Versuche es gleich noch einmal.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'KI-Vorschläge dienen nur zur Orientierung und sind kein ärztlicher Rat.';
+
+  @override
   String get actorBodyLabel => 'Thomas-Figur';
 
   @override
@@ -34,6 +258,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get appName => 'Flare Thomas';
+
+  @override
+  String get flareStraightLegs => 'Flare (gestreckte Beine)';
 
   @override
   String get tagline => 'Verstehe die Bewegung. Trainiere jeden Schritt.';
@@ -108,10 +335,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get side => 'Seite';
 
   @override
-  String get pausedHint => 'Muskeln ansehen';
-
-  @override
-  String get playingHint => 'Erst pausieren';
+  String get homeGoToTraining => 'Zum Training';
 
   @override
   String get loadingScene => '3D-Bewegung wird vorbereitet…';
@@ -624,7 +848,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get safetyRule1 => 'Wärme zuerst deine Handgelenke auf';
 
   @override
-  String get safetyRule1Note => 'Der Plan „Aufwärmen“ führt dich durch';
+  String get safetyRule1Note =>
+      'Bewege vor dem Training deine Handgelenke und Schulterblätter.';
 
   @override
   String get safetyRule2 =>
@@ -886,10 +1111,206 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wristExtension => 'Handgelenkstreckung';
 
   @override
+  String get plansByAngle => 'Nach Winkel';
+
+  @override
+  String get plansByMuscle => 'Nach Muskelgruppe';
+
+  @override
+  String get anglePlanLabel => 'Plan nach Winkel';
+
+  @override
+  String get musclePlanLabel => 'Muskelplan';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Eine Hand am Boden, Beine im hohen V. Stärke diesen Stütz.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Halte den Körper über einer Hand. Deine Schultern tragen jede Flare-Runde.';
+
+  @override
+  String get planTrainingContent => 'Trainingsablauf';
+
+  @override
+  String get planMuscleLinkHint => 'Tippe einen Muskel für seinen Plan an';
+
+  @override
+  String get planSpecialized => 'Gezielter Plan';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '$seconds Sek. Pause';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Variante ohne Geräte';
+
+  @override
+  String get planBodyweightScene => 'Ohne Geräte';
+
+  @override
+  String get hubAngle => 'Winkel';
+
+  @override
+  String get hubMuscle => 'Muskeln';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Ab $count Min.';
+  }
+
+  @override
+  String get hubThreeTiers => 'Drei Stufen';
+
+  @override
+  String get hubPrimaryMuscles => 'Hauptmuskeln dieser Phase';
+
+  @override
+  String get hubSpecializedPlan => 'Gezielter Trainingsplan';
+
+  @override
+  String get hubSupportTab => 'Stütz';
+
+  @override
+  String get hubCoreTab => 'Rumpf';
+
+  @override
+  String get hubLegsTab => 'Beine';
+
+  @override
+  String get hubStillPlanning => 'In Vorbereitung';
+
+  @override
+  String get hubPlanComingSoon => 'Gezielter Plan in Vorbereitung';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Plan „$name“ ansehen';
+  }
+
+  @override
+  String get hubPhase09Caption =>
+      'Stütze dich auf beide Hände und hebe die gespreizten Beine nach vorn.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Verlagere dein Gewicht von beiden Händen auf eine.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Stütze den ganzen Körper seitlich auf einer Hand. Die Stützschulter arbeitet am meisten.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Dreh dich nach vorn und führe die Beine im Scherenwechsel nach vorn.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Stütze dich hinter dem Körper ab und schwinge die gespreizten Beine zurück.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Wechsle die Stützhand und schwinge die gestreckten Beine zurück.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Stütze dich auf die andere Hand und halte das hohe V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Dreh dich mit dem Gesicht nach unten und schwinge die Beine nach hinten.';
+
+  @override
+  String get planTierBeginner => 'Einsteiger';
+
+  @override
+  String get planTierIntermediate => 'Mittelstufe';
+
+  @override
+  String get planTierAdvanced => 'Fortgeschritten';
+
+  @override
+  String get planActiveMuscles => 'Beanspruchte Muskeln';
+
+  @override
+  String get planExercises => 'Übungen';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · pro Seite';
+  }
+
+  @override
+  String get planTierSummary => 'Einsteiger · Mittelstufe · Fortgeschritten';
+
+  @override
   String get plans => 'Pläne';
 
   @override
-  String get plansHint => 'Fertige Einheiten und deine eigenen';
+  String get plansHint => 'Gezieltes Training und eigene Pläne';
+
+  @override
+  String get plansLastSession => 'Letztes Training';
+
+  @override
+  String get plansContinue => 'Weiter';
+
+  @override
+  String get plansToday => 'Heute';
+
+  @override
+  String get plansYesterday => 'Gestern';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total Übungen';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Häufige Übungen kombinieren';
+
+  @override
+  String get plansNewEmptyHint => 'Kombiniere deine häufigsten Übungen';
+
+  @override
+  String get plansAnglesTitle => 'Anspruchsvolle Flare-Positionen';
+
+  @override
+  String get plansAnglesDescription =>
+      'Trainiere Stabilität in den schwierigsten Phasen.';
+
+  @override
+  String get plansMusclesTitle => 'Zu stärkende Muskelgruppen';
+
+  @override
+  String get plansMusclesDescription =>
+      'Beim Flare besonders belastete Bereiche.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Alle $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Einarmstütz';
+
+  @override
+  String get plansTwoHandSupport => 'Zweiarmstütz';
+
+  @override
+  String get plansThreeLevels => '3 Stufen';
+
+  @override
+  String get plansAiTitle => 'KI-Trainingsplan';
+
+  @override
+  String get plansAiHint =>
+      'Wähle Umgebung, Dauer und Muskelgruppe für einen gezielten Plan.';
+
+  @override
+  String get plansAiUnavailable => 'KI ist nicht verfügbar';
 
   @override
   String get plansReady => 'Fertige Einheiten';
@@ -914,6 +1335,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Als meinen Plan speichern';
+
+  @override
+  String get premiumCopyRoutine => 'Plan kopieren';
 
   @override
   String get planSaved => 'In Meine Pläne gespeichert';
@@ -1133,4 +1557,139 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets Sätze × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => 'Du brauchst:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Trainingsmatte',
+      'chair': 'Stuhl',
+      'band': 'Widerstandsband',
+      'dumbbell': 'Kurzhantel',
+      'wall': 'Wand',
+      'cable': 'Kabelzug',
+      'block': 'Yogablock',
+      'pullup_bar': 'Klimmzugstange',
+      'parallettes': 'Parallettes',
+      'dip_bars': 'Dip-Barren',
+      'slider': 'Gleitscheiben',
+      'rings': 'Turnringe',
+      'landmine': 'Landmine-Halterung',
+      'swiss_ball': 'Gymnastikball',
+      'roman_chair': 'Römischer Stuhl',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Reverse-Hyper-Maschine',
+      'ghd': 'Glute-Ham-Bank',
+      'hip_abductor_machine': 'Hüftabduktionsmaschine',
+      'leg_extension_machine': 'Beinstrecker',
+      'foam_roller': 'Faszienrolle',
+      'towel': 'Handtuch',
+      'doorframe': 'Türrahmen',
+      'bench': 'Hantelbank',
+      'barbell': 'Langhantel',
+      'clamp_pad': 'Kleines Polster',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'Vor und nach dem Training';
+
+  @override
+  String get preWorkoutWarmup => 'Aufwärmen';
+
+  @override
+  String get postWorkoutStretch => 'Nach dem Training';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Noch nicht aufgewärmt? $minutesString Minuten ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'Je Seite $count Kreise pro Richtung';
+  }
+
+  @override
+  String get planCircleClockwise => 'Im Uhrzeigersinn';
+
+  @override
+  String get planCircleCounterclockwise => 'Gegen den Uhrzeigersinn';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Oben $seconds Sek. halten';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Mit der Routine nach dem Training fortfahren';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 Stufen · Eigengewicht';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Gezielte Kräftigung';
+
+  @override
+  String get cooldownStretchHeading => 'B Ganzkörperdehnung';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Kräftigung überspringen und direkt dehnen';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Führe den Block 2–3 Mal pro Woche an abwechselnden Tagen aus. Überspringe ihn, wenn du heute schon den Oberkörper trainiert hast oder deine Handgelenke schmerzen.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds Runden';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds s zwischen Übungen · $roundSeconds s zwischen Runden';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max Sek.';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max Wdh.';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'Je $reps Wdh.';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds Sek. PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes Min. · Eigengewicht';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Vorläufige Demo';
 }

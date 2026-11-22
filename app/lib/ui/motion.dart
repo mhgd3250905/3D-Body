@@ -76,8 +76,9 @@ abstract final class FlareMotion {
   static const Curve spring = Curves.easeOutBack;
 
   // Durations. Reduced motion collapses each to zero through [of].
-  static const Duration push = Duration(milliseconds: 420);
-  static const Duration pop = Duration(milliseconds: 360);
+  /// Stage push / pop on the HipLab page timing (400 / 340).
+  static const Duration push = page;
+  static const Duration pop = pageReverse;
   static const Duration modal = Duration(milliseconds: 460);
   static const Duration sheet = Duration(milliseconds: 420);
   static const Duration sheetClose = Duration(milliseconds: 260);
@@ -94,9 +95,38 @@ abstract final class FlareMotion {
   static const Duration fade = Duration(milliseconds: 260);
   static const Duration quick = Duration(milliseconds: 180);
 
-  /// Press feedback: sink fast, spring back slower.
-  static const Duration press = Duration(milliseconds: 110);
-  static const Duration release = Duration(milliseconds: 320);
+  /// Press feedback (HipLab): sink in 100 ms, return in 180 ms, no
+  /// overshoot, so a press reads as "pushed in" rather than a bounce.
+  static const Duration press = Duration(milliseconds: 100);
+  static const Duration release = Duration(milliseconds: 180);
+
+  /// Press scale for pressable surfaces; 1 under reduced motion.
+  static const double pressScale = .97;
+  static const double navPressScale = .9;
+
+  // HipLab interaction timings. Routes, controls and media adopt these in
+  // later rounds (docs/ui-hiplab-adoption-plan.md).
+
+  /// Page push / pop and its quicker reverse.
+  static const Duration page = Duration(milliseconds: 400);
+  static const Duration pageReverse = Duration(milliseconds: 340);
+
+  /// Container transform (a card or button growing into a page).
+  static const Duration container = Duration(milliseconds: 500);
+  static const Duration containerReverse = Duration(milliseconds: 420);
+
+  /// Segmented thumb slide and switch toggle.
+  static const Duration segment = Duration(milliseconds: 380);
+  static const Duration toggle = Duration(milliseconds: 200);
+
+  /// A page arriving: gentle first frame, long soft landing.
+  static const Curve pageEnter = Cubic(.2, 0, 0, 1);
+  // A pop tracks distance travelled (0→1), so this is the counterpart to
+  // fastOutSlowIn.flipped on a reverse route clock (1→0).
+  static const Curve pageExit = Curves.fastOutSlowIn;
+
+  /// Container bounds, both ways.
+  static const Curve containerCurve = Curves.fastOutSlowIn;
 
   /// One-off celebrations (the finish check) and their afterglow.
   static const Duration celebrate = Duration(milliseconds: 620);
@@ -198,15 +228,91 @@ class FlarePageActivity extends InheritedWidget {
   const FlarePageActivity({
     super.key,
     required this.active,
+    this.settled = true,
     required super.child,
   });
   final bool active;
+  final bool settled;
   static bool of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<FlarePageActivity>()?.active ??
       true;
+
+  /// Whether the page is in place after the shell's navigation animation.
+  static bool settledOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<FlarePageActivity>()
+          ?.settled ??
+      true;
+
   @override
   bool updateShouldNotify(FlarePageActivity oldWidget) =>
-      active != oldWidget.active;
+      active != oldWidget.active || settled != oldWidget.settled;
+}
+
+/// Tells a page's [FlareNavBar] that the stage is drawing the one back
+/// chip for it while two back-able pages slide past each other, so the
+/// bar leaves its slot empty and the chip stays still (HipLab pinLeading).
+class FlareBackPin extends InheritedWidget {
+  const FlareBackPin({super.key, required this.hidden, required super.child});
+  final bool hidden;
+
+  static bool hiddenOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<FlareBackPin>()?.hidden ??
+      false;
+
+  @override
+  bool updateShouldNotify(FlareBackPin oldWidget) => oldWidget.hidden != hidden;
+}
+
+enum FlareHomeChromePart { muscles, training, timeline, header }
+
+typedef FlareHomeChromePose = ({Offset offset, double opacity});
+
+/// Paints a home control from the training page's own navigation progress.
+class FlareHomeChrome extends StatelessWidget {
+  const FlareHomeChrome({super.key, required this.part, required this.child});
+
+  final FlareHomeChromePart part;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = context
+        .dependOnInheritedWidgetOfExactType<_HomeChromeStage>()
+        ?.state;
+    if (stage == null) return child;
+    final width = MediaQuery.sizeOf(context).width;
+    return AnimatedBuilder(
+      animation: stage._motion,
+      child: child,
+      builder: (context, child) {
+        final pose = stage._homeChromePose(part, width);
+        return Offstage(
+          offstage: stage._homeChromeParked,
+          child: Transform.translate(
+            offset: pose?.offset ?? Offset.zero,
+            child: IgnorePointer(
+              ignoring: pose != null,
+              child: ExcludeSemantics(
+                excluding: pose != null,
+                child: Opacity(opacity: pose?.opacity ?? 1, child: child),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HomeChromeStage extends InheritedWidget {
+  const _HomeChromeStage({required this.state, required super.child});
+
+  final _FlareStageState state;
+
+  @override
+  bool updateShouldNotify(_HomeChromeStage oldWidget) =>
+      state != oldWidget.state;
 }
 
 class FlareStage extends StatefulWidget {
@@ -215,14 +321,57 @@ class FlareStage extends StatefulWidget {
     required this.pageKey,
     required this.depth,
     required this.child,
+    this.underlay,
+    this.backdrop,
+    this.homeTrainingHub = false,
+    this.homeTrainingExiting = false,
+    this.holdCommittedSwipe = false,
+    this.onHomeMusclesMotion,
+    this.transparentUnderlay = false,
+    this.opaqueUnderlayTransition = false,
     this.modal = false,
+    this.cover = false,
+    this.anchorIncomingUnderlayHitTest = false,
     this.onSettled,
     this.onSwipeBack,
+    this.backChip = false,
+    this.backChipBuilder,
+    this.pinSwipeBack = false,
   });
+
+  /// The current page carries the standard [FlareNavBar] back chip. When a
+  /// push or pop runs between two such pages the stage draws one still
+  /// chip with [backChipBuilder]; from or to a page without one, the chip
+  /// rides with its page (HipLab `pinLeading: false`).
+  final bool backChip;
+  final WidgetBuilder? backChipBuilder;
+
+  /// The swipe's destination also has a standard back chip. Pin from the
+  /// first drag frame, including a cancelled swipe's return to rest.
+  final bool pinSwipeBack;
   final Object pageKey;
   final int depth;
   final Widget? child;
+  final Widget? backdrop;
+
+  /// The training hub shares the home backdrop and may start its slide out
+  /// once the separate 3D handoff has prepared the returning frame.
+  final bool homeTrainingHub;
+  final bool homeTrainingExiting;
+  final bool holdCommittedSwipe;
+  final ValueChanged<FlareHomeChromePose?>? onHomeMusclesMotion;
+
+  /// A page that stays mounted while another route covers it.
+  final Widget? underlay;
+  final bool transparentUnderlay;
+
+  /// Give a moving underlay an opaque surface while it crosses its parent.
+  final bool opaqueUnderlayTransition;
   final bool modal;
+
+  /// Slide over the previous page while keeping it stationary and undimmed.
+  final bool cover;
+  final bool anchorIncomingUnderlayHitTest;
   final VoidCallback? onSettled;
 
   /// When set, a drag from the left edge carries the page with the finger
@@ -243,17 +392,143 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   late final Listenable _motion = Listenable.merge([_controller, _swipe]);
   double _popFrom = 0;
   bool _swiping = false;
+  final _parents = <({Object key, int depth, Widget? child})>[];
   Widget? _previous;
+  bool _previousTransparent = false;
   Object? _previousKey;
   _Kind _kind = _Kind.fade;
+  bool _pinned = false;
+  bool _swipePinned = false;
+  bool _cover = false;
+  bool _enteringHomeTraining = false;
+  bool _returningFromHomeTraining = false;
+  double? _interruptedEntry;
+  double _exitFrom = 0;
+  double _homeWidth = 0;
+  bool _reduceHomeMotion = false;
+  FlareHomeChromePose? _lastMusclesPose;
+
+  bool get _showPinnedBack => _pinned || _swipePinned;
 
   bool get animating => _previousKey != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _motion.addListener(_publishMuscleMotion);
+  }
+
+  bool get _homeChromeParked =>
+      widget.homeTrainingHub &&
+      !widget.homeTrainingExiting &&
+      !(widget.cover && _swipe.value > 0) &&
+      !(animating && _enteringHomeTraining);
+
+  double get _homeTrainingPopProgress =>
+      _popFrom +
+      (1 - _popFrom) * FlareMotion.pageExit.transform(_controller.value);
+
+  FlareHomeChromePose? _homeChromePose(FlareHomeChromePart part, double width) {
+    if (_reduceHomeMotion) {
+      return widget.homeTrainingHub ? (offset: Offset.zero, opacity: 0) : null;
+    }
+    if (widget.homeTrainingHub) {
+      if (widget.homeTrainingExiting || widget.cover && _swipe.value > 0) {
+        return _homeChromeReturnPose(part, width, _swipe.value);
+      }
+      final progress = animating && _enteringHomeTraining
+          ? FlareMotion.pageEnter.transform(_controller.value)
+          : 1.0;
+      return _homeChromePoseAt(part, width, progress, returning: false);
+    }
+    if (animating && _returningFromHomeTraining) {
+      return _homeChromeReturnPose(part, width, _homeTrainingPopProgress);
+    }
+    return null;
+  }
+
+  FlareHomeChromePose _homeChromeReturnPose(
+    FlareHomeChromePart part,
+    double width,
+    double progress,
+  ) {
+    final interrupted = _interruptedEntry;
+    if (interrupted == null) {
+      return _homeChromePoseAt(part, width, progress, returning: true);
+    }
+    // A Back press while entering inherits the currently painted pose.
+    final from = _homeChromePoseAt(part, width, interrupted, returning: false);
+    final landed = _exitFrom < 1
+        ? ((progress - _exitFrom) / (1 - _exitFrom)).clamp(0.0, 1.0)
+        : 1.0;
+    return (
+      offset: from.offset * (1 - landed),
+      opacity: from.opacity + (1 - from.opacity) * landed,
+    );
+  }
+
+  FlareHomeChromePose _homeChromePoseAt(
+    FlareHomeChromePart part,
+    double width,
+    double progress, {
+    required bool returning,
+  }) {
+    final delay = switch ((part, returning)) {
+      (FlareHomeChromePart.muscles, true) ||
+      (FlareHomeChromePart.training, false) => .06,
+      (FlareHomeChromePart.training, true) ||
+      (FlareHomeChromePart.timeline, false) => .12,
+      _ => 0.0,
+    };
+    final motion = Interval(delay, 1).transform(progress);
+    final away = returning ? 1 - motion : motion;
+    return (
+      offset: part == FlareHomeChromePart.header
+          ? Offset(0, -8 * away)
+          : Offset(-width * .9 * away, 0),
+      opacity: returning
+          ? Interval(.4, 1).transform(progress)
+          : 1 - Interval(0, .6).transform(progress),
+    );
+  }
+
+  void _publishMuscleMotion() {
+    final notify = widget.onHomeMusclesMotion;
+    if (notify == null || _homeWidth <= 0) return;
+    final pose = _homeChromePose(FlareHomeChromePart.muscles, _homeWidth);
+    if (pose == _lastMusclesPose) return;
+    _lastMusclesPose = pose;
+    notify(pose);
+  }
+
+  void _slideHomeTrainingHubOut() {
+    if (animating && _enteringHomeTraining) {
+      _interruptedEntry = FlareMotion.pageEnter.transform(_controller.value);
+      _exitFrom = 1 - _interruptedEntry!;
+      _swipe.value = _exitFrom;
+    }
+    final duration = FlareMotion.of(context, FlareMotion.pop);
+    if (duration == Duration.zero) {
+      _swipe.value = 1;
+    } else {
+      // Continue directly from a committed edge swipe instead of springing
+      // back while the actor prepares its first returning frame.
+      unawaited(
+        _swipe.animateTo(
+          1,
+          duration: duration * (1 - _swipe.value),
+          curve: FlareMotion.pageEnter,
+        ),
+      );
+    }
+  }
 
   void _status(AnimationStatus status) {
     if (status != AnimationStatus.completed || !animating) return;
     setState(() {
       _previous = null;
       _previousKey = null;
+      _pinned = false;
     });
     widget.onSettled?.call();
   }
@@ -261,7 +536,12 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(FlareStage old) {
     super.didUpdateWidget(old);
-    if (old.pageKey == widget.pageKey) return;
+    if (old.pageKey == widget.pageKey) {
+      if (widget.homeTrainingExiting && !old.homeTrainingExiting) {
+        _slideHomeTrainingHubOut();
+      }
+      return;
+    }
     final kind = widget.modal && !old.modal
         ? _Kind.modalIn
         : old.modal && !widget.modal
@@ -271,6 +551,17 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         : widget.depth < old.depth
         ? _Kind.pop
         : _Kind.fade;
+    _enteringHomeTraining =
+        kind == _Kind.push && old.depth == 0 && widget.homeTrainingHub;
+    _returningFromHomeTraining =
+        kind == _Kind.pop && widget.depth == 0 && old.homeTrainingHub;
+    if (!_returningFromHomeTraining) _interruptedEntry = null;
+    if (kind == _Kind.push) {
+      _parents.removeWhere((parent) => parent.depth >= old.depth);
+      _parents.add((key: old.pageKey, depth: old.depth, child: old.child));
+    } else if (kind == _Kind.pop || kind == _Kind.fade) {
+      _parents.removeWhere((parent) => parent.depth >= widget.depth);
+    }
     final duration = FlareMotion.of(context, switch (kind) {
       _Kind.push => FlareMotion.push,
       _Kind.pop => FlareMotion.pop,
@@ -279,11 +570,14 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     });
     // A pop released from a swipe carries on from the finger's position.
     _popFrom = kind == _Kind.pop ? _swipe.value : 0;
+    _swipePinned = false;
     _swipe.value = 0;
     _swiping = false;
     if (duration == Duration.zero) {
+      // Reduced motion: land on the end state with nothing left on top.
       _previous = null;
       _previousKey = null;
+      _pinned = false;
       _controller.value = 1;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onSettled?.call();
@@ -291,18 +585,45 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
       return;
     }
     _kind = kind;
-    _previous = old.child;
+    _cover = switch (kind) {
+      _Kind.push => widget.cover,
+      _Kind.pop => old.cover,
+      _ => false,
+    };
+    _pinned =
+        (kind == _Kind.push || kind == _Kind.pop) &&
+        old.backChip &&
+        widget.backChip &&
+        widget.backChipBuilder != null;
+    final outgoingHub =
+        old.child == null &&
+        widget.underlay == null &&
+        (!old.cover || _returningFromHomeTraining && _popFrom < 1);
+    _previous = old.child ?? (outgoingHub ? old.underlay : null);
+    _previousTransparent =
+        outgoingHub && old.transparentUnderlay && !old.opaqueUnderlayTransition;
     _previousKey = old.pageKey;
     _controller.duration = _popFrom > 0
-        ? duration * (1 - _popFrom).clamp(.35, 1)
+        ? Duration(
+            milliseconds: (duration.inMilliseconds * (1 - _popFrom))
+                .round()
+                .clamp(120, duration.inMilliseconds),
+          )
         : duration;
     _controller.forward(from: 0);
   }
 
   void _dragStart(DragStartDetails _) {
-    if (animating) return;
+    if (animating || widget.holdCommittedSwipe) return;
     _swipe.stop();
-    _swiping = true;
+    setState(() {
+      _swiping = true;
+      _swipePinned =
+          !FlareMotion.reduced(context) &&
+          widget.pinSwipeBack &&
+          widget.backChip &&
+          widget.backChipBuilder != null;
+    });
   }
 
   void _dragUpdate(DragUpdateDetails details) {
@@ -314,41 +635,71 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   void _dragEnd(DragEndDetails details) {
     if (!_swiping) return;
     _swiping = false;
-    final velocity = details.primaryVelocity ?? 0;
-    final commit = velocity > 700 || (_swipe.value > .4 && velocity > -300);
+    final width = MediaQuery.sizeOf(context).width;
+    final velocity = (details.primaryVelocity ?? 0) / width;
+    final commit = velocity.abs() >= 1 ? velocity > 0 : _swipe.value >= .5;
     if (commit && widget.onSwipeBack != null) {
       widget.onSwipeBack!();
       // If the shell refused to go back, settle the page home again.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !animating && _swipe.value > 0) _settleSwipe();
+        if (mounted &&
+            !animating &&
+            !widget.holdCommittedSwipe &&
+            (_swipe.value > 0 || _swipePinned)) {
+          _settleSwipe();
+        }
       });
     } else {
       _settleSwipe();
     }
   }
 
-  void _settleSwipe() => _swipe.animateBack(
-    0,
-    duration: FlareMotion.of(
-      context,
-      Duration(milliseconds: (320 * _swipe.value).round().clamp(120, 320)),
-    ),
-    curve: FlareMotion.settle,
-  );
+  void _settleSwipe() {
+    unawaited(
+      _swipe
+          .animateBack(
+            0,
+            duration: FlareMotion.of(
+              context,
+              Duration(
+                milliseconds: (320 * _swipe.value).round().clamp(120, 320),
+              ),
+            ),
+            curve: Curves.fastEaseInToSlowEaseOut,
+          )
+          .then<void>((_) {
+            if (mounted && !animating && !_swiping && _swipe.value == 0) {
+              setState(() => _swipePinned = false);
+            }
+          }),
+    );
+  }
 
   @override
   void dispose() {
+    _motion.removeListener(_publishMuscleMotion);
     _controller.dispose();
     _swipe.dispose();
     super.dispose();
   }
 
-  Widget _page(Widget? child) => child == null
+  Widget _page(Widget? child, {bool transparent = false}) => child == null
       ? const SizedBox.expand()
-      : Material(color: FlareColors.background, child: child);
+      : Material(
+          color: transparent ? Colors.transparent : FlareColors.background,
+          child: child,
+        );
 
   @override
   Widget build(BuildContext context) {
+    final underlay = widget.underlay;
+    _homeWidth = MediaQuery.sizeOf(context).width;
+    _reduceHomeMotion = FlareMotion.reduced(context);
+    if (widget.onHomeMusclesMotion != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _publishMuscleMotion();
+      });
+    }
     final current = _layer(
       key: widget.pageKey,
       incoming: true,
@@ -360,41 +711,103 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
             key: _previousKey!,
             incoming: false,
             empty: _previous == null,
-            child: _page(_previous),
+            child: _page(_previous, transparent: _previousTransparent),
           )
         : null;
     // The page that moves across the screen is drawn on top.
     final previousOnTop = _kind == _Kind.pop || _kind == _Kind.modalOut;
+    final incomingUnderlay = underlay != null && widget.child == null;
+    final opaqueUnderlay =
+        widget.opaqueUnderlayTransition &&
+        incomingUnderlay &&
+        (animating ? _kind == _Kind.push : _swiping || _swipe.value > 0);
+    final outgoingUnderlay = underlay != null && animating && _previous == null;
+    final reduced = FlareMotion.reduced(context);
+    final swipeParent = !animating && !reduced && (_swiping || _swipe.value > 0)
+        ? _parents.lastOrNull
+        : null;
+    final previewHub =
+        swipeParent != null &&
+        swipeParent.child == null &&
+        underlay != null &&
+        widget.child != null;
+    final dimStrength = FlareColors.isDark ? .32 : .14;
     final canSwipe =
-        widget.onSwipeBack != null && widget.child != null && !widget.modal;
+        widget.onSwipeBack != null &&
+        (widget.child != null || underlay != null) &&
+        !widget.modal;
     return Stack(
       fit: StackFit.expand,
       children: [
+        if (widget.backdrop case final backdrop?)
+          _HomeChromeStage(state: this, child: backdrop),
         // While a swipe peels the page away, a dimmed backdrop sits beneath.
         AnimatedBuilder(
           key: const ValueKey('_swipe-underlay'),
           animation: _swipe,
-          builder: (context, _) => _swipe.value == 0 || animating
+          builder: (context, _) =>
+              reduced ||
+                  _swipe.value == 0 ||
+                  animating ||
+                  widget.cover ||
+                  swipeParent?.child != null ||
+                  previewHub
               ? const SizedBox.shrink()
               : IgnorePointer(
                   child: ColoredBox(
                     color: Color.alphaBlend(
-                      Colors.black.withValues(alpha: .22 * (1 - _swipe.value)),
+                      Colors.black.withValues(
+                        alpha: dimStrength * (1 - _swipe.value),
+                      ),
                       FlareColors.background,
                     ),
                   ),
                 ),
         ),
-        if (previous != null && !previousOnTop) previous,
+        if (swipeParent?.child case final backPage?)
+          _layer(
+            key: swipeParent!.key,
+            incoming: false,
+            empty: false,
+            swipeBackdrop: true,
+            child: _page(backPage),
+          ),
+        if (previous != null && !previousOnTop && incomingUnderlay) previous,
+        if (underlay != null)
+          _layer(
+            key: const ValueKey('_underlay'),
+            incoming: widget.child == null,
+            empty: widget.child != null,
+            stationary:
+                widget.child != null && !outgoingUnderlay && !previewHub,
+            swipeBackdrop: previewHub,
+            anchorHitTest:
+                incomingUnderlay && widget.anchorIncomingUnderlayHitTest,
+            child: _page(
+              underlay,
+              transparent: widget.transparentUnderlay && !opaqueUnderlay,
+            ),
+          ),
+        if (previous != null && !previousOnTop && !incomingUnderlay) previous,
         current,
         if (previous != null && previousOnTop) previous,
+        // One still back chip on the control rail while both pages go back.
+        if (_showPinnedBack)
+          PositionedDirectional(
+            key: const ValueKey('_pinned-back'),
+            start: 16,
+            top: FlareGeometry.navSafeTop(context),
+            child: IgnorePointer(child: widget.backChipBuilder!(context)),
+          ),
         if (canSwipe && !animating)
           Positioned(
             key: const ValueKey('_swipe-edge'),
             left: 0,
             top: 0,
             bottom: 0,
-            width: 18,
+            width: MediaQuery.viewPaddingOf(
+              context,
+            ).left.clamp(20, double.infinity),
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onHorizontalDragStart: _dragStart,
@@ -416,6 +829,9 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
     required Object key,
     required bool incoming,
     required bool empty,
+    bool stationary = false,
+    bool swipeBackdrop = false,
+    bool anchorHitTest = false,
     required Widget child,
   }) {
     return KeyedSubtree(
@@ -427,31 +843,47 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
         child: AnimatedBuilder(
           animation: _motion,
           child: RepaintBoundary(
-            child: FlarePageActivity(active: incoming, child: child),
+            child: FlareBackPin(
+              hidden: _showPinnedBack,
+              child: FlarePageActivity(
+                active: incoming,
+                settled: incoming && !animating,
+                child: child,
+              ),
+            ),
           ),
           builder: (context, child) {
             final v = animating ? _controller.value : 1.0;
-            final t = FlareMotion.settle.transform(v);
+            final curve = switch (_kind) {
+              _Kind.push => FlareMotion.pageEnter,
+              _Kind.pop => FlareMotion.pageExit,
+              _ => FlareMotion.settle,
+            };
+            final t = curve.transform(v);
             final width = MediaQuery.sizeOf(context).width;
+            final dimStrength = FlareColors.isDark ? .32 : .14;
             var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0, dim = 0.0;
             var shadow = false;
+            final cover = animating && _cover;
             switch (_kind) {
               case _Kind.push:
                 if (incoming) {
                   dx = (1 - t) * width;
-                  shadow = true;
-                } else {
+                  shadow = !cover;
+                } else if (!cover) {
                   dx = -.28 * t * width;
-                  dim = .22 * t;
+                  dim = dimStrength * t;
                 }
               case _Kind.pop:
                 final from = _popFrom;
                 if (incoming) {
-                  dx = -.28 * (1 - from) * (1 - t) * width;
-                  dim = .22 * (1 - from) * (1 - t);
+                  if (!cover) {
+                    dx = -.28 * (1 - from) * (1 - t) * width;
+                    dim = dimStrength * (1 - from) * (1 - t);
+                  }
                 } else {
                   dx = (from + (1 - from) * t) * width;
-                  shadow = true;
+                  shadow = !cover;
                 }
               case _Kind.modalIn:
                 final height = MediaQuery.sizeOf(context).height;
@@ -479,14 +911,30 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
                   opacity = 1 - Curves.easeIn.transform(v);
                 }
             }
-            if (!animating && incoming && _swipe.value > 0) {
+            if (!FlareMotion.reduced(context) &&
+                (!animating || widget.homeTrainingExiting) &&
+                incoming &&
+                _swipe.value > 0) {
               dx = _swipe.value * width;
-              shadow = true;
+              shadow = !widget.cover;
+            }
+            if (!animating && swipeBackdrop) {
+              dx = -.28 * (1 - _swipe.value) * width;
+              dim = dimStrength * (1 - _swipe.value);
+            }
+            if (stationary) {
+              dx = 0;
+              dy = 0;
+              scale = 1;
+              opacity = 1;
+              dim = 0;
+              shadow = false;
             }
             // Keep one widget shape at rest and in flight: changing the
             // wrappers would remount the page and drop its state.
             return Transform.translate(
               offset: Offset(dx, dy),
+              transformHitTests: !anchorHitTest,
               child: Transform.scale(
                 scale: scale,
                 child: Opacity(
@@ -530,8 +978,8 @@ class _FlareStageState extends State<FlareStage> with TickerProviderStateMixin {
   }
 }
 
-/// Gentle entrance: fades in and rises a few pixels, once, after [delay].
-/// Used for list and grid items (staggered by index) and swapped panels.
+/// Gentle entrance that waits for navigation before applying the item's
+/// stagger. Used for list and grid items and swapped panels.
 class FadeSlideIn extends StatefulWidget {
   const FadeSlideIn({
     super.key,
@@ -555,30 +1003,82 @@ class FadeSlideIn extends StatefulWidget {
 
 class _FadeSlideInState extends State<FadeSlideIn>
     with SingleTickerProviderStateMixin {
+  Timer? _startTimer;
+  ModalRoute<dynamic>? _route;
+  bool _settled = true;
+  bool _active = true;
+  bool _reduced = false;
+  bool _began = false;
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: widget.duration,
   );
+  late final _opacity = _controller.drive(CurveTween(curve: Curves.easeOut));
+
+  bool get _ready =>
+      _active &&
+      _settled &&
+      _route?.offstage != true &&
+      (_route?.animation?.status ?? AnimationStatus.completed) ==
+          AnimationStatus.completed;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (_route != route) {
+      _route?.animation?.removeStatusListener(_onRouteStatus);
+      _route = route;
+      route?.animation?.addStatusListener(_onRouteStatus);
+    }
+    _active = FlarePageActivity.of(context);
+    _settled = FlarePageActivity.settledOf(context);
+    _reduced = FlareMotion.reduced(context);
+    if (!_ready) _pauseEntrance();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      if (FlareMotion.reduced(context)) {
-        _controller.value = 1;
-      } else if (widget.delay == Duration.zero) {
-        _controller.forward();
-      } else {
-        Future<void>.delayed(widget.delay, () {
-          if (mounted) _controller.forward();
-        });
-      }
+      if (mounted) _startWhenReady();
     });
+  }
+
+  void _onRouteStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _startWhenReady();
+    } else if (status == AnimationStatus.reverse) {
+      _pauseEntrance();
+    }
+  }
+
+  void _pauseEntrance() {
+    _startTimer?.cancel();
+    _startTimer = null;
+    if (_controller.isAnimating) _controller.stop();
+  }
+
+  void _startWhenReady() {
+    if (_controller.isCompleted || _controller.isAnimating) return;
+    if (_reduced) {
+      _pauseEntrance();
+      _controller.value = 1;
+      return;
+    }
+    if (!_ready || _startTimer != null) return;
+    if (_began || widget.delay == Duration.zero) {
+      _began = true;
+      _controller.forward();
+    } else {
+      _startTimer = Timer(widget.delay, () {
+        _startTimer = null;
+        if (!_ready) return;
+        _began = true;
+        _controller.forward();
+      });
+    }
   }
 
   @override
   void dispose() {
+    _route?.animation?.removeStatusListener(_onRouteStatus);
+    _startTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -586,28 +1086,56 @@ class _FadeSlideInState extends State<FadeSlideIn>
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: _controller,
-    child: widget.child,
+    child: FadeTransition(
+      opacity: _opacity,
+      child: RepaintBoundary(child: widget.child),
+    ),
     builder: (context, child) {
       final t = FlareMotion.settle.transform(_controller.value);
-      if (t >= 1) return child!;
-      return Opacity(
-        opacity: Curves.easeOut.transform(_controller.value),
-        child: Transform.translate(
-          offset: Offset(0, widget.offset * (1 - t)),
-          child: child,
-        ),
+      return Transform.translate(
+        offset: Offset(0, widget.offset * (1 - t)),
+        child: child,
       );
     },
   );
 }
 
+/// Whether the enclosing [FlarePressable] (or [Pressable]) is held, so a
+/// face painted inside it can dip its fill without its own gesture.
+class FlarePressedScope extends InheritedWidget {
+  const FlarePressedScope({
+    super.key,
+    required this.pressed,
+    required super.child,
+  });
+  final bool pressed;
+
+  static bool of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<FlarePressedScope>()
+          ?.pressed ??
+      false;
+
+  @override
+  bool updateShouldNotify(FlarePressedScope oldWidget) =>
+      oldWidget.pressed != pressed;
+}
+
 /// Press feedback without stealing the tap: the child sinks slightly while a
-/// finger rests on it and springs back on release. A drag (scrolling) cancels
-/// the press so lists never wobble while scrolling.
+/// finger rests on it and returns on release. A drag (scrolling) cancels
+/// the press so lists never wobble while scrolling. Use it around a widget
+/// that already owns its tap (a Material button); own the tap with
+/// [FlarePressable] instead.
 class Pressable extends StatefulWidget {
-  const Pressable({super.key, required this.child, this.scale = .965});
+  const Pressable({
+    super.key,
+    required this.child,
+    this.scale = FlareMotion.pressScale,
+    this.enabled = true,
+  });
   final Widget child;
   final double scale;
+  final bool enabled;
   @override
   State<Pressable> createState() => _PressableState();
 }
@@ -616,31 +1144,164 @@ class _PressableState extends State<Pressable> {
   bool _down = false;
   Offset? _origin;
 
+  @override
+  void didUpdateWidget(Pressable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.enabled) {
+      _down = false;
+      _origin = null;
+    }
+  }
+
   void _set(bool value) {
     if (_down != value) setState(() => _down = value);
   }
 
   @override
-  Widget build(BuildContext context) => Listener(
-    onPointerDown: (event) {
-      _origin = event.position;
-      _set(true);
-    },
-    onPointerMove: (event) {
-      if (_origin != null && (event.position - _origin!).distance > 8) {
-        _set(false);
-      }
-    },
-    onPointerUp: (_) => _set(false),
-    onPointerCancel: (_) => _set(false),
-    child: AnimatedScale(
-      scale: _down ? widget.scale : 1,
-      duration: FlareMotion.of(
-        context,
-        _down ? FlareMotion.press : FlareMotion.release,
+  Widget build(BuildContext context) {
+    final reduced = FlareMotion.reduced(context);
+    return Listener(
+      onPointerDown: widget.enabled
+          ? (event) {
+              _origin = event.position;
+              _set(true);
+            }
+          : null,
+      onPointerMove: widget.enabled
+          ? (event) {
+              if (_origin != null && (event.position - _origin!).distance > 8) {
+                _set(false);
+              }
+            }
+          : null,
+      onPointerUp: (_) => _set(false),
+      onPointerCancel: (_) => _set(false),
+      child: AnimatedScale(
+        scale: widget.enabled && _down && !reduced ? widget.scale : 1,
+        duration: reduced || !widget.enabled
+            ? Duration.zero
+            : _down
+            ? FlareMotion.press
+            : FlareMotion.release,
+        curve: _down ? Curves.easeOut : Curves.easeOutCubic,
+        child: FlarePressedScope(
+          pressed: widget.enabled && _down,
+          child: widget.child,
+        ),
       ),
-      curve: _down ? Curves.easeOut : FlareMotion.spring,
-      child: widget.child,
-    ),
-  );
+    );
+  }
+}
+
+/// The HipLab pressable: owns the tap, keyboard activation (Enter/Space)
+/// and one merged button node for accessibility, and publishes its held
+/// state through [FlarePressedScope]. Reduced motion keeps the tap and the
+/// pressed fill but drops the scale.
+class FlarePressable extends StatefulWidget {
+  const FlarePressable({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.scale = FlareMotion.pressScale,
+    this.pressDuration = FlareMotion.press,
+    this.plainWhenDisabled = false,
+    this.focusNode,
+    this.semanticLabel,
+    this.preserveChildSemantics = false,
+    this.selected,
+    this.inMutuallyExclusiveGroup = false,
+    this.onPressChanged,
+  });
+  final Widget child;
+  final VoidCallback? onTap;
+  final double scale;
+  final Duration pressDuration;
+  final bool plainWhenDisabled;
+  final FocusNode? focusNode;
+
+  /// Spoken name in the current language; the child's own text is then
+  /// excluded so the node is not read twice.
+  final String? semanticLabel;
+
+  /// Keep independently actionable children visible to accessibility.
+  final bool preserveChildSemantics;
+  final bool? selected;
+  final bool inMutuallyExclusiveGroup;
+
+  /// Reports press changes when a shared face is painted outside this
+  /// widget (a segmented control's sliding thumb).
+  final ValueChanged<bool>? onPressChanged;
+
+  @override
+  State<FlarePressable> createState() => _FlarePressableState();
+}
+
+class _FlarePressableState extends State<FlarePressable> {
+  bool _down = false;
+
+  void _set(bool value) {
+    if (_down != value && mounted) {
+      setState(() => _down = value);
+      widget.onPressChanged?.call(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduced = FlareMotion.reduced(context);
+    final enabled = widget.onTap != null;
+    final semantics = Semantics(
+      container: true,
+      explicitChildNodes: widget.preserveChildSemantics,
+      button: enabled || !widget.plainWhenDisabled,
+      enabled: enabled || !widget.plainWhenDisabled ? enabled : null,
+      label: widget.semanticLabel,
+      selected: widget.selected,
+      inMutuallyExclusiveGroup: widget.inMutuallyExclusiveGroup,
+      onTap: widget.onTap,
+      child: FocusableActionDetector(
+        focusNode: widget.focusNode,
+        enabled: enabled,
+        shortcuts: const {
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (_) {
+              widget.onTap?.call();
+              return null;
+            },
+          ),
+        },
+        child: GestureDetector(
+          excludeFromSemantics: true,
+          behavior: HitTestBehavior.opaque,
+          onTapDown: enabled ? (_) => _set(true) : null,
+          onTapUp: enabled ? (_) => _set(false) : null,
+          onTapCancel: () => _set(false),
+          onTap: widget.onTap,
+          child: AnimatedScale(
+            scale: _down && !reduced ? widget.scale : 1,
+            duration: reduced
+                ? Duration.zero
+                : _down
+                ? widget.pressDuration
+                : FlareMotion.release,
+            curve: _down ? Curves.easeOut : Curves.easeOutCubic,
+            child: FlarePressedScope(
+              pressed: _down,
+              child:
+                  widget.semanticLabel == null || widget.preserveChildSemantics
+                  ? widget.child
+                  : ExcludeSemantics(child: widget.child),
+            ),
+          ),
+        ),
+      ),
+    );
+    return widget.preserveChildSemantics
+        ? semantics
+        : MergeSemantics(child: semantics);
+  }
 }

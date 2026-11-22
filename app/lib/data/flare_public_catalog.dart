@@ -1,12 +1,57 @@
 // Read the shipped public definitions through the SDK's verified adapter.
+
 import 'package:flutter/services.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 
+import 'posehub_catalog_updates.dart';
+
 const flarePublicCatalogAsset = 'assets/public_media/catalog.json';
 const flarePublicSemanticsAsset = 'assets/public_media/catalog/catalog.json';
+const flareWarmupPushupId = 't-kneeling-scap-pushup';
 
+/// Actions available in plan details outside the general library and Coach scope.
+const flareSupplementalActionIds = <String>{
+  't-step-jack-arm-circles',
+  't-neck-wrist-finger-wakeup',
+  't-wide-side-squat-shift',
+  't-standing-neck-side-stretch',
+  't-standing-wrist-flexor-stretch',
+  't-side-lying-straight-leg-abduction',
+  't-kneeling-wrist-pushup',
+  't-kneeling-fist-plank',
+  't-prone-t-w',
+  't-forearm-side-plank',
+  't-straight-arm-side-plank-switch',
+  't-planche-lean-hold',
+  't-pseudo-planche-pushup-v2',
+  't-floor-tuck-hold',
+  't-supine-straddle-open-close',
+  't-standing-clasp-chest-opener',
+};
+
+/// Prefer the SDK-verified hot-update cache unless it predates Flare's
+/// bundled baseline (for example after an offline app upgrade).
 Future<coach.PoseHubAppTestCatalog> loadFlarePublicCatalog({
+  AssetBundle? bundle,
+  trainer.PoseHubCatalogStore? verifiedCache,
+}) async {
+  final store = verifiedCache ?? PoseHubCatalogUpdates.activeStore;
+  if (store != null) {
+    final cached = await trainer.readVerifiedPoseHubCatalog(store);
+    if (cached != null) {
+      final order = trainer.comparePoseHubPacks(
+        trainer.poseHubPackVersionOf(cached),
+        PoseHubCatalogUpdates.bundledPackVersion,
+      );
+      if (order != null && order >= 0) return cached;
+    }
+  }
+  return loadFlareBundledPublicCatalog(bundle: bundle);
+}
+
+/// Reads the shipped baseline even when a newer pack is active.
+Future<coach.PoseHubAppTestCatalog> loadFlareBundledPublicCatalog({
   AssetBundle? bundle,
 }) async {
   final assets = bundle ?? rootBundle;

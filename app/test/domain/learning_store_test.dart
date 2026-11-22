@@ -78,6 +78,38 @@ void main() {
   );
 
   test(
+    'training snapshot revision tracks mutations and the local day',
+    () async {
+      var now = day;
+      final store = LearningStore(
+        catalog: catalog,
+        storage: MemoryStorage(),
+        now: () => now,
+      );
+      addTearDown(store.dispose);
+      await store.initialize();
+
+      expect(store.trainingDay, '2026-10-08');
+      expect(store.trainingDataRevision, 0);
+      await store.setLastTime(2.15);
+      expect(store.trainingDataRevision, 0);
+
+      await store.addToToday('deltoids-A');
+      await store.addToToday('deltoids-A');
+      expect(store.trainingDataRevision, 1);
+      await store.logSession(session());
+      await store.logSession(session());
+      await store.retrySave();
+      expect(store.trainingDataRevision, 2);
+
+      now = DateTime(2026, 10, 9, 1);
+      store.refreshDate();
+      expect(store.trainingDay, '2026-10-09');
+      expect(store.trainingDataRevision, 2);
+    },
+  );
+
+  test(
     'settings, last frame, deduplicated dated plan and self-reports restore',
     () async {
       var now = day;
@@ -91,6 +123,8 @@ void main() {
       expect(store.safetyAccepted, isFalse);
       await store.acknowledgeSafety();
       await store.updateSettings(tier: 'B', speed: 0.25, weeklyGoal: 4);
+      expect(store.settings.cooldownTier, 1);
+      expect(await store.updateSettings(cooldownTier: 3), isTrue);
       await store.setLastTime(2.15);
       await store.addToToday('deltoids-A');
       await store.addToToday('deltoids-A');
@@ -106,6 +140,7 @@ void main() {
       await restored.initialize();
       expect(restored.safetyAccepted, isTrue);
       expect(restored.settings.tier, 'B');
+      expect(restored.settings.cooldownTier, 3);
       expect(restored.settings.speed, 0.25);
       expect(restored.settings.weeklyGoal, 4);
       expect(restored.lastTime, 2.15);
@@ -416,10 +451,19 @@ void main() {
     });
     expect(legacy.themeMode, 'system');
     expect(legacy.actorBody, 'original');
+    expect(legacy.cooldownTier, 1);
     expect(legacy.valid, isTrue);
     expect(legacy.copyWith(themeMode: 'sepia').valid, isFalse);
     expect(legacy.copyWith(themeMode: 'light').toJson()['themeMode'], 'light');
     expect(legacy.copyWith(actorBody: 'other').valid, isFalse);
+    expect(legacy.copyWith(cooldownTier: 4).valid, isFalse);
+    expect(
+      LearningSettings.fromJson({
+        ...legacy.toJson(),
+        'cooldownTier': 4,
+      }).cooldownTier,
+      1,
+    );
     expect(
       LearningSettings.fromJson({
         ...legacy.toJson(),

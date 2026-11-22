@@ -9,6 +9,228 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Buka Flare Pro';
+
+  @override
+  String get premiumPreviewFooter =>
+      'Buka semua akses ke latihan, riwayat, dan rencana kustom.';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Hari berturut-turut';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Pencapaian';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Durasi latihan';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Pilih gerakan';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Set fleksibel';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Simpan tanpa batas';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Timer suara';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Demo gerakan';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Catatan otomatis';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'Catat setiap latihan';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'setiap';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Durasi, hari latihan berturut-turut, dan pencapaian disimpan otomatis agar progres mudah dilihat.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'Buat rencana latihan sendiri';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'sendiri';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Pilih gerakan, atur jumlah set, lalu simpan rencana latihanmu sendiri.';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'Ikuti latihan, setiap set berarti';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'setiap set';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Ikuti panduan waktu lewat suara dan demonstrasi gerakan. Latihan otomatis dicatat saat selesai.';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return 'Uji coba gratis $days hari jika memenuhi syarat';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Berlangganan seharga $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return 'Uji coba gratis $days hari';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count rencana untuk setiap fase Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Sudut utama';
+
+  @override
+  String get premiumMuscleCount => 'Kelompok otot';
+
+  @override
+  String get premiumLevelCount => 'Tingkat kesulitan';
+
+  @override
+  String get premiumVoiceTitle => 'Panduan suara dan demo 3D';
+
+  @override
+  String get premiumVoiceDescription =>
+      'Petunjuk repetisi, pergantian sisi, dan istirahat';
+
+  @override
+  String get premiumCustomDescription =>
+      'Buat rencana dari latihan andalan Anda';
+
+  @override
+  String get premiumPerYear => '/tahun';
+
+  @override
+  String get premiumPerMonth => '/bulan';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Tidak dapat terhubung ke $store. Harga di toko berlaku.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Masih tidak dapat terhubung ke $store. Coba lagi nanti.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'Setelah uji coba, langganan diperpanjang dengan biaya $price. Batalkan kapan saja di $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Langganan diperpanjang dengan biaya $price. Batalkan kapan saja di $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Langganan diperpanjang otomatis. Batalkan di $store.';
+  }
+
+  @override
+  String get premiumTitle => 'Buka Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Buat latihan sesuai keinginanmu';
+
+  @override
+  String get premiumAiCoach => 'Mulai rencana latihan apa pun kapan saja';
+
+  @override
+  String get premiumAiPlans =>
+      'Tiga tingkat rencana menurut sudut dan kelompok otot';
+
+  @override
+  String get premiumCustomWorkouts => 'Latihan kustom tanpa batas';
+
+  @override
+  String get premiumMonthly => 'Bulanan';
+
+  @override
+  String get premiumYearly => 'Tahunan';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'Sekitar $price/bulan';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Hemat $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Mulai uji coba gratis $days hari';
+  }
+
+  @override
+  String get premiumSubscribe => 'Berlangganan';
+
+  @override
+  String get premiumDisclosure =>
+      'Langganan diperpanjang otomatis. Batalkan kapan saja di Google Play. Jika dibatalkan sebelum uji coba berakhir, kamu tidak akan dikenai biaya.';
+
+  @override
+  String get premiumRestore => 'Pulihkan pembelian';
+
+  @override
+  String get premiumTerms => 'Ketentuan layanan';
+
+  @override
+  String get premiumPrivacy => 'Kebijakan privasi';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Keanggotaan aktif';
+
+  @override
+  String get premiumInactive => 'Tidak ada keanggotaan aktif';
+
+  @override
+  String get premiumManage => 'Kelola langganan';
+
+  @override
+  String get premiumUnavailable => 'Toko tidak tersedia. Coba lagi.';
+
+  @override
+  String get premiumRestoreEmpty => 'Tidak ditemukan langganan aktif.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'Kamu sudah memakai semua $limit permintaan AI hari ini. Kembali besok.';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'Terlalu banyak permintaan. Coba lagi sebentar lagi.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'Saran AI hanya untuk referensi dan bukan nasihat medis.';
+
+  @override
   String get actorBodyLabel => 'Karakter Thomas';
 
   @override
@@ -34,6 +256,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get appName => 'Flare Thomas';
+
+  @override
+  String get flareStraightLegs => 'Flare (kedua kaki lurus)';
 
   @override
   String get tagline => 'Pahami gerakan. Latih setiap tahap.';
@@ -108,10 +333,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get side => 'Samping';
 
   @override
-  String get pausedHint => 'Jelajahi otot';
-
-  @override
-  String get playingHint => 'Jeda lalu pilih';
+  String get homeGoToTraining => 'Ke latihan';
 
   @override
   String get loadingScene => 'Menyiapkan gerakan 3D…';
@@ -621,7 +843,8 @@ class AppLocalizationsId extends AppLocalizations {
       'Lakukan pemanasan pergelangan tangan terlebih dahulu';
 
   @override
-  String get safetyRule1Note => 'Rencana Pemanasan memandu Anda';
+  String get safetyRule1Note =>
+      'Gerakkan pergelangan tangan dan tulang belikat sebelum berlatih.';
 
   @override
   String get safetyRule2 =>
@@ -882,10 +1105,206 @@ class AppLocalizationsId extends AppLocalizations {
   String get wristExtension => 'Ekstensi pergelangan tangan';
 
   @override
+  String get plansByAngle => 'Menurut sudut';
+
+  @override
+  String get plansByMuscle => 'Menurut kelompok otot';
+
+  @override
+  String get anglePlanLabel => 'Rencana sudut';
+
+  @override
+  String get musclePlanLabel => 'Rencana otot';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'Bertumpu pada satu tangan dan buka kaki membentuk V tinggi. Kuatkan tumpuan ini.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Tahan tubuh di atas satu tangan. Otot deltoid bekerja di setiap putaran flare.';
+
+  @override
+  String get planTrainingContent => 'Isi latihan';
+
+  @override
+  String get planMuscleLinkHint => 'Ketuk otot untuk melihat rencananya';
+
+  @override
+  String get planSpecialized => 'Rencana khusus';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Istirahat $seconds dtk';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Pengganti tanpa alat';
+
+  @override
+  String get planBodyweightScene => 'Tanpa alat';
+
+  @override
+  String get hubAngle => 'Sudut';
+
+  @override
+  String get hubMuscle => 'Otot';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'Mulai $count mnt';
+  }
+
+  @override
+  String get hubThreeTiers => 'Tiga tingkat';
+
+  @override
+  String get hubPrimaryMuscles => 'Otot utama pada fase ini';
+
+  @override
+  String get hubSpecializedPlan => 'Rencana khusus';
+
+  @override
+  String get hubSupportTab => 'Tumpuan';
+
+  @override
+  String get hubCoreTab => 'Inti';
+
+  @override
+  String get hubLegsTab => 'Kaki';
+
+  @override
+  String get hubStillPlanning => 'Dalam persiapan';
+
+  @override
+  String get hubPlanComingSoon => 'Rencana khusus sedang disiapkan';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'Lihat rencana “$name”';
+  }
+
+  @override
+  String get hubPhase09Caption =>
+      'Bertumpu pada kedua tangan dan angkat kaki terbuka ke depan.';
+
+  @override
+  String get hubPhase10Caption =>
+      'Alihkan berat badan dari dua tangan ke satu tangan.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Topang seluruh tubuh menyamping dengan satu tangan. Bahu penopang bekerja paling berat.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Putar badan menghadap ke depan dan tukar posisi kaki seperti gunting di depan tubuh.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Letakkan kedua tangan di belakang dan ayunkan kaki terbuka ke belakang.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Ganti tangan tumpuan dan ayunkan kaki lurus ke belakang.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Bertumpu pada tangan satunya dan pertahankan V tinggi.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Putar badan menghadap lantai dan ayunkan kaki ke belakang.';
+
+  @override
+  String get planTierBeginner => 'Pemula';
+
+  @override
+  String get planTierIntermediate => 'Menengah';
+
+  @override
+  String get planTierAdvanced => 'Lanjutan';
+
+  @override
+  String get planActiveMuscles => 'Otot yang bekerja';
+
+  @override
+  String get planExercises => 'Gerakan';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · tiap sisi';
+  }
+
+  @override
+  String get planTierSummary => 'Pemula · Menengah · Lanjutan';
+
+  @override
   String get plans => 'Rencana';
 
   @override
-  String get plansHint => 'Set siap pakai dan milikmu';
+  String get plansHint => 'Latihan terarah dan rencana sendiri';
+
+  @override
+  String get plansLastSession => 'Sesi terakhir';
+
+  @override
+  String get plansContinue => 'Lanjutkan';
+
+  @override
+  String get plansToday => 'Hari ini';
+
+  @override
+  String get plansYesterday => 'Kemarin';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total latihan';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Gabungkan latihan rutin';
+
+  @override
+  String get plansNewEmptyHint =>
+      'Kelompokkan latihan yang paling sering dilakukan';
+
+  @override
+  String get plansAnglesTitle => 'Sudut flare yang menantang';
+
+  @override
+  String get plansAnglesDescription =>
+      'Latih kestabilan pada fase tersulit dalam satu putaran.';
+
+  @override
+  String get plansMusclesTitle => 'Kelompok otot yang perlu diperkuat';
+
+  @override
+  String get plansMusclesDescription =>
+      'Bagian tubuh dengan beban terbesar saat flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'Semua $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'Tumpuan satu tangan';
+
+  @override
+  String get plansTwoHandSupport => 'Tumpuan dua tangan';
+
+  @override
+  String get plansThreeLevels => '3 tingkat';
+
+  @override
+  String get plansAiTitle => 'Rencana AI';
+
+  @override
+  String get plansAiHint => 'Pilih tempat, durasi, dan kelompok otot.';
+
+  @override
+  String get plansAiUnavailable => 'AI tidak tersedia';
 
   @override
   String get plansReady => 'Set siap pakai';
@@ -910,6 +1329,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Simpan sebagai rencanaku';
+
+  @override
+  String get premiumCopyRoutine => 'Salin rencana';
 
   @override
   String get planSaved => 'Tersimpan di Rencanaku';
@@ -1111,4 +1533,139 @@ class AppLocalizationsId extends AppLocalizations {
   String pickerAddCount(int count) {
     return 'Tambah $count latihan';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets set × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => 'Siapkan:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Matras latihan',
+      'chair': 'Kursi',
+      'band': 'Pita resistansi',
+      'dumbbell': 'Dumbel',
+      'wall': 'Dinding',
+      'cable': 'Mesin kabel',
+      'block': 'Balok yoga',
+      'pullup_bar': 'Palang pull-up',
+      'parallettes': 'Palang paralel rendah',
+      'dip_bars': 'Palang dip',
+      'slider': 'Cakram geser',
+      'rings': 'Cincin senam',
+      'landmine': 'Dudukan landmine',
+      'swiss_ball': 'Bola latihan',
+      'roman_chair': 'Kursi Romawi',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Mesin hiperekstensi terbalik',
+      'ghd': 'Bangku glute dan hamstring',
+      'hip_abductor_machine': 'Mesin abduksi pinggul',
+      'leg_extension_machine': 'Mesin ekstensi kaki',
+      'foam_roller': 'Rol busa',
+      'towel': 'Handuk',
+      'doorframe': 'Kusen pintu',
+      'bench': 'Bangku latihan',
+      'barbell': 'Barbel',
+      'clamp_pad': 'Bantalan kecil',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'Sebelum dan sesudah latihan';
+
+  @override
+  String get preWorkoutWarmup => 'Pemanasan';
+
+  @override
+  String get postWorkoutStretch => 'Setelah latihan';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Belum pemanasan? Coba $minutesString menit ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count putaran per arah dan sisi';
+  }
+
+  @override
+  String get planCircleClockwise => 'Searah jarum jam';
+
+  @override
+  String get planCircleCounterclockwise => 'Berlawanan arah jarum jam';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Tahan di atas $seconds dtk';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Lanjutkan rutinitas setelah latihan';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 tingkat · Berat badan';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Penguatan terarah';
+
+  @override
+  String get cooldownStretchHeading => 'B Peregangan seluruh tubuh';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Lewati penguatan dan langsung ke peregangan';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Lakukan 2–3 kali seminggu dengan jeda satu hari. Lewati penguatan jika hari ini sudah melatih tubuh bagian atas atau pergelangan tangan terasa nyeri.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds putaran';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds dtk antar latihan · $roundSeconds dtk antar putaran';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max dtk';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max repetisi';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps repetisi per posisi';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds dtk PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes menit · Berat badan';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demo sementara';
 }

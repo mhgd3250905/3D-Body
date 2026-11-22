@@ -7,10 +7,14 @@ class ScenePlatformView extends StatefulWidget {
     super.key,
     required this.controller,
     this.body = 'original',
+    this.interactive = true,
+    this.concealed = false,
   });
 
   final SceneController controller;
   final String body;
+  final bool interactive;
+  final bool concealed;
 
   @override
   State<ScenePlatformView> createState() => _ScenePlatformViewState();

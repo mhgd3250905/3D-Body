@@ -11,6 +11,7 @@ export function setFunctionalFocus(uniforms, ids = [], side = 'both') {
 // The imported shader defines functional regions and hit testing. Adapt only
 // their presentation here; retain the supplied geometry, normals and source.
 export function applyFunctionalSurface(material, uniforms, { posed = false, thumbnail = false, density = null } = {}) {
+  const hasHubCrop = Boolean(uniforms.mmHubFraming);
   uniforms.mmFocusSide ??= { value: 0 };
   uniforms.mmFocusColour ??= { value: new THREE.Color('#e58b90') };
   uniforms.mmFocusInk ??= { value: new THREE.Color('#a7777b') };
@@ -31,6 +32,7 @@ export function applyFunctionalSurface(material, uniforms, { posed = false, thum
     shader.fragmentShader = `uniform float mmStrokeDensity;
 uniform float mmFocusSide; uniform vec3 mmFocusColour; uniform vec3 mmFocusInk;
 uniform float mmHomeEmphasis; uniform float mmEffort;
+${hasHubCrop ? 'uniform float mmHubFraming; uniform float mmHubBottom;' : ''}
 float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
 ` + shader.fragmentShader;
     const replace = (from, to) => {
@@ -138,8 +140,18 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
       // or all-body recoloring when a muscle is selected.
       replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;', '');
     } else {
+      const ordinaryLighting = hasHubCrop ? 'mmHubFraming < 0.5 && ' : '';
       replace('totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;',
-        'if (mmHomeEmphasis < 0.5) totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;');
+        `if (${ordinaryLighting}mmHomeEmphasis < 0.5) totalEmissiveRadiance += vec3(0.50, 0.60, 0.80) * rim * 0.32;`);
+      if (hasHubCrop) {
+        replace('} else {\n            totalEmissiveRadiance += mmPc * (lit',
+          '} else if (mmHubFraming < 0.5) {\n            totalEmissiveRadiance += mmPc * (lit');
+        replace('#include <opaque_fragment>', `#include <opaque_fragment>
+          if (mmHubFraming > 0.5) {
+            if (vMmPos.y <= mmHubBottom) discard;
+            gl_FragColor.a *= smoothstep(mmHubBottom, mmHubBottom + 0.065, vMmPos.y);
+          }`);
+      }
     }
     if (thumbnail) {
       // r170 disables tone mapping and outputs linear RGB for ordinary render
@@ -165,6 +177,6 @@ float mmPanelCoverage; float mmFocusCoverage; float mmFocusOutline;
       replace(output, output + '\n{\n vec3 ink = sRGBTransferOETF(vec4(mmFocusInk, 1.0)).rgb;\n gl_FragColor.rgb = mix(gl_FragColor.rgb, ink, mmFocusOutline * 0.26);\n}');
     }
   };
-  material.customProgramCacheKey = () => 'flare-functional-surface-v10-' + Number(posed) + '-' + Number(thumbnail);
+  material.customProgramCacheKey = () => 'flare-functional-surface-v10-' + Number(posed) + '-' + Number(thumbnail) + '-' + Number(hasHubCrop);
   material.needsUpdate = true;
 }

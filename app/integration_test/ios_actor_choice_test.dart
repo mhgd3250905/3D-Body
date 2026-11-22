@@ -34,7 +34,7 @@ Future<void> _until(
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  testWidgets('native actor switch loads the selected asset and retains detail', (
+  testWidgets('native scene keeps V5 with an older saved actor preference', (
     tester,
   ) async {
     final catalog = await Catalog.load();
@@ -45,6 +45,7 @@ void main() {
     addTearDown(scene.dispose);
     await store.initialize();
     await store.acknowledgeSafety();
+    await store.updateSettings(actorBody: 'training');
     await tester.pumpWidget(
       MaterialApp(
         theme: flareTheme(),
@@ -58,75 +59,37 @@ void main() {
         ),
       ),
     );
-    await _until(tester, () => scene.presented, 'original actor rendered');
-    scene.setTime(2.375);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('点选肌群'));
-    await tester.pumpAndSettle();
-    final group = catalog.groups.firstWhere(
-      (group) => find.text(group.label).evaluate().isNotEmpty,
-    );
-    await tester.tap(find.text(group.label).last);
+    await _until(tester, () => scene.presented, 'V5 actor rendered');
+    final revision = scene.stateRevision;
+    const pausedTime = 2.375;
+    scene.setTime(pausedTime);
     await _until(
       tester,
-      () => scene.lastState?['detail'] == true,
-      'paused detail acknowledgement',
+      () => scene.confirmsPausedFrame(after: revision, time: pausedTime),
+      'V5 scene acknowledged the paused frame',
     );
-    await tester.pumpAndSettle();
-    for (final body in [
-      'training',
-      'shadow',
-      'chrome',
-      'street',
-      'robot',
-      'cyber',
-      'original',
-    ]) {
-      final readyRevision = scene.readyRevision;
-      final stateRevision = scene.stateRevision;
-      await store.updateSettings(actorBody: body);
-      await _until(
-        tester,
-        () =>
-            scene.readyRevision > readyRevision &&
-            scene.presented &&
-            scene.confirmsPausedFrame(
-              after: stateRevision,
-              detail: group.id,
-              time: 2.375,
-            ),
-        '$body actor renders and restores the paused detail',
-      );
-      expect(scene.errorCode, isNull);
-      final web = tester.widget<WebViewWidget>(find.byType(WebViewWidget));
-      final raw = await web.platform.params.controller
-          .runJavaScriptReturningResult('''JSON.stringify({
-            body:new URLSearchParams(location.search).get('body'),
-            character:new URLSearchParams(location.search).get('character'),
-            resources:performance.getEntriesByType('resource').map(x=>x.name)
-          })''');
-      var decoded = jsonDecode(raw.toString());
-      if (decoded is String) decoded = jsonDecode(decoded);
-      final diagnostics = Map<String, dynamic>.from(decoded as Map);
-      final resources = (diagnostics['resources'] as List).cast<String>();
-      final usesCoach = body == 'original' || body == 'street';
-      final model = usesCoach
-          ? 'flare-coach-v42-r17-animated.meshopt.glb.gz'
-          : 'flare-coach-v42-r17-training-human.meshopt.glb.gz';
-      expect(diagnostics['body'], body == 'training' ? 'training' : isNull);
-      expect(
-        diagnostics['character'],
-        body == 'original' || body == 'training' ? isNull : body,
-      );
-      expect(resources.any((url) => url.endsWith(model)), isTrue);
-      final restored = LearningStore(catalog: catalog, storage: storage);
-      await restored.initialize();
-      expect(restored.settings.actorBody, body);
-      restored.dispose();
-      debugPrint(
-        'FLARE_IOS_ACTOR_REPORT ${jsonEncode({'body': body, 'modelLoaded': model, 'pausedTime': scene.time, 'detail': group.id, 'preferenceRestored': true})}',
-      );
-    }
+    final web = tester.widget<WebViewWidget>(find.byType(WebViewWidget));
+    final raw = await web.platform.params.controller
+        .runJavaScriptReturningResult('''JSON.stringify({
+          actor:new URLSearchParams(location.search).get('actor'),
+          body:new URLSearchParams(location.search).get('body'),
+          resources:performance.getEntriesByType('resource').map(x=>x.name)
+        })''');
+    var decoded = jsonDecode(raw.toString());
+    if (decoded is String) decoded = jsonDecode(decoded);
+    final diagnostics = Map<String, dynamic>.from(decoded as Map);
+    final resources = (diagnostics['resources'] as List).cast<String>();
+    expect(diagnostics['actor'], 'flare-v5');
+    expect(diagnostics['body'], isNull);
+    expect(
+      resources.any((url) => url.endsWith('coach-v3r3-wristfix.glb')),
+      isTrue,
+    );
+    expect(scene.errorCode, isNull);
+    final restored = LearningStore(catalog: catalog, storage: storage);
+    addTearDown(restored.dispose);
+    await restored.initialize();
+    expect(restored.settings.actorBody, 'training');
     await tester.pumpWidget(const SizedBox());
   });
 }

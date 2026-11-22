@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flare/data/catalog.dart';
 import 'package:flare/trainer/trainer_voice.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_coach/ugk_coach.dart' show sha256Hex;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   Future<String> read(String path) => File(path).readAsString();
 
   test(
@@ -100,6 +105,149 @@ void main() {
     },
   );
 
+  test(
+    'plan voices and chime aliases resolve only to the versioned bundle',
+    () async {
+      const versionedRoot = 'assets/trainer_voice/flare-plan-voice-r1-6c5d81a9';
+      const legacyRoot = 'assets/trainer_voice/_common/voice/zh';
+      final base = await loadTrainerVoiceSource(read: read);
+      final catalog = await Catalog.load();
+      final source = await withSupplementalTrainerVoice(
+        base,
+        catalog.flareWarmupPlan,
+        language: 'zh',
+      );
+      final expected = <String>{};
+      for (final file in [
+        'flare-supplemental-voice.json',
+        'flare-plan-announcements.json',
+      ]) {
+        final manifest =
+            jsonDecode(
+                  await rootBundle.loadString('assets/trainer_voice/$file'),
+                )
+                as Map<String, dynamic>;
+        expected.addAll(
+          (manifest['clips'] as Map<String, dynamic>).keys.map(
+            (key) => '$versionedRoot/$key.m4a',
+          ),
+        );
+      }
+      expect(expected, hasLength(172));
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final assets = manifest.listAssets();
+      expect(
+        assets.where((asset) => asset.startsWith('$versionedRoot/')),
+        unorderedEquals(expected),
+      );
+      expect(
+        assets.where((asset) => asset.startsWith('$legacyRoot/supplemental.')),
+        isEmpty,
+      );
+
+      const technique = 'supplemental.general-warmup.1';
+      const segment = '$technique.segment.step-jack-side-raise';
+      for (final key in [
+        technique,
+        '$technique.intro',
+        segment,
+        'chime.$segment',
+      ]) {
+        expect(source.has(key, lang: 'zh'), isTrue);
+        final asset = source.asset(key, lang: 'zh');
+        expect(asset, '$versionedRoot/${key.replaceFirst('chime.', '')}.m4a');
+        expect((await rootBundle.load(asset)).lengthInBytes, greaterThan(0));
+      }
+      for (final key in ['n.1', 'chime.start']) {
+        expect(source.asset(key, lang: 'zh'), base.asset(key, lang: 'zh'));
+      }
+    },
+  );
+
+  test(
+    'pinned voice paths and timing come from verified snapshot clips',
+    () async {
+      const technique = 'supplemental.general-warmup.1';
+      const segment = '$technique.segment.step-jack-side-raise';
+      final guideBytes = File(
+        '$flarePlanVoiceAssetRoot/$technique.m4a',
+      ).readAsBytesSync();
+      final segmentBytes = File(
+        '$flarePlanVoiceAssetRoot/$segment.m4a',
+      ).readAsBytesSync();
+      final earlier = Uint8List.fromList([
+        ...guideBytes,
+        // A valid ISO BMFF free box changes the digest, without changing timing.
+        0, 0, 0, 8, 102, 114, 101, 101,
+      ]);
+      final snapshot = _voiceSnapshot(
+        {technique: earlier, segment: segmentBytes},
+        paths: [technique, segment],
+      );
+      final http = _VoiceHttp({technique: earlier, segment: segmentBytes});
+      final directory = await Directory.systemTemp.createTemp(
+        'flare-voice-test-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final cache = PoseHubPlanVoiceCache.files(directory.path, http: http);
+      final base = await loadTrainerVoiceSource(read: read);
+      final plan = (await Catalog.load()).flareWarmupPlan!;
+      final source = await withSupplementalTrainerVoice(
+        base,
+        plan,
+        language: 'zh',
+        planSnapshot: snapshot,
+        voiceCache: cache,
+      );
+      expect(http.requested, unorderedEquals([technique, segment]));
+      final uri = Uri.parse(source.asset(technique, lang: 'zh'));
+      expect(uri.scheme, 'file');
+      expect(uri.pathSegments.last, '${sha256Hex(earlier)}.m4a');
+      expect(source.seconds(technique, lang: 'zh'), closeTo(5.27, .05));
+      expect(source.line(technique, lang: 'zh'), plan.items.first.voiceCue);
+      expect(
+        source.asset('chime.$segment', lang: 'zh'),
+        source.asset(segment, lang: 'zh'),
+      );
+      expect(source.asset('n.1', lang: 'zh'), base.asset('n.1', lang: 'zh'));
+    },
+  );
+
+  test(
+    'offline snapshot falls back only to the exact matching shipped clip',
+    () async {
+      const guide = 'supplemental.general-warmup.1';
+      const intro = '$guide.intro';
+      final guideBytes = File(
+        '$flarePlanVoiceAssetRoot/$guide.m4a',
+      ).readAsBytesSync();
+      final snapshot = _voiceSnapshot(
+        {
+          guide: guideBytes,
+          intro: Uint8List.fromList([1, 2, 3]),
+        },
+        paths: [guide, intro],
+      );
+      final base = await loadTrainerVoiceSource(read: read);
+      final source = await withSupplementalTrainerVoice(
+        base,
+        (await Catalog.load()).flareWarmupPlan,
+        language: 'zh',
+        planSnapshot: snapshot,
+        voiceCache: PoseHubPlanVoiceCache(
+          store: MemoryPoseHubCatalogStore(),
+          uriOf: (name) => Uri.file('/test/$name'),
+          http: _VoiceHttp({}),
+        ),
+      );
+      expect(
+        source.asset(guide, lang: 'zh'),
+        '$flarePlanVoiceAssetRoot/$guide.m4a',
+      );
+      expect(source.has(intro, lang: 'zh'), isFalse);
+    },
+  );
+
   test('English phrases use English order and singular units', () async {
     final en = await loadTrainerVoiceSource(language: 'en', read: read);
     final zh = await loadTrainerVoiceSource(read: read);
@@ -158,4 +306,64 @@ void main() {
       }
     },
   );
+}
+
+PoseHubPlanSnapshot _voiceSnapshot(
+  Map<String, Uint8List> files, {
+  required List<String> paths,
+}) {
+  String path(String key) => 'zh/$key.m4a';
+  final voice = utf8.encode(
+    jsonEncode({
+      'schema': 1,
+      'files': [
+        for (final MapEntry(key: key, value: bytes) in files.entries)
+          {
+            'path': path(key),
+            'bytes': bytes.length,
+            'sha256': sha256Hex(bytes),
+          },
+      ],
+      'plans': {'general-warmup': paths.map(path).toList()},
+    }),
+  );
+  return PoseHubPlanSnapshot.fromBytes(
+    utf8.encode(
+      jsonEncode({
+        'schema': 1,
+        'app': 'flare',
+        'version': 'fixture',
+        'min_catalog_pack': 'r2-v22',
+        'voice_manifest': {
+          'url': 'https://example.com/manifest.json',
+          'bytes': voice.length,
+          'sha256': sha256Hex(voice),
+        },
+        'plans': <Object?>[],
+      }),
+    ),
+    voice,
+    minSdk: '1.0.2',
+  );
+}
+
+class _VoiceHttp implements PoseHubCatalogHttpClient {
+  _VoiceHttp(this.files);
+
+  final Map<String, Uint8List> files;
+  final requested = <String>[];
+
+  @override
+  Future<PoseHubCatalogHttpResponse> get(
+    Uri uri, {
+    Map<String, String> headers = const {},
+    int maxBytes = 64 * 1024 * 1024,
+  }) async {
+    final key = uri.pathSegments.last.replaceFirst(RegExp(r'\.m4a$'), '');
+    requested.add(key);
+    final bytes = files[key];
+    return bytes == null
+        ? PoseHubCatalogHttpResponse(503, Uint8List(0))
+        : PoseHubCatalogHttpResponse(200, bytes);
+  }
 }

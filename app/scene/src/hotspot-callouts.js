@@ -8,10 +8,11 @@ import { sceneFont } from './localization.js';
 
 // Cards live outside the muscle surface and remain camera-facing. Dots and
 // their fine guides remain visible through the actor; cards keep natural depth.
-export function createHotspotCallouts(player, layer, onSelect, { hosted = false, depthSampler = null } = {}) {
+export function createHotspotCallouts(player, layer, onSelect, { hosted = false, depthSampler = null, scene = player.scene } = {}) {
   const records = new Map(), raycaster = new THREE.Raycaster();
-  const root = new THREE.Group(); root.name = 'MuscleBillboards'; player.scene.add(root);
+  const root = new THREE.Group(); root.name = 'MuscleBillboards'; scene.add(root);
   let anchors = [], moveFrame = null;
+  let pickCamera = player.camera;
   function texture(name, colour, dot = false) {
     const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
     const ratio = 4, height = dot ? 24 : 30;
@@ -70,25 +71,83 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     if (moveFrame != null) cancelAnimationFrame(moveFrame); moveFrame = null;
     for (const record of records.values()) remove(record); records.clear(); anchors = [];
   }
-  function update(items) {
-    anchors = computeHotspots(player, items, anchors, depthSampler);
+  function snapshotLayout() {
+    const scale = modelScale(pickCamera);
+    return new Map(anchors.filter(point => point.callout?.opacity > 0).map(point => {
+      const { x, y, dot, opacity } = point.callout;
+      return [point.groupId, { x, y, dot, opacity, side: point.side,
+        dx: (x - dot.x) / scale, dy: (y - dot.y) / scale,
+        candidateKey: point.candidateKey, occluded: point.occluded }];
+    }));
+  }
+  function modelScale(camera) {
+    const pelvis = new THREE.Vector3().fromArray(player.getMetrics().joints.pelvis);
+    const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    return Math.max(1, Math.abs(player.project(pelvis.clone().add(up), camera).y - player.project(pelvis, camera).y));
+  }
+  function update(items, { camera = player.camera, opacity = 1, reservedBottom = 0, homeOverlays = true,
+    layout = null, departureOffset = null, viewport = null } = {}) {
+    pickCamera = camera;
+    const project = point => player.project(point, camera);
+    if (layout) items = items.map(item => {
+      const side = layout.get(item.groupId)?.side;
+      return side && item.side === 'both' ? { ...item, side } : item;
+    });
+    anchors = departureOffset == null ? computeHotspots(player, items, anchors, depthSampler, camera, layout)
+      : anchors.filter(point => layout.has(point.groupId));
     const active = new Set(anchors.map(p => p.groupId));
     for (const [id, record] of records) if (!active.has(id)) { remove(record); records.delete(id); }
     const joints = player.getMetrics().joints;
-    const cameraRight = new THREE.Vector3().setFromMatrixColumn(player.camera.matrixWorld, 0);
-    const cameraUp = new THREE.Vector3().setFromMatrixColumn(player.camera.matrixWorld, 1);
-    const centreX = player.project(new THREE.Vector3().fromArray(joints.pelvis)).x;
+    const cameraRight = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+    const cameraUp = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    const centreX = project(new THREE.Vector3().fromArray(joints.pelvis)).x;
     const viewWidth = player.container.clientWidth;
     const canvasHeight = player.container.clientHeight;
-    const viewHeight = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget));
+    const viewTop = Math.max(0, viewport?.clipTop ?? viewport?.top ?? player.viewTop ?? 0);
+    const viewBottom = Math.max(viewTop + 1, viewport
+      ? Math.min(canvasHeight, viewport.clipBottom ?? Infinity, viewport.top + viewport.height - reservedBottom)
+      : canvasHeight - Math.max(player.viewInset, player.viewInsetTarget, reservedBottom));
+    function atScreen(position, x, y) {
+      const ndc = position.clone().project(camera);
+      ndc.x = 2 * x / viewWidth - 1;
+      ndc.y = 1 - 2 * y / canvasHeight;
+      return ndc.unproject(camera);
+    }
     let clearance;
     const placed = [];
     function cardRect(position, scale) {
-      const corners = [-1, 1].flatMap(x => [-1, 1].map(y => player.project(position.clone()
+      const corners = [-1, 1].flatMap(x => [-1, 1].map(y => project(position.clone()
         .addScaledVector(cameraRight, x * scale.x / 2).addScaledVector(cameraUp, y * scale.y / 2))));
       const left = Math.min(...corners.map(p => p.x)), top = Math.min(...corners.map(p => p.y));
       return { left, top, width: Math.max(...corners.map(p => p.x)) - left, height: Math.max(...corners.map(p => p.y)) - top };
     }
+    function recordFor(point) {
+      let record = records.get(point.groupId);
+      if (!record) {
+        record = { card: texture(point.name, point.colour), dot: texture('', point.colour, true), guide: guide(point.colour) };
+        record.card.userData.groupId = record.dot.userData.groupId = point.groupId;
+        records.set(point.groupId, record);
+      }
+      return record;
+    }
+    function fittedLayoutScale() {
+      let scale = modelScale(camera);
+      for (const point of anchors) {
+        const previous = layout.get(point.groupId);
+        if (!previous) continue;
+        const surface = new THREE.Vector3().fromArray(point.world), normal = new THREE.Vector3().fromArray(point.normal);
+        const dot = project(surface.clone().addScaledVector(normal, .014));
+        const card = cardRect(surface.addScaledVector(normal, .08), recordFor(point).card.scale);
+        const padX = card.width / 2 + 8, padY = card.height / 2 + 8;
+        const roomX = previous.dx > 0 ? viewWidth - padX - dot.x : dot.x - padX;
+        const roomY = previous.dy > 0 ? viewBottom - padY - dot.y : dot.y - viewTop - padY;
+        // Fit all offsets with one factor so a near edge cannot reorder the cards.
+        if (roomX > 0 && previous.dx) scale = Math.min(scale, roomX / Math.abs(previous.dx));
+        if (roomY > 0 && previous.dy) scale = Math.min(scale, roomY / Math.abs(previous.dy));
+      }
+      return scale;
+    }
+    const scale = layout?.size && departureOffset == null ? fittedLayoutScale() : 1;
     function floorHeight(scale) {
       return .03 + Math.abs(cameraRight.y) * scale.x / 2 + Math.abs(cameraUp.y) * scale.y / 2;
     }
@@ -97,49 +156,56 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         position.y = Math.max(position.y, floorHeight(scale));
         const rect = cardRect(position, scale);
         const dx = rect.left < 8 ? 8 - rect.left : rect.left + rect.width > viewWidth - 8 ? viewWidth - 8 - rect.left - rect.width : 0;
-        const dy = rect.top < 8 ? 8 - rect.top : rect.top + rect.height > viewHeight - 8 ? viewHeight - 8 - rect.top - rect.height : 0;
+        const dy = rect.top < viewTop + 8 ? viewTop + 8 - rect.top : rect.top + rect.height > viewBottom - 8 ? viewBottom - 8 - rect.top - rect.height : 0;
         if (dx || dy) {
-          const ndc = position.clone().project(player.camera);
+          const ndc = position.clone().project(camera);
           ndc.x += 2 * dx / viewWidth; ndc.y -= 2 * dy / canvasHeight;
-          position.copy(ndc.unproject(player.camera));
+          position.copy(ndc.unproject(camera));
         }
       }
     }
     function getClearance() {
       if (clearance) return clearance;
       const rect = player.container.getBoundingClientRect(), obstacles = [];
-      const map = player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
+      const map = homeOverlays && player.container.querySelector('.phase-map:not([hidden])')?.getBoundingClientRect();
       if (map) obstacles.push({ left: map.left - rect.left, top: map.top - rect.top, width: map.width, height: map.height });
-      const height = player.visibleHeight(Math.max(player.viewInset, player.viewInsetTarget));
-      if (hosted) obstacles.push({ left: Math.max(0, rect.width - 208), top: height - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
-      clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(p => player.project(p))),
-        { width: rect.width, height, obstacles, gap: 8 });
+      if (hosted && homeOverlays) obstacles.push({ left: Math.max(0, rect.width - 208), top: viewBottom - (rect.width < 380 ? 288 : 78), width: 208, height: 78 });
+      clearance = createBillboardClearance(player.motion.getBodyHulls().map(hull => hull.map(project)),
+        { width: rect.width, height: viewBottom - viewTop, top: viewTop, obstacles, gap: 8 });
       return clearance;
     }
     for (const [index, point] of anchors.entries()) {
-      let record = records.get(point.groupId);
-      if (!record) {
-        record = { card: texture(point.name, point.colour), dot: texture('', point.colour, true), guide: guide(point.colour) };
-        record.card.userData.groupId = record.dot.userData.groupId = point.groupId;
-        records.set(point.groupId, record);
-      }
+      const record = recordFor(point);
       const surface = new THREE.Vector3().fromArray(point.world), normal = new THREE.Vector3().fromArray(point.normal);
+      const previous = layout?.get(point.groupId);
+      const departing = departureOffset != null && previous;
+      const alpha = departing ? opacity * previous.opacity : opacity;
+      // A carried label keeps its slot even if the destination pose crosses it.
+      record.card.material.depthTest = !previous;
+      record.card.material.opacity = record.dot.material.opacity = alpha;
+      record.guide.halo.material.opacity = .48 * alpha;
+      record.guide.stroke.material.opacity = .85 * alpha;
       record.dot.position.copy(surface).addScaledVector(normal, .014);
+      if (departing) record.dot.position.copy(atScreen(record.dot.position, previous.dot.x, previous.dot.y + departureOffset));
       // Follow the currently visible body side. The small dead band prevents
       // a central muscle from repeatedly swapping labels across the athlete.
       const dx = point.x - centreX;
       const screenSide = dx < -12 ? -1 : dx > 12 ? 1 : record.screenSide ?? (index === 0 ? -1 : 1);
       const changedSide = record.screenSide != null && (record.screenSide !== screenSide || record.bodySide !== point.side);
       record.screenSide = screenSide; record.bodySide = point.side;
-      const evaluate = getClearance(), baseLift = index === 0 ? .02 : index === 1 ? .16 : .20;
+      const baseLift = index === 0 ? .02 : index === 1 ? .16 : .20;
       const positionAt = slot => {
         const position = surface.clone().addScaledVector(normal, .08)
           .addScaledVector(cameraRight, screenSide * slot.reach).addScaledVector(cameraUp, slot.lift);
         position.y = Math.max(position.y, floorHeight(record.card.scale));
         return position;
       };
-      let slot = record.slot, position = slot && positionAt(slot), score = position && evaluate.score(cardRect(position, record.card.scale), placed);
-      if (!slot || changedSide || score !== 0) {
+      let slot = record.slot;
+      if (previous && !slot) slot = { reach: .42, lift: baseLift };
+      let position = slot && positionAt(slot);
+      let score = previous ? record.clearanceScore ?? 0 : position && getClearance().score(cardRect(position, record.card.scale), placed);
+      if (!previous && (!slot || changedSide || score !== 0)) {
+        const evaluate = getClearance();
         let best = null;
         for (const reach of [.18, .30, .42, .54, .66, .80, .96, 1.15]) {
           for (const lift of [baseLift, baseLift + .18, baseLift - .18, baseLift + .36, baseLift - .36, baseLift + .54, baseLift - .54,
@@ -151,19 +217,26 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         }
         slot = best.slot; position = best.position; score = best.cost;
       }
-      keepVisible(position, record.card.scale);
       record.slot = slot; record.clearanceScore = score;
       const now = performance.now(), dt = Math.min(.05, Math.max(0, (now - (record.lastMove ?? now)) / 1000));
       const immediate = record.poseTime !== player.time || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (immediate) record.card.position.copy(position);
-      else record.card.position.lerp(position, 1 - Math.exp(-dt / .065));
-      keepVisible(record.card.position, record.card.scale);
+      if (previous) {
+        const dot = project(record.dot.position);
+        position = atScreen(position, departing ? previous.x : dot.x + previous.dx * scale,
+          departing ? previous.y + departureOffset : dot.y + previous.dy * scale);
+        record.card.position.copy(position);
+      } else {
+        keepVisible(position, record.card.scale);
+        if (immediate) record.card.position.copy(position);
+        else record.card.position.lerp(position, 1 - Math.exp(-dt / .065));
+        keepVisible(record.card.position, record.card.scale);
+      }
       record.lastMove = now; record.poseTime = player.time;
       const moving = record.card.position.distanceToSquared(position) > .001 ** 2;
       if (!moving) record.card.position.copy(position);
       // Continue the tail of a camera-driven movement while paused. Re-target
       // from the current position; do not restart a tween or fade its name.
-      if (moving && moveFrame == null) moveFrame = requestAnimationFrame(() => {
+      if (moving && !previous && moveFrame == null) moveFrame = requestAnimationFrame(() => {
         // Labels are not shadow casters: redraw without invalidating the pose.
         moveFrame = null; if (player.requestRedraw) player.requestRedraw(); else player.dirty = true; player.start();
       });
@@ -173,10 +246,10 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
       record.card.updateMatrixWorld(); record.dot.updateMatrixWorld();
       // Use the actual perspective direction to reach the card border, rather
       // than the closest 3D point (which can put a diagonal guide in its text).
-      const projected = player.project(record.card.position);
-      const dotProjected = player.project(record.dot.position);
-      const rightProjected = player.project(record.card.position.clone().add(cameraRight));
-      const upProjected = player.project(record.card.position.clone().add(cameraUp));
+      const projected = project(record.card.position);
+      const dotProjected = project(record.dot.position);
+      const rightProjected = project(record.card.position.clone().add(cameraRight));
+      const upProjected = project(record.card.position.clone().add(cameraUp));
       const halfWidth = record.card.scale.x / 2, halfHeight = record.card.scale.y / 2;
       const x = (dotProjected.x - projected.x) / (rightProjected.x - projected.x);
       const y = (projected.y - dotProjected.y) / (projected.y - upProjected.y);
@@ -191,7 +264,11 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         line.visible = Math.abs(x) > halfWidth || Math.abs(y) > halfHeight;
         line.material.resolution.set(player.container.clientWidth, player.container.clientHeight);
       }
-      point.callout = { ...projected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
+      const rect = cardRect(record.card.position, record.card.scale), dotRect = cardRect(record.dot.position, record.dot.scale);
+      const guideStart = project(start), guideEnd = project(end);
+      const inside = bounds => bounds.left >= 0 && bounds.top >= viewTop && bounds.left + bounds.width <= viewWidth && bounds.top + bounds.height <= viewBottom;
+      const insidePoint = p => !p.behind && p.x >= 0 && p.y >= viewTop && p.x <= viewWidth && p.y <= viewBottom;
+      point.callout = { ...projected, dot: dotProjected, world: record.card.position.toArray(), width: record.card.scale.x, height: record.card.scale.y,
         depthTest: record.card.material.depthTest, dotDepthTest: record.dot.material.depthTest, billboard: true,
         label: record.card.userData.label, fontSize: record.card.userData.fontSize,
         textureSize: [record.card.material.map.image.width, record.card.material.map.image.height],
@@ -200,7 +277,8 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
         screenSide,
         moving, targetWorld: position.toArray(), opacity: record.card.material.opacity,
         minWorldY: record.card.position.y - floorHeight(record.card.scale) + .03,
-        rect: cardRect(record.card.position, record.card.scale), viewWidth, viewHeight,
+        rect, viewWidth, viewHeight: viewBottom,
+        fitsStage: inside(rect) && inside(dotRect) && (!record.guide.stroke.visible || (insidePoint(guideStart) && insidePoint(guideEnd))),
         guide: { start: start.toArray(), end: end.toArray(), width: record.guide.stroke.material.linewidth,
           visible: record.guide.stroke.visible, colour: point.colour } };
     }
@@ -209,7 +287,7 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
   function pick(clientX, clientY) {
     if (!records.size) return null;
     const rect = player.renderer.domElement.getBoundingClientRect();
-    raycaster.setFromCamera(new THREE.Vector2((clientX - rect.left) / rect.width * 2 - 1, 1 - (clientY - rect.top) / rect.height * 2), player.camera);
+    raycaster.setFromCamera(new THREE.Vector2((clientX - rect.left) / rect.width * 2 - 1, 1 - (clientY - rect.top) / rect.height * 2), pickCamera);
     const hits = raycaster.intersectObjects([...records.values()].flatMap(r => [r.card, r.dot]), false).filter(hit => {
       const uv = hit.uv, sprite = hit.object;
       if (!uv) return false;
@@ -230,5 +308,5 @@ export function createHotspotCallouts(player, layer, onSelect, { hosted = false,
     const card = hits.find(hit => !body || body.distance >= hit.distance - .002);
     return card ? { groupId: card.object.userData.groupId } : null;
   }
-  return { update, clear, pick, dispose() { clear(); root.removeFromParent(); depthSampler?.dispose?.(); } };
+  return { update, clear, pick, snapshotLayout, dispose() { clear(); root.removeFromParent(); depthSampler?.dispose?.(); } };
 }

@@ -1,7 +1,7 @@
 name: flare
 description: "Offline Flare learning with 3D movement, muscle explanations and practice."
 publish_to: 'none'
-version: 1.0.10+15
+version: 1.0.15+64
 
 environment:
   sdk: ^3.12.2
@@ -23,33 +23,46 @@ dependencies:
   # 3.44.7 pins 0.20.2, 3.47.x pins 0.20.3; either toolchain resolves.
   intl: ^0.20.2
   path_provider: 2.1.6
-  # Shared SDK packages are pinned to one reviewed commit (2026-11-02).
+  http: ^1.6.0
+  purchases_flutter: 10.4.1
+  url_launcher: 6.3.2
+  # Shared SDK packages are pinned together to the verified catalog and plan runtime.
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: ugk_trainer-v1.0.2
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_coach_chat
 
-# Keep SDK transitive dependencies on the same reviewed commit.
+# Resolve the SDK's sibling Git dependencies with the same commit.
 dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 693cbc02cdf284163409868e117e438515c6a8d8
+      ref: ugk_trainer-v1.0.2
+  ugk_trainer_runtime:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      ref: ugk_trainer-v1.0.2
+      path: packages/ugk_trainer_runtime
+  ugk_coach_ui:
+    git:
+      url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
+      ref: ugk_trainer-v1.0.2
+      path: packages/ugk_coach_ui
 
 dev_dependencies:
   flutter_test:
@@ -57,7 +70,6 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  http: ^1.6.0
 
 flutter:
   generate: true
@@ -68,10 +80,16 @@ flutter:
     - assets/data/phase-muscles.schema.json
     - assets/data/course-stages.json
     - assets/data/drills.json
+    - assets/data/flare-plans.json
+    - assets/data/flare-plan-voice-manifest.json
+    - assets/data/flare-local-plans.json
     - assets/data/drills.schema.json
     - assets/data/source-manifest.json
+    # Pose-Hub PR #26: unreviewed AI tag drafts, kept separate from source data.
+    - assets/ai_tags/actions.json
     - assets/coach/
     - assets/trainer_voice/
+    - assets/trainer_voice/flare-plan-voice-r1-6c5d81a9/
     - assets/trainer_voice/_common/
     - assets/trainer_voice/_common/voice/zh/
     - assets/trainer_voice/_common/voice/en/
@@ -80,18 +98,23 @@ flutter:
     - assets/drills/
     - assets/drills/light/
     # Shared SDK public definitions and posters; videos load on demand.
-    - assets/public_media/
-    - assets/public_media/catalog/
+    - assets/public_media/catalog.json
+    - assets/public_media/catalog/catalog.json
     - assets/public_posters/
+    - assets/public_posters/r2-v22/cover/
+    - assets/public_posters/r2-v22/thumbnail/
     - assets/muscles/
+    - assets/plan_resume_muscles/
+    - assets/plan_icons/
+    - assets/angles/
     - assets/scene/
     - assets/scene/assets/
     - assets/scene/coach/
+    - assets/scene/v5/
     - assets/scene/anatomy/
     - assets/scene/licenses/
     - assets/licenses/
     - assets/brand/icon.png
-    - assets/brand/hero-thomas.webp
     - assets/brand/flare-loading.webp
     - assets/brand/flare-loading-still.webp
     - assets/brand/flare-loading-v42-r12.webp
@@ -100,8 +123,6 @@ flutter:
     - assets/brand/flare-loading-v42-r15-still.webp
     - assets/brand/flare-loading-v42-r16.webp
     - assets/brand/flare-loading-v42-r16-still.webp
-    - assets/brand/flare-loading-v42-r17.webp
-    - assets/brand/flare-loading-v42-r17-still.webp
   fonts:
     - family: FlareSans
       fonts:

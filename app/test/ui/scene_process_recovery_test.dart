@@ -2,6 +2,7 @@ import 'package:flare/control/learning_store.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,9 +21,8 @@ void main() {
   for (final mode in [
     'background',
     'foreground paused',
-    'detail muscles',
+    'muscle plan',
     'initial background',
-    'body switch',
   ]) {
     testWidgets('WebContent recovery preserves $mode and paused frame', (
       tester,
@@ -31,7 +31,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      final catalog = loadCatalogFixture();
+      final catalog = loadCatalogFixture(includeFlarePlans: true);
       final store = LearningStore(catalog: catalog, storage: _Storage());
       await store.initialize();
       await store.acknowledgeSafety();
@@ -85,7 +85,7 @@ void main() {
       }
       expect(scene.playing, isTrue);
       scene.setTime(2.375);
-      if (mode == 'detail muscles') {
+      if (mode == 'muscle plan') {
         scene.receiveEvent({
           'source': 'flare-scene',
           'type': 'select',
@@ -93,16 +93,12 @@ void main() {
           'time': 2.375,
         });
         await tester.pumpAndSettle();
-        scene.setDetailModel('muscles');
+        expect(find.byType(FlarePlanDetailPage), findsOneWidget);
       }
       if (mode == 'background') {
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
       }
-      if (mode == 'body switch') {
-        await store.updateSettings(actorBody: 'training');
-      } else {
-        scene.reportError(SceneController.processTerminated);
-      }
+      scene.reportError(SceneController.processTerminated);
       await tester.pump();
       commands.clear();
       scene.receiveEvent({
@@ -110,8 +106,6 @@ void main() {
         'type': 'ready',
         'time': 0,
         'playing': false,
-        'detail': null,
-        'detailModel': 'motion',
       });
       await tester.pumpAndSettle();
       expect(scene.playing, isFalse);
@@ -124,9 +118,16 @@ void main() {
         commands.lastWhere((c) => c['type'] == 'visibility')['visible'],
         mode != 'background',
       );
-      if (mode == 'detail muscles') {
-        expect(scene.detail, 'deltoids');
-        expect(scene.detailModel, 'muscles');
+      if (mode == 'muscle plan') {
+        final plan = find.byType(FlarePlanDetailPage);
+        expect(plan, findsOneWidget);
+        expect(
+          tester.widget<FlarePlanDetailPage>(plan).plans.first.groupId,
+          'deltoids',
+        );
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(plan, findsNothing);
       }
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();

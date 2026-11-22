@@ -380,7 +380,7 @@ void main() {
       await shot(tester, d, '09b-drill-detail-scrolled');
     });
 
-    testWidgets('$d 10 plans, 11 preset, 12 routine, 13 editor', (
+    testWidgets('$d 10 plans, 11 angle plan, 12 routine, 13 editor', (
       tester,
     ) async {
       final store = await setup(tester, mode, history: true);
@@ -393,22 +393,25 @@ void main() {
       await tester.pumpWidget(
         app(
           page(
-            PlanDetailPage(
-              title: '托马斯全链',
-              line: '一次练到托马斯的主力肌群',
-              drills: PresetPlan.all.last.drills(catalog, 'A'),
+            FlarePlanDetailPage(
+              title: catalog.phaseBySource(11)!.name,
+              phase: catalog.phaseBySource(11),
+              plans: catalog.plansForAngle(11),
+              selectedTier: 1,
+              catalog: catalog,
               store: store,
               onBack: () {},
-              onStart: () {},
+              onStart: (_) {},
+              onMuscle: (_) {},
+              onTierChanged: (_) {},
               onDrill: (_) {},
-              onSaveAsMine: () {},
             ),
           ),
           mode,
         ),
       );
       await settle(tester);
-      await shot(tester, d, '11-preset-detail');
+      await shot(tester, d, '11-angle-plan-detail');
       final routine = store.routines.first;
       await tester.pumpWidget(
         app(

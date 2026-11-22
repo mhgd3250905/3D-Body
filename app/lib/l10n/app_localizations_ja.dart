@@ -9,6 +9,222 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Flare Proを解放';
+
+  @override
+  String get premiumPreviewFooter => 'トレーニング、履歴、カスタムプランをすべて利用できます。';
+
+  @override
+  String get premiumPreviewBenefitStreak => '連続日数';
+
+  @override
+  String get premiumPreviewBenefitMilestones => '達成記録';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'トレーニング時間';
+
+  @override
+  String get premiumPreviewBenefitActions => '種目を選択';
+
+  @override
+  String get premiumPreviewBenefitSets => 'セット数を調整';
+
+  @override
+  String get premiumPreviewBenefitSaves => '保存数無制限';
+
+  @override
+  String get premiumPreviewBenefitVoice => '音声タイマー';
+
+  @override
+  String get premiumPreviewBenefitDemos => '動作デモ';
+
+  @override
+  String get premiumPreviewBenefitLogging => '自動記録';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'トレーニングを毎回記録';
+
+  @override
+  String get premiumPreviewRecordsHighlight => '毎回';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'トレーニング時間、連続日数、達成記録を自動保存し、進歩をひと目で確認できます。';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => '自分だけのプランを作成';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => '自分だけ';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      '種目を選び、セット数を調整して、自分専用のプランとして保存できます。';
+
+  @override
+  String get premiumPreviewTrainingTitle => 'ガイドに合わせて、すべてのセットを記録';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'すべてのセット';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      '音声タイマーと動作のデモに合わせて練習。終了すると自動で記録されます。';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return '対象の方は $days 日間無料でお試し';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '$price で登録する';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days 日間の無料トライアル';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return 'フレアの各局面を鍛える $count 種類のプラン';
+  }
+
+  @override
+  String get premiumAngleCount => '難所の角度';
+
+  @override
+  String get premiumMuscleCount => '筋群';
+
+  @override
+  String get premiumLevelCount => '難易度';
+
+  @override
+  String get premiumVoiceTitle => '音声ガイドと 3D 実演';
+
+  @override
+  String get premiumVoiceDescription => '回数・左右の切り替え・休憩を案内';
+
+  @override
+  String get premiumCustomDescription => 'よく行う種目を組み合わせて自分のプランに';
+
+  @override
+  String get premiumPerYear => '/年';
+
+  @override
+  String get premiumPerMonth => '/月';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store に接続できません。ストアの表示価格が適用されます。';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'まだ $store に接続できません。しばらくしてからお試しください。';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return '無料期間終了後は $price で自動更新されます。$store でいつでも解約できます。';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return '$price で自動更新されます。$store でいつでも解約できます。';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'サブスクリプションは自動更新されます。$store で解約できます。';
+  }
+
+  @override
+  String get premiumTitle => 'Flare Premium を利用する';
+
+  @override
+  String get premiumSubtitle => '自分だけのトレーニングを作ろう';
+
+  @override
+  String get premiumAiCoach => 'すべてのトレーニングプランをいつでも開始';
+
+  @override
+  String get premiumAiPlans => '角度・筋群別に初級から上級までの3段階のプラン';
+
+  @override
+  String get premiumCustomWorkouts => 'カスタムワークアウトを無制限に作成';
+
+  @override
+  String get premiumMonthly => '月額';
+
+  @override
+  String get premiumYearly => '年額';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return '月あたり約 $price';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent% お得';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days 日間の無料トライアルを開始';
+  }
+
+  @override
+  String get premiumSubscribe => '登録する';
+
+  @override
+  String get premiumDisclosure =>
+      'サブスクリプションは自動更新されます。Google Play でいつでも解約できます。トライアル終了前に解約すれば料金はかかりません。';
+
+  @override
+  String get premiumRestore => '購入を復元';
+
+  @override
+  String get premiumTerms => '利用規約';
+
+  @override
+  String get premiumPrivacy => 'プライバシーポリシー';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'メンバーシップは有効です';
+
+  @override
+  String get premiumInactive => '有効なメンバーシップはありません';
+
+  @override
+  String get premiumManage => 'サブスクリプションを管理';
+
+  @override
+  String get premiumUnavailable => 'ストアに接続できません。もう一度お試しください。';
+
+  @override
+  String get premiumRestoreEmpty => '有効なサブスクリプションが見つかりませんでした。';
+
+  @override
+  String premiumQuota(int limit) {
+    return '本日の AI 利用上限（$limit 回）に達しました。明日またお試しください。';
+  }
+
+  @override
+  String get premiumRateLimit => 'リクエストが多すぎます。少し待ってからお試しください。';
+
+  @override
+  String get premiumAiDisclaimer => 'AI の提案は参考情報であり、医学的な助言ではありません。';
+
+  @override
   String get actorBodyLabel => 'トーマスのモデル';
 
   @override
@@ -34,6 +250,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get appName => 'Flare トーマス';
+
+  @override
+  String get flareStraightLegs => 'トーマス（両脚伸ばし）';
 
   @override
   String get tagline => '動きを理解し、一歩ずつ練習';
@@ -108,10 +327,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get side => '側面';
 
   @override
-  String get pausedHint => '筋肉を見る';
-
-  @override
-  String get playingHint => '一時停止して選ぶ';
+  String get homeGoToTraining => 'トレーニングへ';
 
   @override
   String get loadingScene => '3D動作を準備中…';
@@ -606,7 +822,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get safetyRule1 => 'まず手首を温める';
 
   @override
-  String get safetyRule1Note => 'プランの「ウォームアップ」で一通りできます';
+  String get safetyRule1Note => '練習を始める前に手首と肩甲骨を動かしましょう。';
 
   @override
   String get safetyRule2 => '鋭い痛み、しびれ、めまいがあれば中止する';
@@ -861,10 +1077,193 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wristExtension => '手首の伸展';
 
   @override
+  String get plansByAngle => '角度別';
+
+  @override
+  String get plansByMuscle => '筋群別';
+
+  @override
+  String get anglePlanLabel => '角度別プラン';
+
+  @override
+  String get musclePlanLabel => '筋群別プラン';
+
+  @override
+  String get angleSupportPlanIntro => '片手をつき、脚を高いV字に開く。この姿勢を安定させる支持力を鍛える';
+
+  @override
+  String get deltoidsPlanIntro => '片腕に体重を乗せ、手の上に体を支える。三角筋はフレアの一周ごとに働く';
+
+  @override
+  String get planTrainingContent => 'トレーニング内容';
+
+  @override
+  String get planMuscleLinkHint => '筋群をタップして専用プランへ';
+
+  @override
+  String get planSpecialized => '専用プラン';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '休憩$seconds秒';
+  }
+
+  @override
+  String get planBodyweightSubstitution => '自重の代替種目';
+
+  @override
+  String get planBodyweightScene => '自重';
+
+  @override
+  String get hubAngle => '角度';
+
+  @override
+  String get hubMuscle => '筋群';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count分から';
+  }
+
+  @override
+  String get hubThreeTiers => '3段階';
+
+  @override
+  String get hubPrimaryMuscles => 'この局面の主働筋';
+
+  @override
+  String get hubSpecializedPlan => '部位別プラン';
+
+  @override
+  String get hubSupportTab => '支持';
+
+  @override
+  String get hubCoreTab => '体幹';
+
+  @override
+  String get hubLegsTab => '脚';
+
+  @override
+  String get hubStillPlanning => '準備中';
+
+  @override
+  String get hubPlanComingSoon => '部位別プランを準備中';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '「$name」のプランを見る';
+  }
+
+  @override
+  String get hubPhase09Caption => '両手で支え、開いた脚を前に持ち上げる';
+
+  @override
+  String get hubPhase10Caption => '両手から片手に体重を移す';
+
+  @override
+  String get hubPhase11Caption => '片手で全身を横向きに支える。支える側の肩に最も負担がかかる。';
+
+  @override
+  String get hubPhase12Caption => '正面に向き、脚をはさみのように前で入れ替える。';
+
+  @override
+  String get hubPhase13Caption => '後ろに両手をつき、開脚したまま後方へ振る';
+
+  @override
+  String get hubPhase14Caption => '支持する手を替え、伸ばした脚を後方へ振る';
+
+  @override
+  String get hubPhase15Caption => '反対の手で支え、高いV字を保つ';
+
+  @override
+  String get hubPhase16Caption => 'うつ伏せに回り、脚を後方へ振る';
+
+  @override
+  String get planTierBeginner => '初級';
+
+  @override
+  String get planTierIntermediate => '中級';
+
+  @override
+  String get planTierAdvanced => '上級';
+
+  @override
+  String get planActiveMuscles => '使う筋肉';
+
+  @override
+  String get planExercises => '種目';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · 左右それぞれ';
+  }
+
+  @override
+  String get planTierSummary => '初級 · 中級 · 上級';
+
+  @override
   String get plans => 'プラン';
 
   @override
-  String get plansHint => 'セットとマイプラン';
+  String get plansHint => '部位別の練習とマイプラン';
+
+  @override
+  String get plansLastSession => '前回の練習';
+
+  @override
+  String get plansContinue => '続ける';
+
+  @override
+  String get plansToday => '今日';
+
+  @override
+  String get plansYesterday => '昨日';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total 種目';
+  }
+
+  @override
+  String get plansNewCompactHint => 'よく行う種目を組み合わせる';
+
+  @override
+  String get plansNewEmptyHint => 'よく行う種目をまとめる';
+
+  @override
+  String get plansAnglesTitle => 'フレアの難しい角度';
+
+  @override
+  String get plansAnglesDescription => '一周で最も負荷のかかる局面から安定させましょう。';
+
+  @override
+  String get plansMusclesTitle => '鍛えたい筋肉';
+
+  @override
+  String get plansMusclesDescription => 'フレアで負荷が集中する部位。';
+
+  @override
+  String plansSeeAll(int count) {
+    return '全 $count 件';
+  }
+
+  @override
+  String get plansOneHandSupport => '片手支持';
+
+  @override
+  String get plansTwoHandSupport => '両手支持';
+
+  @override
+  String get plansThreeLevels => '3 段階';
+
+  @override
+  String get plansAiTitle => 'AI プラン';
+
+  @override
+  String get plansAiHint => '場所、時間、鍛えたい筋肉を選んでください。';
+
+  @override
+  String get plansAiUnavailable => 'AI は利用できません';
 
   @override
   String get plansReady => 'おすすめセット';
@@ -888,6 +1287,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'マイプランに保存';
+
+  @override
+  String get premiumCopyRoutine => 'プランをコピー';
 
   @override
   String get planSaved => 'マイプランに保存しました';
@@ -1086,4 +1488,137 @@ class AppLocalizationsJa extends AppLocalizations {
   String pickerAddCount(int count) {
     return '$count 種目を追加';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets セット × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => '用意するもの：';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'エクササイズマット',
+      'chair': '椅子',
+      'band': 'トレーニングバンド',
+      'dumbbell': 'ダンベル',
+      'wall': '壁',
+      'cable': 'ケーブルマシン',
+      'block': 'ヨガブロック',
+      'pullup_bar': '懸垂バー',
+      'parallettes': 'プッシュアップバー',
+      'dip_bars': 'ディップスバー',
+      'slider': 'スライダーディスク',
+      'rings': '体操リング',
+      'landmine': 'ランドマインアタッチメント',
+      'swiss_ball': 'バランスボール',
+      'roman_chair': 'ローマンチェア',
+      'kettlebell': 'ケトルベル',
+      'reverse_hyper': 'リバースハイパー台',
+      'ghd': 'グルートハム台',
+      'hip_abductor_machine': 'ヒップアブダクターマシン',
+      'leg_extension_machine': 'レッグエクステンションマシン',
+      'foam_roller': 'フォームローラー',
+      'towel': 'タオル',
+      'doorframe': 'ドア枠',
+      'bench': 'トレーニングベンチ',
+      'barbell': 'バーベル',
+      'clamp_pad': '小さなパッド',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'トレーニング前後';
+
+  @override
+  String get preWorkoutWarmup => 'ウォームアップ';
+
+  @override
+  String get postWorkoutStretch => 'トレーニング後';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'まだ準備運動をしていませんか？ $minutesString分の';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '各側で順・逆に各 $count 回';
+  }
+
+  @override
+  String get planCircleClockwise => '時計回り';
+
+  @override
+  String get planCircleCounterclockwise => '反時計回り';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '上で $seconds 秒止める';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => '続けてトレーニング後のルーティンへ';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3段階 · 自重';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 部位別の強化';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身ストレッチ';
+
+  @override
+  String get skipCooldownStrengthening => '強化をスキップして全身ストレッチへ';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      '1日おきに週2〜3回が目安です。当日に上半身の筋トレをした場合や手首に痛みがある場合は、強化をスキップしてください。';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 周';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '種目間は $seconds 秒休憩 · 周回間は $roundSeconds 秒休憩';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min〜$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min〜$max 回';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 回';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes分 · 自重';
+  }
+
+  @override
+  String get temporaryPlanDemo => '仮のデモ';
 }

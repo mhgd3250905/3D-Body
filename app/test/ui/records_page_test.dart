@@ -131,7 +131,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.add_rounded).last);
+    await tester.tap(find.byKey(const ValueKey('routine-add')));
     await tester.pumpAndSettle();
     final search = find.byKey(const ValueKey('picker-search'));
     await tester.enterText(search, catalog.drillById('obliques-A')!.name);

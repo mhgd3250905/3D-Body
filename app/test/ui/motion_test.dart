@@ -84,6 +84,40 @@ void main() {
     expect(find.text('deeper'), findsNothing);
   });
 
+  testWidgets('page travel uses the specified enter and reverse curves', (
+    tester,
+  ) async {
+    const a = ValueKey('surface-a');
+    const b = ValueKey('surface-b');
+    const pageA = SizedBox.expand(key: a);
+    const pageB = SizedBox.expand(key: b);
+    await tester.pumpWidget(_host('a', 1, pageA));
+    final width = tester.getSize(find.byKey(a)).width;
+
+    await tester.pumpWidget(_host('b', 2, pageB));
+    await tester.pump(const Duration(milliseconds: 80));
+    final entered = const Cubic(.2, 0, 0, 1).transform(.2);
+    expect(
+      tester.getTopLeft(find.byKey(b)).dx,
+      closeTo(width * (1 - entered), 1),
+    );
+    expect(
+      tester.getTopLeft(find.byKey(a)).dx,
+      closeTo(-.28 * width * entered, 1),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(_host('a', 1, pageA));
+    await tester.pump(const Duration(milliseconds: 68));
+    final exited = Curves.fastOutSlowIn.transform(.2);
+    expect(tester.getTopLeft(find.byKey(b)).dx, closeTo(width * exited, 1));
+    expect(
+      tester.getTopLeft(find.byKey(a)).dx,
+      closeTo(-.28 * width * (1 - exited), 1),
+    );
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('a modal page rises from the bottom', (tester) async {
     await tester.pumpWidget(_host('a', 1, const Text('page')));
     await tester.pumpWidget(
@@ -195,6 +229,59 @@ void main() {
     expect(find.text('deep'), findsNothing);
     expect(find.text('shallow'), findsOneWidget);
   });
+
+  for (final reduced in [false, true]) {
+    testWidgets('edge swipe uses the actual parent page, reduced=$reduced', (
+      tester,
+    ) async {
+      var depth = 1;
+      late StateSetter update;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: reduced),
+              child: StatefulBuilder(
+                builder: (_, setState) {
+                  update = setState;
+                  return FlareStage(
+                    pageKey: depth,
+                    depth: depth,
+                    onSwipeBack: depth == 2
+                        ? () => setState(() => depth = 1)
+                        : null,
+                    child: Center(child: Text('page-$depth')),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      update(() => depth = 2);
+      await tester.pumpAndSettle();
+      final front = find.text('page-2');
+      final back = find.text('page-1');
+      final frontAtRest = tester.getCenter(front);
+
+      final gesture = await tester.startGesture(const Offset(4, 300));
+      await gesture.moveBy(const Offset(40, 0));
+      await gesture.moveBy(const Offset(90, 0));
+      await tester.pump();
+      if (reduced) {
+        expect(back, findsNothing);
+        expect(tester.getCenter(front), frontAtRest);
+      } else {
+        expect(back, findsOneWidget);
+        expect(tester.getCenter(back).dx, lessThan(frontAtRest.dx));
+        expect(tester.getCenter(front).dx, greaterThan(frontAtRest.dx));
+      }
+      await gesture.cancel();
+      await tester.pumpAndSettle();
+      expect(back, findsNothing);
+      expect(tester.getCenter(front), frontAtRest);
+    });
+  }
 
   testWidgets('a drag away from the edge does not swipe back', (tester) async {
     var backs = 0;

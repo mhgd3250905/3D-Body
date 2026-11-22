@@ -257,24 +257,27 @@ void main() {
         await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
         await shot('09b-drill-detail-scrolled');
 
-        current = '11-preset-detail';
+        current = '11-angle-plan-detail';
         await tester.pumpWidget(
           app(
             page(
-              PlanDetailPage(
-                title: s.plans,
-                line: s.plansHint,
-                drills: PresetPlan.all.last.drills(catalog, 'A'),
+              FlarePlanDetailPage(
+                title: catalog.phaseBySource(11)!.name,
+                phase: catalog.phaseBySource(11),
+                plans: catalog.plansForAngle(11),
+                selectedTier: 1,
+                catalog: catalog,
                 store: st,
                 onBack: () {},
-                onStart: () {},
+                onStart: (_) {},
+                onMuscle: (_) {},
+                onTierChanged: (_) {},
                 onDrill: (_) {},
-                onSaveAsMine: () {},
               ),
             ),
           ),
         );
-        await shot('11-preset-detail');
+        await shot('11-angle-plan-detail');
 
         final routine = st.routines.first;
         current = '13-routine-editor';

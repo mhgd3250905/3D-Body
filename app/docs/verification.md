@@ -1,10 +1,481 @@
 # App 验证记录
 
-## iOS 本轮对齐验证（2026-11-04）
+## iOS SDK 1.0.2 对齐（2026-11-22）
+
+从 iOS 主线 `318fca4d` 合入 Android 发布基线 `0fdfce5f`。保留 iOS 签名设置、`Info.plist`、`AppDelegate` 和图标。iOS 集成用例检查旧人物偏好仍可读取，当前 V5 场景加载并能确认暂停帧。
+
+四个 UGK 包均锁在 `ugk_trainer-v1.0.2`（`e23f3ba0eee763fa5fd00ac4b27ca177480a7d1b`），Flutter 按锁文件恢复依赖，静态分析通过。线上 `stable` 指向 `r2-v23` 和 `flare-plans-r2`。SDK 内置的 285 动作目录与指针声明的目录长度及 SHA-256 一致，下载的线上计划与 App 内置计划快照逐字节一致。App 的离线动作目录仍为 `r2-v22`。目录文件的线上下载未完成，iOS 真机首启及网络切换待验。
+
+## vc2082 转场与动效对照（2026-11-19）
+
+实际页面在同一 390 × 844 视口对照基线 `25abd977`。浅色与深色均覆盖，有侧滑入口的壳内页面取入口、按钮返回及侧滑返回样本。Flutter 测试的计数是构建、绘制回调或数据操作次数，Chrome 托管场景计数来自浏览器动画帧及场景计数器。
+
+| 场景 | 现象 | 根因与改动 | 修前 → 修后 |
+| --- | --- | --- | --- |
+| 动作库、计划条目共用入场 | 与页转场叠跑，结束时内容重新挂载 | `motion.dart` 固定延时从挂载计起，结束切换树形。等路由完成再执行原错落，保留子树并分层淡入 | 两主题均为重叠帧 20→0、内容构建 2→1、探针绘制 27→1 |
+| 首页时间轴拖动 | 同阶段每帧重新构建整个壳并写存储 | `app_shell.dart` 收到时间即保存、重建。拖动时更新进度和实际变化的控件，松手保存最终时间，`motion_controls.dart` 在滑条内更新语义值 | 12 帧中壳构建 12→0，拖动写入 12→0，加上松手写入 12→1 |
+| 首页 3D 暂停及从训练返回 | 场景无绘制仍连续申请帧 | `scene/src/main.js` 托管首页使用持续循环。改用按需调度，`player.js` 允许入睡后的视口变化唤醒原有动画 | 约 1.21 秒内，暂停显现浅/深 73/72→0/0，训练返回 70/71→0/0。绘制均为 0 |
+| 首页肌群图卡 | 转相机时重复读卡片布局 | `scene/src/phase-map.js` 在每次场景绘制中读取边界。缓存图卡实际尺寸，在尺寸或定位变化时刷新 | 两主题各 12 帧布局读取 12→0，人体缓存重绘均为 0 |
+| 动作与计划媒体卡 | 播放一张卡带动其他媒体卡重建 | `drill_media.dart` 全体订阅播放通知并更新。仅在本卡播放或持有状态变化时更新 | 两主题各 9 张卡经过播放、切换、回收和暂停四步，构建 36→8 |
+| 会员跟练休息反馈 | 点反馈重建播放器 | `trainer_page.dart` 更新宿主状态。反馈状态下沉至面板 | 浅/深构建 951/947→321/321，宿主和播放器各 1→0 |
+| 跟练动作与语音索引 | 同一动作查找重复创建对象，重复进入解析同一清单 | `trainer_page.dart` 复用动作描述，`trainer_voice.dart` 复用资产包解析缓存 | 1,000 次同动作查找对象创建 1,000→1，40 次热加载语音索引 P50 766→11 μs |
+| 计划中心与加入计划弹层 | 冷开时读取画面外的计划列表 | `plans_page.dart` 计划组 eager 展开且加入计划重复读取封面。按视口构建，已建行只读取一次 | 80 条种子数据，计划中心读取 80→15，加入计划 160→15 |
+| 更多与语言弹层 | 整块内容随弹层位移重复绘制 | `app_shell.dart` 给稳定内容加独立重绘边界 | 两主题入场回调均为更多 1690→1300、语言 1080→900 |
+| 安全说明、动作选择、加入计划与两个筛选弹层 | 弹层位移连带重绘内容 | `content_pages.dart`、`plans_page.dart`、`drill_filter.dart`、`public_library_filter.dart` 保留内容绘制层 | 两主题入场回调分别 1768→1534、4030→1534、1794→1534、2730→1534、2860→1560 |
+
+全量 Flutter 测试 472 项通过、1 项既有实时测试默认跳过，静态分析通过。场景构建、完整性检查、12 项训练台测试及两种模型的动效调度检查通过。工作树的 `output/playwright/app-perf-audit/widget-route-matrix.csv` 有 86 组页面及弹层对照，`output/playwright/perf-vc2082-scene/` 有托管 3D 场景样本。已测新建、编辑、记录、设置、会员、训练页、动作详情和角度/肌群入口。稳定画面的玻璃、渐变及 SDK 内部特效以既有设计为准。部分 Plan 列表返回后的第一帧会重新挂载，运动帧绘制数相同。Android 原生 GPU 合成、外部纹理、SDK 内部预取、付费网络返回和真实设备帧时间待复验。
+
+## vc2081 首页肌群图卡转场合成（2026-11-19）
+
+基于 vc2080 的 `ba3142df`。肌群图卡在 WebView 内由 DOM 和 WebGL 预栅格化后写入的 2D 画布组成。旧版每帧在同一层更新位移、透明度和交互标志，卡面与外阴影一起淡出。Chrome 在两处侧滑停留之间观测到该层新增 2 次绘制。旧版返回时还随 GPU 释放清掉位图缓存标记，并重建同阶段图例。
+
+本版用只做位移的容器带动卡面和外阴影，两者分层合成透明度。转场期间复用上一帧位图，保留原时长、进度和阴影参数。GPU 释放后仍可复用 CPU 端位图，阶段、采样尺寸或光照条件变化时才重新栅格化。同阶段返回时保留已有图例。
+
+Chrome profile 覆盖进入、按钮返回与侧滑返回。转场期间卡片 DOM 与画布为同一实例，卡片子树重建、人体图 GPU 栅格化及 2D 画布写入均为 0。两处侧滑停留之间，卡面层绘制计数保持 4、外阴影层保持 1。Flutter 静态分析、9 项定向测试、场景构建及场景完整性检查通过。Android 真机流畅度待复验。
+
+## vc2080 首页训练转场与会员底板退场（2026-11-19）
+
+基于 vc2079 的 `bf01c1e4`。首页菜单和标题、训练入口、时间轴与肌群图卡共用训练页的转场进度。侧滑带动首页控件返回，原 3D 人物交接继续走场景桥接。肌群图卡在转场中使用现有画面，只改平移和透明度。
+
+复现记录与新建计划的上跳时，在测试窗口注入 20 px 底部系统区，两页点击左上返回后的首帧底板顶边均从 485 px 跳到 465 px。原因是外层 SafeArea 按目标页重算尺寸，仍在退场的旧页也被缩短。现在各页独立管理安全区，退场中的底板冻结自身动画并保留 `viewPadding` 取到的底部间距。回归检查覆盖两页退场首帧和横移中的底板位置，以及跟练页反向路由中系统内边距变化。
+
+Flutter 静态分析及 103 项定向测试通过，场景构建和场景完整性检查通过。Chrome 以 390 × 844 跑实际训练入口、点击返回和侧滑返回。299 帧内共用场景的视图与画布保持同一实例、相同尺寸和不透明度。侧滑两处停留时，肌群图卡随手势横移并渐显，和首页菜单、训练按钮及时间轴一同回位。记录在本工作树 `output/playwright/transition-vc2080/transition-report.json`。Android 真机观感待复验。
+
+## vc2079 访客跟练舞台与会员遮罩入场（2026-11-19）
+
+基于 vc2078 的 `7aa0d046`。旧访客跟练在 SDK 中选择旧舞台，将宿主提供的透明舞台色强制画成不透明黑色。Chrome 在 390 × 844 浅色视口中复现了遮罩开始位置以上的纯黑背景。访客现在使用会员版的 V1 舞台，准备画面保持静止，开通后仍等用户点击开始。
+
+记录、计划编辑和跟练准备共用的遮罩只绘制主题渐变，省去实时背景取样。跟练等待 Navigator 路由完成，记录与计划编辑还等待壳内页面滑动完成。底板入场仍为 360 ms，扫光延迟 1.2 秒，并在按钮自己的重绘边界内运行。
+
+Flutter 静态分析和 84 项定向测试通过，覆盖页面转场、访客解锁、预览退出、准备倒计时及正式训练。Chrome 浅色访客跟练的检查图位于本工作树 `output/playwright/premium-preview-vc2079/`。Android 合成与小米真机流畅度待复验。
+
+## 会员遮罩 v3 黑金通栏 Chrome 待确认（2026-11-19）
+
+本地分支 `codex/flare-records-premium` 基于 `21321de`。记录、新建或编辑计划、跟练准备共用贴底黑金通栏和三列权益。按钮沿用原会员入口，开通后在同一页面淡出。已更新 14 种语言，标题仅对本地化关键词应用金色渐变。
+
+Chrome 中 ShaderMask 会隔离背景取样。主题叠色由 ShaderMask 从屏高 45% 渐增至底板顶边的 92%。背景模糊由独立裁剪的 BackdropFilter 在屏高 50%–60% 之间逐级提升至 σ10，按面板实际位置裁切。
+
+Flutter 静态分析和 79 项定向测试通过，覆盖购买返回、只读、跟练手动开始及底部安全区。Chrome 访客配置以 390 × 844 核对记录、新建计划和跟练准备页的浅色与深色主题，验收图位于本工作树 `output/playwright/premium-offer-v3/`。待截图确认后再构建 Android vc2078。
+
+## 会员遮罩视觉升级 Chrome 待确认（2026-11-19）
+
+基于 `codex/flare-records-premium` 的 `f8ac41d`。3 个访客预览页共用深色暖光卡、权益标签和渐变订阅按钮，所有 14 种现有语言已更新。触摸与返回规则沿用原预览。入场时分别推进遮罩、卡片和光晕，按钮流光在入场后延迟开启，减少动态效果时关闭。
+
+Chrome 的 ShaderMask 会隔离其子层的背景取样。实现使用 ShaderMask 渐隐 72% 背景叠色，另用裁剪的 BackdropFilter 逐级增加 52%–62% 区间的模糊，第 62% 起为 σ10。Chrome 已核对文本边缘的模糊变化和离线中文按钮字体。
+
+静态分析及 79 项 Flutter 定向测试通过。记录、新建计划和跟练准备页的浅深主题截图均为 390 × 844，隔离访客测试产物位于 `output/playwright/premium-offer/`。本次交付为 Chrome 截图审阅，确认后再出 vc2078。
+
+## 会员遮罩 Chrome 待确认（2026-11-19）
+
+基于 `codex/flare-records-premium` 的 `f8d314f`。访客可进入记录、新建或编辑计划、跟练准备页，点遮罩按钮打开现有会员页。购买返回后遮罩原地淡出。计划编辑只读，跟练用首个动作的静态封面、组数和初始倒计时，解锁后等待用户开始。复制计划继续使用原会员入口。
+
+静态分析和 84 项 Flutter 定向测试通过，覆盖购买返回时的页面保留、计划保存拦截、跟练空闲及无记录退出、返回手势和遮罩动画。Chrome 在隔离的访客测试配置中核对 390 × 844 浅色与深色各三张截图，截图和测试报告位于本工作树 `output/playwright/premium-preview/`。本阶段为截图审阅，待确认后再构建 Android vc2078。
+
+## vc2077 记录页会员校验（2026-11-19）
+
+`codex/flare-records-premium` 基于合入 vc2076 的 `master` 提交 `6a63e4f`。记录页统一通过 `_changeTab` 检查会员。访客打开现有会员页，开通后继续进入记录页，取消后回到原页。原来正在播放的首页模型会继续播放。未接入会员服务的宿主按原规则放行。全局核对 Dart 导航、平台入口和通知处理，目前记录页的入口为「更多 → 记录」。
+
+本地单动作的开始训练入口也复用训练计划的会员校验。首页、训练页、公共动作与计划详情保留浏览入口，公共动作 SDK 详情继续使用只展示动作信息和示范的配置。
+
+Flutter 3.44.7 静态分析通过，全量测试 454 项通过，1 项既有 live 测试默认跳过。组件测试用模拟购买验证访客拦截、取消、购买后继续、会员直进及单动作训练拦截。商业购买和真机验收另行记录。
+
+## vc2076 计划页进入训练页的转场（2026-11-19）
+
+基线为 `origin/master` 的 `6539229`。从计划页进入训练的「全部 8 个」和「全部 17 个」在进退场时使用不透明背景。共享 3D 视图在进入动画结束前保持隐藏，到达训练页后先配置视口，再等待新画面呈现，最后用 150 ms 淡入。返回时先停绘，再退出训练视口。减少动态效果时直接切换。
+
+Flutter 3.44.7 静态分析通过，全量 453 项通过，1 项既有 live 测试默认跳过。新增回归覆盖两个入口、普通和减少动态效果，以及前一条原生桥接命令仍在执行时的返回顺序。15 项场景测试通过。
+
+Chrome 在完整 Web 预览逐帧核对两个入口的进出动画。旧卡片只出现在滑动尚未覆盖的区域，训练页范围内未见叠画，首页模型和肌群标签未提前露出。独立场景检查在两种视口测得首页 ↔ 训练页的骨盆、头顶坐标差均为 0.000000 CSS px。记录位于本工作树 `output/playwright/plans-hub-overlap/`。14:37 飞书回执确认开哥已验收 Android vc2076 的计划页转场。[版本与包身份](version-ledger.md#计划页转场-android-真机验收-vc20762026-11-19)
+
+## vc2075 首页与训练页交接（2026-11-19）
+
+从 `origin/master` 的 `395c161` 建立 `codex/flare-handoff-jitter`。Flutter 固定共享场景视图，保留首页原取景，并通过相机视口和裁剪表达训练区。进场落点复用训练页的角度相机，返程起点取最后实际绘制的姿态和投影。交接前后各保留两帧的渲染状态。标签仍用 120 ms 淡出、180 ms 淡入。
+
+Flutter 3.44.7 全量测试通过 451 项，既有的 live 测试默认跳过 1 项，静态分析通过。原基线的计划行滚动用例在 760 px 高度已无需滚动，将测试视口缩短为 640 px 后保留原间距断言。场景构建、`npm run verify`、15 项训练及标签测试、标签避让及训练取景检查通过。
+
+在 Chrome 以 390 × 690（DPR 1）与 393 × 745（DPR 3，含训练滚动裁剪）驱动真实场景桥接命令。通过 `app/scene/tools/test-handoff-frames.mjs` 采样连续绘制帧，进场和返程的骨盆与头顶最大位移均为 0.000000 CSS px；画布矩形、缓冲尺寸、裁剪、地面和阴影状态、姿态时间在边界上相同。Flutter 组件测试另行验证共享视图的矩形和短屏滚动。逐帧数据见本工作树 `output/playwright/handoff-frames/frame-report.json`。
+
+合入前从最新主线快进到验收提交后复跑，Flutter 静态分析通过，全量测试 451 项通过、1 项默认跳过；15 项场景测试及场景完整性校验通过。
+
+11:28 飞书回执确认开哥已在 Android vc2075 与 iOS 构建 40 真机验收首页与训练页的双向交接抖动修复。真机结论来自用户反馈。[版本与包身份](version-ledger.md#首页与训练页交接真机验收2026-11-19)
+
+## vc2074 主线核验（2026-11-19）
+
+运行源码为 `266653fe69ffcea2e302d089a1a93d813976e7da`。以下测试在该提交推送前运行，APK 则从提交前相同的运行文件构建，来源和关键文件哈希记录在[版本台账](version-ledger.md#android-真机测试包-vc20742026-11-19)所列回执中。
+
+| 范围 | 命令与结果 |
+| --- | --- |
+| Flutter 静态分析 | `flutter analyze --no-pub`，通过。 |
+| 页面与转场 | `flutter test --no-pub --reporter expanded test/ui/flare_plans_flow_test.dart test/ui/training_hub_entry_test.dart`，14 项通过。 |
+| 训练场景与资产 | 在 `app/scene` 执行 `node --test tools/test-training-hub.mjs` 与 `npm run verify`，12 项场景测试及资产校验通过。 |
+| Android APK | `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=74`，构建通过。与 vc2073 同签名，16 KiB ZIP 对齐通过。 |
+| 真机安装 | 07:58 以 `adb install -r` 从 vc2072 覆盖更新，版本、包哈希、首次安装时间和数据目录回读符合预期。 |
+
+08:01 的验收确认覆盖 vc2073 和计划详情页四组 Chrome 截图。vc2074 最后增加的 16 px 留白由用户真机复验。iOS、长期运行和设备矩阵各自保留待验状态。
+
+## 专项计划详情页头部（2026-11-19）
+
+Chrome 390×844 拍摄了背阔肌、三角肌、第二侧支撑（15）和后侧支撑（09）的改前、改后图，见本工作树 `output/playwright/flare-plan-header-review/`。两张肌群计划的人台位置与尺寸一致，标题和下方内容上移 120 px。两张角度计划标题和下方内容上移约 70 px。Chrome 顶部安全区为 0 时，人物画布贴近顶边，人物上移 64 px。较高的角度姿势会按轮廓下缘留出标题空间。
+
+`flutter analyze --no-pub`、12 项计划流程定向测试和离线 Web 构建通过。截图交付后，用户要求打包安装，并在背阔肌图上指出人台与档位之间需要留白。肌群计划档位及后续内容追加下移 16 px，静态分析和 12 项流程测试复跑通过。上方截图为追加留白前的对照。
+
+与 vc2073 对比，vc2074 的 1,307 项随包 App 资产逐字节一致。构建和安装见上方主线核验。
+
+## 第 15 阶段标签淡入淡出（2026-11-19）
+
+以用户真机认可进退场的 vc2072 为基线。首页与训练页切换开始时，标签、锚点和连线在起始位置用 120 毫秒淡出。镜头落定后，按人物的屏幕缩放换算锚点到标签的偏移，标签在最终位置用 180 毫秒 `easeOutCubic` 淡入。窄屏统一限制三枚标签偏移的缩放比例以保留完整文字。
+
+Chrome 390×844 第 15 阶段核对了三个标签的侧别、上下顺序和统一缩放比，淡入期间屏幕坐标无变化，主体飞行期间无标签。12 项训练场景测试、场景与离线 Web 构建通过。首页、训练页落定和返回首页落定的三张图位于本工作树 `output/playwright/flare-hub-label-fade-review/`。同尺寸对照 vc2072 已确认返程人物部分出画原先存在。用户已确认截图并同意出 vc2073，后续验收见上方主线核验。
+
+`flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=73` 通过。APK 与 vc2072 同签名，16 KiB ZIP 对齐通过，场景入口与脚本对应本次构建，其余 1,305 个 App 资产逐字节一致。
+
+## 第 15 阶段标签交接与返程起飞（2026-11-19）
+
+vc2071 的真机录屏在标签消失后仍保持原人物位置约 0.47 秒，之后才开始移动。旧返程路径串行等待取帧、平台视图移动和首帧确认，录屏无法拆分各步骤用时。新路径从正在显示训练页的画布直接开始飞行，保留当前像素密度并复用同一个渲染器。Chrome 故意扣住返程首帧确认，镜头仍开始移动，期间没有取帧命令。
+
+进退场先沿用出发页的标签位置和身体侧别，交接后按 220 毫秒 `easeOutCubic` 平移，连线随对应锚点。Chrome 第 15 阶段的三枚标签在首页和落地首帧的屏幕坐标一致。三张图保存在本工作树 `output/playwright/flare-hub-handoff-review/`，分别为首页、落地首帧和落地后 300 毫秒。
+
+`flutter analyze --no-pub`、36 项 Flutter 定向测试、12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。用户确认三张 Chrome 截图并同意出 Android 测试包，随后认可 vc2072 真机进退场。
+
+`flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=72` 通过。vc2072 验签与 16 KiB ZIP 对齐通过，包内场景入口和脚本匹配本次构建，其余 1,305 个 App 资产与 vc2071 逐字节一致。
+
+## 训练页进退场实时画面保留（2026-11-19）
+
+`codex/flare-hub-flash-fix` 在 Hark 的防占位图修复上接入 vc2070 基线。进场保留同一个 3D 画布的落地帧，退场保留退出前的实时角度，两端都等下一帧确认后再交接。首次冷加载仍可使用原静态占位图。
+
+- `flutter analyze --no-pub` 和 36 项 Flutter 定向测试通过。12 项训练场景测试、`npm run verify`、场景和离线 Web 构建通过。
+- Chrome 手机视口下分别延迟进场、退场首帧确认，两端复用同一 3D 视图。对比画面中的蓝衣躯干区域，进退场掩膜交并比分别为 98.99% 和 98.42%。Android 真机观感待复验。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=71` 通过。vc2071 签名与 vc2064、vc2070 一致，16 KiB ZIP 对齐通过。包内场景入口与更新脚本匹配本次构建，其余 1,305 个 App 资产与 vc2070 逐字节一致。
+
+## 训练页返回首页的角度交接（2026-11-19）
+
+vc2069 真机反馈显示，返回时有一帧回落到第 12 阶段的静态占位图，之后恢复实时角度。修复后，退场在原 3D 画布上截取当前姿态与镜头，保留到首页的退场首帧确认。取帧失败时直接返回首页。
+
+- 36 项 Flutter 定向测试及静态分析通过。12 项训练场景测试、`npm run verify`、场景与离线 Web 构建通过。
+- Chrome 手机模拟选择第 12 阶段、拖转镜头并点击返回。故意延迟退场首帧确认，对比等待前后的截图，蓝衣躯干区域的像素掩膜交并比为 98.87%。确认返回后继续复用原 3D 视图。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=70` 通过。vc2070 验签和 16 KiB ZIP 对齐通过，场景入口与脚本和源码产物一致，其余 1,305 个随包 App 资产与 vc2069 逐字节一致。11 月 19 日 06:27 同签名覆盖安装，真机版本与 APK 哈希回读通过，退场观感由用户复验。
+
+## 首页进入训练的加载层（2026-11-19）
+
+以 vc2068 为基线。训练页接管共享 3D 画布时，首页退出加载层，由训练页负责等待画面确认。回归测试延迟训练页的画面确认，覆盖同一画布交接、等待期间首页加载层隐藏及提前返回。
+
+- Flutter 3.44.7 的训练入口、场景加载、启动、导航与场景控制测试共 24 项通过。`flutter analyze --no-pub lib/ui/app_shell.dart test/ui/training_hub_entry_test.dart` 通过。
+- `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` 通过。Chrome 移动端模拟核对「前往训练」及返回，确认复用同一个 3D 视图。进场期间逐帧采样，未检测到「正在载入 3D 动作」。
+- `flutter build apk --release --no-pub --target-platform android-arm64 --split-per-abi --build-name=1.0.15 --build-number=69` 通过。vc2069 签名与 vc2068 一致，16 KiB ZIP 对齐通过，1,307 个随包 App 资产与 vc2068 逐字节一致。11 月 19 日 06:08 用 `adb install -r --no-incremental` 覆盖安装，回读版本、包哈希、首次安装时间和数据目录均符合预期。训练转场的真机观感待用户复验。
+
+## V5 恢复原相机与播放器（2026-11-18）
+
+使用 Flutter 3.44.7 执行静态分析与 108 项定向测试，通过。场景构建、场景回归和离线 Web 构建通过。以 `cf654dde` 为 Chrome 同帧基线，归档 13 组并排图和训练播放 5 秒录屏。原版没有的完整双腿伸直条目以原页面模板比较。新增入口的 Android 真机验收待进行。[实现与量化验证](flare-v5-model-2026-11-18.md)
+
+## V5 全入口（2026-11-18）
+
+Flutter 3.44.7 静态分析及 112 项定向测试通过。离线 Web、场景构建及场景回归通过。Chrome 390×844 验证首页、肌群详情、角度教学、计划封面、动作库、动作详情、自定义计划与播放器。Android 真机新增入口和深色播放合成效果仍待复验。[V5 验证与原素材来源](flare-v5-model-2026-11-18.md)
+
+## 首页更多弹窗（2026-11-17）
+
+首页菜单的底部弹窗在把手下方 12 pt 显示训练、计划、记录和设置。播放速度三段等宽，控件使用卡片左右各 16 pt 的内边距，左侧与图标列对齐。
+
+`flutter test --no-pub --concurrency=1 test/ui/interaction_polish_test.dart` 共 3 项通过，覆盖弹窗间距、速度选择、下滑和点遮罩关闭及入口跳转。静态分析和离线 Web 构建通过。Chrome 390 × 844 截图已回飞书，等待用户确认。
+
+## Android vc2056 安装与启动（2026-11-17）
+
+Flutter 3.44.7 使用 `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=56` 构建通过。首次 `--no-pub` 使用了含集成测试插件的生成登记，标准 release 流程重新生成登记后通过。核对了包名、版本、测试证书、16 KiB ZIP 对齐和随包计划 JSON。APK 身份及回执见[版本台账](version-ledger.md#android-测试包-vc20562026-11-17)。
+
+USB 真机从 vc2054 通过 `adb install -r` 覆盖到 vc2056。发起一次启动，4 秒后 Flare 主界面对应的 Activity 在前台，进程仍在运行。本次真机验证限于安装和启动。
+
+## 训练前器材显示复核（2026-11-17）
+
+Chrome 390 × 920 核对高级背阔肌同一计划的徒手与居家场景。器材行在训练内容标题下方，居家按整项显示弹力带。两场景的站姿毛巾下拉均为 3 组 × 10 次、休 60 秒。核对随包目录 25 个器材 ID 及 App 的夹垫别名，均覆盖 14 种语言。
+
+9 项定向测试和 216 个场景排程导出通过，静态分析及离线 Web 构建通过。两张截图已回飞书等待确认。
+
+## 训练计划修订 R1（2026-11-17）
+
+以 `feat/flare-plans-full @ b461a0d` 为基线。定向测试覆盖 72 套计划的 216 个场景排程、徒手和居家器材清单、场景切换后的处方与预计时长、左右计次、腕部四段计时、旧训练记录兼容以及计划到训练播放器的入口。
+
+Flutter 3.44.7 下，8 个定向测试文件共 44 项通过（`flutter test --no-pub --concurrency=1`），`flutter analyze --no-pub` 无问题。首次并发测试遇到本机内存不足，串行复跑通过。验证范围为本地解析、SDK 排程和组件流程，代表性替代动作仍待真人试训。
+
+[侧别裁决](audits/training-plan-fix-r1/side-review.md) · [场景器材及替换](audits/training-plan-fix-r1/equipment-review.md) · [72 套计划时长对照](audits/training-plan-fix-r1/duration-comparison.md)
+
+## 顶栏与整页转场对齐（2026-11-17）
+
+按 HipLab `docs/ui-design-standard.md` §1.5「路由过渡」和 `docs/ui-kit/02-navigation.md` §4–5。Flare 壳内从计划进入汇总、角度及肌群详情均使用 400 ms 水平进入、340 ms 水平返回，分别采用规范的进入与反向缓动。下层页面使用 28% 视差及浅色 .14、深色 .32 的压暗上限。两页同时有返回键时，只固定同一个安全区控制轨上的返回键。首页与训练汇总之间的实时 3D 交接沿用现有流程。
+
+左缘手势使用手指位移，普通内页露出其上一级内容。开启减少动态效果时保留手势导航，省略页面位移动画。
+
+- 77 项动效、导航、计划、肌群和 iPhone 布局相关测试通过，覆盖中间帧、固定返回键、边缘拖动、取消与减少动态效果。静态分析和离线 Web 构建通过。 Chrome 390 × 844 以帧采样核对计划与汇总、计划与角度详情的双向转场。
+
+## 全页顶部导航核对（2026-11-17）
+
+[改前清单、规范来源和 SDK 边界](navigation-inventory-2026-11-17.md)。主页、更多菜单、3D 肌群详情、训练汇总、两套动作库、动作详情、训练记录、设置、关于、个人计划与编辑、会员和训练载入接到共用常驻渐隐。73 项相关测试、静态分析和离线 Web 构建通过。Chrome 与测试数据渲染核对 15 个改动页。
+
+## 计划页与训练详情顶部渐隐（2026-11-17）
+
+计划页、角度详情和肌群详情使用 [FlareScrollNav](../lib/ui/page_kit.dart) 绘制常驻渐隐。依据本文件「首页菜单胶囊与计划页浮动顶栏」的材料段与其引用的 HipLab `docs/ui-design-standard.md` §1.1–1.3、`docs/ui-kit/02-navigation.md` §2 与 §3.1。遮罩高度为安全区 + 44 pt 控制行 + 24 pt 过渡段，沿用 [FlareNavigationGlass](../lib/ui/app_glass.dart) 的页面底色、13 点采样与 60%/.86 拐点。按本次反馈，遮罩只绘制渐变，返回键沿用原有 FlareBackChip。
+
+- 24 项计划流程、动作列表与顶栏测试通过，覆盖三页首屏与滚动状态、遮罩内起手滚动、返回键定位和深浅色渐变。
+- 静态分析与离线 Web 构建通过。Chrome 390 × 844 核对三页滚动效果。
+
+## 计划页与训练详情顶部栏补修（2026-11-17，历史）
+
+以 `674d440` 为基线。计划页、角度详情和肌群详情共用 [FlareScrollNav](../lib/ui/page_kit.dart)。滚动超过 8 px 时，安全区加 56 px 的底板在 160 ms 内淡入，回到顶部淡出。底板采用页面底色 94% 不透明度，底边为 0.5 px 分隔线，浅色黑 8%，深色白 8%。返回键沿用 FlareBackChip 的位置和样式。
+
+- 计划流程、动作列表和顶部栏 24 项组件测试通过，覆盖三页的底板、滚动阈值、往返淡入淡出、深浅色分隔线和固定返回键。
+- 静态分析和本地离线 Web 构建通过。Chrome `127.0.0.1:8915` 以 390 × 844 核对三页滚动后的表现。
+
+## 界面优化 r2（2026-11-17）
+
+以 `feat/flare-plans-full` 的 `539278d` 为基线。首页「前往训练」进入时间轴当前角度的初级计划。角度页把可横滑的发力肌群移到难度选择上方。角度和肌群详情均使用计划页的 [FlareNavBar / FlareBackChip](../lib/ui/page_kit.dart)，滚动时返回按钮固定在原位。
+
+- Chrome `127.0.0.1:8915`，390 × 844 深浅色检查。首页从第一侧支撑进入同名初级计划，返回保留角度；角度详情首屏在开始按钮上方显示训练内容和完整第一条动作，能从肌群胶囊进入对应详情。
+- 用真实训练记录核对两种卡片装饰，后侧支撑的头部避开「继续」按钮，空心体支撑的腹直肌人台头部完整、底部与卡片齐平。[摄影来源](asset-sources.md#最近训练卡肌群摄影2026-11-17)
+- 全量测试 446 通过、1 跳过。最后微调后侧支撑图片对齐后，计划流程和列表布局 14 项复测通过。`flutter analyze --no-pub` 和本地离线 Web 构建通过。
+- 交付范围为功能分支源码和 Chrome 预览。Android 真机此轮待验。
+
+## 计划页改版 r1（2026-11-17）
+
+以 `feat/flare-plans-full` 的走查修复 `cd36126` 为基线。计划页通过现有角度及肌群汇总和详情开始训练，旧成套训练入口已下线。继续卡使用训练记录识别原计划和场景，从第一项未完成动作进入 SDK 播放器，保留其处方剂量。无法确定原计划的旧记录仅显示回顾。8 张 459 × 510 的透明 PNG 由随包角度定帧图派生，仅用于继续卡。
+
+| 核对 | 结果 |
+| --- | --- |
+| `flutter test --no-pub --reporter expanded` | 446 通过、1 跳过。覆盖有无记录、场景和镜像角度保留、重复续练、两个汇总入口及返回、自建计划和会员限制。 |
+| `flutter analyze --no-pub` | 无问题 |
+| `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` | 通过。Chrome 在 `127.0.0.1:8915` 核对 390 × 844 深浅色计划页和续练入口。 |
+| 走查补修 | 徒手替换徽标移到剂量行，动作名独立占一行。结果页关闭从训练控件遗留的提示，组件测试核对部分完成视图。 |
+
+本轮交付为本机 Web 预览和功能分支提交，真机仍使用此前安装的 vc2051。
+
+## 走查修复 r1 Web 预览（2026-11-17）
+
+在 `feat/flare-plans-full` 的 `3c046a0` 运行源码上修改。用 Flutter 3.44.7 和原锁定依赖构建本机 Web 预览，Chrome 视口为 390 × 844。
+
+| 核对 | 结果 |
+| --- | --- |
+| `flutter test --no-pub --reporter expanded` | 440 通过、1 跳过。72 套 × 3 场景解析出的动作均无重复，训练用例覆盖休息提示、全部及部分完成、零完成返回和保存重试。组件测试确认滚到底时最后一条与开始按钮间隔 24 px，点击可达。 |
+| `flutter analyze --no-pub` | 无问题 |
+| `npm run build`、`npm run verify`、`node tools/verify-training-hub-framing.mjs` | 通过。5 个腿部肌群、7 种手机尺寸的最小头顶留白为舞台高度的 6%。 |
+| `flutter build web --release --no-pub --no-web-resources-cdn --no-wasm-dry-run` | 通过。Chrome 核对了臀大肌初级徒手替换、核心肌群短名、下一动作与剂量、2/6 结果及零完成返回。 |
+
+固定的 SDK 结果页将计划名用作副标题，部分完成的数量显示在主标题第二行。休息页顶部保留刚才的动作和休息时间，独立卡片提示下一个动作及其剂量。此轮在 Web 验证，Android 包及设备仍按 vc2051 记录。
+
+## 专项计划 vc2051（2026-11-17）
+
+测试、分析与 Android 构建在 `feat/flare-plans-full` 的同一源码状态完成，提交为 `3c046a0a3dff20543cda9939f0d70a90baf1e43a`。本次文档收束使用该提交的既有工具回执和真机回读。
+
+| 核对 | 结果 |
+| --- | --- |
+| `flutter analyze --no-pub` | 无问题 |
+| `flutter test --no-pub --reporter expanded` | 434 通过、1 跳过、0 失败。训练汇总页验证 8 个角度、17 个肌群的入口可点；布局矩阵覆盖肌群计划到动作详情 |
+| 计划数据与动作引用 | 72 套计划，原 6 套逐项一致，角度 15 复用 11。152 个动作及替代动作 ID 全部可解析。训练适配用例验证三场景的动作、组数、次数或时长、左右侧和休息 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=51` | 构建通过。APK 实际 versionCode 为 2051，仅 arm64-v8a。签名、16 KiB zipalign 和包内计划 JSON 字节一致性通过 |
+| `adb -s <设备序列号> install -r --no-incremental <APK>`、`adb -s <设备序列号> shell am start -W -n dev.mhgd.flare/.MainActivity` | 2602BRT18C 同签名覆盖成功。设备回读 vc2051、安装 APK 哈希一致，首次安装时间与应用数据目录保持，主界面在前台 |
+
+收束前，以 vc2050 标签指向的 `5202caf508904f43aeb2b0940a778c0c37d8b917` 为基线核对到运行源码的提交和路径差异。工作树完整状态为空。另从源码回读计划 JSON 与随包交付、语义目录，确认 72 套、8 个角度、17 个肌群和 152 个动作 ID 均可解析。本次收束仅更新 Markdown 文档，运行源码、资产、构建配置及测试与上述版本一致。
+
+设备回读覆盖安装、包身份与启动。vc2050 的用户认可及 vc2051 尚待用户确认的交互见[版本台账](version-ledger.md)和[待验收台账](development-roadmap.md)。
+
+## r2-v11 英文详情（1.0.13+28，2026-11-10）
+
+英文 locale 的 SDK 详情使用 Flare 提供的 `displayText`，直接读取目录的 `nameEn`、`cuesEn`、`cautionsEn`。目录没有英文禁忌提示，Flare 在展示层翻译 7 种标签，对应 251 条提示。目录原始字节与 SDK 锁定保持一致。
+
+测试从英文动作卡打开 SDK 详情，并遍历详情配置的 248 项动作。回读 248 个名称、811 条提示、594 条安全事项，`[\u4e00-\u9fff]` 和禁用词均为 0 个匹配。静态分析 0 问题。全量 408 通过、4 项已知失败、1 项原有默认跳过；四项失败名称及溢出量与下文的 +26、+27 记录一致。
+
+APK 与 AAB 从同一提交构建，Android 版本均为 1.0.13 / versionCode 2028。AAB 使用商店上传证书，arm64 APK 使用 +26 内测证书。更新说明见 [Flare 1.0.13 更新说明](release-notes-1.0.13.md)。
+
+## r2-v11 出厂目录候选（1.0.13+27，2026-11-10）
+
+Flare 随包交付 [Pose-Hub r2-v11 原始目录](https://media.uuugk.win/pack/r2-v11/catalog.json)，SHA-256 为 `6f46c0a3fc0b6546193e2e3d867d90add55ce21bf0b8f3c482edaa507cdcabc0`。目录保留全部 249 条，动作库和 AI 的授权范围排除自测演示 `n-thomas-test`，共 248 项。每项的 WebP 封面和缩略图均按目录校验字节数和 SHA-256 后随包交付，视频由 SDK 按需下载。四个 SDK 包仍固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`，目录更新使用 stable。
+
+播放器集成测试采用 r2-v11 的 `chest-A` 左右一对 8 秒、默认 6 对加 1 秒引导共 49 秒，以及新目录的随包封面路径。
+
+`flutter analyze --no-pub` 无问题。全量 `flutter test --no-pub --reporter json` 为 407 通过、4 项已知失败、1 项原有 live 测试默认跳过。随包资源测试已逐一回读 496 张 WebP，覆盖动作库和 AI 共用的 248 项授权范围。手机断网冷启动、联网视频下载与播放、覆盖 +26 后的数据和 AI 会话保留分别由真机验收。
+
+以下四项测试仍实际执行。对照 +26 运行源 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564` 的 `output/ui-sdk080-restore-20261108/tests-summary.json` 和 `full-tests-final.jsonl`，两次结果的测试名与溢出量相同。+26 的总结果为 406 通过、4 失败、1 项默认跳过，见 [整合验证记录](hiplab-sdk080-restoration-2026-11-08.md)。
+
+| 已知失败的测试全名 | +26 与 +27 观察 |
+| --- | --- |
+| `SDK player ar light at 1.5x has no layout errors` | 底部 RenderFlex 溢出 0.963 px |
+| `SDK player ar dark at 1.5x has no layout errors` | 底部 RenderFlex 溢出 0.963 px |
+| `SDK player hi light at 1.5x has no layout errors` | 底部 RenderFlex 溢出 2.0 px |
+| `SDK player hi dark at 1.5x has no layout errors` | 底部 RenderFlex 溢出 2.0 px |
+
+## +26文档收束与证据绑定（2026-11-08）
+
+本次在主目录master收束，基线为PR #133合入前主线 `6a2d816a55735b267a9989a228bb90066ec32569`，收束前HEAD为合入检查点 `1effaf31a0930627f4595b2bda74e156052964c2`。`git rev-parse --verify <baseline>^{commit}` 及 `git merge-base --is-ancestor <baseline> HEAD` 核对通过；阶段差异11提交/130路径（根文档2、App文档12、资产42、源码53、测试18、配置/工具3），完整 `git status --porcelain=v1 --untracked-files=all` 为空，staged/unstaged/deleted/renamed/untracked均0。GitHub只读核对PR #133已于22:41:27（UTC+8）合入master。
+
+证据来源为本页及整合记录中11月8日的实际执行结果，源状态为 `b96b5705f8e1e0e5cfd57a0de95eedca6c39b564`。本次不读取本机私有配置、旧日志或构建产物，不重复设备操作；只复用与当前运行树相同的证据：
+
+| 命令/观察 | 11月8日既有结果与适用范围 |
+| --- | --- |
+| `flutter pub get`、`flutter analyze`（app/） | 依赖解析成功，分析No issues found；四项SDK仍固定536b4c52，coach0.8.0 |
+| `flutter test --reporter json`（app/） | 406通过、4项既有ar/hi浅深1.5倍字号失败、1项opt-in跳过；没有将失败过滤或销项 |
+| `python tools/ui_token_scan.py`（app/） | owner外color=8/font=0/radius=5/height50=0，无新增 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.12 --build-number=26 --dart-define-from-file=<既有私有配置>` | APK来自b96b570，实际vc2026；包哈希和签名身份见下方整合记录，未因此获得发布资格 |
+| 同签名覆盖安装与设备回读 | 实际+25→+26，安装APK哈希一致，有限首页/菜单/249库/返回观察；用户随后认可此版，完整数据/媒体/语音/iOS/长期验收继续分账 |
+
+适用性已用 `git diff --exit-code b96b5705f8e1e0e5cfd57a0de95eedca6c39b564 1effaf31a0930627f4595b2bda74e156052964c2 -- app/lib app/assets app/test app/tools app/pubspec.yaml app/pubspec.lock app/android app/ios` 证明：退出0、无差异；两点间全部差异仅7份Markdown文档。因此上述运行验证可用于合入检查点；本次后续也仅改文档，不把早先APK当作新文档提交重新构建的产物。
+
+本轮现行入口为根AGENTS/README/CONTRIBUTING、app/AGENTS/README，以及docs下version-ledger、verification、development-roadmap、asset-sources、motion-v42、hiplab-sdk080-restoration-2026-11-08。确定修正：补实际合入回执、更新旧版本/授权数/按钮说明和AI锚点，将旧阶段入口标历史；原R17/七形象来源及历史验收保留。
+
+本次文档检查（2026-11-08）：`git diff --check`通过；内联Python核对11份确定路径、18个新增行内本地链接及AI锚点通过，授权/交付目录/语义目录的ID集合均为同一249项，251张封面覆盖全部授权项。重新运行 `python tools/ui_token_scan.py`，仍为owner外color=8/font=0/radius=5/height50=0。完整status只有这11份Markdown修改，均为本次Agent对齐、无新增/删除/重命名/untracked；与收束前HEAD相比运行源码、资产、测试、配置无变化，因此不重复Flutter全量测试或出包。
+
+## +26用户验收及主线合入（2026-11-08）
+
+用户明确验收当前手机+26/vc2026并授权合入主线，候选与运行源b96b570的运行文件898/898 SHA一致，安装包/设备哈希一致。默认主线实际为master，合入完整UI+249+SDK536b4c52整合版。既有406通过/4已知字体失败/1跳过证据适用于同一运行树；本批仅追加验收和基线文档，不重复出包、安装或扩写语音细项/iOS/长期QA为通过。来源、授权原话及范围见[整合记录](hiplab-sdk080-restoration-2026-11-08.md)。
+
+## UI恢复整合+26（2026-11-08，已覆盖安装）
+
+针对SDK分支出包遗漏新版UI的问题，在独立分支codex/hiplab-sdk080-restore-20261108保留此前UI工作树全部成果，接回536b4c52 SDK与+25语音接入，版本1.0.12+26。分析通过，最终全量406通过/1跳过/4项既有SDK字体失败，token无新增；原UI工作树20项指纹仍全部一致，未改原工作树或iOS。旧Icon finder仅改用现有routine-add键，业务断言保持。源码本地保存b96b570；同签名从手机实际vc2025覆盖到vc2026，APK哈希回读一致，首页圆形左菜单/无右更多、新条目图标、249动作库与固定返回已原生观察，原计划1/本周1天计数仍可见。最终停在首页，有限数据观察与设备范围、APK/签名和来源见[整合记录](hiplab-sdk080-restoration-2026-11-08.md)。
+
+## SDK v0.8.0 +25验证包（2026-11-08，已新装，基础功能验证）
+
+按用户任务卡检出Draft PR #132 / codex/sdk-v0.8.0-r1的 `9d35b1149c2af7282c33d2e533083a67cfd2726f`。四项ugk_*固定 `536b4c52c0f665203e7feb82dfde4d76f4815ad8`，ugk_coach 0.8.0；pub get成功、lock未变，分析No issues found。全量326通过/1项opt-in跳过/4项已知ar/hi浅深1.5倍字体失败，未放宽断言，按任务卡继续出包。
+
+沿用用户确认的既有+22私有配置，不输出/提交密钥、不补出+24；release arm64 split构建参数build-name=1.0.12/build-number=25。最终实际vc2025，92,493,055字节，APK SHA-256 `7dda42ab891bc6915c5fda11ae465f51e2c983068778e657db03368fd62c70d1`。证书SHA-256与用户要求的 `3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7` 完全一致；apksigner v2/v3、ZIP完整性及16KiB ZIP/ELF对齐通过。
+
+设备QSG6Q8IFDMDELVGQ的主/分身空间均无Flare包；用户确认已卸载并授权新装。因此被覆盖版本为“无”，旧数据与视频保留未验证。首次安装返回 `INSTALL_FAILED_USER_RESTRICTED`，用户允许后重试成功；设备实际1.0.12/vc2025，APK哈希回读与交付包一致。
+
+基础真机检查：启动、下载进度圈、断网失败及联网重试、三动作有限切换样本、“屁股/核心/大腿后侧”检索均已观察。实际输出录音及本地ASR确认中英开场、中文“第2组”和中英动作要点；英文实际识别“Set two”，本地前缀录音与+24逐字节相同，不能写成“Set number two”原文验收通过，也不能认定新回归。目录动作名完整播放未获充分设备证据，自定义>10没有拿默认16次冒充验收。
+
+用户随后明确“我来测试……大致验证功能……后续自己使用验收细节”，因此按基础验证收口，目录动作名、英文原文及自定义次数等细节交用户后续验收，不代答AI首次健康安全问答。语言恢复跟随系统、原输入法和Wi-Fi/移动数据状态恢复，QA25验收计划及测试记录保留；手机停在AI首次安全问答交回用户。完整证据/边界见[本轮记录](sdk080-plus25-2026-11-08.md)。
+
+本次构建源码为完整指定提交；此段为构建完成后的文档记录，未修改运行代码/SDK/Pose-Hub/iOS，原UI工作树保留，未提交/推送/合入/tag/发布。包、去敏回执、测试日志及安装阻塞详情在本机 `output/sdk080-9d35b11-25-20261108/`。
+
+## 动作库滑动性能（2026-11-08，vc2034预览）
+
+已将动作库改为缓存真实文案行高、一次布局及按卡片宽度解码的纯静态海报，保留同行等高；补齐40张经目录哈希核对的原源封面，原211张保持。28项定向测试、分析通过，token无新增。最终同台profile三轮采样1304帧，UI/绘制P95分别5.087/5.549ms，均无超过16.67ms；自适应刷新使各次采样节奏不同，不据此宣称固定FPS提升或完整性能验收。
+
+已同签名保留数据安装 **1.0.12 / profile vc2034**，设备APK与源码指纹回读一致；真机249列表及用户所指两卡833px等高已观察，停在原英文浅色列表供体验。包/证据/采样限制见[性能记录](library-scroll-performance-2026-11-08.md)。未提交/推送/合入/tag/发布，SDK与筛选设计保持。
+
+## 同行卡片等高（2026-11-08，vc2031预览）
+
+用户反馈英文动作库的同行卡片因组次换行而底边不齐。公共 SliverCardRows 仍逐行惰性创建，在每行内部测量自然高度后拉伸同排卡片到该排最大值；不固定全库高度、不压缩文案，原大字号单列保持。新增8项 en/de × 浅深 × 1/1.5字号回归：修改前正常字号4项准确复现19逻辑像素高度差，修正后全过；加动作库流程7项/原列表检查4项，共19项通过。分析无问题，token扫描无新增项。
+
+已同签名保留数据从vc2030更新 **1.0.12 / debug vc2031**，168,016,831字节，SHA-256 `baf259bf20928648a6b1fdd1555689b021cc06f4979a2a294c8ec3a560528078`，设备APK哈希与源码指纹核对一致。原英文浅色保持，真机用户所指两卡更新前底边1865/1803，更新后共同范围y988–1821、均833px高；已回读截图确认，最终停在这组卡片供用户查看。来源仍为1cd4dd2加既有SDK/249/UI本地整合，本轮只改公共卡片行与新增回归，没有调整筛选栏、SDK或动作范围。
+
+日志/包/旧包/安装回执在本工作树 `output/card-row-height-20261108/`；截图及XML `card-rows-vc2030-before`、`card-rows-vc2031-aligned` 在原验收工作树输出目录。未提交/推送、合master、打tag或发布，已有SDK字号及其他待验边界保持。
+
+## 动作库与AI范围249（2026-11-08，vc2030预览）
+
+已按用户图3目标接入App动作库外壳，复用SDK数据/静态媒体/详情；菜单显示249，肌群入口带精确ID筛选。纠正此前UI工作树遗漏主项目新版接入的问题，将主项目已有SDK97eb66d/r2-v1/热更新及相关修复保留整合；按用户明确选择，动作库与AI离线授权同为显式249项。没有修改SDK源码或合master。筛选栏按用户安排后续设计，当前仅保持可用。
+
+分析与token扫描无新增问题；相关131项通过/4项原有SDK ar/hi大字号失败，另1项渲染通过；新增7项流程含实际249及AI profile集合核对。原严格本地化审计171项保留，本次14语剂量文案无新增审计项。真机中文浅色确认249列表、SDK详情、练三角肌26项与返回原肌群姿态；最终vc2030同签名保留数据安装且APK哈希一致，停在动作库。具体包/基线更正/测试与限制见[本轮记录](library249-ui-2026-11-08.md)。未提交/推送、合入、tag或发布；此前阶段的SDK固定值/211范围/包状态均按原时点保留。
+
+## 条目图标手机预览安装（2026-11-08，vc2028）
+
+用户重新连接原手机后，使用同一 UI 工作树未提交源码和既有私有构建定义，标准 debug arm64 构建成功。实际 **dev.mhgd.flare / 1.0.12 / vc2028**，167,674,123 字节，SHA-256 `b532607d0a6f65ba32f1d0e7e083cad3dce985f0454b6748348cf3600c01cb4f`；先回拉旧 vc2027 备份，核对新旧签名与既有内测证书一致，再 `adb install -r` 成功，设备 APK 哈希及7个 UI 源文件指纹一致。pubspec/lock、SDK pin 和原生配置未变；复用下节40项相关测试与分析结果，没有重复扩大测试范围。
+
+真机中文浅色/深色有限检查：首页启动、左菜单、新条目图标、设置往返均正常，原1个计划及本周1天计数可见；设置内图标已显示。切深色检查后恢复原显式浅色，语言、0.25速度、均衡画质保持，最终停在浅色底部菜单供用户验收。一次恢复点按早于页面转场完成，回执断言拦住了未恢复状态；重新等待页面后恢复，读取selected并回看最终截图确认。未卸载/清数据，不把计数可见扩大为完整数据验收或用户观感通过。
+
+包、旧包、源码指纹和安装回执保存在本工作树 `output/ui-row-icons-device-20261108/`；原验收工作树输出目录保存 `row-icons-vc2028-menu-light/menu-dark/settings-light/settings-dark/restored-final/ready-final.png` 和对应 XML。此前离线阶段“未安装”保留为历史。未提交/推送、合master、打tag或发布，SDK/Pose-Hub/HipLab/iOS及既有媒体/字体待验边界保持。
+
+## 仿 iOS 菜单条目与托马斯图标（2026-11-08，离线完成，未安装）
+
+复用既有列表几何，为菜单/设置/计划等现有条目前导图标制作13类原创橙色、浅瓷、钢灰与石墨矢量，支持浅深和高对比；速度字段纳入同一分组语言。分析无问题，5文件40项相关测试全部通过，另1项组件渲染通过，已检查中英德浅深菜单/设置及图标预览。token扫描 owner 外 color=8、font=0、radius=5、height50=0，均无新增。新图标与条目没有持续动画或滤镜，装饰语义与整行动作分离。
+
+手机已拔出，本轮未出新安装包/未操作设备，现有vc2027不含此次图标；明日连接后待原生验收。源文件、设计依据、测试命令、预览位置与边界见[本轮记录](flare-row-icons-2026-11-08.md)。源码尚未提交/推送，未改SDK、HipLab、Pose-Hub或iOS，未合主线/打tag/发布。
+
+## 首页单菜单入口（2026-11-08，手机预览 vc2027）
+
+按用户指令将原右侧更多功能移到左侧：左上使用对称三横线和既有圆形 FlareNavChip，打开原底部菜单；右侧按钮移除，等宽等高留位保持标题居中及场景构图。底部训练、计划、记录、设置和速度控制沿用原实现。
+
+分析无问题，24 项相关回归通过，浅深组件渲染通过；token 扫描 owner 外 color=8、font=0、radius=5、height50=0，无新增项。使用既有私有构建定义生成 debug arm64 **1.0.12 / vc2027**，167,650,779 字节，SHA-256 `011847654313806ee85d4fffd8b615a00d76be5628a6c3f8c53d04a50a5682b3`。与手机 vc2026 证书一致，`adb install -r` 成功，设备已安装 APK 哈希与新包一致。
+
+Android 浅色中文真机确认：首页无右按钮、左菜单打开底部弹窗、计划入口可用、返回首页正常，原 1 个计划可见。手机最终停在首页，未更改系统设置或清数据；不扩大为完整数据/多语浅深/性能验收。包及回执在本工作树 `output/ui-menu-device-20261108/`，截图 `menu-vc2027-home/sheet/plans/ready.png` 在原验收工作树输出目录。改动尚未提交/推送，SDK、Pose-Hub、HipLab、iOS 与正式版本保持原状。
+
+## 顶部 UI 预览包安装（2026-11-08，用户追加授权）
+
+用户随后要求“更新到我app我看看吧”，本节覆盖下方源码阶段“未出包”的当时状态。使用同一 UI 工作区（1cd4dd2 加未提交顶部 UI 修改）和 Flutter 3.44.7，标准 `flutter build apk --debug --target-platform android-arm64 --build-number=2026 --dart-define-from-file=<既有本机私有定义>` 成功。pubspec/lock、SDK 固定值及 Gradle 参数没有修改；此前 23 项相关回归、分析和 token 扫描结果适用于这批 UI 源码，本次没有重复扩大到全量测试或真实 AI。
+
+实际包 **dev.mhgd.flare / 1.0.12 / debug vc2026**，167,652,403 字节，SHA-256 `9923d30ad5da904f27ad5c4b0bc5765ac5e60819e8a0051fee278fac805b6b3e`。构建后先回拉手机旧 vc2025 核对实际证书，与新包及既有内测证书一致，再 `adb install -r` 保留数据覆盖安装成功；无卸载/清数据。安装后设备 APK SHA-256 与新包一致，原有 1 个计划可见，但不据此声称逐文件验证全部数据。
+
+本次 Android 真机浅色/中文有限检查：新首页圆形菜单已显示，点按进入计划；计划顶部与状态栏材料已显示，列表可滚到其下，返回胶囊坐标保持 `[52,152]–[195,295]`。最后回到计划页顶部供用户查看，未更改原语言/主题/系统动画。尚不代表用户审美认可、浅深/多语完整新包矩阵或原生性能验收。此前 SDK 暂停/全局解码器及字体问题继续保留。
+
+包、旧包备份、源码文件指纹与核验回执在本工作树 `output/ui-topbar-device-20261108/`；实际设备截图 `topbar-vc2026-home/plans/plans-scrolled/ready.png` 在 `hiplab-ui-acceptance-20261107/output/ui-acceptance-20261107/`。初次组合命令被执行审核拒绝且未执行，之后独立构建、核验及单独安装完成。未提交/推送、合主线、打 tag、发布商店或改动 HipLab/SDK/Pose-Hub/iOS。
+
+## 首页菜单胶囊与计划页浮动顶栏（2026-11-08，工作区修改）
+
+按用户逐处优化指令，在 `codex/ui-hiplab-r3` / 1cd4dd2 的隔离工作区修改。HipLab `E:/AII-3D/3D-Hip` 只读，依据 `docs/ui-design-standard.md` 第 1 节及 `docs/ui-kit/02-navigation.md`；先向用户说明当前实现缺少材料层和 scroll-under 的差异，再实现。没有提交、推送、构建安装包或操作设备。
+
+首页左侧菜单入口与现有返回键共用 FlareNavChip/同一磨砂表面：44×44、32 图标、平整半透明玻璃、σ12、细边、无投影，保留原菜单图标/回调；按压和减少动画继续走现有 FlarePressable。几何及材质参数进入现有 token/material owner，FlareSans 与托马斯品牌色保持。
+
+截图所指 PlansPage 接入 App 侧 FlareNavPage：材料从 y=0 覆盖状态栏与 44/52 标题行及 24 过渡段，正文首项留足 inset，滚动视口从 y=0 开始。材料以页面背景色绘制 13 采样点、60%/.86 抛物线渐变，加 σ34/.78、σ20/.90、σ9/1 三层渐进模糊，显式 ClipRect 限定采样；高对比关闭滤镜。玻璃与标题透传滚动，只有胶囊/右操作接收点击；现有 FlareStage 负责路由。系统栏图标策略原已与 HipLab 一致，main.dart 未改。其他页面未在本轮批量迁移。
+
+验证：`flutter analyze --no-pub` 无问题；原导航/计划/交互 13 项回归通过，新顶栏 10 项通过，覆盖安全区、单双标题、滚动穿透、固定返回、模糊裁剪、高对比、en/de 浅深及减少动画；另一次临时组件渲染检查通过，实际菜单 44×44/圆形/点按进计划均确认。显式加载 FlareSans 和 MaterialIcons 后回读浅深截图，早期缺图标字体的渲染已被替换。它们不包含系统时钟或真实 3D WebView，不是真机/原生光学验收。
+
+按用户要求运行 `python tools/ui_token_scan.py`：扫描完成，token owner 外 color 从 9 减至 8，font=0、radius=5、height50=0 保持，无新增扫描项；扫描为提示工具，不把历史残留写成全零。日志及组件预览保存在本工作树 `output/ui-topbar-20261108/`。未改 SDK、Pose-Hub、iOS/PR #127，未合 master、打 tag 或出包；上一批 SDK 媒体/字体待验边界保持。
+
+## HipLab UI r3（2026-11-07，Draft #131，未整体验收通过）
+
+pub get / 最终 analyze 通过；全量 **365 过 / 同 4 项 SDK 字体失败 / 1 默认跳过**，含 6 项媒体回归。App 自有详情 en 浅色/de 深色真机暂停/继续与减少动画检查通过；同签名 debug vc2025 已保留数据安装，安装包回拉哈希一致。正式 SDK 动作库暂停仍跳回封面，且其详情/播放器未经过 App 两槽池，故不能宣称全 App 媒体验收或全局最多两个解码器通过；见 [详细结果与待决边界](hiplab-ui-acceptance-2026-11-07.md)。语言/主题与系统动画已恢复，SDK/Pose-Hub/iOS 未改。
+
+## HipLab UI r2（2026-11-07，Draft #130）
+
+已带入 r1 修复；pub get/analyze 通过，全量 **345 过 / 同 4 项 SDK 字体失败 / 1 默认跳过**，另 14 项控件回归全过。修复设置→关于与手势返回的胶囊跳动；同签名 debug vc2024 真机检查 en/de 浅深、关于往返/手势返回、系统减少动画及设置滚动恢复。开关/确认框仅组件覆盖，详情与本地证据见 [本批记录](hiplab-ui-acceptance-2026-11-07.md)。
+
+## HipLab UI r1（2026-11-07，Draft #129）
+
+`pub get` / analyze 通过；修复禁用按钮仍缩放并新增 12 项回归。全量 **337 过 / 4 项已有 SDK 字体失败 / 1 默认跳过**，未放宽 SDK 断言。Android 同签名保留数据更新 debug vc2023，en/de 浅深与减少动画的有限观察、证据和范围见 [本批记录](hiplab-ui-acceptance-2026-11-07.md)。不代表全量全绿、合入或发布验收。
+
+## 当前：QA v3 / +21 与主线文档收束（2026-11-04）
+
+### Preflight 与来源
+
+| 字段 | 实际核对 |
+| --- | --- |
+| 收束 scope | QA071 保存点之后的 SDK 修复锁定、+19/+20/+21 源码与出包状态、PR #126 合入及问答测试变化；有限修正当前入口/版本/验证/待验记录和 pubspec 注释，不升级依赖、不改运行代码、不操作设备或发布 |
+| baseline | `293d23a9482c74e44344f57b3355800f07168b3c`；本会话已保存的 QA071 源码/证据收束点，ref 为该完整 SHA |
+| HEAD / 工作副本 | `4b32607ed24c98af22ba4879909544729a3c3213` / master；`git rev-parse --show-toplevel` 为 `E:/AII-3D/3D-Body` |
+| 基线证明 | `git rev-parse --verify '<baseline>^{commit}'` 返回上述基线，`git merge-base --is-ancestor <baseline> HEAD` 退出 0 |
+| stage delta | `git log --oneline <baseline>..HEAD`、`git diff --name-status <baseline>..HEAD`：4 提交（a524792、d416213、4ea55a7、4b32607），4 路径：`app/pubspec.yaml`、`app/pubspec.lock`、`app/test/live/coach_qa_live_test.dart`、`app/test/ui/coach_qa_sdk_test.dart`；2 配置、2 测试，App lib/assets/原生目录无增量 |
+| 完整工作区与归属 | Preflight 的 `git status --porcelain=v1 --untracked-files=all` 完整输出为空；staged / unstaged / deleted / renamed / untracked 均 0。本次后续文档/注释归本 Agent，3 份文档由明确委派的文档 Agent 修改，均逐路径纳入 |
+| 验证复用证明 | +21 实测源为 `4ea55a7db323145c0c952d3ae5974c9aea986074`；`git diff --exit-code <该SHA> HEAD` 整树为空、退出 0。合入后的主线与已测/已构建源一致；本次新增 Markdown 与 pubspec 注释不改变运行、依赖或测试语义 |
+| alignment findings | 当前身份仍停在 7eaccf7 / 2017 或 QA071 未合入；未登记 +19/+20/+21 分账及 4 项失败例外交付；待验台账混用 +18 实模与新版状态；pubspec SDK 注释仍写旧 pin。按配置、提交差异及本会话已观察结果修正，历史保留 |
+
+从适用的根/App AGENTS 与根 README“当前文档与历史记录”一跳发现并实际核对的 current 来源：`AGENTS.md`、`README.md`、`app/AGENTS.md`、`app/README.md`（约定/入口）、`app/docs/version-ledger.md`（版本与包）、本文（验证）、`app/docs/development-roadmap.md`（实施与待验）、`app/docs/motion-v42.md`（动作契约）、`app/docs/asset-sources.md`（来源）。实际配置来源为 `app/pubspec.yaml` / `app/pubspec.lock`；本阶段 delta 的问答行为由两份变更测试与现有 SDK 宿主配置核对。`app/docs/coach-qa-v071-2026-11-04.md` 是 archive/history，仅保留 +18 阶段结果；不能当作新版验收。
+
+### +21 原始执行结果（本会话 2026-11-04）
+
+以下均来自本会话早先执行及工具回执，工程在 `app/`，Flutter 为 `E:\DevCaches\flutter-3.44.7-hiplab\bin\flutter.bat`、TEMP/TMP 在 E 盘；本次收束不重新读取日志、APK、私有配置或跨仓库交付目录。
+
+| 命令 / source state | 实际结果与适用边界 |
+| --- | --- |
+| `flutter pub get` / `4ea55a7db323145c0c952d3ae5974c9aea986074` | 成功；最终 pubspec.lock 与指定提交一致，四项 SDK resolved-ref 均为 f7b8a8e；hosted 使用 pub.dev |
+| `flutter analyze --no-pub` / 同源 | **No issues found，退出 0** |
+| `flutter test --no-pub --concurrency=1 --reporter json` / 同源 | 未过滤全量，**325 通过 / 4 失败 / 1 跳过，退出 1**；test/live 为默认 opt-in 跳过。未删除、放宽或过滤失败用例；不是全量通过 |
+| `flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.12 --build-number=21 --dart-define-from-file=<本机私有配置>` / 同源 | 退出 0，arm64 release；用户先明确允许保留 4 失败继续出包。随后既有内测签名、对齐与包身份检查通过，实际 vc2021；详见[版本台账](version-ledger.md) |
+| `flutter pub get` / `master 4b32607ed24c98af22ba4879909544729a3c3213` | 用户要求切回主线后执行成功，lock 未变，工作区干净；主线与上述构建源整树一致，不是另做一次构建 |
+
+4 项失败原名如下，均是 SDK 播放器 1.5 倍字体布局：
+
+- `SDK player ar light at 1.5x has no layout errors`
+- `SDK player ar dark at 1.5x has no layout errors`
+- `SDK player hi light at 1.5x has no layout errors`
+- `SDK player hi dark at 1.5x has no layout errors`
+
+ar 底部 RenderFlex 溢出约 0.963px，hi 为 2.0px。用户批准“保留 4 项失败记录，继续出测试包”，不等于失败已修复。问答 v3 的 App 单选、多选及推荐/计划编号测试通过；这些组件测试不证明真实模型或真机恢复/发送已修复。本批 +21 **没有真实模型对话或设备执行证据**，+18 的 3 段 10 轮结果仅保留历史。
+
+构建不带 `--no-pub`，由 Flutter 标准 release 流程重新生成测试后可能残留的开发插件登记；没有手改生成代码或在 App 绕过 SDK。APK 的 SHA-256、实际证书、目录与源状态见[版本台账](version-ledger.md)；交付 `REPORT.md` 和本机日志不纳入本仓库。本次没有安装、清数据、商店发布或 iOS 验证。
+
+### 本次对齐检查
+
+本次仅检查文档事实、UTF-8、新改本地链接、`git diff --check`、完整工作区归属、pubspec 非注释内容与锁定不变、运行/测试/资产/原生目录无改动及提交前后 HEAD/远端回执。历史测试结果保留其原 source state；不因文档收束重复 Flutter 全量、模型调用或构建。确定的 alignment findings 修正完毕后按明确路径暂存、提交及普通 push master，Git 回执另行汇报；ios/main 与 PR #127 不操作。
+
+本次内联 Python 检查实际通过：HEAD 保持 4b32607、基线祖先关系及 4ea55a7 整树适用性成立；完整 porcelain 只有 10 份已归属 Markdown 与 1 份 pubspec 注释修改，staged / untracked 均 0。UTF-8 与新增/修改行的 24 个本地链接文件目标通过，`git diff --check` 退出 0；pubspec 非注释内容完全相同、5 处 SDK ref 与 4 项 resolved-ref 均为 f7b8a8e。lib、assets、lock、测试/集成测试、原生与场景目录 diff 为空。委派只读复核未发现当前/历史身份或验收范围混用；这些检查是文档对齐证明，不是新一轮产品测试。
+
+## 历史：SDK 0.7.1 QA v2 / +18 内测候选（2026-11-04）
+
+分支 `codex/sdk-pin-v0.7.0`，最终产品/测试源 `f0ef5d60e8472d7f53f031cadc238bcb1be4cdd8`，SDK固定 `9dd93163e9f355665e5c923f374c64f03bf65a86`。App沿用SDK聊天页，通过qaV2开关及App标签启用；没有App问答适配层。`flutter analyze --no-pub`退出0、无问题；未过滤全量 `flutter test --no-pub --concurrency=1 --reporter json` 为 **324通过 / 5失败 / 1跳过**，退出1。
+
+失败包括计划交付检查1项、ar/hi浅深1.5倍字号布局4项（分别底部溢出0.963px/2.0px）；既有断言保留。普通测试中跳过的真实模型检查已另行opt-in运行，3段10轮中2轮未交付核心计划，不能记为全通过。单选/多选、推荐编号及只替换第2张已实际跑通。原文、源适用性证明、独立器械冲突复现、完整命令及包身份统一见[本批记录](coach-qa-v071-2026-11-04.md)。本批只出Android测试包供远程安装，未做真机/iOS/发布验收。
+
+## 历史：SDK 0.6 主线文档收束与证据边界（2026-11-04）
+
+## 历史：iOS 本轮对齐验证（2026-11-04）
 
 分析、原锁解析、Web和dist构建通过；137项共享SDK/计划/存储/语音/恢复/形象回归及10项iOS常规字号布局通过，另4项ar/hi浅深1.5倍字号溢出失败，未改断言。原生两类构建因iOS26.5组件/destination缺失未进入编译，原生测试仅更新未运行，浏览器因profile占用未验。范围和日志见[本轮记录](ios-sdk-sync-2026-11-04.md)、[精选结果](evidence/ios-sdk-20261104/verification.json)，不宣称全绿或iOS交付验收。
 
-## 当前阶段：文档收束与证据边界（2026-11-04）
+## 历史：当前阶段：文档收束与证据边界（2026-11-04）
 
 ### Preflight
 

@@ -2,6 +2,16 @@ import 'dart:async';
 
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
+import 'plan_voice_trace_stub.dart'
+    if (dart.library.io) 'plan_voice_trace_io.dart';
+import 'trainer_voice.dart' show flarePlanVoiceAssetRoot;
+
+const _traceVoice = bool.fromEnvironment('FLARE_PLAN_VOICE_TRACE');
+
+bool _isPlanClip(String asset) =>
+    asset.startsWith('$flarePlanVoiceAssetRoot/') ||
+    (asset.startsWith('file:') && asset.contains('/channel-plan-voice/'));
+
 /// One app-scoped audio output, as required by the SDK. Old training routes
 /// cannot deactivate the audio session owned by a newer route. Lifecycle
 /// operations are serialized, including a slow OS audio-session shutdown.
@@ -65,9 +75,25 @@ class TrainerAudioLease implements VoiceOutput, InterruptibleVoiceOutput {
   }
 
   @override
-  Future<void> speak(List<String> assets) => _play((out) => out.speak(assets));
+  Future<void> speak(List<String> assets) => _play((out) {
+    if (_traceVoice &&
+        assets.length == 1 &&
+        _isPlanClip(assets.single) &&
+        out is StartReportingVoiceOutput) {
+      return (out as StartReportingVoiceOutput).speakReportingStart(assets, () {
+        unawaited(tracePlanVoice('started', assets.single));
+      });
+    }
+    return out.speak(assets);
+  });
+
   @override
-  Future<void> chime(String asset) => _play((out) => out.chime(asset));
+  Future<void> chime(String asset) => _play((out) async {
+    await out.chime(asset);
+    if (_traceVoice && _isPlanClip(asset)) {
+      unawaited(tracePlanVoice('effect', asset));
+    }
+  });
   @override
   Future<void> stopSpeech() => _play((out) => out.stopSpeech());
   @override

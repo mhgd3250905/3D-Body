@@ -67,4 +67,23 @@ void main() {
       isEmpty,
     );
   });
+
+  test('V5 teaching and media retain the original scene page', () {
+    for (final base in [
+      Uri.parse('http://127.0.0.1:8821/index.html'),
+      Uri.parse('https://example.test/app/assets/scene/index.html'),
+    ]) {
+      final media = configuredSceneUri(base, body: flareMediaScene);
+      expect(media.path, base.path);
+      expect(media.origin, base.origin);
+      expect(media.queryParameters, {
+        'actor': flareStraightLegsScene,
+        'embed': 'media',
+      });
+      final teaching = configuredSceneUri(media, body: flareTeachingScene);
+      expect(teaching.path, base.path);
+      expect(teaching.queryParameters, {'actor': flareStraightLegsScene});
+      expect(configuredSceneUri(base, body: 'training').path, base.path);
+    }
+  });
 }

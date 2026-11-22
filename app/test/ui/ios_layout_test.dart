@@ -1,16 +1,15 @@
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/catalog.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
-import 'package:flare/ui/components.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_plan_detail_page.dart';
+import 'package:flare/ui/flare_training_hub_page.dart';
+import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../domain/fixtures.dart';
-import 'flow_regressions_test.dart'
-    show TrainingRouteProbe, waitForTrainingRoute;
 
 class _MemoryStorage implements LocalStateStorage {
   String? value;
@@ -21,7 +20,10 @@ class _MemoryStorage implements LocalStateStorage {
 }
 
 void main() {
-  final catalog = loadCatalogFixture();
+  late Catalog catalog;
+  setUpAll(() async {
+    catalog = await Catalog.load();
+  });
   for (final (name, size, top, bottom, side) in [
     ('SE3', const Size(375, 667), 20.0, 0.0, 0.0),
     ('iPhone13', const Size(390, 844), 47.0, 34.0, 0.0),
@@ -83,7 +85,6 @@ void main() {
                   store: store,
                   sceneController: scene,
                   enableScene: false,
-                  trainingPageBuilder: (plan) => TrainingRouteProbe(plan),
                 ),
               ),
             );
@@ -105,76 +106,66 @@ void main() {
               'source': 'flare-scene',
               'type': 'select',
               'time': 2.375,
-              'groupId': 'obliques',
+              'groupId': 'triceps',
             });
             await tester.pumpAndSettle();
-            expect(tester.takeException(), isNull, reason: 'muscle detail');
-            if (name.contains('landscape')) {
-              expect(
-                find.byKey(const ValueKey('muscle-panel-scroll')),
-                findsOneWidget,
-              );
-              await tester.ensureVisible(
-                find.byKey(const ValueKey('muscle-knowledge')),
-              );
-              await tester.pumpAndSettle();
-              await tester.ensureVisible(
-                find.byKey(const ValueKey('detail-card')),
-              );
-              await tester.pumpAndSettle();
-              expect(scene.time, 2.375);
-              expect(
-                tester.takeException(),
-                isNull,
-                reason: 'scrollable detail and related card',
-              );
-            }
-            final train = find.byKey(const ValueKey('train-group'));
-            expect(train, findsOneWidget);
-            expect(
-              tester.getRect(train).bottom,
-              lessThanOrEqualTo(size.height - bottom),
-            );
-            await tester.tap(train);
-            await tester.pumpAndSettle();
             expect(
               tester.takeException(),
               isNull,
-              reason: 'training scene choices',
+              reason: 'muscle plan',
             );
-            expect(find.byType(LibraryPage), findsOneWidget);
-            final drill = tester
-                .widget<DrillCard>(find.byType(DrillCard).first)
-                .drill;
-            final drillName = find.text(drill.name);
-            await tester.ensureVisible(drillName);
+            final plan = find.byType(FlarePlanDetailPage);
+            expect(plan, findsOneWidget);
+            expect(
+              tester.widget<FlarePlanDetailPage>(plan).plans.first.id,
+              'muscle-triceps-t1',
+            );
+            final exercise = find.byKey(
+              const ValueKey('flare-plan-item-0-forearms-A'),
+            );
+            final planScroll = find.descendant(
+              of: plan,
+              matching: find.byType(Scrollable),
+            );
+            await tester.scrollUntilVisible(
+              exercise,
+              180,
+              scrollable: planScroll,
+            );
+            await Scrollable.ensureVisible(
+              tester.element(exercise),
+              alignment: .35,
+            );
             await tester.pumpAndSettle();
-            expect(drillName.hitTestable(), findsOneWidget);
-            await tester.tap(drillName);
+            expect(exercise.hitTestable(), findsOneWidget);
+            await tester.tap(exercise);
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull, reason: 'drill detail');
-            final start = find.text('开始训练');
-            await tester.ensureVisible(start);
-            await tester.tap(start);
-            await waitForTrainingRoute(tester);
-            expect(find.byType(TrainingRouteProbe), findsOneWidget);
-            expect(
-              tester
-                  .widget<TrainingRouteProbe>(find.byType(TrainingRouteProbe))
-                  .plan
-                  .exerciseIds,
-              {drill.id},
-            );
-            expect(
-              tester.takeException(),
-              isNull,
-              reason: 'SDK route handoff (player layout covered separately)',
-            );
-            await tester.tap(
-              find.byKey(const ValueKey('training-probe-close')),
-            );
-            await tester.pumpAndSettle();
             expect(find.byType(DrillDetailPage), findsOneWidget);
+
+            // Return through the muscle plan to the home menu.
+            for (var page = 0; page < 2; page++) {
+              await tester.binding.handlePopRoute();
+              await tester.pumpAndSettle();
+            }
+            await tester.tap(find.byKey(const ValueKey('home-menu-chip')));
+            await tester.pumpAndSettle();
+            await tester.tap(find.byKey(const ValueKey('more-library')));
+            await tester.pumpAndSettle();
+
+            expect(find.byType(FlareTrainingHubPage), findsOneWidget);
+            final timeline = tester.widget<MotionTimeline>(
+              find.byKey(const ValueKey('hub-timeline')),
+            );
+            expect(timeline.phase, 11);
+            expect(timeline.time, 2.375);
+            final viewPlan = find.byKey(const ValueKey('hub-view-plan'));
+            expect(viewPlan, findsOneWidget);
+            expect(
+              tester.getRect(viewPlan).bottom,
+              lessThanOrEqualTo(size.height - bottom),
+            );
+            expect(tester.takeException(), isNull, reason: 'training hub');
             await tester.pumpWidget(const SizedBox());
           },
           tags: name.contains('landscape') ? ['landscape'] : ['portrait'],
