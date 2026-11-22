@@ -30,21 +30,21 @@ dependencies:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_coach_chat
 
 # Resolve the SDK's sibling Git dependencies with the same commit.
@@ -52,16 +52,16 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: 7ba0db822399ffd84aead01b07f2f9f21e947f13
+      ref: ugk_trainer-v1.0.2
       path: packages/ugk_coach_ui
 
 dev_dependencies:
