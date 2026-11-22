@@ -1519,6 +1519,96 @@ class AppLocalizationsZh extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '练前练后';
+
+  @override
+  String get preWorkoutWarmup => '练前热身';
+
+  @override
+  String get postWorkoutStretch => '练后';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '还没热身？先做 $minutesString 分钟';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '每侧顺逆各 $count 圈';
+  }
+
+  @override
+  String get planCircleClockwise => '顺时针';
+
+  @override
+  String get planCircleCounterclockwise => '逆时针';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '顶峰停 $seconds 秒';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => '接着做练后';
+
+  @override
+  String get cooldownPlanCardSubtitle => '初／中／高 · 徒手';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 专项补强';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身拉伸';
+
+  @override
+  String get skipCooldownStrengthening => '跳过补强，直接全身拉伸';
+
+  @override
+  String get cooldownStrengtheningAdvice => '建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 轮';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '动作间休息 $seconds 秒 · 轮间休息 $roundSeconds 秒';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max 次';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 次';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes 分钟 · 徒手';
+  }
+
+  @override
+  String get temporaryPlanDemo => '临时示范';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3037,4 +3127,94 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => '練前練後';
+
+  @override
+  String get preWorkoutWarmup => '練前熱身';
+
+  @override
+  String get postWorkoutStretch => '練後';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '還沒熱身？先做 $minutesString 分鐘';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '每側順逆各 $count 圈';
+  }
+
+  @override
+  String get planCircleClockwise => '順時針';
+
+  @override
+  String get planCircleCounterclockwise => '逆時針';
+
+  @override
+  String planPeakHold(int seconds) {
+    return '頂峰停 $seconds 秒';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => '接著做練後';
+
+  @override
+  String get cooldownPlanCardSubtitle => '初／中／高 · 徒手';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A 專項補強';
+
+  @override
+  String get cooldownStretchHeading => 'B 全身伸展';
+
+  @override
+  String get skipCooldownStrengthening => '跳過補強，直接全身伸展';
+
+  @override
+  String get cooldownStrengtheningAdvice => '建議每週 2–3 次、隔天做；當天已練上肢力量或手腕發痠請直接跳過';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds 輪';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '動作間休息 $seconds 秒 · 輪間休息 $roundSeconds 秒';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max 秒';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max 次';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '各 $reps 次';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return 'PNF $seconds 秒';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes 分鐘 · 徒手';
+  }
+
+  @override
+  String get temporaryPlanDemo => '臨時示範';
 }

@@ -5,6 +5,7 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import '../domain/catalog_models.dart';
 import '../domain/dose.dart';
 import 'flare_action_scope.dart';
+import 'flare_public_catalog.dart';
 import 'flare_public_media.dart';
 
 /// A shared public action projected onto Flare's display row. Poster is the
@@ -19,7 +20,10 @@ Drill? sharedDisplayDrill(uc.Catalog? shared, String id) {
   final prescription = amount > 0
       ? '${dd.sets} 组 × ${d.unilateral ? '每侧 ' : ''}$amount $unit'
       : '${dd.sets} 组';
-  final hasVersionedArtwork = flareAuthorizedActionIds.contains(id);
+  final hasVersionedArtwork =
+      flareAuthorizedActionIds.contains(id) ||
+      id == flareWarmupPushupId ||
+      flareSupplementalActionIds.contains(id);
   final coverRoot = hasVersionedArtwork
       ? FlarePublicMedia.coverRoot
       : FlarePublicMedia.posterRoot;

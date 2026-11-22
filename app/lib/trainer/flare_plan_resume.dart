@@ -1,9 +1,12 @@
 import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/engine.dart' as sdk;
+import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart'
+    show PoseHubPlanSnapshot;
 
 import '../data/catalog.dart';
 import '../domain/training_plan.dart';
 import '../domain/training_session.dart';
+import 'training_plan_adapter.dart';
 
 /// What the Plans page can truthfully show and, when identified, continue.
 /// The SDK owns work and result recording. A follow-up is a new SDK session
@@ -19,6 +22,9 @@ class FlarePlanResume {
     this.tier,
     this.sceneTier,
     this.authoredPlan,
+    this.snapshotId,
+    this.planSnapshot,
+    this.skipStrengthening = false,
     this.routine,
     this._sourceId,
     this._sessionId,
@@ -35,6 +41,9 @@ class FlarePlanResume {
   final int? tier;
   final String? sceneTier;
   final FlarePlan? authoredPlan;
+  final String? snapshotId;
+  final PoseHubPlanSnapshot? planSnapshot;
+  final bool skipStrengthening;
   final TrainingRoutine? routine;
   final String? _sourceId;
   final String? _sessionId;
@@ -43,17 +52,23 @@ class FlarePlanResume {
 
   bool get canContinue => _remaining.any((block) => block.isNotEmpty);
 
-  /// Keep the captured scene and mirrored phase in the SDK's persisted
-  /// [sdk.SessionResult.planId]. The base ID still identifies the catalog plan.
+  /// Keep the captured scene, mirrored phase and plan snapshot in the SDK's
+  /// persisted [sdk.SessionResult.planId].
   static uc.TrainingPlan recordAuthored(
     uc.TrainingPlan plan, {
     required String sceneTier,
     int? phaseSource,
-  }) => plan.copyWith(
-    id:
-        'flare-plan-v1:${Uri.encodeComponent(plan.id)}:$sceneTier:'
-        '${phaseSource ?? 0}',
-  );
+    String? snapshotId,
+  }) {
+    final planKey =
+        '${Uri.encodeComponent(plan.id)}:$sceneTier:'
+        '${phaseSource ?? 0}';
+    return plan.copyWith(
+      id: snapshotId == null
+          ? 'flare-plan-v1:$planKey'
+          : 'flare-plan-v2:$planKey:$snapshotId',
+    );
+  }
 
   static FlarePlanResume? resolve({
     required Catalog catalog,
@@ -61,6 +76,7 @@ class FlarePlanResume {
     required Iterable<TrainingRoutine> routines,
     Iterable<TrainingSession> legacySessions = const [],
     String preferredSceneTier = 'A',
+    PoseHubPlanSnapshot? restoredSnapshot,
   }) {
     final results = {for (final result in sessions) result.sessionId: result};
     sdk.SessionResult? latest;
@@ -99,24 +115,34 @@ class FlarePlanResume {
     final drill = catalog.drillById(latest.items.firstOrNull?.exerciseId ?? '');
     final title = recordedTitle.isNotEmpty ? recordedTitle : drill?.name;
     if (title == null || title.isEmpty) return null;
+    final chain = _sessionChain(latest, results);
+    final identity = chain == null
+        ? null
+        : _PlanIdentity.parse(chain.last.planId);
     final summary = FlarePlanResume._(
       title: title,
       completed: latest.completedExercises,
       total: latest.totalExercises,
       endedAt: latest.endedAt,
       groupId: drill?.groupId,
+      snapshotId: identity?.snapshotId,
     );
 
-    final chain = _sessionChain(latest, results);
-    if (chain == null) return summary;
-    final origin = chain.last;
-    final identity = _PlanIdentity.parse(origin.planId);
+    if (chain == null || identity == null) return summary;
+    final pinnedSnapshot =
+        identity.snapshotId != null &&
+            restoredSnapshot?.id == identity.snapshotId &&
+            restoredSnapshot?.app == 'flare'
+        ? restoredSnapshot
+        : null;
+    if (identity.snapshotId != null && pinnedSnapshot == null) return summary;
     final target = _resolveTarget(
       identity: identity,
-      origin: origin,
+      origin: chain.last,
       catalog: catalog,
       routines: routines,
       preferredSceneTier: preferredSceneTier,
+      pinnedSnapshot: pinnedSnapshot,
     );
     if (target == null) return summary;
 
@@ -142,6 +168,9 @@ class FlarePlanResume {
       tier: target.authoredPlan?.tier ?? target.routine?.sdkPlan?.level,
       sceneTier: target.sceneTier,
       authoredPlan: target.authoredPlan,
+      snapshotId: identity.snapshotId,
+      planSnapshot: pinnedSnapshot,
+      skipStrengthening: target.skipStrengthening,
       routine: target.routine,
       sourceId: identity.sourceId,
       sessionId: latest.sessionId,
@@ -184,13 +213,23 @@ class FlarePlanResume {
         ),
       );
     }
+    final resumeKey =
+        '${Uri.encodeComponent(_sourceId!)}:${Uri.encodeComponent(_sessionId!)}';
     final followUp = original.copyWith(
-      id:
-          'flare-resume-v1:${Uri.encodeComponent(_sourceId!)}:'
-          '${Uri.encodeComponent(_sessionId!)}',
+      id: snapshotId == null
+          ? 'flare-resume-v1:$resumeKey'
+          : 'flare-resume-v2:$resumeKey:$snapshotId',
       blocks: blocks,
     );
-    final seconds = sdk.SessionBuilder(rhythms: rhythms).planSeconds(followUp);
+    final authored = authoredPlan;
+    final builder = authored != null && authored.kind == FlarePlanKind.cooldown
+        ? FlareCooldownSessionBuilder(
+            strengtheningRestSeconds: authored.strengtheningRestSeconds,
+            stretchPostures: authored.stretchPosturesForScene(sceneTier ?? 'A'),
+            rhythms: rhythms,
+          )
+        : sdk.SessionBuilder(rhythms: rhythms);
+    final seconds = builder.planSeconds(followUp);
     return followUp.copyWith(
       targetMinutes: (seconds / 60).ceil().clamp(1, 1000000),
     );
@@ -203,12 +242,15 @@ class _PlanIdentity {
     this.parentId,
     this.sceneTier,
     this.phaseSource,
+    this.snapshotId,
   });
 
   final String sourceId;
   final String? parentId;
   final String? sceneTier;
   final int? phaseSource;
+  final String? snapshotId;
+  static final _snapshotIdPattern = RegExp(r'^[0-9a-f]{64}$');
 
   static _PlanIdentity parse(String id) {
     final parts = id.split(':');
@@ -220,12 +262,32 @@ class _PlanIdentity {
         );
       }
       if (parts.length == 4 &&
+          parts[0] == 'flare-resume-v2' &&
+          _snapshotIdPattern.hasMatch(parts[3])) {
+        return _PlanIdentity(
+          Uri.decodeComponent(parts[1]),
+          parentId: Uri.decodeComponent(parts[2]),
+          snapshotId: parts[3],
+        );
+      }
+      if (parts.length == 4 &&
           parts[0] == 'flare-plan-v1' &&
           const ['A', 'B', 'C'].contains(parts[2])) {
         return _PlanIdentity(
           Uri.decodeComponent(parts[1]),
           sceneTier: parts[2],
           phaseSource: int.tryParse(parts[3]),
+        );
+      }
+      if (parts.length == 5 &&
+          parts[0] == 'flare-plan-v2' &&
+          const ['A', 'B', 'C'].contains(parts[2]) &&
+          _snapshotIdPattern.hasMatch(parts[4])) {
+        return _PlanIdentity(
+          Uri.decodeComponent(parts[1]),
+          sceneTier: parts[2],
+          phaseSource: int.tryParse(parts[3]),
+          snapshotId: parts[4],
         );
       }
     } on ArgumentError {
@@ -243,12 +305,15 @@ List<sdk.SessionResult>? _sessionChain(
 ) {
   final chain = <sdk.SessionResult>[];
   final seen = <String>{};
-  final source = _PlanIdentity.parse(latest.planId).sourceId;
+  final latestIdentity = _PlanIdentity.parse(latest.planId);
   var current = latest;
   while (seen.add(current.sessionId)) {
     chain.add(current);
     final identity = _PlanIdentity.parse(current.planId);
-    if (identity.sourceId != source) return null;
+    if (identity.sourceId != latestIdentity.sourceId ||
+        identity.snapshotId != latestIdentity.snapshotId) {
+      return null;
+    }
     final parentId = identity.parentId;
     if (parentId == null) return chain;
     final parent = results[parentId];
@@ -266,6 +331,7 @@ typedef _Target = ({
   TrainingRoutine? routine,
   int? phaseSource,
   String? sceneTier,
+  bool skipStrengthening,
 });
 
 _Target? _resolveTarget({
@@ -274,13 +340,19 @@ _Target? _resolveTarget({
   required Catalog catalog,
   required Iterable<TrainingRoutine> routines,
   required String preferredSceneTier,
+  required PoseHubPlanSnapshot? pinnedSnapshot,
 }) {
-  final authored = [
-    ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
-    ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
-  ].where((plan) => plan.id == identity.sourceId).firstOrNull;
+  final authored = pinnedSnapshot == null
+      ? catalog.bundledSupplementalPlanById(identity.sourceId) ??
+            [
+              ...catalog.flarePlanAngles.expand(catalog.plansForAngle),
+              ...catalog.flarePlanMuscles.expand(catalog.plansForMuscle),
+            ].where((plan) => plan.id == identity.sourceId).firstOrNull
+      : _planInSnapshot(pinnedSnapshot, identity.sourceId);
   if (authored != null) {
-    final candidates = identity.sceneTier != null
+    final scenes = authored.isSupplemental
+        ? const ['A']
+        : identity.sceneTier != null
         ? [identity.sceneTier!]
         : {
             if (const ['A', 'B', 'C'].contains(preferredSceneTier))
@@ -289,15 +361,28 @@ _Target? _resolveTarget({
             'B',
             'C',
           };
+    final candidates = [
+      for (final scene in scenes) ...[
+        (scene, false),
+        if (authored.kind == FlarePlanKind.cooldown) (scene, true),
+      ],
+    ];
     // Prefer the recorded movement itself over a historical substitution
     // reference when older logs cannot name the scene directly.
     for (final allowAliases in [false, true]) {
-      for (final scene in candidates) {
+      for (final (scene, skipStrengthening) in candidates) {
+        final groups = [
+          if (!skipStrengthening && authored.strengtheningItems.isNotEmpty)
+            authored.strengtheningItems,
+          authored.items,
+        ];
         final ids = [
-          [for (final item in authored.items) item.drillForScene(scene)],
+          for (final group in groups)
+            [for (final item in group) item.trainingDrillForScene(scene)],
         ];
         final indexes = [
-          List<int>.generate(authored.items.length, (index) => index),
+          for (final group in groups)
+            List<int>.generate(group.length, (index) => index),
         ];
         if (!_applyResult(origin, ids, indexes, allowAliases: allowAliases)) {
           continue;
@@ -322,11 +407,13 @@ _Target? _resolveTarget({
           routine: null,
           phaseSource: phaseSource,
           sceneTier: scene,
+          skipStrengthening: skipStrengthening,
         );
       }
     }
     return null;
   }
+  if (pinnedSnapshot != null) return null;
 
   final matches = routines
       .where((routine) => routine.id == identity.sourceId)
@@ -351,7 +438,20 @@ _Target? _resolveTarget({
     routine: routine,
     phaseSource: null,
     sceneTier: null,
+    skipStrengthening: false,
   );
+}
+
+FlarePlan? _planInSnapshot(PoseHubPlanSnapshot snapshot, String id) {
+  try {
+    return Catalog.readSupplementalPlans(
+      snapshot,
+    ).where((plan) => plan.id == id).firstOrNull;
+  } on FormatException {
+    return null;
+  } on TypeError {
+    return null;
+  }
 }
 
 /// Apply only per-action completions. Partial sets or a partially completed

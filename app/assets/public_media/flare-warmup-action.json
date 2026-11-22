@@ -1,0 +1,745 @@
+{
+  "sourcePack": "r2-v19",
+  "sourceCatalogSha256": "2100641560ee3a6e5d53c0a948b9e7034c4fe3120c71389f1b0d3726c0f19060",
+  "sourceSemanticSha256": "39539f805bb838166cac518a5a26724af8b0c20e35ba6ca081cf34e111327758",
+  "action": {
+    "id": "t-kneeling-scap-pushup",
+    "nameZh": "跪姿肩胛俯卧撑",
+    "muscleGroups": [
+      "serratus",
+      "scapular"
+    ],
+    "equipment": [
+      "mat"
+    ],
+    "rhythm": {
+      "fps": 30,
+      "frames": 240,
+      "durationSeconds": 8,
+      "coverFrame": 135,
+      "policy": "pose-hub-v3-source-motion",
+      "execution": {
+        "kind": "rep_hold",
+        "leadSeconds": 1,
+        "phases": "go=1.5s; hold=1s; back=1.3s; rest=0.2s",
+        "source": "thomas-sup r2 animation tempo (4 s per rep, 1 s at the top; brief: 顶端停 1 秒)",
+        "reps": 10
+      },
+      "executionStatus": "draft-ai-needs-user-review",
+      "executionSource": {
+        "path": "catalog/production/thomas-supplement-r1/text/t-kneeling-scap-pushup.json",
+        "actionId": "t-kneeling-scap-pushup",
+        "sha256": "3da5ccf82503664756bdc2f7327e9605429e900a7716ee8154d0a8f14a13119e"
+      },
+      "videoLoopIsTrainingDose": false
+    },
+    "source": {
+      "branch": "codex/thomas-sup-publish",
+      "commit": "39a83471906b52f9ea9a96985267c91cbd0ac102",
+      "renderCommit": "b33b9addc77865aac46c35f978c1a323e4a2fe66",
+      "spec": {
+        "path": "drill-anim/specs/t-kneeling-scap-pushup.js",
+        "sha256": "b056c3612aa46ba52eff144e8eab174c4c664a1c334ff3dff7111b2e13e5c0b9"
+      },
+      "mediaSet": "2026-11-19_thomas-sup-final_b33b9ad",
+      "model": "coach-v3r3-wristfix@v5-toon (pose solved on coach-v3r3-wristfix@v5-toon (pose solved on training-human-v3-armfix@0.1.0-r2))"
+    },
+    "revision": "t-kneeling-scap-pushup-r2-v19",
+    "state": "ready-test-unreviewed",
+    "reviewed": false,
+    "releaseEligible": false,
+    "family": "t-kneeling-scap-pushup",
+    "muscleGroupsZh": "前锯肌、斜方肌中下部 · 菱形肌",
+    "equipmentZh": "瑜伽垫",
+    "trainingDefinitionComplete": true,
+    "trainingSemantics": {
+      "status": "complete-unreviewed",
+      "reviewed": false,
+      "releaseEligible": false,
+      "batchId": "thomas-supplement-r1",
+      "definitionComplete": true,
+      "missingRequiredFields": [],
+      "unknownFields": [],
+      "evidence": [
+        {
+          "path": "catalog/production/thomas-supplement-r1/text/t-kneeling-scap-pushup.json",
+          "sha256": "3da5ccf82503664756bdc2f7327e9605429e900a7716ee8154d0a8f14a13119e"
+        },
+        {
+          "path": "catalog/production/thomas-supplement-r1/recipes/t-kneeling-scap-pushup.json",
+          "sha256": "ada5dd57b8324a8a461a5c85d00f2be43d1cfb6744e06a13e3291e7016999eb8"
+        },
+        {
+          "path": "tools/thomas-sup/publish/pack-fields.json",
+          "actionId": "t-kneeling-scap-pushup"
+        },
+        {
+          "path": "catalog/catalog.json",
+          "actionId": "t-kneeling-scap-pushup"
+        }
+      ],
+      "videoLoopIsTrainingDose": false
+    },
+    "purpose": "俯卧撑加推的入门版，膝盖跪着先把肩胛推地的劲儿找到",
+    "category": "strength",
+    "muscles": [
+      "前锯肌",
+      "斜方肌中下部 · 菱形肌"
+    ],
+    "position": "kneeling",
+    "unilateral": false,
+    "level": 1,
+    "scenes": [
+      "home",
+      "gym"
+    ],
+    "defaultDose": {
+      "mode": "reps",
+      "sets": 3,
+      "reps": 10,
+      "restSeconds": 60
+    },
+    "doseRange": {
+      "sets": [
+        3,
+        3
+      ],
+      "reps": [
+        10,
+        12
+      ],
+      "restSeconds": [
+        60,
+        60
+      ]
+    },
+    "cues": {
+      "zh": [
+        "手肘锁死别弯，只让肩胛骨动",
+        "手放在肩膀正下方，膝盖跪稳，从膝盖到头是一条斜线。",
+        "胸口往地上沉，两块肩胛骨靠拢；再用手把地推开，推到后背微微拱起。",
+        "推到最高停一秒，肩膀离耳朵远一点，屁股别跟着上下晃。"
+      ]
+    },
+    "primaryCue": 0,
+    "cautions": [
+      "膝盖硌得疼就垫块毛巾"
+    ],
+    "contraindications": [
+      "膝"
+    ],
+    "alternative": null,
+    "sourceRevision": "t-kneeling-scap-pushup",
+    "mediaRevision": "r2-v19",
+    "repairReason": "托马斯动作库补充 r1 新动作（V5 日漫 v5-toon；开哥 2026-11-19 22:26 样片通过、22:27 同意正式渲染上传）",
+    "files": {
+      "video": {
+        "path": "media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.rgb-alpha.mp4",
+        "bytes": 108159,
+        "sha256": "3dc1a31b538df2a59c6d9991b8f8617b7334ce1ce951feaf3a1999592e9c2ebc",
+        "width": 720,
+        "height": 1440,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "assetName": "t-kneeling-scap-pushup.rgb-alpha.mp4",
+        "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.rgb-alpha.mp4",
+        "status": "ready"
+      },
+      "cover": {
+        "path": "media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.cover.alpha.webp",
+        "bytes": 14702,
+        "sha256": "d00cfe28faf5c11960944d5a8b8a5e116db9dc755f79998d1834326bab5fd0ad",
+        "width": 640,
+        "height": 640,
+        "alpha": true,
+        "assetName": "t-kneeling-scap-pushup.cover.alpha.webp",
+        "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.cover.alpha.webp",
+        "status": "ready"
+      },
+      "thumbnail": {
+        "path": "media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.thumbnail.alpha.webp",
+        "bytes": 3930,
+        "sha256": "72b2a819c24dde8e366101826c4d0e5fc4e004a529b152f577ae5be1d8ac99c9",
+        "width": 192,
+        "height": 192,
+        "alpha": true,
+        "assetName": "t-kneeling-scap-pushup.thumbnail.alpha.webp",
+        "downloadUrl": "https://media.uuugk.win/pack/r2-v1/media/t-kneeling-scap-pushup/r2-v19/t-kneeling-scap-pushup.thumbnail.alpha.webp",
+        "status": "ready"
+      }
+    },
+    "qa": {
+      "report": {
+        "path": "qa/t-kneeling-scap-pushup/r2-v19/export-check.json",
+        "bytes": null,
+        "sha256": null
+      },
+      "metrics": {
+        "status": "pending-export"
+      }
+    },
+    "availableForApp": true,
+    "availableForTraining": true,
+    "nameEn": "Kneeling Scapula Push-Up",
+    "purposeEn": "The entry version of the push-up plus: on your knees, find how to push the floor with your shoulder blades.",
+    "activeMuscles": [
+      "chest"
+    ],
+    "synergistMuscles": [
+      "upper-back",
+      "deltoids"
+    ],
+    "equipmentEn": [
+      "mat"
+    ],
+    "cuesEn": [
+      "Lock your elbows, only your shoulder blades move",
+      "Hands right under your shoulders, knees planted, one straight slope from your knees to your head.",
+      "Let your chest drop so your shoulder blades come together, then push the floor away until your upper back rounds slightly.",
+      "Wait a second at the top, shoulders away from your ears, and keep your hips from bobbing."
+    ],
+    "commonErrors": [
+      {
+        "zh": "手肘跟着弯，变成跪姿俯卧撑",
+        "en": "Bending your elbows and turning it into a kneeling push-up."
+      },
+      {
+        "zh": "耸肩、头往前探",
+        "en": "Shrugging and pushing your head forward."
+      },
+      {
+        "zh": "屁股往后坐或者塌腰，靠腰动不是肩胛骨在动",
+        "en": "Sitting your hips back or sagging your lower back, so your waist moves instead of your shoulder blades."
+      }
+    ],
+    "cautionsEn": [
+      "If your knees hurt on the floor, put a towel under them."
+    ],
+    "phases": {
+      "start": {
+        "zh": "推开地面",
+        "en": "Push away"
+      },
+      "peak": {
+        "zh": "顶住别动",
+        "en": "Top"
+      },
+      "end": {
+        "zh": "胸口下沉",
+        "en": "Sink"
+      }
+    },
+    "training": {
+      "kind": "rep_hold",
+      "leadSeconds": 1,
+      "phases": [
+        {
+          "id": "go",
+          "seconds": 1.5
+        },
+        {
+          "id": "hold",
+          "seconds": 1.0
+        },
+        {
+          "id": "back",
+          "seconds": 1.3
+        },
+        {
+          "id": "rest",
+          "seconds": 0.2
+        }
+      ],
+      "source": "thomas-sup r2 animation tempo (4 s per rep, 1 s at the top; brief: 顶端停 1 秒)"
+    },
+    "reviewStatus": "draft-ai-needs-user-review",
+    "packRevision": "r2-v19",
+    "assetStatus": "pending-export",
+    "recipe": {
+      "path": "catalog/production/thomas-supplement-r1/recipes/t-kneeling-scap-pushup.json",
+      "sha256": "ada5dd57b8324a8a461a5c85d00f2be43d1cfb6744e06a13e3291e7016999eb8",
+      "fingerprint": "sha256:ada5dd57b8324a8a461a5c85d00f2be43d1cfb6744e06a13e3291e7016999eb8"
+    },
+    "doseRangeSource": "thomas-supplement-brief-2026-11-19",
+    "scenesSource": "inferred-from-equipment-and-position",
+    "poseHubText": {
+      "format": "pose-hub-action-text@1",
+      "id": "t-kneeling-scap-pushup",
+      "reviewStatus": "draft-ai-needs-user-review",
+      "sources": [
+        "catalog/production/thomas-supplement-r1/brief-2026-11-19 (托马斯动作库补充-制作说明 item 1（初级）)",
+        "drill-anim/specs/t-kneeling-scap-pushup.js",
+        "tools/thomas-sup/standards/t-kneeling-scap-pushup.md"
+      ],
+      "name": {
+        "zh": "跪姿肩胛俯卧撑",
+        "en": "Kneeling Scapula Push-Up"
+      },
+      "purpose": {
+        "zh": "俯卧撑加推的入门版，膝盖跪着先把肩胛推地的劲儿找到",
+        "en": "The entry version of the push-up plus: on your knees, find how to push the floor with your shoulder blades."
+      },
+      "cues": [
+        {
+          "id": "cue1",
+          "primary": true,
+          "text": {
+            "zh": "手肘锁死别弯，只让肩胛骨动",
+            "en": "Lock your elbows, only your shoulder blades move"
+          }
+        },
+        {
+          "id": "cue2",
+          "primary": false,
+          "text": {
+            "zh": "手放在肩膀正下方，膝盖跪稳，从膝盖到头是一条斜线。",
+            "en": "Hands right under your shoulders, knees planted, one straight slope from your knees to your head."
+          }
+        },
+        {
+          "id": "cue3",
+          "primary": false,
+          "text": {
+            "zh": "胸口往地上沉，两块肩胛骨靠拢；再用手把地推开，推到后背微微拱起。",
+            "en": "Let your chest drop so your shoulder blades come together, then push the floor away until your upper back rounds slightly."
+          }
+        },
+        {
+          "id": "cue4",
+          "primary": false,
+          "text": {
+            "zh": "推到最高停一秒，肩膀离耳朵远一点，屁股别跟着上下晃。",
+            "en": "Wait a second at the top, shoulders away from your ears, and keep your hips from bobbing."
+          }
+        }
+      ],
+      "commonErrors": [
+        {
+          "zh": "手肘跟着弯，变成跪姿俯卧撑",
+          "en": "Bending your elbows and turning it into a kneeling push-up."
+        },
+        {
+          "zh": "耸肩、头往前探",
+          "en": "Shrugging and pushing your head forward."
+        },
+        {
+          "zh": "屁股往后坐或者塌腰，靠腰动不是肩胛骨在动",
+          "en": "Sitting your hips back or sagging your lower back, so your waist moves instead of your shoulder blades."
+        }
+      ],
+      "cautions": [
+        {
+          "zh": "膝盖硌得疼就垫块毛巾",
+          "en": "If your knees hurt on the floor, put a towel under them."
+        }
+      ],
+      "tags": {
+        "category": "strength",
+        "activeMuscles": [
+          "chest"
+        ],
+        "synergistMuscles": [
+          "upper-back",
+          "deltoids"
+        ],
+        "equipment": [
+          "mat"
+        ],
+        "position": "kneeling",
+        "difficulty": 1
+      },
+      "unilateral": false,
+      "defaultDose": {
+        "mode": "reps",
+        "sets": 3,
+        "reps": 10,
+        "restSeconds": 60
+      },
+      "phases": {
+        "start": {
+          "zh": "推开地面",
+          "en": "Push away"
+        },
+        "peak": {
+          "zh": "顶住别动",
+          "en": "Top"
+        },
+        "end": {
+          "zh": "胸口下沉",
+          "en": "Sink"
+        }
+      },
+      "training": {
+        "kind": "rep_hold",
+        "leadSeconds": 1,
+        "phases": [
+          {
+            "id": "go",
+            "seconds": 1.5
+          },
+          {
+            "id": "hold",
+            "seconds": 1.0
+          },
+          {
+            "id": "back",
+            "seconds": 1.3
+          },
+          {
+            "id": "rest",
+            "seconds": 0.2
+          }
+        ],
+        "source": "thomas-sup r2 animation tempo (4 s per rep, 1 s at the top; brief: 顶端停 1 秒)"
+      },
+      "thomasSupplement": {
+        "version": "r2",
+        "item": "1（初级）",
+        "thomasAngle": "10 第一侧移重 / 14 第二侧移重（初级）",
+        "camera": "正侧面＋斜后上方（同动作 1）",
+        "doseBrief": "同动作 1 的低阶版：3 组 × 10–12 次，休 60 秒；顶端停 1 秒",
+        "status": "draft-awaiting-user-review",
+        "note": "defaultDose takes the low end of the brief range; the range is in doseBrief. r2: one rep 4 s (push 1.5 s, top 1 s, sink 1.3 s, 0.2 s at the bottom), same as t-pushup-plus.",
+        "standard": "tools/thomas-sup/standards/t-kneeling-scap-pushup.md"
+      }
+    },
+    "voice": {
+      "status": "ready",
+      "sourceBatch": "2026-11-19_thomas-sup-voice",
+      "revision": "r2-v19",
+      "sourceManifest": {
+        "path": "packages/t-kneeling-scap-pushup/voice-manifest.json",
+        "sha256": "5bfe52ad272750e9786d393a4fc25adfb488ddd950e28a7da96106d2f0b15947",
+        "status": "technical-passed"
+      },
+      "guideManifest": {
+        "path": "packages/t-kneeling-scap-pushup/voice-guide-manifest.json",
+        "sha256": "944d389fb5e2a0067ed18d5e69b8ef0fc5fecf26f2e03e5a0d2cd2711670eefe",
+        "status": "technical-passed"
+      },
+      "manualListening": "pending",
+      "files": [
+        {
+          "language": "zh",
+          "clipId": "name",
+          "role": "intro",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/name.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/name.m4a",
+          "bytes": 13679,
+          "sha256": "5711651b17d7019035eb0674126a89afda4ddd7ad923ec7a68fdc28c584f690a",
+          "durationSeconds": 1.532517,
+          "assetName": "name.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/name.m4a",
+          "contentType": "audio/mp4",
+          "text": "跪姿肩胛俯卧撑"
+        },
+        {
+          "language": "zh",
+          "clipId": "primaryCue",
+          "role": "intro",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/primaryCue.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/primaryCue.m4a",
+          "bytes": 23216,
+          "sha256": "cf2b91f5794a850b5f094e053975829ff838526658250961da87b91652490057",
+          "durationSeconds": 2.693515,
+          "assetName": "primaryCue.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/primaryCue.m4a",
+          "contentType": "audio/mp4",
+          "text": "手肘锁死别弯，只让肩胛骨动"
+        },
+        {
+          "language": "zh",
+          "clipId": "phase.start",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/phase.start.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/phase.start.m4a",
+          "bytes": 8976,
+          "sha256": "32afcba298677206c97c269d54cd0d86d7872986fa699e96eb6887672657d547",
+          "durationSeconds": 0.952018,
+          "assetName": "phase.start.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/phase.start.m4a",
+          "contentType": "audio/mp4",
+          "text": "推开地面"
+        },
+        {
+          "language": "zh",
+          "clipId": "phase.peak",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/phase.peak.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/phase.peak.m4a",
+          "bytes": 8635,
+          "sha256": "73e77feef4504eb3117dc5acf73707e0ba1e1441c660012e3894cc63e752a4db",
+          "durationSeconds": 0.928798,
+          "assetName": "phase.peak.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/phase.peak.m4a",
+          "contentType": "audio/mp4",
+          "text": "顶住别动"
+        },
+        {
+          "language": "zh",
+          "clipId": "phase.end",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/phase.end.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/phase.end.m4a",
+          "bytes": 9929,
+          "sha256": "01143ec8c3e21bc303dd7d4af6b0a58a5f61d7f60965aaa8bb48a19012fc7b81",
+          "durationSeconds": 1.091338,
+          "assetName": "phase.end.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/phase.end.m4a",
+          "contentType": "audio/mp4",
+          "text": "胸口下沉"
+        },
+        {
+          "language": "zh",
+          "clipId": "g.rem.0",
+          "role": "guide",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/g.rem.0.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/g.rem.0.m4a",
+          "bytes": 20020,
+          "sha256": "7cf45069258c0650f5d81edfac27b2db4bd6ebe647b84f893a2eb32daca08ea3",
+          "durationSeconds": 2.321995,
+          "assetName": "g.rem.0.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/g.rem.0.m4a",
+          "contentType": "audio/mp4",
+          "text": "手肘锁直，靠肩胛骨推地"
+        },
+        {
+          "language": "zh",
+          "clipId": "g.rem.1",
+          "role": "guide",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/zh/g.rem.1.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/zh/g.rem.1.m4a",
+          "bytes": 19038,
+          "sha256": "118486400e71f2174de4c5c83b72bd704fbf10623cd6f6b7dfb5056fd1f88afc",
+          "durationSeconds": 2.182676,
+          "assetName": "g.rem.1.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/zh/g.rem.1.m4a",
+          "contentType": "audio/mp4",
+          "text": "屁股别往后坐，腰也别塌"
+        },
+        {
+          "language": "en",
+          "clipId": "name",
+          "role": "intro",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/name.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/name.m4a",
+          "bytes": 13552,
+          "sha256": "096cb839ac4689a6be1ace6ffea353cc92c2ce5e505e743092c0c0f5e60e2a42",
+          "durationSeconds": 1.509297,
+          "assetName": "name.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/name.m4a",
+          "contentType": "audio/mp4",
+          "text": "Kneeling Scapula Push-Up"
+        },
+        {
+          "language": "en",
+          "clipId": "primaryCue",
+          "role": "intro",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/primaryCue.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/primaryCue.m4a",
+          "bytes": 22604,
+          "sha256": "d75d5371783a20cb07582f7183ef7b9873a30723b039ce033f3f0b709d45b3b7",
+          "durationSeconds": 2.623855,
+          "assetName": "primaryCue.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/primaryCue.m4a",
+          "contentType": "audio/mp4",
+          "text": "Lock your elbows, only your shoulder blades move"
+        },
+        {
+          "language": "en",
+          "clipId": "phase.start",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/phase.start.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/phase.start.m4a",
+          "bytes": 7012,
+          "sha256": "a3eed189a8fb06e6e9fdb9f67cacdbb59a6410c3782161759c2656f60e654e24",
+          "durationSeconds": 0.743039,
+          "assetName": "phase.start.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/phase.start.m4a",
+          "contentType": "audio/mp4",
+          "text": "Push away"
+        },
+        {
+          "language": "en",
+          "clipId": "phase.peak",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/phase.peak.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/phase.peak.m4a",
+          "bytes": 4893,
+          "sha256": "65d108f69fce103deacd86c87cc4763795af63141ae1e8e7e682b0792f8b8262",
+          "durationSeconds": 0.464399,
+          "assetName": "phase.peak.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/phase.peak.m4a",
+          "contentType": "audio/mp4",
+          "text": "Top"
+        },
+        {
+          "language": "en",
+          "clipId": "phase.end",
+          "role": "phase",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/phase.end.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/phase.end.m4a",
+          "bytes": 5739,
+          "sha256": "4b9b769335ac0972e1e24a469497593959688263ccc3d2593422defcab51bd8a",
+          "durationSeconds": 0.580499,
+          "assetName": "phase.end.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/phase.end.m4a",
+          "contentType": "audio/mp4",
+          "text": "Sink"
+        },
+        {
+          "language": "en",
+          "clipId": "g.rem.0",
+          "role": "guide",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/g.rem.0.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/g.rem.0.m4a",
+          "bytes": 21966,
+          "sha256": "eebac7fdf678014e1e719719111cfb91b0920730f36dda8bf1c326c0aafd30c4",
+          "durationSeconds": 2.530975,
+          "assetName": "g.rem.0.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/g.rem.0.m4a",
+          "contentType": "audio/mp4",
+          "text": "Elbows locked, shoulder blades push the floor"
+        },
+        {
+          "language": "en",
+          "clipId": "g.rem.1",
+          "role": "guide",
+          "path": "voice/t-kneeling-scap-pushup/r2-v19/en/g.rem.1.m4a",
+          "sourcePath": "packages/t-kneeling-scap-pushup/voice/en/g.rem.1.m4a",
+          "bytes": 18357,
+          "sha256": "b3cf3e4be632fea0022b131457cc1710d243daa64a375223e86a3f03358d9f24",
+          "durationSeconds": 2.113016,
+          "assetName": "g.rem.1.m4a",
+          "downloadUrl": "https://media.uuugk.win/pack/r2-v1/voice/t-kneeling-scap-pushup/r2-v19/en/g.rem.1.m4a",
+          "contentType": "audio/mp4",
+          "text": "Hips stay forward, no sagging back"
+        }
+      ]
+    },
+    "status": "active",
+    "voiceGuide": {
+      "format": "pose-hub-voice-guide@1",
+      "status": "ready",
+      "mode": "reps",
+      "speechRate": {
+        "zhCharsPerSecond": 4,
+        "enWordsPerSecond": 2.5
+      },
+      "sharedVocabulary": "catalog/voice-v2/script.json#common",
+      "repSeconds": 4.0,
+      "phaseCues": "first-2-reps",
+      "count": {
+        "key": "n.{rep}",
+        "at": "rep-end"
+      },
+      "reminders": [
+        {
+          "afterRep": 3,
+          "role": "form",
+          "zh": "手肘锁直，靠肩胛骨推地",
+          "en": "Elbows locked, shoulder blades push the floor",
+          "from": [
+            "cue1",
+            "commonErrors[0]"
+          ],
+          "clipId": "g.rem.0"
+        },
+        {
+          "afterRep": 6,
+          "role": "halfway",
+          "zh": "屁股别往后坐，腰也别塌",
+          "en": "Hips stay forward, no sagging back",
+          "from": [
+            "commonErrors[2]"
+          ],
+          "clipId": "g.rem.1"
+        },
+        {
+          "afterRep": 9,
+          "key": "p.last_rep"
+        }
+      ],
+      "afterSet": {
+        "moreSets": [
+          "p.rest",
+          "sec.60"
+        ],
+        "allDone": [
+          "p.nice"
+        ]
+      }
+    }
+  },
+  "definition": {
+    "id": "t-kneeling-scap-pushup",
+    "name": {
+      "zh": "跪姿肩胛俯卧撑",
+      "en": "Kneeling Scapula Push-Up"
+    },
+    "purpose": "俯卧撑加推的入门版，膝盖跪着先把肩胛推地的劲儿找到",
+    "category": "strength",
+    "muscles": [
+      "前锯肌",
+      "斜方肌中下部 · 菱形肌"
+    ],
+    "muscleGroups": [
+      "serratus",
+      "scapular"
+    ],
+    "equipment": [
+      "mat"
+    ],
+    "position": "kneeling",
+    "unilateral": false,
+    "level": 1,
+    "scenes": [
+      "home",
+      "gym"
+    ],
+    "defaultDose": {
+      "mode": "reps",
+      "sets": 3,
+      "reps": 10,
+      "restSeconds": 60
+    },
+    "doseRange": {
+      "sets": [
+        3,
+        3
+      ],
+      "reps": [
+        10,
+        12
+      ],
+      "restSeconds": [
+        60,
+        60
+      ]
+    },
+    "cues": {
+      "zh": [
+        "手肘锁死别弯，只让肩胛骨动",
+        "手放在肩膀正下方，膝盖跪稳，从膝盖到头是一条斜线。",
+        "胸口往地上沉，两块肩胛骨靠拢；再用手把地推开，推到后背微微拱起。",
+        "推到最高停一秒，肩膀离耳朵远一点，屁股别跟着上下晃。"
+      ]
+    },
+    "primaryCue": 0,
+    "cautions": [
+      "膝盖硌得疼就垫块毛巾"
+    ],
+    "contraindications": [
+      "膝"
+    ],
+    "alternative": null,
+    "apps": [],
+    "tags": [
+      "thomas",
+      "thomas:supplement-r1"
+    ],
+    "review": {
+      "status": "draft-ai-needs-user-review"
+    }
+  }
+}

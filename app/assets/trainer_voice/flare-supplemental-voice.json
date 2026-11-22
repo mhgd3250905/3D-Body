@@ -1,0 +1,278 @@
+{
+  "language": "zh",
+  "engine": "Edge TTS, zh-CN-XiaoxiaoNeural, +6%",
+  "source": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r1/manifest.json",
+  "clips": {
+    "supplemental.general-warmup.1": {
+      "ms": 5270,
+      "sha256": "e3c56626ee131135cdd0f03b44d54ca2ca5c07bd4aaebd2c51f0c6603f9c1220"
+    },
+    "supplemental.general-warmup.2": {
+      "ms": 6070,
+      "sha256": "8d4ad714ca52ca5de2143bdd458ab913aac689635b4adda69af8cbdc6b72799b"
+    },
+    "supplemental.general-warmup.3": {
+      "ms": 5960,
+      "sha256": "5c4e7e662194b8d3f6f8e0ed0225f8d1428d0e13acd1364c75cafc940718c354"
+    },
+    "supplemental.general-warmup.4": {
+      "ms": 4470,
+      "sha256": "2422a51b50d7c2f622d87bb5e60ed08c8a91652fd3b68dd45022b148f2b145e5"
+    },
+    "supplemental.general-warmup.5": {
+      "ms": 4940,
+      "sha256": "35836e8ff1d452aba19e27680091c794fb90d3d2626391ed9c221ff5d920d6ff"
+    },
+    "supplemental.general-warmup.6": {
+      "ms": 3890,
+      "sha256": "1681e8aaaf1cf9dbc6fd4af0d95dfb832ef6ee0d10df75d4fa2252df4251b1c1"
+    },
+    "supplemental.general-warmup.7": {
+      "ms": 5720,
+      "sha256": "7784d5c6b87a55e776681d460b55401e238162251eb3b8edfa7bb9a0737764e4"
+    },
+    "supplemental.general-warmup.8": {
+      "ms": 5840,
+      "sha256": "e79c6b8e6ff2f552a09f8dbe3a8e9ee16e8bd71863a602a6e378ae2a6c5f7ec3"
+    },
+    "supplemental.general-warmup.9": {
+      "ms": 4580,
+      "sha256": "954a62b3d48cbbb46cb44a9562ab49f261ace2f25149ae860dc319019e10c35d"
+    },
+    "supplemental.general-warmup.10": {
+      "ms": 5150,
+      "sha256": "47c3d6d03df41110b1a06f05269698a62a76a582e9d41a1c6e80642da64ad965"
+    },
+    "supplemental.general-warmup.11": {
+      "ms": 4220,
+      "sha256": "840e2a529638f9d6bd814318b842406fa971fe533cbf7af7e2764d9216069901"
+    },
+    "supplemental.general-warmup.12": {
+      "ms": 5510,
+      "sha256": "3d3b9965e119ec1d17d5e89504c4b4863a8deb7d54865782c3c488fd6f5e956c"
+    },
+    "supplemental.cooldown.strength.1.1": {
+      "ms": 5020,
+      "sha256": "e88a069ca267f466c79f504f33d062184cfa97e9e843e393babc4baff14c67a1"
+    },
+    "supplemental.cooldown.strength.1.2": {
+      "ms": 5210,
+      "sha256": "e7da82f48e2b5aeea2e48bdea1e8605550fb773f711f7ba9f816aaf34ff46b41"
+    },
+    "supplemental.cooldown.strength.1.3": {
+      "ms": 4780,
+      "sha256": "006c526c14ca4cc9d50ad185082e28491104fc3216258b1bd4c34bb2aaf32335"
+    },
+    "supplemental.cooldown.strength.1.4": {
+      "ms": 6410,
+      "sha256": "ec8f67cbdbdb02fae24b1529845564ecf78d29c98aa102a984578a1c2242f05f"
+    },
+    "supplemental.cooldown.strength.1.5": {
+      "ms": 5240,
+      "sha256": "f2dd81943379df6aea9a98bb1d53436603950abd69fb740f1a4a250d2998d57f"
+    },
+    "supplemental.cooldown.strength.1.6": {
+      "ms": 5200,
+      "sha256": "fd51e3985cb2d8bca0e7184471e2c5707f46334539b9ea1a0f7b66d0f5490075"
+    },
+    "supplemental.cooldown.strength.2.1": {
+      "ms": 5950,
+      "sha256": "3668ec5d7db0395c92e4257002d54ec2db4a8a5e8d5247d8fb1c2eaee2c10258"
+    },
+    "supplemental.cooldown.strength.2.2": {
+      "ms": 5360,
+      "sha256": "6501acb21a48c38c464b934fef4fe41d15ef5658de7c97876dfd92b3afd828c1"
+    },
+    "supplemental.cooldown.strength.2.3": {
+      "ms": 5640,
+      "sha256": "280326a3e2a4684b2a13c25eba2a26a476f30bd7ad19c8198fabc040852e6295"
+    },
+    "supplemental.cooldown.strength.2.4": {
+      "ms": 4940,
+      "sha256": "ae16fd57e964fd0d82d7172b63bbf2b98943f6402ddd171dc20688c9d1b8d52b"
+    },
+    "supplemental.cooldown.strength.2.5": {
+      "ms": 5790,
+      "sha256": "4f455ceef6060ee63d126e1866502a988244188cb3448d2cd03fb1d9d03c4cab"
+    },
+    "supplemental.cooldown.strength.2.6": {
+      "ms": 6680,
+      "sha256": "140cf852c5902c521907f253c8d30bff2337ad74bd23ff6ddf1ce0ca5efe02b3"
+    },
+    "supplemental.cooldown.strength.2.7": {
+      "ms": 5550,
+      "sha256": "aa417c69a2978c8556cb3c73526b18bb46ddaab234ff1b651acdbe0545c0c184"
+    },
+    "supplemental.cooldown.strength.3.1": {
+      "ms": 6370,
+      "sha256": "394ec31966ba507494bc77d4ad8c2f67745e2735823df20a44fabbb1a4ec88cf"
+    },
+    "supplemental.cooldown.strength.3.2": {
+      "ms": 5270,
+      "sha256": "51fa3ece2ae4040d230ad12d244bb94fb0587468d3c2f5ac2baf111156a6805d"
+    },
+    "supplemental.cooldown.strength.3.3": {
+      "ms": 5840,
+      "sha256": "a3c82f3d161f4e2ce6b8afd5b0cbf79246c585d794833b45717980e575b42fab"
+    },
+    "supplemental.cooldown.strength.3.4": {
+      "ms": 6740,
+      "sha256": "7078e712cdf7d048a2fb8167dbb47a8447c5f7e28d8b0af3df2bba72c30b39b0"
+    },
+    "supplemental.cooldown.strength.3.5": {
+      "ms": 5840,
+      "sha256": "1fe14c20efd9c95ebb337fcfd4edda87b2ffaa598f99ebf089fa7ef7b86ed4df"
+    },
+    "supplemental.cooldown.strength.3.6": {
+      "ms": 6350,
+      "sha256": "00dd0a3b2630a07b7c1d46b5c113ddd6c7dbd91ca6bf627be2dd3a58e43f50fc"
+    },
+    "supplemental.cooldown.stretch.1": {
+      "ms": 4690,
+      "sha256": "98e180bec0f4b916b02677856ef3552359eab0357421f566897d66082a7d6edf"
+    },
+    "supplemental.cooldown.stretch.2": {
+      "ms": 5060,
+      "sha256": "6ddc487c829d8470303fd4eb6f60162e8a09f997fcc00b08d070294afab450c9"
+    },
+    "supplemental.cooldown.stretch.3": {
+      "ms": 5080,
+      "sha256": "31e32ea721be5aa7c576a3eebba9e3f1eca5cdf21f0b05fe6de9b99db51c0263"
+    },
+    "supplemental.cooldown.stretch.4": {
+      "ms": 5060,
+      "sha256": "18c31a40a262bb718a632e41ce091512964828da15bf16b1a14c863067235811"
+    },
+    "supplemental.cooldown.stretch.5": {
+      "ms": 5240,
+      "sha256": "ae20583db088bc371b7b10d1533e8cf57b7180ef44581696a9ef3ebd8c465964"
+    },
+    "supplemental.cooldown.stretch.6.1": {
+      "ms": 2180,
+      "sha256": "297f5a5f682e53b1bf6f7cbeea0bf1c9d8d805947af5edd1d67eb60f316c26e4"
+    },
+    "supplemental.cooldown.stretch.6.2": {
+      "ms": 2750,
+      "sha256": "2d78356455d15a4a193caaff21c8d06b9f3d975ec970df35b9471a8ed1ea4b03"
+    },
+    "supplemental.cooldown.stretch.7": {
+      "ms": 4320,
+      "sha256": "0f231a0dd463cef7259906e5e8604ff7d9239d449943b7e031766c96b8ccd870"
+    },
+    "supplemental.cooldown.stretch.8": {
+      "ms": 5050,
+      "sha256": "12687dfc523069a4c40a6ff65448f90bce37ae13998c8c56b44f36476d98ada5"
+    },
+    "supplemental.cooldown.stretch.9": {
+      "ms": 5510,
+      "sha256": "240104589183c81b2574e5e4271e6e1a788cc3e54f5d615aa595dcea0f6fbba9"
+    },
+    "supplemental.cooldown.stretch.10": {
+      "ms": 6030,
+      "sha256": "88d5d08642ffb3b1e08db6d254b9cee171088f67bdc0689436c14951a33a5b61"
+    },
+    "supplemental.cooldown.stretch.11": {
+      "ms": 6160,
+      "sha256": "97445f1fbe6717c3ca811ab64f49e11c28b1083bab5351976673cc7cda6d9026"
+    },
+    "supplemental.cooldown.stretch.12": {
+      "ms": 5660,
+      "sha256": "379f06850eb512f2d3c00fb3bc825827155ae364108d4cb5a63694b502578cea"
+    },
+    "supplemental.cooldown.stretch.13": {
+      "ms": 5940,
+      "sha256": "441b1aca8b72ea382123b41cbed69f958dbd2a3ed90980baa426c81dd3834a76"
+    },
+    "supplemental.cooldown.pnf": {
+      "ms": 2240,
+      "sha256": "4f1e49868a7c8369d941eb5c02a33970410164b57b47bc302e1f0e4a06a65610"
+    },
+    "supplemental.cooldown.stretch.2.short": {
+      "ms": 2450,
+      "sha256": "9d30e9fdf2aa967c2af04431a9bd6e1cf5b57a0d16fad2fb9e959fc7f4dec54f"
+    },
+    "supplemental.cooldown.stretch.3.short": {
+      "ms": 2220,
+      "sha256": "83f052a05ce534111f42aeefbc033170f9b465df5b191e3d2ccdd3abc0bad69b"
+    },
+    "supplemental.cooldown.stretch.4.short": {
+      "ms": 2090,
+      "sha256": "c6ab2b80c7e0939a22d102e159ffef338b1d4b6d6af79dde2c84b23e5eb05add"
+    },
+    "supplemental.cooldown.stretch.5.short": {
+      "ms": 2440,
+      "sha256": "0bbb222c7717f3ec71ebf5d1723cfea3203272da5dd89667a169ca49604feba6"
+    },
+    "supplemental.cooldown.stretch.7.short": {
+      "ms": 2370,
+      "sha256": "2ecdd26b2bd08c9ed35432a978566f95ed04ae99e1e718c79453b1ab010c786e"
+    },
+    "supplemental.cooldown.stretch.8.short": {
+      "ms": 2590,
+      "sha256": "01faa87deda2b637c704982da2671c460bd44d43ce9ba22eeb5aa2a4ff257845"
+    },
+    "supplemental.cooldown.stretch.10.short": {
+      "ms": 2270,
+      "sha256": "f3b5bf80f6ea9838402477883d5e2f3a3f4312b92c71891f69c515b68d554e64"
+    },
+    "supplemental.cooldown.stretch.11.short": {
+      "ms": 2430,
+      "sha256": "f4004ff2474296fa87e624aa7a429f1dbc95ab1db6be799ad61ac159ee0666bf"
+    },
+    "supplemental.cooldown.stretch.13.short": {
+      "ms": 2010,
+      "sha256": "16d45aa6da83322618ce5afb00a4a6544ece745bd1c88a654ce482a1e14a4436"
+    },
+    "supplemental.general-warmup.3.r2": {
+      "ms": 4690,
+      "sha256": "4d778edc9aab5613d8eb70e9b421ca720709bfd3c35b50074c506df2bd840cfb",
+      "text": "大臂贴身屈肘九十度，掌心朝上、朝下慢慢转到底"
+    },
+    "supplemental.general-warmup.4.r2": {
+      "ms": 6571,
+      "sha256": "787c810f31ad8b9025669289578e975462ee2ba8932249c931c869c9e4f990ca",
+      "text": "双手叉腰膝盖微弯，胯部先顺时针画 5 圈、再逆时针 5 圈，上身尽量不动"
+    },
+    "supplemental.general-warmup.8.r2": {
+      "ms": 5271,
+      "sha256": "2eacc310be949ca3bf34144f463f7e92dafb009763182576b55abd8ce3cd286b",
+      "text": "跪撑背平，一侧膝盖抬起向侧后方画大圈，骨盆别跟着转"
+    },
+    "supplemental.general-warmup.9.r2": {
+      "ms": 5921,
+      "sha256": "bccd66f9beef541d4461deb235dd7c94fcf95bf11199da0d39e76f3abec4fb14",
+      "text": "一条腿向侧伸直、脚掌踩地，背平着往后坐，大腿内侧有拉感就回"
+    },
+    "supplemental.general-warmup.12.r2": {
+      "ms": 5062,
+      "sha256": "bcc24a5781e4da4cf26b6ba25b8a6cdf62e0cc5176d39bed49b315cf16eb230d",
+      "text": "臀部抬起保持骨盆水平，左右交替抬脚，臀部别往下掉"
+    },
+    "supplemental.general-warmup.14.r2": {
+      "ms": 4783,
+      "sha256": "fb208e1312668dfdcffb55dbc0c4099898d4c94300bb9d96064b58df42a1eeb8",
+      "text": "90/90 坐稳上身立直，后侧小腿抬离地面停一下再放"
+    },
+    "supplemental.general-warmup.16.r2": {
+      "ms": 6130,
+      "sha256": "d8916bb6e32d05cfb72844084f5d2817ac1d583190844600d1053d3498143e88",
+      "text": "双脚宽于肩、脚尖朝外，蹲到底用手肘把膝盖往外推，停住再站起"
+    },
+    "supplemental.general-warmup.18.r2": {
+      "ms": 5968,
+      "sha256": "7cece877ee732bd61b82e66345303703f4c1c15428ea5a6e18e8d5c74cbe1178",
+      "text": "膝盖微弯背挺直，屁股向后推、上身前倾，大腿后侧有拉感就起"
+    },
+    "supplemental.general-warmup.21.r2": {
+      "ms": 5712,
+      "sha256": "baf93fefc0223ba2b31921e07fae40cd3debfa3e3846c5a92fe7cd18c72ad7a0",
+      "text": "直臂俯撑，肩在手腕正上方，单脚向侧点地再收回，臀部别晃"
+    },
+    "supplemental.general-warmup.22.r2": {
+      "ms": 5526,
+      "sha256": "673029e613c93e710735cdc8d897b6865909d60e3e441928e5d68a916ac89016",
+      "text": "坐姿双手撑在身后指尖朝后，伸髋把身体顶成桌面，停一下再落"
+    }
+  },
+  "additionalSource": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json"
+}

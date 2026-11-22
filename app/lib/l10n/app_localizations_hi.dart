@@ -1564,4 +1564,96 @@ class AppLocalizationsHi extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'कसरत से पहले और बाद में';
+
+  @override
+  String get preWorkoutWarmup => 'कसरत से पहले वार्म-अप';
+
+  @override
+  String get postWorkoutStretch => 'कसरत के बाद';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'अभी वार्म-अप नहीं किया? $minutesString मिनट · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'हर तरफ़, हर दिशा में $count चक्कर';
+  }
+
+  @override
+  String get planCircleClockwise => 'घड़ी की दिशा में';
+
+  @override
+  String get planCircleCounterclockwise => 'घड़ी की विपरीत दिशा में';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'ऊपर $seconds सेकंड रुकें';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => 'कसरत के बाद की दिनचर्या शुरू करें';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 स्तर · शरीर का वज़न';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A लक्षित मज़बूती';
+
+  @override
+  String get cooldownStretchHeading => 'B पूरे शरीर की स्ट्रेचिंग';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'मज़बूती वाले व्यायाम छोड़कर सीधे स्ट्रेचिंग करें';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'इसे हफ़्ते में 2–3 बार एक दिन छोड़कर करें। अगर आज शरीर के ऊपरी हिस्से की ताकत की कसरत कर चुके हैं या कलाइयों में दर्द है, तो मज़बूती वाले व्यायाम छोड़ दें।';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds राउंड';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return 'व्यायामों के बीच $seconds सेकंड · राउंड के बीच $roundSeconds सेकंड';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max सेकंड';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max बार';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'हर मुद्रा में $reps बार';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds सेकंड PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes मिनट · शरीर का वज़न';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'अस्थायी डेमो';
 }

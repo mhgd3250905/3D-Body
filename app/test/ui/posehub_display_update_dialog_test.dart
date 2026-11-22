@@ -76,7 +76,7 @@ void main() {
         utf8.encode(jsonEncode(oneAction)),
         semanticCatalogBytes: semanticBytes,
       );
-      const version = 'r2-v19';
+      const version = 'r2-v23';
       final catalogBytes = utf8.encode(
         jsonEncode({...oneAction, 'pack': version}),
       );
@@ -126,7 +126,10 @@ void main() {
       );
       final original = FlareShared.current;
       final oldPolicy = FlarePublicMedia.current;
-      expect(sdk.poseHubPackVersionOf(original!.pack), 'r2-v18');
+      expect(
+        sdk.poseHubPackVersionOf(original!.pack),
+        PoseHubCatalogUpdates.bundledPackVersion,
+      );
       final shell = find.byType(FlareShell, skipOffstage: false);
       final originalShell = tester.element(shell);
 

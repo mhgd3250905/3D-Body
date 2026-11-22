@@ -23,6 +23,7 @@ import 'package:flare/ui/trainer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart' as sdk;
 
 import 'flow_regressions_test.dart' as helpers;
@@ -211,7 +212,7 @@ void main() {
     Future<Map<String, dynamic>> loadData(String name) async =>
         jsonDecode(await rootBundle.loadString('assets/data/$name.json'))
             as Map<String, dynamic>;
-    final planData = await loadData('flare-plans');
+    final planData = await loadData('flare-local-plans');
     final pilotPlans = (planData['plans'] as List).where((plan) {
       final target = (plan as Map)['target'];
       return target == 11 || target == 'deltoids';
@@ -356,6 +357,116 @@ void main() {
       expect(hub, findsNothing);
       expect(root, findsOneWidget);
     }
+    helpers.assertNoFlutterError(tester);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('non-members can open and start both supplemental plans', (
+    tester,
+  ) async {
+    final membership = FlareMembership(_MembershipStore());
+    addTearDown(membership.dispose);
+    final mounted = await mountShell(tester, membership: membership);
+    expect(membership.isPremium, isFalse);
+    await mounted.store.updateSettings(tier: 'C');
+    await helpers.openPlansFromHome(tester);
+    expect(find.text('9 分钟 · 徒手'), findsOneWidget);
+    expect(find.text('初／中／高 · 徒手'), findsOneWidget);
+
+    final detail = find.byType(FlarePlanDetailPage);
+    final start = _key('flare-plan-start');
+    final tier = _key('flare-plan-tier');
+    final skip = _key('flare-cooldown-skip-strengthening');
+
+    Future<void> openSupplemental(String id) async {
+      await tester.tap(_key('plan-$id'));
+      await tester.pumpAndSettle();
+      expect(detail, findsOneWidget);
+      expect(_key('flare-plan-warmup-link'), findsNothing);
+    }
+
+    Future<uc.TrainingPlan> startAndClose(Finder action) async {
+      await tester.tap(action);
+      await helpers.waitForTrainingRoute(tester);
+      final probe = tester.widget<helpers.TrainingRouteProbe>(
+        find.byType(helpers.TrainingRouteProbe),
+      );
+      expect(mounted.store.settings.tier, 'C');
+      await tester.tap(_key('training-probe-close'));
+      await tester.pumpAndSettle();
+      return probe.plan;
+    }
+
+    Future<void> backToPlans() async {
+      await tester.tap(find.byType(FlareBackChip));
+      await tester.pumpAndSettle();
+      expect(find.byType(PlansPage), findsOneWidget);
+    }
+
+    await openSupplemental('general-warmup');
+    expect(tier, findsNothing);
+    expect(skip, findsNothing);
+    final warmup = await startAndClose(start);
+    expect(warmup.items, hasLength(12));
+    await backToPlans();
+
+    await openSupplemental('general-cooldown');
+    expect(find.text('练后'), findsOneWidget);
+    expect(tier, findsOneWidget);
+    expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 1);
+    expect(find.text('居家'), findsNothing);
+    expect(find.text('健身房'), findsNothing);
+    expect(find.text('A 专项补强'), findsOneWidget);
+    expect(find.text('跳过补强，直接全身拉伸'), findsOneWidget);
+    final advice = find.text('建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过');
+    expect(advice, findsOneWidget);
+    expect(
+      tester.getBottomLeft(skip).dy,
+      lessThan(tester.getTopLeft(advice).dy),
+    );
+
+    await tester.tap(find.descendant(of: tier, matching: find.text('中级')));
+    await tester.pumpAndSettle();
+    expect(mounted.store.settings.cooldownTier, 2);
+    await _revealPlanContent(tester, find.text('B 全身拉伸'));
+    expect(find.text('B 全身拉伸'), findsOneWidget);
+    await _showPlanTop(tester);
+    await backToPlans();
+
+    await openSupplemental('general-cooldown');
+    expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 2);
+    final full = await startAndClose(start);
+    expect(full.blocks.first.type, uc.BlockType.circuit);
+    expect(full.blocks.first.rounds, 3);
+    expect(full.blocks.last.type, uc.BlockType.cooldown);
+
+    final skipped = await startAndClose(skip);
+    expect(skipped.blocks, hasLength(full.blocks.length - 1));
+    expect(
+      skipped.blocks.map((block) => block.toJson()),
+      full.blocks.skip(1).map((block) => block.toJson()),
+    );
+    await backToPlans();
+    final normalPlan = _key('plan-angle-11');
+    await Scrollable.ensureVisible(tester.element(normalPlan));
+    await tester.pumpAndSettle();
+    await tester.tap(normalPlan);
+    await tester.pumpAndSettle();
+    final warmupLink = _key('flare-plan-warmup-link');
+    expect(
+      tester.widget<FlarePressable>(warmupLink).semanticLabel,
+      '还没热身？先做 9 分钟练前热身',
+    );
+    await tester.tap(warmupLink);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<FlarePlanDetailPage>(find.byType(FlarePlanDetailPage))
+          .plans
+          .single
+          .items,
+      hasLength(12),
+    );
     helpers.assertNoFlutterError(tester);
     await tester.pumpWidget(const SizedBox());
   });

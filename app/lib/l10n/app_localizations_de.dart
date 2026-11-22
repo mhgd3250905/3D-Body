@@ -1599,4 +1599,97 @@ class AppLocalizationsDe extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Vor und nach dem Training';
+
+  @override
+  String get preWorkoutWarmup => 'Aufwärmen';
+
+  @override
+  String get postWorkoutStretch => 'Nach dem Training';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Noch nicht aufgewärmt? $minutesString Minuten ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'Je Seite $count Kreise pro Richtung';
+  }
+
+  @override
+  String get planCircleClockwise => 'Im Uhrzeigersinn';
+
+  @override
+  String get planCircleCounterclockwise => 'Gegen den Uhrzeigersinn';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Oben $seconds Sek. halten';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Mit der Routine nach dem Training fortfahren';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 Stufen · Eigengewicht';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Gezielte Kräftigung';
+
+  @override
+  String get cooldownStretchHeading => 'B Ganzkörperdehnung';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Kräftigung überspringen und direkt dehnen';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Führe den Block 2–3 Mal pro Woche an abwechselnden Tagen aus. Überspringe ihn, wenn du heute schon den Oberkörper trainiert hast oder deine Handgelenke schmerzen.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds Runden';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds s zwischen Übungen · $roundSeconds s zwischen Runden';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max Sek.';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max Wdh.';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'Je $reps Wdh.';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds Sek. PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes Min. · Eigengewicht';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Vorläufige Demo';
 }

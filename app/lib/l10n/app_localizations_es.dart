@@ -1598,4 +1598,97 @@ class AppLocalizationsEs extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Antes y después';
+
+  @override
+  String get preWorkoutWarmup => 'Calentamiento previo';
+
+  @override
+  String get postWorkoutStretch => 'Después de entrenar';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return '¿Aún sin calentar? Dedica $minutesString min al ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count círculos por sentido y por lado';
+  }
+
+  @override
+  String get planCircleClockwise => 'Sentido horario';
+
+  @override
+  String get planCircleCounterclockwise => 'Sentido antihorario';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Mantén arriba $seconds s';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Continuar con la rutina después de entrenar';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 niveles · Peso corporal';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Refuerzo específico';
+
+  @override
+  String get cooldownStretchHeading => 'B Estiramientos de todo el cuerpo';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Saltar el refuerzo e ir a los estiramientos';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Hazlo 2–3 veces por semana en días alternos. Sáltate el refuerzo si hoy ya entrenaste la parte superior del cuerpo o te duelen las muñecas.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds rondas';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds s entre ejercicios · $roundSeconds s entre rondas';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max s';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max repeticiones';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps repeticiones por posición';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds s de FNP';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes min · Peso corporal';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demostración temporal';
 }

@@ -1575,4 +1575,97 @@ class AppLocalizationsId extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'Sebelum dan sesudah latihan';
+
+  @override
+  String get preWorkoutWarmup => 'Pemanasan';
+
+  @override
+  String get postWorkoutStretch => 'Setelah latihan';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Belum pemanasan? Coba $minutesString menit ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count putaran per arah dan sisi';
+  }
+
+  @override
+  String get planCircleClockwise => 'Searah jarum jam';
+
+  @override
+  String get planCircleCounterclockwise => 'Berlawanan arah jarum jam';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Tahan di atas $seconds dtk';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Lanjutkan rutinitas setelah latihan';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 tingkat · Berat badan';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Penguatan terarah';
+
+  @override
+  String get cooldownStretchHeading => 'B Peregangan seluruh tubuh';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Lewati penguatan dan langsung ke peregangan';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Lakukan 2–3 kali seminggu dengan jeda satu hari. Lewati penguatan jika hari ini sudah melatih tubuh bagian atas atau pergelangan tangan terasa nyeri.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds putaran';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds dtk antar latihan · $roundSeconds dtk antar putaran';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max dtk';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max repetisi';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps repetisi per posisi';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds dtk PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes menit · Berat badan';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Demo sementara';
 }

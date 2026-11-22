@@ -1615,4 +1615,97 @@ class AppLocalizationsRu extends AppLocalizations {
     });
     return '$_temp0';
   }
+
+  @override
+  String get warmupCooldownHeading => 'До и после тренировки';
+
+  @override
+  String get preWorkoutWarmup => 'Разминка';
+
+  @override
+  String get postWorkoutStretch => 'После тренировки';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Ещё не разогрелись? $minutesString мин · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'По $count круга в каждом направлении на сторону';
+  }
+
+  @override
+  String get planCircleClockwise => 'По часовой стрелке';
+
+  @override
+  String get planCircleCounterclockwise => 'Против часовой стрелки';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Задержитесь вверху на $seconds с';
+  }
+
+  @override
+  String get continuePostWorkoutStretch =>
+      'Перейти к упражнениям после тренировки';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 уровня · Без инвентаря';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Целевое укрепление';
+
+  @override
+  String get cooldownStretchHeading => 'B Растяжка всего тела';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Пропустить укрепление и перейти к растяжке';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Выполняйте 2–3 раза в неделю через день. Пропустите укрепление, если сегодня уже тренировали верхнюю часть тела или у вас болят запястья.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds круга';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '$seconds с между упражнениями · $roundSeconds с между кругами';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max с';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max повт.';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'По $reps повт.';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds с ПНФ';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes мин · Без инвентаря';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Временный показ';
 }
