@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-20",
+  "timezone": "Asia/Shanghai",
+  "app": "Flare 托马斯",
+  "appStoreId": "6821186142",
+  "bundleId": "dev.mhgd.flare",
+  "version": "1.0.0",
+  "build": "3",
+  "source": "7ffa5e6c1d06ef78ee7ff537a3b18b3389793726",
+  "ipaSha256": "8cf1ec14b009dce4120edde85574ac732d2445128767bb41bd0d848c11b9493f",
+  "ipaBytes": 50089798,
+  "authorization": "User confirmed precise Build3 / free / 175 territories release with ok",
+  "releaseReceiptAt": "2026-10-20T08:57:59+08:00",
+  "modalTerritoryCount": 175,
+  "allPricesZero": true,
+  "macAvailability": false,
+  "visionProAvailability": false,
+  "postReloadObservedAt": "2026-10-20T08:58:39+08:00",
+  "postReloadStatus": "可分发",
+  "postReloadUrl": "https://appstoreconnect.apple.com/apps/6821186142/distribution/ios/version/deliverable",
+  "postReloadBuild": "3",
+  "releaseButtonPresentAfterReload": false,
+  "publicVisibility": "NOT_YET_CONFIRMED",
+  "publicChecks": [
+    {
+      "region": "cn",
+      "url": "https://apps.apple.com/cn/app/id6821186142",
+      "httpStatus": 404,
+      "observedAt": "2026-10-20T08:58:27+08:00"
+    },
+    {
+      "region": "us",
+      "url": "https://apps.apple.com/us/app/id6821186142",
+      "httpStatus": 404,
+      "observedAt": "2026-10-20T08:58:39+08:00"
+    },
+    {
+      "region": "cn",
+      "url": "https://apps.apple.com/cn/app/id6821186142",
+      "httpStatus": 404,
+      "observedAt": "2026-10-20T08:59:40+08:00"
+    }
+  ],
+  "verification": "Exact frozen IPA identity, strict deep signing, arm64, get-task-allow=false and 4 privacy manifests passed before release",
+  "notPerformed": [
+    "New archive/signing/upload",
+    "Metadata, price, territory or account changes",
+    "Remote Git writes",
+    "Background monitoring"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-19",
+  "source": "9aa5b43bae75e3e1ba14da2ed8a08601934c4be0",
+  "upstream": "2be8cca34abebb204f3d30b79000eea02015b793",
+  "rebasedHead": "a6b2f8411dfb2fee631f04dfcc84550e388521c8",
+  "version": "1.0.9",
+  "build": "12",
+  "flutter": "3.44.7",
+  "dart": "3.12.2",
+  "xcode": "26.6",
+  "device": "dedicated iPhone 13 Simulator / iOS 26.5",
+  "targetedTests": 45,
+  "poseHubPathTests": 5,
+  "analyze": "No issues found",
+  "nativeWorkflow": {
+    "firstLaunchSafetyOk": true,
+    "darkAndLightThemesOk": true,
+    "realCountdownAndPauseOk": true,
+    "abandonedRecordIsNotCompletion": true,
+    "nativePreferencesRoundTripOk": true,
+    "nativePlanPersistenceOk": true,
+    "nativeIdleTimerLifecycleOk": true,
+    "activeSeconds": 2,
+    "systemReduceMotion": false,
+    "appDisableAnimations": false,
+    "webReduceMotion": false,
+    "sceneResourceCount": 6,
+    "externalSceneResourceOrigins": [],
+    "sceneOriginIsLoopback": true
+  },
+  "nativeIdleTimerAssertions": {
+    "ready": false,
+    "countdown": true,
+    "paused": false,
+    "resumedByUser": true,
+    "exitConfirmation": false,
+    "afterSave": false
+  },
+  "productionEntrypoint": {
+    "target": "lib/main.dart",
+    "buildPassed": true,
+    "installedPreservingData": true,
+    "launchSucceeded": true,
+    "assetHashesMatched": {
+      "scene": 30,
+      "drill_media": 105,
+      "brand": 12
+    },
+    "screenshot": "native-main.png",
+    "screenshotReviewed": true
+  },
+  "limitations": [
+    "No physical device auto-lock or long-term power verification",
+    "No real OS interruption or memory pressure verification",
+    "No complete language/accessibility or 51-media device matrix",
+    "No push, Apple account changes, signing, IPA upload or release"
+  ]
+}

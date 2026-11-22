@@ -43,3 +43,7 @@ npm run build
 个人计划、训练会话和进度保存在本机。旧课程、自评、关卡与今日清单数据及 Store 接口保留。设置的「复制本地备份」可导出部分状态，当前备份不提供导入入口。具体范围见[本地数据说明](docs/privacy-local.md)。
 
 3D 接口见[场景说明](scene/README.md)，旧 [v42/R17](docs/motion-v42.md)、[v41](docs/motion-v41.md) 和 [v38](docs/motion-v38.md) 的 App 接入记录用于追溯旧版。
+
+## iOS 对齐与本机验证
+
+iOS 发布构建使用本机签名配置。既有平台差异、配套工具和原生验证记录见 [iOS SDK 平台差异](docs/sdk-ios-readiness-report-2026-11-04.md)及[验证记录](docs/verification.md)。
