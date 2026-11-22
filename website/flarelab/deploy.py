@@ -8,6 +8,7 @@ D = os.path.join(HERE, 'dist')
 # Auth: set CLOUDFLARE_API_TOKEN (Workers Scripts:Edit). In Hark the token is injected on the wire.
 if os.environ.get('CLOUDFLARE_API_TOKEN'): pass
 CT = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.glb': 'model/gltf-binary', '.webp': 'image/webp',
+      '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml; charset=utf-8',
       '.png': 'image/png', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.json': 'application/json'}
 files = []
 for r, _, fs in os.walk(D):

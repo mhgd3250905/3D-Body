@@ -121,6 +121,378 @@ abstract class AppLocalizations {
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
+  /// No description provided for @premiumPreviewBadge.
+  ///
+  /// In zh, this message translates to:
+  /// **'FLARE PRO'**
+  String get premiumPreviewBadge;
+
+  /// No description provided for @premiumPreviewSubscribe.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁 Flare 会员'**
+  String get premiumPreviewSubscribe;
+
+  /// No description provided for @premiumPreviewFooter.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通后 · 训练、记录、自定义计划全部可用'**
+  String get premiumPreviewFooter;
+
+  /// No description provided for @premiumPreviewBenefitStreak.
+  ///
+  /// In zh, this message translates to:
+  /// **'连续天数'**
+  String get premiumPreviewBenefitStreak;
+
+  /// No description provided for @premiumPreviewBenefitMilestones.
+  ///
+  /// In zh, this message translates to:
+  /// **'里程碑'**
+  String get premiumPreviewBenefitMilestones;
+
+  /// No description provided for @premiumPreviewBenefitDuration.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练时长'**
+  String get premiumPreviewBenefitDuration;
+
+  /// No description provided for @premiumPreviewBenefitActions.
+  ///
+  /// In zh, this message translates to:
+  /// **'自选动作'**
+  String get premiumPreviewBenefitActions;
+
+  /// No description provided for @premiumPreviewBenefitSets.
+  ///
+  /// In zh, this message translates to:
+  /// **'自由组数'**
+  String get premiumPreviewBenefitSets;
+
+  /// No description provided for @premiumPreviewBenefitSaves.
+  ///
+  /// In zh, this message translates to:
+  /// **'无限保存'**
+  String get premiumPreviewBenefitSaves;
+
+  /// No description provided for @premiumPreviewBenefitVoice.
+  ///
+  /// In zh, this message translates to:
+  /// **'语音计时'**
+  String get premiumPreviewBenefitVoice;
+
+  /// No description provided for @premiumPreviewBenefitDemos.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作示范'**
+  String get premiumPreviewBenefitDemos;
+
+  /// No description provided for @premiumPreviewBenefitLogging.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动记录'**
+  String get premiumPreviewBenefitLogging;
+
+  /// No description provided for @premiumPreviewRecordsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'记录每一次训练'**
+  String get premiumPreviewRecordsTitle;
+
+  /// No description provided for @premiumPreviewRecordsHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'每一次'**
+  String get premiumPreviewRecordsHighlight;
+
+  /// No description provided for @premiumPreviewRecordsDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动保存时长、连续天数和里程碑，进步一眼看清。'**
+  String get premiumPreviewRecordsDescription;
+
+  /// No description provided for @premiumPreviewPlanEditorTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'组合你自己的计划'**
+  String get premiumPreviewPlanEditorTitle;
+
+  /// No description provided for @premiumPreviewPlanEditorHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'自己'**
+  String get premiumPreviewPlanEditorHighlight;
+
+  /// No description provided for @premiumPreviewPlanEditorDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'自由挑选动作、调整组数，保存成你的专属计划。'**
+  String get premiumPreviewPlanEditorDescription;
+
+  /// No description provided for @premiumPreviewTrainingTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟着练，每组都算数'**
+  String get premiumPreviewTrainingTitle;
+
+  /// No description provided for @premiumPreviewTrainingHighlight.
+  ///
+  /// In zh, this message translates to:
+  /// **'每组'**
+  String get premiumPreviewTrainingHighlight;
+
+  /// No description provided for @premiumPreviewTrainingDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'全程语音计时与动作示范，练完自动记录。'**
+  String get premiumPreviewTrainingDescription;
+
+  /// No description provided for @premiumConditionalTrial.
+  ///
+  /// In zh, this message translates to:
+  /// **'符合资格可免费试用 {days} 天'**
+  String premiumConditionalTrial(int days);
+
+  /// No description provided for @premiumSubscribeAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅 {price}'**
+  String premiumSubscribeAt(String price);
+
+  /// No description provided for @premiumTrialOffer.
+  ///
+  /// In zh, this message translates to:
+  /// **'{days} 天免费试用'**
+  String premiumTrialOffer(int days);
+
+  /// No description provided for @premiumPlanSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 套计划，托马斯每个难点都有专项练法'**
+  String premiumPlanSummary(int count);
+
+  /// No description provided for @premiumAngleCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'难点角度'**
+  String get premiumAngleCount;
+
+  /// No description provided for @premiumMuscleCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群专项'**
+  String get premiumMuscleCount;
+
+  /// No description provided for @premiumLevelCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'难度档位'**
+  String get premiumLevelCount;
+
+  /// No description provided for @premiumVoiceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟练语音与 3D 示范'**
+  String get premiumVoiceTitle;
+
+  /// No description provided for @premiumVoiceDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'计数、换边、休息全程提示'**
+  String get premiumVoiceDescription;
+
+  /// No description provided for @premiumCustomDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'把常练动作组合成自己的计划'**
+  String get premiumCustomDescription;
+
+  /// No description provided for @premiumPerYear.
+  ///
+  /// In zh, this message translates to:
+  /// **'/年'**
+  String get premiumPerYear;
+
+  /// No description provided for @premiumPerMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'/月'**
+  String get premiumPerMonth;
+
+  /// No description provided for @premiumStoreOffline.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂未连上 {store}，价格以商店显示为准'**
+  String premiumStoreOffline(String store);
+
+  /// No description provided for @premiumStoreRetryFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'仍未连上 {store}，请稍后重试'**
+  String premiumStoreRetryFailed(String store);
+
+  /// No description provided for @premiumTrialRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'试用结束后 {price} 自动续订，可随时在 {store} 取消'**
+  String premiumTrialRenewal(String price, String store);
+
+  /// No description provided for @premiumPaidRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'{price} 自动续订，可随时在 {store} 取消'**
+  String premiumPaidRenewal(String price, String store);
+
+  /// No description provided for @premiumStoreRenewal.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅将自动续订，可在 {store} 取消'**
+  String premiumStoreRenewal(String store);
+
+  /// No description provided for @premiumTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'解锁 Flare 会员'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'打造属于你的训练'**
+  String get premiumSubtitle;
+
+  /// No description provided for @premiumAiCoach.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部训练计划随时开练'**
+  String get premiumAiCoach;
+
+  /// No description provided for @premiumAiPlans.
+  ///
+  /// In zh, this message translates to:
+  /// **'角度计划与肌群计划，初中高三档'**
+  String get premiumAiPlans;
+
+  /// No description provided for @premiumCustomWorkouts.
+  ///
+  /// In zh, this message translates to:
+  /// **'无限自定义训练组'**
+  String get premiumCustomWorkouts;
+
+  /// No description provided for @premiumMonthly.
+  ///
+  /// In zh, this message translates to:
+  /// **'月付'**
+  String get premiumMonthly;
+
+  /// No description provided for @premiumYearly.
+  ///
+  /// In zh, this message translates to:
+  /// **'年付'**
+  String get premiumYearly;
+
+  /// No description provided for @premiumMonthlyEstimate.
+  ///
+  /// In zh, this message translates to:
+  /// **'约 {price}/月'**
+  String premiumMonthlyEstimate(String price);
+
+  /// No description provided for @premiumSavings.
+  ///
+  /// In zh, this message translates to:
+  /// **'省 {percent}%'**
+  String premiumSavings(int percent);
+
+  /// No description provided for @premiumTrial.
+  ///
+  /// In zh, this message translates to:
+  /// **'免费试用 {days} 天'**
+  String premiumTrial(int days);
+
+  /// No description provided for @premiumSubscribe.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅'**
+  String get premiumSubscribe;
+
+  /// No description provided for @premiumDisclosure.
+  ///
+  /// In zh, this message translates to:
+  /// **'订阅将自动续订，可随时在 Google Play 取消。在试用结束前取消则不会扣费。'**
+  String get premiumDisclosure;
+
+  /// No description provided for @premiumRestore.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复购买'**
+  String get premiumRestore;
+
+  /// No description provided for @premiumTerms.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务条款'**
+  String get premiumTerms;
+
+  /// No description provided for @premiumPrivacy.
+  ///
+  /// In zh, this message translates to:
+  /// **'隐私政策'**
+  String get premiumPrivacy;
+
+  /// No description provided for @premiumStatus.
+  ///
+  /// In zh, this message translates to:
+  /// **'Flare 会员'**
+  String get premiumStatus;
+
+  /// No description provided for @premiumActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'会员有效'**
+  String get premiumActive;
+
+  /// No description provided for @premiumInactive.
+  ///
+  /// In zh, this message translates to:
+  /// **'未开通会员'**
+  String get premiumInactive;
+
+  /// No description provided for @premiumManage.
+  ///
+  /// In zh, this message translates to:
+  /// **'管理订阅'**
+  String get premiumManage;
+
+  /// No description provided for @premiumUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂时无法连接商店，请重试。'**
+  String get premiumUnavailable;
+
+  /// No description provided for @premiumRestoreEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'未找到有效订阅。'**
+  String get premiumRestoreEmpty;
+
+  /// No description provided for @premiumQuota.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日 AI 次数已用完（{limit} 次），明天再来。'**
+  String premiumQuota(int limit);
+
+  /// No description provided for @premiumRateLimit.
+  ///
+  /// In zh, this message translates to:
+  /// **'请求过于频繁，请稍后再试。'**
+  String get premiumRateLimit;
+
+  /// No description provided for @premiumAiDisclaimer.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 建议仅供参考，非医疗建议。'**
+  String get premiumAiDisclaimer;
+
   /// No description provided for @actorBodyLabel.
   ///
   /// In zh, this message translates to:
@@ -174,6 +546,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'Flare 托马斯'**
   String get appName;
+
+  /// Title of the Flare variant performed with both legs straight.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯（双腿伸直）'**
+  String get flareStraightLegs;
 
   /// No description provided for @tagline.
   ///
@@ -319,17 +697,11 @@ abstract class AppLocalizations {
   /// **'侧面'**
   String get side;
 
-  /// No description provided for @pausedHint.
+  /// No description provided for @homeGoToTraining.
   ///
   /// In zh, this message translates to:
-  /// **'点选肌群'**
-  String get pausedHint;
-
-  /// No description provided for @playingHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'暂停后查看'**
-  String get playingHint;
+  /// **'前往训练'**
+  String get homeGoToTraining;
 
   /// No description provided for @loadingScene.
   ///
@@ -1150,7 +1522,7 @@ abstract class AppLocalizations {
   /// No description provided for @sceneNone.
   ///
   /// In zh, this message translates to:
-  /// **'无器械'**
+  /// **'徒手'**
   String get sceneNone;
 
   /// No description provided for @sceneHome.
@@ -1270,7 +1642,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyRule1Note.
   ///
   /// In zh, this message translates to:
-  /// **'计划里的「热身激活」会带你做一遍'**
+  /// **'先把手腕和肩胛活动开，再开始训练'**
   String get safetyRule1Note;
 
   /// No description provided for @safetyRule2.
@@ -1729,6 +2101,240 @@ abstract class AppLocalizations {
   /// **'腕伸'**
   String get wristExtension;
 
+  /// No description provided for @plansByAngle.
+  ///
+  /// In zh, this message translates to:
+  /// **'按角度'**
+  String get plansByAngle;
+
+  /// No description provided for @plansByMuscle.
+  ///
+  /// In zh, this message translates to:
+  /// **'按肌群'**
+  String get plansByMuscle;
+
+  /// No description provided for @anglePlanLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'角度计划'**
+  String get anglePlanLabel;
+
+  /// No description provided for @musclePlanLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群计划'**
+  String get musclePlanLabel;
+
+  /// No description provided for @angleSupportPlanIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手撑地、双腿打开成高 V，练稳这一下的支撑力量'**
+  String get angleSupportPlanIntro;
+
+  /// No description provided for @deltoidsPlanIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'单臂承重、把身体顶在手上方，托马斯每一圈都靠它'**
+  String get deltoidsPlanIntro;
+
+  /// No description provided for @planTrainingContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'训练内容'**
+  String get planTrainingContent;
+
+  /// No description provided for @planMuscleLinkHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'点肌群看专项计划'**
+  String get planMuscleLinkHint;
+
+  /// No description provided for @planSpecialized.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划'**
+  String get planSpecialized;
+
+  /// No description provided for @planRestSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'休息 {seconds} 秒'**
+  String planRestSeconds(int seconds);
+
+  /// No description provided for @planBodyweightSubstitution.
+  ///
+  /// In zh, this message translates to:
+  /// **'徒手替换'**
+  String get planBodyweightSubstitution;
+
+  /// No description provided for @planBodyweightScene.
+  ///
+  /// In zh, this message translates to:
+  /// **'徒手'**
+  String get planBodyweightScene;
+
+  /// No description provided for @hubAngle.
+  ///
+  /// In zh, this message translates to:
+  /// **'角度'**
+  String get hubAngle;
+
+  /// No description provided for @hubMuscle.
+  ///
+  /// In zh, this message translates to:
+  /// **'肌群'**
+  String get hubMuscle;
+
+  /// Starting duration of a beginner training plan, in minutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 分钟起'**
+  String hubMinutesFrom(int count);
+
+  /// No description provided for @hubThreeTiers.
+  ///
+  /// In zh, this message translates to:
+  /// **'三档'**
+  String get hubThreeTiers;
+
+  /// No description provided for @hubPrimaryMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'这一刻的主力'**
+  String get hubPrimaryMuscles;
+
+  /// No description provided for @hubSpecializedPlan.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划'**
+  String get hubSpecializedPlan;
+
+  /// No description provided for @hubSupportTab.
+  ///
+  /// In zh, this message translates to:
+  /// **'支撑'**
+  String get hubSupportTab;
+
+  /// No description provided for @hubCoreTab.
+  ///
+  /// In zh, this message translates to:
+  /// **'核心'**
+  String get hubCoreTab;
+
+  /// No description provided for @hubLegsTab.
+  ///
+  /// In zh, this message translates to:
+  /// **'腿部'**
+  String get hubLegsTab;
+
+  /// No description provided for @hubStillPlanning.
+  ///
+  /// In zh, this message translates to:
+  /// **'还在编排'**
+  String get hubStillPlanning;
+
+  /// No description provided for @hubPlanComingSoon.
+  ///
+  /// In zh, this message translates to:
+  /// **'专项计划准备中'**
+  String get hubPlanComingSoon;
+
+  /// Call to action for the currently selected training plan.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看「{name}」计划'**
+  String hubViewNamedPlan(String name);
+
+  /// No description provided for @hubPhase09Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手撑地，开腿抬过前方'**
+  String get hubPhase09Caption;
+
+  /// No description provided for @hubPhase10Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'从双手移重到单手'**
+  String get hubPhase10Caption;
+
+  /// No description provided for @hubPhase11Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手撑起全身侧立，支撑肩最吃力。'**
+  String get hubPhase11Caption;
+
+  /// No description provided for @hubPhase12Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'身体转向正面，双腿剪刀式换位过前。'**
+  String get hubPhase12Caption;
+
+  /// No description provided for @hubPhase13Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手在身后撑地，开腿后扫'**
+  String get hubPhase13Caption;
+
+  /// No description provided for @hubPhase14Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'换手接重，长腿向后扫'**
+  String get hubPhase14Caption;
+
+  /// No description provided for @hubPhase15Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'换侧单手撑地，保持高 V'**
+  String get hubPhase15Caption;
+
+  /// No description provided for @hubPhase16Caption.
+  ///
+  /// In zh, this message translates to:
+  /// **'转身朝下，双腿扫过后方'**
+  String get hubPhase16Caption;
+
+  /// No description provided for @planTierBeginner.
+  ///
+  /// In zh, this message translates to:
+  /// **'初级'**
+  String get planTierBeginner;
+
+  /// No description provided for @planTierIntermediate.
+  ///
+  /// In zh, this message translates to:
+  /// **'中级'**
+  String get planTierIntermediate;
+
+  /// No description provided for @planTierAdvanced.
+  ///
+  /// In zh, this message translates to:
+  /// **'高级'**
+  String get planTierAdvanced;
+
+  /// No description provided for @planActiveMuscles.
+  ///
+  /// In zh, this message translates to:
+  /// **'发力肌群'**
+  String get planActiveMuscles;
+
+  /// No description provided for @planExercises.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作'**
+  String get planExercises;
+
+  /// No description provided for @planDosePerSide.
+  ///
+  /// In zh, this message translates to:
+  /// **'{dose} · 每侧'**
+  String planDosePerSide(String dose);
+
+  /// No description provided for @planTierSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'初级 · 中级 · 高级'**
+  String get planTierSummary;
+
   /// No description provided for @plans.
   ///
   /// In zh, this message translates to:
@@ -1738,8 +2344,116 @@ abstract class AppLocalizations {
   /// No description provided for @plansHint.
   ///
   /// In zh, this message translates to:
-  /// **'成套训练与我的计划'**
+  /// **'专项练习与我的计划'**
   String get plansHint;
+
+  /// No description provided for @plansLastSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次练到'**
+  String get plansLastSession;
+
+  /// No description provided for @plansContinue.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续'**
+  String get plansContinue;
+
+  /// No description provided for @plansToday.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天'**
+  String get plansToday;
+
+  /// No description provided for @plansYesterday.
+  ///
+  /// In zh, this message translates to:
+  /// **'昨天'**
+  String get plansYesterday;
+
+  /// No description provided for @plansFinishedCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{completed}/{total} 个动作'**
+  String plansFinishedCount(int completed, int total);
+
+  /// No description provided for @plansNewCompactHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'组合常练动作'**
+  String get plansNewCompactHint;
+
+  /// No description provided for @plansNewEmptyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'把常练的动作组合起来'**
+  String get plansNewEmptyHint;
+
+  /// No description provided for @plansAnglesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯难点角度'**
+  String get plansAnglesTitle;
+
+  /// No description provided for @plansAnglesDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'一圈里最吃力的几下，先把它们练稳'**
+  String get plansAnglesDescription;
+
+  /// No description provided for @plansMusclesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'补短板肌群'**
+  String get plansMusclesTitle;
+
+  /// No description provided for @plansMusclesDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'托马斯里负荷最大、最容易受伤的部位'**
+  String get plansMusclesDescription;
+
+  /// No description provided for @plansSeeAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部 {count} 个'**
+  String plansSeeAll(int count);
+
+  /// No description provided for @plansOneHandSupport.
+  ///
+  /// In zh, this message translates to:
+  /// **'单手支撑'**
+  String get plansOneHandSupport;
+
+  /// No description provided for @plansTwoHandSupport.
+  ///
+  /// In zh, this message translates to:
+  /// **'双手支撑'**
+  String get plansTwoHandSupport;
+
+  /// No description provided for @plansThreeLevels.
+  ///
+  /// In zh, this message translates to:
+  /// **'3 档'**
+  String get plansThreeLevels;
+
+  /// No description provided for @plansAiTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'AI 定制'**
+  String get plansAiTitle;
+
+  /// No description provided for @plansAiHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'说出场地、时长和想练的部位，排一份专项计划'**
+  String get plansAiHint;
+
+  /// No description provided for @plansAiUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂未接入 AI'**
+  String get plansAiUnavailable;
 
   /// No description provided for @plansReady.
   ///
@@ -1782,6 +2496,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'存为我的计划'**
   String get planSaveAsMine;
+
+  /// No description provided for @premiumCopyRoutine.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制计划'**
+  String get premiumCopyRoutine;
 
   /// No description provided for @planSaved.
   ///
@@ -2142,6 +2862,156 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'添加 {count} 个动作'**
   String pickerAddCount(int count);
+
+  /// No description provided for @libraryDose.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sets} 组 × {amount}'**
+  String libraryDose(int sets, String amount);
+
+  /// No description provided for @planEquipmentNeeded.
+  ///
+  /// In zh, this message translates to:
+  /// **'需要：'**
+  String get planEquipmentNeeded;
+
+  /// Individual equipment labels by catalog ID. Keep select keys unchanged. An empty other branch hides unrecognized equipment.
+  ///
+  /// In zh, this message translates to:
+  /// **'{id, select, mat{瑜伽垫} chair{椅子} band{弹力带} dumbbell{哑铃} wall{墙} cable{绳索训练机} block{瑜伽砖} pullup_bar{单杠} parallettes{俯卧撑架} dip_bars{双杠} slider{滑盘} rings{吊环} landmine{地雷杆} swiss_ball{健身球} roman_chair{罗马椅} kettlebell{壶铃} reverse_hyper{反向挺身机} ghd{臀腿训练器} hip_abductor_machine{髋外展机} leg_extension_machine{腿屈伸机} foam_roller{泡沫轴} towel{毛巾} doorframe{门框} bench{训练凳} barbell{杠铃} clamp_pad{夹垫} other{}}'**
+  String planEquipmentNameForId(String id);
+
+  /// No description provided for @warmupCooldownHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前练后'**
+  String get warmupCooldownHeading;
+
+  /// No description provided for @preWorkoutWarmup.
+  ///
+  /// In zh, this message translates to:
+  /// **'练前热身'**
+  String get preWorkoutWarmup;
+
+  /// No description provided for @postWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'练后'**
+  String get postWorkoutStretch;
+
+  /// No description provided for @preWorkoutWarmupPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没热身？先做 {minutes} 分钟'**
+  String preWorkoutWarmupPrompt(int minutes);
+
+  /// No description provided for @planCirclesInBothDirections.
+  ///
+  /// In zh, this message translates to:
+  /// **'每侧顺逆各 {count} 圈'**
+  String planCirclesInBothDirections(int count);
+
+  /// No description provided for @planCircleClockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'顺时针'**
+  String get planCircleClockwise;
+
+  /// No description provided for @planCircleCounterclockwise.
+  ///
+  /// In zh, this message translates to:
+  /// **'逆时针'**
+  String get planCircleCounterclockwise;
+
+  /// No description provided for @planPeakHold.
+  ///
+  /// In zh, this message translates to:
+  /// **'顶峰停 {seconds} 秒'**
+  String planPeakHold(int seconds);
+
+  /// No description provided for @continuePostWorkoutStretch.
+  ///
+  /// In zh, this message translates to:
+  /// **'接着做练后'**
+  String get continuePostWorkoutStretch;
+
+  /// No description provided for @cooldownPlanCardSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'初／中／高 · 徒手'**
+  String get cooldownPlanCardSubtitle;
+
+  /// No description provided for @cooldownStrengtheningHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'A 专项补强'**
+  String get cooldownStrengtheningHeading;
+
+  /// No description provided for @cooldownStretchHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'B 全身拉伸'**
+  String get cooldownStretchHeading;
+
+  /// No description provided for @skipCooldownStrengthening.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过补强，直接全身拉伸'**
+  String get skipCooldownStrengthening;
+
+  /// No description provided for @cooldownStrengtheningAdvice.
+  ///
+  /// In zh, this message translates to:
+  /// **'建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过'**
+  String get cooldownStrengtheningAdvice;
+
+  /// No description provided for @cooldownStrengtheningRounds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{rounds} 轮'**
+  String cooldownStrengtheningRounds(int rounds);
+
+  /// No description provided for @cooldownStrengtheningRest.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作间休息 {seconds} 秒 · 轮间休息 {roundSeconds} 秒'**
+  String cooldownStrengtheningRest(int seconds, int roundSeconds);
+
+  /// No description provided for @cooldownSecondsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 秒'**
+  String cooldownSecondsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsRange.
+  ///
+  /// In zh, this message translates to:
+  /// **'{min}–{max} 次'**
+  String cooldownRepsRange(int min, int max);
+
+  /// No description provided for @cooldownRepsPerPosition.
+  ///
+  /// In zh, this message translates to:
+  /// **'各 {reps} 次'**
+  String cooldownRepsPerPosition(int reps);
+
+  /// No description provided for @cooldownPnfSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'PNF {seconds} 秒'**
+  String cooldownPnfSeconds(int seconds);
+
+  /// No description provided for @bodyweightPlanMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{minutes} 分钟 · 徒手'**
+  String bodyweightPlanMinutes(int minutes);
+
+  /// No description provided for @temporaryPlanDemo.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时示范'**
+  String get temporaryPlanDemo;
 }
 
 class _AppLocalizationsDelegate

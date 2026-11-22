@@ -6,6 +6,9 @@ import { loadOfflineGlb } from './assets.js';
 import { renderQuality } from './render-quality.js';
 import { createAdaptiveResolution, adaptiveEnabled } from './adaptive-resolution.js';
 import { applyCharacter, characterAsset } from './characters.js';
+import { loadFlareV5 } from './v5/renderer.js';
+import { createV5TeachingMotion } from './v5/teaching-motion.js';
+import { legacyLoopBounds, legacyPoseBounds } from './v5/legacy-framing.js';
 
 export const CAMERA_PRESETS = {
   standard: new THREE.Vector3(0.18, 0.38, 1), front: new THREE.Vector3(0, 0.15, 1),
@@ -20,7 +23,8 @@ export class FlarePlayer {
     // `viewInset` px with chrome (transport or the detail panel). The view is
     // framed into the visible part above it, so entering or leaving detail is
     // a camera move, never a WebView resize.
-    this.viewInset = 0; this.viewInsetTarget = 0;
+    this.viewTop = 0; this.viewInset = 0; this.viewInsetTarget = 0;
+    this.stageHandoffFrames = 0;
     this.time = 0; this.period = 9; this.playing = false; this.speed = 0.5; this.loopRange = null;
     this.visible = true; this.disposed = false; this.contextLost = false; this.sceneDirty = false; this.dirty = true;
     this.framingMode = 'main';
@@ -42,7 +46,7 @@ export class FlarePlayer {
     Object.assign(this.controls, { enableDamping: true, dampingFactor: 0.13, enablePan: false, minDistance: 0.45, maxDistance: 7, minPolarAngle: 0.12, maxPolarAngle: Math.PI * 0.9 });
     // An orbit-only change bypasses the `dirty` setter, so the next frame
     // knows the pose, lights and stage did not change.
-    this.onControlsChange = () => { this.redraw = true; this.cameraMoved = true; };
+    this.onControlsChange = () => { this.requestRedraw(); this.cameraMoved = true; };
     this.controls.addEventListener('change', this.onControlsChange);
     this.autoFrame = true;
     this.controls.addEventListener('start', () => { this.autoFrame = false; this.glide = null; });
@@ -51,7 +55,10 @@ export class FlarePlayer {
     this.keyLight = new THREE.DirectionalLight(0xffead2, 3.7); this.keyLight.position.set(-2.5, 4, 4); this.scene.add(this.keyLight);
     const rim = new THREE.DirectionalLight(0xf0f2ff, 2.2); rim.position.set(2, 2, -3); this.scene.add(rim); this.rimLight = rim;
     const fill = new THREE.DirectionalLight(0xe2e2ea, 0.8); fill.position.set(4, 0.7, 2); this.scene.add(fill);
-    this.createEnvironment(); this.scene.environmentIntensity = 0.32;
+    // V5's toon, hair and stage materials provide their own lighting. Only
+    // the older standard-material actors need the room environment.
+    if (!callbacks.v5) this.createEnvironment();
+    this.scene.environmentIntensity = 0.32;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.keyLight.shadow.mapSize.set(1024, 1024); this.keyLight.shadow.bias = -0.0004; this.keyLight.shadow.normalBias = 0.02; this.keyLight.shadow.radius = 6;
     Object.assign(this.keyLight.shadow.camera, { left: -1.9, right: 1.9, top: 1.9, bottom: -1.9, near: 1, far: 12 });
@@ -62,6 +69,7 @@ export class FlarePlayer {
     this.setQuality('medium');
     this.resizeObserver = new ResizeObserver(() => this.resize()); this.resizeObserver.observe(container); this.resize();
     this.onVisibility = () => {
+      this.trainingHub?.setVisible?.(this.visible && !document.hidden);
       if (document.hidden) { this.playing = false; this.stop(); callbacks.onTime?.(this.time); }
       else if (this.visible) { this.dirty = true; this.start(); }
     };
@@ -79,7 +87,12 @@ export class FlarePlayer {
       callbacks.onContext?.(false); callbacks.onTime?.(this.time);
     };
     this.onContextRestored = () => {
-      this.contextLost = false; this.createEnvironment(); this.dirty = true; this.resize(); this.start(); callbacks.onContext?.(true);
+      this.contextLost = false;
+      if (!callbacks.v5) {
+        if (this.trainingHub?.getState()?.mode === 'muscle') this.needsActorEnvironment = true;
+        else this.createEnvironment();
+      }
+      this.dirty = true; this.resize(); this.start(); callbacks.onContext?.(true);
     };
     document.addEventListener('visibilitychange', this.onVisibility);
     this.renderer.domElement.addEventListener('webglcontextlost', this.onContextLost);
@@ -88,18 +101,55 @@ export class FlarePlayer {
 
   // Every request outside the orbit handler may change the scene itself.
   get dirty() { return this.redraw; }
-  set dirty(value) { this.redraw = !!value; if (value) this.sceneDirty = true; }
+  set dirty(value) {
+    if (value) { this.sceneDirty = true; this.requestRedraw(); }
+    else this.redraw = false;
+  }
   /** Redraw for overlay-only motion (labels): pose, lights and stage unchanged. */
-  requestRedraw() { this.redraw = true; }
+  requestRedraw() {
+    this.redraw = true;
+    if (this.demandFrames) this.start();
+  }
 
   createEnvironment() {
     this.environment?.dispose();
     const pmrem = new THREE.PMREMGenerator(this.renderer), room = new RoomEnvironment();
     this.environment = pmrem.fromScene(room, 0.04); this.scene.environment = this.environment.texture;
+    this.needsActorEnvironment = false;
     room.dispose(); pmrem.dispose();
   }
 
+  releaseActorGpu() {
+    // Disposal invalidates Three's GPU caches. The rig, materials and decoded
+    // arrays still belong to the actor scene and are uploaded if it returns.
+    disposeTree(this.scene);
+    const shadow = this.keyLight.shadow;
+    shadow?.map?.dispose();
+    if (shadow) shadow.map = null;
+    this.shadowFresh = false;
+    this.renderer.renderLists?.dispose();
+    if (this.environment) {
+      this.scene.environment = null;
+      this.environment.dispose();
+      this.environment = null;
+      this.needsActorEnvironment = true;
+    }
+  }
+
   async load() {
+    if (this.callbacks.v5) {
+      const stage = await loadFlareV5(this.renderer, { scene: this.scene });
+      if (this.disposed) { stage.dispose(); return; }
+      this.v5 = stage;
+      this.coach = stage.root;
+      this.motion = createV5TeachingMotion(stage);
+      this.period = this.motion.clock.period;
+      this.loopBounds.min.fromArray(legacyLoopBounds.min);
+      this.loopBounds.max.fromArray(legacyLoopBounds.max);
+      this.v5.setShadowsEnabled(this.renderer.shadowMap.enabled);
+      this.setTime(0); this.resetView(); this.start();
+      return;
+    }
     // Relative URLs work under Flutter asset paths, localhost and Android's WebView origin.
     const [gltf, rig] = await Promise.all([
       // The App's saved body selection supplies ?body=training for the faceless
@@ -132,60 +182,124 @@ export class FlarePlayer {
 
   start() {
     if (this.running || this.disposed || this.contextLost || !this.visible || document.hidden) return;
-    this.running = true; this.last = performance.now(); this.renderer.setAnimationLoop(now => this.tick(now));
+    this.running = true; this.last = performance.now();
+    this.scheduleFrame();
   }
-  stop() { this.running = false; this.renderer.setAnimationLoop(null); }
+  stop() {
+    this.running = false;
+    if (this.animationFrame != null) cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = null;
+  }
+  setDemandFrames(enabled) {
+    if (!!this.demandFrames === enabled) return;
+    this.demandFrames = enabled;
+    this.dirty = true;
+    this.start();
+  }
+  scheduleFrame() {
+    if (!this.running || this.animationFrame != null) return;
+    this.animationFrame = requestAnimationFrame(now => {
+      this.animationFrame = null;
+      const moving = this.tick(now);
+      if (!this.running || this.animationFrame != null) return;
+      if (!this.demandFrames || moving || this.dirty || this.adaptive.moving) this.scheduleFrame();
+      else this.running = false;
+    });
+  }
   tick(now) {
     const interval = Math.max(0, now - this.last);
     const delta = Math.min(interval / 1000, 0.06); this.last = now;
-    const animated = !!(this.motion && this.playing);
+    const animated = !!(this.motion && this.playing && !this.stageHandoffFrames);
     if (animated) {
       this.time = this.motion.clock.advance(this.time, delta, this.speed, this.loopRange);
       this.motion.update(this.time); this.callbacks.onTime?.(this.time); this.dirty = true;
     }
-    this.stepGlide(now);
-    this.controls.update();
-    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved;
+    if (!this.hubFlight && !this.stageHandoffFrames) {
+      this.stepGlide(now);
+      if (!this.trainingHub) this.controls.update();
+    }
+    const hubMoving = !this.hubFlight?.returning && !this.stageHandoffFrames && this.trainingHub?.tick(now);
+    const flightMoving = this.hubFlight?.sample(now);
+    if (flightMoving) this.dirty = true;
+    const moving = animated || !!this.glide || !!this.projectionGlide || this.cameraMoved || hubMoving;
     // A frame requested only by the orbit keeps the pose and the shadow map.
     this.cameraOnly = this.cameraMoved && !this.sceneDirty;
     this.cameraMoved = false;
     const density = this.adaptive.update(now, moving, interval);
-    if (density.changed) { this.applyPixelRatio(density.ratio); this.dirty = true; }
+    const ratio = this.stagePixelRatio(density.ratio);
+    if (ratio !== this.renderer.getPixelRatio()) { this.applyPixelRatio(ratio); this.dirty = true; }
     this.perf.ticks++;
     if (this.dirty) {
       // Render hooks may request another frame while an effect settles.
       // Consume this frame's request before running those hooks.
-      this.redraw = false; this.sceneDirty = false; this.render(); this.callbacks.onRender?.();
+      this.redraw = false; this.sceneDirty = false; const complete = this.render(); this.callbacks.onRender?.(complete);
+      this.hubFlight?.rendered();
+      if (this.stageHandoffFrames > 0) {
+        this.stageHandoffFrames--;
+        this.requestRedraw();
+      }
       const perf = this.perf;
       if (perf.lastRenderTick === perf.ticks - 1) pushRing(perf.intervals, interval, 240);
       perf.lastRenderTick = perf.ticks; pushRing(perf.renderTimes, now, 240);
     }
+    return moving || flightMoving;
   }
   render() {
+    if (this.trainingHub && !this.hubFlight?.returning) return this.trainingHub.render();
     this.callbacks.onBeforeRender?.();
-    const r = this.renderer, inset = Math.round(this.viewInset), height = this.container.clientHeight;
-    // The key light's shadow depends on the pose, not on the camera. While
-    // only the orbit moves, the previous shadow map stays valid.
-    const shadows = r.shadowMap.enabled && this.keyLight.castShadow;
-    const reuseShadow = this.adaptive.enabled && this.cameraOnly && shadows && this.shadowFresh && !!this.keyLight.shadow.map;
-    if (reuseShadow) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
-    try {
-      if (inset > 0 && inset < height) {
-        // Nothing is drawn under the host's chrome: clear all, draw above it.
-        r.setScissorTest(false); r.clear();
-        r.setScissor(0, inset, this.container.clientWidth, height - inset); r.setScissorTest(true);
-        r.render(this.displayScene ?? this.scene, this.camera); r.setScissorTest(false);
-      } else r.render(this.displayScene ?? this.scene, this.camera);
-    } finally { r.shadowMap.autoUpdate = true; }
+    const flight = this.hubFlight;
+    const bottom = flight?.bottomInset ?? this.viewInset;
+    const top = flight?.topInset ?? this.viewTop ?? 0;
+    this.withStageScissor(bottom, top, () => this.renderActor(this.scene, flight?.camera ?? this.camera,
+      !!flight || (this.adaptive.enabled && this.cameraOnly)));
     this.cameraOnly = false;
+    const r = this.renderer;
     const perf = this.perf, canvas = r.domElement;
     perf.renders++; perf.colorPixels += canvas.width * canvas.height;
     perf.calls = r.info.render.calls; perf.triangles = r.info.render.triangles;
-    if (reuseShadow) perf.skippedShadows++;
-    else if (shadows && (!this.displayScene || this.displayScene === this.scene)) {
-      const size = this.keyLight.shadow.mapSize; perf.shadowPasses++; perf.shadowPixels += size.x * size.y;
+  }
+  withStageScissor(bottom, top, render) {
+    const r = this.renderer, height = this.container.clientHeight;
+    top = Math.round(top);
+    bottom = Math.round(bottom);
+    if (top + bottom === 0) return render();
+    // Match the destination viewport at the handoff, including its shadow.
+    r.setScissorTest(false); r.clear();
+    if (top + bottom >= height) return;
+    r.setScissor(0, bottom, this.container.clientWidth, height - bottom - top);
+    r.setScissorTest(true);
+    try { return render(); }
+    finally { r.setScissorTest(false); }
+  }
+  renderActor(scene, camera, reusePoseShadow) {
+    const r = this.renderer;
+    if (scene === this.scene && this.needsActorEnvironment) this.createEnvironment();
+    const time = this.hubFlight?.poseTime ?? this.time;
+    const shadows = r.shadowMap.enabled && this.keyLight.castShadow && scene === this.scene;
+    // While the rig is paused, the light-space shadow follows the camera
+    // from the existing map. A new pose gets its own projection.
+    const reuse = reusePoseShadow && shadows && this.shadowFresh && this.shadowPoseTime === time;
+    const autoUpdate = r.shadowMap.autoUpdate;
+    if (reuse) { r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = false; }
+    try { r.render(scene, camera); }
+    finally { r.shadowMap.autoUpdate = autoUpdate; }
+    if (reuse) this.perf.skippedShadows++;
+    else if (shadows) {
+      const size = this.keyLight.shadow.mapSize;
+      this.perf.shadowPasses++; this.perf.shadowPixels += size.x * size.y;
       this.shadowFresh = !!this.keyLight.shadow.map;
+      this.shadowPoseTime = time;
     }
+  }
+  setViewTop(px) {
+    const top = Math.max(0, px);
+    if (this.viewTop === top) return;
+    this.viewTop = top;
+    this.updateFramingTarget();
+    this.viewBias = { ...this.viewBiasTarget };
+    this.applyProjection();
+    if (this.autoFrame && this.motion) this.resetView();
+    this.dirty = true;
   }
   /** Bottom px of the stage hidden under host chrome. A running glide carries
    * the change; otherwise it eases on its own (reduced motion: at once). */
@@ -199,7 +313,8 @@ export class FlarePlayer {
       this.projectionGlide.toBias = { ...this.viewBiasTarget };
       return;
     }
-    if (animate && this.running && Math.abs(value - this.viewInset) > 0.5) {
+    const canGlide = this.running || (this.demandFrames && this.visible && !document.hidden && !this.contextLost);
+    if (animate && canGlide && Math.abs(value - this.viewInset) > 0.5) {
       this.glideTo(this.camera.position.clone(), this.controls.target.clone(), 420);
     } else { this.projectionGlide = null; this.viewInset = value; this.viewBias = { ...this.viewBiasTarget }; this.applyProjection(); }
     this.dirty = true;
@@ -212,9 +327,12 @@ export class FlarePlayer {
   pacingRate(time) { return (this.motion.clock.toSequence(Math.min(this.motion.clock.toWall(time) + 0.001, this.motion.clock.duration)) - time) / 0.001; }
   paceStep(delta) { return this.motion.clock.advance(this.time, delta, this.speed, this.loopRange) - this.time; }
   getMetrics() { return this.motion?.getMetrics() ?? null; }
-  setDisplayScene(scene = null) { this.displayScene = scene; this.dirty = true; }
+  getMotionCameraBounds() {
+    return this.v5 ? legacyPoseBounds(this.time) : this.getMetrics().bounds;
+  }
   setVisible(visible) {
     this.visible = !!visible;
+    this.trainingHub?.setVisible?.(this.visible && !document.hidden);
     if (this.visible && !document.hidden) { this.dirty = true; this.start(); }
     else { this.playing = false; this.stop(); this.callbacks.onTime?.(this.time); }
   }
@@ -223,7 +341,8 @@ export class FlarePlayer {
     this.updatePixelRatio();
     this.renderer.shadowMap.enabled = quality.shadows; this.keyLight.castShadow = quality.shadows;
     this.shadowCatcher.visible = quality.shadows;
-    this.coach?.traverse(object => { if (object.isMesh) object.castShadow = quality.shadows; });
+    if (this.v5) this.v5.setShadowsEnabled(quality.shadows);
+    else this.coach?.traverse(object => { if (object.isMesh) object.castShadow = quality.shadows; });
     this.dirty = true; this.resize();
   }
   updatePixelRatio() {
@@ -232,7 +351,17 @@ export class FlarePlayer {
     // Adaptive density only lowers moving frames below this full density.
     const full = renderQuality(this.quality, window.devicePixelRatio).pixelRatio;
     this.fullPixelRatio = full;
-    this.applyPixelRatio(this.adaptive.configure(full, this.quality));
+    this.applyPixelRatio(this.stagePixelRatio(this.adaptive.configure(full, this.quality)));
+  }
+  holdStageHandoff() {
+    // Hold the last drawn buffer for the first two destination frames.
+    this.stageHandoffRatio = this.renderer.getPixelRatio();
+    this.stageHandoffFrames = 2;
+    this.requestRedraw();
+  }
+  stagePixelRatio(adaptiveRatio) {
+    if (this.hubFlight) return this.hubFlight.pixelRatio ?? this.fullPixelRatio;
+    return this.stageHandoffFrames > 0 ? this.stageHandoffRatio : adaptiveRatio;
   }
   applyPixelRatio(ratio) {
     // setPixelRatio reallocates the drawing buffer; only call it on a change.
@@ -252,7 +381,7 @@ export class FlarePlayer {
     this.dirty = true;
   }
   /** Visible stage height for an inset (the part above the host's chrome). */
-  visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - inset); }
+  visibleHeight(inset = this.viewInset) { return Math.max(1, this.container.clientHeight - (this.viewTop ?? 0) - inset); }
   updateFramingTarget() {
     const width = this.container.clientWidth, visible = this.visibleHeight(this.viewInsetTarget);
     const fullStage = this.framingMode === 'main' && width <= 600 && visible >= 500;
@@ -262,12 +391,12 @@ export class FlarePlayer {
     this.viewBias ??= { ...this.viewBiasTarget };
   }
   applyProjection() {
-    const width = this.container.clientWidth, height = this.container.clientHeight;
+    const width = this.container.clientWidth, canvasHeight = this.container.clientHeight;
+    const top = this.viewTop ?? 0;
+    const height = canvasHeight - top;
     if (!(width > 0 && height > 0)) return;
     const visible = this.visibleHeight();
-    // The visible part keeps the base field of view; the canvas below it is
-    // the same lens extended, so framing matches a stage of that height.
-    this.camera.aspect = width / height;
+    // Map the original home lens into its rectangle inside the shared canvas.
     this.camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(this.baseFov / 2)) * height / visible));
     if (!this.viewBias) this.updateFramingTarget();
     // h1 embeds the 650px stage at global y108. Lift the visual composition
@@ -275,8 +404,7 @@ export class FlarePlayer {
     // shift is retained for v38; its slightly wider envelope is fitted below.
     this.offsetY = visible * this.viewBias.y + (height - visible) / 2;
     this.offsetX = width * this.viewBias.x;
-    this.camera.setViewOffset(width, height, this.offsetX, this.offsetY, width, height);
-    this.camera.updateProjectionMatrix();
+    this.camera.setViewOffset(width, height, this.offsetX, this.offsetY - top, width, canvasHeight);
   }
   setFramingMode(value) { this.framingMode = value; this.resize(); }
   resetView(direction = CAMERA_PRESETS.standard) {
@@ -303,7 +431,7 @@ export class FlarePlayer {
    * reads as a sudden zoom-in and a flip. Longer turns get a little more time. */
   glideTo(position, target, ms = null) {
     const reduce = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!this.running || reduce || ms === 0) { this.setCameraView(position, target); return; }
+    if ((!this.running && !this.demandFrames) || reduce || ms === 0) { this.setCameraView(position, target); return; }
     const damping = this.controls.enableDamping;
     this.controls.enableDamping = false; this.controls.update(); this.controls.enableDamping = damping;
     const fromT = this.controls.target.clone(), toT = target.clone();
@@ -366,8 +494,8 @@ export class FlarePlayer {
     const position = center.clone().addScaledVector(dir, distance * padding);
     if (glide) this.glideTo(position, center); else this.setCameraView(position, center);
   }
-  project(point) {
-    const v = point.clone().project(this.camera), rect = this.renderer.domElement.getBoundingClientRect();
+  project(point, camera = this.camera) {
+    const v = point.clone().project(camera), rect = this.renderer.domElement.getBoundingClientRect();
     return { x: (v.x + 1) * 0.5 * rect.width, y: (1 - v.y) * 0.5 * rect.height, behind: v.z > 1 || v.z < -1 };
   }
   dispose() {
@@ -376,8 +504,11 @@ export class FlarePlayer {
     this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
     this.renderer.domElement.removeEventListener('webglcontextrestored', this.onContextRestored);
     this.controls.removeEventListener('change', this.onControlsChange); this.controls.dispose();
+    this.trainingHub?.releaseGpu();
     this.motion?.dispose();
-    disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
+    disposeTree(this.scene); this.environment?.dispose(); this.renderer.dispose();
+    if (this.trainingHub) this.renderer.forceContextLoss();
+    this.renderer.domElement.remove();
   }
 }
 

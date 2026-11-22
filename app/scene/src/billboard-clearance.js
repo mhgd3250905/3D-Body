@@ -84,7 +84,7 @@ function rectPenetration(a, b) {
  * card collisions outweigh all body collisions combined, so an unavoidable
  * body overlap cannot drive a card offscreen or onto another control.
  */
-export function createBillboardClearance(hulls, { width, height, obstacles = [], gap = 8 }) {
+export function createBillboardClearance(hulls, { width, height, top = 0, obstacles = [], gap = 8 }) {
   if (!finite(width) || !finite(height) || width <= 0 || height <= 0) throw new RangeError('A positive viewport is required');
   if (!finite(gap) || gap < 0) throw new RangeError('Clearance gap must be nonnegative');
   const bodies = (hulls ?? []).map(prepare).filter(Boolean);
@@ -94,8 +94,8 @@ export function createBillboardClearance(hulls, { width, height, obstacles = [],
     const rect = normalizeRect(input);
     if (!rect) return Infinity;
     const padded = expand(rect, gap);
-    const violations = [gap - rect.left, gap - rect.top,
-      rect.left + rect.width + gap - width, rect.top + rect.height + gap - height];
+    const violations = [gap - rect.left, top + gap - rect.top,
+      rect.left + rect.width + gap - width, rect.top + rect.height + gap - top - height];
     let hard = 0;
     for (const distance of violations) if (distance > EPSILON) hard += HARD_PENALTY + distance * distance;
     for (const obstacle of ui) {

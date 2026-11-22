@@ -11,8 +11,10 @@ class ActorBodySelector extends StatelessWidget {
     required this.onChanged,
   });
 
+  const ActorBodySelector.fixedV5({super.key}) : value = 'v5', onChanged = null;
+
   final String value;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +27,22 @@ class ActorBodySelector extends StatelessWidget {
   }
 
   Widget _chips(BuildContext context, AppLocalizations s, double maxWidth) {
+    final options = onChanged == null
+        ? [('v5', s.flareStraightLegs)]
+        : [
+            ('original', s.actorBodyOriginal),
+            ('training', s.actorBodyTraining),
+            ('shadow', s.actorBodyShadow),
+            ('chrome', s.actorBodyChrome),
+            ('street', s.actorBodyStreet),
+            ('robot', s.actorBodyRobot),
+            ('cyber', s.actorBodyCyber),
+          ];
     return Wrap(
       spacing: 8,
       runSpacing: 6,
       children: [
-        for (final (id, label) in [
-          ('original', s.actorBodyOriginal),
-          ('training', s.actorBodyTraining),
-          ('shadow', s.actorBodyShadow),
-          ('chrome', s.actorBodyChrome),
-          ('street', s.actorBodyStreet),
-          ('robot', s.actorBodyRobot),
-          ('cyber', s.actorBodyCyber),
-        ])
+        for (final (id, label) in options)
           ChoiceChip(
             key: ValueKey('actor-body-$id'),
             showCheckmark: false,
@@ -47,6 +52,7 @@ class ActorBodySelector extends StatelessWidget {
             visualDensity: const VisualDensity(vertical: -2),
             backgroundColor: FlareColors.palette.segmentTrack,
             selectedColor: FlareColors.accent.withValues(alpha: .16),
+            disabledColor: FlareColors.accent.withValues(alpha: .16),
             label: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: maxWidth.isFinite
@@ -60,21 +66,19 @@ class ActorBodySelector extends StatelessWidget {
                 style: TextStyle(
                   color: value == id ? FlareColors.accentInk : FlareColors.text,
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'FlareSans',
-                  fontFamilyFallback: const [
-                    'NotoSansKR',
-                    'NotoSansArabic',
-                    'NotoSansDevanagari',
-                  ],
+                  fontFamily: flareFontFamily,
+                  fontFamilyFallback: flareFontFallback,
                   fontSize: 13,
                   height: 1.2,
                 ),
               ),
             ),
             selected: value == id,
-            onSelected: (selected) {
-              if (selected) onChanged(id);
-            },
+            onSelected: onChanged == null
+                ? null
+                : (selected) {
+                    if (selected) onChanged!(id);
+                  },
           ),
       ],
     );

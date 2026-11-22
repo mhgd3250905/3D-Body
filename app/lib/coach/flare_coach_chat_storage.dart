@@ -10,8 +10,9 @@ import '../control/learning_store.dart';
 /// routines that carry a complete SDK plan are offered to the chat module;
 /// hand-built legacy sets stay in Flare's own editor untouched.
 class FlareCoachPlanStore extends CoachPlanStorageAdapter {
-  FlareCoachPlanStore(this.store);
+  FlareCoachPlanStore(this.store, {this.canSave});
   final LearningStore store;
+  final bool Function()? canSave;
 
   static String revisionOf(TrainingRoutine routine) =>
       jsonEncode(routine.toJson());
@@ -41,6 +42,9 @@ class FlareCoachPlanStore extends CoachPlanStorageAdapter {
 
   @override
   Future<CoachPlanWriteResult> save(CoachPlanWriteRequest request) async {
+    if (canSave?.call() == false) {
+      return const CoachPlanWriteResult.failure(CoachPlanWriteStatus.failed);
+    }
     final name = TrainingRoutine.truncateName(request.name.trim());
     try {
       if (request.mode == CoachPlanWriteMode.update) {

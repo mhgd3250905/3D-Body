@@ -9,6 +9,227 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Unlock Flare Pro';
+
+  @override
+  String get premiumPreviewFooter =>
+      'Training, history and custom plans, all unlocked';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'Streaks';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'Milestones';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'Workout time';
+
+  @override
+  String get premiumPreviewBenefitActions => 'Choose exercises';
+
+  @override
+  String get premiumPreviewBenefitSets => 'Flexible sets';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'Unlimited saves';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'Voice timer';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'Exercise demos';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'Auto logging';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'Log every workout';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'every';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'Automatically save workout time, streaks and milestones to see your progress at a glance.';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'Build your own plan';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'your own';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'Choose exercises, adjust sets and save your own training plan.';
+
+  @override
+  String get premiumPreviewTrainingTitle =>
+      'Follow along, make every set count';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'every set';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'Follow timed voice cues and exercise demos. Your workout is logged when you finish.';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return 'Free trial for $days days if eligible';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return 'Subscribe $price';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days-day free trial';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return '$count plans for every phase of the Flare';
+  }
+
+  @override
+  String get premiumAngleCount => 'Key angles';
+
+  @override
+  String get premiumMuscleCount => 'Muscle groups';
+
+  @override
+  String get premiumLevelCount => 'Levels';
+
+  @override
+  String get premiumVoiceTitle => 'Voice guidance and 3D demos';
+
+  @override
+  String get premiumVoiceDescription => 'Prompts for reps, sides and rests';
+
+  @override
+  String get premiumCustomDescription =>
+      'Build a plan from your go-to exercises';
+
+  @override
+  String get premiumPerYear => '/yr';
+
+  @override
+  String get premiumPerMonth => '/mo';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return 'Can’t reach $store. Store prices apply.';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'Still can’t reach $store. Try again later.';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'After the trial, renews at $price. Cancel anytime in $store.';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'Renews at $price. Cancel anytime in $store.';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'Renews automatically. Cancel in $store.';
+  }
+
+  @override
+  String get premiumTitle => 'Unlock Flare Premium';
+
+  @override
+  String get premiumSubtitle => 'Build training that\'s yours';
+
+  @override
+  String get premiumAiCoach => 'Start any training plan anytime';
+
+  @override
+  String get premiumAiPlans =>
+      'Three levels of plans by angle and muscle group';
+
+  @override
+  String get premiumCustomWorkouts => 'Unlimited custom workouts';
+
+  @override
+  String get premiumMonthly => 'Monthly';
+
+  @override
+  String get premiumYearly => 'Yearly';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'About $price/month';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return 'Save $percent%';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return 'Start $days-day free trial';
+  }
+
+  @override
+  String get premiumSubscribe => 'Subscribe';
+
+  @override
+  String get premiumDisclosure =>
+      'Subscription renews automatically. Cancel anytime in Google Play. Cancel before the trial ends and you won\'t be charged.';
+
+  @override
+  String get premiumRestore => 'Restore purchases';
+
+  @override
+  String get premiumTerms => 'Terms of service';
+
+  @override
+  String get premiumPrivacy => 'Privacy policy';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'Membership active';
+
+  @override
+  String get premiumInactive => 'No active membership';
+
+  @override
+  String get premiumManage => 'Manage subscription';
+
+  @override
+  String get premiumUnavailable => 'The store is unavailable. Try again.';
+
+  @override
+  String get premiumRestoreEmpty => 'No active subscription was found.';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'You\'ve used all $limit AI requests for today. Come back tomorrow.';
+  }
+
+  @override
+  String get premiumRateLimit => 'Too many requests. Try again shortly.';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'AI suggestions are for reference only, not medical advice.';
+
+  @override
   String get actorBodyLabel => 'Thomas character';
 
   @override
@@ -34,6 +255,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appName => 'Flare';
+
+  @override
+  String get flareStraightLegs => 'Flare (Straight Legs)';
 
   @override
   String get tagline => 'Understand the move. Train every step.';
@@ -108,10 +332,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get side => 'Side';
 
   @override
-  String get pausedHint => 'Explore muscles';
-
-  @override
-  String get playingHint => 'Pause to explore';
+  String get homeGoToTraining => 'Go to training';
 
   @override
   String get loadingScene => 'Preparing 3D motion…';
@@ -618,7 +839,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyRule1 => 'Warm up your wrists first';
 
   @override
-  String get safetyRule1Note => 'The Warm-up plan walks you through it';
+  String get safetyRule1Note =>
+      'Move your wrists and shoulder blades before you start training.';
 
   @override
   String get safetyRule2 => 'Stop for sharp pain, numbness, or dizziness';
@@ -876,10 +1098,205 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wristExtension => 'Wrist extension';
 
   @override
+  String get plansByAngle => 'By angle';
+
+  @override
+  String get plansByMuscle => 'By muscle group';
+
+  @override
+  String get anglePlanLabel => 'Angle plan';
+
+  @override
+  String get musclePlanLabel => 'Muscle plan';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'One hand down, legs in a high V. Build strength for a steady hold.';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'Hold your body over one hand. Your delts drive every flare.';
+
+  @override
+  String get planTrainingContent => 'Workout';
+
+  @override
+  String get planMuscleLinkHint => 'Tap a muscle for its plan';
+
+  @override
+  String get planSpecialized => 'Focused plan';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return 'Rest $seconds sec';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'Bodyweight swap';
+
+  @override
+  String get planBodyweightScene => 'Bodyweight';
+
+  @override
+  String get hubAngle => 'Angle';
+
+  @override
+  String get hubMuscle => 'Muscles';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return 'From $count min';
+  }
+
+  @override
+  String get hubThreeTiers => 'Three levels';
+
+  @override
+  String get hubPrimaryMuscles => 'Main muscles in this phase';
+
+  @override
+  String get hubSpecializedPlan => 'Targeted plan';
+
+  @override
+  String get hubSupportTab => 'Support';
+
+  @override
+  String get hubCoreTab => 'Core';
+
+  @override
+  String get hubLegsTab => 'Legs';
+
+  @override
+  String get hubStillPlanning => 'In preparation';
+
+  @override
+  String get hubPlanComingSoon => 'Targeted plan in preparation';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return 'View the “$name” plan';
+  }
+
+  @override
+  String get hubPhase09Caption =>
+      'Plant both hands and lift your spread legs forward.';
+
+  @override
+  String get hubPhase10Caption => 'Shift your weight from both hands to one.';
+
+  @override
+  String get hubPhase11Caption =>
+      'Support your whole body sideways on one hand. That shoulder works hardest.';
+
+  @override
+  String get hubPhase12Caption =>
+      'Turn to face forward and scissor your legs past the front.';
+
+  @override
+  String get hubPhase13Caption =>
+      'Plant both hands behind you and sweep your legs back.';
+
+  @override
+  String get hubPhase14Caption =>
+      'Switch hands and sweep your straight legs back.';
+
+  @override
+  String get hubPhase15Caption =>
+      'Support on the other hand and hold a high V.';
+
+  @override
+  String get hubPhase16Caption =>
+      'Turn face down and sweep your legs behind you.';
+
+  @override
+  String get planTierBeginner => 'Beginner';
+
+  @override
+  String get planTierIntermediate => 'Intermediate';
+
+  @override
+  String get planTierAdvanced => 'Advanced';
+
+  @override
+  String get planActiveMuscles => 'Muscles worked';
+
+  @override
+  String get planExercises => 'Exercises';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · per side';
+  }
+
+  @override
+  String get planTierSummary => 'Beginner · Intermediate · Advanced';
+
+  @override
   String get plans => 'Plans';
 
   @override
-  String get plansHint => 'Ready-made sets and your own';
+  String get plansHint => 'Targeted workouts and your plans';
+
+  @override
+  String get plansLastSession => 'Last session';
+
+  @override
+  String get plansContinue => 'Continue';
+
+  @override
+  String get plansToday => 'Today';
+
+  @override
+  String get plansYesterday => 'Yesterday';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total exercises';
+  }
+
+  @override
+  String get plansNewCompactHint => 'Combine your regular exercises';
+
+  @override
+  String get plansNewEmptyHint => 'Group the exercises you do most';
+
+  @override
+  String get plansAnglesTitle => 'Challenging flare angles';
+
+  @override
+  String get plansAnglesDescription =>
+      'Build stability in the toughest moments of a full flare.';
+
+  @override
+  String get plansMusclesTitle => 'Muscle groups to strengthen';
+
+  @override
+  String get plansMusclesDescription =>
+      'Areas under the most strain during a flare.';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'One-hand support';
+
+  @override
+  String get plansTwoHandSupport => 'Two-hand support';
+
+  @override
+  String get plansThreeLevels => '3 levels';
+
+  @override
+  String get plansAiTitle => 'AI plan';
+
+  @override
+  String get plansAiHint =>
+      'Choose a setting, duration and muscle group for a targeted plan.';
+
+  @override
+  String get plansAiUnavailable => 'AI is unavailable';
 
   @override
   String get plansReady => 'Ready-made sets';
@@ -904,6 +1321,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'Save as my plan';
+
+  @override
+  String get premiumCopyRoutine => 'Copy plan';
 
   @override
   String get planSaved => 'Saved to My plans';
@@ -1122,4 +1542,138 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets sets × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => 'You\'ll need:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'Exercise mat',
+      'chair': 'Chair',
+      'band': 'Resistance band',
+      'dumbbell': 'Dumbbell',
+      'wall': 'Wall',
+      'cable': 'Cable machine',
+      'block': 'Yoga block',
+      'pullup_bar': 'Pull-up bar',
+      'parallettes': 'Parallettes',
+      'dip_bars': 'Dip bars',
+      'slider': 'Exercise sliders',
+      'rings': 'Gymnastic rings',
+      'landmine': 'Landmine attachment',
+      'swiss_ball': 'Exercise ball',
+      'roman_chair': 'Roman chair',
+      'kettlebell': 'Kettlebell',
+      'reverse_hyper': 'Reverse hyper machine',
+      'ghd': 'Glute-ham developer',
+      'hip_abductor_machine': 'Hip abductor machine',
+      'leg_extension_machine': 'Leg extension machine',
+      'foam_roller': 'Foam roller',
+      'towel': 'Towel',
+      'doorframe': 'Doorframe',
+      'bench': 'Weight bench',
+      'barbell': 'Barbell',
+      'clamp_pad': 'Small pad',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'Before and after';
+
+  @override
+  String get preWorkoutWarmup => 'Pre-workout warm-up';
+
+  @override
+  String get postWorkoutStretch => 'Post-workout';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'Not warmed up? Try the $minutesString-minute ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return '$count circles each way per side';
+  }
+
+  @override
+  String get planCircleClockwise => 'Clockwise';
+
+  @override
+  String get planCircleCounterclockwise => 'Counterclockwise';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'Hold at the top for $seconds s';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => 'Continue with post-workout';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 levels · Bodyweight';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A Targeted strengthening';
+
+  @override
+  String get cooldownStretchHeading => 'B Full-body stretching';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'Skip strengthening and go to full-body stretching';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'Aim for 2–3 times a week on alternate days. Skip strengthening if you already trained upper-body strength today or your wrists feel sore.';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds rounds';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return '${seconds}s between exercises · ${roundSeconds}s between rounds';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max sec';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max reps';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return '$reps reps each';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '${seconds}s PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes min · Bodyweight';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'Temporary demo';
 }

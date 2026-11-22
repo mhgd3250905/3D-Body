@@ -30,7 +30,7 @@ void _phone(WidgetTester tester) {
 }
 
 void main() {
-  final catalog = loadCatalogFixture();
+  final catalog = loadCatalogFixture(includeFlarePlans: true);
 
   Future<LearningStore> store() async {
     final s = LearningStore(catalog: catalog, storage: _Memory());
@@ -39,13 +39,14 @@ void main() {
     return s;
   }
 
-  testWidgets('scene switch turns every preset into that scene', (
+  testWidgets('plans shows authored angles and muscles before any training', (
     tester,
   ) async {
     _phone(tester);
     final s = await store();
     addTearDown(s.dispose);
-    PresetPlan? opened;
+    int? openedAngle;
+    String? openedMuscle;
     var created = 0;
     await tester.pumpWidget(
       _app(
@@ -54,7 +55,11 @@ void main() {
           builder: (_, _) => PlansPage(
             catalog: catalog,
             store: s,
-            onPreset: (preset) => opened = preset,
+            onOpenAngle: (phase) => openedAngle = phase.source,
+            onOpenMuscle: (group) => openedMuscle = group.id,
+            onAllAngles: () {},
+            onAllMuscles: () {},
+            onContinue: () {},
             onRoutine: (_) {},
             onNewRoutine: () => created++,
           ),
@@ -62,22 +67,22 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('成套训练'), findsOneWidget);
-    await tester.tap(find.text('健身房'));
-    await tester.pumpAndSettle();
-    expect(s.settings.tier, 'C');
-    await tester.tap(find.byKey(const ValueKey('preset-warmup')));
-    expect(opened?.id, 'warmup');
-    expect(
-      opened!.drills(catalog, s.settings.tier).every((d) => d.tier == 'C'),
-      isTrue,
-    );
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('plan-new')),
-      300,
-    );
+    expect(find.text('成套训练'), findsNothing);
+    expect(find.byKey(const ValueKey('plan-last-session')), findsNothing);
+    expect(find.text('把常练的动作组合起来'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('plan-new')));
     expect(created, 1);
+    await tester.tap(find.byKey(const ValueKey('plan-angle-11')));
+    expect(openedAngle, 11);
+    final muscle = find.byKey(const ValueKey('plan-muscle-deltoids'));
+    final pageScroll = find.byWidgetPredicate(
+      (widget) =>
+          widget is Scrollable && widget.axisDirection == AxisDirection.down,
+    );
+    await tester.scrollUntilVisible(muscle, 250, scrollable: pageScroll);
+    await tester.tap(muscle);
+    expect(openedMuscle, 'deltoids');
+    expect(s.settings.tier, 'A');
     expect(tester.takeException(), isNull);
   });
 

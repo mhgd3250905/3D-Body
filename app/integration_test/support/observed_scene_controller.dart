@@ -20,22 +20,13 @@ class ObservedSceneController extends SceneController {
     return accepted;
   }
 
-  bool confirmsPausedFrame({
-    required int after,
-    required String? detail,
-    required double time,
-    String? retainedSelection,
-    String model = 'motion',
-  }) {
+  bool confirmsPausedFrame({required int after, required double time}) {
     final state = lastState;
     final actualTime = state?['time'];
     return stateRevision > after &&
         state?['ready'] == true &&
         state?['errorCode'] == null &&
         state?['playing'] == false &&
-        state?['selected'] == (detail ?? retainedSelection) &&
-        state?['detail'] == (detail != null) &&
-        state?['detailModel'] == model &&
         actualTime is num &&
         actualTime.isFinite &&
         (actualTime - time).abs() < .025;

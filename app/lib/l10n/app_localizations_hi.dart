@@ -9,6 +9,228 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get premiumPreviewBadge => 'FLARE PRO';
+
+  @override
+  String get premiumPreviewSubscribe => 'Flare Pro अनलॉक करें';
+
+  @override
+  String get premiumPreviewFooter =>
+      'कसरत, इतिहास और अपनी योजनाओं का इस्तेमाल करें।';
+
+  @override
+  String get premiumPreviewBenefitStreak => 'लगातार दिन';
+
+  @override
+  String get premiumPreviewBenefitMilestones => 'उपलब्धियाँ';
+
+  @override
+  String get premiumPreviewBenefitDuration => 'कसरत का समय';
+
+  @override
+  String get premiumPreviewBenefitActions => 'व्यायाम चुनें';
+
+  @override
+  String get premiumPreviewBenefitSets => 'मनचाहे सेट';
+
+  @override
+  String get premiumPreviewBenefitSaves => 'असीमित योजनाएँ';
+
+  @override
+  String get premiumPreviewBenefitVoice => 'वॉइस टाइमर';
+
+  @override
+  String get premiumPreviewBenefitDemos => 'व्यायाम प्रदर्शन';
+
+  @override
+  String get premiumPreviewBenefitLogging => 'अपने आप रिकॉर्ड';
+
+  @override
+  String get premiumPreviewRecordsTitle => 'हर कसरत दर्ज करें';
+
+  @override
+  String get premiumPreviewRecordsHighlight => 'हर';
+
+  @override
+  String get premiumPreviewRecordsDescription =>
+      'कसरत का समय, लगातार अभ्यास के दिन और उपलब्धियाँ अपने आप सहेजें और प्रगति एक नज़र में देखें।';
+
+  @override
+  String get premiumPreviewPlanEditorTitle => 'अपनी योजना खुद बनाएँ';
+
+  @override
+  String get premiumPreviewPlanEditorHighlight => 'खुद';
+
+  @override
+  String get premiumPreviewPlanEditorDescription =>
+      'व्यायाम चुनें, सेट बदलें और अपनी प्रशिक्षण योजना सहेजें।';
+
+  @override
+  String get premiumPreviewTrainingTitle =>
+      'साथ में कसरत करें, हर सेट मायने रखता है';
+
+  @override
+  String get premiumPreviewTrainingHighlight => 'हर सेट';
+
+  @override
+  String get premiumPreviewTrainingDescription =>
+      'आवाज़ से समय का संकेत और व्यायाम का प्रदर्शन पाएँ। कसरत पूरी होते ही दर्ज हो जाती है।';
+
+  @override
+  String premiumConditionalTrial(int days) {
+    return 'पात्र होने पर $days दिनों की मुफ़्त आज़माइश';
+  }
+
+  @override
+  String premiumSubscribeAt(String price) {
+    return '$price में सदस्यता लें';
+  }
+
+  @override
+  String premiumTrialOffer(int days) {
+    return '$days दिनों की मुफ़्त आज़माइश';
+  }
+
+  @override
+  String premiumPlanSummary(int count) {
+    return 'फ़्लेयर के हर चरण के लिए $count प्लान';
+  }
+
+  @override
+  String get premiumAngleCount => 'मुख्य कोण';
+
+  @override
+  String get premiumMuscleCount => 'मांसपेशी समूह';
+
+  @override
+  String get premiumLevelCount => 'कठिनाई स्तर';
+
+  @override
+  String get premiumVoiceTitle => 'आवाज़ में निर्देश और 3D डेमो';
+
+  @override
+  String get premiumVoiceDescription =>
+      'दोहराव, करवट बदलने और आराम के लिए संकेत';
+
+  @override
+  String get premiumCustomDescription => 'अपने नियमित व्यायामों का प्लान बनाएँ';
+
+  @override
+  String get premiumPerYear => '/साल';
+
+  @override
+  String get premiumPerMonth => '/महीना';
+
+  @override
+  String premiumStoreOffline(String store) {
+    return '$store से कनेक्ट नहीं हो सका। स्टोर की कीमतें लागू होंगी।';
+  }
+
+  @override
+  String premiumStoreRetryFailed(String store) {
+    return 'अब भी $store से कनेक्ट नहीं हो सका। बाद में फिर कोशिश करें।';
+  }
+
+  @override
+  String premiumTrialRenewal(String price, String store) {
+    return 'आज़माइश के बाद $price पर सदस्यता रिन्यू होगी। $store में कभी भी रद्द करें।';
+  }
+
+  @override
+  String premiumPaidRenewal(String price, String store) {
+    return 'सदस्यता $price पर रिन्यू होगी। $store में कभी भी रद्द करें।';
+  }
+
+  @override
+  String premiumStoreRenewal(String store) {
+    return 'सदस्यता अपने आप रिन्यू होगी। $store में रद्द करें।';
+  }
+
+  @override
+  String get premiumTitle => 'Flare Premium अनलॉक करें';
+
+  @override
+  String get premiumSubtitle => 'अपनी पसंद की ट्रेनिंग बनाएँ';
+
+  @override
+  String get premiumAiCoach => 'कोई भी ट्रेनिंग प्लान कभी भी शुरू करें';
+
+  @override
+  String get premiumAiPlans =>
+      'कोण और मांसपेशी समूह के अनुसार तीन स्तरों के प्लान';
+
+  @override
+  String get premiumCustomWorkouts => 'अनलिमिटेड कस्टम वर्कआउट';
+
+  @override
+  String get premiumMonthly => 'मासिक';
+
+  @override
+  String get premiumYearly => 'वार्षिक';
+
+  @override
+  String premiumMonthlyEstimate(String price) {
+    return 'लगभग $price/महीना';
+  }
+
+  @override
+  String premiumSavings(int percent) {
+    return '$percent% बचाएँ';
+  }
+
+  @override
+  String premiumTrial(int days) {
+    return '$days दिनों की मुफ़्त आज़माइश शुरू करें';
+  }
+
+  @override
+  String get premiumSubscribe => 'सदस्यता लें';
+
+  @override
+  String get premiumDisclosure =>
+      'सदस्यता अपने आप नवीनीकृत होती है। Google Play में कभी भी रद्द करें। आज़माइश खत्म होने से पहले रद्द करने पर कोई शुल्क नहीं लगेगा।';
+
+  @override
+  String get premiumRestore => 'खरीदारी बहाल करें';
+
+  @override
+  String get premiumTerms => 'सेवा की शर्तें';
+
+  @override
+  String get premiumPrivacy => 'निजता नीति';
+
+  @override
+  String get premiumStatus => 'Flare Premium';
+
+  @override
+  String get premiumActive => 'सदस्यता सक्रिय है';
+
+  @override
+  String get premiumInactive => 'कोई सक्रिय सदस्यता नहीं';
+
+  @override
+  String get premiumManage => 'सदस्यता प्रबंधित करें';
+
+  @override
+  String get premiumUnavailable => 'स्टोर उपलब्ध नहीं है। फिर कोशिश करें।';
+
+  @override
+  String get premiumRestoreEmpty => 'कोई सक्रिय सदस्यता नहीं मिली।';
+
+  @override
+  String premiumQuota(int limit) {
+    return 'आज के सभी $limit AI अनुरोध इस्तेमाल हो गए हैं। कल फिर आएँ।';
+  }
+
+  @override
+  String get premiumRateLimit =>
+      'बहुत ज़्यादा अनुरोध हैं। थोड़ी देर बाद कोशिश करें।';
+
+  @override
+  String get premiumAiDisclaimer =>
+      'AI के सुझाव केवल संदर्भ के लिए हैं, चिकित्सीय सलाह नहीं।';
+
+  @override
   String get actorBodyLabel => 'थॉमस पात्र';
 
   @override
@@ -34,6 +256,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get appName => 'Flare थॉमस';
+
+  @override
+  String get flareStraightLegs => 'फ्लेयर (दोनों पैर सीधे)';
 
   @override
   String get tagline => 'हर चरण को समझें और अभ्यास करें।';
@@ -108,10 +333,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get side => 'बगल';
 
   @override
-  String get pausedHint => 'मांसपेशी चुनें';
-
-  @override
-  String get playingHint => 'पहले रोकें';
+  String get homeGoToTraining => 'ट्रेनिंग पर जाएँ';
 
   @override
   String get loadingScene => '3D गतिविधि तैयार हो रही है…';
@@ -619,7 +841,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get safetyRule1 => 'पहले कलाई को गर्म करें';
 
   @override
-  String get safetyRule1Note => 'वार्म-अप योजना आपको पूरा करवाती है';
+  String get safetyRule1Note =>
+      'अभ्यास शुरू करने से पहले कलाइयों और कंधे की हड्डियों को हिलाएँ।';
 
   @override
   String get safetyRule2 => 'तेज़ दर्द, सुन्नपन या चक्कर आने पर रुकें';
@@ -877,10 +1100,202 @@ class AppLocalizationsHi extends AppLocalizations {
   String get wristExtension => 'कलाई का विस्तार';
 
   @override
+  String get plansByAngle => 'कोण के अनुसार';
+
+  @override
+  String get plansByMuscle => 'मांसपेशी समूह के अनुसार';
+
+  @override
+  String get anglePlanLabel => 'कोण की योजना';
+
+  @override
+  String get musclePlanLabel => 'मांसपेशी की योजना';
+
+  @override
+  String get angleSupportPlanIntro =>
+      'एक हाथ ज़मीन पर रखकर पैरों को ऊँचे V में खोलें। इस सहारे को मज़बूत करें।';
+
+  @override
+  String get deltoidsPlanIntro =>
+      'एक हाथ पर शरीर को थामें। हर फ्लेयर चक्कर में डेल्टॉइड काम करते हैं।';
+
+  @override
+  String get planTrainingContent => 'प्रशिक्षण क्रम';
+
+  @override
+  String get planMuscleLinkHint => 'योजना देखने के लिए मांसपेशी पर टैप करें';
+
+  @override
+  String get planSpecialized => 'लक्षित योजना';
+
+  @override
+  String planRestSeconds(int seconds) {
+    return '$seconds सेकंड आराम';
+  }
+
+  @override
+  String get planBodyweightSubstitution => 'बिना उपकरण वाला विकल्प';
+
+  @override
+  String get planBodyweightScene => 'बिना उपकरण';
+
+  @override
+  String get hubAngle => 'कोण';
+
+  @override
+  String get hubMuscle => 'मांसपेशियाँ';
+
+  @override
+  String hubMinutesFrom(int count) {
+    return '$count मिनट से';
+  }
+
+  @override
+  String get hubThreeTiers => 'तीन स्तर';
+
+  @override
+  String get hubPrimaryMuscles => 'इस चरण की मुख्य मांसपेशियाँ';
+
+  @override
+  String get hubSpecializedPlan => 'लक्षित योजना';
+
+  @override
+  String get hubSupportTab => 'सहारा';
+
+  @override
+  String get hubCoreTab => 'कोर';
+
+  @override
+  String get hubLegsTab => 'पैर';
+
+  @override
+  String get hubStillPlanning => 'तैयारी में';
+
+  @override
+  String get hubPlanComingSoon => 'लक्षित योजना की तैयारी जारी है';
+
+  @override
+  String hubViewNamedPlan(String name) {
+    return '“$name” की योजना देखें';
+  }
+
+  @override
+  String get hubPhase09Caption => 'दोनों हाथों पर टिककर फैले पैर सामने उठाएँ।';
+
+  @override
+  String get hubPhase10Caption => 'दोनों हाथों से भार एक हाथ पर ले जाएँ।';
+
+  @override
+  String get hubPhase11Caption =>
+      'एक हाथ पर पूरे शरीर को बगल की ओर टिकाएँ। सबसे ज़्यादा भार उसी कंधे पर पड़ता है।';
+
+  @override
+  String get hubPhase12Caption =>
+      'शरीर को सामने की ओर मोड़ें और आगे से पैरों की जगह कैंची की तरह बदलें।';
+
+  @override
+  String get hubPhase13Caption =>
+      'दोनों हाथ पीछे टिकाएँ और फैले पैर पीछे घुमाएँ।';
+
+  @override
+  String get hubPhase14Caption =>
+      'सहारा देने वाला हाथ बदलें और सीधे पैर पीछे घुमाएँ।';
+
+  @override
+  String get hubPhase15Caption =>
+      'दूसरे हाथ पर टिककर पैरों का ऊँचा V बनाए रखें।';
+
+  @override
+  String get hubPhase16Caption => 'मुँह नीचे की ओर घुमाएँ और पैर पीछे ले जाएँ।';
+
+  @override
+  String get planTierBeginner => 'शुरुआती';
+
+  @override
+  String get planTierIntermediate => 'मध्यम';
+
+  @override
+  String get planTierAdvanced => 'उन्नत';
+
+  @override
+  String get planActiveMuscles => 'सक्रिय मांसपेशियाँ';
+
+  @override
+  String get planExercises => 'व्यायाम';
+
+  @override
+  String planDosePerSide(String dose) {
+    return '$dose · हर तरफ़';
+  }
+
+  @override
+  String get planTierSummary => 'शुरुआती · मध्यम · उन्नत';
+
+  @override
   String get plans => 'प्लान';
 
   @override
-  String get plansHint => 'तैयार सेट और आपके अपने';
+  String get plansHint => 'लक्षित अभ्यास और आपकी योजनाएँ';
+
+  @override
+  String get plansLastSession => 'पिछला सत्र';
+
+  @override
+  String get plansContinue => 'जारी रखें';
+
+  @override
+  String get plansToday => 'आज';
+
+  @override
+  String get plansYesterday => 'कल';
+
+  @override
+  String plansFinishedCount(int completed, int total) {
+    return '$completed/$total अभ्यास';
+  }
+
+  @override
+  String get plansNewCompactHint => 'नियमित अभ्यास जोड़ें';
+
+  @override
+  String get plansNewEmptyHint => 'अपने सबसे आम अभ्यासों को साथ रखें';
+
+  @override
+  String get plansAnglesTitle => 'फ़्लेयर के कठिन कोण';
+
+  @override
+  String get plansAnglesDescription =>
+      'एक पूरे चक्कर के सबसे कठिन हिस्सों में स्थिरता बनाएँ।';
+
+  @override
+  String get plansMusclesTitle => 'मज़बूत करने वाले मांसपेशी समूह';
+
+  @override
+  String get plansMusclesDescription =>
+      'फ़्लेयर के दौरान सबसे अधिक भार वाले हिस्से।';
+
+  @override
+  String plansSeeAll(int count) {
+    return 'सभी $count';
+  }
+
+  @override
+  String get plansOneHandSupport => 'एक हाथ का सहारा';
+
+  @override
+  String get plansTwoHandSupport => 'दो हाथों का सहारा';
+
+  @override
+  String get plansThreeLevels => '3 स्तर';
+
+  @override
+  String get plansAiTitle => 'AI योजना';
+
+  @override
+  String get plansAiHint => 'जगह, समय और मांसपेशी समूह चुनें।';
+
+  @override
+  String get plansAiUnavailable => 'AI उपलब्ध नहीं है';
 
   @override
   String get plansReady => 'तैयार सेट';
@@ -905,6 +1320,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get planSaveAsMine => 'मेरे प्लान में सहेजें';
+
+  @override
+  String get premiumCopyRoutine => 'प्लान कॉपी करें';
 
   @override
   String get planSaved => 'मेरे प्लान में सहेजा गया';
@@ -1104,4 +1522,138 @@ class AppLocalizationsHi extends AppLocalizations {
   String pickerAddCount(int count) {
     return '$count अभ्यास जोड़ें';
   }
+
+  @override
+  String libraryDose(int sets, String amount) {
+    return '$sets सेट × $amount';
+  }
+
+  @override
+  String get planEquipmentNeeded => 'ज़रूरी सामान:';
+
+  @override
+  String planEquipmentNameForId(String id) {
+    String _temp0 = intl.Intl.selectLogic(id, {
+      'mat': 'व्यायाम मैट',
+      'chair': 'कुर्सी',
+      'band': 'रेज़िस्टेंस बैंड',
+      'dumbbell': 'डम्बल',
+      'wall': 'दीवार',
+      'cable': 'केबल मशीन',
+      'block': 'योग ब्लॉक',
+      'pullup_bar': 'पुल-अप बार',
+      'parallettes': 'नीचे वाले समानांतर बार',
+      'dip_bars': 'डिप बार',
+      'slider': 'स्लाइडिंग डिस्क',
+      'rings': 'जिमनास्टिक रिंग',
+      'landmine': 'लैंडमाइन अटैचमेंट',
+      'swiss_ball': 'व्यायाम बॉल',
+      'roman_chair': 'रोमन चेयर',
+      'kettlebell': 'केटलबेल',
+      'reverse_hyper': 'रिवर्स हाइपर मशीन',
+      'ghd': 'ग्लूट-हैम ट्रेनर',
+      'hip_abductor_machine': 'हिप एबडक्टर मशीन',
+      'leg_extension_machine': 'लेग एक्सटेंशन मशीन',
+      'foam_roller': 'फोम रोलर',
+      'towel': 'तौलिया',
+      'doorframe': 'दरवाज़े का फ़्रेम',
+      'bench': 'व्यायाम बेंच',
+      'barbell': 'बारबेल',
+      'clamp_pad': 'छोटा पैड',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get warmupCooldownHeading => 'कसरत से पहले और बाद में';
+
+  @override
+  String get preWorkoutWarmup => 'कसरत से पहले वार्म-अप';
+
+  @override
+  String get postWorkoutStretch => 'कसरत के बाद';
+
+  @override
+  String preWorkoutWarmupPrompt(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    return 'अभी वार्म-अप नहीं किया? $minutesString मिनट · ';
+  }
+
+  @override
+  String planCirclesInBothDirections(int count) {
+    return 'हर तरफ़, हर दिशा में $count चक्कर';
+  }
+
+  @override
+  String get planCircleClockwise => 'घड़ी की दिशा में';
+
+  @override
+  String get planCircleCounterclockwise => 'घड़ी की विपरीत दिशा में';
+
+  @override
+  String planPeakHold(int seconds) {
+    return 'ऊपर $seconds सेकंड रुकें';
+  }
+
+  @override
+  String get continuePostWorkoutStretch => 'कसरत के बाद की दिनचर्या शुरू करें';
+
+  @override
+  String get cooldownPlanCardSubtitle => '3 स्तर · शरीर का वज़न';
+
+  @override
+  String get cooldownStrengtheningHeading => 'A लक्षित मज़बूती';
+
+  @override
+  String get cooldownStretchHeading => 'B पूरे शरीर की स्ट्रेचिंग';
+
+  @override
+  String get skipCooldownStrengthening =>
+      'मज़बूती वाले व्यायाम छोड़कर सीधे स्ट्रेचिंग करें';
+
+  @override
+  String get cooldownStrengtheningAdvice =>
+      'इसे हफ़्ते में 2–3 बार एक दिन छोड़कर करें। अगर आज शरीर के ऊपरी हिस्से की ताकत की कसरत कर चुके हैं या कलाइयों में दर्द है, तो मज़बूती वाले व्यायाम छोड़ दें।';
+
+  @override
+  String cooldownStrengtheningRounds(int rounds) {
+    return '$rounds राउंड';
+  }
+
+  @override
+  String cooldownStrengtheningRest(int seconds, int roundSeconds) {
+    return 'व्यायामों के बीच $seconds सेकंड · राउंड के बीच $roundSeconds सेकंड';
+  }
+
+  @override
+  String cooldownSecondsRange(int min, int max) {
+    return '$min–$max सेकंड';
+  }
+
+  @override
+  String cooldownRepsRange(int min, int max) {
+    return '$min–$max बार';
+  }
+
+  @override
+  String cooldownRepsPerPosition(int reps) {
+    return 'हर मुद्रा में $reps बार';
+  }
+
+  @override
+  String cooldownPnfSeconds(int seconds) {
+    return '$seconds सेकंड PNF';
+  }
+
+  @override
+  String bodyweightPlanMinutes(int minutes) {
+    return '$minutes मिनट · शरीर का वज़न';
+  }
+
+  @override
+  String get temporaryPlanDemo => 'अस्थायी डेमो';
 }

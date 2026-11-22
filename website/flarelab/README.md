@@ -3,7 +3,7 @@
 产品展示官网，线上地址：**https://flare.uuugk.win/**（备用：https://flarelab.294851575.workers.dev）
 
 - 中文名：托马斯训练助手；英文名：FlareLab — Thomas Flare Trainer
-- 目标：介绍 App、招募内测（报名邮箱 mhgd3250905@gmail.com / 294851575@qq.com，iOS TestFlight、Android Google Play 内部测试）
+- 目标：介绍 App，引导至 App Store、Google Play 或网页版。中文首页为 `/`，英文首页为 `/en/`。
 - 托管：Cloudflare Worker `flarelab`（账号 36f7672020cfc6c515e198c5786d99da），自定义域名 `flare.uuugk.win`；主域名 `uuugk.win` 另有用途，未改动
 
 ## 页面结构
@@ -14,11 +14,11 @@
 | 01 | 八个阶段 | 滚动驱动：动画逐帧推进、镜头环绕约 300°，超大阶段编号 + 中英阶段名 + 8 段进度条 |
 | 02 | 发力同步 | 身体切换 X 光材质，沿用 App 的阶段→肌群数据（17 块肌群，支撑/核心/腿部，按支撑手区分左右），主要发力亮橙、协同较暗 |
 | 03 | 硬性标准 | 身体上实时标注膝角 / 支撑肘角；直腿 ≥176°、折髋 ≥50°、支撑臂伸直、节奏均匀；整圈膝角曲线 |
-| 04 | 学习闭环 | 看 → 懂 → 练 → 测（v1.1）→ 解锁 |
+| 04 | 学习闭环 | 看 → 懂 → 练 → 问 AI 教练 → 进阶 |
 | 05 | 产品界面 | 4 台悬浮手机截图，视差滚动（设计稿） |
 | 06 | 训练库 | 51 个训练 A/B/C 三档走马灯 |
 | 07 | 数字 | 8 / 17 / 51 / 40+ 计数动画 |
-| 08–10 | 适用人群 / FAQ / 报名内测 | mailto 预填主题“托马斯训练助手 内测报名” |
+| 08–10 | 适用人群 / FAQ / 下载 | 中英介绍和 FAQ，商店下载与网页版入口 |
 
 加载时 000→100 计数；WebGL 不可用或 15 秒未加载完成时自动降级为循环动图。手机（390×844）单独排版。
 
@@ -26,11 +26,12 @@
 
 ```
 website/flarelab/
-  src/           main.js（Three.js 场景、滚动叙事、肌群发光、角度标注）、index.tpl.html、flare-data.json（阶段/肌群数据）、drills.json、img/
+  src/           中英 HTML 模板、共享样式、Three.js 场景、阶段与训练数据、素材和 llms.txt
   coach.glb      压缩后的教练模型（7.5MB → 725KB：去掉口腔牙齿、网格简化 45%、meshopt + 量化）
-  build.py       生成 dist/：渲染模板、esbuild 打包、字体子集化、拷贝资源
+  build.py       生成双语页面、robots.txt、sitemap.xml、llms.txt 及静态资源
+  site_content.py  双语 FAQ、简介、商店链接、搜索元数据和 JSON-LD
   deploy.py      把 dist/ 打成单个模块化 Worker（资源作为二进制模块内嵌）并上传
-  dist/          当前线上版本的构建产物
+  dist/          入库的构建产物
   shots/         线上截图（桌面 1440×900、手机 390×844）
 ```
 
@@ -39,6 +40,7 @@ website/flarelab/
 ```bash
 npm ci                                   # 仓库根目录，提供 three 与 esbuild
 python website/flarelab/build.py            # 默认复用 src/fonts/ 内已入库的当前字体子集，Windows/Linux 均可
+python -m http.server 8820 --bind 127.0.0.1 --directory website/flarelab/dist  # 本地预览 / 和 /en/
 FONTS_DIR=/path/to/fonts python3 website/flarelab/build.py   # 可选重新子集化：原始三种字体 + fonttools、brotli
 CLOUDFLARE_API_TOKEN=xxx python3 website/flarelab/deploy.py  # 需 Workers Scripts:Edit
 ```

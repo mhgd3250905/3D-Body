@@ -11,6 +11,9 @@ export function prepareStudySpine(model, rig) {
 // A multi-material garment is a named glTF group containing primitives whose
 // generated names need not include the garment's authored node name.
 export function isCoveredActorPart(mesh) {
+  if (mesh.isSkinnedMesh && mesh.geometry.attributes._region) {
+    return !mesh.userData.__outline && Math.round(mesh.geometry.attributes._region.getX(0)) !== 3;
+  }
   for (let node = mesh; node; node = node.parent) {
     if (node.name === 'Coach_Body' || /^Coach_Training_(Tee|Shorts)(_|$)/.test(node.name)) return true;
   }

@@ -18,12 +18,20 @@ class SceneView extends StatelessWidget {
     super.key,
     required this.controller,
     this.body = 'original',
+    this.interactive = true,
+    this.concealed = false,
   });
 
   final SceneController controller;
   final String body;
+  final bool interactive;
+  final bool concealed;
 
   @override
-  Widget build(BuildContext context) =>
-      platform.ScenePlatformView(controller: controller, body: body);
+  Widget build(BuildContext context) => platform.ScenePlatformView(
+    controller: controller,
+    body: body,
+    interactive: interactive,
+    concealed: concealed,
+  );
 }

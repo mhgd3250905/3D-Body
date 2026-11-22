@@ -105,8 +105,7 @@ void main() {
   }
 
   Future<void> startPlan(WidgetTester tester) async {
-    await tester.tap(helpers.labeledControl('计划'));
-    await tester.pumpAndSettle();
+    await helpers.openPlansFromHome(tester);
     await tester.tap(find.text('Audit routine'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('plan-start')));
@@ -218,7 +217,7 @@ void main() {
       );
       uc.TrainingPlan? received;
       try {
-        await open(
+        final store = await open(
           tester,
           sdkPlan: plan,
           trainingPageBuilder: (value) {
@@ -227,7 +226,9 @@ void main() {
           },
         );
         await startPlan(tester);
-        expect(received!.toJson(), plan.toJson());
+        final saved = store.routines.single;
+        expect(received!.toJson(), plan.copyWith(id: saved.id).toJson());
+        expect(saved.sdkPlan!.toJson(), plan.toJson());
         await tester.tap(find.byKey(const ValueKey('sdk-route-close')));
         await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('plan-start')), findsOneWidget);

@@ -1,0 +1,11 @@
+# FlareLab（托马斯训练助手）
+
+> FlareLab 面向想学托马斯全旋的霹雳舞与体操爱好者。它把动作拆成八个阶段，配有可旋转的 3D 模型、分阶段肌群图和三档训练。会员可以使用 AI 教练询问练习方法。
+
+FlareLab – Thomas Flare Trainer is for breakers and gymnasts learning the Thomas flare. An interactive 3D model shows eight phases with synchronized muscle maps, alongside three levels of drills. Members can ask the AI coach training questions.
+
+- [官网 / Official website](https://flare.uuugk.win/)
+- [English website](https://flare.uuugk.win/en/)
+- [App Store](https://apps.apple.com/app/id6821186142)
+- [Google Play](https://play.google.com/store/apps/details?id=dev.mhgd.flare)
+- [网页版 / Web app](https://flare-app.uuugk.win/)

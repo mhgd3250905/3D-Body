@@ -1,8 +1,36 @@
 # 资产来源与复现
 
-## 当前消费来源（2026-11-04）
+## 当前 App 消费来源
 
-功能源码 `7eaccf7cf87cf7468b9df838680dab9edf515d27` 的首页 / 肌群详情仍消费原 Snow 同源 R17 烘焙模型，七形象、署名和历史冻结批次保持。训练库、AI 和训练播放器已改为共享公共目录与 SDK 媒体，四个 SDK 包固定 `693cbc02cdf284163409868e117e438515c6a8d8`。包版本与安装分账见[版本台账](version-ledger.md)，验证及设备限制见[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+- 首页、专项教学和本地 `flare-v5` 演示使用 [V5 交付包](flare-v5-model-2026-11-18.md)的模型与动作。根目录网页 R17 与旧版 App R17 的来源见 [v42/R17 记录](motion-v42.md)。
+- 随包公共媒体清单 `assets/public_media/catalog.json` 对应 r2-v22，源提交 `7f03532a6e363e45028ccf8c3c5206432634f924`，交付目录 285 项。浏览和 AI 的公共动作授权由 `lib/data/flare_action_scope.dart` 维护，本地 V5 与辅助图单独计数。
+- 共享动作封面随包，SDK 从配置的媒体仓库按需下载视频，缓存命中时可重用。清单标为 `test-unreviewed`、`reviewed=false`、`releaseEligible=false`。清单中的 `readyCount` 记录素材交付状态。
+
+- iOS Build 50 使用 `POSEHUB_CATALOG_CHANNEL=dev` 从 SDK 读取验证后的 `flare-plans-r2`。断网时可读取同版随包计划、r2-v22 目录及 173 条计划语音引用。公共训练示范继续由 SDK 按需下载。
+
+## 历史 iOS 热身和放松内测离线包（Build 44–49）
+
+这批历史内测从 `1a43a8c` 取清单、语义目录、计划数据、提示词和录音。目录为 r2-v18 加 r2-v19 的跪姿肩胛俯卧撑。运行 `python3 tools/bundle-flare-public-media.py`，按清单下载并校验视频和中英语音的字节数与 SHA-256，再用 `--dart-define=FLARE_OFFLINE_PUBLIC_MEDIA=true` 构建 iOS。生成的媒体文件不提交 Git。启用此选项时，训练库使用随包目录、动作媒体和语音，跳过线上目录指针。
+
+同步 vc2088 时，按 `7721422` 追加 r2-v21 的六个动作及清单中的 6 段视频、12 张封面与缩略图和 102 段语音。新增媒体由源提交直接随包，原公共目录仍取 r2-v18。
+
+同步 vc2089 时，按 `4552594` 追加 r2-v22 的十个动作，用于练后 13 处示范。资料随包包含 10 段视频、20 张封面与缩略图和 141 个语音文件，覆盖 142 条语音引用。原在线指针仍为 r2-v18。
+
+## 249项动作库缺失封面补齐（2026-11-08）
+
+沿用当前 r2-v1 公共目录，给已授权的249项动作补齐缺少的40张封面。只读来源为本机 `F:/PoseHub-v3/app-pack/r2-v1/` 中目录各项 `files.cover.path`，目标为 `assets/public_posters/{id}.webp`；每张的字节数和 SHA-256 均与当前 App 目录及源文件一致。40张共626,008字节，640×640 WebP；没有重渲、生成、下载或上传素材，也未修改 Pose-Hub/SDK。
+
+原211张逐项核验保持原字节。目录现在保留251张，其中249张属于当前授权动作，另2张历史封面不删除、不据此扩大授权。逐项来源/目标/哈希留存在补图时的原UI工作树 `output/library-scroll-perf-20261108/poster-repair.json`，该路径相对于原UI工作树；回执 SHA-256 为 `711a762f57df1a3e49af2eeb3fb6d9a806350e551a7eed981d90fdee5ad977d1`。沿用既有来源、许可和 QA 状态；封面齐全不代表全部动作或视频已验收。
+
+## 历史消费来源（2026-11-08，r2-v1）
+
+当时的 r2-v1 公共目录与语义目录均为 249 项，来源提交为 `ed49ffb85c1df256ceaa779408aab77a0f417b7f`。40 张补图及原封面核验见上节，App 与设备检查点见[版本台账](version-ledger.md)。
+
+## 历史消费来源（2026-11-04）
+
+当前主线 `4b32607ed24c98af22ba4879909544729a3c3213` 的首页 / 肌群详情仍消费原 Snow 同源 R17 烘焙模型，七形象、署名和历史冻结批次保持。源码版本为 **1.0.12+21**；训练库、AI 和训练播放器消费共享公共目录与 SDK 媒体，四个 SDK 包固定 `f7b8a8e4853e9f50fc93888e1768ec1dbc75b588`（问答 v3 内容），沿用 SDK 聊天页及 App 传入的 `aiTags`。最新 APK 产品源码为 `4ea55a7db323145c0c952d3ae5974c9aea986074`，实际 versionCode 2021，已出包未安装；未因此完成素材、真实模型或真机验收。包版本与安装分账见[版本台账](version-ledger.md)，验证及设备限制见[验证记录](verification.md)和[待验收台账](development-roadmap.md)。
+
+旧主线 `7eaccf7` / SDK `693cbc0` 保留历史检查点；本阶段没有重制、替换或重新审核 R17 模型、媒体或下述来源数据。
 
 公共交付目录为 `assets/public_media/catalog.json`（219条、`readyCount=219`），语义目录为 `assets/public_media/catalog/catalog.json`（0.3.0、142条）；来源 commit 为 `1fdd117d8e29bb0efcc8c57cb23dc1d9dc7422dd`，由 `lib/data/flare_public_catalog.dart` 交 SDK 适配器校验。`lib/data/flare_action_scope.dart` 固定211个授权 ID，排除8项partial；授权范围、交付条数、语义定义条数和随包211张 WebP 封面分别计数，不能互换。公共素材仍标记 `ready-test-unreviewed`、`releaseEligible=false`，不是全部动作已通过最终 QA 或具备发布资格。
 
@@ -62,13 +90,17 @@ App内容与设计基线来自用户提供的 `E:\AII-Remote\flare-app-info.zip`
 
 原人物署名 **Snow Rig © Blender Foundation | studio.blender.org** 与 CC BY 4.0 来源保留于 [Snow-ATTRIBUTION.md](../assets/licenses/Snow-ATTRIBUTION.md)。本段记录用户选定的设计与资源同步；构建、安装与设备验证以版本台账和验证记录为准。
 
-## 肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
+## 肌群插图与最近训练卡（2026-11-18）
+
+`muscle-toon-v1` 使用与实时人台共享的哑光卡通着色和肌群分界线。实时外轮廓为 1.2 CSS px，缩略图按相同比例缩细。条目与最近训练卡各有 17 张透明 WebP，沿用各自的正交机位、裁切和输出尺寸。复现命令为 `node app/tools/render-muscle-thumbnails.mjs --toon-v1`，添加 `--preview` 可只输出验证文件。报告在上墨和编码前对比 34 个机位的分区 ID、选区、深层斜线与底模轮廓。原模型与 CC0-1.0 许可见 [解剖资产说明](../../docs/anatomy-assets.md)。[条目清单](../assets/muscles/manifest.json) · [最近训练卡清单](../assets/plan_resume_muscles/manifest.json)
+
+## 历史：肌群条目银色金属摄影（2026-10-11，L26，用户确认采用）
 
 用户反馈L25米白质感仍不足，授权尝试金属。L26的17张透明512×512 WebP共592,628字节，采用钛银色金属人台和保留原色的珐琅教学选区；模型、原分区、左右与逐组镜头沿用L24/L25，仅更改离线截图的材质、反射和光照，运行时人台保持。L26安装后用户先反馈不满意并要求试作黄色橡胶，随后看手机银色截图明确确认“这个银色可以 就这个了”；当前选用L26银色肌群图文条目外观。该确认仅覆盖此处肌群图片与条目，不扩大为全App或其他T02验收。
 
 截图使用物理材质与本地工作室环境反射，基础色 `#b8bdc5`、金属度0.88、粗糙度0.28；细微拉丝以0.025幅度改变表面粗糙度，按像素覆盖抑制不可分辨纹理，不修改原网格或法线。肌群区域使用原色、金属度0.10和粗糙度0.44，保持颜色清晰；透明背景、1024渲染后缩小为512的流程保持。
 
-当前摄影清单采用L26的 `muscle-photography-v3-titanium`，保存尺寸、材质/光照、镜头、输出字节与SHA-256及工具源哈希，历史副本见仓库 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。复现使用 [render-muscle-thumbnails.mjs](../tools/render-muscle-thumbnails.mjs) 和 [muscle-thumbnails.js](../scene/tools/muscle-thumbnails.js)；L26原始1024图、联系表和报告保留在同一目录。L24/L25素材报告和具名交付包保留作历史。
+L26 的 `muscle-photography-v3-titanium` 清单保存尺寸、材质、光照、镜头与输入输出 SHA-256，历史副本见 `output/playwright/2026-10-11-muscle-thumbnails-metallic/render-report.json`。L26 原始 1024 图、联系表和报告保留在同一目录。L24/L25 素材报告和具名交付包保留作历史。
 
 人台继续来自Human Base Meshes v1.4.1 / `GEO-body_male_realistic`既有派生，许可CC0-1.0，来源见 [解剖资产说明](../../docs/anatomy-assets.md)。反光、选区色和深层斜线只用于展示体表功能位置，不代表内部肌肉几何、肌电或与Snow精确配准。图片路径和L24图文组件保持。
 

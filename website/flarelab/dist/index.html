@@ -3,12 +3,104 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>托马斯训练助手 · FlareLab — 看清、读懂、练成托马斯全旋</title>
-<meta name="description" content="托马斯训练助手（FlareLab · Thomas Flare Trainer）：3D 动作拆解、逐阶段肌群同步、三档针对训练与 AI 姿态检测，把托马斯全旋变成一条看得见、量得出的学习阶梯。内测招募中。">
-<meta name="theme-color" content="#08080a">
+<title>托马斯训练助手 · FlareLab</title>
+<meta name="description" content="托马斯训练助手（FlareLab）：3D 动作拆解、逐阶段肌群同步、三档针对训练与 AI 教练，把托马斯全旋变成看得见、量得出的学习阶梯。iOS 与 Android 已上架。">
+<link rel="canonical" href="https://flare.uuugk.win/">
+<link rel="alternate" hreflang="zh-CN" href="https://flare.uuugk.win/">
+<link rel="alternate" hreflang="en" href="https://flare.uuugk.win/en/">
+<link rel="alternate" hreflang="x-default" href="https://flare.uuugk.win/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="托马斯训练助手 · FlareLab">
-<meta property="og:description" content="See it. Understand it. Land your flare. 内测招募中 / Beta open.">
-<meta property="og:image" content="/img/og.jpg">
+<meta property="og:description" content="托马斯训练助手（FlareLab）：3D 动作拆解、逐阶段肌群同步、三档针对训练与 AI 教练，把托马斯全旋变成看得见、量得出的学习阶梯。iOS 与 Android 已上架。">
+<meta property="og:url" content="https://flare.uuugk.win/">
+<meta property="og:image" content="https://flare.uuugk.win/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MobileApplication",
+      "@id": "https://flare.uuugk.win/#app",
+      "name": "托马斯训练助手",
+      "alternateName": "FlareLab",
+      "description": "托马斯训练助手（FlareLab）：3D 动作拆解、逐阶段肌群同步、三档针对训练与 AI 教练，把托马斯全旋变成看得见、量得出的学习阶梯。iOS 与 Android 已上架。",
+      "url": "https://flare.uuugk.win/",
+      "inLanguage": "zh-CN",
+      "operatingSystem": [
+        "iOS",
+        "Android"
+      ],
+      "applicationCategory": "HealthApplication",
+      "installUrl": [
+        "https://apps.apple.com/app/id6821186142",
+        "https://play.google.com/store/apps/details?id=dev.mhgd.flare"
+      ],
+      "sameAs": [
+        "https://apps.apple.com/app/id6821186142",
+        "https://play.google.com/store/apps/details?id=dev.mhgd.flare"
+      ],
+      "publisher": {
+        "@id": "https://flare.uuugk.win/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://flare.uuugk.win/#faq",
+      "inLanguage": "zh-CN",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "在哪里下载？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "可在 \u003ca href=\"https://apps.apple.com/app/id6821186142\">App Store\u003c/a> 和 \u003ca href=\"https://play.google.com/store/apps/details?id=dev.mhgd.flare\">Google Play\u003c/a> 搜索「托马斯训练助手」或 FlareLab，也可以直接使用\u003ca href=\"https://flare-app.uuugk.win/\">网页版\u003c/a>。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "免费吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "基础动作分解与部分训练可免费使用。Flare Premium 提供 AI 教练、自定义训练计划等功能，订阅条款以 App 内商店页面为准。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "零基础能练吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "可以。App 把托马斯拆成阶段，按三档针对训练从基础力量、活动度和支撑开始。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "和看视频学有什么不同？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "3D 模型可任意角度暂停查看每个阶段，并同步显示该阶段发力肌群，还能随时问 AI 教练。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "需要联网吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "内置的 3D 动作分解可离线使用。训练视频首次播放需要下载，在线 AI 教练需要联网。"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://flare.uuugk.win/#organization",
+      "name": "UGK",
+      "url": "https://flare.uuugk.win/"
+    }
+  ]
+}
+</script>
+<meta name="theme-color" content="#08080a">
 <link rel="icon" href="/img/icon.png">
 <link rel="apple-touch-icon" href="/img/icon.png">
 <link rel="preload" href="/coach.glb" as="fetch" crossorigin>
@@ -280,13 +372,6 @@ h2{font-weight:900;font-size:clamp(38px,4.4vw,78px);line-height:1.06;letter-spac
 .join-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;margin-top:60px;align-items:end}
 .join-grid p{color:var(--mute);font-size:15px}
 .join-grid p span{display:block;color:var(--dim);font-size:13px}
-.mails{display:flex;flex-direction:column;gap:12px}
-.mail{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;border-radius:18px;border:1px solid var(--hair2);background:rgba(255,255,255,.02);transition:all .3s}
-.mail:hover{border-color:var(--ember);background:rgba(255,106,61,.08)}
-.mail b{font-size:clamp(17px,1.6vw,22px);font-weight:900;word-break:break-all}
-.mail span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);display:block;margin-bottom:4px}
-.mail .go{width:44px;height:44px;flex:none;border-radius:50%;background:var(--ember);color:#130703;display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .3s}
-.mail:hover .go{transform:rotate(-45deg)}
 .platforms{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
 footer{position:relative;z-index:4;padding:40px var(--pad) 46px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:12px;background:var(--bg)}
 footer .brand b{font-size:16px}
@@ -374,11 +459,38 @@ footer .brand b{font-size:16px}
   .faq summary .q span{display:block;margin:4px 0 0}
   .faq .a{padding-left:46px}
   .join-grid{grid-template-columns:1fr;gap:30px;margin-top:40px}
-  .mail{padding:18px}
   #poster{justify-content:center;padding:0;align-items:flex-start;padding-top:18vh}
   #poster img{width:92vw}
 }
 @media (prefers-reduced-motion:reduce){.mrow{animation-duration:400s}.grain{animation:none}}
+/* Store links and locale navigation */
+.lang-switch{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);white-space:nowrap}
+.lang-switch a{padding:8px 2px;color:var(--mute)}
+.lang-switch a:hover,.lang-switch a[aria-current="page"]{color:var(--ink)}
+.hero-cta{align-items:flex-start}
+.store-links{display:grid;justify-items:start;gap:12px}
+.store-badges{display:flex;flex-wrap:wrap;gap:12px}
+.store-badges a{display:block}
+.store-badges img{display:block;height:48px;width:auto}
+.web-link{color:var(--ink);font-size:14px;text-decoration:underline;text-underline-offset:4px}
+.web-link:hover,.faq-intro a:hover{color:var(--ember)}
+.faq-intro{max-width:720px;color:var(--mute);font-size:16px;line-height:1.7;margin-bottom:36px}
+.faq-intro a{text-decoration:underline;text-underline-offset:4px}
+html[lang="zh-CN"] .join-big{font-size:clamp(48px,10vw,180px)}
+html[lang="en"] .join-big{font-size:clamp(54px,11vw,190px)}
+html[lang="en"] h1{font-size:clamp(37px,5.5vw,86px);text-wrap:balance}
+html[lang="en"] #ph-en,html[lang="en"] #mus-phase-en{display:none}
+html[lang="en"] #ph-zh{font-size:clamp(30px,4vw,68px)}
+html[lang="en"] .step .ch{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.2vw,64px);line-height:1.1;text-transform:uppercase}
+@media (max-width:820px){
+  .navlinks{gap:12px}
+  html[lang="en"] .step .ch{font-size:clamp(18px,4.5vw,32px)}
+}
+@media (320px <= width <= 357px){
+  .store-links{width:100%;grid-template-columns:minmax(0,1fr);justify-items:center}
+  .store-badges{width:max-content;flex-wrap:nowrap}
+}
+
 </style>
 </head>
 <body>
@@ -408,7 +520,12 @@ footer .brand b{font-size:16px}
     <a class="l" href="#rules">规则<small>RULES</small></a>
     <a class="l" href="#loop">闭环<small>LOOP</small></a>
     <a class="l" href="#faq">问答<small>FAQ</small></a>
-    <a class="pill" href="#join">报名内测 <span class="en">Join beta</span></a>
+    <a class="pill" href="#join">下载 App</a>
+    <div class="lang-switch mono" aria-label="语言">
+      <a href="/" lang="zh-CN" hreflang="zh-CN" aria-label="简体中文" aria-current="page">中</a>
+      <span aria-hidden="true">/</span>
+      <a href="/en/" lang="en" hreflang="en" aria-label="English">EN</a>
+    </div>
   </div>
 </nav>
 
@@ -417,12 +534,12 @@ footer .brand b{font-size:16px}
   <div class="hero-word" aria-hidden="true">FL<span>A</span>RE</div>
   <div class="hero-scrim"></div>
   <div class="hero-copy">
-    <div class="kicker mono"><span class="dot"></span>开发中 · 招募内测 <i></i> Beta open</div>
+    <div class="kicker mono"><span class="dot"></span>FlareLab · 托马斯训练助手</div>
     <h1>看清 · 读懂 ·<em>练成托马斯全旋</em></h1>
     <div class="hero-en">See it. Understand it. Land your flare.</div>
-    <p class="hero-p">把“刷 50 个视频、自己瞎练”，变成一条看得见、量得出、一步步解锁的学习阶梯。<span>Turn endless video-watching into a clear, measurable, step-by-step path.</span></p>
+    <p class="hero-p">用 3D 动作拆解看清每一帧，理解发力肌群，再用针对性训练逐步练习。</p>
     <div class="hero-cta">
-      <a class="pill" href="#join">报名内测 <span class="en">Join the beta</span></a>
+      <div class="store-links"><div class="store-badges"><a href="https://apps.apple.com/app/id6821186142"><img src="/img/app-store-zh-cn.svg" alt="在 App Store 下载" height="48"></a><a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare"><img src="/img/google-play-zh-cn.svg" alt="在 Google Play 上获取" height="48"></a></div><a class="web-link" href="https://flare-app.uuugk.win/">也可以先试网页版 →</a></div>
       <a class="ghost" href="#phases">看 8 个阶段 <span class="en" style="opacity:.6">Explore ↓</span></a>
     </div>
   </div>
@@ -481,7 +598,7 @@ footer .brand b{font-size:16px}
       <div>
         <div class="sec-k mono"><b>03</b> 硬性标准 · Hard rules</div>
         <h2>干净的动作，<br>真实的规则。</h2>
-        <div class="h2en">Clean motion, real rules — the same ones the AI check uses.</div>
+        <div class="h2en">Measure knee, hip and elbow angles against the technique shown.</div>
       </div>
       <div>
         <div class="rules">
@@ -505,17 +622,17 @@ footer .brand b{font-size:16px}
   <div class="sec-head">
     <div data-reveal>
       <div class="sec-k mono"><b>04</b> 学习闭环 · The learning loop</div>
-      <h2>看 → 懂 → 练 → 测 → 解锁</h2>
-      <div class="h2en">Watch → Understand → Train → Check → Unlock</div>
+      <h2>看 → 懂 → 练 → 问 → 进阶</h2>
+      <div class="h2en">Watch → Understand → Train → Ask → Progress</div>
     </div>
-    <p data-reveal data-d="1">五步闭环，把“看会了”变成“练成了”。每一步都基于同一套 3D 动作和同一套规则。<span>Five steps that turn “I get it” into “I landed it” — all built on one motion and one set of rules.</span></p>
+    <p data-reveal data-d="1">从观察 3D 动作到制定练习计划，用技术要领指导每一步训练。</p>
   </div>
   <div class="loop">
     <div class="step" data-reveal><span class="arrow">→</span><div class="n">01</div><div class="ch">看</div><div class="ten">Watch</div><h3>全屏 3D 托马斯循环<span>Full-screen 3D flare loop</span></h3><p>8 个阶段任意循环，0.25–1× 慢放，自由旋转视角。</p><div class="chips"><span class="chip">8 阶段</span><span class="chip">0.25–1×</span></div></div>
     <div class="step" data-reveal data-d="1"><span class="arrow">→</span><div class="n">02</div><div class="ch">懂</div><div class="ten">Understand</div><h3>暂停，点一块肌肉<span>Pause and tap a muscle</span></h3><p>看它在这一瞬间做什么，附 3 个关键要领和常见错误。</p><div class="chips"><span class="chip">关键要领</span><span class="chip">常见错误</span></div></div>
     <div class="step" data-reveal data-d="2"><span class="arrow">→</span><div class="n">03</div><div class="ch">练</div><div class="ten">Train</div><h3>针对这块肌肉的训练<span>Targeted drills</span></h3><p>A 徒手 · B 居家器械 · C 健身房，三档难度，带计时器或计数器。</p><div class="chips"><span class="chip">A 徒手</span><span class="chip">B 器械</span><span class="chip">C 健身房</span></div></div>
-    <div class="step" data-reveal data-d="3"><span class="arrow">→</span><div class="n">04</div><div class="ch">测</div><div class="ten">Check</div><h3>立起手机，AI 打分<span>Prop up your phone, get scored</span></h3><p>端侧 AI 姿态识别，用同一套规则为你的关键姿势打分。</p><div class="chips"><span class="chip em">v1.1 推出 · Coming in v1.1</span></div></div>
-    <div class="step" data-reveal data-d="4"><div class="n">05</div><div class="ch">解锁</div><div class="ten">Unlock</div><h3>六阶段学习路径<span>A 6-stage path</span></h3><p>每个阶段设有检测关卡，过关才解锁下一步。</p><div class="chips"><span class="chip">6 阶段</span><span class="chip">检测关卡</span></div></div>
+    <div class="step" data-reveal data-d="3"><span class="arrow">→</span><div class="n">04</div><div class="ch">问</div><div class="ten">Ask</div><h3>向 AI 教练提问<span>Ask the AI coach</span></h3><p>询问动作要领，结合自己的练习目标制定训练计划。</p><div class="chips"><span class="chip em">AI 教练</span></div></div>
+    <div class="step" data-reveal data-d="4"><div class="n">05</div><div class="ch">进阶</div><div class="ten">Progress</div><h3>逐步练习<span>Build up gradually</span></h3><p>按阶段对照动作要领，循序渐进地练习。</p></div>
   </div>
 </section>
 
@@ -526,7 +643,7 @@ footer .brand b{font-size:16px}
       <h2>四个界面，<br>一条路径。</h2>
       <div class="h2en">Four screens, one path.</div>
     </div>
-    <p data-reveal data-d="1">iOS 与 Android 双平台。核心动画与训练可离线使用。<span>On iOS and Android. Core animation and drills work offline.</span></p>
+    <p data-reveal data-d="1">支持 iOS 和 Android。动作拆解可离线查看，训练视频首次播放可能需要联网。</p>
   </div>
   <div class="screens" data-par>
     <div class="glow"></div>
@@ -542,8 +659,8 @@ footer .brand b{font-size:16px}
   <div class="sec-head">
     <div data-reveal>
       <div class="sec-k mono"><b>06</b> 训练库 · Drill library</div>
-      <h2>51 个训练，<br>对准每一块肌群。</h2>
-      <div class="h2en">51 illustrated drills, 3 tiers, one per muscle group.</div>
+      <h2>51 个训练示例，<br>对准每一块肌群。</h2>
+      <div class="h2en">51 illustrated drills across three tiers.</div>
     </div>
     <div data-reveal data-d="1" style="justify-self:end;max-width:440px">
       <p style="justify-self:auto">每块发力肌群配 A / B / C 三档训练，含组数、要领、常见错误与安全提示。<span>Every working muscle gets three tiers of drills with sets, cues, mistakes and safety notes.</span></p>
@@ -588,6 +705,7 @@ footer .brand b{font-size:16px}
 </section>
 
 <section id="faq" class="sec">
+  <p class="faq-intro">托马斯全旋是霹雳舞与体操中以双手交替支撑、双腿绕身体连续画圈的动作。FlareLab 将一圈拆成八个阶段，用可旋转的 3D 模型展示支撑和换重心，并同步标出关联肌群。初学者可从三档针对训练开始，也可向 AI 教练询问练习方法。</p>
   <div class="sec-head">
     <div data-reveal>
       <div class="sec-k mono"><b>09</b> 常见问题 · FAQ</div>
@@ -595,24 +713,20 @@ footer .brand b{font-size:16px}
     </div>
   </div>
   <div class="faq">
-    <details data-reveal open><summary><span class="mono">Q1</span><span class="q">收费吗？<span>Is it paid?</span></span><span class="pl"></span></summary><div class="a">内测免费。<span>The beta is free.</span></div></details>
-    <details data-reveal><summary><span class="mono">Q2</span><span class="q">支持哪些平台？<span>Which platforms?</span></span><span class="pl"></span></summary><div class="a">iOS 和 Android。iOS 通过 TestFlight，Android 通过 Google Play 内部测试。<span>iOS via TestFlight · Android via Google Play internal testing.</span></div></details>
-    <details data-reveal><summary><span class="mono">Q3</span><span class="q">需要联网吗？<span>Does it need internet?</span></span><span class="pl"></span></summary><div class="a">核心动画与训练可离线使用。<span>Core animation and drills work offline.</span></div></details>
+    <details data-reveal open><summary><span class="mono">Q1</span><span class="q">在哪里下载？</span><span class="pl"></span></summary><div class="a">可在 <a href="https://apps.apple.com/app/id6821186142">App Store</a> 和 <a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare">Google Play</a> 搜索「托马斯训练助手」或 FlareLab，也可以直接使用<a href="https://flare-app.uuugk.win/">网页版</a>。</div></details>
+<details data-reveal><summary><span class="mono">Q2</span><span class="q">免费吗？</span><span class="pl"></span></summary><div class="a">基础动作分解与部分训练可免费使用。Flare Premium 提供 AI 教练、自定义训练计划等功能，订阅条款以 App 内商店页面为准。</div></details>
+<details data-reveal><summary><span class="mono">Q3</span><span class="q">零基础能练吗？</span><span class="pl"></span></summary><div class="a">可以。App 把托马斯拆成阶段，按三档针对训练从基础力量、活动度和支撑开始。</div></details>
+<details data-reveal><summary><span class="mono">Q4</span><span class="q">和看视频学有什么不同？</span><span class="pl"></span></summary><div class="a">3D 模型可任意角度暂停查看每个阶段，并同步显示该阶段发力肌群，还能随时问 AI 教练。</div></details>
+<details data-reveal><summary><span class="mono">Q5</span><span class="q">需要联网吗？</span><span class="pl"></span></summary><div class="a">内置的 3D 动作分解可离线使用。训练视频首次播放需要下载，在线 AI 教练需要联网。</div></details>
   </div>
 </section>
 
 <section id="join">
-  <div class="sec-k mono" data-reveal><b>10</b> 报名内测 · Join the beta</div>
-  <div class="join-big" data-reveal>报名内测<span class="en">Join the beta</span></div>
+  <div class="sec-k mono" data-reveal><b>10</b> 开始训练 · Get the app</div>
+  <h2 class="join-big" data-reveal>下载 FlareLab<span class="en">Get the app</span></h2>
   <div class="join-grid">
-    <div data-reveal>
-      <p>发邮件至任一地址，主题写“托马斯训练助手 内测报名”。内测免费，名额招募中。<span>Email either address with the subject “托马斯训练助手 内测报名”. The beta is free and open now.</span></p>
-      <div class="platforms"><span class="chip">iOS · TestFlight</span><span class="chip">Android · Google Play 内部测试</span></div>
-    </div>
-    <div class="mails" data-reveal data-d="1">
-      <a class="mail" href="mailto:mhgd3250905@gmail.com?subject=%E6%89%98%E9%A9%AC%E6%96%AF%E8%AE%AD%E7%BB%83%E5%8A%A9%E6%89%8B%20%E5%86%85%E6%B5%8B%E6%8A%A5%E5%90%8D"><div><span>Gmail</span><b>mhgd3250905@gmail.com</b></div><i class="go">→</i></a>
-      <a class="mail" href="mailto:294851575@qq.com?subject=%E6%89%98%E9%A9%AC%E6%96%AF%E8%AE%AD%E7%BB%83%E5%8A%A9%E6%89%8B%20%E5%86%85%E6%B5%8B%E6%8A%A5%E5%90%8D"><div><span>QQ 邮箱</span><b>294851575@qq.com</b></div><i class="go">→</i></a>
-    </div>
+    <div data-reveal><p>在 iOS 或 Android 下载 FlareLab，也可以打开 Web 版本直接体验。</p></div>
+    <div data-reveal data-d="1"><div class="store-links"><div class="store-badges"><a href="https://apps.apple.com/app/id6821186142"><img src="/img/app-store-zh-cn.svg" alt="在 App Store 下载" height="48"></a><a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare"><img src="/img/google-play-zh-cn.svg" alt="在 Google Play 上获取" height="48"></a></div><a class="web-link" href="https://flare-app.uuugk.win/">也可以先试网页版 →</a></div></div>
   </div>
 </section>
 </main>

@@ -1,0 +1,543 @@
+{
+  "language": "zh",
+  "engine": "Edge TTS, zh-CN-XiaoxiaoNeural, +6%",
+  "source": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r1/manifest.json",
+  "clips": {
+    "supplemental.general-warmup.1.intro": {
+      "ms": 2040,
+      "sha256": "98ac2ff9567d0a1c2ba1763520e67f88764816934e80fd5720947df8e614b117",
+      "text": "开合踏步绕臂，一分钟。"
+    },
+    "supplemental.general-warmup.2.intro": {
+      "ms": 2370,
+      "sha256": "acb2a61d9e3c37399f976aa3439d1575f964e091a24a74a2143531f09827a2de",
+      "text": "颈腕手指唤醒，四十五秒。"
+    },
+    "supplemental.general-warmup.3.intro": {
+      "ms": 1940,
+      "sha256": "b834add1cbb2bfdbacd92b9054906ffea25f8bbe3ce3e3f289bdfbb32a2ed3fe",
+      "text": "宽距侧蹲，每侧五次。"
+    },
+    "supplemental.general-warmup.4.intro": {
+      "ms": 2580,
+      "sha256": "b5d92d5f9c56d6a4bfbc244eeaaf5f61decb2848d0ad0c2b17e61623a3f70565",
+      "text": "仰卧画圈，每侧顺逆各三圈。"
+    },
+    "supplemental.general-warmup.5.intro": {
+      "ms": 1850,
+      "sha256": "f7f5bf49d12dac8bf0cb63ae53e5ab27aadae1e459a5d2a3c8f3e8933c4e7a5a",
+      "text": "死虫式，每侧五次。"
+    },
+    "supplemental.general-warmup.6.intro": {
+      "ms": 2010,
+      "sha256": "c797db9983587a202623e3a260327514cd4df018c3da307926df57d0ff008439",
+      "text": "坐姿换髋，每侧四次。"
+    },
+    "supplemental.general-warmup.7.intro": {
+      "ms": 2930,
+      "sha256": "b3a6cc5b3d3f1a4ea7cc4ecb4361c50cab67e93ebaa6d3e5dafe52903e60c199",
+      "text": "分腿单腿抬，每侧五次，停一秒。"
+    },
+    "supplemental.general-warmup.8.intro": {
+      "ms": 3230,
+      "sha256": "425762e695a2d19ba3e1e3cd3edeb09d3514ee722078620fd3a61db46be93643",
+      "text": "跪姿摇腕，三向各四次，手背十秒。"
+    },
+    "supplemental.general-warmup.9.intro": {
+      "ms": 1880,
+      "sha256": "63f2c1b9b7483052ea9cf0294ca36a26e6aa13bfd0487f10f5e809c9689e7255",
+      "text": "四足猫牛式，六次。"
+    },
+    "supplemental.general-warmup.10.intro": {
+      "ms": 2050,
+      "sha256": "43f2333ffb63f103bfa7750315b32f89dfee2d623b83a4578349000acbbd5ecc",
+      "text": "跪姿穿针，每侧四次。"
+    },
+    "supplemental.general-warmup.11.intro": {
+      "ms": 2200,
+      "sha256": "840588922f0dc80f21fae566fe253d843fb92fb9f21bd59f30703c02c4d23696",
+      "text": "跪姿肩胛俯卧撑，十次。"
+    },
+    "supplemental.general-warmup.12.intro": {
+      "ms": 2000,
+      "sha256": "96e6fee7167d7cc06b216b2c4c299c4cdb154dadf9862ee43ae8ef5065b68940",
+      "text": "俯撑触肩，每侧四次。"
+    },
+    "supplemental.cooldown.strength.1.1.intro": {
+      "ms": 1940,
+      "sha256": "ec8afb80cee20e1290e6e6d6ed4156032f92b5e1ebe8cf7cf4ff024b6e6e81d8",
+      "text": "跪姿腕俯卧撑，八次。"
+    },
+    "supplemental.cooldown.strength.1.2.intro": {
+      "ms": 2100,
+      "sha256": "9354bb646d7e3f23f53836cca8a91c7b755e3793e4e868ee5907aeafb3c3cc8b",
+      "text": "跪姿拳面支撑，二十秒。"
+    },
+    "supplemental.cooldown.strength.1.3.intro": {
+      "ms": 1760,
+      "sha256": "5a1b4181ace7b3e08ca91b882f0de1feb46fe71b5beef796a92aab7641940057",
+      "text": "直臂推肩，二十秒。"
+    },
+    "supplemental.cooldown.strength.1.4.intro": {
+      "ms": 2880,
+      "sha256": "58d229593153a6e3c8b7082175f0b5d88011a863a106300f8973b750a2591a99",
+      "text": "俯卧 T W，各六次，停两秒。"
+    },
+    "supplemental.cooldown.strength.1.5.intro": {
+      "ms": 2370,
+      "sha256": "32d66ebcf5c9a11863f2a55a637ba83d9171b585dc9f517841a3b236179fda32",
+      "text": "侧卧下腿内收，每侧八次。"
+    },
+    "supplemental.cooldown.strength.1.6.intro": {
+      "ms": 2470,
+      "sha256": "73508812ef7d93437ec834e17a47d7575cb00f501d9a53f3b96a9fe88c457590",
+      "text": "侧卧上腿外展，每侧十次。"
+    },
+    "supplemental.cooldown.strength.2.1.intro": {
+      "ms": 1970,
+      "sha256": "b259e493dd8cdb982553bf0261a6b9107fe793561f4bdd917db4ae92dca35e5e",
+      "text": "远距腕俯卧撑，八次。"
+    },
+    "supplemental.cooldown.strength.2.2.intro": {
+      "ms": 1790,
+      "sha256": "bbdd6731f2e2895980276a67a2e8cec87e32faf85d9d06893af802501baecff1",
+      "text": "前倾支撑，十二秒。"
+    },
+    "supplemental.cooldown.strength.2.3.intro": {
+      "ms": 1740,
+      "sha256": "6b30b4176fafd4faeb889b003b427b2202ac7b024ff2370b3d4f1dafb77390e3",
+      "text": "反向平板，二十秒。"
+    },
+    "supplemental.cooldown.strength.2.4.intro": {
+      "ms": 3020,
+      "sha256": "5ac7ada34d064af1914ce99e1f49ff219130cfb8c890ae329f0c8fd7ebf4009a",
+      "text": "分腿单腿抬，每侧五次，停三秒。"
+    },
+    "supplemental.cooldown.strength.2.5.intro": {
+      "ms": 2220,
+      "sha256": "21fc56f46df5caf8d0c582e17a39ee6d523df679f5d4cb0f093cb6a720ae66ed",
+      "text": "侧卧慢内收，每侧八次。"
+    },
+    "supplemental.cooldown.strength.2.6.intro": {
+      "ms": 2240,
+      "sha256": "794339a6250ad77f71d6c9a6d21a641ea603255b939fbb70f263f4fff69c1945",
+      "text": "俯卧 Y T W，各六次。"
+    },
+    "supplemental.cooldown.strength.2.7.intro": {
+      "ms": 2160,
+      "sha256": "bd6bc69e79013360c8050e427cb3201d31e540c0fa0a85e9afcfc28a4ffbef60",
+      "text": "前臂侧桥，每侧二十秒。"
+    },
+    "supplemental.cooldown.strength.3.1.intro": {
+      "ms": 1960,
+      "sha256": "8e6e7c32ca63f25ddd13d04c3c262f837b0446cd84e19b4ebe54b0bdab9f1d96",
+      "text": "伪俄挺俯卧撑，六次。"
+    },
+    "supplemental.cooldown.strength.3.2.intro": {
+      "ms": 1960,
+      "sha256": "eee8899cab732206e82b2ee4652d9d7ba735c9f05712b730e78551e1d0eccf28",
+      "text": "团身转 L 撑，十秒。"
+    },
+    "supplemental.cooldown.strength.3.3.intro": {
+      "ms": 1890,
+      "sha256": "e5c4895b415da0044e23f29d11d0a0f1d48e1227109ebecde36301a2a3bd6210",
+      "text": "分腿双腿抬，八次。"
+    },
+    "supplemental.cooldown.strength.3.4.intro": {
+      "ms": 2020,
+      "sha256": "af06fd3ab9becccd3db73fe188a4a3d4dad43fb13da0d6ae5430066356d2a210",
+      "text": "仰卧分腿开合，十次。"
+    },
+    "supplemental.cooldown.strength.3.5.intro": {
+      "ms": 2430,
+      "sha256": "06ee746ed0fba90b413356fb8273c1efa6545452eec2a3b63663fbb1b516609b",
+      "text": "直臂侧桥转换，每侧四次。"
+    },
+    "supplemental.cooldown.strength.3.6.intro": {
+      "ms": 3130,
+      "sha256": "ada88203f692e558096ca0612cc0b0cd4e65927aedd47d3135c8024e1e8c01ee",
+      "text": "俯卧 Y T W，各六次，停两秒。"
+    },
+    "supplemental.cooldown.stretch.1.intro.1": {
+      "ms": 2170,
+      "sha256": "10a1cf4d65d692d97196cf2b813df2e2fedb6dfb7a6778a94332fe1e33df4e72",
+      "text": "颈侧拉伸，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.2.intro.1": {
+      "ms": 2150,
+      "sha256": "4af1d67262f0a8ba9b201b35910654b3ff0aee7edcff5c5819b6bbd5e2b090ff",
+      "text": "过头侧弯，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.3.intro.1": {
+      "ms": 2130,
+      "sha256": "2f798605ee312d8195fea8c9dff9587033c419f9ffe7a6a7472afb4730cff2ad",
+      "text": "横臂拉肩，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.4.intro.1": {
+      "ms": 1820,
+      "sha256": "eeaafd8b2992ff6bb93c829be2d8aba263a391ffafd5760e0be4c4c0558905bd",
+      "text": "扣手扩胸，三十秒。"
+    },
+    "supplemental.cooldown.stretch.5.intro.1": {
+      "ms": 2140,
+      "sha256": "7f6d2ee17888aa3b35522e615b1bd333b83d01aca5b88ee2703773a7344c9025",
+      "text": "站姿拉腕，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.6.1.intro.1": {
+      "ms": 2360,
+      "sha256": "a76e7556217bfc9dad3891c43597076370540f106e381b54bb1fd26718e21d7f",
+      "text": "婴儿式侧伸，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.7.intro.1": {
+      "ms": 2860,
+      "sha256": "c0cb2abad290e20fabedcba398e992f6e1e7dc625f86ce79b2898668fd991cde",
+      "text": "跪姿伸髋，每侧两组，三十秒。"
+    },
+    "supplemental.cooldown.stretch.9.intro.1": {
+      "ms": 1640,
+      "sha256": "04083c5e07c68d839ab8d5960e5ba9f436d43e195f8206c7f74d4535133303a0",
+      "text": "蝴蝶式，三十秒。"
+    },
+    "supplemental.cooldown.stretch.10.intro.1": {
+      "ms": 2230,
+      "sha256": "f3036511ea0b43dbbb4a20390a60a606105b0d1014312ae9c89a5e45810e3b3e",
+      "text": "并腿前屈，两组三十秒。"
+    },
+    "supplemental.cooldown.stretch.11.intro.1": {
+      "ms": 2610,
+      "sha256": "30cb67079fd3b86c1bec292ab84013b727bf08e08623ae0b08e693ff0687ba04",
+      "text": "分腿前屈够脚，两组三十秒。"
+    },
+    "supplemental.cooldown.stretch.12.intro.1": {
+      "ms": 2550,
+      "sha256": "9110d1c88d033579df9b15840666204c45a2063ee3555555cd0fe80ba04ad3ae",
+      "text": "仰卧四字伸臀，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.13.intro.1": {
+      "ms": 2130,
+      "sha256": "dee37a0f8c38ad406e60610034988dd509f72908c8c655870a8d15479ad152a3",
+      "text": "仰卧扭转，每侧三十秒。"
+    },
+    "supplemental.cooldown.stretch.1.intro.2": {
+      "ms": 2350,
+      "sha256": "06eea0694a63f90504acfe59e4bb1285c5a522e46f0111507b0e2820eb6cbb5b",
+      "text": "颈侧拉伸，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.2.intro.2": {
+      "ms": 2330,
+      "sha256": "de774224c379e57a72aba727d567274e6893feee518c22f2a4781c3ad974260e",
+      "text": "过头侧弯，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.3.intro.2": {
+      "ms": 2280,
+      "sha256": "7bd5521044bc77db5b8059e68b1e15455f2e3849d51ea0df7a493ec20aa6dabe",
+      "text": "横臂拉肩，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.4.intro.2": {
+      "ms": 1990,
+      "sha256": "5d53e6223e3887e9ac7385dd9ec27246e869961425af862deb2f7f17a1a6a7dc",
+      "text": "扣手扩胸，四十五秒。"
+    },
+    "supplemental.cooldown.stretch.5.intro.2": {
+      "ms": 2320,
+      "sha256": "dc9038fbeeea40d07d425d1dcfbfae9d5dd4ec11de753b0e720b628f59cef39a",
+      "text": "站姿拉腕，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.6.2.intro.2": {
+      "ms": 1870,
+      "sha256": "ee935572c920f76d2d1947cc0df037726a2d7d8d5cc3afecedf714bbc620ce1f",
+      "text": "下犬式，四十五秒。"
+    },
+    "supplemental.cooldown.stretch.7.intro.2": {
+      "ms": 3000,
+      "sha256": "de43d1de1d5f78426a4f32cda30a4c5ad269ee5cd84cd4ddf90ab82948f80010",
+      "text": "跪姿伸髋，每侧两组，四十五秒。"
+    },
+    "supplemental.cooldown.stretch.9.intro.2": {
+      "ms": 1800,
+      "sha256": "aa7d8eee216cfbe74d5d2d362fac69c6f70020bda3dcbc9f7b2b1da010963d22",
+      "text": "蝴蝶式，四十五秒。"
+    },
+    "supplemental.cooldown.stretch.10.intro.2": {
+      "ms": 2360,
+      "sha256": "0921c5a2f380a36438e4efe2edba30e50d3a00d5abe2aa2004ab0396ebb3dcd6",
+      "text": "并腿前屈，两组四十五秒。"
+    },
+    "supplemental.cooldown.stretch.11.intro.2": {
+      "ms": 2770,
+      "sha256": "91b7a95d06dffe8103689f1fd6f3275d44483c7a732ac12ab6211a1e2106548b",
+      "text": "分腿前屈够脚，两组四十五秒。"
+    },
+    "supplemental.cooldown.stretch.12.intro.2": {
+      "ms": 2770,
+      "sha256": "8c2a1ee68a07f453bc376c0aaf54d5efa95bd6664e21583d0d5503b8740cdc08",
+      "text": "仰卧四字伸臀，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.13.intro.2": {
+      "ms": 2330,
+      "sha256": "f26798bbf3a14f05fdbe1db62aa0ff853291a2e250da3276beea4d54db822228",
+      "text": "仰卧扭转，每侧四十五秒。"
+    },
+    "supplemental.cooldown.stretch.1.intro.3": {
+      "ms": 2100,
+      "sha256": "20563741d2628f8a569309b33e8c8f6e5e12c64aee76e8b99aa08b884f40e65d",
+      "text": "颈侧拉伸，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.2.intro.3": {
+      "ms": 2120,
+      "sha256": "60d435d7fc01c08cdae4e4609dfbd273ba5c17a194851b1987327cf3fb52127d",
+      "text": "过头侧弯，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.3.intro.3": {
+      "ms": 2030,
+      "sha256": "16b28548d5543a6607c103608d6c43ed26fe8467dd88ff0608d469e58c724b04",
+      "text": "横臂拉肩，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.4.intro.3": {
+      "ms": 1750,
+      "sha256": "1abc520054848787781ca121fabaf184cc9d1ff41e9ae35ddbb7af470f762f60",
+      "text": "扣手扩胸，六十秒。"
+    },
+    "supplemental.cooldown.stretch.5.intro.3": {
+      "ms": 2110,
+      "sha256": "dc089ce482d8309a4dc943079afb2b3632fffc0ae79401b5a13e2bb3a4e4d2ae",
+      "text": "站姿拉腕，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.6.2.intro.3": {
+      "ms": 1650,
+      "sha256": "6836b9b792ed0a01bffe03d8cdce80a3802ae4361d25a7d0a35183c80b0d16d5",
+      "text": "下犬式，六十秒。"
+    },
+    "supplemental.cooldown.stretch.7.intro.3": {
+      "ms": 2560,
+      "sha256": "290a52682778a7a8d384783c56bc53c00ebb3387ed6916b2a9802f33907402dd",
+      "text": "跪姿抓踝伸髋，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.8.intro.3": {
+      "ms": 1620,
+      "sha256": "d42caa0142b11733d8951b98ff9287f7bf766ff5755e7cc1d694fab7f3b6a6f9",
+      "text": "青蛙式，六十秒。"
+    },
+    "supplemental.cooldown.stretch.9.intro.3": {
+      "ms": 1590,
+      "sha256": "85833038e6a948e06d315a71862427a7f234d242f321f217a7f0ea0053a9dd51",
+      "text": "蝴蝶式，六十秒。"
+    },
+    "supplemental.cooldown.stretch.10.intro.3": {
+      "ms": 1820,
+      "sha256": "359923cf8967c36c8f8458db3446cd731d35fc4d23e7d49426abaaa61fb4ea65",
+      "text": "并腿前屈，六十秒。"
+    },
+    "supplemental.cooldown.stretch.11.intro.3": {
+      "ms": 2170,
+      "sha256": "44f6fd6e133cbc7672f93099bf9fdc9c2975e017b3188fcfc5c2c1f9d4a68e1e",
+      "text": "分腿前屈够脚，六十秒。"
+    },
+    "supplemental.cooldown.stretch.12.intro.3": {
+      "ms": 2500,
+      "sha256": "be6b603d470bd48e8e596cde173bdfa559b0c8ebc740ca23c9d3f56c3f5ffef8",
+      "text": "仰卧四字伸臀，每侧六十秒。"
+    },
+    "supplemental.cooldown.stretch.13.intro.3": {
+      "ms": 2070,
+      "sha256": "bfa78f3f157df193b388b5a2b0bcf539b19884bf9d2761f4f52e09158a3d22ec",
+      "text": "仰卧扭转，每侧六十秒。"
+    },
+    "supplemental.side.left": {
+      "ms": 620,
+      "sha256": "d8d5772de0c35a2ca9191b9150f38d294dfa3f4a9edea5f0030ba254dd7e8f46",
+      "text": "左侧。"
+    },
+    "supplemental.side.right": {
+      "ms": 620,
+      "sha256": "d148c9aa60d64ded3463c9f3cf9d079426f13c3344004b23c0dfcbb648157aeb",
+      "text": "右侧。"
+    },
+    "supplemental.cooldown.kickoff.2": {
+      "ms": 2540,
+      "sha256": "5aefcdb2b11402d90bc80c2bbd804633af77aca5ddf5ef5820c9cb58277f50f0",
+      "text": "练后补强，第一轮，共两轮。"
+    },
+    "supplemental.cooldown.kickoff.3": {
+      "ms": 2570,
+      "sha256": "5d111232db2c2f571d68aadeb020e4f1635b2cf8f4391baa9f5967ee9bc580c4",
+      "text": "练后补强，第一轮，共三轮。"
+    },
+    "supplemental.cooldown.round.2": {
+      "ms": 710,
+      "sha256": "0cbda0d889d2ff24186e49f76564c162df22380d8f272400f12baed9becac88e",
+      "text": "第二轮。"
+    },
+    "supplemental.cooldown.round.3": {
+      "ms": 790,
+      "sha256": "58706f0c6d6d291dccd4834258634dec4a6a1bfa868663e0f7901f46dbf37e76",
+      "text": "第三轮。"
+    },
+    "supplemental.cooldown.stretch.5.segment.wrist-extended": {
+      "ms": 760,
+      "sha256": "651b4261025cfba39b7c04d9acb788b6ec318d176ba23fe751135b005112632f",
+      "text": "换方向。"
+    },
+    "supplemental.cooldown.stretch.13.breath": {
+      "ms": 1990,
+      "sha256": "14b555c82acb2e222fe9215063872e7aed7194a5db5c1a21bb2c818354f02198",
+      "text": "吸气四秒，呼气六秒。"
+    },
+    "supplemental.general-warmup.1.segment.step-jack-side-raise": {
+      "ms": 1040,
+      "sha256": "405cc13906a4fb76d33f079953565db5ab259798d882def0bef33905bb10455d",
+      "text": "双臂侧举。"
+    },
+    "supplemental.general-warmup.1.segment.step-jack-forward-circles": {
+      "ms": 1060,
+      "sha256": "7b59623dcf4849d25a6f0b81326d99df5b8e1aaf972ba27706901ceee64dfc3f",
+      "text": "向前绕环。"
+    },
+    "supplemental.general-warmup.1.segment.step-jack-backward-circles": {
+      "ms": 1040,
+      "sha256": "559c99c528828775731410451f7f8c45abc1d22d98dc3939e2c13717a3e4ac54",
+      "text": "向后绕环。"
+    },
+    "supplemental.general-warmup.2.segment.neck-wakeup": {
+      "ms": 970,
+      "sha256": "e3e0d5fe2ed1d4099f650c4fe93a294c96d637e18ddf7feb3e8e2a4f86dca72b",
+      "text": "低头慢滚。"
+    },
+    "supplemental.general-warmup.2.segment.wrist-figure-eight": {
+      "ms": 1180,
+      "sha256": "88cba189766c66c69156b93f6f59116e36e5fb0ef2d157fc17e5bb280efbacfe",
+      "text": "合掌画八字。"
+    },
+    "supplemental.general-warmup.2.segment.finger-spread": {
+      "ms": 940,
+      "sha256": "851d1b8c417fa1c469ce0b32dc64b48cd1d1c814e8006a0b2048ddf583324bbe",
+      "text": "张指弹开。"
+    },
+    "supplemental.general-warmup.4.segment.clockwise": {
+      "ms": 860,
+      "sha256": "d14879f30c48465459b21e21853bfc95b99d487d3d602f562cecd7f5962e9f27",
+      "text": "顺时针。"
+    },
+    "supplemental.general-warmup.4.segment.counterclockwise": {
+      "ms": 760,
+      "sha256": "fa1662f59754ae0b0f12f8b700d7651471f1b743ea72cb62357ad5777c8929dd",
+      "text": "逆时针。"
+    },
+    "supplemental.general-warmup.8.segment.fingers-forward": {
+      "ms": 1020,
+      "sha256": "d8b0f32c4438271b1ae40c3c83af92591d555c4281304d68e951ce728c323fa9",
+      "text": "指尖朝前。"
+    },
+    "supplemental.general-warmup.8.segment.fingers-sideways": {
+      "ms": 960,
+      "sha256": "7361aa08908b8b4eebb293a98ebe452bfa5a1c16c7cbc1bb1ccd6f43f208bb5d",
+      "text": "指尖朝外。"
+    },
+    "supplemental.general-warmup.8.segment.fingers-backward": {
+      "ms": 980,
+      "sha256": "bddc443719625e49e8780e40eaa1a06b125104321070016ba85cc854e3af53bd",
+      "text": "指尖朝后。"
+    },
+    "supplemental.general-warmup.8.segment.back-of-hand": {
+      "ms": 1000,
+      "sha256": "855061b1eadc42d0635e4f2613d3f111e52bb541f486bdcec776aaae1734e919",
+      "text": "手背轻压。"
+    },
+    "supplemental.cooldown.strength.1.4.segment.t": {
+      "ms": 630,
+      "sha256": "2332c2b3588ab77777779067497969eb37988da9cca2f7c3ee15db5c7b0ba438",
+      "text": "T 字。"
+    },
+    "supplemental.cooldown.strength.1.4.segment.w": {
+      "ms": 820,
+      "sha256": "67d5672b9b1226f3cfc9c75a87dcda4524c7296f283b7fa4a2a951aa60928cc5",
+      "text": "W 字。"
+    },
+    "supplemental.cooldown.strength.2.6.segment.y": {
+      "ms": 620,
+      "sha256": "ddcb48b904410998abbdbf0f849f65162371b02329093c3ebaef1094b520ec0b",
+      "text": "Y 字。"
+    },
+    "supplemental.cooldown.strength.2.6.segment.t": {
+      "ms": 630,
+      "sha256": "2332c2b3588ab77777779067497969eb37988da9cca2f7c3ee15db5c7b0ba438",
+      "text": "T 字。"
+    },
+    "supplemental.cooldown.strength.2.6.segment.w": {
+      "ms": 820,
+      "sha256": "67d5672b9b1226f3cfc9c75a87dcda4524c7296f283b7fa4a2a951aa60928cc5",
+      "text": "W 字。"
+    },
+    "supplemental.cooldown.strength.3.6.segment.y": {
+      "ms": 620,
+      "sha256": "ddcb48b904410998abbdbf0f849f65162371b02329093c3ebaef1094b520ec0b",
+      "text": "Y 字。"
+    },
+    "supplemental.cooldown.strength.3.6.segment.t": {
+      "ms": 630,
+      "sha256": "2332c2b3588ab77777779067497969eb37988da9cca2f7c3ee15db5c7b0ba438",
+      "text": "T 字。"
+    },
+    "supplemental.cooldown.strength.3.6.segment.w": {
+      "ms": 820,
+      "sha256": "67d5672b9b1226f3cfc9c75a87dcda4524c7296f283b7fa4a2a951aa60928cc5",
+      "text": "W 字。"
+    },
+    "supplemental.general-warmup.1.intro.r2": {
+      "ms": 2229,
+      "sha256": "f8890b9a5bfcb94b48f8d5ebdabc92f0eef2b4a03d0bf487b30cb166acc2f4f6",
+      "text": "开合步绕臂，一分三十秒。"
+    },
+    "supplemental.general-warmup.3.intro.r2": {
+      "ms": 2601,
+      "sha256": "514f07a6b2e9fbdd57e8aa12ec0654634f333926c34a52b9d923431d2f27304e",
+      "text": "站姿屈肘前臂旋转，八次。"
+    },
+    "supplemental.general-warmup.4.intro.r2": {
+      "ms": 2763,
+      "sha256": "22afc4b561a960311b4850a8ce51cb430669f052d749d39312fbe9565f7e73eb",
+      "text": "站姿转胯画圈，两个方向各五次。"
+    },
+    "supplemental.general-warmup.8.intro.r2": {
+      "ms": 3204,
+      "sha256": "50244a6abc83a3d7d29085f189567224807269cc661b5793d344e056fdbabba5",
+      "text": "跪撑抬膝画圈，每侧两个方向各三次。"
+    },
+    "supplemental.general-warmup.9.intro.r2": {
+      "ms": 2786,
+      "sha256": "d8144268ae28c5ca9c288c8ca5da78cf83ad6179705e9cd5366356666a000021",
+      "text": "四足单腿侧伸后摇，每侧五次。"
+    },
+    "supplemental.general-warmup.12.intro.r2": {
+      "ms": 2392,
+      "sha256": "5a44e738f0a14b8fab9e7651a659cba7dacb853385b0e525c0da2f6976b0af2e",
+      "text": "臀桥交替踏步，每侧六次。"
+    },
+    "supplemental.general-warmup.14.intro.r2": {
+      "ms": 2833,
+      "sha256": "d591ee8a1f8c871f296581bfedc7514109e5206fbde463e4b0bcea8b738e9dca",
+      "text": "九十度坐姿后腿抬起，每侧五次。"
+    },
+    "supplemental.general-warmup.16.intro.r2": {
+      "ms": 3762,
+      "sha256": "9496fbd690dac91e54a8aaaefe4b97829d9c2c407102fbb312b93a8c0b753b97",
+      "text": "相扑深蹲肘推膝，六次，每次停两秒半。"
+    },
+    "supplemental.general-warmup.18.intro.r2": {
+      "ms": 1788,
+      "sha256": "e84b2fe3bce60e744b7bf3ea9ca4dc551bb003fd1ef7970d933622f32150d3c5",
+      "text": "徒手早安式，八次。"
+    },
+    "supplemental.general-warmup.21.intro.r2": {
+      "ms": 3042,
+      "sha256": "83ca15594c8e07f01f4f1eff9212bec77b800db05860ad2ffdd7a87cf52339fb",
+      "text": "直臂俯撑交替侧点地，每侧五次。"
+    },
+    "supplemental.general-warmup.22.intro.r2": {
+      "ms": 3367,
+      "sha256": "9b35c400975abdff9e932e8e5cb16f94512784256c4275bddb28369ad83dcd04",
+      "text": "桌面式后撑抬髋，六次，每次停一秒。"
+    }
+  },
+  "additionalSource": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json"
+}

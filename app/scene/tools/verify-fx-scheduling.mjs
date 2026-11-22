@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { FlarePlayer } from '../src/player.js';
+import { createAdaptiveResolution } from '../src/adaptive-resolution.js';
 import { createBakedMotion } from '../src/baked-motion.js';
 import { createFlareFx } from '../src/fx.js';
 
@@ -31,7 +32,16 @@ try {
       controls: { target: new THREE.Vector3(0, 0.5, 0), enableDamping: true, update() {} },
       time: 0, period: 9, speed: 1, loopRange: null, playing: true, dirty: true,
       running: true, last: now, viewInset: 0, viewInsetTarget: 0, framingMode: 'main',
-      renderer: { domElement: { height: 844 }, render() { renders++; renderedFxVisible = fx.root.visible; } },
+      renderer: {
+        domElement: { width: 390, height: 844 },
+        shadowMap: { enabled: false }, info: { render: { calls: 0, triangles: 0 } },
+        getPixelRatio: () => 1,
+        render() { renders++; renderedFxVisible = fx.root.visible; },
+      },
+      adaptive: createAdaptiveResolution({ enabled: false }),
+      keyLight: { castShadow: false },
+      perf: { renders: 0, colorPixels: 0, shadowPasses: 0, shadowPixels: 0, skippedShadows: 0,
+        calls: 0, triangles: 0, intervals: [], renderTimes: [], lastRenderTick: -1, ticks: 0, resizes: 0 },
       callbacks: {},
     });
     player.scene.add(player.coach); player.camera.position.set(0, 2, 4);

@@ -29,7 +29,7 @@ void main() {
   );
   bool known(String id) => shared[id] != null;
 
-  test('共享 211 动作计划可映射', () {
+  test('共享公共动作计划可映射', () {
     for (final id in ids) {
       expect(catalog.drillById(id), isNull, reason: '$id 不在旧目录');
       expect(shared[id], isNotNull, reason: '$id 在共享目录');
@@ -40,7 +40,7 @@ void main() {
     expect(CoachPlanMapper(catalog).missingIds(plan), ids.toSet());
   });
 
-  test('共享 211 动作计划可启动（校验 + 展开）', () {
+  test('共享公共动作计划可启动（校验 + 展开）', () {
     validateTrainingPlan(plan, catalog, known: known);
     final expanded = expandSegmentedTrainingPlan(plan, catalog, known: known);
     expect(expanded.items.map((i) => i.exerciseId), ids);

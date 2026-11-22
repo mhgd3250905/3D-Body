@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FlareLab – Thomas Flare Trainer</title>
+<meta name="description" content="Learn the Thomas flare with interactive 3D breakdowns, phase-by-phase muscle maps, three levels of targeted drills, and an AI coach. Available on iOS and Android.">
+<link rel="canonical" href="https://flare.uuugk.win/en/">
+<link rel="alternate" hreflang="zh-CN" href="https://flare.uuugk.win/">
+<link rel="alternate" hreflang="en" href="https://flare.uuugk.win/en/">
+<link rel="alternate" hreflang="x-default" href="https://flare.uuugk.win/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FlareLab – Thomas Flare Trainer">
+<meta property="og:description" content="Learn the Thomas flare with interactive 3D breakdowns, phase-by-phase muscle maps, three levels of targeted drills, and an AI coach. Available on iOS and Android.">
+<meta property="og:url" content="https://flare.uuugk.win/en/">
+<meta property="og:image" content="https://flare.uuugk.win/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MobileApplication",
+      "@id": "https://flare.uuugk.win/en/#app",
+      "name": "FlareLab",
+      "alternateName": "托马斯训练助手",
+      "description": "Learn the Thomas flare with interactive 3D breakdowns, phase-by-phase muscle maps, three levels of targeted drills, and an AI coach. Available on iOS and Android.",
+      "url": "https://flare.uuugk.win/en/",
+      "inLanguage": "en",
+      "operatingSystem": [
+        "iOS",
+        "Android"
+      ],
+      "applicationCategory": "HealthApplication",
+      "installUrl": [
+        "https://apps.apple.com/app/id6821186142",
+        "https://play.google.com/store/apps/details?id=dev.mhgd.flare"
+      ],
+      "sameAs": [
+        "https://apps.apple.com/app/id6821186142",
+        "https://play.google.com/store/apps/details?id=dev.mhgd.flare"
+      ],
+      "publisher": {
+        "@id": "https://flare.uuugk.win/#organization"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://flare.uuugk.win/en/#faq",
+      "inLanguage": "en",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where can I download it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Search for FlareLab or 托马斯训练助手 on the \u003ca href=\"https://apps.apple.com/app/id6821186142\">App Store\u003c/a> and \u003ca href=\"https://play.google.com/store/apps/details?id=dev.mhgd.flare\">Google Play\u003c/a>, or try the \u003ca href=\"https://flare-app.uuugk.win/\">web app\u003c/a>."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Basic movement breakdowns and some training are free. Flare Premium includes the AI coach, custom training plans, and other features. See the in-app store for subscription terms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I start as a complete beginner?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The app breaks the flare into phases and offers three levels of drills, starting with basic strength, mobility, and support."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is this different from learning from a video?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pause and rotate the 3D model to inspect each phase from any angle, with the active muscles highlighted for that phase. You can also ask the AI coach a question at any point."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it need an internet connection?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The built-in 3D breakdown works offline. Exercise videos need to download on first use, and the online AI coach needs a connection."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://flare.uuugk.win/#organization",
+      "name": "UGK",
+      "url": "https://flare.uuugk.win/"
+    }
+  ]
+}
+</script>
+<meta name="theme-color" content="#08080a">
+<link rel="icon" href="/img/icon.png">
+<link rel="apple-touch-icon" href="/img/icon.png">
+<link rel="preload" href="/coach.glb" as="fetch" crossorigin>
+<link rel="preload" href="/fonts/nsc-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"FL Display";src:url(/fonts/anton.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"FL Sans";src:url(/fonts/nsc-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"FL Sans";src:url(/fonts/nsc-900.woff2) format("woff2");font-weight:900;font-display:swap}
+@font-face{font-family:"FL Mono";src:url(/fonts/mono.woff2) format("woff2");font-weight:400 700;font-display:swap}
+:root{
+  --bg:#08080a;--bg2:#101013;--bg3:#17171b;--ink:#f3f1ec;--mute:#8b8a90;--dim:#55545a;--ember:#ff6a3d;--ember-d:rgba(255,106,61,.16);
+  --hair:rgba(255,255,255,.09);--hair2:rgba(255,255,255,.18);
+  --disp:"FL Display","Anton","Impact","Arial Narrow","FL Sans",sans-serif;
+  --sans:"FL Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"FL Mono",ui-monospace,"SFMono-Regular",Menlo,"FL Sans","PingFang SC","Microsoft YaHei",monospace;
+  --pad:clamp(20px,4vw,64px);
+  --stage-a:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--ink);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;background:var(--bg)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--ember);color:#000}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.em{color:var(--ember)}
+.en{font-family:var(--disp);letter-spacing:.02em;text-transform:uppercase}
+
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .9s cubic-bezier(.7,0,.2,1),visibility .9s}
+.is-loaded #loader{opacity:0;visibility:hidden}
+#loader .lmark{display:flex;align-items:center;gap:12px;color:var(--mute)}
+#loader .lmark i{width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 18px var(--ember);animation:pulse 1.2s infinite}
+#loader-pct{font-family:var(--disp);font-size:clamp(88px,16vw,220px);line-height:.85;letter-spacing:-.01em;color:var(--ink)}
+#loader .lbar{width:min(360px,70vw);height:1px;background:var(--hair2);overflow:hidden}
+#loader-bar{height:100%;background:var(--ember);transform-origin:0 50%;transform:scaleX(0)}
+#loader .lcap{color:var(--mute);font-size:13px;text-align:center}
+@keyframes pulse{50%{opacity:.35}}
+
+/* ---------- stage ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity .3s}
+#poster{position:fixed;inset:0;z-index:0;display:none;align-items:center;justify-content:flex-end;padding-right:6vw;opacity:var(--stage-a);
+  background:radial-gradient(60% 60% at 70% 62%,rgba(255,106,61,.12),transparent 70%),var(--bg)}
+#poster img{width:min(56vw,760px);border-radius:24px;opacity:.95;mask-image:radial-gradient(closest-side,#000 70%,transparent)}
+.no-gl #gl{display:none}
+.no-gl #poster{display:flex}
+#annot{position:fixed;inset:0;z-index:2;width:100vw;height:100vh;pointer-events:none;opacity:0}
+#annot path{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.1}
+#annot path.e{stroke:var(--ember);stroke-width:1.4}
+#annot text{font-family:var(--mono);font-size:12px;fill:#fff;letter-spacing:.06em;paint-order:stroke;stroke:rgba(8,8,10,.85);stroke-width:4px}
+#annot text.e{fill:var(--ember)}
+.grain{position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55));opacity:var(--stage-a)}
+
+main{position:relative;z-index:4}
+
+/* ---------- nav ---------- */
+#nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px var(--pad);transition:background .4s,backdrop-filter .4s,padding .4s}
+#nav.scrolled{padding-top:12px;padding-bottom:12px;background:linear-gradient(rgba(8,8,10,.82),rgba(8,8,10,0))}
+#nav.solid{background:rgba(8,8,10,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:34px;height:34px;border-radius:9px}
+.brand b{font-family:var(--disp);font-weight:400;font-size:20px;letter-spacing:.06em;display:block;line-height:1}
+.brand span{font-size:11px;color:var(--mute);display:block;letter-spacing:.08em;margin-top:3px}
+.navlinks{display:flex;gap:28px;align-items:center}
+.navlinks a.l{font-size:13px;color:var(--mute);transition:color .2s}
+.navlinks a.l:hover{color:var(--ink)}
+.navlinks a.l small{font-family:var(--mono);font-size:9px;color:var(--dim);margin-left:4px;letter-spacing:.1em}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;background:var(--ember);color:#130703;font-weight:900;font-size:14px;transition:transform .25s,box-shadow .25s;white-space:nowrap}
+.pill:hover{transform:translateY(-2px);box-shadow:0 10px 40px -8px rgba(255,106,61,.7)}
+.pill .en{font-size:13px;font-weight:400;opacity:.75}
+.ghost{display:inline-flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1px solid var(--hair2);font-size:14px;color:var(--ink);transition:border-color .25s,background .25s}
+.ghost:hover{border-color:var(--ink);background:rgba(255,255,255,.04)}
+
+/* ---------- hero ---------- */
+#hero{position:relative;height:100vh;min-height:640px;touch-action:pan-y;cursor:grab}
+.dragging #hero,.dragging [data-drag]{cursor:grabbing}
+.hero-word{position:absolute;left:0;right:0;top:9vh;text-align:center;font-family:var(--disp);font-size:31vw;line-height:.8;letter-spacing:-.01em;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.11);pointer-events:none;user-select:none;white-space:nowrap}
+.hero-word span{-webkit-text-stroke:1px rgba(255,106,61,.38)}
+.hero-copy{position:absolute;left:var(--pad);bottom:clamp(40px,9vh,110px);max-width:min(720px,52vw)}
+.kicker{display:flex;align-items:center;gap:12px;color:var(--mute);margin-bottom:22px}
+.kicker i{width:22px;height:1px;background:var(--ember)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);display:inline-block;animation:pulse 1.6s infinite}
+h1{font-weight:900;font-size:clamp(46px,6.6vw,118px);line-height:1.02;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--ember);display:block}
+.hero-en{font-family:var(--disp);font-size:clamp(18px,1.9vw,30px);letter-spacing:.04em;text-transform:uppercase;margin-top:18px;color:var(--ink)}
+.hero-p{margin-top:16px;color:var(--mute);font-size:15px;max-width:480px}
+.hero-p span{display:block;font-size:13px;color:var(--dim);margin-top:4px}
+.hero-cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.hero-side{position:absolute;right:var(--pad);bottom:clamp(40px,9vh,110px);text-align:right;color:var(--mute)}
+.hero-side .live{display:flex;gap:10px;align-items:center;justify-content:flex-end;color:var(--ink)}
+#hero-live{font-family:var(--sans);font-size:15px;color:var(--ink);margin-top:10px;letter-spacing:0;text-transform:none;font-weight:900}
+.hero-side .hint{margin-top:16px;display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.hint svg{width:34px;height:14px}
+.scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--dim)}
+.scrollcue i{width:1px;height:42px;background:linear-gradient(var(--ember),transparent);animation:cue 2s infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---------- pinned ---------- */
+.pin{position:relative}
+.sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+#phases{height:900vh}
+#muscle{height:420vh}
+#rules{height:360vh}
+.sec-k{display:flex;gap:14px;align-items:center;color:var(--mute)}
+.sec-k b{color:var(--ember);font-weight:400}
+.scrim-l{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.5) 32%,transparent 58%);pointer-events:none}
+.scrim-r{position:absolute;inset:0;background:linear-gradient(270deg,rgba(8,8,10,.9) 0%,rgba(8,8,10,.55) 34%,transparent 60%);pointer-events:none}
+
+/* phases */
+.ph-wrap{position:absolute;left:var(--pad);top:0;bottom:0;width:min(46vw,680px);display:flex;flex-direction:column;justify-content:center;padding-top:40px}
+#ph-text{position:relative}
+#ph-num{font-family:var(--disp);font-size:clamp(130px,23vh,260px);line-height:.82;color:transparent;-webkit-text-stroke:1.5px var(--ember);display:block;margin:26px 0 8px}
+#ph-num-of{font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.2em;vertical-align:top}
+#ph-zh{font-weight:900;font-size:clamp(44px,5.6vw,96px);line-height:1.05;letter-spacing:-.02em}
+#ph-en{font-family:var(--disp);font-size:clamp(20px,2vw,32px);text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-top:6px}
+#ph-detail{display:inline-block;margin-top:20px;padding:6px 12px;border:1px solid var(--ember);color:var(--ember);border-radius:999px;font-size:13px}
+#ph-cap{margin-top:18px;max-width:470px;color:#bdbcc2;font-size:15px;line-height:1.75}
+#ph-text.swap #ph-num,#ph-text.swap #ph-zh,#ph-text.swap #ph-en,#ph-text.swap #ph-detail,#ph-text.swap #ph-cap{animation:swapin .7s cubic-bezier(.2,.8,.2,1) both}
+#ph-text.swap #ph-zh{animation-delay:.04s}#ph-text.swap #ph-en{animation-delay:.08s}#ph-text.swap #ph-detail{animation-delay:.12s}#ph-text.swap #ph-cap{animation-delay:.16s}
+@keyframes swapin{from{opacity:0;transform:translateY(26px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+#ph-rail{position:absolute;left:var(--pad);right:var(--pad);bottom:34px;display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+#ph-rail .track{position:absolute;left:0;right:0;top:0;height:1px;background:var(--hair2)}
+#ph-fill{position:absolute;left:0;right:0;top:0;height:1px;background:var(--ember);transform-origin:0 50%;transform:scaleX(0)}
+.tick{padding-top:14px;color:var(--dim);font-size:12px;transition:color .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tick b{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.14em;display:block;margin-bottom:2px}
+.tick.on{color:var(--ink)}
+.tick.on b{color:var(--ember)}
+.ph-side{position:absolute;right:var(--pad);top:110px;text-align:right;color:var(--mute)}
+.ph-side .big{font-family:var(--disp);font-size:58px;line-height:1;color:var(--ink)}
+
+/* muscle */
+.mu-wrap{position:absolute;right:var(--pad);top:0;bottom:0;width:min(44vw,600px);display:flex;flex-direction:column;justify-content:center;padding-top:50px}
+h2{font-weight:900;font-size:clamp(38px,4.4vw,78px);line-height:1.06;letter-spacing:-.02em;margin-top:20px}
+.h2en{font-family:var(--disp);font-size:clamp(17px,1.5vw,24px);text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-top:10px}
+.readout{margin-top:26px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+#mus-phase{font-weight:900;font-size:22px}
+#mus-phase-en{font-family:var(--disp);text-transform:uppercase;color:var(--mute);letter-spacing:.04em}
+#mus-support{margin-left:auto;color:var(--ember);font-size:13px}
+#legend{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+#legend h4{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--hair)}
+#legend h4 b{color:var(--ink);font-family:var(--sans);font-weight:900;font-size:14px;letter-spacing:0;margin-right:6px}
+#legend li{list-style:none;font-size:13px;color:var(--dim);padding:4px 0 4px 16px;position:relative;transition:color .35s;line-height:1.35}
+#legend li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:7px;border-radius:50%;border:1px solid var(--dim);transition:all .35s}
+#legend li.s{color:#c8c6cc}
+#legend li.s::before{border-color:var(--ember);background:rgba(255,106,61,.3)}
+#legend li.p{color:var(--ink);font-weight:900}
+#legend li.p::before{border-color:var(--ember);background:var(--ember);box-shadow:0 0 12px var(--ember)}
+.mu-note{margin-top:20px;color:var(--mute);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mu-left{position:absolute;left:var(--pad);bottom:34px;color:var(--mute)}
+.mu-left .big{font-family:var(--disp);font-size:clamp(70px,9vw,150px);line-height:.85;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.2)}
+
+/* rules */
+.ru-wrap{position:absolute;left:var(--pad);top:0;bottom:0;width:min(44vw,600px);display:flex;flex-direction:column;justify-content:center;padding-top:50px}
+.rules{margin-top:26px;border-top:1px solid var(--hair)}
+.rule{display:grid;grid-template-columns:1fr auto;gap:4px 18px;padding:14px 0;border-bottom:1px solid var(--hair);align-items:baseline}
+.rule .t{font-weight:900;font-size:19px}
+.rule .t small{font-family:var(--disp);font-weight:400;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);font-size:14px;margin-left:10px}
+.rule .v{font-family:var(--disp);font-size:30px;color:var(--ember);line-height:1;text-align:right;min-width:110px}
+.rule .s{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase}
+.rule .s2{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-align:right;letter-spacing:.08em}
+.rhythm{grid-column:1/-1;position:relative;height:18px;margin-top:8px;display:grid;grid-template-columns:.651fr 1.268fr 1.134fr .984fr .834fr 1.034fr 1.118fr 1.218fr .617fr;gap:3px}
+.rhythm i{background:rgba(255,255,255,.1);height:4px;margin-top:7px;border-radius:2px}
+#rhythm-head{position:absolute;top:0;width:2px;height:18px;background:var(--ember);box-shadow:0 0 10px var(--ember);left:0}
+.sparkcard{margin-top:22px;display:flex;gap:20px;align-items:center}
+#spark{width:300px;height:70px;overflow:visible;flex:none}
+#spark-path{fill:none;stroke:var(--ink);stroke-width:1.2}
+#spark-th{stroke:var(--ember);stroke-dasharray:3 4;stroke-width:1}
+#spark-dot{fill:var(--ember)}
+.sparkcard p{font-size:12px;color:var(--mute);line-height:1.6}
+.sparkcard p b{font-family:var(--disp);font-weight:400;font-size:24px;color:var(--ink);display:block}
+.ru-right{position:absolute;right:var(--pad);top:110px;text-align:right;color:var(--mute)}
+#live-phase{font-weight:900;color:var(--ink);font-size:16px;margin-top:8px;letter-spacing:0;text-transform:none;font-family:var(--sans)}
+
+/* ---------- flow sections ---------- */
+.sec{position:relative;padding:clamp(100px,16vh,180px) var(--pad);background:var(--bg)}
+.sec.first{background:linear-gradient(rgba(8,8,10,0),var(--bg) 22vh)}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:clamp(50px,8vh,90px)}
+.sec-head p{color:var(--mute);max-width:440px;justify-self:end;font-size:15px}
+.sec-head p span{display:block;color:var(--dim);font-size:13px;margin-top:6px}
+[data-reveal]{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+[data-reveal].in{opacity:1;transform:none}
+[data-reveal][data-d="1"]{transition-delay:.08s}[data-reveal][data-d="2"]{transition-delay:.16s}[data-reveal][data-d="3"]{transition-delay:.24s}[data-reveal][data-d="4"]{transition-delay:.32s}
+
+/* loop */
+#loop h2{white-space:nowrap;font-size:clamp(30px,4vw,72px)}
+.loop{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--hair2)}
+.step{position:relative;padding:28px 22px 30px 0;border-right:1px solid var(--hair)}
+.step:last-child{border-right:0}
+.step+.step{padding-left:22px}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.16em}
+.step .ch{white-space:nowrap;font-weight:900;font-size:clamp(72px,8.6vw,150px);line-height:1;margin:14px 0 6px;letter-spacing:-.04em;transition:color .4s,-webkit-text-stroke-color .4s}
+.step:nth-child(odd) .ch{color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.55)}
+.step:last-child .ch{font-size:calc(clamp(72px,8.6vw,150px) * .6);line-height:calc(1em / .6)}
+.step:hover .ch{color:var(--ember);-webkit-text-stroke-color:var(--ember)}
+.step .ten{font-family:var(--disp);font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.step h3{font-weight:900;font-size:18px;margin-top:14px}
+.step h3 span{display:block;font-weight:400;font-size:13px;color:var(--mute)}
+.step p{font-size:13.5px;color:#a9a8ae;margin-top:10px;line-height:1.65}
+.step .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chip{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--hair2);color:#cfcdd2}
+.chip.em{border-color:var(--ember);color:var(--ember)}
+.arrow{position:absolute;right:-9px;top:34px;width:17px;height:17px;border-radius:50%;background:var(--bg);border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;color:var(--ember);font-size:10px;z-index:2}
+
+/* screens */
+.screens{position:relative;height:clamp(560px,80vh,820px);perspective:1600px}
+.phone{position:absolute;top:50%;left:50%;width:clamp(200px,17vw,270px);aspect-ratio:540/1170;border-radius:clamp(30px,2.6vw,42px);padding:9px;background:linear-gradient(145deg,#2a2a30,#0d0d10 40%,#1b1b20);box-shadow:0 60px 120px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08) inset,0 30px 80px -40px rgba(255,106,61,.35);
+  transform:translate(-50%,-50%) translateX(calc(var(--x) * 1px)) translateY(calc(var(--y) * 1px + (var(--p,0.5) - .5) * var(--py) * 1px)) rotateY(calc(var(--ry) * 1deg)) rotateZ(calc(var(--rz) * 1deg));transition:transform .2s linear}
+.phone img{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:clamp(22px,2.1vw,34px)}
+.phone figcaption{position:absolute;left:0;right:0;bottom:-46px;text-align:center;font-size:13px;color:var(--mute)}
+.phone figcaption b{color:var(--ink);font-weight:900;margin-right:6px}
+.screens .glow{position:absolute;left:50%;top:55%;width:70vw;height:40vw;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,106,61,.16),transparent);pointer-events:none}
+.disclaim{text-align:center;color:var(--dim);font-size:12px;margin-top:70px}
+
+/* drills */
+.marquee{overflow:hidden;margin:0 calc(var(--pad) * -1);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mrow{display:flex;gap:16px;width:max-content;animation:mq 90s linear infinite}
+.mrow.rev{animation-direction:reverse;animation-duration:110s;margin-top:16px}
+.marquee:hover .mrow{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.dcard{width:clamp(180px,16vw,240px);flex:none}
+.dcard img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:1px solid var(--hair)}
+.dcard p{font-size:13px;margin-top:10px;font-weight:900;line-height:1.3}
+.dcard p span{display:block;font-weight:400;font-size:11px;color:var(--mute);margin-top:3px}
+.dcard p i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ember);margin-right:6px}
+.tiers{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--hair2)}
+.num{padding:30px 20px 10px 0;border-right:1px solid var(--hair)}
+.num+.num{padding-left:24px}
+.num:last-child{border-right:0}
+.num .v{font-family:var(--disp);font-size:clamp(90px,11vw,200px);line-height:.9;letter-spacing:-.01em}
+.num .v sup{font-size:.4em;color:var(--ember);vertical-align:top;margin-left:4px}
+.num h3{font-weight:900;font-size:17px;margin-top:14px}
+.num p{color:var(--mute);font-size:13px}
+.nums-note{color:var(--mute);font-size:13px;margin-top:30px}
+
+/* who */
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--bg2);border:1px solid var(--hair);border-radius:22px;padding:30px 28px 32px;transition:border-color .3s,transform .3s}
+.card:hover{border-color:rgba(255,106,61,.5);transform:translateY(-4px)}
+.card .i{font-family:var(--mono);font-size:11px;color:var(--ember);letter-spacing:.16em}
+.card h3{font-weight:900;font-size:22px;margin-top:40px;line-height:1.3}
+.card h3 span{display:block;font-family:var(--disp);font-weight:400;font-size:16px;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-top:4px}
+.card ul{margin-top:18px;list-style:none}
+.card li{font-size:14px;color:#c9c7cc;padding:9px 0;border-top:1px solid var(--hair)}
+.card li span{display:block;font-size:12px;color:var(--dim)}
+
+/* faq */
+.faq{border-top:1px solid var(--hair2);max-width:1100px}
+.faq details{border-bottom:1px solid var(--hair)}
+.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:60px 1fr auto;align-items:center;padding:26px 0;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .q{font-weight:900;font-size:clamp(20px,2vw,28px)}
+.faq summary .q span{font-family:var(--disp);font-weight:400;font-size:.62em;text-transform:uppercase;color:var(--mute);margin-left:14px;letter-spacing:.03em}
+.faq summary .pl{width:36px;height:36px;border-radius:50%;border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;transition:transform .35s,background .35s,border-color .35s}
+.faq summary .pl::before{content:"+";font-size:20px;line-height:1;color:var(--ember)}
+.faq details[open] .pl{transform:rotate(45deg);border-color:var(--ember)}
+.faq .a{padding:0 0 28px 70px;color:#c9c7cc;font-size:16px}
+.faq .a span{display:block;color:var(--mute);font-size:14px}
+
+/* join */
+#join{position:relative;padding:clamp(120px,20vh,220px) var(--pad) 60px;overflow:hidden;background:radial-gradient(70% 60% at 50% 100%,rgba(255,106,61,.18),transparent 70%),var(--bg)}
+.join-big{font-weight:900;font-size:clamp(76px,15vw,270px);line-height:.95;letter-spacing:-.04em}
+.join-big .en{display:block;font-weight:400;font-size:.36em;line-height:1;letter-spacing:.01em;color:transparent;-webkit-text-stroke:1.2px var(--ember);margin-top:.32em}
+.join-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;margin-top:60px;align-items:end}
+.join-grid p{color:var(--mute);font-size:15px}
+.join-grid p span{display:block;color:var(--dim);font-size:13px}
+.platforms{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+footer{position:relative;z-index:4;padding:40px var(--pad) 46px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:12px;background:var(--bg)}
+footer .brand b{font-size:16px}
+
+/* ---------- fallback ---------- */
+.no-gl #phases{height:500vh}.no-gl #muscle{height:300vh}.no-gl #rules{height:auto}
+.no-gl #rules .sticky{position:relative;height:auto;padding:120px 0}
+.no-gl #rules .ru-wrap{position:relative;width:auto;padding:0 var(--pad);right:auto;left:0}
+.no-gl .ru-right,.no-gl .sparkcard,.no-gl .hero-side .hint,.no-gl .rhythm #rhythm-head{display:none}
+.no-gl .rule .v.live{font-size:0}.no-gl .rule .v.live::after{content:"✓";font-size:26px}
+
+.no-gl .scrim-r,.no-gl .scrim-l{background:rgba(8,8,10,.8)}
+.no-gl .hero-side .live{display:none}
+/* ---------- mobile ---------- */
+@media (max-width:820px){
+  .navlinks a.l{display:none}
+  .pill{padding:9px 15px;font-size:13px}.pill .en{display:none}
+  .brand span{display:none}
+  #hero{min-height:600px}
+  .hero-word{top:13vh;font-size:34vw}
+  .hero-copy{left:var(--pad);right:var(--pad);max-width:none;bottom:34px}
+  .kicker{margin-bottom:14px}
+  h1{font-size:clamp(40px,11.5vw,60px)}
+  .hero-en{font-size:17px;margin-top:10px}
+  .hero-p{font-size:14px;margin-top:10px}.hero-p span{display:none}
+  .hero-cta{margin-top:18px}.hero-cta .ghost{display:none}
+  .hero-side{top:84px;bottom:auto;right:var(--pad)}
+  .hero-side .hint{display:none}
+  .scrollcue{display:none}
+  .hero-scrim{position:absolute;inset:auto 0 0 0;height:62%;background:linear-gradient(transparent,rgba(8,8,10,.92) 55%);pointer-events:none}
+  .scrim-l,.scrim-r{background:linear-gradient(rgba(8,8,10,.92),rgba(8,8,10,.4) 34%,transparent 50%,rgba(8,8,10,.55) 72%,rgba(8,8,10,.95))}
+  .ph-wrap{left:var(--pad);right:var(--pad);width:auto;top:72px;bottom:auto;padding-top:0;display:block}
+  #ph-num{font-size:84px;margin:10px 0 2px;-webkit-text-stroke-width:1px}
+  #ph-zh{font-size:38px}
+  #ph-en{font-size:17px}
+  #ph-detail{position:absolute;right:0;top:44px;margin:0}
+  #ph-cap{position:absolute;left:0;right:0;top:calc(100svh - 300px);font-size:13.5px;max-width:none;line-height:1.65}
+  #ph-rail{bottom:22px;gap:4px}
+  .tick{font-size:0}.tick b{font-size:9px;letter-spacing:.06em}
+  .tick.on{font-size:0}
+  .ph-side{display:none}
+  .scrub-hint{display:none}
+  .mu-wrap{left:var(--pad);right:var(--pad);width:auto;top:70px;bottom:18px;padding-top:0;justify-content:space-between}
+  .mu-wrap h2{font-size:32px;margin-top:10px}.mu-wrap .h2en{font-size:14px}
+  .readout{margin-top:auto;padding:10px 0;gap:10px}
+  #mus-phase{font-size:17px}#mus-phase-en{display:none}
+  #legend{gap:10px;margin-top:10px}
+  #legend h4{font-size:9px;margin-bottom:4px;padding-bottom:4px}#legend h4 b{font-size:12px;display:block}
+  #legend li{font-size:11px;padding:2px 0 2px 11px}
+  #legend li::before{width:5px;height:5px;top:8px}
+  #legend li:not(.p):not(.s){display:none}
+  .mu-note{display:none}
+  .mu-left{display:none}
+  .ru-wrap{left:var(--pad);right:var(--pad);width:auto;top:70px;bottom:16px;padding-top:0;justify-content:space-between}
+  .ru-wrap h2{font-size:32px;margin-top:10px}.ru-wrap .h2en{font-size:14px}
+  .rules{margin-top:auto}
+  .rule{padding:8px 0}
+  .rule .t{font-size:15px}.rule .t small{display:none}
+  .rule .v{font-size:22px;min-width:80px}
+  .rule .s,.rule .s2{font-size:9px}
+  .sparkcard{display:none}
+  .ru-right{display:none}
+  #annot text{font-size:10px}
+  .sec-head{grid-template-columns:1fr;gap:16px}
+  .sec-head p{justify-self:start}
+  .loop{grid-template-columns:1fr;border-top:0}
+  .step,.step+.step{padding:26px 0;border-right:0;border-top:1px solid var(--hair);display:grid;grid-template-columns:96px 1fr;column-gap:16px}
+  .step .n{grid-column:1/-1}
+  .step .ch{font-size:72px;margin:6px 0 0;grid-row:span 4}
+  .step:last-child .ch{font-size:44px;line-height:1.6}
+  #loop h2{font-size:27px}
+  .step .ten{font-size:16px;margin-top:10px}
+  .arrow{display:none}
+  .screens{height:auto;display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(var(--pad) * -1);padding:10px var(--pad) 70px;perspective:none}
+  .phone{position:relative;top:auto;left:auto;transform:none!important;flex:none;width:62vw;scroll-snap-align:center}
+  .screens .glow{display:none}
+  .disclaim{margin-top:10px}
+  .nums{grid-template-columns:1fr 1fr}
+  .num,.num+.num{padding:24px 12px 20px 0;border-right:0;border-bottom:1px solid var(--hair)}
+  .num:nth-child(even){padding-left:16px;border-left:1px solid var(--hair)}
+  .num .v{font-size:84px}
+  .who{grid-template-columns:1fr}
+  .card h3{margin-top:24px}
+  .faq summary{grid-template-columns:36px 1fr auto}
+  .faq summary .q span{display:block;margin:4px 0 0}
+  .faq .a{padding-left:46px}
+  .join-grid{grid-template-columns:1fr;gap:30px;margin-top:40px}
+  #poster{justify-content:center;padding:0;align-items:flex-start;padding-top:18vh}
+  #poster img{width:92vw}
+}
+@media (prefers-reduced-motion:reduce){.mrow{animation-duration:400s}.grain{animation:none}}
+/* Store links and locale navigation */
+.lang-switch{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);white-space:nowrap}
+.lang-switch a{padding:8px 2px;color:var(--mute)}
+.lang-switch a:hover,.lang-switch a[aria-current="page"]{color:var(--ink)}
+.hero-cta{align-items:flex-start}
+.store-links{display:grid;justify-items:start;gap:12px}
+.store-badges{display:flex;flex-wrap:wrap;gap:12px}
+.store-badges a{display:block}
+.store-badges img{display:block;height:48px;width:auto}
+.web-link{color:var(--ink);font-size:14px;text-decoration:underline;text-underline-offset:4px}
+.web-link:hover,.faq-intro a:hover{color:var(--ember)}
+.faq-intro{max-width:720px;color:var(--mute);font-size:16px;line-height:1.7;margin-bottom:36px}
+.faq-intro a{text-decoration:underline;text-underline-offset:4px}
+html[lang="zh-CN"] .join-big{font-size:clamp(48px,10vw,180px)}
+html[lang="en"] .join-big{font-size:clamp(54px,11vw,190px)}
+html[lang="en"] h1{font-size:clamp(37px,5.5vw,86px);text-wrap:balance}
+html[lang="en"] #ph-en,html[lang="en"] #mus-phase-en{display:none}
+html[lang="en"] #ph-zh{font-size:clamp(30px,4vw,68px)}
+html[lang="en"] .step .ch{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.2vw,64px);line-height:1.1;text-transform:uppercase}
+@media (max-width:820px){
+  .navlinks{gap:12px}
+  html[lang="en"] .step .ch{font-size:clamp(18px,4.5vw,32px)}
+}
+@media (320px <= width <= 357px){
+  .store-links{width:100%;grid-template-columns:minmax(0,1fr);justify-items:center}
+  .store-badges{width:max-content;flex-wrap:nowrap}
+}
+
+</style>
+</head>
+<body>
+<div id="loader" aria-hidden="true">
+  <div class="lmark mono"><i></i>FlareLab – Thomas Flare Trainer</div>
+  <div id="loader-pct">000</div>
+  <div class="lbar"><div id="loader-bar"></div></div>
+  <div class="lcap">Loading the 3D coach</div>
+</div>
+
+<canvas id="gl" aria-label="Live 3D flare demo"></canvas>
+<div id="poster"><img src="/img/flare-loop.webp" alt="3D flare loop"></div>
+<div class="vignette"></div>
+<svg id="annot" aria-hidden="true">
+  <path id="a-kl"/><text id="t-kl"></text>
+  <path id="a-kr"/><text id="t-kr"></text>
+  <path id="a-el" class="e"/><text id="t-el" class="e"></text>
+  <path id="a-hip"/><text id="t-hip"></text>
+</svg>
+<div class="grain"></div>
+
+<nav id="nav">
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b><span>Thomas Flare Trainer</span></div></a>
+  <div class="navlinks">
+    <a class="l" href="#phases">Phases</a>
+    <a class="l" href="#muscle">Muscles</a>
+    <a class="l" href="#rules">Rules</a>
+    <a class="l" href="#loop">Training</a>
+    <a class="l" href="#faq">FAQ</a>
+    <a class="pill" href="#join">Get the app</a>
+    <div class="lang-switch mono" aria-label="Language">
+      <a href="/" lang="zh-CN" hreflang="zh-CN" aria-label="Simplified Chinese">中</a>
+      <span aria-hidden="true">/</span>
+      <a href="/en/" lang="en" hreflang="en" aria-label="English" aria-current="page">EN</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+<section id="hero" data-drag>
+  <div class="hero-word" aria-hidden="true">FL<span>A</span>RE</div>
+  <div class="hero-scrim"></div>
+  <div class="hero-copy">
+    <div class="kicker mono"><span class="dot"></span>FlareLab – Thomas Flare Trainer</div>
+    <h1>See it. Understand it.<em>Land your flare.</em></h1>
+
+    <p class="hero-p">See each phase in 3D, understand which muscles are working and build up with targeted drills.</p>
+    <div class="hero-cta">
+      <div class="store-links"><div class="store-badges"><a href="https://apps.apple.com/app/id6821186142"><img src="/img/app-store-en.svg" alt="Download on the App Store" height="48"></a><a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare"><img src="/img/google-play-en.svg" alt="Get it on Google Play" height="48"></a></div><a class="web-link" href="https://flare-app.uuugk.win/">Try the web app first →</a></div>
+      <a class="ghost" href="#phases">Explore the 8 phases ↓</a>
+    </div>
+  </div>
+  <div class="hero-side mono">
+    <div class="live"><span class="dot"></span>Live 3D · 0.5×</div>
+    <div id="hero-live">01/08 · Rear support</div>
+    <div class="hint"><svg viewBox="0 0 34 14" fill="none" stroke="currentColor"><path d="M1 7h32M5 3L1 7l4 4M29 3l4 4-4 4"/></svg>Drag to rotate</div>
+  </div>
+  <div class="scrollcue mono">Scroll<i></i></div>
+</section>
+
+<section id="phases" class="pin">
+  <div class="sticky">
+    <div class="scrim-l"></div>
+    <div class="ph-wrap">
+      <div class="sec-k mono"><b>01</b> Eight phases <span class="scrub-hint" style="color:var(--dim)">— Scroll to scrub</span></div>
+      <div id="ph-text">
+        <span id="ph-num">01</span>
+        <div id="ph-zh">Rear support</div>
+        <div id="ph-en">Rear support</div>
+        <span id="ph-detail">Long leg sweeps forward</span>
+        <p id="ph-cap"></p>
+      </div>
+    </div>
+    <div class="ph-side mono">One loop<div class="big">9.0<span style="font-size:.4em;color:var(--mute)">s</span></div>0.25–1× speed</div>
+    <div id="ph-rail">
+      <div class="track"></div><div id="ph-fill"></div>
+      <div class="tick on"><b>01</b>Rear support</div><div class="tick"><b>02</b>First transfer</div><div class="tick"><b>03</b>First side support</div><div class="tick"><b>04</b>First leg pass</div><div class="tick"><b>05</b>Front support</div><div class="tick"><b>06</b>Second transfer</div><div class="tick"><b>07</b>Second side support</div><div class="tick"><b>08</b>Second leg pass</div>
+    </div>
+  </div>
+</section>
+
+<section id="muscle" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-r"></div>
+    <div class="mu-left mono"><div class="big">17</div>Muscle groups, synced per phase</div>
+    <div class="mu-wrap">
+      <div>
+        <div class="sec-k mono"><b>02</b> Muscle sync</div>
+        <h2>See which muscles<br>carry each phase.</h2>
+
+      </div>
+      <div>
+        <div class="readout"><span id="mus-phase">02 · First transfer</span><span id="mus-phase-en">First transfer</span><span id="mus-support">Right-hand support</span></div>
+        <div id="legend"><div><h4>Support</h4><ul><li data-g="deltoids">Deltoids</li><li data-g="rotator-cuff">Rotator cuff</li><li data-g="triceps">Triceps</li><li data-g="forearms">Forearm and wrist muscles</li><li data-g="serratus">Serratus anterior</li><li data-g="scapular">Middle and lower traps, rhomboids</li><li data-g="chest">Pectoralis major</li><li data-g="lats">Latissimus dorsi</li></ul></div><div><h4>Core</h4><ul><li data-g="abs">Rectus and transversus abdominis</li><li data-g="obliques">Obliques</li><li data-g="erectors">Spinal erectors</li><li data-g="hip-flexors">Hip flexors</li></ul></div><div><h4>Legs</h4><ul><li data-g="glute-max">Gluteus maximus</li><li data-g="hip-abductors">Gluteus medius and hip abductors</li><li data-g="adductors">Adductors</li><li data-g="quadriceps">Quadriceps</li><li data-g="hamstrings">Hamstrings</li></ul></div></div>
+        <div class="mu-note"><span>● Primary &nbsp; ◐ Secondary</span><span>Sides follow the supporting hand</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rules" class="pin">
+  <div class="sticky" data-drag style="touch-action:pan-y">
+    <div class="scrim-l"></div>
+    <div class="ru-wrap">
+      <div>
+        <div class="sec-k mono"><b>03</b> Technique rules</div>
+        <h2>Clean technique,<br>measured in motion.</h2>
+
+      </div>
+      <div>
+        <div class="rules">
+          <div class="rule"><div class="t">Straight legs</div><div class="v live" id="live-knee">178°</div><div class="s">Knee angle ≥ 176°</div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Hip fold</div><div class="v live" id="live-hip">50°</div><div class="s">Hip fold ≥ 50° · loop peak <span id="hip-peak" class="em">—</span></div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Straight support arm</div><div class="v live" id="live-elbow">179°</div><div class="s">Supporting elbow</div><div class="s2">Live</div></div>
+          <div class="rule"><div class="t">Even rhythm</div><div class="v">✓</div><div class="s">Steady tempo · seamless loop</div><div class="s2">8 segments</div>
+            <div class="rhythm"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span id="rhythm-head"></span></div></div>
+        </div>
+        <div class="sparkcard">
+          <svg id="spark" viewBox="0 0 300 70"><line id="spark-th" x1="0" x2="300" y1="30" y2="30"/><path id="spark-path"/><circle id="spark-dot" r="3.5" cx="0" cy="0"/></svg>
+          <p>Minimum knee angle<br>across the loop<b id="spark-min">—</b>Dashed line = 176° minimum</p>
+        </div>
+      </div>
+    </div>
+    <div class="ru-right mono">Current phase<div id="live-phase">—</div><div style="margin-top:14px">Flexed feet ✓<br>Level hips on hand changes ✓</div></div>
+  </div>
+</section>
+
+<section id="loop" class="sec first">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>04</b> The learning loop</div>
+      <h2>Watch → Understand → Train → Ask → Progress</h2>
+
+    </div>
+    <p data-reveal data-d="1">From observing the move in 3D to planning your practice, use technique cues to guide each step.</p>
+  </div>
+  <div class="loop">
+    <div class="step" data-reveal><span class="arrow">→</span><div class="n">01</div><div class="ch">Watch</div><h3>Full-screen 3D flare loop</h3><p>Loop any of the eight phases, slow it to 0.25–1× speed and rotate the view.</p><div class="chips"><span class="chip">8 phases</span><span class="chip">0.25–1×</span></div></div>
+    <div class="step" data-reveal data-d="1"><span class="arrow">→</span><div class="n">02</div><div class="ch">Understand</div><h3>Pause and tap a muscle</h3><p>See what it does in that instant, with three key cues and common mistakes.</p><div class="chips"><span class="chip">Key cues</span><span class="chip">Common mistakes</span></div></div>
+    <div class="step" data-reveal data-d="2"><span class="arrow">→</span><div class="n">03</div><div class="ch">Train</div><h3>Drills for that muscle</h3><p>Three levels with timers or rep counters: A bodyweight, B home equipment, C gym.</p><div class="chips"><span class="chip">A Bodyweight</span><span class="chip">B Home equipment</span><span class="chip">C Gym</span></div></div>
+    <div class="step" data-reveal data-d="3"><span class="arrow">→</span><div class="n">04</div><div class="ch">Ask</div><h3>Ask the AI coach</h3><p>Ask about technique and plan practice around your training goals.</p><div class="chips"><span class="chip em">AI coach</span></div></div>
+    <div class="step" data-reveal data-d="4"><div class="n">05</div><div class="ch">Progress</div><h3>Build up gradually</h3><p>Use each phase's cues as you work through the move at your own pace.</p></div>
+  </div>
+</section>
+
+<section id="screens" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>05</b> The app</div>
+      <h2>Four screens,<br>one path.</h2>
+
+    </div>
+    <p data-reveal data-d="1">Available for iOS and Android. The movement breakdown works offline. Drill videos may need a connection on first play.</p>
+  </div>
+  <div class="screens" data-par>
+    <div class="glow"></div>
+    <figure class="phone" style="--x:-420;--y:40;--py:140;--ry:24;--rz:-4"><img loading="lazy" src="/img/ph-01-watch.webp" alt="Watch each frame"><figcaption><b>Watch</b></figcaption></figure>
+    <figure class="phone" style="--x:-140;--y:-20;--py:-90;--ry:10;--rz:-1.5"><img loading="lazy" src="/img/ph-03-understand.webp" alt="Understand the muscles at work"><figcaption><b>Understand</b></figcaption></figure>
+    <figure class="phone" style="--x:140;--y:20;--py:110;--ry:-10;--rz:1.5"><img loading="lazy" src="/img/ph-04-train.webp" alt="Targeted drills"><figcaption><b>Train</b></figcaption></figure>
+    <figure class="phone" style="--x:420;--y:-30;--py:-130;--ry:-24;--rz:4"><img loading="lazy" src="/img/ph-05-path.webp" alt="Training path"><figcaption><b>Training path</b></figcaption></figure>
+  </div>
+  <p class="disclaim">Screens show design previews.</p>
+</section>
+
+<section id="drills" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>06</b> Drill library</div>
+      <h2>51 drills for<br>the muscles you use.</h2>
+
+    </div>
+    <div data-reveal data-d="1" style="justify-self:end;max-width:440px">
+      <p style="justify-self:auto">Every working muscle gets three tiers of drills with sets, cues, mistakes and safety notes.</p>
+      <div class="tiers"><span class="chip em">A Bodyweight</span><span class="chip">B Home equipment</span><span class="chip">C Gym</span></div>
+    </div>
+  </div>
+  <div class="marquee" data-reveal>
+    <div class="mrow"><div class="dcard"><img loading="lazy" src="/img/d-deltoids-A.webp" alt="Straight-Arm Side Plank"><p><i>A</i>Straight-Arm Side Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-C.webp" alt="Half-Kneeling Landmine Press"><p><i>C</i>Half-Kneeling Landmine Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-B.webp" alt="Band External Rotation"><p><i>B</i>Band External Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-A.webp" alt="Close-Grip Push-Up with Lockout"><p><i>A</i>Close-Grip Push-Up with Lockout</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-C.webp" alt="Parallel Bar Dips"><p><i>C</i>Parallel Bar Dips</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-B.webp" alt="Dumbbell Wrist Curl &amp; Reverse Curl"><p><i>B</i>Dumbbell Wrist Curl &amp; Reverse Curl</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-A.webp" alt="Push-Up Plus"><p><i>A</i>Push-Up Plus</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-C.webp" alt="Ring Push-Up Plus"><p><i>C</i>Ring Push-Up Plus</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-B.webp" alt="Scapular Pull-Up"><p><i>B</i>Scapular Pull-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-A.webp" alt="Push-Up to Side Plank Rotation"><p><i>A</i>Push-Up to Side Plank Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-C.webp" alt="Single-Arm Standing Cable Press"><p><i>C</i>Single-Arm Standing Cable Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-B.webp" alt="Band Straight-Arm Pulldown"><p><i>B</i>Band Straight-Arm Pulldown</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-A.webp" alt="Hollow Body Hold"><p><i>A</i>Hollow Body Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-C.webp" alt="Dip-Bar Support Leg Raise"><p><i>C</i>Dip-Bar Support Leg Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-B.webp" alt="Band Pallof Press"><p><i>B</i>Band Pallof Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-A.webp" alt="Reverse Plank"><p><i>A</i>Reverse Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-C.webp" alt="45° Hyperextension"><p><i>C</i>45° Hyperextension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-B.webp" alt="Banded Standing Knee Drive"><p><i>B</i>Banded Standing Knee Drive</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-A.webp" alt="Single-Leg Glute Bridge"><p><i>A</i>Single-Leg Glute Bridge</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-C.webp" alt="Reverse Hyperextension"><p><i>C</i>Reverse Hyperextension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-B.webp" alt="Banded Supine Straddle Opens"><p><i>B</i>Banded Supine Straddle Opens</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-A.webp" alt="Cossack Squat"><p><i>A</i>Cossack Squat</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-C.webp" alt="Cable Standing Hip Adduction"><p><i>C</i>Cable Standing Hip Adduction</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-B.webp" alt="Banded Terminal Knee Extension"><p><i>B</i>Banded Terminal Knee Extension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-A.webp" alt="Bodyweight Single-Leg RDL"><p><i>A</i>Bodyweight Single-Leg RDL</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-C.webp" alt="GHD Nordic Eccentric"><p><i>C</i>GHD Nordic Eccentric</p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-A.webp" alt="Straight-Arm Side Plank"><p><i>A</i>Straight-Arm Side Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-C.webp" alt="Half-Kneeling Landmine Press"><p><i>C</i>Half-Kneeling Landmine Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-B.webp" alt="Band External Rotation"><p><i>B</i>Band External Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-A.webp" alt="Close-Grip Push-Up with Lockout"><p><i>A</i>Close-Grip Push-Up with Lockout</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-C.webp" alt="Parallel Bar Dips"><p><i>C</i>Parallel Bar Dips</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-B.webp" alt="Dumbbell Wrist Curl &amp; Reverse Curl"><p><i>B</i>Dumbbell Wrist Curl &amp; Reverse Curl</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-A.webp" alt="Push-Up Plus"><p><i>A</i>Push-Up Plus</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-C.webp" alt="Ring Push-Up Plus"><p><i>C</i>Ring Push-Up Plus</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-B.webp" alt="Scapular Pull-Up"><p><i>B</i>Scapular Pull-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-A.webp" alt="Push-Up to Side Plank Rotation"><p><i>A</i>Push-Up to Side Plank Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-C.webp" alt="Single-Arm Standing Cable Press"><p><i>C</i>Single-Arm Standing Cable Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-B.webp" alt="Band Straight-Arm Pulldown"><p><i>B</i>Band Straight-Arm Pulldown</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-A.webp" alt="Hollow Body Hold"><p><i>A</i>Hollow Body Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-C.webp" alt="Dip-Bar Support Leg Raise"><p><i>C</i>Dip-Bar Support Leg Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-B.webp" alt="Band Pallof Press"><p><i>B</i>Band Pallof Press</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-A.webp" alt="Reverse Plank"><p><i>A</i>Reverse Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-C.webp" alt="45° Hyperextension"><p><i>C</i>45° Hyperextension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-B.webp" alt="Banded Standing Knee Drive"><p><i>B</i>Banded Standing Knee Drive</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-A.webp" alt="Single-Leg Glute Bridge"><p><i>A</i>Single-Leg Glute Bridge</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-C.webp" alt="Reverse Hyperextension"><p><i>C</i>Reverse Hyperextension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-B.webp" alt="Banded Supine Straddle Opens"><p><i>B</i>Banded Supine Straddle Opens</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-A.webp" alt="Cossack Squat"><p><i>A</i>Cossack Squat</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-C.webp" alt="Cable Standing Hip Adduction"><p><i>C</i>Cable Standing Hip Adduction</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-B.webp" alt="Banded Terminal Knee Extension"><p><i>B</i>Banded Terminal Knee Extension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-A.webp" alt="Bodyweight Single-Leg RDL"><p><i>A</i>Bodyweight Single-Leg RDL</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-C.webp" alt="GHD Nordic Eccentric"><p><i>C</i>GHD Nordic Eccentric</p></div></div>
+    <div class="mrow rev"><div class="dcard"><img loading="lazy" src="/img/d-deltoids-B.webp" alt="Dumbbell Turkish Get-Up"><p><i>B</i>Dumbbell Turkish Get-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-A.webp" alt="Plank Shoulder Taps"><p><i>A</i>Plank Shoulder Taps</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-C.webp" alt="Cable 90/90 External Rotation"><p><i>C</i>Cable 90/90 External Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-B.webp" alt="Parallette Support Hold"><p><i>B</i>Parallette Support Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-A.webp" alt="Quadruped Wrist Rocks"><p><i>A</i>Quadruped Wrist Rocks</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-C.webp" alt="Bottoms-Up Kettlebell Carry"><p><i>C</i>Bottoms-Up Kettlebell Carry</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-B.webp" alt="Foam Roller Wall Slide"><p><i>B</i>Foam Roller Wall Slide</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-A.webp" alt="Prone Y-T-W Raise"><p><i>A</i>Prone Y-T-W Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-C.webp" alt="Ring Support Hold"><p><i>C</i>Ring Support Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-B.webp" alt="Parallette Deficit Push-Up"><p><i>B</i>Parallette Deficit Push-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-A.webp" alt="Floor Support Lift (Seated Dip Shrug)"><p><i>A</i>Floor Support Lift (Seated Dip Shrug)</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-C.webp" alt="Dip-Bar Scapular Depression"><p><i>C</i>Dip-Bar Scapular Depression</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-B.webp" alt="Parallette Tuck L-Sit"><p><i>B</i>Parallette Tuck L-Sit</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-A.webp" alt="Kick-Through (Beast Flow)"><p><i>A</i>Kick-Through (Beast Flow)</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-C.webp" alt="Cable High-to-Low Woodchop"><p><i>C</i>Cable High-to-Low Woodchop</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-B.webp" alt="Stability Ball Back Extension"><p><i>B</i>Stability Ball Back Extension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-A.webp" alt="Seated Pike Leg Lifts"><p><i>A</i>Seated Pike Leg Lifts</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-C.webp" alt="Cable Straight-Leg Raise"><p><i>C</i>Cable Straight-Leg Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-B.webp" alt="Banded Straight-Leg Kickback"><p><i>B</i>Banded Straight-Leg Kickback</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-A.webp" alt="Side Plank Hip Abduction"><p><i>A</i>Side Plank Hip Abduction</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-C.webp" alt="Hip Abduction Machine"><p><i>C</i>Hip Abduction Machine</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-B.webp" alt="Short-Lever Copenhagen Plank"><p><i>B</i>Short-Lever Copenhagen Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-A.webp" alt="Reverse Nordic"><p><i>A</i>Reverse Nordic</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-C.webp" alt="Leg Extension with Lockout Hold"><p><i>C</i>Leg Extension with Lockout Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-B.webp" alt="Slider Hamstring Curl"><p><i>B</i>Slider Hamstring Curl</p></div><div class="dcard"><img loading="lazy" src="/img/d-deltoids-B.webp" alt="Dumbbell Turkish Get-Up"><p><i>B</i>Dumbbell Turkish Get-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-A.webp" alt="Plank Shoulder Taps"><p><i>A</i>Plank Shoulder Taps</p></div><div class="dcard"><img loading="lazy" src="/img/d-rotator-cuff-C.webp" alt="Cable 90/90 External Rotation"><p><i>C</i>Cable 90/90 External Rotation</p></div><div class="dcard"><img loading="lazy" src="/img/d-triceps-B.webp" alt="Parallette Support Hold"><p><i>B</i>Parallette Support Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-A.webp" alt="Quadruped Wrist Rocks"><p><i>A</i>Quadruped Wrist Rocks</p></div><div class="dcard"><img loading="lazy" src="/img/d-forearms-C.webp" alt="Bottoms-Up Kettlebell Carry"><p><i>C</i>Bottoms-Up Kettlebell Carry</p></div><div class="dcard"><img loading="lazy" src="/img/d-serratus-B.webp" alt="Foam Roller Wall Slide"><p><i>B</i>Foam Roller Wall Slide</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-A.webp" alt="Prone Y-T-W Raise"><p><i>A</i>Prone Y-T-W Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-scapular-C.webp" alt="Ring Support Hold"><p><i>C</i>Ring Support Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-chest-B.webp" alt="Parallette Deficit Push-Up"><p><i>B</i>Parallette Deficit Push-Up</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-A.webp" alt="Floor Support Lift (Seated Dip Shrug)"><p><i>A</i>Floor Support Lift (Seated Dip Shrug)</p></div><div class="dcard"><img loading="lazy" src="/img/d-lats-C.webp" alt="Dip-Bar Scapular Depression"><p><i>C</i>Dip-Bar Scapular Depression</p></div><div class="dcard"><img loading="lazy" src="/img/d-abs-B.webp" alt="Parallette Tuck L-Sit"><p><i>B</i>Parallette Tuck L-Sit</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-A.webp" alt="Kick-Through (Beast Flow)"><p><i>A</i>Kick-Through (Beast Flow)</p></div><div class="dcard"><img loading="lazy" src="/img/d-obliques-C.webp" alt="Cable High-to-Low Woodchop"><p><i>C</i>Cable High-to-Low Woodchop</p></div><div class="dcard"><img loading="lazy" src="/img/d-erectors-B.webp" alt="Stability Ball Back Extension"><p><i>B</i>Stability Ball Back Extension</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-A.webp" alt="Seated Pike Leg Lifts"><p><i>A</i>Seated Pike Leg Lifts</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-flexors-C.webp" alt="Cable Straight-Leg Raise"><p><i>C</i>Cable Straight-Leg Raise</p></div><div class="dcard"><img loading="lazy" src="/img/d-glute-max-B.webp" alt="Banded Straight-Leg Kickback"><p><i>B</i>Banded Straight-Leg Kickback</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-A.webp" alt="Side Plank Hip Abduction"><p><i>A</i>Side Plank Hip Abduction</p></div><div class="dcard"><img loading="lazy" src="/img/d-hip-abductors-C.webp" alt="Hip Abduction Machine"><p><i>C</i>Hip Abduction Machine</p></div><div class="dcard"><img loading="lazy" src="/img/d-adductors-B.webp" alt="Short-Lever Copenhagen Plank"><p><i>B</i>Short-Lever Copenhagen Plank</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-A.webp" alt="Reverse Nordic"><p><i>A</i>Reverse Nordic</p></div><div class="dcard"><img loading="lazy" src="/img/d-quadriceps-C.webp" alt="Leg Extension with Lockout Hold"><p><i>C</i>Leg Extension with Lockout Hold</p></div><div class="dcard"><img loading="lazy" src="/img/d-hamstrings-B.webp" alt="Slider Hamstring Curl"><p><i>B</i>Slider Hamstring Curl</p></div></div>
+  </div>
+</section>
+
+<section id="numbers" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>07</b> The numbers</div>
+      <h2>The flare,<br>by the numbers.</h2>
+    </div>
+  </div>
+  <div class="nums">
+    <div class="num" data-reveal><div class="v" data-count="8">8</div><h3>Phases in the 3D loop</h3></div>
+    <div class="num" data-reveal data-d="1"><div class="v" data-count="17">17</div><h3>Muscle groups synced per phase</h3></div>
+    <div class="num" data-reveal data-d="2"><div class="v" data-count="51">51</div><h3>Illustrated drills across three levels</h3></div>
+    <div class="num" data-reveal data-d="3"><div class="v"><span data-count="40">40</span><sup>+</sup></div><h3>Motion refinements</h3></div>
+  </div>
+  <p class="nums-note" data-reveal>Muscles are grouped into support, core and legs. Sides follow the supporting hand.</p>
+</section>
+
+<section id="who" class="sec">
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>08</b> Who it's for</div>
+      <h2>For anyone stuck on the flare.</h2>
+
+    </div>
+  </div>
+  <div class="who">
+    <div class="card" data-reveal><div class="i">01</div><h3>Beginner to intermediate breakers</h3><ul><li>See what your body does in each phase</li><li>Know which muscles to train</li><li>Spot what you need to work on</li></ul></div>
+    <div class="card" data-reveal data-d="1"><div class="i">02</div><h3>Street workout and gymnastics enthusiasts</h3><ul><li>Break down the technique</li><li>Follow a progressive training path</li></ul></div>
+    <div class="card" data-reveal data-d="2"><div class="i">03</div><h3>Coaches and breaking studios</h3><ul><li>Visual tools for teaching are planned.</li></ul></div>
+  </div>
+</section>
+
+<section id="faq" class="sec">
+  <p class="faq-intro">The Thomas flare is a breaking and gymnastics move where you alternate hand support as your legs circle your body. FlareLab breaks one full rotation into eight phases. You can pause the 3D model and rotate it to see each hand placement and weight shift from different angles. The muscle map highlights the muscles involved at each phase. Three levels of drills help beginners build strength, mobility, and support. You can also ask the AI coach about a phase or how to practice it.</p>
+  <div class="sec-head">
+    <div data-reveal>
+      <div class="sec-k mono"><b>09</b> FAQ</div>
+      <h2>Frequently asked questions</h2>
+    </div>
+  </div>
+  <div class="faq">
+    <details data-reveal open><summary><span class="mono">Q1</span><span class="q">Where can I download it?</span><span class="pl"></span></summary><div class="a">Search for FlareLab or 托马斯训练助手 on the <a href="https://apps.apple.com/app/id6821186142">App Store</a> and <a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare">Google Play</a>, or try the <a href="https://flare-app.uuugk.win/">web app</a>.</div></details>
+<details data-reveal><summary><span class="mono">Q2</span><span class="q">Is it free?</span><span class="pl"></span></summary><div class="a">Basic movement breakdowns and some training are free. Flare Premium includes the AI coach, custom training plans, and other features. See the in-app store for subscription terms.</div></details>
+<details data-reveal><summary><span class="mono">Q3</span><span class="q">Can I start as a complete beginner?</span><span class="pl"></span></summary><div class="a">Yes. The app breaks the flare into phases and offers three levels of drills, starting with basic strength, mobility, and support.</div></details>
+<details data-reveal><summary><span class="mono">Q4</span><span class="q">How is this different from learning from a video?</span><span class="pl"></span></summary><div class="a">Pause and rotate the 3D model to inspect each phase from any angle, with the active muscles highlighted for that phase. You can also ask the AI coach a question at any point.</div></details>
+<details data-reveal><summary><span class="mono">Q5</span><span class="q">Does it need an internet connection?</span><span class="pl"></span></summary><div class="a">The built-in 3D breakdown works offline. Exercise videos need to download on first use, and the online AI coach needs a connection.</div></details>
+  </div>
+</section>
+
+<section id="join">
+  <div class="sec-k mono" data-reveal><b>10</b> Get the app</div>
+  <h2 class="join-big" data-reveal>Download FlareLab</h2>
+  <div class="join-grid">
+    <div data-reveal><p>Download FlareLab for iOS or Android, or try it in your browser.</p></div>
+    <div data-reveal data-d="1"><div class="store-links"><div class="store-badges"><a href="https://apps.apple.com/app/id6821186142"><img src="/img/app-store-en.svg" alt="Download on the App Store" height="48"></a><a href="https://play.google.com/store/apps/details?id=dev.mhgd.flare"><img src="/img/google-play-en.svg" alt="Get it on Google Play" height="48"></a></div><a class="web-link" href="https://flare-app.uuugk.win/">Try the web app first →</a></div></div>
+  </div>
+</section>
+</main>
+<footer>
+  <a class="brand" href="#hero"><img src="/img/icon.png" alt=""><div><b>FLARELAB</b></div></a>
+  <div>© 2026 FlareLab · Developer Bboy Ug1yk</div>
+  <div class="mono" style="font-size:10px">Thomas Flare Trainer</div>
+</footer>
+<script src="/app.js" defer></script>
+</body>
+</html>

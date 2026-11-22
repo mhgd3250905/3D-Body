@@ -4,6 +4,7 @@ import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/content_pages.dart';
+import 'package:flare/ui/flare_plan_detail_page.dart';
 import 'package:flare/ui/motion_controls.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
@@ -58,13 +59,12 @@ void main() {
         TextDirection.rtl,
       );
       final more = find.bySemanticsLabel(strings.more);
-      final path = find.bySemanticsLabel(strings.plans);
       expect(more, findsOneWidget);
-      expect(path, findsOneWidget);
+      expect(find.bySemanticsLabel(strings.plans), findsNothing);
       expect(
         tester.getCenter(more).dx,
-        lessThan(tester.getCenter(path).dx),
-        reason: 'The trailing header action moves to the left in RTL.',
+        greaterThan(390 / 2),
+        reason: 'The single menu uses the leading edge in RTL.',
       );
       expect(tester.takeException(), isNull);
       semantics.dispose();
@@ -107,13 +107,14 @@ void main() {
   );
 
   testWidgets(
-    'Arabic muscle detail retains a useful knowledge viewport and fixed actions at 390x844',
+    'Arabic home muscle selection opens its localized plan directly',
     (tester) async {
       _setSize(tester, const Size(390, 844));
       final translations = (await tester.runAsync(
         () => ContentTranslations.load(),
       ))!;
       final catalog = source.localized(translations.forLanguage('ar'));
+      final group = catalog.groupById('deltoids')!;
       final store = LearningStore(
         catalog: catalog,
         storage: MemoryStateStorage(),
@@ -148,37 +149,14 @@ void main() {
         'source': 'flare-scene',
         'type': 'select',
         'time': 2.375,
-        'groupId': 'deltoids',
+        'groupId': group.id,
       });
       await _pumpTransitions(tester);
 
-      final knowledge = find.byKey(const ValueKey('muscle-knowledge'));
-      final knowledgePosition = Scrollable.of(
-        tester.element(knowledge),
-      ).position;
-      expect(
-        knowledgePosition.viewportDimension,
-        greaterThanOrEqualTo(40),
-        reason: 'The Arabic role copy must not squeeze the knowledge viewport.',
-      );
-      final assist = find.byKey(const ValueKey('muscle-assist-cards'));
-      final footer = find.byKey(const ValueKey('train-group'));
-      final beforeAssist = tester.getRect(assist);
-      final beforeFooter = tester.getRect(footer);
-      expect(beforeFooter.top, greaterThan(beforeAssist.bottom));
-      expect(beforeFooter.bottom, lessThanOrEqualTo(844));
-      expect(footer.hitTestable(), findsOneWidget);
-
-      if (knowledgePosition.maxScrollExtent > 0) {
-        await tester.drag(
-          find.byKey(const ValueKey('muscle-detail-content')),
-          const Offset(0, -180),
-        );
-        await tester.pumpAndSettle();
-        expect(knowledgePosition.pixels, greaterThan(0));
-      }
-      expect(tester.getRect(assist), beforeAssist);
-      expect(tester.getRect(footer), beforeFooter);
+      final plans = find.byType(FlarePlanDetailPage);
+      expect(plans, findsOneWidget);
+      expect(tester.widget<FlarePlanDetailPage>(plans).title, group.shortLabel);
+      expect(Directionality.of(tester.element(plans)), TextDirection.rtl);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     },

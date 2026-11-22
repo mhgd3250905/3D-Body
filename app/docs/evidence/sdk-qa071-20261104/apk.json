@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-04",
+  "branch": "codex/sdk-pin-v0.7.0",
+  "sourceCommit": "f0ef5d60e8472d7f53f031cadc238bcb1be4cdd8",
+  "sdkCommit": "9dd93163e9f355665e5c923f374c64f03bf65a86",
+  "sdkTag": "ugk_trainer-v0.7.1",
+  "apk": "E:\\AII-3D\\3D-Body\\output\\releases\\Flare-QA071-f0ef5d6-1.0.12-vc2018-20261104-arm64.apk",
+  "package": "dev.mhgd.flare",
+  "versionCode": 2018,
+  "versionName": "1.0.12",
+  "bytes": 91976959,
+  "sha256": "5da2abff2ffd979bf404549f213f4f9ecad3bcf7587083336c1c901d2ab8f4e7",
+  "abis": [
+    "arm64-v8a"
+  ],
+  "mp4": 0,
+  "posters": 211,
+  "aiTagCount": 249,
+  "aiTagStatus": "ai-draft; unreviewed",
+  "tagAssetSha256": "f3d1e03420a68520233d2d47ee91d60d679a4391b70a6739dd109a6b14e7de65",
+  "internalCertificateSha256": "3761270a4764157f0e389014a9e5b800b05403bfddce0f4f7f8c039f6a53bdc7",
+  "signatureV2V3": true,
+  "zipAlignment16KiB": true,
+  "nativeElfChecks": [
+    {
+      "name": "lib/arm64-v8a/libapp.so",
+      "loadAlignments": [
+        65536,
+        65536,
+        65536
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libdartjni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libdatastore_shared_counter.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libflutter.so",
+      "loadAlignments": [
+        65536,
+        65536,
+        65536
+      ]
+    }
+  ],
+  "installed": false,
+  "fullTests": {
+    "passed": 324,
+    "failed": 5,
+    "skipped": 1
+  },
+  "realModel": {
+    "dialogs": 3,
+    "turns": 10,
+    "undeliveredTurns": 2
+  },
+  "analyze": "No issues found"
+}

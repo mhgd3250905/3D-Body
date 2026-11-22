@@ -2,9 +2,10 @@ import './style.css';
 import { FlarePlayer, CAMERA_PRESETS } from './player.js';
 import { phaseAt, phaseTicks, GROUPS } from './phase.js';
 import { createHotspotCallouts } from './hotspot-callouts.js';
+import { createHubFlight } from './training-hub-flight.js';
 import { createHotspotDepth } from './hotspot-depth.js';
-import { buildMmRest, createHitTester, createSurfaceSelection } from './mapped-mesh.js';
-import { createDetailView } from './detail.js';
+import { createHubCalloutVisibility } from './hub-callout-visibility.js';
+import { buildMmRest, createHitTester } from './mapped-mesh.js';
 import { isCoveredActorPart, isOriginalActorHeadPart } from './study-body.js';
 import { createPhaseMap } from './phase-map.js';
 import { applyTheme, themeSettling } from './theme.js';
@@ -13,21 +14,74 @@ import { sceneStrings, setSceneStrings } from './localization.js';
 import { createFlareFx } from './fx.js';
 import { characterFromLocation } from './characters.js';
 import { createPerfHud, perfEnabled, perfSnapshot } from './perf-hud.js';
+import { createTrainingHub } from './training-hub-stage.js';
 
 const stage = document.querySelector('#stage'), status = document.querySelector('#status');
 const statusText = document.querySelector('#status-text'), retry = document.querySelector('#retry');
 const hotspotLayer = document.querySelector('#hotspots');
-let player, hitTester, surface, detailView, phaseMap, ready = false, selected = null, detailed = false, hotspots = [], errorCode = null;
-let viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
+let player, hitTester, phaseMap, ready = false, hotspots = [], errorCode = null;
+let viewTop = 0, viewInset = 0, pending = [], pointerDown = null, lastState = 0, callouts, fx = null, previewing = false, perfHud = null;
+let clockRevision = 0;
 const character = characterFromLocation(location.search);
+const options = new URLSearchParams(location.search);
+const v5 = options.get('actor') === 'flare-v5';
+const media = v5 && options.get('embed') === 'media';
+let v5Fx = options.get('fx') !== '0';
 const hosted = document.documentElement.dataset.hosted === 'true';
+const homeDemandFrames = hosted && v5 && !media;
 let presented = false, statusTimer = null;
+const hubCallouts = createHubCalloutVisibility();
+let hubCalloutFrame = null, animateHubCallouts = true;
+let showHubCallouts = true;
+let hubCaptureId = null;
+let pageLabels = null;
+let snapshotSettings = {}, snapshotDay = '', snapshotMidnightTimer = null;
+let snapshotFontsReady = true;
+
+function refreshSnapshotDay() {
+  clearTimeout(snapshotMidnightTimer);
+  const now = new Date();
+  const year = now.getFullYear(), month = now.getMonth(), day = now.getDate();
+  snapshotDay = [year, month + 1, day].map(part => String(part).padStart(2, '0')).join('-');
+  if (phaseMap && player?.visible && !document.hidden) {
+    const midnight = new Date(year, month, day + 1);
+    snapshotMidnightTimer = setTimeout(refreshSnapshotDay, midnight - now);
+  }
+  syncPhaseMapSnapshots();
+}
+
+function syncPhaseMapSnapshots() {
+  if (!phaseMap) return;
+  phaseMap.setSnapshotContext({
+    theme: document.documentElement.dataset.theme ?? 'dark',
+    language: sceneStrings.locale ?? snapshotSettings.language ?? 'zh',
+    dataVersion: snapshotSettings.dataVersion ?? 'standalone',
+    day: snapshotDay,
+  });
+  phaseMap.setSnapshotSchedulingEnabled(ready && presented && !presentation.pending
+    && !errorCode && snapshotFontsReady && player.visible && !document.hidden
+    && !player.contextLost && !player.hubFlight && !player.trainingHub
+    && (!hosted || snapshotSettings.active === true));
+}
+
+function labelArrival(page, time) {
+  if (pageLabels?.destination !== page) return { layout: null, opacity: 1 };
+  if (pageLabels.arrivedAt == null) return { layout: null, opacity: 0 };
+  if (Math.abs(time - pageLabels.time) > .001) {
+    pageLabels = null;
+    return { layout: null, opacity: 1 };
+  }
+  const t = pageLabels.animate ? Math.min(1, (performance.now() - pageLabels.arrivedAt) / 180) : 1;
+  if (t < 1) player.requestRedraw();
+  return { layout: pageLabels.layout, opacity: 1 - (1 - t) ** 3 };
+}
 const presentation = createPresentationGate({
   canPresent: () => ready && !errorCode && player.visible && !document.hidden && !player.contextLost && !player.disposed && !player.dirty
     && stage.clientWidth > 0 && stage.clientHeight > 0 && !player.glide && !player.projectionGlide && !themeSettling(),
   requestRender: () => { if (player) { player.dirty = true; player.start(); } },
   onPresented: requestId => {
     presented = true;
+    syncPhaseMapSnapshots();
     // Include the final clock/selection in the acknowledgement, so the host
     // unveils the stage and updates its transport as one coherent state.
     if (hosted) post({ ...state(), type: 'presented', requestId });
@@ -48,11 +102,11 @@ function post(event) {
   }
 }
 function state() {
-  return { type: 'state', time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
-    speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source, selected, detail: detailed,
+  return { type: 'state', clockRevision, time: player?.time ?? 0, period: player?.period ?? 9, playing: player?.playing ?? false,
+    speed: player?.speed ?? 0.5, phase: phaseAt(player?.time ?? 0).source,
     loop: player?.loopRange ? { start: player.loopRange[0], end: player.loopRange[1] } : null,
-    detailModel: detailed ? detailView?.getModel() ?? 'motion' : 'motion',
-    quality: player?.quality ?? 'medium', fx: fx?.enabled ?? false, character: character.id, ready, presented, errorCode };
+    quality: player?.quality ?? 'medium', fx: v5 ? v5Fx : fx?.enabled ?? false,
+    character: v5 ? 'flare-v5' : character.id, ready, presented, errorCode };
 }
 function emitState(force = false) {
   // Intermediate viewport/theme/seek acknowledgements must not flash the
@@ -62,7 +116,7 @@ function emitState(force = false) {
   lastState = now; post(state());
 }
 function showError(code, recoverable = false) {
-  callouts?.clear(); hotspots = [];
+  clearHotspots();
   presented = false; presentation.cancel(); clearTimeout(statusTimer);
   errorCode = code; status.classList.remove('leaving'); status.hidden = false; status.dataset.error = 'true';
   statusText.textContent = sceneStrings.sceneFailed ?? (recoverable ? '三维画面暂时中断，正在等待图形恢复。也可重新载入。' : '三维动作暂时无法载入，请重新载入。');
@@ -80,59 +134,73 @@ function dismissStatus() {
     status.classList.remove('leaving');
   }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 340);
 }
+function clearHotspots() {
+  callouts?.clear(); hotspots = [];
+  hubCallouts.clear(); hubCalloutFrame = null;
+}
 function refreshHotspots(rendered = false) {
-  if (!ready || previewing || player.playing || detailed || !player.visible || document.hidden || player.contextLost || errorCode
+  if (media || player.hubFlight) return;
+  if (!ready || previewing || player.playing || !player.visible || document.hidden || player.contextLost || errorCode
       || stage.clientWidth <= 0 || stage.clientHeight <= 0) {
-    hotspots = []; callouts?.clear(); return;
+    clearHotspots(); return;
   }
-  if (rendered) hotspots = callouts?.update(phaseAt(player.time).items, selected) ?? [];
+  if (rendered && !player.trainingHub) {
+    const arrival = labelArrival('home', player.time);
+    if (arrival.opacity === 0) return;
+    hotspots = callouts?.update(phaseAt(player.time).items, arrival) ?? [];
+  }
 }
-function closeDetail() {
-  detailView?.close(); detailed = false;
-  surface?.restore();
-  phaseMap?.setHidden(false);
-  for (const prop of player?.stageProps ?? []) prop.visible = prop === player.shadowCatcher ? player.renderer.shadowMap.enabled : true;
+function renderHubCallouts(frame) {
+  if (!showHubCallouts) return;
+  hubCalloutFrame = hubCallouts.update(frame, performance.now(), animateHubCallouts &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (!hubCalloutFrame) {
+    if (hotspots.length) callouts?.clear();
+    hotspots = [];
+    return;
+  }
+  if (hubCalloutFrame.redrawing) player.requestRedraw();
+  const arrival = labelArrival('hub', hubCalloutFrame.time);
+  if (arrival.opacity === 0) return;
+  hotspots = callouts?.update(phaseAt(hubCalloutFrame.time).items, {
+    camera: frame.camera, viewport: frame.viewport,
+    opacity: hubCalloutFrame.opacity * arrival.opacity, reservedBottom: 32, homeOverlays: false,
+    layout: arrival.layout,
+  }) ?? [];
 }
-function setSelected(groupId, detail = detailed) {
+function openMusclePlan(groupId, pause = false) {
+  if (!ready || !GROUPS[groupId] || player.trainingHub || player.hubFlight || (player.playing && !pause)) return;
   player.playing = false;
-  if (!groupId) {
-    closeDetail(); selected = null; surface.restore();
-  } else {
-    selected = groupId; detailed = !!detail; const phase = phaseAt(player.time);
-    surface.show(selected, phase.items, detailed);
-    if (detailed) {
-      detailView.open(selected, phase);
-      phaseMap?.setHidden(true);
-      for (const prop of player.stageProps) prop.visible = false;
-    }
-  }
-  player.dirty = true; refreshHotspots(); emitState(true);
-}
-function selectFromTap(groupId) {
-  if (!ready || player.playing) return;
-  setSelected(groupId); post({ type: 'select', groupId, time: player.time });
-}
-function selectFromMap(groupId) {
-  if (!ready) return;
-  setSelected(groupId); post({ type: 'select', groupId, time: player.time });
+  post({ type: 'select', groupId, time: player.time });
 }
 function command(value) {
   let input = value;
   if (typeof input === 'string') { try { input = JSON.parse(input); } catch { post({ type: 'error', code: 'invalid_command', errorCode: 'invalid_command' }); return; } }
   if (!input || typeof input !== 'object' || typeof input.type !== 'string') return;
+  if (input.type === 'phase_map_snapshots') {
+    snapshotSettings = input;
+    if (typeof input.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(input.day)) snapshotDay = input.day;
+    syncPhaseMapSnapshots();
+    return;
+  }
+  if (media && ['hub_scene', 'hub_viewport', 'hub_exit', 'hub_flight', 'hub_flight_reverse', 'hub_flight_angle', 'hub_angle'].includes(input.type)) return;
   if (input.type !== 'present') presentation.invalidate();
   if (input.type === 'theme') {
     // Appearance only: page chrome and the miniature's backdrop. The athlete,
     // lighting and materials are identical in both themes.
     // An optional duration (ms) dissolves the chrome in step with the app.
     if (applyTheme(input.value, input.duration) && player) player.dirty = true;
+    syncPhaseMapSnapshots();
     return;
   }
   if (input.type === 'viewport') {
     // The host's chrome covers the bottom `bottom` px of the stage. DOM
     // overlays sit above it; the camera eases its framing into what is left.
     const bottom = Math.max(0, Number(input.bottom) || 0);
+    viewTop = Number.isFinite(input.top) ? Math.max(0, input.top) : viewTop;
     viewInset = bottom; stage.style.setProperty('--inset-bottom', `${bottom}px`);
+    stage.style.setProperty('--inset-top', `${viewTop}px`);
+    player?.setViewTop(viewTop);
     player?.setViewInset(bottom, ready && input.animate !== false);
     return;
   }
@@ -142,31 +210,162 @@ function command(value) {
       for (const [id, label] of Object.entries(input.groups ?? {})) {
         if (GROUPS[id] && typeof label === 'string') GROUPS[id].label = label;
       }
+      snapshotFontsReady = false;
       setSceneStrings(input).then(() => {
         callouts?.clear();
         if (player) { player.dirty = true; player.start(); }
-      }).catch(() => post({ type: 'localization_font_error', code: 'font_load_failed' }));
+      }).catch(() => post({ type: 'localization_font_error', code: 'font_load_failed' }))
+        .finally(() => {
+          if (sceneStrings !== input) return;
+          snapshotFontsReady = true;
+          syncPhaseMapSnapshots();
+        });
+      syncPhaseMapSnapshots();
       stage.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
       player.renderer.domElement.setAttribute('aria-label', input.sceneAccessibility ?? 'Flare 3D');
       hotspotLayer.setAttribute('aria-label', input.mapAccessibility ?? 'Muscles');
       document.title = input.sceneAccessibility ?? 'Flare';
       retry.textContent = input.retry ?? 'Retry';
       if (errorCode) statusText.textContent = input.sceneFailed ?? 'Unable to load';
-      phaseMap?.setLocalization(); detailView?.updateLocalization(); callouts?.clear();
+      phaseMap?.setLocalization(); callouts?.clear();
       break;
     }
     case 'present':
       if (!Number.isSafeInteger(input.requestId) || input.requestId <= 0) return;
-      presentation.request(input.requestId); return;
+      presentation.request(input.requestId);
+      syncPhaseMapSnapshots();
+      return;
+    case 'hub_scene': {
+      const flight = player.hubFlight;
+      const entering = flight && !flight.returning;
+      const hub = player.trainingHub ?? createTrainingHub(player, phaseMap, renderHubCallouts,
+        entering ? flight.angleView : undefined);
+      if (!hub.configure(input, performance.now())) {
+        if (!player.trainingHub) hub.releaseGpu();
+        return;
+      }
+      animateHubCallouts = input.animate !== false;
+      showHubCallouts = input.showCallouts !== false;
+      if (!showHubCallouts) clearHotspots();
+      if (!player.trainingHub) {
+        clearHotspots();
+        player.trainingHub = hub;
+        if (entering) {
+          player.holdStageHandoff();
+          player.hubFlight = null;
+          if (pageLabels?.destination === 'hub') pageLabels.arrivedAt = performance.now();
+        }
+        player.playing = false;
+        player.loopRange = null;
+        player.autoFrame = false;
+        player.glide = player.projectionGlide = null;
+        player.controls.enabled = false;
+        player.setDemandFrames(true);
+        phaseMap.setHidden(true);
+        syncPhaseMapSnapshots();
+        if (fx) { fx.setEnabled(false); fx.root.visible = false; }
+        player.v5?.setFxEnabled(false);
+      }
+      break;
+    }
+    case 'home_chrome':
+      if (input.x === null && input.opacity === null) {
+        phaseMap?.setChromeMotion(null);
+      } else if (Number.isFinite(input.x) && Number.isFinite(input.opacity)) {
+        phaseMap?.setChromeMotion({ x: input.x, opacity: Math.max(0, Math.min(1, input.opacity)) });
+      }
+      return;
+    case 'hub_viewport':
+      player.trainingHub?.setViewport(input);
+      return;
+    case 'hub_exit':
+      hubCaptureId = null;
+      if (!player.trainingHub) return;
+      player.trainingHub.releaseGpu();
+      player.trainingHub = null;
+      phaseMap.releaseGpu();
+      phaseMap.setHidden(false);
+      phaseMap.restorePhase();
+      phaseMap.clearHubCrop();
+      clearHotspots();
+      player.controls.enabled = true;
+      syncPhaseMapSnapshots();
+      if (fx) { fx.setEnabled(true); fx.root.visible = true; }
+      player.setDemandFrames(homeDemandFrames);
+      break;
+    case 'hub_capture': {
+      if (!Number.isSafeInteger(input.id) || input.id <= 0) return;
+      const flight = player.hubFlight;
+      if (!player.trainingHub && !(flight?.landed && !flight.returning)) {
+        post({ type: 'hub_captured', id: input.id }); return;
+      }
+      hubCaptureId = input.id;
+      player.requestRedraw(); player.start();
+      return;
+    }
+    case 'hub_flight': {
+      const flight = player.hubFlight;
+      // Keep the final angle shot visible while Flutter configures the hub.
+      if (input.id === 0 && flight?.landed && !flight.returning && !player.trainingHub) return;
+      const returned = flight?.returning && flight.landed;
+      if (input.id === 0 && returned) player.holdStageHandoff();
+      flight?.restore();
+      player.hubFlight = null;
+      if (input.id === 0 && pageLabels?.arrivedAt == null && returned && pageLabels?.destination === 'home') {
+        pageLabels.arrivedAt = performance.now();
+      }
+      if (input.id > 0) {
+        player.playing = false;
+        if (fx) fx.root.visible = false;
+        player.v5?.setFxEnabled(false);
+        pageLabels = {
+          layout: callouts?.snapshotLayout() ?? new Map(), time: input.returning ? player.time : input.time,
+          destination: input.returning ? 'home' : 'hub',
+          departedAt: performance.now(), arrivedAt: null,
+          animate: input.duration > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        };
+        if (input.returning) player.trainingHub?.prepareActorReturn();
+        const pixelRatio = input.returning ? player.renderer.getPixelRatio() : undefined;
+        player.hubFlight = createHubFlight(player, { ...input, pixelRatio }, CAMERA_PRESETS.standard,
+          () => {
+            player.stop();
+            post({ type: 'hub_flight_done', id: input.id });
+          }, () => {
+            post({ type: 'hub_flight_ready', id: input.id });
+          });
+        if (!player.hubFlight) post({ type: 'hub_flight_done', id: input.id });
+      }
+      phaseMap?.setHidden(!!player.trainingHub || !!player.hubFlight);
+      syncPhaseMapSnapshots();
+      player.start();
+      break;
+    }
+    case 'hub_flight_reverse': {
+      if (pageLabels) pageLabels.destination = 'home';
+      const done = () => post({ type: 'hub_flight_done', id: input.id });
+      if (!player.hubFlight?.reverse(done)) done();
+      else player.start();
+      break;
+    }
+    case 'hub_flight_angle':
+      if (player.hubFlight?.setAngleYaw(input.yaw)) player.start();
+      return;
+    case 'hub_angle':
+      if (pageLabels?.arrivedAt != null) pageLabels = null;
+      player.trainingHub?.setAngleYaw(input.yaw);
+      return;
     case 'play':
-      closeDetail(); selected = null; surface.restore();
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
       if (player.time >= player.period) player.setTime(0);
       player.playing = player.visible && !document.hidden && !player.contextLost;
       player.start(); break;
-    case 'pause': player.playing = false; break;
+    case 'pause':
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
+      player.playing = false; break;
     case 'seek': {
       const time = Number(input.time); if (!Number.isFinite(time)) return;
-      closeDetail(); selected = null; surface.restore(); player.playing = false; player.loopRange = null; player.setTime(time); break;
+      if (Number.isSafeInteger(input.clockRevision)) clockRevision = input.clockRevision;
+      player.playing = false; player.loopRange = null; player.setTime(time); break;
     }
     case 'speed': if ([0.25, 0.5, 1].includes(Number(input.value))) player.speed = Number(input.value); break;
     case 'loop': {
@@ -179,27 +378,19 @@ function command(value) {
       }
       break;
     }
-    case 'reset':
-      if (detailed && selected) detailView.reset(phaseAt(player.time)); else player.resetView(); break;
+    case 'reset': player.resetView(); break;
     case 'camera': {
       if (!CAMERA_PRESETS[input.view]) return;
-      if (detailed && selected) detailView.reset(phaseAt(player.time), CAMERA_PRESETS[input.view]);
-      else player.resetView(CAMERA_PRESETS[input.view]); break;
+      player.resetView(CAMERA_PRESETS[input.view]); break;
     }
-    case 'select': if (input.groupId == null || GROUPS[input.groupId]) setSelected(input.groupId ?? null); else return; break;
-    case 'detail':
-      if (input.groupId == null) {
-        closeDetail();
-        if (selected) surface.show(selected, phaseAt(player.time).items, false); else surface.restore();
-      } else if (GROUPS[input.groupId]) setSelected(input.groupId, true);
-      else return;
-      break;
-    case 'detail_model':
-      if (!detailed || !['motion', 'muscles'].includes(input.value)) return;
-      detailView.setModel(input.value, phaseAt(player.time)); break;
     case 'quality': player.setQuality(input.value); break;
-    case 'fx': if (typeof input.value !== 'boolean') return; fx?.setEnabled(input.value); break;
-    case 'visibility': player.setVisible(input.visible); break;
+    case 'fx':
+      if (typeof input.value !== 'boolean') return;
+      fx?.setEnabled(input.value); v5Fx = input.value; break;
+    case 'visibility':
+      player.setVisible(input.visible);
+      refreshSnapshotDay();
+      break;
     default: return;
   }
   player.dirty = true; refreshHotspots(); emitState(true);
@@ -217,14 +408,46 @@ retry.addEventListener('click', () => window.location.reload());
 
 async function boot() {
   try {
-    player = new FlarePlayer(stage, { character,
+    player = new FlarePlayer(stage, { character, v5,
       onTime: () => { if (document.hidden) refreshHotspots(); emitState(); },
-      onBeforeRender: () => { fx?.update(performance.now(), !detailed && !selected); refreshHotspots(true); },
-      onRender: () => {
-        const complete = detailed ? detailView?.renderMini() : phaseMap?.render();
-        presentation.rendered(complete === true);
+      onBeforeRender: () => {
+        if (player.hubFlight) {
+          const flight = player.hubFlight;
+          const elapsed = pageLabels ? performance.now() - pageLabels.departedAt : 120;
+          if (pageLabels?.animate && pageLabels.layout.size && elapsed < 120 && !flight.landed) {
+            hotspots = callouts?.update([], {
+              camera: flight.camera, opacity: 1 - elapsed / 120, reservedBottom: flight.bottomInset + 32,
+              homeOverlays: false, layout: pageLabels.layout, departureOffset: 0,
+              viewport: { top: flight.topInset, height: stage.clientHeight - flight.topInset - flight.bottomInset },
+            }) ?? [];
+          } else if (hotspots.length) {
+            clearHotspots();
+          }
+          return;
+        }
+        if (!player.stageHandoffFrames) {
+          fx?.update(performance.now(), true);
+          player.v5?.setFxEnabled(v5Fx && (previewing || player.playing));
+        }
+        refreshHotspots(true);
       },
-      onResize: () => { presentation.invalidate(); if (detailed) detailView?.refit(phaseAt(player.time)); },
+      onRender: hubCompleted => {
+        const flight = player.hubFlight;
+        const landed = flight?.landed && !flight.returning;
+        if (hubCaptureId !== null && (landed || (player.trainingHub && hubCompleted))) {
+          const id = hubCaptureId;
+          hubCaptureId = null;
+          captureHubFrame(id, player.renderer.domElement, landed ? flight.viewport : player.trainingHub.getViewport());
+        }
+        if (flight) return;
+        const complete = player.trainingHub ? hubCompleted : phaseMap?.render();
+        if (hosted && !media && ready && presented && !presentation.pending && player.playing
+            && !player.trainingHub) {
+          post({ type: 'playhead', clockRevision, time: player.time, phase: phaseAt(player.time).source });
+        }
+        presentation.rendered(media || complete === true);
+      },
+      onResize: () => presentation.invalidate(),
       onContext: restored => {
         if (restored) {
           phaseMap?.refreshEnvironment(); errorCode = null; delete status.dataset.error; retry.hidden = true;
@@ -233,31 +456,32 @@ async function boot() {
           post({ type: 'ready', period: player.period });
           if (!hosted) presentation.request(0);
         }
-        else { surface?.releaseGpu(); phaseMap?.releaseGpu(); detailView?.releaseGpu(); showError('graphics_context_lost', true); }
+        else {
+          player.trainingHub?.releaseGpu();
+          phaseMap?.releaseGpu();
+          showError('graphics_context_lost', true);
+          syncPhaseMapSnapshots();
+        }
       },
     });
+    player.setViewTop(viewTop);
     player.setViewInset(viewInset, false);
     if (perfEnabled(location.search)) perfHud = createPerfHud(player);
-    await Promise.all([player.load(), createPhaseMap(player, selectFromMap).then(map => { phaseMap = map; })]);
+    if (v5) {
+      const context = player.renderer.getContext();
+      if ('drawingBufferColorSpace' in context) context.drawingBufferColorSpace = 'srgb';
+    }
+    await Promise.all([player.load(), media ? null : createPhaseMap(player, groupId => openMusclePlan(groupId, true)).then(map => { phaseMap = map; })]);
+    if (phaseMap) {
+      document.addEventListener('visibilitychange', refreshSnapshotDay);
+      refreshSnapshotDay();
+    }
     player.resetView();
-    fx = createFlareFx(player, { palette: character.fx, enabled: new URLSearchParams(location.search).get('fx') !== '0' });
-    const skinned = buildMmRest(player.motion, player.coach);
-    callouts = createHotspotCallouts(player, hotspotLayer, selectFromTap, { hosted, depthSampler: createHotspotDepth(player, skinned) });
-    hitTester = createHitTester(player, skinned); surface = createSurfaceSelection(skinned);
-    detailView = createDetailView(player, phaseMap, () => { player.dirty = true; emitState(true); }, () => surface.focusDirection());
-    detailView.mini.addEventListener('click', () => detailView.toggle(phaseAt(player.time)));
-    const canvas = player.renderer.domElement;
-    canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });
-    canvas.addEventListener('pointercancel', () => { pointerDown = null; });
-    canvas.addEventListener('pointerup', event => {
-      const down = pointerDown; pointerDown = null;
-      if (!down || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
-      const hit = (!detailed && callouts?.pick(event.clientX, event.clientY)) || (detailed && detailView.getModel() === 'muscles'
-        ? phaseMap.pickSurface(event.clientX, event.clientY, player.camera, canvas.getBoundingClientRect())
-        : hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items));
-      if (hit) selectFromTap(hit.groupId);
-    });
+    if (!v5) fx = createFlareFx(player, { palette: character.fx, enabled: options.get('fx') !== '0' });
+    const skinned = media ? player.v5.skinned : configureTeaching();
+
     ready = true; player.dirty = true;
+    if (homeDemandFrames) player.setDemandFrames(true);
     const geometryStats = skinned.reduce((stats, mesh) => ({ meshes: stats.meshes + 1, vertices: stats.vertices + mesh.geometry.attributes.position.count,
       triangles: stats.triangles + (mesh.geometry.index?.count ?? mesh.geometry.attributes.position.count) / 3 }), { meshes: 0, vertices: 0, triangles: 0 });
     // Diagnostics return data copies, not scene objects. The playback bridge is
@@ -270,23 +494,31 @@ async function boot() {
     };
     window.__flareScene = Object.freeze({
       getMetrics: () => player.getMetrics(), getState: state, getHotspots: () => hotspots.map(point => ({ ...point })),
-      hitTest: (x, y) => hitTester.pick(x, y, phaseAt(player.time).items),
+      hitTest: (x, y) => hitTester?.pick(x, y, phaseAt(player.time).items) ?? null,
       hitTestCallout: (x, y) => callouts?.pick(x, y) ?? null,
       getPhaseMap: () => phaseMap?.getState(), getFx: () => fx?.getState() ?? null,
       wallToTime: wall => player.motion.clock.toSequence(wall), wallDuration: () => player.motion.clock.duration,
       previewFx: (time, hold = true) => { previewing = hold; command({ type: 'seek', time }); fx?.setHold(hold); player.dirty = true; },
-      getSelectionSurface: () => surface?.getState(),
       getActorSurface: () => skinned.filter(mesh => mesh.userData.studySkin || mesh.userData.studyHead || isCoveredActorPart(mesh) || isOriginalActorHeadPart(mesh))
         .map(mesh => ({ name: mesh.name, part: mesh.parent.name, visible: mesh.visible, studySkin: !!mesh.userData.studySkin, studyHead: !!mesh.userData.studyHead })),
-      getRenderState: () => ({ visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
-        frame: player.renderer.info.render.frame, calls: player.renderer.info.render.calls, triangles: player.renderer.info.render.triangles,
-        pixelRatio: player.renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
-        framingMode: player.framingMode,
-        bufferSize: [player.renderer.domElement.width, player.renderer.domElement.height] }),
+      getRenderState: () => {
+        const renderer = player.renderer;
+        return { visible: player.visible, running: player.running, dirty: player.dirty, contextLost: player.contextLost,
+          frame: renderer.info.render.frame, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles,
+          pixelRatio: renderer.getPixelRatio(), devicePixelRatio: window.devicePixelRatio,
+          framingMode: player.framingMode, ticks: player.perf.ticks,
+          bufferSize: [renderer.domElement.width, renderer.domElement.height] };
+      },
       getCamera: () => ({ position: player.camera.position.toArray(), target: player.controls.target.toArray(), aspect: player.camera.aspect,
         projectionMatrix: player.camera.projectionMatrix.toArray(), fov: player.camera.fov,
         viewInset: player.viewInset, viewInsetTarget: player.viewInsetTarget, offsetX: player.offsetX, offsetY: player.offsetY,
         gliding: !!player.glide || !!player.projectionGlide }),
+      getTrainingHub: () => player.trainingHub?.getState() ?? null,
+      getStandingView: () => player.trainingHub?.getStandingView() ?? null,
+      getTrainingFlight: () => player.hubFlight && {
+        position: player.hubFlight.camera.position.toArray(), landed: player.hubFlight.landed,
+      },
+      getHubCalloutState: () => hubCalloutFrame && { ...hubCalloutFrame },
       getPerf: () => perfSnapshot(player),
       setTime: time => command({ type: 'seek', time }), phaseAt, phaseTicks, pacingRate: time => player.pacingRate(time),
       geometryStats: { ...geometryStats },
@@ -295,13 +527,55 @@ async function boot() {
     const queued = pending; pending = []; for (const input of queued) command(input);
     if (!hosted) presentation.request(0);
     emitState(true);
-  } catch (error) { player?.stop(); showError(error?.message === 'rig_load_failed' ? 'rig_load_failed' : 'scene_load_failed'); }
+  } catch (error) { console.error(error); player?.stop(); showError(error?.message === 'rig_load_failed' ? 'rig_load_failed' : 'scene_load_failed'); }
+}
+function captureHubFrame(id, source, viewport) {
+  const canvas = document.createElement('canvas');
+  const ratio = source.height / stage.clientHeight;
+  const top = Math.round(viewport.top * ratio);
+  const height = Math.max(1, Math.round(viewport.height * ratio));
+  const scale = Math.min(1, 960 / Math.max(source.width, height));
+  canvas.width = Math.max(1, Math.round(source.width * scale));
+  canvas.height = Math.max(1, Math.round(height * scale));
+  const context = canvas.getContext('2d');
+  if (!context) { post({ type: 'hub_captured', id }); return; }
+  // Copy during the render callback, before WebGL can discard the buffer.
+  context.drawImage(source, 0, top, source.width, height, 0, 0, canvas.width, canvas.height);
+  canvas.toBlob(blob => {
+    if (!blob) { post({ type: 'hub_captured', id }); return; }
+    const reader = new FileReader();
+    reader.onload = () => post({ type: 'hub_captured', id, png: reader.result.split(',')[1] });
+    reader.onerror = () => post({ type: 'hub_captured', id });
+    reader.readAsDataURL(blob);
+  });
+}
+function configureTeaching() {
+  const skinned = buildMmRest(player.motion, player.coach);
+  callouts = createHotspotCallouts(player, hotspotLayer, openMusclePlan, { hosted, depthSampler: createHotspotDepth(player, skinned) });
+  hitTester = createHitTester(player, skinned);
+  const canvas = player.renderer.domElement;
+  canvas.addEventListener('pointerdown', event => { pointerDown = { x: event.clientX, y: event.clientY, time: performance.now() }; });
+  canvas.addEventListener('pointercancel', () => { pointerDown = null; });
+  canvas.addEventListener('pointerup', event => {
+    const down = pointerDown; pointerDown = null;
+    if (!down || player.trainingHub || player.playing || performance.now() - down.time > 550 || Math.hypot(event.clientX - down.x, event.clientY - down.y) > 7) return;
+    const hit = callouts?.pick(event.clientX, event.clientY) || hitTester.pick(event.clientX, event.clientY, phaseAt(player.time).items);
+    if (hit) openMusclePlan(hit.groupId);
+  });
+  return skinned;
 }
 function dispose() {
   presentation.cancel(); clearTimeout(statusTimer); presented = false;
+  clearTimeout(snapshotMidnightTimer);
+  document.removeEventListener('visibilitychange', refreshSnapshotDay);
   ready = false; pending = []; window.removeEventListener('message', receive);
-  perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); detailView?.dispose(); surface?.dispose(); phaseMap?.dispose(); player?.dispose();
+  perfHud?.dispose(); fx?.dispose(); callouts?.dispose(); phaseMap?.dispose(); player?.dispose();
 }
-window.addEventListener('pagehide', event => { if (event.persisted) player?.setVisible(false); else dispose(); });
-window.addEventListener('pageshow', event => { if (event.persisted) player?.setVisible(true); });
+window.addEventListener('pagehide', event => {
+  if (event.persisted) { player?.setVisible(false); refreshSnapshotDay(); }
+  else dispose();
+});
+window.addEventListener('pageshow', event => {
+  if (event.persisted) { player?.setVisible(true); refreshSnapshotDay(); }
+});
 boot();

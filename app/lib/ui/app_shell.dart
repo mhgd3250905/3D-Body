@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -9,27 +8,34 @@ import 'package:ugk_coach/ugk_coach.dart' as uc;
 import 'package:ugk_coach_chat/ugk_coach_chat.dart';
 import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as sdk;
 import '../control/learning_store.dart';
+import '../control/flare_membership.dart';
 import '../data/catalog.dart';
-import '../data/muscle_knowledge.dart';
 import '../l10n/languages.dart';
 import '../platform/scene/scene.dart';
+import '../platform/scene/scene_variant.dart';
+import '../data/flare_public_catalog.dart';
 import '../data/flare_public_media.dart';
 import '../data/flare_shared_library.dart';
+import '../trainer/flare_plan_resume.dart';
 import '../trainer/training_plan_adapter.dart';
 import '../trainer/trainer_strings.dart';
+import '../trainer/trainer_theme.dart';
 import 'components.dart';
 import 'page_kit.dart';
 import 'actor_body_selector.dart';
 import 'content_pages.dart';
 import 'flare_silhouette.dart';
 import 'motion_controls.dart';
-import 'muscle_widgets.dart';
 import 'motion.dart';
 import 'trainer_page.dart';
 import 'sdk_plan_editor_page.dart';
 import 'plans_page.dart';
+import 'flare_training_hub_page.dart';
+import 'scene_localization.dart';
 import 'drill_media.dart';
 import 'flare_coach_chat_page.dart';
+import 'flare_membership_page.dart';
+import 'flare_premium_preview.dart';
 import '../coach/flare_coach_chat.dart';
 import '../coach/usage_store.dart';
 import 'startup_splash.dart';
@@ -47,13 +53,18 @@ class FlareShell extends StatefulWidget {
     this.sceneRevision = 0,
     this.startupCovered = false,
     this.coach,
+    this.membership,
     this.trainingPageBuilder,
+    this.restorePlanSnapshot,
   });
   final Catalog catalog;
 
-  /// SDK chat host; without a configured Key/token, all AI entries stay hidden.
+  /// Optional SDK chat host used by embedding and test flows.
   final FlareCoachChat? coach;
+  final FlareMembership? membership;
   final Widget Function(uc.TrainingPlan plan)? trainingPageBuilder;
+  final Future<sdk.PoseHubPlanSnapshot?> Function(String snapshotId)?
+  restorePlanSnapshot;
   final LearningStore store;
   final SceneController? sceneController;
   final bool enableScene;
@@ -63,43 +74,95 @@ class FlareShell extends StatefulWidget {
   State<FlareShell> createState() => _FlareShellState();
 }
 
+enum _HubRouteStage { entering, waitingForScene, sceneConfigured, leaving }
+
 class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
+  static const _recordsTab = 3;
+  static const _trainingHubTab = 4;
   late final SceneController _scene;
   int _tab = 0;
   bool _configured = false;
   bool _configuring = false;
   bool _didPresentScene = false;
-  int _sceneGeneration = 0;
+  GlobalKey _liveSceneKey = GlobalKey();
   DateTime? _lastAutoRestart;
   late bool _appActive;
   late bool _appVisible;
   bool? _recoveryWasPlaying;
-  String? _recoveryDetailModel;
   double? _recoveryTime;
-  late String _actorBody;
   bool _settings = false;
+  bool _about = false;
   bool _trainingOpen = false;
   Drill? _drill;
-  PresetPlan? _preset;
   TrainingRoutine? _routine;
   _RoutineEdit? _editing;
+  final _flarePlanTrail = <_FlarePlanTarget>[];
+  String? _resumeSnapshotId;
+  Future<sdk.PoseHubPlanSnapshot?>? _resumeSnapshot;
   FlareCoachChat? _coach;
-  FlareCoachChat get coach =>
-      _coach ??= widget.coach ?? FlareCoachChat(store: store);
+  FlareCoachChat get coach => _coach ??=
+      widget.coach ??
+      FlareCoachChat(store: store, membership: widget.membership);
+  bool _membershipOpen = false;
+  final _awaitingPreviewUnlock = ValueNotifier(false);
+  bool get _hasPremium => widget.membership?.isPremium ?? true;
   late final _usage = CoachUsageStore.device();
-  MuscleGroup? _detail;
-  MuscleGroup? _libraryGroup;
   String _libraryQuery = '';
   int _handledSelection = 0;
   double _lastSavedTime = -1;
+  Object? _scrubChrome;
   String _quality = 'balanced';
   String? _sceneTheme;
   String? _sceneLanguage;
   String? _stageKey;
-  double _stageArea = 0, _sentInset = -1;
+  int _phaseMapCatalogRevision = 0;
+  Object? _phaseMapSnapshotSettings;
+  bool _homeRouteCurrent = true;
+  late final ValueNotifier<({int phase, bool playing})> _transportChrome;
+  double _stageArea = 0, _sentInset = -1, _sentStageTop = 0;
   bool _insetSent = false;
   bool _holdWatch = false;
   final _stageBackdropKey = GlobalKey();
+  final _homeSceneBounds = GlobalKey();
+  final _hubSceneBounds = GlobalKey();
+  final _hubSceneClipBounds = GlobalKey();
+  final _trainingHubState = GlobalKey<FlareTrainingHubPageState>();
+  int _trainingHubOrigin = 0;
+  _HubRouteStage? _hubRouteStage;
+  bool _trainingHubInitialMuscles = false;
+  Timer? _trainingFlightDeadline;
+  double _trainingEntryTime = 0;
+  bool _trainingActorFlight = false;
+  bool _trainingHubLiveEntry = false;
+  bool _trainingHubStagePresented = false;
+  bool _trainingFlightLanded = false;
+  bool _returningToWatch = false;
+  bool _returnFlightExposed = false;
+
+  bool get _showHomeActor =>
+      _trainingActorFlight &&
+      (_returningToWatch ? _returnFlightExposed : !_trainingFlightLanded);
+
+  bool get _hubFromAnotherTab =>
+      _tab == _trainingHubTab && _trainingHubOrigin != 0;
+
+  bool get _hubSliding =>
+      _hubRouteStage == _HubRouteStage.entering ||
+      _hubRouteStage == _HubRouteStage.leaving;
+
+  bool get _routeAllowsScene =>
+      _hubRouteStage == null ||
+      _hubRouteStage == _HubRouteStage.sceneConfigured;
+
+  bool get _hubStageActive =>
+      _tab == _trainingHubTab &&
+      _hubRouteStage != _HubRouteStage.entering &&
+      (!_trainingActorFlight ||
+          (_returningToWatch ? !_returnFlightExposed : _trainingFlightLanded));
+
+  bool get _hideHomeChrome => _tab == _trainingHubTab || _trainingActorFlight;
+
+  bool get _homeCoveredByPlan => _tab == 0 && _flarePlanTrail.isNotEmpty;
 
   /// One sheet at a time: a quick double tap must not stack two sheets.
   bool _sheetOpen = false;
@@ -118,7 +181,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         lifecycle == AppLifecycleState.resumed ||
         lifecycle == AppLifecycleState.inactive;
     _scene = widget.sceneController ?? SceneController();
-    _actorBody = store.settings.actorBody;
+    _transportChrome = ValueNotifier((
+      phase: _scene.phase,
+      playing: _scene.playing,
+    ));
     _scene.addListener(_sceneChanged);
     store.addListener(_storeChanged);
     WidgetsBinding.instance.addObserver(this);
@@ -127,21 +193,21 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   @override
   void didUpdateWidget(covariant FlareShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.sceneRevision != oldWidget.sceneRevision) {
+      _liveSceneKey = GlobalKey();
+    }
+    if (widget.catalog.planSnapshot?.id != oldWidget.catalog.planSnapshot?.id) {
+      _resumeSnapshotId = null;
+      _resumeSnapshot = null;
+    }
     if (!identical(widget.catalog, oldWidget.catalog)) {
-      if (_detail != null) _detail = catalog.groupById(_detail!.id);
+      _phaseMapCatalogRevision++;
+      _sceneLanguage = null;
       if (_drill != null) _drill = catalog.drillById(_drill!.id);
-      if (_libraryGroup != null) {
-        _libraryGroup = catalog.groupById(_libraryGroup!.id);
-      }
     }
   }
 
   void _storeChanged() {
-    if (_actorBody != store.settings.actorBody) {
-      _actorBody = store.settings.actorBody;
-      _restartScene();
-      return;
-    }
     _refreshView();
   }
 
@@ -160,16 +226,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   void _restartScene() {
     _recoveryTime = _scene.time;
     _recoveryWasPlaying = _appActive && _scene.playing;
-    _recoveryDetailModel = _scene.detailModel;
     _scene.pause();
     setState(() {
       _configured = false;
-      _sceneGeneration++;
+      _liveSceneKey = GlobalKey();
     });
   }
 
   void _sceneChanged() {
     if (!mounted || _configuring) return;
+    _transportChrome.value = (phase: _scene.phase, playing: _scene.playing);
     if (_scene.errorCode == SceneController.processTerminated) {
       final now = DateTime.now();
       final last = _lastAutoRestart;
@@ -189,40 +255,37 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       // Their provisional clock must not replace the user's saved position.
       _configured = false;
       _didPresentScene = false;
+      _phaseMapSnapshotSettings = null;
       _refreshView();
       return;
     }
     if (_scene.ready && !_configured) {
       final restoredTime = _recoveryTime ?? store.lastTime;
-      final restoredModel = _recoveryDetailModel ?? _scene.detailModel;
       _configuring = true;
       _configured = true;
       // A replacement WebView has no viewport state, even when its size is
       // unchanged. Install the inset before seek/play can frame the new view.
-      _sentInset = _viewInsetFor(context, _detail != null);
+      _sentInset = _viewInsetFor(context);
       _insetSent = true;
-      _scene.setViewInset(_sentInset, animate: false);
+      _scene.setViewInset(_sentInset, top: _sentStageTop, animate: false);
       _scene.setSpeed(store.settings.speed);
       _scene.setQuality(_quality);
       if (_sceneTheme != null) _scene.setTheme(_sceneTheme!);
       _sceneLanguage = null;
       _scene.setTime(restoredTime);
-      if (_detail case final group?) {
-        _scene.setDetail(group.id);
-        _scene.setDetailModel(restoredModel);
-      } else if (_appActive &&
+      if (_appActive &&
           (_recoveryWasPlaying ?? true) &&
           store.safetyAccepted &&
           _watchVisible) {
         _scene.play();
       }
       _recoveryWasPlaying = null;
-      _recoveryDetailModel = null;
       _recoveryTime = null;
       // A recovered WebGL context may still belong to a hidden, prewarmed
       // view. Let it produce its replacement frame before hiding it again.
-      _scene.setVisible(_appVisible);
+      _scene.setVisible(_appVisible && _routeAllowsScene);
       if (widget.enableScene) _scene.requestPresentation();
+      _transportChrome.value = (phase: _scene.phase, playing: _scene.playing);
       _configuring = false;
       _refreshView();
       return;
@@ -231,15 +294,11 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       _didPresentScene = true;
       // First-use welcome still requires explicit acknowledgement. Its model
       // is now prewarmed, so stop its idle loop until the action is shown.
-      if (!_watchVisible) _scene.setVisible(false);
+      if (!_watchVisible && !_hubStageActive && !_trainingActorFlight) {
+        _scene.setVisible(false);
+      }
     }
-    if (store.safetyAccepted &&
-        (_scene.presented || !widget.enableScene) &&
-        !_scene.playing &&
-        (_scene.time - _lastSavedTime).abs() > .001) {
-      _lastSavedTime = _scene.time;
-      unawaited(store.setLastTime(_scene.time));
-    }
+    if (_scrubChrome == null) _savePausedSceneTime();
     if (_scene.selectionGeneration != _handledSelection) {
       _handledSelection = _scene.selectionGeneration;
       if (_scene.selected == null) {
@@ -250,12 +309,70 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       if (group != null) {
         scheduleMicrotask(() {
           if (mounted && _watchVisible && _scene.selected == group.id) {
-            _openGroup(group);
+            _openMusclePlan(group);
           }
         });
       }
     }
+    if (_scrubChrome != null) {
+      final chrome = _watchChrome;
+      if (_scrubChrome == chrome) return;
+      _scrubChrome = chrome;
+    }
     _refreshView();
+  }
+
+  // The playhead and phase title update inside the transport during a drag.
+  // Only scene changes that affect the shell itself need to rebuild it.
+  Object get _watchChrome => (
+    speed: _scene.speed,
+    period: _scene.period,
+    presented: _scene.presented,
+    error: _scene.errorCode,
+  );
+
+  void _savePausedSceneTime() {
+    if (store.safetyAccepted &&
+        (_scene.presented || !widget.enableScene) &&
+        !_scene.playing &&
+        (_scene.time - _lastSavedTime).abs() > .001) {
+      _lastSavedTime = _scene.time;
+      unawaited(store.setLastTime(_scene.time));
+    }
+  }
+
+  void _onHomeScrubbing(bool active) {
+    _scrubChrome = active ? _watchChrome : null;
+    _syncPhaseMapSnapshots();
+    if (!active) _savePausedSceneTime();
+  }
+
+  void _syncPhaseMapSnapshots() {
+    if (!mounted || !widget.enableScene || !_scene.ready) return;
+    final settings = (
+      language: _sceneLanguage,
+      dataVersion: '$_phaseMapCatalogRevision:${store.trainingDataRevision}',
+      day: store.trainingDay,
+      active:
+          _scene.presented &&
+          _scene.errorCode == null &&
+          !widget.startupCovered &&
+          _appActive &&
+          _homeRouteCurrent &&
+          _watchVisible &&
+          !_holdWatch &&
+          !_trainingActorFlight &&
+          _scrubChrome == null,
+    );
+    if (_phaseMapSnapshotSettings == settings) return;
+    _phaseMapSnapshotSettings = settings;
+    _scene.command({
+      'type': 'phase_map_snapshots',
+      'language': settings.language,
+      'dataVersion': settings.dataVersion,
+      'day': settings.day,
+      'active': settings.active,
+    });
   }
 
   bool get _watchVisible =>
@@ -266,20 +383,35 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       !_settings &&
       !_trainingOpen;
 
-  bool get _inPlan => _preset != null || _routine != null || _editing != null;
+  bool get _inPlan =>
+      _routine != null || _editing != null || _flarePlanTrail.isNotEmpty;
 
   void _clearPlan() {
-    _preset = null;
     _routine = null;
     _editing = null;
+    _flarePlanTrail.clear();
   }
 
   bool get _preparingScene => widget.enableScene && !_scene.presented;
 
   void _syncSceneVisibility() {
-    _scene.setVisible(_appVisible && (_watchVisible || _preparingScene));
+    final hubVisible =
+        _hubStageActive &&
+        !_inPlan &&
+        _drill == null &&
+        !_settings &&
+        !_trainingOpen;
+    _scene.setVisible(
+      _appVisible &&
+          _routeAllowsScene &&
+          (_watchVisible ||
+              _preparingScene ||
+              _trainingActorFlight ||
+              hubVisible),
+    );
     if (!_watchVisible) {
       _scene.pause();
+      _scrubChrome = null;
       if (store.safetyAccepted && (_scene.presented || !widget.enableScene)) {
         unawaited(store.setLastTime(_scene.time));
       }
@@ -287,48 +419,223 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
   }
 
   void _changeTab(int value) {
+    if (_tab == _trainingHubTab && value != _trainingHubTab) {
+      if (_hubFromAnotherTab) {
+        _hubRouteStage = _HubRouteStage.leaving;
+        // Stop drawing before hub_exit restores the home scene.
+        _scene.setVisible(false);
+      }
+      _scene.leaveTrainingHub();
+    }
     setState(() {
       _tab = value;
       _drill = null;
       _clearPlan();
       _settings = false;
-      _libraryGroup = null;
+      _about = false;
       _libraryQuery = '';
     });
     _syncSceneVisibility();
   }
 
-  void _openGroup(MuscleGroup group) {
-    _scene.pause();
-    setState(() {
-      _detail = group;
+  void _enterTrainingHub({bool muscles = false}) {
+    _trainingHubOrigin = _tab;
+    _hubRouteStage = _tab == 0 ? null : _HubRouteStage.entering;
+    _trainingHubInitialMuscles = muscles;
+    _trainingEntryTime = _scene.time;
+    _trainingActorFlight =
+        _trainingHubOrigin == 0 &&
+        widget.enableScene &&
+        _scene.presented &&
+        _scene.errorCode == null;
+    _trainingHubLiveEntry = _trainingActorFlight;
+    _trainingHubStagePresented = false;
+    _trainingFlightLanded = false;
+    _changeTab(_trainingHubTab);
+    if (!_trainingActorFlight) return;
+    _trainingFlightDeadline = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_returningToWatch && !_trainingFlightLanded) {
+        // Let the hub configure the shared scene if the flight times out.
+        _scene.finishTrainingFlight();
+        setState(() => _trainingFlightLanded = true);
+      }
     });
-    _scene.select(group.id);
-    // Inset first, so the scene frames the athlete above the panel in the
-    // same glide that opens the detail.
-    _sentInset = _viewInsetFor(context, true);
-    _scene.setViewInset(_sentInset);
-    _scene.setDetail(group.id);
-    _syncSceneVisibility();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !_trainingActorFlight) return;
+      final geometry = _trainingViewport();
+      if (geometry == null) {
+        _finishTrainingFlight();
+        return;
+      }
+      final deadline = _trainingFlightDeadline;
+      await _scene.flyTrainingActor(
+        time: _trainingEntryTime,
+        yaw: _trainingHubState.currentState?.angleYaw ?? 0,
+        viewport: geometry,
+        duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
+      );
+      if (!mounted ||
+          !_trainingActorFlight ||
+          _trainingFlightLanded ||
+          _trainingFlightDeadline != deadline) {
+        return;
+      }
+      // The fixed canvas keeps the landing frame until the hub configures it.
+      _scene.finishTrainingFlight();
+      setState(() => _trainingFlightLanded = true);
+    });
   }
 
-  void _returnToMotion() {
-    setState(() {
-      _detail = null;
-    });
-    _sentInset = _viewInsetFor(context, false);
-    _scene.setViewInset(_sentInset);
-    _scene.setDetail(null);
-    _syncSceneVisibility();
+  TrainingViewport? _trainingViewport() {
+    final home = _homeSceneBounds.currentContext?.findRenderObject();
+    final hub = _hubSceneBounds.currentContext?.findRenderObject();
+    if (home is! RenderBox ||
+        hub is! RenderBox ||
+        !home.hasSize ||
+        !hub.hasSize ||
+        home.size.isEmpty ||
+        hub.size.isEmpty) {
+      return null;
+    }
+    final canvasTop = home.localToGlobal(Offset.zero).dy;
+    final top = hub.localToGlobal(Offset.zero).dy - canvasTop;
+    if (!top.isFinite) return null;
+    final scroll = _hubSceneClipBounds.currentContext?.findRenderObject();
+    if (scroll is RenderBox && scroll.hasSize && !scroll.size.isEmpty) {
+      final clipTop = scroll.localToGlobal(Offset.zero).dy - canvasTop;
+      if (clipTop.isFinite) {
+        return (
+          top: top,
+          height: hub.size.height,
+          clipTop: clipTop,
+          clipBottom: clipTop + scroll.size.height,
+        );
+      }
+    }
+    return (top: top, height: hub.size.height, clipTop: null, clipBottom: null);
   }
 
-  void _swapDetailCard() {
-    if (_detail == null || !_watchVisible) return;
-    FlareHaptics.light();
-    _syncSceneVisibility();
-    _scene.setDetailModel(
-      _scene.detailModel == 'motion' ? 'muscles' : 'motion',
+  Future<void> _returnFromTrainingHub() async {
+    final hub = _trainingHubState.currentState;
+    if (hub == null) {
+      _changeTab(0);
+      return;
+    }
+    setState(() {
+      _trainingActorFlight = true;
+      _returningToWatch = true;
+      _returnFlightExposed = false;
+    });
+    final deadline = _trainingFlightDeadline = Timer(
+      const Duration(seconds: 3),
+      _finishTrainingFlight,
     );
+    final shot = hub.beginReturn();
+    if (shot == null) {
+      _finishTrainingFlight();
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _trainingFlightDeadline != deadline) return;
+      final geometry = _trainingViewport();
+      if (geometry == null) {
+        _finishTrainingFlight();
+        return;
+      }
+      await _scene.flyTrainingActor(
+        time: shot.time,
+        yaw: shot.yaw,
+        viewport: geometry,
+        duration: FlareMotion.of(context, const Duration(milliseconds: 650)),
+        returning: true,
+        onPrepared: () {
+          if (!mounted || _trainingFlightDeadline != deadline) return;
+          setState(() => _returnFlightExposed = true);
+        },
+      );
+      if (mounted && _trainingFlightDeadline == deadline) {
+        _finishTrainingFlight();
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  Future<void> _reverseTrainingEntry() async {
+    if (_trainingFlightLanded) {
+      await _returnFromTrainingHub();
+      return;
+    }
+    _trainingFlightDeadline?.cancel();
+    final deadline = _trainingFlightDeadline = Timer(
+      const Duration(seconds: 3),
+      _finishTrainingFlight,
+    );
+    setState(() {
+      _returningToWatch = true;
+      _returnFlightExposed = true;
+    });
+    await _scene.reverseTrainingFlight();
+    if (mounted && _trainingFlightDeadline == deadline) {
+      _finishTrainingFlight();
+    }
+  }
+
+  void _onStageSettled() {
+    if (!mounted) return;
+    final entering = _hubRouteStage == _HubRouteStage.entering;
+    final leaving = _hubRouteStage == _HubRouteStage.leaving;
+    if (!_holdWatch && !entering && !leaving) return;
+    setState(() {
+      _holdWatch = false;
+      if (entering) _hubRouteStage = _HubRouteStage.waitingForScene;
+      if (leaving) _hubRouteStage = null;
+    });
+    if (leaving) _syncSceneVisibility();
+  }
+
+  void _onHubSceneConfigured() {
+    if (_hubRouteStage != _HubRouteStage.waitingForScene) return;
+    _hubRouteStage = _HubRouteStage.sceneConfigured;
+    _syncSceneVisibility();
+  }
+
+  void _onTrainingHubPresented() {
+    final deadline = _trainingFlightDeadline;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _tab != _trainingHubTab) return;
+      if (!_trainingHubStagePresented) {
+        setState(() => _trainingHubStagePresented = true);
+      }
+      if (!_trainingActorFlight || _returningToWatch) return;
+      // Let the landed frame composite before unlocking the controls.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _trainingFlightDeadline == deadline) {
+          _finishTrainingFlight();
+        }
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+    });
+  }
+
+  void _finishTrainingFlight() {
+    if (!_trainingActorFlight || !mounted) return;
+    _trainingFlightDeadline?.cancel();
+    _trainingFlightDeadline = null;
+    if (_returningToWatch) _scene.leaveTrainingHub();
+    setState(() {
+      _trainingActorFlight = false;
+      if (_returningToWatch) {
+        _tab = 0;
+        _returningToWatch = false;
+        _returnFlightExposed = false;
+      }
+    });
+    // Keep the landing frame until the destination canvas has been unveiled.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _trainingActorFlight) return;
+      _syncSceneVisibility();
+      _scene.finishTrainingFlight();
+    });
   }
 
   void _openDrill(Drill drill) {
@@ -337,17 +644,35 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
-  void _openGroupTraining(MuscleGroup group) {
-    _scene.pause();
+  void _openAnglePlan(Phase phase) {
+    _openFlarePlan(_FlarePlanTarget.angle(phase.source));
+  }
+
+  void _openMusclePlan(MuscleGroup group) {
+    _openFlarePlan(_FlarePlanTarget.muscle(group.id));
+  }
+
+  void _openSupplementalPlan(FlarePlan plan) {
     setState(() {
-      _tab = 1;
-      _libraryGroup = group;
-      _libraryQuery = group.shortLabel;
+      _flarePlanTrail.add(_FlarePlanTarget.supplemental(plan, _drill));
       _drill = null;
-      _clearPlan();
-      _settings = false;
     });
     _syncSceneVisibility();
+  }
+
+  void _openFlarePlan(_FlarePlanTarget target) {
+    setState(() => _flarePlanTrail.add(target));
+    _syncSceneVisibility();
+  }
+
+  void _openFlarePlanDrill(String id) {
+    if (catalog.drillById(id) case final drill?) {
+      _openDrill(drill);
+    } else {
+      unawaited(
+        FlareShared.openDetail(context, id, soundEnabled: store.settings.sound),
+      );
+    }
   }
 
   /// Content, dose and saving stay with Flare; the SDK launcher owns poster
@@ -357,35 +682,92 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     uc.TrainingPlan plan, {
     Future<bool> Function()? onStarting,
     VoidCallback Function()? holdTransition,
-  }) {
-    final policy = FlarePublicMedia.current;
-    final ids = plan.exerciseIds.toList();
-    String? posterFor(String id) =>
-        policy?.posterAssetFor(id) ?? 'assets/public_posters/$id.webp';
-    return sdk.TrainerLauncher.open<sdk.SessionResult>(
+    FlarePlan? supplementalPlan,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
+  }) async {
+    final policy =
+        sdk.TrainingMediaPolicyScope.read(context) ?? FlarePublicMedia.current;
+    final trainingCatalog = catalog;
+    final mediaIds = {
+      for (final item in supplementalPlan?.allItems ?? const <FlarePlanItem>[])
+        ...item.trainingMediaIdsForScene('A'),
+    };
+    final ids = plan.exerciseIds.map((id) => mediaIds[id] ?? id).toList();
+    String? posterFor(String id) => policy?.actionFor(id) != null
+        ? policy!.posterAssetFor(id)
+        : policy?.posterAssetFor(id) ??
+              (flareSupplementalActionIds.contains(id) ||
+                      id == flareWarmupPushupId
+                  ? FlarePublicMedia.coverAssetFor(id)
+                  : null) ??
+              '${FlarePublicMedia.posterRoot}$id.webp';
+    final cooldown = supplementalPlan == null
+        ? trainingCatalog.flareCooldownPlan
+        : null;
+    var continueCooldown = false;
+    void markCooldownRequested() => continueCooldown = true;
+    final onContinueCooldown = cooldown == null ? null : markCooldownRequested;
+    final preview = _hasPremium || supplementalPlan != null
+        ? null
+        : _premiumPreview(
+            FlarePremiumFeature.training,
+            (locked) => FlareTrainingPage(
+              plan: plan,
+              catalog: trainingCatalog,
+              store: store,
+              startInPreview: true,
+              previewLocked: locked,
+              onContinueCooldown: onContinueCooldown,
+            ),
+            keepUnlocked: true,
+          );
+    final result = await sdk.TrainerLauncher.open<sdk.SessionResult>(
       context,
       builder: (_) =>
+          preview ??
           widget.trainingPageBuilder?.call(plan) ??
-          FlareTrainingPage(plan: plan, catalog: catalog, store: store),
+          FlareTrainingPage(
+            plan: plan,
+            catalog: trainingCatalog,
+            store: store,
+            supplementalPlan: supplementalPlan,
+            planSnapshot: planSnapshot,
+            onContinueCooldown: onContinueCooldown,
+          ),
       firstPosterAsset: ids.isEmpty ? null : posterFor(ids.first),
-      posterAssets: [for (final id in ids) ?posterFor(id)],
+      posterAssets: preview == null
+          ? [for (final id in ids) ?posterFor(id)]
+          : const [],
       mediaPolicy: policy,
-      planActionIds: ids,
-      theme: FlareShared.theme(context),
+      planActionIds: preview == null ? ids : const [],
+      theme: trainerTheme(context),
       onStarting: onStarting,
       holdTransition: holdTransition,
       settings: const RouteSettings(name: '/training'),
     );
+    if (mounted && continueCooldown && cooldown != null) {
+      _openSupplementalPlan(cooldown);
+    }
+    return result;
   }
 
-  Future<void> _startPlan(uc.TrainingPlan plan) async {
-    if (_trainingOpen || plan.items.isEmpty) return;
+  Future<void> _startPlan(
+    uc.TrainingPlan plan, {
+    FlarePlan? supplementalPlan,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
+  }) async {
+    if (!mounted || _trainingOpen || plan.items.isEmpty) return;
     FlareHaptics.light();
     DrillPlaybackCoordinator.shared.pauseAll();
     setState(() => _trainingOpen = true);
     _syncSceneVisibility();
     try {
-      await _launchTraining(context, plan);
+      await _launchTraining(
+        context,
+        plan,
+        supplementalPlan: supplementalPlan,
+        planSnapshot: planSnapshot,
+      );
     } finally {
       if (mounted) {
         setState(() => _trainingOpen = false);
@@ -394,8 +776,82 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  /// The SDK chat is its own route; Flare supplies only navigation targets.
+  Widget _premiumPreview(
+    FlarePremiumFeature feature,
+    Widget Function(bool locked) buildPage, {
+    bool keepUnlocked = false,
+  }) {
+    final membership = widget.membership;
+    if (membership == null) return buildPage(false);
+    var unlocked = false;
+    return ListenableBuilder(
+      listenable: Listenable.merge([membership, _awaitingPreviewUnlock]),
+      builder: (context, _) {
+        final hasAccess = membership.isPremium && !_awaitingPreviewUnlock.value;
+        if (keepUnlocked && hasAccess) unlocked = true;
+        final locked = !hasAccess && !unlocked;
+        final page = buildPage(locked);
+        return FlarePremiumPreview(
+          feature: feature,
+          locked: locked,
+          onSubscribe: () => unawaited(_openPreviewMembership()),
+          onEdgeBack: feature == FlarePremiumFeature.training
+              ? () => unawaited(Navigator.maybePop(context))
+              : null,
+          child: feature == FlarePremiumFeature.training
+              ? page
+              : SafeArea(top: false, child: page),
+        );
+      },
+    );
+  }
+
+  Future<void> _openPreviewMembership() async {
+    if (_membershipOpen || _awaitingPreviewUnlock.value) return;
+    _awaitingPreviewUnlock.value = true;
+    try {
+      await _openMembership(waitForTransition: true);
+    } finally {
+      if (mounted) _awaitingPreviewUnlock.value = false;
+    }
+  }
+
+  Future<void> _openMembership({bool waitForTransition = false}) async {
+    final membership = widget.membership;
+    if (membership == null || _membershipOpen || !mounted) return;
+    _membershipOpen = true;
+    try {
+      final route = MaterialPageRoute<bool>(
+        settings: const RouteSettings(name: '/membership'),
+        builder: (_) =>
+            FlareMembershipPage(membership: membership, catalog: catalog),
+      );
+      await Navigator.of(context).push(route);
+      if (waitForTransition) await route.completed;
+    } finally {
+      _membershipOpen = false;
+    }
+  }
+
+  Future<bool> _requirePremium() async {
+    final membership = widget.membership;
+    if (membership == null || membership.isPremium) return true;
+    await _openMembership();
+    return mounted && membership.isPremium;
+  }
+
+  void _editRoutine(_RoutineEdit edit) {
+    setState(() => _editing = edit);
+  }
+
+  /// The SDK chat is its own route; Flare supplies navigation and access.
+  // ignore: unused_element — kept for the disabled AI entry points.
   Future<void> _openCoach() async {
+    if (!await _requirePremium() || !mounted) return;
+    if (!coach.configured) {
+      showMembershipMessage(context, context.strings.premiumUnavailable);
+      return;
+    }
     _scene.pause();
     final navigator = Navigator.of(context);
     void leaveChat(VoidCallback change) {
@@ -408,20 +864,34 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         settings: const RouteSettings(name: '/coach'),
         builder: (_) => FlareCoachChatPage(
           coach: coach,
+          onPremiumRequired: widget.membership == null ? null : _openMembership,
           actions: CoachChatHostActions(
-            onStartTraining: (context, request) => _launchTraining(
+            onStartTraining: (context, request) async {
+              if (!await _requirePremium() || !context.mounted) return null;
+              return _launchTraining(
+                context,
+                request.plan.plan,
+                onStarting: request.onStarting,
+                holdTransition: request.holdTransition,
+              );
+            },
+            onOpenAction: (context, request) => FlareShared.openDetail(
               context,
-              request.plan.plan,
-              onStarting: request.onStarting,
-              holdTransition: request.holdTransition,
+              request.actionId,
+              soundEnabled: store.settings.sound,
             ),
-            onOpenAction: (context, request) =>
-                FlareShared.openDetail(context, request.actionId),
             onOpenLibrary: (context, request) => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => Scaffold(
-                  appBar: AppBar(title: Text(context.strings.library)),
-                  body: const FlareSharedLibraryPage(),
+                builder: (libraryContext) => Scaffold(
+                  body: FlareSharedLibraryPage(
+                    presentationCatalog: catalog,
+                    soundEnabled: store.settings.sound,
+                    onBack: () => Navigator.pop(libraryContext),
+                    onOpenStraightLegFlare: (drill) {
+                      navigator.popUntil((route) => route.isFirst);
+                      if (mounted) _openDrill(drill);
+                    },
+                  ),
                 ),
               ),
             ),
@@ -429,18 +899,24 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               _clearPlan();
               _drill = null;
               _settings = false;
+              _about = false;
               _tab = 2;
             }),
-            onOpenCustomPlan: (_) async => leaveChat(() {
-              _drill = null;
-              _settings = false;
-              _tab = 2;
-              _editing = const _RoutineEdit();
-            }),
+            onOpenCustomPlan: (_) async {
+              if (!mounted) return;
+              leaveChat(() {
+                _drill = null;
+                _settings = false;
+                _about = false;
+                _tab = 2;
+                _editing = const _RoutineEdit();
+              });
+            },
             onOpenSettings: (_) async => leaveChat(() {
               _clearPlan();
               _drill = null;
               _settings = true;
+              _about = false;
             }),
           ),
         ),
@@ -449,7 +925,112 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     if (mounted) _syncSceneVisibility();
   }
 
-  Future<void> _startDrills(String title, List<Drill> drills) async {
+  uc.TrainingPlan _authoredTrainingPlan(
+    FlarePlan plan,
+    String title,
+    String sceneTier,
+    FlareShared shared, {
+    bool skipStrengthening = false,
+  }) => shared.authoredPlan(
+    plan,
+    catalog,
+    sceneTier,
+    title: title,
+    skipStrengthening: skipStrengthening,
+    wristDirections: trainerWristDirections(context.strings),
+    circleDirections: (
+      clockwise: context.strings.planCircleClockwise,
+      counterclockwise: context.strings.planCircleCounterclockwise,
+    ),
+  );
+
+  Future<void> _startFlarePlan(
+    String title,
+    FlarePlan plan, {
+    int? phaseSource,
+    bool skipStrengthening = false,
+    sdk.PoseHubPlanSnapshot? planSnapshot,
+  }) async {
+    if (_trainingOpen) return;
+    final sceneTier = plan.isSupplemental ? 'A' : store.settings.tier;
+    try {
+      final shared = FlareShared.current ?? await FlareShared.load();
+      if (!mounted) return;
+      await _startPlan(
+        FlarePlanResume.recordAuthored(
+          _authoredTrainingPlan(
+            plan,
+            title,
+            sceneTier,
+            shared,
+            skipStrengthening: skipStrengthening,
+          ),
+          sceneTier: sceneTier,
+          phaseSource: phaseSource,
+          snapshotId: planSnapshot?.id,
+        ),
+        supplementalPlan: plan.isSupplemental ? plan : null,
+        planSnapshot: planSnapshot,
+      );
+    } catch (_) {
+      _showTrainingLoadFailure();
+    }
+  }
+
+  Future<void> _continueTrainingPlan(FlarePlanResume resume) async {
+    if (_trainingOpen || !resume.canContinue) return;
+    try {
+      final shared = FlareShared.current ?? await FlareShared.load();
+      if (!mounted) return;
+      final uc.TrainingPlan original;
+      if (resume.authoredPlan case final authored?) {
+        original = _authoredTrainingPlan(
+          authored,
+          resume.title,
+          resume.sceneTier!,
+          shared,
+          skipStrengthening: resume.skipStrengthening,
+        );
+      } else if (resume.routine case final routine?) {
+        original =
+            routine.sdkPlan?.copyWith(id: routine.id) ??
+            trainingPlanFromDrills(
+              title: routine.name,
+              drills: routine.drills(catalog),
+              id: routine.id,
+              sourceCatalog: shared.catalog,
+            );
+      } else {
+        return;
+      }
+      final remaining = resume.continueFrom(original, rhythms: shared.rhythms);
+      if (remaining == null) {
+        _showTrainingLoadFailure();
+        return;
+      }
+      final authored = resume.authoredPlan;
+      await _startPlan(
+        remaining,
+        supplementalPlan: authored?.isSupplemental == true ? authored : null,
+        planSnapshot: resume.planSnapshot,
+      );
+    } catch (_) {
+      _showTrainingLoadFailure();
+    }
+  }
+
+  void _showTrainingLoadFailure() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(trainerLoadFailed(context.strings))));
+  }
+
+  Future<void> _startDrills(
+    String title,
+    List<Drill> drills, {
+    String? id,
+  }) async {
     if (_trainingOpen || drills.isEmpty) return;
     try {
       final source = (FlareShared.current ?? await FlareShared.load()).catalog;
@@ -458,14 +1039,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         trainingPlanFromDrills(
           title: title,
           drills: drills,
+          id: id,
           sourceCatalog: source,
         ),
       );
     } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(trainerLoadFailed(context.strings))),
-      );
+      _showTrainingLoadFailure();
     }
   }
 
@@ -490,8 +1069,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       );
       return;
     }
+    if (!await _requirePremium() || !mounted) return;
     final name = store.routineById(choice)?.name ?? '';
-    final success = await store.addToRoutine(choice, drill.id);
+    final success = await store.addToRoutine(
+      choice,
+      drill.id,
+      sourceCatalog: FlareShared.current?.catalog,
+    );
     if (!mounted) return;
     FlareHaptics.light();
     ScaffoldMessenger.of(context)
@@ -505,6 +1089,26 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           ),
         ),
       );
+  }
+
+  Future<void> _copyRoutine(TrainingRoutine routine) async {
+    if (!await _requirePremium() || !mounted) return;
+    final plan = routine.sdkPlan;
+    final copied = await store.createRoutine(
+      routine.name,
+      routine.drillIds,
+      doses: routine.doses,
+      source: routine.source,
+      sdkPlan: plan?.copyWith(
+        id: '${plan.id}-copy-${DateTime.now().microsecondsSinceEpoch}',
+      ),
+    );
+    if (!mounted) return;
+    if (copied != null) {
+      setState(() => _routine = copied);
+    } else {
+      await _result(Future.value(false));
+    }
   }
 
   void _deleteRoutine(TrainingRoutine routine) {
@@ -543,28 +1147,41 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
 
   void _back() {
     if (_trainingOpen) return;
-    if (_tab == 0 &&
-        _drill == null &&
+    if (_returningToWatch) return;
+    if (_trainingActorFlight) {
+      unawaited(_reverseTrainingEntry());
+      return;
+    } else if (_tab == _trainingHubTab &&
         !_inPlan &&
-        !_settings &&
-        _detail != null) {
-      _returnToMotion();
+        _drill == null &&
+        !_settings) {
+      if (_trainingHubOrigin != 0) {
+        _changeTab(_trainingHubOrigin);
+        return;
+      }
+      if (widget.enableScene && _scene.presented && _scene.errorCode == null) {
+        unawaited(_returnFromTrainingHub());
+        return;
+      }
+      _changeTab(0);
       return;
     }
     setState(() {
-      if (_editing != null) {
+      if (_about) {
+        _about = false;
+      } else if (_editing != null) {
         _editing = null;
       } else if (_drill != null) {
         _drill = null;
+      } else if (_flarePlanTrail.isNotEmpty) {
+        _drill = _flarePlanTrail.removeLast().returnToDrill;
       } else if (_routine != null) {
         _routine = null;
-      } else if (_preset != null) {
-        _preset = null;
       } else if (_settings) {
         _settings = false;
+        _about = false;
       } else {
         _tab = 0;
-        _libraryGroup = null;
         _libraryQuery = '';
       }
     });
@@ -589,14 +1206,20 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       }
     } else {
       store.refreshDate();
+      unawaited(widget.membership?.refresh());
       _syncSceneVisibility();
     }
+    _syncPhaseMapSnapshots();
   }
 
   @override
   void dispose() {
+    _trainingFlightDeadline?.cancel();
+    if (_trainingActorFlight) _scene.finishTrainingFlight();
     _scene.removeListener(_sceneChanged);
+    _transportChrome.dispose();
     store.removeListener(_storeChanged);
+    _awaitingPreviewUnlock.dispose();
     if (widget.coach == null) unawaited(_coach?.close());
     WidgetsBinding.instance.removeObserver(this);
     if (widget.sceneController == null) _scene.dispose();
@@ -622,38 +1245,47 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final s = context.strings;
     if (_sceneLanguage != s.localeName) {
       _sceneLanguage = s.localeName;
-      _scene.setLocalization({
-        'locale': s.localeName,
-        'rtl': Directionality.of(context) == TextDirection.rtl,
-        'groups': {for (final group in catalog.groups) group.id: group.label},
-        'shortGroups': {
-          for (final group in catalog.groups) group.id: group.shortLabel,
-        },
-        'viewLabels': {
-          for (final group in catalog.groups)
-            group.id: s.viewGroup(group.label),
-        },
-        'syncEffort': s.syncEffort,
-        'muscleMap': s.muscleMap,
-        'motion': s.watch,
-        'mapAccessibility': s.phaseMapAccessibility,
-        'sceneAccessibility': s.sceneAccessibleTitle,
-        'switchToMuscles': s.switchToMuscles,
-        'switchToMotion': s.switchToMotion,
-        'sceneFailed': s.sceneFailed,
-        'retry': s.retry,
-      });
+      _scene.setLocalization(
+        sceneLocalization(
+          s,
+          catalog.groups,
+          rtl: Directionality.of(context) == TextDirection.rtl,
+        ),
+      );
     }
     final drill = _drill;
-    final canBack =
-        drill != null || _inPlan || _settings || _detail != null || _tab != 0;
+    final canBack = drill != null || _inPlan || _settings || _tab != 0;
     final route = _route(context);
+    final edgeToEdgePlan = route.$4 is FlarePlanDetailPage;
+    final edgeToEdgePreview =
+        widget.membership != null &&
+        (route.$1 == 'tab$_recordsTab' || route.$1.startsWith('edit:'));
+    final hasHub = _tab == _trainingHubTab;
+    final padding = MediaQuery.paddingOf(context).copyWith(top: 0);
+    final sidePadding = padding.copyWith(bottom: 0);
+    final homeOwnsBottomInset = edgeToEdgePlan || hasHub || edgeToEdgePreview;
+    final page = route.$4;
+    // FlareStage keeps the old page mounted while it exits. Give each
+    // page its own insets so the destination never resizes that old layer.
+    final stagePage = page == null || edgeToEdgePreview
+        ? page
+        : Padding(
+            padding: edgeToEdgePlan || hasHub ? sidePadding : padding,
+            child: page,
+          );
+    final hubInFront = route.$1 == 'training-hub' && !_trainingOpen;
     if (route.$1 != _stageKey) {
       // Keep the live stage on screen while a page slides over or off it.
       if (_stageKey != null && (_stageKey == 'watch' || route.$1 == 'watch')) {
         _holdWatch = true;
       }
       _stageKey = route.$1;
+    }
+    _homeRouteCurrent = ModalRoute.isCurrentOf(context) ?? true;
+    if (widget.enableScene && _scene.ready) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _syncPhaseMapSnapshots();
+      });
     }
     final shell = PopScope(
       canPop: !canBack && !_trainingOpen,
@@ -666,69 +1298,155 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         // floating header, transparent 3D view and compact transport.
         decoration: BoxDecoration(gradient: _stageGradient()),
         child: Scaffold(
-          backgroundColor: _watchVisible || _holdWatch
+          backgroundColor:
+              _watchVisible || _holdWatch || _trainingActorFlight || hasHub
               ? Colors.transparent
               : FlareColors.background,
-          // Titled pages sit below the status bar; the shared 3D stage owns
-          // its own inset.
-          body: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                if (store.storageError != null)
-                  SafeArea(
-                    bottom: false,
-                    child: _StorageNotice(
-                      message: store.corruptState
-                          ? s.storageReadFailed
-                          : s.saveFailed,
-                      action: store.corruptState ? s.settings : s.retry,
-                      onAction: store.corruptState
-                          ? () {
-                              setState(() => _settings = true);
-                              _syncSceneVisibility();
-                            }
-                          : () => _result(store.retrySave()),
-                    ),
-                  ),
-                Expanded(
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: store.storageError != null,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Offstage(
-                          offstage:
-                              !_watchVisible && !_holdWatch && !_preparingScene,
-                          child: SafeArea(
-                            bottom: false,
-                            child: _watchPage(context),
-                          ),
-                        ),
-                        FlareStage(
-                          pageKey: route.$1,
-                          depth: route.$2,
-                          modal: route.$3,
-                          onSettled: () {
-                            if (mounted && _holdWatch) {
-                              setState(() => _holdWatch = false);
-                            }
-                          },
-                          onSwipeBack:
-                              canBack && !_trainingOpen && route.$4 != null
-                              ? _back
-                              : null,
-                          child: route.$4 == null
-                              ? route.$4
-                              : SafeArea(bottom: false, child: route.$4!),
-                        ),
-                      ],
-                    ),
+          // Page navigation and the live 3D surface each own their top inset.
+          body: Column(
+            children: [
+              if (store.storageError != null)
+                SafeArea(
+                  bottom: false,
+                  child: _StorageNotice(
+                    message: store.corruptState
+                        ? s.storageReadFailed
+                        : s.saveFailed,
+                    action: store.corruptState ? s.settings : s.retry,
+                    onAction: store.corruptState
+                        ? () {
+                            setState(() {
+                              _settings = true;
+                              _about = false;
+                            });
+                            _syncSceneVisibility();
+                          }
+                        : () => _result(store.retrySave()),
                   ),
                 ),
-              ],
-            ),
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: store.storageError != null,
+                  child: FlareStage(
+                    backdrop: Offstage(
+                      offstage:
+                          _hubSliding ||
+                          (!_watchVisible &&
+                              !_homeCoveredByPlan &&
+                              !_holdWatch &&
+                              !_preparingScene &&
+                              !_trainingActorFlight &&
+                              !hasHub),
+                      child: Padding(
+                        padding: homeOwnsBottomInset ? sidePadding : padding,
+                        child: SafeArea(
+                          top: false,
+                          left: false,
+                          right: false,
+                          bottom: homeOwnsBottomInset,
+                          child: IgnorePointer(
+                            ignoring: _hideHomeChrome || _homeCoveredByPlan,
+                            child: ExcludeSemantics(
+                              excluding: _hideHomeChrome || _homeCoveredByPlan,
+                              child: Builder(builder: _watchPage),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    homeTrainingHub: hasHub,
+                    homeTrainingExiting: _returnFlightExposed,
+                    holdCommittedSwipe: _returningToWatch,
+                    onHomeMusclesMotion: widget.enableScene
+                        ? (pose) => _scene.command({
+                            'type': 'home_chrome',
+                            'x': pose?.offset.dx,
+                            'opacity': pose?.opacity,
+                          })
+                        : null,
+                    pageKey: route.$1,
+                    depth: route.$2,
+                    modal: route.$3,
+                    cover: hubInFront && _trainingHubOrigin == 0,
+                    anchorIncomingUnderlayHitTest:
+                        hubInFront &&
+                        _trainingActorFlight &&
+                        !_returningToWatch,
+                    transparentUnderlay: hasHub,
+                    opaqueUnderlayTransition: _hubFromAnotherTab,
+                    underlay: hasHub
+                        ? Padding(
+                            padding: sidePadding,
+                            child: ExcludeSemantics(
+                              excluding: !hubInFront || _returningToWatch,
+                              child: IgnorePointer(
+                                ignoring: !hubInFront || _returningToWatch,
+                                child: KeyedSubtree(
+                                  key: const ValueKey('training-hub'),
+                                  child: FlareTrainingHubPage(
+                                    key: _trainingHubState,
+                                    catalog: catalog,
+                                    sceneTier: store.settings.tier,
+                                    actorBody: flareTeachingScene,
+                                    quality: _quality,
+                                    enableScene: widget.enableScene,
+                                    initialTime: _trainingEntryTime,
+                                    initialMuscles: _trainingHubInitialMuscles,
+                                    mountScene: _hubStageActive,
+                                    sharedController: _scene,
+                                    sharedViewport: _trainingViewport,
+                                    actorHandoff: _showHomeActor,
+                                    liveEntry: _trainingHubLiveEntry,
+                                    showLoadingFrame: !_hubFromAnotherTab,
+                                    interactionLocked:
+                                        _trainingActorFlight ||
+                                        _hubRouteStage ==
+                                            _HubRouteStage.entering,
+                                    leaving: _returnFlightExposed,
+                                    sceneBoundsKey: _hubSceneBounds,
+                                    sceneClipBoundsKey: _hubSceneClipBounds,
+                                    onSceneConfigured: _hubFromAnotherTab
+                                        ? _onHubSceneConfigured
+                                        : null,
+                                    onScenePresented: _onTrainingHubPresented,
+                                    onAngleYawChanged: (yaw) {
+                                      if (_trainingActorFlight &&
+                                          !_returningToWatch &&
+                                          !_trainingFlightLanded) {
+                                        _scene.rotateTrainingFlight(yaw);
+                                      }
+                                    },
+                                    visible:
+                                        hubInFront &&
+                                        !_returnFlightExposed &&
+                                        _appVisible &&
+                                        _appActive,
+                                    onBack: _back,
+                                    onAngle: _openAnglePlan,
+                                    onMuscle: _openMusclePlan,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : null,
+                    onSettled: _onStageSettled,
+                    onSwipeBack:
+                        canBack &&
+                            !_trainingOpen &&
+                            (route.$4 != null || hubInFront)
+                        ? _back
+                        : null,
+                    backChip: route.$4 != null || hubInFront,
+                    pinSwipeBack: route.$2 > 1,
+                    backChipBuilder: (_) =>
+                        const FlareBackChip(onPressed: _noop),
+                    child: stagePage,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -755,8 +1473,31 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  /// The page the shell shows now: its key, depth, whether it is modal, and
-  /// the page itself (null is the 3D stage underneath).
+  static void _noop() {}
+
+  int get _hubDepth => _trainingHubOrigin == 0 ? 1 : 2;
+
+  int get _planDepth {
+    final parent = _routine != null
+        ? 2
+        : _tab == _trainingHubTab
+        ? _hubDepth
+        : (_tab == 0 ? 0 : 1);
+    final coveredDrills = _flarePlanTrail
+        .where((target) => target.returnToDrill != null)
+        .length;
+    return parent + _flarePlanTrail.length + coveredDrills;
+  }
+
+  int get _drillDepth => _flarePlanTrail.isNotEmpty
+      ? _planDepth + 1
+      : _routine != null
+      ? 3
+      : _tab == 0
+      ? 1
+      : 2;
+
+  /// The current surface key, depth, modal flag and page (null is the stage).
   (String, int, bool, Widget?) _route(BuildContext context) {
     final s = context.strings;
     final drill = _drill;
@@ -769,176 +1510,332 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           'edit:${routine!.id}',
           3,
           false,
-          SdkPlanEditorPage(
-            plan: plan,
-            catalog: catalog,
-            initialTier: store.settings.tier,
-            onBack: _back,
-            onSaved: (updated) async {
-              final saved = await store.updateRoutine(
-                routine.id,
-                name: TrainingRoutine.truncateName(updated.title),
-                sdkPlan: updated,
-              );
-              if (!mounted) return false;
-              if (saved) {
-                setState(() {
-                  _editing = null;
-                  _routine = store.routineById(routine.id);
-                });
-              }
-              return saved;
-            },
+          _premiumPreview(
+            FlarePremiumFeature.planEditor,
+            (locked) => SdkPlanEditorPage(
+              readOnly: locked,
+              plan: plan,
+              catalog: catalog,
+              initialTier: store.settings.tier,
+              onBack: _back,
+              onSaved: (updated) async {
+                if (!_hasPremium || !mounted) return false;
+                final saved = await store.updateRoutine(
+                  routine.id,
+                  name: TrainingRoutine.truncateName(updated.title),
+                  sdkPlan: updated,
+                );
+                if (!mounted) return false;
+                if (saved) {
+                  setState(() {
+                    _editing = null;
+                    _routine = store.routineById(routine.id);
+                  });
+                }
+                return saved;
+              },
+            ),
           ),
         );
       }
       return (
         'edit:${edit.routineId ?? 'new'}',
-        drill != null ? 5 : 3,
+        drill != null ? _drillDepth + 1 : 3,
         false,
-        RoutineEditorPage(
-          key: ValueKey('editor:${edit.routineId ?? edit.seedIds.join(',')}'),
-          catalog: catalog,
-          store: store,
-          routine: routine,
-          seedName: edit.seedName,
-          seedDrillIds: edit.seedIds,
-          onBack: _back,
-          onSaved: (saved) {
-            setState(() {
-              _editing = null;
-              if (!edit.fromDrill) {
-                _preset = null;
-                _routine = saved;
+        _premiumPreview(
+          FlarePremiumFeature.planEditor,
+          (locked) => RoutineEditorPage(
+            key: ValueKey('editor:${edit.routineId ?? edit.seedIds.join(',')}'),
+            readOnly: locked,
+            catalog: catalog,
+            store: store,
+            routine: routine,
+            seedDrillIds: edit.seedIds,
+            onBack: _back,
+            allowSave: () async => _hasPremium,
+            onSaved: (saved) {
+              setState(() {
+                _editing = null;
+                if (!edit.fromDrill) {
+                  _routine = saved;
+                }
+              });
+              if (edit.fromDrill) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(content: Text(s.planAddedTo(saved.name))),
+                  );
               }
-            });
-            if (edit.fromDrill) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(content: Text(s.planAddedTo(saved.name))),
-                );
-            }
-          },
-          onDeleted: routine == null ? null : () => _deleteRoutine(routine),
+            },
+            onDeleted: routine == null
+                ? null
+                : () {
+                    if (_hasPremium) _deleteRoutine(routine);
+                  },
+          ),
         ),
       );
     }
     if (drill != null) {
       return (
         'drill:${drill.id}',
-        _inPlan ? 4 : 2,
+        _drillDepth,
         false,
         DrillDetailPage(
           drill: drill,
           group: catalog.groupById(drill.groupId),
+          demoSpeed: store.settings.speed,
           onBack: _back,
           onAddToPlan: () => _addToPlan(drill),
           onStart: () => _startDrills(drill.name, [drill]),
         ),
       );
     }
+    if (_flarePlanTrail.lastOrNull case final target?) {
+      final supplemental = switch (target.supplemental?.kind) {
+        FlarePlanKind.warmup => catalog.flareWarmupPlan ?? target.supplemental,
+        FlarePlanKind.cooldown =>
+          catalog.flareCooldownPlan ?? target.supplemental,
+        _ => null,
+      };
+      final planSnapshot = supplemental == null ? null : catalog.planSnapshot;
+      final cooldown = supplemental?.kind == FlarePlanKind.cooldown;
+      final phaseSource = target.phaseSource;
+      final phase = phaseSource == null
+          ? null
+          : catalog.phaseBySource(phaseSource);
+      final group = target.groupId == null
+          ? null
+          : catalog.groupById(target.groupId!);
+      final plans = cooldown
+          ? catalog.flareCooldownPlans
+          : supplemental != null
+          ? [supplemental]
+          : phaseSource != null
+          ? catalog.plansForAngle(phaseSource)
+          : catalog.plansForMuscle(target.groupId!);
+      final title = switch (supplemental?.kind) {
+        FlarePlanKind.warmup => s.preWorkoutWarmup,
+        FlarePlanKind.cooldown => s.postWorkoutStretch,
+        _ => phase?.name ?? group!.shortLabel,
+      };
+      final warmup = supplemental == null ? catalog.flareWarmupPlan : null;
+      return (
+        'flare-plan:${supplemental?.id ?? phaseSource ?? target.groupId}',
+        _planDepth,
+        false,
+        FlarePlanDetailPage(
+          title: title,
+          membership: supplemental == null ? widget.membership : null,
+          phase: phase,
+          emptyTargetGroup: group,
+          plans: plans,
+          selectedTier: cooldown
+              ? store.settings.cooldownTier
+              : target.selectedTier,
+          catalog: catalog,
+          store: store,
+          onTierChanged: (value) {
+            if (cooldown) {
+              unawaited(store.updateSettings(cooldownTier: value));
+            } else {
+              setState(() => target.selectedTier = value);
+            }
+          },
+          onMuscle: _openMusclePlan,
+          onDrill: _openFlarePlanDrill,
+          onBack: _back,
+          onOpenWarmup: warmup == null
+              ? null
+              : () => _openSupplementalPlan(warmup),
+          onStart: (plan) => _startFlarePlan(
+            title,
+            plan,
+            phaseSource: phaseSource,
+            planSnapshot: planSnapshot,
+          ),
+          onSkipStrengthening: cooldown
+              ? (plan) => _startFlarePlan(
+                  title,
+                  plan,
+                  skipStrengthening: true,
+                  planSnapshot: planSnapshot,
+                )
+              : null,
+        ),
+      );
+    }
     if (_routine case final viewed?) {
       final routine = store.routineById(viewed.id) ?? viewed;
       final drills = routine.drills(catalog);
+      final warmup = catalog.flareWarmupPlan;
       return (
         'routine:${routine.id}',
         2,
         false,
         PlanDetailPage(
+          soundEnabled: store.settings.sound,
           title: routine.name,
           drills: drills,
           onBack: _back,
           onDrill: _openDrill,
+          onOpenWarmup: warmup == null
+              ? null
+              : () => _openSupplementalPlan(warmup),
           sdkPlan: routine.sdkPlan,
           catalog: catalog,
-          onStart: () => routine.sdkPlan != null
-              ? _startPlan(routine.sdkPlan!)
-              : _startDrills(routine.name, drills),
-          onEdit: () =>
-              setState(() => _editing = _RoutineEdit(routineId: routine.id)),
+          onStart: () async {
+            if (routine.sdkPlan case final plan?) {
+              await _startPlan(plan.copyWith(id: routine.id));
+            } else {
+              await _startDrills(routine.name, drills, id: routine.id);
+            }
+          },
+          onEdit: () => _editRoutine(_RoutineEdit(routineId: routine.id)),
+          onCopy: widget.membership == null
+              ? null
+              : () => _copyRoutine(routine),
         ),
       );
     }
-    if (_preset case final preset?) {
-      final drills = preset.drills(catalog, store.settings.tier);
-      final title = preset.title(context);
-      return (
-        'preset:${preset.id}',
-        2,
-        false,
-        PlanDetailPage(
-          title: title,
-          line: preset.line(context),
-          drills: drills,
-          store: store,
-          onBack: _back,
-          onDrill: _openDrill,
-          onStart: () => _startDrills(title, drills),
-          onSaveAsMine: () => setState(
-            () => _editing = _RoutineEdit(
-              seedName: title,
-              seedIds: [for (final drill in drills) drill.id],
-            ),
-          ),
-        ),
-      );
+    if (_settings && _about) {
+      return ('about', 2, false, _aboutPage(context));
     }
     if (_settings) return ('settings', 1, false, _settingsPage(context));
     return switch (_tab) {
       0 => ('watch', 0, false, null),
+      _trainingHubTab => ('training-hub', _hubDepth, false, null),
       1 => (
         'tab1',
         1,
         false,
         FlareShared.current != null && FlarePublicMedia.current != null
-            ? const FlareSharedLibraryPage()
+            ? FlareSharedLibraryPage(
+                onBack: _back,
+                presentationCatalog: catalog,
+                soundEnabled: store.settings.sound,
+                onOpenStraightLegFlare: _openDrill,
+              )
             : LibraryPage(
                 catalog: catalog,
                 store: store,
-                initialGroup: _libraryGroup,
                 initialQuery: _libraryQuery,
                 onQueryChanged: (value) => _libraryQuery = value,
                 onBack: _back,
                 onDrill: _openDrill,
               ),
       ),
-      2 => (
-        'tab2',
+      2 => ('tab2', 1, false, _plansPage()),
+      _recordsTab => (
+        'tab$_recordsTab',
         1,
         false,
-        PlansPage(
-          catalog: catalog,
-          store: store,
-          onBack: _back,
-          onPreset: (preset) => setState(() => _preset = preset),
-          onRoutine: (routine) => setState(() => _routine = routine),
-          onNewRoutine: () => setState(() => _editing = const _RoutineEdit()),
-          onAiCoach: coach.configured && aiCoachAvailable(context)
-              ? _openCoach
-              : null,
-          aiCoachConfigured: coach.configured,
+        _premiumPreview(
+          FlarePremiumFeature.records,
+          (locked) => ProgressPage(
+            catalog: catalog,
+            store: store,
+            readOnly: locked,
+            onBack: _back,
+            onDrill: _openDrill,
+            onStart: () => _changeTab(1),
+          ),
         ),
       ),
-      _ => (
-        'tab$_tab',
-        1,
-        false,
-        ProgressPage(
-          catalog: catalog,
-          store: store,
-          onBack: _back,
-          onDrill: _openDrill,
-          onStart: () => _changeTab(1),
-        ),
-      ),
+      _ => throw StateError('Unknown Flare tab: $_tab'),
     };
+  }
+
+  Widget _plansPage() {
+    final resume = _resolvePlanResume(catalog.planSnapshot);
+    final snapshotId = resume?.snapshotId;
+    final restore = widget.restorePlanSnapshot;
+    if (snapshotId == null || restore == null) {
+      return _plansPageWithResume(resume);
+    }
+    if (_resumeSnapshotId != snapshotId) {
+      _resumeSnapshotId = snapshotId;
+      _resumeSnapshot = restore(snapshotId);
+    }
+    return FutureBuilder<sdk.PoseHubPlanSnapshot?>(
+      future: _resumeSnapshot,
+      builder: (context, result) {
+        final snapshot = result.data;
+        return _plansPageWithResume(
+          snapshot?.id == snapshotId ? _resolvePlanResume(snapshot) : resume,
+        );
+      },
+    );
+  }
+
+  FlarePlanResume? _resolvePlanResume(sdk.PoseHubPlanSnapshot? snapshot) =>
+      FlarePlanResume.resolve(
+        catalog: catalog,
+        sessions: store.trainerSessions,
+        routines: store.routines,
+        legacySessions: store.sessions,
+        preferredSceneTier: store.settings.tier,
+        restoredSnapshot: snapshot,
+      );
+
+  Widget _plansPageWithResume(FlarePlanResume? resume) {
+    return PlansPage(
+      catalog: catalog,
+      store: store,
+      resume: resume,
+      onBack: _back,
+      onRoutine: (routine) => setState(() => _routine = routine),
+      onNewRoutine: () => _editRoutine(const _RoutineEdit()),
+      onOpenAngle: _openAnglePlan,
+      onOpenMuscle: _openMusclePlan,
+      onOpenSupplemental: _openSupplementalPlan,
+      onAllAngles: _enterTrainingHub,
+      onAllMuscles: () => _enterTrainingHub(muscles: true),
+      onContinue: () {
+        if (resume != null) unawaited(_continueTrainingPlan(resume));
+      },
+    );
   }
 
   Widget _watchPage(BuildContext context) {
     final s = context.strings;
-    final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
-    final detail = _detail;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SafeArea(bottom: false, child: _watchContent(context)),
+        PositionedDirectional(
+          top: 0,
+          start: 0,
+          end: 0,
+          child: FlareHomeChrome(
+            part: FlareHomeChromePart.header,
+            child: FlareNavBar(
+              leading: FlareNavChip(
+                key: const ValueKey('home-menu-chip'),
+                label: s.more,
+                icon: Icons.menu_rounded,
+                onPressed: _showMore,
+              ),
+              center: IgnorePointer(
+                child: FittedBox(
+                  key: const ValueKey('home-wordmark'),
+                  fit: BoxFit.scaleDown,
+                  child: _HomeWordmark(label: s.motionBrand),
+                ),
+              ),
+              topInset: FlareGeometry.navSafeTop(context),
+              glass: true,
+              blurBackdrop: false,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _watchContent(BuildContext context) {
+    final s = context.strings;
     // Retain the previous header height so simplifying its text does not
     // resize the shared 3D stage or shift the athlete's framing.
     final textScaler = MediaQuery.textScalerOf(context);
@@ -947,78 +1844,31 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           44.0,
           double.infinity,
         );
+    final headingTop = (54 - MediaQuery.viewPaddingOf(context).top).clamp(
+      8.0,
+      54.0,
+    );
+    // Extend the single surface through the empty home header. The scene
+    // projects the original home frame below this band and can also paint the
+    // higher training viewport without moving or resizing the platform view.
+    final stageTop = headingTop + headingHeight + 10;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          // 48pt targets with their 40pt squares on the 20pt content margin.
-          padding: EdgeInsets.fromLTRB(
-            16,
-            (54 - MediaQuery.viewPaddingOf(context).top).clamp(8, 54),
-            16,
-            10,
-          ),
-          child: Row(
-            children: [
-              FlareGlassSquareButton(
-                label: detail == null ? s.plans : s.returnToMotion,
-                icon: detail == null
-                    ? Icons.playlist_play_rounded
-                    : Icons.arrow_back_ios_new_rounded,
-                onPressed: detail == null
-                    ? () => _changeTab(2)
-                    : _returnToMotion,
-              ),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: FlareMotion.of(context, FlareMotion.fade),
-                  switchInCurve: FlareMotion.settle,
-                  child: detail == null
-                      ? SizedBox(
-                          key: const ValueKey('home'),
-                          height: headingHeight,
-                          child: Center(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: _HomeWordmark(label: s.motionBrand),
-                            ),
-                          ),
-                        )
-                      // The panel below carries the large muscle title; the
-                      // bar keeps its height (stage framing) but no title,
-                      // so the name is not shown twice.
-                      : SizedBox(
-                          key: ValueKey(detail.id),
-                          height: headingHeight,
-                          child: const SizedBox.expand(
-                            key: ValueKey('muscle-detail-title'),
-                          ),
-                        ),
-                ),
-              ),
-              if (detail == null)
-                FlareGlassSquareButton(
-                  label: s.more,
-                  icon: Icons.more_horiz_rounded,
-                  onPressed: _showMore,
-                )
-              else
-                const SizedBox(width: 48),
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(16, headingTop, 16, 10),
+          child: SizedBox(key: const ValueKey('home'), height: headingHeight),
         ),
         Expanded(
           child: LayoutBuilder(
             builder: (context, box) {
-              // The 3D view always fills this whole area, behind the
-              // transport or the detail panel; only the part above them is
-              // drawn. Entering or leaving detail moves the camera and this
-              // inset together, so the WebView itself never resizes.
+              // The same home 3D view stays mounted under navigation.
               _stageArea = box.maxHeight;
-              final inset = _viewInsetFor(context, detail != null);
-              _sendViewInset(inset);
+              final inset = _viewInsetFor(context);
+              _sendViewInset(inset, stageTop);
               return Stack(
                 fit: StackFit.expand,
+                clipBehavior: Clip.none,
                 children: [
                   // Under the live view: during an appearance dissolve the
                   // old frame's backdrop fades out here, behind the athlete.
@@ -1031,101 +1881,116 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                       enabled: widget.enableScene && _watchVisible,
                     ),
                   ),
-                  widget.enableScene
-                      ? SceneView(
-                          key: ValueKey((
-                            _sceneGeneration,
-                            widget.sceneRevision,
-                            _actorBody,
-                          )),
-                          controller: _scene,
-                          body: _actorBody,
-                        )
-                      : ColoredBox(color: FlareColors.background),
-                  SceneRevealLayer(
-                    enabled: widget.enableScene && !widget.startupCovered,
-                    presented: _scene.presented,
-                    bottomInset: inset,
-                    backdrop: _StageBackdropCover(ancestor: _stageBackdropKey),
-                    loading: SceneLoading(
-                      key: const ValueKey('scene-loading'),
-                      label: s.sceneLoading,
+                  if (widget.enableScene)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: -stageTop,
+                      bottom: 0,
+                      child: SizedBox.expand(
+                        key: _homeSceneBounds,
+                        child: _liveScene(
+                          interactive: !_hideHomeChrome,
+                          concealed:
+                              _tab == _trainingHubTab &&
+                              !_trainingHubLiveEntry &&
+                              !_trainingHubStagePresented,
+                        ),
+                      ),
+                    )
+                  else
+                    SizedBox.expand(
+                      key: _homeSceneBounds,
+                      child: ColoredBox(color: FlareColors.background),
                     ),
-                    error: widget.startupCovered || _scene.errorCode == null
-                        ? null
-                        : _SceneError(
-                            key: const ValueKey('scene-error'),
-                            message: s.sceneFailed,
-                            retry: s.retry,
-                            onRetry: _restartScene,
+                  if (widget.enableScene && _hubFromAnotherTab)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: -stageTop,
+                      bottom: 0,
+                      child: IgnorePointer(
+                        child: AnimatedOpacity(
+                          key: const ValueKey('hub-scene-reveal'),
+                          opacity:
+                              _trainingHubStagePresented && _scene.presented
+                              ? 0
+                              : 1,
+                          duration:
+                              _trainingHubStagePresented && _scene.presented
+                              ? FlareMotion.of(
+                                  context,
+                                  const Duration(milliseconds: 150),
+                                )
+                              : Duration.zero,
+                          child: _StageBackdropCover(
+                            ancestor: _stageBackdropKey,
                           ),
-                  ),
+                        ),
+                      ),
+                    ),
+                  if (_tab != _trainingHubTab)
+                    SceneRevealLayer(
+                      enabled: widget.enableScene && !widget.startupCovered,
+                      presented: _scene.presented,
+                      bottomInset: inset,
+                      backdrop: _StageBackdropCover(
+                        ancestor: _stageBackdropKey,
+                      ),
+                      loading: SceneLoading(
+                        key: const ValueKey('scene-loading'),
+                        label: s.sceneLoading,
+                      ),
+                      error: widget.startupCovered || _scene.errorCode == null
+                          ? null
+                          : _SceneError(
+                              key: const ValueKey('scene-error'),
+                              message: s.sceneFailed,
+                              retry: s.retry,
+                              onRetry: _restartScene,
+                            ),
+                    ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: detail == null ? 5 : 1,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            if (detail != null)
-                              Positioned(
-                                left: 12,
-                                bottom: 31,
-                                width: 86,
-                                height: 136,
-                                child: Semantics(
-                                  label: _scene.detailModel == 'motion'
-                                      ? s.switchToMuscles
-                                      : s.switchToMotion,
-                                  button: true,
-                                  onTap: _swapDetailCard,
-                                  child: ExcludeSemantics(
-                                    child: TextButton(
-                                      key: const ValueKey('detail-card'),
-                                      onPressed: _swapDetailCard,
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                        minimumSize: const Size(86, 136),
-                                        backgroundColor: FlareColors.background
-                                            .withValues(alpha: .004),
-                                        overlayColor: FlareColors.text
-                                            .withValues(alpha: .13),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                      ),
-                                      child: const SizedBox.expand(),
-                                    ),
-                                  ),
+                            Positioned(
+                              right: 20,
+                              bottom: box.maxWidth < 380 ? 228 : 18,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: box.maxWidth < 380
+                                      ? box.maxWidth * .46
+                                      : box.maxWidth - 218,
+                                ),
+                                child: FlareHomeChrome(
+                                  part: FlareHomeChromePart.training,
+                                  child: _homeTrainingButton(context),
                                 ),
                               ),
-                            if (detail == null)
-                              Positioned(
-                                right: 20,
-                                bottom: box.maxWidth < 380 ? 228 : 18,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: box.maxWidth < 380
-                                        ? box.maxWidth * .46
-                                        : box.maxWidth - 218,
-                                  ),
-                                  child: _homeHint(context),
-                                ),
-                              ),
+                            ),
                           ],
                         ),
                       ),
-                      if (detail == null) ...[
-                        FadeSlideIn(
-                          key: const ValueKey('transport'),
-                          offset: 10,
-                          child: _transport(context, phase),
+                      FadeSlideIn(
+                        key: const ValueKey('transport'),
+                        offset: 10,
+                        child: FlareHomeChrome(
+                          part: FlareHomeChromePart.timeline,
+                          child: ValueListenableBuilder(
+                            valueListenable: _transportChrome,
+                            builder: (context, chrome, _) {
+                              final phase =
+                                  catalog.phaseBySource(chrome.phase) ??
+                                  catalog.phases.first;
+                              return _transport(context, phase, chrome.playing);
+                            },
+                          ),
                         ),
-                      ] else
-                        _detailPanel(context, phase, detail),
+                      ),
                     ],
                   ),
                 ],
@@ -1137,254 +2002,38 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
   }
 
-  /// Height of the chrome over the bottom of the 3D view: the transport on
-  /// the watch screen, or the lower half of the detail content area.
-  double _viewInsetFor(BuildContext context, bool detail) {
+  Widget _liveScene({bool interactive = true, bool concealed = false}) =>
+      SceneView(
+        key: _liveSceneKey,
+        controller: _scene,
+        body: flareTeachingScene,
+        interactive: interactive,
+        concealed: concealed,
+      );
+
+  /// Height of the transport chrome over the bottom of the home 3D view.
+  double _viewInsetFor(BuildContext context) {
     if (_stageArea <= 0) return 0;
-    if (detail) {
-      return _stageArea * .5;
-    }
     return _transportHeightFor(context) +
-        (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30).toDouble();
+        (30 - MediaQuery.viewPaddingOf(this.context).bottom)
+            .clamp(8, 30)
+            .toDouble();
   }
 
-  void _sendViewInset(double inset) {
-    if ((inset - _sentInset).abs() < .5) return;
+  void _sendViewInset(double inset, double top) {
+    if ((inset - _sentInset).abs() < .5 && (top - _sentStageTop).abs() < .5) {
+      return;
+    }
     _sentInset = inset;
+    _sentStageTop = top;
     // The first value lands at once; later ones ease with the camera.
     final first = !_insetSent;
     _insetSent = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && (_sentInset - inset).abs() < .5) {
-        _scene.setViewInset(inset, animate: !first);
+      if (mounted && _sentInset == inset && _sentStageTop == top) {
+        _scene.setViewInset(inset, top: top, animate: !first);
       }
     });
-  }
-
-  Widget _detailPanel(BuildContext context, Phase phase, MuscleGroup detail) {
-    final s = context.strings;
-    final muscle = phase.muscle(detail.id);
-    final together = catalog.synergists(phase, detail.id, limit: 99);
-    final hasDrills = catalog.drillsFor(detail.id).isNotEmpty;
-    final color = Color(detail.colorValue);
-    return Expanded(
-      flex: 1,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Translated role sentences often take two lines. Reserve room for
-          // the independent knowledge viewport on phone-height panels.
-          final rolePainter =
-              TextPainter(
-                text: TextSpan(
-                  text: muscle?.why ?? detail.role,
-                  style: DefaultTextStyle.of(context).style.merge(
-                    const TextStyle(
-                      fontSize: 14.5,
-                      height: 1.35,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                textDirection: Directionality.of(context),
-                textScaler: MediaQuery.textScalerOf(context),
-                maxLines: 2,
-              )..layout(
-                maxWidth: (constraints.maxWidth - 48).clamp(0, double.infinity),
-              );
-          final roleWraps = rolePainter.computeLineMetrics().length > 1;
-          rolePainter.dispose();
-          final compact =
-              constraints.maxHeight < 270 ||
-              (constraints.maxHeight < 330 &&
-                  (s.localeName != 'zh' || roleWraps));
-          final scaler = MediaQuery.textScalerOf(context);
-          // Preserve a readable knowledge viewport even when the model/detail
-          // split leaves less vertical space than the title and fixed cards.
-          final minContentHeight =
-              (compact ? 2 : 10) +
-              (compact ? 27 : 36) +
-              (compact ? 2 : 6) +
-              scaler.scale(compact ? 12.5 : 14.5) * 1.35 * 2 +
-              (compact ? 2 : 8) +
-              48;
-          final assistHeight = together.isEmpty
-              ? 0.0
-              : (scaler.scale(13) * 1.35 * 2).clamp(
-                      compact ? 32.0 : 48.0,
-                      double.infinity,
-                    ) +
-                    (compact ? 16 : 20) +
-                    (compact ? 8 : 16);
-          final content = Padding(
-            padding: EdgeInsets.fromLTRB(20, compact ? 2 : 10, 20, 0),
-            child: FadeSlideIn(
-              key: ValueKey('detail-${detail.id}'),
-              delay: FadeSlideIn.stagger(2, step: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Semantics(
-                    header: true,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Same group-colour dot as drill detail, not a bar.
-                        Container(
-                          width: 8,
-                          height: 8,
-                          margin: EdgeInsetsDirectional.only(
-                            top: compact ? 9 : 14,
-                            end: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Expanded(
-                          child: SizedBox(
-                            height: compact ? 26 : 36,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: AlignmentDirectional.centerStart,
-                              child: Text(
-                                detail.shortLabel,
-                                semanticsLabel: detail.label,
-                                key: const ValueKey('muscle-panel-title'),
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  height: 1.2,
-                                  letterSpacing: -.6,
-                                  fontWeight: FontWeight.w800,
-                                  color: FlareColors.text,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: compact ? 2 : 6),
-                  Text(
-                    muscle?.why ?? detail.role,
-                    key: const ValueKey('muscle-role'),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: compact ? 12.5 : 14.5,
-                      height: 1.35,
-                      fontWeight: FontWeight.w600,
-                      color: FlareColors.text.withValues(alpha: .88),
-                    ),
-                  ),
-                  SizedBox(height: compact ? 2 : 8),
-                  Expanded(
-                    child: _MuscleKnowledgeBlock(
-                      key: ValueKey('knowledge-${detail.id}'),
-                      text: catalog
-                          .translate(muscleKnowledge[detail.id] ?? detail.role)
-                          .replaceFirstMapped(
-                            RegExp(r'[。.!؟।]'),
-                            (m) => '${m[0]}\n\n',
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-          final assists = together.isEmpty
-              ? null
-              : Padding(
-                  // Cards run to the screen edge so a cut-off card reads
-                  // as "scrolls sideways".
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                    24,
-                    compact ? 4 : 8,
-                    0,
-                    compact ? 4 : 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SingleChildScrollView(
-                        key: const ValueKey('muscle-assist-cards'),
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsetsDirectional.only(end: 14),
-                        child: Row(
-                          children: [
-                            for (final group in together) ...[
-                              MuscleAssistCard(
-                                group: group,
-                                compact: compact,
-                                onTap: () => _openGroup(group),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, body) {
-                    if (body.maxHeight >= minContentHeight + assistHeight) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(child: content),
-                          ?assists,
-                        ],
-                      );
-                    }
-                    return SingleChildScrollView(
-                      key: const ValueKey('muscle-panel-scroll'),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(height: minContentHeight, child: content),
-                          ?assists,
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(color: FlareColors.background),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    20,
-                    8,
-                    20,
-                    (12 - MediaQuery.viewPaddingOf(context).bottom).clamp(
-                      8,
-                      12,
-                    ),
-                  ),
-                  child: PrimaryAction(
-                    key: const ValueKey('train-group'),
-                    height: compact ? 46 : 50,
-                    label: s.trainGroup(detail.shortLabel),
-                    semanticsLabel: s.trainGroup(detail.label),
-                    arrow: true,
-                    onPressed: hasDrills
-                        ? () => _openGroupTraining(detail)
-                        : null,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
   }
 
   // ~72pt: 12pt padding around one 48pt row (phase line + compact timeline).
@@ -1415,9 +2064,13 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final scaler = MediaQuery.textScalerOf(context);
     final width = MediaQuery.sizeOf(context).width;
     final style = _phaseTextStyle(context);
-    final names = [for (final p in catalog.phases) p.name];
+    final phases = catalog.phases;
+    final anglePlans = [
+      for (final p in phases)
+        if (catalog.plansForAngle(p.source).isNotEmpty) p.source,
+    ];
     final key =
-        '$width|${scaler.scale(13)}|${style.fontFamily}|${names.join('|')}';
+        '$width|${scaler.scale(13)}|${style.fontFamily}|${phases.map((p) => p.name).join('|')}|$anglePlans';
     if (key == _nameLinesKey) return _nameLines;
     final number = TextPainter(
       text: TextSpan(
@@ -1433,13 +2086,16 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     final available = width - 40 - 24 - 48 - 16 - number.width - 6;
     number.dispose();
     var lines = 1;
-    for (final name in names) {
+    for (final phase in phases) {
+      final width = anglePlans.contains(phase.source)
+          ? available - FlareGeometry.rowChevron - 4
+          : available;
       final painter = TextPainter(
-        text: TextSpan(text: name, style: style),
+        text: TextSpan(text: phase.name, style: style),
         textScaler: scaler,
         textDirection: Directionality.of(context),
         maxLines: 2,
-      )..layout(maxWidth: available.clamp(1, double.infinity).toDouble());
+      )..layout(maxWidth: width.clamp(1, double.infinity).toDouble());
       if (painter.computeLineMetrics().length > 1) lines = 2;
       painter.dispose();
       if (lines == 2) break;
@@ -1448,14 +2104,65 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     return _nameLines = lines;
   }
 
-  Widget _transport(BuildContext context, Phase phase) {
+  Widget _phaseTitle(Phase phase, bool playing) {
+    final canOpen = !playing && catalog.plansForAngle(phase.source).isNotEmpty;
+    final row = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          phase.source.toString().padLeft(2, '0'),
+          style: TextStyle(
+            color: FlareColors.accentInk,
+            fontSize: 13,
+            height: 1.25,
+            fontWeight: FontWeight.w600,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            phase.name,
+            key: const ValueKey('home-phase-name'),
+            maxLines: 2,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.25,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        if (canOpen) ...[
+          const SizedBox(width: 4),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: FlareGeometry.rowChevron,
+            color: FlareColors.faint,
+          ),
+        ],
+      ],
+    );
+    final label = MotionPhaseLabel(phase: phase.source, child: row);
+    if (!canOpen) return label;
+    return FlarePressable(
+      key: const ValueKey('home-plan-angle'),
+      scale: .99,
+      onTap: () {
+        FlareHaptics.light();
+        _openAnglePlan(phase);
+      },
+      child: label,
+    );
+  }
+
+  Widget _transport(BuildContext context, Phase phase, bool playing) {
     final s = context.strings;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         20,
         0,
         20,
-        (30 - MediaQuery.viewPaddingOf(context).bottom).clamp(8, 30),
+        (30 - MediaQuery.viewPaddingOf(this.context).bottom).clamp(8, 30),
       ),
       child: FlareGlassBar(
         padding: const EdgeInsets.all(12),
@@ -1464,12 +2171,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
           child: Row(
             children: [
               _roundControl(
-                label: _scene.playing ? s.pause : s.play,
-                icon: _scene.playing
-                    ? Icons.pause_rounded
-                    : Icons.play_arrow_rounded,
+                label: playing ? s.pause : s.play,
+                icon: playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
                 diameter: 48,
-                solid: !_scene.playing,
+                solid: !playing,
                 onTap: () {
                   FlareHaptics.light();
                   _scene.playing ? _scene.pause() : _scene.play();
@@ -1480,40 +2185,15 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          phase.source.toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            color: FlareColors.accentInk,
-                            fontSize: 13,
-                            height: 1.25,
-                            fontWeight: FontWeight.w600,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            phase.name,
-                            key: const ValueKey('home-phase-name'),
-                            maxLines: 2,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              height: 1.25,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    _phaseTitle(phase, playing),
                     Expanded(
                       child: MotionTimeline(
                         catalog: catalog,
                         time: _scene.time,
+                        playhead: _scene.playhead,
                         phase: phase.source,
                         onSeek: _seek,
+                        onScrubbing: _onHomeScrubbing,
                       ),
                     ),
                   ],
@@ -1574,62 +2254,48 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     ),
   );
 
-  /// 「点选肌群」: the home-glass control (r12, 40pt, hairline rim, blur
-  /// over the stage), inside a 48pt tap target, matching the top bar.
-  Widget _homeHint(BuildContext context) {
-    final s = context.strings;
-    final playing = _scene.playing;
-    final onTap = playing ? _scene.pause : _showMuscles;
-    final label = playing ? s.playingHint : s.pausedHint;
-    return Semantics(
-      button: true,
-      label: label,
-      excludeSemantics: true,
-      child: GestureDetector(
-        key: const ValueKey('home-muscle-hint'),
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Pressable(
-          scale: .95,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 48),
-            child: Center(
-              widthFactor: 1,
-              child: FlareHipGlassSurface(
-                radius: 12,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 28),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        playing
-                            ? Icons.pause_rounded
-                            : Icons.touch_app_outlined,
-                        size: 15,
+  Widget _homeTrainingButton(BuildContext context) {
+    final label = context.strings.homeGoToTraining;
+    return FlarePressable(
+      key: const ValueKey('home-go-to-training'),
+      scale: .95,
+      semanticLabel: label,
+      onTap: () {
+        FlareHaptics.light();
+        _enterTrainingHub();
+      },
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Center(
+          widthFactor: 1,
+          child: FlareHipGlassSurface(
+            radius: 12,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 28),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 15,
+                    color: FlareColors.secondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        height: 1.25,
+                        fontWeight: FontWeight.w500,
                         color: FlareColors.secondary,
                       ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.25,
-                            fontWeight: FontWeight.w500,
-                            color: FlareColors.secondary,
-                          ),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -1648,16 +2314,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _showMuscles() async {
-    if (_sheetOpen) return;
-    _sheetOpen = true;
-    try {
-      await _presentMuscles();
-    } finally {
-      _sheetOpen = false;
-    }
-  }
-
   Future<void> _presentMore() async {
     final s = context.strings;
     final wasPlaying = _scene.playing;
@@ -1666,77 +2322,150 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       context: context,
       sheetAnimationStyle: FlareMotion.sheetStyle(context),
       isScrollControlled: true,
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (sheetContext, setSheet) => SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      showDragHandle: false,
+      builder: (sheetContext) => RepaintBoundary(
+        child: StatefulBuilder(
+          builder: (sheetContext, setSheet) => SafeArea(
+            top: false,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                FlareListGroup(
-                  children: [
-                    for (final entry in [
-                      (
-                        'library',
-                        s.library,
-                        s.libraryHint,
-                        Icons.fitness_center_outlined,
-                      ),
-                      (
-                        'plans',
-                        s.plans,
-                        store.routines.isEmpty
-                            ? s.plansHint
-                            : '${s.plansMine} · ${store.routines.length}',
-                        Icons.playlist_play_rounded,
-                      ),
-                      (
-                        'progress',
-                        s.progress,
-                        store.weekTrainingDays == 0
-                            ? s.recordsEmptyAction
-                            : s.moreProgressHint(store.weekTrainingDays),
-                        Icons.insights_outlined,
-                      ),
-                      (
-                        'settings',
-                        s.settings,
-                        s.settingsHint,
-                        Icons.tune_outlined,
-                      ),
-                    ])
-                      FlareListRow(
-                        key: ValueKey('more-${entry.$1}'),
-                        leading: FlareRowIcon(entry.$4),
-                        title: entry.$2,
-                        subtitle: entry.$3,
-                        onTap: () => Navigator.pop(sheetContext, entry.$1),
-                      ),
-                  ],
-                ),
-                FlareSection(s.playbackSpeed),
-                FlareListGroup(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: FlareSegmented<double>(
-                        expand: true,
-                        segments: const [
-                          (.25, '0.25×'),
-                          (.5, '0.5×'),
-                          (1.0, '1×'),
-                        ],
-                        selected: _scene.speed,
-                        // Speed applies in place; the sheet stays so the
-                        // new choice is visible, and play resumes on close.
-                        onChanged: (value) {
-                          _scene.setSpeed(value);
-                          unawaited(store.updateSettings(speed: value));
-                          setSheet(() {});
-                        },
+                Semantics(
+                  label: MaterialLocalizations.of(
+                    sheetContext,
+                  ).modalBarrierDismissLabel,
+                  button: true,
+                  onTap: () => Navigator.of(sheetContext).pop(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Container(
+                      key: const ValueKey('more-drag-handle'),
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: FlareColors.palette.dragHandle,
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                  ],
+                  ),
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      FlareGeometry.pageInset,
+                      0,
+                      FlareGeometry.pageInset,
+                      FlareGeometry.rowSideInset,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FlareListGroup(
+                          children: [
+                            for (final entry in [
+                              (
+                                'library',
+                                s.library,
+                                s.libraryHint,
+                                Icons.fitness_center_outlined,
+                              ),
+                              (
+                                'plans',
+                                s.plans,
+                                store.routines.isEmpty
+                                    ? s.plansHint
+                                    : '${s.plansMine} · ${store.routines.length}',
+                                Icons.playlist_play_rounded,
+                              ),
+                              (
+                                'progress',
+                                s.progress,
+                                store.weekTrainingDays == 0
+                                    ? s.recordsEmptyAction
+                                    : s.moreProgressHint(
+                                        store.weekTrainingDays,
+                                      ),
+                                Icons.insights_outlined,
+                              ),
+                              (
+                                'settings',
+                                s.settings,
+                                s.settingsHint,
+                                Icons.tune_outlined,
+                              ),
+                            ])
+                              FlareListRow(
+                                key: ValueKey('more-${entry.$1}'),
+                                leading: FlareRowIcon(entry.$4),
+                                title: entry.$2,
+                                subtitle: entry.$3,
+                                onTap: () {
+                                  final navigator = Navigator.of(sheetContext);
+                                  if (entry.$1 == 'library') {
+                                    // Remove the sheet and its barrier together before
+                                    // the training page starts covering the home stage.
+                                    final sheet = ModalRoute.of<String>(
+                                      sheetContext,
+                                    );
+                                    if (sheet != null && sheet.isCurrent) {
+                                      navigator.removeRoute(sheet, entry.$1);
+                                    }
+                                  } else {
+                                    navigator.pop(entry.$1);
+                                  }
+                                },
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: FlareGeometry.groupGap),
+                        FlareListGroup(
+                          key: const ValueKey('more-playback-speed'),
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                FlareListRow(
+                                  leading: const FlareRowIcon(
+                                    Icons.speed_rounded,
+                                  ),
+                                  title: s.playbackSpeed,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                    start: FlareGeometry.rowSideInset,
+                                    end: FlareGeometry.rowSideInset,
+                                    bottom: FlareGeometry.rowControlBottom,
+                                  ),
+                                  child: FlareSegmented<double>(
+                                    expand: true,
+                                    height: FlareGeometry.settingsSegmentHeight,
+                                    radius: FlareGeometry.settingsSegmentRadius,
+                                    inset: FlareGeometry.settingsSegmentInset,
+                                    ios: true,
+                                    segments: const [
+                                      (.25, '0.25×'),
+                                      (.5, '0.5×'),
+                                      (1.0, '1×'),
+                                    ],
+                                    selected: _scene.speed,
+                                    // Speed applies in place; the sheet stays so the
+                                    // new choice is visible, and play resumes on close.
+                                    onChanged: (value) {
+                                      _scene.setSpeed(value);
+                                      unawaited(
+                                        store.updateSettings(speed: value),
+                                      );
+                                      setSheet(() {});
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1746,182 +2475,62 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     );
     if (!mounted) return;
     if (value == null) {
-      if (wasPlaying && _watchVisible && _detail == null) _scene.play();
+      if (wasPlaying && _watchVisible) _scene.play();
       return;
     }
     switch (value) {
       case 'library':
-        _changeTab(1);
+        _enterTrainingHub();
       case 'plans':
         _changeTab(2);
       case 'progress':
-        _changeTab(3);
+        _changeTab(_recordsTab);
       case 'settings':
-        setState(() => _settings = true);
+        setState(() {
+          _settings = true;
+          _about = false;
+        });
         _syncSceneVisibility();
     }
   }
 
-  Future<void> _presentMuscles() async {
-    _scene.pause();
-    final s = context.strings;
-    final phase = catalog.phaseBySource(_scene.phase) ?? catalog.phases.first;
-    final primary = [
-      for (final item in phase.primary)
-        if (catalog.groupById(item.id) case final MuscleGroup group)
-          (group, item.why ?? group.role),
-    ];
-    final ids = primary.map((item) => item.$1.id).toSet();
-    final others = [
-      for (final item in phase.secondary)
-        if (!ids.contains(item.id))
-          if (catalog.groupById(item.id) case final MuscleGroup group) group,
-    ];
-    Widget row(BuildContext sheet, MuscleGroup group, String? why) =>
-        MuscleItemTile(
-          group: group,
-          subtitle: why,
-          onTap: () => Navigator.pop(sheet, group),
-        );
-    final group = await showModalBottomSheet<MuscleGroup>(
-      context: context,
-      sheetAnimationStyle: FlareMotion.sheetStyle(context),
-      isScrollControlled: true,
-      builder: (sheetContext) {
-        var expanded = false;
-        return StatefulBuilder(
-          builder: (sheetContext, setSheet) => SafeArea(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * .78,
-              ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 12),
-                // The sheet grows smoothly when the rest of the group opens.
-                child: FlareSizeTransition(
-                  duration: FlareMotion.of(context, FlareMotion.expand),
-                  curve: FlareMotion.settle,
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Eyebrow(
-                              s.phaseMoment(
-                                phase.source.toString().padLeft(2, '0'),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              phase.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      for (final item in primary)
-                        row(sheetContext, item.$1, item.$2),
-                      if (others.isNotEmpty && !expanded)
-                        InkWell(
-                          onTap: () => setSheet(() => expanded = true),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
-                            child: Row(
-                              children: [
-                                MuscleThumbnailStack(
-                                  groups: others.take(3).toList(),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    s.othersInvolved(
-                                      others
-                                              .take(2)
-                                              .map((g) => g.label)
-                                              .join('、') +
-                                          (others.length > 2
-                                              ? s.groupCount(others.length)
-                                              : ''),
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: FlareColors.secondary,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.expand_more_rounded,
-                                  size: 20,
-                                  color: FlareColors.dim,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (expanded) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Divider(height: 20),
-                        ),
-                        for (final (index, other) in others.indexed)
-                          FadeSlideIn(
-                            delay: FadeSlideIn.stagger(index, step: 26),
-                            offset: 8,
-                            child: row(sheetContext, other, null),
-                          ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    if (mounted && group != null) _openGroup(group);
-  }
-
   Widget _settingsPage(BuildContext context) {
     final s = context.strings;
-    // Title row with icon, then the control on its own line under the
-    // title (aligned with the title, not the icon). One control height (34).
+    // HipLab settings choice: the title row (30 icon slot, 17/w400), then
+    // the control on its own line on the 58 text column, right 16, bottom
+    // 12, so long translations keep the full label and a readable control.
     Widget line(String label, IconData icon, Widget control) => Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 14),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              FlareRowIcon(icon),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 32),
+            child: Row(
+              children: [
+                FlareRowIcon(icon),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: FlareType.rowTitle.copyWith(
+                      height: 1.25,
+                      color: FlareColors.text,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           // On a narrow phone the control takes the full row width (no
-          // 44 pt title indent) so long labels stay at a readable size.
+          // text-column indent) so long labels stay at a readable size.
           LayoutBuilder(
             builder: (context, box) => Padding(
               padding: EdgeInsetsDirectional.only(
-                start: box.maxWidth >= 300 ? 44 : 0,
+                start: box.maxWidth >= 300
+                    ? FlareGeometry.rowTextStart - 16
+                    : 0,
               ),
               child: control,
             ),
@@ -1929,135 +2538,176 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         ],
       ),
     );
-    return Column(
-      children: [
-        FlareNavBar(title: s.settings, onBack: _back),
-        Expanded(
-          child: ScrollEdge(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+    return FlareNavPage(
+      title: s.settings,
+      onBack: _back,
+      blurBackdrop: false,
+      body: ScrollEdge(
+        child: ListView(
+          key: const PageStorageKey('flare-settings-scroll'),
+          padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 24),
+          children: [
+            // Groups sit 28 apart without repeated headings (HipLab).
+            FlareListGroup(
               children: [
-                FlareSection(s.appearanceGroup),
-                FlareListGroup(
-                  children: [
-                    Semantics(
-                      container: true,
-                      button: true,
-                      label:
-                          '${s.languageLabel} ${languageNames[store.settings.language] ?? s.languageSystem}',
-                      onTap: () => _chooseLanguage(context),
-                      excludeSemantics: true,
-                      child: FlareListRow(
-                        key: const ValueKey('language-setting'),
-                        leading: const FlareRowIcon(Icons.translate_rounded),
-                        title: s.languageLabel,
-                        meta:
-                            languageNames[store.settings.language] ??
-                            s.languageSystem,
-                        onTap: () => _chooseLanguage(context),
-                      ),
-                    ),
-                    line(
-                      s.appearanceLabel,
-                      Icons.contrast_rounded,
-                      FlareSegmented<String>(
-                        expand: true,
-                        segments: [
-                          ('system', s.themeSystem),
-                          ('dark', s.themeDark),
-                          ('light', s.themeLight),
-                        ],
-                        selected: store.settings.themeMode,
-                        onChanged: (value) =>
-                            _result(store.updateSettings(themeMode: value)),
-                      ),
-                    ),
-                    line(
-                      s.actorBodyLabel,
-                      Icons.accessibility_new_rounded,
-                      ActorBodySelector(
-                        value: store.settings.actorBody,
-                        onChanged: (value) =>
-                            _result(store.updateSettings(actorBody: value)),
-                      ),
-                    ),
-                  ],
+                Semantics(
+                  container: true,
+                  button: true,
+                  label:
+                      '${s.languageLabel} ${languageNames[store.settings.language] ?? s.languageSystem}',
+                  onTap: () => _chooseLanguage(context),
+                  excludeSemantics: true,
+                  child: FlareListRow(
+                    key: const ValueKey('language-setting'),
+                    leading: const FlareRowIcon(Icons.translate_rounded),
+                    title: s.languageLabel,
+                    meta:
+                        languageNames[store.settings.language] ??
+                        s.languageSystem,
+                    onTap: () => _chooseLanguage(context),
+                  ),
                 ),
-                FlareSection(s.playbackGroup),
-                FlareListGroup(
-                  children: [
-                    line(
-                      s.speedLabel,
-                      Icons.speed_rounded,
-                      FlareSegmented<double>(
-                        expand: true,
-                        segments: const [
-                          (.25, '0.25×'),
-                          (.5, '0.5×'),
-                          (1.0, '1×'),
-                        ],
-                        selected: store.settings.speed,
-                        onChanged: (value) {
-                          _scene.setSpeed(value);
-                          unawaited(store.updateSettings(speed: value));
-                        },
-                      ),
-                    ),
-                    line(
-                      s.qualityLabel,
-                      Icons.high_quality_outlined,
-                      FlareSegmented<String>(
-                        expand: true,
-                        segments: [
-                          ('battery', s.battery),
-                          ('balanced', s.balanced),
-                          ('high', s.high),
-                        ],
-                        selected: _quality,
-                        onChanged: (value) {
-                          setState(() => _quality = value);
-                          _scene.setQuality(value);
-                        },
-                      ),
-                    ),
-                  ],
+                line(
+                  s.appearanceLabel,
+                  Icons.contrast_rounded,
+                  FlareSegmented<String>(
+                    expand: true,
+                    height: 32,
+                    radius: 9,
+                    inset: 2,
+                    ios: true,
+                    segments: [
+                      ('system', s.themeSystem),
+                      ('dark', s.themeDark),
+                      ('light', s.themeLight),
+                    ],
+                    selected: store.settings.themeMode,
+                    onChanged: (value) =>
+                        _result(store.updateSettings(themeMode: value)),
+                  ),
                 ),
-                FlareSection(s.otherGroup),
-                FlareListGroup(
-                  children: [
-                    FlareListRow(
-                      leading: const FlareRowIcon(
-                        Icons.health_and_safety_outlined,
-                      ),
-                      title: s.safety,
-                      subtitle: s.safetyHint,
-                      onTap: () => showSafetySheet(context),
-                    ),
-                    if (coach.configured && aiCoachAvailable(context))
-                      _aiUsageRow(),
-                    FlareListRow(
-                      leading: const FlareRowIcon(Icons.info_outline_rounded),
-                      title: s.aboutFlare,
-                      subtitle: s.aboutHint,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => Scaffold(
-                            body: SafeArea(child: _aboutPage(context)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                line(
+                  s.actorBodyLabel,
+                  Icons.accessibility_new_rounded,
+                  const ActorBodySelector.fixedV5(),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: FlareGeometry.groupGap),
+            FlareListGroup(
+              children: [
+                line(
+                  s.speedLabel,
+                  Icons.speed_rounded,
+                  FlareSegmented<double>(
+                    expand: true,
+                    height: 32,
+                    radius: 9,
+                    inset: 2,
+                    ios: true,
+                    segments: const [(.25, '0.25×'), (.5, '0.5×'), (1.0, '1×')],
+                    selected: store.settings.speed,
+                    onChanged: (value) {
+                      _scene.setSpeed(value);
+                      unawaited(store.updateSettings(speed: value));
+                    },
+                  ),
+                ),
+                line(
+                  s.qualityLabel,
+                  Icons.high_quality_outlined,
+                  FlareSegmented<String>(
+                    expand: true,
+                    height: 32,
+                    radius: 9,
+                    inset: 2,
+                    ios: true,
+                    segments: [
+                      ('battery', s.battery),
+                      ('balanced', s.balanced),
+                      ('high', s.high),
+                    ],
+                    selected: _quality,
+                    onChanged: (value) {
+                      setState(() => _quality = value);
+                      _scene.setQuality(value);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: FlareGeometry.groupGap),
+            if (widget.membership case final membership?)
+              _membershipSettings(membership),
+            FlareListGroup(
+              children: [
+                FlareListRow(
+                  leading: const FlareRowIcon(Icons.health_and_safety_outlined),
+                  title: s.safety,
+                  subtitle: s.safetyHint,
+                  onTap: () => showSafetySheet(context),
+                ),
+                FlareListRow(
+                  leading: const FlareRowIcon(Icons.info_outline_rounded),
+                  title: s.aboutFlare,
+                  subtitle: s.aboutHint,
+                  onTap: () => setState(() => _about = true),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
+  Widget _membershipSettings(FlareMembership membership) => ListenableBuilder(
+    listenable: membership,
+    builder: (context, _) {
+      final s = context.strings;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: FlareGeometry.groupGap),
+        child: FlareListGroup(
+          children: [
+            FlareListRow(
+              key: const ValueKey('settings-membership'),
+              leading: const FlareRowIcon(Icons.workspace_premium_outlined),
+              title: s.premiumStatus,
+              subtitle: membership.isPremium
+                  ? s.premiumActive
+                  : s.premiumInactive,
+              onTap: membership.isPremium ? null : _openMembership,
+            ),
+            FlareListRow(
+              key: const ValueKey('settings-restore-purchases'),
+              leading: const FlareRowIcon(Icons.restore_rounded),
+              title: s.premiumRestore,
+              onTap: membership.busy
+                  ? null
+                  : () async {
+                      final restored = await restoreFlareSubscription(
+                        context,
+                        membership,
+                      );
+                      if (restored && context.mounted) {
+                        showMembershipMessage(context, s.premiumActive);
+                      }
+                    },
+            ),
+            FlareListRow(
+              key: const ValueKey('settings-manage-subscription'),
+              leading: const FlareRowIcon(Icons.receipt_long_outlined),
+              title: s.premiumManage,
+              onTap: () => manageFlareSubscription(context),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
   /// 设置 → AI 定制用量：本机累计模型调用次数与 token（来自本地 JSONL 记录）。
+  // ignore: unused_element — kept for the disabled AI entry points.
   Widget _aiUsageRow() => FutureBuilder<void>(
     future: _usage.load(),
     builder: (context, snapshot) {
@@ -2077,40 +2727,42 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (context) => SizedBox(
-        height: MediaQuery.sizeOf(context).height * .75,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                s.languageTitle,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+      builder: (context) => RepaintBoundary(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(context).height * .75,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  s.languageTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: ListView(
-                children: [
-                  for (final entry in {
-                    'system': s.languageSystem,
-                    ...languageNames,
-                  }.entries)
-                    ListTile(
-                      key: ValueKey('language-${entry.key}'),
-                      title: Text(entry.value),
-                      trailing: store.settings.language == entry.key
-                          ? const Icon(Icons.check_rounded)
-                          : null,
-                      selected: store.settings.language == entry.key,
-                      onTap: () => Navigator.of(context).pop(entry.key),
-                    ),
-                ],
+              Expanded(
+                child: ListView(
+                  children: [
+                    for (final entry in {
+                      'system': s.languageSystem,
+                      ...languageNames,
+                    }.entries)
+                      ListTile(
+                        key: ValueKey('language-${entry.key}'),
+                        title: Text(entry.value),
+                        trailing: store.settings.language == entry.key
+                            ? const Icon(Icons.check_rounded)
+                            : null,
+                        selected: store.settings.language == entry.key,
+                        onTap: () => Navigator.of(context).pop(entry.key),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -2123,56 +2775,48 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     builder: (context) {
       final s = context.strings;
       Theme.of(context);
-      return ColoredBox(
-        color: FlareColors.background,
-        child: Column(
-          children: [
-            FlareNavBar(
-              title: s.aboutFlare,
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            Expanded(
-              child: ScrollEdge(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                  children: [
-                    BodyText(s.aboutBody),
-                    SectionTitle(s.teachingTitle),
-                    BodyText(s.teachingNote, color: FlareColors.secondary),
-                    const SizedBox(height: 6),
-                    BodyText(s.contentDraftNote, color: FlareColors.secondary),
-                    SectionTitle(s.privacyTitle),
-                    BodyText(s.privacyBody, color: FlareColors.secondary),
-                    SectionTitle(s.creditsTitle),
-                    BodyText(s.creditsBody, color: FlareColors.secondary),
-                    const SizedBox(height: 22),
-                    RowGroup(
-                      children: [
-                        FlareRow(
-                          title: s.exportBackup,
-                          leading: const Icon(Icons.copy_outlined, size: 18),
-                          onTap: () async {
-                            await Clipboard.setData(
-                              ClipboardData(text: _backupJson()),
-                            );
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(s.backupCopied)),
-                            );
-                          },
-                        ),
-                        FlareRow(
-                          title: s.licenses,
-                          leading: const Icon(Icons.article_outlined, size: 18),
-                          onTap: () => showLicensePage(context: context),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+      return FlareNavPage(
+        title: s.aboutFlare,
+        onBack: _back,
+        blurBackdrop: false,
+        body: ScrollEdge(
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 24),
+            children: [
+              BodyText(s.aboutBody),
+              SectionTitle(s.teachingTitle),
+              BodyText(s.teachingNote, color: FlareColors.secondary),
+              const SizedBox(height: 6),
+              BodyText(s.contentDraftNote, color: FlareColors.secondary),
+              SectionTitle(s.privacyTitle),
+              BodyText(s.privacyBody, color: FlareColors.secondary),
+              SectionTitle(s.creditsTitle),
+              BodyText(s.creditsBody, color: FlareColors.secondary),
+              const SizedBox(height: 22),
+              RowGroup(
+                children: [
+                  FlareRow(
+                    title: s.exportBackup,
+                    leading: const Icon(Icons.copy_outlined, size: 18),
+                    onTap: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: _backupJson()),
+                      );
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(s.backupCopied)));
+                    },
+                  ),
+                  FlareRow(
+                    title: s.licenses,
+                    leading: const Icon(Icons.article_outlined, size: 18),
+                    onTap: () => showLicensePage(context: context),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     },
@@ -2192,241 +2836,6 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     'gateReports': store.gateReports,
     'assessmentGrades': store.assessmentGrades,
   });
-}
-
-class _MuscleKnowledgeBlock extends StatefulWidget {
-  const _MuscleKnowledgeBlock({super.key, required this.text});
-
-  final String text;
-
-  @override
-  State<_MuscleKnowledgeBlock> createState() => _MuscleKnowledgeBlockState();
-}
-
-class _MuscleKnowledgeBlockState extends State<_MuscleKnowledgeBlock> {
-  static const _padding = EdgeInsets.symmetric(horizontal: 10, vertical: 4);
-  final _scroll = ScrollController();
-  ScrollController? _readerScroll;
-  final _portal = OverlayPortalController();
-  final _anchorKey = GlobalKey();
-  Rect? _previewRect, _readerRect;
-  TextStyle? _flightStyle;
-  bool _expanded = false;
-
-  TextStyle _style(BuildContext context) =>
-      DefaultTextStyle.of(context).style.merge(
-        TextStyle(fontSize: 14, height: 1.55, color: FlareColors.secondary),
-      );
-
-  double _textHeight(BuildContext context, double width) {
-    final painter = TextPainter(
-      text: TextSpan(text: widget.text, style: _style(context)),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: width.clamp(1, double.infinity));
-    final height = painter.height;
-    painter.dispose();
-    return height;
-  }
-
-  void _open() {
-    if (_portal.isShowing) return;
-    final anchor = _anchorKey.currentContext?.findRenderObject();
-    final overlay = Overlay.of(context).context.findRenderObject();
-    if (anchor is! RenderBox || overlay is! RenderBox) return;
-    final origin = overlay.localToGlobal(Offset.zero);
-    final rect = (anchor.localToGlobal(Offset.zero) - origin) & anchor.size;
-    final topLimit = MediaQuery.viewPaddingOf(context).top + 108;
-    final available = (rect.bottom - topLimit).clamp(
-      rect.height,
-      double.infinity,
-    );
-    // Both cards share the exact text width, font, border and inner padding.
-    // A small rounding allowance prevents a complete paragraph losing 1px.
-    final height = (_textHeight(context, rect.width - 21).ceilToDouble() + 10)
-        .clamp(rect.height, available);
-    _readerScroll?.dispose();
-    _readerScroll = ScrollController(
-      initialScrollOffset: _scroll.hasClients ? _scroll.offset : 0,
-      keepScrollOffset: false,
-    );
-    setState(() {
-      _flightStyle = _style(context);
-      _previewRect = rect;
-      _readerRect = Rect.fromLTRB(
-        rect.left,
-        rect.bottom - height,
-        rect.right,
-        rect.bottom,
-      );
-      _expanded = true;
-    });
-    _portal.show();
-    FlareHaptics.selection();
-  }
-
-  void _close() {
-    if (!_portal.isShowing || !_expanded) return;
-    setState(() => _expanded = false);
-  }
-
-  void _finishClose() {
-    if (!mounted || _expanded || !_portal.isShowing) return;
-    // Hand back the visible text position before revealing the original card.
-    // Finish on the actual last animation frame rather than a separate timer.
-    if (_scroll.hasClients && (_readerScroll?.hasClients ?? false)) {
-      _scroll.jumpTo(
-        _readerScroll!.offset.clamp(0, _scroll.position.maxScrollExtent),
-      );
-    }
-    _portal.hide();
-    setState(() {});
-  }
-
-  ScrollBehavior _scrollBehavior(BuildContext context) =>
-      ScrollConfiguration.of(context).copyWith(
-        scrollbars: false,
-        dragDevices: {
-          PointerDeviceKind.touch,
-          PointerDeviceKind.mouse,
-          PointerDeviceKind.stylus,
-          PointerDeviceKind.invertedStylus,
-          PointerDeviceKind.trackpad,
-        },
-      );
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    _readerScroll?.dispose();
-    super.dispose();
-  }
-
-  Widget _card(
-    BuildContext context, {
-    required bool reader,
-    double lift = 0,
-    bool canOpen = true,
-  }) => GestureDetector(
-    key: ValueKey(
-      reader ? 'muscle-knowledge-reader-toggle' : 'muscle-knowledge-toggle',
-    ),
-    behavior: HitTestBehavior.opaque,
-    onTap: reader ? _close : (canOpen ? _open : null),
-    child: Container(
-      key: reader
-          ? const ValueKey('muscle-knowledge-expanded-card')
-          : _anchorKey,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: FlareStaticSurface.colorOf(context),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: FlareColors.hairline, width: .5),
-        boxShadow: lift <= 0 || !FlareColors.palette.isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: const Color(0x26000000).withValues(alpha: .15 * lift),
-                  blurRadius: 24 * lift,
-                  offset: Offset(0, 6 * lift),
-                ),
-              ],
-      ),
-      padding: _padding,
-      child: ScrollConfiguration(
-        behavior: _scrollBehavior(context),
-        child: SingleChildScrollView(
-          key: ValueKey(
-            reader ? 'muscle-knowledge-reader' : 'muscle-detail-content',
-          ),
-          controller: reader ? _readerScroll : _scroll,
-          primary: false,
-          child: Text(
-            widget.text,
-            key: ValueKey(
-              reader ? 'muscle-knowledge-expanded' : 'muscle-knowledge',
-            ),
-            style: reader ? _flightStyle! : _style(context),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget _reader(BuildContext context) => Stack(
-    children: [
-      Positioned(
-        left: 0,
-        right: 0,
-        top: 0,
-        height: _previewRect!.bottom,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: _close,
-          child: const ColoredBox(color: Colors.transparent),
-        ),
-      ),
-      TweenAnimationBuilder<Rect?>(
-        tween: RectTween(
-          begin: _previewRect,
-          end: _expanded ? _readerRect : _previewRect,
-        ),
-        duration: FlareMotion.of(
-          context,
-          _expanded ? FlareMotion.expand : FlareMotion.collapse,
-        ),
-        curve: FlareMotion.settle,
-        onEnd: _finishClose,
-        builder: (context, rect, _) {
-          final growth = _readerRect!.height - _previewRect!.height;
-          final lift = growth <= 0
-              ? 0.0
-              : ((rect!.height - _previewRect!.height) / growth).clamp(
-                  0.0,
-                  1.0,
-                );
-          return Positioned.fromRect(
-            rect: rect!,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Semantics(
-                button: true,
-                hint: context.strings.close,
-                child: _card(context, reader: true, lift: lift),
-              ),
-            ),
-          );
-        },
-      ),
-    ],
-  );
-
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final overflow =
-          _textHeight(context, constraints.maxWidth - 21) >
-          constraints.maxHeight - 9;
-      return OverlayPortal(
-        controller: _portal,
-        overlayChildBuilder: _reader,
-        child: ExcludeSemantics(
-          excluding: _portal.isShowing,
-          child: Opacity(
-            opacity: _portal.isShowing ? 0 : 1,
-            child: Semantics(
-              button: overflow,
-              hint: overflow ? context.strings.more : null,
-              child: IgnorePointer(
-                ignoring: !overflow,
-                child: _card(context, reader: false, canOpen: overflow),
-              ),
-            ),
-          ),
-        ),
-      );
-    },
-  );
 }
 
 /// Plain two-line title: "Flare" 17 semibold over the subtitle in 12 grey
@@ -2569,11 +2978,17 @@ class SceneRevealLayer extends StatefulWidget {
 class _SceneRevealLayerState extends State<SceneRevealLayer>
     with SingleTickerProviderStateMixin {
   static const _markEnd = 120 / 340;
-  late final AnimationController _reveal = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 340),
-    value: widget.presented && widget.error == null ? 1 : 0,
-  );
+  late final AnimationController _reveal;
+
+  @override
+  void initState() {
+    super.initState();
+    _reveal = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 340),
+      value: widget.presented && widget.error == null ? 1 : 0,
+    );
+  }
 
   @override
   void didUpdateWidget(SceneRevealLayer oldWidget) {
@@ -2658,7 +3073,7 @@ class _SceneRevealLayerState extends State<SceneRevealLayer>
   }
 }
 
-/// Placeholder while the 3D scene boots: the baked R17 action silhouette
+/// Placeholder while the 3D scene boots: the V5 action silhouette
 /// with one quiet line. The lightweight asset needs no live model to play.
 /// Flutter owns the hosted scene's loading UI. The scene only draws its own
 /// loader when opened on its own, avoiding two marks during initialization.
@@ -2790,15 +3205,33 @@ class _SceneError extends StatelessWidget {
 }
 
 /// An open set editor: an existing set, or a new one seeded with drills.
+class _FlarePlanTarget {
+  _FlarePlanTarget.angle(this.phaseSource)
+    : groupId = null,
+      supplemental = null,
+      returnToDrill = null;
+  _FlarePlanTarget.muscle(this.groupId)
+    : phaseSource = null,
+      supplemental = null,
+      returnToDrill = null;
+  _FlarePlanTarget.supplemental(this.supplemental, this.returnToDrill)
+    : phaseSource = null,
+      groupId = null;
+
+  final int? phaseSource;
+  final String? groupId;
+  final FlarePlan? supplemental;
+  final Drill? returnToDrill;
+  int selectedTier = 1;
+}
+
 class _RoutineEdit {
   const _RoutineEdit({
     this.routineId,
-    this.seedName,
     this.seedIds = const [],
     this.fromDrill = false,
   });
   final String? routineId;
-  final String? seedName;
   final List<String> seedIds;
 
   /// Started from a drill page: saving returns there instead of the set.

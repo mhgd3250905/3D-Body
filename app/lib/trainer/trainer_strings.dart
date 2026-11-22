@@ -213,6 +213,102 @@ List<String> _for(AppLocalizations s) =>
 String trainerLoadFailed(AppLocalizations s) => _for(s)[9];
 String trainerMoveUnavailable(AppLocalizations s) => _for(s)[10];
 
+// Rest feedback belongs to the player and uses the app's locale.
+const _restFeedback =
+    <String, (String, String, String, String, String, String)>{
+      'zh': ('刚才感觉怎么样？', '选择刚才的感受', '已选择', '舒服', '有点紧', '疼'),
+      'zh_Hant': ('剛才感覺如何？', '選擇剛才的感受', '已選擇', '舒服', '有點緊', '痛'),
+      'en': (
+        'How did that feel?',
+        'Choose how the last set felt',
+        'Selected',
+        'Good',
+        'Tight',
+        'Pain',
+      ),
+      'es': (
+        '¿Cómo te sentiste?',
+        'Elige cómo sentiste la serie',
+        'Seleccionado',
+        'Bien',
+        'Tensión',
+        'Dolor',
+      ),
+      'pt': (
+        'Como te sentiste?',
+        'Escolhe como foi a série',
+        'Selecionado',
+        'Bem',
+        'Tensão',
+        'Dor',
+      ),
+      'fr': (
+        'Comment te sens-tu ?',
+        'Évalue ta dernière série',
+        'Sélectionné',
+        'Bien',
+        'Tension',
+        'Douleur',
+      ),
+      'de': (
+        'Wie hat es sich angefühlt?',
+        'Bewerte den letzten Satz',
+        'Ausgewählt',
+        'Gut',
+        'Spannung',
+        'Schmerz',
+      ),
+      'it': (
+        'Come ti sei sentito?',
+        'Valuta l’ultima serie',
+        'Selezionato',
+        'Bene',
+        'Tensione',
+        'Dolore',
+      ),
+      'ru': (
+        'Как ощущения?',
+        'Оцени последний подход',
+        'Выбрано',
+        'Хорошо',
+        'Напряжение',
+        'Боль',
+      ),
+      'ja': ('どんな感じでしたか？', '直前のセットの感覚を選択', '選択済み', '快適', '張り', '痛み'),
+      'ko': ('어떤 느낌이었나요?', '직전 세트의 느낌을 선택하세요', '선택됨', '편안함', '뻐근함', '통증'),
+      'ar': (
+        'كيف شعرت؟',
+        'اختر شعورك في المجموعة الأخيرة',
+        'تم الاختيار',
+        'جيد',
+        'شدّ',
+        'ألم',
+      ),
+      'hi': (
+        'कैसा लगा?',
+        'पिछले सेट का अनुभव चुनें',
+        'चुन लिया',
+        'अच्छा',
+        'खिंचाव',
+        'दर्द',
+      ),
+      'id': (
+        'Bagaimana rasanya?',
+        'Pilih rasanya pada set terakhir',
+        'Dipilih',
+        'Nyaman',
+        'Tegang',
+        'Nyeri',
+      ),
+    };
+
+(String, String, String, String, String, String) trainerRestFeedbackLabels(
+  AppLocalizations s,
+) =>
+    _restFeedback[s.localeName] ??
+    _restFeedback[s.localeName.split('_').first] ??
+    _restFeedback['en']!;
+
 const _completeTimed = <String, String>{
   'zh': '提前完成本段',
   'zh_Hant': '提前完成本段',
@@ -304,8 +400,56 @@ List<String> trainerWristDirections(AppLocalizations s) =>
     _wristDirections[s.localeName.split('_').first] ??
     _wristDirections['en']!;
 
-sdk.TrainerStrings trainerStrings(AppLocalizations s) {
+const _timedWristCue = <String, String>{
+  'zh': '每个手位轻摇约 15 秒',
+  'zh_Hant': '每個手位輕搖約 15 秒',
+  'en': 'Rock gently for about 15 seconds in each position',
+  'es': 'Balancéate suavemente unos 15 segundos en cada posición',
+  'pt': 'Balance-se suavemente por cerca de 15 segundos em cada posição',
+  'fr': 'Balancez-vous doucement environ 15 secondes dans chaque position',
+  'de': 'In jeder Handposition etwa 15 Sekunden sanft vor und zurück wippen',
+  'it': 'Dondola delicatamente per circa 15 secondi in ogni posizione',
+  'ru': 'Мягко покачивайтесь около 15 секунд в каждом положении рук',
+  'ja': '手の向きごとに約15秒、やさしく体を揺らす',
+  'ko': '손 위치마다 약 15초 동안 가볍게 몸을 흔드세요',
+  'ar': 'تأرجح برفق لنحو ١٥ ثانية في كل وضعية لليدين',
+  'hi': 'हाथों की हर स्थिति में लगभग 15 सेकंड हल्के से झूलें',
+  'id': 'Goyangkan tubuh perlahan sekitar 15 detik di setiap posisi',
+};
+
+String trainerTimedWristCue(AppLocalizations s) =>
+    _timedWristCue[s.localeName] ??
+    _timedWristCue[s.localeName.split('_').first] ??
+    _timedWristCue['en']!;
+
+String? _completionTitle(AppLocalizations s, sdk.SessionResult? result) {
+  if (result == null ||
+      result.completedExercises == 0 ||
+      result.completedExercises >= result.totalExercises) {
+    return null;
+  }
+  final progress = '${result.completedExercises}/${result.totalExercises}';
+  // The V1 heading takes host copy, but its subtitle is the SDK plan name.
+  // Keep the achievement immediately below the heading in the same slot.
+  return switch (s.localeName) {
+    'zh' => '今天先练到这里\n完成 $progress 个动作',
+    'zh_Hant' => '今天先練到這裡\n完成 $progress 個動作',
+    _ => '${s.planRunEnded}\n$progress ${_for(s)[8]}',
+  };
+}
+
+sdk.TrainerStrings trainerStrings(
+  AppLocalizations s, {
+  sdk.SessionResult? result,
+  String? prepFirst,
+}) {
   final w = _for(s);
+  final (_, _, recorded, comfortable, tight, pain) = trainerRestFeedbackLabels(
+    s,
+  );
+  final playerCopy = s.localeName.startsWith('zh')
+      ? sdk.TrainerStrings.zh()
+      : sdk.TrainerStrings.en();
   return sdk.TrainerStrings(
     extendRest: s.addRest,
     completeTimedPhase:
@@ -314,7 +458,7 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
         _completeTimed['en']!,
     soundOn: s.trainerSoundOn,
     soundOff: s.trainerSoundOff,
-    prepFirst: '${s.countdown} · ${w[0]}',
+    prepFirst: prepFirst ?? '${s.countdown} · ${w[0]}',
     restNext: '${s.rest} · ${s.planNext}',
     restBetweenSets: s.rest,
     roundRest: '${s.completed} · ${s.rest}',
@@ -333,6 +477,15 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     paused: s.paused,
     next: s.planNext,
     nextUp: s.planUpNext,
+    upcomingLabel: s.planUpNext,
+    restLabel: s.rest,
+    demonstration: s.drillDemo,
+    startTraining: s.startTimer,
+    playerStart: s.start,
+    howTo: s.cues,
+    instructionsLabel: s.cues,
+    precautions: s.safety,
+    closeInstructions: playerCopy.closeInstructions,
     discomfort: w[3],
     discomfortTitle: w[4],
     discomfortBody: '${s.safetyRule2}. ${s.safetyRule2Note}.',
@@ -341,6 +494,8 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     discomfortEnd: s.endSessionConfirm,
     close: s.close,
     closeTitle: s.endSessionTitle,
+    closeSheetTitle: s.endSessionTitle,
+    closeSheetProgress: playerCopy.closeSheetProgress,
     closeBody: s.endSessionBody,
     closeConfirm: s.endSessionConfirm,
     closeCancel: s.keepTraining,
@@ -350,12 +505,34 @@ sdk.TrainerStrings trainerStrings(AppLocalizations s) {
     resume: s.resume,
     doneFull: s.planAllDone,
     donePartial: s.planRunEnded,
+    completionTitle: _completionTitle(s, result),
     minutes: w[7],
     exercisesDone: w[8],
     finish: s.done,
+    feelingPrompt: playerCopy.feelingPrompt,
+    feelingLabels: playerCopy.feelingLabels,
+    restFeedbackComfortable: comfortable,
+    restFeedbackTight: tight,
+    restFeedbackPain: pain,
+    restFeedbackRecorded: (label) => '$recorded · $label',
+    restFeedbackEdit: s.planEdit,
+    actualDuration: playerCopy.actualDuration,
+    totalReps: playerCopy.totalReps,
+    totalWorkTime: playerCopy.totalWorkTime,
+    streak: s.streak,
+    trainedAreasLabel: playerCopy.trainedAreasLabel,
+    skipped: playerCopy.skipped,
+    replay: playerCopy.replay,
+    durationLabel: playerCopy.durationLabel,
     saveFailed: s.saveFailed,
     saveRetry: s.retry,
     mediaUnavailable: s.demoFailed,
+    mediaDownloading: playerCopy.mediaDownloading,
+    mediaDownloadingSemantics: playerCopy.mediaDownloadingSemantics,
+    mediaDownloadFailed: playerCopy.mediaDownloadFailed,
+    mediaDownloadFailedSemantics: playerCopy.mediaDownloadFailedSemantics,
+    mediaDownloadVerifying: playerCopy.mediaDownloadVerifying,
+    mediaDownloadReady: playerCopy.mediaDownloadReady,
     notificationChannel: s.library,
     notificationChannelDescription: s.library,
     notificationTitle: s.appName,

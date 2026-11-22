@@ -1,10 +1,10 @@
 import 'package:flare/control/learning_store.dart';
-import 'package:flare/data/catalog.dart';
 import 'package:flare/data/content_translations.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/l10n/languages.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -21,14 +21,6 @@ const _fontAssets = <String, String>{
   'NotoSansDevanagari': 'assets/fonts/NotoSansDevanagari.ttf',
 };
 
-const _buttonLabelStyle = TextStyle(
-  fontFamily: 'FlareSans',
-  fontFamilyFallback: ['NotoSansKR', 'NotoSansArabic', 'NotoSansDevanagari'],
-  fontSize: 16,
-  fontWeight: FontWeight.w700,
-  letterSpacing: .5,
-);
-
 const _sceneLabelStyle = TextStyle(
   fontFamily: 'FlareSans',
   fontFamilyFallback: ['NotoSansKR', 'NotoSansArabic', 'NotoSansDevanagari'],
@@ -38,12 +30,12 @@ const _sceneLabelStyle = TextStyle(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final source = loadCatalogFixture();
+  final source = loadCatalogFixture(includeFlarePlans: true);
 
   tearDown(() => FlareColors.use(Brightness.dark));
 
   testWidgets(
-    'compact muscle labels, home hint, and detail actions fit across locales and phone sizes',
+    'compact muscle labels, home hint, and muscle plans fit across locales and phone sizes',
     (tester) async {
       await _precacheFonts(tester);
       final translations = (await tester.runAsync(
@@ -108,7 +100,7 @@ void main() {
           final shellContext = tester.element(find.byType(FlareShell));
           final strings = AppLocalizations.of(shellContext);
           final direction = Directionality.of(shellContext);
-          final homeHint = find.byKey(const ValueKey('home-muscle-hint'));
+          final homeHint = find.byKey(const ValueKey('home-go-to-training'));
           expect(homeHint, findsOneWidget, reason: '$language at $size');
           final hintRect = tester.getRect(homeHint);
           _recordFailure(
@@ -125,6 +117,7 @@ void main() {
           );
           expect(hintText, findsOneWidget);
           final hintWidget = tester.widget<Text>(hintText);
+          expect(hintWidget.data, strings.homeGoToTraining);
           final hintParagraph = tester.renderObject<RenderParagraph>(hintText);
           final hintFits =
               hintWidget.maxLines != null &&
@@ -173,21 +166,7 @@ void main() {
             );
           }
 
-          MuscleGroup? widestActionGroup;
-          var widestAction = 0.0;
           for (final group in catalog.groups) {
-            final painter = _textPainter(
-              strings.trainGroup(group.shortLabel),
-              style: _buttonLabelStyle,
-              locale: locale,
-              direction: direction,
-            )..layout();
-            if (painter.width > widestAction) {
-              widestAction = painter.width;
-              widestActionGroup = group;
-            }
-            painter.dispose();
-
             _recordTextFit(
               failures,
               group.shortLabel,
@@ -195,127 +174,34 @@ void main() {
               locale: locale,
               direction: direction,
               maxWidth: 150,
-              reason: '$language ${group.id} scene label at $size',
+              reason: '$language scene label at $size',
             );
           }
-          final detailGroup = widestActionGroup!;
 
+          final group = catalog.groups.firstWhere(
+            (group) => group.id == 'deltoids',
+          );
           scene.receiveEvent({
             'source': 'flare-scene',
             'type': 'select',
             'time': 2.375,
-            'groupId': detailGroup.id,
+            'groupId': group.id,
           });
           await _pumpTransitions(tester);
 
-          final title = find.byKey(const ValueKey('muscle-panel-title'));
-          expect(title, findsOneWidget, reason: '$language detail at $size');
-          final titleParagraph = find.descendant(
-            of: title,
-            matching: find.byType(RichText),
+          final plan = find.byType(FlarePlanDetailPage);
+          expect(plan, findsOneWidget, reason: '$language plan at $size');
+          expect(
+            tester.widget<FlarePlanDetailPage>(plan).title,
+            group.shortLabel,
           );
-          expect(titleParagraph, findsOneWidget);
-          _recordFailure(
-            failures,
-            !tester
-                .renderObject<RenderParagraph>(titleParagraph)
-                .didExceedMaxLines,
-            '$language detail title must not be ellipsized at $size',
-          );
-          final knowledge = find.byKey(const ValueKey('muscle-knowledge'));
-          expect(knowledge, findsOneWidget);
-          final knowledgePosition = Scrollable.of(
-            tester.element(knowledge),
-          ).position;
-          _recordFailure(
-            failures,
-            knowledgePosition.viewportDimension >= 40,
-            '$language detail needs a 40px knowledge viewport at $size; got '
-            '${knowledgePosition.viewportDimension}px',
-          );
-
-          final action = find.byKey(const ValueKey('train-group'));
-          expect(action, findsOneWidget);
-          final actionRect = tester.getRect(action);
-          final preview = find.byKey(const ValueKey('muscle-knowledge-toggle'));
-          final previewTap = tester.widget<GestureDetector>(preview).onTap;
-          if (previewTap != null) {
-            await tester.pumpAndSettle();
-            await tester.tap(preview);
-            await tester.pumpAndSettle();
-            final reader = find.byKey(
-              const ValueKey('muscle-knowledge-expanded'),
-            );
-            expect(
-              reader,
-              findsOneWidget,
-              reason: '$language expanded at $size',
-            );
-            final readerCard = tester.getRect(
-              find.byKey(const ValueKey('muscle-knowledge-expanded-card')),
-            );
-            _recordFailure(
-              failures,
-              readerCard.left >= 0 &&
-                  readerCard.right <= size.width &&
-                  readerCard.top >= 0,
-              '$language expanded reader must stay in the screen at $size',
-            );
-            expect(tester.getRect(action), actionRect);
-            expect(
-              find.ancestor(of: reader, matching: find.byType(Scrollbar)),
-              findsNothing,
-            );
-            await tester.tap(
-              find.byKey(const ValueKey('muscle-knowledge-reader-toggle')),
-            );
-            await tester.pumpAndSettle();
-            expect(reader, findsNothing);
-          }
-
-          final actionText = find.descendant(
-            of: action,
-            matching: find.byType(Text),
-          );
-          expect(actionText, findsOneWidget);
-          final renderedAction = tester.widget<Text>(actionText);
-          _recordFailure(
-            failures,
-            renderedAction.data == strings.trainGroup(detailGroup.shortLabel),
-            '$language train action should display the short label at $size',
-          );
-          _recordFailure(
-            failures,
-            renderedAction.semanticsLabel ==
-                strings.trainGroup(detailGroup.label),
-            '$language train action should retain its full accessible name',
-          );
-          _recordFailure(
-            failures,
-            renderedAction.maxLines == 1 && renderedAction.overflow == null,
-            '$language train action must scale without ellipsis at $size',
-          );
-          final actionParagraph = find.descendant(
-            of: actionText,
-            matching: find.byType(RichText),
-          );
-          _recordFailure(
-            failures,
-            !tester
-                .renderObject<RenderParagraph>(actionParagraph)
-                .didExceedMaxLines,
-            '$language compact training action must not be truncated at $size',
-          );
-          _recordFailure(
-            failures,
-            find
-                    .ancestor(of: actionText, matching: find.byType(FittedBox))
-                    .evaluate()
-                    .length ==
-                1,
-            'Long button labels must scale down instead of clipping.',
-          );
-          expect(action.hitTestable(), findsOneWidget);
+          expect(scene.time, 2.375);
+          expect(scene.playing, isFalse);
+          await tester.binding.handlePopRoute();
+          await _pumpTransitions(tester);
+          expect(plan, findsNothing);
+          expect(scene.time, 2.375);
+          expect(scene.playing, isFalse);
           final flutterError = tester.takeException();
           if (flutterError != null) {
             failures.add('$language at $size raised $flutterError');

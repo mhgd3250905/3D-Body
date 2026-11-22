@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'motion.dart';
 import 'theme.dart';
 
-/// A small, offline render of the v42 / R17 seam-elbow repair loop. It plays before the
+/// A small, offline render of the V5 straight-leg Flare cycle. It plays before the
 /// WebView or model is ready, without starting a second 3D renderer.
 class FlareLoadingSilhouette extends StatelessWidget {
   const FlareLoadingSilhouette({
@@ -15,8 +15,8 @@ class FlareLoadingSilhouette extends StatelessWidget {
   final double size;
   final bool animate;
 
-  static const animationAsset = 'assets/brand/flare-loading-v42-r17.webp';
-  static const stillAsset = 'assets/brand/flare-loading-v42-r17-still.webp';
+  static const animationAsset = 'assets/public_posters/flare-v5-loading.webp';
+  static const stillAsset = 'assets/public_posters/flare-v5-loading-still.webp';
 
   @override
   Widget build(BuildContext context) {

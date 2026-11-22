@@ -1,10 +1,28 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'scene_hub_camera.dart';
+
 typedef SceneCommandSink =
     FutureOr<void> Function(Map<String, Object?> command);
+
+/// Training frame and optional scroll clipping edges in canvas coordinates.
+typedef TrainingViewport = ({
+  double top,
+  double height,
+  double? clipTop,
+  double? clipBottom,
+});
+
+Map<String, double?> _trainingViewportFields(TrainingViewport viewport) => {
+  'viewportTop': viewport.top,
+  'viewportHeight': viewport.height,
+  'viewportClipTop': viewport.clipTop,
+  'viewportClipBottom': viewport.clipBottom,
+};
 
 /// Shared state and commands for the bundled Three.js scene.
 /// The scene owns the animation clock; Flutter never advances it independently.
@@ -16,8 +34,17 @@ class SceneController extends ChangeNotifier {
   bool _dispatching = false;
   bool _disposed = false;
   int _connection = 0;
+  Map<String, Object?>? _trainingHubCommand;
+  double _trainingHubYaw = 0;
+  Completer<void>? _trainingFlight;
+  VoidCallback? _onTrainingFlightPrepared;
+  int _trainingFlightId = 0;
+  Completer<Uint8List?>? _trainingCapture;
+  int _trainingCaptureId = 0;
 
   double _time = 0;
+  final _playhead = ValueNotifier<double>(0);
+  int _clockRevision = 0;
   double _period = 9;
   double _speed = 0.5;
   bool _playing = false;
@@ -27,8 +54,6 @@ class SceneController extends ChangeNotifier {
   int? _presentationRequest;
   int _phase = 9;
   String? _selected;
-  String? _detail;
-  String _detailModel = 'motion';
 
   /// The platform reclaimed the WebView's content process (iOS memory
   /// pressure). The host may restart the scene without asking the user.
@@ -38,6 +63,7 @@ class SceneController extends ChangeNotifier {
   int _selectionGeneration = 0;
 
   double get time => _time;
+  ValueListenable<double> get playhead => _playhead;
   double get period => _period;
   double get speed => _speed;
   bool get playing => _playing;
@@ -47,12 +73,11 @@ class SceneController extends ChangeNotifier {
   bool get presented => _presented;
   int get phase => _phase;
   String? get selected => _selected;
-  String? get detail => _detail;
-  String get detailModel => _detailModel;
   String? get errorCode => _errorCode;
 
   /// Advances only for an actual scene hit, never a command acknowledgement.
   int get selectionGeneration => _selectionGeneration;
+  double get trainingHubYaw => _trainingHubYaw;
 
   /// Replacing a view never sends its queued commands to the previous view.
   void attachCommandSink(SceneCommandSink sink) {
@@ -79,10 +104,9 @@ class SceneController extends ChangeNotifier {
   void setTime(double value) {
     if (!value.isFinite || _disposed) return;
     _time = value.clamp(0, _period).toDouble();
+    _playhead.value = _time;
     _playing = false;
-    _detail = null;
-    _resetDetailModel();
-    command({'type': 'seek', 'time': _time});
+    command({'type': 'seek', 'time': _time, 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
@@ -90,16 +114,14 @@ class SceneController extends ChangeNotifier {
     if (_disposed) return;
     _playing = true;
     _selected = null;
-    _detail = null;
-    _resetDetailModel();
-    command({'type': 'play'});
+    command({'type': 'play', 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
   void pause() {
     if (_disposed) return;
     _playing = false;
-    command({'type': 'pause'});
+    command({'type': 'pause', 'clockRevision': ++_clockRevision});
     notifyListeners();
   }
 
@@ -110,53 +132,176 @@ class SceneController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Keep the selected frames together when the live view enters the training
+  /// hub or is recovered after a WebView process restart.
+  void configureTrainingHub({
+    required int phaseSource,
+    required double phaseTime,
+    required String muscleId,
+    required bool showMuscles,
+    bool focusMuscle = false,
+    bool animate = true,
+    bool scrubbing = false,
+    bool showCallouts = true,
+    TrainingViewport? viewport,
+  }) {
+    final muscle = SceneHubCamera.muscle(muscleId, focused: focusMuscle);
+    if (_disposed ||
+        phaseSource < 9 ||
+        phaseSource > 16 ||
+        muscle == null ||
+        !phaseTime.isFinite) {
+      return;
+    }
+    final configuration = <String, Object?>{
+      'type': 'hub_scene',
+      'phaseSource': phaseSource,
+      'phaseTime': phaseTime,
+      'angleYaw': _trainingHubYaw,
+      'muscleId': muscleId,
+      'showMuscles': showMuscles,
+      'focusMuscle': focusMuscle,
+      'muscleCamera': muscle,
+      'animate': animate,
+      'scrubbing': scrubbing,
+      'showCallouts': showCallouts,
+      if (viewport != null) ..._trainingViewportFields(viewport),
+    };
+    _trainingHubCommand = configuration;
+    _pending.remove('hub_exit');
+    _pending.remove('hub_viewport');
+    command(configuration);
+  }
+
+  /// Move the clip within the shared canvas as the training page scrolls or
+  /// relayouts, without applying a new pose or replaying its labels.
+  void updateTrainingHubViewport(TrainingViewport viewport) {
+    final hub = _trainingHubCommand;
+    if (hub == null) return;
+    final fields = _trainingViewportFields(viewport);
+    if (fields.entries.every((field) => hub[field.key] == field.value)) return;
+    final updated = {...hub, ...fields};
+    _trainingHubCommand = updated;
+    if (_pending.containsKey('hub_scene')) {
+      _pending['hub_scene'] = Map<String, Object?>.unmodifiable(updated);
+    } else {
+      command({'type': 'hub_viewport', ...fields});
+    }
+  }
+
+  void leaveTrainingHub() {
+    _trainingHubYaw = 0;
+    if (_trainingHubCommand == null) return;
+    _trainingHubCommand = null;
+    _pending.remove('hub_scene');
+    _pending.remove('hub_viewport');
+    _pending.remove('hub_angle');
+    command({'type': 'hub_exit'});
+  }
+
+  void rotateTrainingHubAngle(double radians) {
+    if (_disposed || !radians.isFinite || radians == 0) return;
+    // Buffer rotation while the shared renderer is still flying into the hub.
+    _trainingHubYaw = (_trainingHubYaw + radians) % (2 * math.pi);
+    final hub = _trainingHubCommand;
+    if (hub == null) return;
+    final configuration = {...hub, 'angleYaw': _trainingHubYaw};
+    _trainingHubCommand = configuration;
+    if (_pending.containsKey('hub_scene')) {
+      _pending['hub_scene'] = Map<String, Object?>.unmodifiable({
+        ..._pending['hub_scene']!,
+        'angleYaw': _trainingHubYaw,
+      });
+      // A queued configuration already carries the latest angle.
+      _pending.remove('hub_angle');
+      return;
+    }
+    command({'type': 'hub_angle', 'yaw': _trainingHubYaw});
+  }
+
+  Future<void> flyTrainingActor({
+    required double time,
+    required TrainingViewport viewport,
+    required Duration duration,
+    bool returning = false,
+    double yaw = 0,
+    VoidCallback? onPrepared,
+  }) {
+    _trainingFlight?.complete();
+    final flight = _trainingFlight = Completer<void>();
+    _onTrainingFlightPrepared = onPrepared;
+    command({
+      'type': 'hub_flight',
+      'id': ++_trainingFlightId,
+      'time': time,
+      'top': viewport.top,
+      'height': viewport.height,
+      'clipTop': ?viewport.clipTop,
+      'clipBottom': ?viewport.clipBottom,
+      'duration': duration.inMilliseconds,
+      'returning': returning,
+      'yaw': yaw,
+    });
+    return flight.future;
+  }
+
+  void rotateTrainingFlight(double yaw) {
+    if (!yaw.isFinite || _trainingFlightId == 0) return;
+    command({'type': 'hub_flight_angle', 'yaw': yaw});
+  }
+
+  Future<void> reverseTrainingFlight() {
+    _trainingFlight?.complete();
+    final flight = _trainingFlight = Completer<void>();
+    _onTrainingFlightPrepared = null;
+    command({'type': 'hub_flight_reverse', 'id': ++_trainingFlightId});
+    return flight.future;
+  }
+
+  void finishTrainingFlight() {
+    _trainingFlight?.complete();
+    _trainingFlight = null;
+    _onTrainingFlightPrepared = null;
+    command({'type': 'hub_flight', 'id': 0});
+  }
+
+  /// Capture one rendered angle frame from the shared scene.
+  Future<Uint8List?> captureTrainingFrame() async {
+    if (_disposed ||
+        !_ready ||
+        !_presented ||
+        _errorCode != null ||
+        _trainingCapture != null) {
+      return null;
+    }
+    final capture = _trainingCapture = Completer<Uint8List?>();
+    command({'type': 'hub_capture', 'id': ++_trainingCaptureId});
+    try {
+      return await capture.future.timeout(
+        const Duration(milliseconds: 500),
+        onTimeout: () => null,
+      );
+    } finally {
+      if (identical(_trainingCapture, capture)) {
+        _trainingCapture = null;
+        _pending.remove('hub_capture');
+      }
+    }
+  }
+
   void setCamera(String view) => command({'type': 'camera', 'view': view});
   void reset() => command({'type': 'reset'});
 
-  void select(String? groupId) {
+  /// Logical pixels outside the home frame. The fixed canvas extends above
+  /// it so the training viewport can keep its original framing.
+  void setViewInset(double bottom, {double top = 0, bool animate = true}) {
     if (_disposed) return;
-    _selected = groupId;
-    _playing = false;
-    command({'type': 'select', 'groupId': groupId});
-    notifyListeners();
-  }
-
-  /// Bottom px of the 3D view covered by host chrome. The scene frames into
-  /// the part above it and eases the change with its camera.
-  void setViewInset(double bottom, {bool animate = true}) {
-    if (_disposed) return;
-    command({'type': 'viewport', 'bottom': bottom, 'animate': animate});
-  }
-
-  void setDetail(String? groupId) {
-    if (_disposed) return;
-    if (_detail == null || groupId == null) _resetDetailModel();
-    _detail = groupId;
-    _playing = false;
-    if (groupId != null) _selected = groupId;
-    command({'type': 'detail', 'groupId': groupId});
-    notifyListeners();
-  }
-
-  /// Both detail models observe the same paused source frame and muscle group.
-  void setDetailModel(String value) {
-    if (_disposed ||
-        _detail == null ||
-        !_detailModels.contains(value) ||
-        _detailModel == value) {
-      return;
-    }
-    _detailModel = value;
-    _playing = false;
-    command({'type': 'detail_model', 'value': value});
-    notifyListeners();
-  }
-
-  static const _detailModels = {'motion', 'muscles'};
-
-  void _resetDetailModel({bool discardQueuedCommand = true}) {
-    _detailModel = 'motion';
-    if (discardQueuedCommand) _pending.remove('detail_model');
+    command({
+      'type': 'viewport',
+      'top': top,
+      'bottom': bottom,
+      'animate': animate,
+    });
   }
 
   void setLoop(double? start, double? end) =>
@@ -165,7 +310,10 @@ class SceneController extends ChangeNotifier {
   void setVisible(bool visible) {
     if (_disposed) return;
     if (!visible) _playing = false;
-    command({'type': 'visibility', 'visible': visible});
+    // Keep an already queued hide ahead of later scene changes, such as hub_exit.
+    if (_pending['visibility']?['visible'] != visible) {
+      command({'type': 'visibility', 'visible': visible});
+    }
     notifyListeners();
   }
 
@@ -267,6 +415,69 @@ class SceneController extends ChangeNotifier {
   bool receiveEvent(Map<Object?, Object?> event) {
     if (_disposed || event['source'] != 'flare-scene') return false;
     final type = event['type'];
+    final revision = event['clockRevision'];
+    // Native bridge messages already queued before pause, seek, or play can
+    // arrive after the tap. A frame from the previous intent must not move
+    // the transport or change its playing state while the command is in flight.
+    if ((type == 'state' || type == 'playhead') &&
+        revision is num &&
+        revision != _clockRevision) {
+      return false;
+    }
+    if (type == 'playhead') {
+      final time = event['time'];
+      if (!_ready ||
+          !_playing ||
+          _presentationRequest != null ||
+          time is! num ||
+          !time.isFinite) {
+        return false;
+      }
+      _time = time.clamp(0, _period).toDouble();
+      _playhead.value = _time;
+      final source = event['phase'];
+      if (source is num && source >= 9 && source <= 16 && source != _phase) {
+        _phase = source.toInt();
+        notifyListeners();
+      }
+      return true;
+    }
+    if (type == 'hub_flight_ready') {
+      if (event['id'] != _trainingFlightId || _trainingFlight == null) {
+        return false;
+      }
+      final callback = _onTrainingFlightPrepared;
+      _onTrainingFlightPrepared = null;
+      callback?.call();
+      return true;
+    }
+    if (type == 'hub_flight_done') {
+      if (event['id'] != _trainingFlightId || _trainingFlight == null) {
+        return false;
+      }
+      _trainingFlight!.complete();
+      _trainingFlight = null;
+      return true;
+    }
+    if (type == 'hub_captured') {
+      final capture = _trainingCapture;
+      if (event['id'] != _trainingCaptureId ||
+          capture == null ||
+          capture.isCompleted) {
+        return false;
+      }
+      final png = event['png'];
+      try {
+        capture.complete(
+          png is String && png.isNotEmpty && png.length <= 4000000
+              ? base64Decode(png)
+              : null,
+        );
+      } on FormatException {
+        capture.complete(null);
+      }
+      return true;
+    }
     if (!const {
       'ready',
       'presented',
@@ -304,6 +515,7 @@ class SceneController extends ChangeNotifier {
     final time = event['time'];
     if (time is num && time.isFinite) {
       _time = time.clamp(0, _period).toDouble();
+      _playhead.value = _time;
     }
     if (event['playing'] is bool) _playing = event['playing'] as bool;
     final speed = event['speed'];
@@ -316,29 +528,24 @@ class SceneController extends ChangeNotifier {
       _phase = source.toInt();
     }
     if (type == 'select') {
-      _selectionGeneration++;
-      _selected = _groupId(event['groupId']);
+      final group = event['groupId'];
+      if (group is String && group.isNotEmpty) {
+        _selectionGeneration++;
+        _selected = group;
+      }
       _playing = false;
-    } else if (event.containsKey('selected')) {
-      _selected = _groupId(event['selected']);
-    }
-    if (event.containsKey('detail')) {
-      final detail = event['detail'];
-      _detail = detail is bool ? (detail ? _selected : null) : _groupId(detail);
-    }
-    if (_detail == null || _playing) {
-      // The scene may acknowledge its initial/previous state while a newer
-      // native command is still in flight. Only an explicit host action such
-      // as play, seek or closing detail can cancel a queued model choice.
-      _resetDetailModel(discardQueuedCommand: false);
-    } else if (_detailModels.contains(event['detailModel'])) {
-      _detailModel = event['detailModel'] as String;
     }
     if (type == 'presented') {
       _presentationRequest = null;
       _presented = true;
     }
     if (type == 'ready') {
+      final hub = _trainingHubCommand;
+      if (hub != null && !_pending.containsKey('hub_scene')) {
+        final presentation = _pending.remove('present');
+        _pending['hub_scene'] = {...hub, 'animate': false};
+        if (presentation != null) _pending['present'] = presentation;
+      }
       _ready = true;
       _errorCode = null;
     } else {
@@ -356,14 +563,6 @@ class SceneController extends ChangeNotifier {
     return true;
   }
 
-  static String? _groupId(Object? value) {
-    if (value is String) return value;
-    if (value is Map && value['groupId'] is String) {
-      return value['groupId'] as String;
-    }
-    return null;
-  }
-
   void reportError(String code) {
     if (_disposed) return;
     _ready = false;
@@ -379,6 +578,9 @@ class SceneController extends ChangeNotifier {
     _connection++;
     _sink = null;
     _pending.clear();
+    final capture = _trainingCapture;
+    if (capture != null && !capture.isCompleted) capture.complete(null);
+    _playhead.dispose();
     super.dispose();
   }
 }
