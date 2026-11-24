@@ -300,7 +300,7 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                 start: 0,
                 end: 0,
                 child: _PlanBottom(
-                  membership: isSupplemental ? null : widget.membership,
+                  membership: widget.membership,
                   minutes: minutes,
                   safeBottom: safe.bottom,
                   onStart: () => widget.onStart(plan),

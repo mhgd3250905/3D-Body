@@ -707,7 +707,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     var continueCooldown = false;
     void markCooldownRequested() => continueCooldown = true;
     final onContinueCooldown = cooldown == null ? null : markCooldownRequested;
-    final preview = _hasPremium || supplementalPlan != null
+    final preview = _hasPremium
         ? null
         : _premiumPreview(
             FlarePremiumFeature.training,
@@ -717,6 +717,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               store: store,
               startInPreview: true,
               previewLocked: locked,
+              supplementalPlan: supplementalPlan,
+              planSnapshot: planSnapshot,
               onContinueCooldown: onContinueCooldown,
             ),
             keepUnlocked: true,
@@ -1627,7 +1629,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         false,
         FlarePlanDetailPage(
           title: title,
-          membership: supplemental == null ? widget.membership : null,
+          membership: widget.membership,
           phase: phase,
           emptyTargetGroup: group,
           plans: plans,
