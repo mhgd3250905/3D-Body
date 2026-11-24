@@ -474,7 +474,10 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
       onBack: widget.onBack,
       blurBackdrop: false,
       body: ListView(
-        padding: EdgeInsets.only(top: flareNavInset(context)),
+        padding: EdgeInsets.only(
+          top: flareNavInset(context),
+          bottom: FlareGeometry.pageScrollBottomPadding,
+        ),
         children: [
           DrillMediaCard(
             key: ValueKey('demo:${drill.id}'),
@@ -483,7 +486,7 @@ class _DrillDetailPageState extends State<DrillDetailPage> {
             stageColor: Colors.transparent,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
+            padding: const EdgeInsets.fromLTRB(22, 4, 22, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

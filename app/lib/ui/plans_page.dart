@@ -1230,7 +1230,7 @@ class PlanDetailPage extends StatelessWidget {
             20,
             flareNavInset(context, hasSubtitle: true),
             20,
-            20,
+            FlareGeometry.pageScrollBottomPadding,
           ),
           children: [
             if (!available)
@@ -1291,8 +1291,8 @@ class PlanDetailPage extends StatelessWidget {
                 ],
               ),
             ],
-            const SizedBox(height: 12),
-            if (onCopy != null)
+            if (onCopy != null) ...[
+              const SizedBox(height: 12),
               Center(
                 child: TextButton.icon(
                   key: const ValueKey('plan-copy'),
@@ -1301,6 +1301,7 @@ class PlanDetailPage extends StatelessWidget {
                   label: Text(s.premiumCopyRoutine),
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -1539,7 +1540,12 @@ class _RoutineEditorPageState extends State<RoutineEditorPage> {
       blurBackdrop: false,
       body: ScrollEdge(
         child: ReorderableListView.builder(
-          padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 20),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            flareNavInset(context),
+            20,
+            FlareGeometry.pageScrollBottomPadding,
+          ),
           buildDefaultDragHandles: false,
           header: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1807,7 +1813,14 @@ class _DrillPickerState extends State<_DrillPicker> {
                           ScrollViewKeyboardDismissBehavior.onDrag,
                       slivers: [
                         SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                          padding: const EdgeInsets.fromLTRB(
+                            20,
+                            4,
+                            20,
+                            // SliverCardRows already ends with its row gap.
+                            FlareGeometry.pageScrollBottomPadding -
+                                FlareGeometry.libraryFilterGap,
+                          ),
                           sliver: SliverCardRows(
                             itemCount: drills.length,
                             itemBuilder: (context, index) {
@@ -1927,6 +1940,7 @@ class _DrillPickerState extends State<_DrillPicker> {
                     ),
             ),
             FlareBottomAction(
+              backgroundColor: FlareColors.palette.sheet,
               child: PrimaryAction(
                 key: const ValueKey('picker-done'),
                 label: _picked.isEmpty

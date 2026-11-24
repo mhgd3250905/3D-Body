@@ -430,35 +430,25 @@ class FlareNavPage extends StatelessWidget {
   }
 }
 
-/// Pinned primary action at the bottom of a page: 50pt Thomas pill, no
-/// glass ring around it, sitting on the page background with a hairline-free
-/// soft fade so scrolled content does not end in a hard edge.
+/// Pinned primary action on the same solid surface as its page.
 class FlareBottomAction extends StatelessWidget {
   const FlareBottomAction({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.fromLTRB(20, 8, 20, 12),
+    this.backgroundColor,
   });
 
   /// Usually a [FlareBottomButton]; any widget is allowed for compound bars.
   final Widget child;
   final EdgeInsetsGeometry padding;
+  final Color? backgroundColor;
 
   static const double buttonHeight = 50;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          FlareColors.background.withValues(alpha: 0),
-          FlareColors.background,
-        ],
-        stops: const [0, .35],
-      ),
-    ),
+  Widget build(BuildContext context) => ColoredBox(
+    color: backgroundColor ?? FlareColors.background,
     child: Padding(padding: padding, child: child),
   );
 }
