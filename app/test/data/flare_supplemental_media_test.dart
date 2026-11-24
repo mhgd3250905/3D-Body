@@ -13,7 +13,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'plan action details and video descriptors come from official r2-v22',
+    'plan action details and video descriptors come from official r2-v24',
     () async {
       final bundled = await loadFlareBundledPublicCatalog();
       final shared = await FlareShared.load(activeCatalog: bundled);
@@ -26,7 +26,7 @@ void main() {
         coach.sha256Hex(bytes),
         PoseHubCatalogUpdates.bundledCatalogSha256,
       );
-      expect(trainer.poseHubPackVersionOf(bundled), 'r2-v22');
+      expect(trainer.poseHubPackVersionOf(bundled), 'r2-v24');
       expect(shared.pack, same(bundled));
       expect(flareSupplementalActionIds, hasLength(16));
       final canonical = bundled.toAiCatalog();
@@ -65,11 +65,9 @@ void main() {
             rootDirectory: directory.path,
           );
           addTearDown(policy.repository.dispose);
-          for (final id in {
-            flareWarmupPushupId,
-            ...flareSupplementalActionIds,
-          }) {
-            final action = policy.actionFor(id)!;
+          final bundled = await loadFlareBundledPublicCatalog();
+          for (final action in bundled.allActions) {
+            final id = action.id;
             expect(
               policy.posterAssetFor(id),
               FlarePublicMedia.coverAssetFor(id),

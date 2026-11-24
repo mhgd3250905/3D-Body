@@ -358,6 +358,7 @@ abstract final class FlareGeometry {
   static const double navFade = 24;
   static const double navSideInset = 16;
   static const double pageInset = 20;
+  static const double pageScrollBottomPadding = 24;
   static const double navTitleInset = 60;
 
   static double navSafeTop(BuildContext context) {

@@ -1,5 +1,13 @@
 # App 验证记录
 
+## vc2100 页面底部与手势区（2026-11-24）
+
+以 `263ecc84` 的页面为对照。托马斯角度及肌群计划详情、自建计划详情、动作详情、自建计划编辑、动作选择和 SDK 计划编辑用与页面同色的固定按钮区，最后一项完整滚出按钮区后留 24 点。训练中心肌群网格移除局部遮罩，复用同一留白。会员预览遮罩用于遮住未解锁内容，继续沿用。
+
+浅深主题和 34 点底部手势区覆盖末项、固定按钮、网格滚动位置恢复以及锁定预览的点击拦截。现有会员流程一并跑过。静态分析命令为 `flutter analyze --no-pub`。定向测试运行 `flutter test --no-pub --concurrency=1 test/ui/page_bottom_actions_test.dart test/ui/flare_plan_bottom_bar_test.dart test/ui/flare_training_hub_grid_test.dart test/ui/flare_premium_preview_test.dart test/ui/flare_membership_flow_test.dart`，24 项通过。功能分支静态分析 0 项问题。全量运行 `flutter test --no-pub --concurrency=1 --reporter expanded`，513 项通过，1 项 AI 模型联机测试按配置跳过。
+
+16 张浅深主题修复前后图来自实际 Flutter 页面渲染，位于本机 `output/bottom-fades-2100/`。会员预览两种主题修复前后逐像素一致。Android 真机由用户验收。
+
 ## iOS SDK 1.0.2 对齐（2026-11-22）
 
 候选为 iOS 1.0.16 (51)。从 TestFlight Build 50 的源提交 `27946c923aab85d1e2abfa14c9e57a3b9f5d0deb` 合入 Android 发布基线 `0fdfce5fc056b0cbd1fd93bfb3601f3e62ed39bb`。保留 Build 50 的原生 iOS 工程、签名设置、`Info.plist`、`AppDelegate` 和图标。合入已发布的草稿分支历史，保留 iOS 主线的验证记录与原生诊断用例。

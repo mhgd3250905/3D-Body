@@ -4,33 +4,39 @@ import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/motion.dart';
 import 'package:flare/ui/page_kit.dart';
+import 'package:flare/ui/plans_page.dart';
 import 'package:flare/ui/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../domain/fixtures.dart';
-import 'flow_regressions_test.dart' show MemoryStateStorage, phoneSize;
+import 'flow_regressions_test.dart'
+    show MemoryStateStorage, openPlansFromHome, phoneSize;
 
-Widget _app(Widget child, {bool reduced = false, String language = 'en'}) =>
-    MaterialApp(
-      locale: Locale(language),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: flareTheme(language == 'de' ? Brightness.dark : Brightness.light),
-      themeAnimationDuration: Duration.zero,
-      builder: (context, child) {
-        FlareColors.use(Theme.of(context).brightness);
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            padding: const EdgeInsets.only(top: 24),
-            disableAnimations: reduced,
-          ),
-          child: child!,
-        );
-      },
-      home: child,
+Widget _app(
+  Widget child, {
+  bool reduced = false,
+  String language = 'en',
+  double safeBottom = 0,
+}) => MaterialApp(
+  locale: Locale(language),
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  theme: flareTheme(language == 'de' ? Brightness.dark : Brightness.light),
+  themeAnimationDuration: Duration.zero,
+  builder: (context, child) {
+    FlareColors.use(Theme.of(context).brightness);
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        padding: EdgeInsets.only(top: 24, bottom: safeBottom),
+        disableAnimations: reduced,
+      ),
+      child: child!,
     );
+  },
+  home: child,
+);
 
 Widget _page(String name, VoidCallback back) => SafeArea(
   bottom: false,
@@ -187,6 +193,90 @@ void main() {
       _expectOneStillChip(tester, rail);
     },
   );
+
+  for (final language in ['en', 'de']) {
+    final brightness = language == 'de' ? Brightness.dark : Brightness.light;
+    testWidgets('Plans reaches the same bottom as Settings in $brightness', (
+      tester,
+    ) async {
+      await phoneSize(tester);
+      tester.view.viewPadding = const FakeViewPadding(bottom: 34);
+      addTearDown(tester.view.resetViewPadding);
+      final catalog = loadCatalogFixture(includeFlarePlans: true);
+      final store = LearningStore(
+        catalog: catalog,
+        storage: MemoryStateStorage(),
+      );
+      final scene = SceneController(commandSink: (_) {});
+      addTearDown(store.dispose);
+      addTearDown(scene.dispose);
+      await store.initialize();
+      await store.acknowledgeSafety();
+      await tester.pumpWidget(
+        _app(
+          FlareShell(
+            catalog: catalog,
+            store: store,
+            sceneController: scene,
+            enableScene: false,
+          ),
+          language: language,
+          safeBottom: 34,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final strings = AppLocalizations.of(
+        tester.element(find.byType(FlareShell)),
+      );
+      await tester.tap(
+        find.bySemanticsLabel(RegExp('^${RegExp.escape(strings.more)}')).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FlareListRow, strings.settings));
+      await tester.pumpAndSettle();
+
+      final settingsList = find.byKey(
+        const PageStorageKey('flare-settings-scroll'),
+      );
+      final settingsPadding = tester.widget<ListView>(settingsList).padding!;
+      final settingsBottom = settingsPadding.resolve(TextDirection.ltr).bottom;
+      expect(settingsBottom, 24);
+      final settingsViewportBottom = tester.getRect(settingsList).bottom;
+      await tester.tap(find.byType(FlareBackChip));
+      await tester.pumpAndSettle();
+      await openPlansFromHome(tester);
+
+      final plansScroll = find.byKey(
+        const PageStorageKey<String>('plans-scroll'),
+      );
+      final plansNav = find.descendant(
+        of: find.byType(PlansPage),
+        matching: find.byType(FlareScrollNav),
+      );
+      final scrollView = tester.widget<CustomScrollView>(plansScroll);
+      expect(tester.widget<FlareScrollNav>(plansNav).child, same(scrollView));
+      expect(tester.getRect(plansScroll).bottom, settingsViewportBottom);
+
+      final scrollable = find.descendant(
+        of: plansScroll,
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Scrollable &&
+              widget.axisDirection == AxisDirection.down,
+        ),
+      );
+      final position = tester.state<ScrollableState>(scrollable).position;
+      expect(position.maxScrollExtent, greaterThan(0));
+      position.jumpTo(position.maxScrollExtent);
+      await tester.pumpAndSettle();
+
+      final spacer = (scrollView.slivers.last as SliverToBoxAdapter).child!;
+      final spacerRect = tester.getRect(find.byWidget(spacer));
+      expect(spacerRect.height, settingsBottom);
+      expect(spacerRect.bottom, closeTo(settingsViewportBottom, 0.01));
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final language in ['en', 'de']) {
     for (final reduced in [false, true]) {

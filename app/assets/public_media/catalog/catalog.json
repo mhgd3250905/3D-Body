@@ -2,13 +2,14 @@
  "format": "pose-hub-catalog",
  "formatVersion": 1,
  "version": "2.1.0",
- "generatedAt": "2026-11-21T07:12:01+08:00",
+ "generatedAt": "2026-11-24T07:46:16+08:00",
  "source": {
-  "pack": "r2-v22",
+  "pack": "r2-v24",
   "catalogSha256": "22b2a391e327bc9eee775988315cd96651e0f623c76dae10c00284686dfe804e",
   "text": "catalog/production/v3-text",
-  "commit": "7f03532a6e363e45028ccf8c3c5206432634f924",
-  "previousPack": "r2-v21"
+  "commit": "c3ca6145e8b7b3a01385b260e07d8b8e0e0576ac",
+  "previousPack": "r2-v23",
+  "legacyFixText": "catalog/production/legacy-fix-r1/text"
  },
  "taxonomy": {
   "categories": {
@@ -9269,7 +9270,7 @@
    },
    "cues": {
     "zh": [
-     "两手合十，用手肘把膝盖往外推",
+     "两手胸前合十，膝盖主动往外撑",
      "两脚站宽、脚尖朝外，脚后跟踩实。",
      "胸口挺起来，蹲住停一下再站起来。"
     ]
@@ -9293,7 +9294,7 @@
     "hip:flexion"
    ],
    "review": {
-    "status": "ai-reviewed-r3-needs-user-review"
+    "status": "unreviewed-legacy-fix-r1"
    }
   },
   {
@@ -14938,10 +14939,10 @@
   {
    "id": "s-9090",
    "name": {
-    "zh": "90/90 坐姿拉胯",
-    "en": "90/90 Hip Stretch"
+    "zh": "90/90 坐姿换髋",
+    "en": "90/90 Hip Switch"
    },
-   "purpose": "拉开前腿那边的屁股和胯外侧",
+   "purpose": "活动两侧髋关节的内旋和外旋",
    "category": "stretch",
    "muscles": [
     "臀大肌"
@@ -14953,15 +14954,15 @@
     "mat"
    ],
    "position": "seated",
-   "unilateral": true,
+   "unilateral": false,
    "level": 2,
    "scenes": [
     "home"
    ],
    "defaultDose": {
-    "mode": "time",
+    "mode": "reps",
     "sets": 2,
-    "seconds": 30,
+    "reps": 6,
     "restSeconds": 15
    },
    "doseRange": {
@@ -14969,9 +14970,9 @@
      1,
      2
     ],
-    "seconds": [
-     20,
-     80
+    "reps": [
+     4,
+     12
     ],
     "restSeconds": [
      0,
@@ -14980,15 +14981,15 @@
    },
    "cues": {
     "zh": [
-     "背挺直，上身朝前腿小腿上方慢慢前倾",
-     "前腿和侧腿都弯成直角，胸口对着前腿。",
-     "胸口对着前腿小腿往前倾，两边屁股都坐在地上。",
-     "前腿屁股后面拉得最明显，膝盖别疼就行。"
+     "脚跟压稳，双膝一起翻到另一侧",
+     "上身尽量坐直，双手往前伸，别往后靠",
+     "两边都落成 90/90：前腿小腿横在身前，后腿小腿朝后",
+     "膝盖跟着髋转，别硬拧膝盖"
     ]
    },
    "primaryCue": 0,
    "cautions": [
-    "膝盖疼就少倾点或屁股下面垫高，还疼就停"
+    "膝盖疼就缩小翻转幅度或手撑在身后辅助，还疼就停"
    ],
    "contraindications": [
     "膝"
@@ -15004,7 +15005,7 @@
     "hip:internal_rotation"
    ],
    "review": {
-    "status": "ai-reviewed-r3-needs-user-review"
+    "status": "user-selected-legacy-fix-r1"
    }
   },
   {
@@ -15054,7 +15055,7 @@
     "zh": [
      "脚心相对，背挺直慢慢往前倾",
      "脚后跟靠近身子，膝盖自然往两边打开。",
-     "两手握住脚，脚跟离身体近一点，膝盖自然往下落。",
+     "两手扶住脚，脚跟离身体近一点，膝盖自然往下落",
      "呼气时肚子往脚那边送一点，别用手肘压膝盖。"
     ]
    },
@@ -15076,7 +15077,7 @@
     "hip:external_rotation"
    ],
    "review": {
-    "status": "ai-reviewed-r3-needs-user-review"
+    "status": "unreviewed-legacy-fix-r1"
    }
   },
   {

@@ -193,79 +193,106 @@ void main() {
     },
   );
 
-  testWidgets('premium preview blocks only the covered pointer and semantics', (
-    tester,
-  ) async {
-    await phoneSize(tester);
-    final semantics = tester.ensureSemantics();
-    var back = 0;
-    var covered = 0;
-    var subscriptions = 0;
-    var swipes = 0;
-    await tester.pumpWidget(
-      testApp(
-        Scaffold(
-          body: Builder(
-            builder: (context) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(disableAnimations: true),
-              child: FlarePremiumPreview(
-                feature: FlarePremiumFeature.training,
-                locked: true,
-                onSubscribe: () => subscriptions++,
-                onEdgeBack: () => swipes++,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 30,
-                      left: 40,
-                      child: TextButton(
-                        onPressed: () => back++,
-                        child: const Text('Preview back'),
+  for (final brightness in Brightness.values) {
+    testWidgets(
+      'premium preview covers locked content and keeps its action in ${brightness.name}',
+      (tester) async {
+        await phoneSize(tester);
+        tester.view.padding = const FakeViewPadding(bottom: 34);
+        tester.view.viewPadding = const FakeViewPadding(bottom: 34);
+        addTearDown(tester.view.resetPadding);
+        addTearDown(tester.view.resetViewPadding);
+        final previousPalette = FlareColors.palette;
+        addTearDown(() => FlareColors.palette = previousPalette);
+        FlareColors.use(brightness);
+        final semantics = tester.ensureSemantics();
+        var back = 0;
+        var covered = 0;
+        var subscriptions = 0;
+        var swipes = 0;
+        await tester.pumpWidget(
+          testApp(
+            Theme(
+              data: flareTheme(brightness),
+              child: Scaffold(
+                body: Builder(
+                  builder: (context) => MediaQuery(
+                    data: MediaQuery.of(
+                      context,
+                    ).copyWith(disableAnimations: true),
+                    child: FlarePremiumPreview(
+                      feature: FlarePremiumFeature.training,
+                      locked: true,
+                      onSubscribe: () => subscriptions++,
+                      onEdgeBack: () => swipes++,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: 30,
+                            left: 40,
+                            child: TextButton(
+                              onPressed: () => back++,
+                              child: const Text('Preview back'),
+                            ),
+                          ),
+                          Positioned(
+                            top: 430,
+                            left: 40,
+                            child: TextButton(
+                              onPressed: () => covered++,
+                              child: const Text('Covered action'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      top: 430,
-                      left: 40,
-                      child: TextButton(
-                        onPressed: () => covered++,
-                        child: const Text('Covered action'),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+        final offer = tester.widget<FlarePremiumOfferCard>(
+          find.byType(FlarePremiumOfferCard),
+        );
+        expect(offer.title, '跟着练，每组都算数');
+        expect(offer.highlight, '每组');
+        expect(offer.safeBottom, 34);
+        final decoration =
+            tester.widget<DecoratedBox>(find.byKey(_gradient)).decoration
+                as BoxDecoration;
+        expect(
+          (decoration.gradient! as LinearGradient).colors.last,
+          FlareColors.background.withValues(alpha: .96),
+        );
+        expect(
+          tester.getRect(find.byKey(_subscribe)).bottom,
+          lessThan(844 - 34),
+        );
+        expect(find.text('FLARE PRO'), findsOneWidget);
+        expect(find.text('解锁 Flare 会员'), findsOneWidget);
+        expect(find.text('语音计时'), findsOneWidget);
+        expect(find.text('动作示范'), findsOneWidget);
+        expect(find.text('自动记录'), findsOneWidget);
+        expect(
+          tester
+              .widget<FlarePremiumOfferCard>(find.byType(FlarePremiumOfferCard))
+              .sheenEnabled
+              .value,
+          isFalse,
+        );
+        expect(find.semantics.byLabel('Preview back'), findsOne);
+        expect(find.semantics.byLabel('Covered action'), findsNothing);
+        await tester.tap(find.text('Preview back'));
+        await tester.tapAt(tester.getCenter(find.text('Covered action')));
+        await tester.tap(find.byKey(_subscribe));
+        await tester.dragFrom(const Offset(10, 505), const Offset(120, 0));
+        expect(back, 1);
+        expect(covered, 0);
+        expect(subscriptions, 1);
+        expect(swipes, 1);
+        semantics.dispose();
+      },
     );
-    final offer = tester.widget<FlarePremiumOfferCard>(
-      find.byType(FlarePremiumOfferCard),
-    );
-    expect(offer.title, '跟着练，每组都算数');
-    expect(offer.highlight, '每组');
-    expect(find.text('FLARE PRO'), findsOneWidget);
-    expect(find.text('解锁 Flare 会员'), findsOneWidget);
-    expect(find.text('语音计时'), findsOneWidget);
-    expect(find.text('动作示范'), findsOneWidget);
-    expect(find.text('自动记录'), findsOneWidget);
-    expect(
-      tester
-          .widget<FlarePremiumOfferCard>(find.byType(FlarePremiumOfferCard))
-          .sheenEnabled
-          .value,
-      isFalse,
-    );
-    expect(find.semantics.byLabel('Preview back'), findsOne);
-    expect(find.semantics.byLabel('Covered action'), findsNothing);
-    await tester.tap(find.text('Preview back'));
-    await tester.tapAt(tester.getCenter(find.text('Covered action')));
-    await tester.tap(find.byKey(_subscribe));
-    await tester.dragFrom(const Offset(10, 505), const Offset(120, 0));
-    expect(back, 1);
-    expect(covered, 0);
-    expect(subscriptions, 1);
-    expect(swipes, 1);
-    semantics.dispose();
-  });
+  }
 }
