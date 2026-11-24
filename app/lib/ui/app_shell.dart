@@ -2547,7 +2547,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       body: ScrollEdge(
         child: ListView(
           key: const PageStorageKey('flare-settings-scroll'),
-          padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 24),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            flareNavInset(context),
+            20,
+            FlareGeometry.pageScrollBottomPadding,
+          ),
           children: [
             // Groups sit 28 apart without repeated headings (HipLab).
             FlareListGroup(
