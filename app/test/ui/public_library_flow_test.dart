@@ -220,7 +220,7 @@ void main() {
   }
 
   test(
-    'the official r2-v22 catalog preserves the library and AI scope',
+    'the official r2-v24 catalog preserves the library and AI scope',
     () async {
       final bundled = await loadFlareBundledPublicCatalog();
       final packIds = bundled.toAiCatalog().drills.map((d) => d.id).toSet();
@@ -281,7 +281,7 @@ void main() {
   );
 
   test(
-    'an older verified cache cannot shadow the bundled r2-v22 pack',
+    'an older verified cache cannot shadow the bundled r2-v24 pack',
     () async {
       const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
@@ -305,7 +305,7 @@ void main() {
       final cached = await sdk.readVerifiedPoseHubCatalog(store);
       expect(sdk.poseHubPackVersionOf(cached!), olderPack);
       final pack = await loadFlarePublicCatalog(verifiedCache: store);
-      expect(sdk.poseHubPackVersionOf(pack), 'r2-v22');
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v24');
       expect(
         poseHubCatalogRevisionOf(pack),
         PoseHubCatalogUpdates.bundledCatalogSha256,

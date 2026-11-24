@@ -31,7 +31,7 @@ void main() {
         catalogBytes,
         semanticCatalogBytes: semanticBytes,
       );
-      const nextPack = 'r2-v22';
+      const nextPack = PoseHubCatalogUpdates.bundledPackVersion;
       final previous = await _oldBaseline(published, semanticBytes);
       expect(sdk.poseHubPackVersionOf(previous), 'r2-v11');
       expect(sdk.poseHubPackVersionOf(published), nextPack);
@@ -133,11 +133,11 @@ void main() {
 
         // A later catalogue adds one new display file. Invalid bytes must
         // keep the active pack intact and leave the new transfer retryable.
-        const failedPack = 'r2-v23';
+        const failedPack = 'r2-v25';
         final newArtwork = await artwork.values.first.readAsBytes();
         final bytes = Uint8List.fromList([...newArtwork, 0]);
         final descriptor = {
-          'path': 'media/flare-home/r2-v23/frame.webp',
+          'path': 'media/flare-home/r2-v25/frame.webp',
           'bytes': bytes.length,
           'sha256': coach.sha256Hex(bytes),
         };
