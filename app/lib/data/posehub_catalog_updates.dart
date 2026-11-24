@@ -71,9 +71,9 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     this._onOutcome,
   );
 
-  static const bundledPackVersion = 'r2-v22';
+  static const bundledPackVersion = 'r2-v24';
   static const bundledCatalogSha256 =
-      'bcb139236691df601c63b91cf317242fb124f346c3427d30bec71e18715bf647';
+      '71d0ba0ce429ee90dcbdc329758da3bf1345b012637b84f2f3bc07adbf4a8f4f';
 
   static const channelName = String.fromEnvironment(
     'POSEHUB_CATALOG_CHANNEL',

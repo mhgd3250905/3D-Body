@@ -101,8 +101,9 @@ flutter:
     - assets/public_media/catalog.json
     - assets/public_media/catalog/catalog.json
     - assets/public_posters/
-    - assets/public_posters/r2-v22/cover/
-    - assets/public_posters/r2-v22/thumbnail/
+    - assets/public_posters/r2-v24/cover/
+    - assets/public_posters/r2-v24/thumbnail/
+    - assets/public_posters/r2-v24/standing/
     - assets/muscles/
     - assets/plan_resume_muscles/
     - assets/plan_icons/
