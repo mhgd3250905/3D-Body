@@ -9,7 +9,6 @@ import 'package:flare/data/posehub_catalog_updates.dart';
 import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/trainer/flare_plan_resume.dart';
-import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flare/ui/app_shell.dart';
 import 'package:flare/ui/components.dart' show FlareSegmented;
 import 'package:flare/ui/content_pages.dart';
@@ -361,199 +360,262 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('non-members can open and start both supplemental plans', (
+  Future<void> expectLockedTraining(
+    WidgetTester tester,
+    Finder entry, {
+    String? supplementalId,
+  }) async {
+    await tester.tap(entry);
+    final subscribe = _key('premium-preview-subscribe').hitTestable();
+    await helpers.waitForTrainingRoute(tester, route: subscribe);
+    expect(find.byType(helpers.TrainingRouteProbe), findsNothing);
+    final page = tester.widget<FlareTrainingPage>(
+      find.byType(FlareTrainingPage),
+    );
+    expect(page.previewLocked, isTrue);
+    expect(page.supplementalPlan?.id, supplementalId);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(subscribe, findsNothing);
+  }
+
+  testWidgets('supplemental plans use the training membership preview', (
     tester,
   ) async {
     final membership = FlareMembership(_MembershipStore());
-    addTearDown(membership.dispose);
-    final mounted = await mountShell(tester, membership: membership);
-    expect(membership.isPremium, isFalse);
-    await mounted.store.updateSettings(tier: 'C');
-    await helpers.openPlansFromHome(tester);
-    expect(find.text('9 分钟 · 徒手'), findsOneWidget);
-    expect(find.text('初／中／高 · 徒手'), findsOneWidget);
+    try {
+      final mounted = await mountShell(tester, membership: membership);
+      expect(membership.isPremium, isFalse);
+      await mounted.store.updateSettings(tier: 'C');
+      await helpers.openPlansFromHome(tester);
+      expect(find.text('9 分钟 · 徒手'), findsOneWidget);
+      expect(find.text('初／中／高 · 徒手'), findsOneWidget);
 
-    final detail = find.byType(FlarePlanDetailPage);
-    final start = _key('flare-plan-start');
-    final tier = _key('flare-plan-tier');
-    final skip = _key('flare-cooldown-skip-strengthening');
+      final detail = find.byType(FlarePlanDetailPage);
+      final start = _key('flare-plan-start');
+      final tier = _key('flare-plan-tier');
+      final skip = _key('flare-cooldown-skip-strengthening');
 
-    Future<void> openSupplemental(String id) async {
-      await tester.tap(_key('plan-$id'));
-      await tester.pumpAndSettle();
-      expect(detail, findsOneWidget);
-      expect(_key('flare-plan-warmup-link'), findsNothing);
-    }
+      Future<void> openSupplemental(String id) async {
+        await tester.tap(_key('plan-$id'));
+        await tester.pumpAndSettle();
+        expect(detail, findsOneWidget);
+        expect(_key('flare-plan-warmup-link'), findsNothing);
+      }
 
-    Future<uc.TrainingPlan> startAndClose(Finder action) async {
-      await tester.tap(action);
-      await helpers.waitForTrainingRoute(tester);
-      final probe = tester.widget<helpers.TrainingRouteProbe>(
-        find.byType(helpers.TrainingRouteProbe),
-      );
-      expect(mounted.store.settings.tier, 'C');
-      await tester.tap(_key('training-probe-close'));
-      await tester.pumpAndSettle();
-      return probe.plan;
-    }
-
-    Future<void> backToPlans() async {
-      await tester.tap(find.byType(FlareBackChip));
-      await tester.pumpAndSettle();
-      expect(find.byType(PlansPage), findsOneWidget);
-    }
-
-    await openSupplemental('general-warmup');
-    expect(tier, findsNothing);
-    expect(skip, findsNothing);
-    final warmup = await startAndClose(start);
-    expect(warmup.items, hasLength(12));
-    await backToPlans();
-
-    await openSupplemental('general-cooldown');
-    expect(find.text('练后'), findsOneWidget);
-    expect(tier, findsOneWidget);
-    expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 1);
-    expect(find.text('居家'), findsNothing);
-    expect(find.text('健身房'), findsNothing);
-    expect(find.text('A 专项补强'), findsOneWidget);
-    expect(find.text('跳过补强，直接全身拉伸'), findsOneWidget);
-    final advice = find.text('建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过');
-    expect(advice, findsOneWidget);
-    expect(
-      tester.getBottomLeft(skip).dy,
-      lessThan(tester.getTopLeft(advice).dy),
-    );
-
-    await tester.tap(find.descendant(of: tier, matching: find.text('中级')));
-    await tester.pumpAndSettle();
-    expect(mounted.store.settings.cooldownTier, 2);
-    await _revealPlanContent(tester, find.text('B 全身拉伸'));
-    expect(find.text('B 全身拉伸'), findsOneWidget);
-    await _showPlanTop(tester);
-    await backToPlans();
-
-    await openSupplemental('general-cooldown');
-    expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 2);
-    final full = await startAndClose(start);
-    expect(full.blocks.first.type, uc.BlockType.circuit);
-    expect(full.blocks.first.rounds, 3);
-    expect(full.blocks.last.type, uc.BlockType.cooldown);
-
-    final skipped = await startAndClose(skip);
-    expect(skipped.blocks, hasLength(full.blocks.length - 1));
-    expect(
-      skipped.blocks.map((block) => block.toJson()),
-      full.blocks.skip(1).map((block) => block.toJson()),
-    );
-    await backToPlans();
-    final normalPlan = _key('plan-angle-11');
-    await Scrollable.ensureVisible(tester.element(normalPlan));
-    await tester.pumpAndSettle();
-    await tester.tap(normalPlan);
-    await tester.pumpAndSettle();
-    final warmupLink = _key('flare-plan-warmup-link');
-    expect(
-      tester.widget<FlarePressable>(warmupLink).semanticLabel,
-      '还没热身？先做 9 分钟练前热身',
-    );
-    await tester.tap(warmupLink);
-    await tester.pumpAndSettle();
-    expect(
-      tester
-          .widget<FlarePlanDetailPage>(find.byType(FlarePlanDetailPage))
-          .plans
-          .single
-          .items,
-      hasLength(12),
-    );
-    helpers.assertNoFlutterError(tester);
-    await tester.pumpWidget(const SizedBox());
-  });
-
-  testWidgets('plans continues the recorded angle and scene at the next move', (
-    tester,
-  ) async {
-    final mounted = await mountShell(tester);
-    const phaseSource = 15;
-    final phase = catalog.phaseBySource(phaseSource)!;
-    final authored = catalog
-        .plansForAngle(phaseSource)
-        .singleWhere((plan) => plan.tier == 2);
-    final shared = FlareShared.current!;
-    final original = trainingPlanFromFlarePlan(
-      plan: authored,
-      title: phase.name,
-      sceneTier: 'A',
-      catalog: catalog,
-      sourceCatalog: shared.catalog,
-      rhythms: shared.rhythms,
-    );
-    final recorded = FlarePlanResume.recordAuthored(
-      original,
-      phaseSource: phaseSource,
-      sceneTier: 'A',
-    );
-    final begin = DateTime.utc(2026, 11, 16, 12);
-    await mounted.store.saveTrainerSession(
-      sdk.SessionResult(
-        sessionId: 'angle-progress',
-        planId: recorded.id,
-        planTitle: phase.name,
-        startedAt: begin,
-        endedAt: begin.add(const Duration(minutes: 1)),
-        activeSeconds: 60,
-        endedEarly: true,
-        completedExercises: 1,
-        totalExercises: original.items.length,
-        items: [
-          for (final (index, item) in original.items.indexed)
-            sdk.ItemResult(
-              exerciseId: item.exerciseId,
-              replacedFrom: item.replacedFrom,
-              blockIndex: 0,
-              itemInBlock: index,
-              plannedSets: item.sets,
-              completedSets: index == 0 ? item.sets : 0,
-              activeSeconds: index == 0 ? 60 : 0,
-              status: index == 0
-                  ? sdk.ItemStatus.completed
-                  : sdk.ItemStatus.notReached,
-            ),
-        ],
-      ),
-    );
-    await mounted.store.updateSettings(tier: 'C');
-    await helpers.openPlansFromHome(tester);
-    final art = tester.widget<Image>(
-      find.descendant(
-        of: _key('plan-last-session'),
-        matching: find.byType(Image),
-      ),
-    );
-    expect(
-      (art.image as AssetImage).assetName,
-      'assets/angles/v5-phase-15.png',
-    );
-    await tester.tap(_key('plan-continue'));
-    await helpers.waitForTrainingRoute(tester);
-    final delivered = tester
-        .widget<helpers.TrainingRouteProbe>(
+      Future<uc.TrainingPlan> startAndClose(Finder action) async {
+        await tester.tap(action);
+        await helpers.waitForTrainingRoute(tester);
+        final probe = tester.widget<helpers.TrainingRouteProbe>(
           find.byType(helpers.TrainingRouteProbe),
-        )
-        .plan;
-    expect(
-      delivered.items.map((item) => item.exerciseId),
-      original.items.skip(1).map((item) => item.exerciseId),
-    );
-    expect(delivered.items.first.sets, original.items.elementAt(1).sets);
-    expect(mounted.store.settings.tier, 'C');
-    await tester.tap(_key('training-probe-close'));
-    await tester.pumpAndSettle();
-    expect(find.byType(PlansPage), findsOneWidget);
-    helpers.assertNoFlutterError(tester);
-    await tester.pumpWidget(const SizedBox());
+        );
+        expect(mounted.store.settings.tier, 'C');
+        await tester.tap(_key('training-probe-close'));
+        await tester.pumpAndSettle();
+        return probe.plan;
+      }
+
+      Future<void> backToPlans() async {
+        await tester.tap(find.byType(FlareBackChip));
+        await tester.pumpAndSettle();
+        expect(find.byType(PlansPage), findsOneWidget);
+      }
+
+      await openSupplemental('general-warmup');
+      await expectLockedTraining(
+        tester,
+        start,
+        supplementalId: 'general-warmup',
+      );
+      await backToPlans();
+      await openSupplemental('general-cooldown');
+      await expectLockedTraining(
+        tester,
+        start,
+        supplementalId: 'general-cooldown',
+      );
+      await expectLockedTraining(
+        tester,
+        skip,
+        supplementalId: 'general-cooldown',
+      );
+      await backToPlans();
+      expect(mounted.store.trainerSessions, isEmpty);
+      expect(await membership.restore(), isTrue);
+
+      await openSupplemental('general-warmup');
+      expect(tier, findsNothing);
+      expect(skip, findsNothing);
+      final warmup = await startAndClose(start);
+      expect(warmup.items, hasLength(12));
+      await backToPlans();
+
+      await openSupplemental('general-cooldown');
+      expect(find.text('练后'), findsOneWidget);
+      expect(tier, findsOneWidget);
+      expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 1);
+      expect(find.text('居家'), findsNothing);
+      expect(find.text('健身房'), findsNothing);
+      expect(find.text('A 专项补强'), findsOneWidget);
+      expect(find.text('跳过补强，直接全身拉伸'), findsOneWidget);
+      final advice = find.text('建议每周 2–3 次、隔天做；当天已练上肢力量或手腕发酸请直接跳过');
+      expect(advice, findsOneWidget);
+      expect(
+        tester.getBottomLeft(skip).dy,
+        lessThan(tester.getTopLeft(advice).dy),
+      );
+
+      await tester.tap(find.descendant(of: tier, matching: find.text('中级')));
+      await tester.pumpAndSettle();
+      expect(mounted.store.settings.cooldownTier, 2);
+      await _revealPlanContent(tester, find.text('B 全身拉伸'));
+      expect(find.text('B 全身拉伸'), findsOneWidget);
+      await _showPlanTop(tester);
+      await backToPlans();
+
+      await openSupplemental('general-cooldown');
+      expect(tester.widget<FlarePlanDetailPage>(detail).selectedTier, 2);
+      final full = await startAndClose(start);
+      expect(full.blocks.first.type, uc.BlockType.circuit);
+      expect(full.blocks.first.rounds, 3);
+      expect(full.blocks.last.type, uc.BlockType.cooldown);
+
+      final skipped = await startAndClose(skip);
+      expect(skipped.blocks, hasLength(full.blocks.length - 1));
+      expect(
+        skipped.blocks.map((block) => block.toJson()),
+        full.blocks.skip(1).map((block) => block.toJson()),
+      );
+      await backToPlans();
+      final normalPlan = _key('plan-angle-11');
+      await Scrollable.ensureVisible(tester.element(normalPlan));
+      await tester.pumpAndSettle();
+      await tester.tap(normalPlan);
+      await tester.pumpAndSettle();
+      final warmupLink = _key('flare-plan-warmup-link');
+      expect(
+        tester.widget<FlarePressable>(warmupLink).semanticLabel,
+        '还没热身？先做 9 分钟练前热身',
+      );
+      await tester.tap(warmupLink);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<FlarePlanDetailPage>(find.byType(FlarePlanDetailPage))
+            .plans
+            .single
+            .items,
+        hasLength(12),
+      );
+      helpers.assertNoFlutterError(tester);
+      await tester.pumpWidget(const SizedBox());
+    } finally {
+      membership.dispose();
+    }
   });
+
+  for (final supplemental in [false, true]) {
+    testWidgets('plans checks membership before continuing a recorded '
+        '${supplemental ? 'warm-up' : 'angle plan'}', (tester) async {
+      final membership = FlareMembership(_MembershipStore());
+      try {
+        final mounted = await mountShell(tester, membership: membership);
+        final phase = supplemental ? null : catalog.phaseBySource(15)!;
+        final authored = supplemental
+            ? catalog.flareWarmupPlan!
+            : catalog
+                  .plansForAngle(phase!.source)
+                  .singleWhere((plan) => plan.tier == 2);
+        final shared = FlareShared.current!;
+        final title = phase?.name ?? '练前热身';
+        final original = shared.authoredPlan(
+          authored,
+          catalog,
+          'A',
+          title: title,
+        );
+        final recorded = FlarePlanResume.recordAuthored(
+          original,
+          phaseSource: phase?.source,
+          sceneTier: 'A',
+        );
+        final begin = DateTime.utc(2026, 11, 16, 12);
+        await mounted.store.saveTrainerSession(
+          sdk.SessionResult(
+            sessionId: 'plan-progress',
+            planId: recorded.id,
+            planTitle: title,
+            startedAt: begin,
+            endedAt: begin.add(const Duration(minutes: 1)),
+            activeSeconds: 60,
+            endedEarly: true,
+            completedExercises: 1,
+            totalExercises: original.items.length,
+            items: [
+              for (final (blockIndex, block) in original.blocks.indexed)
+                for (final (index, item) in block.items.indexed)
+                  sdk.ItemResult(
+                    exerciseId: item.exerciseId,
+                    replacedFrom: item.replacedFrom,
+                    blockIndex: blockIndex,
+                    itemInBlock: index,
+                    plannedSets: item.sets,
+                    completedSets: blockIndex == 0 && index == 0
+                        ? item.sets
+                        : 0,
+                    activeSeconds: blockIndex == 0 && index == 0 ? 60 : 0,
+                    status: blockIndex == 0 && index == 0
+                        ? sdk.ItemStatus.completed
+                        : sdk.ItemStatus.notReached,
+                  ),
+            ],
+          ),
+        );
+        await mounted.store.updateSettings(tier: 'C');
+        await helpers.openPlansFromHome(tester);
+        if (phase != null) {
+          final art = tester.widget<Image>(
+            find.descendant(
+              of: _key('plan-last-session'),
+              matching: find.byType(Image),
+            ),
+          );
+          expect(
+            (art.image as AssetImage).assetName,
+            'assets/angles/v5-phase-15.png',
+          );
+        }
+        final continueButton = _key('plan-continue');
+        await expectLockedTraining(
+          tester,
+          continueButton,
+          supplementalId: supplemental ? authored.id : null,
+        );
+        expect(mounted.store.trainerSessions, hasLength(1));
+        expect(await membership.restore(), isTrue);
+        await tester.tap(continueButton);
+        await helpers.waitForTrainingRoute(tester);
+        final delivered = tester
+            .widget<helpers.TrainingRouteProbe>(
+              find.byType(helpers.TrainingRouteProbe),
+            )
+            .plan;
+        expect(
+          delivered.items.map((item) => item.exerciseId),
+          original.items.skip(1).map((item) => item.exerciseId),
+        );
+        expect(delivered.items.first.sets, original.items.elementAt(1).sets);
+        expect(mounted.store.settings.tier, 'C');
+        await tester.tap(_key('training-probe-close'));
+        await tester.pumpAndSettle();
+        expect(find.byType(PlansPage), findsOneWidget);
+        helpers.assertNoFlutterError(tester);
+        await tester.pumpWidget(const SizedBox());
+      } finally {
+        membership.dispose();
+      }
+    });
+  }
 
   testWidgets('home handoff stays stationary and plan detail uses parallax', (
     tester,
