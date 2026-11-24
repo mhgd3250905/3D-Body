@@ -124,7 +124,12 @@ class _SdkPlanEditorPageState extends State<SdkPlanEditorPage> {
       onBack: _saving ? () {} : widget.onBack,
       blurBackdrop: false,
       body: ListView(
-        padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 20),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          flareNavInset(context),
+          20,
+          FlareGeometry.pageScrollBottomPadding,
+        ),
         children: [
           FlareFieldGroup(
             label: s.planNameHint,

@@ -757,54 +757,40 @@ class _HubMuscles extends StatelessWidget {
             ios: true,
           ),
           Expanded(
-            child: ShaderMask(
-              blendMode: BlendMode.dstIn,
-              shaderCallback: (bounds) {
-                final fade = (12 / math.max(1, bounds.height)).clamp(0.0, .5);
-                return LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: const [
-                    Colors.transparent,
-                    Colors.white,
-                    Colors.white,
-                    Colors.transparent,
-                  ],
-                  stops: [0, fade, 1 - fade, 1],
-                ).createShader(bounds);
-              },
-              child: AnimatedSwitcher(
-                duration: FlareMotion.reduced(context)
-                    ? Duration.zero
-                    : const Duration(milliseconds: 200),
-                layoutBuilder: (current, previous) => Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    for (final old in previous)
-                      IgnorePointer(child: ExcludeSemantics(child: old)),
-                    ?current,
-                  ],
+            child: AnimatedSwitcher(
+              duration: FlareMotion.reduced(context)
+                  ? Duration.zero
+                  : const Duration(milliseconds: 200),
+              layoutBuilder: (current, previous) => Stack(
+                fit: StackFit.expand,
+                children: [
+                  for (final old in previous)
+                    IgnorePointer(child: ExcludeSemantics(child: old)),
+                  ?current,
+                ],
+              ),
+              child: GridView.builder(
+                key: PageStorageKey(selected.section),
+                primary: false,
+                padding: const EdgeInsets.only(
+                  top: 12,
+                  bottom: FlareGeometry.pageScrollBottomPadding,
                 ),
-                child: GridView.builder(
-                  key: PageStorageKey(selected.section),
-                  primary: false,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisExtent: 44,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: current.length,
-                  itemBuilder: (context, index) {
-                    final group = current[index];
-                    return _MuscleGridCell(
-                      group: group,
-                      selected: selected.id == group.id,
-                      onTap: () => onSelected(group.id),
-                    );
-                  },
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisExtent: 44,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
+                itemCount: current.length,
+                itemBuilder: (context, index) {
+                  final group = current[index];
+                  return _MuscleGridCell(
+                    group: group,
+                    selected: selected.id == group.id,
+                    onTap: () => onSelected(group.id),
+                  );
+                },
               ),
             ),
           ),
