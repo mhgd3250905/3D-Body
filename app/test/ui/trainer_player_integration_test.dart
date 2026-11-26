@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flare/control/learning_store.dart';
 import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
@@ -136,6 +139,7 @@ Future<LearningStore> _open(
   uc.TrainingPlan? sdkPlan,
   Catalog? catalog,
   FlarePlan? supplementalPlan,
+  sdk.TrainingMediaPolicy? mediaPolicy,
   sdk.VoiceOutput? voiceOutput,
   _Storage? storage,
   List<sdk.SessionResult>? popped,
@@ -160,12 +164,17 @@ Future<LearningStore> _open(
       locale: localeForLanguage(language),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(textScale)),
-        child: child!,
-      ),
+      builder: (context, child) {
+        final page = MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        );
+        return mediaPolicy == null
+            ? page
+            : sdk.TrainingMediaPolicyScope(policy: mediaPolicy, child: page);
+      },
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(
@@ -903,6 +912,93 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  for (final language in ['zh', 'en']) {
+    testWidgets('leg-by-leg hip circles mirror only the left leg ($language)', (
+      tester,
+    ) async {
+      const id = 'h-quad-cars';
+      final (temporary, policy, shared, authored) = (await tester.runAsync(
+        () async {
+          final pack =
+              jsonDecode(
+                    await rootBundle.loadString(
+                      'assets/data/flare-plans-r3.json',
+                    ),
+                  )
+                  as Map<String, dynamic>;
+          final warmup = (pack['plans'] as List)
+              .cast<Map<String, dynamic>>()
+              .singleWhere((plan) => plan['id'] == 'general-warmup');
+          final row = (warmup['items'] as List)
+              .cast<Map<String, dynamic>>()
+              .singleWhere((item) => item['drill'] == id);
+          final authored = FlarePlan.fromJson({
+            ...warmup,
+            'items': [row],
+          });
+          final parent = await Directory(
+            '../output/public-library-flow-tests',
+          ).create(recursive: true);
+          final temporary = await parent.createTemp('warmup-mirror-');
+          final policy = await FlarePublicMedia.load(
+            rootDirectory: temporary.path,
+          );
+          final shared = await FlareShared.load(activeCatalog: policy.catalog);
+          return (temporary, policy, shared, authored);
+        },
+      ))!;
+      addTearDown(() async {
+        policy.repository.dispose();
+        await temporary.delete(recursive: true);
+      });
+
+      final catalog = loadCatalogFixture();
+      await _open(
+        tester,
+        language: language,
+        catalog: catalog,
+        supplementalPlan: authored,
+        sdkPlan: shared.authoredPlan(
+          authored,
+          catalog,
+          'A',
+          language: language,
+        ),
+        mediaPolicy: policy,
+      );
+      final player = _player(tester);
+      final phases = player.sessionBuilder!.phases(player.plan);
+      final work = phases.where((phase) => phase.isWork).toList();
+      expect(work.map((phase) => (phase.segmentId, phase.reps)), [
+        ('右腿向外', 5),
+        ('右腿向内', 5),
+        ('左腿向外', 5),
+        ('左腿向内', 5),
+      ]);
+      expect(work.map((phase) => phase.side), [
+        sdk.Side.right,
+        sdk.Side.right,
+        sdk.Side.left,
+        sdk.Side.left,
+      ]);
+
+      final media = find.byWidgetPredicate(
+        (widget) => widget is sdk.TrainingActionMedia && widget.actionId == id,
+      );
+      await _advance(tester, phases.first.seconds.ceil() + 1);
+      for (final (index, phase) in work.indexed) {
+        final active = tester.widget<sdk.TrainingActionMedia>(media);
+        expect(active.mirrored, index >= 2, reason: phase.segmentId);
+        if (index < work.length - 1) {
+          await _advance(tester, phase.seconds.round());
+        }
+      }
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   for (final cooldown in [false, true]) {
     final planName = cooldown ? 'cooldown' : 'warm-up';

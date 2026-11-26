@@ -50,6 +50,10 @@ void main() {
           ),
         },
       };
+      final distinctArtwork = {
+        for (final file in published.displayMediaFiles)
+          (file.sha256, file.bytes): file.resolve(mediaBase),
+      };
       for (final entry in artwork.entries) {
         http.files[entry.key] = entry.value.readAsBytes;
       }
@@ -83,11 +87,11 @@ void main() {
           coach.PoseHubDisplayUpdatePhase.downloading,
         );
         expect(progress.last.phase, coach.PoseHubDisplayUpdatePhase.completed);
-        expect(progress.last.completedFiles, 572);
+        expect(progress.last.completedFiles, distinctArtwork.length + 2);
         expect(progress.last.receivedBytes, progress.last.totalBytes);
-        expect(http.requests, hasLength(573));
-        expect(http.requests, containsAll(artwork.keys));
-        expect(artwork, hasLength(570));
+        expect(http.requests, hasLength(distinctArtwork.length + 3));
+        expect(http.requests, containsAll(distinctArtwork.values));
+        expect(artwork, hasLength(590));
         expect(
           http.requests.where(
             (uri) => !uri.path.endsWith('.json') && !uri.path.endsWith('.webp'),
@@ -133,11 +137,11 @@ void main() {
 
         // A later catalogue adds one new display file. Invalid bytes must
         // keep the active pack intact and leave the new transfer retryable.
-        const failedPack = 'r2-v25';
+        const failedPack = 'r2-v30';
         final newArtwork = await artwork.values.first.readAsBytes();
         final bytes = Uint8List.fromList([...newArtwork, 0]);
         final descriptor = {
-          'path': 'media/flare-home/r2-v25/frame.webp',
+          'path': 'media/flare-home/r2-v30/frame.webp',
           'bytes': bytes.length,
           'sha256': coach.sha256Hex(bytes),
         };

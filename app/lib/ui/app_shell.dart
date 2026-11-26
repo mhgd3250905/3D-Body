@@ -665,12 +665,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
-  void _openFlarePlanDrill(String id) {
+  void _openFlarePlanDrill(String id, {bool autoPlay = false}) {
     if (catalog.drillById(id) case final drill?) {
       _openDrill(drill);
     } else {
       unawaited(
-        FlareShared.openDetail(context, id, soundEnabled: store.settings.sound),
+        FlareShared.openDetail(
+          context,
+          id,
+          soundEnabled: store.settings.sound,
+          autoPlay: autoPlay,
+        ),
       );
     }
   }
@@ -939,6 +944,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     sceneTier,
     title: title,
     skipStrengthening: skipStrengthening,
+    language: Localizations.localeOf(context).languageCode,
     wristDirections: trainerWristDirections(context.strings),
     circleDirections: (
       clockwise: context.strings.planCircleClockwise,
@@ -1646,7 +1652,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             }
           },
           onMuscle: _openMusclePlan,
-          onDrill: _openFlarePlanDrill,
+          onDrill: (id) => _openFlarePlanDrill(
+            id,
+            autoPlay: supplemental?.kind == FlarePlanKind.warmup,
+          ),
           onBack: _back,
           onOpenWarmup: warmup == null
               ? null
