@@ -406,6 +406,71 @@ List<uc.PlanSegment> _authoredDoseSegments(
   ];
 }
 
+/// Give the authored leg-by-leg circle segments a side for SDK playback.
+class FlareWarmupSessionBuilder extends sdk.SessionBuilder {
+  FlareWarmupSessionBuilder({
+    super.rhythms,
+    super.known,
+    super.prepSeconds,
+    super.switchSecondsFor,
+    super.prepSecondsFor,
+    super.voiceGuideFor,
+    super.guideSideSwitchSecondsFor,
+  }) : super(transitionSeconds: flareWarmupTransitionSeconds);
+
+  // The authored position generates the stable segment ID in all locales.
+  static const _quadCarsSides = {
+    '右腿向外': sdk.Side.right,
+    '右腿向内': sdk.Side.right,
+    '左腿向外': sdk.Side.left,
+    '左腿向内': sdk.Side.left,
+  };
+
+  static bool hasSidedSegments(uc.TrainingPlan plan) => plan.items.any(
+    (item) =>
+        item.exerciseId == 'h-quad-cars' &&
+        item.segments.any((segment) => _quadCarsSides.containsKey(segment.id)),
+  );
+
+  @override
+  List<sdk.SessionPhase> phases(uc.TrainingPlan plan) => [
+    for (final phase in super.phases(plan))
+      if (phase.isWork &&
+          phase.exerciseId == 'h-quad-cars' &&
+          phase.side == null &&
+          _quadCarsSides.containsKey(phase.segmentId))
+        sdk.SessionPhase(
+          kind: phase.kind,
+          seconds: phase.seconds,
+          exerciseId: phase.exerciseId,
+          item: phase.item,
+          segmentId: phase.segmentId,
+          segment: phase.segment,
+          itemIndex: phase.itemIndex,
+          blockIndex: phase.blockIndex,
+          itemInBlock: phase.itemInBlock,
+          set: phase.set,
+          sets: phase.sets,
+          round: phase.round,
+          rounds: phase.rounds,
+          side: _quadCarsSides[phase.segmentId],
+          blockName: phase.blockName,
+          reps: phase.reps,
+          repSeconds: phase.repSeconds,
+          rhythm: phase.rhythm,
+          selfPaced: phase.selfPaced,
+          holdSeconds: phase.holdSeconds,
+          nextExerciseId: phase.nextExerciseId,
+          nextItem: phase.nextItem,
+          doneExerciseId: phase.doneExerciseId,
+          voiceGuideSetExit: phase.voiceGuideSetExit,
+          afterGuidedSet: phase.afterGuidedSet,
+        )
+      else
+        phase,
+  ];
+}
+
 /// Use fixed repositioning and side-change times for the cooldown plans.
 class FlareCooldownSessionBuilder extends sdk.SessionBuilder {
   FlareCooldownSessionBuilder({

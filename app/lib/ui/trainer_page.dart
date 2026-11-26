@@ -737,13 +737,28 @@ class _FlareTrainingPageState extends State<FlareTrainingPage> {
         final sound = widget.store.settings.sound;
         final planAnnouncements =
             authored != null && hasFlarePlanAnnouncements(data.source);
+        final needsWarmupBuilder =
+            authored?.kind == FlarePlanKind.warmup &&
+            FlareWarmupSessionBuilder.hasSidedSegments(data.plan);
+        final defaultScript = needsWarmupBuilder && !planAnnouncements
+            ? sdk.SessionScript(source: data.source, lang: data.language)
+            : null;
         final sessionBuilder = cooldown == null
-            ? planAnnouncements
-                  ? sdk.SessionBuilder(
-                      transitionSeconds: flareWarmupTransitionSeconds,
+            ? planAnnouncements || needsWarmupBuilder
+                  ? FlareWarmupSessionBuilder(
                       prepSeconds: initialCountdownSeconds,
                       rhythms: data.rhythms,
                       known: (id) => drillOf(id) != null,
+                      switchSecondsFor: defaultScript?.switchSecondsFor,
+                      prepSecondsFor: sound
+                          ? defaultScript?.prepSecondsFor
+                          : null,
+                      voiceGuideFor: defaultScript == null
+                          ? null
+                          : data.source.voiceGuide,
+                      guideSideSwitchSecondsFor: defaultScript == null
+                          ? null
+                          : data.source.sideSwitchSecondsFor,
                     )
                   : null
             : FlareCooldownSessionBuilder(
