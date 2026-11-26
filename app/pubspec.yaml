@@ -81,6 +81,7 @@ flutter:
     - assets/data/course-stages.json
     - assets/data/drills.json
     - assets/data/flare-plans.json
+    - assets/data/flare-plans-r3.json
     - assets/data/flare-plan-voice-manifest.json
     - assets/data/flare-local-plans.json
     - assets/data/drills.schema.json

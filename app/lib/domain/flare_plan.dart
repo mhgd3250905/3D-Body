@@ -342,6 +342,7 @@ class FlarePlanDose {
     this.recommendedMin,
     this.recommendedMax,
     required this.repPositions,
+    required this.repPositionsEn,
     required this.workSegments,
     this.lastPositionHoldSeconds,
     this.rhythm,
@@ -358,6 +359,10 @@ class FlarePlanDose {
   final int? recommendedMin;
   final int? recommendedMax;
   final List<String> repPositions;
+  final List<String>? repPositionsEn;
+
+  List<String> repPositionsFor(String language) =>
+      language == 'zh' ? repPositions : repPositionsEn ?? repPositions;
   final List<FlarePlanWorkSegment> workSegments;
   final int? lastPositionHoldSeconds;
   final Map<String, dynamic>? rhythm;
@@ -377,6 +382,7 @@ class FlarePlanDose {
     final recommendedMin = json['recommendedMin'];
     final recommendedMax = json['recommendedMax'];
     final repPositions = json['repPositions'] ?? const [];
+    final repPositionsEn = json['repPositionsEn'];
     final workSegments = json['workSegments'] ?? const [];
     final lastPositionHoldSeconds = json['lastPositionHoldSeconds'];
     final rhythm = json['rhythm'];
@@ -410,6 +416,12 @@ class FlarePlanDose {
         repPositions.any((value) => value is! String || value.isEmpty) ||
         repPositions.toSet().length != repPositions.length ||
         (repPositions.isNotEmpty && reps == null) ||
+        (repPositionsEn != null &&
+            (repPositionsEn is! List ||
+                repPositionsEn.length != repPositions.length ||
+                repPositionsEn.any(
+                  (value) => value is! String || value.isEmpty,
+                ))) ||
         workSegments is! List ||
         workSegments.any((segment) => segment is! Map<String, dynamic>) ||
         (workSegments.isNotEmpty &&
@@ -424,7 +436,7 @@ class FlarePlanDose {
         perSide is! bool ||
         switch (movement) {
           FlarePlanMovement.bothCircleDirections ||
-          FlarePlanMovement.alternatingHipSwitch => reps == null || !perSide,
+          FlarePlanMovement.alternatingHipSwitch => reps == null,
           FlarePlanMovement.threeWayWristRocks =>
             seconds is! int || seconds < 3 || perSide,
           null => false,
@@ -455,6 +467,9 @@ class FlarePlanDose {
       recommendedMin: recommendedMin as int?,
       recommendedMax: recommendedMax as int?,
       repPositions: List.unmodifiable(repPositions.cast<String>()),
+      repPositionsEn: repPositionsEn == null
+          ? null
+          : List.unmodifiable((repPositionsEn as List).cast<String>()),
       workSegments: List.unmodifiable(parsedSegments),
       lastPositionHoldSeconds: lastPositionHoldSeconds as int?,
       rhythm: rhythm == null

@@ -72,6 +72,67 @@ void main() {
     },
   );
 
+  test('only dev preview selects bundled r3 on a compatible catalog', () async {
+    final store = MemoryPoseHubCatalogStore();
+    Future<PoseHubCatalogUpdates> open(PoseHubCatalogChannel channel) async =>
+        (await PoseHubCatalogUpdates.start(
+          config: PoseHubCatalogUpdateConfig(channel: channel),
+          store: store,
+          http: _OfflineHttp(),
+          previewWarmupR3: true,
+        ))!;
+
+    final dev = await open(PoseHubCatalogChannel.dev);
+    addTearDown(dev.dispose);
+    final baseline = await dev.planSnapshotFor('r2-v25');
+    expect(baseline!.version, 'flare-plans-r2');
+
+    // r2 is already the verified selection on a data-preserving upgrade.
+    final devPlans = PoseHubChannelPlanStore(
+      store: store,
+      channelUri: dev.updater.config.pointerUri,
+    );
+    await devPlans.install(baseline);
+    final preview = (await dev.planSnapshotFor('r2-v26'))!;
+    expect(preview.version, 'flare-plans-r3');
+    expect((await dev.restorePlanSnapshot(preview.id))?.id, preview.id);
+    expect((await dev.restorePlanSnapshot(baseline.id))?.id, baseline.id);
+    final catalog = loadCatalogFixture(
+      includeFlarePlans: true,
+    ).withPlanSnapshot(preview);
+    final warmup = catalog.flareWarmupPlan!;
+    expect(warmup.estimatedMinutes, 7);
+    expect(warmup.items.map((item) => item.drill), [
+      't-quadruped-wrist-shift',
+      't-quadruped-wrist-circle',
+      't-quadruped-backhand-press',
+      't-9090-hip-switch-planted',
+      't-9090-back-knee-lift',
+    ]);
+    final oldVoiceFiles = preview.voiceManifest.files.keys;
+    for (final item in warmup.items) {
+      expect(item.voiceKey, startsWith('supplemental.general-warmup-r3.'));
+      expect(
+        oldVoiceFiles.any(
+          (file) => file.split('/').last == '${item.voiceKey}.m4a',
+        ),
+        isFalse,
+      );
+    }
+
+    final stable = await open(PoseHubCatalogChannel.stable);
+    addTearDown(stable.dispose);
+    expect((await stable.planSnapshotFor('r2-v26'))?.id, baseline.id);
+
+    final publishedR3 = PoseHubPlanSnapshot.fromBytes(
+      [...preview.planPack.jsonBytes, 10],
+      File('assets/data/flare-plan-voice-manifest.json').readAsBytesSync(),
+      minSdk: preview.minSdk,
+    );
+    await devPlans.install(publishedR3);
+    expect((await dev.planSnapshotFor('r2-v26'))?.id, publishedR3.id);
+  });
+
   test(
     'verified snapshots replace supplemental plans and preserve old IDs',
     () {

@@ -130,6 +130,7 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
   required uc.Catalog sourceCatalog,
   Map<String, sdk.Rhythm> rhythms = const {},
   bool skipStrengthening = false,
+  String language = 'zh',
   List<String> wristDirections = const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
   ({String clockwise, String counterclockwise}) circleDirections = const (
     clockwise: '顺时针',
@@ -188,7 +189,8 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       );
       continue;
     }
-    if (dose.movement == FlarePlanMovement.alternatingHipSwitch) {
+    if (dose.movement == FlarePlanMovement.alternatingHipSwitch &&
+        dose.perSide) {
       // The source pose is held. Schedule both directions per count for this
       // authored 90/90 switch while continuing to use its published media.
       items.add(
@@ -215,6 +217,7 @@ uc.TrainingPlan trainingPlanFromFlarePlan({
       dose,
       item,
       sceneTier,
+      language,
     );
     if (explicitSegments.isNotEmpty) {
       items.add(item.copyWith(segments: explicitSegments));
@@ -312,6 +315,7 @@ List<uc.PlanSegment> _authoredDoseSegments(
   FlarePlanDose dose,
   uc.PlanItem item,
   String scene,
+  String language,
 ) {
   if (authored.secondaryStretchTrainingIdForScene(scene)
       case final secondary?) {
@@ -374,12 +378,13 @@ List<uc.PlanSegment> _authoredDoseSegments(
   }
   if (workSegments.isNotEmpty) return workSegments;
   if (dose.repPositions.isNotEmpty) {
+    final labels = dose.repPositionsFor(language);
     return [
       for (final (index, label) in dose.repPositions.indexed)
         uc.PlanSegment(
           id: label.toLowerCase(),
           exerciseId: item.exerciseId,
-          label: label,
+          label: labels[index],
           mode: uc.DoseMode.reps,
           reps: dose.reps,
           holdSeconds: index == dose.repPositions.length - 1

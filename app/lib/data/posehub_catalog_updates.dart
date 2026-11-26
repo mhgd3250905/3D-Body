@@ -27,20 +27,21 @@ import 'flare_public_catalog.dart';
 const flareChannelTrace = bool.fromEnvironment('FLARE_CHANNEL_TRACE');
 const _planApp = 'flare';
 const _bundledPlans = 'assets/data/flare-plans.json';
+const _bundledWarmupR3 = 'assets/data/flare-plans-r3.json';
+const _enableWarmupR3 = bool.fromEnvironment('FLARE_BUNDLED_WARMUP_R3');
 const _bundledVoiceManifest = 'assets/data/flare-plan-voice-manifest.json';
 
 Future<PoseHubPlanSnapshot?> loadFlareBundledPlanSnapshot({
   AssetBundle? bundle,
+  bool warmupR3 = false,
 }) async {
   final assets = bundle ?? rootBundle;
   try {
-    final documents = await Future.wait([
-      assets.load(_bundledPlans),
-      assets.load(_bundledVoiceManifest),
-    ]);
+    final plan = await assets.load(warmupR3 ? _bundledWarmupR3 : _bundledPlans);
+    final voice = await assets.load(_bundledVoiceManifest);
     final snapshot = PoseHubPlanSnapshot.fromBytes(
-      _planBytes(documents[0]),
-      _planBytes(documents[1]),
+      _planBytes(plan),
+      _planBytes(voice),
       minSdk: poseHubCatalogSdkVersion,
     );
     Catalog.readSupplementalPlans(snapshot);
@@ -69,7 +70,10 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     this.updater,
     this.assetRootDirectory,
     this._onOutcome,
+    this._previewWarmupR3,
   );
+
+  final bool _previewWarmupR3;
 
   static const bundledPackVersion = 'r2-v24';
   static const bundledCatalogSha256 =
@@ -108,6 +112,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     PoseHubCatalogUpdateConfig? config,
     String? assetRootDirectory,
     Future<coach.PoseHubAppTestCatalog> Function()? loadLocal,
+    bool previewWarmupR3 = _enableWarmupR3,
   }) async {
     if (kIsWeb && store == null) return null;
     try {
@@ -117,9 +122,10 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
             // The legacy catalog cache did not verify or install the images.
             '${(await getApplicationSupportDirectory()).path}/posehub-display-catalog',
           );
+      final updateConfig = config ?? buildConfig;
       final updates = PoseHubCatalogUpdates._(
         PoseHubCatalogUpdater.withPersistentAssets(
-          config: config ?? buildConfig,
+          config: updateConfig,
           store: resolved,
           http: http,
           assetRootDirectory: assetRootDirectory,
@@ -131,6 +137,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
         ),
         assetRootDirectory,
         onOutcome,
+        previewWarmupR3 && updateConfig.channel == PoseHubCatalogChannel.dev,
       );
       PoseHubActionLibrary.useVerifiedCache(resolved);
       activeStore = resolved;
@@ -156,7 +163,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
   Future<PoseHubPlanSnapshot?> planSnapshotFor(String catalogPack) async {
     var source = 'verified-cache';
     try {
-      final snapshot = await updater.planSnapshotFor(
+      var snapshot = await updater.planSnapshotFor(
         _planApp,
         catalogPack: catalogPack,
         loadBundled: () {
@@ -164,6 +171,18 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
           return loadFlareBundledPlanSnapshot();
         },
       );
+      if (_previewWarmupR3 &&
+          (snapshot == null || snapshot.version == 'flare-plans-r2')) {
+        final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
+        if (preview != null &&
+            preview.isCompatible(
+              catalogPack: catalogPack,
+              sdkVersion: updater.config.sdkVersion,
+            )) {
+          snapshot = preview;
+          source = 'bundle';
+        }
+      }
       if (snapshot == null) return null;
       Catalog.readSupplementalPlans(snapshot);
       if (flareChannelTrace) {
@@ -187,8 +206,12 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     }
   }
 
-  Future<PoseHubPlanSnapshot?> restorePlanSnapshot(String id) =>
-      updater.restorePlanSnapshot(_planApp, id);
+  Future<PoseHubPlanSnapshot?> restorePlanSnapshot(String id) async {
+    final stored = await updater.restorePlanSnapshot(_planApp, id);
+    if (stored != null || !_previewWarmupR3) return stored;
+    final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
+    return preview?.id == id ? preview : null;
+  }
 
   Future<PoseHubCatalogUpdateOutcome> _reportOutcome(
     Future<PoseHubCatalogUpdateOutcome> check,

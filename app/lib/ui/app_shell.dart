@@ -939,6 +939,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     sceneTier,
     title: title,
     skipStrengthening: skipStrengthening,
+    language: Localizations.localeOf(context).languageCode,
     wristDirections: trainerWristDirections(context.strings),
     circleDirections: (
       clockwise: context.strings.planCircleClockwise,

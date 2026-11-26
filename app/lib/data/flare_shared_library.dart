@@ -124,6 +124,7 @@ class FlareShared {
     String scene, {
     String? title,
     bool skipStrengthening = false,
+    String language = 'zh',
     List<String>? wristDirections,
     ({String clockwise, String counterclockwise}) circleDirections = const (
       clockwise: '顺时针',
@@ -137,6 +138,7 @@ class FlareShared {
     sourceCatalog: catalog,
     rhythms: rhythms,
     skipStrengthening: skipStrengthening,
+    language: language,
     wristDirections: wristDirections ?? const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
     circleDirections: circleDirections,
   );
