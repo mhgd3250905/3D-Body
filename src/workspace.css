@@ -170,3 +170,9 @@ body[data-mode="transition"] .orientation{bottom:155px}
 .segment-guide-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:7px;align-items:center}.segment-guide-actions>button{font-size:12px;padding:11px 5px;border:1px solid #365270;background:#1c2d43;border-radius:5px;margin-top:10px}
 .trajectory-legacy-pose{margin:15px 0;font-size:12.5px}.trajectory-legacy-pose summary{cursor:pointer;color:var(--muted)}
 .editing-segment-guide>.pose-field,.editing-segment-guide>.pose-values,.editing-segment-guide>.pose-locks,.editing-segment-guide>.pose-tools,.editing-segment-guide>.pose-save,.editing-segment-guide>.pose-note,.editing-segment-guide>.transition-skip,.editing-segment-guide>.transition-settings,.editing-segment-guide>.transition-time-details,.editing-segment-guide>.trajectory-legacy-curves,.editing-segment-guide>.trajectory-legacy-pose,.editing-segment-guide>.transition-recovery{display:none}
+/* 托马斯 / 2000 move switch (header) */
+.move-switch{display:inline-flex;align-items:center;gap:2px;padding:2px;margin-right:6px;border-radius:9px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.move-switch button{min-width:52px;height:30px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:#9fb0c4;font-size:13px;font-weight:500;letter-spacing:.3px;white-space:nowrap}
+.move-switch button:hover{color:#e4ecf0;background:rgba(255,255,255,.06)}
+.move-switch button[aria-pressed="true"]{background:var(--accent,#ff6a3d);color:#fff;font-weight:600}
+@media(max-width:720px){.move-switch{margin-right:2px}.move-switch button{min-width:0;height:28px;padding:0 9px;font-size:12px}}

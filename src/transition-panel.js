@@ -10,6 +10,8 @@ import { solveTrajectoryPose } from './trajectory-pose-edit.js';
 import { createSegmentGuideEditor, segmentGuideMarkup } from './segment-guide-editor.js';
 import { planSegmentGuideRange } from './segment-guide-range.js';
 import { clampGuideTime, unfoldGuideClock, guideTransportMarkers } from './transition-transport.js';
+import { IS_2000, CURRENT_MOVE, assertSameMove, tagMove } from './move-2000.js';
+import { encodeShareCode, decodeShareCode, restorePayload, isShareCode } from './share-code.js';
 
 const clone = value => structuredClone(value);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -110,7 +112,7 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
     store.setItem(RECOVERY_STORAGE_KEY, raw);
     if (store.getItem(RECOVERY_STORAGE_KEY) !== raw) throw new Error('恢复前备份未保存成功，当前动画保留。');
   }
-  function downloadAnimation(animation, prefix = 'flare-transitions') {
+  function downloadAnimation(animation, prefix = IS_2000 ? '2000-transitions' : 'flare-transitions') {
     const url = URL.createObjectURL(new Blob([JSON.stringify(animation, null, 2)], { type: 'application/json' }));
     const link = globalThis.document.createElement('a');link.href = url;link.download = `${prefix}-${Date.now()}.json`;link.click();
     setTimeout(() => URL.revokeObjectURL(url), 30000);
@@ -120,14 +122,21 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
     if (trajectoryPoseEdit?.result?.improved) { saveTrajectoryPose();if (trajectoryPoseEdit) throw new Error('姿态修正尚未保存。'); }
     if (curveEdit && curvePending()) saveCurve();
     if (dirty) { saveDraft();if (!persisted) throw new Error('当前调整尚未暂存成功，请保留此页。'); }
-    return { ...clone(document), sequence: clone(source) };
+    return tagMove({ ...clone(document), sequence: clone(source) });
   }
-  function importAnimationText(text, label = '粘贴的姿态备份') {
+  async function importAnimationText(text, label = '粘贴的姿态备份') {
+    if (isShareCode(text)) {
+      const payload = await decodeShareCode(text);assertSameMove(payload);
+      importAnimationData(restorePayload(payload, OFFICIAL_FLARE_SEQUENCE), '粘贴的分享码');return;
+    }
     if (new Blob([text]).size > 2 * 1024 * 1024) throw new Error('请选择 2 MB 以内的动画 JSON。');
-    const imported = JSON.parse(text);
+    importAnimationData(JSON.parse(text), label);
+  }
+  function importAnimationData(imported, label) {
+    assertSameMove(imported);
     pause();if (guideEditor.active()) guideEditor.cancel({ resample: false });if (trajectoryPoseEdit) endTrajectoryPose({ resample: false });if (curveEdit) endCurveEdit({ resample: false });
     if (['flare-pose-library', 'flare-demonstration'].includes(imported?.format)) { loadRecoveryBackup(imported, label);return; }
-    const { sequence: importedSequence, ...edits } = imported;
+    const { sequence: importedSequence, move: _move, ...edits } = imported;
     if (importedSequence && onImportFrames && JSON.stringify(importedSequence) !== JSON.stringify(source)) {
       const previous = snapshot(), result = onImportFrames(importedSequence, edits);
       documentHistory.push(previous);if (documentHistory.length > 30) documentHistory.shift();acceptFrames(result);
@@ -163,6 +172,7 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
     }
   }
   function loadRecoveryBackup(backup, label) {
+    assertSameMove(backup);
     const frames = getOfficialRecoveryFrames(source, backup);
     if (!frames.some(frame => frame.available)) throw new Error('这份备份没有与当前原帧身份匹配的姿态，当前动画保留。');
     recoveryBackup = clone(backup);recoveryLabel = label;recoveryMessage = '';
@@ -859,7 +869,7 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
       <details class="transition-settings"><summary>路线与启用设置</summary><label class="pose-field"><span>四肢过渡路线</span><select id="transition-leg-path" aria-label="四肢过渡路线"><option value="arc">沿关键姿态 · 推荐</option><option value="linear">原直线 · 对照</option></select></label><div class="pose-locks"><label><input id="transition-enabled" type="checkbox"/>启用过渡调整</label></div></details>
       <details id="transition-recovery" class="transition-recovery"><summary>恢复原关键帧</summary><p class="pose-note">恢复来源：<strong id="transition-recovery-source"></strong></p><div class="pose-tools"><button id="transition-recovery-original">使用初始保存姿态</button><button id="transition-recovery-import">读取姿态备份 JSON</button></div><input id="transition-recovery-file" type="file" accept=".json,application/json" hidden/><fieldset id="transition-recovery-frames" aria-label="选择需要恢复的原帧"></fieldset><button class="focus-button" id="transition-recovery-apply" disabled>恢复勾选的原帧</button><p id="transition-recovery-note" class="pose-note" role="status"></p><button id="transition-recovery-download" class="focus-button" hidden>下载恢复前备份</button></details>
       <div class="pose-file-actions"><button id="transition-export">导出动画 JSON</button><button id="transition-import">导入动画 JSON</button><input id="transition-import-file" type="file" accept=".json,application/json" hidden/></div>
-      <details class="transition-json-backup" id="transition-json-backup"><summary>复制／粘贴动画备份</summary><p class="pose-note">完整备份包含原姿态、K 帧、曲线与暂存。也可粘贴之前的完整动画 JSON 恢复，载入后可撤销。</p><button id="transition-json-generate">生成完整备份</button><textarea id="transition-json-text" aria-label="完整动画备份 JSON" spellcheck="false" placeholder="生成备份，或在这里粘贴完整动画 JSON"></textarea><div class="pose-file-actions"><button id="transition-json-copy">复制 JSON</button><button id="transition-json-import">载入这份备份</button></div><p class="pose-note" id="transition-json-note" role="status"></p></details>`;
+      <details class="transition-json-backup" id="transition-json-backup"><summary>复制／粘贴动画备份</summary><p class="pose-note">完整备份包含原姿态、K 帧、曲线与暂存。也可粘贴之前的完整动画 JSON 恢复，载入后可撤销。${IS_2000 ? '“复制分享码”只带改过的帧和 K 帧，更短，直接发给 Hark；粘贴分享码后点“载入这份备份”即可还原。' : ''}</p><button id="transition-json-generate">生成完整备份</button>${IS_2000 ? '<button id="transition-share-copy" class="focus-button">复制分享码</button>' : ''}<textarea id="transition-json-text" aria-label="完整动画备份 JSON" spellcheck="false" placeholder="${IS_2000 ? '生成备份或分享码，或在这里粘贴完整动画 JSON / 分享码' : '生成备份，或在这里粘贴完整动画 JSON'}"></textarea><div class="pose-file-actions"><button id="transition-json-copy">复制 JSON</button><button id="transition-json-import">载入这份备份</button></div><p class="pose-note" id="transition-json-note" role="status"></p></details>`;
     $('#transition-handle').innerHTML = viewer.motion.getEditableHandles().map(handle => `<option value="${handle.id}">${escape(handle.label)}</option>`).join('');
     for (const id of ['from', 'to']) $('#trajectory-' + id).addEventListener('change', () => {
       try {
@@ -964,9 +974,18 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
       try { await navigator.clipboard.writeText(text);$('#transition-json-note').textContent = '完整 JSON 已复制。'; }
       catch { $('#transition-json-text').focus();$('#transition-json-text').select();notify('请按 Ctrl+C 复制选中的完整 JSON。'); }
     });
-    $('#transition-json-import').addEventListener('click', () => {
-      try { importAnimationText($('#transition-json-text').value); }
+    $('#transition-json-import').addEventListener('click', async () => {
+      try { await importAnimationText($('#transition-json-text').value); }
       catch (error) { notify(error.message); }
+    });
+    $('#transition-share-copy')?.addEventListener('click', async () => {
+      let code;
+      try {
+        code = await encodeShareCode(animationBackup(), OFFICIAL_FLARE_SEQUENCE, CURRENT_MOVE);
+        $('#transition-json-text').value = code;
+      } catch (error) { notify(error.message);return; }
+      try { await navigator.clipboard.writeText(code);$('#transition-json-note').textContent = `分享码已复制（${code.length} 个字符），直接粘贴发给 Hark 即可。`; }
+      catch { $('#transition-json-text').focus();$('#transition-json-text').select();$('#transition-json-note').textContent = `分享码已生成（${code.length} 个字符），请按 Ctrl+C 复制选中的内容。`; }
     });
     $('#transition-recovery-original').addEventListener('click', () => loadRecoveryBackup(OFFICIAL_FLARE_SEQUENCE, '初始保存姿态（原始导出）'));
     $('#transition-recovery-import').addEventListener('click', () => $('#transition-recovery-file').click());
@@ -982,7 +1001,7 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
     $('#transition-recovery-download').addEventListener('click', () => {
       try {
         const backup = recoveryHistory().entries.at(-1);
-        if (backup) { downloadAnimation(backup.animation, 'flare-before-recovery');notify('恢复前的完整动画备份已导出。'); }
+        if (backup) { downloadAnimation(backup.animation, IS_2000 ? '2000-before-recovery' : 'flare-before-recovery');notify('恢复前的完整动画备份已导出。'); }
       } catch (error) { notify(error.message); }
     });
     $('#transition-import').addEventListener('click', () => $('#transition-import-file').click());
@@ -990,7 +1009,7 @@ export function createTransitionPanel({ viewer, panel, shelf, sequence, storage,
       const file = event.target.files[0];if (!file) return;
       try {
         if (file.size > 2 * 1024 * 1024) throw new Error('请选择 2 MB 以内的动画 JSON。');
-        importAnimationText(await file.text(), file.name);
+        await importAnimationText(await file.text(), file.name);
       }
       catch (error) { notify(error.message); }
       finally { event.target.value = ''; }

@@ -4,6 +4,7 @@ import { exerciseById } from './data.js';
 import { renderSources, poseSources } from './research-ui.js';
 import { mirrorContinuationSources, mirroredStep, mirroredTemplate } from './pose-mirror.js';
 import { applySavedMirrorUpdate } from './saved-mirror-update.js';
+import { IS_2000, assertSameMove, tagMove } from './move-2000.js';
 
 const KEY='flare-pose-library-v1';
 const MIRROR_COMPLETION='five-step-half-v1';
@@ -264,14 +265,15 @@ export function createPosePanel({viewer,panel,shelf,presetPanel,presets=[],notif
 
   function exportFile(){
     const steps=library.steps.length?library.steps:[{id:id(),name:title.trim()||'当前姿势',pose:pose()}];
-    const data={format:'flare-pose-library',version:1,character:'Snow Flare Coach',exportedAt:new Date().toISOString(),steps};
+    const data=tagMove({format:'flare-pose-library',version:1,character:'Snow Flare Coach',exportedAt:new Date().toISOString(),steps});
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-    link.href=url;link.download='flare-my-steps.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('步骤已导出为 JSON。');
+    link.href=url;link.download=IS_2000?'2000-my-steps.json':'flare-my-steps.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('步骤已导出为 JSON。');
   }
 
   async function importFile(file){
     if(file.size>2*1024*1024)throw new Error('请选择 2 MB 以内的姿势 JSON 文件。');
     let data;try{data=JSON.parse(await file.text());}catch{throw new Error('文件不是有效的 JSON。');}
+    assertSameMove(data);
     if(data.format!=='flare-pose-library'||data.version!==1||!Array.isArray(data.steps)||!data.steps.length||data.steps.length+library.steps.length>200)throw new Error('请选择这个项目导出的步骤文件，总步骤数需在 200 以内。');
     const previous=pose(),valid=[];
     const importedIds=new Map(data.steps.filter(step=>typeof step.id==='string').map(step=>[step.id,id()]));

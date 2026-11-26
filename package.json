@@ -6,6 +6,7 @@
   "description": "An offline Three.js anatomy and movement explorer for the breaking flare",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 8810",
+    "dev:2000": "vite --host 127.0.0.1 --port 8810 --open /?move=2000",
     "build": "vite build",
     "start": "node tools/server.mjs",
     "verify": "node tools/verify.mjs",
@@ -17,7 +18,9 @@
     "verify:asset": "node tools/verify-coach-asset.mjs",
     "verify:sequence": "node tools/verify-flare-sequence.mjs",
     "verify:official": "node tools/verify-official-poses.mjs",
-    "verify:demonstration": "node tools/verify-demonstration-ui.mjs"
+    "verify:demonstration": "node tools/verify-demonstration-ui.mjs",
+    "verify:share": "node tools/verify-share-code.mjs",
+    "verify:move-switch": "node tools/verify-move-switch.mjs"
   },
   "dependencies": {
     "lucide": "0.468.0",

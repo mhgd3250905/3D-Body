@@ -1,3 +1,4 @@
+import { IS_2000, CURRENT_MOVE, MOVES, switchMove } from './move-2000.js';
 import './tokens.css';
 import './style.css';
 import './workspace.css';
@@ -23,7 +24,7 @@ import { createMuscleSync } from './muscle-sync.js';
 import { openMuscleViewer } from './muscle-viewer.js';
 import { createFlarePosePresets } from './pose-presets.js';
 import { renderSources } from './research-ui.js';
-import { OFFICIAL_FLARE_SEQUENCE, sequenceFromSavedSteps, saveOfficialSequence, saveV41DefaultSequence, previousOfficialSequence, restoreOfficialSequence, updateOfficialFrame } from './official-poses.js';
+import { OFFICIAL_FLARE_SEQUENCE, validSequence, sequenceFromSavedSteps, saveOfficialSequence, saveV41DefaultSequence, previousOfficialSequence, restoreOfficialSequence, updateOfficialFrame } from './official-poses.js';
 import { V42_DEFAULT_SEQUENCE, resolveV42Sequence, saveV42DefaultSequence } from './v42-default.js';
 import { rebaseTransitionEdits, saveOfficialFrameEdits } from './transition-edits.js';
 import { createAppMenu } from './app-menu.js';
@@ -81,6 +82,11 @@ function updateTime(time){
 }
 
 function localStore(){try{return localStorage;}catch{return null;}}
+// 2000: a saved formal selection in the b2000 namespace, otherwise the bundled 2000 keyframes (no baked v42 clip).
+function resolve2000Sequence(storage){
+  try{const saved=JSON.parse(storage?.getItem('flare-demonstration-v1')||'null');if(saved&&validSequence(saved)&&saved.source?.kind==='move-2000')return structuredClone(saved);}catch{}
+  return structuredClone(OFFICIAL_FLARE_SEQUENCE);
+}
 // Synced muscle body: same sequence and clock as the main animation, shown only over the saved animation.
 function syncMuscleSequence(){if(muscleSync&&demonstration&&transitionPanel)muscleSync.setSequence({...demonstration,...transitionPanel.options(),motionModel},viewer.motion);}
 function syncMuscleVisibility(){muscleSync?.setVisible(ready&&mode==='motion'&&motionModel==='saved'&&!trainingPreview?.active&&!movementInspector?.active);}
@@ -364,7 +370,7 @@ async function initialize(){
       onPoseSelection:()=>{if(mode==='pose')posePanel?.refresh();else if(mode==='transition')transitionPanel?.refresh();}
     });
     workspaceUI.sync();viewer.selectGroup(selectedGroup);const manifest=await viewer.load();ready=true;$('#loading').hidden=true;
-    demonstration=resolveV42Sequence(localStore());viewer.setSequence(demonstration);
+    demonstration=IS_2000?resolve2000Sequence(localStore()):resolveV42Sequence(localStore());viewer.setSequence(demonstration);
     presets=createFlarePosePresets(viewer.motion,demonstration);
     posePanel=createPosePanel({viewer,panel:$('#detail-panel'),shelf:$('#pose-shelf'),presetPanel:$('#pose-presets'),presets,notify:toast,refreshIcons,onTraining:id=>openExercise(id),onDisplayStep:()=>updatePlayButton(),onUseDemonstration:steps=>{replaceDemonstration(sequenceFromSavedSteps(steps));toast('已将这 9 步用于正式展示，个人步骤保留。');},onUndoDemonstration:()=>{const previous=previousOfficialSequence(localStore());if(previous){replaceDemonstration(previous,'restore');toast('已恢复此前的正式展示，个人步骤保留。');}},hasPreviousDemonstration:()=>!!previousOfficialSequence(localStore()),onPresetLoad:()=>workspaceUI.afterPreset()});
     transitionPanel=createTransitionPanel({viewer,panel:$('#detail-panel'),shelf:$('#transition-shelf'),sequence:demonstration,storage:localStore,notify:toast,refreshIcons,onApply:applyTransitionOptions,onUpdateFrame:updateAnimationFrame,onRestoreFrames:undoAnimationFrames,onImportFrames:importAnimationFrames,hasPreviousFrameUpdate:()=>['browser-keyframe-edit','browser-animation-import'].includes(demonstration?.source?.origin)&&!!previousOfficialSequence(localStore()),onExit:()=>{setMode('motion');workspaceUI.revealDetails();}});
@@ -401,6 +407,16 @@ async function initialize(){
     const retry=document.createElement('button');retry.className='retry-button';retry.textContent='重新载入';retry.addEventListener('click',()=>location.reload());$('#loading').append(retry);
   }
 }
+if(IS_2000){for(const id of ['#use-v42-default','#use-v41-default','#phase-strip'])$(id)?.setAttribute('data-b2000-hidden','');}
+// 托马斯 / 2000 switch: reloads this tab on the other move (each move keeps its own saved data).
+function requestMoveSwitch(move){
+  if(move===CURRENT_MOVE)return;
+  const editing=['pose','transition'].includes(document.body.dataset.mode);
+  if(editing&&!confirm(`切换到「${MOVES[move]}」会重新载入页面。已保存和已暂存的调整都会保留，正在拖动但未保存的姿势会丢失。继续？`))return;
+  switchMove(move);
+}
+for(const button of $$('[data-move-switch]')){button.setAttribute('aria-pressed',String(button.dataset.moveSwitch===CURRENT_MOVE));button.addEventListener('click',()=>requestMoveSwitch(button.dataset.moveSwitch));}
+for(const item of $$('[data-menu-move]')){item.setAttribute('aria-checked',String(item.dataset.menuMove===CURRENT_MOVE));item.addEventListener('click',()=>requestMoveSwitch(item.dataset.menuMove));}
 $('#capture-button').disabled=true;
 createAppMenu({refreshIcons});
 workspaceUI=createWorkspace({viewer:()=>viewer,refreshIcons,onNotice:toast,extraInsets:()=>{muscleSync?.relayout();return muscleSync?.reserve();}});
