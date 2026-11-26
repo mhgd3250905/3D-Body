@@ -76,7 +76,7 @@ void main() {
         utf8.encode(jsonEncode(oneAction)),
         semanticCatalogBytes: semanticBytes,
       );
-      const version = 'r2-v25';
+      const version = 'r2-v30';
       final catalogBytes = utf8.encode(
         jsonEncode({...oneAction, 'pack': version}),
       );

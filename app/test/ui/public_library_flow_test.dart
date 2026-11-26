@@ -352,7 +352,7 @@ void main() {
   }
 
   test(
-    'the official r2-v24 catalog preserves the library and AI scope',
+    'the official r2-v29 catalog preserves the library and AI scope',
     () async {
       final bundled = await loadFlareBundledPublicCatalog();
       final packIds = bundled.toAiCatalog().drills.map((d) => d.id).toSet();
@@ -366,9 +366,9 @@ void main() {
         shared: shared,
         executionTiming: shared.sessionBuilder().executionTiming,
       );
-      expect(packIds, hasLength(285));
+      expect(packIds, hasLength(295));
       expect(packIds, contains('n-thomas-test'));
-      expect(scopedIds, hasLength(248));
+      expect(scopedIds, hasLength(258));
       expect(aiIds, unorderedEquals(packIds));
       expect(scopedIds, isNot(contains(flareWarmupPushupId)));
       expect(scopedIds.intersection(flareSupplementalActionIds), isEmpty);
@@ -382,14 +382,15 @@ void main() {
         profile.scopeManifest.allowedActionIds,
         unorderedEquals(libraryIds),
       );
+      expect(flareAuthorizedActionIds.difference(scopedIds), isEmpty);
       expect(
-        flareAuthorizedActionIds.difference(scopedIds),
-        unorderedEquals([
-          't-quadruped-wrist-shift',
-          't-quadruped-wrist-circle',
-          't-quadruped-backhand-press',
-          't-9090-hip-switch-planted',
-          't-9090-back-knee-lift',
+        scopedIds,
+        containsAll([
+          't-quadruped-straight-leg-raise',
+          't-standing-straddle-hands-floor',
+          't-reverse-plank-hold',
+          't-reverse-plank-hold-fingers-out',
+          'h-tabletop-fingers-out',
         ]),
       );
       expect(_newR2V1Actions, hasLength(40));
@@ -401,7 +402,7 @@ void main() {
   test(
     'every scoped action has both verified WebP files in the asset bundle',
     () async {
-      expect(shared.allowedActionIds, hasLength(248));
+      expect(shared.allowedActionIds, hasLength(258));
       for (final id in shared.allowedActionIds) {
         final action = policy.actionFor(id)!;
         final assets = {
@@ -422,7 +423,7 @@ void main() {
   );
 
   test(
-    'an older verified cache cannot shadow the bundled r2-v24 pack',
+    'an older verified cache cannot shadow the bundled r2-v29 pack',
     () async {
       const olderPack = 'r2-v11';
       final store = sdk.MemoryPoseHubCatalogStore();
@@ -446,7 +447,7 @@ void main() {
       final cached = await sdk.readVerifiedPoseHubCatalog(store);
       expect(sdk.poseHubPackVersionOf(cached!), olderPack);
       final pack = await loadFlarePublicCatalog(verifiedCache: store);
-      expect(sdk.poseHubPackVersionOf(pack), 'r2-v24');
+      expect(sdk.poseHubPackVersionOf(pack), 'r2-v29');
       expect(
         poseHubCatalogRevisionOf(pack),
         PoseHubCatalogUpdates.bundledCatalogSha256,
@@ -454,7 +455,7 @@ void main() {
     },
   );
 
-  testWidgets('empty logs open 248 public actions and the local V5 drill', (
+  testWidgets('empty logs open 258 public actions and the local V5 drill', (
     tester,
   ) async {
     final scene = await mountShell(tester);
@@ -466,7 +467,7 @@ void main() {
     await _settleLocalAssets(tester);
     expect(find.byType(FlareSharedLibraryPage), findsOneWidget);
     expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
-    _expectCount(tester, 249);
+    _expectCount(tester, 259);
     expect(_key('public-action-flare-v5'), findsOneWidget);
     final v5Poster = tester.widget<sdk.TrainerPoster>(
       _key('library-poster-flare-v5'),
@@ -783,7 +784,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('English SDK detail copy covers all 248 actions', (tester) async {
+  testWidgets('English SDK detail copy covers all 258 actions', (tester) async {
     await mountLibrary(tester, locale: const Locale('en', 'US'));
     final id = _posterId(
       tester.widget<sdk.TrainerPoster>(find.byType(sdk.TrainerPoster).first),
@@ -819,7 +820,7 @@ void main() {
         excludedMatches += excluded.allMatches(text).length;
       }
     }
-    expect((names, cues, cautions), (248, 821, 603));
+    expect((names, cues, cautions), (258, 860, 628));
     expect(hanMatches, 0);
     expect(excludedMatches, 0);
     final displayed = displayText(id)!;
@@ -852,7 +853,7 @@ void main() {
       const sdk.TrainingLibraryFilter(muscle: 'deltoids'),
     );
     expect(expected, greaterThan(0));
-    expect(expected, lessThan(248));
+    expect(expected, lessThan(258));
     expect(_filter(tester).filter.muscle, 'deltoids');
     expect(_filter(tester).controller.text, isEmpty);
     _expectCount(tester, expected);
@@ -899,7 +900,7 @@ void main() {
       await tester.binding.handlePopRoute();
       await _settleLocalAssets(tester);
       expect(_filter(tester).filter, const sdk.TrainingLibraryFilter());
-      _expectCount(tester, 248);
+      _expectCount(tester, 258);
       await _openFilter(tester);
       await _chooseDraft(tester, 'public-library-body-肩');
       await tester.tap(_key('public-library-filter-apply'));

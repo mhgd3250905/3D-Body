@@ -18,6 +18,7 @@ const flareDemoOrientationOverrides = {
   't-supine-straddle-open-close': FlareDemoOrientation.bilateral,
   't-standing-clasp-chest-opener': FlareDemoOrientation.bilateral,
   't-forearm-side-plank': FlareDemoOrientation.left,
+  't-9090-back-knee-lift': FlareDemoOrientation.left,
 };
 
 bool flareDemoMirrored(String mediaActionId, bool sdkMirrored) =>

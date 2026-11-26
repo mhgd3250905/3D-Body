@@ -84,8 +84,16 @@ void main() {
 
     final dev = await open(PoseHubCatalogChannel.dev);
     addTearDown(dev.dispose);
-    final baseline = await dev.planSnapshotFor('r2-v25');
+    final baseline = await dev.planSnapshotFor('r2-v28');
     expect(baseline!.version, 'flare-plans-r2');
+
+    final cold = await dev.planSnapshotFor('r2-v29');
+    expect(cold?.version, 'flare-plans-r3');
+    final localOnly = await loadCompatibleFlareBundledPlanSnapshot(
+      'r2-v29',
+      previewWarmupR3: true,
+    );
+    expect(localOnly?.id, cold?.id);
 
     // r2 is already the verified selection on a data-preserving upgrade.
     final devPlans = PoseHubChannelPlanStore(
@@ -93,15 +101,16 @@ void main() {
       channelUri: dev.updater.config.pointerUri,
     );
     await devPlans.install(baseline);
-    final preview = (await dev.planSnapshotFor('r2-v26'))!;
+    final preview = (await dev.planSnapshotFor('r2-v29'))!;
     expect(preview.version, 'flare-plans-r3');
+    expect(preview.id, cold?.id);
     expect((await dev.restorePlanSnapshot(preview.id))?.id, preview.id);
     expect((await dev.restorePlanSnapshot(baseline.id))?.id, baseline.id);
     final catalog = loadCatalogFixture(
       includeFlarePlans: true,
     ).withPlanSnapshot(preview);
     final warmup = catalog.flareWarmupPlan!;
-    expect(warmup.estimatedMinutes, 20);
+    expect(warmup.estimatedMinutes, 25);
     expect(warmup.items.map((item) => item.drill), [
       't-quadruped-wrist-shift',
       't-quadruped-wrist-circle',
@@ -109,17 +118,21 @@ void main() {
       'h-catcow-quad',
       'h-kneeling-thread-needle',
       'h-quad-cars',
+      't-quadruped-straight-leg-raise',
       'h-adductor-rock',
+      's-frog',
       't-9090-hip-switch-planted',
       't-9090-back-knee-lift',
       'h-sumo-pry',
+      't-standing-straddle-hands-floor',
       'n-straddle-fold',
       't-seated-straddle-lift-1leg',
       't-seated-straddle-lifts',
       'adductors-A',
       'h-good-morning',
       'serratus-A',
-      'h-tabletop',
+      'h-tabletop-fingers-out',
+      't-reverse-plank-hold-fingers-out',
     ]);
     final r2 = loadCatalogFixture(
       includeFlarePlans: true,
@@ -150,7 +163,7 @@ void main() {
 
     final stable = await open(PoseHubCatalogChannel.stable);
     addTearDown(stable.dispose);
-    expect((await stable.planSnapshotFor('r2-v26'))?.id, baseline.id);
+    expect((await stable.planSnapshotFor('r2-v29'))?.id, baseline.id);
 
     final publishedR3 = PoseHubPlanSnapshot.fromBytes(
       [...preview.planPack.jsonBytes, 10],
@@ -158,7 +171,7 @@ void main() {
       minSdk: preview.minSdk,
     );
     await devPlans.install(publishedR3);
-    expect((await dev.planSnapshotFor('r2-v26'))?.id, publishedR3.id);
+    expect((await dev.planSnapshotFor('r2-v29'))?.id, publishedR3.id);
   });
 
   test(

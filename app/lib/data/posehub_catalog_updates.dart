@@ -54,6 +54,28 @@ Future<PoseHubPlanSnapshot?> loadFlareBundledPlanSnapshot({
   }
 }
 
+/// Select the compatible built-in plan even if the update store is unavailable.
+Future<PoseHubPlanSnapshot?> loadCompatibleFlareBundledPlanSnapshot(
+  String catalogPack, {
+  bool previewWarmupR3 =
+      _enableWarmupR3 && PoseHubCatalogUpdates.channelName == 'dev',
+  String sdkVersion = poseHubCatalogSdkVersion,
+}) async {
+  bool compatible(PoseHubPlanSnapshot? snapshot) =>
+      snapshot?.isCompatible(
+        catalogPack: catalogPack,
+        sdkVersion: sdkVersion,
+      ) ==
+      true;
+
+  if (previewWarmupR3) {
+    final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
+    if (compatible(preview)) return preview;
+  }
+  final baseline = await loadFlareBundledPlanSnapshot();
+  return compatible(baseline) ? baseline : null;
+}
+
 Uint8List _planBytes(ByteData data) =>
     data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
@@ -75,9 +97,9 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
 
   final bool _previewWarmupR3;
 
-  static const bundledPackVersion = 'r2-v24';
+  static const bundledPackVersion = 'r2-v29';
   static const bundledCatalogSha256 =
-      '71d0ba0ce429ee90dcbdc329758da3bf1345b012637b84f2f3bc07adbf4a8f4f';
+      'a35c13e2b22ad7251c75b4c0f8491615c8d396dbdc5ecaec30388db7af86cd9b';
 
   static const channelName = String.fromEnvironment(
     'POSEHUB_CATALOG_CHANNEL',
@@ -195,14 +217,11 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
       if (flareChannelTrace) {
         debugPrint('FlareChannel plan selection failed: $error');
       }
-      final bundled = await loadFlareBundledPlanSnapshot();
-      return bundled?.isCompatible(
-                catalogPack: catalogPack,
-                sdkVersion: updater.config.sdkVersion,
-              ) ==
-              true
-          ? bundled
-          : null;
+      return loadCompatibleFlareBundledPlanSnapshot(
+        catalogPack,
+        previewWarmupR3: _previewWarmupR3,
+        sdkVersion: updater.config.sdkVersion,
+      );
     }
   }
 

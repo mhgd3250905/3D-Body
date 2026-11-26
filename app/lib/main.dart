@@ -174,9 +174,10 @@ class _FlareBootstrapState extends State<FlareBootstrap> {
     coach.PoseHubAppTestCatalog pack,
   ) {
     final updates = widget.catalogUpdates;
+    final version = sdk.poseHubPackVersionOf(pack);
     return updates == null
-        ? loadFlareBundledPlanSnapshot()
-        : updates.planSnapshotFor(sdk.poseHubPackVersionOf(pack));
+        ? loadCompatibleFlareBundledPlanSnapshot(version)
+        : updates.planSnapshotFor(version);
   }
 
   Future<sdk.PoseHubPlanSnapshot?> _restorePlanSnapshot(String id) async {

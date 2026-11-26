@@ -2,7 +2,7 @@
   "schema": 1,
   "app": "flare",
   "version": "flare-plans-r3",
-  "min_catalog_pack": "r2-v26",
+  "min_catalog_pack": "r2-v29",
   "voice_manifest": {
     "url": "https://media.uuugk.win/pack/r2-v1/plan-voice/flare-plan-voice-r2/manifest.json",
     "bytes": 178802,
@@ -12,7 +12,7 @@
     {
       "id": "general-warmup",
       "kind": "warmup",
-      "estimatedMinutes": 20,
+      "estimatedMinutes": 25,
       "items": [
         {
           "drill": "t-quadruped-wrist-shift",
@@ -95,6 +95,14 @@
           "voiceKey": "supplemental.general-warmup-r3.h-quad-cars"
         },
         {
+          "drill": "t-quadruped-straight-leg-raise",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 10,
+          "perSide": true,
+          "voiceKey": "supplemental.general-warmup-r3.t-quadruped-straight-leg-raise"
+        },
+        {
           "drill": "h-adductor-rock",
           "reps": 8,
           "perSide": true,
@@ -113,6 +121,15 @@
             "startingSide": "right"
           },
           "voiceKey": "supplemental.general-warmup-r3.h-adductor-rock"
+        },
+        {
+          "drill": "s-frog",
+          "sets": 1,
+          "restSeconds": 0,
+          "seconds": 80,
+          "displayName": "青蛙式（小臂撑地）",
+          "displayNameEn": "Frog Stretch (Forearm Support)",
+          "voiceKey": "supplemental.general-warmup-r3.s-frog"
         },
         {
           "drill": "t-9090-hip-switch-planted",
@@ -152,6 +169,13 @@
             "reps": 8
           },
           "voiceKey": "supplemental.general-warmup.16"
+        },
+        {
+          "drill": "t-standing-straddle-hands-floor",
+          "sets": 1,
+          "restSeconds": 0,
+          "seconds": 120,
+          "voiceKey": "supplemental.general-warmup-r3.t-standing-straddle-hands-floor"
         },
         {
           "drill": "n-straddle-fold",
@@ -210,15 +234,24 @@
           "voiceKey": "supplemental.general-warmup-r3.serratus-A"
         },
         {
-          "drill": "h-tabletop",
+          "drill": "h-tabletop-fingers-out",
           "sets": 1,
           "reps": 10,
           "restSeconds": 0,
           "holdSeconds": 3,
-          "displayName": "桌面式后撑抬髋",
-          "displayNameEn": "Reverse Tabletop Bridge",
-          "voiceCue": "撑住双手和脚掌，把髋抬到与躯干齐平，停三秒再放下。",
-          "voiceKey": "supplemental.general-warmup-r3.h-tabletop"
+          "displayName": "桌面式后撑抬髋（手指朝外）",
+          "displayNameEn": "Reverse Tabletop Bridge (Fingers Out)",
+          "voiceCue": "手指朝两侧外，手臂伸直。手和脚后跟推地，把髋抬到与膝盖齐平，停三秒再放下。",
+          "voiceKey": "supplemental.general-warmup-r3.h-tabletop-fingers-out"
+        },
+        {
+          "drill": "t-reverse-plank-hold-fingers-out",
+          "sets": 1,
+          "restSeconds": 0,
+          "seconds": 30,
+          "displayName": "直腿后撑静态（反向平板）（手指朝外）",
+          "displayNameEn": "Reverse Plank Hold (Fingers Out)",
+          "voiceKey": "supplemental.general-warmup-r3.t-reverse-plank-hold-fingers-out"
         }
       ]
     },
