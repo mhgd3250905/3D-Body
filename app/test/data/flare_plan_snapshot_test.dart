@@ -101,22 +101,50 @@ void main() {
       includeFlarePlans: true,
     ).withPlanSnapshot(preview);
     final warmup = catalog.flareWarmupPlan!;
-    expect(warmup.estimatedMinutes, 7);
+    expect(warmup.estimatedMinutes, 20);
     expect(warmup.items.map((item) => item.drill), [
       't-quadruped-wrist-shift',
       't-quadruped-wrist-circle',
       't-quadruped-backhand-press',
+      'h-catcow-quad',
+      'h-kneeling-thread-needle',
+      'h-quad-cars',
+      'h-adductor-rock',
       't-9090-hip-switch-planted',
       't-9090-back-knee-lift',
+      'h-sumo-pry',
+      'n-straddle-fold',
+      't-seated-straddle-lift-1leg',
+      't-seated-straddle-lifts',
+      'adductors-A',
+      'h-good-morning',
+      'serratus-A',
+      'h-tabletop',
     ]);
+    final r2 = loadCatalogFixture(
+      includeFlarePlans: true,
+    ).withPlanSnapshot(baseline).flareWarmupPlan!;
+    const reusedCues = {
+      'h-catcow-quad': 6,
+      'h-kneeling-thread-needle': 7,
+      'h-sumo-pry': 16,
+      'h-good-morning': 18,
+    };
     final oldVoiceFiles = preview.voiceManifest.files.keys;
     for (final item in warmup.items) {
-      expect(item.voiceKey, startsWith('supplemental.general-warmup-r3.'));
+      final slot = reusedCues[item.drill];
+      if (slot != null) {
+        expect(item.drill, r2.items[slot - 1].drill);
+        expect(item.voiceKey, 'supplemental.general-warmup.$slot');
+        expect(item.voiceCue, r2.items[slot - 1].voiceCue);
+      } else {
+        expect(item.voiceKey, startsWith('supplemental.general-warmup-r3.'));
+      }
       expect(
         oldVoiceFiles.any(
           (file) => file.split('/').last == '${item.voiceKey}.m4a',
         ),
-        isFalse,
+        slot != null,
       );
     }
 

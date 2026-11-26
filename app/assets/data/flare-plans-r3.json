@@ -12,7 +12,7 @@
     {
       "id": "general-warmup",
       "kind": "warmup",
-      "estimatedMinutes": 7,
+      "estimatedMinutes": 20,
       "items": [
         {
           "drill": "t-quadruped-wrist-shift",
@@ -56,6 +56,65 @@
           "voiceKey": "supplemental.general-warmup-r3.3"
         },
         {
+          "drill": "h-catcow-quad",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 6,
+          "displayName": "四足猫牛式",
+          "displayNameEn": "Quadruped Cat-Cow",
+          "voiceCue": "吸气塌腰抬头，呼气推地拱背，跟着呼吸一节一节动",
+          "voiceKey": "supplemental.general-warmup.6"
+        },
+        {
+          "drill": "h-kneeling-thread-needle",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 4,
+          "perSide": true,
+          "voiceCue": "一手从腋下穿过去滑远，再打开指向天花板，眼睛跟着手走",
+          "voiceKey": "supplemental.general-warmup.7"
+        },
+        {
+          "drill": "h-quad-cars",
+          "sets": 1,
+          "reps": 5,
+          "restSeconds": 0,
+          "repPositions": [
+            "右腿向外",
+            "右腿向内",
+            "左腿向外",
+            "左腿向内"
+          ],
+          "repPositionsEn": [
+            "Right leg outward",
+            "Right leg inward",
+            "Left leg outward",
+            "Left leg inward"
+          ],
+          "voiceCue": "每条腿先向外画五圈，再向内画五圈，然后换腿。",
+          "voiceKey": "supplemental.general-warmup-r3.h-quad-cars"
+        },
+        {
+          "drill": "h-adductor-rock",
+          "reps": 8,
+          "perSide": true,
+          "voiceCue": "一条腿向侧伸直、脚掌踩地，背平着往后坐，大腿内侧有拉感就回",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "四足单腿侧伸后摇",
+          "displayNameEn": "Quadruped Adductor Rock-Back",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1.5s; hold=1s; back=1.2s; rest=0.3s",
+            "source": "real-tempo r3",
+            "reps": 8,
+            "perSide": "each-side-separately",
+            "startingSide": "right"
+          },
+          "voiceKey": "supplemental.general-warmup-r3.h-adductor-rock"
+        },
+        {
           "drill": "t-9090-hip-switch-planted",
           "sets": 1,
           "reps": 10,
@@ -76,6 +135,90 @@
           "displayNameEn": "90/90 Back-Knee Lift",
           "voiceCue": "后脚踩住不动，只把后腿膝盖抬起来",
           "voiceKey": "supplemental.general-warmup-r3.5"
+        },
+        {
+          "drill": "h-sumo-pry",
+          "reps": 6,
+          "voiceCue": "双脚宽于肩、脚尖朝外，蹲到底用手肘把膝盖往外推，停住再站起",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "相扑深蹲肘推膝停留",
+          "displayNameEn": "Sumo Squat Hold with Elbow Pry",
+          "rhythm": {
+            "kind": "rep_hold",
+            "leadSeconds": 1,
+            "phases": "go=1.5s; hold=2.5s; back=1.5s",
+            "source": "real-tempo r3",
+            "reps": 8
+          },
+          "voiceKey": "supplemental.general-warmup.16"
+        },
+        {
+          "drill": "n-straddle-fold",
+          "sets": 1,
+          "restSeconds": 0,
+          "seconds": 120,
+          "voiceKey": "supplemental.general-warmup-r3.n-straddle-fold"
+        },
+        {
+          "drill": "t-seated-straddle-lift-1leg",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 8,
+          "movement": "alternatingHipSwitch",
+          "voiceKey": "supplemental.general-warmup-r3.t-seated-straddle-lift-1leg"
+        },
+        {
+          "drill": "t-seated-straddle-lifts",
+          "sets": 1,
+          "restSeconds": 0,
+          "reps": 8,
+          "voiceKey": "supplemental.general-warmup-r3.t-seated-straddle-lifts"
+        },
+        {
+          "drill": "adductors-A",
+          "sets": 1,
+          "reps": 10,
+          "restSeconds": 0,
+          "movement": "alternatingHipSwitch",
+          "voiceKey": "supplemental.general-warmup-r3.adductors-A"
+        },
+        {
+          "drill": "h-good-morning",
+          "reps": 8,
+          "voiceCue": "膝盖微弯背挺直，屁股向后推、上身前倾，大腿后侧有拉感就起",
+          "sets": 1,
+          "restSeconds": 0,
+          "displayName": "徒手早安式",
+          "displayNameEn": "Bodyweight Good Morning",
+          "rhythm": {
+            "kind": "rep_updown",
+            "leadSeconds": 1,
+            "phases": "go=2s; hold=0.5s; back=1.5s",
+            "source": "real-tempo r3",
+            "reps": 12
+          },
+          "voiceKey": "supplemental.general-warmup.18"
+        },
+        {
+          "drill": "serratus-A",
+          "sets": 1,
+          "reps": 10,
+          "restSeconds": 0,
+          "displayName": "俯撑肩胛前伸",
+          "displayNameEn": "Plank Scapular Protraction",
+          "voiceKey": "supplemental.general-warmup-r3.serratus-A"
+        },
+        {
+          "drill": "h-tabletop",
+          "sets": 1,
+          "reps": 10,
+          "restSeconds": 0,
+          "holdSeconds": 3,
+          "displayName": "桌面式后撑抬髋",
+          "displayNameEn": "Reverse Tabletop Bridge",
+          "voiceCue": "撑住双手和脚掌，把髋抬到与躯干齐平，停三秒再放下。",
+          "voiceKey": "supplemental.general-warmup-r3.h-tabletop"
         }
       ]
     },

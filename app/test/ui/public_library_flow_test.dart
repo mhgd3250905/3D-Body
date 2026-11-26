@@ -1,19 +1,27 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flare/coach/flare_coach_profile.dart';
 import 'package:flare/control/learning_store.dart';
+import 'package:flare/data/catalog.dart';
 import 'package:flare/data/flare_action_scope.dart';
 import 'package:flare/data/flare_public_catalog.dart';
 import 'package:flare/data/flare_public_media.dart';
 import 'package:flare/data/flare_shared_library.dart';
 import 'package:flare/data/posehub_catalog_updates.dart';
+import 'package:flare/l10n/app_localizations.dart';
 import 'package:flare/platform/scene/scene_controller.dart';
 import 'package:flare/ui/app_shell.dart';
+import 'package:flare/ui/drill_decoder_pool.dart';
 import 'package:flare/ui/drill_media.dart';
 import 'package:flare/ui/flare_v5_media.dart';
 import 'package:flare/ui/public_library_filter.dart';
+import 'package:flare/ui/theme.dart';
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ugk_coach/ugk_coach.dart' as coach;
@@ -68,6 +76,108 @@ const _newR2V1Actions = <String>{
 };
 
 Finder _key(String value) => find.byKey(ValueKey(value));
+
+class _CaptureCoverBundle extends CachingAssetBundle {
+  _CaptureCoverBundle(this.key, File cover)
+    : _cover = ByteData.sublistView(cover.readAsBytesSync());
+
+  final String key;
+  final ByteData _cover;
+
+  @override
+  Future<ByteData> load(String key) =>
+      key == this.key ? Future.value(_cover) : rootBundle.load(key);
+}
+
+class _ControlledVideo extends DrillDecoderRepository {
+  _ControlledVideo(super.delegate, this.video, {this.artwork = const {}});
+
+  final coach.PoseHubPackFile video;
+  final Map<coach.PoseHubPackFile, Uri> artwork;
+  final status = ValueNotifier(
+    const sdk.CatalogMediaDownloadState(
+      phase: sdk.CatalogMediaDownloadPhase.idle,
+    ),
+  );
+  final uri = Uri.file('/verified/warmup.mp4');
+  late Completer<Uri> _download;
+  int requests = 0;
+
+  @override
+  ValueListenable<sdk.CatalogMediaDownloadState> watchFile(
+    coach.PoseHubPackFile file,
+  ) => file == video ? status : super.watchFile(file);
+
+  @override
+  Future<Uri> ensureFile(coach.PoseHubPackFile file) {
+    if (artwork[file] case final local?) return Future.value(local);
+    if (file != video) return super.ensureFile(file);
+    if (status.value.phase == sdk.CatalogMediaDownloadPhase.ready) {
+      return Future.value(uri);
+    }
+    requests++;
+    update(sdk.CatalogMediaDownloadPhase.downloading);
+    return (_download = Completer<Uri>()).future;
+  }
+
+  void update(sdk.CatalogMediaDownloadPhase phase) {
+    status.value = sdk.CatalogMediaDownloadState(
+      phase: phase,
+      receivedBytes: switch (phase) {
+        sdk.CatalogMediaDownloadPhase.downloading => video.bytes * 45 ~/ 100,
+        sdk.CatalogMediaDownloadPhase.ready => video.bytes,
+        _ => 0,
+      },
+      totalBytes: video.bytes,
+    );
+  }
+
+  void fail() {
+    update(sdk.CatalogMediaDownloadPhase.failed);
+    _download.completeError(StateError('simulated media failure'));
+  }
+
+  void finish() {
+    update(sdk.CatalogMediaDownloadPhase.ready);
+    _download.complete(uri);
+  }
+
+  @override
+  void dispose() => status.dispose();
+}
+
+class _DetailDecoder
+    implements sdk.PackedAlphaPlatform, sdk.PackedAlphaUriPlatform {
+  final _events = StreamController<Map<Object?, Object?>>.broadcast(sync: true);
+  int _id = 0;
+
+  @override
+  bool get isSupported => true;
+
+  @override
+  Stream<Map<Object?, Object?>> get events => _events.stream;
+
+  @override
+  Future<({int playerId, int textureId})> create(String asset) =>
+      throw StateError('Expected a verified video file');
+
+  @override
+  Future<({int playerId, int textureId})> createUri(Uri uri) async {
+    final id = ++_id;
+    return (playerId: id, textureId: id);
+  }
+
+  void firstFrame() {
+    _events.add({'playerId': _id, 'type': 'ready'});
+    _events.add({'playerId': _id, 'type': 'first-frame'});
+  }
+
+  @override
+  Future<Object?> command(int playerId, String type, [Object? value]) async =>
+      null;
+
+  Future<void> close() => _events.close();
+}
 
 Future<void> _settleLocalAssets(WidgetTester tester) async {
   // Decode bundled posters on the real asset IO queue, never by substituting
@@ -183,24 +293,46 @@ void main() {
     addTearDown(() => tester.pumpWidget(const SizedBox()));
   }
 
-  Future<SceneController> mountShell(WidgetTester tester) async {
+  Future<SceneController> mountShell(
+    WidgetTester tester, {
+    Catalog? catalog,
+    GlobalKey? screenshotBoundary,
+    AssetBundle? screenshotBundle,
+  }) async {
     await phoneSize(tester);
+    final presentation = catalog ?? loadCatalogFixture();
     final store = LearningStore(
-      catalog: loadCatalogFixture(),
+      catalog: presentation,
       storage: MemoryStateStorage(),
     );
     await store.initialize();
     await store.acknowledgeSafety();
     final scene = SceneController(commandSink: (_) {});
+    final shell = FlareShell(
+      catalog: presentation,
+      store: store,
+      sceneController: scene,
+      enableScene: false,
+    );
     await tester.pumpWidget(
-      testApp(
-        FlareShell(
-          catalog: loadCatalogFixture(),
-          store: store,
-          sceneController: scene,
-          enableScene: false,
-        ),
-      ),
+      screenshotBoundary == null
+          ? testApp(shell)
+          : RepaintBoundary(
+              key: screenshotBoundary,
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: flareTheme(Brightness.light),
+                locale: const Locale('zh'),
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                home: screenshotBundle == null
+                    ? shell
+                    : DefaultAssetBundle(
+                        bundle: screenshotBundle,
+                        child: shell,
+                      ),
+              ),
+            ),
     );
     scene.receiveEvent({
       'source': 'flare-scene',
@@ -250,7 +382,16 @@ void main() {
         profile.scopeManifest.allowedActionIds,
         unorderedEquals(libraryIds),
       );
-      expect(flareAuthorizedActionIds, unorderedEquals(scopedIds));
+      expect(
+        flareAuthorizedActionIds.difference(scopedIds),
+        unorderedEquals([
+          't-quadruped-wrist-shift',
+          't-quadruped-wrist-circle',
+          't-quadruped-backhand-press',
+          't-9090-hip-switch-planted',
+          't-9090-back-knee-lift',
+        ]),
+      );
       expect(_newR2V1Actions, hasLength(40));
       expect(packIds, containsAll(_newR2V1Actions));
       expect(shared.scope.allowedActionIds, containsAll(_newR2V1Actions));
@@ -436,6 +577,209 @@ void main() {
     expect(media.stage, Colors.transparent);
     expect(media.mirrored, isFalse);
     expect(_key('library-detail-$id'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('warm-up details autoplay and use the SDK download indicator', (
+    tester,
+  ) async {
+    const screenshot = String.fromEnvironment('FLARE_WARMUP_HUD_SCREENSHOT');
+    const catalogArchive = String.fromEnvironment('FLARE_WARMUP_HUD_CATALOG');
+    const posterPath = String.fromEnvironment('FLARE_WARMUP_HUD_POSTER');
+    final captureR3 = screenshot.isNotEmpty && catalogArchive.isNotEmpty;
+    final id = captureR3
+        ? 't-quadruped-backhand-press'
+        : 't-step-jack-arm-circles';
+    final sourcePolicy = captureR3
+        ? (await tester.runAsync(() async {
+            final pack = coach.PoseHubAppTestCatalog.fromBytes(
+              File('$catalogArchive/r2-v26-catalog.json').readAsBytesSync(),
+              semanticCatalogBytes: File(
+                '$catalogArchive/r2-v26-semantics.json',
+              ).readAsBytesSync(),
+            );
+            FlareShared.current = await FlareShared.load(activeCatalog: pack);
+            return FlarePublicMedia.load(
+              activeCatalog: pack,
+              rootDirectory: temporaryCache.path,
+            );
+          }))!
+        : policy;
+    if (captureR3) addTearDown(sourcePolicy.repository.dispose);
+
+    final action = sourcePolicy.actionFor(id)!;
+    final cover = captureR3 ? File(posterPath) : null;
+    if (cover != null) {
+      expect(coach.sha256Hex(cover.readAsBytesSync()), action.cover.sha256);
+    }
+    final video = _ControlledVideo(
+      sourcePolicy.repository,
+      action.video,
+      artwork: {if (cover != null) action.cover: cover.uri},
+    );
+    final detailPolicy = sdk.TrainingMediaPolicy(
+      repository: video,
+      posterAssetRoot: sourcePolicy.posterAssetRoot,
+    );
+    FlarePublicMedia.current = detailPolicy;
+    final decoder = _DetailDecoder();
+    final previousPlatform = sdk.UgkPackedAlphaVideo.debugPlatform;
+    final previousFilter = sdk.UgkPackedAlphaVideo.debugFilterBuilder;
+    sdk.UgkPackedAlphaVideo.debugPlatform = decoder;
+    sdk.UgkPackedAlphaVideo.debugFilterBuilder = (child) => child;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox());
+      sdk.UgkPackedAlphaVideo.debugPlatform = previousPlatform;
+      sdk.UgkPackedAlphaVideo.debugFilterBuilder = previousFilter;
+      video.dispose();
+      await decoder.close();
+    });
+
+    final snapshot = await tester.runAsync(
+      () => loadFlareBundledPlanSnapshot(warmupR3: captureR3),
+    );
+    final catalog = loadCatalogFixture(
+      includeFlarePlans: true,
+    ).withPlanSnapshot(snapshot);
+    final boundary = screenshot.isEmpty ? null : GlobalKey();
+    final screenshotBundle = cover == null
+        ? null
+        : _CaptureCoverBundle(detailPolicy.posterAssetFor(id)!, cover);
+    if (boundary != null) {
+      await tester.runAsync(() async {
+        const fonts = {
+          'FlareSans': 'assets/fonts/FlareSans.ttf',
+          'MaterialIcons': 'fonts/MaterialIcons-Regular.otf',
+          'packages/cupertino_icons/CupertinoIcons':
+              'packages/cupertino_icons/assets/CupertinoIcons.ttf',
+        };
+        for (final entry in fonts.entries) {
+          await (FontLoader(
+            entry.key,
+          )..addFont(rootBundle.load(entry.value))).load();
+        }
+        await video.ensureFile(action.cover);
+      });
+    }
+    await mountShell(
+      tester,
+      catalog: catalog,
+      screenshotBoundary: boundary,
+      screenshotBundle: screenshotBundle,
+    );
+    await tester.tap(_key('home-menu-chip'));
+    await tester.pumpAndSettle();
+    await tester.tap(_key('more-plans'));
+    await tester.pumpAndSettle();
+    await tester.tap(_key('plan-general-warmup'));
+    await _settleLocalAssets(tester);
+    expect(find.byType(sdk.TrainingActionMedia), findsNothing);
+    expect(video.requests, 0);
+
+    final index = catalog.flareWarmupPlan!.items.indexWhere(
+      (item) => item.drill == id,
+    );
+    final row = _key('flare-plan-item-$index-$id');
+    await tester.ensureVisible(row);
+    await tester.pumpAndSettle();
+    await tester.tap(row);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pump(const Duration(milliseconds: 250));
+    final media = find.byType(sdk.TrainingActionMedia);
+    expect(media, findsOneWidget);
+    final active = tester.widget<sdk.TrainingActionMedia>(media);
+    expect(active.actionId, id);
+    expect(active.policy, same(detailPolicy));
+    expect(active.playing, isTrue);
+    expect(active.showInlineStatus, isFalse);
+    expect(video.requests, 1);
+
+    final play = _key('library-detail-play');
+    final hud = find.byType(sdk.TrainerMediaDownloadIndicator);
+    final indicator = tester.widget<sdk.TrainerMediaDownloadIndicator>(hud);
+    expect(indicator.state, same(video.status));
+    expect(indicator.playbackHandle, same(active.playbackHandle));
+    expect(tester.getCenter(hud).dx, greaterThan(tester.getCenter(play).dx));
+    expect(
+      tester.getTopLeft(hud).dy,
+      closeTo(tester.getTopLeft(play).dy + 4, 1),
+    );
+    expect(_key('media-download-arrow'), findsOneWidget);
+    expect(_key('public-action-progress'), findsNothing);
+    final sourceCues = ((action.raw['cues'] as Map)['zh'] as List)
+        .cast<String>();
+    final displayedCues = find.descendant(
+      of: _key('library-detail-$id'),
+      matching: find.text(sourceCues.join('\n')),
+    );
+    expect(displayedCues, findsOneWidget);
+
+    if (boundary != null) {
+      await tester.runAsync(() async {
+        await precacheImage(
+          AssetImage(
+            detailPolicy.posterAssetFor(id)!,
+            bundle: screenshotBundle,
+          ),
+          tester.element(play),
+        );
+      });
+      await tester.pump();
+      await tester.ensureVisible(displayedCues);
+      await tester.pump();
+      await tester.runAsync(() async {
+        final render =
+            boundary.currentContext!.findRenderObject()!
+                as RenderRepaintBoundary;
+        final image = await render.toImage(pixelRatio: 2);
+        try {
+          final data = (await image.toByteData(
+            format: ui.ImageByteFormat.png,
+          ))!;
+          await File(screenshot).writeAsBytes(data.buffer.asUint8List());
+        } finally {
+          image.dispose();
+        }
+      });
+      await tester.ensureVisible(play);
+      await tester.pump();
+    }
+
+    video.fail();
+    await tester.pump();
+    final retry = _key('media-download-retry');
+    expect(retry, findsOneWidget);
+    await tester.tap(retry);
+    await tester.pump();
+    expect(video.requests, 2);
+    expect(tester.widget<sdk.TrainingActionMedia>(media).playing, isTrue);
+
+    video.update(sdk.CatalogMediaDownloadPhase.verifying);
+    await tester.pump();
+    expect(_key('media-download-verifying'), findsOneWidget);
+    video.finish();
+    await tester.pump();
+    await tester.pump();
+    expect(_key('media-download-ready'), findsNothing);
+    decoder.firstFrame();
+    await tester.pump();
+    await tester.pump();
+    expect(_key('media-download-ready'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pump(const Duration(milliseconds: 220));
+    expect(_key('media-download-indicator'), findsNothing);
+
+    await tester.tap(play);
+    await tester.pump();
+    expect(tester.widget<sdk.TrainingActionMedia>(media).playing, isFalse);
+    await tester.tap(play);
+    await tester.pump();
+    expect(tester.widget<sdk.TrainingActionMedia>(media).playing, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(media, findsNothing);
     expect(tester.takeException(), isNull);
   });
 

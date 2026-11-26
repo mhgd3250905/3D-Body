@@ -1,5 +1,39 @@
 # App 验证记录
 
+## vc2107 练前热身第二版（2026-11-26）
+
+分支基于 master 248982e3，SDK 锁 e43d3832。r2-v26 对应 17 项，均在现有白名单。跳过缺少指定示范的四足直腿后抬、双手撑地青蛙式、双手撑地站姿宽距前屈和静态反向平板。坐姿分腿前屈沿用瑜伽砖支撑示范。跪撑画圈按右腿外、右腿内、左腿外、左腿内依次排程。当前计划段复用同一示范，左侧阶段不触发 SDK 自动镜像。
+
+定向 flutter test --no-pub --concurrency=1 运行计划快照、训练排程、动作库流程及 r2-v26 剂量断言，通过 28 项。实际排程 29 个工作阶段，含休息共 1153 秒，开场倒计时另计。列表组件测试通过，截图包含 17 张经过哈希校验的 r2-v26 缩略图。flutter analyze --no-pub test/data/flare_plan_snapshot_test.dart 通过。
+
+flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=107 构建 dev 预览包并启用 FLARE_BUNDLED_WARMUP_R3 和 FLARE_CHANNEL_TRACE。已回读 vc2107、arm64、16 KiB 对齐、r3 计划及签名，与 vc2106 同证书。三套冷身、语音清单和内置目录字节一致。产物与校验单位于 E:/AII-3D/3D-Body/output/release-checkpoints/app-v1.0.15-build2107。真机安装与试听待验。
+
+## vc2106 练前热身重排（2026-11-26）
+
+基于 master 检查点 248982e3，SDK 临时锁 e43d3832。dev 已发布目录为 r2-v26，匹配的 14 项均在现有白名单中。徒手四足直腿后上抬和直腿静态反向平板缺对应示范，本包跳过。三套冷身的 JSON 字节、内置目录和语音清单与 vc2105 一致。第 8 项每侧改为 8 次后避开旧的五次报数录音。
+
+定向 flutter test --no-pub --concurrency=1 运行计划快照、训练排程、动作库流程及 r2-v26 剂量验证，通过 28 项。排程验证 28 个工作阶段，合计 1,092 秒。另一次组件测试用 14 张校验过的 r2-v26 缩略图渲染全列表，通过。flutter analyze --no-pub test/data/flare_plan_snapshot_test.dart 通过。
+
+flutter build apk --release --split-per-abi --target-platform android-arm64 --build-name=1.0.15 --build-number=106 构建 dev 预览包，启用 FLARE_BUNDLED_WARMUP_R3 和 FLARE_CHANNEL_TRACE。APK 回读核对 vc2106、arm64、16 KiB 对齐、r3 计划及同 vc2105 的签名。APK、校验单和列表组件截图位于 E:/AII-3D/3D-Body/output/release-checkpoints/app-v1.0.15-build2106。真机安装与试听待验。
+
+## vc2105 动作详情要领逐条换行（2026-11-26）
+
+SDK Draft PR #37 从 `main 5570c93` 提供要领显示函数。SDK 共用详情及 Flare 热身详情逐条换行并保留原标点。Flare 四个 SDK 包临时锁定 `e43d38323f35d9b3b70d741a922a711e9ecba78e`。本地 dev 测试包沿用 vc2104 的内置目录及训练素材，线上 dev `r2-v26` 仍可照常热更新。
+
+SDK `training_library_test.dart` 的 14 项测试通过，覆盖有句号、无标点和单条。Flare 的 `public_library_flow_test.dart` 与 `flare_plans_flow_test.dart` 通过 25 项，核对原文顺序、逐行显示及播放状态。两端改动文件的静态分析通过。「跪姿手背撑地挤压」截图由组件测试用真实 r3 计划与已校验的动作封面渲染，真机验证待补。
+
+## vc2104 热身详情复用训练页下载动画（2026-11-26）
+
+热身详情右上角直接使用 SDK `TrainerMediaDownloadIndicator`。它监听当前视频的仓库状态，并与自动播放视图共用首帧状态。下载或解码失败时由组件触发重试，文件校验通过且画面就绪后显示完成。
+
+`flutter test --no-pub --concurrency=1 test/ui/public_library_flow_test.dart test/ui/flare_plans_flow_test.dart` 通过 25 项。新增验证覆盖进度、校验、失败重试、首帧就绪后的完成与隐藏，以及原有自动播放和暂停交互。截图使用真实 r3 计划和 r2-v26 动作，通过组件测试模拟约 45% 下载进度。定向静态分析通过，Android 真机验证待补。
+
+## vc2103 练前热身详情自动播放（2026-11-26）
+
+从「计划 → 练前热身」打开共享动作详情时，详情立即请求当前项目的 SDK 视频。加载时保留封面，首帧就绪后自动播放。点画面仍可暂停和继续。热身列表及普通动作库维持原播放策略，整套跟练沿用会员流程。
+
+`flutter test --no-pub --concurrency=1 test/ui/public_library_flow_test.dart test/ui/flare_plans_flow_test.dart` 通过 25 项，覆盖从热身列表进入详情、播放状态、点按暂停和继续、关闭详情、普通动作按需点播及会员入口。改动文件定向静态分析通过。Android 真机点播待验证。
+
 ## vc2100 页面底部与手势区（2026-11-24）
 
 以 `263ecc84` 的页面为对照。托马斯角度及肌群计划详情、自建计划详情、动作详情、自建计划编辑、动作选择和 SDK 计划编辑用与页面同色的固定按钮区，最后一项完整滚出按钮区后留 24 点。训练中心肌群网格移除局部遮罩，复用同一留白。会员预览遮罩用于遮住未解锁内容，继续沿用。
