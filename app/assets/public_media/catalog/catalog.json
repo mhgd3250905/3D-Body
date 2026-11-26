@@ -2,13 +2,13 @@
  "format": "pose-hub-catalog",
  "formatVersion": 1,
  "version": "2.1.0",
- "generatedAt": "2026-11-24T07:46:16+08:00",
+ "generatedAt": "2026-11-26T20:23:21+08:00",
  "source": {
-  "pack": "r2-v24",
+  "pack": "r2-v29",
   "catalogSha256": "22b2a391e327bc9eee775988315cd96651e0f623c76dae10c00284686dfe804e",
   "text": "catalog/production/v3-text",
-  "commit": "c3ca6145e8b7b3a01385b260e07d8b8e0e0576ac",
-  "previousPack": "r2-v23",
+  "commit": "61cf8ba6631d3dd587f46d0b329602170cfde9d5",
+  "previousPack": "r2-v28",
   "legacyFixText": "catalog/production/legacy-fix-r1/text"
  },
  "taxonomy": {
@@ -19885,6 +19885,713 @@
    ],
    "review": {
     "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-quadruped-wrist-shift",
+   "name": {
+    "zh": "跪姿撑地三向移重（掌心）",
+    "en": "Quadruped Palm Weight Shift"
+   },
+   "purpose": "跪姿四点支撑，手掌不动，把重心慢慢压向前、左、右，让手腕在承重下热起来",
+   "category": "mobility",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 2,
+    "reps": 15,
+    "restSeconds": 20
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "reps": [
+     9,
+     30
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手掌贴地不动，只移重心",
+     "跪姿四点支撑：手在肩膀正下方、掌心贴地、手指朝前，手臂伸直，膝盖在髋下方。",
+     "先慢慢往前压，肩膀超过手腕，再回正；前 5 次，然后左倾 5 次、右倾 5 次。",
+     "背保持平，手肘不弯，幅度在不疼的范围内由小到大。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕刺疼就缩小幅度，还疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-quadruped-wrist-circle",
+   "name": {
+    "zh": "跪姿撑地上身绕圈（掌心）",
+    "en": "Quadruped Palm Circles"
+   },
+   "purpose": "跪姿撑地、双手不动，用上半身带着重心画圈，手腕在承重下转一圈各个角度",
+   "category": "mobility",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 20
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "reps": [
+     6,
+     20
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双手不动，上身带重心画圈",
+     "跪姿四点支撑：手在肩膀正下方、掌心贴地、手指朝前，手臂伸直。",
+     "先画小圈，再慢慢画大；一个方向 5 圈，再反方向 5 圈。",
+     "手腕一直承重，手肘不弯，背保持平。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕刺疼就把圈画小，还疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-quadruped-backhand-press",
+   "name": {
+    "zh": "跪姿手背撑地挤压",
+    "en": "Quadruped Back-of-Hand Press"
+   },
+   "purpose": "跪姿、手背撑地、手腕屈着，轻轻往地面压再放松，热身手腕伸肌和手背一侧",
+   "category": "mobility",
+   "muscles": [
+    "前臂 · 腕屈伸肌"
+   ],
+   "muscleGroups": [
+    "forearms"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 20
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "reps": [
+     6,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手背贴地，轻轻往下压再放松",
+     "跪姿，双手手背着地、手腕弯着，手指朝向膝盖，手臂伸直。",
+     "手腕几乎不动，往地面方向施压、肩胛推地，停一下再放松，算 1 次。",
+     "不前后左右移重心，力度由轻到中等。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手背或手腕刺疼就少压一点，还疼就停"
+   ],
+   "contraindications": [
+    "手腕"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-9090-back-knee-lift",
+   "name": {
+    "zh": "90/90 后腿膝盖抬起",
+    "en": "90/90 Back-Knee Lift"
+   },
+   "purpose": "90/90 坐姿，后脚不动只抬后腿膝盖，活动后侧髋、为换髋和开胯热身",
+   "category": "mobility",
+   "muscles": [
+    "臀中肌 · 髋外展",
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "hip-abductors",
+    "glute-max"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 8,
+    "restSeconds": 10
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "reps": [
+     5,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "后脚踩住不动，只把后腿膝盖抬起来",
+     "90/90 坐好：前腿小腿横在身前，后腿小腿朝后，上身坐直、双手往前伸。",
+     "后腿膝盖慢慢抬离地面，停一下再慢慢放回去。",
+     "每侧 8 次，做完换另一侧。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "髋或膝盖不舒服就抬低一点，还疼就停"
+   ],
+   "contraindications": [
+    "膝",
+    "髋"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-9090-hip-switch-planted",
+   "name": {
+    "zh": "90/90 换髋（双脚不动）",
+    "en": "90/90 Hip Switch (Feet Planted)"
+   },
+   "purpose": "活动两侧髋关节的内旋和外旋",
+   "category": "mobility",
+   "muscles": [
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "glute-max"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "reps": [
+     4,
+     12
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双脚踩住不动，双膝一起倒向另一侧",
+     "坐地，双腿 90/90：前腿小腿横在身前，后腿小腿朝后，膝盖都弯 90 度。",
+     "一左一右算 1 次，两边都落成 90/90 再往回换。",
+     "上身坐直，别往后靠；膝盖跟着髋转，别硬拧膝盖。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "膝盖疼就缩小翻转幅度或手撑在身后辅助，还疼就停"
+   ],
+   "contraindications": [
+    "膝"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r1"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-quadruped-straight-leg-raise",
+   "name": {
+    "zh": "四足直腿后上抬",
+    "en": "Quadruped Straight-Leg Raise"
+   },
+   "purpose": "跪姿四点支撑，一条腿伸直往后上方抬起再放下，徒手唤醒臀部和大腿后侧",
+   "category": "mobility",
+   "muscles": [
+    "臀大肌"
+   ],
+   "muscleGroups": [
+    "glute-max"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "quadruped",
+   "unilateral": true,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 1,
+    "reps": 10,
+    "restSeconds": 10
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "reps": [
+     6,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "腿伸直，往后上方抬到和背差不多高",
+     "跪姿四点支撑：手在肩膀正下方、掌心贴地，膝盖在髋下方，背放平。",
+     "一条腿向后伸直，脚尖轻点垫子；用屁股的力量把整条腿往后上方抬，再放回脚尖轻点垫子。",
+     "抬到腿和背差不多平就够了，腰不往下塌，两边胯一样高，不往一侧翻。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "腰有不舒服就抬低一点，还不舒服就停"
+   ],
+   "contraindications": [
+    "腰"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-standing-straddle-hands-floor",
+   "name": {
+    "zh": "站姿分腿俯身撑地",
+    "en": "Wide Straddle Fold, Hands Down"
+   },
+   "purpose": "双脚大幅分开站，俯身双手撑地，靠上身的重量被动打开胯和大腿内侧",
+   "category": "stretch",
+   "muscles": [
+    "内收肌群",
+    "腘绳肌"
+   ],
+   "muscleGroups": [
+    "adductors",
+    "hamstrings"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "standing",
+   "unilateral": false,
+   "level": 1,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 120,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     2
+    ],
+    "seconds": [
+     60,
+     180
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "双脚大开，双手撑地，让上身的重量往下挂",
+     "双脚分开到比肩宽得多的位置，脚尖朝前，膝盖伸直但不锁死，从胯部往前俯身，双手掌心撑在垫子上。",
+     "手只是撑着，头、肩膀和后背都放松挂下来，让重力把胯往下带。",
+     "大腿内侧和后侧有拉的感觉就够了，喘气别停，不要往下弹压。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "拉得太紧或大腿内侧刺疼就把手放远一点、脚收窄一点"
+   ],
+   "contraindications": [
+    "大腿内侧"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "t-reverse-plank-hold",
+   "name": {
+    "zh": "直腿后撑静态",
+    "en": "Reverse Plank Hold"
+   },
+   "purpose": "坐地双手撑在身后、双腿伸直，抬起臀部让身体成一条直线并保持，唤醒肩膀、臀部和后背",
+   "category": "strength",
+   "muscles": [
+    "臀大肌",
+    "腘绳肌",
+    "竖脊肌"
+   ],
+   "muscleGroups": [
+    "glute-max",
+    "hamstrings",
+    "erectors"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 30,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "seconds": [
+     15,
+     45
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "肩膀、臀部、脚跟连成一条直线",
+     "坐在垫子上，双手撑在臀部后面、掌心贴地、手指朝脚，双腿伸直并拢，脚跟着地。",
+     "手臂伸直，手和脚跟往地上推，把臀部抬起来，让身体成一条直线。",
+     "屁股夹紧，胸口打开，肩膀往下离开耳朵，头跟身体在一条线上。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕或肩膀前面不舒服就把臀部放低一点，还不舒服就停"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:warmup-r2"
+   ],
+   "review": {
+    "status": "draft-ai-needs-user-review"
+   }
+  },
+  {
+   "id": "h-tabletop-fingers-out",
+   "name": {
+    "zh": "桌面式后撑抬髋（手指朝外）",
+    "en": "Reverse Tabletop Bridge (Fingers Out)"
+   },
+   "purpose": "练屁股和肩膀，打开胸口",
+   "category": "strength",
+   "muscles": [
+    "臀大肌",
+    "三角肌"
+   ],
+   "muscleGroups": [
+    "glute-max",
+    "deltoids"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "seated",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home"
+   ],
+   "defaultDose": {
+    "mode": "reps",
+    "sets": 3,
+    "reps": 10,
+    "restSeconds": 30
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "reps": [
+     5,
+     15
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "手和脚后跟推地，把屁股抬到跟膝盖一样高",
+     "手指朝两侧外，手臂伸直。",
+     "胸口打开，肩胛骨往中间夹。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手指朝两侧外撑地，掌根在肩下",
+    "肩膀前面夹着疼就屁股抬低点"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:fingers-out-r1"
+   ],
+   "review": {
+    "status": "draft-copied-from-h-tabletop-needs-user-review"
+   }
+  },
+  {
+   "id": "t-reverse-plank-hold-fingers-out",
+   "name": {
+    "zh": "直腿后撑静态（手指朝外）",
+    "en": "Reverse Plank Hold (Fingers Out)"
+   },
+   "purpose": "坐地双手撑在身后、双腿伸直，抬起臀部让身体成一条直线并保持，唤醒肩膀、臀部和后背",
+   "category": "strength",
+   "muscles": [
+    "臀大肌",
+    "腘绳肌",
+    "竖脊肌"
+   ],
+   "muscleGroups": [
+    "glute-max",
+    "hamstrings",
+    "erectors"
+   ],
+   "equipment": [
+    "mat"
+   ],
+   "position": "supine",
+   "unilateral": false,
+   "level": 2,
+   "scenes": [
+    "home",
+    "gym"
+   ],
+   "defaultDose": {
+    "mode": "time",
+    "sets": 1,
+    "seconds": 30,
+    "restSeconds": 15
+   },
+   "doseRange": {
+    "sets": [
+     1,
+     3
+    ],
+    "seconds": [
+     15,
+     45
+    ],
+    "restSeconds": [
+     0,
+     60
+    ]
+   },
+   "cues": {
+    "zh": [
+     "肩膀、臀部、脚跟连成一条直线",
+     "坐在垫子上，双手撑在臀部后面、掌心贴地、手指朝两侧外，双腿伸直并拢，脚跟着地。",
+     "手臂伸直，手和脚跟往地上推，把臀部抬起来，让身体成一条直线。",
+     "屁股夹紧，胸口打开，肩膀往下离开耳朵，头跟身体在一条线上。"
+    ]
+   },
+   "primaryCue": 0,
+   "cautions": [
+    "手腕或肩膀前面不舒服就把臀部放低一点，还不舒服就停"
+   ],
+   "contraindications": [
+    "手腕",
+    "肩"
+   ],
+   "alternative": null,
+   "apps": [],
+   "tags": [
+    "thomas",
+    "flare2:fingers-out-r1"
+   ],
+   "review": {
+    "status": "draft-copied-from-t-reverse-plank-hold-needs-user-review"
    }
   }
  ]

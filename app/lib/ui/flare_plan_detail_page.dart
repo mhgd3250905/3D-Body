@@ -1130,12 +1130,24 @@ class _PlanExercise extends StatelessWidget {
         dose.reps == null
             ? s.cooldownSecondsRange(min, max)
             : s.cooldownRepsRange(min, max),
+      _ when !isCooldown && dose.repPositions.isNotEmpty =>
+        dose
+            .repPositionsFor(Localizations.localeOf(context).languageCode)
+            .map((label) => '$label ${s.countLabel(dose.reps!)}')
+            .join(' → '),
       _ when dose.repPositions.isNotEmpty => s.cooldownRepsPerPosition(
         dose.reps!,
       ),
+      _ when dose.bothCircleDirections && !dose.perSide =>
+        '${s.planCircleClockwise} ${s.countLabel(dose.reps!)} + '
+            '${s.planCircleCounterclockwise} ${s.countLabel(dose.reps!)}',
       _ when dose.bothCircleDirections => s.planCirclesInBothDirections(
         dose.reps!,
       ),
+      _
+          when dose.movement == FlarePlanMovement.alternatingHipSwitch &&
+              !dose.perSide =>
+        '${s.countLabel(dose.reps!)} · ${s.leftSide} + ${s.rightSide}',
       _ when dose.reps == null => s.secondsLabel(dose.seconds!),
       _ => s.countLabel(dose.reps!),
     };

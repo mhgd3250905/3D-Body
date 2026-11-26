@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show FlutterError, debugPrint, kIsWeb;
 import 'package:flutter/services.dart';
-import 'package:ugk_coach/ugk_coach.dart' show sha256Hex;
+import 'package:ugk_coach/ugk_coach.dart' show PoseHubVoiceGuide, sha256Hex;
 import 'package:ugk_trainer_runtime/ugk_trainer.dart';
 
 import '../domain/flare_plan.dart';
@@ -716,6 +716,26 @@ class _SupplementalVoiceSource extends _LeftFirstVoiceSource
   @override
   KitVoice? kitVoice(String exerciseId) =>
       cues.containsKey(exerciseId) ? null : super.kitVoice(exerciseId);
+
+  // This timed move uses the catalog's twelve scheduled coaching clips.
+  static const _standingStraddle = 't-standing-straddle-hands-floor';
+
+  @override
+  PoseHubVoiceGuide? voiceGuide(String exerciseId) =>
+      exerciseId == _standingStraddle ? source.voiceGuide(exerciseId) : null;
+
+  @override
+  String? voiceGuideClipKey(
+    String exerciseId,
+    String packId, {
+    required String lang,
+  }) => exerciseId == _standingStraddle
+      ? source.voiceGuideClipKey(exerciseId, packId, lang: lang)
+      : null;
+
+  @override
+  List<String> voiceGuideCommonKeys(String key, {required String lang}) =>
+      source.voiceGuideCommonKeys(key, lang: lang);
 
   @override
   Future<void> prepare(

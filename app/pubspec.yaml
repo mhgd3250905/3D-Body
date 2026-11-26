@@ -30,21 +30,21 @@ dependencies:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
       path: packages/ugk_coach_ui
   ugk_coach_chat:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
       path: packages/ugk_coach_chat
 
 # Resolve the SDK's sibling Git dependencies with the same commit.
@@ -52,16 +52,16 @@ dependency_overrides:
   ugk_coach:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
   ugk_trainer_runtime:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
       path: packages/ugk_trainer_runtime
   ugk_coach_ui:
     git:
       url: https://github.com/mhgd3250905/ugk-3d-pose-sdk.git
-      ref: ugk_trainer-v1.0.3
+      ref: bc1055e8ef179110f014113dacee63657f9e0bc6
       path: packages/ugk_coach_ui
 
 dev_dependencies:
@@ -81,6 +81,7 @@ flutter:
     - assets/data/course-stages.json
     - assets/data/drills.json
     - assets/data/flare-plans.json
+    - assets/data/flare-plans-r3.json
     - assets/data/flare-plan-voice-manifest.json
     - assets/data/flare-local-plans.json
     - assets/data/drills.schema.json
@@ -101,9 +102,9 @@ flutter:
     - assets/public_media/catalog.json
     - assets/public_media/catalog/catalog.json
     - assets/public_posters/
-    - assets/public_posters/r2-v24/cover/
-    - assets/public_posters/r2-v24/thumbnail/
-    - assets/public_posters/r2-v24/standing/
+    - assets/public_posters/r2-v29/cover/
+    - assets/public_posters/r2-v29/thumbnail/
+    - assets/public_posters/r2-v29/standing/
     - assets/muscles/
     - assets/plan_resume_muscles/
     - assets/plan_icons/
