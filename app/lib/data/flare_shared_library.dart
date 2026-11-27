@@ -9,6 +9,8 @@ import 'package:ugk_trainer_runtime/ugk_trainer_runtime.dart' as trainer;
 import '../ui/theme.dart';
 import '../ui/components.dart';
 import '../ui/flare_action_artwork.dart';
+import '../ui/flare_warmup_action_detail.dart';
+import '../ui/motion.dart';
 import '../ui/page_kit.dart';
 import '../ui/public_library_filter.dart';
 import '../trainer/trainer_audio.dart';
@@ -124,6 +126,7 @@ class FlareShared {
     String scene, {
     String? title,
     bool skipStrengthening = false,
+    String language = 'zh',
     List<String>? wristDirections,
     ({String clockwise, String counterclockwise}) circleDirections = const (
       clockwise: '顺时针',
@@ -137,6 +140,7 @@ class FlareShared {
     sourceCatalog: catalog,
     rhythms: rhythms,
     skipStrengthening: skipStrengthening,
+    language: language,
     wristDirections: wristDirections ?? const ['手指朝前', '手指朝侧', '手指朝后', '手背撑地'],
     circleDirections: circleDirections,
   );
@@ -231,17 +235,46 @@ class FlareShared {
     BuildContext context,
     String id, {
     bool soundEnabled = true,
+    bool autoPlay = false,
   }) async {
     final shared = current;
     final policy = FlarePublicMedia.of(context);
     if (shared == null || policy == null) return;
     final resolvedTheme = theme(context);
+    final detailTheme = resolvedTheme.copyWith(mediaStage: Colors.transparent);
+    final config = shared.libraryFor(context, planActionId: id);
+    if (autoPlay) {
+      final action = config
+          .actions(policy.catalog)
+          .where((action) => action.id == id)
+          .firstOrNull;
+      if (action == null) return;
+      final bundle = DefaultAssetBundle.of(context);
+      await showModalBottomSheet<void>(
+        context: context,
+        routeSettings: RouteSettings(name: 'training_library_detail/$id'),
+        isScrollControlled: true,
+        backgroundColor: detailTheme.surface,
+        sheetAnimationStyle: FlareMotion.sheetStyle(context),
+        showDragHandle: true,
+        builder: (_) => DefaultAssetBundle(
+          bundle: bundle,
+          child: FlareWarmupActionDetail(
+            action: action,
+            config: config,
+            mediaPolicy: policy,
+            theme: detailTheme,
+          ),
+        ),
+      );
+      return;
+    }
     await trainer.TrainingLibraryDetails.open(
       context,
       actionId: id,
-      config: shared.libraryFor(context, planActionId: id),
+      config: config,
       mediaPolicy: policy,
-      theme: resolvedTheme.copyWith(mediaStage: Colors.transparent),
+      theme: detailTheme,
       onStart: soundEnabled && !flareSupplementalActionIds.contains(id)
           ? (actionId) async {
               final action = policy.actionFor(actionId);

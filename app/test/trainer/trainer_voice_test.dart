@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flare/data/catalog.dart';
+import 'package:flare/data/flare_public_catalog.dart';
+import 'package:flare/data/flare_shared_library.dart';
+import 'package:flare/data/posehub_catalog_updates.dart';
+import 'package:flare/trainer/training_plan_adapter.dart';
 import 'package:flare/trainer/trainer_voice.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -248,6 +252,73 @@ void main() {
     },
   );
 
+  test(
+    'the standing straddle keeps all twelve timed Mandarin guide lines',
+    () async {
+      const id = 't-standing-straddle-hands-floor';
+      final shared = await FlareShared.load(
+        activeCatalog: await loadFlareBundledPublicCatalog(),
+      );
+      final snapshot = (await loadFlareBundledPlanSnapshot(warmupR3: true))!;
+      final catalog = (await Catalog.load()).withPlanSnapshot(snapshot);
+      final authored = catalog.flareWarmupPlan!;
+      final plan = shared.authoredPlan(authored, catalog, 'A');
+      final builder = FlareWarmupSessionBuilder(rhythms: shared.rhythms);
+      final phases = builder.phases(plan);
+      final work = phases.singleWhere(
+        (phase) => phase.isWork && phase.exerciseId == id,
+      );
+      expect(work.seconds, 120);
+
+      final base = LayeredVoiceSource(
+        primary: await loadTrainerVoiceSource(read: read),
+        catalog: CatalogVoiceIndex.fromCatalogJson(shared.pack.raw),
+        cache: _ReadyCatalogVoiceCache(),
+      );
+      final source = await withSupplementalTrainerVoice(
+        base,
+        authored,
+        language: 'zh',
+      );
+      final script = buildSupplementalTrainerScript(
+        source,
+        'zh',
+        plan: authored,
+        phases: phases,
+      );
+      final expected = [
+        for (var ordinal = 1; ordinal <= 12; ordinal++)
+          LayeredVoiceSource.keyOf(id, 'g.set.$ordinal'),
+      ];
+      final scheduled = script
+          .cues(work, planSeconds: builder.planSeconds(plan))
+          .where((cue) => cue.clips.any(expected.contains))
+          .toList();
+      expect(
+        scheduled.expand((cue) => cue.clips.where(expected.contains)),
+        expected,
+      );
+      expect(scheduled.map((cue) => cue.at), [
+        4,
+        12,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        108,
+      ]);
+      expect(
+        scheduled.every((cue) => cue.subtitle?.isNotEmpty == true),
+        isTrue,
+      );
+    },
+  );
+
   test('English phrases use English order and singular units', () async {
     final en = await loadTrainerVoiceSource(language: 'en', read: read);
     final zh = await loadTrainerVoiceSource(read: read);
@@ -366,4 +437,12 @@ class _VoiceHttp implements PoseHubCatalogHttpClient {
         ? PoseHubCatalogHttpResponse(503, Uint8List(0))
         : PoseHubCatalogHttpResponse(200, bytes);
   }
+}
+
+class _ReadyCatalogVoiceCache extends CatalogVoiceCache {
+  _ReadyCatalogVoiceCache()
+    : super(store: MemoryPoseHubCatalogStore(), pathOf: (name) => name);
+
+  @override
+  bool isReady(CatalogVoiceClip clip) => true;
 }

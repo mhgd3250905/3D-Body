@@ -665,12 +665,17 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     _syncSceneVisibility();
   }
 
-  void _openFlarePlanDrill(String id) {
+  void _openFlarePlanDrill(String id, {bool autoPlay = false}) {
     if (catalog.drillById(id) case final drill?) {
       _openDrill(drill);
     } else {
       unawaited(
-        FlareShared.openDetail(context, id, soundEnabled: store.settings.sound),
+        FlareShared.openDetail(
+          context,
+          id,
+          soundEnabled: store.settings.sound,
+          autoPlay: autoPlay,
+        ),
       );
     }
   }
@@ -707,7 +712,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     var continueCooldown = false;
     void markCooldownRequested() => continueCooldown = true;
     final onContinueCooldown = cooldown == null ? null : markCooldownRequested;
-    final preview = _hasPremium || supplementalPlan != null
+    final preview = _hasPremium
         ? null
         : _premiumPreview(
             FlarePremiumFeature.training,
@@ -717,6 +722,8 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
               store: store,
               startInPreview: true,
               previewLocked: locked,
+              supplementalPlan: supplementalPlan,
+              planSnapshot: planSnapshot,
               onContinueCooldown: onContinueCooldown,
             ),
             keepUnlocked: true,
@@ -937,6 +944,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
     sceneTier,
     title: title,
     skipStrengthening: skipStrengthening,
+    language: Localizations.localeOf(context).languageCode,
     wristDirections: trainerWristDirections(context.strings),
     circleDirections: (
       clockwise: context.strings.planCircleClockwise,
@@ -1627,7 +1635,7 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
         false,
         FlarePlanDetailPage(
           title: title,
-          membership: supplemental == null ? widget.membership : null,
+          membership: widget.membership,
           phase: phase,
           emptyTargetGroup: group,
           plans: plans,
@@ -1644,7 +1652,10 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
             }
           },
           onMuscle: _openMusclePlan,
-          onDrill: _openFlarePlanDrill,
+          onDrill: (id) => _openFlarePlanDrill(
+            id,
+            autoPlay: supplemental?.kind == FlarePlanKind.warmup,
+          ),
           onBack: _back,
           onOpenWarmup: warmup == null
               ? null
@@ -2545,7 +2556,12 @@ class _FlareShellState extends State<FlareShell> with WidgetsBindingObserver {
       body: ScrollEdge(
         child: ListView(
           key: const PageStorageKey('flare-settings-scroll'),
-          padding: EdgeInsets.fromLTRB(20, flareNavInset(context), 20, 24),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            flareNavInset(context),
+            20,
+            FlareGeometry.pageScrollBottomPadding,
+          ),
           children: [
             // Groups sit 28 apart without repeated headings (HipLab).
             FlareListGroup(

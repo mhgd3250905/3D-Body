@@ -13,7 +13,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'plan action details and video descriptors come from official r2-v22',
+    'plan action details and video descriptors come from official r2-v29',
     () async {
       final bundled = await loadFlareBundledPublicCatalog();
       final shared = await FlareShared.load(activeCatalog: bundled);
@@ -26,8 +26,19 @@ void main() {
         coach.sha256Hex(bytes),
         PoseHubCatalogUpdates.bundledCatalogSha256,
       );
-      expect(trainer.poseHubPackVersionOf(bundled), 'r2-v22');
+      expect(trainer.poseHubPackVersionOf(bundled), 'r2-v29');
       expect(shared.pack, same(bundled));
+      final needle = bundled.tryGet('h-kneeling-thread-needle')!;
+      expect((needle.raw['rhythm'] as Map)['coverFrame'], isNull);
+      expect(needle.video.path, contains('/r2-v24/'));
+      expect(
+        needle.video.sha256,
+        'a6c259c649667d08539ee71adf045867b7f46a30cff0087f7b9b3a788f01a7b4',
+      );
+      expect(
+        needle.cover.sha256,
+        'c0fddbfe287ce868eedcce8f8c23cd60f30d826567c3973cc9df9c01d690929d',
+      );
       expect(flareSupplementalActionIds, hasLength(16));
       final canonical = bundled.toAiCatalog();
       for (final id in {flareWarmupPushupId, ...flareSupplementalActionIds}) {
@@ -65,11 +76,9 @@ void main() {
             rootDirectory: directory.path,
           );
           addTearDown(policy.repository.dispose);
-          for (final id in {
-            flareWarmupPushupId,
-            ...flareSupplementalActionIds,
-          }) {
-            final action = policy.actionFor(id)!;
+          final bundled = await loadFlareBundledPublicCatalog();
+          for (final action in bundled.allActions) {
+            final id = action.id;
             expect(
               policy.posterAssetFor(id),
               FlarePublicMedia.coverAssetFor(id),

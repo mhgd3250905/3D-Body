@@ -2,6 +2,13 @@ import 'package:flare/trainer/flare_demo_orientation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('the left-knee source mirrors only for the right knee lift', () {
+    const id = 't-9090-back-knee-lift';
+    // The SDK normally requests mirroring for the left phase.
+    expect(flareDemoMirrored(id, false), isTrue);
+    expect(flareDemoMirrored(id, true), isFalse);
+  });
+
   test('the bundled demonstrations keep their recorded side orientation', () {
     for (final id in [
       't-step-jack-arm-circles',

@@ -29,8 +29,6 @@ const _switchTime = Duration(milliseconds: 220);
 const _figures = [FontFeature.tabularFigures()];
 const _startButtonHeight = 56.0;
 const _startButtonBottomInset = 12.0;
-const _lastExerciseGap = 24.0;
-const _startButtonFadeHeight = 48.0;
 
 class FlarePlanDetailPage extends StatefulWidget {
   const FlarePlanDetailPage({
@@ -148,21 +146,18 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
         child: FlareScrollNav(
           onBack: widget.onBack,
           scrollFadeController: _scroll,
-          child: Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Positioned.fill(
-                bottom: safe.bottom + _startButtonBottomInset,
+              Expanded(
                 child: ScrollConfiguration(
                   behavior: ScrollConfiguration.of(
                     context,
                   ).copyWith(scrollbars: false),
                   child: ListView(
                     controller: _scroll,
-                    padding: EdgeInsets.only(
-                      bottom:
-                          _startButtonHeight +
-                          _lastExerciseGap +
-                          (openWarmup == null ? 0 : FlarePlanWarmupLink.height),
+                    padding: const EdgeInsets.only(
+                      bottom: FlareGeometry.pageScrollBottomPadding,
                     ),
                     children: [
                       _PlanHero(
@@ -295,18 +290,13 @@ class _FlarePlanDetailPageState extends State<FlarePlanDetailPage> {
                   ),
                 ),
               ),
-              PositionedDirectional(
-                bottom: 0,
-                start: 0,
-                end: 0,
-                child: _PlanBottom(
-                  membership: isSupplemental ? null : widget.membership,
-                  minutes: minutes,
-                  safeBottom: safe.bottom,
-                  onStart: () => widget.onStart(plan),
-                  onOpenWarmup: openWarmup,
-                  warmupMinutes: warmupMinutes,
-                ),
+              _PlanBottom(
+                membership: widget.membership,
+                minutes: minutes,
+                safeBottom: safe.bottom,
+                onStart: () => widget.onStart(plan),
+                onOpenWarmup: openWarmup,
+                warmupMinutes: warmupMinutes,
               ),
             ],
           ),
@@ -1140,12 +1130,24 @@ class _PlanExercise extends StatelessWidget {
         dose.reps == null
             ? s.cooldownSecondsRange(min, max)
             : s.cooldownRepsRange(min, max),
+      _ when !isCooldown && dose.repPositions.isNotEmpty =>
+        dose
+            .repPositionsFor(Localizations.localeOf(context).languageCode)
+            .map((label) => '$label ${s.countLabel(dose.reps!)}')
+            .join(' → '),
       _ when dose.repPositions.isNotEmpty => s.cooldownRepsPerPosition(
         dose.reps!,
       ),
+      _ when dose.bothCircleDirections && !dose.perSide =>
+        '${s.planCircleClockwise} ${s.countLabel(dose.reps!)} + '
+            '${s.planCircleCounterclockwise} ${s.countLabel(dose.reps!)}',
       _ when dose.bothCircleDirections => s.planCirclesInBothDirections(
         dose.reps!,
       ),
+      _
+          when dose.movement == FlarePlanMovement.alternatingHipSwitch &&
+              !dose.perSide =>
+        '${s.countLabel(dose.reps!)} · ${s.leftSide} + ${s.rightSide}',
       _ when dose.reps == null => s.secondsLabel(dose.seconds!),
       _ => s.countLabel(dose.reps!),
     };
@@ -1391,98 +1393,77 @@ class _PlanBottomState extends State<_PlanBottom> {
         ],
       ),
     );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IgnorePointer(
-          child: SizedBox(
-            width: double.infinity,
-            height: _startButtonFadeHeight,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [p.background.withValues(alpha: 0), p.background],
+    return ColoredBox(
+      color: p.background,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          _gutter,
+          0,
+          _gutter,
+          widget.safeBottom + _startButtonBottomInset,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if ((widget.onOpenWarmup, widget.warmupMinutes) case (
+              final open?,
+              final minutes?,
+            ))
+              FlarePlanWarmupLink(onOpen: open, minutes: minutes),
+            FlarePressable(
+              key: const ValueKey('flare-plan-start'),
+              scale: 1,
+              onTap: widget.onStart,
+              onPressChanged: (pressed) => setState(() => _pressed = pressed),
+              child: AnimatedScale(
+                scale: _pressed && !FlareMotion.reduced(context) ? .98 : 1,
+                duration: const Duration(milliseconds: 100),
+                child: Container(
+                  width: double.infinity,
+                  height: _startButtonHeight,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.lerp(p.accent, Colors.white, .15)!,
+                        p.accent,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: p.accent,
+                        offset: const Offset(0, 10),
+                        blurRadius: 28,
+                        spreadRadius: -8,
+                      ),
+                    ],
+                  ),
+                  foregroundDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0x40ffffff), Color(0x00ffffff)],
+                      stops: [0, 1 / _startButtonHeight],
+                    ),
+                  ),
+                  child: widget.membership == null
+                      ? label()
+                      : ListenableBuilder(
+                          listenable: widget.membership!,
+                          builder: (_, _) => label(),
+                        ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
-        ColoredBox(
-          color: p.background,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              _gutter,
-              0,
-              _gutter,
-              widget.safeBottom + _startButtonBottomInset,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if ((widget.onOpenWarmup, widget.warmupMinutes) case (
-                  final open?,
-                  final minutes?,
-                ))
-                  FlarePlanWarmupLink(onOpen: open, minutes: minutes),
-                FlarePressable(
-                  key: const ValueKey('flare-plan-start'),
-                  scale: 1,
-                  onTap: widget.onStart,
-                  onPressChanged: (pressed) =>
-                      setState(() => _pressed = pressed),
-                  child: AnimatedScale(
-                    scale: _pressed && !FlareMotion.reduced(context) ? .98 : 1,
-                    duration: const Duration(milliseconds: 100),
-                    child: Container(
-                      width: double.infinity,
-                      height: _startButtonHeight,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color.lerp(p.accent, Colors.white, .15)!,
-                            p.accent,
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: p.accent,
-                            offset: const Offset(0, 10),
-                            blurRadius: 28,
-                            spreadRadius: -8,
-                          ),
-                        ],
-                      ),
-                      foregroundDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        gradient: const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Color(0x40ffffff), Color(0x00ffffff)],
-                          stops: [0, 1 / _startButtonHeight],
-                        ),
-                      ),
-                      child: widget.membership == null
-                          ? label()
-                          : ListenableBuilder(
-                              listenable: widget.membership!,
-                              builder: (_, _) => label(),
-                            ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
