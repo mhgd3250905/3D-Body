@@ -31,6 +31,13 @@ const _bundledWarmupR3 = 'assets/data/flare-plans-r3.json';
 const _enableWarmupR3 = bool.fromEnvironment('FLARE_BUNDLED_WARMUP_R3');
 const _bundledVoiceManifest = 'assets/data/flare-plan-voice-manifest.json';
 
+bool _shouldUseBundledWarmupR3(
+  PoseHubCatalogChannel channel,
+  bool devPreview,
+) =>
+    channel == PoseHubCatalogChannel.stable ||
+    (channel == PoseHubCatalogChannel.dev && devPreview);
+
 Future<PoseHubPlanSnapshot?> loadFlareBundledPlanSnapshot({
   AssetBundle? bundle,
   bool warmupR3 = false,
@@ -57,8 +64,7 @@ Future<PoseHubPlanSnapshot?> loadFlareBundledPlanSnapshot({
 /// Select the compatible built-in plan even if the update store is unavailable.
 Future<PoseHubPlanSnapshot?> loadCompatibleFlareBundledPlanSnapshot(
   String catalogPack, {
-  bool previewWarmupR3 =
-      _enableWarmupR3 && PoseHubCatalogUpdates.channelName == 'dev',
+  bool? previewWarmupR3,
   String sdkVersion = poseHubCatalogSdkVersion,
 }) async {
   bool compatible(PoseHubPlanSnapshot? snapshot) =>
@@ -68,7 +74,10 @@ Future<PoseHubPlanSnapshot?> loadCompatibleFlareBundledPlanSnapshot(
       ) ==
       true;
 
-  if (previewWarmupR3) {
+  final useBundledWarmupR3 =
+      previewWarmupR3 ??
+      _shouldUseBundledWarmupR3(PoseHubCatalogUpdates.channel, _enableWarmupR3);
+  if (useBundledWarmupR3) {
     final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
     if (compatible(preview)) return preview;
   }
@@ -92,10 +101,10 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
     this.updater,
     this.assetRootDirectory,
     this._onOutcome,
-    this._previewWarmupR3,
+    this._useBundledWarmupR3,
   );
 
-  final bool _previewWarmupR3;
+  final bool _useBundledWarmupR3;
 
   static const bundledPackVersion = 'r2-v29';
   static const bundledCatalogSha256 =
@@ -159,7 +168,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
         ),
         assetRootDirectory,
         onOutcome,
-        previewWarmupR3 && updateConfig.channel == PoseHubCatalogChannel.dev,
+        _shouldUseBundledWarmupR3(updateConfig.channel, previewWarmupR3),
       );
       PoseHubActionLibrary.useVerifiedCache(resolved);
       activeStore = resolved;
@@ -193,7 +202,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
           return loadFlareBundledPlanSnapshot();
         },
       );
-      if (_previewWarmupR3 &&
+      if (_useBundledWarmupR3 &&
           (snapshot == null || snapshot.version == 'flare-plans-r2')) {
         final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
         if (preview != null &&
@@ -219,7 +228,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
       }
       return loadCompatibleFlareBundledPlanSnapshot(
         catalogPack,
-        previewWarmupR3: _previewWarmupR3,
+        previewWarmupR3: _useBundledWarmupR3,
         sdkVersion: updater.config.sdkVersion,
       );
     }
@@ -227,7 +236,7 @@ class PoseHubCatalogUpdates with WidgetsBindingObserver {
 
   Future<PoseHubPlanSnapshot?> restorePlanSnapshot(String id) async {
     final stored = await updater.restorePlanSnapshot(_planApp, id);
-    if (stored != null || !_previewWarmupR3) return stored;
+    if (stored != null || !_useBundledWarmupR3) return stored;
     final preview = await loadFlareBundledPlanSnapshot(warmupR3: true);
     return preview?.id == id ? preview : null;
   }

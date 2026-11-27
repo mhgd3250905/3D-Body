@@ -1,5 +1,11 @@
 # App 验证记录
 
+## stable 默认启用内置热身（2026-11-27）
+
+stable 在 r2-v29 及兼容目录上默认选用内置 21 项。dev 仍由 `FLARE_BUNDLED_WARMUP_R3` 控制，beta 沿用原选择规则。定向测试覆盖 stable 空缓存、已有旧计划缓存、离线回退和恢复训练，以及 dev 开关两种状态。第 20、21 项仍是已验收的手指朝外变体。
+
+`flutter analyze --no-pub` 无问题。stable 和 dev 的计划快照测试各 4 项通过。全量 `flutter test --no-pub --concurrency=1` 通过 521 项、失败 0 项，1 项外部服务实测默认跳过。本节记录源码验证，发布按单独放行处理。
+
 ## vc2111 练前热身手指朝外变体（2026-11-26）
 
 fetch 后核对 `codex/flare-warmup-r2-v26-dev` 的 HEAD 与远端均为 `8cd832ba962c614445bccd9e4edd3b2f2541911d`，在 vc2110 本地改动上继续。四个 SDK 包锁到 Draft PR #39 的 `bc1055e8ef179110f014113dacee63657f9e0bc6`。内置 r2-v29 目录包含 295 项，6,193,373 B，SHA-256 `a35c13e2b22ad7251c75b4c0f8491615c8d396dbdc5ecaec30388db7af86cd9b`。包内封面、缩略图和起始帧图各 295 张，逐文件核对哈希。
