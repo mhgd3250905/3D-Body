@@ -72,15 +72,54 @@ void main() {
     },
   );
 
-  test('only dev preview selects bundled r3 on a compatible catalog', () async {
+  test('stable uses the bundled 21-move plan with the dev flag off', () async {
     final store = MemoryPoseHubCatalogStore();
-    Future<PoseHubCatalogUpdates> open(PoseHubCatalogChannel channel) async =>
-        (await PoseHubCatalogUpdates.start(
-          config: PoseHubCatalogUpdateConfig(channel: channel),
-          store: store,
-          http: _OfflineHttp(),
-          previewWarmupR3: true,
-        ))!;
+    final stable = (await PoseHubCatalogUpdates.start(
+      config: PoseHubCatalogUpdateConfig(channel: PoseHubCatalogChannel.stable),
+      store: store,
+      http: _OfflineHttp(),
+      previewWarmupR3: false,
+    ))!;
+    addTearDown(stable.dispose);
+    const pack = PoseHubCatalogUpdates.bundledPackVersion;
+    final legacy = (await stable.planSnapshotFor('r2-v28'))!;
+    expect(legacy.version, 'flare-plans-r2');
+
+    final cold = (await stable.planSnapshotFor(pack))!;
+    expect(cold.version, 'flare-plans-r3');
+    if (PoseHubCatalogUpdates.channel == PoseHubCatalogChannel.stable) {
+      expect((await loadCompatibleFlareBundledPlanSnapshot(pack))?.id, cold.id);
+    }
+    final plans = PoseHubChannelPlanStore(
+      store: store,
+      channelUri: stable.updater.config.pointerUri,
+    );
+    await plans.install(legacy);
+    final current = (await stable.planSnapshotFor(pack))!;
+    expect(current.id, cold.id);
+    expect((await stable.restorePlanSnapshot(legacy.id))?.id, legacy.id);
+    expect((await stable.restorePlanSnapshot(current.id))?.id, current.id);
+    final warmup = loadCatalogFixture(
+      includeFlarePlans: true,
+    ).withPlanSnapshot(current).flareWarmupPlan!;
+    expect(warmup.items, hasLength(21));
+    expect(warmup.items.skip(19).map((item) => item.drill), [
+      'h-tabletop-fingers-out',
+      't-reverse-plank-hold-fingers-out',
+    ]);
+  });
+
+  test('dev preview still selects the compatible bundled plan', () async {
+    final store = MemoryPoseHubCatalogStore();
+    Future<PoseHubCatalogUpdates> open(
+      PoseHubCatalogChannel channel, {
+      bool preview = true,
+    }) async => (await PoseHubCatalogUpdates.start(
+      config: PoseHubCatalogUpdateConfig(channel: channel),
+      store: store,
+      http: _OfflineHttp(),
+      previewWarmupR3: preview,
+    ))!;
 
     final dev = await open(PoseHubCatalogChannel.dev);
     addTearDown(dev.dispose);
@@ -161,9 +200,19 @@ void main() {
       );
     }
 
-    final stable = await open(PoseHubCatalogChannel.stable);
-    addTearDown(stable.dispose);
-    expect((await stable.planSnapshotFor('r2-v29'))?.id, baseline.id);
+    final devWithoutPreview = await open(
+      PoseHubCatalogChannel.dev,
+      preview: false,
+    );
+    addTearDown(devWithoutPreview.dispose);
+    expect(
+      (await devWithoutPreview.planSnapshotFor('r2-v29'))?.id,
+      baseline.id,
+    );
+
+    final beta = await open(PoseHubCatalogChannel.beta);
+    addTearDown(beta.dispose);
+    expect((await beta.planSnapshotFor('r2-v29'))?.id, baseline.id);
 
     final publishedR3 = PoseHubPlanSnapshot.fromBytes(
       [...preview.planPack.jsonBytes, 10],
